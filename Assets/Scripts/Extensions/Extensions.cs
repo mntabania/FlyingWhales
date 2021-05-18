@@ -1473,4 +1473,23 @@ public static class Extensions {
         }
     }
     #endregion
+
+    #region Biomes
+    public static BIOMES GetMainBiomeForTileType(this Biome_Tile_Type p_tileType) {
+        switch (p_tileType) {
+            case Biome_Tile_Type.Desert:
+            case Biome_Tile_Type.Oasis:
+                return BIOMES.DESERT;
+            case Biome_Tile_Type.Grassland:
+            case Biome_Tile_Type.Jungle:
+                return BIOMES.GRASSLAND;
+            case Biome_Tile_Type.Taiga:
+            case Biome_Tile_Type.Tundra:
+            case Biome_Tile_Type.Snow:
+                return BIOMES.SNOW;
+            default:
+                throw new ArgumentOutOfRangeException(nameof(p_tileType), p_tileType, null);
+        }
+    }
+    #endregion
 }

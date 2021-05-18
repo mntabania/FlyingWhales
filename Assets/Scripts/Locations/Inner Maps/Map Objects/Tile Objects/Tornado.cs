@@ -18,7 +18,7 @@ public class Tornado : MovingTileObject {
         AddAdvertisedAction(INTERACTION_TYPE.RESOLVE_COMBAT);
         SetRadius(2);
     }
-    public Tornado(SaveDataTornado data) {
+    public Tornado(SaveDataTornado data) : base(data) {
         //SaveDataTornado saveDataTornado = data as SaveDataTornado;
         Assert.IsNotNull(data);
         expiryDate = data.expiryDate;

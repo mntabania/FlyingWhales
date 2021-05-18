@@ -195,12 +195,16 @@ namespace Inner_Maps.Location_Structures {
                     Messenger.AddListener<Character, CharacterBehaviourComponent>(CharacterSignals.CHARACTER_REMOVED_BEHAVIOUR, OnCharacterRemovedBehaviour);
                     Messenger.AddListener<Character>(CharacterSignals.CHARACTER_MARKER_DESTROYED, OnCharacterMarkerDestroyed);
                 }
+#if DEBUG_LOG
                 UnityEngine.Debug.Log($"Added attacker {p_attacker.name} to {this.name}");
+#endif
             }
         }
         private void RemoveAttacker(Character p_attacker) {
             if (currentAttackers.Remove(p_attacker)) {
+#if DEBUG_LOG
                 UnityEngine.Debug.Log($"Removed attacker {p_attacker.name} to {this.name}");
+#endif
                 if (currentAttackers.Count == 0) {
                     Messenger.RemoveListener<Character, CharacterBehaviourComponent>(CharacterSignals.CHARACTER_REMOVED_BEHAVIOUR, OnCharacterRemovedBehaviour);
                     Messenger.RemoveListener<Character>(CharacterSignals.CHARACTER_MARKER_DESTROYED, OnCharacterMarkerDestroyed);
@@ -215,9 +219,9 @@ namespace Inner_Maps.Location_Structures {
         private void OnCharacterMarkerDestroyed(Character p_character) {
             RemoveAttacker(p_character);
         }
-        #endregion
+#endregion
         
-        #region IPartyTargetDestination
+#region IPartyTargetDestination
         public override bool IsAtTargetDestination(Character character) {
             bool isAtTargetDestination = base.IsAtTargetDestination(character);
             if (!isAtTargetDestination) {
@@ -225,7 +229,7 @@ namespace Inner_Maps.Location_Structures {
             }
             return true;
         }
-        #endregion
+#endregion
 
         public bool CanSeeObjectLocatedHere(Character p_character) {
             if (p_character.hasMarker) {

@@ -48,7 +48,7 @@ namespace Interrupts {
                     //Evaluate all character if they will stay or leave
                     for (int i = 0; i < faction.characters.Count; i++) {
                         Character member = faction.characters[i];
-                        if (member != actor) {
+                        if (member != actor && !member.isDead) {
                             member.interruptComponent.TriggerInterrupt(INTERRUPT.Evaluate_Cultist_Affiliation, member);
                         }
                     }

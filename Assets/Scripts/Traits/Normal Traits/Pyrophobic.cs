@@ -115,26 +115,41 @@ namespace Traits {
             seenBurningSources.Remove(burningSource);
         }
         private void TriggerReactionToFireOnFirstTimeSeeing(IPointOfInterest burningPOI) {
+#if DEBUG_LOG
             string debugLog = $"{owner.name} saw a fire for the first time, reduce Happiness by 20 and become anxious. ";
+#endif
             owner.needsComponent.AdjustHappiness(-20f);
 
             if (GameUtilities.RollChance(10)) {
+#if DEBUG_LOG
                 debugLog += $"{owner.name} became catatonic";
+#endif
                 owner.traitContainer.AddTrait(owner, "Catatonic");
             } else if (GameUtilities.RollChance(15)) {
+#if DEBUG_LOG
                 debugLog += $"{owner.name} became berserked";
+#endif
                 owner.traitContainer.AddTrait(owner, "Berserked");
             } else if (GameUtilities.RollChance(15)) {
+#if DEBUG_LOG
                 debugLog += $"{owner.name} Had a seizure";
+#endif
                 owner.interruptComponent.TriggerInterrupt(INTERRUPT.Seizure, owner);
             } else if (GameUtilities.RollChance(10) && (owner.characterClass.className == "Druid" || owner.characterClass.className == "Shaman" || owner.characterClass.className == "Mage")) {
+
+#if DEBUG_LOG
                 debugLog += $"{owner.name} Had a loss of control";
+#endif
                 owner.interruptComponent.TriggerInterrupt(INTERRUPT.Loss_Of_Control, owner);
             } else {
+#if DEBUG_LOG
                 debugLog += $"{owner.name} became anxious and is cowering.";
+#endif
                 owner.interruptComponent.TriggerInterrupt(INTERRUPT.Cowering, owner, reason: "saw fire");
             }
+#if DEBUG_LOG
             owner.logComponent.PrintLogIfActive(debugLog);
+#endif
 
             Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Trait", "Pyrophobic", "on_see_first", null, LOG_TAG.Combat);
             log.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
@@ -142,11 +157,11 @@ namespace Traits {
 
         }
 
-        #region Listeners
+#region Listeners
         private void OnBurningSourceInactive(BurningSource burningSource) {
             RemoveKnownBurningSource(burningSource);
         }
-        #endregion
+#endregion
     }
 }
 

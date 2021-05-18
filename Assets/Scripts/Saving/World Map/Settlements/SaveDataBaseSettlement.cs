@@ -17,6 +17,7 @@ public class SaveDataBaseSettlement : SaveData<BaseSettlement>, ISavableCounterp
     public string factionOwnerID;
     public List<string> residents;
     public List<string> parties;
+    public List<Point> reservedAreas;
 
     public string persistentID => _persistentID;
     public OBJECT_TYPE objectType => OBJECT_TYPE.Settlement;
@@ -43,6 +44,12 @@ public class SaveDataBaseSettlement : SaveData<BaseSettlement>, ISavableCounterp
             Party party = data.parties[i];
             parties.Add(party.persistentID);
             SaveManager.Instance.saveCurrentProgressManager.AddToSaveHub(party);
+        }
+        
+        reservedAreas = new List<Point>();
+        for (int i = 0; i < data.reservedAreas.Count; i++) {
+            Area area = data.reservedAreas[i];
+            reservedAreas.Add(new Point(area.areaData.xCoordinate, area.areaData.yCoordinate));
         }
     }
     

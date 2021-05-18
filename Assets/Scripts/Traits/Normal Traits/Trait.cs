@@ -397,11 +397,13 @@ namespace Traits {
                 gridTile = p_character.deathTilePosition;
             }
             if (gridTile != null) {
+#if DEBUG_LOG
                 Debug.Log("Chaos Orb Produced - [" + p_character.name + "] - [" + name + "/Affliction] - [" + amount + "]");
+#endif
                 Messenger.Broadcast(PlayerSignals.CREATE_CHAOS_ORBS, gridTile.centeredWorldLocation, amount, gridTile.parentMap);
             }
         }
-        #endregion
+#endregion
     }
 }
 

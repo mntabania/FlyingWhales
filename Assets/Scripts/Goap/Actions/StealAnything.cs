@@ -45,8 +45,10 @@ public class StealAnything : GoapAction {
         SetState("Steal Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
+#if DEBUG_LOG
         string costLog = $"\n{name} {target.nameWithID}: +10(Constant)";
         actor.logComponent.AppendCostLog(costLog);
+#endif
         return 10;
     }
     public override IPointOfInterest GetTargetToGoTo(ActualGoapNode goapNode) {
@@ -93,9 +95,9 @@ public class StealAnything : GoapAction {
     public override CRIME_TYPE GetCrimeType(Character actor, IPointOfInterest target, ActualGoapNode crime) {
         return CRIME_TYPE.Theft;
     }
-    #endregion
+#endregion
 
-    #region Requirements
+#region Requirements
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, OtherData[] otherData, JobQueueItem job) { 
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData, job);
         if (satisfied) {
@@ -108,9 +110,9 @@ public class StealAnything : GoapAction {
         }
         return false;
     }
-    #endregion
+#endregion
 
-    #region State Effects
+#region State Effects
     //public void PreStealSuccess(ActualGoapNode goapNode) {
     //    //**Note**: This is a Theft crime
     //    //GoapActionState currentState = goapNode.action.states[goapNode.currentStateName];
@@ -123,5 +125,5 @@ public class StealAnything : GoapAction {
             goapNode.actor.needsComponent.AdjustHappiness(10);
         }
     }
-    #endregion
+#endregion
 }

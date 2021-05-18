@@ -18,7 +18,9 @@ public class GroupHealSpecialSkill : CombatSpecialSkill {
                 Character target = healedCharacters[i];
                 target.AdjustHP(100, ELEMENTAL_TYPE.Normal);
                 GameManager.Instance.CreateParticleEffectAt(target, PARTICLE_EFFECT.Heal, false);
-                p_character.logComponent.PrintLogIfActive("HEAL SPECIAL SKILL OF " + p_character.name + " ACTIVATED FOR: " + target.name);
+#if DEBUG_LOG
+                p_character.logComponent.PrintLogIfActive("GROUP HEAL SPECIAL SKILL OF " + p_character.name + " ACTIVATED FOR: " + target.name);
+#endif
             }
         }
         ObjectPoolManager.Instance.ReturnCharactersListToPool(healedCharacters);
@@ -40,5 +42,5 @@ public class GroupHealSpecialSkill : CombatSpecialSkill {
             }
         }
     }
-    #endregion
+#endregion
 }

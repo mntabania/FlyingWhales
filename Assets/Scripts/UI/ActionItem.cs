@@ -123,10 +123,14 @@ public class ActionItem : PooledObject {
 	    Messenger.AddListener(Signals.TICK_STARTED, PerTickCooldown);
     }
     private void PerTickCooldown() {
+#if DEBUG_PROFILER
 	    Profiler.BeginSample($"Action Item Per Tick Cooldown");
+#endif
 	    float fillAmount = ((float)playerAction.currentCooldownTick / playerAction.cooldown);
         cooldownCoverImg.DOFillAmount(fillAmount, 0.4f);
+#if DEBUG_PROFILER
         Profiler.EndSample();
+#endif
     }
     private void StopCooldownFill() {
         SetCooldownState(false);
@@ -136,7 +140,7 @@ public class ActionItem : PooledObject {
     private void OnPlayerAdjustedMana(int adjusted, int mana) {
         UpdateInteractableState();
     }
-    #endregion
+#endregion
 
     public override void Reset() {
 		base.Reset();

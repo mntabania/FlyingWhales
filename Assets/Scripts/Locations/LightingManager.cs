@@ -61,9 +61,13 @@ public class LightingManager : BaseMonoBehaviour {
     }
    
     private void OnTickEnded() {
+#if DEBUG_PROFILER
         Profiler.BeginSample($"Lighting On Tick Ended");
+#endif
         UpdateAllLightsBasedOnTimeOfDay(GameManager.Instance.Today());
+#if DEBUG_PROFILER
         Profiler.EndSample();
+#endif
     }
     private void ComputeLightingValues() {
         int darkToLightDifferenceInHours = Mathf.Abs(_darkPeriodRange.lowerBound - _brightPeriodRange.lowerBound);

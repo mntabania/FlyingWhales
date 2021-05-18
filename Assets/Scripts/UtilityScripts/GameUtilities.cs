@@ -294,6 +294,10 @@ namespace UtilityScripts {
             result.y = a.y - b.y;
             return result;
         }
+        public static int Roll() {
+            int roll = UnityEngine.Random.Range(0, 100);
+            return roll;
+        }
         /// <summary>
         /// Roll a chance. This rolls from 0 - 100.
         /// </summary>
@@ -302,7 +306,9 @@ namespace UtilityScripts {
         /// <returns>Whether or not the given chance was met.</returns>
         public static bool RollChance(int chance, ref string log) {
             int roll = UnityEngine.Random.Range(0, 100);
+#if DEBUG_LOG
             log += $"\nRoll is {roll.ToString()}. Chance is {chance.ToString()}";
+#endif
             return roll < chance;
         }
         /// <summary>
@@ -349,6 +355,19 @@ namespace UtilityScripts {
                 tiles.Add(tile);
             }
             return tiles;
+        }
+        public static List<Area> GetHexTilesGivenCoordinates(Point[] coordinates, Area[,] map) {
+            List<Area> tiles = new List<Area>();
+            for (int i = 0; i < coordinates.Length; i++) {
+                Point point = coordinates[i];
+                Area tile = map[point.X, point.Y];
+                tiles.Add(tile);
+            }
+            return tiles;
+        }
+        public static Area GetHexTileGivenCoordinates(Point point, Area[,] map) {
+            Area tile = map[point.X, point.Y];
+            return tile;
         }
         public static Color GetUpgradeButtonTextColor(bool p_interactable) {
             return p_interactable ? _normalColor : _grayedOutColor;

@@ -55,13 +55,10 @@ namespace Inner_Maps.Location_Structures {
 
         /// <summary>
         /// List of areas that this structure has a tile on.
-        /// NOTE: This can have duplicates of the same Area, this is so that there is
-        /// no need to count the number of tiles that occupy a area, when trying to remove that area from the list
-        /// so it is safe to assume that number of tiles = length of this list.
         /// NOTE: This is not filled out in wilderness structure! Because it is not needed.
         /// NOTE: This isn't saved because this is filled out anytime a tile is added to this structure, and since those tiles are saved, there is no need to save this.
         /// </summary>
-        public List<Area> occupiedAreas { get; private set; }
+        public Dictionary<Area, int> occupiedAreas { get; private set; }
         public BookmarkableEventDispatcher bookmarkEventDispatcher { get; }
 
         #region getters
@@ -101,7 +98,7 @@ namespace Inner_Maps.Location_Structures {
             objectsThatContributeToDamage = new HashSet<IDamageable>();
             structureTags = new List<STRUCTURE_TAG>();
             residents = new List<Character>();
-            occupiedAreas = new List<Area>();
+            occupiedAreas = new Dictionary<Area, int>();
             SetMaxHPAndReset(3000);
             //outerTiles = new List<LocationGridTile>();
             SetInteriorState(structureType.IsInterior());
@@ -121,7 +118,7 @@ namespace Inner_Maps.Location_Structures {
             unoccupiedTiles = new List<LocationGridTile>();
             objectsThatContributeToDamage = new HashSet<IDamageable>();
             residents = new List<Character>();
-            occupiedAreas = new List<Area>();
+            occupiedAreas = new Dictionary<Area, int>();
 
             persistentID = data.persistentID;
             this.region = location;
@@ -274,9 +271,9 @@ namespace Inner_Maps.Location_Structures {
         public bool RemoveStructureTag(STRUCTURE_TAG tag) {
             return structureTags.Remove(tag);
         }
-        public bool HasStructureTag(params STRUCTURE_TAG[] tag) {
-            for (int i = 0; i < tag.Length; i++) {
-                if (structureTags.Contains(tag[i])) {
+        public bool HasStructureTag(STRUCTURE_TAG tag) {
+            for (int i = 0; i < structureTags.Count; i++) {
+                if (structureTags[i] == tag) {
                     return true;
                 }
             }
@@ -292,7 +289,7 @@ namespace Inner_Maps.Location_Structures {
             hasActiveSocialGathering = state;
         }
         public virtual bool HasTileOnArea(Area p_area) {
-            return (occupiedArea != null && occupiedArea == p_area) || occupiedAreas.Contains(p_area);
+            return (occupiedArea != null && occupiedArea == p_area) || occupiedAreas.ContainsKey(p_area);
         }
         #endregion
 
@@ -419,27 +416,27 @@ namespace Inner_Maps.Location_Structures {
             }
             //return objs;
         }
-        public void PopulateTileObjectsThatAdvertise(List<TileObject> p_objectList, params INTERACTION_TYPE[] types) {
+        public void PopulateTileObjectsThatAdvertise(List<TileObject> p_objectList, INTERACTION_TYPE type) {
             for (int i = 0; i < pointsOfInterest.Count; i++) {
                 IPointOfInterest currPOI = pointsOfInterest.ElementAt(i);
                 if (currPOI is TileObject obj) {
-                    if (obj.IsAvailable() && obj.AdvertisesAll(types)) {
+                    if (obj.IsAvailable() && obj.Advertises(type)) {
                         p_objectList.Add(obj);
                     }
                 }
             }
             for (int i = 0; i < tiles.Count; i++) {
                 LocationGridTile currTile = tiles.ElementAt(i);
-                if (currTile.tileObjectComponent.genericTileObject.IsAvailable() && currTile.tileObjectComponent.genericTileObject.AdvertisesAll(types)) {
+                if (currTile.tileObjectComponent.genericTileObject.IsAvailable() && currTile.tileObjectComponent.genericTileObject.Advertises(type)) {
                     p_objectList.Add(currTile.tileObjectComponent.genericTileObject);
                 }
             }
         }
-        public TileObject GetUnoccupiedTileObject(params TILE_OBJECT_TYPE[] type) {
+        public TileObject GetUnoccupiedBuiltTileObject(TILE_OBJECT_TYPE type1, TILE_OBJECT_TYPE type2) {
             for (int i = 0; i < pointsOfInterest.Count; i++) {
                 IPointOfInterest poi = pointsOfInterest.ElementAt(i);
                 if (poi.IsAvailable() && poi is TileObject tileObj) {
-                    if (type.Contains(tileObj.tileObjectType) && tileObj.mapObjectState == MAP_OBJECT_STATE.BUILT) {
+                    if ((type1 == tileObj.tileObjectType || type2 == tileObj.tileObjectType) && tileObj.mapObjectState == MAP_OBJECT_STATE.BUILT) {
                         return tileObj;
                     }
                 }
@@ -557,7 +554,7 @@ namespace Inner_Maps.Location_Structures {
                 }
             }
         }
-        public void PopulateTileObjectsOfType<T>(List<T> objs) where T : TileObject {
+        public void PopulateTileObjectsOfType<T>(List<TileObject> objs) where T : TileObject {
             for (int i = 0; i < pointsOfInterest.Count; i++) {
                 IPointOfInterest poi = pointsOfInterest.ElementAt(i);
                 if (poi is T t) {
@@ -565,7 +562,15 @@ namespace Inner_Maps.Location_Structures {
                 }
             }
         }
-        public void PopulateTileObjectsOfTypeThatAdvertisesEatAndHasTileLocation<T>(List<T> objs) where T : TileObject {
+        public void PopulateTileObjectsOfType(List<TileObject> objs, TILE_OBJECT_TYPE p_type) {
+            for (int i = 0; i < pointsOfInterest.Count; i++) {
+                IPointOfInterest poi = pointsOfInterest.ElementAt(i);
+                if (poi is TileObject t && t.tileObjectType == p_type) {
+                    objs.Add(t);
+                }
+            }
+        }
+        public void PopulateTileObjectsOfTypeThatAdvertisesEatAndHasTileLocation<T>(List<TileObject> objs) where T : TileObject {
             for (int i = 0; i < pointsOfInterest.Count; i++) {
                 IPointOfInterest poi = pointsOfInterest.ElementAt(i);
                 if (poi is T t) {
@@ -575,14 +580,14 @@ namespace Inner_Maps.Location_Structures {
                 }
             }
         }
-        public void PopulateTileObjectsOfTypeThatIsBlockWallValidForOreVein<T>(List<T> objs) where T : TileObject {
+        public void PopulateTileObjectsOfTypeThatIsBlockWallValidForOreVein(List<TileObject> objs, TILE_OBJECT_TYPE p_type) {
             for (int i = 0; i < pointsOfInterest.Count; i++) {
                 IPointOfInterest poi = pointsOfInterest.ElementAt(i);
-                if (poi is T t) {
+                if (poi is TileObject t && t.tileObjectType == p_type) {
                     if (t.gridTileLocation != null) {
-                        int caveNeighbours = t.gridTileLocation.neighbourList.Count(o => o.tileObjectComponent.objHere is BlockWall);
+                        int caveNeighbours = t.gridTileLocation.GetCountOfNeighboursThatHasTileObjectOfType(p_type);
                         if (caveNeighbours == 2 || caveNeighbours == 5) {
-                            if (t.gridTileLocation.neighbourList.Count(o => o.structure is Wilderness) >= 3) {
+                            if (t.gridTileLocation.GetCountOfNeighboursInStructureType(STRUCTURE_TYPE.WILDERNESS) >= 3) {
                                 objs.Add(t);
                             }
                         }
@@ -590,37 +595,40 @@ namespace Inner_Maps.Location_Structures {
                 }
             }
         }
-        public void PopulateTileObjectsOfTypeThatIsBlockWallValidForOreVein2<T>(List<T> objs) where T : TileObject {
+        public void PopulateTileObjectsOfTypeThatIsBlockWallValidForOreVein2(List<TileObject> objs, TILE_OBJECT_TYPE p_type) {
             for (int i = 0; i < pointsOfInterest.Count; i++) {
                 IPointOfInterest poi = pointsOfInterest.ElementAt(i);
-                if (poi is T t) {
+                if (poi is TileObject t && t.tileObjectType == p_type) {
                     if (t.gridTileLocation != null) {
-                        List<LocationGridTile> caveNeighbours = t.gridTileLocation.FourNeighbours().Where(o => o.tileObjectComponent.objHere is BlockWall).ToList();
-                        int wildernessNeighboursCount = t.gridTileLocation.FourNeighbours().Count(o => o.structure.structureType == STRUCTURE_TYPE.WILDERNESS);
+                        List<LocationGridTile> caveNeighbours = RuinarchListPool<LocationGridTile>.Claim();
+                        t.gridTileLocation.PopulateFourNeighboursThatHasTileObjectOfType(caveNeighbours, p_type);
+                        int wildernessNeighboursCount = t.gridTileLocation.GetCountOfFourNeighboursInStructureType(STRUCTURE_TYPE.WILDERNESS);
                         if (caveNeighbours.Count == 2 && wildernessNeighboursCount == 1) {
-                            GridNeighbourDirection[] directions = new GridNeighbourDirection[2];
+                            List<GridNeighbourDirection> directions = RuinarchListPool<GridNeighbourDirection>.Claim();
                             for (int j = 0; j < caveNeighbours.Count; j++) {
                                 LocationGridTile neighbour = caveNeighbours[j];
                                 t.gridTileLocation.TryGetNeighbourDirection(neighbour, out GridNeighbourDirection direction);
-                                directions[j] = direction;
+                                directions.Add(direction);
                             }
                             if((directions[0] == GridNeighbourDirection.North && directions[1] == GridNeighbourDirection.South) || (directions[0] == GridNeighbourDirection.South && directions[1] == GridNeighbourDirection.North) ||
                                    (directions[0] == GridNeighbourDirection.East && directions[1] == GridNeighbourDirection.West) || directions[0] == GridNeighbourDirection.West && directions[1] == GridNeighbourDirection.East) {
                                 objs.Add(t);
                             }
+                            RuinarchListPool<GridNeighbourDirection>.Release(directions);
                         } else if (caveNeighbours.Count == 3 && wildernessNeighboursCount == 1) {
-                            if(t.gridTileLocation.neighbourList.Count(o => o.tileObjectComponent.objHere is BlockWall) == 5 &&
-                                   t.gridTileLocation.neighbourList.Count(o => o.structure.structureType == STRUCTURE_TYPE.WILDERNESS) == 3) {
+                            if(t.gridTileLocation.GetCountOfNeighboursThatHasTileObjectOfType(p_type) == 5 &&
+                                   t.gridTileLocation.GetCountOfNeighboursInStructureType(STRUCTURE_TYPE.WILDERNESS) == 3) {
                                 objs.Add(t);
                             }
                         }
+                        RuinarchListPool<LocationGridTile>.Release(caveNeighbours);
                     }
                 }
             }
            
         }
         public T GetRandomTileObjectOfTypeThatHasTileLocation<T>() where T : TileObject {
-            List<T> objs = RuinarchListPool<T>.Claim();
+            List<TileObject> objs = RuinarchListPool<TileObject>.Claim();
             for (int i = 0; i < pointsOfInterest.Count; i++) {
                 IPointOfInterest poi = pointsOfInterest.ElementAt(i);
                 if (poi is T t) {
@@ -631,13 +639,13 @@ namespace Inner_Maps.Location_Structures {
             }
             T chosenObj = null;
             if (objs.Count > 0) {
-                chosenObj = objs[UnityEngine.Random.Range(0, objs.Count)];
+                chosenObj = objs[UnityEngine.Random.Range(0, objs.Count)] as T;
             }
-            RuinarchListPool<T>.Release(objs);
+            RuinarchListPool<TileObject>.Release(objs);
             return chosenObj;
         }
         public T GetRandomTileObjectOfTypeThatHasTileLocationAndIsBuilt<T>() where T : TileObject {
-            List<T> objs = RuinarchListPool<T>.Claim();
+            List<TileObject> objs = RuinarchListPool<TileObject>.Claim();
             for (int i = 0; i < pointsOfInterest.Count; i++) {
                 IPointOfInterest poi = pointsOfInterest.ElementAt(i);
                 if (poi is T t) {
@@ -648,21 +656,10 @@ namespace Inner_Maps.Location_Structures {
             }
             T chosenObj = null;
             if (objs.Count > 0) {
-                chosenObj = objs[UnityEngine.Random.Range(0, objs.Count)];
+                chosenObj = objs[UnityEngine.Random.Range(0, objs.Count)] as T;
             }
-            RuinarchListPool<T>.Release(objs);
+            RuinarchListPool<TileObject>.Release(objs);
             return chosenObj;
-        }
-        public T GetFirstTileObjectOfTypeThatMeetCriteria<T>(System.Func<T, bool> validityChecker) where T : TileObject {
-            for (int i = 0; i < pointsOfInterest.Count; i++) {
-                IPointOfInterest poi = pointsOfInterest.ElementAt(i);
-                if (poi is T obj) {
-                    if (validityChecker.Invoke(obj)) {
-                        return obj;
-                    }
-                }
-            }
-            return null;
         }
         public T GetFirstTileObjectOfTypeThatIsAvailable<T>() where T : TileObject {
             for (int i = 0; i < pointsOfInterest.Count; i++) {
@@ -898,7 +895,9 @@ namespace Inner_Maps.Location_Structures {
         }
         public void OnlyAddPOIToList(IPointOfInterest p_poi) {
             if (!pointsOfInterest.Contains(p_poi)) {
+#if DEBUG_LOG
                 Debug.Log($"Added {p_poi.name} to {name}");
+#endif
                 pointsOfInterest.Add(p_poi);
                 if (p_poi is TileObject tileObject) {
                     if (groupedTileObjects.ContainsKey(tileObject.tileObjectType)) {
@@ -911,7 +910,9 @@ namespace Inner_Maps.Location_Structures {
         }
         public void OnlyRemovePOIFromList(IPointOfInterest p_poi) {
             if (pointsOfInterest.Remove(p_poi)) {
+#if DEBUG_LOG
                 Debug.Log($"Removed {p_poi.name} from {name}");
+#endif
                 if (p_poi is TileObject tileObject) {
                     if (groupedTileObjects.ContainsKey(tileObject.tileObjectType)) {
                         groupedTileObjects[tileObject.tileObjectType].Remove(tileObject);
@@ -1004,16 +1005,6 @@ namespace Inner_Maps.Location_Structures {
             }
             return false;
         }
-        public List<IPointOfInterest> GetPOIsOfType(POINT_OF_INTEREST_TYPE type) {
-            List<IPointOfInterest> pois = new List<IPointOfInterest>();
-            for (int i = 0; i < pointsOfInterest.Count; i++) {
-                IPointOfInterest poi = pointsOfInterest.ElementAt(i); 
-                if (poi.poiType == type) {
-                    pois.Add(poi);
-                }
-            }
-            return pois;
-        }
         private bool PlaceAreaObjectAtAppropriateTile(TileObject poi, LocationGridTile tile) {
             if (tile != null) {
                 region.innerMap.PlaceObject(poi, tile);
@@ -1044,7 +1035,7 @@ namespace Inner_Maps.Location_Structures {
                     if (poi is MagicCircle) {
                         for (int i = 0; i < unoccupiedTiles.Count; i++) {
                             LocationGridTile x = unoccupiedTiles[i];
-                            if(!x.HasOccupiedNeighbour() && x.groundType != LocationGridTile.Ground_Type.Cave 
+                            if(x.HasUnoccupiedNeighbour() && x.groundType != LocationGridTile.Ground_Type.Cave 
                                 && x.groundType != LocationGridTile.Ground_Type.Water
                                 && x.area.elevationType == ELEVATION.PLAIN
                                 && !x.HasNeighbourOfType(LocationGridTile.Tile_Type.Wall)
@@ -1058,7 +1049,7 @@ namespace Inner_Maps.Location_Structures {
                     } else if (poi is WaterWell) {
                         for (int i = 0; i < unoccupiedTiles.Count; i++) {
                             LocationGridTile x = unoccupiedTiles[i];
-                            if (!x.HasOccupiedNeighbour() && !x.HasNeighbouringWalledStructure()) { //&& !x.GetTilesInRadius(3).Any(y => y.tileObjectComponent.objHere is WaterWell)
+                            if (x.HasUnoccupiedNeighbour() && !x.HasNeighbouringWalledStructure()) { //&& !x.GetTilesInRadius(3).Any(y => y.tileObjectComponent.objHere is WaterWell)
                                 List<LocationGridTile> tilesInRadius = RuinarchListPool<LocationGridTile>.Claim();
                                 x.PopulateTilesInRadius(tilesInRadius, 3);
                                 if (!tilesInRadius.Any(y => y.tileObjectComponent.objHere is WaterWell)) {
@@ -1070,7 +1061,7 @@ namespace Inner_Maps.Location_Structures {
                     } else if (poi is GoddessStatue) {
                         for (int i = 0; i < unoccupiedTiles.Count; i++) {
                             LocationGridTile x = unoccupiedTiles[i];
-                            if (!x.HasOccupiedNeighbour() && !x.HasNeighbouringWalledStructure()) { //&& !x.GetTilesInRadius(3).Any(y => y.tileObjectComponent.objHere is GoddessStatue)
+                            if (x.HasUnoccupiedNeighbour() && !x.HasNeighbouringWalledStructure()) { //&& !x.GetTilesInRadius(3).Any(y => y.tileObjectComponent.objHere is GoddessStatue)
                                 List<LocationGridTile> tilesInRadius = RuinarchListPool<LocationGridTile>.Claim();
                                 x.PopulateTilesInRadius(tilesInRadius, 3);
                                 if (!tilesInRadius.Any(y => y.tileObjectComponent.objHere is GoddessStatue)) {
@@ -1123,9 +1114,9 @@ namespace Inner_Maps.Location_Structures {
         //         }
         //     }
         // }
-        #endregion
+#endregion
 
-        #region Tiles
+#region Tiles
         protected virtual void OnTileAddedToStructure(LocationGridTile tile) {
             if (structureType != STRUCTURE_TYPE.WILDERNESS) {
                 tile.area.structureComponent.AddStructureInArea(this);    
@@ -1153,7 +1144,7 @@ namespace Inner_Maps.Location_Structures {
                 //     SetSettlementLocation(settlement);
                 // }
                 if (structureType != STRUCTURE_TYPE.WILDERNESS) {
-                    AddOccupiedArea(tile.area);
+                    AddOccupiedAreaVote(tile.area);
                 }
                 OnTileAddedToStructure(tile);
             }
@@ -1162,7 +1153,7 @@ namespace Inner_Maps.Location_Structures {
             if (tiles.Remove(tile)) {
                 OnTileRemovedFromStructure(tile);
                 if (structureType != STRUCTURE_TYPE.WILDERNESS) {
-                    RemoveOccupiedArea(tile.area);
+                    ReduceOccupiedAreaVote(tile.area);
                 }
             }
             RemovePassableTile(tile);
@@ -1194,14 +1185,14 @@ namespace Inner_Maps.Location_Structures {
             }
             return passableTiles[UtilityScripts.Utilities.Rng.Next(0, passableTiles.Count)];
         }
-        public LocationGridTile GetRandomPassableTileThatMeetCriteria(Func<LocationGridTile, bool> criteria) {
+        public LocationGridTile GetRandomPassableTileThatIsNotOccupied() {
             if (passableTiles.Count <= 0) {
                 return null;
             }
-            List<LocationGridTile> filteredList = ObjectPoolManager.Instance.CreateNewGridTileList();
+            List<LocationGridTile> filteredList = RuinarchListPool<LocationGridTile>.Claim();
             for (int i = 0; i < passableTiles.Count; i++) {
                 LocationGridTile tile = passableTiles[i];
-                if (criteria.Invoke(tile)) {
+                if (!tile.isOccupied) {
                     filteredList.Add(tile);
                 }
             }
@@ -1209,46 +1200,76 @@ namespace Inner_Maps.Location_Structures {
             if(filteredList.Count > 0) {
                 chosenTile = filteredList[UtilityScripts.Utilities.Rng.Next(0, filteredList.Count)];
             }
-            ObjectPoolManager.Instance.ReturnGridTileListToPool(filteredList);
+            RuinarchListPool<LocationGridTile>.Release(filteredList);
             return chosenTile;
         }
         public LocationGridTile GetRandomUnoccupiedTile() {
             if (unoccupiedTiles.Count <= 0) {
                 return null;
             }
-            return unoccupiedTiles.ElementAt(UnityEngine.Random.Range(0, unoccupiedTiles.Count));
+            return unoccupiedTiles[UnityEngine.Random.Range(0, unoccupiedTiles.Count)];
+        }
+        public LocationGridTile GetRandomUnoccupiedTileThatHasNoCharacters() {
+            LocationGridTile chosenTile = null;
+            if (unoccupiedTiles.Count > 0) {
+                List<LocationGridTile> tiles = RuinarchListPool<LocationGridTile>.Claim();
+                for (int i = 0; i < unoccupiedTiles.Count; i++) {
+                    LocationGridTile t = unoccupiedTiles[i];
+                    if (t.charactersHere.Count <= 0) {
+                        tiles.Add(t);
+                    }
+                }
+                if (tiles.Count > 0) {
+                    chosenTile = tiles[GameUtilities.RandomBetweenTwoNumbers(0, tiles.Count - 1)];
+                }
+                RuinarchListPool<LocationGridTile>.Release(tiles);
+            }
+            return chosenTile;
         }
         public virtual void OnTileDamaged(LocationGridTile tile, int amount) { }
         public virtual void OnTileRepaired(LocationGridTile tile, int amount) { }
-        private void AddOccupiedArea(Area p_area) {
-            occupiedAreas.Add(p_area);
+        private void AddOccupiedAreaVote(Area p_area) {
+            if (!occupiedAreas.ContainsKey(p_area)) {
+                occupiedAreas.Add(p_area, 0);
+            }
+            occupiedAreas[p_area]++;
         }
-        private void RemoveOccupiedArea(Area p_area) {
-            occupiedAreas.Remove(p_area);
+        private void ReduceOccupiedAreaVote(Area p_area) {
+            if (occupiedAreas.ContainsKey(p_area)) {
+                occupiedAreas[p_area]--;
+                if (occupiedAreas[p_area] <= 0) {
+                    occupiedAreas.Remove(p_area);
+                }
+            }
         }
-        #endregion
+#endregion
 
-        #region Structure Objects
+#region Structure Objects
         public void SetOccupiedArea(Area p_area) {
             occupiedArea = p_area;
+#if DEBUG_LOG
             Debug.Log($"Set Occupied area of {name} to {occupiedArea}");
+#endif
         }
         private void OnClickStructure() {
             Selector.Instance.Select(this);
         }
-        #endregion
+#endregion
 
-        #region Destroy
+#region Destroy
         protected virtual void DestroyStructure(Character p_responsibleCharacter = null, bool isPlayerSource = false) {
             if (hasBeenDestroyed) {
                 return;
             }
             hasBeenDestroyed = true;
+#if DEBUG_LOG
             Debug.Log($"{GameManager.Instance.TodayLogString()}{ToString()} was destroyed!");
+#endif
 
             //transfer tiles to either the wilderness or work npcSettlement
-            List<LocationGridTile> tilesInStructure = new List<LocationGridTile>(tiles);
-            LocationStructure wilderness = region.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
+            List<LocationGridTile> tilesInStructure = RuinarchListPool<LocationGridTile>.Claim();
+            tilesInStructure.AddRange(tiles);
+            LocationStructure wilderness = region.wilderness;
             for (int i = 0; i < tilesInStructure.Count; i++) {
                 LocationGridTile tile = tilesInStructure[i];
                 tile.tileObjectComponent.ClearWallObjects();
@@ -1294,6 +1315,8 @@ namespace Inner_Maps.Location_Structures {
                     tile.SetGroundTilemapVisual(InnerMapManager.Instance.assetManager.corruptedTile);
                 }
             }
+            RuinarchListPool<LocationGridTile>.Release(tilesInStructure);
+
             //transfer characters here to wilderness
             for (int i = 0; i < charactersHere.Count; i++) {
                 Character character = charactersHere[i];
@@ -1328,9 +1351,9 @@ namespace Inner_Maps.Location_Structures {
             }
             eventDispatcher.ExecuteStructureDestroyed(this);
         }
-        #endregion
+#endregion
 
-        #region Player Action Target
+#region Player Action Target
         public List<PLAYER_SKILL_TYPE> actions { get; private set; }
 
         public virtual void ConstructDefaultActions() {
@@ -1350,9 +1373,9 @@ namespace Inner_Maps.Location_Structures {
         public void ClearPlayerActions() {
             actions.Clear();
         }
-        #endregion
+#endregion
         
-        #region Selectable
+#region Selectable
         public bool IsCurrentlySelected() {
             return UIManager.Instance.structureInfoUI.isShowing 
                    && UIManager.Instance.structureInfoUI.activeStructure == this;
@@ -1376,9 +1399,9 @@ namespace Inner_Maps.Location_Structures {
         public bool CanBeSelected() {
             return true;
         }
-        #endregion
+#endregion
 
-        #region HP
+#region HP
         public void AddObjectAsDamageContributor(IDamageable damageable) {
             objectsThatContributeToDamage.Add(damageable);
             if(damageable is TileObject to) {
@@ -1426,9 +1449,9 @@ namespace Inner_Maps.Location_Structures {
         public void ResetHP() {
             currentHP = maxHP;
         }
-        #endregion
+#endregion
 
-        #region Residents
+#region Residents
         public bool AddResident(Character character) {
             if (!residents.Contains(character)) { //residents.Count < maxResidentCapacity && 
                 residents.Add(character);
@@ -1489,14 +1512,12 @@ namespace Inner_Maps.Location_Structures {
         public bool IsOccupied() {
             return residents.Count > 0;
         }
-        public int GetNumberOfResidentsExcluding(out List<Character> validResidents, params Character[] excludedCharacters) {
-            validResidents = null;
+        public int GetNumberOfResidentsAndPopulateListExcluding(List<Character> validResidents, Character excludedCharacter) {
             if (residents != null) {
-                validResidents = new List<Character>();
                 int residentCount = 0;
                 for (int i = 0; i < residents.Count; i++) {
                     Character resident = residents[i];
-                    if (excludedCharacters.Contains(resident) == false) {
+                    if (excludedCharacter != resident) {
                         residentCount++;
                         validResidents.Add(resident);
                     }
@@ -1521,10 +1542,10 @@ namespace Inner_Maps.Location_Structures {
         public bool HasReachedMaxResidentCapacity() {
             return residents.Count >= maxResidentCapacity;
         }
-        public bool HasResidentThatMeetCriteria(Func<Character, bool> checker) {
+        public bool HasVillagerResident() {
             for (int i = 0; i < residents.Count; i++) {
                 Character resident = residents[i];
-                if (checker.Invoke(resident)) {
+                if (resident.isNormalCharacter) {
                     return true;
                 }
             }
@@ -1539,19 +1560,19 @@ namespace Inner_Maps.Location_Structures {
             }
             return false;
         }
-        public int GetNumberOfReidentsThatMeetCriteria(System.Func<Character, bool> criteria) {
+        public int GetNumberOfResidentsThatIsAliveMonsterAndMonsterTypeIs(SUMMON_TYPE p_summonType) {
             int count = 0;
             for (int i = 0; i < residents.Count; i++) {
-                Character character = residents[i];
-                if (criteria.Invoke(character)) {
+                Character c = residents[i];
+                if (!c.isDead && c is Summon summon && summon.summonType == p_summonType) {
                     count++;
                 }
             }
             return count;
         }
-        #endregion
+#endregion
 
-        #region Rooms
+#region Rooms
         public void CreateRoomsBasedOnStructureObject(LocationStructureObject structureObject) {
             if (structureObject.roomTemplates == null || structureObject.roomTemplates.Length == 0) { return; }
             rooms = new StructureRoom[structureObject.roomTemplates.Length];
@@ -1577,25 +1598,25 @@ namespace Inner_Maps.Location_Structures {
             room = null;
             return false;
         }
-        #endregion
+#endregion
 
-        #region IPartyTargetDestination
+#region IPartyTargetDestination
         public virtual bool IsAtTargetDestination(Character character) {
             return character.currentStructure == this;
         }
-        #endregion
+#endregion
 
-        #region Building
+#region Building
         public void OnBuiltNewStructureFromBlueprint() {
             if (settlementLocation is NPCSettlement settlement) {
                 settlement.OnStructureBuilt(this);
             }
         }
-        #endregion
+#endregion
 
         public virtual void OnCharacterUnSeizedHere(Character character) { }
 
-        #region Testing
+#region Testing
         public virtual string GetTestingInfo() {
             string summary = $"{name} Info:";
             summary += "\nDamage Contributing Objects:";
@@ -1605,18 +1626,18 @@ namespace Inner_Maps.Location_Structures {
             }
             return summary;
         }
-        #endregion
+#endregion
         
-        #region IStoredTarget
+#region IStoredTarget
         public bool CanBeStoredAsTarget() {
             return !hasBeenDestroyed;
         }
         public void SetAsStoredTarget(bool p_state) {
             isStoredAsTarget = p_state;
         }
-        #endregion
+#endregion
 
-        #region IBookmarkable
+#region IBookmarkable
         public void OnSelectBookmark() {
             LeftSelectAction();
         }
@@ -1629,6 +1650,6 @@ namespace Inner_Maps.Location_Structures {
         public void OnHoverOutBookmarkItem() {
             UIManager.Instance.HideStructureNameplateTooltip();
         }
-        #endregion
+#endregion
     }
 }

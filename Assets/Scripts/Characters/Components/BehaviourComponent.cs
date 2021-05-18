@@ -160,7 +160,9 @@ public class BehaviourComponent : CharacterComponent {
     private bool RemoveBehaviourComponent(CharacterBehaviourComponent component) {
         bool wasRemoved = currentBehaviourComponents.Remove(component);
         if (wasRemoved) {
+#if DEBUG_LOG
             Debug.Log($"{owner.name} removed character behaviour {component}");
+#endif
             component.OnRemoveBehaviourFromCharacter(owner);
             Messenger.Broadcast(CharacterSignals.CHARACTER_REMOVED_BEHAVIOUR, owner, component);
         }
@@ -258,57 +260,76 @@ public class BehaviourComponent : CharacterComponent {
         //update following invader count. NOTE: Note this is for disablers only
         invaderToFollow?.behaviourComponent.RemoveFollower();
     }
-    #endregion
+#endregion
 
-    #region Utilities
+#region Utilities
     public void PopulateVillageTargetsByPriority(List<Area> areas) {
         //get settlements in region that have normal characters living there.
-        List<BaseSettlement> settlementsInRegion = owner.currentRegion?
-            .GetSettlementsInRegion(settlement => settlement.residents.Count > 0 && settlement.residents.Count(c => c != null && c.isNormalCharacter && !c.isAlliedWithPlayer && c.IsAble()) > 0);
-        if (settlementsInRegion != null) {
+        List<BaseSettlement> settlementsInRegion = RuinarchListPool<BaseSettlement>.Claim();
+        owner.currentRegion?.PopulateSettlementsInRegionForGettingGeneralVillageTargets(settlementsInRegion);
+        if (settlementsInRegion.Count > 0) {
             // List<BaseSettlement> villageChoices = settlementsInRegion.Where(x => x.locationType == LOCATION_TYPE.VILLAGE && (x.owner == null || !x.owner.IsFriendlyWith(PlayerManager.Instance.player.playerFaction))).ToList();
-            List<BaseSettlement> villageChoices = settlementsInRegion.GetSettlementsThatAreUnownedOrHostileWithFaction(LOCATION_TYPE.VILLAGE, PlayerManager.Instance.player.playerFaction);
+            List<BaseSettlement> villageChoices = RuinarchListPool<BaseSettlement>.Claim();
+            settlementsInRegion.PopulateSettlementsThatAreUnownedOrHostileWithFaction(villageChoices, LOCATION_TYPE.VILLAGE, PlayerManager.Instance.player.playerFaction);
             if (villageChoices != null) {
                 //a random village occupied by Villagers within current region
                 BaseSettlement chosenVillage = CollectionUtilities.GetRandomElement(villageChoices);
                 areas.AddRange(chosenVillage.areas);
             } else {
                 //a random special structure occupied by Villagers within current region
-                List<BaseSettlement> specialStructureChoices = settlementsInRegion.GetSettlementsThatAreUnownedOrHostileWithFaction(LOCATION_TYPE.DUNGEON, PlayerManager.Instance.player.playerFaction);
+                List<BaseSettlement> specialStructureChoices = RuinarchListPool<BaseSettlement>.Claim();
+                settlementsInRegion.PopulateSettlementsThatAreUnownedOrHostileWithFaction(specialStructureChoices, LOCATION_TYPE.DUNGEON, PlayerManager.Instance.player.playerFaction);
                 if (specialStructureChoices != null) {
                     BaseSettlement chosenSpecialStructure = CollectionUtilities.GetRandomElement(specialStructureChoices);
                     areas.AddRange(chosenSpecialStructure.areas);
                 }
+                RuinarchListPool<BaseSettlement>.Release(specialStructureChoices);
             }
+            RuinarchListPool<BaseSettlement>.Release(villageChoices);
         }
+        RuinarchListPool<BaseSettlement>.Release(settlementsInRegion);
+
         //no settlements in region.
         //a random area occupied by Villagers within current region
-        List<Area> occupiedAreas = ObjectPoolManager.Instance.CreateNewAreaList();
-        owner.currentRegion?.PopulateAreasOccupiedByVillagers(occupiedAreas);
-        if (occupiedAreas != null) {
-            Area randomArea = CollectionUtilities.GetRandomElement(occupiedAreas);
-            areas.Add(randomArea);
+        if (areas.Count <= 0) {
+            List<Area> occupiedAreas = RuinarchListPool<Area>.Claim();
+            owner.currentRegion?.PopulateAreasOccupiedByVillagers(occupiedAreas);
+            if (occupiedAreas != null) {
+                Area randomArea = CollectionUtilities.GetRandomElement(occupiedAreas);
+                areas.Add(randomArea);
+            }
+            RuinarchListPool<Area>.Release(occupiedAreas);
         }
-        ObjectPoolManager.Instance.ReturnAreaListToPool(occupiedAreas);
     }
-    #endregion
+#endregion
 
-    #region Processes
+#region Processes
     public string RunBehaviour() {
-        string log = $"{GameManager.Instance.TodayLogString()}{owner.name} Idle Plan Decision Making:";
+        string log = string.Empty;
+#if DEBUG_LOG
+        log = $"{GameManager.Instance.TodayLogString()}{owner.name} Idle Plan Decision Making:";
+#endif
         for (int i = 0; i < currentBehaviourComponents.Count; i++) {
             CharacterBehaviourComponent component = currentBehaviourComponents[i];
             if (component.IsDisabledFor(owner)) {
+#if DEBUG_LOG
                 log += $"\nBehaviour Component: {component.ToString()} is disabled for {owner.name} skipping it...";
+#endif
                 continue; //skip component
             }
             if (!component.CanDoBehaviour(owner)) {
+#if DEBUG_LOG
                 log += $"\nBehaviour Component: {component.ToString()} cannot be done by {owner.name} skipping it...";
+#endif
                 continue; //skip component
             }
+#if DEBUG_PROFILER
             Profiler.BeginSample($"{component} - Try Do Behaviour");
+#endif
             bool behaviourSuccess = component.TryDoBehaviour(owner, ref log, out JobQueueItem producedJob);
+#if DEBUG_PROFILER
             Profiler.EndSample();
+#endif
             if (behaviourSuccess) {
                 bool isProducedJobValid = IsProducedJobValid(producedJob, owner);
                 if (producedJob == null || isProducedJobValid) {
@@ -376,9 +397,9 @@ public class BehaviourComponent : CharacterComponent {
         }
         return false;
     }
-    #endregion
+#endregion
 
-    #region Inquiry
+#region Inquiry
     public bool HasBehaviour(System.Type type) {
         for (int i = 0; i < currentBehaviourComponents.Count; i++) {
             CharacterBehaviourComponent cbc = currentBehaviourComponents[i];
@@ -388,9 +409,9 @@ public class BehaviourComponent : CharacterComponent {
         }
         return false;
     }
-    #endregion
+#endregion
 
-    #region Attack Demonic Structure
+#region Attack Demonic Structure
     public void SetIsAttackingDemonicStructure(bool state, DemonicStructure target) {
         if (isAttackingDemonicStructure != state) {
             isAttackingDemonicStructure = state;
@@ -454,18 +475,18 @@ public class BehaviourComponent : CharacterComponent {
             //}    
         }
     }
-    #endregion
+#endregion
 
-    #region Priority
+#region Priority
     public int GetHighestBehaviourPriority() {
         if (currentBehaviourComponents.Count > 0) {
             return currentBehaviourComponents[0].priority;
         }
         return -1;
     }
-    #endregion
+#endregion
 
-    #region Douse Fire
+#region Douse Fire
     public void SetDouseFireSettlement(NPCSettlement settlement) {
         if (settlement == null) {
             //remove douser from previous settlements list, if any.
@@ -475,9 +496,9 @@ public class BehaviourComponent : CharacterComponent {
         }
         dousingFireForSettlement = settlement;
     }
-    #endregion
+#endregion
 
-    #region Cleanse Tiles
+#region Cleanse Tiles
     public void SetCleansingTilesForSettlement(NPCSettlement settlement) {
         if (settlement == null) {
             //remove poison cleanser from previous settlements list, if any.
@@ -488,9 +509,9 @@ public class BehaviourComponent : CharacterComponent {
         cleansingTilesForSettlement = settlement;
         
     }
-    #endregion
+#endregion
     
-    #region Dry Tiles
+#region Dry Tiles
     public void SetDryingTilesForSettlement(NPCSettlement settlement) {
         if (settlement == null) {
             //remove tile dryer from previous settlements list, if any.
@@ -501,7 +522,7 @@ public class BehaviourComponent : CharacterComponent {
         dryingTilesForSettlement = settlement;
         
     }
-    #endregion
+#endregion
 
     //#region Mining
     //public void SetTargetMiningTile(LocationGridTile tile) {
@@ -509,7 +530,7 @@ public class BehaviourComponent : CharacterComponent {
     //}
     //#endregion
 
-    #region Attack Village
+#region Attack Village
     public void SetAttackVillageTarget(NPCSettlement npcSettlement) {
         attackVillageTarget = npcSettlement;
     }
@@ -523,27 +544,27 @@ public class BehaviourComponent : CharacterComponent {
             RemoveBehaviourComponent(typeof(AttackVillageBehaviour));
         }
     }
-    #endregion
+#endregion
 
-    #region Abduction
+#region Abduction
     //public void SetDigForAbductionPath(ABPath path) {
     //    currentAbductDigPath = path;
     //}
     public void SetAbductionTarget(Character character) {
         currentAbductTarget = character;
     }
-    #endregion
+#endregion
 
-    #region Summon Specific
+#region Summon Specific
     public void OnSummon(LocationGridTile tile) {
         if (HasBehaviour(typeof(AbductorBehaviour))) {
             //if character is an abductor, set its nest to where it was summoned
             SetNest(tile);
         }
     }
-    #endregion
+#endregion
     
-    #region De-Mood
+#region De-Mood
     public void OnBecomeDeMooder() {
         Messenger.AddListener<Character, GoapPlanJob>(CharacterSignals.CHARACTER_FINISHED_JOB_SUCCESSFULLY, CheckIfDeMoodJobFinished);
     }
@@ -570,9 +591,9 @@ public class BehaviourComponent : CharacterComponent {
     public void ResetDeMoodVillageTarget() {
         deMoodVillageTarget.Clear();
     }
-    #endregion
+#endregion
 
-    #region Invade
+#region Invade
     public void ResetInvadeVillageTarget() {
         invadeVillageTarget.Clear();
     }
@@ -582,9 +603,9 @@ public class BehaviourComponent : CharacterComponent {
     public void RemoveFollower() {
         followerCount--;
     }
-    #endregion
+#endregion
 
-    #region Disabler
+#region Disabler
     public void OnBecomeDisabler() {
         Messenger.AddListener<Character, GoapPlanJob>(CharacterSignals.CHARACTER_FINISHED_JOB_SUCCESSFULLY, CheckIfDisablerJobFinished);
     }
@@ -631,9 +652,9 @@ public class BehaviourComponent : CharacterComponent {
             SetInvaderToFollow(null);
         }
     }
-    #endregion
+#endregion
 
-    #region Infestor
+#region Infestor
     public void SetHasLayedAnEgg(bool state) {
         if(hasLayedAnEgg != state) {
             hasLayedAnEgg = state;
@@ -644,9 +665,9 @@ public class BehaviourComponent : CharacterComponent {
             }
         }
     }
-    #endregion
+#endregion
 
-    #region Abductor
+#region Abductor
     private void SetNest(LocationGridTile tile) {
         nest = tile;
     }
@@ -737,9 +758,9 @@ public class BehaviourComponent : CharacterComponent {
             SchedulingManager.Instance.AddEntry(resetDate, () => SetHasEatenInTheNight(false), owner);
         }
     }
-    #endregion
+#endregion
 
-    #region Arsonist
+#region Arsonist
     public void ResetArsonistVillageTarget() {
         arsonVillageTarget.Clear();
     }
@@ -777,9 +798,9 @@ public class BehaviourComponent : CharacterComponent {
             StartArsonistCooldown();
         }
     }
-    #endregion
+#endregion
 
-    #region Abomination
+#region Abomination
     public void SetAbominationTarget(Area p_area) {
         abominationTarget = p_area;
         if (abominationTarget != null) {
@@ -789,9 +810,9 @@ public class BehaviourComponent : CharacterComponent {
             SchedulingManager.Instance.AddEntry(dueDate, () => SetAbominationTarget(null), owner);
         }
     }
-    #endregion
+#endregion
 
-    #region Agitate
+#region Agitate
     public void SetIsAgitated(bool state) {
         if(isAgitated != state) {
             isAgitated = state;
@@ -802,15 +823,15 @@ public class BehaviourComponent : CharacterComponent {
             }
         }
     }
-    #endregion
+#endregion
 
-    #region Subterranean
+#region Subterranean
     public void SetSubterraneanJustExitedCombat(bool state) {
         subterraneanJustExitedCombat = state;
     }
-    #endregion
+#endregion
 
-    #region Snatcher
+#region Snatcher
     public void SetIsSnatching(bool state) {
         isCurrentlySnatching = state;
     }
@@ -837,9 +858,9 @@ public class BehaviourComponent : CharacterComponent {
             }
         }
     }
-    #endregion
+#endregion
 
-    #region Cultist
+#region Cultist
     public void OnBecomeCultist() {
         Messenger.AddListener<JobQueueItem, Character>(JobSignals.JOB_ADDED_TO_QUEUE, OnCultistSnatchAddedJobToQueue);
         Messenger.AddListener<JobQueueItem, Character>(JobSignals.JOB_REMOVED_FROM_QUEUE, OnCultistSnatchJobRemoved);   
@@ -860,9 +881,9 @@ public class BehaviourComponent : CharacterComponent {
             character.combatComponent.SetCombatMode(COMBAT_MODE.Aggressive);
         }
     }
-    #endregion
+#endregion
 
-    #region Dazed
+#region Dazed
     public void OnBecomeDazed() {
         Messenger.AddListener<Character, Area>(CharacterSignals.CHARACTER_ENTERED_AREA, OnCharacterEnteredArea);
         Messenger.AddListener<Character, LocationStructure>(CharacterSignals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
@@ -899,18 +920,18 @@ public class BehaviourComponent : CharacterComponent {
         Messenger.RemoveListener<Character>(CharacterSignals.CHARACTER_CAN_NO_LONGER_PERFORM, OnDazedCharacterCanNoLongerPerform);
         Messenger.RemoveListener<Character, CharacterState>(CharacterSignals.CHARACTER_STARTED_STATE, OnDazedCharacterStartedState);
     }
-    #endregion
+#endregion
 
-    #region Pest
+#region Pest
     public void SetPestSettlementTarget(BaseSettlement p_settlement) {
         pestSettlementTarget = p_settlement;
     }
     public void SetPestHasFailedEat(bool p_state) {
         pestHasFailedEat = p_state;
     }
-    #endregion
+#endregion
 
-    #region Work
+#region Work
     public bool PlanWorkActions(out JobQueueItem producedJob) {
         //Stationary characters like Wurm cannot take work jobs
         if (owner.limiterComponent.canTakeJobs && !owner.movementComponent.isStationary) {
@@ -954,9 +975,9 @@ public class BehaviourComponent : CharacterComponent {
         producedJob = null;
         return false;
     }
-    #endregion
+#endregion
 
-    #region Recruit
+#region Recruit
     public bool CanCharacterBeRecruitedBy(Character recruiter) {
         if (recruiter.faction == null || owner.faction == recruiter.faction
             || owner.race == RACE.TRITON) {
@@ -988,9 +1009,9 @@ public class BehaviourComponent : CharacterComponent {
         }
         return true;
     }
-    #endregion
+#endregion
 
-    #region Loading
+#region Loading
     public void LoadReferences(SaveDataBehaviourComponent data) {
         if (!string.IsNullOrEmpty(data.attackVillageTarget)) {
             attackVillageTarget = DatabaseManager.Instance.settlementDatabase.GetSettlementByPersistentID(data.attackVillageTarget) as NPCSettlement;
@@ -1061,9 +1082,9 @@ public class BehaviourComponent : CharacterComponent {
             }    
         }
     }
-    #endregion
+#endregion
 
-    #region Demonic Defender
+#region Demonic Defender
     public void OnBecomeDemonicDefender() {
         Messenger.AddListener<Character, DemonicStructure>(CharacterSignals.CHARACTER_HIT_DEMONIC_STRUCTURE, OnCharacterHitDemonicStructure);
         Messenger.AddListener<Character, Character>(CharacterSignals.CHARACTER_WAS_HIT, OnCharacterAttacked);
@@ -1089,7 +1110,7 @@ public class BehaviourComponent : CharacterComponent {
             owner.combatComponent.Fight(p_attacker, CombatManager.Defending_Home, null, true);
         }
     }
-    #endregion
+#endregion
 }
 
 [System.Serializable]
@@ -1149,7 +1170,7 @@ public class SaveDataBehaviourComponent : SaveData<BehaviourComponent> {
 
     public COMBAT_MODE combatModeBeforeAttackingDemonicStructure;
 
-    #region Overrides
+#region Overrides
     public override void Save(BehaviourComponent data) {
         currentBehaviourComponents = new List<string>();
         for (int i = 0; i < data.currentBehaviourComponents.Count; i++) {
@@ -1234,5 +1255,5 @@ public class SaveDataBehaviourComponent : SaveData<BehaviourComponent> {
         BehaviourComponent component = new BehaviourComponent(this);
         return component;
     }
-    #endregion
+#endregion
 }

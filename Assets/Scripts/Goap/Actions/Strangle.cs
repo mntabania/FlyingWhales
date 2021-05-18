@@ -33,8 +33,10 @@ public class Strangle : GoapAction {
         }
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
+#if DEBUG_LOG
         string costLog = $"\n{name} {target.nameWithID}: +10(Constant)";
         actor.logComponent.AppendCostLog(costLog);
+#endif
         return 10;
     }
     public override LocationStructure GetTargetStructure(ActualGoapNode node) {
@@ -42,7 +44,7 @@ public class Strangle : GoapAction {
         if (actor.homeStructure != null) {
             return actor.homeStructure;
         } else {
-            return actor.currentRegion.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
+            return actor.currentRegion.wilderness;
         }
     }
     public override void PopulateReactionsToActor(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
@@ -110,9 +112,9 @@ public class Strangle : GoapAction {
         }
         return CRIME_TYPE.Murder;
     }
-    #endregion
+#endregion
 
-    #region Requirements
+#region Requirements
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, OtherData[] otherData, JobQueueItem job) { 
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData, job);
         if (satisfied) {
@@ -120,9 +122,9 @@ public class Strangle : GoapAction {
         }
         return false;
     }
-    #endregion
+#endregion
 
-    #region State Effects
+#region State Effects
     public void PerTickStrangleSuccess(ActualGoapNode goapNode) {
         goapNode.actor.AdjustHP(-(int)(goapNode.actor.maxHP * 0.18f), ELEMENTAL_TYPE.Normal, showHPBar: true);
     }
@@ -145,5 +147,5 @@ public class Strangle : GoapAction {
         goapNode.actor.Death("suicide", goapNode, responsibleCharacter: responsibleCharacter, _deathLog: goapNode.descriptionLog);
 
     }
-    #endregion
+#endregion
 }

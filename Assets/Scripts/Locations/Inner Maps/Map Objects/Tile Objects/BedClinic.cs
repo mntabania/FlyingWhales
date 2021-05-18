@@ -84,7 +84,9 @@ public class BedClinic : BaseBed, CharacterEventDispatcher.ITraitListener {
         if (currentUsers != null && currentUsers.Length > 0) {
             for (int i = 0; i < currentUsers.Length; i++) {
                 Character currentUser = currentUsers[i];
-                RemoveUser(currentUser);
+                if (currentUser != null) {
+                    RemoveUser(currentUser);
+                }
             }
         }
     }

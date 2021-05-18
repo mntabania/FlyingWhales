@@ -9,11 +9,11 @@ public class BiomeIsland : BaseIsland {
     public BiomeIsland(BIOMES biome) : base() {
         this.biome = biome;
     }
-    public override void AddTile(LocationGridTile tile) {
-        base.AddTile(tile);
+    public override void AddTile(LocationGridTile tile, MapGenerationData mapGenerationData) {
+        base.AddTile(tile, mapGenerationData);
         // tile.parentMap.perlinTilemap.SetTile(tile.localPlace, InnerMapManager.Instance.assetManager.grassTile);
         // // tile.parentMap.perlinTilemap.SetColor(tile.localPlace, color);
-        if (tile.biomeType != biome) {
+        if (tile.mainBiomeType != biome) {
             tile.SetIndividualBiomeType(biome);
         }
     }

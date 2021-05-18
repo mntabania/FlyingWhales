@@ -16,7 +16,7 @@ public class Ore : TileObject {
 
         SetYield(50);
     }
-    public Ore(SaveDataOre data) { }
+    public Ore(SaveDataOre data) : base(data) { }
 
     #region Overrides
     public override string ToString() {

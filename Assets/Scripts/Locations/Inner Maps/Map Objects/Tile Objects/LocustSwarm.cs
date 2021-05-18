@@ -18,7 +18,7 @@ public class LocustSwarm : MovingTileObject {
         AddAdvertisedAction(INTERACTION_TYPE.RESOLVE_COMBAT);
         expiryDate = GameManager.Instance.Today().AddTicks(processedTick);
     }
-    public LocustSwarm(SaveDataLocustSwarm data) {
+    public LocustSwarm(SaveDataLocustSwarm data) : base(data) {
         //SaveDataLocustSwarm saveDataLocustSwarm = data as SaveDataLocustSwarm;
         Assert.IsNotNull(data);
         expiryDate = data.expiryDate;
@@ -66,7 +66,9 @@ public class LocustSwarm : MovingTileObject {
                 Messenger.Broadcast(TileObjectSignals.TILE_OBJECT_REPAIRED, this as TileObject, amount);
             }
         }
+#if DEBUG_LOG
         Debug.Log($"{GameManager.Instance.TodayLogString()}HP of {this} was adjusted by {amount}. New HP is {currentHP}.");
+#endif
     }
     public override void Neutralize() {
         _locustSwarmMapObjectVisual.Expire();

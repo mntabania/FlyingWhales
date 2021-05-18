@@ -12,6 +12,7 @@
     public abstract void OnUnattachPlanToJob(GoapPlanJob job);
     public abstract void SetNextActualNode();
     public abstract bool IsCurrentActionNode(ActualGoapNode node);
+    public abstract void Reset();
 }
 
 #region Save Data

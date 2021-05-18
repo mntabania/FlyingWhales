@@ -240,7 +240,9 @@ public class MovementComponent : CharacterComponent {
     }
     private void StartTravellingToRegion(Region targetRegion, Action doneAction = null) {
         if (isTravellingInWorld) {
+#if DEBUG_LOG
             owner.logComponent.PrintLogErrorIfActive(owner.name + " cannot travel to " + targetRegion.name + " because it is already travelling in the world");
+#endif
             return;
         }
         isTravellingInWorld = true;
@@ -271,7 +273,9 @@ public class MovementComponent : CharacterComponent {
     }
     private void FinishTravellingToRegion(Action doneAction = null) {
         if (!isTravellingInWorld) {
+#if DEBUG_LOG
             owner.logComponent.PrintLogErrorIfActive(owner.name + " cannot finish travel to " + targetRegionToTravelInWorld?.name + " because it is already not travelling in the world");
+#endif
             return;
         }
         isTravellingInWorld = false;
@@ -310,9 +314,9 @@ public class MovementComponent : CharacterComponent {
     public void SetTargetRegionToTravelInWorld(Region region) {
         targetRegionToTravelInWorld = region;
     }
-    #endregion
+#endregion
 
-    #region Pathfinding
+#region Pathfinding
     /// <summary>
     /// Does this character have a path towards the target tile?
     /// Note: This factors in digging capabilities. If need to query without
@@ -429,9 +433,9 @@ public class MovementComponent : CharacterComponent {
         }
         return false;
     }
-    #endregion
+#endregion
 
-    #region Dig
+#region Dig
     public bool CanDig() {
         //Must not dig out of Kennel
         //https://trello.com/c/Yyj9DFry/1582-some-monsters-can-dig-out-of-kennel
@@ -528,20 +532,24 @@ public class MovementComponent : CharacterComponent {
         }
         return false;
     }
-    #endregion
+#endregion
 
-    #region Avoid Structures
+#region Avoid Structures
     private bool AddStructureToAvoid(LocationStructure locationStructure) {
         if (!structuresToAvoid.Contains(locationStructure)) {
             structuresToAvoid.Add(locationStructure);
+#if DEBUG_LOG
             owner.logComponent.PrintLogIfActive($"{owner.name} has added {locationStructure} to its structure avoid list!");
+#endif
             return true;
         }
         return false;
     }
     public void RemoveStructureToAvoid(LocationStructure locationStructure) {
         if (structuresToAvoid.Remove(locationStructure)) {
+#if DEBUG_LOG
             owner.logComponent.PrintLogIfActive($"{owner.name} has removed {locationStructure} from its structure avoid list!");
+#endif
         }
     }
     public void AddStructureToAvoidAndScheduleRemoval(LocationStructure locationStructure) {
@@ -550,17 +558,16 @@ public class MovementComponent : CharacterComponent {
             expiryDate.AddDays(1);
             SchedulingManager.Instance.AddEntry(expiryDate, () => RemoveStructureToAvoid(locationStructure), this);
             if (owner.homeSettlement != null && owner.faction != null && !owner.faction.partyQuestBoard.HasPartyQuestWithTarget(PARTY_QUEST_TYPE.Extermination, locationStructure)) {
-                if (locationStructure.settlementLocation == null || locationStructure.settlementLocation.HasResidentThatMeetsCriteria(resident => resident != owner && !resident.isDead
-                    && (resident.faction == null || owner.faction == null || owner.faction.IsHostileWith(resident.faction)))) {
+                if (locationStructure.settlementLocation == null || locationStructure.settlementLocation.HasResidentThatIsNotDeadThatIsHostileWithFaction(owner.faction, owner)) {
                     owner.faction.partyQuestBoard.CreateExterminatePartyQuest(owner, owner.homeSettlement, locationStructure, owner.homeSettlement);
                 }
                 //owner.homeSettlement.settlementJobTriggerComponent.TriggerExterminationJob(locationStructure);
             }
         }
     }
-    #endregion
+#endregion
 
-    #region Tags
+#region Tags
     public void SetTagAsTraversable(int tag) {
         traversableTags = traversableTags | tag;
         if (owner != null && owner.hasMarker) {
@@ -615,9 +622,9 @@ public class MovementComponent : CharacterComponent {
         }
         return true; //All Major factions use pathfinding tags.
     }
-    #endregion
+#endregion
 
-    #region Travelling Status
+#region Travelling Status
     private void OnCharacterStartedTravelling(Character character) {
         if(owner != character) {
             if(owner.currentActionNode != null && owner.currentActionNode.poiTarget == character) {
@@ -631,9 +638,9 @@ public class MovementComponent : CharacterComponent {
             }
         }
     }
-    #endregion
+#endregion
 
-    #region Combat Repositioning
+#region Combat Repositioning
     public bool IsCurrentGridNodeOccupiedByOtherNonRepositioningActiveCharacter() {
         LocationGridTile currentGridTile = owner.gridTileLocation;
         if (currentGridTile != null) {
@@ -641,9 +648,9 @@ public class MovementComponent : CharacterComponent {
         }
         return false;
     }
-    #endregion
+#endregion
 
-    #region Let Go
+#region Let Go
     public void LetGo(bool becomeDazed = false) {
         LocationStructure letGoFrom = owner.currentStructure;
         //Make character dazed (if not summon) and teleport him/her on a random spot outside
@@ -674,9 +681,9 @@ public class MovementComponent : CharacterComponent {
         RuinarchListPool<LocationGridTile>.Release(allTilesOutside);
         RuinarchListPool<LocationGridTile>.Release(passableTilesOutside);
     }
-    #endregion
+#endregion
 
-    #region Loading
+#region Loading
     public void LoadReferences(SaveDataMovementComponent data) {
         if (!string.IsNullOrEmpty(data.targetRegionToTravelInWorld)) {
             targetRegionToTravelInWorld = DatabaseManager.Instance.regionDatabase.GetRegionByPersistentID(data.targetRegionToTravelInWorld);
@@ -688,7 +695,7 @@ public class MovementComponent : CharacterComponent {
         }
 
     }
-    #endregion
+#endregion
 }
 
 [System.Serializable]
@@ -713,7 +720,7 @@ public class SaveDataMovementComponent : SaveData<MovementComponent> {
     public int traversableTags;
     public int[] tagPenalties;
 
-    #region Overrides
+#region Overrides
     public override void Save(MovementComponent data) {
         isRunning = data.isRunning;
         noRunExceptCombat = data.noRunExceptCombat;
@@ -747,5 +754,5 @@ public class SaveDataMovementComponent : SaveData<MovementComponent> {
         MovementComponent component = new MovementComponent(this);
         return component;
     }
-    #endregion
+#endregion
 }

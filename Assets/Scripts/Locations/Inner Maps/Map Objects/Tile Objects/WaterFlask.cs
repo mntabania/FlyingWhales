@@ -4,7 +4,7 @@ public class WaterFlask : TileObject{
     public WaterFlask() {
         Initialize(TILE_OBJECT_TYPE.WATER_FLASK);
     }
-    public WaterFlask(SaveDataTileObject data) {
+    public WaterFlask(SaveDataTileObject data) : base(data) {
         
     }
 

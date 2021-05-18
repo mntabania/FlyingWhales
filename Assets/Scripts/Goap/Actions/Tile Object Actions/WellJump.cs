@@ -29,16 +29,18 @@ public class WellJump : GoapAction {
         }
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
+#if DEBUG_LOG
         string costLog = $"\n{name} {target.nameWithID}: +10(Constant)";
         actor.logComponent.AppendCostLog(costLog);
+#endif
         return 10;
     }
     public override REACTABLE_EFFECT GetReactableEffect(ActualGoapNode node, Character witness) {
         return REACTABLE_EFFECT.Negative;
     }
-    #endregion
+#endregion
 
-    #region Requirements
+#region Requirements
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, OtherData[] otherData, JobQueueItem job) {
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData, job);
         if (satisfied) {
@@ -46,11 +48,11 @@ public class WellJump : GoapAction {
         }
         return false;
     }
-    #endregion
+#endregion
 
-    #region State Effects
+#region State Effects
     public void AfterWellJumpSuccess(ActualGoapNode goapNode) {
         goapNode.actor.Death("suicide", goapNode, _deathLog: goapNode.descriptionLog);
     }
-    #endregion
+#endregion
 }

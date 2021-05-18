@@ -28,12 +28,6 @@ public class AreaData {
     public int yCoordinate;
     public string areaName;
     
-    public float elevationNoise;
-    public float moistureNoise;
-    public float temperature;
-    public BIOMES biomeType;
-    public ELEVATION elevationType;
-
     #region getters
     public Vector2 position => new Vector2(xCoordinate, yCoordinate);
     #endregion

@@ -50,7 +50,7 @@ namespace Traits {
                     } 
 
                     ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.RETURN_HOME], character, character, null, 0);
-                    GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, character);
+                    GoapPlan goapPlan = ObjectPoolManager.Instance.CreateNewGoapPlan(node, character);
                     GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.TRIGGER_FLAW, INTERACTION_TYPE.RETURN_HOME, character, character);
                     goapPlan.SetDoNotRecalculate(true);
                     job.SetCannotBePushedBack(true);

@@ -71,26 +71,32 @@ public class ExtractItem : GoapAction {
         log.AddToFillers(null, text, LOG_IDENTIFIER.STRING_1);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
+#if DEBUG_LOG
         string costLog = $"\n{name} {target.nameWithID}:";
+#endif
         BaseSettlement settlement = null;
         if(target is TileObject && target.gridTileLocation != null && target.gridTileLocation.IsPartOfSettlement(out settlement)) {
             Faction targetFaction = settlement.owner;
             if(actor.faction != null && targetFaction != null && actor.faction.IsHostileWith(targetFaction)) {
                 //Do not extract if object is at hostile settlement
+#if DEBUG_LOG
                 costLog += $" +2000(Location of target is in hostile faction of actor)";
                 actor.logComponent.AppendCostLog(costLog);
+#endif
                 return 2000;
             }
         }
         
         int cost = 250;
+#if DEBUG_LOG
         costLog += $" +{cost}(Initial)";
         actor.logComponent.AppendCostLog(costLog);
+#endif
         return cost;
     }
-    #endregion
+#endregion
 
-    #region State Effects
+#region State Effects
     public void PreExtractSuccess(ActualGoapNode goapNode) {
         IPointOfInterest target = goapNode.poiTarget;
         string text = string.Empty;
@@ -134,18 +140,18 @@ public class ExtractItem : GoapAction {
             actor.ObtainItem(InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.ICE));
         }
     }
-    #endregion
+#endregion
 
-    #region Preconditions
+#region Preconditions
     private bool HasHerbPlant(Character actor, IPointOfInterest poiTarget, object[] otherData) {
         return actor.HasItem("Herb Plant");
     }
     private bool HasWaterFlask(Character actor, IPointOfInterest poiTarget, object[] otherData) {
         return actor.HasItem("Water Flask");
     }
-    #endregion
+#endregion
 
-    #region Requirement
+#region Requirement
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, OtherData[] otherData, JobQueueItem job) {
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData, job);
         if (satisfied) {
@@ -154,5 +160,5 @@ public class ExtractItem : GoapAction {
         }
         return false;
     }
-    #endregion
+#endregion
 }

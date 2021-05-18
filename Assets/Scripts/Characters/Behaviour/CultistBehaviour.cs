@@ -14,8 +14,10 @@ public class CultistBehaviour : CharacterBehaviourComponent {
     public override bool TryDoBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
         if (character.homeSettlement == null && !WorldSettings.Instance.worldSettingsData.villageSettings.disableNewVillages && !character.currentRegion.IsRegionVillageCapacityReached() && character.faction != null && 
             character.faction.factionType.type == FACTION_TYPE.Demon_Cult && character.characterClass.className == "Cult Leader") {
-            Area targetArea = character.currentRegion.GetRandomHexThatMeetCriteria(currArea => currArea.elevationType != ELEVATION.WATER && currArea.elevationType != ELEVATION.MOUNTAIN && !currArea.structureComponent.HasStructureInArea() && !currArea.IsNextToOrPartOfVillage() && !currArea.gridTileComponent.HasCorruption());
-            if (targetArea != null) {
+            // Area targetArea = character.currentRegion.GetRandomHexThatMeetCriteria(currArea => currArea.elevationType != ELEVATION.WATER && currArea.elevationType != ELEVATION.MOUNTAIN && !currArea.structureComponent.HasStructureInArea() && !currArea.IsNextToOrPartOfVillage() && !currArea.gridTileComponent.HasCorruption());
+            VillageSpot villageSpot = character.currentRegion.GetRandomUnoccupiedVillageSpot();
+            if (villageSpot != null) {
+                Area targetArea = villageSpot.mainSpot;
                 StructureSetting structureSetting = new StructureSetting(STRUCTURE_TYPE.CITY_CENTER, character.faction.factionType.mainResource, true);
                 List<GameObject> choices = InnerMapManager.Instance.GetStructurePrefabsForStructure(structureSetting);
                 GameObject chosenStructurePrefab = CollectionUtilities.GetRandomElement(choices);
@@ -36,8 +38,10 @@ public class CultistBehaviour : CharacterBehaviourComponent {
         // chance = 100;
         
         int roll = UnityEngine.Random.Range(0, 100);
+#if DEBUG_LOG
         log += $"\nWill try to do cultist action. Chance is {chance.ToString()}. Roll is {roll.ToString()}";
-        
+#endif
+
         if (roll < chance) {
             return TryCreateCultistJob(character, ref log, out producedJob);
         }

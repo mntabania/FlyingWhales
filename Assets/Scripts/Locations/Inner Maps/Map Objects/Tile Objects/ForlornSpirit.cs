@@ -23,7 +23,7 @@ public class ForlornSpirit : TileObject {
         Initialize(TILE_OBJECT_TYPE.FORLORN_SPIRIT, false);
         traitContainer.AddTrait(this, "Forlorn");
     }
-    public ForlornSpirit(SaveDataForlornSpirit data) {
+    public ForlornSpirit(SaveDataForlornSpirit data) : base(data) {
         _duration = GameManager.Instance.GetTicksBasedOnHour(1);
         //SaveDataForlornSpirit saveDataForlornSpirit = data as SaveDataForlornSpirit;
         Assert.IsNotNull(data);

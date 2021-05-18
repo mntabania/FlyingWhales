@@ -25,7 +25,7 @@ public class MapGenerator : BaseMonoBehaviour {
         SaveManager.Instance.SetUseSaveData(false);
         DatabaseManager.Instance.mainSQLDatabase.InitializeDatabase(); //Initialize main SQL database
         MapGenerationComponent[] mapGenerationComponents = {
-            new AreaGeneration(), new ElevationGeneration(), new SupportingFactionGeneration(), 
+            new AreaGeneration(), /*new ElevationGeneration(),*/ new SupportingFactionGeneration(), 
             new WorldMapRegionGeneration(), /*new WorldMapBiomeGeneration(),*/ new FamilyTreeGeneration(), new RegionInnerMapGeneration(), /*new ElevationStructureGeneration(),*/ 
             new TileFeatureGeneration(), new RegionFeatureGeneration(), new VillageGeneration(),  new SpecialStructureGeneration(),
             new FactionFinalization(), new CharacterFinalization(), new SettlementFinalization(), new FeaturesActivation(), 
@@ -72,8 +72,10 @@ public class MapGenerator : BaseMonoBehaviour {
             LevelLoaderManager.Instance.UpdateLoadingBar(1f, 0.5f);
             yield return new WaitForSeconds(0.5f);
             loadingWatch.Stop();
+#if DEBUG_LOG
             Debug.Log($"{loadingDetails}\nTotal loading time is {loadingWatch.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)} seconds");
-
+#endif
+            data.SetFinishedMapGenerationCoroutine(true);
             WorldConfigManager.Instance.mapGenerationData = data;
             AudioManager.Instance.TransitionToWorld();
             
@@ -84,9 +86,9 @@ public class MapGenerator : BaseMonoBehaviour {
             yield return new WaitForSeconds(1f);
         }
     }
-    #endregion
+#endregion
 
-    #region Scenario World
+#region Scenario World
     public IEnumerator InitializeScenarioWorld(ScenarioMapData scenarioMapData) {
         SaveManager.Instance.SetUseSaveData(false);
         DatabaseManager.Instance.mainSQLDatabase.InitializeDatabase(); //Initialize main SQL database
@@ -137,8 +139,12 @@ public class MapGenerator : BaseMonoBehaviour {
             LevelLoaderManager.Instance.UpdateLoadingBar(1f, 0.5f);
             yield return new WaitForSeconds(0.5f);
             loadingWatch.Stop();
-            Debug.Log($"{loadingDetails}\nTotal loading time is {loadingWatch.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)} seconds");
 
+#if DEBUG_LOG
+            Debug.Log($"{loadingDetails}\nTotal loading time is {loadingWatch.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)} seconds");
+#endif
+            
+            data.SetFinishedMapGenerationCoroutine(true);
             WorldConfigManager.Instance.mapGenerationData = data;
             AudioManager.Instance.TransitionToWorld();
             
@@ -149,9 +155,9 @@ public class MapGenerator : BaseMonoBehaviour {
             yield return new WaitForSeconds(1f);
         }
     }
-    #endregion
+#endregion
     
-    #region Saved World
+#region Saved World
     public IEnumerator InitializeSavedWorld(SaveDataCurrentProgress saveData) {
         //Note: In the Save World, the TileFeatureGeneration is done after the second wave is done loading because there are tile features thats needs the references when it is added
         //Example: The HeatWave feature function PopulateInitialCharactersOutside is called when it is added, inside the GetAllCharactersInsideHexThatMeetCriteria is called, where the innermaphextile is needed, so we must have the references before loading the tile features
@@ -199,14 +205,17 @@ public class MapGenerator : BaseMonoBehaviour {
         componentWatch.Stop();
         if (componentFailed) {
             //reload scene
+#if DEBUG_LOG
             Debug.LogWarning("A component in world generation failed! Reloading scene...");
+#endif
             SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         } else {
             LevelLoaderManager.Instance.UpdateLoadingBar(1f, 0.5f);
             yield return new WaitForSeconds(0.5f);
             loadingWatch.Stop();
+#if DEBUG_LOG
             Debug.Log($"{loadingDetails}\nTotal loading time is {loadingWatch.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)} seconds");
-            
+#endif
             WorldConfigManager.Instance.mapGenerationData = data;
             AudioManager.Instance.TransitionToWorld();
             
@@ -226,7 +235,7 @@ public class MapGenerator : BaseMonoBehaviour {
             LevelLoaderManager.Instance.SetLoadingState(false);
         }
     }
-    #endregion
+#endregion
 
     protected override void OnDestroy() {
         base.OnDestroy();

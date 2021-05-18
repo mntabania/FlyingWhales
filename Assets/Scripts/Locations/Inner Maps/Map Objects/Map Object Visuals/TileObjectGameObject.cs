@@ -64,7 +64,7 @@ public class TileObjectGameObject : MapObjectVisual<TileObject> {
     public override void UpdateTileObjectVisual(TileObject tileObject) {
         SetVisual(InnerMapManager.Instance.GetTileObjectAsset(tileObject, 
             tileObject.state,
-            tileObject.gridTileLocation.biomeType,
+            tileObject.gridTileLocation.mainBiomeType,
             tileObject.gridTileLocation?.corruptionComponent.isCorrupted ?? false));
         tileObject.hiddenComponent.OnSetHiddenState();
     }

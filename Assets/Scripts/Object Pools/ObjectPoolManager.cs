@@ -3,6 +3,7 @@ using System.Collections;
 using EZObjectPools;
 using System.Collections.Generic;
 using System;
+using System.Diagnostics;
 using System.Linq;
 using Interrupts;
 using Inner_Maps.Location_Structures;
@@ -10,6 +11,7 @@ using Inner_Maps;
 using Locations.Settlements;
 using Locations;
 using Threads;
+using Debug = UnityEngine.Debug;
 
 public class ObjectPoolManager : MonoBehaviour {
 
@@ -30,6 +32,13 @@ public class ObjectPoolManager : MonoBehaviour {
     public List<GoapThread> _goapThreadPool { get; private set; }
     private List<UpdateCharacterNameThread> _updateCharacterNameThreadPool;
     private List<SQLLogInsertThread> _sqlInsertThreadPool;
+    private List<GoapPlanJob> _goapJobPool;
+    private List<CharacterStateJob> _stateJobPool;
+    private List<ConversationData> _conversationDataPool;
+    private List<ScheduledAction> _scheduledActionPool;
+    private List<SingleJobNode> _jobNodePool;
+    private List<GoapPlan> _goapPlanPool;
+
     private List<List<GoapEffect>> _expectedEffectsListPool;
     private List<List<Precondition>> _preconditionsListPool;
     private List<List<Character>> _characterListPool;
@@ -39,14 +48,10 @@ public class ObjectPoolManager : MonoBehaviour {
     private List<List<Faction>> _factionListPool;
     private List<List<BaseSettlement>> _settlementListPool;
     private List<List<SkillData>> _skillDataPool;
-    private List<GoapPlanJob> _goapJobPool;
-    private List<CharacterStateJob> _stateJobPool;
-    private List<ConversationData> _conversationDataPool;
     private List<List<ConversationData>> _conversationDataListPool;
     private List<List<EMOTION>> _emotionListPool;
     private List<List<ILocation>> _ilocationListPool;
     private List<List<Area>> _areaListPool;
-
     private void Awake() {
         if (Instance == null) {
             Instance = this;
@@ -74,21 +79,11 @@ public class ObjectPoolManager : MonoBehaviour {
         for (int i = 0; i < otherPrefabs.Length; i++) {
             GameObject currPrefab = otherPrefabs[i];
             int size = 0;
-            if (currPrefab.name == "TileObjectGameObject") {
-                size = 5000;
-            }
+            // if (currPrefab.name == "TileObjectGameObject") {
+            //     size = 5000;
+            // }
             CreateNewPool(currPrefab, currPrefab.name, size, true, true, false); //50    
         }
-
-        ConstructGoapNodes();
-        ConstructOpinionDataPool();
-        ConstructTraitRemoveSchedulePool();
-        ConstructCombatDataPool();
-        ConstructInterruptPool();
-        ConstructPartyPool();
-        ConstructGoapThreadPool();
-        ConstructLogDatabaseThreadPool();
-        ConstructSQLInsertThreadPool();
         ConstructExpectedEffectsListPool();
         ConstructPreconditionListPool();
         ConstructCharacterListPool();
@@ -97,12 +92,37 @@ public class ObjectPoolManager : MonoBehaviour {
         ConstructGridTileListPool();
         ConstructFactionListPool();
         ConstructSettlementListPool();
-        ConstructJobPool();
-        ConstructConversationPool();
         ConstructEmotionListPool();
         ConstructILocationListPool();
         ConstructSkillDataListPool();
         ConstructAreaListPool();
+
+
+        ConstructOpinionDataPool();
+        ConstructTraitRemoveSchedulePool();
+        ConstructCombatDataPool();
+        ConstructInterruptPool();
+        ConstructPartyPool();
+        ConstructGoapThreadPool();
+        ConstructLogDatabaseThreadPool();
+        ConstructSQLInsertThreadPool();
+        ConstructGoapNodes();
+        ConstructJobPool();
+        ConstructConversationPool();
+        ConstructScheduledActionPool();
+        ConstructSingleJobNodePool();
+        ConstructGoapPlanPool();
+        
+        InitialPoolObjectCreation("TILEOBJECTGAMEOBJECT", 20000);
+    }
+    
+    private void InitialPoolObjectCreation(string p_poolName, int p_objectCount) {
+        if (!allObjectPools.ContainsKey(p_poolName)) {
+            throw new Exception($"Object Pool does not have key {p_poolName}");
+        }
+        EZObjectPool objectPoolToUse = allObjectPools[p_poolName];
+        Stopwatch stopwatch = new Stopwatch();
+        StartCoroutine(objectPoolToUse.InstantiatePoolCoroutine(p_objectCount, stopwatch));
     }
 
     public GameObject InstantiateObjectFromPool(string poolName, Vector3 position, Quaternion rotation, Transform parent = null, bool isWorldPosition = false) {
@@ -548,12 +568,14 @@ public class ObjectPoolManager : MonoBehaviour {
         return new GoapPlanJob();
     }
     public void ReturnGoapPlanJobToPool(GoapPlanJob job) {
+#if DEBUG_LOG
         Debug.Log($"Returned job {job.ToString()} to pool");
+#endif
         job.Reset();
         if (!_goapJobPool.Contains(job)) {
             _goapJobPool.Add(job);    
         } else {
-#if UNITY_EDITOR
+#if DEBUG_LOG
             Debug.LogError("Job instance is already in pool but is added again!");
 #endif
         }
@@ -571,9 +593,9 @@ public class ObjectPoolManager : MonoBehaviour {
         job.Reset();
         _stateJobPool.Add(job);
     }
-    #endregion
+#endregion
 
-    #region Conversation
+#region Conversation
     private void ConstructConversationPool() {
         _conversationDataPool = new List<ConversationData>();
         _conversationDataListPool = new List<List<ConversationData>>();
@@ -609,9 +631,9 @@ public class ObjectPoolManager : MonoBehaviour {
         data.Clear();
         _conversationDataListPool.Add(data);
     }
-    #endregion
+#endregion
 
-    #region Emotions
+#region Emotions
     private void ConstructEmotionListPool() {
         _emotionListPool = new List<List<EMOTION>>();
     }
@@ -627,9 +649,9 @@ public class ObjectPoolManager : MonoBehaviour {
         data.Clear();
         _emotionListPool.Add(data);
     }
-    #endregion
+#endregion
 
-    #region ILocation
+#region ILocation
     private void ConstructILocationListPool() {
         _ilocationListPool = new List<List<ILocation>>();
     }
@@ -645,9 +667,9 @@ public class ObjectPoolManager : MonoBehaviour {
         data.Clear();
         _ilocationListPool.Add(data);
     }
-    #endregion
+#endregion
     
-    #region Area
+#region Area
     private void ConstructAreaListPool() {
         _areaListPool = new List<List<Area>>();
     }
@@ -663,7 +685,79 @@ public class ObjectPoolManager : MonoBehaviour {
         data.Clear();
         _areaListPool.Add(data);
     }
-    #endregion
+#endregion
+
+#region Scheduled Actions
+    private void ConstructScheduledActionPool() {
+        _scheduledActionPool = new List<ScheduledAction>();
+    }
+    public ScheduledAction CreateNewScheduledAction() {
+        if (_scheduledActionPool.Count > 0) {
+            ScheduledAction data = _scheduledActionPool[0];
+            _scheduledActionPool.RemoveAt(0);
+            return data;
+        }
+        return new ScheduledAction();
+    }
+    public void ReturnScheduledActionToPool(ScheduledAction data) {
+        data.Reset();
+        _scheduledActionPool.Add(data);
+    }
+#endregion
+
+#region Goap Plan
+    private void ConstructGoapPlanPool() {
+        _goapPlanPool = new List<GoapPlan>();
+    }
+    public GoapPlan CreateNewGoapPlan(List<JobNode> p_nodes, IPointOfInterest p_target) {
+        GoapPlan plan = CreateNewGoapPlan();
+        plan.SetNodes(p_nodes);
+        plan.SetTarget(p_target);
+        return plan;
+    }
+    public GoapPlan CreateNewGoapPlan(ActualGoapNode p_action, IPointOfInterest p_target) {
+        GoapPlan plan = CreateNewGoapPlan();
+        plan.SetActionNodes(p_action);
+        plan.SetTarget(p_target);
+        return plan;
+    }
+    public GoapPlan CreateNewGoapPlan(ActualGoapNode p_action1, ActualGoapNode p_action2, IPointOfInterest p_target) {
+        GoapPlan plan = CreateNewGoapPlan();
+        plan.SetActionNodes(p_action1, p_action2);
+        plan.SetTarget(p_target);
+        return plan;
+    }
+    public GoapPlan CreateNewGoapPlan() {
+        if (_goapPlanPool.Count > 0) {
+            GoapPlan data = _goapPlanPool[0];
+            _goapPlanPool.RemoveAt(0);
+            return data;
+        }
+        return new GoapPlan();
+    }
+    public void ReturnGoapPlanToPool(GoapPlan data) {
+        data.Reset();
+        _goapPlanPool.Add(data);
+    }
+#endregion
+
+#region Job Nodes
+    private void ConstructSingleJobNodePool() {
+        _jobNodePool = new List<SingleJobNode>();
+    }
+    public SingleJobNode CreateNewSingleJobNode() {
+        if (_jobNodePool.Count > 0) {
+            SingleJobNode data = _jobNodePool[0];
+            _jobNodePool.RemoveAt(0);
+            return data;
+        }
+        return new SingleJobNode();
+    }
+    public void ReturnSingleJobNodeToPool(SingleJobNode data) {
+        data.Reset();
+        _jobNodePool.Add(data);
+    }
+#endregion
 
     // protected override void OnDestroy() {
     //     if (allObjectPools != null) {
@@ -724,5 +818,5 @@ public class ObjectPoolManager : MonoBehaviour {
     //     base.OnDestroy();
     //     Instance = null;
     // }
-        
+
 }

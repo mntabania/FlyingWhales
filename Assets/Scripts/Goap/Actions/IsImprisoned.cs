@@ -14,8 +14,10 @@ public class IsImprisoned : GoapAction {
         SetState("Imprisoned Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
+#if DEBUG_LOG
         string costLog = $"\n{name} {target.nameWithID}: +10(Constant)";
         actor.logComponent.AppendCostLog(costLog);
+#endif
         return 10;
     }
     public override void AddFillersToLog(Log log, ActualGoapNode node) {
@@ -65,11 +67,11 @@ public class IsImprisoned : GoapAction {
     public override REACTABLE_EFFECT GetReactableEffect(ActualGoapNode node, Character witness) {
         return REACTABLE_EFFECT.Neutral;
     }
-    #endregion
+#endregion
 
-    #region State Effects
+#region State Effects
     public void PreImprisonedSuccess(ActualGoapNode goapNode) { }
     public void PerTickImprisonedSuccess(ActualGoapNode goapNode) { }
     public void AfterImprisonedSuccess(ActualGoapNode goapNode) { }
-    #endregion
+#endregion
 }

@@ -9,6 +9,8 @@ using UnityEngine.Tilemaps;
 namespace Inner_Maps {
     public class InnerMapAssetManager : BaseMonoBehaviour {
 
+        public TileTypeAssetDictionary tileTypeAssets;
+        
         [Header("Grassland Tiles")]
         public TileBase outsideTile;
         public TileBase grassTile;
@@ -82,7 +84,7 @@ namespace Inner_Maps {
         
         [Header("Demon")]
         public TileBase demonStoneRuleTile;
-
+        
         public TileBase GetOutsideFloorTile(BIOMES p_biomeType) {
             switch (p_biomeType) {
                 case BIOMES.SNOW:
@@ -195,12 +197,16 @@ namespace Inner_Maps {
                 fullFilePath = fullFilePath.Replace(@"D:\Documents\FlyingWhales\", "");
                 Sprite loadedSprite = (Sprite)UnityEditor.AssetDatabase.LoadAssetAtPath(fullFilePath, typeof(Sprite));
                 if (loadedSprite != null) {
+#if DEBUG_LOG
                     Debug.Log($"Loaded {loadedSprite.name} sprite.");
+#endif
                     if (!allTileObjectSprites.ContainsKey(loadedSprite.name)) {
                         allTileObjectSprites.Add(loadedSprite.name, loadedSprite);    
                     }
                 }
+#if DEBUG_LOG
                 Debug.Log("Loaded all tile object assets");
+#endif
             }
             assetPath = "Assets/Textures/Interior Map/Demonic Structures/";
             allFiles = Directory.GetFiles(assetPath, "*.png", SearchOption.AllDirectories);
@@ -211,15 +217,23 @@ namespace Inner_Maps {
                 fullFilePath = fullFilePath.Replace(@"D:\Documents\FlyingWhales\", "");
                 Sprite loadedSprite = (Sprite)UnityEditor.AssetDatabase.LoadAssetAtPath(fullFilePath, typeof(Sprite));
                 if (loadedSprite != null) {
+#if DEBUG_LOG
                     Debug.Log($"Loaded {loadedSprite.name} sprite.");
+#endif
                     if (!allTileObjectSprites.ContainsKey(loadedSprite.name)) {
                         allTileObjectSprites.Add(loadedSprite.name, loadedSprite);    
                     }
                 }
+#if DEBUG_LOG
                 Debug.Log("Loaded all tile object assets");
+#endif
             }
         }
 #endif
-        #endregion
-    }
-}
+#endregion
+
+        public TileBase GetGroundAssetForTile(LocationGridTile p_tile) {
+            return tileTypeAssets[p_tile.specificBiomeTileType];
+        }
+            }
+        }

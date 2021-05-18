@@ -14,8 +14,7 @@ namespace Locations.Region_Features {
         public override void ActivateFeatureInWorldGen(Region region) {
             base.ActivateFeatureInWorldGen(region);
             int amount = Random.Range(40, 61);
-            List<LocationGridTile> validWildernessTiles = region.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS)
-                .unoccupiedTiles.Where(t => t.IsPartOfSettlement() == false).ToList();
+            List<LocationGridTile> validWildernessTiles = region.wilderness.unoccupiedTiles.Where(t => t.IsPartOfSettlement() == false).ToList();
             for (int i = 0; i < amount; i++) {
                 if (validWildernessTiles.Count == 0) { break; }
                 LocationGridTile tile = CollectionUtilities.GetRandomElement(validWildernessTiles);

@@ -19,22 +19,24 @@ public class DestroyResourceAmount : GoapAction {
         SetState("Destroy Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
+#if DEBUG_LOG
         string costLog = $"\n{name} {target.nameWithID}: +10(Constant)";
         actor.logComponent.AppendCostLog(costLog);
+#endif
         return 10;
     }
-    #endregion
+#endregion
 
-    #region Requirements
+#region Requirements
     //protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, object[] otherData) {
     //    bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData);
     //    if (satisfied) {
     //    }
     //    return false;
     //}
-    #endregion
+#endregion
 
-    #region State Effects
+#region State Effects
     public void PreDestroySuccess(ActualGoapNode goapNode) {
         OtherData[] otherData = goapNode.otherData;
         int amountToReduce = 0;
@@ -52,5 +54,5 @@ public class DestroyResourceAmount : GoapAction {
         }
         pile.AdjustResourceInPile(-amountToReduce);
     }
-    #endregion
+#endregion
 }

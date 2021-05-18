@@ -79,7 +79,9 @@ namespace Traits {
                 return false;
             }
             character.jobQueue.CancelAllJobs();
+#if DEBUG_LOG
             string debugLog = $"{character.name} is agoraphobic and has a crowd in vision.";
+#endif
 
             bool shouldAddAnxiousTrait = true;
             if (character.HasAfflictedByPlayerWith(name)) {
@@ -93,26 +95,40 @@ namespace Traits {
                 DispenseChaosOrbsForAffliction(character, 1);
             }
             if (shouldAddAnxiousTrait) {
+#if DEBUG_LOG
                 debugLog += $"\n{character.name} became anxious";
+#endif
                 character.traitContainer.AddTrait(character, "Anxious");
             }
             if (GameUtilities.RollChance(10)) {
+#if DEBUG_LOG
                 debugLog += $"\n{character.name} became catatonic";
+#endif
                 character.traitContainer.AddTrait(character, "Catatonic");
             } else if (GameUtilities.RollChance(15)) {
+#if DEBUG_LOG
                 debugLog += $"\n{character.name} became berserked";
+#endif
                 character.traitContainer.AddTrait(character, "Berserked");
             } else if (GameUtilities.RollChance(15)) {
+#if DEBUG_LOG
                 debugLog += $"\n{character.name} Had a seizure";
+#endif
                 character.interruptComponent.TriggerInterrupt(INTERRUPT.Seizure, character);
             } else if (GameUtilities.RollChance(10) && (character.characterClass.className == "Druid" || character.characterClass.className == "Shaman" || character.characterClass.className == "Mage")) {
+#if DEBUG_LOG
                 debugLog += $"\n{character.name} Had a loss of control";
+#endif
                 character.interruptComponent.TriggerInterrupt(INTERRUPT.Loss_Of_Control, character);
             } else {
+#if DEBUG_LOG
                 debugLog += $"\n{character.name} is cowering.";
+#endif
                 character.interruptComponent.TriggerInterrupt(INTERRUPT.Cowering, character, reason: "Agoraphobic");
             }
+#if DEBUG_LOG
             character.logComponent.PrintLogIfActive(debugLog);
+#endif
             Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Trait", "Agoraphobic", "on_see_first", null, LOG_TAG.Social);
             log.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             log.AddLogToDatabase(true);

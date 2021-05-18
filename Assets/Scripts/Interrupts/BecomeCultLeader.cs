@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 using Locations.Settlements;
+using UtilityScripts;
+
 namespace Interrupts {
     public class BecomeCultLeader : Interrupt {
         public BecomeCultLeader() : base(INTERRUPT.Become_Cult_Leader) {
@@ -35,7 +37,7 @@ namespace Interrupts {
                 //Evaluate all character if they will stay or leave
                 for (int i = 0; i < faction.characters.Count; i++) {
                     Character member = faction.characters[i];
-                    if(member != actor) {
+                    if(member != actor && !member.isDead) {
                         member.interruptComponent.TriggerInterrupt(INTERRUPT.Evaluate_Cultist_Affiliation, member);
                     }
                 }
@@ -84,14 +86,14 @@ namespace Interrupts {
 
 
                 //check if faction characters still meets ideology requirements
-                List<Character> charactersToCheck = ObjectPoolManager.Instance.CreateNewCharactersList();
+                List<Character> charactersToCheck = RuinarchListPool<Character>.Claim();
                 charactersToCheck.AddRange(faction.characters);
                 charactersToCheck.Remove(actor);
                 for (int i = 0; i < charactersToCheck.Count; i++) {
                     Character factionMember = charactersToCheck[i];
                     faction.CheckIfCharacterStillFitsIdeology(factionMember);
                 }
-                ObjectPoolManager.Instance.ReturnCharactersListToPool(charactersToCheck);
+                RuinarchListPool<Character>.Release(charactersToCheck);
             }
             return true;
         }

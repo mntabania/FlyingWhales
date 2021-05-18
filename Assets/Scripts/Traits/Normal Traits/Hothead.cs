@@ -24,10 +24,15 @@ namespace Traits {
         }
         public override bool OnSeePOI(IPointOfInterest targetPOI, Character characterThatWillDoJob) {
             if (targetPOI is Character targetCharacter) {
-                string debugLog = $"Hotheaded reaction: {characterThatWillDoJob.name} saw {targetCharacter.name} and has {name}";
+                string debugLog = string.Empty;
+#if DEBUG_LOG
+                debugLog = $"Hotheaded reaction: {characterThatWillDoJob.name} saw {targetCharacter.name} and has {name}";
+#endif
                 // int chance = UnityEngine.Random.Range(0, 100);
                 float chance = PlayerSkillManager.Instance.GetTriggerRateForCurrentLevel(PLAYER_SKILL_TYPE.HOTHEADED);
+#if DEBUG_LOG
                 debugLog = $"{debugLog}\n-{chance.ToString("F2")} chance to trigger Angered interrupt if saw a character";
+#endif
                 if (GameUtilities.RollChance(chance, ref debugLog)) {
                     bool isRelationshipRequirementMet = false;
                     List<OPINIONS> validOpinions = RuinarchListPool<OPINIONS>.Claim();
@@ -37,15 +42,19 @@ namespace Traits {
                     } else if (validOpinions.Contains(OPINIONS.Everyone)) {
                         isRelationshipRequirementMet = true;
                     } else {
-                        isRelationshipRequirementMet = characterThatWillDoJob.relationshipContainer.HasOpinionLabelWithCharacter(targetCharacter, validOpinions.ToArray());
+                        isRelationshipRequirementMet = characterThatWillDoJob.relationshipContainer.HasOpinionLabelWithCharacter(targetCharacter, validOpinions);
                     }
                     if (isRelationshipRequirementMet) {
+#if DEBUG_LOG
                         debugLog = $"{debugLog}\n-Character considers Target as {validOpinions.ComafyList()}, will trigger Angered interrupt";
                         characterThatWillDoJob.logComponent.PrintLogIfActive(debugLog);
+#endif
                         characterThatWillDoJob.interruptComponent.TriggerInterrupt(INTERRUPT.Angered, targetCharacter);
                         return true;
                     } else {
+#if DEBUG_LOG
                         debugLog = $"{debugLog}\n-Character does not consider Target as {validOpinions.ComafyList()}";
+#endif
                     }
                     RuinarchListPool<OPINIONS>.Release(validOpinions);
                     // if (characterThatWillDoJob.relationshipContainer.IsEnemiesWith(targetCharacter)) {
@@ -62,11 +71,13 @@ namespace Traits {
                     //     debugLog += "\n-Character does not consider Target as Enemy or Rival";
                     // }
                 }
+#if DEBUG_LOG
                 characterThatWillDoJob.logComponent.PrintLogIfActive(debugLog);
+#endif
             }
             return base.OnSeePOI(targetPOI, characterThatWillDoJob);
         }
-        #endregion
+#endregion
     }
 
 }

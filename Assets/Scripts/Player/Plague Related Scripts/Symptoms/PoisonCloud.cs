@@ -17,7 +17,9 @@ namespace Plague.Symptom {
                 PlayerManager.Instance.player.plagueComponent.GainPlaguePointFromCharacter(1, p_character);    
             }
             */
+#if DEBUG_LOG
             Debug.Log("Activated Poison Cloud Symptom");
+#endif
         }
         public override void PerTickWhileStationaryOrUnoccupied(Character p_character) {
             if (GameUtilities.RollChance(1.5f)) {

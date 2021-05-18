@@ -156,7 +156,9 @@ public class PlayerManager : BaseMonoBehaviour {
             AddAvailableChaosOrb(chaosOrb);
             yield return null;
         }
+#if DEBUG_LOG
         Debug.Log($"Created {amount.ToString()} chaos orbs at {mapLocation.region.name}. Position {worldPos.ToString()}");
+#endif
     }
     private void OnCharacterDidActionSuccess(Character character, ActualGoapNode actionNode) {
         if (character.isNormalCharacter) {
@@ -200,7 +202,9 @@ public class PlayerManager : BaseMonoBehaviour {
                         break;
                 }
                 if(orbsToCreate != 0) {
+#if DEBUG_LOG
                     character.logComponent.PrintLogIfActive($"{character.name} performed a crime of type {crimeType.ToString()}. Expelling {orbsToCreate.ToString()} Mana Orbs.");
+#endif
                     //Messenger.Broadcast(PlayerSignals.CREATE_CHAOS_ORBS, character.marker.transform.position, orbsToCreate, character.currentRegion.innerMap);
                 }
             }    
@@ -214,9 +218,9 @@ public class PlayerManager : BaseMonoBehaviour {
         availableChaosOrbs.Remove(chaosOrb);
         Messenger.Broadcast(PlayerSignals.CHAOS_ORB_DESPAWNED);
     }
-    #endregion
+#endregion
 
-    #region Spirit Energy
+#region Spirit Energy
     public List<SpiritEnergy> availableSpiritEnergy;
     public void CreateSpiritEnergyFromSave(Vector3 worldPos, Region region) {
         GameObject spiritEnergyGO = ObjectPoolManager.Instance.InstantiateObjectFromPool(spiritnEnergyPrefab.name, Vector3.zero, Quaternion.identity, region.innerMap.objectsParent);
@@ -238,7 +242,9 @@ public class PlayerManager : BaseMonoBehaviour {
             AddAvailableSpritiEnergy(spiritEnergy);
             yield return null;
         }
+#if DEBUG_LOG
         Debug.Log($"Created {amount.ToString()} chaos orbs at {mapLocation.region.name}. Position {worldPos.ToString()}");
+#endif
     }
     
     private void AddAvailableSpritiEnergy(SpiritEnergy p_spiritEnergy) {
@@ -249,9 +255,9 @@ public class PlayerManager : BaseMonoBehaviour {
         availableSpiritEnergy.Remove(p_spiritEnergy);
         Messenger.Broadcast(PlayerSignals.SPIRIT_ENERGY_DESPAWNED);
     }
-    #endregion
+#endregion
 
-    #region Archetypes
+#region Archetypes
     public static PlayerArchetype CreateNewArchetype(PLAYER_ARCHETYPE archetype) {
         string typeName = $"Archetype.{ UtilityScripts.Utilities.NotNormalizedConversionEnumToStringNoSpaces(archetype.ToString()) }, Assembly-CSharp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
         System.Type type = System.Type.GetType(typeName);
@@ -261,9 +267,9 @@ public class PlayerManager : BaseMonoBehaviour {
         }
         throw new System.Exception($"Could not create new archetype {archetype} because there is no data for it!");
     }
-    #endregion
+#endregion
 
-    #region End Game Mechanics
+#region End Game Mechanics
     private void WinGame(string winMessage) {
         StartCoroutine(DelayedWinGame(winMessage));
     }
@@ -273,9 +279,9 @@ public class PlayerManager : BaseMonoBehaviour {
         PlayerUI.Instance.WinGameOver(winMessage);
         QuestManager.Instance.winConditionTracker?.RemoveStepsFromBookmark();
     }
-    #endregion
+#endregion
 
-    #region Structure Placement
+#region Structure Placement
     public void ShowStructurePlacementVisual(STRUCTURE_TYPE p_structureType) {
         _structurePlacementVisual.Show(p_structureType);
     }
@@ -288,5 +294,5 @@ public class PlayerManager : BaseMonoBehaviour {
     public void SetStructurePlacementVisualHighlightColor(Color p_color) {
         _structurePlacementVisual.SetHighlightColor(p_color);
     }
-    #endregion
+#endregion
 }

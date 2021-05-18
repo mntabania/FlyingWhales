@@ -1318,3 +1318,18 @@ public enum CHANCE_TYPE {
     Ent_Spawn,
     Mimic_Spawn
 }
+public enum Gradient_Direction {
+    Top, Bottom, Left, Right
+}
+public enum Biome_Tile_Type {
+    Desert, Oasis, Grassland, Jungle, Taiga, Tundra, Snow
+}
+public enum Tile_Tag {
+    Decor, Tree, Berry_Shrub, None
+}
+public enum Temperature_Type {
+    Coldest, Colder, Cold, Hot, Hotter, Hottest
+}
+public enum Precipitation_Type {
+    Dryest, Dryer, Dry, Wet, Wetter, Wettest
+}

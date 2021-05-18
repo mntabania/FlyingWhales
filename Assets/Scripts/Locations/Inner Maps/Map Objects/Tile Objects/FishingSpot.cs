@@ -26,7 +26,7 @@ public class FishingSpot : TileObject {
         }
         BaseSettlement.onSettlementBuilt += UpdateSettlementResourcesParent;
     }
-    public FishingSpot(SaveDataTileObject data) { }
+    public FishingSpot(SaveDataTileObject data) : base(data) { }
 
     #region Loading
     public override void LoadSecondWave(SaveDataTileObject data) {
@@ -72,6 +72,9 @@ public class FishingSpot : TileObject {
         name = "a Lake";
         AddAdvertisedAction(INTERACTION_TYPE.FISH);
         Messenger.AddListener(Signals.HOUR_STARTED, HourStarted);
+        if (structureConnector != null && gridTileLocation != null) {
+            structureConnector.OnPlaceConnector(gridTileLocation.parentMap);    
+        }
     }
     public override void OnDestroyPOI() {
         base.OnDestroyPOI();

@@ -901,11 +901,11 @@ public class LocationStructureObject : PooledObject, ISelectable {
                 o_cannotPlaceReason = string.Empty;
                 return false;
             }
-            LocationStructure mostImportantStructure = areaOwner.structureComponent.GetMostImportantStructureOnTile();
-            if (mostImportantStructure != null && mostImportantStructure.structureType.IsSpecialStructure()) {
-                o_cannotPlaceReason = string.Empty;
-                return false;
-            }
+            // LocationStructure mostImportantStructure = areaOwner.structureComponent.GetMostImportantStructureOnTile();
+            // if (mostImportantStructure != null && mostImportantStructure.structureType.IsSpecialStructure()) {
+            //     o_cannotPlaceReason = string.Empty;
+            //     return false;
+            // }
         }
         //Note: Demonic structure can now be built if there is one tile that is on or beside a corrupted tile, so the checker for it is now moved to DemonicStructurePlayerSkill - CanBuildDemonicStructureOn
         //if (structureType != STRUCTURE_TYPE.THE_PORTAL && structureType.IsPlayerStructure() && !tile.corruptionComponent.isCorrupted) {
@@ -1186,15 +1186,17 @@ public class LocationStructureObject : PooledObject, ISelectable {
             for (int y = bounds.yMin; y < bounds.yMax; y++) {
                 Vector3Int pos = new Vector3Int(x, y, 0);
                 TileBase tb = _groundTileMap.GetTile(pos);
+#if DEBUG_LOG
                 if (tb != null) {
                     Debug.Log($"{pos.ToString()} - {tb.name}");
                 }
+#endif
             }
         }
     }
-    #endregion
+#endregion
 
-    #region Interaction
+#region Interaction
     private void SetClickColliderState(bool p_state) {
         if (_clickCollider != null) {
             if (p_state) {
@@ -1204,7 +1206,7 @@ public class LocationStructureObject : PooledObject, ISelectable {
             }    
         }
     }
-    #endregion
+#endregion
 
     public Vector3 worldPosition {
         get {

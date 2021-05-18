@@ -33,11 +33,11 @@ public class MonsterGeneration : MapGenerationComponent {
 	#region Helpers
 	private void CreateMonster(SUMMON_TYPE summonType, BaseSettlement settlementOnTile, Region region, LocationStructure monsterLairStructure, Faction faction = null) {
 		Summon summon = CharacterManager.Instance.CreateNewSummon(summonType, faction ?? FactionManager.Instance.GetDefaultFactionForMonster(summonType), settlementOnTile, region, monsterLairStructure);
-		LocationGridTile targetTile = CollectionUtilities.GetRandomElement(monsterLairStructure.unoccupiedTiles);
+		LocationGridTile targetTile = CollectionUtilities.GetRandomElement(monsterLairStructure.passableTiles);
 		CharacterManager.Instance.PlaceSummonInitially(summon, targetTile);
 	}
-    private Summon CreateMonster(SUMMON_TYPE summonType, List<LocationGridTile> locationChoices, LocationStructure homeStructure = null, string className = "", Faction faction = null, params Area[] territories) {
-		var chosenTile = homeStructure != null ? CollectionUtilities.GetRandomElement(homeStructure.unoccupiedTiles) : CollectionUtilities.GetRandomElement(locationChoices);
+    private Summon CreateMonster(SUMMON_TYPE summonType, List<LocationGridTile> locationChoices, LocationStructure homeStructure = null, string className = "", Faction faction = null) {
+		var chosenTile = homeStructure != null ? CollectionUtilities.GetRandomElement(homeStructure.passableTiles) : CollectionUtilities.GetRandomElement(locationChoices);
 		
 		Assert.IsNotNull(chosenTile, $"Chosen tile for {summonType.ToString()} is null!");
 
@@ -46,13 +46,18 @@ public class MonsterGeneration : MapGenerationComponent {
 		if (homeStructure != null) {
 			summon.MigrateHomeStructureTo(homeStructure);	
 		} else {
-			summon.SetTerritory(chosenTile.area, false);
-			if (territories != null) {
-				for (int i = 0; i < territories.Length; i++) {
-					Area territory = territories[i];
-					summon.SetTerritory(territory, false);
-				}
-			}	
+            if (chosenTile.structure != null && chosenTile.structure.structureType != STRUCTURE_TYPE.WILDERNESS && chosenTile.structure.structureType != STRUCTURE_TYPE.OCEAN) {
+				summon.MigrateHomeStructureTo(chosenTile.structure);
+			} else {
+				summon.SetTerritory(chosenTile.area, false);
+			}
+			//Why set multiple territories here? Character cannot have multiple territories, this will only override the existing territory
+			//if (territories != null) {
+			//	for (int i = 0; i < territories.Length; i++) {
+			//		Area territory = territories[i];
+			//		summon.SetTerritory(territory, false);
+			//	}
+			//}	
 		}
 		return summon;
 	}
@@ -62,8 +67,9 @@ public class MonsterGeneration : MapGenerationComponent {
 	    if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Pangat_Loo) {
 			PangatLooLandmarkMonsterGeneration();
 		}
-		List<LocationStructure> allSpecialStructures = LandmarkManager.Instance.GetAllSpecialStructures();
-		List<LocationGridTile> locationChoices = new List<LocationGridTile>();
+		List<LocationStructure> allSpecialStructures = RuinarchListPool<LocationStructure>.Claim();
+		LandmarkManager.Instance.PopulateAllSpecialStructures(allSpecialStructures);
+		List<LocationGridTile> locationChoices = RuinarchListPool<LocationGridTile>.Claim();
 		for (int i = 0; i < allSpecialStructures.Count; i++) {
 			LocationStructure structure = allSpecialStructures[i];
 			if (structure.structureType != STRUCTURE_TYPE.CAVE) {
@@ -71,6 +77,7 @@ public class MonsterGeneration : MapGenerationComponent {
 					continue; //do not spawn other monsters in ancient graveyard for Pangat Loo since there are already skeletons there.
 				}
 				Assert.IsNotNull(structure.occupiedArea, $"Occupied area of {structure.name} is null!");
+				Assert.IsTrue(structure.tiles.Count > 0, $"{structure.name} has no tiles!");
 				BiomeDivision biomeDivision = structure.region.biomeDivisionComponent.GetBiomeDivisionThatTileBelongsTo(structure.tiles.First());
 				if (structure is RuinedZoo) {
 					continue; //skip
@@ -95,22 +102,23 @@ public class MonsterGeneration : MapGenerationComponent {
                 }
 			}
 		}
+		RuinarchListPool<LocationGridTile>.Release(locationChoices);
 		RuinarchListPool<LocationStructure>.Release(allSpecialStructures);
 		yield return null;
 	}
 	private IEnumerator CaveMonsterGeneration() {
 		Region region = GridMap.Instance.allRegions.First();
 		if (region.HasStructure(STRUCTURE_TYPE.CAVE)) {
-			List<LocationStructure> caves = region.GetStructuresAtLocation<LocationStructure>(STRUCTURE_TYPE.CAVE);
-			caves = caves.OrderByDescending(x => x.tiles.Count).ToList();
-			
+			List<LocationStructure> caves = region.GetStructuresAtLocation(STRUCTURE_TYPE.CAVE);
+			List<LocationStructure> orderedStructures = RuinarchListPool<LocationStructure>.Claim();
+			orderedStructures.AddRange(caves.OrderByDescending(x => x.tiles.Count));			
 			// if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Tutorial) {
 			// 	TutorialCaveMonsterGeneration(caves);
 			// } else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Oona) {
 			// 	OonaCaveMonsterGeneration(caves);
 			// } else 
 			if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Icalawa) {
-				IcalawaCaveMonsterGeneration(caves);
+				IcalawaCaveMonsterGeneration(orderedStructures);
 			} 
 			// else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Pangat_Loo) {
 			// 	PangatLooCaveMonsterGeneration(caves);
@@ -121,22 +129,22 @@ public class MonsterGeneration : MapGenerationComponent {
 			// } 
 			else {
 				if (region.regionFeatureComponent.HasFeature<HauntedFeature>()) {
-					for (int j = 0; j < caves.Count; j++) {
+					for (int j = 0; j < orderedStructures.Count; j++) {
 						if (GameUtilities.RollChance(40)) {
-							LocationStructure cave = caves[j];
-							if (cave.unoccupiedTiles.Count == 0) { continue; }
+							LocationStructure cave = orderedStructures[j];
+							if (cave.passableTiles.Count == 0) { continue; }
 							if (GameUtilities.RollChance(50)) {
 								//spawn 2-4 ghosts
 								int ghosts = Random.Range(2, 5);
 								for (int k = 0; k < ghosts; k++) {
-									CreateMonster(SUMMON_TYPE.Ghost, cave.unoccupiedTiles.ToList());
+									CreateMonster(SUMMON_TYPE.Ghost, cave.passableTiles);
 								}	
 							} else {
 								//spawn 2-4 to Skeletons
-								List<string> randomClassChoices = CharacterManager.Instance.GetNormalCombatantClasses().Select(x => x.className).ToList();
+								List<CharacterClass> randomClassChoices = CharacterManager.Instance.GetNormalCombatantClasses();
 								int skeletons = Random.Range(2, 5);
 								for (int k = 0; k < skeletons; k++) {
-									CreateMonster(SUMMON_TYPE.Skeleton, cave.unoccupiedTiles.ToList(), className: CollectionUtilities.GetRandomElement(randomClassChoices), faction: FactionManager.Instance.undeadFaction);
+									CreateMonster(SUMMON_TYPE.Skeleton, cave.passableTiles, className: CollectionUtilities.GetRandomElement(randomClassChoices).className, faction: FactionManager.Instance.undeadFaction);
 								}	
 							}
 						}
@@ -144,16 +152,16 @@ public class MonsterGeneration : MapGenerationComponent {
 					}
 				} else {
 					// WeightedDictionary<MonsterSetting> monsterChoices = caveData.monsterGenerationSetting.GetMonsterChoicesForBiome(region.coreTile.biomeType);
-					List<LocationGridTile> locationChoices = new List<LocationGridTile>();
-					for (int j = 0; j < caves.Count; j++) {
-						LocationStructure cave = caves[j];
+					List<LocationGridTile> locationChoices = RuinarchListPool<LocationGridTile>.Claim();
+					for (int j = 0; j < orderedStructures.Count; j++) {
+						LocationStructure cave = orderedStructures[j];
 						if (cave.residents.Count > 0 || cave.passableTiles.Count == 0) {
 							//if cave already has occupants, then do not generate monsters for that cave
 							continue;
 						}
-                        if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Custom && CharacterManager.Instance.GenerateRatmen(cave, GameUtilities.RandomBetweenTwoNumbers(1, 3), 8)) {
-                            //Ratmen has bee generated
-                        } else {
+						if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Custom && CharacterManager.Instance.GenerateRatmen(cave, GameUtilities.RandomBetweenTwoNumbers(1, 3), 8)) {
+							//Ratmen has bee generated
+						} else {
 							BiomeDivision biomeDivision = cave.region.biomeDivisionComponent.GetBiomeDivisionThatTileBelongsTo(cave.tiles.First());
 							locationChoices.Clear();
 							locationChoices.AddRange(cave.passableTiles);
@@ -176,27 +184,36 @@ public class MonsterGeneration : MapGenerationComponent {
 								break;
 							}
 						}
-                    }	
+					}
+					RuinarchListPool<LocationGridTile>.Release(locationChoices);
 				}
 					
 			}
+			RuinarchListPool<LocationStructure>.Release(orderedStructures);
 		}
 		yield return null;
 	}
-	private List<Area> GetHexTileCountOfCave(LocationStructure caveStructure) {
-		List<Area> tiles = new List<Area>();
-		for (int i = 0; i < caveStructure.unoccupiedTiles.Count; i++) {
-			LocationGridTile tile = caveStructure.unoccupiedTiles.ElementAt(i);
-			if (tiles.Contains(tile.area) == false) {
-				tiles.Add(tile.area);
-			}
-		}
-		return tiles;
-	}
+	//private List<Area> GetHexTileCountOfCave(LocationStructure caveStructure) {
+	//	List<Area> tiles = new List<Area>();
+	//	for (int i = 0; i < caveStructure.unoccupiedTiles.Count; i++) {
+	//		LocationGridTile tile = caveStructure.unoccupiedTiles.ElementAt(i);
+	//		if (tiles.Contains(tile.area) == false) {
+	//			tiles.Add(tile.area);
+	//		}
+	//	}
+	//	return tiles;
+	//}
 
 	#region Icalawa
 	private void IcalawaCaveMonsterGeneration(List<LocationStructure> caves) {
-		List<LocationStructure> shuffledCaves = CollectionUtilities.Shuffle(caves.Where(c => c.unoccupiedTiles.Count > 0).ToList());
+		List<LocationStructure> shuffledCaves = RuinarchListPool<LocationStructure>.Claim();
+        for (int i = 0; i < caves.Count; i++) {
+			LocationStructure s = caves[i];
+            if (s.unoccupiedTiles.Count > 0) {
+				shuffledCaves.Add(s);
+			}
+        }
+		CollectionUtilities.Shuffle(shuffledCaves);
 		if (shuffledCaves.Count > 0) {
 			LocationStructure ratmenCave = shuffledCaves[0];
 			shuffledCaves.Remove(ratmenCave);
@@ -209,9 +226,9 @@ public class MonsterGeneration : MapGenerationComponent {
 				//if cave already has occupants, then do not generate monsters for that cave
 				continue;
 			}
-			List<Area> hexTilesOfCave = GetHexTileCountOfCave(cave);
+			//List<Area> hexTilesOfCave = GetHexTileCountOfCave(cave);
 			if (j < 4) {
-				CreateMonster(SUMMON_TYPE.Wurm, cave.unoccupiedTiles.ToList(), cave, territories: hexTilesOfCave.ToArray());
+				CreateMonster(SUMMON_TYPE.Wurm, cave.unoccupiedTiles, cave);
 			}
 		}
 	}
@@ -220,12 +237,14 @@ public class MonsterGeneration : MapGenerationComponent {
 	#region Pangat Loo
 	private void PangatLooLandmarkMonsterGeneration() {
 		//skeletons at ancient graveyard
-		List<LocationStructure> graveyards = LandmarkManager.Instance.GetSpecialStructuresOfType(STRUCTURE_TYPE.ANCIENT_GRAVEYARD);
-		for (int i = 0; i < graveyards.Count; i++) {
-			LocationStructure structure = graveyards[i];
-			int randomAmount = 2;
-			for (int k = 0; k < randomAmount; k++) {
-				CreateMonster(SUMMON_TYPE.Skeleton, structure.settlementLocation, structure.region, structure, FactionManager.Instance.undeadFaction);
+		List<LocationStructure> graveyards = LandmarkManager.Instance.GetStructuresOfType(STRUCTURE_TYPE.ANCIENT_GRAVEYARD);
+		if (graveyards != null) {
+			for (int i = 0; i < graveyards.Count; i++) {
+				LocationStructure structure = graveyards[i];
+				int randomAmount = 2;
+				for (int k = 0; k < randomAmount; k++) {
+					CreateMonster(SUMMON_TYPE.Skeleton, structure.settlementLocation, structure.region, structure, FactionManager.Instance.undeadFaction);
+				}
 			}
 		}
 	}

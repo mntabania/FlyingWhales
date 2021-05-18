@@ -24,8 +24,10 @@ public class Evangelize : GoapAction {
         SetState("Evangelize Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
+#if DEBUG_LOG
         string costLog = $"\n{name} {target.nameWithID}: +0(Constant)";
         actor.logComponent.AppendCostLog(costLog);
+#endif
         return 0;
     }
     public override REACTABLE_EFFECT GetReactableEffect(ActualGoapNode node, Character witness) {
@@ -59,15 +61,15 @@ public class Evangelize : GoapAction {
             }
         }
     }
-    #endregion
+#endregion
 
-    #region Preconditions
+#region Preconditions
     private bool HasCultistKit(Character actor, IPointOfInterest poiTarget, object[] otherData, JOB_TYPE jobType) {
         return actor.HasItem("Cultist Kit");
     }
-    #endregion
+#endregion
 
-    #region Requirements
+#region Requirements
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest target, OtherData[] otherData, JobQueueItem job) {
         bool hasMetRequirements = base.AreRequirementsSatisfied(actor, target, otherData, job);
         if (hasMetRequirements) {
@@ -75,9 +77,9 @@ public class Evangelize : GoapAction {
         }
         return false;
     }
-    #endregion
+#endregion
     
-    #region State Effects
+#region State Effects
     public void AfterEvangelizeSuccess(ActualGoapNode goapNode) {
         Character targetCharacter = goapNode.poiTarget as Character;
         Assert.IsNotNull(targetCharacter, $"Target of Evangelize is not a character! Actor: {goapNode.actor.name}. Target: {goapNode.poiTarget?.name ?? "Null"}");
@@ -163,11 +165,11 @@ public class Evangelize : GoapAction {
         }
         goapNode.actor.UnobtainItem(TILE_OBJECT_TYPE.CULTIST_KIT);
     }
-    #endregion
+#endregion
 
-    #region Reactions
+#region Reactions
     public override CRIME_TYPE GetCrimeType(Character actor, IPointOfInterest target, ActualGoapNode crime) {
         return CRIME_TYPE.Demon_Worship;
     }
-    #endregion
+#endregion
 }

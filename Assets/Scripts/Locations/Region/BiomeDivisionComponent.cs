@@ -39,7 +39,7 @@ public class BiomeDivisionComponent {
     public BiomeDivision GetBiomeDivisionThatTileBelongsTo(LocationGridTile p_tile) {
         for (int i = 0; i < divisions.Count; i++) {
             BiomeDivision biomeDivision = divisions[i];
-            if (biomeDivision.biome == p_tile.biomeType && biomeDivision.tiles.Contains(p_tile)) {
+            if (biomeDivision.biome == p_tile.mainBiomeType && biomeDivision.tiles.Contains(p_tile)) {
                 return biomeDivision;
             }
         }

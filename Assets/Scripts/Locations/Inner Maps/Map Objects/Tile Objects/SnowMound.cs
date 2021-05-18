@@ -9,7 +9,7 @@ public class SnowMound : TileObject{
         AddAdvertisedAction(INTERACTION_TYPE.RESOLVE_COMBAT);
         AddAdvertisedAction(INTERACTION_TYPE.EXTRACT_ITEM);
     }
-    public SnowMound(SaveDataTileObject data) { }
+    public SnowMound(SaveDataTileObject data) : base(data) { }
 
     public override void OnDestroyPOI() {
         base.OnDestroyPOI();
@@ -26,7 +26,7 @@ public class SnowMound : TileObject{
 
     public override void OnPlacePOI() {
         base.OnPlacePOI();
-        if(gridTileLocation.biomeType != BIOMES.SNOW) {
+        if(gridTileLocation.mainBiomeType != BIOMES.SNOW) {
             traitContainer.AddTrait(this, "Melting");
         } else {
             traitContainer.RemoveTrait(this, "Melting");

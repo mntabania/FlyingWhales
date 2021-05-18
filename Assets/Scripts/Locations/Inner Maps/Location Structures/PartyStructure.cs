@@ -232,7 +232,9 @@ namespace Inner_Maps.Location_Structures {
             partyData.deployedTargets.ForEach((eachTarget) => eachTarget.isTargetted = false);
             partyData.ClearAllData();
             Messenger.Broadcast(PartySignals.UNDEPLOY_PARTY, prevParty);
+#if DEBUG_LOG
             Debug.Log($"Un Deployed party at {name}. Party was {prevParty?.name}");
+#endif
             //party = null;
         }
 
@@ -247,7 +249,7 @@ namespace Inner_Maps.Location_Structures {
             //    PlayerManager.Instance.player.underlingsComponent.AdjustMonsterUnderlingCharge((eachSummon as Summon).summonType, 1);
             //});
         }
-        #region Party.EventsIListener
+#region Party.EventsIListener
         public void OnQuestSucceed() {
             if (!m_isUndeployUserAction) {
                 partyData.deployedTargets.ForEach((eachTarget) => eachTarget.isTargetted = false);
@@ -264,7 +266,7 @@ namespace Inner_Maps.Location_Structures {
                 UnDeployAll();
             }
         }
-        #endregion
+#endregion
     }
 
     public class SaveDataPartyStructure : SaveDataDemonicStructure {

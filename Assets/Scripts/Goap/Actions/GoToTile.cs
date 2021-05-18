@@ -19,8 +19,10 @@
         SetState("Go Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
+#if DEBUG_LOG
         string costLog = $"\n{name} {target.nameWithID}: +10(Constant)";
         actor.logComponent.AppendCostLog(costLog);
+#endif
         return 10;
     }
     public override void OnMoveToDoAction(ActualGoapNode node) {
@@ -29,5 +31,5 @@
             node.actor.partyComponent.currentParty.AddMemberThatJoinedQuest(node.actor);
         }
     }
-    #endregion
+#endregion
 }

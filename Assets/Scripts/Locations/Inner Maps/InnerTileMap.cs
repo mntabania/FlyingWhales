@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
@@ -14,6 +15,7 @@ using UnityEngine.Profiling;
 using UnityEngine.Serialization;
 using UnityEngine.Tilemaps;
 using UtilityScripts;
+using Debug = UnityEngine.Debug;
 using Random = UnityEngine.Random;
 namespace Inner_Maps {
     public abstract partial class InnerTileMap : BaseMonoBehaviour {
@@ -56,35 +58,11 @@ namespace Inner_Maps {
         [Header("Perlin Noise")]
         [SerializeField] private float _xSeed;
         [SerializeField] private float _ySeed;
-        [NonSerialized] public PerlinNoiseSettings biomePerlinSettings = new PerlinNoiseSettings() {
-            noiseScale = 40.4f,
-            octaves = 3,
-            persistance = 0f,
-            lacunarity = 2,
-            offset = new Vector2(13.09f, 12f),
-            regions = new PerlinNoiseRegion[] {
-                new PerlinNoiseRegion() {
-                    name = "DESERT",
-                    color = Color.yellow,
-                    height = 0.3f,
-                },
-                new PerlinNoiseRegion() {
-                    name = "GRASSLAND",
-                    color = Color.green,
-                    height = 0.65f,
-                },
-                new PerlinNoiseRegion() {
-                    name = "SNOW",
-                    color = Color.white,
-                    height = 1f,
-                },
-            }
-        };
         [NonSerialized] public PerlinNoiseSettings elevationPerlinSettings = new PerlinNoiseSettings() {
             noiseScale = 34.15f,
-            octaves = 4,
-            persistance = 0.5f,
-            lacunarity = 2f,
+            octaves = 3,
+            persistance = 0.2f,
+            lacunarity = 2,
             offset = new Vector2(13.09f, 12f),
             regions = new PerlinNoiseRegion[] {
                 new PerlinNoiseRegion() {
@@ -104,6 +82,22 @@ namespace Inner_Maps {
                 },
             }
         };
+        [NonSerialized] public PerlinNoiseSettings precipitationPerlinSettings = new PerlinNoiseSettings() {
+            noiseScale = 40.4f,
+            octaves = 3,
+            persistance = 0f,
+            lacunarity = 2,
+            offset = new Vector2(13.09f, 12f),
+        };
+        [SerializeField] private WhittakerDiagram whittakerDiagram;
+        
+        [Header("Temperature")] 
+        public Gradient_Direction temperatureGradient;
+        public float warpNoiseScale = 2f;
+        public float warpSeed;
+        public float warpStrength = 0.2f;
+        public float warpWeight = 0.6f;
+        public float temperatureSeed;
 
         [Header("For Testing")]
         [SerializeField] protected LineRenderer pathLineRenderer;
@@ -121,6 +115,7 @@ namespace Inner_Maps {
         public GameObject centerGo { get; private set; }
         public NNConstraint onlyUnwalkableGraph { get; private set; }
         public NNConstraint onlyPathfindingGraph { get; private set; }
+        public Tile_Tag[,] tileTagMap { get; private set; }
 
         private struct BiomeOrder {
             public BIOMES[] biomesInOrder;
@@ -143,13 +138,16 @@ namespace Inner_Maps {
         #endregion
 
         #region Generation
-        public void Initialize(Region location, float xSeed, float ySeed, PerlinNoiseSettings biomeSettings, PerlinNoiseSettings elevationSettings) {
+        public void Initialize(Region location, float xSeed, float ySeed, PerlinNoiseSettings elevationSettings, float p_warpWeight, float p_temperatureSeed) {
             region = location;
             _xSeed = xSeed;
             _ySeed = ySeed;
 
-            biomePerlinSettings = biomeSettings;
+            warpSeed = xSeed;
+            precipitationPerlinSettings.seed = (int)ySeed;
             elevationPerlinSettings = elevationSettings;
+            warpWeight = p_warpWeight;
+            temperatureSeed = p_temperatureSeed;
 
             //set tile map sorting orders
             groundTilemapRenderer.sortingOrder = InnerMapManager.GroundTilemapSortingOrder;
@@ -163,22 +161,24 @@ namespace Inner_Maps {
             upperGroundTilemapRenderer.sortingOrder = InnerMapManager.GroundTilemapSortingOrder + 3;
 
             Messenger.AddListener<Camera, float>(ControlsSignals.CAMERA_ZOOM_CHANGED, UpdateOrtigraphicSize);
+            
+            perlinTilemap.gameObject.SetActive(false);
         }
         public void Initialize(Region location, float xSeed, float ySeed, int biomeSeed, int elevationSeed) {
             region = location;
             _xSeed = xSeed;
             _ySeed = ySeed;
 
-            BiomeOrder chosenOrder = CollectionUtilities.GetRandomElement(_biomeOrders);
-            Debug.Log($"Chosen biome order is {chosenOrder.ToString()}");
-            for (int i = 0; i < chosenOrder.biomesInOrder.Length; i++) {
-                BIOMES biomes = chosenOrder.biomesInOrder[i];
-                PerlinNoiseRegion perlinNoiseRegion = biomePerlinSettings.regions[i];
-                perlinNoiseRegion.name = biomes.ToString();
-                biomePerlinSettings.regions[i] = perlinNoiseRegion;
+            warpSeed = xSeed;
+            precipitationPerlinSettings.seed = (int)ySeed;
+            temperatureSeed = Random.Range(0f, 0.25f);
+            
+            if (GameUtilities.RollChance(50)) {
+                warpWeight = -0.39f;    
+            } else {
+                warpWeight = 0.39f;
             }
-
-            biomePerlinSettings.seed = biomeSeed;
+            
             elevationPerlinSettings.seed = elevationSeed;
 
             //set tile map sorting orders
@@ -193,9 +193,11 @@ namespace Inner_Maps {
             upperGroundTilemapRenderer.sortingOrder = InnerMapManager.GroundTilemapSortingOrder + 3;
 
             Messenger.AddListener<Camera, float>(ControlsSignals.CAMERA_ZOOM_CHANGED, UpdateOrtigraphicSize);
+            
+            perlinTilemap.gameObject.SetActive(false);
         }
-        protected IEnumerator GenerateGrid(int width, int height, MapGenerationComponent mapGenerationComponent) {
-            System.Diagnostics.Stopwatch stopwatch = new System.Diagnostics.Stopwatch();
+        protected IEnumerator GenerateGrid(int width, int height, MapGenerationComponent mapGenerationComponent, System.Diagnostics.Stopwatch stopwatch) {
+            stopwatch.Reset();
             stopwatch.Start();
             this.width = width;
             this.height = height;
@@ -204,7 +206,7 @@ namespace Inner_Maps {
             allTiles = new List<LocationGridTile>();
             allEdgeTiles = new List<LocationGridTile>();
             int batchCount = 0;
-            LocationStructure wilderness = region.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
+            LocationStructure wilderness = region.wilderness;
             Vector3Int[] positionArray = new Vector3Int[width * height];
             TileBase[] groundTilesArray = new TileBase[width * height];
 
@@ -219,8 +221,10 @@ namespace Inner_Maps {
                     LocationGridTile tile = new LocationGridTile(x, y, groundTilemap, this, area);
                     area.gridTileComponent.AddGridTile(tile);
                     area.elevationComponent.OnTileAddedToArea(tile);
+                    area.biomeComponent.OnTileAddedToArea(tile);
                     tile.tileObjectComponent.CreateGenericTileObject();
                     tile.SetStructure(wilderness);
+                    tile.tileObjectComponent.genericTileObject.ManualInitialize(tile);
                     allTiles.Add(tile);
                     if (tile.IsAtEdgeOfWalkableMap()) {
                         allEdgeTiles.Add(tile);
@@ -266,7 +270,7 @@ namespace Inner_Maps {
             Vector3Int[] positionArray = new Vector3Int[width * height];
             TileBase[] groundTilesArray = new TileBase[width * height];
             int count = 0;
-            LocationStructure wilderness = region.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
+            LocationStructure wilderness = region.wilderness;
             TileBase regionOutsideTile = InnerMapManager.Instance.assetManager.outsideTile;
             for (int x = 0; x < width; x++) {
                 for (int y = 0; y < height; y++) {
@@ -276,16 +280,22 @@ namespace Inner_Maps {
                     groundTilesArray[count] = regionOutsideTile;
                     Area area = DetermineAreaGivenCoordinates(x, y);
                     LocationGridTile tile;
-                    if (existingSaveData != null) {
+                    bool hasSaveData = existingSaveData != null;
+                    if (hasSaveData) {
                         //has existing save data
                         tile = existingSaveData.InitialLoad(groundTilemap, this, saveData, area);
                     } else {
                         tile = new LocationGridTile(x, y, groundTilemap, this, area);
-                        tile.tileObjectComponent.CreateGenericTileObject();    
+                        tile.tileObjectComponent.CreateGenericTileObject();
                     }
                     area.gridTileComponent.AddGridTile(tile);
                     area.elevationComponent.OnTileAddedToArea(tile);
+                    area.biomeComponent.OnTileAddedToArea(tile);
                     tile.SetStructure(wilderness);
+                    if (!hasSaveData) {
+                        //had to do this after set structure since initialize needs tile to already have a structure, for location awareness
+                        tile.tileObjectComponent.genericTileObject.ManualInitialize(tile);    
+                    }
                     tile.tileObjectComponent.genericTileObject.SetGridTileLocation(tile); //had to do this since I could not set tile location before setting structure because awareness list depends on it.
                     allTiles.Add(tile);
                     if (tile.IsAtEdgeOfWalkableMap()) {
@@ -346,9 +356,9 @@ namespace Inner_Maps {
             
             
         } 
-        #endregion
+#endregion
 
-        #region Visuals
+#region Visuals
         protected void ClearAllTileMaps() {
             for (var i = 0; i < _allTilemaps.Length; i++) {
                 _allTilemaps[i].ClearAllTiles();
@@ -377,9 +387,9 @@ namespace Inner_Maps {
         public void SetUpperGroundVisual(Vector3Int[] locations, TileBase[] assets) {
             upperGroundTilemap.SetTiles(locations, assets);
         }
-        #endregion
+#endregion
 
-        #region Data Getting
+#region Data Getting
         public void GetUnoccupiedTilesInRadius(List<LocationGridTile> tiles, LocationGridTile centerTile, int radius, int radiusLimit = 0, bool includeCenterTile = false, bool includeTilesInDifferentStructure = false) {
             int mapSizeX = map.GetUpperBound(0);
             int mapSizeY = map.GetUpperBound(1);
@@ -422,9 +432,9 @@ namespace Inner_Maps {
             }
             return null;
         }
-        #endregion
+#endregion
         
-        #region Points of Interest
+#region Points of Interest
         public void PlaceObject(TileObject obj, LocationGridTile tile, bool placeAsset = true) {
             tile.tileObjectComponent.SetObjectHere(obj);
             //switch (obj.poiType) {
@@ -505,9 +515,9 @@ namespace Inner_Maps {
             }
         
         }
-        #endregion
+#endregion
 
-        #region Data Setting
+#region Data Setting
         public void UpdateTilesWorldPosition() {
             for (int x = 0; x < width; x++) {
                 for (int y = 0; y < height; y++) {
@@ -519,7 +529,7 @@ namespace Inner_Maps {
         public void SetWorldPosition() {
             worldPos = transform.position;
         }
-        #endregion
+#endregion
 
         void UpdateOrtigraphicSize(Camera p_cam, float p_float) {
            
@@ -535,7 +545,7 @@ namespace Inner_Maps {
             //SpawnCenterGo();
         }
 
-        #region Utilities
+#region Utilities
         public void Open() { }
         public void Close() { }
         public virtual void OnMapGenerationFinished() {
@@ -596,9 +606,9 @@ namespace Inner_Maps {
             }
             return null;
         }
-        #endregion
+#endregion
 
-        #region Structures
+#region Structures
         public List<LocationStructure> PlaceBuiltStructureTemplateAt(GameObject p_structurePrefab, Area p_area, BaseSettlement p_settlement) {
             GameObject structureTemplateGO = ObjectPoolManager.Instance.InstantiateObjectFromPool(p_structurePrefab.name, p_area.gridTileComponent.centerGridTile.centeredLocalLocation, Quaternion.identity, structureParent);
             
@@ -686,14 +696,15 @@ namespace Inner_Maps {
                 TileObjectData tileObjectData = TileObjectDB.GetTileObjectData(TILE_OBJECT_TYPE.BLOCK_WALL);
                 structure.AdjustHP(-(missingWalls * tileObjectData.maxHP));
             }
-
+#if DEBUG_LOG
             Debug.Log($"Placed {structure} at {centerTile}");
+#endif
             return structure;
             // hexTile.innerMapHexTile.Occupy();
         }
-        #endregion
+#endregion
 
-        #region Details
+#region Details
         private void ConvertDetailToTileObject(LocationGridTile tile) {
             Sprite sprite = detailsTilemap.GetSprite(tile.localPlace);
             TileObject obj = InnerMapManager.Instance.CreateNewTileObject<TileObject>(InnerMapManager.Instance.GetTileObjectTypeFromTileAsset(sprite));
@@ -720,27 +731,22 @@ namespace Inner_Maps {
             }
             return tiles;
         }
-        protected IEnumerator GenerateDetails(MapGenerationComponent mapGenerationComponent, int xSize, int ySize) {
-            System.Diagnostics.Stopwatch stopwatch = new System.Diagnostics.Stopwatch();
-            stopwatch.Start();
-            yield return StartCoroutine(MapPerlinDetails(allTiles, xSize, ySize, xSeed, ySeed));
-            stopwatch.Stop();
-            mapGenerationComponent.AddLog($"{region.name} GenerateDetails took {stopwatch.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)} seconds to complete.");
-        }
-        protected IEnumerator GroundPerlin(List<LocationGridTile> tiles, int xSize, int ySize, float xSeed, float ySeed) {
-            yield return StartCoroutine(BiomePerlin());
+        // protected IEnumerator GenerateDetails(MapGenerationComponent mapGenerationComponent, int xSize, int ySize, System.Diagnostics.Stopwatch stopwatch) {
+        //     stopwatch.Reset();
+        //     stopwatch.Start();
+        //     yield return StartCoroutine(MapPerlinDetails(allTiles, xSize, ySize, xSeed, ySeed));
+        //     stopwatch.Stop();
+        //     mapGenerationComponent.AddLog($"{region.name} GenerateDetails took {stopwatch.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)} seconds to complete.");
+        // }
+        protected IEnumerator GroundPerlin(List<LocationGridTile> tiles, int xSize, int ySize, float xSeed, float ySeed, MapGenerationData p_data) {
+            yield return StartCoroutine(BiomePerlin(p_data));
             Vector3Int[] positionArray = new Vector3Int[tiles.Count];
             TileBase[] groundTilesArray = new TileBase[tiles.Count];
             
             for (int i = 0; i < tiles.Count; i++) {
                 LocationGridTile currTile = tiles[i];
-                float xCoord = (float)currTile.localPlace.x / xSize * 11f + xSeed;
-                float yCoord = (float)currTile.localPlace.y / ySize * 11f + ySeed;
-
-                float floorSample = Mathf.PerlinNoise(xCoord, yCoord);
-                currTile.SetFloorSample(floorSample);
                 positionArray[i] = currTile.localPlace;
-                groundTilesArray[i] = GetGroundAssetPerlin(floorSample, currTile.biomeType); //currTile.biomeType
+                groundTilesArray[i] = InnerMapManager.Instance.assetManager.GetGroundAssetForTile(currTile);
             }
             
             //Mass Update tiles
@@ -751,44 +757,41 @@ namespace Inner_Maps {
             }
             yield return null;
         }
-        private IEnumerator BiomePerlin() {
-            float[,] noiseMap = Noise.GenerateNoiseMap(biomePerlinSettings, width, height);
-
-            List<BiomeIsland> allBiomeIslands = new List<BiomeIsland>();
+        private IEnumerator BiomePerlin(MapGenerationData p_data) {
+            float[,] temperatureMap = Noise.GenerateTemperatureGradient(width, height, temperatureGradient, warpNoiseScale, warpSeed, warpStrength, warpWeight, temperatureSeed); 
+            float[,] precipitationMap = Noise.GenerateNoiseMap(precipitationPerlinSettings, width, height);
+            tileTagMap = new Tile_Tag[width, height];
             
-            BiomeIsland[][] biomeIslandMap = new BiomeIsland[width][];
-            for (int index = 0; index < width; index++) {
-                biomeIslandMap[index] = new BiomeIsland[height];
-            }
+            p_data?.InitializeGeneratedMapPerlinDetails(width, height);
+
+            List<LocationGridTile> tilesToSkipTileTag = RuinarchListPool<LocationGridTile>.Claim();
+            
             int batchCount = 0;
             for (int x = 0; x < width; x++) {
                 for (int y = 0; y < height; y++) {
-                    float currentHeight = noiseMap[x, y];
-                    PerlinNoiseRegion noiseRegion = biomePerlinSettings.GetPerlinNoiseRegion(currentHeight);
+                    float precipitation = precipitationMap[x, y];
+                    float temperature = temperatureMap[x, y];
                     LocationGridTile tile = map[x, y];
-                    string upperCase = noiseRegion.name.ToUpperInvariant();
-                    BIOMES biome = (BIOMES)System.Enum.Parse(typeof(BIOMES), upperCase);
-                    tile.SetIndividualBiomeType(biome);
-                    bool wasAddedToAdjacentBiomeIsland = false;
-                    for (int i = 0; i < tile.neighbourList.Count; i++) {
-                        LocationGridTile neighbour = tile.neighbourList[i];
-                        if (biome == neighbour.biomeType) {
-                            BiomeIsland biomeIsland = biomeIslandMap[neighbour.localPlace.x][neighbour.localPlace.y];
-                            if (biomeIsland != null) {
-                                biomeIsland.AddTile(tile);
-                                biomeIslandMap[x][y] = biomeIsland;
-                                wasAddedToAdjacentBiomeIsland = true;
-                                break;
+                    Biome_Tile_Type tileType = whittakerDiagram.GetTileType(precipitation, temperature);
+                    tile.SetIndividualBiomeType(tileType.GetMainBiomeForTileType());
+                    tile.SetSpecificBiomeType(tileType);
+                    if (p_data != null) {
+                        //only generate tile tags for random maps, loaded maps will have null MapGenerationData
+                        Tile_Tag tileTag = tilesToSkipTileTag.Contains(tile) ? Tile_Tag.None : RandomizeTileTag(tileType);
+                        tileTagMap[x, y] = tileTag;
+                    
+                        if (tile.tileObjectComponent.objHere == null && tileTag != Tile_Tag.None && !tile.HasNeighbouringWalledStructure()) {
+                            TILE_OBJECT_TYPE tileObjectType = GetRandomTileObjectTypeForTileTag(tileTag, tile, p_data);
+                            if (tileObjectType == TILE_OBJECT_TYPE.BIG_TREE_OBJECT) {
+                                List<LocationGridTile> overlappedTiles = tile.parentMap.GetTiles(new Point(2, 2), tile);
+                                tilesToSkipTileTag.AddRange(overlappedTiles);
+                                RuinarchListPool<LocationGridTile>.Release(overlappedTiles);
                             }
+                            p_data.SetGeneratedMapPerlinDetails(tile, tileObjectType);
+                        } else {
+                            p_data.SetGeneratedMapPerlinDetails(tile, TILE_OBJECT_TYPE.NONE);
                         }
                     }
-                    if (!wasAddedToAdjacentBiomeIsland) {
-                        BiomeIsland biomeIsland = new BiomeIsland(biome);
-                        biomeIsland.AddTile(tile);
-                        allBiomeIslands.Add(biomeIsland);
-                        biomeIslandMap[x][y] = biomeIsland;
-                    }
-                    // yield return null;
                     batchCount++;
                     if (batchCount == MapGenerationData.InnerMapTileGenerationBatches) {
                         batchCount = 0;
@@ -796,58 +799,174 @@ namespace Inner_Maps {
                     }
                 }
             }
+            RuinarchListPool<LocationGridTile>.Release(tilesToSkipTileTag);
+        }
+        protected IEnumerator GraduallyGenerateTileObjects(MapGenerationData p_data) {
+            p_data.SetGeneratingTileObjectsState(true);
+            Stopwatch stopwatch = new Stopwatch();
+            stopwatch.Start();
+            int count = 0;
+            for (int x = 0; x < width; x++) {
+                for (int y = 0; y < height; y++) {
+                    LocationGridTile tile = map[x, y];
+                    TILE_OBJECT_TYPE tileObjectType = p_data.generatedMapPerlinDetailsMap[x][y];
+                    if (tileObjectType != TILE_OBJECT_TYPE.NONE && (tile.structure is Wilderness || tile.structure is Ocean || tile.structure is Cave)) {
+                        Sprite sprite = detailsTilemap.GetSprite(tile.localPlace);
+                        TileObject obj = InnerMapManager.Instance.CreateNewTileObject<TileObject>(tileObjectType);
+                        if (obj is BlockWall blockWall) {
+                            blockWall.SetWallType(WALL_TYPE.Stone);
+                        }
+                        tile.structure.AddPOI(obj, tile);
+                        if (obj.mapObjectVisual != null) {
+                            obj.mapObjectVisual.SetVisual(sprite);    
+                        }
+                        // Debug.Log($"Created {tileObjectType.ToString()} at {tile}");
 
-            //merge same biome islands that are next to each other
-            for (int k = 0; k < 2; k++) {
-                for (int i = 0; i < allBiomeIslands.Count; i++) {
-                    BiomeIsland biomeIsland = allBiomeIslands[i];
-                    for (int j = 0; j < allBiomeIslands.Count; j++) {
-                        BiomeIsland otherIsland = allBiomeIslands[j];
-                        if (biomeIsland != otherIsland && biomeIsland.biome == otherIsland.biome && biomeIsland.IsAdjacentToIsland(otherIsland)) {
-                            biomeIsland.MergeWithIsland(otherIsland);
+                        count++;
+                        int batchCount;
+                        if (p_data.hasFinishedMapGenerationCoroutine) {
+                            if (UIManager.Instance.IsWaitingForTileObjectGenerationToComplete()) {
+                                batchCount = MapGenerationData.TileObjectCreationBatchesWhileWaiting;
+                            } else {
+                                batchCount = MapGenerationData.TileObjectCreationBatchesAfterWorldGeneration;
+                            }
+                        } else {
+                            batchCount = MapGenerationData.TileObjectCreationBatches;
                         }
-                        batchCount++;
-                        if (batchCount == MapGenerationData.InnerMapTileGenerationBatches) {
-                            batchCount = 0;
+                        if (count >= batchCount) {
+                            count = 0;
                             yield return null;
-                        }
+                        }    
                     }
+                    detailsTilemap.SetTile(tile.localPlace, null);
                 }
             }
-            
-            //clean up all biome islands list, remove islands with no tiles.
-            for (int i = 0; i < allBiomeIslands.Count; i++) {
-                BiomeIsland biomeIsland = allBiomeIslands[i];
-                if (biomeIsland.tiles.Count == 0) {
-                    allBiomeIslands.RemoveAt(i);
-                    i--;
-                }
-            }
-            
-            //Remove Biome islands with less that or equal to the minimum amount of tiles.
-            for (int i = 0; i < allBiomeIslands.Count; i++) {
-                BiomeIsland biomeIsland = allBiomeIslands[i];
-                if (biomeIsland.tiles.Count <= BiomeIsland.MinimumTilesInIsland) {
-                    //merge with an adjacent island and set tiles to that biome
-                    BiomeIsland adjacent = biomeIsland.GetFirstAdjacentIsland(allBiomeIslands);
-                    adjacent?.MergeWithIsland(biomeIsland);
-                }
+            stopwatch.Stop();
+            Debug.Log($"{region.name} GraduallyGenerateTileObjects took {stopwatch.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)} seconds to complete.");
+            p_data.SetGeneratingTileObjectsState(false);
+        }
+        private Tile_Tag RandomizeTileTag(Biome_Tile_Type p_tileType) {
+            switch (p_tileType) {
+                case Biome_Tile_Type.Desert:
+                    return GameUtilities.RollChance(10) ? Tile_Tag.Decor : Tile_Tag.None;
+                case Biome_Tile_Type.Oasis:
+                    int oasisRoll = GameUtilities.Roll();
+                    if (oasisRoll < 10) {
+                        return Tile_Tag.Tree;
+                    } else if (oasisRoll < 20) {
+                        return Tile_Tag.Decor;
+                    } else if (oasisRoll < 23) {
+                        return Tile_Tag.Berry_Shrub;
+                    } else {
+                        return Tile_Tag.None;
+                    }
+                case Biome_Tile_Type.Grassland:
+                    int grasslandRoll = GameUtilities.Roll();
+                    if (grasslandRoll < 3) {
+                        return Tile_Tag.Tree;
+                    } else if (grasslandRoll < 18) {
+                        return Tile_Tag.Decor;
+                    } else if (grasslandRoll < 21) {
+                        return Tile_Tag.Berry_Shrub;
+                    } else {
+                        return Tile_Tag.None;
+                    }
+                case Biome_Tile_Type.Jungle:
+                    int jungleRoll = GameUtilities.Roll();
+                    if (jungleRoll < 25) {
+                        return Tile_Tag.Tree;
+                    } else if (jungleRoll < 35) {
+                        return Tile_Tag.Decor;
+                    } else if (jungleRoll < 39) {
+                        return Tile_Tag.Berry_Shrub;
+                    } else {
+                        return Tile_Tag.None;
+                    }
+                case Biome_Tile_Type.Taiga:
+                    int taigaRoll = GameUtilities.Roll();
+                    if (taigaRoll < 12) {
+                        return Tile_Tag.Tree;
+                    } else if (taigaRoll < 22) {
+                        return Tile_Tag.Decor;
+                    } else if (taigaRoll < 25) {
+                        return Tile_Tag.Berry_Shrub;
+                    } else {
+                        return Tile_Tag.None;
+                    }
+                case Biome_Tile_Type.Tundra:
+                    int tundraRoll = GameUtilities.Roll();
+                    if (tundraRoll < 3) {
+                        return Tile_Tag.Tree;
+                    } else if (tundraRoll < 13) {
+                        return Tile_Tag.Decor;
+                    } else if (tundraRoll < 16) {
+                        return Tile_Tag.Berry_Shrub;
+                    } else {
+                        return Tile_Tag.None;
+                    }
+                case Biome_Tile_Type.Snow:
+                    return GameUtilities.RollChance(10) ? Tile_Tag.Decor : Tile_Tag.None;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(p_tileType), p_tileType, null);
             }
         }
-        private IEnumerator MapPerlinDetails(List<LocationGridTile> tiles, int xSize, int ySize, float xSeed, float ySeed) {
-            int batchCount = 0;
-            //flower, rock and garbage
-            for (int i = 0; i < tiles.Count; i++) {
-                LocationGridTile currTile = tiles[i];
-                GenerateDetailOnTile(xSize, ySize, xSeed, ySeed, currTile);    
-            
-                batchCount++;
-                if (batchCount == MapGenerationData.InnerMapDetailBatches) {
-                    batchCount = 0;
-                    yield return null;    
-                }
+        // private IEnumerator MapPerlinDetails(List<LocationGridTile> tiles, int xSize, int ySize, float xSeed, float ySeed) {
+        //     int batchCount = 0;
+        //     
+        //     //flower, rock and garbage
+        //     for (int i = 0; i < tiles.Count; i++) {
+        //         LocationGridTile currTile = tiles[i];
+        //         // GenerateDetailOnTile(xSize, ySize, xSeed, ySeed, currTile);
+        //         Tile_Tag tileTag = tileTagMap[currTile.localPlace.x, currTile.localPlace.y];
+        //         if (currTile.tileObjectComponent.objHere == null && tileTag != Tile_Tag.None && 
+        //             currTile.elevationType == ELEVATION.PLAIN && !currTile.HasNeighbouringWalledStructure()) {
+        //             TILE_OBJECT_TYPE tileObjectType = GetRandomTileObjectTypeForTileTag(tileTag, currTile);
+        //             generatedObjectMap[currTile.localPlace.x][currTile.localPlace.y] = tileObjectType;
+        //             // Sprite sprite = InnerMapManager.Instance.GetTileObjectAsset(tileObjectType, POI_STATE.ACTIVE, currTile.mainBiomeType, false);
+        //             
+        //             // TileObject obj = InnerMapManager.Instance.CreateNewTileObject<TileObject>(tileObjectType);
+        //             // currTile.structure.AddPOI(obj, currTile);
+        //         }
+        //     
+        //         batchCount++;
+        //         if (batchCount == MapGenerationData.InnerMapDetailBatches) {
+        //             batchCount = 0;
+        //             yield return null;    
+        //         }
+        //     }
+        // }
+        private readonly TILE_OBJECT_TYPE[] desertDecorChoices = new[] {TILE_OBJECT_TYPE.FLOWER, TILE_OBJECT_TYPE.PLANT, TILE_OBJECT_TYPE.ROCK, TILE_OBJECT_TYPE.TRASH,};
+        private readonly TILE_OBJECT_TYPE[] snowDecorChoices = new[] {TILE_OBJECT_TYPE.PLANT, TILE_OBJECT_TYPE.ROCK, TILE_OBJECT_TYPE.TRASH};
+        private readonly TILE_OBJECT_TYPE[] grasslandDecorChoices = new[] {TILE_OBJECT_TYPE.FLOWER, TILE_OBJECT_TYPE.PLANT, TILE_OBJECT_TYPE.ROCK, TILE_OBJECT_TYPE.TRASH,};
+        private TILE_OBJECT_TYPE GetRandomTileObjectTypeForTileTag(Tile_Tag p_tag, LocationGridTile p_tile, MapGenerationData p_data) {
+            switch (p_tag) {
+                case Tile_Tag.Decor:
+                    switch (p_tile.mainBiomeType) {
+                        case BIOMES.GRASSLAND:
+                        case BIOMES.FOREST:
+                            return CollectionUtilities.GetRandomElement(grasslandDecorChoices);
+                        case BIOMES.SNOW:
+                            return CollectionUtilities.GetRandomElement(snowDecorChoices);
+                        case BIOMES.DESERT:
+                            return CollectionUtilities.GetRandomElement(desertDecorChoices);
+                        default:
+                            throw new ArgumentOutOfRangeException();
+                    }
+                case Tile_Tag.Tree:
+                    if (BigTreeObject.CanBePlacedOnTileInRandomGeneration(p_tile, p_data)) {
+                        return GameUtilities.RollChance(25) ? TILE_OBJECT_TYPE.BIG_TREE_OBJECT : TILE_OBJECT_TYPE.TREE_OBJECT;    
+                    } else {
+                        return TILE_OBJECT_TYPE.TREE_OBJECT;
+                    }
+                case Tile_Tag.Berry_Shrub:
+                    return TILE_OBJECT_TYPE.BERRY_SHRUB;
+                case Tile_Tag.None:
+                    return TILE_OBJECT_TYPE.NONE;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(p_tag), p_tag, null);
             }
         }
+        
         private void GenerateDetailOnTile(int xSize, int ySize, float xSeed, float ySeed, LocationGridTile currTile) {
             if ((currTile.elevationType == ELEVATION.MOUNTAIN
                  || currTile.elevationType == ELEVATION.WATER)) {
@@ -866,7 +985,7 @@ namespace Inner_Maps {
             if (currTile.tileObjectComponent.objHere == null && currTile.HasNeighbouringWalledStructure() == false) {
                 if (sampleDetail < 0.55f) {
                     if (GameUtilities.RollChance(50)) {
-                        if (currTile.biomeType == BIOMES.TUNDRA || currTile.biomeType == BIOMES.DESERT || currTile.biomeType == BIOMES.SNOW) {
+                        if (currTile.mainBiomeType == BIOMES.TUNDRA || currTile.mainBiomeType == BIOMES.DESERT || currTile.mainBiomeType == BIOMES.SNOW) {
                             TileBase tileBase = GameUtilities.RollChance(60) ? InnerMapManager.Instance.assetManager.shrubTile : InnerMapManager.Instance.assetManager.herbPlantTile;
                             if (tileBase == InnerMapManager.Instance.assetManager.herbPlantTile) {
                                 if (GameUtilities.RollChance(5)) {
@@ -874,7 +993,7 @@ namespace Inner_Maps {
                                     currTile.structure.AddPOI(obj, currTile);
                                 }
                             }
-                        } else if (currTile.biomeType == BIOMES.GRASSLAND || currTile.biomeType == BIOMES.FOREST) {
+                        } else if (currTile.mainBiomeType == BIOMES.GRASSLAND || currTile.mainBiomeType == BIOMES.FOREST) {
                             if (currTile.groundType == LocationGridTile.Ground_Type.Grass) {
                                 TileBase tileBase = GameUtilities.RollChance(60) ? InnerMapManager.Instance.assetManager.shrubTile : InnerMapManager.Instance.assetManager.herbPlantTile;
                                 if (tileBase == InnerMapManager.Instance.assetManager.herbPlantTile) {
@@ -914,17 +1033,17 @@ namespace Inner_Maps {
                 }
 
                 if (GameUtilities.RollChance(3)) {
-                    detailsTilemap.SetTile(currTile.localPlace, InnerMapManager.Instance.assetManager.GetFlowerTile(currTile.biomeType));
+                    detailsTilemap.SetTile(currTile.localPlace, InnerMapManager.Instance.assetManager.GetFlowerTile(currTile.mainBiomeType));
                     Assert.IsNotNull(currTile.structure);
                     ConvertDetailToTileObject(currTile);
                     // TileObject obj = InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.WEREWOLF_PELT);
                     // currTile.structure.AddPOI(obj, currTile);
                 } else if (GameUtilities.RollChance(4)) {
-                    detailsTilemap.SetTile(currTile.localPlace, InnerMapManager.Instance.assetManager.GetRockTile(currTile.biomeType));
+                    detailsTilemap.SetTile(currTile.localPlace, InnerMapManager.Instance.assetManager.GetRockTile(currTile.mainBiomeType));
                     Assert.IsNotNull(currTile.structure);
                     ConvertDetailToTileObject(currTile);
                 } else if (GameUtilities.RollChance(3)) {
-                    detailsTilemap.SetTile(currTile.localPlace, InnerMapManager.Instance.assetManager.GetGarbTile(currTile.biomeType));
+                    detailsTilemap.SetTile(currTile.localPlace, InnerMapManager.Instance.assetManager.GetGarbTile(currTile.mainBiomeType));
                     Assert.IsNotNull(currTile.structure);
                     ConvertDetailToTileObject(currTile);
                 }
@@ -963,9 +1082,12 @@ namespace Inner_Maps {
                 }
             }
         }
-        #endregion
+        
+        
+        
+#endregion
 
-        #region Monobehaviours
+#region Monobehaviours
         public void Update() {
             Character activeCharacter = UIManager.Instance.GetCurrentlySelectedCharacter();
             if (activeCharacter != null && activeCharacter.currentRegion == region
@@ -989,9 +1111,9 @@ namespace Inner_Maps {
                 HidePath();
             }
         }
-        #endregion
+#endregion
 
-        #region Cleanup
+#region Cleanup
         public void CleanUp() {
             for (int x = 0; x < width; x++) {
                 for (int y = 0; y < height; y++) {
@@ -1008,7 +1130,7 @@ namespace Inner_Maps {
             Destroy(centerGo);
             centerGo = null;
         }
-        #endregion
+#endregion
         
     }
 }

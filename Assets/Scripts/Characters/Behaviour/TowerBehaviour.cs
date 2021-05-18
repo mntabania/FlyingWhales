@@ -10,7 +10,9 @@ public class TowerBehaviour : CharacterBehaviourComponent {
 	}
 	public override bool TryDoBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
         producedJob = null;
+#if DEBUG_LOG
         log += $"\n-{character.name} is a tower";
+#endif
 		return true;
 	}
 }

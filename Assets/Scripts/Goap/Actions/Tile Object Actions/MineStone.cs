@@ -25,8 +25,10 @@ public class MineStone : GoapAction {
         SetState("Mine Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
+#if DEBUG_LOG
         string costLog = $"\n{name} {target.nameWithID}: +10(Constant)";
         actor.logComponent.AppendCostLog(costLog);
+#endif
         return 10;
     }
     //public override void OnStopWhilePerforming(ActualGoapNode node) {
@@ -38,9 +40,9 @@ public class MineStone : GoapAction {
     public override bool IsHappinessRecoveryAction() {
         return true;
     }
-    #endregion
+#endregion
 
-    #region Requirements
+#region Requirements
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, OtherData[] otherData, JobQueueItem job) {
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData, job);
         if (satisfied) {
@@ -48,9 +50,9 @@ public class MineStone : GoapAction {
         }
         return false;
     }
-    #endregion
+#endregion
 
-    #region State Effects
+#region State Effects
     public void PreMineSuccess(ActualGoapNode goapNode) {
         Rock rock = goapNode.poiTarget as Rock;
         goapNode.descriptionLog.AddToFillers(null, rock.yield.ToString(), LOG_IDENTIFIER.STRING_1);
@@ -78,5 +80,5 @@ public class MineStone : GoapAction {
         
         InnerMapManager.Instance.CreateNewResourcePileAndTryCreateHaulJob<StonePile>(TILE_OBJECT_TYPE.STONE_PILE, stone, goapNode.actor, tile);
     }
-    #endregion
+#endregion
 }

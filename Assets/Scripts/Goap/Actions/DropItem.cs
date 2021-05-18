@@ -35,8 +35,10 @@ public class DropItem : GoapAction {
         SetState("Drop Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
+#if DEBUG_LOG
         string costLog = $"\n{name} {target.nameWithID}: +10(Constant)";
         actor.logComponent.AppendCostLog(costLog);
+#endif
         return 10;
     }
     public override LocationStructure GetTargetStructure(ActualGoapNode node) {
@@ -67,15 +69,15 @@ public class DropItem : GoapAction {
         GoapActionInvalidity goapActionInvalidity = new GoapActionInvalidity(defaultTargetMissing, stateName, "target_unavailable");
         return goapActionInvalidity;
     }
-    #endregion
+#endregion
 
-    #region Preconditions
+#region Preconditions
     private bool IsItemInInventory(Character actor, IPointOfInterest poiTarget, OtherData[] otherData, JOB_TYPE jobType) {
         return actor.HasItem(poiTarget as TileObject);
     }
-    #endregion
+#endregion
 
-    #region State Effects
+#region State Effects
     public void AfterDropSuccess(ActualGoapNode goapNode) {
         //if current grid location is occupied and cannot get any unoccupied tile from current location, then just let the object disappear
         LocationGridTile tile = goapNode.actor.gridTileLocation;
@@ -92,7 +94,7 @@ public class DropItem : GoapAction {
         //    goapNode.actor.behaviourComponent.SetIsDefending(false, null);
         //}
     }
-    #endregion
+#endregion
 
     private bool IsTargetMissingOverride(ActualGoapNode node) {
         Character actor = node.actor;

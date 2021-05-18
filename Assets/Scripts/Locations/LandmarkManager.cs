@@ -53,35 +53,27 @@ public partial class LandmarkManager : BaseMonoBehaviour {
     #endregion
 
     #region Utilities
-    public LocationStructure GetSpecialStructureOfType(STRUCTURE_TYPE p_structureType) {
-        List<LocationStructure> _allLandmarks = GetAllSpecialStructures();
-        for (int i = 0; i < _allLandmarks.Count; i++) {
-            LocationStructure structure = _allLandmarks[i];
-            if (structure.structureType == p_structureType) {
-                return structure;
-            }
+    public List<LocationStructure> GetStructuresOfType(STRUCTURE_TYPE p_structureType) {
+        Dictionary<STRUCTURE_TYPE, List<LocationStructure>> structureDict = GridMap.Instance.mainRegion.structures;
+        if (structureDict.ContainsKey(p_structureType)) {
+            return structureDict[p_structureType];
         }
         return null;
     }
-    public List<LocationStructure> GetSpecialStructuresOfType(STRUCTURE_TYPE p_structureType) {
-        List<LocationStructure> structures = new List<LocationStructure>();
-        List<LocationStructure> _allLandmarks = GetAllSpecialStructures();
-        for (int i = 0; i < _allLandmarks.Count; i++) {
-            LocationStructure currLandmark = _allLandmarks[i];
-            if (currLandmark.structureType == p_structureType) {
-                structures.Add(currLandmark);
-            }
+    public int GetStructuresOfTypeCount(STRUCTURE_TYPE p_structureType) {
+        int count = 0;
+        List<LocationStructure> structures = GetStructuresOfType(p_structureType);
+        if (structures != null) {
+            count = structures.Count;
         }
-        return structures;
+        return count;
     }
-    public List<LocationStructure> GetAllSpecialStructures() {
-        List<LocationStructure> specialStructures = RuinarchListPool<LocationStructure>.Claim();
+    public void PopulateAllSpecialStructures(List<LocationStructure> specialStructures) {
         foreach (var regionStructure in GridMap.Instance.mainRegion.structures) {
             if (regionStructure.Key.IsSpecialStructure()) {
                 specialStructures.AddRange(regionStructure.Value);
             }
         }
-        return specialStructures;
     }
     #endregion
 
@@ -103,6 +95,10 @@ public partial class LandmarkManager : BaseMonoBehaviour {
             Area tile = tiles[i];
             newNpcSettlement.AddAreaToSettlement(tile);
         }
+        if (saveDataNpcSettlement.reservedAreas != null) {
+            List<Area> reservedAreas = GameUtilities.GetHexTilesGivenCoordinates(saveDataNpcSettlement.reservedAreas, GridMap.Instance.map);
+            newNpcSettlement.AddReservedAreas(reservedAreas);    
+        }
         Messenger.Broadcast(SettlementSignals.SETTLEMENT_CREATED, newNpcSettlement);
         DatabaseManager.Instance.settlementDatabase.RegisterSettlement(newNpcSettlement);
         return newNpcSettlement;
@@ -123,37 +119,29 @@ public partial class LandmarkManager : BaseMonoBehaviour {
             newPlayerSettlement.AddAreaToSettlement(tile);
         }
 
+        if (saveDataPlayerSettlement.reservedAreas != null) {
+            List<Area> reservedAreas = GameUtilities.GetHexTilesGivenCoordinates(saveDataPlayerSettlement.reservedAreas, GridMap.Instance.map);
+            newPlayerSettlement.AddReservedAreas(reservedAreas);    
+        }
+        
         Messenger.Broadcast(SettlementSignals.SETTLEMENT_CREATED, newPlayerSettlement);
         DatabaseManager.Instance.settlementDatabase.RegisterSettlement(newPlayerSettlement);
         return newPlayerSettlement;
     }
-    public NPCSettlement GetRandomVillageSettlement() {
-        List<NPCSettlement> villages = null;
-        for (int i = 0; i < allNonPlayerSettlements.Count; i++) {
-            NPCSettlement settlement = allNonPlayerSettlements[i];
-            if(settlement.locationType == LOCATION_TYPE.VILLAGE) {
-                if(villages == null) { villages = new List<NPCSettlement>(); }
-                villages.Add(settlement);
-            }
-        }
-        if(villages != null && villages.Count > 0) {
-            return villages[UnityEngine.Random.Range(0, villages.Count)];
-        }
-        return null;
-    }
     public NPCSettlement GetRandomActiveSapientSettlement() {
-        List<NPCSettlement> villages = null;
+        List<BaseSettlement> villages = RuinarchListPool<BaseSettlement>.Claim();
         for (int i = 0; i < allNonPlayerSettlements.Count; i++) {
             NPCSettlement settlement = allNonPlayerSettlements[i];
             if(settlement.locationType == LOCATION_TYPE.VILLAGE && settlement.owner != null && settlement.residents.Count > 0 && settlement.owner.race.IsSapient()) {
-                if(villages == null) { villages = new List<NPCSettlement>(); }
                 villages.Add(settlement);
             }
         }
-        if(villages != null && villages.Count > 0) {
-            return villages[UnityEngine.Random.Range(0, villages.Count)];
+        NPCSettlement chosen = null;
+        if(villages.Count > 0) {
+            chosen = villages[UnityEngine.Random.Range(0, villages.Count)] as NPCSettlement;
         }
-        return null;
+        RuinarchListPool<BaseSettlement>.Release(villages);
+        return chosen;
     }
     public NPCSettlement GetFirstVillageSettlementInRegionWithAliveResident(Region region, Faction faction) {
         for (int i = 0; i < allNonPlayerSettlements.Count; i++) {
@@ -329,10 +317,16 @@ public partial class LandmarkManager : BaseMonoBehaviour {
     }
     public bool CanPlaceStructureBlueprint(NPCSettlement npcSettlement, StructureSetting structureToPlace, out LocationGridTile targetTile, out string structurePrefabName, 
         out int connectorToUse, out LocationGridTile connectorTile) {
-        List<StructureConnector> availableStructureConnectors = npcSettlement.GetStructureConnectorsForStructureType(structureToPlace.structureType);
-        availableStructureConnectors = CollectionUtilities.Shuffle(availableStructureConnectors);
+        List<StructureConnector> availableStructureConnectors = RuinarchListPool<StructureConnector>.Claim();
+        npcSettlement.PopulateStructureConnectorsForStructureType(availableStructureConnectors, structureToPlace.structureType);
+        CollectionUtilities.Shuffle(availableStructureConnectors);
         List<GameObject> prefabChoices = InnerMapManager.Instance.GetStructurePrefabsForStructure(structureToPlace);
-        prefabChoices = CollectionUtilities.Shuffle(prefabChoices);
+        CollectionUtilities.Shuffle(prefabChoices);
+        bool canPlace = false;
+        targetTile = null;
+        structurePrefabName = string.Empty;
+        connectorToUse = -1;
+        connectorTile = null;
         for (int j = 0; j < prefabChoices.Count; j++) {
             GameObject prefabGO = prefabChoices[j];
             LocationStructureObject prefabObject = prefabGO.GetComponent<LocationStructureObject>();
@@ -341,14 +335,12 @@ public partial class LandmarkManager : BaseMonoBehaviour {
                 targetTile = tileToPlaceStructure;
                 structurePrefabName = prefabGO.name;
                 connectorToUse = connectorIndex;
-                return true;
+                canPlace = true;
+                break;
             }
         }
-        targetTile = null;
-        structurePrefabName = string.Empty;
-        connectorToUse = -1;
-        connectorTile = null;
-        return false;
+        RuinarchListPool<StructureConnector>.Release(availableStructureConnectors);
+        return canPlace;
     }
     public bool HasEnoughSpaceForStructure(string structurePrefabName, LocationGridTile tileLocation) {
         GameObject ogObject = ObjectPoolManager.Instance.GetOriginalObjectFromPool(structurePrefabName);

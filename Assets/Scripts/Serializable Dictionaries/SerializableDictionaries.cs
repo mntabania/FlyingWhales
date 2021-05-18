@@ -106,6 +106,12 @@ public class StructureDataDictionary : SerializableDictionary<STRUCTURE_TYPE, St
 public class IntChancesDictionary : SerializableDictionary<CHANCE_TYPE, int> { }
 [System.Serializable]
 public class PowerAndLevelDictionary : SerializableDictionary<PLAYER_SKILL_TYPE, int> { }
+[System.Serializable]
+public class TileTypeAssetDictionary : SerializableDictionary<Biome_Tile_Type, TileBase> { }
+[System.Serializable]
+public class TemperatureTypeDictionary : SerializableDictionary<Temperature_Type, Range> { }
+[System.Serializable]
+public class PrecipitationTypeDictionary : SerializableDictionary<Precipitation_Type, Range> { }
 
 //List storage
 [System.Serializable]

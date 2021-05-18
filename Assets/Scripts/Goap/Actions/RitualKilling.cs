@@ -36,8 +36,10 @@ public class RitualKilling : GoapAction {
         SetState("Killing Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
+#if DEBUG_LOG
         string costLog = $"\n{name} {target.nameWithID}: +10(Constant)";
         actor.logComponent.AppendCostLog(costLog);
+#endif
         return 10;
     }
     public override Precondition GetPrecondition(Character actor, IPointOfInterest target, OtherData[] otherData, JOB_TYPE jobType, out bool isOverridden) {
@@ -126,9 +128,9 @@ public class RitualKilling : GoapAction {
     public override CRIME_TYPE GetCrimeType(Character actor, IPointOfInterest target, ActualGoapNode crime) {
         return CRIME_TYPE.Murder;
     }
-    #endregion
+#endregion
 
-    #region Requirements
+#region Requirements
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, OtherData[] otherData, JobQueueItem job) {
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData, job);
         if (satisfied) {
@@ -156,9 +158,9 @@ public class RitualKilling : GoapAction {
     private bool HasRestrained(Character actor, IPointOfInterest target, OtherData[] otherData, JOB_TYPE jobType) {
         return target.traitContainer.HasTrait("Restrained");
     }
-    #endregion
+#endregion
 
-    #region State Effects
+#region State Effects
     public void PreKillingSuccess(ActualGoapNode goapNode) {
         
     }
@@ -172,5 +174,5 @@ public class RitualKilling : GoapAction {
             targetCharacter.reactionComponent.AddCharacterThatSawThisDead(goapNode.actor);
         }
     }
-    #endregion
+#endregion
 }

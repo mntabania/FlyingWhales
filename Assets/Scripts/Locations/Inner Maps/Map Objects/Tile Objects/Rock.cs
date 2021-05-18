@@ -27,7 +27,7 @@ public class Rock : TileObject{
         SetYield(50);
         BaseSettlement.onSettlementBuilt += UpdateSettlementResourcesParent;
     }
-    public Rock(SaveDataTileObject data) { }
+    public Rock(SaveDataTileObject data) : base(data) { }
     protected override void CreateMapObjectVisual() {
         base.CreateMapObjectVisual();
         _rockGameObject = mapVisual as RockGameObject;

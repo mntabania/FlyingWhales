@@ -29,8 +29,10 @@ public class SleepOutside : GoapAction {
         SetState("Rest Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
+#if DEBUG_LOG
         string costLog = $"\n{name} {target.nameWithID}: +160(Constant)";
         actor.logComponent.AppendCostLog(costLog);
+#endif
         return 160;
     }
     public override void OnStopWhilePerforming(ActualGoapNode node) {
@@ -38,9 +40,9 @@ public class SleepOutside : GoapAction {
         Character actor = node.actor;
         actor.traitContainer.RemoveTrait(actor, "Resting");
     }
-    #endregion
+#endregion
 
-    #region Requirements
+#region Requirements
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, OtherData[] otherData, JobQueueItem job) { 
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData, job);
         if (satisfied) {
@@ -54,9 +56,9 @@ public class SleepOutside : GoapAction {
         }
         return false;
     }
-    #endregion
+#endregion
 
-    #region State Effects
+#region State Effects
     public void PreRestSuccess(ActualGoapNode goapNode) {
         goapNode.actor.traitContainer.AddTrait(goapNode.actor, "Resting");
         //GoapActionState currentState = goapNode.action.states[goapNode.currentStateName];
@@ -78,5 +80,5 @@ public class SleepOutside : GoapAction {
     public void AfterRestSuccess(ActualGoapNode goapNode) {
         goapNode.actor.traitContainer.RemoveTrait(goapNode.actor, "Resting");
     }
-    #endregion
+#endregion
 }

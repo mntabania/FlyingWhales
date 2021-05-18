@@ -24,8 +24,10 @@ public class FoundCultData : PlayerAction {
             Messenger.Broadcast(PlayerSkillSignals.RELOAD_PLAYER_ACTIONS, targetPOI as IPlayerActionTarget);
             if (!WorldSettings.Instance.worldSettingsData.villageSettings.disableNewVillages) {
                 if (!character.currentRegion.IsRegionVillageCapacityReached()) {
-                    Area targetArea = character.currentRegion.GetRandomHexThatMeetCriteria(a => a.elevationType != ELEVATION.WATER && a.elevationType != ELEVATION.MOUNTAIN && !a.structureComponent.HasStructureInArea() && !a.IsNextToOrPartOfVillage() && !a.gridTileComponent.HasCorruption());
-                    if (targetArea != null) {
+                    // Area targetArea = character.currentRegion.GetRandomHexThatMeetCriteria(a => a.elevationType != ELEVATION.WATER && a.elevationType != ELEVATION.MOUNTAIN && !a.structureComponent.HasStructureInArea() && !a.IsNextToOrPartOfVillage() && !a.gridTileComponent.HasCorruption());
+                    VillageSpot villageSpot = character.currentRegion.GetRandomUnoccupiedVillageSpot();
+                    if (villageSpot != null) {
+                        Area targetArea = villageSpot.mainSpot;
                         StructureSetting structureSetting = new StructureSetting(STRUCTURE_TYPE.CITY_CENTER, character.faction.factionType.mainResource, character.faction.factionType.usesCorruptedStructures);
                         List<GameObject> choices = InnerMapManager.Instance.GetStructurePrefabsForStructure(structureSetting);
                         GameObject chosenStructurePrefab = CollectionUtilities.GetRandomElement(choices);

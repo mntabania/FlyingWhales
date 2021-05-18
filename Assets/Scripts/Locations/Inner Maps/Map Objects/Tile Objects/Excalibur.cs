@@ -34,7 +34,7 @@ public class Excalibur : TileObject {
         _traitsGainedByCurrentOwner = new List<string>();
         _finishedCharacters = new HashSet<int>();
     }
-    public Excalibur(SaveDataExcalibur data) {
+    public Excalibur(SaveDataExcalibur data) : base(data) {
         //SaveDataExcalibur saveDataExcalibur = data as SaveDataExcalibur;
         Assert.IsNotNull(data);
         _traitsGainedByCurrentOwner = data.traitsGainedByCurrentOwner; //new List<string>(data.traitsGainedByCurrentOwner);

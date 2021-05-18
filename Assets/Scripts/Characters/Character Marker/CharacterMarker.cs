@@ -75,9 +75,11 @@ public class CharacterMarker : MapObjectVisual<Character> {
         get => _previousGridTile;
         set {
             _previousGridTile = value;
+#if DEBUG_LOG
             if (_previousGridTile == null) {
                 Debug.Log($"Previous grid tile was set to null");
             }
+#endif
         } 
     }
 
@@ -94,14 +96,14 @@ public class CharacterMarker : MapObjectVisual<Character> {
     public bool useCanTraverse;
     public float endReachedDistance;
 
-    #region Getters
+#region Getters
     public GameDate destroyDate => _destroyDate;
     public bool hasExpiry => !string.IsNullOrEmpty(_destroySchedule);
     public bool isMainVisualActive => mainImg.gameObject.activeSelf;
     public CharacterMarkerAnimationListener animationListener => _animationListener;
     public int sortingOrder => mainImg.sortingOrder;
     public CharacterMarkerNameplate nameplate => _nameplate;
-    #endregion
+#endregion
     
     public void SetCharacter(Character character) {
         base.Initialize(character);
@@ -157,7 +159,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         // UpdateNameplatePosition();
     }
 
-    #region Monobehavior
+#region Monobehavior
     private void OnDisable() {
         if (LevelLoaderManager.Instance.isLoadingNewScene) { return; }
         if (UIManager.Instance == null) { return; }
@@ -182,16 +184,22 @@ public class CharacterMarker : MapObjectVisual<Character> {
     public void ManualUpdate() {
         if (GameManager.Instance.gameHasStarted && !GameManager.Instance.isPaused) {
             if (character.isBeingSeized) { return; }
+#if DEBUG_PROFILER
             Profiler.BeginSample($"{character.name} - Attack Speed Meter");
+#endif
             if (attackSpeedMeter < character.combatComponent.attackSpeed) {
                 attackSpeedMeter += ((Time.deltaTime * 1000f) * progressionSpeedMultiplier);
                 UpdateAttackSpeedMeter();
             }
+#if DEBUG_PROFILER
             Profiler.EndSample();
 
             Profiler.BeginSample($"{character.name} - Pathfinding Update Me Call");
+#endif
             pathfindingAI.UpdateMe();
+#if DEBUG_PROFILER
             Profiler.EndSample();
+#endif
         }
     }
     private void LateUpdate() {
@@ -207,9 +215,9 @@ public class CharacterMarker : MapObjectVisual<Character> {
             mainImg.sprite = newSprite;
         }
     }
-    #endregion
+#endregion
 
-    #region Placement
+#region Placement
     /// <summary>
     /// Used for placing a character for the first time.
     /// </summary>
@@ -288,9 +296,9 @@ public class CharacterMarker : MapObjectVisual<Character> {
             _nameplate.UpdateNameActiveState();
         }
     }
-    #endregion
+#endregion
     
-    #region Pointer Functions
+#region Pointer Functions
     protected override void OnPointerLeftClick(Character poi) {
         base.OnPointerLeftClick(poi);
         UIManager.Instance.ShowCharacterInfo(character, true);
@@ -384,9 +392,9 @@ public class CharacterMarker : MapObjectVisual<Character> {
             _nameplate.UpdateNameActiveState();
         }
     }
-    #endregion
+#endregion
 
-    #region Listeners
+#region Listeners
     private void AddListeners() {
         Messenger.AddListener<PROGRESSION_SPEED>(UISignals.PROGRESSION_SPEED_CHANGED, OnProgressionSpeedChanged);
         Messenger.AddListener<Character, Trait>(CharacterSignals.CHARACTER_TRAIT_ADDED, OnCharacterGainedTrait);
@@ -434,9 +442,11 @@ public class CharacterMarker : MapObjectVisual<Character> {
     }
     private void OnCharacterLostTrait(Character character, Trait trait) {
         if (character == this.character) {
+#if DEBUG_LOG
             string lostTraitSummary =
                 $"{character.name} has <color=red>lost</color> trait <b>{trait.name}</b>";
             character.logComponent.PrintLogIfActive(lostTraitSummary);
+#endif
             UpdateAnimation();
             UpdateActionIcon();
         }
@@ -475,12 +485,15 @@ public class CharacterMarker : MapObjectVisual<Character> {
         }
     }
     private void SelfGainedTrait(Character characterThatGainedTrait, Trait trait) {
+#if DEBUG_LOG
         string gainTraitSummary = $"{GameManager.Instance.TodayLogString()}{characterThatGainedTrait.name} has <color=green>gained</color> trait <b>{trait.name}</b>";
-       
+#endif
         if (!characterThatGainedTrait.limiterComponent.canPerform) {
             if (character.combatComponent.isInCombat) {
                 characterThatGainedTrait.stateComponent.ExitCurrentState();
+#if DEBUG_LOG
                 gainTraitSummary += "\nGained trait hinders performance, and characters current state is combat, exiting combat state.";
+#endif
             }
 
             //Once a character has a negative disabler trait, clear hostile and avoid list
@@ -489,7 +502,10 @@ public class CharacterMarker : MapObjectVisual<Character> {
         }
         UpdateAnimation();
         UpdateActionIcon();
+
+#if DEBUG_LOG
         character.logComponent.PrintLogIfActive(gainTraitSummary);
+#endif
     }
     private void OtherCharacterGainedTrait(Character otherCharacter, Trait trait) {
         if (trait.name == "Invisible") {
@@ -539,9 +555,9 @@ public class CharacterMarker : MapObjectVisual<Character> {
             _nameplate.UpdateNameActiveState();
         }
     }
-    #endregion
+#endregion
 
-    #region UI
+#region UI
     private void OnProgressionSpeedChanged(PROGRESSION_SPEED progSpeed) {
         if (progSpeed == PROGRESSION_SPEED.X1) {
             progressionSpeedMultiplier = 1f;
@@ -565,18 +581,18 @@ public class CharacterMarker : MapObjectVisual<Character> {
         _nameplate = nameplateGO.GetComponent<CharacterMarkerNameplate>();
         _nameplate.Initialize(this);
     }
-    #endregion
+#endregion
 
-    #region Action Icon
+#region Action Icon
     public void UpdateActionIcon() {
         //Do not show action icon if character is invisible
         if (_nameplate && isMainVisualActive) {
             _nameplate.UpdateActionIcon();    
         }
     }
-    #endregion
+#endregion
 
-    #region Object Pool
+#region Object Pool
     public override void Reset() {
         base.Reset(); 
         TryCancelExpiry();
@@ -633,9 +649,9 @@ public class CharacterMarker : MapObjectVisual<Character> {
             }
         }
     }
-    #endregion
+#endregion
 
-    #region Pathfinding Movement
+#region Pathfinding Movement
     public void GoTo(LocationGridTile destinationTile, Action arrivalAction = null) {
         if (character.movementComponent.isStationary) {
             return;
@@ -800,9 +816,13 @@ public class CharacterMarker : MapObjectVisual<Character> {
         Action action = arrivalAction;
         //set arrival action to null, because some arrival actions set it
         ClearArrivalAction();
+#if DEBUG_PROFILER
         Profiler.BeginSample($"{character.name} - Arrived At Target - Action Invoke");
-        action?.Invoke();   
+#endif
+        action?.Invoke();
+#if DEBUG_PROFILER
         Profiler.EndSample();
+#endif
         
         // if (actualDestinationTile == attainedDestinationTile || (attainedDestinationTile != null && actualDestinationTile != null && attainedDestinationTile.IsNeighbour(actualDestinationTile))) {
         //     Action action = arrivalAction;
@@ -862,9 +882,13 @@ public class CharacterMarker : MapObjectVisual<Character> {
     }
     private void PerTickMovement() {
         if (isMoving) {
+#if DEBUG_PROFILER
             Profiler.BeginSample($"{character.name} PerTickMovement");
-            character.PerTickDuringMovement();    
+#endif
+            character.PerTickDuringMovement();
+#if DEBUG_PROFILER
             Profiler.EndSample();
+#endif
         }
     }
     /// <summary>
@@ -917,9 +941,9 @@ public class CharacterMarker : MapObjectVisual<Character> {
     public void ClearArrivalAction() {
          arrivalAction = null;
     }
-    #endregion
+#endregion
 
-    #region For Testing
+#region For Testing
     public void BerserkedMarker() {
         if(mainImg.color == Color.white) {
             SetMarkerColor(Color.red);
@@ -942,9 +966,9 @@ public class CharacterMarker : MapObjectVisual<Character> {
     public void ForceUpdateVisuals() {
         character.visuals.UpdateAllVisuals(character);
     }
-    #endregion
+#endregion
 
-    #region Animation
+#region Animation
     private void UpdateAnimatorController() {
         animator.runtimeAnimatorController = character.isNormalCharacter || character.characterClass.rangeType == RANGE_TYPE.RANGED ? defaultController : monsterController;
     }
@@ -1070,9 +1094,9 @@ public class CharacterMarker : MapObjectVisual<Character> {
             animator.speed = 1f * progressionSpeedMultiplier;
         }
     }
-    #endregion
+#endregion
 
-    #region Utilities
+#region Utilities
     private void UpdateSortingOrder() {
         var characterSortingOrder = InnerMapManager.DefaultCharacterSortingOrder + character.id;
         mainImg.sortingOrder = characterSortingOrder;
@@ -1086,7 +1110,9 @@ public class CharacterMarker : MapObjectVisual<Character> {
         hpBarGO.GetComponent<Canvas>().sortingOrder = InnerMapManager.DefaultCharacterSortingOrder - 1;
     }
     private new void SetActiveState(bool state) {
+#if DEBUG_LOG
         Debug.Log($"Set active state of {this.name} to {state}");
+#endif
         this.gameObject.SetActive(state);
     }
     /// <summary>
@@ -1139,43 +1165,67 @@ public class CharacterMarker : MapObjectVisual<Character> {
     public void UpdatePosition() {
         //This is checked per update, stress test this for performance
         //I'm keeping a separate field called anchoredPos instead of using the rect transform anchoredPosition directly because the multithread cannot access transform components
+#if DEBUG_PROFILER
         Profiler.BeginSample($"{character.name} Set Grid Tile Position");
+#endif
         character.SetGridTilePosition(transform.localPosition);
+#if DEBUG_PROFILER
         Profiler.EndSample();
+#endif
 
         if (previousGridTile != character.gridTileLocation && character.gridTileLocation != null) {
+#if DEBUG_PROFILER
             Profiler.BeginSample($"{character.name} On Character Moved To");
+#endif
             character.gridTileLocation.parentMap.OnCharacterMovedTo(character, character.gridTileLocation, previousGridTile);
+#if DEBUG_PROFILER
             Profiler.EndSample();
+#endif
             if(character != null) {
                 previousGridTile = character.gridTileLocation;
                 if (_previousAreaLocation == null || (_previousAreaLocation != character.areaLocation)) {
                     if (_previousAreaLocation != null) {
                         _previousAreaLocation.locationCharacterTracker.RemoveCharacterFromLocation(character);
-                        
-                        Profiler.BeginSample($"{character.name} Character Exited Hextile Broadcast");
-                        Messenger.Broadcast(CharacterSignals.CHARACTER_EXITED_AREA, character, _previousAreaLocation);
-                        Profiler.EndSample();
 
+#if DEBUG_PROFILER
+                        Profiler.BeginSample($"{character.name} Character Exited Hextile Broadcast");
+#endif
+                        Messenger.Broadcast(CharacterSignals.CHARACTER_EXITED_AREA, character, _previousAreaLocation);
+#if DEBUG_PROFILER
+                        Profiler.EndSample();
+#endif
+
+#if DEBUG_PROFILER
                         Profiler.BeginSample($"{character.name} Remove From Awareness List");
+#endif
                         if(character.currentLocationAwareness == _previousAreaLocation.locationAwareness) {
                             LocationAwarenessUtility.RemoveFromAwarenessList(character);
                         }
+#if DEBUG_PROFILER
                         Profiler.EndSample();
+#endif
                     }
                     
                     //When character enters new hex tile it becomes the previous hex tile altogether
                     _previousAreaLocation = character.areaLocation;
                     
                     _previousAreaLocation.locationCharacterTracker.AddCharacterAtLocation(character);
-                    
+
+#if DEBUG_PROFILER
                     Profiler.BeginSample($"{character.name} Character Entered Hextile Broadcast");
+#endif
                     Messenger.Broadcast(CharacterSignals.CHARACTER_ENTERED_AREA, character, _previousAreaLocation); //character.gridTileLocation.hexTileOwner
+#if DEBUG_PROFILER
                     Profiler.EndSample();
-                    
+#endif
+
+#if DEBUG_PROFILER
                     Profiler.BeginSample($"{character.name} Add To Awareness List");
+#endif
                     LocationAwarenessUtility.AddToAwarenessList(character, character.gridTileLocation);
+#if DEBUG_PROFILER
                     Profiler.EndSample();
+#endif
                 }
             }
         }
@@ -1299,9 +1349,9 @@ public class CharacterMarker : MapObjectVisual<Character> {
         }
         return false;
     }
-    #endregion
+#endregion
 
-    #region Vision Collision
+#region Vision Collision
     private void CreateCollisionTrigger() {
         visionTrigger = InnerMapManager.Instance.mapObjectFactory.CreateAndInittializeCharacterVisionTrigger(character);
     }
@@ -1359,11 +1409,13 @@ public class CharacterMarker : MapObjectVisual<Character> {
         ClearUnprocessedActions();
     }
     public void LogPOIsInVisionRange() {
+#if DEBUG_LOG
         string summary = $"{character.name}'s POIs in range: ";
         for (int i = 0; i < inVisionPOIs.Count; i++) {
             summary += $"\n- {inVisionPOIs[i]}";
         }
         Debug.Log(summary);
+#endif
     }
     private void OnAddPOIAsInVisionRange(IPointOfInterest poi) {
         if (character.currentActionNode != null && character.currentActionNode.target == poi && character.currentActionNode.action.IsInvalidOnVision(character.currentActionNode, out var reason)) {
@@ -1431,7 +1483,9 @@ public class CharacterMarker : MapObjectVisual<Character> {
         // string log = $"{character.name} tick ended! Processing all unprocessed in visions...";
         if (unprocessedVisionPOIs.Count > 0) {
             if (!character.isDead && character.reactionComponent.disguisedCharacter == null /* && character.limiterComponent.canWitness*/) { //character.traitContainer.GetNormalTrait<Trait>("Unconscious", "Resting", "Zapped") == null
+#if DEBUG_PROFILER
                 Profiler.BeginSample($"{character.name} ProcessAllUnprocessedVisionPOIs - Objects");
+#endif
                 for (int i = 0; i < unprocessedVisionPOIs.Count; i++) {
                     IPointOfInterest poi = unprocessedVisionPOIs[i];
                     if (poi.mapObjectVisual == null) {
@@ -1464,7 +1518,9 @@ public class CharacterMarker : MapObjectVisual<Character> {
                     }
                     character.ThisCharacterSaw(poi, reactToActionOnly);
                 }
+#if DEBUG_PROFILER
                 Profiler.EndSample();
+#endif
             } else {
                 // log = $"{log}\n - Character is either dead, not processing...";
             }
@@ -1472,7 +1528,9 @@ public class CharacterMarker : MapObjectVisual<Character> {
         }
         if (unprocessedActionsOnly.Count > 0) {
             if (!character.isDead) {
+#if DEBUG_PROFILER
                 Profiler.BeginSample($"{character.name} ProcessAllUnprocessedVisionPOIs - Actions");
+#endif
                 for (int i = 0; i < unprocessedActionsOnly.Count; i++) {
                     ActualGoapNode action = unprocessedActionsOnly[i];
                     Character actor = action.actor;
@@ -1486,7 +1544,9 @@ public class CharacterMarker : MapObjectVisual<Character> {
                     }
                     character.ThisCharacterSawAction(action);
                 }
+#if DEBUG_PROFILER
                 Profiler.EndSample();
+#endif
             } else {
                 // log = $"{log}\n - Character is either dead, not processing...";
             }
@@ -1502,9 +1562,9 @@ public class CharacterMarker : MapObjectVisual<Character> {
         if (character == null) { return false; }
         return poi.CanBeSeenBy(character); //(poi is Character character && inVisionCharacters.Contains(character)) || (poi is TileObject tileObject && inVisionTileObjects.Contains(tileObject));
     }
-    #endregion
+#endregion
 
-    #region Hosility Collision
+#region Hosility Collision
     //public bool AddHostileInRange(IPointOfInterest poi, bool checkHostility = true, bool processCombatBehavior = true, bool isLethal = true, bool gotHit = false) {
     //    if (!IsHostileInRange(poi)) {
     //        //&& !this.character.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE) 
@@ -1656,9 +1716,9 @@ public class CharacterMarker : MapObjectVisual<Character> {
     //    }
     //    return false;
     //}
-    #endregion
+#endregion
 
-    #region Avoid In Range
+#region Avoid In Range
     //public bool AddAvoidInRange(IPointOfInterest poi, bool processCombatBehavior = true, string reason = "") {
     //    if (poi is Character) {
     //        return AddAvoidInRange(poi as Character, processCombatBehavior, reason);
@@ -1764,9 +1824,9 @@ public class CharacterMarker : MapObjectVisual<Character> {
     //        }
     //    }
     //}
-    #endregion
+#endregion
 
-    #region Flee
+#region Flee
     public void OnStartFlee() {
         if (!hasFleePath) {
             //Only clear path on the first start of flee, once the character is already in flee path and decided to flee again do not clear path anymore
@@ -1943,9 +2003,9 @@ public class CharacterMarker : MapObjectVisual<Character> {
         avoidThisPositions.Add(avoid);
         ReconstructFleePath();
     }
-    #endregion
+#endregion
 
-    #region Combat
+#region Combat
     public void UpdateAttackSpeedMeter() {
         if (hpBarGO.activeSelf) {
             aspeedFill.fillAmount = attackSpeedMeter / character.combatComponent.attackSpeed;
@@ -1993,9 +2053,9 @@ public class CharacterMarker : MapObjectVisual<Character> {
         }
         return false;
     }
-    #endregion
+#endregion
 
-    #region Colliders
+#region Colliders
     public void SetCollidersState(bool state) {
         //for (int i = 0; i < collider.Length; i++) {
         //    collider[i].enabled = state;
@@ -2012,9 +2072,9 @@ public class CharacterMarker : MapObjectVisual<Character> {
             collider.size = new Vector2(size, size);    
         }
     }
-    #endregion
+#endregion
 
-    #region Map Object Visual
+#region Map Object Visual
     public override void UpdateTileObjectVisual(Character obj) { }
     public virtual void ApplyFurnitureSettings(FurnitureSetting furnitureSetting) { }
     public override void SetVisualAlpha(float alpha) {
@@ -2028,9 +2088,9 @@ public class CharacterMarker : MapObjectVisual<Character> {
         color.a = alpha;
         knockedOutHairImg.color = color;
     }
-    #endregion
+#endregion
 
-    #region Seize
+#region Seize
     public void OnSeize() {
         Character _character = character;
         //TODO: Change logic of this, only quick fix for webbbed characters that are seized
@@ -2045,9 +2105,9 @@ public class CharacterMarker : MapObjectVisual<Character> {
     public void OnUnseize() {
         buttonCollider.enabled = true;
     }
-    #endregion
+#endregion
 
-    #region Expiry
+#region Expiry
     public void TryCancelExpiry() {
         if (String.IsNullOrEmpty(_destroySchedule) == false) {
             SchedulingManager.Instance.RemoveSpecificEntry(_destroySchedule);
@@ -2059,7 +2119,9 @@ public class CharacterMarker : MapObjectVisual<Character> {
             _destroyDate = GameManager.Instance.Today();
             _destroyDate.AddDays(3);
             // _destroyDate.AddTicks(3);
+#if DEBUG_LOG
             Debug.Log($"{character.name}'s marker will expire at {_destroyDate.ConvertToContinuousDaysWithTime()}");
+#endif
             _destroySchedule = SchedulingManager.Instance.AddEntry(_destroyDate, TryExpire, character);    
         }
     }
@@ -2088,14 +2150,16 @@ public class CharacterMarker : MapObjectVisual<Character> {
         
     }
     private void Expire() {
+#if DEBUG_LOG
         Debug.Log($"{character.name}'s marker has expired.");
+#endif
         character.ForceCancelAllJobsTargetingThisCharacter(false);
         Messenger.Broadcast(CharacterSignals.CHARACTER_MARKER_EXPIRED, character);
         character.DestroyMarker();
     }
-    #endregion
+#endregion
 
-    #region Nameplate
+#region Nameplate
     public void ShowThoughtsAndNameplate() {
         if (!_nameplate) {
             return;
@@ -2114,11 +2178,13 @@ public class CharacterMarker : MapObjectVisual<Character> {
         }
         _nameplate.UpdateElementsStateBasedOnActiveCharacter();
     }
-    #endregion
+#endregion
 
-    #region Stroll
+#region Stroll
     public void DoStrollMovement() {
+#if DEBUG_PROFILER
         Profiler.BeginSample($"{character.name} - Do Stroll Movement");
+#endif
         StopMovement();
         pathfindingAI.ClearAllCurrentPathData();
         ConstantPath constantPath = ConstantPath.Construct(transform.position, 10000, OnStrollPathComputed);
@@ -2133,7 +2199,9 @@ public class CharacterMarker : MapObjectVisual<Character> {
         //     }
         // }
         UpdateAnimation();
+#if DEBUG_PROFILER
         Profiler.EndSample();
+#endif
     }
     public void OnStrollPathComputed(Path path) {
         if (character == null) {
@@ -2153,18 +2221,18 @@ public class CharacterMarker : MapObjectVisual<Character> {
                 
         }
     }
-    #endregion
+#endregion
 
-    #region Tags
+#region Tags
     public void UpdateTraversableTags() {
         seeker.traversableTags = character.movementComponent.traversableTags;
     }
     public void UpdateTagPenalties() {
         seeker.tagPenalties = character.movementComponent.tagPenalties;
     }
-    #endregion
+#endregion
 
-    #region Effects
+#region Effects
     public void ShowHealthAdjustmentEffect(int damage) {
         Color color = damage > 0 ? Color.green : Color.red;
         float startSize = 1.5f;
@@ -2175,5 +2243,5 @@ public class CharacterMarker : MapObjectVisual<Character> {
         float startSize = 1.5f;
         textRendererParticleSystem.SpawnParticle(transform.position, damage, color, startSize);
     }
-    #endregion
+#endregion
 }

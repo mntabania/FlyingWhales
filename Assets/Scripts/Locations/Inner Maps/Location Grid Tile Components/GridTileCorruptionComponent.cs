@@ -124,7 +124,9 @@ namespace Inner_Maps {
                     TILE_OBJECT_TYPE tileObjectType = CollectionUtilities.GetRandomElement(GameUtilities.corruptionTileObjectChoices);
                     TileObject createdDecor = InnerMapManager.Instance.CreateNewTileObject<TileObject>(tileObjectType);
                     owner.structure.AddPOI(createdDecor, owner);
+#if DEBUG_LOG
                     Debug.Log($"Placed random demonic decor {createdDecor.name} at {owner.ToString()}");
+#endif
                 }
                 // owner.mouseEventsComponent.SetMouseEventsForAllNeighbours(true);
                 owner.mouseEventsComponent.UpdateHasMouseEventsForAllNeighbours();
@@ -177,9 +179,9 @@ namespace Inner_Maps {
         public bool CanDisruptCorruptionOfTile() {
             return !isCorrupted && isCurrentlyBeingCorrupted;
         }
-        #endregion
+#endregion
 
-        #region Demonic Wall
+#region Demonic Wall
         public void StartBuildDemonicWall() {
             if (CanBuildDemonicWall()) {
                 if (!_buildSmokeEffect) {
@@ -237,9 +239,9 @@ namespace Inner_Maps {
         public bool CanDestroyDemonicWall() {
             return isCorrupted && !wallIsBeingDestroyed && !wallIsBeingBuilt && owner.tileObjectComponent.objHere is BlockWall wall && wall.wallType == WALL_TYPE.Demon_Stone;
         }
-        #endregion
+#endregion
 
-        #region Loading
+#region Loading
         public void LoadSecondWave() {
             if (isCurrentlyBeingCorrupted) {
                 if (!_buildSmokeEffect) {
@@ -262,7 +264,7 @@ namespace Inner_Maps {
                 owner.mouseEventsComponent.OnHoverExit();
             }
         }
-        #endregion
+#endregion
     }
     public class SaveDataGridTileCorruptionComponent : SaveData<GridTileCorruptionComponent>
     {

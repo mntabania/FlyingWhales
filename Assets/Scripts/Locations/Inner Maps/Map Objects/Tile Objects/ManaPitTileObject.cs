@@ -11,7 +11,7 @@ public class ManaPitTileObject : TileObject {
         RemoveAdvertisedAction(INTERACTION_TYPE.STEAL_ANYTHING);
         traitContainer.AddTrait(this, "Immovable");
     }
-    public ManaPitTileObject(SaveDataTileObject data) {
+    public ManaPitTileObject(SaveDataTileObject data) : base(data) {
         
     }
     public override bool CanBeSelected() {

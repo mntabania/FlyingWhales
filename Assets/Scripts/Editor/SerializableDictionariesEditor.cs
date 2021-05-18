@@ -97,6 +97,12 @@ public class StructureDataDictionaryPropertyDrawer : SerializableDictionaryPrope
 public class IntChancesDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
 [CustomPropertyDrawer(typeof(PowerAndLevelDictionary))]
 public class PowerAndLevelDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
+[CustomPropertyDrawer(typeof(TileTypeAssetDictionary))]
+public class TileTypeAssetDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
+[CustomPropertyDrawer(typeof(TemperatureTypeDictionary))]
+public class TemperatureTypeDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
+[CustomPropertyDrawer(typeof(PrecipitationTypeDictionary))]
+public class PrecipitationTypeDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
 
 //list storage
 [CustomPropertyDrawer(typeof(LandmarkSpriteListStorage))]

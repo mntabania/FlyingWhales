@@ -27,20 +27,26 @@ public class RemoveFreezing : GoapAction {
         SetState("Remove Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
-        string costLog = "";
+#if DEBUG_LOG
+        string costLog = string.Empty;
+#endif
         if (target.gridTileLocation != null && actor.movementComponent.structuresToAvoid.Contains(target.gridTileLocation.structure)) {
             //target is at structure that character is avoiding
+#if DEBUG_LOG
             costLog += $" +2000(Location of target is in avoid structure)";
             actor.logComponent.AppendCostLog(costLog);
+#endif
             return 2000;
         }
+#if DEBUG_LOG
         costLog = $"\n{name} {target.nameWithID}: +10(Constant)";
         actor.logComponent.AppendCostLog(costLog);
+#endif
         return 10;
     }
-    #endregion
+#endregion
 
-    #region State Effects
+#region State Effects
     public void AfterRemoveSuccess(ActualGoapNode goapNode) {
         //**Effect 1**: Remove Poisoned Trait from target table
         goapNode.poiTarget.traitContainer.RemoveStatusAndStacks(goapNode.poiTarget, "Freezing");
@@ -57,9 +63,9 @@ public class RemoveFreezing : GoapAction {
         //}
        
     }
-    #endregion
+#endregion
 
-    #region Requirement
+#region Requirement
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, OtherData[] otherData, JobQueueItem job) {
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData, job);
         if (satisfied) {
@@ -70,11 +76,11 @@ public class RemoveFreezing : GoapAction {
         }
         return false;
     }
-    #endregion
+#endregion
 
-    #region Preconditions
+#region Preconditions
     private bool HasWaterFlask(Character actor, IPointOfInterest poiTarget, object[] otherData, JOB_TYPE jobType) {
         return actor.HasItem(TILE_OBJECT_TYPE.WATER_FLASK);
     }
-    #endregion
+#endregion
 }

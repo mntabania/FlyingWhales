@@ -19,7 +19,7 @@ public class OreVein : TileObject {
         Initialize(TILE_OBJECT_TYPE.ORE_VEIN);
         BaseSettlement.onSettlementBuilt += UpdateSettlementResourcesParent;
     }
-    public OreVein(SaveDataTileObject data) { }
+    public OreVein(SaveDataTileObject data) : base(data) { }
     
     public override void UpdateSettlementResourcesParent() {
         if (gridTileLocation.area.settlementOnArea != null) {
@@ -66,6 +66,10 @@ public class OreVein : TileObject {
         Vector2 size = new Vector2(1.15f, 1.15f);
         mapVisual.InitializeGUS(Vector2.zero, size, tile);
         mapVisual.UpdateTileObjectVisual(this);
+
+        if (structureConnector != null) {
+            structureConnector.OnPlaceConnector(tile.parentMap);    
+        }
 
         base.OnPlaceTileObjectAtTile(tile);
     }

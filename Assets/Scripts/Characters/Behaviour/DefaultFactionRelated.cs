@@ -16,28 +16,42 @@ public class DefaultFactionRelated : CharacterBehaviourComponent {
         producedJob = null;
         if (character.isVagrantOrFactionless) {
             if(UnityEngine.Random.Range(0, 100) < 15) {
+#if DEBUG_LOG
                 log += $"\n-{character.name} is factionless, 15% chance to join faction";
+#endif
                 Faction chosenFaction = character.JoinFactionProcessing();
                 if (chosenFaction != null) {
+#if DEBUG_LOG
                     log += $"\n-Chosen faction to join: {chosenFaction.name}";
+#endif
                 } else {
+#if DEBUG_LOG
                     log += "\n-No available faction that the character fits the ideology";
+#endif
                 }
                 return true;
             } else {
+#if DEBUG_LOG
                 log += $"\nDid not meet chance to join faction. Checking if can create faction...";
+#endif
                 if (!WorldSettings.Instance.worldSettingsData.factionSettings.disableNewFactions) {
                     int villagerFactionCount = FactionManager.Instance.GetActiveVillagerFactionCount();
+#if DEBUG_LOG
                     log += $"\nActive villager faction count is {villagerFactionCount.ToString()}";
+#endif
                     if (villagerFactionCount < 20) {
+#if DEBUG_LOG
                         log += $"\nActive villager factions is less than 20, rolling chances";
+#endif
                         int factionsInRegion = GetFactionsInRegion(character.currentRegion);
                         float createChance = factionsInRegion >= 2 ? 2f : 3f;
                         if (character.traitContainer.HasTrait("Inspiring", "Ambitious")) {
                             createChance = factionsInRegion >= 2 ? 0.5f : 15f;
                         }
                         if (GameUtilities.RollChance(createChance)) {
+#if DEBUG_LOG
                             log += $"\nChance met, creating new faction";
+#endif
                             character.interruptComponent.TriggerInterrupt(INTERRUPT.Create_Faction, character);
                             return true;
                         }
@@ -65,20 +79,30 @@ public class DefaultFactionRelated : CharacterBehaviourComponent {
                 }
             }
             if (character.traitContainer.HasTrait("Cultist")) {
+#if DEBUG_LOG
                 log += $"\n-{character.name} is cultist";
+#endif
                 if (character.faction == null || character.faction.factionType.type != FACTION_TYPE.Demon_Cult) {
+#if DEBUG_LOG
                     log += $"\n-Character is not part of a demon cult faction, will try to join one";
+#endif
                     int chance = 0;
                     if (HasFactionWithMemberWithUnoccupiedDwelling(FACTION_TYPE.Demon_Cult)) {
+#if DEBUG_LOG
                         log += $"\n-Has demon cult faction with a member that has unoccupied dwelling, +3%";
+#endif
                         chance += 3;
                     }
                     if (HasFactionWith2Members(FACTION_TYPE.Demon_Cult)) {
+#if DEBUG_LOG
                         log += $"\n-Has demon cult faction with 1 or 2 members, +3%";
+#endif
                         chance += 3;
                     }
                     if (GameUtilities.RollChance(chance)) {
+#if DEBUG_LOG
                         log += $"\n-Will join demon cult";
+#endif
                         character.JoinFactionProcessing();
                     }
                 }

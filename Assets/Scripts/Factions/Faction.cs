@@ -379,12 +379,14 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
         }
     }
     private void CheckForNewLeaderDesignation() {
+        int chance = Random.Range(0, 100);
+#if DEBUG_LOG
         string debugLog =
             $"{GameManager.Instance.TodayLogString()}Checking for new faction leader designation for {name}";
         debugLog += $"\n-Chance: {newLeaderDesignationChance.ToString()}";
-        int chance = Random.Range(0, 100);
         debugLog += $"\n-Roll: {chance.ToString()}";
         Debug.Log(debugLog);
+#endif
         // chance = 0;
         if (chance < newLeaderDesignationChance) {
             DesignateNewLeader();
@@ -393,11 +395,15 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
         }
     }
     public void DesignateNewLeader(bool willLog = true) {
+#if DEBUG_LOG
         string log = $"Designating a new npcSettlement faction leader for: {name}(chance it triggered: {newLeaderDesignationChance.ToString()})";
+#endif
 
         Character chosenLeader = successionComponent.PickSuccessor();
         if (chosenLeader != null) {
+#if DEBUG_LOG
             log += $"\nCHOSEN LEADER: {chosenLeader.name}";
+#endif
             if (willLog) {
                 chosenLeader.interruptComponent.TriggerInterrupt(INTERRUPT.Become_Faction_Leader, chosenLeader);
             } else {
@@ -539,7 +545,9 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
         //    log += "\nCHOSEN LEADER: NONE";
         //}
         ResetNewLeaderDesignationChance();
+#if DEBUG_LOG
         Debug.Log(GameManager.Instance.TodayLogString() + log);
+#endif
     }
     private void ResetNewLeaderDesignationChance() {
         newLeaderDesignationChance = 5;
@@ -561,7 +569,7 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
     public bool HasMemberThatIsNotDeadHasHomeSettlementUnoccupiedDwelling() {
         for (int i = 0; i < characters.Count; i++) {
             Character m = characters[i];
-            if (!m.isDead && m.homeSettlement != null && m.homeSettlement.GetFirstStructureThatMeetCriteria(s => !s.IsOccupied() && s is Dwelling) != null) {
+            if (!m.isDead && m.homeSettlement != null && m.homeSettlement.GetFirstStructureThatIsUnoccupiedDwelling() != null) {
                 return true;
             }
         }
@@ -659,9 +667,9 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
         }
         return false;
     }
-    #endregion
+#endregion
 
-    #region Utilities
+#region Utilities
     private void AddListeners() {
         Messenger.AddListener<Character>(CharacterSignals.CHARACTER_REMOVED, OnCharacterRemoved);
         Messenger.AddListener<Character>(CharacterSignals.CHARACTER_CHANGED_RACE, OnCharacterRaceChange);
@@ -732,9 +740,13 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
         return $"{UtilityScripts.GameUtilities.GetNormalizedRaceAdjective(race)} Faction";
     }
     private void OnTickEnded() {
+#if DEBUG_PROFILER
         Profiler.BeginSample($"Faction On Tick Ended");
+#endif
         ProcessForcedCancelJobsOnTickEnded();
+#if DEBUG_PROFILER
         Profiler.EndSample();
+#endif
     }
     private void OnDayStarted() {
         ClearAllBlacklistToAllExistingJobs();
@@ -747,9 +759,9 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
         }
         return name;
     }
-    #endregion
+#endregion
 
-    #region Relationships
+#region Relationships
     public void AddNewRelationship(Faction relWith, FactionRelationship relationship) {
         if (!relationships.ContainsKey(relWith)) {
             relationships.Add(relWith, relationship);
@@ -839,16 +851,16 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
         }
         return null;
     }
-    #endregion
+#endregion
 
-    #region Death
+#region Death
     public void Death() {
         RemoveListeners();
         FactionManager.Instance.RemoveRelationshipsWith(this);
     }
-    #endregion
+#endregion
 
-    #region Areas
+#region Areas
     public void AddToOwnedSettlements(BaseSettlement settlement) {
         if (!ownedSettlements.Contains(settlement)) {
             ownedSettlements.Add(settlement);
@@ -907,7 +919,7 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
     public bool HasOwnedSettlementThatHasAliveResidentAndIsNotHomeOf(Character p_character) {
         for (int i = 0; i < ownedSettlements.Count; i++) {
             BaseSettlement s = ownedSettlements[i];
-            if (s != p_character.homeSettlement && s.HasResidentThatMeetsCriteria(c => !c.isDead)) {
+            if (s != p_character.homeSettlement && s.HasResidentThatIsNotDead()) {
                 return true;
             }
         }
@@ -930,35 +942,41 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
     //    }
     //    return false;
     //}
-    #endregion
+#endregion
 
-    #region Emblems
+#region Emblems
     public void SetEmblem(Sprite sprite) {
         emblem = sprite;
     }
-    #endregion
+#endregion
 
-    #region Jobs
+#region Jobs
     public void AddToAvailableJobs(JobQueueItem job, int position = -1) {
         if (position == -1) {
             availableJobs.Add(job);    
         } else {
             availableJobs.Insert(position, job);
         }
+#if DEBUG_LOG
         if (job is GoapPlanJob goapJob) {
             Debug.Log($"{GameManager.Instance.TodayLogString()}{goapJob} targeting {goapJob.targetPOI} was added to {name}'s available jobs");
         } else {
             Debug.Log($"{GameManager.Instance.TodayLogString()}{job} was added to {name}'s available jobs");    
         }
+#endif
         
     }
     public bool RemoveFromAvailableJobs(JobQueueItem job) {
         if (availableJobs.Remove(job)) {
             if (job is GoapPlanJob) {
                 GoapPlanJob goapJob = job as GoapPlanJob;
+#if DEBUG_LOG
                 Debug.Log($"{GameManager.Instance.TodayLogString()}{goapJob} targeting {goapJob.targetPOI?.name} was removed from {name}'s available jobs");
+#endif
             } else {
-                Debug.Log($"{GameManager.Instance.TodayLogString()}{job} was removed from {name}'s available jobs");    
+#if DEBUG_LOG
+                Debug.Log($"{GameManager.Instance.TodayLogString()}{job} was removed from {name}'s available jobs");
+#endif
             }
             OnJobRemovedFromAvailableJobs(job);
             return true;
@@ -1085,9 +1103,9 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
         }
         return false;
     }
-    #endregion
+#endregion
 
-    #region IJobOwner
+#region IJobOwner
     public void OnJobAddedToCharacterJobQueue(JobQueueItem job, Character character) { }
     public void OnJobRemovedFromCharacterJobQueue(JobQueueItem job, Character character) {
         if (!job.IsJobStillApplicable()) {
@@ -1110,17 +1128,23 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
             forcedCancelJobsOnTickEnded.Clear();
         }
     }
-    #endregion
+#endregion
 
-    #region War Declaration
+#region War Declaration
     public void CheckForWar(Faction targetFaction, CRIME_SEVERITY crimeSeverity, Character crimeCommitter, Character crimeTarget, ActualGoapNode crime) {
         if (targetFaction != this && targetFaction != null) {
+#if DEBUG_LOG
             string debugLog = $"Checking for war {name} against {targetFaction.name}";
+#endif
             if (!factionType.HasIdeology(FACTION_IDEOLOGY.Peaceful)) {
+#if DEBUG_LOG
                 debugLog += $"\n{name} is not a peaceful faction.";
+#endif
                 bool isTargetPartOfFaction = crimeTarget != null && crimeTarget.faction == this;
+#if DEBUG_LOG
                 debugLog += $"\nTarget of committed crime is part of faction {name}: {isTargetPartOfFaction.ToString()}";
                 debugLog += $"\nSeverity of committed crime is {crimeSeverity.ToString()}.";
+#endif
                 float chance = 0f;
                 if (isTargetPartOfFaction) {
                     switch (crimeSeverity) {
@@ -1153,28 +1177,42 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
                             break;
                     }
                     if (factionType.HasIdeology(FACTION_IDEOLOGY.Warmonger)) {
+#if DEBUG_LOG
                         debugLog += $"\n{name} is a warmonger faction.";
+#endif
                         chance *= 1.5f;
                     }
                 } else {
+#if DEBUG_LOG
                     debugLog += $"\nTarget is not part of faction.";
+#endif
                     //target is not part of faction
                     if (crimeSeverity == CRIME_SEVERITY.Heinous && (crimeCommitter.isFactionLeader || crimeCommitter.isSettlementRuler)) {
-                        debugLog += $"\nCrime severity   Heinous and {crimeCommitter.name} is Faction Leader or Settlement Ruler";
+#if DEBUG_LOG
+                        debugLog += $"\nCrime severity Heinous and {crimeCommitter.name} is Faction Leader or Settlement Ruler";
+#endif
                         chance = 50f;
                     }
                     if (factionType.HasIdeology(FACTION_IDEOLOGY.Warmonger)) {
+#if DEBUG_LOG
                         debugLog += $"\n{name} is a warmonger faction.";
+#endif
                         chance *= 1.5f;
                     }
                 }
 
                 float roll = Random.Range(0f, 100f);
+#if DEBUG_LOG
                 debugLog += $"\nChance for war is {chance.ToString()}. Roll is {roll.ToString()}";
+#endif
                 if (roll < chance) {
+#if DEBUG_LOG
                     debugLog += $"\nChance for war met, setting {name} and {targetFaction.name} as Hostile.";
+#endif
                     if (SetRelationshipFor(targetFaction, FACTION_RELATIONSHIP_STATUS.Hostile)) {
+#if DEBUG_LOG
                         debugLog += $"\nSuccessfully set {name} and {targetFaction.name} as Hostile.";
+#endif
                         Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Faction", "Generic", "declare_war", providedTags: LOG_TAG.Life_Changes);
                         log.AddToFillers(this, name, LOG_IDENTIFIER.FACTION_1);
                         log.AddToFillers(targetFaction, targetFaction.name, LOG_IDENTIFIER.FACTION_2);
@@ -1183,24 +1221,30 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
                         log.AddLogToDatabase();    
                         PlayerManager.Instance.player.ShowNotificationFromPlayer(log, true);
                     } else {
+#if DEBUG_LOG
                         debugLog += $"\nCould not set {name} and {targetFaction.name} as Hostile.";
+#endif
                     }
                 }
             } else {
+#if DEBUG_LOG
                 debugLog += $"\n{name} is a peaceful faction.";
+#endif
             }
+#if DEBUG_LOG
             Debug.Log(debugLog);
+#endif
         }
     }
-    #endregion
+#endregion
 
-    #region Crime
+#region Crime
     public CRIME_SEVERITY GetCrimeSeverity(Character actor, IPointOfInterest target, CRIME_TYPE crimeType) {
         return factionType.GetCrimeSeverity(actor, target, crimeType);
     }
-    #endregion
+#endregion
 
-    #region Heirloom
+#region Heirloom
     public void SetFactionHeirloom(TileObject heirloom) {
         if(factionHeirloom != heirloom) {
             factionHeirloom = heirloom as Heirloom;
@@ -1227,18 +1271,18 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
             HeirloomSearch();
         }
     }
-    #endregion
+#endregion
 
-    #region Pathfinding
+#region Pathfinding
     public void SetPathfindingTag(uint tag) {
         pathfindingTag = tag;
     }
     public void SetPathfindingDoorTag(uint tag) {
         pathfindingDoorTag = tag;
     }
-    #endregion
+#endregion
 
-    #region Faction Type
+#region Faction Type
     public bool SetFactionType(FactionType factionType) {
         if(this.factionType == null || this.factionType.type != factionType.type) {
             this.factionType = factionType;
@@ -1259,9 +1303,9 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
             FactionInfoHubUI.Instance.UpdateFactionItem(this);
         }
     }
-    #endregion
+#endregion
 
-    #region Loading
+#region Loading
     public void LoadReferences(SaveDataFaction data) {
         if (!data.isLeaderPlayer) {
             if (!string.IsNullOrEmpty(data.leaderID)) {
@@ -1318,7 +1362,7 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
         successionComponent.LoadReferences(data.successionComponent);
 
     }
-    #endregion
+#endregion
 
     
 }

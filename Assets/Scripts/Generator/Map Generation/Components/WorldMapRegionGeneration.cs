@@ -122,12 +122,14 @@ public class WorldMapRegionGeneration : MapGenerationComponent {
 			allRegions[i] = region;
 		}
 		GridMap.Instance.SetRegions(allRegions);
+#if DEBUG_LOG
 		string summary = "Region Generation Summary: ";
 		for (int i = 0; i < allRegions.Length; i++) {
 			Region region = allRegions[i];
 			summary += $"\n{region.name} - {region.areas.Count.ToString()}";
 		}
 		Debug.Log(summary);
+#endif
 		
 		yield return null;
 	}
@@ -160,7 +162,7 @@ public class WorldMapRegionGeneration : MapGenerationComponent {
     //         }
     //     }
     // }
-    #endregion
+#endregion
 }
 
 [Serializable]

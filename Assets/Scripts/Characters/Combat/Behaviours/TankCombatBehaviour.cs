@@ -27,7 +27,9 @@ public class TankCombatBehaviour : CharacterCombatBehaviour {
                     }
                 }
                 if (highestHPHostile != null) {
+#if DEBUG_LOG
                     p_character.logComponent.PrintLogIfActive("TANK BEHAVIOUR FOR: " + p_character.name + ", TARGET: " + highestHPHostile.name);
+#endif
                     if (p_character.combatComponent.IsHostileInRange(highestHPHostile)) {
                         p_combatState.SetForcedTarget(highestHPHostile);
                         p_character.combatComponent.combatBehaviourParent.SetCanDoTankBehaviour(false);
@@ -42,5 +44,5 @@ public class TankCombatBehaviour : CharacterCombatBehaviour {
         }
         return base.DetermineCombatBehaviour(p_character, p_combatState);
     }
-    #endregion
+#endregion
 }

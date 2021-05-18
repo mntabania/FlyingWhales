@@ -13,16 +13,18 @@
         SetState("Start Tend Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
+#if DEBUG_LOG
         string costLog = $"\n{name} {target.nameWithID}: +10(Constant)";
         actor.logComponent.AppendCostLog(costLog);
+#endif
         return 10;
     }
-    #endregion
+#endregion
     
-    #region State Effects
+#region State Effects
     public void AfterStartTendSuccess(ActualGoapNode goapNode) {
         goapNode.actor.traitContainer.AddTrait(goapNode.actor, "Tending", goapNode.actor, goapNode);
 
     }
-    #endregion
+#endregion
 }

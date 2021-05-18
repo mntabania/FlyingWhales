@@ -18,13 +18,15 @@ public class Absolve : GoapAction {
         SetState("Absolve Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
+#if DEBUG_LOG
         string costLog = $"\n{name} {target.nameWithID}: +10(Constant)";
         actor.logComponent.AppendCostLog(costLog);
+#endif
         return 10;
     }
-    #endregion
+#endregion
     
-    #region State Effects
+#region State Effects
     public void AfterAbsolveSuccess(ActualGoapNode goapNode) {
         Character target = goapNode.target as Character;
         if (target.traitContainer.HasTrait("Criminal")) {
@@ -36,5 +38,5 @@ public class Absolve : GoapAction {
         //target.traitContainer.RemoveTrait(target, "Criminal", goapNode.actor);
         target.traitContainer.RemoveRestrainAndImprison(target, goapNode.actor);
     }
-    #endregion
+#endregion
 }

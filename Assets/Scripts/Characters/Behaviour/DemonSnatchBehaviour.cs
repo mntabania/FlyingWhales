@@ -12,10 +12,14 @@ public class DemonSnatchBehaviour : CharacterBehaviourComponent {
     public override bool TryDoBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
         producedJob = null;
         bool hasJob = false;
+#if DEBUG_LOG
         log += $"\n-Character is snatching";
+#endif
         Party party = character.partyComponent.currentParty;
         if (party.isActive && party.partyState == PARTY_STATE.Working) {
+#if DEBUG_LOG
             log += $"\n-Party is working";
+#endif
             DemonSnatchPartyQuest quest = party.currentQuest as DemonSnatchPartyQuest;
             if(quest.targetCharacter != null) {
                 if (quest.targetCharacter.isDead) {

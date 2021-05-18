@@ -198,28 +198,36 @@ public class Minion {
 
     #region Invasion
     private void OnTickEnded() {
+#if DEBUG_PROFILER
         Profiler.BeginSample($"Minion On Tick Ended");
+#endif
         if (character.isDead) { return; }
         character.interruptComponent.OnTickEnded();
         character.stateComponent.OnTickEnded();
         character.ProcessTraitsOnTickEnded();
         character.TryProcessTraitsOnTickEndedWhileStationaryOrUnoccupied();
         character.EndTickPerformJobs();
+#if DEBUG_PROFILER
         Profiler.EndSample();
+#endif
     }
     private void OnTickStarted() {
+#if DEBUG_PROFILER
         Profiler.BeginSample($"Minion On Tick Started");
+#endif
         if (character.isDead) { return; }
         character.ProcessTraitsOnTickStarted();
         if (character.CanPlanGoap()) {
             character.PerStartTickActionPlanning();
         }
         // character.AdjustHP(-5, ELEMENTAL_TYPE.Normal, triggerDeath: true, showHPBar: true, source: character);
+#if DEBUG_PROFILER
         Profiler.EndSample();
+#endif
     }
-    #endregion
+#endregion
 
-    #region Utilities
+#region Utilities
     public void SetMinionPlayerSkillType(PLAYER_SKILL_TYPE skillType) {
         minionPlayerSkillType = skillType;
     }
@@ -243,9 +251,9 @@ public class Minion {
                 return "Wrath";
         }
     }
-    #endregion
+#endregion
 
-    #region Summoning
+#region Summoning
     public void Summon(LocationGridTile tile) {
         character.CreateMarker();
         character.marker.visionCollider.VoteToUnFilterVision();
@@ -296,7 +304,9 @@ public class Minion {
         Messenger.Broadcast(PlayerSkillSignals.UNSUMMON_MINION, this);
     }
     private void UnsummonedCooldown() {
+#if DEBUG_PROFILER
         Profiler.BeginSample($"Minion Unsummoned HP Recovery");
+#endif
         this.character.AdjustHP(7, ELEMENTAL_TYPE.Normal);
         SkillData spellData = PlayerSkillManager.Instance.GetMinionPlayerSkillData(minionPlayerSkillType);
         spellData.SetCurrentCooldownTick(spellData.currentCooldownTick + 1);
@@ -307,7 +317,9 @@ public class Minion {
             Messenger.Broadcast(PlayerSkillSignals.SPELL_COOLDOWN_FINISHED, spellData);
             Messenger.RemoveListener(Signals.TICK_STARTED, UnsummonedCooldown);
         }
+#if DEBUG_PROFILER
         Profiler.EndSample();
+#endif
     }
     public void OnSeize() {
         Messenger.RemoveListener(Signals.TICK_ENDED, OnTickEnded);
@@ -320,9 +332,9 @@ public class Minion {
     public void SetIsSummoned(bool state) {
         isSummoned = state;
     }
-    #endregion
+#endregion
 
-    #region Listeners
+#region Listeners
     private void SubscribeListeners() {
         Messenger.AddListener(Signals.TICK_ENDED, OnTickEnded);
         Messenger.AddListener(Signals.TICK_STARTED, OnTickStarted);
@@ -368,7 +380,7 @@ public class Minion {
     //        }
     //    }
     //}
-    #endregion
+#endregion
 }
 
 [System.Serializable]

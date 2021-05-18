@@ -9,7 +9,9 @@ public class HarassBehaviour : CharacterBehaviourComponent {
     }
     public override bool TryDoBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
         producedJob = null;
+#if DEBUG_LOG
         log += $"\n-{character.name} will harass";
+#endif
         //if (character.gridTileLocation.collectionOwner.partOfHextile != null
         //    && character.gridTileLocation.hexTileOwner 
         //    && character.gridTileLocation.hexTileOwner.settlementOnTile == character.behaviourComponent.assignedTargetSettlement) {

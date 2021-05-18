@@ -156,7 +156,7 @@ namespace Traits {
         }
         private void TryFreezeWetObject() {
             if (GameUtilities.RollChance(25)) {
-                if (_owner.gridTileLocation != null && _owner.gridTileLocation.biomeType == BIOMES.SNOW) {
+                if (_owner.gridTileLocation != null && _owner.gridTileLocation.mainBiomeType == BIOMES.SNOW) {
                     _owner.traitContainer.AddTrait(_owner, "Frozen", bypassElementalChance: true);
                 }    
             }

@@ -241,9 +241,13 @@ public abstract class JobQueueItem : ISavable {
         Character previousAssignedCharacter = null;
         if (assignedCharacter != null) {
             previousAssignedCharacter = assignedCharacter;
+#if DEBUG_LOG
             assignedCharacter.logComponent.PrintLogIfActive($"{assignedCharacter.name} quit job {name}");
+#endif
         }
+#if DEBUG_LOG
         character?.logComponent.PrintLogIfActive($"{character.name} took job {name}");
+#endif
 
         assignedCharacter = character;
         if (assignedCharacter != null) {
@@ -253,23 +257,23 @@ public abstract class JobQueueItem : ISavable {
         }
     }
 
-    #region Can Take Job
+#region Can Take Job
     private void SetCanTakeThisJobChecker(CanTakeJobChecker canTakeJobChecker) {
         this.canTakeJobChecker = canTakeJobChecker;
     }
     public void SetCanTakeThisJobChecker(string canTakeJobCheckerKey) {
         SetCanTakeThisJobChecker(JobManager.Instance.GetJobChecker(canTakeJobCheckerKey));
     }
-    #endregion
+#endregion
 
-    #region Applicability
+#region Applicability
     public void SetStillApplicableChecker(string applicabilityKey) {
         SetStillApplicableChecker(JobManager.Instance.GetApplicabilityChecker(applicabilityKey));
     }
     public void SetStillApplicableChecker(JobApplicabilityChecker jobApplicabilityChecker) {
         stillApplicable = jobApplicabilityChecker;
     }
-    #endregion
+#endregion
     
     public void SetCannotBePushedBack (bool state) {
         cannotBePushedBack = state;
@@ -303,7 +307,7 @@ public abstract class JobQueueItem : ISavable {
         forceCancelOnInvalid = state;
     }
 
-    #region Priority
+#region Priority
     public int GetPriority() {
         return _priority;
     }
@@ -315,9 +319,9 @@ public abstract class JobQueueItem : ISavable {
         Assert.IsTrue(priority > 0, $"Cannot set initial priority for {name} job because priority is {priority}");
         SetPriority(priority);
     }
-    #endregion
+#endregion
 
-    #region Utilities
+#region Utilities
     public bool CanCharacterDoJob(Character character) {
         return CanCharacterTakeThisJob(character) && !blacklistedCharacters.Contains(character);
     }
@@ -351,11 +355,13 @@ public abstract class JobQueueItem : ISavable {
     public void SetShouldForceCancelJobUponReceiving(bool state) {
         shouldForceCancelUponReceiving = state;
     }
-    #endregion
+#endregion
 
-    #region Job Object Pool
+#region Job Object Pool
     public virtual void Reset() {
+#if DEBUG_LOG
         Debug.Log($"{GameManager.Instance.TodayLogString()}Job {this} was reset with original owner {originalOwner}");
+#endif
         DatabaseManager.Instance.jobDatabase.UnRegister(this);
         persistentID = string.Empty;
         hasBeenReset = true;
@@ -383,5 +389,5 @@ public abstract class JobQueueItem : ISavable {
         Messenger.RemoveListener<JOB_TYPE, IPointOfInterest>(JobSignals.CHECK_JOB_APPLICABILITY, CheckJobApplicability);
         Messenger.RemoveListener<IPointOfInterest>(JobSignals.CHECK_APPLICABILITY_OF_ALL_JOBS_TARGETING, CheckJobApplicability);
     }
-    #endregion
+#endregion
 }

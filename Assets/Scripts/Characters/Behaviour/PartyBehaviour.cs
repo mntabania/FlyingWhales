@@ -13,10 +13,14 @@ public class PartyBehaviour : CharacterBehaviourComponent {
         bool hasJob = false;
         Party party = character.partyComponent.currentParty;
         if (party.isActive) {
+#if DEBUG_LOG
             log += $"\n-Party is active, will try to do party behaviour";
+#endif
             if (party.partyState == PARTY_STATE.Waiting) {
+#if DEBUG_LOG
                 log += $"\n-Party is waiting";
-                if(party.meetingPlace != null && !party.meetingPlace.hasBeenDestroyed && party.meetingPlace.passableTiles.Count > 0) {
+#endif
+                if (party.meetingPlace != null && !party.meetingPlace.hasBeenDestroyed && party.meetingPlace.passableTiles.Count > 0) {
                     hasJob = true;
                     if (character.currentStructure == party.meetingPlace) {
                         party.AddMemberThatJoinedQuest(character);
@@ -53,7 +57,9 @@ public class PartyBehaviour : CharacterBehaviourComponent {
                         hasJob = DoPartyJobsInPartyJobBoard(character, party, ref producedJob);
                         if (!hasJob) { //If no job is assigned from job board continue doing behaviour
                             if (party.partyState == PARTY_STATE.Moving) {
+#if DEBUG_LOG
                                 log += $"\n-Party is moving";
+#endif
                                 if (party.targetDestination != null && !party.targetDestination.hasBeenDestroyed) {
                                     if (party.targetDestination.IsAtTargetDestination(character)) {
                                         if (party.targetDestination == party.partySettlement) {
@@ -92,7 +98,9 @@ public class PartyBehaviour : CharacterBehaviourComponent {
                                     }
                                 }
                             } else if (party.partyState == PARTY_STATE.Resting) {
+#if DEBUG_LOG
                                 log += $"\n-Party is resting";
+#endif
                                 if (party.targetRestingTavern != null && !party.targetRestingTavern.hasBeenDestroyed && party.targetRestingTavern.passableTiles.Count > 0) {
                                     if (character.currentStructure == party.targetRestingTavern) {
                                         //Removed this because this is the reason why the characters in party are not eating on adjacent hex tiles
@@ -125,7 +133,9 @@ public class PartyBehaviour : CharacterBehaviourComponent {
                                     return hasJob;
                                 }
                             } else if (party.partyState == PARTY_STATE.Working) {
+#if DEBUG_LOG
                                 log += $"\n-Party is working";
+#endif
                                 if (!party.targetDestination.IsAtTargetDestination(character)) {
                                     if (party.hasChangedTargetDestination) {
                                         party.SetHasChangedTargetDestination(false);

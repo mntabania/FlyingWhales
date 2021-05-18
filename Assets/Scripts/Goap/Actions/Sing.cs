@@ -28,28 +28,40 @@ public class Sing : GoapAction {
         SetState("Sing Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
+#if DEBUG_LOG
         string costLog = $"\n{name} {target.nameWithID}:";
+#endif
         int cost = UtilityScripts.Utilities.Rng.Next(85, 126);
+#if DEBUG_LOG
         costLog += $" +{cost}(Initial)";
+#endif
         int numOfTimesActionDone = actor.jobComponent.GetNumOfTimesActionDone(this);
         if (numOfTimesActionDone > 5) {
             cost += 2000;
+#if DEBUG_LOG
             costLog += " +2000(Times Played > 5)";
+#endif
         }
 
         if (actor.traitContainer.HasTrait("Music Hater") || !actor.limiterComponent.isSociable || actor.marker.HasEnemyOrRivalInVision()) {
             cost += 2000;
+#if DEBUG_LOG
             costLog += " +2000 (Actor is Music Hater or is Unsociable or has Enemy/Rival in vision)";
+#endif
         }
         if (actor.traitContainer.HasTrait("Music Lover")) {
             cost -= 20;
+#if DEBUG_LOG
             costLog += " -20 (Actor is Music Lover)";
+#endif
         }
         int timesCost = 10 * numOfTimesActionDone;
         cost += timesCost;
+#if DEBUG_LOG
         costLog += $" +{timesCost}(10 x Times Played)";
 
         actor.logComponent.AppendCostLog(costLog);
+#endif
         return cost;
     }
     //public override void OnStopWhilePerforming(ActualGoapNode node) {
@@ -104,9 +116,9 @@ public class Sing : GoapAction {
     public override bool IsHappinessRecoveryAction() {
         return true;
     }
-    #endregion
+#endregion
 
-    #region Effects
+#region Effects
     public void PreSingSuccess(ActualGoapNode goapNode) {
         //goapNode.actor.needsComponent.AdjustDoNotGetBored(1);
         goapNode.actor.jobComponent.IncreaseNumOfTimesActionDone(this);
@@ -118,9 +130,9 @@ public class Sing : GoapAction {
     //public void AfterSingSuccess(ActualGoapNode goapNode) {
     //    goapNode.actor.needsComponent.AdjustDoNotGetBored(-1);
     //}
-    #endregion
+#endregion
 
-    #region Requirement
+#region Requirement
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, OtherData[] otherData, JobQueueItem job) {
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData, job);
         if (satisfied) {
@@ -134,5 +146,5 @@ public class Sing : GoapAction {
         }
         return false;
     }
-    #endregion
+#endregion
 }

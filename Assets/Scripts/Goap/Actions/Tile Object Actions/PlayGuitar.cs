@@ -29,11 +29,15 @@ public class PlayGuitar : GoapAction {
         SetState("Play Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
+#if DEBUG_LOG
         string costLog = $"\n{name} {target.nameWithID}:";
+#endif
         if (actor.traitContainer.HasTrait("Enslaved")) {
             if (target.gridTileLocation == null || !target.gridTileLocation.IsInHomeOf(actor)) {
+#if DEBUG_LOG
                 costLog += $" +2000(Slave, target is not in actor's home)";
                 actor.logComponent.AppendCostLog(costLog);
+#endif
                 return 2000;
             }
         }
@@ -47,44 +51,58 @@ public class PlayGuitar : GoapAction {
 
                     if (distance > distanceToCheck) {
                         //target is at structure that character is avoiding
+#if DEBUG_LOG
                         costLog += $" +2000(Active Party, Location of target too far from actor)";
                         actor.logComponent.AppendCostLog(costLog);
+#endif
                         return 2000;
                     }
                 }
             }
         }
         int cost = UtilityScripts.Utilities.Rng.Next(80, 121);
+#if DEBUG_LOG
         costLog += $" +{cost}(Initial)";
+#endif
         int numOfTimesActionDone = actor.jobComponent.GetNumOfTimesActionDone(this);
         if (numOfTimesActionDone > 5) {
             cost += 2000;
+#if DEBUG_LOG
             costLog += " +2000(Times Played > 5)";
+#endif
         }
 
         if (target.gridTileLocation != null) {
             if (actor.trapStructure.IsTrapped()) {
                 if (actor.trapStructure.IsTrapStructure(target.gridTileLocation.structure)) {
                     cost += 2000;
+#if DEBUG_LOG
                     costLog += " +2000(Actor trapped and guitar is not at trap structure)";
+#endif
                 }
             } else {
                 if (target.gridTileLocation.structure != actor.homeStructure) {
                     cost += 2000;
-                    costLog += " +2000(Actor is not trapped and guitar is not at home)";    
+#if DEBUG_LOG
+                    costLog += " +2000(Actor is not trapped and guitar is not at home)";
+#endif
                 }
             }
         }
 
         if (actor.traitContainer.HasTrait("Music Lover")) {
             cost += -25;
+#if DEBUG_LOG
             costLog += " -25(Music Lover)";
+#endif
         }
         int timesCost = 10 * numOfTimesActionDone;
         cost += timesCost;
+#if DEBUG_LOG
         costLog += $" +{timesCost}(10 x Times Played)";
-        
+
         actor.logComponent.AppendCostLog(costLog);
+#endif
         return cost;
     }
     public override void OnStopWhilePerforming(ActualGoapNode node) {
@@ -160,9 +178,9 @@ public class PlayGuitar : GoapAction {
     public override bool IsHappinessRecoveryAction() {
         return true;
     }
-    #endregion
+#endregion
 
-    #region State Effects
+#region State Effects
     public void PrePlaySuccess(ActualGoapNode goapNode) {
         //goapNode.actor.needsComponent.AdjustDoNotGetBored(1);
         goapNode.actor.jobComponent.IncreaseNumOfTimesActionDone(this);
@@ -178,9 +196,9 @@ public class PlayGuitar : GoapAction {
     //public void PreTargetMissing() {
     //    actor.RemoveAwareness(poiTarget);
     //}
-    #endregion
+#endregion
 
-    #region Requirement
+#region Requirement
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, OtherData[] otherData, JobQueueItem job) {
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData, job);
         if (satisfied) {
@@ -228,5 +246,5 @@ public class PlayGuitar : GoapAction {
         } 
         return false;
     }
-    #endregion
+#endregion
 }

@@ -5,11 +5,15 @@ public class SkillProgressionManager {
 	public bool CheckAndUpgrade(CurrenciesComponent p_currencies, PLAYER_SKILL_TYPE p_type) {
 		bool success = false;
 		PlayerSkillData data = PlayerSkillManager.Instance.GetScriptableObjPlayerSkillData<PlayerSkillData>(p_type);
+#if DEBUG_LOG
 		UnityEngine.Debug.Log(data);
+#endif
 		if (data.GetUnlockCost() <= p_currencies.Mana) {
 			success = true;
 		}
+#if DEBUG_LOG
 		UnityEngine.Debug.Log("Unlocking " + data + ": " + success);
+#endif
 		return success;
 	}
 
@@ -49,6 +53,7 @@ public class SkillProgressionManager {
 		if (playerSkilldata.requirementData.portalLevel <= (PlayerManager.Instance.player.playerSettlement.GetRandomStructureOfType(STRUCTURE_TYPE.THE_PORTAL) as ThePortal).level) {
 			return playerSkilldata.GetUnlockCost();
 		}
+		// UnityEngine.Debug.LogError("D");
 		return -1;
 	}
 }

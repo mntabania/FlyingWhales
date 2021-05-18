@@ -115,7 +115,9 @@ public class FireBallMapObjectVisual : MovingMapObjectVisual<TileObject> {
         if (isSpawned == false) {
             return;
         }
+#if DEBUG_PROFILER
         Profiler.BeginSample($"Poison Cloud Per Tick");
+#endif
         SkillData fireBallData = PlayerSkillManager.Instance.GetSpellData(PLAYER_SKILL_TYPE.FIRE_BALL);
         int processedDamage = -PlayerSkillManager.Instance.GetDamageBaseOnLevel(fireBallData);
         BurningSource bs = null;
@@ -141,11 +143,13 @@ public class FireBallMapObjectVisual : MovingMapObjectVisual<TileObject> {
                 }
             }
         }
+#if DEBUG_PROFILER
         Profiler.EndSample();
+#endif
     }
-    #endregion
+#endregion
     
-    #region Triggers
+#region Triggers
     public void OnTriggerEnter2D(Collider2D collision) {
         if (isSpawned == false) { return; }
         BaseVisionTrigger collidedWith = collision.gameObject.GetComponent<BaseVisionTrigger>();
@@ -160,9 +164,9 @@ public class FireBallMapObjectVisual : MovingMapObjectVisual<TileObject> {
             RemoveObject(traitable);   
         }
     }
-    #endregion
+#endregion
     
-    #region POI's
+#region POI's
     private void AddObject(ITraitable obj) {
         if (!_objsInRange.Contains(obj)) {
             _objsInRange.Add(obj);
@@ -171,11 +175,13 @@ public class FireBallMapObjectVisual : MovingMapObjectVisual<TileObject> {
     private void RemoveObject(ITraitable obj) {
         _objsInRange.Remove(obj);
     }
-    #endregion
+#endregion
     
-    #region Expiration
+#region Expiration
     public void Expire() {
+#if DEBUG_LOG
         Debug.Log($"{this.name} expired!");
+#endif
         _coreEffect.Stop();
         _flareEffect.Stop();
         isSpawned = false;
@@ -192,9 +198,9 @@ public class FireBallMapObjectVisual : MovingMapObjectVisual<TileObject> {
         yield return new WaitForSeconds(0.8f);
         ObjectPoolManager.Instance.DestroyObject(this);
     }
-    #endregion
+#endregion
 
-    #region Particles
+#region Particles
     private IEnumerator PlayParticleCoroutineWhenGameIsPaused() {
         //Playing particle effect is done in a coroutine so that it will wait one frame before pausing the particles if the game is paused when the particle is activated
         //This will make sure that the particle effect will show but it will be paused right away
@@ -204,5 +210,5 @@ public class FireBallMapObjectVisual : MovingMapObjectVisual<TileObject> {
         _coreEffect.Pause();
         _flareEffect.Pause();
     }
-    #endregion
+#endregion
 }

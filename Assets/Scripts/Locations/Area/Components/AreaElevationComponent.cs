@@ -61,14 +61,5 @@ public class AreaElevationComponent : AreaComponent {
             }
         }
         elevationType = majorityElevation;
-        
-        // List<ELEVATION> presentElevations = RuinarchListPool<ELEVATION>.Claim();
-        // foreach (var kvp in elevationDictionary) {
-        //     if (kvp.Value > 0) {
-        //         presentElevations.Add(kvp.Key);
-        //     }
-        // }
-        // elevationType = presentElevations.Count == 1 ? presentElevations[0] : ELEVATION.MIXED;
-        // RuinarchListPool<ELEVATION>.Release(presentElevations);
     }
 }

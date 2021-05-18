@@ -327,7 +327,9 @@ public class MonsterAndDemonUnderlingCharges {
     }
     private void CancelMonsterReplenish() {
         if (isReplenishing) {
+#if DEBUG_LOG
             Debug.Log($"{GameManager.Instance.TodayLogString()}Cancelling monster replenish of {monsterType.ToString()} since player no longer has max charges for it.");
+#endif
             currentCooldownTick = 0;
             Messenger.RemoveListener(Signals.TICK_STARTED, PerTickReplenish);
             isReplenishing = false;
@@ -355,14 +357,14 @@ public class MonsterAndDemonUnderlingCharges {
         }
         return count;
     }
-    #endregion
+#endregion
 
-    #region Loading
+#region Loading
     public void LoadMonsterReplenish() {
         if (isReplenishing) {
             //Messenger.Broadcast(PlayerSkillSignals.START_MONSTER_UNDERLING_COOLDOWN, this);
             Messenger.AddListener(Signals.TICK_STARTED, PerTickReplenish);
         }
     }
-    #endregion
+#endregion
 }

@@ -66,7 +66,7 @@ public class BedMarkerNameplate : PooledObject {
 
     #region Utilities
     public void UpdateMarkerNameplate(TileObject bedTileObject) {
-        int userCount = bedTileObject.users.Length;
+        int userCount = bedTileObject.GetUserCount();
         bool showActionIcon = false;
         if (bedGO.bedTileObject.currentRegion == InnerMapManager.Instance.currentlyShowingLocation) {
             if (userCount == 1) {
@@ -77,7 +77,11 @@ public class BedMarkerNameplate : PooledObject {
         }
         if (showActionIcon) {
             bool shouldShowIcon = true;
-            Character user = bedTileObject.users[0];
+            Character user = bedTileObject.GetFirstUser();
+            if (user == null) {
+                HideMarkerNameplate();
+                return;
+            }
             ActualGoapNode actionNode = user.currentActionNode;
             if (actionNode != null && (actionNode.actionStatus == ACTION_STATUS.PERFORMING || actionNode.actionStatus == ACTION_STATUS.STARTED)) {
                 string actionIconString = actionNode.action.GetActionIconString(actionNode);

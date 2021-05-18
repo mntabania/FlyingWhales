@@ -17,8 +17,10 @@ public class Dispel : GoapAction {
         SetState("Dispel Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
+#if DEBUG_LOG
         string costLog = $"\n{name} {target.nameWithID}: +10(Constant)";
         actor.logComponent.AppendCostLog(costLog);
+#endif
         return 10;
     }
     public override REACTABLE_EFFECT GetReactableEffect(ActualGoapNode node, Character witness) {
@@ -30,9 +32,9 @@ public class Dispel : GoapAction {
         string logString = GetTraitLogString(traitToRemove);
         log.AddToFillers(null, logString, LOG_IDENTIFIER.STRING_1);
     }
-    #endregion
+#endregion
     
-    #region State Effects
+#region State Effects
     public void PreDispelSuccess(ActualGoapNode goapNode) {
         string traitToRemove = (string)goapNode.otherData[0].obj;
         if (goapNode.poiTarget.traitContainer.HasTrait(traitToRemove)) {
@@ -112,7 +114,7 @@ public class Dispel : GoapAction {
             }    
         }
     }
-    #endregion
+#endregion
 
     private string GetTraitLogString(string traitName) {
         if (traitName == "Lycanthrope") {

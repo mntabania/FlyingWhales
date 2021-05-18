@@ -31,12 +31,16 @@ public class Cry : GoapAction {
         SetState("Cry Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
-        string costLog = $"\n{name} {target.nameWithID}:";
         int cost = UtilityScripts.Utilities.Rng.Next(100, 116);
+#if DEBUG_LOG
+        string costLog = $"\n{name} {target.nameWithID}:";
         costLog += $" +{cost.ToString()}(Initial)";
+#endif
         int timesCost = 20 * actor.jobComponent.GetNumOfTimesActionDone(this);
         cost += timesCost;
+#if DEBUG_LOG
         costLog += $" +{timesCost.ToString()}(10 x Times Cried)";
+#endif
         // if (actor.moodComponent.moodState != MOOD_STATE.Bad && actor.moodComponent.moodState != MOOD_STATE.Critical) {
         //     cost += 2000;
         //     costLog += " +2000(not Low and Critical mood)";
@@ -47,14 +51,20 @@ public class Cry : GoapAction {
                 if (actor.traitContainer.HasTrait(trait)) {
                     int randomAmount = UtilityScripts.Utilities.Rng.Next(10, 31);
                     cost -= randomAmount;
-                    costLog += $" -{randomAmount.ToString()}(Has {trait})";            
+#if DEBUG_LOG
+                    costLog += $" -{randomAmount.ToString()}(Has {trait})";       
+#endif
                 }
             }
         } else {
             cost += 2000;
-            costLog += " +2000(does not have any of cost traits)";    
+#if DEBUG_LOG
+            costLog += " +2000(does not have any of cost traits)";
+#endif
         }
+#if DEBUG_LOG
         actor.logComponent.AppendCostLog(costLog);
+#endif
         return cost;
     }
     public override void PopulateReactionsToActor(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
@@ -86,9 +96,9 @@ public class Cry : GoapAction {
     public override bool IsHappinessRecoveryAction() {
         return true;
     }
-    #endregion    
+#endregion
 
-    #region State Effects
+#region State Effects
     public void PreCrySuccess(ActualGoapNode goapNode) {
         goapNode.actor.jobComponent.IncreaseNumOfTimesActionDone(this);
         //if (goapNode.actor.characterClass.IsCombatant()) {
@@ -121,9 +131,9 @@ public class Cry : GoapAction {
         // goapNode.actor.interruptComponent.TriggerInterrupt(INTERRUPT.Cry, goapNode.actor, "feeling sad");
         //Messenger.Broadcast(PlayerSignals.CREATE_CHAOS_ORBS, goapNode.actor.marker.transform.position, 2, goapNode.actor.currentRegion.innerMap);
     }
-    #endregion
+#endregion
 
-    #region Requirements
+#region Requirements
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, OtherData[] otherData, JobQueueItem job) {
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData, job);
         if (satisfied) {
@@ -131,5 +141,5 @@ public class Cry : GoapAction {
         }
         return false;
     }
-    #endregion
+#endregion
 }

@@ -5,7 +5,7 @@ public class Trash : TileObject{
         Initialize(TILE_OBJECT_TYPE.TRASH);
         RemoveAdvertisedAction(INTERACTION_TYPE.STEAL_ANYTHING);
     }
-    public Trash(SaveDataTileObject data) {
+    public Trash(SaveDataTileObject data) : base(data) {
         
     }
 }

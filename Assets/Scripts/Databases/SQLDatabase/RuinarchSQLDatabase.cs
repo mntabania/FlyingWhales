@@ -58,15 +58,17 @@ namespace Databases.SQLDatabase {
                 //release managed resources here
                 Messenger.RemoveListener<Character>(CharacterSignals.CHARACTER_CHANGED_NAME, OnCharacterNameUpdated);
             }
+#if DEBUG_LOG
             Debug.Log("Ruinarch SQL database has been disposed.");
+#endif
         }
         public void Dispose() {
             Dispose(true);
             GC.SuppressFinalize(this);
         }
-        #endregion
+#endregion
 
-        #region Initialization
+#region Initialization
         public void InitializeDatabase() {
             //This will either create or get the current gameDB database located at the Temp folder
             //so it is essential that if game came from save data, that it's relevant data be placed inside the Temp folder.
@@ -128,9 +130,9 @@ namespace Databases.SQLDatabase {
                 }
             }
         }
-        #endregion
+#endregion
 
-        #region Connection
+#region Connection
         public void CloseConnection() {
             _dbConnection?.Close();
             _dbConnection?.Dispose();
@@ -147,9 +149,9 @@ namespace Databases.SQLDatabase {
         // public ConnectionState GetConnectionState() {
         //     return dbConnection.isD dbConnection.State;
         // }
-        #endregion
+#endregion
 
-        #region Logs
+#region Logs
         public void InsertLogUsingMultiThread(Log log) {
             SQLLogInsertThread thread = ObjectPoolManager.Instance.CreateNewSQLInsertThread();
             thread.Initialize(log);
@@ -417,9 +419,9 @@ namespace Databases.SQLDatabase {
             databaseThread.Initialize(character);
             DatabaseThreadPool.Instance.AddToThreadPool(databaseThread);
         }
-        #endregion
+#endregion
 
-        #region Utilities
+#region Utilities
         private Log ConvertToBareBonesLog(IDataReader dataReader) {
             string id = dataReader.GetString(0);
             int tick = dataReader.GetInt32(1);
@@ -509,9 +511,9 @@ namespace Databases.SQLDatabase {
                 databaseInFile.BackupDatabase(_dbConnection, "main", "main", -1, null, -1);
             }
         }
-        #endregion
+#endregion
 
-        #region Plugins
+#region Plugins
         // static Constructor
         static RuinarchSQLDatabase() {
             var currentPath = Environment.GetEnvironmentVariable("PATH", EnvironmentVariableTarget.Process);
@@ -525,6 +527,6 @@ namespace Databases.SQLDatabase {
             if (currentPath != null && currentPath.Contains(dllPath) == false)
                 Environment.SetEnvironmentVariable("PATH", currentPath + "/" + dllPath, EnvironmentVariableTarget.Process); //Path.PathSeparator
         }
-        #endregion
+#endregion
     }
 }

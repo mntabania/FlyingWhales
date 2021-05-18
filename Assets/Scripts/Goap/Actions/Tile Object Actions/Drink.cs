@@ -25,11 +25,15 @@ public class Drink : GoapAction {
         SetState("Drink Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
+#if DEBUG_LOG
         string costLog = $"\n{name} {target.nameWithID}:";
+#endif
         if (actor.traitContainer.HasTrait("Enslaved")) {
             if (target.gridTileLocation == null || !target.gridTileLocation.IsInHomeOf(actor)) {
+#if DEBUG_LOG
                 costLog += $" +2000(Slave, target is not in actor's home)";
                 actor.logComponent.AppendCostLog(costLog);
+#endif
                 return 2000;
             }
         }
@@ -38,8 +42,10 @@ public class Drink : GoapAction {
             Faction targetFaction = settlement.owner;
             if(actor.faction != null && targetFaction != null && actor.faction.IsHostileWith(targetFaction)) {
                 //Do not drink on hostile faction's taverns
+#if DEBUG_LOG
                 costLog += $" +2000(Location of target is in hostile faction of actor)";
                 actor.logComponent.AppendCostLog(costLog);
+#endif
                 return 2000;
             }
         }
@@ -53,35 +59,49 @@ public class Drink : GoapAction {
 
                     if (distance > distanceToCheck) {
                         //target is at structure that character is avoiding
+#if DEBUG_LOG
                         costLog += $" +2000(Active Party, Location of target too far from actor)";
                         actor.logComponent.AppendCostLog(costLog);
+#endif
                         return 2000;
                     }
                 }
             }
         }
         int cost = UtilityScripts.Utilities.Rng.Next(80, 121);
+#if DEBUG_LOG
         costLog += $" +{cost}(Initial)";
+#endif
         if (actor.traitContainer.HasTrait("Alcoholic")) {
             cost -= 35;
+#if DEBUG_LOG
             costLog += " -35(Alcoholic)";
+#endif
         } else {
             int numOfTimesActionDone = actor.jobComponent.GetNumOfTimesActionDone(this);
             TIME_IN_WORDS timeOfDay = GameManager.Instance.GetCurrentTimeInWordsOfTick();
             if (timeOfDay == TIME_IN_WORDS.MORNING ||  timeOfDay == TIME_IN_WORDS.AFTERNOON) {
                 cost += 2000;
+#if DEBUG_LOG
                 costLog += " +2000(not Alcoholic, Morning/Lunch/Afternoon)";
+#endif
             }
             if (numOfTimesActionDone > 5) {
                 cost += 2000;
+#if DEBUG_LOG
                 costLog += " +2000(Times Drank > 5)";
+#endif
             } else {
                 int timesCost = 10 * numOfTimesActionDone;
                 cost += timesCost;
+#if DEBUG_LOG
                 costLog += $" +{timesCost}(10 x Times Drank)";
+#endif
             }
         }
+#if DEBUG_LOG
         actor.logComponent.AppendCostLog(costLog);
+#endif
         return cost;
     }
     //public override void OnStopWhilePerforming(ActualGoapNode node) {
@@ -98,9 +118,9 @@ public class Drink : GoapAction {
     public override bool IsHappinessRecoveryAction() {
         return true;
     }
-    #endregion
+#endregion
 
-    #region State Effects
+#region State Effects
     public void PreDrinkSuccess(ActualGoapNode goapNode) {
         //goapNode.actor.needsComponent.AdjustDoNotGetBored(1);
         goapNode.actor.jobComponent.IncreaseNumOfTimesActionDone(this);
@@ -164,9 +184,9 @@ public class Drink : GoapAction {
     //public void PreTargetMissing() {
     //    actor.RemoveAwareness(poiTarget);
     //}
-    #endregion
+#endregion
 
-    #region Requirements
+#region Requirements
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, OtherData[] otherData, JobQueueItem job) { 
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData, job);
         if (satisfied) {
@@ -180,5 +200,5 @@ public class Drink : GoapAction {
         }
         return false;
     }
-    #endregion
+#endregion
 }

@@ -15,7 +15,9 @@ public class CharacterMarkerAnimationListener : MonoBehaviour {
     
     public void OnAttackExecuted() {
         if (parentMarker.character.stateComponent.currentState is CombatState combatState && combatState.isExecutingAttack) {
+#if DEBUG_LOG
             Debug.Log($"{parentMarker.character.name} executed attack.");
+#endif
             if (parentMarker.character.characterClass.rangeType == RANGE_TYPE.RANGED) {
                 CreateProjectile(combatState.currentClosestHostile, combatState);
                 //combatState.isExecutingAttack = false;
@@ -107,7 +109,10 @@ public class CharacterMarkerAnimationListener : MonoBehaviour {
                     combatState.OnAttackHit(target);
                 }
             } else if (target != null) {
-                string attackSummary = $"{parentMarker.character.name} hit {target.name}, outside of combat state";
+                string attackSummary = string.Empty;
+#if DEBUG_LOG
+                attackSummary = $"{parentMarker.character.name} hit {target.name}, outside of combat state";
+#endif
                 if (projectile.isAOE) {
                     List<LocationGridTile> tiles = RuinarchListPool<LocationGridTile>.Claim();
                     target.gridTileLocation.PopulateTilesInRadius(tiles, 1, 0, true, true); //radius
@@ -119,7 +124,9 @@ public class CharacterMarkerAnimationListener : MonoBehaviour {
                 } else {
                     target.OnHitByAttackFrom(parentMarker.character, fromState, ref attackSummary);
                 }
+#if DEBUG_LOG
                 parentMarker.character.logComponent.PrintLogIfActive(attackSummary);
+#endif
             }    
         }
     }

@@ -193,14 +193,16 @@ public class CounterattackPartyQuest : PartyQuest {
     #region Chance to End Quest
     public void AdjustChanceToEndQuest(int amount) {
         currentChanceToEndQuest += amount;
+#if DEBUG_LOG
         Debug.Log("CURRENT CHANCE TO END COUNTER ATTACK QUEST OF " + assignedParty.name + " IS " + currentChanceToEndQuest);
+#endif
         if (GameUtilities.RollChance(currentChanceToEndQuest) && assignedParty != null) {
             EndQuest("Finished quest");
         }
     }
-    #endregion
+#endregion
 
-    #region Loading
+#region Loading
     public override void LoadReferences(SaveDataPartyQuest data) {
         base.LoadReferences(data);
         if(data is SaveDataCounterattackPartyQuest subData) {
@@ -209,14 +211,14 @@ public class CounterattackPartyQuest : PartyQuest {
             }
         }
     }
-    #endregion
+#endregion
 }
 
 [System.Serializable]
 public class SaveDataCounterattackPartyQuest : SaveDataPartyQuest {
     public string targetStructure;
 
-    #region Overrides
+#region Overrides
     public override void Save(PartyQuest data) {
         base.Save(data);
         if(data is CounterattackPartyQuest subData) {
@@ -225,5 +227,5 @@ public class SaveDataCounterattackPartyQuest : SaveDataPartyQuest {
             }
         }
     }
-    #endregion
+#endregion
 }

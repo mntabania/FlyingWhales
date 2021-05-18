@@ -14,5 +14,5 @@ public class HealingPotion : TileObject {
         AddAdvertisedAction(INTERACTION_TYPE.BOOBY_TRAP);
         AddAdvertisedAction(INTERACTION_TYPE.STEAL_ANYTHING);
     }
-    public HealingPotion(SaveDataTileObject data) { }
+    public HealingPotion(SaveDataTileObject data) : base(data) { }
 }

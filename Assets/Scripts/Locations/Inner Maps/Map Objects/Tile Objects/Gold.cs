@@ -2,7 +2,7 @@
     public Gold() {
         Initialize(TILE_OBJECT_TYPE.GOLD);
     }
-    public Gold(SaveDataTileObject data) {
+    public Gold(SaveDataTileObject data) : base(data) {
         
     }
 }

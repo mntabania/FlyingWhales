@@ -23,10 +23,12 @@ public class Recruit : GoapAction {
         SetState("Recruit Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
-        string costLog = $"\n{name} {target.nameWithID}:";
         int cost = 10;
+#if DEBUG_LOG
+        string costLog = $"\n{name} {target.nameWithID}:";
         costLog += $" +{cost}(Constant)";
         actor.logComponent.AppendCostLog(costLog);
+#endif
         return cost;
     }
     public override GoapActionInvalidity IsInvalid(ActualGoapNode node) {
@@ -66,9 +68,9 @@ public class Recruit : GoapAction {
             }
         }
     }
-    #endregion
+#endregion
 
-    #region Effects
+#region Effects
     public void AfterRecruitSuccess(ActualGoapNode goapNode) {
         Character actor = goapNode.actor;
         Character targetCharacter = goapNode.poiTarget as Character;
@@ -88,9 +90,9 @@ public class Recruit : GoapAction {
         targetCharacter.traitContainer.RemoveRestrainAndImprison(targetCharacter, goapNode.actor);
         targetCharacter.traitContainer.RemoveTrait(targetCharacter, "Criminal");
     }
-    #endregion
+#endregion
 
-    #region Requirements
+#region Requirements
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, OtherData[] otherData, JobQueueItem job) {
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData, job);
         if (satisfied) {
@@ -98,5 +100,5 @@ public class Recruit : GoapAction {
         }
         return false;
     }
-    #endregion
+#endregion
 }

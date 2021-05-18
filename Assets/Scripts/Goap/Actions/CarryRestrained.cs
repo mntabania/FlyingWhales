@@ -48,6 +48,7 @@ public class CarryRestrained : GoapAction {
         return goapActionInvalidity;
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
+#if DEBUG_LOG
         string costLog = $"\n{name} {target.nameWithID}:";
         //if (job.jobType == JOB_TYPE.MOVE_CHARACTER) {
         //    //If the job is move character and the target can move again, should not, do move character anymore
@@ -63,11 +64,12 @@ public class CarryRestrained : GoapAction {
         //}
         costLog += $" +10(Constant)";
         actor.logComponent.AppendCostLog(costLog);
+#endif
         return 10;
     }
-    #endregion
+#endregion
 
-    #region Requirements
+#region Requirements
    protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, OtherData[] otherData, JobQueueItem job) { 
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData, job);
         if (satisfied) {
@@ -83,22 +85,22 @@ public class CarryRestrained : GoapAction {
         }
         return false;
     }
-    #endregion
+#endregion
 
-    #region State Effects
+#region State Effects
     public void AfterCarrySuccess(ActualGoapNode goapNode) {
         goapNode.actor.CarryPOI(goapNode.poiTarget, setOwnership: false);
     }
-    #endregion
+#endregion
 
-    #region Precondition
+#region Precondition
     private bool TargetIsRestrainedOrDead(Character actor, IPointOfInterest target, object[] otherData, JOB_TYPE jobType) {
         if(target is Character) {
             return target.traitContainer.HasTrait("Restrained") || target.isDead;
         }
         return true;
     }
-    #endregion
+#endregion
 
     private bool TargetMissingForCarry(ActualGoapNode node) {
         Character actor = node.actor;

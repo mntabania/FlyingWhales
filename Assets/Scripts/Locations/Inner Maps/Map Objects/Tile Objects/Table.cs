@@ -20,7 +20,7 @@ public class Table : TileObject {
         traitContainer.AddTrait(this, "Edible");
     }
 
-    public Table(SaveDataTileObject data) { }
+    public Table(SaveDataTileObject data) : base(data) { }
 
     #region Overrides
     public override void SetPOIState(POI_STATE state) {

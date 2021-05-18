@@ -12,7 +12,7 @@ public class KennelTileObject : TileObject {
         RemoveAdvertisedAction(INTERACTION_TYPE.STEAL_ANYTHING);
         traitContainer.AddTrait(this, "Immovable");
     }
-    public KennelTileObject(SaveDataTileObject data) {
+    public KennelTileObject(SaveDataTileObject data) : base(data) {
         
     }
     public override bool CanBeSelected() {

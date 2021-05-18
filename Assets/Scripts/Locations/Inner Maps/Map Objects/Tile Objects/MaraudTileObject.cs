@@ -12,7 +12,7 @@ public class MaraudTileObject : TileObject {
         RemoveAdvertisedAction(INTERACTION_TYPE.STEAL_ANYTHING);
         traitContainer.AddTrait(this, "Immovable");
     }
-    public MaraudTileObject(SaveDataTileObject data) {
+    public MaraudTileObject(SaveDataTileObject data) : base(data) {
         
     }
     public override bool CanBeSelected() {

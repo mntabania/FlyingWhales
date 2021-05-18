@@ -152,6 +152,16 @@ namespace UtilityScripts {
                 };
             }
         }
+        public static Dictionary<GridNeighbourDirection, Point> gridPossibleNeighbours = new Dictionary<GridNeighbourDirection, Point>() {
+            {GridNeighbourDirection.North, new Point(0,1) },
+            {GridNeighbourDirection.South, new Point(0,-1) },
+            {GridNeighbourDirection.West, new Point(-1,0) },
+            {GridNeighbourDirection.East, new Point(1,0) },
+            {GridNeighbourDirection.North_West, new Point(-1,1) },
+            {GridNeighbourDirection.North_East, new Point(1,1) },
+            {GridNeighbourDirection.South_West, new Point(-1,-1) },
+            {GridNeighbourDirection.South_East, new Point(1,-1) },
+        };
         #endregion
 
         #region Color Utilities

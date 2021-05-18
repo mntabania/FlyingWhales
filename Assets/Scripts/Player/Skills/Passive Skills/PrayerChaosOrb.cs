@@ -12,6 +12,8 @@ public class PrayerChaosOrb : PassiveSkill {
     private void OnSuccessPraying(Character character) {
         int orbsCount = GameUtilities.RandomBetweenTwoNumbers(1, 2);
         Messenger.Broadcast(PlayerSignals.CREATE_CHAOS_ORBS, character.worldPosition, orbsCount, character.gridTileLocation.parentMap);
+#if DEBUG_LOG
         Debug.Log("Chaos Orb Produced - [" + character.name + "] - [OnSuccessPraying] - [" + orbsCount + "]");
+#endif
     }
 }

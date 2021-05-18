@@ -12,7 +12,7 @@ public class ImpHutTileObject : TileObject {
         RemoveAdvertisedAction(INTERACTION_TYPE.STEAL_ANYTHING);
         traitContainer.AddTrait(this, "Immovable");
     }
-    public ImpHutTileObject(SaveDataTileObject data) {
+    public ImpHutTileObject(SaveDataTileObject data) : base(data) {
         
     }
     public override bool CanBeSelected() {

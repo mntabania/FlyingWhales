@@ -4,6 +4,7 @@ using Inner_Maps.Location_Structures;
 using UnityEngine;
 using UnityEngine.Assertions;
 using Traits;
+using UtilityScripts;
 
 namespace Locations.Area_Features {
     public class RainFeature : AreaFeature {
@@ -138,8 +139,8 @@ namespace Locations.Area_Features {
             _effect = go;
         }
         private void PopulateInitialCharactersOutside(Area p_area) {
-            List<Character> allCharactersInHex = ObjectPoolManager.Instance.CreateNewCharactersList();
-            p_area.locationCharacterTracker.PopulateCharacterListInsideHexThatMeetCriteria(allCharactersInHex, c => !c.isDead);
+            List<Character> allCharactersInHex = RuinarchListPool<Character>.Claim();
+            p_area.locationCharacterTracker.PopulateCharacterListInsideHexThatIsAlive(allCharactersInHex);
             if (allCharactersInHex != null) {
                 for (int i = 0; i < allCharactersInHex.Count; i++) {
                     Character character = allCharactersInHex[i];
@@ -148,7 +149,7 @@ namespace Locations.Area_Features {
                     }
                 }
             }
-            ObjectPoolManager.Instance.ReturnCharactersListToPool(allCharactersInHex);
+            RuinarchListPool<Character>.Release(allCharactersInHex);
         }
         private void CheckForWet(Area p_area) {
             for (int i = 0; i < _charactersOutside.Count; i++) {

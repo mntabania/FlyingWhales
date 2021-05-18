@@ -31,15 +31,21 @@ public class FirstAidCharacter : GoapAction {
         SetState("First Aid Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
-        string costLog = "";
+#if DEBUG_LOG
+        string costLog = string.Empty;
+#endif
         if (target.gridTileLocation != null && actor.movementComponent.structuresToAvoid.Contains(target.gridTileLocation.structure)) {
             //target is at structure that character is avoiding
+#if DEBUG_LOG
             costLog += $" +2000(Location of target is in avoid structure)";
             actor.logComponent.AppendCostLog(costLog);
+#endif
             return 2000;
         }
+#if DEBUG_LOG
         costLog = $"\n{name} {target.nameWithID}: +10(Constant)";
         actor.logComponent.AppendCostLog(costLog);
+#endif
         return 10;
     }
     public override GoapActionInvalidity IsInvalid(ActualGoapNode node) {
@@ -107,9 +113,9 @@ public class FirstAidCharacter : GoapAction {
         }
         return REACTABLE_EFFECT.Positive;
     }
-    #endregion
+#endregion
 
-    #region State Effects
+#region State Effects
     public void PreFirstAidSuccess(ActualGoapNode goapNode) {
         TileObject chosenHealingPotion = goapNode.actor.GetItem(TILE_OBJECT_TYPE.HEALING_POTION);
         if (chosenHealingPotion != null && chosenHealingPotion.traitContainer.HasTrait("Poisoned")) {
@@ -158,11 +164,11 @@ public class FirstAidCharacter : GoapAction {
         // }
         // goapNode.poiTarget.traitContainer.RemoveStatusAndStacks(goapNode.poiTarget, "Injured", goapNode.actor);
     }
-    #endregion
+#endregion
 
-    #region Precondition
+#region Precondition
     private bool HasHealingPotion(Character actor, IPointOfInterest poiTarget, object[] otherData, JOB_TYPE jobType) {
         return actor.HasItem(TILE_OBJECT_TYPE.HEALING_POTION);
     }
-    #endregion
+#endregion
 }

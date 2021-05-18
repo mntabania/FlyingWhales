@@ -253,7 +253,7 @@ namespace Traits {
                     job.AddOtherData(INTERACTION_TYPE.DROP_RESTRAINED, new object[] { character.homeStructure });
                     job.AddOtherData(INTERACTION_TYPE.RITUAL_KILLING, new object[] { character.homeStructure });
                 } else {
-                    Area area = character.gridTileLocation.GetNearestHexTileWithinRegionThatMeetCriteria(h => h.elevationType != ELEVATION.MOUNTAIN && h.elevationType != ELEVATION.WATER && h.settlementOnArea == null);
+                    Area area = character.gridTileLocation.GetNearestAreaWithinRegionThatIsNotMountainAndWaterAndHasNoSettlement();
                     if(area != null) {
                         LocationGridTile chosenTile = area.gridTileComponent.GetRandomPassableTile();
                         job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { chosenTile.structure, chosenTile });
@@ -298,7 +298,7 @@ namespace Traits {
                     job.AddOtherData(INTERACTION_TYPE.DROP_RESTRAINED, new object[] { character.homeStructure });
                     job.AddOtherData(INTERACTION_TYPE.RITUAL_KILLING, new object[] { character.homeStructure });
                 } else {
-                    Area area = targetVictim.gridTileLocation.GetNearestHexTileWithinRegionThatMeetCriteria(h => h.elevationType != ELEVATION.MOUNTAIN && h.elevationType != ELEVATION.WATER && h.settlementOnArea == null);
+                    Area area = targetVictim.gridTileLocation.GetNearestAreaWithinRegionThatIsNotMountainAndWaterAndHasNoSettlement();
                     if (area != null) {
                         LocationGridTile chosenTile = area.gridTileComponent.GetRandomPassableTile();
                         job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { chosenTile.structure, chosenTile });

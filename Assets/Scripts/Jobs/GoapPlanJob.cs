@@ -132,7 +132,9 @@ public class GoapPlanJob : JobQueueItem {
         if (hasBeenReset) { return false; }
         //Should goap plan in multithread if character is being carried or being seized
         if(assignedPlan == null && originalOwner != null && assignedCharacter != null && assignedCharacter.carryComponent.IsNotBeingCarried() && !assignedCharacter.isBeingSeized) {
+#if DEBUG_PROFILER
             Profiler.BeginSample($"Goap Plan Job Process Job");
+#endif
             Character characterOwner = assignedCharacter;
             bool isPersonal = originalOwner.ownerType == JOB_OWNER.CHARACTER;
             IPointOfInterest target = targetPOI ?? assignedCharacter; //if provided target is null, default to the assigned character.
@@ -147,7 +149,9 @@ public class GoapPlanJob : JobQueueItem {
                 //    }
                 //}
             }
+#if DEBUG_PROFILER
             Profiler.EndSample();
+#endif
             return true;
         }
         return base.ProcessJob();
@@ -330,15 +334,16 @@ public class GoapPlanJob : JobQueueItem {
             }
         }
     }
-    #endregion
+#endregion
 
-    #region Misc
+#region Misc
     public void SetAssignedPlan(GoapPlan plan) {
         if(assignedPlan != plan) {
             GoapPlan prevPlan = assignedPlan;
             assignedPlan = plan;
             if (prevPlan != null) {
                 prevPlan.OnUnattachPlanToJob(this);
+                ObjectPoolManager.Instance.ReturnGoapPlanToPool(prevPlan);
             }
             if (plan != null) {
                 plan.OnAttachPlanToJob(this);
@@ -436,18 +441,18 @@ public class GoapPlanJob : JobQueueItem {
         }
         return data;
     }
-    #endregion
+#endregion
 
-    #region Goap Effects
+#region Goap Effects
     public bool HasGoalConditionKey(string key) {
         return goal.conditionKey == key;
     }
     public bool HasGoalConditionType(GOAP_EFFECT_CONDITION conditionType) {
         return goal.conditionType == conditionType;
     }
-    #endregion
+#endregion
 
-    #region Job Object Pool
+#region Job Object Pool
     public override void Reset() {
         if (targetPOI != null) {
             targetPOI.RemoveJobTargetingThis(this);
@@ -468,7 +473,7 @@ public class GoapPlanJob : JobQueueItem {
         }
         priorityLocations.Clear();
     }
-    #endregion
+#endregion
 }
 
 public interface IGoapJobPremadeNodeCreator {

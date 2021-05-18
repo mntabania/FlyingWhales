@@ -21,8 +21,10 @@ public class Execute : GoapAction {
         SetState("Execute Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
+#if DEBUG_LOG
         string costLog = $"\n{name} {target.nameWithID}: +10(Constant)";
         actor.logComponent.AppendCostLog(costLog);
+#endif
         return 10;
     }
     public override void PopulateReactionsToActor(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
@@ -79,9 +81,9 @@ public class Execute : GoapAction {
             reactions.Add(EMOTION.Anger);
         }
     }
-    #endregion
+#endregion
 
-    #region State Effects
+#region State Effects
     public void AfterExecuteSuccess(ActualGoapNode goapNode) {
         Character target = goapNode.target as Character;
         if (target.traitContainer.HasTrait("Criminal")) {
@@ -95,12 +97,12 @@ public class Execute : GoapAction {
         target.traitContainer.RemoveRestrainAndImprison(target, goapNode.actor);
         target.Death("executed", goapNode, goapNode.actor);
     }
-    #endregion
+#endregion
     
-    #region Preconditions
+#region Preconditions
     private bool IsTargetRestrained(Character actor, IPointOfInterest poiTarget, object[] otherData) {
         return poiTarget.traitContainer.HasTrait("Restrained");
     }
-    #endregion
+#endregion
 
 }

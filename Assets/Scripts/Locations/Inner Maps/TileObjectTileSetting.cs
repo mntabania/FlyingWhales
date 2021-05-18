@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [System.Serializable]
-public struct TileObjectTileSetting {
+public class TileObjectTileSetting {
     public TileObjectBiomeAssetDictionary biomeAssets;
 
     public BiomeTileObjectTileSetting GetAsset(BIOMES biome) {

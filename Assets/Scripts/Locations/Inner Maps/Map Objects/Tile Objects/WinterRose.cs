@@ -9,7 +9,7 @@ public class WinterRose : TileObject {
         AddAdvertisedAction(INTERACTION_TYPE.ASSAULT);
         AddAdvertisedAction(INTERACTION_TYPE.RESOLVE_COMBAT);
     }
-    public WinterRose(SaveDataTileObject data) { }
+    public WinterRose(SaveDataTileObject data) : base(data) { }
 
     public void WinterRoseEffect() {
         if(gridTileLocation != null) {
@@ -17,7 +17,7 @@ public class WinterRose : TileObject {
                 gridTileLocation.area.gridTileComponent.centerGridTile,
                 PARTICLE_EFFECT.Winter_Rose).GetComponent<AutoDestroyParticle>();
             //gridTileLocation.hexTileOwner.ChangeBiomeType(BIOMES.SNOW);
-            gridTileLocation.area.biomeComponent.GradualChangeBiomeType(BIOMES.SNOW, OnDoneChangingBiome);
+            // gridTileLocation.area.biomeComponent.GradualChangeBiomeType(BIOMES.SNOW, OnDoneChangingBiome);
             gridTileLocation.structure.RemovePOI(this);
         }
     }

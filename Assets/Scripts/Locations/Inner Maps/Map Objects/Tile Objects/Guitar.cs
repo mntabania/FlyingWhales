@@ -11,7 +11,7 @@ public class Guitar : TileObject {
         AddAdvertisedAction(INTERACTION_TYPE.PICK_UP);
         AddAdvertisedAction(INTERACTION_TYPE.DROP_ITEM);
     }
-    public Guitar(SaveDataTileObject data) {
+    public Guitar(SaveDataTileObject data) : base(data) {
     }
     public override string ToString() {
         return $"Guitar {id.ToString()}";

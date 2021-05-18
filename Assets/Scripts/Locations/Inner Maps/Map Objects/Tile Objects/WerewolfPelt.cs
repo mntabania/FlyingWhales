@@ -10,7 +10,7 @@
         AddAdvertisedAction(INTERACTION_TYPE.STEAL_ANYTHING);
         traitContainer.AddTrait(this, "Interesting");
     }
-    public WerewolfPelt(SaveDataTileObject data) { }
+    public WerewolfPelt(SaveDataTileObject data) : base(data) { }
     protected override string GenerateName() { return "Werewolf Pelt"; }
 
     #region Ownership

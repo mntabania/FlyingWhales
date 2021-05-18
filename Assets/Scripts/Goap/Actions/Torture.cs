@@ -15,13 +15,15 @@ public class Torture : GoapAction {
         SetState("Torture Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
+#if DEBUG_LOG
         string costLog = $"\n{name} {target.nameWithID}: +10(Constant)";
         actor.logComponent.AppendCostLog(costLog);
+#endif
         return 10;
     }
-    #endregion
+#endregion
     
-    #region State Effects
+#region State Effects
     public void PerTickTortureSuccess(ActualGoapNode goapNode) {
         int maxHP = goapNode.poiTarget.maxHP;
         int damage = Mathf.RoundToInt(0.03f * maxHP);
@@ -54,5 +56,5 @@ public class Torture : GoapAction {
             }
         }
     }
-    #endregion
+#endregion
 }

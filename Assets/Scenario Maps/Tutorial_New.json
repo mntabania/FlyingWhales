@@ -104,6 +104,8 @@
         }
       ]
     },
+    "warpWeight": 0.39,
+    "temperatureSeed": 0.1,
     "hextileSaves": null,
     "areaSaves": [
       {
