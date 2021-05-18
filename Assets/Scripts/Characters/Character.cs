@@ -124,6 +124,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public BookmarkableEventDispatcher bookmarkEventDispatcher { get; }
     public BuffStatsBonus buffStatsBonus { get; private set; }
     public EquipmentComponent equipmentComponent { get; private set; }
+    public CharacterMoneyComponent moneyComponent { get; private set; }
 
     #region getters / setters
     public string bookmarkName => lycanData != null ? lycanData.activeForm.visuals.GetCharacterNameWithIconAndColor() : visuals.GetCharacterNameWithIconAndColor();
@@ -328,6 +329,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         piercingAndResistancesComponent = new PiercingAndResistancesComponent(); piercingAndResistancesComponent.SetOwner(this);
         previousCharacterDataComponent = new PreviousCharacterDataComponent(); previousCharacterDataComponent.SetOwner(this);
         traitComponent = new CharacterTraitComponent(); traitComponent.SetOwner(this);
+        moneyComponent = new CharacterMoneyComponent(); moneyComponent.SetOwner(this);
         eventDispatcher = new CharacterEventDispatcher();
         bookmarkEventDispatcher = new BookmarkableEventDispatcher();
         buffStatsBonus = new BuffStatsBonus();
@@ -410,6 +412,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         piercingAndResistancesComponent = data.piercingAndResistancesComponent.Load(); piercingAndResistancesComponent.SetOwner(this);
         previousCharacterDataComponent = data.previousCharacterDataComponent.Load(); previousCharacterDataComponent.SetOwner(this);
         traitComponent = data.traitComponent.Load(); traitComponent.SetOwner(this);
+        moneyComponent = data.moneyComponent.Load(); moneyComponent.SetOwner(this);
+
         buffStatsBonus = data.buffStatusBonus.Load();
         eventDispatcher = new CharacterEventDispatcher();
         bookmarkEventDispatcher = new BookmarkableEventDispatcher();
