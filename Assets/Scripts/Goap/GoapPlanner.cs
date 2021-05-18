@@ -75,6 +75,9 @@ public class GoapPlanner {
             goapThread.job.SetIsInMultithread(false);
             if (goapThread.job.shouldForceCancelUponReceiving) {
                 ForceCancelJobAndReturnToObjectPool(goapThread.job);
+                if (goapThread.recalculationPlan != null && goapThread.recalculationPlan.resetPlanOnFinishRecalculation) {
+                    ObjectPoolManager.Instance.ReturnGoapPlanToPool(goapThread.recalculationPlan);
+                }
                 ObjectPoolManager.Instance.ReturnGoapThreadToPool(goapThread);
                 return;
             }
@@ -84,9 +87,18 @@ public class GoapPlanner {
             ObjectPoolManager.Instance.ReturnGoapThreadToPool(goapThread);
             return;
         }
-        if (goapThread.recalculationPlan != null && goapThread.recalculationPlan.isEnd) {
-            ForceCancelJobAndReturnToObjectPool(goapThread.job);
-            ObjectPoolManager.Instance.ReturnGoapThreadToPool(goapThread);
+        if (goapThread.recalculationPlan != null) {
+            if (goapThread.recalculationPlan.isEnd) {
+                ForceCancelJobAndReturnToObjectPool(goapThread.job);
+                if (goapThread.recalculationPlan.resetPlanOnFinishRecalculation) {
+                    ObjectPoolManager.Instance.ReturnGoapPlanToPool(goapThread.recalculationPlan);
+                }
+                ObjectPoolManager.Instance.ReturnGoapThreadToPool(goapThread);    
+            } else {
+                if (goapThread.recalculationPlan.resetPlanOnFinishRecalculation) {
+                    ObjectPoolManager.Instance.ReturnGoapPlanToPool(goapThread.recalculationPlan);
+                }    
+            }
             return;
         }
 #if DEBUG_LOG

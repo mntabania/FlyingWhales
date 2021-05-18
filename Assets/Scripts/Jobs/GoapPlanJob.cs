@@ -343,7 +343,11 @@ public class GoapPlanJob : JobQueueItem {
             assignedPlan = plan;
             if (prevPlan != null) {
                 prevPlan.OnUnattachPlanToJob(this);
-                ObjectPoolManager.Instance.ReturnGoapPlanToPool(prevPlan);
+                if (prevPlan.isBeingRecalculated) {
+                    prevPlan.SetResetPlanOnFinishRecalculation(true);
+                } else {
+                    ObjectPoolManager.Instance.ReturnGoapPlanToPool(prevPlan);
+                }
             }
             if (plan != null) {
                 plan.OnAttachPlanToJob(this);
