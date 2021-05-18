@@ -32,15 +32,16 @@ MonoBehaviour:
   resistanceType: 0
   archetypeWeightedBonus: 0
   canBeReleasedEvenIfLearned: 0
-  contextMenuIcon: {fileID: 21300000, guid: 3aa12ad36bc6d1d479696c177317a09a, type: 3}
+  contextMenuIcon: {fileID: 21300000, guid: 5a7e6b638f2cc634ca09e22045496b76, type: 3}
   contextMenuColumn: 0
-  playerActionIcon: {fileID: 21300000, guid: 623d4fe6fa7f3264d8a883e12f3774f4, type: 3}
+  playerActionIcon: {fileID: 21300000, guid: 5a7e6b638f2cc634ca09e22045496b76, type: 3}
   isNonUpgradeable: 1
   isAffliction: 0
   isLockedBaseOnRequirements: 0
+  canBeCastedOnMaxLevel: 0
   requirementData:
     requirements: 
-    requiredArchetype: 0
+    requiredArchetypes: 
     requiredSkills: 
     actionCount: 0
     afflictionCount: 0
@@ -61,6 +62,7 @@ MonoBehaviour:
     additionalAttackPercentagePerLevel: []
     additionalHpValuePerLevel: 
     additionalAttackValuePerLevel: 
+    applyOnLevel: 
     additionalmanaReceivedPercentagePerLevel: []
     statsIncreasedPercentagePerLevel: []
     durationBonusPerLevel: 

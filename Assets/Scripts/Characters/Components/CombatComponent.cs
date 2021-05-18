@@ -1153,11 +1153,11 @@ public class CombatComponent : CharacterComponent {
     }
     private void UpdateAttack() {
         int modifiedAttack = unModifiedAttack + attackModification;
-        attack = modifiedAttack + Mathf.RoundToInt(modifiedAttack * (attackPercentModification / 100f));
+        attack = Mathf.RoundToInt(modifiedAttack * ((attackPercentModification / 100f) + 1f));
     }
     private void UpdateMaxHP() {
         int modifiedHP = unModifiedMaxHP + maxHPModification;
-        maxHP = modifiedHP + Mathf.RoundToInt(modifiedHP * (maxHPPercentModification / 100f));
+        maxHP = Mathf.RoundToInt(modifiedHP * ((maxHPPercentModification / 100f) + 1f));
         if (maxHP < 0) {
             maxHP = 1;
         }
