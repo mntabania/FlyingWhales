@@ -2158,11 +2158,12 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 	    }
 	    return false;
     }
-    public void TriggerRaiseCorpse(IPointOfInterest target) {
+    public bool TriggerRaiseCorpse(IPointOfInterest target) {
         if (!owner.jobQueue.HasJob(JOB_TYPE.RAISE_CORPSE)) {
             GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.RAISE_CORPSE, INTERACTION_TYPE.RAISE_CORPSE, target, owner);
-            owner.jobQueue.AddJobInQueue(job);
+            return owner.jobQueue.AddJobInQueue(job);
         }
+        return false;
     }
     public void TriggerRaiseCorpse(IPointOfInterest target, out JobQueueItem producedJob) {
 	    producedJob = null;

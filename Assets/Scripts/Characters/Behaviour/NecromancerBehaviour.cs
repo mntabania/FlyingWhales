@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
+using Traits;
 using UtilityScripts;
 
 public class NecromancerBehaviour : CharacterBehaviourComponent {
@@ -35,9 +36,9 @@ public class NecromancerBehaviour : CharacterBehaviourComponent {
                 if(deadCharacter != null) {
                     log += $"\n-Character saw a dead character, has a 80% chance to raise corpse";
                     if (UnityEngine.Random.Range(0, 100) < 80) {
-                        int followersInRegion = character.necromancerTrait.numOfSkeletonFollowersInSameRegion;
-                        if(followersInRegion > 25) {
-                            log += $"\n-Character will no longer raise corpse because the number of followers in region is above 25";
+                        int followersInRegion = character.necromancerTrait.numOfSkeletonFollowers;
+                        if(followersInRegion > Necromancer.MaxSkeletonFollowers) {
+                            log += $"\n-Character will no longer raise corpse because the number of followers in region is above {Necromancer.MaxSkeletonFollowers.ToString()}";
                         } else {
                             log += $"\n-Character will raise corpse";
                             character.jobComponent.TriggerRaiseCorpse(deadCharacter, out producedJob);
@@ -60,9 +61,9 @@ public class NecromancerBehaviour : CharacterBehaviourComponent {
                     if (tomb != null) {
                         log += $"\n-Character saw a tombstone, has a 80% chance to raise corpse";
                         if (UnityEngine.Random.Range(0, 100) < 80) {
-                            int followersInRegion = character.necromancerTrait.numOfSkeletonFollowersInSameRegion;
-                            if (followersInRegion > 25) {
-                                log += $"\n-Character will no longer raise corpse because the number of followers in region is above 25";
+                            int followersInRegion = character.necromancerTrait.numOfSkeletonFollowers;
+                            if (followersInRegion > Necromancer.MaxSkeletonFollowers) {
+                                log += $"\n-Character will no longer raise corpse because the number of followers in region is above {Necromancer.MaxSkeletonFollowers.ToString()}";
                             } else {
                                 log += $"\n-Character will raise corpse";
                                 character.jobComponent.TriggerRaiseCorpse(tomb, out producedJob);
@@ -111,9 +112,9 @@ public class NecromancerBehaviour : CharacterBehaviourComponent {
                                 return true;
                             }
                         } else {
-                            int followersInRegion = character.necromancerTrait.numOfSkeletonFollowersInSameRegion;
-                            if (followersInRegion > 25) {
-                                log += $"\n-Character will no longer visit Graveyards/Cemeteries because the number of followers in region is above 25";
+                            int followersInRegion = character.necromancerTrait.numOfSkeletonFollowers;
+                            if (followersInRegion > Necromancer.MaxSkeletonFollowers) {
+                                log += $"\n-Character will no longer visit Graveyards/Cemeteries because the number of followers in region is above {Necromancer.MaxSkeletonFollowers.ToString()}";
                             } else {
                                 log += $"\n-50% chance to visit Ancient Graveyard/Cemetery if there's any, Otherwise, Create skeletons";
                                 int roll = UnityEngine.Random.Range(0, 100);
@@ -156,7 +157,7 @@ public class NecromancerBehaviour : CharacterBehaviourComponent {
                     bool hasCreated = false;
                     if (character.necromancerTrait.energy > 0) {
                         //hasCreated = character.jobComponent.TriggerSpawnSkeleton(out producedJob);
-                        int followersInRegion = character.necromancerTrait.numOfSkeletonFollowersInSameRegion;
+                        int followersInRegion = character.necromancerTrait.numOfSkeletonFollowers;
                         if (followersInRegion > 15) {
                             log += $"\n-Character will no longer visit create skeletons because the number of followers in region is above 15";
                         } else {
