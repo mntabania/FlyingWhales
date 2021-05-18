@@ -17,6 +17,8 @@ public class CharacterClassData : ScriptableObject {
     public Sprite portraitSprite;
     public CharacterClassAsset defaultSprites;
     public RaceSpriteListDictionary raceSprites;
+    [Header("Upgrade bonus per skill level up")]
+    public CharacterSkillUpdateData characterSkillUpdateData;
 
     public int GetSummonCost() {
         return SpellUtilities.GetModifiedSpellCost(summonCost, WorldSettings.Instance.worldSettingsData.playerSkillSettings.GetCostsModification());
