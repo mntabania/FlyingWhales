@@ -99,7 +99,10 @@ namespace Traits {
                 Character character = addedTo as Character;
                 // character.moodComponent.AddMoodEffect(moodEffect, this);
                 if (elementalType != ELEMENTAL_TYPE.Normal) {
-                    character.combatComponent.SetElementalType(elementalType);
+                    if (!character.equipmentComponent.HasEquips()) {
+                        character.combatComponent.SetElementalType(elementalType);
+                    }
+                    character.combatComponent.elementalStatusWaitingList.Add(elementalType);
                 }
             }
         }
@@ -108,6 +111,7 @@ namespace Traits {
                 Character character = removedFrom as Character;
                 // character.moodComponent.RemoveMoodEffect(-moodEffect, this);
                 if (elementalType != ELEMENTAL_TYPE.Normal) {
+                    character.combatComponent.elementalStatusWaitingList.Remove(elementalType);
                     character.combatComponent.UpdateElementalType();
                 }
             }

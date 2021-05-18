@@ -1,21 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Characters.Components;
+﻿using Characters.Components;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
-using UnityEngine;
-using Traits;
-using UnityEngine.Assertions;
 using Interrupts;
-using Locations.Settlements;
-using UnityEngine.EventSystems;
-using UtilityScripts;
 using JetBrains.Annotations;
-using Plague.Transmission;
 using Locations;
+using Locations.Settlements;
 using Object_Pools;
+using Plague.Transmission;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using Traits;
+using UnityEngine;
+using UnityEngine.Assertions;
+using UnityEngine.EventSystems;
 using UnityEngine.Profiling;
+using UtilityScripts;
 
 public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlayerActionTarget, IObjectManipulator, IPartyQuestTarget, IGatheringTarget, IStoredTarget {
     private int _id;
@@ -52,6 +52,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public CharacterTrait defaultCharacterTrait { get; private set; }
     public List<INTERACTION_TYPE> advertisedActions { get; private set; }
     public List<TileObject> items { get; private set; }
+    public List<TileObject> equipmentInventory { get; private set; }
     public List<TileObject> ownedItems { get; private set; }
     public List<JobQueueItem> allJobsTargetingThis { get; private set; }
     public List<Trait> traitsNeededToBeRemoved { get; private set; }
@@ -70,6 +71,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public bool shouldDoActionOnFirstTickUponLoadGame { get; private set; } //This should not be saved. Upon loading the game, this is always set to true so that if the character has a saved current action, it should resume on first tick
     public bool isPreplaced { get; private set; }
     public bool isStoredAsTarget { get; private set; }
+
+    public bool isWildMonster { get; protected set; }
     public Log deathLog { get; private set; }
     public List<string> interestedItemNames { get; private set; }
     public string previousClassName { get; private set; }
@@ -120,6 +123,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public CharacterTraitComponent traitComponent { get; private set; }
     public BookmarkableEventDispatcher bookmarkEventDispatcher { get; }
     public BuffStatsBonus buffStatsBonus { get; private set; }
+    public EquipmentComponent equipmentComponent { get; private set; }
 
     #region getters / setters
     public string bookmarkName => lycanData != null ? lycanData.activeForm.visuals.GetCharacterNameWithIconAndColor() : visuals.GetCharacterNameWithIconAndColor();
@@ -286,6 +290,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         skillCauseOfDeath = PLAYER_SKILL_TYPE.NONE;
         advertisedActions = new List<INTERACTION_TYPE>();
         items = new List<TileObject>();
+        equipmentInventory = new List<TileObject>();
         ownedItems = new List<TileObject>();
         allJobsTargetingThis = new List<JobQueueItem>();
         traitsNeededToBeRemoved = new List<Trait>();
@@ -326,6 +331,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         eventDispatcher = new CharacterEventDispatcher();
         bookmarkEventDispatcher = new BookmarkableEventDispatcher();
         buffStatsBonus = new BuffStatsBonus();
+        equipmentComponent = new EquipmentComponent();
         needsComponent.ResetSleepTicks();
     }
     public Character(SaveDataCharacter data) {
@@ -333,6 +339,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         shouldDoActionOnFirstTickUponLoadGame = true;
         advertisedActions = new List<INTERACTION_TYPE>();
         items = new List<TileObject>();
+        equipmentInventory = new List<TileObject>();
         ownedItems = new List<TileObject>();
         allJobsTargetingThis = new List<JobQueueItem>();
         traitsNeededToBeRemoved = new List<Trait>();
@@ -2742,7 +2749,18 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
 
         CombatManager.Instance.ModifyDamage(ref amount, elementalDamageType, piercingPower, this);
-        
+
+        //weapon ward and slayer bonus calculator
+        float increaseDamage = EquipmentBonusProcessor.GetSlayerBonusDamage(responsibleCharacter, this, amount);
+        float reducedDamage = EquipmentBonusProcessor.GetWardBonusDamage(responsibleCharacter, this, amount);
+        int processedAmount = amount;
+        processedAmount += (int)increaseDamage;
+        processedAmount -= (int)reducedDamage;
+        if (responsibleCharacter != null) {
+            Debug.Log("Damage Receiver: " + this.name + " !Raw Damage: " + amount + " !Damage Reduction(Ward Bonus): " + reducedDamage + " !Damage Increase(Slayer Bonus): " + increaseDamage + " Attacker: " + responsibleCharacter + " !After Process Damage: " + processedAmount);
+        }
+        //weapon ward and slayer bonus calculator
+        amount = processedAmount;
         if ((amount < 0 && (ignoreIndestructibleTrait || CanBeDamaged())) || amount > 0) {
             if (hasMarker) {
                 marker.ShowHealthAdjustmentEffect(amount);
@@ -3715,6 +3733,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                     }
                 }
             }
+            if (item is EquipmentItem equipment) {
+                equipmentComponent.SetEquipment(equipment, this);
+            }
             return true;
         }
         return false;
@@ -3722,6 +3743,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     }
     public bool UnobtainItem(TileObject item) {
         if (RemoveItem(item)) {
+            RemoveBonusForUnobtainedEquipment(item);
             item.SetInventoryOwner(null);
             return true;
         }
@@ -3730,6 +3752,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public bool UnobtainItem(TILE_OBJECT_TYPE itemType) {
         TileObject removedItem = RemoveItem(itemType);
         if (removedItem != null) {
+            RemoveBonusForUnobtainedEquipment(removedItem);
             removedItem.SetInventoryOwner(null);
             return true;
         }
@@ -3738,10 +3761,17 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public bool UnobtainItem(string name) {
         TileObject removedItem = RemoveItem(name);
         if (removedItem != null) {
+            RemoveBonusForUnobtainedEquipment(removedItem);
             removedItem.SetInventoryOwner(null);
             return true;
         }
         return false;
+    }
+
+    void RemoveBonusForUnobtainedEquipment(TileObject p_tileObject) {
+        if (p_tileObject is EquipmentItem equipItem) {
+            equipmentComponent.RemoveEquipment(equipItem, this);
+        }
     }
     //public bool ConsumeToken(SpecialToken token) {
     //    token.OnConsumeToken(this);
@@ -3751,19 +3781,37 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     //    return false;
     //}
     private bool AddItem(TileObject item) {
-        if (!items.Contains(item)) {
-            items.Add(item);
-            //item.OnTileObjectAddedToInventoryOf(this);
-            Messenger.Broadcast(CharacterSignals.CHARACTER_OBTAINED_ITEM, item, this);
-            return true;
+        if (item is EquipmentItem) {
+            if (!equipmentInventory.Contains(item)) {
+                equipmentInventory.Add(item);
+                //item.OnTileObjectAddedToInventoryOf(this);
+                Messenger.Broadcast(CharacterSignals.CHARACTER_OBTAINED_ITEM, item, this);
+                return true;
+            }
+        } else {
+            if (!items.Contains(item)) {
+                items.Add(item);
+                //item.OnTileObjectAddedToInventoryOf(this);
+                Messenger.Broadcast(CharacterSignals.CHARACTER_OBTAINED_ITEM, item, this);
+                return true;
+            }
         }
+        
         return false;
     }
     private bool RemoveItem(TileObject item) {
-        if (items.Remove(item)) {
-            Messenger.Broadcast(CharacterSignals.CHARACTER_LOST_ITEM, item, this);
-            return true;
+        if (item is EquipmentItem) {
+            if (equipmentInventory.Remove(item)) {
+                Messenger.Broadcast(CharacterSignals.CHARACTER_LOST_ITEM, item, this);
+                return true;
+            }
+        } else {
+            if (items.Remove(item)) {
+                Messenger.Broadcast(CharacterSignals.CHARACTER_LOST_ITEM, item, this);
+                return true;
+            }
         }
+        
         return false;
     }
     private TileObject RemoveItem(TILE_OBJECT_TYPE itemType) {
@@ -5926,7 +5974,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         if (vampireTrait != null && !vampireTrait.isInVampireBatForm) {
             vampireTrait.SetIsInVampireBatForm(true);
             movementComponent.AdjustSpeedModifier(0.20f);
-            movementComponent.SetIsFlying(true);
+            movementComponent.SetToFlying();
             if (visuals != null) {
                 visuals.UpdateAllVisuals(this);
             }
@@ -5937,7 +5985,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         if (vampireTrait != null && vampireTrait.isInVampireBatForm) {
             vampireTrait.SetIsInVampireBatForm(false);
             movementComponent.AdjustSpeedModifier(-0.20f);
-            movementComponent.SetIsFlying(false);
+            movementComponent.SetToNonFlying();
             if (visuals != null) {
                 visuals.UpdateAllVisuals(this);
             }
@@ -6086,6 +6134,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 items.Add(obj);
             }
         }
+        
         for (int i = 0; i < data.ownedItems.Count; i++) {
             TileObject obj = DatabaseManager.Instance.tileObjectDatabase.GetTileObjectByPersistentID(data.ownedItems[i]);
             if (obj != null) {
@@ -6148,6 +6197,14 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
 
         //Load character traits after all references and visuals and objects of character has been placed since
         LoadCharacterTraitsFromSave(data);
+        for (int i = 0; i < data.equipmentInventory.Count; i++) {
+            TileObject obj = DatabaseManager.Instance.tileObjectDatabase.GetTileObjectByPersistentID(data.equipmentInventory[i]);
+            if (obj != null) {
+                equipmentInventory.Add(obj);
+            }
+        }
+        equipmentComponent = new EquipmentComponent();
+        ApplyStackCountForTraits();
         SetRelationshipContainer(data.saveDataBaseRelationshipContainer.Load());
 
         visuals.UpdateAllVisuals(this);
@@ -6233,8 +6290,17 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     }
     #endregion
 
-    #region IBookmarkable
-    public void OnSelectBookmark() {
+    #region apply equipment effects upon load
+    void ApplyStackCountForTraits() {
+        equipmentInventory.ForEach((eachEquip) => {
+            (eachEquip as EquipmentItem).AssignData();
+            equipmentComponent.SetEquipment(eachEquip as EquipmentItem, this, true);
+        });
+    }
+	#endregion
+
+	#region IBookmarkable
+	public void OnSelectBookmark() {
         LeftSelectAction();
     }
     public void RemoveBookmark() {

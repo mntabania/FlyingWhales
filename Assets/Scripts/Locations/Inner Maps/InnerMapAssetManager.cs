@@ -194,7 +194,7 @@ namespace Inner_Maps {
             foreach (var file in allFiles) {
                 FileInfo fileInfo = new FileInfo(file);
                 string fullFilePath = fileInfo.FullName;
-                fullFilePath = fullFilePath.Replace(@"F:\Repositories\FlyingWhales\", "");
+                fullFilePath = fullFilePath.Replace(@"D:\Documents\FlyingWhales\", "");
                 Sprite loadedSprite = (Sprite)UnityEditor.AssetDatabase.LoadAssetAtPath(fullFilePath, typeof(Sprite));
                 if (loadedSprite != null) {
                     Debug.Log($"Loaded {loadedSprite.name} sprite.");
@@ -210,7 +210,7 @@ namespace Inner_Maps {
             foreach (var file in allFiles) {
                 FileInfo fileInfo = new FileInfo(file);
                 string fullFilePath = fileInfo.FullName;
-                fullFilePath = fullFilePath.Replace(@"F:\Repositories\FlyingWhales\", "");
+                fullFilePath = fullFilePath.Replace(@"D:\Documents\FlyingWhales\", "");
                 Sprite loadedSprite = (Sprite)UnityEditor.AssetDatabase.LoadAssetAtPath(fullFilePath, typeof(Sprite));
                 if (loadedSprite != null) {
                     Debug.Log($"Loaded {loadedSprite.name} sprite.");

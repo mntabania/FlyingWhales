@@ -54,7 +54,12 @@ public class CharacterInfoUI : InfoUIBase {
     [Space(10)] [Header("Items")]
     [SerializeField] private TextMeshProUGUI itemsLbl;
     [SerializeField] private EventLabel itemsEventLbl;
-    
+
+    [Space(10)]
+    [Header("Equips")]
+    [SerializeField] private TextMeshProUGUI equipsLbl;
+    [SerializeField] private EventLabel equipsEventLbl;
+
     [Space(10)] [Header("Relationships")]
     [SerializeField] private EventLabel relationshipNamesEventLbl;
     [SerializeField] private TextMeshProUGUI relationshipTypesLbl;
@@ -153,7 +158,10 @@ public class CharacterInfoUI : InfoUIBase {
         
         itemsEventLbl.SetOnLeftClickAction(OnLeftClickItem);
         itemsEventLbl.SetOnRightClickAction(OnRightClickItem);
-        
+
+        equipsEventLbl.SetOnLeftClickAction(OnLeftClickEquipment);
+        equipsEventLbl.SetOnRightClickAction(OnRightClickEquipment);
+
         opinionsEventLabel.SetShouldColorHighlight(false);
         statusTraitsEventLbl.SetShouldColorHighlight(false);
         normalTraitsEventLbl.SetShouldColorHighlight(false);
@@ -559,6 +567,24 @@ public class CharacterInfoUI : InfoUIBase {
             }
         }
     }
+    private void OnLeftClickEquipment(object obj) {
+        if (obj is string text) {
+            int index = int.Parse(text);
+            TileObject tileObject = _activeCharacter.equipmentInventory.ElementAtOrDefault(index);
+            if (tileObject != null) {
+                UIManager.Instance.ShowTileObjectInfo(tileObject);
+            }
+        }
+    }
+    private void OnRightClickEquipment(object obj) {
+        if (obj is string text) {
+            int index = int.Parse(text);
+            TileObject tileObject = _activeCharacter.equipmentInventory.ElementAtOrDefault(index);
+            if (tileObject != null) {
+                UIManager.Instance.ShowPlayerActionContextMenu(tileObject, Input.mousePosition, true);
+            }
+        }
+    }
     private void UpdateInventoryInfo() {
         itemsLbl.text = string.Empty;
         for (int i = 0; i < _activeCharacter.items.Count; i++) {
@@ -566,6 +592,14 @@ public class CharacterInfoUI : InfoUIBase {
             itemsLbl.text = $"{itemsLbl.text}<link=\"{i.ToString()}\">{UtilityScripts.Utilities.ColorizeAndBoldName(currInventoryItem.name)}</link>";
             if (i < _activeCharacter.items.Count - 1) {
                 itemsLbl.text = $"{itemsLbl.text}, ";
+            }
+        }
+        equipsLbl.text = string.Empty;
+        for (int i = 0; i < _activeCharacter.equipmentInventory.Count; i++) {
+            TileObject currInventoryItem = _activeCharacter.equipmentInventory[i];
+            equipsLbl.text = $"{equipsLbl.text}<link=\"{i.ToString()}\">{UtilityScripts.Utilities.ColorizeAndBoldName(currInventoryItem.name)}</link>";
+            if (i < _activeCharacter.equipmentInventory.Count - 1) {
+                equipsLbl.text = $"{equipsLbl.text}, ";
             }
         }
     }

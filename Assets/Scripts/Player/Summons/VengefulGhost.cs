@@ -20,7 +20,7 @@ public class VengefulGhost : Summon {
     #region Overrides
     public override void Initialize() {
         base.Initialize();
-        movementComponent.SetIsFlying(true);
+        movementComponent.SetToFlying();
         RemoveAdvertisedAction(INTERACTION_TYPE.BURY_CHARACTER);
         behaviourComponent.ChangeDefaultBehaviourSet(CharacterManager.Vengeful_Ghost_Behaviour);
     }

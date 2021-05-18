@@ -24,7 +24,7 @@ public class Harpy : Summon {
     #region Overrides
     public override void Initialize() {
         base.Initialize();
-        movementComponent.SetIsFlying(true);
+        movementComponent.SetToFlying();
         behaviourComponent.ChangeDefaultBehaviourSet(CharacterManager.Harpy_Behaviour);
         hasCapturedForTheDay = true;
         int randomNextCaptureTick = UnityEngine.Random.Range(0, 288);

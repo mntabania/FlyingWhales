@@ -25,7 +25,7 @@ public class Ghost : Summon {
     #region Overrides
     public override void Initialize() {
         base.Initialize();
-        movementComponent.SetIsFlying(true);
+        movementComponent.SetToFlying();
         RemoveAdvertisedAction(INTERACTION_TYPE.BURY_CHARACTER);
     }
 
