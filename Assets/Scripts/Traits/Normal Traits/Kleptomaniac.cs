@@ -99,7 +99,7 @@ namespace Traits {
                         //Pickpocket only from characters inside Settlement, if not inside a settlement, cannot target anyone
                         for (int i = 0; i < character.currentSettlement.SettlementResources.characters.Count; i++) {
                             Character otherCharacter = character.currentSettlement.SettlementResources.characters[i];
-                            if (character != otherCharacter && otherCharacter.HasItem()) {
+                            if (character != otherCharacter && (otherCharacter.HasItem() || otherCharacter.moneyComponent.HasCoins())) {
                                 choices.Add(otherCharacter);
                             }
                         }    
@@ -113,11 +113,32 @@ namespace Traits {
                         if (!character.movementComponent.HasPathToEvenIfDiffRegion(targetTile)) {
                             return "no_path_to_target";
                         } else {
-                            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.TRIGGER_FLAW, INTERACTION_TYPE.PICKPOCKET, target, character);
-                            //GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.TRIGGER_FLAW, INTERACTION_TYPE.STEAL, target, character);
-                            Assert.IsNotNull(character.currentSettlement);
-                            job.AddPriorityLocation(INTERACTION_TYPE.PICKPOCKET, character.currentSettlement);
-                            character.jobQueue.AddJobInQueue(job);
+                            bool stealCoins = false;
+                            bool stealItem = false;
+                            bool hasItem = target.HasItem();
+                            bool hasCoins = target.moneyComponent.HasCoins();
+                            if (hasItem && hasCoins) {
+                                if (GameUtilities.RandomBetweenTwoNumbers(0, 1) == 0) {
+                                    stealCoins = true;
+                                } else {
+                                    stealItem = true;
+                                }
+                            } else if (hasItem) {
+                                stealItem = true;
+                            } else if (hasCoins) {
+                                stealCoins = true;
+                            }
+                            if (stealItem) {
+                                GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.TRIGGER_FLAW, INTERACTION_TYPE.PICKPOCKET, target, character);
+                                //GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.TRIGGER_FLAW, INTERACTION_TYPE.STEAL, target, character);
+                                Assert.IsNotNull(character.currentSettlement);
+                                job.AddPriorityLocation(INTERACTION_TYPE.PICKPOCKET, character.currentSettlement);
+                                character.jobQueue.AddJobInQueue(job);
+                            } else if (stealCoins) {
+                                GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.TRIGGER_FLAW, INTERACTION_TYPE.STEAL_COINS, target, character);
+                                character.jobQueue.AddJobInQueue(job);
+                            }
+
                         }
                     } else {
                         return "no_target";
@@ -130,7 +151,7 @@ namespace Traits {
             return base.TriggerFlaw(character);
         }
         public override void ExecuteCostModification(INTERACTION_TYPE action, Character actor, IPointOfInterest poiTarget, OtherData[] otherData, ref int cost) {
-            if (action == INTERACTION_TYPE.STEAL || action == INTERACTION_TYPE.PICKPOCKET || action == INTERACTION_TYPE.STEAL_ANYTHING) {
+            if (action == INTERACTION_TYPE.STEAL || action == INTERACTION_TYPE.PICKPOCKET || action == INTERACTION_TYPE.STEAL_ANYTHING || action == INTERACTION_TYPE.STEAL_COINS) {
                 cost = 0;//Utilities.rng.Next(5, 10);//5,46
             } else if (action == INTERACTION_TYPE.PICK_UP) {
                 cost = 10000;//Utilities.rng.Next(5, 10);//5,46

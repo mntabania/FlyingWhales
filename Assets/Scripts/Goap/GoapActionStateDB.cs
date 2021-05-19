@@ -157,6 +157,9 @@ public static class GoapActionStateDB {
         {INTERACTION_TYPE.PICKPOCKET, new[]{
             new StateNameAndDuration(){ name = "Pickpocket Success", status = InteractionManager.Goap_State_Success, duration = 0 },
         } },
+        {INTERACTION_TYPE.STEAL_COINS, new[]{
+            new StateNameAndDuration(){ name = "Steal Success", status = InteractionManager.Goap_State_Success, duration = 0 },
+        } },
         {INTERACTION_TYPE.SCRAP, new[]{
             new StateNameAndDuration(){ name = "Scrap Success", status = InteractionManager.Goap_State_Success, duration = 0 },
         } },
