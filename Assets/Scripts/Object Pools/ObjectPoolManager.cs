@@ -726,12 +726,18 @@ public class ObjectPoolManager : MonoBehaviour {
 #if DEBUG_LOG
         Debug.Log($"Returned plan to pool:\n {data.LogPlan()}");
 #endif
+        if (!_goapPlanPool.Contains(data)) {
+            _goapPlanPool.Add(data);
+        } else {
+#if DEBUG_LOG
+            Debug.LogError($"Goap Plan has duplicate in pool: {data.LogPlan()}");
+#endif
+        }
         data.Reset();
-        _goapPlanPool.Add(data);
     }
-#endregion
+    #endregion
 
-#region Job Nodes
+    #region Job Nodes
     private void ConstructSingleJobNodePool() {
         _jobNodePool = new List<SingleJobNode>();
     }
@@ -744,10 +750,16 @@ public class ObjectPoolManager : MonoBehaviour {
         return new SingleJobNode();
     }
     public void ReturnSingleJobNodeToPool(SingleJobNode data) {
+        if (!_jobNodePool.Contains(data)) {
+            _jobNodePool.Add(data);
+        } else {
+#if DEBUG_LOG
+            Debug.LogError($"Job Node has duplicate in pool: Actor: {data.singleNode?.actor.name}, Target: {data.singleNode?.poiTarget?.name}, Action: {data.singleNode?.action.name}, Job: {data.singleNode?.associatedJobType.ToString()}");
+#endif
+        }
         data.Reset();
-        _jobNodePool.Add(data);
     }
-#endregion
+    #endregion
 
     // protected override void OnDestroy() {
     //     if (allObjectPools != null) {
