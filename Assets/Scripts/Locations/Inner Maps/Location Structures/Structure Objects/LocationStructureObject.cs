@@ -155,21 +155,6 @@ public class LocationStructureObject : PooledObject, ISelectable {
     #endregion
 
     #region Tile Objects
-    private void RegisterPreplacedObjectsOfType(LocationStructure structure, InnerTileMap innerMap, params TILE_OBJECT_TYPE[] validTileObjectTypes) {
-        StructureTemplateObjectData[] preplacedObjs = GetPreplacedObjects();
-        for (int i = 0; i < preplacedObjs.Length; i++) {
-            StructureTemplateObjectData preplacedObj = preplacedObjs[i];
-            if (validTileObjectTypes.Contains(preplacedObj.tileObjectType)) {
-                Vector3Int tileCoords = innerMap.groundTilemap.WorldToCell(preplacedObj.transform.position);
-                LocationGridTile tile = innerMap.map[tileCoords.x, tileCoords.y];
-                TileObject newTileObject = InnerMapManager.Instance.CreateNewTileObject<TileObject>(preplacedObj.tileObjectType);
-                newTileObject.SetIsPreplaced(true);
-            
-                PreplacedObjectProcessing(preplacedObj, tile, structure, newTileObject);    
-            }
-        }
-        SetPreplacedObjectsState(false);
-    }
     private void RegisterPreplacedObjects(LocationStructure structure, InnerTileMap innerMap) {
         StructureTemplateObjectData[] preplacedObjs = GetPreplacedObjects();
         for (int i = 0; i < preplacedObjs.Length; i++) {
@@ -184,15 +169,17 @@ public class LocationStructureObject : PooledObject, ISelectable {
                     tile.structure.RemovePOI(tile.tileObjectComponent.objHere);    
                 }
             }
-            TileObject newTileObject = InnerMapManager.Instance.CreateNewTileObject<TileObject>(preplacedObj.tileObjectType);
+            TileObject newTileObject = InstantiatePreplacedObject(preplacedObj.tileObjectType, tile);
             newTileObject.SetIsPreplaced(true);
             
             PreplacedObjectProcessing(preplacedObj, tile, structure, newTileObject);
         }
         SetPreplacedObjectsState(false);
     }
-    protected virtual void PreplacedObjectProcessing(StructureTemplateObjectData preplacedObj,
-        LocationGridTile tile, LocationStructure structure, TileObject newTileObject) {
+    protected virtual TileObject InstantiatePreplacedObject(TILE_OBJECT_TYPE p_type, LocationGridTile p_tile) {
+        return InnerMapManager.Instance.CreateNewTileObject<TileObject>(p_type);
+    }
+    protected virtual void PreplacedObjectProcessing(StructureTemplateObjectData preplacedObj, LocationGridTile tile, LocationStructure structure, TileObject newTileObject) {
         tile.structure.AddPOI(newTileObject, tile);
         newTileObject.mapVisual.SetVisual(preplacedObj.spriteRenderer.sprite);
         newTileObject.mapVisual.SetRotation(preplacedObj.transform.localEulerAngles.z);

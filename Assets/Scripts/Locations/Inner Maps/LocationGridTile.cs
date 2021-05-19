@@ -1632,15 +1632,15 @@ namespace Inner_Maps {
             }
         }
         public bool IsPassable() {
-            //Remove HasWalls checking because it is a wrong implementation
-            //Reverted back to original checkers
-            //Although there parts of the tile that is impassable because of thin walls, we do not consider the whole tile as impassable if there are thin walls because thin walls does not occupy the whole tile
-            //We only consider it impassable if there is a block wall
             if (structure is Cave && tileType == Tile_Type.Wall) {
                 //had to add this checking because in map generation cave walls are not generated immediately,
                 //which can cause Monsters to be generated on top of block walls after map generation is finished
                 return false; 
             }
+            //Remove HasWalls checking because it is a wrong implementation
+            //Reverted back to original checkers
+            //Although there parts of the tile that is impassable because of thin walls, we do not consider the whole tile as impassable if there are thin walls because thin walls does not occupy the whole tile
+            //We only consider it impassable if there is a block wall
             return (tileObjectComponent.objHere == null || !tileObjectComponent.objHere.IsUnpassable()) /*&& !tileObjectComponent.HasWalls()*/ && groundType != Ground_Type.Water;
         }
         private LocationGridTile GetTargetTileToGoToRegion(Region region) {

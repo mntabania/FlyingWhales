@@ -13,7 +13,7 @@ using Random = UnityEngine.Random;
 
 public class VillageGeneration : MapGenerationComponent {
 
-	#region Random World
+#region Random World
 	public override IEnumerator ExecuteRandomGeneration(MapGenerationData data) {
 		LevelLoaderManager.Instance.UpdateLoadingInfo("Creating Settlements...");
 		for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
@@ -50,7 +50,7 @@ public class VillageGeneration : MapGenerationComponent {
 				Area settlementTile = villageSpot.mainSpot;
 				VillageSetting villageSetting = factionTemplate.villageSettings[i];
 				NPCSettlement npcSettlement = LandmarkManager.Instance.CreateNewSettlement(region, locationType, settlementTile);
-				npcSettlement.AddReservedAreas(villageSpot.reservedAreas);
+				npcSettlement.SetOccupiedVillageSpot(villageSpot);
 				createdSettlements.Add(npcSettlement);
 				villageSettings.Add(villageSetting);
 				
@@ -176,7 +176,7 @@ public class VillageGeneration : MapGenerationComponent {
 		}
 		yield return null;
 	}
-	private IEnumerator PlaceStructure(Region region, StructureSetting structureSetting, NPCSettlement npcSettlement) {
+	public static IEnumerator PlaceStructure(Region region, StructureSetting structureSetting, NPCSettlement npcSettlement) {
 		List<StructureConnector> availableStructureConnectors = RuinarchListPool<StructureConnector>.Claim();
 		npcSettlement.PopulateStructureConnectorsForStructureType(availableStructureConnectors, structureSetting.structureType);
 		// availableStructureConnectors = CollectionUtilities.Shuffle(availableStructureConnectors);

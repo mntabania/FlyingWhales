@@ -183,7 +183,7 @@ public class TileObjectInfoUI : InfoUIBase {
         if(activeTileObject is ResourcePile) {
             quantity = (activeTileObject as ResourcePile).resourceInPile;
         } else if (activeTileObject is Table) {
-            quantity = activeTileObject.storedResources[RESOURCE.FOOD];
+            quantity = activeTileObject.resourceStorageComponent.GetResourceValue(RESOURCE.FOOD);
         }
         quantityLbl.text = $"{quantity}";
 

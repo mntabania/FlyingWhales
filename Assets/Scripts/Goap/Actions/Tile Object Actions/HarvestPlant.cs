@@ -6,6 +6,7 @@ using UnityEngine;
 using Traits;
 using UtilityScripts;
 using Locations.Settlements;
+using UnityEngine.Assertions;
 
 public class HarvestPlant : GoapAction {
 
@@ -120,6 +121,7 @@ public class HarvestPlant : GoapAction {
         //    goapNode.actor.needsComponent.AdjustDoNotGetBored(-1);
         //}
         IPointOfInterest poiTarget = goapNode.poiTarget;
+        Assert.IsTrue(poiTarget is Crops);
         if (poiTarget is Crops crop) {
             crop.SetGrowthState(Crops.Growth_State.Growing);
             
@@ -140,18 +142,19 @@ public class HarvestPlant : GoapAction {
                 }
             }
             RuinarchListPool<LocationGridTile>.Release(choices);
-        } else {
-            LocationGridTile tile = poiTarget.gridTileLocation;
-            tile.structure.RemovePOI(poiTarget);
-            
-            FoodPile foodPile = InnerMapManager.Instance.CreateNewTileObject<FoodPile>(TILE_OBJECT_TYPE.VEGETABLES);
-            foodPile.SetResourceInPile(30);
-            tile.structure.AddPOI(foodPile, tile);
-            if (foodPile != null && goapNode.actor.homeSettlement != null) {
-                goapNode.actor.homeSettlement.settlementJobTriggerComponent.TryCreateHaulJob(foodPile);
-                goapNode.actor.marker.AddPOIAsInVisionRange(foodPile); //automatically add pile to character's vision so he/she can take haul job immediately after
-            }
-        }
+        } 
+        // else {
+        //     LocationGridTile tile = poiTarget.gridTileLocation;
+        //     tile.structure.RemovePOI(poiTarget);
+        //     
+        //     FoodPile foodPile = InnerMapManager.Instance.CreateNewTileObject<FoodPile>(TILE_OBJECT_TYPE.VEGETABLES);
+        //     foodPile.SetResourceInPile(30);
+        //     tile.structure.AddPOI(foodPile, tile);
+        //     if (foodPile != null && goapNode.actor.homeSettlement != null) {
+        //         goapNode.actor.homeSettlement.settlementJobTriggerComponent.TryCreateHaulJob(foodPile);
+        //         goapNode.actor.marker.AddPOIAsInVisionRange(foodPile); //automatically add pile to character's vision so he/she can take haul job immediately after
+        //     }
+        // }
     }
 #endregion
 

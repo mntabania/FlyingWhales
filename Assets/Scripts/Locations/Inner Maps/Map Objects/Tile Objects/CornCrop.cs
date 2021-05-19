@@ -6,6 +6,7 @@ public class CornCrop : Crops {
     
     public override System.Type serializedData => typeof(SaveDataCornCrop);
     public override bool doesNotGrowPerTick => true;
+    public override TILE_OBJECT_TYPE producedObjectOnHarvest => TILE_OBJECT_TYPE.CORN;
 
     public CornCrop() : base() {
         Initialize(TILE_OBJECT_TYPE.CORN_CROP);

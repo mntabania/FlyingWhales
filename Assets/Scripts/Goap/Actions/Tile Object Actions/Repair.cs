@@ -20,7 +20,6 @@ public class Repair : GoapAction {
         
         _stonePrecondition = new Precondition(new GoapEffect(GOAP_EFFECT_CONDITION.TAKE_POI, "Stone Pile", false, GOAP_EFFECT_TARGET.ACTOR), HasResource);
         _woodPrecondition = new Precondition(new GoapEffect(GOAP_EFFECT_CONDITION.TAKE_POI, "Wood Pile", false, GOAP_EFFECT_TARGET.ACTOR), HasResource);
-        _metalPrecondition = new Precondition(new GoapEffect(GOAP_EFFECT_CONDITION.TAKE_POI, "Metal Pile", false, GOAP_EFFECT_TARGET.ACTOR), HasResource);
     }
 
     #region Overrides
@@ -38,8 +37,6 @@ public class Repair : GoapAction {
                 p = _woodPrecondition;
             } else if (actor.homeSettlement.mainStorage.HasBuiltTileObjectOfType(TILE_OBJECT_TYPE.STONE_PILE)) {
                 p = _stonePrecondition;
-            } else if (actor.homeSettlement.mainStorage.HasBuiltTileObjectOfType(TILE_OBJECT_TYPE.METAL_PILE)) {
-                p = _metalPrecondition;
             }
         } else {
             //if character doesn't have a home settlement then default to wood.
@@ -136,7 +133,7 @@ public class Repair : GoapAction {
         if (goapNode.actor.carryComponent.carriedPOI != null) {
             ResourcePile carriedPile = goapNode.actor.carryComponent.carriedPOI as ResourcePile;
             carriedPile.AdjustResourceInPile(-cost);
-            obj.AdjustResource(carriedPile.providedResource, cost);
+            obj.resourceStorageComponent.AdjustResource(carriedPile.specificProvidedResource, cost);
         }
         // TileObjectData data = TileObjectDB.GetTileObjectData(obj.tileObjectType);
         // if (data != null && data.craftRecipes != null) {
@@ -171,10 +168,8 @@ public class Repair : GoapAction {
 
         TileObject obj = goapNode.poiTarget as TileObject;
         Character actor = goapNode.actor;
-        obj.SetResource(RESOURCE.WOOD, 0);
-        obj.SetResource(RESOURCE.STONE, 0);
-        obj.SetResource(RESOURCE.METAL, 0);
-        
+        obj.resourceStorageComponent.ClearAllResources();
+
         // TileObjectData data = TileObjectDB.GetTileObjectData(obj.tileObjectType);
         // if (data != null && data.craftRecipes != null) {
         //     TileObjectRecipe recipe = data.mainRecipe;
@@ -222,7 +217,9 @@ public class Repair : GoapAction {
         TileObjectData data = TileObjectDB.GetTileObjectData(obj.tileObjectType);
         int craftCost = data.repairCost;
         
-        if (poiTarget.HasResourceAmount(RESOURCE.WOOD, craftCost) || poiTarget.HasResourceAmount(RESOURCE.STONE, craftCost) || poiTarget.HasResourceAmount(RESOURCE.METAL, craftCost)) {
+        if (poiTarget.resourceStorageComponent.HasResourceAmount(RESOURCE.WOOD, craftCost) || 
+            poiTarget.resourceStorageComponent.HasResourceAmount(RESOURCE.STONE, craftCost) || 
+            poiTarget.resourceStorageComponent.HasResourceAmount(RESOURCE.METAL, craftCost)) {
             return true; //if structure tile object already has needed resources then precondition is met
         }
         //allow precondition if actor is already carrying any resource pile that is not food pile.

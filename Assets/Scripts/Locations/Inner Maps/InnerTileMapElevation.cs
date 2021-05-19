@@ -209,6 +209,14 @@ namespace Inner_Maps {
         public void SetAsMountainWall(LocationGridTile tile, LocationStructure structure, MapGenerationData mapGenerationData) {
             if (tile.tileObjectComponent.objHere is BlockWall) { return; }
             tile.SetTileType(LocationGridTile.Tile_Type.Wall);
+            
+            //had to add this checking since block walls aren't immediately created here,
+            //but we don't want monsters to spawn on a tile set as a wall, so we set this tile as impassable.
+            //Didn't add this to tile.SetTileType function since the above case is only a problem on initial world creation,
+            //and is unnecessary for actual game time.
+            tile.structure.RemovePassableTile(tile);
+            tile.area.gridTileComponent.RemovePassableTile(tile);
+            
             tile.SetTileState(LocationGridTile.Tile_State.Occupied);
             mapGenerationData.SetGeneratedMapPerlinDetails(tile, TILE_OBJECT_TYPE.BLOCK_WALL);
             tile.SetIsDefault(false);

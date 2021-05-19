@@ -750,7 +750,7 @@ public enum TILE_OBJECT_TYPE {
     GODDESS_STATUE = 23,
     STRUCTURE_TILE_OBJECT = 24,
     STONE_PILE = 25,
-    METAL_PILE = 26,
+    // METAL_PILE = 26,
     TORNADO = 27,
     BANDAGES = 29,
     TABLE_MEDICINE = 30,
@@ -867,7 +867,6 @@ public enum TILE_OBJECT_TYPE {
     VAPOR_VENT = 141,
     ELF_MEAT = 142,
     HUMAN_MEAT = 143,
-    VEGETABLES = 144,
     FISH_PILE = 145,
     DIAMOND = 146,
     GOLD = 147,
@@ -912,6 +911,31 @@ public enum TILE_OBJECT_TYPE {
     BRACER = 186,
     FUR_SHIRT = 187,
     MINK_SHIRT = 188,
+    MITHRIL = 189,
+    ORICHALCUM = 190,
+    IRON = 191,
+    COPPER = 192,
+    CORN = 193,
+    POTATO = 194,
+    PINEAPPLE = 195,
+    ICEBERRY = 196,
+    HYPNO_HERB = 197,
+    WOOL = 198,
+    MINK_CLOTH = 199,
+    MOONCRAWLER_CLOTH = 200,
+    BOAR_HIDE = 201,
+    WOLF_HIDE = 202,
+    BEAR_HIDE = 203,
+    DRAGON_HIDE = 204,
+    RABBIT_CLOTH = 205,
+    SCALE_HIDE = 206,
+    SPIDER_SILK = 207,
+    MOON_THREAD = 208,
+    HYPNO_HERB_CROP = 209,
+    ICEBERRY_CROP = 210,
+    PINEAPPLE_CROP = 211,
+    POTATO_CROP = 212,
+    VEGETABLES = 213,
 }
 public enum POI_STATE {
     ACTIVE,
@@ -1234,7 +1258,9 @@ public enum EQUIPMENT_CLASS_COMPATIBILITY {
 }
 
 public enum CONCRETE_RESOURCES { 
-    Copper = 0, Iron, Mithril, Orichalcum, Fur, Munk, Wool, Spider_Silk, Moonthrea, Boarhide, Scale, Dragon, Stone, Diamond,
+    Copper = 0, Iron, Mithril, Orichalcum, Rabbit_Cloth, Mink_Cloth, Wool, Spider_Silk, Moon_Thread, Boar_Hide, Scale_Hide, Dragon_Hide, Stone, Diamond, 
+    Elf_Meat, Human_Meat, Animal_Meat, Fish, Corn, Potato, Pineapple, Iceberry, Mushroom, Wood, Wolf_Hide, Bear_Hide, Mooncrawler_Cloth, Gold, Hypno_Herb,
+    Rat_Meat, Vegetables
 }
 
 public enum UNLOCKING_SKILL_REQUIREMENT {

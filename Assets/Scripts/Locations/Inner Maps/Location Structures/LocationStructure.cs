@@ -541,17 +541,24 @@ namespace Inner_Maps.Location_Structures {
         //    }
         //    return objs;
         //}
-        public void PopulateCornCropsThatIsNotRipe(List<TileObject> tileObjects) {
-            if (groupedTileObjects.ContainsKey(TILE_OBJECT_TYPE.CORN_CROP)) {
-                List<TileObject> objs = groupedTileObjects[TILE_OBJECT_TYPE.CORN_CROP];
+        public void PopulateCropsThatAreNotRipe(List<TileObject> tileObjects) {
+            PopulateCropsThatAreNotRipe(TILE_OBJECT_TYPE.CORN_CROP, tileObjects);
+            PopulateCropsThatAreNotRipe(TILE_OBJECT_TYPE.HYPNO_HERB_CROP, tileObjects);
+            PopulateCropsThatAreNotRipe(TILE_OBJECT_TYPE.ICEBERRY_CROP, tileObjects);
+            PopulateCropsThatAreNotRipe(TILE_OBJECT_TYPE.PINEAPPLE_CROP, tileObjects);
+            PopulateCropsThatAreNotRipe(TILE_OBJECT_TYPE.POTATO_CROP, tileObjects);
+        }
+        private void PopulateCropsThatAreNotRipe(TILE_OBJECT_TYPE p_type, List<TileObject> p_tileObjects) {
+            if (groupedTileObjects.ContainsKey(p_type)) {
+                List<TileObject> objs = groupedTileObjects[p_type];
                 if (objs != null) {
                     for (int i = 0; i < objs.Count; i++) {
                         TileObject t = objs[i];
-                        if (t is CornCrop cornCrop && cornCrop.currentGrowthState != Crops.Growth_State.Ripe) {
-                            tileObjects.Add(t);
+                        if (t is Crops crops && crops.currentGrowthState != Crops.Growth_State.Ripe) {
+                            p_tileObjects.Add(t);
                         }
                     }
-                }
+                }    
             }
         }
         public void PopulateTileObjectsOfType<T>(List<TileObject> objs) where T : TileObject {
@@ -826,7 +833,7 @@ namespace Inner_Maps.Location_Structures {
             for (int i = 0; i < pointsOfInterest.Count; i++) {
                 IPointOfInterest poi = pointsOfInterest.ElementAt(i);
                 if (poi is T obj) {
-                    if (excludeMaximum && obj.IsAtMaxResource(obj.providedResource)) {
+                    if (excludeMaximum && obj.resourceStorageComponent.IsAtMaxResource(obj.providedResource)) {
                         continue; //skip
                     }
                     if (chosenPile == null || obj.resourceInPile <= lowestCount) {
@@ -843,7 +850,7 @@ namespace Inner_Maps.Location_Structures {
             for (int i = 0; i < pointsOfInterest.Count; i++) {
                 IPointOfInterest poi = pointsOfInterest.ElementAt(i);
                 if (poi is ResourcePile obj && obj.tileObjectType == tileObjectType) {
-                    if (excludeMaximum && obj.IsAtMaxResource(obj.providedResource)) {
+                    if (excludeMaximum && obj.resourceStorageComponent.IsAtMaxResource(obj.providedResource)) {
                         continue; //skip
                     }
                     if (chosenPile == null || obj.resourceInPile <= lowestCount) {

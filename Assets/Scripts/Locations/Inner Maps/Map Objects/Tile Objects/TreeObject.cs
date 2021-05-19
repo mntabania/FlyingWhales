@@ -11,6 +11,7 @@ using Locations.Settlements;
 
 public class TreeObject : TileObject {
     public int yield { get; private set; }
+    public BaseSettlement parentSettlement { get; private set; }
     public override Character[] users => _users;
     
     public enum Occupied_State { Undecided, Occupied, Unoccupied }
@@ -21,7 +22,7 @@ public class TreeObject : TileObject {
     private Character[] _users;
     private Occupied_State _occupiedState;
     public override System.Type serializedData => typeof(SaveDataTreeObject);
-    public override StructureConnector structureConnector {
+    public StructureConnector structureConnector {
         get {
             if (_treeGameObject != null) {
                 return _treeGameObject.structureConnector;
@@ -48,8 +49,7 @@ public class TreeObject : TileObject {
         yield = data.yield;
         _occupiedState = data.occupiedState;
     }
-
-    public override void UpdateSettlementResourcesParent() {
+    protected override void UpdateSettlementResourcesParent() {
         if (gridTileLocation.area.settlementOnArea != null) {
             gridTileLocation.area.settlementOnArea.SettlementResources?.AddToListbaseOnRequirement(SettlementResources.StructureRequirement.TREE, this);
         }
@@ -60,8 +60,7 @@ public class TreeObject : TileObject {
             }
         });
     }
-
-    public override void RemoveFromSettlementResourcesParent() {
+    protected override void RemoveFromSettlementResourcesParent() {
         if (parentSettlement != null && parentSettlement.SettlementResources != null) {
             if (parentSettlement.SettlementResources.trees.Remove(this)) {
                 parentSettlement = null;

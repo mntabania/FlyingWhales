@@ -4,7 +4,7 @@ using Inner_Maps.Map_Objects.Map_Object_Visuals;
 using Locations.Settlements;
 
 public class FishingSpot : TileObject {
-    public override StructureConnector structureConnector {
+    public StructureConnector structureConnector {
         get {
             if (_fishingSpotGameObject != null) {
                 return _fishingSpotGameObject.structureConnector;
@@ -15,6 +15,7 @@ public class FishingSpot : TileObject {
     private FishingSpotGameObject _fishingSpotGameObject;
     
     public FishingShack connectedFishingShack { get; private set; }
+    public BaseSettlement parentSettlement { get; private set; }
     public override Type serializedData => typeof(SaveDataFishingSpot);
     public FishingSpot() {
         Initialize(TILE_OBJECT_TYPE.FISHING_SPOT);
@@ -47,7 +48,7 @@ public class FishingSpot : TileObject {
         base.DestroyMapVisualGameObject();
         _fishingSpotGameObject = null;
     }
-    public override void UpdateSettlementResourcesParent() {
+    protected override void UpdateSettlementResourcesParent() {
         if (gridTileLocation.area.settlementOnArea != null) {
             gridTileLocation.area.settlementOnArea.SettlementResources?.AddToListbaseOnRequirement(SettlementResources.StructureRequirement.FISHING_SPOT, this);
         }
@@ -58,7 +59,7 @@ public class FishingSpot : TileObject {
             }
         });
     }
-    public override void RemoveFromSettlementResourcesParent() {
+    protected override void RemoveFromSettlementResourcesParent() {
         if (parentSettlement != null && parentSettlement.SettlementResources != null) {
             if (parentSettlement.SettlementResources.fishingSpots.Remove(this)) {
                 parentSettlement = null;

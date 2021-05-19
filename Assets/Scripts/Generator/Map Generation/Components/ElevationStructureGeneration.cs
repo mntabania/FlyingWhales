@@ -35,90 +35,90 @@ public class ElevationStructureGeneration : MapGenerationComponent {
 		// yield return MapGenerator.Instance.StartCoroutine(GridMap.Instance.mainRegion.innerMap.DrawElevationIslands(data.elevationIslands));
 		yield return null;
 	}
-	private IEnumerator RefreshTilemapCollider(TilemapCollider2D tilemapCollider2D) {
-		tilemapCollider2D.enabled = false;
-		yield return new WaitForSeconds(0.5f);
-		// ReSharper disable once Unity.InefficientPropertyAccess
-		tilemapCollider2D.enabled = true;
-	}
-	private STRUCTURE_TYPE GetStructureTypeFor(ELEVATION elevation) {
-		switch (elevation) {
-			case ELEVATION.MOUNTAIN:
-				return STRUCTURE_TYPE.CAVE;
-			case ELEVATION.WATER:
-				return STRUCTURE_TYPE.OCEAN;
-		}
-		throw new Exception($"There is no corresponding structure type for {elevation.ToString()}");
-	}
-	private List<AreaElevationIsland> GetElevationIslandsInRegion(Region region) {
-		List<AreaElevationIsland> islands = new List<AreaElevationIsland>();
-		ELEVATION[] elevationsToCheck = new[] {ELEVATION.WATER, ELEVATION.MOUNTAIN};
-		for (int i = 0; i < elevationsToCheck.Length; i++) {
-			ELEVATION elevation = elevationsToCheck[i];
-			List<Area> tilesOfThatElevation = GetTilesWithElevationInRegion(region, elevation);
-			List<AreaElevationIsland> initialIslands = CreateInitialIslands(tilesOfThatElevation, elevation);
-			List<AreaElevationIsland> mergedIslands = MergeIslands(initialIslands);
-			islands.AddRange(mergedIslands);
-		}
-		return islands;
-	}
-	private List<Area> GetTilesWithElevationInRegion(Region region, ELEVATION elevation) {
-		List<Area> tiles = new List<Area>();
-		for (int i = 0; i < region.areas.Count; i++) {
-			Area tile = region.areas[i];
-			if (tile.elevationType == elevation) {
-				tiles.Add(tile);
-			}
-		}
-		return tiles;
-	}
-	private List<AreaElevationIsland> CreateInitialIslands(List<Area> tiles, ELEVATION elevation) {
-		List<AreaElevationIsland> islands = new List<AreaElevationIsland>();
-		for (int i = 0; i < tiles.Count; i++) {
-			Area tile = tiles[i];
-			AreaElevationIsland island = new AreaElevationIsland(elevation);
-			island.AddTile(tile);
-			islands.Add(island);
-		}
-		return islands;
-	}
-	private List<AreaElevationIsland> MergeIslands(List<AreaElevationIsland> islands) {
-		for (int i = 0; i < islands.Count; i++) {
-			AreaElevationIsland currIsland = islands[i];
-			for (int j = 0; j < islands.Count; j++) {
-				AreaElevationIsland otherIsland = islands[j];
-				if (currIsland != otherIsland) {
-					if (currIsland.IsAdjacentToIsland(otherIsland)) {
-						currIsland.MergeWithIsland(otherIsland);
-					}
-				}
-			}
-		}
-		List<AreaElevationIsland> mergedIslands = new List<AreaElevationIsland>();
-		for (int i = 0; i < islands.Count; i++) {
-			AreaElevationIsland island = islands[i];
-			if (island.tilesInIsland.Count > 0) {
-				mergedIslands.Add(island);
-			}
-		}
-		return mergedIslands;
-	}
+	// private IEnumerator RefreshTilemapCollider(TilemapCollider2D tilemapCollider2D) {
+	// 	tilemapCollider2D.enabled = false;
+	// 	yield return new WaitForSeconds(0.5f);
+	// 	// ReSharper disable once Unity.InefficientPropertyAccess
+	// 	tilemapCollider2D.enabled = true;
+	// }
+	// private STRUCTURE_TYPE GetStructureTypeFor(ELEVATION elevation) {
+	// 	switch (elevation) {
+	// 		case ELEVATION.MOUNTAIN:
+	// 			return STRUCTURE_TYPE.CAVE;
+	// 		case ELEVATION.WATER:
+	// 			return STRUCTURE_TYPE.OCEAN;
+	// 	}
+	// 	throw new Exception($"There is no corresponding structure type for {elevation.ToString()}");
+	// }
+	// private List<AreaElevationIsland> GetElevationIslandsInRegion(Region region) {
+	// 	List<AreaElevationIsland> islands = new List<AreaElevationIsland>();
+	// 	ELEVATION[] elevationsToCheck = new[] {ELEVATION.WATER, ELEVATION.MOUNTAIN};
+	// 	for (int i = 0; i < elevationsToCheck.Length; i++) {
+	// 		ELEVATION elevation = elevationsToCheck[i];
+	// 		List<Area> tilesOfThatElevation = GetTilesWithElevationInRegion(region, elevation);
+	// 		List<AreaElevationIsland> initialIslands = CreateInitialIslands(tilesOfThatElevation, elevation);
+	// 		List<AreaElevationIsland> mergedIslands = MergeIslands(initialIslands);
+	// 		islands.AddRange(mergedIslands);
+	// 	}
+	// 	return islands;
+	// }
+	// private List<Area> GetTilesWithElevationInRegion(Region region, ELEVATION elevation) {
+	// 	List<Area> tiles = new List<Area>();
+	// 	for (int i = 0; i < region.areas.Count; i++) {
+	// 		Area tile = region.areas[i];
+	// 		if (tile.elevationType == elevation) {
+	// 			tiles.Add(tile);
+	// 		}
+	// 	}
+	// 	return tiles;
+	// }
+	// private List<AreaElevationIsland> CreateInitialIslands(List<Area> tiles, ELEVATION elevation) {
+	// 	List<AreaElevationIsland> islands = new List<AreaElevationIsland>();
+	// 	for (int i = 0; i < tiles.Count; i++) {
+	// 		Area tile = tiles[i];
+	// 		AreaElevationIsland island = new AreaElevationIsland(elevation);
+	// 		island.AddTile(tile);
+	// 		islands.Add(island);
+	// 	}
+	// 	return islands;
+	// }
+	// private List<AreaElevationIsland> MergeIslands(List<AreaElevationIsland> islands) {
+	// 	for (int i = 0; i < islands.Count; i++) {
+	// 		AreaElevationIsland currIsland = islands[i];
+	// 		for (int j = 0; j < islands.Count; j++) {
+	// 			AreaElevationIsland otherIsland = islands[j];
+	// 			if (currIsland != otherIsland) {
+	// 				if (currIsland.IsAdjacentToIsland(otherIsland)) {
+	// 					currIsland.MergeWithIsland(otherIsland);
+	// 				}
+	// 			}
+	// 		}
+	// 	}
+	// 	List<AreaElevationIsland> mergedIslands = new List<AreaElevationIsland>();
+	// 	for (int i = 0; i < islands.Count; i++) {
+	// 		AreaElevationIsland island = islands[i];
+	// 		if (island.tilesInIsland.Count > 0) {
+	// 			mergedIslands.Add(island);
+	// 		}
+	// 	}
+	// 	return mergedIslands;
+	// }
 
 	#region Cellular Automata
-	private IEnumerator GenerateElevationMap(AreaElevationIsland island, LocationStructure elevationStructure) {
-		List<LocationGridTile> locationGridTiles = new List<LocationGridTile>();
-		for (int i = 0; i < island.tilesInIsland.Count; i++) {
-			Area tileInIsland = island.tilesInIsland[i];
-			locationGridTiles.AddRange(tileInIsland.gridTileComponent.gridTiles);
-		}
-
-		if (island.elevation == ELEVATION.WATER) {
-			// yield return MapGenerator.Instance.StartCoroutine(WaterCellAutomata(locationGridTiles, elevationStructure));
-		} else if (island.elevation == ELEVATION.MOUNTAIN) {
-			// yield return MapGenerator.Instance.StartCoroutine(MountainCellAutomata(locationGridTiles, elevationStructure, island));
-		}
-		yield return null;
-	}
+	// private IEnumerator GenerateElevationMap(AreaElevationIsland island, LocationStructure elevationStructure) {
+	// 	List<LocationGridTile> locationGridTiles = new List<LocationGridTile>();
+	// 	for (int i = 0; i < island.tilesInIsland.Count; i++) {
+	// 		Area tileInIsland = island.tilesInIsland[i];
+	// 		locationGridTiles.AddRange(tileInIsland.gridTileComponent.gridTiles);
+	// 	}
+	//
+	// 	if (island.elevation == ELEVATION.WATER) {
+	// 		// yield return MapGenerator.Instance.StartCoroutine(WaterCellAutomata(locationGridTiles, elevationStructure));
+	// 	} else if (island.elevation == ELEVATION.MOUNTAIN) {
+	// 		// yield return MapGenerator.Instance.StartCoroutine(MountainCellAutomata(locationGridTiles, elevationStructure, island));
+	// 	}
+	// 	yield return null;
+	// }
 	// private IEnumerator WaterCellAutomata(List<LocationGridTile> locationGridTiles, LocationStructure elevationStructure) {
 	// 	LocationGridTile[,] tileMap = CellularAutomataGenerator.ConvertListToGridMap(locationGridTiles);
 	// 	int[,] cellMap = CellularAutomataGenerator.GenerateMap(tileMap, locationGridTiles, 1, 20); //2
@@ -240,32 +240,32 @@ public class ElevationStructureGeneration : MapGenerationComponent {
 	//	}
 	//	return false;
 	//}
-	private void CreateOreVeinAt(LocationGridTile tile) {
-		if (tile != null) {
-			if (tile.tileObjectComponent.objHere != null) {
-				tile.structure.RemovePOI(tile.tileObjectComponent.objHere);
-			}
-			TileObject well = InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.ORE_VEIN);
-			tile.structure.AddPOI(well, tile);
-		}
-	}
-	private void SetAsMountainWall(LocationGridTile tile, LocationStructure structure) {
-		tile.SetGroundTilemapVisual(InnerMapManager.Instance.assetManager.caveGroundTile);
-		tile.SetTileType(LocationGridTile.Tile_Type.Wall);
-		tile.SetTileState(LocationGridTile.Tile_State.Occupied);
-		tile.SetStructure(structure);
-		
-		//create wall tile object
-		BlockWall blockWall = InnerMapManager.Instance.CreateNewTileObject<BlockWall>(TILE_OBJECT_TYPE.BLOCK_WALL);
-		blockWall.SetWallType(WALL_TYPE.Stone);
-		structure.AddPOI(blockWall, tile);
-		tile.SetIsDefault(false);
-	}
-	private void SetAsMountainGround(LocationGridTile tile, LocationStructure structure) {
-		tile.SetStructure(structure);
-		tile.SetGroundTilemapVisual(InnerMapManager.Instance.assetManager.caveGroundTile);
-		tile.SetIsDefault(false);
-	}
+	// private void CreateOreVeinAt(LocationGridTile tile) {
+	// 	if (tile != null) {
+	// 		if (tile.tileObjectComponent.objHere != null) {
+	// 			tile.structure.RemovePOI(tile.tileObjectComponent.objHere);
+	// 		}
+	// 		TileObject well = InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.ORE_VEIN);
+	// 		tile.structure.AddPOI(well, tile);
+	// 	}
+	// }
+	// private void SetAsMountainWall(LocationGridTile tile, LocationStructure structure) {
+	// 	tile.SetGroundTilemapVisual(InnerMapManager.Instance.assetManager.caveGroundTile);
+	// 	tile.SetTileType(LocationGridTile.Tile_Type.Wall);
+	// 	tile.SetTileState(LocationGridTile.Tile_State.Occupied);
+	// 	tile.SetStructure(structure);
+	// 	
+	// 	//create wall tile object
+	// 	BlockWall blockWall = InnerMapManager.Instance.CreateNewTileObject<BlockWall>(TILE_OBJECT_TYPE.BLOCK_WALL);
+	// 	blockWall.SetWallType(WALL_TYPE.Stone);
+	// 	structure.AddPOI(blockWall, tile);
+	// 	tile.SetIsDefault(false);
+	// }
+	// private void SetAsMountainGround(LocationGridTile tile, LocationStructure structure) {
+	// 	tile.SetStructure(structure);
+	// 	tile.SetGroundTilemapVisual(InnerMapManager.Instance.assetManager.caveGroundTile);
+	// 	tile.SetIsDefault(false);
+	// }
 	#endregion
 
 	#region Scenario Maps

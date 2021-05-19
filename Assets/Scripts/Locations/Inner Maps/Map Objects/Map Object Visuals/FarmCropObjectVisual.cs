@@ -2,7 +2,7 @@
 using UnityEngine;
 using UnityEngine.Assertions;
 
-public class CornCropObjectVisual : TileObjectGameObject {
+public class FarmCropObjectVisual : TileObjectGameObject {
     
     [SerializeField] private Sprite horizontalEmpty;
     [SerializeField] private Sprite horizontalGrowing;

@@ -21,48 +21,49 @@ namespace UtilityScripts {
                 TileObjectScriptableObject existingAsset = (TileObjectScriptableObject)AssetDatabase.LoadAssetAtPath(path, typeof(TileObjectScriptableObject));
                 if (existingAsset == null) {
                     TileObjectScriptableObject asset = ScriptableObject.CreateInstance<TileObjectScriptableObject>();
-                    if (InnerMapManager.Instance.assetManager.tileObjectTiles.ContainsKey(tileObjectType)) {
-                        TileObjectTileSetting setting = InnerMapManager.Instance.assetManager.tileObjectTiles[tileObjectType];
-                        asset.tileObjectAssets = setting;
-                        asset.defaultSprite = setting.biomeAssets[BIOMES.NONE].activeTile.FirstOrDefault();
-                    } else {
-                        missingTileObjects.Add(tileObjectType);
-                    }
-                    if (InnerMapManager.Instance.assetManager.corruptedTileObjectAssets.ContainsKey(tileObjectType)) {
-                        TileObjectTileSetting corruptedSetting = InnerMapManager.Instance.assetManager.corruptedTileObjectAssets[tileObjectType];    
-                        asset.corruptedTileObjectAssets = corruptedSetting;
-                    }
-                    
-                    TileBase tileBase = (TileBase)AssetDatabase.LoadAssetAtPath($"Assets/Tile Map Assets/Interior Map Tiles/Objects/{tileObjectType.ToString()}.asset", typeof(TileBase));
-                    if (tileBase == null) {
-                        tileBase = (TileBase)AssetDatabase.LoadAssetAtPath($"Assets/Tile Map Assets/Interior Map Tiles/Objects/{tileObjectType.ToString()}#1.asset", typeof(TileBase));
-                        if (tileBase == null && asset.defaultSprite != null) {
-                            tileBase = GetTileBaseFor(asset.defaultSprite, allTileBases);
-                        }
-                    }
-                    if (tileBase == null) {
-                        //create tilebase for tile object
-                        Sprite sprite = asset.defaultSprite != null ? asset.defaultSprite : GetSpriteFor(tileObjectType, allObjectSprites);
-                        if (sprite != null) {
-                            CustomTileBase createdTileBase = ScriptableObject.CreateInstance<CustomTileBase>();
-                            createdTileBase.sprite = sprite;
-                            AssetDatabase.CreateAsset(createdTileBase, $"Assets/Tile Map Assets/Interior Map Tiles/{sprite.name}.asset");
-                            allTileBases.Add(createdTileBase);
-                            tileBase = createdTileBase;
-                            Debug.Log($"Created {createdTileBase.name}");
-                        }
-                    }
-                    asset.defaultTileMapAsset = tileBase;
-                    if (asset.tileObjectAssets.biomeAssets == null) {
-                        asset.tileObjectAssets.biomeAssets = new TileObjectBiomeAssetDictionary();
-                        if (!asset.tileObjectAssets.biomeAssets.ContainsKey(BIOMES.NONE)) {
-                            asset.tileObjectAssets.biomeAssets.Add(BIOMES.NONE, new BiomeTileObjectTileSetting());
-                        }
-                    }
-                    if (tileBase != null) {
-                        asset.tileObjectAssets.biomeAssets[BIOMES.NONE].tileBase.Add(tileBase);    
-                    }
-                    AssetDatabase.CreateAsset(asset, path);    
+                    // if (InnerMapManager.Instance != null && InnerMapManager.Instance.assetManager.tileObjectTiles.ContainsKey(tileObjectType)) {
+                    //     TileObjectTileSetting setting = InnerMapManager.Instance.assetManager.tileObjectTiles[tileObjectType];
+                    //     asset.tileObjectAssets = setting;
+                    //     asset.defaultSprite = setting.biomeAssets[BIOMES.NONE].activeTile.FirstOrDefault();
+                    // } else {
+                    //     missingTileObjects.Add(tileObjectType);
+                    // }
+                    // if (InnerMapManager.Instance != null && InnerMapManager.Instance.assetManager.corruptedTileObjectAssets.ContainsKey(tileObjectType)) {
+                    //     TileObjectTileSetting corruptedSetting = InnerMapManager.Instance.assetManager.corruptedTileObjectAssets[tileObjectType];    
+                    //     asset.corruptedTileObjectAssets = corruptedSetting;
+                    // }
+                    //
+                    // TileBase tileBase = (TileBase)AssetDatabase.LoadAssetAtPath($"Assets/Tile Map Assets/Interior Map Tiles/Objects/{tileObjectType.ToString()}.asset", typeof(TileBase));
+                    // if (tileBase == null) {
+                    //     tileBase = (TileBase)AssetDatabase.LoadAssetAtPath($"Assets/Tile Map Assets/Interior Map Tiles/Objects/{tileObjectType.ToString()}#1.asset", typeof(TileBase));
+                    //     if (tileBase == null && asset.defaultSprite != null) {
+                    //         tileBase = GetTileBaseFor(asset.defaultSprite, allTileBases);
+                    //     }
+                    // }
+                    // if (tileBase == null) {
+                    //     //create tilebase for tile object
+                    //     Sprite sprite = asset.defaultSprite != null ? asset.defaultSprite : GetSpriteFor(tileObjectType, allObjectSprites);
+                    //     if (sprite != null) {
+                    //         CustomTileBase createdTileBase = ScriptableObject.CreateInstance<CustomTileBase>();
+                    //         createdTileBase.sprite = sprite;
+                    //         AssetDatabase.CreateAsset(createdTileBase, $"Assets/Tile Map Assets/Interior Map Tiles/{sprite.name}.asset");
+                    //         allTileBases.Add(createdTileBase);
+                    //         tileBase = createdTileBase;
+                    //         Debug.Log($"Created {createdTileBase.name}");
+                    //     }
+                    // }
+                    // asset.defaultTileMapAsset = tileBase;
+                    // if (asset.tileObjectAssets.biomeAssets == null) {
+                    //     asset.tileObjectAssets.biomeAssets = new TileObjectBiomeAssetDictionary();
+                    //     if (!asset.tileObjectAssets.biomeAssets.ContainsKey(BIOMES.NONE)) {
+                    //         asset.tileObjectAssets.biomeAssets.Add(BIOMES.NONE, new BiomeTileObjectTileSetting());
+                    //     }
+                    // }
+                    // if (tileBase != null) {
+                    //     asset.tileObjectAssets.biomeAssets[BIOMES.NONE].tileBase.Add(tileBase);    
+                    // }
+                    AssetDatabase.CreateAsset(asset, path);
+                    Debug.Log($"Created new TileObjectScriptableObject {asset.name}");
                 }
             }
             Debug.LogWarning($"Missing Tile Objects: {missingTileObjects.ComafyList()}");

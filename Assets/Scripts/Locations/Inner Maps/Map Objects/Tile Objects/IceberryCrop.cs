@@ -1,0 +1,16 @@
+﻿public class IceberryCrop : Crops {
+    public override bool doesNotGrowPerTick => true;
+    public override TILE_OBJECT_TYPE producedObjectOnHarvest => TILE_OBJECT_TYPE.ICEBERRY;
+    
+    public IceberryCrop() : base() {
+        Initialize(TILE_OBJECT_TYPE.ICEBERRY_CROP);
+    }
+    public IceberryCrop(SaveDataCornCrop data) : base(data) { }
+
+    #region Growth State
+    public override int GetRipeningTicks() {
+        int ticks = GameManager.Instance.GetTicksBasedOnHour(1); //120
+        return ticks;
+    }
+    #endregion    
+}

@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
@@ -352,7 +353,7 @@ public class TileFeatureGeneration : MapGenerationComponent {
 	}
 #endregion
 
-#region Settlement Generation Utilities
+	#region Settlement Generation Utilities
 	private List<Area> GetNeighbouringTiles(List<Area> tiles) {
 		List<Area> neighbouringTiles = new List<Area>();
 		for (int i = 0; i < tiles.Count; i++) {
@@ -366,9 +367,9 @@ public class TileFeatureGeneration : MapGenerationComponent {
 		}
 		return neighbouringTiles;
 	}
-#endregion
+	#endregion
 
-#region Scenario Maps
+	#region Scenario Maps
 	public override IEnumerator LoadScenarioData(MapGenerationData data, ScenarioMapData scenarioMapData) {
 		SaveDataArea[,] savedMap = scenarioMapData.worldMapSave.GetSaveDataMap();
 		for (int x = 0; x < data.width; x++) {
@@ -385,6 +386,8 @@ public class TileFeatureGeneration : MapGenerationComponent {
 				yield return null;
 			}
 		}
+		//TODO: load village spots
+		throw new NotImplementedException("Scenario Village Spots not yet implemented");
 	}
 	private void DetermineSettlementsForTutorial() {
 		List<Area> chosenTiles = new List<Area> {
@@ -400,7 +403,7 @@ public class TileFeatureGeneration : MapGenerationComponent {
 			chosenTile.featureComponent.AddFeature(AreaFeatureDB.Inhabited_Feature, chosenTile);
 		}
 		
-		List<Area> neighbouringTiles = GetNeighbouringTiles(chosenTiles);
+		// List<Area> neighbouringTiles = GetNeighbouringTiles(chosenTiles);
 		//if settlement is not adjacent to any water hex tile create one
 		// if (neighbouringTiles.Any(h => h.elevationType == ELEVATION.WATER) == false) {
 		// 	Area randomTile = CollectionUtilities.GetRandomElement(neighbouringTiles);
@@ -564,9 +567,9 @@ public class TileFeatureGeneration : MapGenerationComponent {
 			}
 		}
 	}
-#endregion
+	#endregion
 	
-#region Saved World
+	#region Saved World
 	public override IEnumerator LoadSavedData(MapGenerationData data, SaveDataCurrentProgress saveData) {
 		SaveDataArea[,] savedMap = saveData.worldMapSave.GetSaveDataMap();
 		for (int x = 0; x < data.width; x++) {
@@ -584,5 +587,5 @@ public class TileFeatureGeneration : MapGenerationComponent {
 			}
 		}
 	}
-#endregion
+	#endregion
 }

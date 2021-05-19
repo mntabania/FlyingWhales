@@ -20,7 +20,7 @@ public struct Point {
         return X * Y;
     }
     public override string ToString() {
-        return $"({X}, {Y})";
+        return $"({X.ToString()}, {Y.ToString()})";
     }
 }
 

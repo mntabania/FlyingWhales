@@ -427,7 +427,6 @@ public static class Extensions {
             case TILE_OBJECT_TYPE.HEIRLOOM:
             case TILE_OBJECT_TYPE.GUITAR:
             case TILE_OBJECT_TYPE.FISH_PILE:
-            case TILE_OBJECT_TYPE.METAL_PILE:
             case TILE_OBJECT_TYPE.STONE_PILE:
             case TILE_OBJECT_TYPE.WOOD_PILE:
             case TILE_OBJECT_TYPE.TABLE:
@@ -450,7 +449,6 @@ public static class Extensions {
             case TILE_OBJECT_TYPE.CRYPT_TILE_OBJECT:
             case TILE_OBJECT_TYPE.DEFENSE_POINT_TILE_OBJECT:
             case TILE_OBJECT_TYPE.ANIMAL_MEAT:
-            case TILE_OBJECT_TYPE.VEGETABLES:
             case TILE_OBJECT_TYPE.RAT_MEAT:
                 return true;
             default:
@@ -1489,6 +1487,52 @@ public static class Extensions {
                 return BIOMES.SNOW;
             default:
                 throw new ArgumentOutOfRangeException(nameof(p_tileType), p_tileType, null);
+        }
+    }
+    #endregion
+
+    #region Resources
+    public static RESOURCE GetResourceCategory(this CONCRETE_RESOURCES p_resource) {
+        switch (p_resource) {
+            case CONCRETE_RESOURCES.Copper:
+            case CONCRETE_RESOURCES.Iron:
+            case CONCRETE_RESOURCES.Mithril:
+            case CONCRETE_RESOURCES.Orichalcum:
+            case CONCRETE_RESOURCES.Diamond:
+            case CONCRETE_RESOURCES.Gold:
+                return RESOURCE.METAL;
+            case CONCRETE_RESOURCES.Rabbit_Cloth:
+            case CONCRETE_RESOURCES.Mink_Cloth:
+            case CONCRETE_RESOURCES.Wool:
+            case CONCRETE_RESOURCES.Spider_Silk:
+            case CONCRETE_RESOURCES.Moon_Thread:
+            case CONCRETE_RESOURCES.Mooncrawler_Cloth:
+                return RESOURCE.CLOTH;
+            case CONCRETE_RESOURCES.Boar_Hide:
+            case CONCRETE_RESOURCES.Scale_Hide:
+            case CONCRETE_RESOURCES.Dragon_Hide:
+            case CONCRETE_RESOURCES.Wolf_Hide:
+            case CONCRETE_RESOURCES.Bear_Hide:
+                return RESOURCE.LEATHER;
+            case CONCRETE_RESOURCES.Stone:
+                return RESOURCE.STONE;
+            case CONCRETE_RESOURCES.Elf_Meat:
+            case CONCRETE_RESOURCES.Human_Meat:
+            case CONCRETE_RESOURCES.Animal_Meat:
+            case CONCRETE_RESOURCES.Fish:
+            case CONCRETE_RESOURCES.Corn:
+            case CONCRETE_RESOURCES.Potato:
+            case CONCRETE_RESOURCES.Pineapple:
+            case CONCRETE_RESOURCES.Iceberry:
+            case CONCRETE_RESOURCES.Mushroom:
+            case CONCRETE_RESOURCES.Hypno_Herb:
+            case CONCRETE_RESOURCES.Rat_Meat:
+            case CONCRETE_RESOURCES.Vegetables:
+                return RESOURCE.FOOD;
+            case CONCRETE_RESOURCES.Wood:
+                return RESOURCE.WOOD;
+            default:
+                throw new ArgumentOutOfRangeException(nameof(p_resource), p_resource, null);
         }
     }
     #endregion
