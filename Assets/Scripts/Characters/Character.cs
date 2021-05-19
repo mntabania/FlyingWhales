@@ -16,6 +16,7 @@ using UnityEngine.Assertions;
 using UnityEngine.EventSystems;
 using UnityEngine.Profiling;
 using UtilityScripts;
+using Factions.Faction_Types;
 
 public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlayerActionTarget, IObjectManipulator, IPartyQuestTarget, IGatheringTarget, IStoredTarget {
     private int _id;
@@ -124,6 +125,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public BookmarkableEventDispatcher bookmarkEventDispatcher { get; }
     public BuffStatsBonus buffStatsBonus { get; private set; }
     public EquipmentComponent equipmentComponent { get; private set; }
+    public CharacterMoneyComponent moneyComponent { get; private set; }
 
     #region getters / setters
     public string bookmarkName => lycanData != null ? lycanData.activeForm.visuals.GetCharacterNameWithIconAndColor() : visuals.GetCharacterNameWithIconAndColor();
@@ -328,6 +330,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         piercingAndResistancesComponent = new PiercingAndResistancesComponent(); piercingAndResistancesComponent.SetOwner(this);
         previousCharacterDataComponent = new PreviousCharacterDataComponent(); previousCharacterDataComponent.SetOwner(this);
         traitComponent = new CharacterTraitComponent(); traitComponent.SetOwner(this);
+        moneyComponent = new CharacterMoneyComponent(); moneyComponent.SetOwner(this);
         eventDispatcher = new CharacterEventDispatcher();
         bookmarkEventDispatcher = new BookmarkableEventDispatcher();
         buffStatsBonus = new BuffStatsBonus();
@@ -410,6 +413,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         piercingAndResistancesComponent = data.piercingAndResistancesComponent.Load(); piercingAndResistancesComponent.SetOwner(this);
         previousCharacterDataComponent = data.previousCharacterDataComponent.Load(); previousCharacterDataComponent.SetOwner(this);
         traitComponent = data.traitComponent.Load(); traitComponent.SetOwner(this);
+        moneyComponent = data.moneyComponent.Load(); moneyComponent.SetOwner(this);
+
         buffStatsBonus = data.buffStatusBonus.Load();
         eventDispatcher = new CharacterEventDispatcher();
         bookmarkEventDispatcher = new BookmarkableEventDispatcher();
@@ -4374,6 +4379,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             //AddAdvertisedAction(INTERACTION_TYPE.CHANGE_CLASS);
             AddAdvertisedAction(INTERACTION_TYPE.STUDY_MONSTER);
             AddAdvertisedAction(INTERACTION_TYPE.PICKPOCKET);
+            AddAdvertisedAction(INTERACTION_TYPE.STEAL_COINS);
 
             //NOTE: Removed the creation of healing potion, etc. on the fly because it conflicts with the current crafting of objects
             //It is confusing to have a crafting then another one the creates them in the inventory without any crafting
@@ -4767,6 +4773,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
 #if DEBUG_LOG
             log = log + "\nPlan is setting next action to be done...";
 #endif
+            OnCharacterFinishedActionSuccessfully(actionNode);
             Messenger.Broadcast(JobSignals.CHARACTER_DID_ACTION_SUCCESSFULLY, this, actionNode);
             plan.SetNextNode();
             if (plan.currentNode == null) {
@@ -4784,6 +4791,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 //    forceRemoveJobInQueue = false;
                 //}
                 job.SetFinishedSuccessfully(true);
+                OnCharacterFinishedJobSuccessfully(job);
                 Messenger.Broadcast(CharacterSignals.CHARACTER_FINISHED_JOB_SUCCESSFULLY, this, job);
                 
                 //this means that this is the end goal so end this plan now
@@ -4997,6 +5005,16 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             }
         }
     }
+    protected void OnCharacterFinishedActionSuccessfully(ActualGoapNode p_action) {
+        moneyComponent.GainCoinsAfterDoingAction(p_action);
+    }
+    protected void OnCharacterFinishedJobSuccessfully(JobQueueItem p_job) {
+        needsComponent.OnCharacterFinishedJob(p_job);
+        behaviourComponent.OnCharacterFinishedJob(p_job);
+        traitComponent.OnCharacterFinishedJob(p_job);
+        moneyComponent.GainCoinsAfterDoingJob(p_job);
+    }
+
     private void HeardAScream(Character characterThatScreamed) {
         if(!limiterComponent.canPerform || !limiterComponent.canWitness) {
             //Do not react to scream if character has disabler trait
@@ -6093,8 +6111,18 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             }
             traitContainer.AddTrait(this, "Dead", responsibleCharacter, gainedFromDoing: deathFromAction);
 
-            if(cause == "attacked" && responsibleCharacter != null && responsibleCharacter.isInWerewolfForm) {
-                traitContainer.AddTrait(this, "Mangled", responsibleCharacter, gainedFromDoing: deathFromAction);
+            if(cause == "attacked" && responsibleCharacter != null) {
+                if (responsibleCharacter.isInWerewolfForm) {
+                    traitContainer.AddTrait(this, "Mangled", responsibleCharacter, gainedFromDoing: deathFromAction);
+                }
+                FactionType ft = faction?.factionType;
+                if (ft != null && ft.type == FACTION_TYPE.Undead || ft.type == FACTION_TYPE.Wild_Monsters) {
+                    if (responsibleCharacter.partyComponent.isMemberThatJoinedQuest) {
+                        if (!responsibleCharacter.partyComponent.currentParty.isPlayerParty) {
+                            responsibleCharacter.partyComponent.currentParty.AllMembersThatJoinedQuestGainsRandomCoinAmount(5, 10);
+                        }
+                    }
+                }
             }
 
 #if DEBUG_LOG

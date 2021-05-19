@@ -19,6 +19,16 @@ public class CharacterTraitComponent : CharacterComponent {
         isOtherTick = data.isOtherTick;
     }
 
+    #region General
+    public void OnCharacterFinishedJob(JobQueueItem p_job) {
+        if(p_job is GoapPlanJob job && job.targetInteractionType == INTERACTION_TYPE.EAT_CORPSE) {
+            if (owner.traitContainer.HasTrait("Hunting")) {
+                owner.traitContainer.RemoveTrait(owner, "Hunting");
+            }
+        }
+    }
+    #endregion
+
     #region Agoraphobia
     public void SubscribeToAgoraphobiaLevelUpSignal() {
         Messenger.AddListener<SkillData>("AgoraphobiaLevelUp", OnAgoraphobiaLevelUp);

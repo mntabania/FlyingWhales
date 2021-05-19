@@ -111,7 +111,8 @@ public class ConsoleBase : InfoUIBase {
             {"/kill_villagers", KillAllVillagers},
             {"/adjust_se", AdjustSpiritEnergy},
             {"/adjust_mm", AdjustMigrationMeter},
-            {"/toggle_vs", ToggleVillageSpots}
+            {"/toggle_vs", ToggleVillageSpots},
+            {"/coins", AdjustCoins}
         };
         
         SchemeData.alwaysSuccessScheme = false;
@@ -1069,6 +1070,30 @@ public class ConsoleBase : InfoUIBase {
             }
         }
         AddSuccessMessage($"Killed {count} villagers!");
+    }
+    private void AdjustCoins(string[] parameters) {
+        if (parameters.Length != 2) { //parameters command, item
+            AddCommandHistory(consoleLbl.text);
+            AddErrorMessage("There was an error in the command format of AdjustCoins");
+            return;
+        }
+        string characterParameterString = parameters[0];
+
+        Character character = CharacterManager.Instance.GetCharacterByName(characterParameterString);
+
+        if (character == null) {
+            AddErrorMessage($"There is no character named {characterParameterString}");
+            return;
+        }
+        string amountParameterString = parameters[1];
+
+        int value = 0;
+        if (!int.TryParse(amountParameterString, out value)) {
+            AddErrorMessage($"Amount parameter is not an integer: {amountParameterString}");
+            return;
+        }
+        character.moneyComponent.AdjustCoins( value);
+        AddSuccessMessage($"Adjusted Coins of {character.name} by {value}");
     }
     #endregion
 

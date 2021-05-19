@@ -655,7 +655,9 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
         if (action.goapType == INTERACTION_TYPE.REMOVE_BUFF) {
             return true;
         }
-        if (action.goapType == INTERACTION_TYPE.STEAL || action.goapType == INTERACTION_TYPE.STEAL_ANYTHING || action.goapType == INTERACTION_TYPE.DRINK_BLOOD || action.goapType == INTERACTION_TYPE.VAMPIRIC_EMBRACE || action.goapType == INTERACTION_TYPE.PICKPOCKET) {
+        if (action.goapType == INTERACTION_TYPE.STEAL || action.goapType == INTERACTION_TYPE.STEAL_ANYTHING 
+            || action.goapType == INTERACTION_TYPE.DRINK_BLOOD || action.goapType == INTERACTION_TYPE.VAMPIRIC_EMBRACE 
+            || action.goapType == INTERACTION_TYPE.PICKPOCKET || action.goapType == INTERACTION_TYPE.STEAL_COINS) {
             return true;
         } else if (action.goapType == INTERACTION_TYPE.KNOCKOUT_CHARACTER && job.jobType != JOB_TYPE.APPREHEND) {
             return true;
