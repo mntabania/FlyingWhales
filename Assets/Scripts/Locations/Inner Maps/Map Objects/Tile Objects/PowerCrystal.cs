@@ -3,8 +3,8 @@
 public class PowerCrystal : TileObject {
 
     public List<RESISTANCE> resistanceBonuses = new List<RESISTANCE>();
-    public int bonusResistance;
-    public int bonusPiercing;
+    public float amountBonusResistance;
+    public float amountBonusPiercing;
     public PowerCrystal() {
         Initialize(TILE_OBJECT_TYPE.POWER_CRYSTAL, true);
 
@@ -12,8 +12,12 @@ public class PowerCrystal : TileObject {
         currentHP = maxHP;
 
         AddAdvertisedAction(INTERACTION_TYPE.ABSORB_POWER_CRYSTAL);
-        bonusPiercing = UtilityScripts.GameUtilities.RandomBetweenTwoNumbers(1, 10);
-        EquipmentBonusProcessor.SetBonusResistanceOnPowerCrystal(this);
+        if(UtilityScripts.GameUtilities.RandomBetweenTwoNumbers(0, 100) > 50) {
+            amountBonusPiercing = 5;
+        } else {
+            amountBonusResistance = 10;
+            EquipmentBonusProcessor.SetBonusResistanceOnPowerCrystal(this, 1);
+        }
     }
 
     public override void LoadSecondWave(SaveDataTileObject data) {
@@ -23,8 +27,8 @@ public class PowerCrystal : TileObject {
             powerCrystalSave.resistanceBonuses.ForEach(eachResistance => {
                 resistanceBonuses.Add(eachResistance);
             });
-            bonusPiercing = powerCrystalSave.bonusPiercing;
-            bonusResistance = powerCrystalSave.bonusResistance;
+            amountBonusPiercing = powerCrystalSave.bonusPiercing;
+            amountBonusResistance = powerCrystalSave.bonusResistance;
         }
     }
 
@@ -35,14 +39,14 @@ public class PowerCrystal : TileObject {
 public class SaveDatapowerCrystalItem : SaveDataTileObject {
 
     public List<RESISTANCE> resistanceBonuses = new List<RESISTANCE>();
-    public int bonusResistance;
-    public int bonusPiercing;
+    public float bonusResistance;
+    public float bonusPiercing;
     public override void Save(TileObject tileObject) {
         base.Save(tileObject);
         PowerCrystal powerCrystal = tileObject as PowerCrystal;
         //Assert.IsNotNull(equipment);
-        bonusResistance = powerCrystal.bonusResistance;
-        bonusPiercing = powerCrystal.bonusPiercing;
+        bonusResistance = powerCrystal.amountBonusResistance;
+        bonusPiercing = powerCrystal.amountBonusPiercing;
         powerCrystal.resistanceBonuses.ForEach((eachRes) => {
             resistanceBonuses.Add(eachRes);
         });

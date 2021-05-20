@@ -233,15 +233,17 @@ public static class EquipmentBonusProcessor
         }
     }
 
-    public static void SetBonusResistanceOnPowerCrystal(PowerCrystal p_crystal) {
-        int resistanceCount = UnityEngine.Random.Range(1, 4);
-        
-        List<int> result = GameUtilities.GetUniqueRandomNumbersInBetween(1, (int)RESISTANCE.Physical, resistanceCount);
+    public static void SetBonusResistanceOnPowerCrystal(PowerCrystal p_crystal, int p_numberOfresistance) {
+
+        /*
+        List<int> result = GameUtilities.GetUniqueRandomNumbersInBetween(1, (int)RESISTANCE.Physical, p_numberOfresistance);
 
         foreach (var item in result) {
             RESISTANCE addElem = (RESISTANCE)item;
             p_crystal.resistanceBonuses.Add(addElem);
-        }
+        }*/
+        int res = GameUtilities.RandomBetweenTwoNumbers(1, ((int)RESISTANCE.Physical - 1));
+        p_crystal.resistanceBonuses.Add((RESISTANCE)res);
     }
 
     public static float GetSlayerBonusDamage(Character p_damager, Character p_damageReceiver, float p_currentAmountDagame) {

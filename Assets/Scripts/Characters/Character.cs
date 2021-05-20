@@ -502,7 +502,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         Messenger.AddListener<Faction, Character>(FactionSignals.CREATE_FACTION_INTERRUPT, OnFactionCreated);
         Messenger.AddListener<ITraitable, Trait>(TraitSignals.TRAITABLE_GAINED_TRAIT, OnTraitableGainedTrait);
         Messenger.AddListener<Faction, Faction, FACTION_RELATIONSHIP_STATUS, FACTION_RELATIONSHIP_STATUS>(FactionSignals.CHANGE_FACTION_RELATIONSHIP, OnChangeFactionRelationship);
-        Messenger.AddListener<Character>(CharacterSignals.ON_ELF_ABSORB_CRYSTAL, OnPowerCrystalAbsorbedByAnElf);
+        Messenger.AddListener<Character, PowerCrystal>(CharacterSignals.ON_ELF_ABSORB_CRYSTAL, OnPowerCrystalAbsorbedByAnElf);
         needsComponent.SubscribeToSignals();
         jobComponent.SubscribeToListeners();
         stateAwarenessComponent.SubscribeSignals();
@@ -6570,17 +6570,17 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     }
 #endregion
 
-    #region apply equipment effects upon load
-    void ApplyStackCountForTraits() {
-        equipmentInventory.ForEach((eachEquip) => {
-            (eachEquip as EquipmentItem).AssignData();
-            equipmentComponent.SetEquipment(eachEquip as EquipmentItem, this, true);
-        });
-    }
-	#endregion
+#region apply equipment effects upon load
+void ApplyStackCountForTraits() {
+    equipmentInventory.ForEach((eachEquip) => {
+        (eachEquip as EquipmentItem).AssignData();
+        equipmentComponent.SetEquipment(eachEquip as EquipmentItem, this, true);
+    });
+}
+#endregion
 
-#region IBookmarkable
-	public void OnSelectBookmark() {
+    #region IBookmarkable
+    public void OnSelectBookmark() {
         LeftSelectAction();
     }
     public void RemoveBookmark() {
@@ -6619,28 +6619,55 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     //function to be attached on signal that 1 elven got a power crystal
     //check if they are on the same village
     //NOTE!! - only elves should gain from this call
-    void OnPowerCrystalAbsorbedByAnElf(Character p_powerCrystalAbsorber) {
+    void OnPowerCrystalAbsorbedByAnElf(Character p_powerCrystalAbsorber, PowerCrystal p_crystal) {
         if(this != p_powerCrystalAbsorber && race == RACE.ELVES && homeSettlement == p_powerCrystalAbsorber.homeSettlement) {
-            UpdatePiercingAndResistance();
+            ApplyCrystalBonus(p_crystal);
         }
     }
 
     //the signal should be called here and also the absorber will gain the bonus from this function
     //NOTE!! - only elves should gain from this call
-    public void AbsorbCrystal() {
-        Debug.LogError("CRYSTAL ABSORBED BY ELF");
-        UpdatePiercingAndResistance();
-        Messenger.Broadcast(CharacterSignals.ON_ELF_ABSORB_CRYSTAL, this);
-        //TODO: fire signal that OnPowerCrystalAbsorbedByAnElven(this) will listen to...
+    public void AbsorbCrystal(PowerCrystal p_crystal) {
+        ApplyCrystalBonus(p_crystal);
+        
+        Log log;
+        string crystalBonus = string.Empty;
+        bool isPiercingBonus = false;
+        if(p_crystal.amountBonusPiercing > 0) {
+            isPiercingBonus = true;
+        }
+        if (currentSettlement == null || currentSettlement?.locationType != LOCATION_TYPE.VILLAGE) {
+            if (isPiercingBonus) {
+                crystalBonus = name + " gained " + p_crystal.amountBonusPiercing + " Piercing";
+            } else {
+                crystalBonus = name + " gained " + p_crystal.amountBonusResistance + " " + p_crystal.resistanceBonuses[0] + " Resistance";
+            }
+            log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "Power Crystal", "absorb_crystal_homeless", null, LOG_TAG.Major);
+            log.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            log.AddToFillers(null, crystalBonus, LOG_IDENTIFIER.STRING_1);
+            log.AddLogToDatabase();
+            PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
+        } else {
+            if (isPiercingBonus) {
+                crystalBonus = " gained " + p_crystal.amountBonusPiercing + " Piercing";
+            } else {
+                crystalBonus = " gained " + p_crystal.amountBonusResistance + " " + p_crystal.resistanceBonuses[0] + " Resistance";
+            }
+            Messenger.Broadcast(CharacterSignals.ON_ELF_ABSORB_CRYSTAL, this, p_crystal);
+            log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "Power Crystal", "absorb_crystal_villager", null, LOG_TAG.Major);
+            log.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            log.AddToFillers(homeSettlement, homeSettlement.name, LOG_IDENTIFIER.LANDMARK_1);
+            log.AddToFillers(null, crystalBonus, LOG_IDENTIFIER.STRING_1);
+            log.AddLogToDatabase();
+            PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
+        }
     }
 
-    void UpdatePiercingAndResistance() {
-        int rand = GameUtilities.RandomBetweenTwoNumbers(0, 100);
-        if (rand >= 50) {
-            piercingAndResistancesComponent.AdjustPiercing(5);
-        } else {
-            piercingAndResistancesComponent.AdjustResistance((RESISTANCE)GameUtilities.RandomBetweenTwoNumbers(1, (int)RESISTANCE.Physical), 10);
-        }
+    public void ApplyCrystalBonus(PowerCrystal p_crystal) {
+        p_crystal.resistanceBonuses.ForEach((eachResistance) => {
+            piercingAndResistancesComponent.AdjustResistance(eachResistance, p_crystal.amountBonusResistance);
+        });
+        piercingAndResistancesComponent.AdjustPiercing(p_crystal.amountBonusPiercing);
     }
     #endregion
 

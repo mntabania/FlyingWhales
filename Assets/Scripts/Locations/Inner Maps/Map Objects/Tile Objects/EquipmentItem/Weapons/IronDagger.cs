@@ -1,11 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-public class CopperSword : WeaponItem {
-    public CopperSword() {
-        Initialize(TILE_OBJECT_TYPE.COPPER_SWORD, false);
+public class IronDagger : WeaponItem {
+    public IronDagger() {
+        Initialize(TILE_OBJECT_TYPE.IRON_DAGGER, false);
         equipmentData = EquipmentDataHandler.Instance.GetEquipmentDataBaseOnName(this.name);
         EquipmentBonusProcessor.SetBonusResistanceOnWeapon(this);
     }
-    public CopperSword(SaveDataTileObject data) { }
+    public IronDagger(SaveDataTileObject data) { }
 }

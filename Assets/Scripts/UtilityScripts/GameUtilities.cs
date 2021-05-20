@@ -353,7 +353,7 @@ namespace UtilityScripts {
 
             var result = sequence.Distinct().Take(p_count);
 
-            return result as List<int>;
+            return result.ToList<int>();
         }
         public static List<Area> GetHexTilesGivenCoordinates(List<Point> coordinates, Area[,] map) {
             List<Area> tiles = new List<Area>();

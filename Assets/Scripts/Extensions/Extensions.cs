@@ -410,6 +410,24 @@ public static class Extensions {
             case TILE_OBJECT_TYPE.PHYLACTERY:
             case TILE_OBJECT_TYPE.COPPER_SWORD:
             case TILE_OBJECT_TYPE.IRON_SWORD:
+            case TILE_OBJECT_TYPE.MITHRIL_SWORD:
+            case TILE_OBJECT_TYPE.ORICHALCUM_SWORD:
+            case TILE_OBJECT_TYPE.COPPER_AXE:
+            case TILE_OBJECT_TYPE.IRON_AXE:
+            case TILE_OBJECT_TYPE.MITHRIL_AXE:
+            case TILE_OBJECT_TYPE.ORICHALCUM_AXE:
+            case TILE_OBJECT_TYPE.COPPER_BOW:
+            case TILE_OBJECT_TYPE.IRON_BOW:
+            case TILE_OBJECT_TYPE.MITHRIL_BOW:
+            case TILE_OBJECT_TYPE.ORICHALCUM_BOW:
+            case TILE_OBJECT_TYPE.COPPER_STAFF:
+            case TILE_OBJECT_TYPE.IRON_STAFF:
+            case TILE_OBJECT_TYPE.MITHRIL_STAFF:
+            case TILE_OBJECT_TYPE.ORICHALCUM_STAFF:
+            case TILE_OBJECT_TYPE.COPPER_DAGGER:
+            case TILE_OBJECT_TYPE.IRON_DAGGER:
+            case TILE_OBJECT_TYPE.MITHRIL_DAGGER:
+            case TILE_OBJECT_TYPE.ORICHALCUM_DAGGER:
             case TILE_OBJECT_TYPE.RING:
             case TILE_OBJECT_TYPE.BRACER:
             case TILE_OBJECT_TYPE.MINK_SHIRT:
@@ -514,6 +532,24 @@ public static class Extensions {
             case TILE_OBJECT_TYPE.DESERT_ROSE:
             case TILE_OBJECT_TYPE.COPPER_SWORD:
             case TILE_OBJECT_TYPE.IRON_SWORD:
+            case TILE_OBJECT_TYPE.MITHRIL_SWORD:
+            case TILE_OBJECT_TYPE.ORICHALCUM_SWORD:
+            case TILE_OBJECT_TYPE.COPPER_AXE:
+            case TILE_OBJECT_TYPE.IRON_AXE:
+            case TILE_OBJECT_TYPE.MITHRIL_AXE:
+            case TILE_OBJECT_TYPE.ORICHALCUM_AXE:
+            case TILE_OBJECT_TYPE.COPPER_BOW:
+            case TILE_OBJECT_TYPE.IRON_BOW:
+            case TILE_OBJECT_TYPE.MITHRIL_BOW:
+            case TILE_OBJECT_TYPE.ORICHALCUM_BOW:
+            case TILE_OBJECT_TYPE.COPPER_STAFF:
+            case TILE_OBJECT_TYPE.IRON_STAFF:
+            case TILE_OBJECT_TYPE.MITHRIL_STAFF:
+            case TILE_OBJECT_TYPE.ORICHALCUM_STAFF:
+            case TILE_OBJECT_TYPE.COPPER_DAGGER:
+            case TILE_OBJECT_TYPE.IRON_DAGGER:
+            case TILE_OBJECT_TYPE.MITHRIL_DAGGER:
+            case TILE_OBJECT_TYPE.ORICHALCUM_DAGGER:
             case TILE_OBJECT_TYPE.RING:
             case TILE_OBJECT_TYPE.BRACER:
             case TILE_OBJECT_TYPE.MINK_SHIRT:
