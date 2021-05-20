@@ -9,8 +9,8 @@ public class CharacterSkillBonusData : ScriptableObject {
 
 [System.Serializable]
 public class SkillBonus {
-    public float maxHPBonus;
-    public float attackBonus;
-    public float critBonus;
+    public int maxHPBonus;
+    public int attackBonus;
+    public int critBonus;
     public List<string> canBecomeClasses = new List<string>();
 }
