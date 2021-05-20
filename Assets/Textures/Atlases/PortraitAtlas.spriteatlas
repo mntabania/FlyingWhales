@@ -43,7 +43,7 @@ SpriteAtlas:
     variantMultiplier: 1
     packables:
     - {fileID: 102900000, guid: 891be410796e8554eafb2611643cc64f, type: 3}
-    totalSpriteSurfaceArea: 3559958
+    totalSpriteSurfaceArea: 3622678
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
@@ -91,6 +91,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 3a641b12296c62440b4445f671127d76, type: 3}
   - {fileID: 21300000, guid: d0bab72205ba05c46a58108cb567e4ed, type: 3}
   - {fileID: 21300000, guid: 70f830329e6c25e4fa78b54cb5fb8567, type: 3}
+  - {fileID: 21300000, guid: 1f091a52e510f904494092f807302d3f, type: 3}
   - {fileID: 21300000, guid: 04666f52b21550f438961f6127ce72ae, type: 3}
   - {fileID: 21300000, guid: 91791662e1933534eae0821cdb338e52, type: 3}
   - {fileID: 21300000, guid: 358cb862cbbfb514f93097d7026d2b83, type: 3}
@@ -101,6 +102,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 3446cbb2f691a6e459dede63d06ba416, type: 3}
   - {fileID: 21300000, guid: aed80cb2f9f2f8d4fbff72fff6c6a95e, type: 3}
   - {fileID: 21300000, guid: 80b6fcb2b7b287a4297e7b15c0e256a7, type: 3}
+  - {fileID: 21300000, guid: b022e0c2e3b5fcb45b1a1582c0552002, type: 3}
   - {fileID: 21300000, guid: 12f193c25cad8824a978c1a8d9d8377f, type: 3}
   - {fileID: 21300000, guid: 470eebd2a50dd5749a5319c8ae215e0c, type: 3}
   - {fileID: 21300000, guid: 23155af263f488645bbff2c93b8d7979, type: 3}
@@ -189,6 +191,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: d4269d17148e0a34ebf0b72e49688303, type: 3}
   - {fileID: 21300000, guid: 4f117727fece67040a6c3082f72b0111, type: 3}
   - {fileID: 21300000, guid: 1e1df827c62dc2143b1272f7d654a601, type: 3}
+  - {fileID: 21300000, guid: f179fb37e98fd2b4da205be9dd85ba06, type: 3}
   - {fileID: 21300000, guid: a50211475c2109f4c8522954f775f932, type: 3}
   - {fileID: 21300000, guid: 4ceb2b47beb2817498a263252bf1e68f, type: 3}
   - {fileID: 21300000, guid: 10016f4795fb3014ab06f390beeb256d, type: 3}
@@ -215,6 +218,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: e252097856f314d4abd5b6b0c5712a92, type: 3}
   - {fileID: 21300000, guid: b8afed78d95feec4f8065ced0d0a7884, type: 3}
   - {fileID: 21300000, guid: e5d9fd985aee8be40a03df8b4c567c3c, type: 3}
+  - {fileID: 21300000, guid: 7b489e9822bf9f54ab4f3252182a3525, type: 3}
   - {fileID: 21300000, guid: 5a4956d826e0f89479571b31fd3d1622, type: 3}
   - {fileID: 21300000, guid: 92163ce8a5818244caf0584031447ef9, type: 3}
   - {fileID: 21300000, guid: 35a3791950f0e3b4e93cdd4bd78a0fc6, type: 3}
@@ -306,6 +310,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 24b73dbd41dbd1f459072d0dcf1f4314, type: 3}
   - {fileID: 21300000, guid: dfc0dadde54370f469219a045b6f4d6d, type: 3}
   - {fileID: 21300000, guid: 9d587aedde59e4e45885cde1e5758b37, type: 3}
+  - {fileID: 21300000, guid: d13beeed7c501b34cacd818376c21620, type: 3}
   - {fileID: 21300000, guid: 8fa4fffd3cbe7df4f9f11d6a933cfc81, type: 3}
   - {fileID: 21300000, guid: 40db3a2e00143a14cbc7a0156c676cf1, type: 3}
   - {fileID: 21300000, guid: eb95285e5b4bfed4aa021eaf823e2e85, type: 3}
@@ -383,6 +388,7 @@ SpriteAtlas:
   - female_human_nose4
   - demon_sloth_portrait
   - female_human_nose3
+  - Head
   - mail_human_head5
   - female_elf_nose3
   - mail_human_nose3
@@ -393,6 +399,7 @@ SpriteAtlas:
   - TheBiolab
   - king
   - M-BoomerZombie
+  - Head
   - demon_envy_portrait
   - female_elf_head3
   - female_human_brows5
@@ -481,6 +488,7 @@ SpriteAtlas:
   - male_elf_eyes3
   - ThePortal
   - female_human_eyes6
+  - Head
   - male_elf_hair9
   - location_triangle_portrait
   - human_farm
@@ -507,6 +515,7 @@ SpriteAtlas:
   - male_elf_brows2
   - M-Ratman
   - female_human_brows1
+  - Head
   - female_elf_lips4
   - female_human_nose7
   - female_elf_ears4
@@ -598,6 +607,7 @@ SpriteAtlas:
   - Head
   - female_human_head5
   - tempest
+  - Head
   - female_human_hair11
   - female_elf_ears1
   - female_elf_nose1

@@ -123,9 +123,12 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public PreviousCharacterDataComponent previousCharacterDataComponent { get; }
     public CharacterTraitComponent traitComponent { get; private set; }
     public BookmarkableEventDispatcher bookmarkEventDispatcher { get; }
-    public BuffStatsBonus buffStatsBonus { get; private set; }
+    //public BuffStatsBonus buffStatsBonus { get; private set; }
     public EquipmentComponent equipmentComponent { get; private set; }
     public CharacterMoneyComponent moneyComponent { get; private set; }
+
+    //IMPORTANT: This component is not applicable to all characters, only VILLAGERS! So, this can be null if the character is NOT A VILLAGER.
+    public CharacterTalentComponent talentComponent { get; private set; }
 
     #region getters / setters
     public string bookmarkName => lycanData != null ? lycanData.activeForm.visuals.GetCharacterNameWithIconAndColor() : visuals.GetCharacterNameWithIconAndColor();
@@ -333,7 +336,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         moneyComponent = new CharacterMoneyComponent(); moneyComponent.SetOwner(this);
         eventDispatcher = new CharacterEventDispatcher();
         bookmarkEventDispatcher = new BookmarkableEventDispatcher();
-        buffStatsBonus = new BuffStatsBonus();
+        //buffStatsBonus = new BuffStatsBonus();
         equipmentComponent = new EquipmentComponent();
         needsComponent.ResetSleepTicks();
     }
@@ -415,7 +418,11 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         traitComponent = data.traitComponent.Load(); traitComponent.SetOwner(this);
         moneyComponent = data.moneyComponent.Load(); moneyComponent.SetOwner(this);
 
-        buffStatsBonus = data.buffStatusBonus.Load();
+        if (data.talentComponent != null) {
+            talentComponent = data.talentComponent.Load(); talentComponent.SetOwner(this);
+        }
+
+        //buffStatsBonus = data.buffStatusBonus.Load();
         eventDispatcher = new CharacterEventDispatcher();
         bookmarkEventDispatcher = new BookmarkableEventDispatcher();
 
@@ -443,6 +450,10 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             needsComponent.Initialize();    
         }
         religionComponent.Initialize();
+        if (race != RACE.DEMON) {
+            //Demons and Summons/Monsters can't have talents
+            talentComponent = new CharacterTalentComponent(); talentComponent.SetOwner(this);
+        }
     }
     public void InitialCharacterPlacement(LocationGridTile tile) {
         if (needsComponent.HasNeeds()) {
@@ -6668,6 +6679,12 @@ void ApplyStackCountForTraits() {
             piercingAndResistancesComponent.AdjustResistance(eachResistance, p_crystal.amountBonusResistance);
         });
         piercingAndResistancesComponent.AdjustPiercing(p_crystal.amountBonusPiercing);
+    }
+    #endregion
+
+    #region Talents
+    public bool HasTalents() {
+        return talentComponent != null;
     }
     #endregion
 

@@ -1,0 +1,40 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 88e6d539796c490aa0efea676d6fae59, type: 3}
+  m_Name: Boar Data
+  m_EditorClassIdentifier: 
+  combatBehaviourType: 2
+  combatSpecialSkillType: 0
+  summonCost: 50
+  portraitSprite: {fileID: 21300000, guid: f179fb37e98fd2b4da205be9dd85ba06, type: 3}
+  defaultSprites:
+    stillSprite: {fileID: 21300000, guid: 56b691475e73cae4aa7da68d9fecb0a4, type: 3}
+    animationSprites:
+    - {fileID: 21300000, guid: 7116bf2ca5c223e48b85c571cc475cc3, type: 3}
+    - {fileID: 21300000, guid: 56b691475e73cae4aa7da68d9fecb0a4, type: 3}
+    - {fileID: 21300000, guid: b1420d8760a60364b95030ffa4e3494b, type: 3}
+  raceSprites:
+    m_keys: 
+    m_values: []
+  characterSkillUpdateData:
+    piercingBonus: 0
+    mentalResistanceBonus: 0
+    physicalResistanceBonus: 0
+    normalResistanceBonus: 0
+    fireResistanceBonus: 0
+    poisonResistanceBonus: 0
+    waterResistanceBonus: 0
+    iceResistanceBonus: 0
+    electricResistanceBonus: 0
+    earthResistanceBonus: 0
+    windResistanceBonus: 0
+    allElementresistanceBonus: 0
