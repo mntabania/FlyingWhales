@@ -40,8 +40,8 @@ namespace Quests {
         protected override void OnDestroy() {
             base.OnDestroy();
             Instance = null;
-            Messenger.RemoveListener<List<Character>, DemonicStructure>(PartySignals.CHARACTERS_ATTACKING_DEMONIC_STRUCTURE, OnCharactersAttackingDemonicStructure);
-            Messenger.RemoveListener<LocationStructure, Character, GoapPlanJob>(JobSignals.DEMONIC_STRUCTURE_DISCOVERED, OnDemonicStructureDiscovered);
+            // Messenger.RemoveListener<List<Character>, DemonicStructure>(PartySignals.CHARACTERS_ATTACKING_DEMONIC_STRUCTURE, OnCharactersAttackingDemonicStructure);
+            // Messenger.RemoveListener<LocationStructure, Character, GoapPlanJob>(JobSignals.DEMONIC_STRUCTURE_DISCOVERED, OnDemonicStructureDiscovered);
             //Messenger.RemoveListener<List<Character>>(PlayerQuestSignals.ANGELS_ATTACKING_DEMONIC_STRUCTURE, OnAngelsAttackingDemonicStructure);
             Messenger.RemoveListener<Character, DemonicStructure>(CharacterSignals.CHARACTER_HIT_DEMONIC_STRUCTURE, OnSingleCharacterAttackedDemonicStructure);
         }
@@ -95,10 +95,10 @@ namespace Quests {
         }
 #endregion
         
-#region Initialization
+        #region Initialization
         public void InitializeAfterGameLoaded() {
-            Messenger.AddListener<List<Character>, DemonicStructure>(PartySignals.CHARACTERS_ATTACKING_DEMONIC_STRUCTURE, OnCharactersAttackingDemonicStructure);
-            Messenger.AddListener<LocationStructure, Character, GoapPlanJob>(JobSignals.DEMONIC_STRUCTURE_DISCOVERED, OnDemonicStructureDiscovered);
+            // Messenger.AddListener<List<Character>, DemonicStructure>(PartySignals.CHARACTERS_ATTACKING_DEMONIC_STRUCTURE, OnCharactersAttackingDemonicStructure);
+            // Messenger.AddListener<LocationStructure, Character, GoapPlanJob>(JobSignals.DEMONIC_STRUCTURE_DISCOVERED, OnDemonicStructureDiscovered);
             //Messenger.AddListener<List<Character>>(PlayerQuestSignals.ANGELS_ATTACKING_DEMONIC_STRUCTURE, OnAngelsAttackingDemonicStructure);
             Messenger.AddListener<Character, DemonicStructure>(CharacterSignals.CHARACTER_HIT_DEMONIC_STRUCTURE, OnSingleCharacterAttackedDemonicStructure);
             Messenger.Broadcast(UISignals.SHOW_SELECTABLE_GLOW, "CenterButton");
@@ -148,9 +148,9 @@ namespace Quests {
             }
             throw new Exception($"Could not instantiate special popup {noSpacesName}");
         }
-#endregion
+        #endregion
 
-#region Inquiry
+        #region Inquiry
         public T GetActiveQuest<T>() where T : Quest {
             for (int i = 0; i < activeQuests.Count; i++) {
                 Quest quest = activeQuests[i];
@@ -172,9 +172,9 @@ namespace Quests {
         public int GetActiveQuestsCount() {
             return activeQuests.Count;
         }
-#endregion
+        #endregion
         
-#region Activation
+        #region Activation
         public void ActivateQuest(Quest quest) {
             activeQuests.Add(quest);
             quest.Activate();
@@ -197,9 +197,9 @@ namespace Quests {
             }
             quest.Deactivate();
         }
-#endregion
+        #endregion
         
-#region Completion
+        #region Completion
         public void CompleteQuest(Quest quest) {
             DeactivateQuest(quest);
             if (quest is SpecialPopup specialPopup) {
@@ -211,9 +211,9 @@ namespace Quests {
                 }
             }
         }
-#endregion
+        #endregion
 
-#region Win Condition
+        #region Win Condition
         private void TryCreateWinConditionQuest() {
             if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Tutorial) {
                 if (SettingsManager.Instance.settings.skipTutorials) {
@@ -320,39 +320,39 @@ namespace Quests {
                 ActivateQuest(SummonTheDemon);
             }
         }
-#endregion
+        #endregion
 
-#region Counterattack
-        private void OnCharactersAttackingDemonicStructure(List<Character> attackers, DemonicStructure targetStructure) {
-            ActivateQuest<Counterattack>(attackers, targetStructure);
-        }
-#endregion
+        // #region Counterattack
+        // private void OnCharactersAttackingDemonicStructure(List<Character> attackers, DemonicStructure targetStructure) {
+        //     ActivateQuest<Counterattack>(attackers, targetStructure);
+        // }
+        // #endregion
 
-#region Report Demonic Structure
-        private void OnDemonicStructureDiscovered(LocationStructure structure, Character reporter, GoapPlanJob job) {
-            ActivateQuest<DemonicStructureDiscovered>(structure, reporter, job);
-        }
-#endregion
+        // #region Report Demonic Structure
+        // private void OnDemonicStructureDiscovered(LocationStructure structure, Character reporter, GoapPlanJob job) {
+        //     ActivateQuest<DemonicStructureDiscovered>(structure, reporter, job);
+        // }
+        // #endregion
 
-#region Divine Intervention
+        #region Divine Intervention
         private void OnAngelsAttackingDemonicStructure(List<Character> angels) {
             ActivateQuest<DivineIntervention>(angels);
         }
-#endregion
+        #endregion
 
-#region Center Button
+        #region Center Button
         public void OnClickCenterButton() {
             Messenger.Broadcast(UISignals.HIDE_SELECTABLE_GLOW, "CenterButton");
         }
-#endregion
+        #endregion
 
-#region Under Attack
+        #region Under Attack
         private void OnSingleCharacterAttackedDemonicStructure(Character character, DemonicStructure demonicStructure) {
             if (demonicStructure.currentAttackers.Count == 1 && !InnerMapCameraMove.Instance.CanSee(demonicStructure)) {
                 PlayerUI.Instance.ShowGeneralConfirmation("Under Attack", $"Your {demonicStructure.name} is under attack!", 
                     onClickCenter: demonicStructure.CenterOnStructure);
             }
         }
-#endregion
+        #endregion
     }
 }
