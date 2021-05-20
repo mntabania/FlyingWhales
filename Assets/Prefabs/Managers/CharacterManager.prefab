@@ -72,6 +72,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4683614060808382}
+  - {fileID: 6529179060144418034}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -88,6 +89,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   classManager: {fileID: 114444464489526964}
+  talentManager: {fileID: 4299273015490349446}
   characterIconPrefab: {fileID: 1000012712350628, guid: 5372250d22a51bc40a200236eee58ac2,
     type: 3}
   characterIconsParent: {fileID: 0}
@@ -1514,3 +1516,47 @@ MonoBehaviour:
   demonNameColor: {r: 0.972549, g: 0.6627451, b: 0.96862745, a: 1}
   undeadNameColor: {r: 0.5372549, g: 0.5372549, b: 0.5372549, a: 1}
   normalNameColor: {r: 0.972549, g: 0.92941177, b: 0.2627451, a: 1}
+--- !u!1 &3878321995466235956
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6529179060144418034}
+  - component: {fileID: 4299273015490349446}
+  m_Layer: 0
+  m_Name: TalentManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6529179060144418034
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3878321995466235956}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 4506135321327042}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4299273015490349446
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3878321995466235956}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 21bddfd2549e68948b5cee07e9dd96de, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  allTalentEnums: 01000000020000000300000004000000050000000600000007000000
