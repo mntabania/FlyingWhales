@@ -127,6 +127,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public EquipmentComponent equipmentComponent { get; private set; }
     public CharacterMoneyComponent moneyComponent { get; private set; }
 
+    //IMPORTANT: This component is not applicable to all characters, only VILLAGERS! So, this can be null if the character is NOT A VILLAGER.
+    public CharacterTalentComponent talentComponent { get; private set; }
+
     #region getters / setters
     public string bookmarkName => lycanData != null ? lycanData.activeForm.visuals.GetCharacterNameWithIconAndColor() : visuals.GetCharacterNameWithIconAndColor();
     public BOOKMARK_TYPE bookmarkType => BOOKMARK_TYPE.Text_With_Cancel;
@@ -415,6 +418,10 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         traitComponent = data.traitComponent.Load(); traitComponent.SetOwner(this);
         moneyComponent = data.moneyComponent.Load(); moneyComponent.SetOwner(this);
 
+        if (data.talentComponent != null) {
+            talentComponent = data.talentComponent.Load(); talentComponent.SetOwner(this);
+        }
+
         buffStatsBonus = data.buffStatusBonus.Load();
         eventDispatcher = new CharacterEventDispatcher();
         bookmarkEventDispatcher = new BookmarkableEventDispatcher();
@@ -443,6 +450,10 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             needsComponent.Initialize();    
         }
         religionComponent.Initialize();
+        if (race != RACE.DEMON) {
+            //Demons and Summons/Monsters can't have talents
+            talentComponent = new CharacterTalentComponent(); talentComponent.SetOwner(this);
+        }
     }
     public void InitialCharacterPlacement(LocationGridTile tile) {
         if (needsComponent.HasNeeds()) {
@@ -6598,7 +6609,13 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public void SetDeathLocation(LocationGridTile p_tile) {
         deathTilePosition = p_tile;
     }
-#endregion
+    #endregion
+
+    #region Talents
+    public bool HasTalents() {
+        return talentComponent != null;
+    }
+    #endregion
 
     public void CleanUp() {
         visuals?.CleanUp();

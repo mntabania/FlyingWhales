@@ -38,6 +38,7 @@ public class ObjectPoolManager : MonoBehaviour {
     private List<ScheduledAction> _scheduledActionPool;
     private List<SingleJobNode> _jobNodePool;
     private List<GoapPlan> _goapPlanPool;
+    private List<CharacterTalent> _characterTalentPool;
 
     private List<List<GoapEffect>> _expectedEffectsListPool;
     private List<List<Precondition>> _preconditionsListPool;
@@ -112,6 +113,7 @@ public class ObjectPoolManager : MonoBehaviour {
         ConstructScheduledActionPool();
         ConstructSingleJobNodePool();
         ConstructGoapPlanPool();
+        ConstructCharacterTalentPool();
         
         InitialPoolObjectCreation("TILEOBJECTGAMEOBJECT", 20000);
     }
@@ -744,7 +746,7 @@ public class ObjectPoolManager : MonoBehaviour {
     }
 #endregion
 
-#region Job Nodes
+    #region Job Nodes
     private void ConstructSingleJobNodePool() {
         _jobNodePool = new List<SingleJobNode>();
     }
@@ -760,7 +762,25 @@ public class ObjectPoolManager : MonoBehaviour {
         data.Reset();
         _jobNodePool.Add(data);
     }
-#endregion
+    #endregion
+
+    #region Character Talent
+    private void ConstructCharacterTalentPool() {
+        _characterTalentPool = new List<CharacterTalent>();
+    }
+    public CharacterTalent CreateNewCharacterTalent() {
+        if (_characterTalentPool.Count > 0) {
+            CharacterTalent data = _characterTalentPool[0];
+            _characterTalentPool.RemoveAt(0);
+            return data;
+        }
+        return new CharacterTalent();
+    }
+    public void ReturnCharacterTalentToPool(CharacterTalent data) {
+        data.Reset();
+        _characterTalentPool.Add(data);
+    }
+    #endregion
 
     // protected override void OnDestroy() {
     //     if (allObjectPools != null) {
