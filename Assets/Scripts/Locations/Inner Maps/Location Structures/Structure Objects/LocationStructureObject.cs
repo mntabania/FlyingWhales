@@ -184,30 +184,6 @@ public class LocationStructureObject : PooledObject, ISelectable {
         newTileObject.mapVisual.SetVisual(preplacedObj.spriteRenderer.sprite);
         newTileObject.mapVisual.SetRotation(preplacedObj.transform.localEulerAngles.z);
         newTileObject.RevalidateTileObjectSlots();
-        if (structureType == STRUCTURE_TYPE.IMP_HUT && newTileObject.tileObjectType == TILE_OBJECT_TYPE.IMP_HUT_TILE_OBJECT) {
-            structure.AddObjectAsDamageContributor(newTileObject);    
-        } else if (structureType == STRUCTURE_TYPE.SNOOPER && newTileObject.tileObjectType == TILE_OBJECT_TYPE.SNOOPER_TILE_OBJECT) {
-            structure.AddObjectAsDamageContributor(newTileObject);    
-        } else if (structureType == STRUCTURE_TYPE.BIOLAB && newTileObject.tileObjectType == TILE_OBJECT_TYPE.BIOLAB_TILE_OBJECT) {
-            structure.AddObjectAsDamageContributor(newTileObject);    
-        } else if (structureType == STRUCTURE_TYPE.DEFENSE_POINT && newTileObject.tileObjectType == TILE_OBJECT_TYPE.DEFENSE_POINT_TILE_OBJECT) {
-            structure.AddObjectAsDamageContributor(newTileObject);    
-        } else if (structureType == STRUCTURE_TYPE.MANA_PIT && newTileObject.tileObjectType == TILE_OBJECT_TYPE.MANA_PIT_TILE_OBJECT) {
-            structure.AddObjectAsDamageContributor(newTileObject);    
-        } else if (structureType == STRUCTURE_TYPE.MARAUD && newTileObject.tileObjectType == TILE_OBJECT_TYPE.MARAUD_TILE_OBJECT) {
-            structure.AddObjectAsDamageContributor(newTileObject);    
-        } else if (structureType == STRUCTURE_TYPE.SPIRE && newTileObject.tileObjectType == TILE_OBJECT_TYPE.SPIRE_TILE_OBJECT) {
-            structure.AddObjectAsDamageContributor(newTileObject);
-        } else if (structureType == STRUCTURE_TYPE.MEDDLER && newTileObject.tileObjectType == TILE_OBJECT_TYPE.MEDDLER_TILE_OBJECT) {
-            structure.AddObjectAsDamageContributor(newTileObject);
-        } else if (structureType == STRUCTURE_TYPE.CRYPT && newTileObject.tileObjectType == TILE_OBJECT_TYPE.CRYPT_TILE_OBJECT) {
-            structure.AddObjectAsDamageContributor(newTileObject);
-        } else if (structureType == STRUCTURE_TYPE.DEFILER && newTileObject.tileObjectType == TILE_OBJECT_TYPE.DEFILER_TILE_OBJECT) {
-            structure.AddObjectAsDamageContributor(newTileObject);
-        } else if (structureType == STRUCTURE_TYPE.KENNEL && 
-                   (newTileObject.tileObjectType == TILE_OBJECT_TYPE.KENNEL_TILE_OBJECT || newTileObject.tileObjectType == TILE_OBJECT_TYPE.DEMONIC_STRUCTURE_BLOCKER_TILE_OBJECT)) {
-            structure.AddObjectAsDamageContributor(newTileObject);
-        }
     }
     public void PlacePreplacedObjectsAsBlueprints(LocationStructure structure, InnerTileMap areaMap, NPCSettlement npcSettlement) {
         StructureTemplateObjectData[] preplacedObjs = GetPreplacedObjects();
@@ -927,7 +903,7 @@ public class LocationStructureObject : PooledObject, ISelectable {
                     o_cannotPlaceReason = string.Empty;
                     return false;
                 }    
-            } else if (structureType == STRUCTURE_TYPE.FISHING_SHACK) {
+            } else if (structureType == STRUCTURE_TYPE.FISHERY) {
                 if (neighbour.structure.structureType != STRUCTURE_TYPE.WILDERNESS && neighbour.structure.structureType != STRUCTURE_TYPE.CITY_CENTER && neighbour.structure.structureType != STRUCTURE_TYPE.OCEAN) {
                     // Debug.Log($"Could not place {structureType} because {tile} has neighbour {neighbour} that is not Wilderness, City CEnter and Ocean!");
                     o_cannotPlaceReason = string.Empty;

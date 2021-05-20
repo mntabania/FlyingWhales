@@ -703,7 +703,7 @@ public enum STRUCTURE_TYPE {
     CRAFTING = 49,
     TAILORING = 50,
     TANNERY = 51,
-    FISHING_SHACK = 52,
+    FISHERY = 52,
     SPIRE = 53,
     MANA_PIT = 54,
     MARAUD = 55,

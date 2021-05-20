@@ -80,7 +80,7 @@ public static class Extensions {
             case STRUCTURE_TYPE.CRAFTING:
             case STRUCTURE_TYPE.TAILORING:
             case STRUCTURE_TYPE.TANNERY:
-            case STRUCTURE_TYPE.FISHING_SHACK:
+            case STRUCTURE_TYPE.FISHERY:
                 return true;
             default:
                 return false;
@@ -104,7 +104,7 @@ public static class Extensions {
             case STRUCTURE_TYPE.CRAFTING:
             case STRUCTURE_TYPE.TAILORING:
             case STRUCTURE_TYPE.TANNERY:
-            case STRUCTURE_TYPE.FISHING_SHACK:
+            case STRUCTURE_TYPE.FISHERY:
                 return true;
             default:
                 return false;
@@ -184,7 +184,7 @@ public static class Extensions {
             case STRUCTURE_TYPE.CRAFTING:
             case STRUCTURE_TYPE.TAILORING:
             case STRUCTURE_TYPE.TANNERY:
-            case STRUCTURE_TYPE.FISHING_SHACK:
+            case STRUCTURE_TYPE.FISHERY:
             case STRUCTURE_TYPE.TEMPLE:
             case STRUCTURE_TYPE.CULT_TEMPLE:
             case STRUCTURE_TYPE.MONSTER_LAIR:

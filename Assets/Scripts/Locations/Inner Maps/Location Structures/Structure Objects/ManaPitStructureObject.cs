@@ -3,8 +3,7 @@
         protected override void PreplacedObjectProcessing(StructureTemplateObjectData preplacedObj,
             LocationGridTile tile, LocationStructure structure, TileObject newTileObject) {
             base.PreplacedObjectProcessing(preplacedObj, tile, structure, newTileObject);
-            if (newTileObject.tileObjectType == TILE_OBJECT_TYPE.BLOOD_POOL || newTileObject.tileObjectType == TILE_OBJECT_TYPE.CORRUPTED_SPIKE
-                || newTileObject.tileObjectType == TILE_OBJECT_TYPE.CAULDRON) {
+            if (newTileObject.tileObjectType == TILE_OBJECT_TYPE.MANA_PIT_TILE_OBJECT) {
                 structure.AddObjectAsDamageContributor(newTileObject);
             }
         }

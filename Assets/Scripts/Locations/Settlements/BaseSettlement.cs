@@ -548,7 +548,7 @@ namespace Locations.Settlements {
         public bool HasStructureForProducingResource(RESOURCE resourceType) {
             switch (resourceType) {
                 case RESOURCE.FOOD:
-                    return HasStructure(STRUCTURE_TYPE.HUNTER_LODGE, STRUCTURE_TYPE.FARM, STRUCTURE_TYPE.FISHING_SHACK);
+                    return HasStructure(STRUCTURE_TYPE.HUNTER_LODGE, STRUCTURE_TYPE.FARM, STRUCTURE_TYPE.FISHERY);
                 case RESOURCE.WOOD:
                     return HasStructure(STRUCTURE_TYPE.LUMBERYARD);
                 case RESOURCE.STONE:

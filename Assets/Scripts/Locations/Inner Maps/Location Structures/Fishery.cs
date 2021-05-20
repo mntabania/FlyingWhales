@@ -3,22 +3,22 @@ using Inner_Maps.Location_Structures;
 using UnityEngine;
 using UnityEngine.Assertions;
 namespace Inner_Maps.Location_Structures {
-    public class FishingShack : ManMadeStructure {
+    public class Fishery : ManMadeStructure {
         public override Vector3 worldPosition => structureObj.transform.position;
-        public override Type serializedData => typeof(SaveDataFishingShack);
+        public override Type serializedData => typeof(SaveDataFishery);
         public Ocean connectedOcean { get; private set; }
         
-        public FishingShack(Region location) : base(STRUCTURE_TYPE.FISHING_SHACK, location) {
+        public Fishery(Region location) : base(STRUCTURE_TYPE.FISHERY, location) {
             SetMaxHPAndReset(4000);
         }
-        public FishingShack(Region location, SaveDataManMadeStructure data) : base(location, data) {
+        public Fishery(Region location, SaveDataManMadeStructure data) : base(location, data) {
             SetMaxHP(4000);
         }
         
         #region Loading
         public override void LoadReferences(SaveDataLocationStructure saveDataLocationStructure) {
             base.LoadReferences(saveDataLocationStructure);
-            SaveDataFishingShack saveDataFishingShack = saveDataLocationStructure as SaveDataFishingShack;
+            SaveDataFishery saveDataFishingShack = saveDataLocationStructure as SaveDataFishery;
             if (!string.IsNullOrEmpty(saveDataFishingShack.connectedFishingShackID)) {
                 connectedOcean = DatabaseManager.Instance.structureDatabase.GetStructureByPersistentID(saveDataFishingShack.connectedFishingShackID) as Ocean;
             }
@@ -43,13 +43,13 @@ namespace Inner_Maps.Location_Structures {
 }
 
 #region Save Data
-public class SaveDataFishingShack : SaveDataManMadeStructure {
+public class SaveDataFishery : SaveDataManMadeStructure {
 
     public string connectedFishingShackID;
     
     public override void Save(LocationStructure locationStructure) {
         base.Save(locationStructure);
-        FishingShack fishingShack = locationStructure as FishingShack;
+        Fishery fishingShack = locationStructure as Fishery;
         if (fishingShack.connectedOcean != null) {
             connectedFishingShackID = fishingShack.connectedOcean.persistentID;
         }

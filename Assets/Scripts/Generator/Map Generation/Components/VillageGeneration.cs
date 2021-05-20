@@ -451,8 +451,8 @@ public class VillageGeneration : MapGenerationComponent {
 			if (!structureTypes.Contains(STRUCTURE_TYPE.FARM)) {
 				structureWeights.AddElement(new StructureSetting(STRUCTURE_TYPE.FARM, RESOURCE.WOOD), 15);
 			}
-			if (settlement.HasReservedSpotWithFeature(AreaFeatureDB.Fish_Source) && !structureTypes.Contains(STRUCTURE_TYPE.FISHING_SHACK)) {
-				structureWeights.AddElement(new StructureSetting(STRUCTURE_TYPE.FISHING_SHACK, RESOURCE.WOOD), 5);
+			if (settlement.HasReservedSpotWithFeature(AreaFeatureDB.Fish_Source) && !structureTypes.Contains(STRUCTURE_TYPE.FISHERY)) {
+				structureWeights.AddElement(new StructureSetting(STRUCTURE_TYPE.FISHERY, RESOURCE.WOOD), 5);
 			}
 			if (settlement.HasReservedSpotWithFeature(AreaFeatureDB.Wood_Source_Feature) && !structureTypes.Contains(STRUCTURE_TYPE.LUMBERYARD)) {
 				structureWeights.AddElement(new StructureSetting(STRUCTURE_TYPE.LUMBERYARD, RESOURCE.WOOD), 40);	
@@ -484,8 +484,8 @@ public class VillageGeneration : MapGenerationComponent {
 			if (!structureTypes.Contains(STRUCTURE_TYPE.FARM)) {
 				structureWeights.AddElement(new StructureSetting(STRUCTURE_TYPE.FARM, RESOURCE.STONE), 15);
 			}
-			if (settlement.HasReservedSpotWithFeature(AreaFeatureDB.Fish_Source) && !structureTypes.Contains(STRUCTURE_TYPE.FISHING_SHACK)) {
-				structureWeights.AddElement(new StructureSetting(STRUCTURE_TYPE.FISHING_SHACK, RESOURCE.STONE), 5);
+			if (settlement.HasReservedSpotWithFeature(AreaFeatureDB.Fish_Source) && !structureTypes.Contains(STRUCTURE_TYPE.FISHERY)) {
+				structureWeights.AddElement(new StructureSetting(STRUCTURE_TYPE.FISHERY, RESOURCE.STONE), 5);
 			}
 			if (settlement.HasReservedSpotWithFeature(AreaFeatureDB.Metal_Source_Feature) && !structureTypes.Contains(STRUCTURE_TYPE.MINE_SHACK)) {
 				structureWeights.AddElement(new StructureSetting(STRUCTURE_TYPE.MINE_SHACK, RESOURCE.STONE), 40);	

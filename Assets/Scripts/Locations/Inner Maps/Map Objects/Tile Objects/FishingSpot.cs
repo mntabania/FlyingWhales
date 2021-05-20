@@ -14,7 +14,7 @@ public class FishingSpot : TileObject {
     }
     private FishingSpotGameObject _fishingSpotGameObject;
     
-    public FishingShack connectedFishingShack { get; private set; }
+    public Fishery connectedFishingShack { get; private set; }
     public BaseSettlement parentSettlement { get; private set; }
     public override Type serializedData => typeof(SaveDataFishingSpot);
     public FishingSpot() {
@@ -34,7 +34,7 @@ public class FishingSpot : TileObject {
         base.LoadSecondWave(data);
         SaveDataFishingSpot saveDataFishingSpot = data as SaveDataFishingSpot;
         if (!string.IsNullOrEmpty(saveDataFishingSpot.connectedFishingShackID)) {
-            connectedFishingShack = DatabaseManager.Instance.structureDatabase.GetStructureByPersistentID(saveDataFishingSpot.connectedFishingShackID) as FishingShack;
+            connectedFishingShack = DatabaseManager.Instance.structureDatabase.GetStructureByPersistentID(saveDataFishingSpot.connectedFishingShackID) as Fishery;
         }
     }
     #endregion
@@ -109,7 +109,7 @@ public class FishingSpot : TileObject {
     #endregion
 
     #region Structure
-    public void SetConnectedFishingShack(FishingShack p_fishingShack) {
+    public void SetConnectedFishingShack(Fishery p_fishingShack) {
         connectedFishingShack = p_fishingShack;
         if (connectedFishingShack != null) {
             Messenger.AddListener<LocationStructure>(StructureSignals.STRUCTURE_DESTROYED, OnStructureDestroyed);

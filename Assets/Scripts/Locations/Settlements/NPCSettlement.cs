@@ -1022,7 +1022,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         return count;
     }
     public bool HasFoodProducingStructure() {
-        return HasStructure(STRUCTURE_TYPE.HUNTER_LODGE) || HasStructure(STRUCTURE_TYPE.FARM) || HasStructure(STRUCTURE_TYPE.FISHING_SHACK);
+        return HasStructure(STRUCTURE_TYPE.HUNTER_LODGE) || HasStructure(STRUCTURE_TYPE.FARM) || HasStructure(STRUCTURE_TYPE.FISHERY);
     }
     public StructureSetting GetValidFoodProducingStructure() {
         Assert.IsNotNull(owner);
@@ -1030,7 +1030,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         PopulateSurroundingAreas(surroundingAreas);
         WeightedDictionary<StructureSetting> choices = new WeightedDictionary<StructureSetting>();
         if (surroundingAreas.Count(t => t.elevationType == ELEVATION.WATER) > 0) {
-            choices.AddElement(new StructureSetting(STRUCTURE_TYPE.FISHING_SHACK, owner.factionType.mainResource), 100);
+            choices.AddElement(new StructureSetting(STRUCTURE_TYPE.FISHERY, owner.factionType.mainResource), 100);
         }
         if (HasAvailableStructureConnectorsBasedOnGameFeature()) {
             choices.AddElement(new StructureSetting(STRUCTURE_TYPE.HUNTER_LODGE, owner.factionType.mainResource), 20);    
@@ -1041,7 +1041,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
     }
     public void PopulateStructureConnectorsForStructureType(List<StructureConnector> p_connectors, STRUCTURE_TYPE p_structureType) {
         switch (p_structureType) {
-            case STRUCTURE_TYPE.FISHING_SHACK:
+            case STRUCTURE_TYPE.FISHERY:
                 PopulateAvailableFishingSpotConnectors(p_connectors);
                 break;
             case STRUCTURE_TYPE.QUARRY:

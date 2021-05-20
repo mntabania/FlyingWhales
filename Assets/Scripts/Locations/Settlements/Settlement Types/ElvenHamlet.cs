@@ -11,7 +11,7 @@ namespace Locations.Settlements.Settlement_Types {
         }
         public override void ApplyDefaultSettings() {
             SetInitialFacilityWeightAndCap(new StructureSetting(STRUCTURE_TYPE.LUMBERYARD, RESOURCE.WOOD), 300, 1);
-            SetInitialFacilityWeightAndCap(new StructureSetting(STRUCTURE_TYPE.FISHING_SHACK, RESOURCE.WOOD), 30, 1);
+            SetInitialFacilityWeightAndCap(new StructureSetting(STRUCTURE_TYPE.FISHERY, RESOURCE.WOOD), 30, 1);
             SetInitialFacilityWeightAndCap(new StructureSetting(STRUCTURE_TYPE.HUNTER_LODGE, RESOURCE.WOOD), 30, 1);
             SetInitialFacilityWeightAndCap(new StructureSetting(STRUCTURE_TYPE.MINE_SHACK, RESOURCE.WOOD), 10, 1);
             SetInitialFacilityWeightAndCap(new StructureSetting(STRUCTURE_TYPE.FARM, RESOURCE.WOOD), 30, 1);

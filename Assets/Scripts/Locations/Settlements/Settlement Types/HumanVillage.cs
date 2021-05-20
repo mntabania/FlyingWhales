@@ -13,7 +13,7 @@ namespace Locations.Settlements.Settlement_Types {
             SetInitialFacilityWeightAndCap(new StructureSetting(STRUCTURE_TYPE.MINE_SHACK, RESOURCE.STONE), 300, 1);
             SetInitialFacilityWeightAndCap(new StructureSetting(STRUCTURE_TYPE.TAVERN, RESOURCE.STONE), 30, 1);
             SetInitialFacilityWeightAndCap(new StructureSetting(STRUCTURE_TYPE.FARM, RESOURCE.STONE), 30, 1);
-            SetInitialFacilityWeightAndCap(new StructureSetting(STRUCTURE_TYPE.FISHING_SHACK, RESOURCE.STONE), 30, 1);
+            SetInitialFacilityWeightAndCap(new StructureSetting(STRUCTURE_TYPE.FISHERY, RESOURCE.STONE), 30, 1);
             SetInitialFacilityWeightAndCap(new StructureSetting(STRUCTURE_TYPE.HUNTER_LODGE, RESOURCE.STONE), 30, 1);
             SetInitialFacilityWeightAndCap(new StructureSetting(STRUCTURE_TYPE.CEMETERY, RESOURCE.STONE), 10, 1);
             SetInitialFacilityWeightAndCap(new StructureSetting(STRUCTURE_TYPE.PRISON, RESOURCE.STONE), 10, 1);
