@@ -123,7 +123,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public PreviousCharacterDataComponent previousCharacterDataComponent { get; }
     public CharacterTraitComponent traitComponent { get; private set; }
     public BookmarkableEventDispatcher bookmarkEventDispatcher { get; }
-    public BuffStatsBonus buffStatsBonus { get; private set; }
+    //public BuffStatsBonus buffStatsBonus { get; private set; }
     public EquipmentComponent equipmentComponent { get; private set; }
     public CharacterMoneyComponent moneyComponent { get; private set; }
 
@@ -336,7 +336,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         moneyComponent = new CharacterMoneyComponent(); moneyComponent.SetOwner(this);
         eventDispatcher = new CharacterEventDispatcher();
         bookmarkEventDispatcher = new BookmarkableEventDispatcher();
-        buffStatsBonus = new BuffStatsBonus();
+        //buffStatsBonus = new BuffStatsBonus();
         equipmentComponent = new EquipmentComponent();
         needsComponent.ResetSleepTicks();
     }
@@ -422,7 +422,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             talentComponent = data.talentComponent.Load(); talentComponent.SetOwner(this);
         }
 
-        buffStatsBonus = data.buffStatusBonus.Load();
+        //buffStatsBonus = data.buffStatusBonus.Load();
         eventDispatcher = new CharacterEventDispatcher();
         bookmarkEventDispatcher = new BookmarkableEventDispatcher();
 
