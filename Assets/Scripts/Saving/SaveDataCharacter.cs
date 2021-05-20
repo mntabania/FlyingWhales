@@ -108,6 +108,7 @@ public class SaveDataCharacter : SaveData<Character>, ISavableCounterpart {
     public SaveDataPiercingAndResistancesComponent piercingAndResistancesComponent;
     public SaveDataPreviousCharacterDataComponent previousCharacterDataComponent;
     public SaveDataCharacterTraitComponent traitComponent;
+    public SaveDataCharacterMoneyComponent moneyComponent;
     public SaveDataBuffStatsBonus buffStatusBonus;
     public SaveDataResourceStorageComponent resourceStorageComponent;
     //public SaveDataEquipmentComponent equipmentComponent;
@@ -186,6 +187,7 @@ public class SaveDataCharacter : SaveData<Character>, ISavableCounterpart {
         previousCharacterDataComponent = new SaveDataPreviousCharacterDataComponent(); previousCharacterDataComponent.Save(data.previousCharacterDataComponent);
         traitComponent = new SaveDataCharacterTraitComponent(); traitComponent.Save(data.traitComponent);
         buffStatusBonus = new SaveDataBuffStatsBonus(); buffStatusBonus.Save(data.buffStatsBonus);
+        moneyComponent = new SaveDataCharacterMoneyComponent(); moneyComponent.Save(data.moneyComponent);
         resourceStorageComponent = new SaveDataResourceStorageComponent(); resourceStorageComponent.Save(data.resourceStorageComponent);
         //equipmentComponent = new SaveDataEquipmentComponent(); equipmentComponent.Save(data.equipmentComponent);
 

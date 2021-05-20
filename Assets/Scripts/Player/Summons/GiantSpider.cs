@@ -38,7 +38,7 @@ public class GiantSpider : Summon {
             return;
         }
         base.SubscribeToSignals();
-        Messenger.AddListener<Character, GoapPlanJob>(CharacterSignals.CHARACTER_FINISHED_JOB_SUCCESSFULLY, OnCharacterFinishedJobSuccessfully);
+        //Messenger.AddListener<Character, GoapPlanJob>(CharacterSignals.CHARACTER_FINISHED_JOB_SUCCESSFULLY, OnCharacterFinishedJobSuccessfully);
         Messenger.AddListener<JobQueueItem, Character>(JobSignals.JOB_ADDED_TO_QUEUE, OnAddedJobToQueue);
         Messenger.AddListener<JobQueueItem, Character>(JobSignals.JOB_REMOVED_FROM_QUEUE, OnRemovedJobFromQueue);
     }
@@ -47,19 +47,19 @@ public class GiantSpider : Summon {
             return;
         }
         base.UnsubscribeSignals();
-        Messenger.RemoveListener<Character, GoapPlanJob>(CharacterSignals.CHARACTER_FINISHED_JOB_SUCCESSFULLY, OnCharacterFinishedJobSuccessfully);
+        //Messenger.RemoveListener<Character, GoapPlanJob>(CharacterSignals.CHARACTER_FINISHED_JOB_SUCCESSFULLY, OnCharacterFinishedJobSuccessfully);
         Messenger.RemoveListener<JobQueueItem, Character>(JobSignals.JOB_ADDED_TO_QUEUE, OnAddedJobToQueue);
         Messenger.RemoveListener<JobQueueItem, Character>(JobSignals.JOB_REMOVED_FROM_QUEUE, OnRemovedJobFromQueue);
     }
     #endregion
 
     #region Listeners
-    private void OnCharacterFinishedJobSuccessfully(Character character, GoapPlanJob job) {
-        if (character == this && job.jobType == JOB_TYPE.MONSTER_ABDUCT && job.targetPOI is Character targetCharacter) {
-            job.targetPOI.traitContainer.AddTrait(targetCharacter, "Webbed", this);
-            targetCharacter.defaultCharacterTrait.SetHasBeenAbductedByWildMonster(true);
-        }
-    }
+    //private void OnCharacterFinishedJobSuccessfully(Character character, GoapPlanJob job) {
+    //    if (character == this && job.jobType == JOB_TYPE.MONSTER_ABDUCT && job.targetPOI is Character targetCharacter) {
+    //        job.targetPOI.traitContainer.AddTrait(targetCharacter, "Webbed", this);
+    //        targetCharacter.defaultCharacterTrait.SetHasBeenAbductedByWildMonster(true);
+    //    }
+    //}
     private void OnRemovedJobFromQueue(JobQueueItem job, Character character) {
         if (character == this && job.jobType == JOB_TYPE.MONSTER_ABDUCT) {
             if (character is Summon summon) {
