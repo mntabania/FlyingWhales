@@ -1578,6 +1578,15 @@ public class ReactionComponent : CharacterComponent {
                 }
             }
         }
+        if (targetTileObject is PowerCrystal) {
+            if (actor.race == RACE.ELVES && !targetTileObject.HasJobTargetingThis(JOB_TYPE.ABSORB_CRYSTAL)) {
+				if (!actor.jobComponent.HasHigherPriorityJobThan(JOB_TYPE.ABSORB_CRYSTAL)) {
+                    actor.jobComponent.TriggerAbsorbPowerCrystal(targetTileObject);
+                    //targetTileObject.DestroyMapVisualGameObject();
+                    //targetTileObject.DestroyPermanently();
+                }
+            }
+        }
         if (targetTileObject is ResourcePile resourcePile && actor.homeSettlement != null) {
             //if character sees a resource pile that is outside his/her home settlement or
             //is not at his/her settlement's main storage

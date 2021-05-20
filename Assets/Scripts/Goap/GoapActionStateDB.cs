@@ -692,6 +692,9 @@ public static class GoapActionStateDB {
         {INTERACTION_TYPE.STEAL_ANYTHING, new[]{
             new StateNameAndDuration(){ name = "Steal Success", status = InteractionManager.Goap_State_Success, duration = 0 },
         } },
+        {INTERACTION_TYPE.ABSORB_POWER_CRYSTAL, new[]{
+            new StateNameAndDuration(){ name = "Absorb Crystal Success", status = InteractionManager.Goap_State_Success, duration = 20 },
+        } },
     };
 }
 

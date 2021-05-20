@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 using Traits;
-
+using UtilityScripts;
 public static class EquipmentBonusProcessor
 {
     private static Dictionary<EQUIPMENT_SLAYER_BONUS, string> traitDictionaryForSlayer = new Dictionary<EQUIPMENT_SLAYER_BONUS, string>
@@ -225,13 +225,22 @@ public static class EquipmentBonusProcessor
         } else if (p_equipItem.equipmentData.equipmentUpgradeData.bonuses.Contains(EQUIPMENT_BONUS.Increased_5_Random_Resistance)) {
             resistanceCount = 5;
         }
-        var sequence = Enumerable.Range(1, (int)RESISTANCE.Physical).OrderBy(n => n * n + UnityEngine.Random.Range(1, (int)RESISTANCE.Physical) * (new System.Random()).Next());
 
-        var result = sequence.Distinct().Take(resistanceCount);
-
+        List<int> result = GameUtilities.GetUniqueRandomNumbersInBetween(1, (int)RESISTANCE.Physical, resistanceCount);
         foreach (var item in result) {
             RESISTANCE addElem = (RESISTANCE)item;
             p_equipItem.resistanceBonuses.Add(addElem);
+        }
+    }
+
+    public static void SetBonusResistanceOnPowerCrystal(PowerCrystal p_crystal) {
+        int resistanceCount = UnityEngine.Random.Range(1, 4);
+        
+        List<int> result = GameUtilities.GetUniqueRandomNumbersInBetween(1, (int)RESISTANCE.Physical, resistanceCount);
+
+        foreach (var item in result) {
+            RESISTANCE addElem = (RESISTANCE)item;
+            p_crystal.resistanceBonuses.Add(addElem);
         }
     }
 

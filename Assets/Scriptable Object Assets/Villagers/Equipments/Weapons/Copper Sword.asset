@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Copper Sword
   m_EditorClassIdentifier: 
   resourceType: 0
-  specificResource: 0
+  specificResource: 13
   resourceAmount: 100
   purchaseCost: 50
   tier: 1
@@ -23,8 +23,8 @@ MonoBehaviour:
   equipmentUpgradeData:
     bonuses: 0000000006000000
     AdditionalPiercing: 25
-    AdditionalmaxHPPercentage: 50
-    AdditionalmaxHPActual: 0
+    AdditionalMaxHPPercentage: 0
+    AdditionalMaxHPActual: 0
     AdditionalAttackPercentage: 25
     AdditionalAttackActual: 0
     additionalResistanceBonus: 20

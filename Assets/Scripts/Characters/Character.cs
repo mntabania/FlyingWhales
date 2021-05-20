@@ -497,7 +497,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         Messenger.AddListener<Faction, Character>(FactionSignals.CREATE_FACTION_INTERRUPT, OnFactionCreated);
         Messenger.AddListener<ITraitable, Trait>(TraitSignals.TRAITABLE_GAINED_TRAIT, OnTraitableGainedTrait);
         Messenger.AddListener<Faction, Faction, FACTION_RELATIONSHIP_STATUS, FACTION_RELATIONSHIP_STATUS>(FactionSignals.CHANGE_FACTION_RELATIONSHIP, OnChangeFactionRelationship);
-        
+        Messenger.AddListener<Character>(CharacterSignals.ON_ELF_ABSORB_CRYSTAL, OnPowerCrystalAbsorbedByAnElf);
         needsComponent.SubscribeToSignals();
         jobComponent.SubscribeToListeners();
         stateAwarenessComponent.SubscribeSignals();
@@ -6570,7 +6570,51 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public void SetDeathLocation(LocationGridTile p_tile) {
         deathTilePosition = p_tile;
     }
-#endregion
+	#endregion
+
+	#region villager progression HUMANS = skill levelup, Elven = Power Crystal absorbed
+    //function to be attached on skill levelup NOTE!! - only humans should gain from this call
+    void OnSkillLevelUp() {
+        CharacterClassData classData = CharacterManager.Instance.GetOrCreateCharacterClassData(_characterClass.className);
+        piercingAndResistancesComponent.AdjustPiercing(classData.characterSkillUpdateData.GetPiercingBonus());
+        if (classData.characterSkillUpdateData.GetAllElementResistanceBonus() > 0) {
+            for (int x = 1; x < (int)RESISTANCE.Physical; ++x) {
+                piercingAndResistancesComponent.AdjustResistance((RESISTANCE)x, classData.characterSkillUpdateData.GetAllElementResistanceBonus());
+            }
+        } else {
+            for (int x = 1; x < (int)RESISTANCE.Physical; ++x) {
+                piercingAndResistancesComponent.AdjustResistance((RESISTANCE)x, classData.characterSkillUpdateData.GetBonusBaseOnElement((RESISTANCE)x));
+            }
+        }
+    }
+
+    //function to be attached on signal that 1 elven got a power crystal
+    //check if they are on the same village
+    //NOTE!! - only elves should gain from this call
+    void OnPowerCrystalAbsorbedByAnElf(Character p_powerCrystalAbsorber) {
+        if(this != p_powerCrystalAbsorber && race == RACE.ELVES && homeSettlement == p_powerCrystalAbsorber.homeSettlement) {
+            UpdatePiercingAndResistance();
+        }
+    }
+
+    //the signal should be called here and also the absorber will gain the bonus from this function
+    //NOTE!! - only elves should gain from this call
+    public void AbsorbCrystal() {
+        Debug.LogError("CRYSTAL ABSORBED BY ELF");
+        UpdatePiercingAndResistance();
+        Messenger.Broadcast(CharacterSignals.ON_ELF_ABSORB_CRYSTAL, this);
+        //TODO: fire signal that OnPowerCrystalAbsorbedByAnElven(this) will listen to...
+    }
+
+    void UpdatePiercingAndResistance() {
+        int rand = GameUtilities.RandomBetweenTwoNumbers(0, 100);
+        if (rand >= 50) {
+            piercingAndResistancesComponent.AdjustPiercing(5);
+        } else {
+            piercingAndResistancesComponent.AdjustResistance((RESISTANCE)GameUtilities.RandomBetweenTwoNumbers(1, (int)RESISTANCE.Physical), 10);
+        }
+    }
+    #endregion
 
     public void CleanUp() {
         visuals?.CleanUp();

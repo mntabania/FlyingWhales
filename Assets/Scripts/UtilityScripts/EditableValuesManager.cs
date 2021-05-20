@@ -75,6 +75,10 @@ public class EditableValuesManager : MonoBehaviour {
 	[SerializeField] private List<Cost> m_radiusUpgradeCostPerLevel;
 	[Space]
 
+	[Header("Elven Power Crystal Bonus")]
+	[SerializeField] private CharacterProgressionBonusData m_elvenBonusForPowerCrystal;
+	[Space]
+
 	public int vaporStacks;
 	public int poisonCloudStacks;
 	public int frostyFogStacks;
@@ -164,7 +168,7 @@ public class EditableValuesManager : MonoBehaviour {
 	public int GetMaxChaoticEnergyPerPortalLevel(int p_portalLevel) {
 		int index = p_portalLevel - 1;
 		if (currencyHoverData.maxChaoticPerValues.IsIndexInList(index)) {
-			return currencyHoverData.maxChaoticPerValues[p_portalLevel - 1];	
+			return currencyHoverData.maxChaoticPerValues[p_portalLevel - 1];
 		}
 		return -1; //no data was provided for current level
 	}
@@ -184,5 +188,9 @@ public class EditableValuesManager : MonoBehaviour {
 
 	public Cost GetBeholderRadiusUpgradeCostPerLevel(int level) {
 		return m_radiusUpgradeCostPerLevel[level];
+	}
+
+	public CharacterProgressionBonusData GetElvenProgressionBonusData() {
+		return m_elvenBonusForPowerCrystal;
 	}
 }

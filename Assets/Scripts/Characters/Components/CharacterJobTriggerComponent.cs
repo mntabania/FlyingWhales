@@ -3325,7 +3325,16 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
     public void LoadReferences(SaveDataCharacterJobTriggerComponent data) {
         //Currently N/A
     }
-#endregion
+    #endregion
+
+    #region elves power crystal
+    public void TriggerAbsorbPowerCrystal(TileObject p_crystal) {
+        if (!owner.jobQueue.HasJob(JOB_TYPE.ABSORB_CRYSTAL)) {
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.ABSORB_CRYSTAL, INTERACTION_TYPE.ABSORB_POWER_CRYSTAL, p_crystal, owner);
+            owner.jobQueue.AddJobInQueue(job);
+        }
+    }
+    #endregion
 }
 
 [System.Serializable]

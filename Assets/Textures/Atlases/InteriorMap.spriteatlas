@@ -43,7 +43,7 @@ SpriteAtlas:
     variantMultiplier: 1
     packables:
     - {fileID: 102900000, guid: 129c2b5e0c8f0e14d9fb8b1c30296b6d, type: 3}
-    totalSpriteSurfaceArea: 5243029
+    totalSpriteSurfaceArea: 5247125
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
@@ -437,6 +437,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: ea5810873ef701945be81f151b98c1a0, type: 3}
   - {fileID: 21300000, guid: 4037f087e3e32884b820e6918fa715cc, type: 3}
   - {fileID: 21300000, guid: dcac2c87a0eeec24ba5e531b110de011, type: 3}
+  - {fileID: 21300000, guid: 8daf6297da115824baceb6a0a6a63fa9, type: 3}
   - {fileID: 21300000, guid: 7f435497afd6b074e876fa727e7a7e21, type: 3}
   - {fileID: 21300000, guid: e42eb59774e0c884f9f93380fbea0e53, type: 3}
   - {fileID: 21300000, guid: 14ac9897766fb38488f077fd3024e9e1, type: 3}
@@ -1249,6 +1250,7 @@ SpriteAtlas:
   - corruptedGround02
   - demonPewLong00
   - TOOL#1
+  - Power Crystal
   - FLOWER#1
   - TABLE_SCROLLS#2
   - corruptedSpikeBig00

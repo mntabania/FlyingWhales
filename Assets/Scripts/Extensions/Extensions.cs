@@ -452,7 +452,8 @@ public static class Extensions {
             case TILE_OBJECT_TYPE.ANIMAL_MEAT:
             case TILE_OBJECT_TYPE.VEGETABLES:
             case TILE_OBJECT_TYPE.RAT_MEAT:
-                return true;
+            case TILE_OBJECT_TYPE.POWER_CRYSTAL:
+            return true;
             default:
                 return tileObjectType.IsTileObjectAnItem();
         }
@@ -687,9 +688,9 @@ public static class Extensions {
             case JOB_TYPE.ZOMBIE_STROLL:
                 priority = 915;
                 break;
-            //case JOB_TYPE.RECOVER_HP:
-            //    priority = 920;
-            //    break;
+            case JOB_TYPE.ABSORB_CRYSTAL:
+                priority = 920;
+                break;
             case JOB_TYPE.UNDERMINE:
             case JOB_TYPE.POISON_FOOD:
             case JOB_TYPE.PLACE_TRAP:
