@@ -160,6 +160,72 @@ MonoBehaviour:
       mustache: []
       beard: []
       ears: []
+  - raceName: BEAR
+    race: 45
+    neutralAssets:
+      head:
+      - {fileID: 21300000, guid: 1f091a52e510f904494092f807302d3f, type: 3}
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+      ears: []
+    maleAssets:
+      head: []
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+      ears: []
+    femaleAssets:
+      head: []
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+      ears: []
+  - raceName: BOAR
+    race: 46
+    neutralAssets:
+      head:
+      - {fileID: 21300000, guid: f179fb37e98fd2b4da205be9dd85ba06, type: 3}
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+      ears: []
+    maleAssets:
+      head: []
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+      ears: []
+    femaleAssets:
+      head: []
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+      ears: []
   - raceName: CHICKEN
     race: 26
     neutralAssets:
@@ -721,6 +787,72 @@ MonoBehaviour:
       mustache: []
       beard: []
       ears: []
+  - raceName: MINK
+    race: 48
+    neutralAssets:
+      head:
+      - {fileID: 21300000, guid: 7b489e9822bf9f54ab4f3252182a3525, type: 3}
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+      ears: []
+    maleAssets:
+      head: []
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+      ears: []
+    femaleAssets:
+      head: []
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+      ears: []
+  - raceName: MOONWALKER
+    race: 47
+    neutralAssets:
+      head:
+      - {fileID: 21300000, guid: b022e0c2e3b5fcb45b1a1582c0552002, type: 3}
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+      ears: []
+    maleAssets:
+      head: []
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+      ears: []
+    femaleAssets:
+      head: []
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+      ears: []
   - raceName: NYMPH
     race: 28
     neutralAssets:
@@ -758,6 +890,39 @@ MonoBehaviour:
     neutralAssets:
       head:
       - {fileID: 21300000, guid: 40507c8f8647b26409f2f9d92b28fb70, type: 3}
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+      ears: []
+    maleAssets:
+      head: []
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+      ears: []
+    femaleAssets:
+      head: []
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+      ears: []
+  - raceName: RABBIT
+    race: 49
+    neutralAssets:
+      head:
+      - {fileID: 21300000, guid: d13beeed7c501b34cacd818376c21620, type: 3}
       brows: []
       eyes: []
       mouth: []
@@ -1270,7 +1435,7 @@ MonoBehaviour:
       - {fileID: 21300000, guid: 2c02cfd9ad40a474298f29d1f6fd8fda, type: 3}
       - {fileID: 21300000, guid: 6987d8f375e6a494c91f9c60dac1a1b7, type: 3}
   summonSettings:
-    m_keys: 0100000002000000030000000400000005000000060000000700000008000000090000000a0000000b0000000c0000000d0000000e0000000f000000100000001100000012000000130000001400000015000000160000001700000018000000190000001a0000001b0000001c0000001d0000001e0000001f00000020000000210000002200000023000000240000002500000026000000270000002800000029000000
+    m_keys: 0100000002000000030000000400000005000000060000000700000008000000090000000a0000000b0000000c0000000d0000000e0000000f000000100000001100000012000000130000001400000015000000160000001700000018000000190000001a0000001b0000001c0000001d0000001e0000001f000000200000002100000022000000230000002400000025000000260000002700000028000000290000002a0000002b0000002c0000002d0000002e000000
     m_values:
     - className: Ravager
     - className: Skeleton
@@ -1313,6 +1478,11 @@ MonoBehaviour:
     - className: Triton
     - className: Imp
     - className: Dire
+    - className: Bear
+    - className: Boar
+    - className: Moonwalker
+    - className: Mink
+    - className: Rabbit
   minionSettings:
     m_keys: 00000000010000000200000003000000040000000500000006000000
     m_values:

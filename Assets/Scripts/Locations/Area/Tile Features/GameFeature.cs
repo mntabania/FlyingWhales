@@ -21,6 +21,9 @@ namespace Locations.Area_Features {
             SUMMON_TYPE.Pig,
             SUMMON_TYPE.Sheep,
             SUMMON_TYPE.Chicken,
+            SUMMON_TYPE.Moonwalker,
+            SUMMON_TYPE.Mink,
+            SUMMON_TYPE.Rabbit,
         }; 
     
         public GameFeature() {

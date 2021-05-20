@@ -67,6 +67,11 @@ public enum RACE{
     HARPY = 38,
     TRITON = 39,
     IMP = 40,
+    BEAR = 45,
+    BOAR = 46,
+    MOONWALKER = 47,
+    MINK = 48,
+    RABBIT = 49,
 }
 public enum HEXTILE_DIRECTION {
     NORTH_WEST,
@@ -1082,6 +1087,11 @@ public enum SUMMON_TYPE {
     Triton,
     Imp,
     Dire_Wolf,
+    Bear,
+    Boar,
+    Moonwalker,
+    Mink,
+    Rabbit,
 }
 public enum ARTIFACT_TYPE { None, Necronomicon, Ankh_Of_Anubis, Berserk_Orb, Heart_Of_The_Wind, Gorgon_Eye }
 public enum ABILITY_TAG { NONE, MAGIC, SUPPORT, DEBUFF, CRIME, PHYSICAL, }
@@ -1334,3 +1344,4 @@ public enum Temperature_Type {
 public enum Precipitation_Type {
     Dryest, Dryer, Dry, Wet, Wetter, Wettest
 }
+public enum CHARACTER_TALENT { None, Martial_Arts, Combat_Magic, Healing_Magic, Crafting, Resources, Food, Social }
