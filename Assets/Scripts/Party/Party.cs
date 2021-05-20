@@ -616,7 +616,7 @@ public class Party : ILogFiller, ISavable, IJobOwner, IBookmarkable {
     }
 #endregion
 
-#region Quest
+    #region Quest
     private void AcceptQuest(PartyQuest quest) {
         if (!isActive && quest != null) {
             SetCurrentQuest(quest);
@@ -708,9 +708,9 @@ public class Party : ILogFiller, ISavable, IJobOwner, IBookmarkable {
     private void SetCanAcceptQuests(bool state) {
         canAcceptQuests = state;
     }
-#endregion
+    #endregion
 
-#region Members
+    #region Members
     public bool AddMember(Character character) {
         if (!members.Contains(character)) {
             members.Add(character);
@@ -1038,9 +1038,15 @@ public class Party : ILogFiller, ISavable, IJobOwner, IBookmarkable {
         Messenger.Broadcast(PartySignals.DISBAND_PARTY, this);
         DestroyParty();
     }
-#endregion
+    public void AllMembersThatJoinedQuestGainsRandomCoinAmount(int p_minAmount, int p_maxAmount) {
+        for (int i = 0; i < membersThatJoinedQuest.Count; i++) {
+            Character c = membersThatJoinedQuest[i];
+            c.moneyComponent.AdjustCoins(GameUtilities.RandomBetweenTwoNumbers(p_minAmount, p_maxAmount));
+        }
+    }
+    #endregion
 
-#region Party Walk Speed
+    #region Party Walk Speed
     private void UpdatePartyWalkSpeed() {
         if (!isPlayerParty) { return; } //Party Walk Speed applies only on demon parties for now
         if(membersThatJoinedQuest.Count > 0) {

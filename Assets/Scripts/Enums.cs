@@ -519,6 +519,7 @@ public enum INTERACTION_TYPE {
     IS_IMPRISONED = 224,
     STEAL_ANYTHING = 225,
     ABSORB_POWER_CRYSTAL = 226,
+    STEAL_COINS = 227,
 }
 public enum INTERRUPT {
     None,

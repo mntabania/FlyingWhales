@@ -397,9 +397,56 @@ public class BehaviourComponent : CharacterComponent {
         }
         return false;
     }
-#endregion
+    public void OnCharacterFinishedJob(JobQueueItem job) {
+        if (job.jobType == JOB_TYPE.DECREASE_MOOD) {
+            if (HasBehaviour(typeof(DeMooderBehaviour))) {
+                //character finished decrease mood job, start cooldown.
+                StartDeMoodCooldown();
+                ResetDeMoodVillageTarget();
+            }
+        } else if (job.jobType == JOB_TYPE.DISABLE) {
+            if (HasBehaviour(typeof(DisablerBehaviour))) {
+                //character finished disable job, start cooldown.
+                StartDisablerCooldown();
+            }
+        } else if (job.jobType == JOB_TYPE.MONSTER_EAT) {
+            if (HasBehaviour(typeof(AbductorBehaviour))) {
+                TIME_IN_WORDS currentTimeInWords = GameManager.Instance.GetCurrentTimeInWordsOfTick();
+                switch (currentTimeInWords) {
+                    case TIME_IN_WORDS.MORNING:
+                    case TIME_IN_WORDS.AFTERNOON:
+                    case TIME_IN_WORDS.LUNCH_TIME:
+                        SetHasEatenInTheMorning(true);
+                        break;
+                    case TIME_IN_WORDS.EARLY_NIGHT:
+                    case TIME_IN_WORDS.LATE_NIGHT:
+                        SetHasEatenInTheNight(true);
+                        break;
+                }
+            }
+        } else if (job.jobType == JOB_TYPE.MONSTER_ABDUCT) {
+            if (job is GoapPlanJob goapJob && goapJob.targetPOI is Character targetCharacter) {
+                if (HasBehaviour(typeof(AbductorBehaviour))) {
+                    targetCharacter.defaultCharacterTrait.SetHasBeenAbductedByPlayerMonster(true);
+                }
+                if (owner is GiantSpider) {
+                    targetCharacter.traitContainer.AddTrait(targetCharacter, "Webbed", owner);
+                    targetCharacter.defaultCharacterTrait.SetHasBeenAbductedByWildMonster(true);
+                }
+            }
+        } else if (job.jobType == JOB_TYPE.ARSON) {
+            if (HasBehaviour(typeof(ArsonistBehaviour))) {
+                //clear target village data after 3 hours after first successful arson job.
+                GameDate expiry = GameManager.Instance.Today();
+                expiry.AddTicks(GameManager.Instance.GetTicksBasedOnHour(3));
+                SchedulingManager.Instance.AddEntry(expiry, ResetArsonistVillageTarget, owner);
+                SchedulingManager.Instance.AddEntry(expiry, StartArsonistCooldown, owner);
+            }
+        }
+    }
+    #endregion
 
-#region Inquiry
+    #region Inquiry
     public bool HasBehaviour(System.Type type) {
         for (int i = 0; i < currentBehaviourComponents.Count; i++) {
             CharacterBehaviourComponent cbc = currentBehaviourComponents[i];
@@ -565,19 +612,6 @@ public class BehaviourComponent : CharacterComponent {
 #endregion
     
 #region De-Mood
-    public void OnBecomeDeMooder() {
-        Messenger.AddListener<Character, GoapPlanJob>(CharacterSignals.CHARACTER_FINISHED_JOB_SUCCESSFULLY, CheckIfDeMoodJobFinished);
-    }
-    public void OnNoLongerDeMooder() {
-        Messenger.RemoveListener<Character, GoapPlanJob>(CharacterSignals.CHARACTER_FINISHED_JOB_SUCCESSFULLY, CheckIfDeMoodJobFinished);
-    }
-    private void CheckIfDeMoodJobFinished(Character character, GoapPlanJob job) {
-        if (character == owner && job.jobType == JOB_TYPE.DECREASE_MOOD) {
-            //character finished decrease mood job, start cooldown.
-            StartDeMoodCooldown();
-            ResetDeMoodVillageTarget();
-        }
-    }
     private void StartDeMoodCooldown() {
         currentDeMoodCooldown = 0;
         Messenger.AddListener(Signals.TICK_ENDED, PerTickDeMoodCooldown);
@@ -606,18 +640,6 @@ public class BehaviourComponent : CharacterComponent {
 #endregion
 
 #region Disabler
-    public void OnBecomeDisabler() {
-        Messenger.AddListener<Character, GoapPlanJob>(CharacterSignals.CHARACTER_FINISHED_JOB_SUCCESSFULLY, CheckIfDisablerJobFinished);
-    }
-    public void OnNoLongerDisabler() {
-        Messenger.RemoveListener<Character, GoapPlanJob>(CharacterSignals.CHARACTER_FINISHED_JOB_SUCCESSFULLY, CheckIfDisablerJobFinished);
-    }
-    private void CheckIfDisablerJobFinished(Character character, GoapPlanJob job) {
-        if (character == owner && job.jobType == JOB_TYPE.DISABLE) {
-            //character finished disable job, start cooldown.
-            StartDisablerCooldown();
-        }
-    }
     private void StartDisablerCooldown() {
         currentDisableCooldown = 0;
         Messenger.AddListener(Signals.TICK_ENDED, PerTickDisablerCooldown);
@@ -672,21 +694,12 @@ public class BehaviourComponent : CharacterComponent {
         nest = tile;
     }
     public void OnBecomeAbductor() {
-        Messenger.AddListener<Character, GoapPlanJob>(CharacterSignals.CHARACTER_FINISHED_JOB_SUCCESSFULLY, CheckIfMonsterAte);
         Messenger.AddListener<JobQueueItem, Character>(JobSignals.JOB_ADDED_TO_QUEUE, OnAbductorAddedJobToQueue);
         Messenger.AddListener<JobQueueItem, Character>(JobSignals.JOB_REMOVED_FROM_QUEUE, OnAbductorRemovedJobFromQueue);
-        Messenger.AddListener<Character, GoapPlanJob>(CharacterSignals.CHARACTER_FINISHED_JOB_SUCCESSFULLY, OnAbductorFinishedJobSuccessfully);
     }
     public void OnNoLongerAbductor() {
-        Messenger.RemoveListener<Character, GoapPlanJob>(CharacterSignals.CHARACTER_FINISHED_JOB_SUCCESSFULLY, CheckIfMonsterAte);
         Messenger.RemoveListener<JobQueueItem, Character>(JobSignals.JOB_ADDED_TO_QUEUE, OnAbductorAddedJobToQueue);
         Messenger.RemoveListener<JobQueueItem, Character>(JobSignals.JOB_REMOVED_FROM_QUEUE, OnAbductorRemovedJobFromQueue);
-        Messenger.RemoveListener<Character, GoapPlanJob>(CharacterSignals.CHARACTER_FINISHED_JOB_SUCCESSFULLY, OnAbductorFinishedJobSuccessfully);
-    }
-    private void OnAbductorFinishedJobSuccessfully(Character character, GoapPlanJob job) {
-        if (character == owner && job.jobType == JOB_TYPE.MONSTER_ABDUCT && job.targetPOI is Character targetCharacter) {
-            targetCharacter.defaultCharacterTrait.SetHasBeenAbductedByPlayerMonster(true);
-        }
     }
     private void OnAbductorRemovedJobFromQueue(JobQueueItem job, Character character) {
         if (character == owner && job.jobType == JOB_TYPE.MONSTER_ABDUCT) {
@@ -701,22 +714,6 @@ public class BehaviourComponent : CharacterComponent {
     private void OnAbductorAddedJobToQueue(JobQueueItem job, Character character) {
         if (character == owner && job.jobType == JOB_TYPE.MONSTER_ABDUCT && character.combatComponent.combatMode != COMBAT_MODE.Defend) {
             character.combatComponent.SetCombatMode(COMBAT_MODE.Defend);
-        }
-    }
-    private void CheckIfMonsterAte(Character character, GoapPlanJob job) {
-        if (character == owner && job.jobType == JOB_TYPE.MONSTER_EAT) {
-            TIME_IN_WORDS currentTimeInWords = GameManager.Instance.GetCurrentTimeInWordsOfTick();
-            switch (currentTimeInWords) {
-                case TIME_IN_WORDS.MORNING:
-                case TIME_IN_WORDS.AFTERNOON:
-                case TIME_IN_WORDS.LUNCH_TIME:
-                    SetHasEatenInTheMorning(true);
-                    break;
-                case TIME_IN_WORDS.EARLY_NIGHT:
-                case TIME_IN_WORDS.LATE_NIGHT:
-                    SetHasEatenInTheNight(true);
-                    break;
-            }
         }
     }
     public bool AlreadyHasAbductedVictimAtNest(out Character target) {
@@ -775,21 +772,10 @@ public class BehaviourComponent : CharacterComponent {
         currentArsonCooldown++;
     }
     public void OnBecomeArsonist() {
-        Messenger.AddListener<Character, GoapPlanJob>(CharacterSignals.CHARACTER_FINISHED_JOB_SUCCESSFULLY, CheckIfArsonistDidBurn);
         Messenger.AddListener<Character>(CharacterSignals.START_FLEE, OnArsonistStartedFleeing);
     }
     public void OnNoLongerArsonist() {
-        Messenger.RemoveListener<Character, GoapPlanJob>(CharacterSignals.CHARACTER_FINISHED_JOB_SUCCESSFULLY, CheckIfArsonistDidBurn);
         Messenger.RemoveListener<Character>(CharacterSignals.START_FLEE, OnArsonistStartedFleeing);
-    }
-    private void CheckIfArsonistDidBurn(Character character, GoapPlanJob job) {
-        if (character == owner && job.jobType == JOB_TYPE.ARSON) {
-            //clear target village data after 3 hours after first successful arson job.
-            GameDate expiry = GameManager.Instance.Today();
-            expiry.AddTicks(GameManager.Instance.GetTicksBasedOnHour(3));
-            SchedulingManager.Instance.AddEntry(expiry, ResetArsonistVillageTarget, owner);
-            SchedulingManager.Instance.AddEntry(expiry, StartArsonistCooldown, owner);
-        }
     }
     private void OnArsonistStartedFleeing(Character character) {
         if (character == owner) {

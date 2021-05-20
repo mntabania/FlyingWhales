@@ -31,7 +31,7 @@ namespace Traits {
             base.LoadTraitOnLoadTraitContainer(addTo);
             if (addTo is Character character) {
                 _owner = character;
-                Messenger.AddListener<Character, GoapPlanJob>(CharacterSignals.CHARACTER_FINISHED_JOB_SUCCESSFULLY, OnCharacterFinishedJobSuccessfully);
+                //Messenger.AddListener<Character, GoapPlanJob>(CharacterSignals.CHARACTER_FINISHED_JOB_SUCCESSFULLY, OnCharacterFinishedJobSuccessfully);
             }
         }
         #endregion
@@ -42,14 +42,14 @@ namespace Traits {
             if (addedTo is Character character) {
                 _owner = character;
                 character.behaviourComponent.AddBehaviourComponent(typeof(HuntPreyBehaviour));
-                Messenger.AddListener<Character, GoapPlanJob>(CharacterSignals.CHARACTER_FINISHED_JOB_SUCCESSFULLY, OnCharacterFinishedJobSuccessfully);
+                //Messenger.AddListener<Character, GoapPlanJob>(CharacterSignals.CHARACTER_FINISHED_JOB_SUCCESSFULLY, OnCharacterFinishedJobSuccessfully);
             }
         }
         public override void OnRemoveTrait(ITraitable removedFrom, Character removedBy) {
             base.OnRemoveTrait(removedFrom, removedBy);
             if (removedFrom is Character character) {
                 character.behaviourComponent.RemoveBehaviourComponent(typeof(HuntPreyBehaviour));
-                Messenger.RemoveListener<Character, GoapPlanJob>(CharacterSignals.CHARACTER_FINISHED_JOB_SUCCESSFULLY, OnCharacterFinishedJobSuccessfully);
+                //Messenger.RemoveListener<Character, GoapPlanJob>(CharacterSignals.CHARACTER_FINISHED_JOB_SUCCESSFULLY, OnCharacterFinishedJobSuccessfully);
             }
         }
         public override void OnCopyStatus(Status statusToCopy, ITraitable from, ITraitable to) {
@@ -64,11 +64,11 @@ namespace Traits {
             targetArea = p_area;
         }
         
-        private void OnCharacterFinishedJobSuccessfully(Character character, GoapPlanJob goapPlanJob) {
-            if (character == _owner && goapPlanJob.targetInteractionType == INTERACTION_TYPE.EAT_CORPSE) {
-                character.traitContainer.RemoveTrait(character, this);
-            }
-        }
+        //private void OnCharacterFinishedJobSuccessfully(Character character, GoapPlanJob goapPlanJob) {
+        //    if (character == _owner && goapPlanJob.targetInteractionType == INTERACTION_TYPE.EAT_CORPSE) {
+        //        character.traitContainer.RemoveTrait(character, this);
+        //    }
+        //}
     }
 }
 

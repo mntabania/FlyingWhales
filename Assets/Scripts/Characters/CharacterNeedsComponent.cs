@@ -161,14 +161,12 @@ public class CharacterNeedsComponent : CharacterComponent {
             Messenger.AddListener(Signals.TICK_STARTED, DecreaseNeeds); //do not make summons decrease needs
         }
         Messenger.AddListener(Signals.HOUR_STARTED, PerHour);
-        Messenger.AddListener<Character, GoapPlanJob>(CharacterSignals.CHARACTER_FINISHED_JOB_SUCCESSFULLY, OnCharacterFinishedJob);
     }
     public void UnsubscribeToSignals() {
         if (Messenger.eventTable.ContainsKey(Signals.TICK_STARTED)) {
             Messenger.RemoveListener(Signals.TICK_STARTED, DecreaseNeeds);
         }
         Messenger.RemoveListener(Signals.HOUR_STARTED, PerHour);
-        Messenger.RemoveListener<Character, GoapPlanJob>(CharacterSignals.CHARACTER_FINISHED_JOB_SUCCESSFULLY, OnCharacterFinishedJob);
     }
     public void DailyGoapProcesses() {
         hasForcedFullness = false;
@@ -1560,23 +1558,21 @@ public class CharacterNeedsComponent : CharacterComponent {
         //     AdjustDoNotGetTired(-1);
         // }
     }
-    private void OnCharacterFinishedJob(Character character, GoapPlanJob job) {
-        if (owner == character) {
+    public void OnCharacterFinishedJob(JobQueueItem job) {
 #if DEBUG_LOG
-            Debug.Log($"{GameManager.Instance.TodayLogString()}{character.name} has finished job {job.ToString()}");
+        Debug.Log($"{GameManager.Instance.TodayLogString()}{owner.name} has finished job {job.ToString()}");
 #endif
-            //after doing an extreme needs type job, check again if the character needs to recover more of that need.
-            if (job.jobType == JOB_TYPE.FULLNESS_RECOVERY_URGENT) {
-                if (character.traitContainer.HasTrait("Pest") || character is Rat) {
-                    character.traitContainer.AddTrait(character, "Abstain Fullness");
-                }
-                PlanFullnessRecoveryActions();
-            } else if (job.jobType == JOB_TYPE.ENERGY_RECOVERY_URGENT) {
-                PlanTirednessRecoveryActions();
-            } else if (job.jobType == JOB_TYPE.FULLNESS_RECOVERY_NORMAL) {
-                if(character.traitContainer.HasTrait("Pest") || character is Rat) {
-                    character.traitContainer.AddTrait(character, "Abstain Fullness");
-                }
+        //after doing an extreme needs type job, check again if the character needs to recover more of that need.
+        if (job.jobType == JOB_TYPE.FULLNESS_RECOVERY_URGENT) {
+            if (owner.traitContainer.HasTrait("Pest") || owner is Rat) {
+                owner.traitContainer.AddTrait(owner, "Abstain Fullness");
+            }
+            PlanFullnessRecoveryActions();
+        } else if (job.jobType == JOB_TYPE.ENERGY_RECOVERY_URGENT) {
+            PlanTirednessRecoveryActions();
+        } else if (job.jobType == JOB_TYPE.FULLNESS_RECOVERY_NORMAL) {
+            if(owner.traitContainer.HasTrait("Pest") || owner is Rat) {
+                owner.traitContainer.AddTrait(owner, "Abstain Fullness");
             }
         }
     }
