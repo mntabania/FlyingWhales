@@ -454,6 +454,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         if (race != RACE.DEMON) {
             //Demons and Summons/Monsters can't have talents
             talentComponent = new CharacterTalentComponent(); talentComponent.SetOwner(this);
+            talentComponent.ConstructAllTalents();
         }
     }
     public void InitialCharacterPlacement(LocationGridTile tile) {

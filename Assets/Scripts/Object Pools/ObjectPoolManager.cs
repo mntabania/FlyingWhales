@@ -12,7 +12,7 @@ using Locations.Settlements;
 using Locations;
 using Threads;
 using Debug = UnityEngine.Debug;
-
+using Character_Talents;
 public class ObjectPoolManager : MonoBehaviour {
 
     public static ObjectPoolManager Instance = null;

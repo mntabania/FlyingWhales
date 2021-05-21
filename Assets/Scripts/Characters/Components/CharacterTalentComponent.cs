@@ -11,7 +11,6 @@ public class CharacterTalentComponent : CharacterComponent {
     private Dictionary<CHARACTER_TALENT, CharacterTalent> _talentDictionary;
 
     public CharacterTalentComponent() {
-        ConstructAllTalents();
     }
 
     public CharacterTalentComponent(SaveDataCharacterTalentComponent data) {
@@ -19,7 +18,7 @@ public class CharacterTalentComponent : CharacterComponent {
     }
 
     #region General
-    private void ConstructAllTalents() {
+    public void ConstructAllTalents() {
         allTalents = new List<CharacterTalent>();
         _talentDictionary = new Dictionary<CHARACTER_TALENT, CharacterTalent>();
         for (int i = 0; i < CharacterManager.Instance.talentManager.allTalentEnums.Length; i++) {

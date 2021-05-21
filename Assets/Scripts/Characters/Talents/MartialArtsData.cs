@@ -4,7 +4,9 @@ using UnityEngine;
 
 namespace Character_Talents {
     public class MartialArtsData : CharacterTalentData {
-        public MartialArtsData() : base(CHARACTER_TALENT.Martial_Arts) { }
+        public MartialArtsData() : base(CHARACTER_TALENT.Martial_Arts) {
+            description = $"Prowess in physical combat.";
+        }
 
         #region Levels
         public override void OnLevelUp(Character p_character, int level) {
