@@ -649,9 +649,9 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
                 attackPower = Mathf.RoundToInt(attackPower * 1.5f);
             //}
         }
-        AdjustHP(-characterThatAttacked.combatComponent.attack, elementalType, source: characterThatAttacked, showHPBar: true, isPlayerSource: isPlayerSource);
+        AdjustHP(-characterThatAttacked.combatComponent.GetAttackWithCritRateBonus(), elementalType, source: characterThatAttacked, showHPBar: true, isPlayerSource: isPlayerSource);
 #if DEBUG_LOG
-        attackSummary = $"{attackSummary}\nDealt damage {characterThatAttacked.combatComponent.attack.ToString()}";
+        attackSummary = $"{attackSummary}\nDealt damage {characterThatAttacked.combatComponent.GetAttackWithCritRateBonus().ToString()}";
 #endif
         if (currentHP <= 0) {
 #if DEBUG_LOG
