@@ -102,7 +102,7 @@ public class CombatComponent : CharacterComponent {
 
     #region General
     public int GetAttackWithCritRateBonus() {
-        return attack * (GameUtilities.RandomBetweenTwoNumbers(0, 100) < critRate ? 2 : 1);
+        return attack * (GameUtilities.RandomBetweenTwoNumbers(0, 99) < critRate ? 2 : 1);
     }
     //public void OnThisCharacterEndedCombatState() {
     //    SetOnProcessCombatAction(null);
