@@ -20,6 +20,7 @@ public class CharacterManager : BaseMonoBehaviour {
 
     [Header("Sub Managers")]
     [SerializeField] private CharacterClassManager classManager;
+    public CharacterTalentManager talentManager;
 
     public static readonly string[] sevenDeadlySinsClassNames = { "Lust", "Gluttony", "Greed", "Sloth", "Wrath", "Envy", "Pride" };
     public const string Make_Love = "Make Love", Steal = "Steal", Poison_Food = "Poison Food",
@@ -115,7 +116,6 @@ public class CharacterManager : BaseMonoBehaviour {
     private string _normalNameColorHex;
     
     private Dictionary<string, CharacterClassData> _loadedClassData;
-
     private Dictionary<string, DeadlySin> deadlySins { get; set; }
     private Dictionary<EMOTION, Emotion> emotionData { get; set; }
     private List<Emotion> allEmotions { get; set; }
@@ -129,6 +129,7 @@ public class CharacterManager : BaseMonoBehaviour {
     public bool toggleCharacterMarkerName { get; private set; }
     public int CHARACTER_MISSING_THRESHOLD { get; private set; }
     public int CHARACTER_PRESUMED_DEAD_THRESHOLD { get; private set; }
+
     private Dictionary<Type, CharacterBehaviourComponent> behaviourComponents;
     private readonly Dictionary<string, Type[]> defaultBehaviourSets = new Dictionary<string, Type[]>() {
         { Default_Resident_Behaviour,
@@ -450,6 +451,7 @@ public class CharacterManager : BaseMonoBehaviour {
         _loadedClassData = new Dictionary<string, CharacterClassData>();
 
         classManager.Initialize();
+        talentManager.Initialize();
         CreateDeadlySinsData();
         defaultSleepTicks = GameManager.Instance.GetTicksBasedOnHour(6);
         CHARACTER_MISSING_THRESHOLD = GameManager.Instance.GetTicksBasedOnHour(24); //72
