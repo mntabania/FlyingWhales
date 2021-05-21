@@ -29,7 +29,7 @@ public class UpgradeBeholderRadiusLevelData : PlayerAction {
             canPerform = false;
         }
 
-        if (m_targetBeholder.GetRadiusLevel() < 3 && PlayerManager.Instance.player.chaoticEnergy >= EditableValuesManager.Instance.GetBeholderRadiusUpgradeCostPerLevel(m_targetBeholder.GetRadiusLevel()).amount && canPerform) {
+        if (m_targetBeholder.GetRadiusLevel() < 3 && PlayerManager.Instance.player.chaoticEnergy >= EditableValuesManager.Instance.GetBeholderRadiusUpgradeCostPerLevel(m_targetBeholder.GetRadiusLevel()).processedAmount && canPerform) {
             canPerform = true;
         } else {
             canPerform = false;
@@ -50,7 +50,7 @@ public class UpgradeBeholderRadiusLevelData : PlayerAction {
             reasons += $"Snooper Radius already max level\n";
             return reasons;
         }
-        if (PlayerManager.Instance.player.chaoticEnergy < EditableValuesManager.Instance.GetBeholderRadiusUpgradeCostPerLevel(m_targetBeholder.GetRadiusLevel()).amount) {
+        if (PlayerManager.Instance.player.chaoticEnergy < EditableValuesManager.Instance.GetBeholderRadiusUpgradeCostPerLevel(m_targetBeholder.GetRadiusLevel()).processedAmount) {
             reasons += $"Not enough chaotic energy.\n";
             return reasons;
         }

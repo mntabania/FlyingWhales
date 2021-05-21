@@ -121,14 +121,14 @@ namespace Inner_Maps.Location_Structures {
         }
 
         public void LevelUpEyes() {
-            PlayerManager.Instance.player.plagueComponent.AdjustPlaguePoints(-EditableValuesManager.Instance.GetBeholderEyeUpgradeCostPerLevel(m_eyesLevel).amount);
+            PlayerManager.Instance.player.plagueComponent.AdjustPlaguePoints(-EditableValuesManager.Instance.GetBeholderEyeUpgradeCostPerLevel(m_eyesLevel).processedAmount);
             m_eyesLevel = Mathf.Clamp(++m_eyesLevel, 1, 4);
             m_eyeWardMaxCount = Mathf.Clamp(++m_eyeWardMaxCount, 1, 8);
             UpdateEyeWardCharges(m_eyesLevel + m_defaultEyeCount, true);
         }
 
         public void LevelUpRadius() {
-            PlayerManager.Instance.player.plagueComponent.AdjustPlaguePoints(-EditableValuesManager.Instance.GetBeholderRadiusUpgradeCostPerLevel(m_radiusLevel).amount);
+            PlayerManager.Instance.player.plagueComponent.AdjustPlaguePoints(-EditableValuesManager.Instance.GetBeholderRadiusUpgradeCostPerLevel(m_radiusLevel).processedAmount);
             m_radiusLevel = Mathf.Clamp(++m_radiusLevel, 1, 4);
             m_eyeWardRadius = Mathf.Clamp(++m_eyeWardRadius, 7, 12);
             eyeWards.ForEach((eachEye) => eachEye.UpdateRange());

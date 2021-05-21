@@ -31,7 +31,7 @@ public class UpgradeBeholderEyeLevelData : PlayerAction {
             canPerform = false;
         }
 
-        if (m_targetBeholder.GetEyeLevel() < 3 && PlayerManager.Instance.player.chaoticEnergy >= EditableValuesManager.Instance.GetBeholderEyeUpgradeCostPerLevel(m_targetBeholder.GetEyeLevel()).amount && canPerform) {
+        if (m_targetBeholder.GetEyeLevel() < 3 && PlayerManager.Instance.player.chaoticEnergy >= EditableValuesManager.Instance.GetBeholderEyeUpgradeCostPerLevel(m_targetBeholder.GetEyeLevel()).processedAmount && canPerform) {
             canPerform = true;
         } else {
             canPerform = false;
@@ -52,7 +52,7 @@ public class UpgradeBeholderEyeLevelData : PlayerAction {
             reasons += $"Demon Eye already max level\n";
             return reasons;
         }
-        if (PlayerManager.Instance.player.chaoticEnergy < EditableValuesManager.Instance.GetBeholderEyeUpgradeCostPerLevel(m_targetBeholder.GetEyeLevel()).amount) {
+        if (PlayerManager.Instance.player.chaoticEnergy < EditableValuesManager.Instance.GetBeholderEyeUpgradeCostPerLevel(m_targetBeholder.GetEyeLevel()).processedAmount) {
             reasons += $"Not enough chaotic energy\n";
             return reasons;
         }
