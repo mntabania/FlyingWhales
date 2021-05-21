@@ -28,7 +28,7 @@ namespace Traits {
                 targetCharacter.traitContainer.RemoveRestrainAndImprison(targetCharacter);
                 targetCharacter.behaviourComponent.ChangeDefaultBehaviourSet(CharacterManager.Slave_Behaviour);
                 if (targetCharacter.isNotSummonAndDemonAndZombie) {
-                    targetCharacter.classComponent.AssignClass("Peasant");
+                    targetCharacter.classComponent.AssignClass("Farmer");
                 }
                 if(responsibleCharacter != null) {
                     if (responsibleCharacter.faction != null) {
