@@ -24,7 +24,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     private string _surName;
     protected bool _isDead;
     private GENDER _gender;
-    private CharacterClass _characterClass;
     private RaceData _raceSetting;
     private Faction _faction;
     private Minion _minion;
@@ -76,7 +75,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public bool isWildMonster { get; protected set; }
     public Log deathLog { get; private set; }
     public List<string> interestedItemNames { get; private set; }
-    public string previousClassName { get; private set; }
     public List<JobQueueItem> forcedCancelJobsOnTickEnded { get; private set; }
     public Area territory { get; private set; }
     public LycanthropeData lycanData { get; protected set; }
@@ -96,6 +94,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     //Components / Managers
     public TrapStructure trapStructure { get; private set; }
     public GoapPlanner planner { get; private set; }
+    public CharacterClassComponent classComponent { get; private set; }
     public CharacterNeedsComponent needsComponent { get; private set; }
     public BuildStructureComponent buildStructureComponent { get; private set; }
     public CharacterStateComponent stateComponent { get; private set; }
@@ -190,7 +189,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public POINT_OF_INTEREST_TYPE poiType => POINT_OF_INTEREST_TYPE.CHARACTER;
     public RACE race => _raceSetting.race;
     public JOB_OWNER ownerType => JOB_OWNER.CHARACTER;
-    public CharacterClass characterClass => _characterClass;
+    public CharacterClass characterClass => classComponent.characterClass;
     public RaceData raceSetting => _raceSetting;
     public Faction faction => _faction;
     public Faction factionOwner => _faction;
@@ -260,7 +259,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         persistentID = UtilityScripts.Utilities.GetNewUniqueID();
         _id = id == -1 ? UtilityScripts.Utilities.SetID(this) : UtilityScripts.Utilities.SetID(this, id);
         _gender = gender;
-        AssignClass(className, true);
+        classComponent.AssignClass(className, true);
         AssignRace(race, true);
         SetSexuality(sexuality);
         visuals = new CharacterVisuals(this);
@@ -275,7 +274,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         persistentID = UtilityScripts.Utilities.GetNewUniqueID();
         _id = UtilityScripts.Utilities.SetID(this);
         _gender = gender;
-        AssignClass(className, true);
+        classComponent.AssignClass(className, true);
         AssignRace(race, true);
         GenerateSexuality();
         visuals = new CharacterVisuals(this);
@@ -288,7 +287,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     private Character() {
         SetIsDead(false);
         //_overrideThoughts = new List<string>();
-        previousClassName = string.Empty;
+        //previousClassName = string.Empty; //Moved to CharacterClassComponent
 
         //Traits
         CreateTraitContainer();
@@ -311,6 +310,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         logComponent = new LogComponent(); logComponent.SetOwner(this);
 
         //Components
+        classComponent = new CharacterClassComponent(); classComponent.SetOwner(this);
         needsComponent = new CharacterNeedsComponent(); needsComponent.SetOwner(this);
         stateComponent = new CharacterStateComponent(); stateComponent.SetOwner(this);
         nonActionEventsComponent = new NonActionEventsComponent(); nonActionEventsComponent.SetOwner(this);
@@ -355,7 +355,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         jobQueue = new JobQueue(this);
         planner = new GoapPlanner(this);
         visuals = new CharacterVisuals(this, data);
-        _characterClass = CharacterManager.Instance.CreateNewCharacterClass(data.className);
+        //_characterClass = CharacterManager.Instance.CreateNewCharacterClass(data.className); //Moved to CharacterClassComponent
         _raceSetting = RaceManager.Instance.GetRaceData(data.race);
         CreateTraitContainer();
 
@@ -381,7 +381,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         interestedItemNames = data.interestedItemNames;
         state = data.state;
         causeOfDeath = data.causeOfDeath;
-        previousClassName = data.previousClassName;
+        //previousClassName = data.classComponent.previousClassName; //Moved to CharacterClassComponent
         isPreplaced = data.isPreplaced;
         isStoredAsTarget = data.isStoredAsTarget;
 
@@ -391,6 +391,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             afflictionsSkillsInflictedByPlayer = new List<PLAYER_SKILL_TYPE>();
         }
         trapStructure = data.trapStructure.Load();
+        classComponent = data.classComponent.Load(); classComponent.SetOwner(this);
         needsComponent = data.needsComponent.Load(); needsComponent.SetOwner(this);
         buildStructureComponent = data.buildStructureComponent.Load(); buildStructureComponent.SetOwner(this);
         stateComponent = data.stateComponent.Load(); stateComponent.SetOwner(this);
@@ -444,7 +445,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public virtual void Initialize() {
         ConstructDefaultActions();
         OnUpdateRace();
-        OnUpdateCharacterClass();
+        classComponent.OnUpdateCharacterClass();
         moodComponent.SetMoodValue(50);
         if (needsComponent.HasNeeds()) {
             needsComponent.Initialize();    
@@ -803,105 +804,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public virtual void PerTickDuringMovement() {
         //NOTE: Moved All Per Tick Movement effects to TryProcessTraitsOnTickEndedWhileStationaryOrUnoccupied because of task
         //https://trello.com/c/DqNguu3v/2941-symptoms-triggered-while-moving-should-also-be-triggered-when-character-is-stationary-and-not-doing-anything-and-not-sleeping
-    }
-#endregion
-
-#region Character Class
-    public virtual string GetClassForRole(CharacterRole role) {
-        if (role == CharacterRole.BEAST) {
-            return GameUtilities.GetRespectiveBeastClassNameFromByRace(race);
-        } else {
-            //string className = CharacterManager.Instance.GetRandomClassByIdentifier(role.classNameOrIdentifier);
-            //if (className != string.Empty) {
-            //    return className;
-            //} else {
-            //    return role.classNameOrIdentifier;
-            //}
-        }
-        return string.Empty;
-    }
-    public void RemoveClass() {
-        if (_characterClass == null) { return; }
-        traitContainer.RemoveTrait(this, traitContainer.GetTraitOrStatus<Trait>(_characterClass.traitNames)); //Remove traits from class
-        _characterClass = null;
-    }
-    public void AssignClass(string className, bool isInitial = false) {
-        if(characterClass == null || className != characterClass.className) {
-            if (CharacterManager.Instance.HasCharacterClass(className)) {
-                AssignClass(CharacterManager.Instance.CreateNewCharacterClass(className), isInitial);
-            } else {
-                throw new Exception($"There is no class named {className} but it is being assigned to {name}");
-            }
-        }
-    }
-    protected void OnUpdateCharacterClass() {
-        CharacterClassData classData = CharacterManager.Instance.GetOrCreateCharacterClassData(_characterClass.className);
-        if(classData != null) {
-            combatComponent.combatBehaviourParent.SetCombatBehaviour(classData.combatBehaviourType, this);
-            combatComponent.specialSkillParent.SetSpecialSkill(classData.combatSpecialSkillType);
-        }
-        for (int i = 0; i < _characterClass.traitNames.Length; i++) {
-            traitContainer.AddTrait(this, _characterClass.traitNames[i]);
-        }
-        if (_characterClass.interestedItemNames != null) {
-            AddItemAsInteresting(_characterClass.interestedItemNames);
-        }
-        combatComponent.UpdateBasicData(false);
-        needsComponent.UpdateBaseStaminaDecreaseRate();
-        visuals.UpdateAllVisuals(this);    
-        
-        UpdateCanCombatState();
-
-        //Misc
-        if (previousClassName == "Ratman") {
-            movementComponent.SetEnableDigging(false);
-        }
-        if(_characterClass.className == "Ratman") {
-            movementComponent.SetEnableDigging(true);
-        }
-        //Should not remove necromancer trait when necromancer becomes werewolf because it is only temporary
-        if(previousClassName == "Necromancer" && _characterClass.className != "Werewolf") {
-            traitContainer.RemoveTrait(this, "Necromancer");
-        }
-        if (_characterClass.className == "Necromancer" && previousClassName != "Werewolf") {
-            traitContainer.AddTrait(this, "Necromancer");
-        }
-        if (_characterClass.className == "Hero") {
-            //Reference: https://www.notion.so/ruinarch/Hero-9697369ffca6410296f852f295ee0090
-            traitContainer.RemoveAllTraitsByType(this, TRAIT_TYPE.FLAW);
-            Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "Generic", "became_hero", providedTags: LOG_TAG.Major);
-            log.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-            log.AddLogToDatabase();
-            PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
-            LogPool.Release(log);
-            traitContainer.AddTrait(this, "Blessed");
-        }
-    }
-    public void AssignClass(CharacterClass characterClass, bool isInitial = false) {
-        CharacterClass previousClass = _characterClass;
-        if (previousClass != null) {
-            homeSettlement?.UnapplyAbleJobsFromSettlement(this);
-            previousClassName = previousClass.className;
-            //This means that the character currently has a class and it will be replaced with a new class
-            for (int i = 0; i < previousClass.traitNames.Length; i++) {
-                traitContainer.RemoveTrait(this, previousClass.traitNames[i]); //Remove traits from class
-            }
-            if (previousClass.interestedItemNames != null) {
-                RemoveItemAsInteresting(previousClass.interestedItemNames);    
-            }
-        }
-        _characterClass = characterClass;
-        movementComponent.OnAssignedClass(characterClass);
-        //behaviourComponent.OnChangeClass(_characterClass, previousClass);
-        if (!isInitial) {
-            homeSettlement?.UpdateAbleJobsOfResident(this);
-            OnUpdateCharacterClass();
-            Messenger.Broadcast(CharacterSignals.CHARACTER_CLASS_CHANGE, this, previousClass, _characterClass);
-        }
-        combatComponent.UpdateElementalType();
-    }
-    public void OverridePreviousClassName(string p_className) {
-        previousClassName = p_className;
     }
 #endregion
 
@@ -5664,7 +5566,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public void TransformToWerewolfForm() {
         if (isLycanthrope && !lycanData.isInWerewolfForm) {
             lycanData.SetIsInWerewolfForm(true);
-            AssignClass("Werewolf");
+            classComponent.AssignClass("Werewolf");
             if (visuals != null) {
                 visuals.UpdateAllVisuals(this);
             }
@@ -5673,9 +5575,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public void RevertFromWerewolfForm() {
         if (isLycanthrope && lycanData.isInWerewolfForm) {
             lycanData.SetIsInWerewolfForm(false);
-            if(previousClassName != "Werewolf") {
+            if(classComponent.previousClassName != "Werewolf") {
                 //Reverting back from werewolf form should mean that the class to be assigned must not be werewolf
-                AssignClass(previousClassName);
+                classComponent.AssignClass(classComponent.previousClassName);
             }
             if (visuals != null) {
                 visuals.UpdateAllVisuals(this);
@@ -5854,7 +5756,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         if (_isDead) {
             //SetRaisedFromDeadAsSkeleton(true);
             AssignRace(race);
-            AssignClass(className);
+            classComponent.AssignClass(className);
 
             ReturnToLife();
 
@@ -6605,7 +6507,7 @@ void ApplyStackCountForTraits() {
     }
 #endregion
 
-#region Death Tile
+    #region Death Tile
     public void SetDeathLocation(LocationGridTile p_tile) {
         deathTilePosition = p_tile;
     }
@@ -6614,7 +6516,7 @@ void ApplyStackCountForTraits() {
 	#region villager progression HUMANS = skill levelup, Elven = Power Crystal absorbed
     //function to be attached on skill levelup NOTE!! - only humans should gain from this call
     void OnSkillLevelUp() {
-        CharacterClassData classData = CharacterManager.Instance.GetOrCreateCharacterClassData(_characterClass.className);
+        CharacterClassData classData = CharacterManager.Instance.GetOrCreateCharacterClassData(classComponent.characterClass.className);
         piercingAndResistancesComponent.AdjustPiercing(classData.characterSkillUpdateData.GetPiercingBonus());
         if (classData.characterSkillUpdateData.GetAllElementResistanceBonus() > 0) {
             for (int x = 1; x < (int)RESISTANCE.Physical; ++x) {

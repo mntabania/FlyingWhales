@@ -4,6 +4,7 @@ using UnityEngine;
 using Traits;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
+using Character_Talents;
 
 public class CharacterTalentComponent : CharacterComponent {
     public List<CharacterTalent> allTalents { get; private set; }

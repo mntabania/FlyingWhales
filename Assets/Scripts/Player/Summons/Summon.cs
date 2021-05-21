@@ -50,7 +50,7 @@ public class Summon : Character {
         combatComponent.SetCombatMode(defaultCombatMode);
         ConstructDefaultActions();
         OnUpdateRace();
-        OnUpdateCharacterClass();
+        classComponent.OnUpdateCharacterClass();
 
         moodComponent.OnCharacterBecomeMinionOrSummon();
         moodComponent.SetMoodValue(50);

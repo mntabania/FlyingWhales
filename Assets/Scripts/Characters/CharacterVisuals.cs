@@ -32,8 +32,8 @@ public class CharacterVisuals {
             } else if (_owner.minion != null && _owner.minion.minionPlayerSkillType != PLAYER_SKILL_TYPE.NONE) {
                 return _owner.minion.GetMinionClassName(_owner.minion.minionPlayerSkillType);
             } else if (_usePreviousClassAsset) {
-                if (!string.IsNullOrEmpty(_owner.previousClassName)) {
-                    return _owner.previousClassName;    
+                if (!string.IsNullOrEmpty(_owner.classComponent.previousClassName)) {
+                    return _owner.classComponent.previousClassName;    
                 }
             }
             return _owner.characterClass.className;
@@ -119,7 +119,7 @@ public class CharacterVisuals {
 
         if (_owner.characterClass.IsZombie()) {
             if (_usePreviousClassAsset) {
-                if (_owner.previousClassName == "Mage" || _owner.previousClassName == "Necromancer" || _owner.characterClass.className == "Cult Leader") {
+                if (_owner.classComponent.previousClassName == "Mage" || _owner.classComponent.previousClassName == "Necromancer" || _owner.characterClass.className == "Cult Leader") {
                     return false;
                 }
             }

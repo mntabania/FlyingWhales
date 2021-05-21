@@ -1297,7 +1297,7 @@ public class CombatComponent : CharacterComponent {
             UpdateMaxHPAndProportionateHP();
         }
     }
-    private void UpdateAttack() {
+    public void UpdateAttack() {
         int modifier = owner.characterClass.attackType == ATTACK_TYPE.PHYSICAL ? strengthModification : intelligenceModification;
         float modifierPercent = owner.characterClass.attackType == ATTACK_TYPE.PHYSICAL ? strengthPercentModification : intelligencePercentModification;
 

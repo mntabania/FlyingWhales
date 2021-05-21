@@ -15,9 +15,9 @@ public class SaveDataCharacter : SaveData<Character>, ISavableCounterpart {
     public bool isDead;
     public GENDER gender;
     public SEXUALITY sexuality;
-    public string className;
+    //public string className; //Moved to CharacterClassComponent
     public RACE race;
-    public string previousClassName;
+    //public string previousClassName; //Moved to CharacterClassComponent
 
     public int currentHP;
     public int doNotRecoverHP;
@@ -84,6 +84,7 @@ public class SaveDataCharacter : SaveData<Character>, ISavableCounterpart {
     public SaveDataBaseRelationshipContainer saveDataBaseRelationshipContainer;
 
     public SaveDataTrapStructure trapStructure;
+    public SaveDataCharacterClassComponent classComponent;
     public SaveDataCharacterNeedsComponent needsComponent;
     public SaveDataBuildStructureComponent buildStructureComponent;
     public SaveDataCharacterStateComponent stateComponent;
@@ -125,7 +126,7 @@ public class SaveDataCharacter : SaveData<Character>, ISavableCounterpart {
         isDead = data.isDead;
         gender = data.gender;
         sexuality = data.sexuality;
-        className = data.characterClass.className;
+        //className = data.characterClass.className;//Moved to CharacterClassComponent
         race = data.race;
         //isAlliedWithPlayer = data.isAlliedWithPlayer;
         currentHP = data.currentHP;
@@ -144,7 +145,7 @@ public class SaveDataCharacter : SaveData<Character>, ISavableCounterpart {
         interestedItemNames = data.interestedItemNames;
         state = data.state;
         causeOfDeath = data.causeOfDeath;
-        previousClassName = data.previousClassName;
+        //previousClassName = data.classComponent.previousClassName; //Moved to CharacterClassComponent
         isPreplaced = data.isPreplaced;
         afflictionsSkillsInflictedByPlayer = data.afflictionsSkillsInflictedByPlayer;
         isStoredAsTarget = data.isStoredAsTarget;
@@ -163,6 +164,7 @@ public class SaveDataCharacter : SaveData<Character>, ISavableCounterpart {
         deathTileLocation = data.deathTilePosition != null ? new TileLocationSave(data.deathTilePosition) : new TileLocationSave();
 
         trapStructure = new SaveDataTrapStructure(); trapStructure.Save(data.trapStructure);
+        classComponent = new SaveDataCharacterClassComponent(); classComponent.Save(data.classComponent);
         needsComponent = new SaveDataCharacterNeedsComponent(); needsComponent.Save(data.needsComponent);
         buildStructureComponent = new SaveDataBuildStructureComponent(); buildStructureComponent.Save(data.buildStructureComponent);
         stateComponent = new SaveDataCharacterStateComponent(); stateComponent.Save(data.stateComponent);
