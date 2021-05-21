@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 49d866ce53a3fb34887a699eb039ad3a, type: 3}
-  m_Name: Bearhide Armor
+  m_Name: Bear Hide Armor
   m_EditorClassIdentifier: 
   resourceType: 0
   specificResource: 0
@@ -23,8 +23,8 @@ MonoBehaviour:
   equipmentUpgradeData:
     bonuses: 0200000004000000
     AdditionalPiercing: 12.5
-    AdditionalmaxHPPercentage: 60
-    AdditionalmaxHPActual: 0
+    AdditionalMaxHPPercentage: 0
+    AdditionalMaxHPActual: 0
     AdditionalAttackPercentage: 0
     AdditionalAttackActual: 0
     additionalResistanceBonus: 100

@@ -10,24 +10,24 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 49d866ce53a3fb34887a699eb039ad3a, type: 3}
-  m_Name: Boarhide Armor
+  m_Name: Orichalcum Armor
   m_EditorClassIdentifier: 
   resourceType: 0
   specificResource: 0
   resourceAmount: 100
   purchaseCost: 50
   tier: 1
-  compatibleClasses: 06000000050000000700000008000000
-  description: This is Boarhide Armor
-  imgIcon: {fileID: 21300000, guid: 6a5857bfd580ac743bddd9dae4abac3a, type: 3}
+  compatibleClasses: 0000000001000000020000000300000004000000
+  description: This is Oricalchum Armor
+  imgIcon: {fileID: 21300000, guid: 66046b8cc9143554dbd1510dffbd7baa, type: 3}
   equipmentUpgradeData:
-    bonuses: 0100000004000000
+    bonuses: 0300000004000000
     AdditionalPiercing: 12.5
-    AdditionalmaxHPPercentage: 20
-    AdditionalmaxHPActual: 0
+    AdditionalMaxHPPercentage: 0
+    AdditionalMaxHPActual: 0
     AdditionalAttackPercentage: 25
     AdditionalAttackActual: 0
-    additionalResistanceBonus: 50
+    additionalResistanceBonus: 150
     elementAttackBonus: 0
     slayerBonus: 0
-    wardBonus: 0
+    wardBonus: 4

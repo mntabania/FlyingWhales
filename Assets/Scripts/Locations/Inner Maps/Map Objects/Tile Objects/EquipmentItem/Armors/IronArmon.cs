@@ -1,11 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-public class Ring : AccessoryItem {
-    public Ring() {
-        Initialize(TILE_OBJECT_TYPE.RING, false);
+public class IronArmor : ArmorItem {
+    public IronArmor() {
+        Initialize(TILE_OBJECT_TYPE.IRON_ARMOR, false);
         equipmentData = EquipmentDataHandler.Instance.GetEquipmentDataBaseOnName(this.name);
         EquipmentBonusProcessor.SetBonusResistanceOnWeapon(this);
     }
-    public Ring(SaveDataTileObject data) { }
+    public IronArmor(SaveDataTileObject data) { }
 }
