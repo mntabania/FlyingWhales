@@ -11,6 +11,8 @@ public class SpawnEyeWardData : PlayerAction {
     public override string name => "Spawn Eye";
     public override string description => $"Spawn a demon eye that will monitor all actions within its radius.";
     public override bool shouldShowOnContextMenu => false;
+
+    private Snooper _snooperParentOfEye;
     public SpawnEyeWardData() : base() {
         targetTypes = new SPELL_TARGET[] { SPELL_TARGET.TILE };
     }
@@ -20,7 +22,10 @@ public class SpawnEyeWardData : PlayerAction {
         PlayerManager.Instance.player.SetCurrentlyActivePlayerSpell(this);
     }
     public override void ActivateAbility(LocationGridTile p_targetTile) {
-        Snooper beholder = UIManager.Instance.structureInfoUI.activeStructure as Snooper;
+        Snooper beholder = _snooperParentOfEye;
+        if (beholder == null) {
+            return;
+        }
         if (beholder.eyeWards.Count >= beholder.GetCurrentMaxEyeCount()) {
             return;
 		}
@@ -31,10 +36,7 @@ public class SpawnEyeWardData : PlayerAction {
         DemonEye ward = InnerMapManager.Instance.CreateNewTileObject<DemonEye>(TILE_OBJECT_TYPE.DEMON_EYE);
         ward.SetBeholderOwner(beholder);
         p_targetTile.structure.AddPOI(ward, p_targetTile);
-
-        if (UIManager.Instance.structureInfoUI.isShowing) {
-            beholder.AddEyeWard(ward);
-        }
+        beholder.AddEyeWard(ward);
 
         base.ActivateAbility(p_targetTile);
         Messenger.Broadcast(PlayerSkillSignals.PLAYER_ACTION_ACTIVATED, this as PlayerAction);
@@ -48,12 +50,12 @@ public class SpawnEyeWardData : PlayerAction {
     }
 
     public override void ShowValidHighlight(LocationGridTile tile) {
-        if (UIManager.Instance.structureInfoUI.activeStructure is Snooper beholder) {
-            TileHighlighter.Instance.PositionHighlight(beholder.GetEyeWardRadius(), tile);
+        if (_snooperParentOfEye != null) {
+            TileHighlighter.Instance.PositionHighlight(_snooperParentOfEye.GetEyeWardRadius(), tile);
         }
     }
     public override bool CanPerformAbilityTowards(LocationStructure target) {
-        Snooper beholder = UIManager.Instance.structureInfoUI.activeStructure as Snooper;
+        Snooper beholder = target as Snooper;
         if(beholder == null) {
             return false;
 		}
@@ -65,8 +67,11 @@ public class SpawnEyeWardData : PlayerAction {
 
     public override bool CanPerformAbilityTowards(LocationGridTile targetTile, out string o_cannotPerformReason) {
         bool dontUsePerForm = base.CanPerformAbilityTowards(targetTile, out o_cannotPerformReason);
-        Snooper beholder = UIManager.Instance.structureInfoUI.activeStructure as Snooper;
+        Snooper beholder = _snooperParentOfEye;
         bool canPerform = true;
+        if (beholder == null) {
+            return false;
+        }
         if (canPerform) {
             if (beholder.eyeWards.Count >= beholder.GetCurrentMaxEyeCount()) {
                 return false;
@@ -85,6 +90,7 @@ public class SpawnEyeWardData : PlayerAction {
         base.OnSetAsCurrentActiveSpell();
         PlayerManager.Instance.player.tileObjectComponent.ShowAllEyeWardHighlights();
         if (UIManager.Instance.structureInfoUI.isShowing) {
+            _snooperParentOfEye = UIManager.Instance.structureInfoUI.activeStructure as Snooper;
             ActionItem item = UIManager.Instance.structureInfoUI.GetActionItem(this);
             if (item != null) {
                 item.SetHighlightState(true);
@@ -94,6 +100,7 @@ public class SpawnEyeWardData : PlayerAction {
     public override void OnNoLongerCurrentActiveSpell() {
         base.OnNoLongerCurrentActiveSpell();
         PlayerManager.Instance.player.tileObjectComponent.HideAllEyeWardHighlights();
+        _snooperParentOfEye = null;
         if (UIManager.Instance.structureInfoUI.isShowing) {
             ActionItem item = UIManager.Instance.structureInfoUI.GetActionItem(this);
             if (item != null) {

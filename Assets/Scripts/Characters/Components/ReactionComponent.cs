@@ -140,7 +140,17 @@ public class ReactionComponent : CharacterComponent {
         if (reactable.awareCharacters.Contains(owner)) {
             return "aware";
         }
-        reactable.AddAwareCharacter(owner);
+        bool shouldBeAware = true;
+        if (status == REACTION_STATUS.WITNESSED 
+            && reactable.isStealth 
+            && !owner.traitContainer.HasTrait("Vigilant")
+            && reactable.target == owner) {
+            //If reaction is witnessed, and the action is stealth, and the one who witnessed is the target itself and he is not vigilant, he should not be aware of the action
+            shouldBeAware = false;
+        }
+        if (shouldBeAware) {
+            reactable.AddAwareCharacter(owner);
+        }
         if (reactable.GetReactableEffect(owner) == REACTABLE_EFFECT.Negative) {
             if (reactable is ActualGoapNode node) {
                 owner.rumorComponent.AddAssumedWitnessedOrInformedNegativeInfo(node);    
