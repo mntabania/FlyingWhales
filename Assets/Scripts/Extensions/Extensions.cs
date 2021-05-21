@@ -430,8 +430,24 @@ public static class Extensions {
             case TILE_OBJECT_TYPE.ORICHALCUM_DAGGER:
             case TILE_OBJECT_TYPE.RING:
             case TILE_OBJECT_TYPE.BRACER:
+            case TILE_OBJECT_TYPE.BELT:
+            case TILE_OBJECT_TYPE.SCROLL:
+            case TILE_OBJECT_TYPE.NECKLACE:
             case TILE_OBJECT_TYPE.MINK_SHIRT:
             case TILE_OBJECT_TYPE.FUR_SHIRT:
+            case TILE_OBJECT_TYPE.RABBIT_SHIRT:
+            case TILE_OBJECT_TYPE.WOOL_SHIRT:
+            case TILE_OBJECT_TYPE.SPIDER_SILK_SHIRT:
+            case TILE_OBJECT_TYPE.MOON_WALKER_SHIRT:
+            case TILE_OBJECT_TYPE.BOAR_HIDE_ARMOR:
+            case TILE_OBJECT_TYPE.WOLF_HIDE_ARMOR:
+            case TILE_OBJECT_TYPE.BEAR_HIDE_ARMOR:
+            case TILE_OBJECT_TYPE.SCALE_ARMOR:
+            case TILE_OBJECT_TYPE.DRAGON_ARMOR:
+            case TILE_OBJECT_TYPE.IRON_ARMOR:
+            case TILE_OBJECT_TYPE.COPPER_ARMOR:
+            case TILE_OBJECT_TYPE.MITHRIL_ARMOR:
+            case TILE_OBJECT_TYPE.ORICHALCUM_ARMOR:
             return true;
             default:
                 return false;
@@ -552,8 +568,24 @@ public static class Extensions {
             case TILE_OBJECT_TYPE.ORICHALCUM_DAGGER:
             case TILE_OBJECT_TYPE.RING:
             case TILE_OBJECT_TYPE.BRACER:
+            case TILE_OBJECT_TYPE.BELT:
+            case TILE_OBJECT_TYPE.SCROLL:
+            case TILE_OBJECT_TYPE.NECKLACE:
             case TILE_OBJECT_TYPE.MINK_SHIRT:
             case TILE_OBJECT_TYPE.FUR_SHIRT:
+            case TILE_OBJECT_TYPE.RABBIT_SHIRT:
+            case TILE_OBJECT_TYPE.WOOL_SHIRT:
+            case TILE_OBJECT_TYPE.SPIDER_SILK_SHIRT:
+            case TILE_OBJECT_TYPE.MOON_WALKER_SHIRT:
+            case TILE_OBJECT_TYPE.BOAR_HIDE_ARMOR:
+            case TILE_OBJECT_TYPE.WOLF_HIDE_ARMOR:
+            case TILE_OBJECT_TYPE.BEAR_HIDE_ARMOR:
+            case TILE_OBJECT_TYPE.SCALE_ARMOR:
+            case TILE_OBJECT_TYPE.DRAGON_ARMOR:
+            case TILE_OBJECT_TYPE.IRON_ARMOR:
+            case TILE_OBJECT_TYPE.COPPER_ARMOR:
+            case TILE_OBJECT_TYPE.MITHRIL_ARMOR:
+            case TILE_OBJECT_TYPE.ORICHALCUM_ARMOR:
             return true;
             default:
                 return false;

@@ -31,6 +31,8 @@ public class CombatComponent : CharacterComponent {
     public CombatSpecialSkillWrapper specialSkillParent { get; private set; }
     public bool willProcessCombat { get; private set; }
 
+    public int critRate { get; private set; }
+
     #region getters
     public bool isInCombat => owner.stateComponent.currentState != null && owner.stateComponent.currentState.characterState == CHARACTER_STATE.COMBAT;
     public bool isInActualCombat => IsInActualCombat();
@@ -63,6 +65,7 @@ public class CombatComponent : CharacterComponent {
         attack = data.attack;
         //strength = data.strength;
         strengthModification = data.strengthModification;
+        critRate = data.critRate;
         strengthPercentModification = data.strengthPercentModification;
         //intelligence = data.intelligence;
         intelligenceModification = data.intelligenceModification;
@@ -98,6 +101,9 @@ public class CombatComponent : CharacterComponent {
     #endregion
 
     #region General
+    public int GetAttackWithCritRateBonus() {
+        return attack * (GameUtilities.RandomBetweenTwoNumbers(0, 100) < critRate ? 2 : 1);
+    }
     //public void OnThisCharacterEndedCombatState() {
     //    SetOnProcessCombatAction(null);
     //}
@@ -1362,6 +1368,9 @@ public class CombatComponent : CharacterComponent {
         intelligencePercentModification += modification;
         UpdateAttack();
     }
+    public void AdjustCritRate(int modification) {
+        critRate += modification;
+    }
     #endregion
 
     #region Prisoner
@@ -1544,12 +1553,14 @@ public class SaveDataCombatComponent : SaveData<CombatComponent> {
     public SaveDataCombatSpecialSkillWrapper specialSkillParent;
 
     public bool willProcessCombat;
+    public int critRate;
 
 #region Overrides
     public override void Save(CombatComponent data) {
         attack = data.attack;
         //strength = data.strength;
         strengthModification = data.strengthModification;
+        critRate = data.critRate;
         strengthPercentModification = data.strengthPercentModification;
         //intelligence = data.intelligence;
         intelligenceModification = data.intelligenceModification;

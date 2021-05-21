@@ -2597,9 +2597,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             chanceToKnockout = Mathf.RoundToInt(chanceToKnockout * 0.35f);
         }
         ELEMENTAL_TYPE elementalType = characterThatAttacked.combatComponent.elementalDamage.type;
-        AdjustHP(-characterThatAttacked.combatComponent.attack, elementalType, source: characterThatAttacked, showHPBar: true, piercingPower: characterThatAttacked.piercingAndResistancesComponent.piercingPower, isPlayerSource: isPlayerSource);
+        AdjustHP(-characterThatAttacked.combatComponent.GetAttackWithCritRateBonus(), elementalType, source: characterThatAttacked, showHPBar: true, piercingPower: characterThatAttacked.piercingAndResistancesComponent.piercingPower, isPlayerSource: isPlayerSource);
 #if DEBUG_LOG
-        attackSummary += $"\nDealt damage {stateComponent.owner.combatComponent.attack}";
+        attackSummary += $"\nDealt damage {stateComponent.owner.combatComponent.GetAttackWithCritRateBonus()}";
 #endif
 
         //If the hostile reaches 0 hp, evaluate if he/she dies, get knock out, or get injured

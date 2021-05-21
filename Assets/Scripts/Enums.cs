@@ -1381,3 +1381,5 @@ public enum Precipitation_Type {
     Dryest, Dryer, Dry, Wet, Wetter, Wettest
 }
 public enum CHARACTER_TALENT { None, Martial_Arts, Combat_Magic, Healing_Magic, Crafting, Resources, Food, Social }
+
+public enum EQUIPMENT_QUALITY { Normal = 0, High, Premium }

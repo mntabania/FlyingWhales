@@ -128,7 +128,6 @@ public static class EquipmentBonusProcessor
             break;
         }
     }
-
     static void RemoveEachBonusToTarget(EquipmentItem p_equipItem, EQUIPMENT_BONUS p_equipBonus, Character p_targetCharacter) {
         switch (p_equipBonus) {
             case EQUIPMENT_BONUS.Atk_Actual:
@@ -234,7 +233,6 @@ public static class EquipmentBonusProcessor
     }
 
     public static void SetBonusResistanceOnPowerCrystal(PowerCrystal p_crystal, int p_numberOfresistance) {
-
         /*
         List<int> result = GameUtilities.GetUniqueRandomNumbersInBetween(1, (int)RESISTANCE.Physical, p_numberOfresistance);
 

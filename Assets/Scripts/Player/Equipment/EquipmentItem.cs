@@ -3,7 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class EquipmentItem : TileObject {
+
     public List<RESISTANCE> resistanceBonuses = new List<RESISTANCE>();
+    public EQUIPMENT_QUALITY quality = EQUIPMENT_QUALITY.Normal;
+    public float additionalQualityBonusPercentage = 0;
     public EquipmentData equipmentData;
 
     public override System.Type serializedData => typeof(SaveDataEquipmentItem);
@@ -21,6 +24,20 @@ public class EquipmentItem : TileObject {
             });
         }
 
+    }
+
+    public void MakeQualityHigh() {
+        maxHP += (int)(maxHP * 0.5f);
+        additionalQualityBonusPercentage = 25;
+    }
+
+    public void MakeQualityPremium() {
+        maxHP = (int)(maxHP * 2f);
+        additionalQualityBonusPercentage = 50;
+    }
+
+    public float GetAdditionaliQualityBonusPercentage() { 
+        return additionalQualityBonusPercentage = 50;
     }
 
     public EquipmentItem() {
