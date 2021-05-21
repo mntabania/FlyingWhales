@@ -783,11 +783,15 @@ namespace Inner_Maps {
                         if (tile.tileObjectComponent.objHere == null && tileTag != Tile_Tag.None && !tile.HasNeighbouringWalledStructure()) {
                             TILE_OBJECT_TYPE tileObjectType = GetRandomTileObjectTypeForTileTag(tileTag, tile, p_data);
                             if (tileObjectType == TILE_OBJECT_TYPE.BIG_TREE_OBJECT) {
-                                List<LocationGridTile> overlappedTiles = tile.parentMap.GetTiles(new Point(2, 2), tile);
-                                tilesToSkipTileTag.AddRange(overlappedTiles);
-                                RuinarchListPool<LocationGridTile>.Release(overlappedTiles);
+                                //immediately generate big trees so that lumberyards can be generated.
+                                TileObject tileObject = InnerMapManager.Instance.CreateNewTileObject<TileObject>(tileObjectType);
+                                tile.structure.AddPOI(tileObject, tile);
+                                // List<LocationGridTile> overlappedTiles = tile.parentMap.GetTiles(new Point(2, 2), tile);
+                                // tilesToSkipTileTag.AddRange(overlappedTiles);
+                                // RuinarchListPool<LocationGridTile>.Release(overlappedTiles);
+                            } else {
+                                p_data.SetGeneratedMapPerlinDetails(tile, tileObjectType);    
                             }
-                            p_data.SetGeneratedMapPerlinDetails(tile, tileObjectType);
                         } else {
                             p_data.SetGeneratedMapPerlinDetails(tile, TILE_OBJECT_TYPE.NONE);
                         }
@@ -851,33 +855,33 @@ namespace Inner_Maps {
                     return GameUtilities.RollChance(10) ? Tile_Tag.Decor : Tile_Tag.None;
                 case Biome_Tile_Type.Oasis:
                     int oasisRoll = GameUtilities.Roll();
-                    if (oasisRoll < 10) {
+                    if (oasisRoll < 8) {
                         return Tile_Tag.Tree;
-                    } else if (oasisRoll < 20) {
+                    } else if (oasisRoll < 18) {
                         return Tile_Tag.Decor;
-                    } else if (oasisRoll < 23) {
+                    } else if (oasisRoll < 20) {
                         return Tile_Tag.Berry_Shrub;
                     } else {
                         return Tile_Tag.None;
                     }
                 case Biome_Tile_Type.Grassland:
                     int grasslandRoll = GameUtilities.Roll();
-                    if (grasslandRoll < 3) {
+                    if (grasslandRoll < 2) {
                         return Tile_Tag.Tree;
-                    } else if (grasslandRoll < 18) {
+                    } else if (grasslandRoll < 12) {
                         return Tile_Tag.Decor;
-                    } else if (grasslandRoll < 21) {
+                    } else if (grasslandRoll < 14) {
                         return Tile_Tag.Berry_Shrub;
                     } else {
                         return Tile_Tag.None;
                     }
                 case Biome_Tile_Type.Jungle:
                     int jungleRoll = GameUtilities.Roll();
-                    if (jungleRoll < 25) {
+                    if (jungleRoll < 18) {
                         return Tile_Tag.Tree;
-                    } else if (jungleRoll < 35) {
+                    } else if (jungleRoll < 28) {
                         return Tile_Tag.Decor;
-                    } else if (jungleRoll < 39) {
+                    } else if (jungleRoll < 30) {
                         return Tile_Tag.Berry_Shrub;
                     } else {
                         return Tile_Tag.None;
@@ -888,18 +892,18 @@ namespace Inner_Maps {
                         return Tile_Tag.Tree;
                     } else if (taigaRoll < 22) {
                         return Tile_Tag.Decor;
-                    } else if (taigaRoll < 25) {
+                    } else if (taigaRoll < 24) {
                         return Tile_Tag.Berry_Shrub;
                     } else {
                         return Tile_Tag.None;
                     }
                 case Biome_Tile_Type.Tundra:
                     int tundraRoll = GameUtilities.Roll();
-                    if (tundraRoll < 3) {
+                    if (tundraRoll < 2) {
                         return Tile_Tag.Tree;
-                    } else if (tundraRoll < 13) {
+                    } else if (tundraRoll < 12) {
                         return Tile_Tag.Decor;
-                    } else if (tundraRoll < 16) {
+                    } else if (tundraRoll < 14) {
                         return Tile_Tag.Berry_Shrub;
                     } else {
                         return Tile_Tag.None;

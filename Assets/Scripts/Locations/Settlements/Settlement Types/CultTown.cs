@@ -10,7 +10,7 @@ namespace Locations.Settlements.Settlement_Types {
             maxFacilities = 5;
         }
         public override void ApplyDefaultSettings() {
-            SetInitialFacilityWeightAndCap(new StructureSetting(STRUCTURE_TYPE.LUMBERYARD, RESOURCE.STONE, true), 300, 1);
+            SetInitialFacilityWeightAndCap(new StructureSetting(STRUCTURE_TYPE.LUMBERYARD, RESOURCE.NONE, true), 300, 1);
             SetInitialFacilityWeightAndCap(new StructureSetting(STRUCTURE_TYPE.CULT_TEMPLE, RESOURCE.STONE, true), 80, 1);
             SetInitialFacilityWeightAndCap(new StructureSetting(STRUCTURE_TYPE.FARM, RESOURCE.STONE, true), 50, 1);
             SetInitialFacilityWeightAndCap(new StructureSetting(STRUCTURE_TYPE.TAVERN, RESOURCE.STONE, true), 30, 1);

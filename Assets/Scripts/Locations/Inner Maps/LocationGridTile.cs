@@ -995,6 +995,17 @@ namespace Inner_Maps {
                 }
             }
         }
+        public void PopulateFourNeighboursThatHasTileObjectOfType(List<LocationGridTile> neighbours, TILE_OBJECT_TYPE p_type, MapGenerationData p_mapGenerationData) {
+            List<LocationGridTile> fourNeighbours = FourNeighbours();
+            if (fourNeighbours != null) {
+                for (int i = 0; i < fourNeighbours.Count; i++) {
+                    LocationGridTile t = fourNeighbours[i];
+                    if ((t.tileObjectComponent.objHere is TileObject to && to.tileObjectType == p_type) || (p_mapGenerationData.GetGeneratedObjectOnTile(t) == p_type)) {
+                        neighbours.Add(t);
+                    }
+                }
+            }
+        }
         public void PopulateFourNeighboursValidTiles(List<LocationGridTile> neighbours) {
             List<LocationGridTile> fourNeighbours = FourNeighbours();
             if (fourNeighbours != null) {
@@ -1056,6 +1067,18 @@ namespace Inner_Maps {
                 for (int i = 0; i < neighbourList.Count; i++) {
                     LocationGridTile t = neighbourList[i];
                     if (t.tileObjectComponent.objHere is TileObject to && to.tileObjectType == p_type) {
+                        count++;
+                    }
+                }
+            }
+            return count;
+        }
+        public int GetCountOfNeighboursThatHasTileObjectOfType(TILE_OBJECT_TYPE p_type, MapGenerationData p_data) {
+            int count = 0;
+            if (neighbourList != null) {
+                for (int i = 0; i < neighbourList.Count; i++) {
+                    LocationGridTile t = neighbourList[i];
+                    if ((t.tileObjectComponent.objHere is TileObject to && to.tileObjectType == p_type) || (p_data.GetGeneratedObjectOnTile(t) == p_type)) {
                         count++;
                     }
                 }

@@ -52,11 +52,11 @@ public class Rock : TileObject{
     protected override void UpdateSettlementResourcesParent() {
         if (gridTileLocation != null) {
             if (gridTileLocation.area.settlementOnArea != null) {
-                gridTileLocation.area.settlementOnArea.SettlementResources?.AddToListbaseOnRequirement(SettlementResources.StructureRequirement.ROCK, this);
+                gridTileLocation.area.settlementOnArea.SettlementResources?.AddToListBasedOnRequirement(SettlementResources.StructureRequirement.ROCK, this);
             }
             gridTileLocation.area.neighbourComponent.neighbours.ForEach((eachNeighbor) => {
                 if (eachNeighbor.settlementOnArea != null) {
-                    eachNeighbor.settlementOnArea.SettlementResources?.AddToListbaseOnRequirement(SettlementResources.StructureRequirement.ROCK, this);
+                    eachNeighbor.settlementOnArea.SettlementResources?.AddToListBasedOnRequirement(SettlementResources.StructureRequirement.ROCK, this);
                     parentSettlement = eachNeighbor.settlementOnArea;
                 }
             });

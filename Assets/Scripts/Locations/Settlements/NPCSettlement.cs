@@ -1053,7 +1053,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
             case STRUCTURE_TYPE.HUNTER_LODGE:
                 PopulateAvailableStructureConnectorsBasedOnGameFeature(p_connectors);
                 break;
-            case STRUCTURE_TYPE.MINE_SHACK:
+            case STRUCTURE_TYPE.MINE:
                 PopulateAvailableOreVeinConnectors(p_connectors);
                 break;
             default:
@@ -1122,6 +1122,18 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
             TreeObject treeObject = SettlementResources.trees[i];
             if (treeObject.structureConnector != null && treeObject.structureConnector.isOpen) {
                 connectors.Add(treeObject.structureConnector);
+            }
+        }
+        for (int i = 0; i < occupiedVillageSpot.reservedAreas.Count; i++) {
+            Area area = occupiedVillageSpot.reservedAreas[i];
+            for (int j = 0; j < area.tileObjectComponent.itemsInArea.Count; j++) {
+                TileObject tileObject = area.tileObjectComponent.itemsInArea[j];
+                if (tileObject is TreeObject treeObject) {
+                    if (treeObject.structureConnector != null && treeObject.structureConnector.isOpen && 
+                        !connectors.Contains(treeObject.structureConnector)) {
+                        connectors.Add(treeObject.structureConnector);
+                    }
+                }
             }
         }
     }

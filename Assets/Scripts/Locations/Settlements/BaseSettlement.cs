@@ -554,7 +554,7 @@ namespace Locations.Settlements {
                 case RESOURCE.STONE:
                     return HasStructure(STRUCTURE_TYPE.QUARRY);
                 case RESOURCE.METAL:
-                    return HasStructure(STRUCTURE_TYPE.MINE_SHACK);
+                    return HasStructure(STRUCTURE_TYPE.MINE);
                 default:
                     return false;
             }

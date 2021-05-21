@@ -39,7 +39,6 @@ public static class Extensions {
         switch (sub) {
             case STRUCTURE_TYPE.WILDERNESS:
             case STRUCTURE_TYPE.CEMETERY:
-            case STRUCTURE_TYPE.POND:
             case STRUCTURE_TYPE.CITY_CENTER:
             case STRUCTURE_TYPE.THE_PORTAL:
             case STRUCTURE_TYPE.SNOOPER:
@@ -51,6 +50,9 @@ public static class Extensions {
             case STRUCTURE_TYPE.MANA_PIT:
             case STRUCTURE_TYPE.OCEAN:
             case STRUCTURE_TYPE.ANCIENT_GRAVEYARD:
+            case STRUCTURE_TYPE.MINE:
+            case STRUCTURE_TYPE.FARM:
+            case STRUCTURE_TYPE.FISHERY:
                 return true;
             default:
                 return false;
@@ -62,25 +64,21 @@ public static class Extensions {
             case STRUCTURE_TYPE.CEMETERY:
             case STRUCTURE_TYPE.PRISON:
             case STRUCTURE_TYPE.DWELLING:
-            case STRUCTURE_TYPE.SMITHY:
             case STRUCTURE_TYPE.BARRACKS:
             case STRUCTURE_TYPE.HOSPICE:
-            case STRUCTURE_TYPE.GRANARY:
-            case STRUCTURE_TYPE.MINER_CAMP:
-            case STRUCTURE_TYPE.RAIDER_CAMP:
-            case STRUCTURE_TYPE.ASSASSIN_GUILD:
             case STRUCTURE_TYPE.HUNTER_LODGE:
             case STRUCTURE_TYPE.MAGE_QUARTERS:
             case STRUCTURE_TYPE.FARM:
             case STRUCTURE_TYPE.LUMBERYARD:
-            case STRUCTURE_TYPE.MINE_SHACK:
+            case STRUCTURE_TYPE.MINE:
             case STRUCTURE_TYPE.TAVERN:
             case STRUCTURE_TYPE.CULT_TEMPLE:
             case STRUCTURE_TYPE.QUARRY:
-            case STRUCTURE_TYPE.CRAFTING:
+            case STRUCTURE_TYPE.WORKSHOP:
             case STRUCTURE_TYPE.TAILORING:
             case STRUCTURE_TYPE.TANNERY:
             case STRUCTURE_TYPE.FISHERY:
+            case STRUCTURE_TYPE.BUTCHERS_SHOP:
                 return true;
             default:
                 return false;
@@ -92,7 +90,7 @@ public static class Extensions {
             case STRUCTURE_TYPE.CITY_CENTER:
             case STRUCTURE_TYPE.WAREHOUSE:
             case STRUCTURE_TYPE.FARM:
-            case STRUCTURE_TYPE.MINE_SHACK:
+            case STRUCTURE_TYPE.MINE:
             case STRUCTURE_TYPE.LUMBERYARD:
             case STRUCTURE_TYPE.HOSPICE:
             case STRUCTURE_TYPE.CEMETERY:
@@ -101,10 +99,11 @@ public static class Extensions {
             case STRUCTURE_TYPE.CULT_TEMPLE:
             case STRUCTURE_TYPE.QUARRY:
             case STRUCTURE_TYPE.HUNTER_LODGE:
-            case STRUCTURE_TYPE.CRAFTING:
+            case STRUCTURE_TYPE.WORKSHOP:
             case STRUCTURE_TYPE.TAILORING:
             case STRUCTURE_TYPE.TANNERY:
             case STRUCTURE_TYPE.FISHERY:
+            case STRUCTURE_TYPE.BUTCHERS_SHOP:
                 return true;
             default:
                 return false;
@@ -136,7 +135,6 @@ public static class Extensions {
     public static int StructurePriority(this STRUCTURE_TYPE sub) {
         switch (sub) {
             case STRUCTURE_TYPE.WILDERNESS:
-            case STRUCTURE_TYPE.POND:
                 return -1;
             case STRUCTURE_TYPE.DWELLING:
                 return 0;
@@ -157,20 +155,15 @@ public static class Extensions {
             case STRUCTURE_TYPE.DWELLING:
             case STRUCTURE_TYPE.TAVERN:
             case STRUCTURE_TYPE.PRISON:
-            case STRUCTURE_TYPE.SMITHY:
-            case STRUCTURE_TYPE.GRANARY:
             case STRUCTURE_TYPE.BARRACKS:
-            case STRUCTURE_TYPE.MINER_CAMP:
             case STRUCTURE_TYPE.WAREHOUSE:
             case STRUCTURE_TYPE.HOSPICE:
-            case STRUCTURE_TYPE.RAIDER_CAMP:
             case STRUCTURE_TYPE.HUNTER_LODGE:
-            case STRUCTURE_TYPE.ASSASSIN_GUILD:
             case STRUCTURE_TYPE.TORTURE_CHAMBERS:
             case STRUCTURE_TYPE.MAGE_TOWER:
             case STRUCTURE_TYPE.ABANDONED_MINE:
             case STRUCTURE_TYPE.LUMBERYARD:
-            case STRUCTURE_TYPE.MINE_SHACK:
+            case STRUCTURE_TYPE.MINE:
             case STRUCTURE_TYPE.MAGE_QUARTERS:
             case STRUCTURE_TYPE.CRYPT:
             case STRUCTURE_TYPE.OSTRACIZER:
@@ -181,7 +174,7 @@ public static class Extensions {
             case STRUCTURE_TYPE.RUINED_ZOO:
             case STRUCTURE_TYPE.BIOLAB:
             case STRUCTURE_TYPE.QUARRY:
-            case STRUCTURE_TYPE.CRAFTING:
+            case STRUCTURE_TYPE.WORKSHOP:
             case STRUCTURE_TYPE.TAILORING:
             case STRUCTURE_TYPE.TANNERY:
             case STRUCTURE_TYPE.FISHERY:
@@ -193,6 +186,7 @@ public static class Extensions {
             case STRUCTURE_TYPE.MARAUD:
             case STRUCTURE_TYPE.DEFENSE_POINT:
             case STRUCTURE_TYPE.IMP_HUT:
+            case STRUCTURE_TYPE.BUTCHERS_SHOP:
                 return true;
             default:
                 return false;
@@ -225,9 +219,9 @@ public static class Extensions {
         switch (structureType) {
             case STRUCTURE_TYPE.QUARRY:
                 return SettlementResources.StructureRequirement.ROCK;
-            case STRUCTURE_TYPE.HUNTER_LODGE:
-                return SettlementResources.StructureRequirement.FEATURE_GAME;
-            case STRUCTURE_TYPE.MINE_SHACK:
+            // case STRUCTURE_TYPE.HUNTER_LODGE:
+            //     return SettlementResources.StructureRequirement.FEATURE_GAME;
+            case STRUCTURE_TYPE.MINE:
                 return SettlementResources.StructureRequirement.ORE_VEIN;
             case STRUCTURE_TYPE.ABANDONED_MINE:
             case STRUCTURE_TYPE.ANCIENT_GRAVEYARD:

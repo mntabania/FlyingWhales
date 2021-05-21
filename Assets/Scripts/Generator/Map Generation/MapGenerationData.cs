@@ -169,6 +169,7 @@ public class MapGenerationData {
 			TileBase tileBaseToUse = tileObjectScriptableObject.GetTileBaseToUse(tileLocation.mainBiomeType);
 			tileLocation.parentMap.detailsTilemap.SetTile(tileLocation.localPlace, tileBaseToUse);
 		}
+		Debug.Log($"Set Generated Map Perlin detail on {tileLocation} to {p_type.ToString()}");
 	}
 	public void SetGeneratingTileObjectsState(bool p_state) {
 		isGeneratingTileObjects = p_state;

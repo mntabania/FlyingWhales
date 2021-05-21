@@ -51,11 +51,11 @@ public class TreeObject : TileObject {
     }
     protected override void UpdateSettlementResourcesParent() {
         if (gridTileLocation.area.settlementOnArea != null) {
-            gridTileLocation.area.settlementOnArea.SettlementResources?.AddToListbaseOnRequirement(SettlementResources.StructureRequirement.TREE, this);
+            gridTileLocation.area.settlementOnArea.SettlementResources?.AddToListBasedOnRequirement(SettlementResources.StructureRequirement.TREE, this);
         }
         gridTileLocation.area.neighbourComponent.neighbours.ForEach((eachNeighbor) => {
             if (eachNeighbor.settlementOnArea != null) {
-                eachNeighbor.settlementOnArea.SettlementResources?.AddToListbaseOnRequirement(SettlementResources.StructureRequirement.TREE, this);
+                eachNeighbor.settlementOnArea.SettlementResources?.AddToListBasedOnRequirement(SettlementResources.StructureRequirement.TREE, this);
                parentSettlement = eachNeighbor.settlementOnArea;
             }
         });

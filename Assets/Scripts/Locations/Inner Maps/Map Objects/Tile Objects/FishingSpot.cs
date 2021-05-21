@@ -50,11 +50,11 @@ public class FishingSpot : TileObject {
     }
     protected override void UpdateSettlementResourcesParent() {
         if (gridTileLocation.area.settlementOnArea != null) {
-            gridTileLocation.area.settlementOnArea.SettlementResources?.AddToListbaseOnRequirement(SettlementResources.StructureRequirement.FISHING_SPOT, this);
+            gridTileLocation.area.settlementOnArea.SettlementResources?.AddToListBasedOnRequirement(SettlementResources.StructureRequirement.FISHING_SPOT, this);
         }
         gridTileLocation.area.neighbourComponent.neighbours.ForEach((eachNeighbor) => {
             if (eachNeighbor.settlementOnArea != null) {
-                eachNeighbor.settlementOnArea.SettlementResources?.AddToListbaseOnRequirement(SettlementResources.StructureRequirement.FISHING_SPOT, this);
+                eachNeighbor.settlementOnArea.SettlementResources?.AddToListBasedOnRequirement(SettlementResources.StructureRequirement.FISHING_SPOT, this);
                 parentSettlement = eachNeighbor.settlementOnArea;
             }
         });
@@ -86,13 +86,13 @@ public class FishingSpot : TileObject {
         if (traitName == "Wet") {
             return true; //allow water well to be wet.
         }
-        return structureLocation.structureType != STRUCTURE_TYPE.POND && structureLocation.structureType != STRUCTURE_TYPE.OCEAN;
+        return structureLocation.structureType != STRUCTURE_TYPE.OCEAN;
     }
     public override bool CanBeDamaged() {
-        return structureLocation.structureType != STRUCTURE_TYPE.POND && structureLocation.structureType != STRUCTURE_TYPE.OCEAN;
+        return structureLocation.structureType != STRUCTURE_TYPE.OCEAN;
     }
     public override bool CanBeSelected() {
-        return structureLocation != null && structureLocation.structureType != STRUCTURE_TYPE.POND && structureLocation.structureType != STRUCTURE_TYPE.OCEAN;
+        return structureLocation != null && structureLocation.structureType != STRUCTURE_TYPE.OCEAN;
     }
     public override string ToString() {
         return $"Fishing Spot {id.ToString()}";

@@ -6,6 +6,9 @@ using System.Linq;
 using System.Runtime.Remoting.Contexts;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
+using UnityEditor;
+using UnityEditor.Experimental.SceneManagement;
+using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.EventSystems;
@@ -897,7 +900,7 @@ public class LocationStructureObject : PooledObject, ISelectable {
                 o_cannotPlaceReason = LocalizationManager.Instance.GetLocalizedValue("Locations", "Structures", "invalid_build_has_blueprint");
                 return false; //if bordering tile has a blueprint, then do not allow this structure to be placed. This is to prevent structures from being directly adjacent with each other, while they are still blueprints.
             }
-            if (structureType == STRUCTURE_TYPE.MINE_SHACK) {
+            if (structureType == STRUCTURE_TYPE.MINE) {
                 if (neighbour.structure.structureType != STRUCTURE_TYPE.WILDERNESS && neighbour.structure.structureType != STRUCTURE_TYPE.CITY_CENTER && neighbour.structure.structureType != STRUCTURE_TYPE.CAVE) {
                     // Debug.Log($"Could not place {structureType} because {tile} has neighbour {neighbour} that is not Wilderness, City CEnter and Cave!");
                     o_cannotPlaceReason = string.Empty;
@@ -1037,19 +1040,146 @@ public class LocationStructureObject : PooledObject, ISelectable {
                         if (tile.name.Contains("BotLeft")) {
                             cornerPos.x -= 0.5f;
                             cornerPos.y -= 0.5f;
-                            Instantiate(cornerPrefab, cornerPos, Quaternion.identity, wallVisual.transform);
+                            InstantiateCorner(cornerPos, wallVisual.transform);
+                            
+                            Vector3Int topNeighbourPos = new Vector3Int(x, y + 1, 0);
+                            TileBase top = wallTileMap.GetTile(topNeighbourPos);
+                            if (top == null) {
+                                //add corner to top
+                                cornerPos = centeredPos;
+                                cornerPos.x -= 0.5f;
+                                cornerPos.y += 0.5f;
+                                InstantiateCorner(cornerPos, wallVisual.transform);
+                            }
+                            
+                            Vector3Int rightNeighbourPos = new Vector3Int(x + 1, y, 0);
+                            TileBase right = wallTileMap.GetTile(rightNeighbourPos);
+                            if (right == null) {
+                                //add corner to right
+                                cornerPos = centeredPos;
+                                cornerPos.x += 0.5f;
+                                cornerPos.y -= 0.5f;
+                                InstantiateCorner(cornerPos, wallVisual.transform);
+                            }
+                            
                         } else if (tile.name.Contains("BotRight")) {
                             cornerPos.x += 0.5f;
                             cornerPos.y -= 0.5f;
-                            Instantiate(cornerPrefab, cornerPos, Quaternion.identity, wallVisual.transform);
+                            InstantiateCorner(cornerPos, wallVisual.transform);
+                            
+                            Vector3Int topNeighbourPos = new Vector3Int(x, y + 1, 0);
+                            TileBase top = wallTileMap.GetTile(topNeighbourPos);
+                            if (top == null) {
+                                //add corner to top
+                                cornerPos = centeredPos;
+                                cornerPos.x += 0.5f;
+                                cornerPos.y += 0.5f;
+                                InstantiateCorner(cornerPos, wallVisual.transform);
+                            }
+                            Vector3Int leftNeighbourPos = new Vector3Int(x - 1, y, 0);
+                            TileBase left = wallTileMap.GetTile(leftNeighbourPos);
+                            if (left == null) {
+                                //add corner to left
+                                cornerPos = centeredPos;
+                                cornerPos.x -= 0.5f;
+                                cornerPos.y -= 0.5f;
+                                InstantiateCorner(cornerPos, wallVisual.transform);
+                            }
+                            
                         } else if (tile.name.Contains("TopLeft")) {
                             cornerPos.x -= 0.5f;
                             cornerPos.y += 0.5f;
-                            Instantiate(cornerPrefab, cornerPos, Quaternion.identity, wallVisual.transform);
+                            InstantiateCorner(cornerPos, wallVisual.transform);
+                            
+                            Vector3Int bottomNeighbourPos = new Vector3Int(x, y - 1, 0);
+                            TileBase bottom = wallTileMap.GetTile(bottomNeighbourPos);
+                            if (bottom == null) {
+                                //add corner to bottom
+                                cornerPos = centeredPos;
+                                cornerPos.x -= 0.5f;
+                                cornerPos.y -= 0.5f;
+                                InstantiateCorner(cornerPos, wallVisual.transform);
+                            }
+                            
+                            Vector3Int rightNeighbourPos = new Vector3Int(x + 1, y, 0);
+                            TileBase right = wallTileMap.GetTile(rightNeighbourPos);
+                            if (right == null) {
+                                //add corner to right
+                                cornerPos = centeredPos;
+                                cornerPos.x += 0.5f;
+                                cornerPos.y += 0.5f;
+                                InstantiateCorner(cornerPos, wallVisual.transform);
+                            }
                         } else if (tile.name.Contains("TopRight")) {
                             cornerPos.x += 0.5f;
                             cornerPos.y += 0.5f;
-                            Instantiate(cornerPrefab, cornerPos, Quaternion.identity, wallVisual.transform);
+                            InstantiateCorner(cornerPos, wallVisual.transform);
+                            
+                            Vector3Int bottomNeighbourPos = new Vector3Int(x, y - 1, 0);
+                            TileBase bottom = wallTileMap.GetTile(bottomNeighbourPos);
+                            if (bottom == null) {
+                                //add corner to bottom
+                                cornerPos = centeredPos;
+                                cornerPos.x += 0.5f;
+                                cornerPos.y -= 0.5f;
+                                InstantiateCorner(cornerPos, wallVisual.transform);
+                            }
+                            
+                            Vector3Int leftNeighbourPos = new Vector3Int(x - 1, y, 0);
+                            TileBase left = wallTileMap.GetTile(leftNeighbourPos);
+                            if (left == null) {
+                                //add corner to left
+                                cornerPos = centeredPos;
+                                cornerPos.x -= 0.5f;
+                                cornerPos.y += 0.5f;
+                                InstantiateCorner(cornerPos, wallVisual.transform);
+                            }
+                            
+                        } else if (tile.name.Contains("Left") || tile.name.Contains("Right")) {
+                            bool isRight = tile.name.Contains("Right");
+                            if (isRight) {
+                                cornerPos.x = centeredPos.x + 0.5f;    
+                            } else {
+                                cornerPos.x = centeredPos.x - 0.5f;
+                            }
+                            //check top and bottom tiles, if no asset was found, add corner to corresponding direction
+                            Vector3Int topNeighbourPos = new Vector3Int(x, y + 1, 0);
+                            TileBase top = wallTileMap.GetTile(topNeighbourPos);
+                            if (top == null) {
+                                //add corner to top
+                                cornerPos.y = centeredPos.y + 0.5f;
+                                InstantiateCorner(cornerPos, wallVisual.transform);
+                            }
+                            
+                            Vector3Int bottomNeighbourPos = new Vector3Int(x, y - 1, 0);
+                            TileBase bottom = wallTileMap.GetTile(bottomNeighbourPos);
+                            if (bottom == null) {
+                                //add corner to bottom
+                                cornerPos.y = centeredPos.y - 0.5f;
+                                InstantiateCorner(cornerPos, wallVisual.transform);
+                            }
+                        } else if (tile.name.Contains("Top") || tile.name.Contains("Bot")) {
+                            bool isTop = tile.name.Contains("Top");
+                            if (isTop) {
+                                cornerPos.y = centeredPos.y + 0.5f;    
+                            } else {
+                                cornerPos.y = centeredPos.y - 0.5f;
+                            }
+                            //check left and right tiles, if no asset was found, add corner to corresponding direction
+                            Vector3Int rightNeighbourPos = new Vector3Int(x + 1, y, 0);
+                            TileBase right = wallTileMap.GetTile(rightNeighbourPos);
+                            if (right == null) {
+                                //add corner to right
+                                cornerPos.x = centeredPos.x + 0.5f;
+                                InstantiateCorner(cornerPos, wallVisual.transform); }
+                            
+                            Vector3Int leftNeighbourPos = new Vector3Int(x - 1, y, 0);
+                            TileBase left = wallTileMap.GetTile(leftNeighbourPos);
+                            if (left == null) {
+                                //add corner to left
+                                cornerPos.x = centeredPos.x - 0.5f;
+                                InstantiateCorner(cornerPos, wallVisual.transform);
+                            }
                         }
                         if (_thinWallResource != RESOURCE.WOOD) {
                             //only update asset if wall resource is not wood.
@@ -1061,6 +1191,13 @@ public class LocationStructureObject : PooledObject, ISelectable {
         }
         wallTileMap.enabled = false;
         wallTileMap.GetComponent<TilemapRenderer>().enabled = false;
+        
+#if UNITY_EDITOR
+        var prefabStage = PrefabStageUtility.GetCurrentPrefabStage();
+        if (prefabStage != null) {
+            EditorSceneManager.MarkSceneDirty(prefabStage.scene);
+        }
+#endif
     }
 
     [ContextMenu("Set Pivot Point")]
@@ -1069,13 +1206,22 @@ public class LocationStructureObject : PooledObject, ISelectable {
     }
     
     private ThinWallGameObject InstantiateWall(GameObject wallPrefab, Vector3 centeredPos, Transform parent, bool updateWallAsset) {
-        GameObject wallGO = Instantiate(wallPrefab, parent);
+#if UNITY_EDITOR
+        GameObject wallGO = PrefabUtility.InstantiatePrefab(wallPrefab, parent) as GameObject;
         wallGO.transform.position = centeredPos;
         ThinWallGameObject wallVisual = wallGO.GetComponent<ThinWallGameObject>();
         if (updateWallAsset) {
             wallVisual.UpdateWallAssets(_thinWallResource);    
         }
         return wallVisual;
+#endif
+        return null;
+    }
+    private void InstantiateCorner(Vector3 p_pos, Transform parent) {
+#if UNITY_EDITOR
+        GameObject wallGO = PrefabUtility.InstantiatePrefab(cornerPrefab, parent) as GameObject;
+        wallGO.transform.position = p_pos;
+#endif
     }
 
     [ContextMenu("Convert Objects")]
@@ -1122,6 +1268,12 @@ public class LocationStructureObject : PooledObject, ISelectable {
         }
         _detailTileMap.enabled = false;
         _detailTileMapRenderer.enabled = false;
+#if UNITY_EDITOR
+        var prefabStage = PrefabStageUtility.GetCurrentPrefabStage();
+        if (prefabStage != null) {
+            EditorSceneManager.MarkSceneDirty(prefabStage.scene);
+        }
+#endif
     }
 
     [Header("Predetermine Structure Tiles")] 

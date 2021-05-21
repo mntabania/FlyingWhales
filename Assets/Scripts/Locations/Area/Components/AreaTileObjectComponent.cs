@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Inner_Maps;
 using UnityEngine;
 using UtilityScripts;
 
@@ -43,6 +44,25 @@ public class AreaTileObjectComponent : AreaComponent {
             if (tileObject.tileObjectType == type || tileObject.tileObjectType == type2) {
                 count++;
             }
+        }
+        return count;
+    }
+    public int GetNumberOfTileObjectsInHexTile(TILE_OBJECT_TYPE type, TILE_OBJECT_TYPE type2, MapGenerationData p_data) {
+        int count = 0;
+        for (int i = 0; i < owner.gridTileComponent.gridTiles.Count; i++) {
+            LocationGridTile tile = owner.gridTileComponent.gridTiles[i];
+            if (tile.tileObjectComponent.objHere != null) {
+                TileObject tileObject = tile.tileObjectComponent.objHere;
+                if (tileObject.tileObjectType == type || tileObject.tileObjectType == type2) {
+                    count++;
+                }    
+            } else {
+                TILE_OBJECT_TYPE tileObjectType = p_data.GetGeneratedObjectOnTile(tile);
+                if (tileObjectType == type || tileObjectType == type2) {
+                    count++;
+                }
+            }
+            
         }
         return count;
     }

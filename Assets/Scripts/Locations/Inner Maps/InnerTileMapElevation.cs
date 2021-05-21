@@ -12,6 +12,7 @@ using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.Tilemaps;
 using UtilityScripts;
+using Debug = UnityEngine.Debug;
 namespace Inner_Maps {
     public abstract partial class InnerTileMap {
         
@@ -220,13 +221,14 @@ namespace Inner_Maps {
             tile.SetTileState(LocationGridTile.Tile_State.Occupied);
             mapGenerationData.SetGeneratedMapPerlinDetails(tile, TILE_OBJECT_TYPE.BLOCK_WALL);
             tile.SetIsDefault(false);
-            
+
             // //create wall tile object
             // BlockWall blockWall = InnerMapManager.Instance.CreateNewTileObject<BlockWall>(TILE_OBJECT_TYPE.BLOCK_WALL);
             // blockWall.SetWallType(WALL_TYPE.Stone);
             // structure.AddPOI(blockWall, tile);
         }
-        public void SetAsMountainGround(LocationGridTile tile, LocationStructure structure, MapGenerationData mapGenerationData) {
+        private void SetAsMountainGround(LocationGridTile tile, LocationStructure structure, MapGenerationData mapGenerationData) {
+            if (tile.tileObjectComponent.objHere != null) { tile.structure.RemovePOI(tile.tileObjectComponent.objHere); }
             if (tile.structure != structure) { tile.SetStructure(structure); }
             tile.SetGroundType(LocationGridTile.Ground_Type.Cave);
             tile.SetIsDefault(false);
@@ -250,17 +252,18 @@ namespace Inner_Maps {
 		    yield return MapGenerator.Instance.StartCoroutine(CellularAutomataGenerator.DrawElevationMapCoroutine(
                 tileMap, cellMap, InnerMapManager.Instance.assetManager.caveWallTile, null, ELEVATION.MOUNTAIN, elevationStructure, mapGenerationData));
             
-		    List<TileObject> validWallsForOreVeins = RuinarchListPool<TileObject>.Claim();
-            elevationStructure.PopulateTileObjectsOfTypeThatIsBlockWallValidForOreVein2(validWallsForOreVeins, TILE_OBJECT_TYPE.BLOCK_WALL);
+		    List<LocationGridTile> validWallsForOreVeins = RuinarchListPool<LocationGridTile>.Claim();
+            elevationStructure.PopulateTileObjectsOfTypeThatIsBlockWallValidForOreVein2(validWallsForOreVeins, mapGenerationData);
 		    
 		    var randomOreAmount = elevationStructure.occupiedAreas.Count == 1 ? UnityEngine.Random.Range(4, 11) : UnityEngine.Random.Range(8, 16);
 		    for (int i = 0; i < randomOreAmount; i++) {
 			    if (validWallsForOreVeins.Count == 0) { break; }
-			    BlockWall blockWall = CollectionUtilities.GetRandomElement(validWallsForOreVeins) as BlockWall;
-			    CreateOreVein(blockWall.gridTileLocation);
-			    validWallsForOreVeins.Remove(blockWall);
+                LocationGridTile oreVeinLocation = CollectionUtilities.GetRandomElement(validWallsForOreVeins);
+			    CreateOreVein(oreVeinLocation);
+                mapGenerationData.SetGeneratedMapPerlinDetails(oreVeinLocation, TILE_OBJECT_TYPE.NONE);
+			    validWallsForOreVeins.Remove(oreVeinLocation);
 		    }
-            RuinarchListPool<TileObject>.Release(validWallsForOreVeins);
+            RuinarchListPool<LocationGridTile>.Release(validWallsForOreVeins);
         }
         //private bool IsBlockWallValidForOreVein(BlockWall p_blockWall) {
         //    if (p_blockWall.gridTileLocation != null) {
@@ -292,6 +295,7 @@ namespace Inner_Maps {
                 }
                 TileObject well = InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.ORE_VEIN);
                 tile.structure.AddPOI(well, tile);
+                Debug.Log($"Created ore vein at {tile}");
             }
         }
         #endregion
@@ -365,6 +369,7 @@ namespace Inner_Maps {
         private void SetAsWater(LocationGridTile tile, LocationStructure structure, MapGenerationData mapGenerationData) {
             tile.SetGroundType(LocationGridTile.Ground_Type.Water);
             tile.SetTileState(LocationGridTile.Tile_State.Occupied);
+            if (tile.tileObjectComponent.objHere != null) { tile.structure.RemovePOI(tile.tileObjectComponent.objHere); }
             tile.SetStructure(structure);
             tile.tileObjectComponent.genericTileObject.traitContainer.AddTrait(tile.tileObjectComponent.genericTileObject, "Wet", overrideDuration: 0);
             mapGenerationData.SetGeneratedMapPerlinDetails(tile, TILE_OBJECT_TYPE.NONE);

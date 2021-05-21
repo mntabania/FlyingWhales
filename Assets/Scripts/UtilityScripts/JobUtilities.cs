@@ -238,11 +238,11 @@ namespace UtilityScripts {
             }
         }
         private static void PopulatePriorityLocationsForProduceMetal(NPCSettlement settlement, GoapPlanJob job) {
-            List<LocationStructure> mineShacks = settlement.GetStructuresOfType(STRUCTURE_TYPE.MINE_SHACK);
+            List<LocationStructure> mineShacks = settlement.GetStructuresOfType(STRUCTURE_TYPE.MINE);
 
             if (mineShacks != null) {
                 for (int i = 0; i < mineShacks.Count; i++) {
-                    MineShack mineShack = mineShacks[i] as MineShack;
+                    Inner_Maps.Location_Structures.Mine mineShack = mineShacks[i] as Inner_Maps.Location_Structures.Mine;
                     job.AddPriorityLocation(INTERACTION_TYPE.NONE, mineShack.connectedCave);
                 }
             }

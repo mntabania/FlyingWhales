@@ -131,7 +131,7 @@ public class FactionLeaderBehaviour : CharacterBehaviourComponent {
                         if (facilityCount < (character.homeSettlement.settlementType.maxFacilities/2)) {
                             chance = 3;
                         }
-                        if(!character.homeSettlement.HasStructure(STRUCTURE_TYPE.LUMBERYARD) && !character.homeSettlement.HasStructure(STRUCTURE_TYPE.MINE_SHACK)) {
+                        if(!character.homeSettlement.HasStructure(STRUCTURE_TYPE.LUMBERYARD) && !character.homeSettlement.HasStructure(STRUCTURE_TYPE.MINE)) {
                             chance *= 2;
                         }
                         // chance = 100;

@@ -9,7 +9,7 @@
 
     #region Growth State
     public override int GetRipeningTicks() {
-        int ticks = GameManager.Instance.GetTicksBasedOnHour(1); //120
+        int ticks = GameManager.Instance.GetTicksBasedOnHour(120);
         return ticks;
     }
     #endregion
