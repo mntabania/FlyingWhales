@@ -839,6 +839,19 @@ namespace Inner_Maps.Location_Structures {
             }
             return chosenPile;
         }
+        public int GetTotalResourceInStructure(RESOURCE p_resource) {
+            int totalResource = 0;
+            List<TileObject> resourcePiles = RuinarchListPool<TileObject>.Claim();
+            PopulateTileObjectsOfType<ResourcePile>(resourcePiles);
+            for (int i = 0; i < resourcePiles.Count; i++) {
+                TileObject resourcePile = resourcePiles[i];
+                if (resourcePile.mapObjectState == MAP_OBJECT_STATE.BUILT) {
+                    totalResource += resourcePile.resourceStorageComponent.GetResourceValue(p_resource);
+                }
+            }
+            RuinarchListPool<TileObject>.Release(resourcePiles);
+            return totalResource;
+        }
         public ResourcePile GetResourcePileObjectWithLowestCount(TILE_OBJECT_TYPE tileObjectType, bool excludeMaximum = true) {
             ResourcePile chosenPile = null;
             int lowestCount = 0;

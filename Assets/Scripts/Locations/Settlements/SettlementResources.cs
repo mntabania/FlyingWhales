@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UtilityScripts;
 
 public class SettlementResources
 {
@@ -55,5 +56,10 @@ public class SettlementResources
         if (characters.Contains(p_character)) {
             characters.Remove(p_character);
         }
+    }
+    public bool HasResourceAmount(NPCSettlement p_settlement, RESOURCE p_resource, int p_amount) {
+        if (p_resource == RESOURCE.NONE) { return true; }
+        int totalResource = p_settlement.mainStorage.GetTotalResourceInStructure(p_resource);
+        return totalResource >= p_amount;
     }
 }
