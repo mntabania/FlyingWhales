@@ -5,7 +5,7 @@
     public PotatoCrop() : base() {
         Initialize(TILE_OBJECT_TYPE.POTATO_CROP);
     }
-    public PotatoCrop(SaveDataCornCrop data) : base(data) { }
+    public PotatoCrop(SaveDataCrops data) : base(data) { }
 
     #region Growth State
     public override int GetRipeningTicks() {

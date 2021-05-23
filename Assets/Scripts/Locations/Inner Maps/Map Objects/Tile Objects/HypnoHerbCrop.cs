@@ -5,7 +5,7 @@
     public HypnoHerbCrop() : base() {
         Initialize(TILE_OBJECT_TYPE.HYPNO_HERB_CROP);
     }
-    public HypnoHerbCrop(SaveDataCornCrop data) : base(data) { }
+    public HypnoHerbCrop(SaveDataCrops data) : base(data) { }
 
     #region Growth State
     public override int GetRipeningTicks() {

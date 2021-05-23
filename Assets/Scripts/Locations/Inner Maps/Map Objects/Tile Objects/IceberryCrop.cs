@@ -5,7 +5,7 @@
     public IceberryCrop() : base() {
         Initialize(TILE_OBJECT_TYPE.ICEBERRY_CROP);
     }
-    public IceberryCrop(SaveDataCornCrop data) : base(data) { }
+    public IceberryCrop(SaveDataCrops data) : base(data) { }
 
     #region Growth State
     public override int GetRipeningTicks() {

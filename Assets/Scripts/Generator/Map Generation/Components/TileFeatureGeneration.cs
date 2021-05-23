@@ -424,8 +424,14 @@ public class TileFeatureGeneration : MapGenerationComponent {
 				yield return null;
 			}
 		}
-		//TODO: load village spots
-		throw new NotImplementedException("Scenario Village Spots not yet implemented");
+		List<VillageSpot> villageSpots = RuinarchListPool<VillageSpot>.Claim();
+		for (int i = 0; i < scenarioMapData.worldMapSave.villageSpots.Count; i++) {
+			SaveDataVillageSpot saveDataVillageSpot = scenarioMapData.worldMapSave.villageSpots[i];
+			VillageSpot villageSpot = saveDataVillageSpot.Load();
+			villageSpots.Add(villageSpot);
+		}
+		GridMap.Instance.mainRegion.SetVillageSpots(villageSpots);
+		RuinarchListPool<VillageSpot>.Release(villageSpots);
 	}
 	private void DetermineSettlementsForTutorial() {
 		List<Area> chosenTiles = new List<Area> {

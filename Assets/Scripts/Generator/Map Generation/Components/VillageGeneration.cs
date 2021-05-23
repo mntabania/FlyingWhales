@@ -215,8 +215,12 @@ public class VillageGeneration : MapGenerationComponent {
 				Faction faction = GetFactionForScenario(settlementTemplate);
 
 				LOCATION_TYPE locationType = GetLocationTypeForRace(faction.race);
-			
-				NPCSettlement npcSettlement = LandmarkManager.Instance.CreateNewSettlement(region, locationType, tilesInSettlement.First());
+
+				Area first = tilesInSettlement.First();
+				NPCSettlement npcSettlement = LandmarkManager.Instance.CreateNewSettlement(region, locationType, first);
+				VillageSpot villageSpot = GridMap.Instance.mainRegion.GetVillageSpotOnArea(first);
+				Assert.IsNotNull(villageSpot);
+				npcSettlement.SetOccupiedVillageSpot(villageSpot);
 				npcSettlement.SetSettlementType(settlementTemplate.settlementType);
 				// npcSettlement.AddStructure(region.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS));
 				LandmarkManager.Instance.OwnSettlement(faction, npcSettlement);

@@ -6,7 +6,7 @@
     public PineappleCrop() : base() {
         Initialize(TILE_OBJECT_TYPE.PINEAPPLE_CROP);
     }
-    public PineappleCrop(SaveDataCornCrop data) : base(data) { }
+    public PineappleCrop(SaveDataCrops data) : base(data) { }
 
     #region Growth State
     public override int GetRipeningTicks() {
