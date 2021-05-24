@@ -20,6 +20,8 @@ public class SaveDataNPCSettlement : SaveDataBaseSettlement {
     public GameDate plaguedExpiry;
     public bool hasPeasants;
     public bool hasWorkers;
+    public bool hasOccupiedVillageSpot;
+    public Point occupiedVillageSpot;
 
     //Components
     public SaveDataSettlementVillageMigrationComponent migrationComponent;
@@ -70,6 +72,11 @@ public class SaveDataNPCSettlement : SaveDataBaseSettlement {
         hasWorkers = npcSettlement.hasWorkers;
 
         migrationComponent = new SaveDataSettlementVillageMigrationComponent(); migrationComponent.Save(npcSettlement.migrationComponent);
+
+        hasOccupiedVillageSpot = npcSettlement.occupiedVillageSpot != null;
+        if (npcSettlement.occupiedVillageSpot != null) {
+            occupiedVillageSpot = new Point(npcSettlement.occupiedVillageSpot.mainSpot.areaData.xCoordinate, npcSettlement.occupiedVillageSpot.mainSpot.areaData.yCoordinate);
+        }
     }
     public override BaseSettlement Load() {
         return LandmarkManager.Instance.LoadNPCSettlement(this);

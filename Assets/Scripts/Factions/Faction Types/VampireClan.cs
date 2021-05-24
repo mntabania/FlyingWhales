@@ -1,4 +1,5 @@
-﻿namespace Factions.Faction_Types {
+﻿using Inner_Maps.Location_Structures;
+namespace Factions.Faction_Types {
     public class VampireClan : FactionType {
         public override RESOURCE mainResource => RESOURCE.STONE;
         
@@ -82,6 +83,20 @@
                     return CRIME_SEVERITY.Heinous;
             }
             return CRIME_SEVERITY.None;
+        }
+        public override StructureSetting ProcessStructureSetting(StructureSetting p_setting, NPCSettlement p_settlement) {
+            if (p_settlement.SettlementResources.HasResourceAmount(p_settlement, p_setting.resource, 100)) {
+                //if settlement has that resource amount then use default setting
+                return p_setting;
+            } else {
+                //if settlement doesn't have that resource amount then check if other resource is available.
+                RESOURCE otherResource = p_setting.resource == RESOURCE.WOOD ? RESOURCE.STONE : RESOURCE.WOOD;
+                if (p_settlement.SettlementResources.HasResourceAmount(p_settlement, otherResource, 100)) {
+                    return new StructureSetting(p_setting.structureType, otherResource, p_setting.isCorrupted);
+                } else {
+                    return p_setting;    
+                }
+            }
         }
     }
 }

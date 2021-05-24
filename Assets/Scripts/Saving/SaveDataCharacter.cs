@@ -36,7 +36,6 @@ public class SaveDataCharacter : SaveData<Character>, ISavableCounterpart {
     public List<INTERACTION_TYPE> advertisedActions;
     public bool canCombat;
     public string deathStr;
-    public Dictionary<RESOURCE, int> storedResources;
     public bool hasUnresolvedCrime;
     public bool isInLimbo;
     public bool isLimboCharacter;
@@ -113,6 +112,7 @@ public class SaveDataCharacter : SaveData<Character>, ISavableCounterpart {
     public SaveDataCharacterMoneyComponent moneyComponent;
     //public SaveDataBuffStatsBonus buffStatusBonus;
     public SaveDataCharacterTalentComponent talentComponent;
+    public SaveDataResourceStorageComponent resourceStorageComponent;
     //public SaveDataEquipmentComponent equipmentComponent;
     #region getters
     public OBJECT_TYPE objectType => OBJECT_TYPE.Character;
@@ -135,7 +135,6 @@ public class SaveDataCharacter : SaveData<Character>, ISavableCounterpart {
         advertisedActions = data.advertisedActions;
         canCombat = data.canCombat;
         deathStr = data.deathStr;
-        storedResources = data.storedResources;
         hasUnresolvedCrime = data.hasUnresolvedCrime;
         isInLimbo = data.isInLimbo;
         isLimboCharacter = data.isLimboCharacter;
@@ -192,6 +191,7 @@ public class SaveDataCharacter : SaveData<Character>, ISavableCounterpart {
         traitComponent = new SaveDataCharacterTraitComponent(); traitComponent.Save(data.traitComponent);
         //buffStatusBonus = new SaveDataBuffStatsBonus(); buffStatusBonus.Save(data.buffStatsBonus);
         moneyComponent = new SaveDataCharacterMoneyComponent(); moneyComponent.Save(data.moneyComponent);
+        resourceStorageComponent = new SaveDataResourceStorageComponent(); resourceStorageComponent.Save(data.resourceStorageComponent);
 
         if (data.talentComponent != null) {
             talentComponent = new SaveDataCharacterTalentComponent(); talentComponent.Save(data.talentComponent);

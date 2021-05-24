@@ -17,6 +17,7 @@ public abstract class Crops : TileObject {
     public override System.Type serializedData => typeof(SaveDataCrops);
     public int growthRate => _growthRate;
     public virtual bool doesNotGrowPerTick => false;
+    public abstract TILE_OBJECT_TYPE producedObjectOnHarvest { get; }
     #endregion
     
     protected Crops() { }

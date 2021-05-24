@@ -137,6 +137,18 @@ public class MapVisualFactory {
             case TILE_OBJECT_TYPE.KENNEL_TILE_OBJECT:
                 obj = ObjectPoolManager.Instance.InstantiateObjectFromPool("KennelGameObject", Vector3.zero, Quaternion.identity);
                 break;
+            case TILE_OBJECT_TYPE.HYPNO_HERB_CROP:
+                obj = ObjectPoolManager.Instance.InstantiateObjectFromPool("HypnoHerbCropMapObjectVisual", Vector3.zero, Quaternion.identity);
+                break;
+            case TILE_OBJECT_TYPE.ICEBERRY_CROP:
+                obj = ObjectPoolManager.Instance.InstantiateObjectFromPool("IceberryCropMapObjectVisual", Vector3.zero, Quaternion.identity);
+                break;
+            case TILE_OBJECT_TYPE.PINEAPPLE_CROP:
+                obj = ObjectPoolManager.Instance.InstantiateObjectFromPool("PineappleCropMapObjectVisual", Vector3.zero, Quaternion.identity);
+                break;
+            case TILE_OBJECT_TYPE.POTATO_CROP:
+                obj = ObjectPoolManager.Instance.InstantiateObjectFromPool("PotatoCropMapObjectVisual", Vector3.zero, Quaternion.identity);
+                break;
             default:
                 obj = ObjectPoolManager.Instance.InstantiateObjectFromPool(Tile_Object_Prefab_Name, Vector3.zero, Quaternion.identity);
                 break;

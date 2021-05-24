@@ -50,7 +50,7 @@ public class VillageGeneration : MapGenerationComponent {
 				Area settlementTile = villageSpot.mainSpot;
 				VillageSetting villageSetting = factionTemplate.villageSettings[i];
 				NPCSettlement npcSettlement = LandmarkManager.Instance.CreateNewSettlement(region, locationType, settlementTile);
-				npcSettlement.AddReservedAreas(villageSpot.reservedAreas);
+				npcSettlement.SetOccupiedVillageSpot(villageSpot);
 				createdSettlements.Add(npcSettlement);
 				villageSettings.Add(villageSetting);
 				
@@ -176,7 +176,7 @@ public class VillageGeneration : MapGenerationComponent {
 		}
 		yield return null;
 	}
-	private IEnumerator PlaceStructure(Region region, StructureSetting structureSetting, NPCSettlement npcSettlement) {
+	public static IEnumerator PlaceStructure(Region region, StructureSetting structureSetting, NPCSettlement npcSettlement) {
 		List<StructureConnector> availableStructureConnectors = RuinarchListPool<StructureConnector>.Claim();
 		npcSettlement.PopulateStructureConnectorsForStructureType(availableStructureConnectors, structureSetting.structureType);
 		// availableStructureConnectors = CollectionUtilities.Shuffle(availableStructureConnectors);
@@ -200,9 +200,9 @@ public class VillageGeneration : MapGenerationComponent {
 		RuinarchListPool<StructureConnector>.Release(availableStructureConnectors);
 		yield return null;
 	}
-#endregion
+	#endregion
 
-#region Scenario Maps
+	#region Scenario Maps
 	public override IEnumerator LoadScenarioData(MapGenerationData data, ScenarioMapData scenarioMapData) {
 		if (scenarioMapData.villageSettlementTemplates != null) {
 			for (int i = 0; i < scenarioMapData.villageSettlementTemplates.Length; i++) {
@@ -215,8 +215,12 @@ public class VillageGeneration : MapGenerationComponent {
 				Faction faction = GetFactionForScenario(settlementTemplate);
 
 				LOCATION_TYPE locationType = GetLocationTypeForRace(faction.race);
-			
-				NPCSettlement npcSettlement = LandmarkManager.Instance.CreateNewSettlement(region, locationType, tilesInSettlement.First());
+
+				Area first = tilesInSettlement.First();
+				NPCSettlement npcSettlement = LandmarkManager.Instance.CreateNewSettlement(region, locationType, first);
+				VillageSpot villageSpot = GridMap.Instance.mainRegion.GetVillageSpotOnArea(first);
+				Assert.IsNotNull(villageSpot);
+				npcSettlement.SetOccupiedVillageSpot(villageSpot);
 				npcSettlement.SetSettlementType(settlementTemplate.settlementType);
 				// npcSettlement.AddStructure(region.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS));
 				LandmarkManager.Instance.OwnSettlement(faction, npcSettlement);
@@ -409,15 +413,15 @@ public class VillageGeneration : MapGenerationComponent {
 			citizenCount += 1;
 		}
 	}
-#endregion
+	#endregion
 	
-#region Saved World
+	#region Saved World
 	public override IEnumerator LoadSavedData(MapGenerationData data, SaveDataCurrentProgress saveData) {
 		yield return MapGenerator.Instance.StartCoroutine(ExecuteRandomGeneration(data));
 	}
-#endregion
+	#endregion
 
-#region Settlement Structures
+	#region Settlement Structures
 	private List<StructureSetting> GenerateFacilities(NPCSettlement settlement, Faction faction, int facilityCount) {
 		List<StructureSetting> structures = new List<StructureSetting>(); //{ new StructureSetting(STRUCTURE_TYPE.CITY_CENTER, faction.factionType.mainResource) }; //faction.factionType.GetStructureSettingFor(STRUCTURE_TYPE.CITY_CENTER)
 		List<STRUCTURE_TYPE> createdStructureTypes = new List<STRUCTURE_TYPE>();
@@ -436,59 +440,52 @@ public class VillageGeneration : MapGenerationComponent {
 		List<Area> tilesInRange = RuinarchListPool<Area>.Claim();
 		villageCenterTile.PopulateAreasInRange(tilesInRange, 3);
 		if (faction.factionType.type == FACTION_TYPE.Elven_Kingdom || settlement.settlementType.settlementType == SETTLEMENT_TYPE.Elven_Hamlet) {
-			if (!structureTypes.Contains(STRUCTURE_TYPE.HOSPICE)) {
-				//Apothecary: +6 (disable if already selected from previous hex tile)
-				structureWeights.AddElement(new StructureSetting(STRUCTURE_TYPE.HOSPICE, RESOURCE.WOOD), 6);
-			}
 			structureWeights.AddElement(new StructureSetting(STRUCTURE_TYPE.FARM, RESOURCE.WOOD), 1);
 			if (!structureTypes.Contains(STRUCTURE_TYPE.TAVERN)) {
 				structureWeights.AddElement(new StructureSetting(STRUCTURE_TYPE.TAVERN, RESOURCE.WOOD), 3);
 			}
 			if (!structureTypes.Contains(STRUCTURE_TYPE.CEMETERY)) {
-				//Wooden Graveyard: +2 (disable if already selected from previous hex tile)
 				structureWeights.AddElement(new StructureSetting(STRUCTURE_TYPE.CEMETERY, RESOURCE.WOOD), 2);
 			}
 			if (!structureTypes.Contains(STRUCTURE_TYPE.FARM)) {
 				structureWeights.AddElement(new StructureSetting(STRUCTURE_TYPE.FARM, RESOURCE.WOOD), 15);
 			}
-			if (settlement.HasReservedSpotWithFeature(AreaFeatureDB.Fish_Source) && !structureTypes.Contains(STRUCTURE_TYPE.FISHING_SHACK)) {
-				structureWeights.AddElement(new StructureSetting(STRUCTURE_TYPE.FISHING_SHACK, RESOURCE.WOOD), 5);
+			if (settlement.HasReservedSpotWithFeature(AreaFeatureDB.Fish_Source) && !structureTypes.Contains(STRUCTURE_TYPE.FISHERY)) {
+				structureWeights.AddElement(new StructureSetting(STRUCTURE_TYPE.FISHERY, RESOURCE.WOOD), 5);
 			}
 			if (settlement.HasReservedSpotWithFeature(AreaFeatureDB.Wood_Source_Feature) && !structureTypes.Contains(STRUCTURE_TYPE.LUMBERYARD)) {
-				structureWeights.AddElement(new StructureSetting(STRUCTURE_TYPE.LUMBERYARD, RESOURCE.WOOD), 40);	
+				structureWeights.AddElement(new StructureSetting(STRUCTURE_TYPE.LUMBERYARD, RESOURCE.NONE), 40);	
 			}
-			if (settlement.HasReservedSpotWithFeature(AreaFeatureDB.Metal_Source_Feature) && !structureTypes.Contains(STRUCTURE_TYPE.MINE_SHACK)) {
-				structureWeights.AddElement(new StructureSetting(STRUCTURE_TYPE.MINE_SHACK, RESOURCE.WOOD), 2);	
+			if (settlement.HasReservedSpotWithFeature(AreaFeatureDB.Metal_Source_Feature) && !structureTypes.Contains(STRUCTURE_TYPE.MINE)) {
+				structureWeights.AddElement(new StructureSetting(STRUCTURE_TYPE.MINE, RESOURCE.NONE), 2);	
 			}
 		} else if (faction.factionType.type == FACTION_TYPE.Human_Empire || settlement.settlementType.settlementType == SETTLEMENT_TYPE.Human_Village) {
 			if (!structureTypes.Contains(STRUCTURE_TYPE.MAGE_QUARTERS)) {
-				//Mage Quarter: +6 (disable if already selected from previous hex tile)
 				structureWeights.AddElement(new StructureSetting(STRUCTURE_TYPE.MAGE_QUARTERS, RESOURCE.STONE), 6);
 			}
 			if (!structureTypes.Contains(STRUCTURE_TYPE.PRISON)) {
-				//Prison: +2 (disable if already selected from previous hex tile)
 				structureWeights.AddElement(new StructureSetting(STRUCTURE_TYPE.PRISON, RESOURCE.STONE), 2);
 			}
 			if (!structureTypes.Contains(STRUCTURE_TYPE.BARRACKS)) {
-				//Barracks: +6 (disable if already selected from previous hex tile)
 				structureWeights.AddElement(new StructureSetting(STRUCTURE_TYPE.BARRACKS, RESOURCE.STONE), 6);
 			}
 			if (!structureTypes.Contains(STRUCTURE_TYPE.TAVERN)) {
-				//Barracks: +6 (disable if already selected from previous hex tile)
 				structureWeights.AddElement(new StructureSetting(STRUCTURE_TYPE.TAVERN, RESOURCE.STONE), 3);
 			}
 			if (!structureTypes.Contains(STRUCTURE_TYPE.CEMETERY)) {
-				//Wooden Graveyard: +2 (disable if already selected from previous hex tile)
 				structureWeights.AddElement(new StructureSetting(STRUCTURE_TYPE.CEMETERY, RESOURCE.STONE), 2);
 			}
 			if (!structureTypes.Contains(STRUCTURE_TYPE.FARM)) {
 				structureWeights.AddElement(new StructureSetting(STRUCTURE_TYPE.FARM, RESOURCE.STONE), 15);
 			}
-			if (settlement.HasReservedSpotWithFeature(AreaFeatureDB.Fish_Source) && !structureTypes.Contains(STRUCTURE_TYPE.FISHING_SHACK)) {
-				structureWeights.AddElement(new StructureSetting(STRUCTURE_TYPE.FISHING_SHACK, RESOURCE.STONE), 5);
+			if (settlement.HasReservedSpotWithFeature(AreaFeatureDB.Fish_Source) && !structureTypes.Contains(STRUCTURE_TYPE.FISHERY)) {
+				structureWeights.AddElement(new StructureSetting(STRUCTURE_TYPE.FISHERY, RESOURCE.WOOD), 5);
 			}
-			if (settlement.HasReservedSpotWithFeature(AreaFeatureDB.Metal_Source_Feature) && !structureTypes.Contains(STRUCTURE_TYPE.MINE_SHACK)) {
-				structureWeights.AddElement(new StructureSetting(STRUCTURE_TYPE.MINE_SHACK, RESOURCE.STONE), 40);	
+			if (settlement.HasReservedSpotWithFeature(AreaFeatureDB.Metal_Source_Feature) && !structureTypes.Contains(STRUCTURE_TYPE.MINE)) {
+				structureWeights.AddElement(new StructureSetting(STRUCTURE_TYPE.MINE, RESOURCE.NONE), 40);	
+			}
+			if (settlement.HasReservedSpotWithFeature(AreaFeatureDB.Wood_Source_Feature) && !structureTypes.Contains(STRUCTURE_TYPE.LUMBERYARD)) {
+				structureWeights.AddElement(new StructureSetting(STRUCTURE_TYPE.LUMBERYARD, RESOURCE.NONE), 2);	
 			}
 			if (settlement.HasReservedSpotWithFeature(AreaFeatureDB.Game_Feature)) {
 				structureWeights.AddElement(new StructureSetting(STRUCTURE_TYPE.HUNTER_LODGE, RESOURCE.STONE), 15);	
@@ -503,18 +500,18 @@ public class VillageGeneration : MapGenerationComponent {
 			if (!structureTypes.Contains(STRUCTURE_TYPE.TAVERN)) {
 				structureWeights.AddElement(new StructureSetting(STRUCTURE_TYPE.TAVERN, faction.factionType.mainResource, faction.factionType.usesCorruptedStructures), 3);
 			}
-			if (settlement.HasReservedSpotWithFeature(AreaFeatureDB.Metal_Source_Feature) && !structureTypes.Contains(STRUCTURE_TYPE.MINE_SHACK)) {
-				structureWeights.AddElement(new StructureSetting(STRUCTURE_TYPE.LUMBERYARD, faction.factionType.mainResource, faction.factionType.usesCorruptedStructures), 10);	
+			if (settlement.HasReservedSpotWithFeature(AreaFeatureDB.Metal_Source_Feature) && !structureTypes.Contains(STRUCTURE_TYPE.MINE)) {
+				structureWeights.AddElement(new StructureSetting(STRUCTURE_TYPE.LUMBERYARD, RESOURCE.NONE, faction.factionType.usesCorruptedStructures), 10);	
 			}
 			if (settlement.HasReservedSpotWithFeature(AreaFeatureDB.Wood_Source_Feature) && !structureTypes.Contains(STRUCTURE_TYPE.LUMBERYARD)) {
-				structureWeights.AddElement(new StructureSetting(STRUCTURE_TYPE.LUMBERYARD, faction.factionType.mainResource, faction.factionType.usesCorruptedStructures), 10);	
+				structureWeights.AddElement(new StructureSetting(STRUCTURE_TYPE.LUMBERYARD, RESOURCE.NONE, faction.factionType.usesCorruptedStructures), 10);	
 			}
 			structureWeights.AddElement(new StructureSetting(STRUCTURE_TYPE.HOSPICE, faction.factionType.mainResource, faction.factionType.usesCorruptedStructures), 6);
 		}
 		RuinarchListPool<Area>.Release(tilesInRange);
 		return structureWeights;
 	}
-#endregion
+	#endregion
 
 #region Residents
 	private void GenerateResidentConfiguration(int providedCitizenCount, int dwellingCount, out int coupleCharacters, out int singleCharacters) {

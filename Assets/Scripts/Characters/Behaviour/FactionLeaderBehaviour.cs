@@ -97,6 +97,9 @@ public class FactionLeaderBehaviour : CharacterBehaviourComponent {
 #endif
                             //place dwelling blueprint
                             StructureSetting structureToPlace = character.homeSettlement.settlementType.GetDwellingSetting(character.faction);
+                            if (character.homeSettlement.owner != null) {
+                                structureToPlace = character.homeSettlement.owner.factionType.ProcessStructureSetting(structureToPlace, character.homeSettlement);    
+                            }
                             if (LandmarkManager.Instance.CanPlaceStructureBlueprint(character.homeSettlement, structureToPlace, out var targetTile, out var structurePrefabName, out var connectorToUse, out var connectorTile)) {
 #if DEBUG_LOG
                                 log += $"\n-Will place dwelling blueprint {structurePrefabName} at {targetTile}.";
@@ -112,6 +115,9 @@ public class FactionLeaderBehaviour : CharacterBehaviourComponent {
 #endif
                         //place dwelling blueprint
                         StructureSetting structureToPlace = character.homeSettlement.settlementType.GetDwellingSetting(character.faction);
+                        if (character.homeSettlement.owner != null) {
+                            structureToPlace = character.homeSettlement.owner.factionType.ProcessStructureSetting(structureToPlace, character.homeSettlement);    
+                        }
                         if (LandmarkManager.Instance.CanPlaceStructureBlueprint(character.homeSettlement, structureToPlace, out var targetTile, out var structurePrefabName, out var connectorToUse, out var connectorTile)) {
 #if DEBUG_LOG
                             log += $"\n-Will place dwelling blueprint {structurePrefabName} at {targetTile}.";
@@ -131,7 +137,7 @@ public class FactionLeaderBehaviour : CharacterBehaviourComponent {
                         if (facilityCount < (character.homeSettlement.settlementType.maxFacilities/2)) {
                             chance = 3;
                         }
-                        if(!character.homeSettlement.HasStructure(STRUCTURE_TYPE.LUMBERYARD) && !character.homeSettlement.HasStructure(STRUCTURE_TYPE.MINE_SHACK)) {
+                        if(!character.homeSettlement.HasStructure(STRUCTURE_TYPE.LUMBERYARD) && !character.homeSettlement.HasStructure(STRUCTURE_TYPE.MINE)) {
                             chance *= 2;
                         }
                         // chance = 100;
@@ -141,6 +147,10 @@ public class FactionLeaderBehaviour : CharacterBehaviourComponent {
 #endif
                             //place random facility based on weights
                             StructureSetting targetFacility = character.homeSettlement.GetMissingFacilityToBuildBasedOnWeights();
+                            if (character.homeSettlement.owner != null) {
+                                targetFacility = character.homeSettlement.owner.factionType.ProcessStructureSetting(targetFacility, character.homeSettlement);    
+                            }
+                            
 #if DEBUG_LOG
                             log += $"\n-Will try to build facility {targetFacility.ToString()}";
 #endif

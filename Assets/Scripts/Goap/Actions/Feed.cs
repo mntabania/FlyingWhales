@@ -105,8 +105,9 @@ public class Feed : GoapAction {
     public override void OnActionStarted(ActualGoapNode node) {
         base.OnActionStarted(node);
         for (int i = 0; i < node.actor.items.Count; i++) {
-            if(node.actor.items[i].HasResourceAmount(RESOURCE.FOOD, 12)) {
-                node.actor.ShowItemVisualCarryingPOI(node.actor.items[i]);
+            TileObject tileObject = node.actor.items[i];
+            if(tileObject.resourceStorageComponent.HasResourceAmount(RESOURCE.FOOD, 12)) {
+                node.actor.ShowItemVisualCarryingPOI(tileObject);
                 break;
             }
         }
@@ -134,7 +135,7 @@ public class Feed : GoapAction {
                     goapNode.OverrideDescriptionLog(log);
                 }
                 carriedPile.AdjustResourceInPile(-12);
-                targetCharacter.AdjustResource(RESOURCE.FOOD, 12);
+                // targetCharacter.resourceStorageComponent.AdjustResource(RESOURCE.FOOD, 12);
             }    
         }
     }
@@ -145,7 +146,7 @@ public class Feed : GoapAction {
                 targetCharacter.AdjustHP(-100, ELEMENTAL_TYPE.Normal, triggerDeath: true);  
             }
             targetCharacter.needsComponent.AdjustFullness(5f);
-            targetCharacter.AdjustResource(RESOURCE.FOOD, -1);
+            // targetCharacter.resourceStorageComponent.AdjustResource(RESOURCE.FOOD, -1);
         }
         
         
@@ -182,12 +183,12 @@ public class Feed : GoapAction {
 
 #region Preconditions
     private bool ActorHasFood(Character actor, IPointOfInterest poiTarget, object[] otherData, JOB_TYPE jobType) {
-        if (poiTarget.HasResourceAmount(RESOURCE.FOOD, 12)) {
+        if (poiTarget.resourceStorageComponent.HasResourceAmount(RESOURCE.FOOD, 12)) {
             return true;
         }
         if(actor.items.Count > 0) {
             for (int i = 0; i < actor.items.Count; i++) {
-                if(actor.items[i].HasResourceAmount(RESOURCE.FOOD, 12)) {
+                if(actor.items[i].resourceStorageComponent.HasResourceAmount(RESOURCE.FOOD, 12)) {
                     return true;
                 }
             }

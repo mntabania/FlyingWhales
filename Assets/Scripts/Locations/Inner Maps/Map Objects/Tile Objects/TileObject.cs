@@ -23,11 +23,8 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     public List<INTERACTION_TYPE> advertisedActions { get; protected set; }
     public Region currentRegion => gridTileLocation.structure.region;
     public LocationStructure structureLocation => gridTileLocation?.structure;
-
-    public BaseSettlement parentSettlement; //NOTE: This is only used in Fishing Spot, Ore Vein, Rock and Tree Object //TODO: either use this in all TileObjects or refactor
     public bool isPreplaced { get; private set; }
     public bool isStoredAsTarget { get; private set; }
-
     /// <summary>
     /// All currently in progress jobs targeting this.
     /// </summary>
@@ -48,21 +45,22 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     private Character[] _users;
     private GameObject slotsParent;
     protected bool hasCreatedSlots;
+    
+    //resources
+    // public Dictionary<RESOURCE, int> storedResources { get; private set; }
+    // protected Dictionary<RESOURCE, int> maxResourceValues { get; set; }
+    // public Dictionary<CONCRETE_RESOURCES, int> specificStoredResources { get; private set; }
+    public ResourceStorageComponent resourceStorageComponent { get; }
 
     public virtual LocationGridTile gridTileLocation { get; protected set; }
     public POI_STATE state { get; private set; }
     public LocationGridTile previousTile { get; private set; }
-    public Dictionary<RESOURCE, int> storedResources { get; private set; }
-    protected Dictionary<RESOURCE, int> maxResourceValues { get; set; }
     public List<PLAYER_SKILL_TYPE> actions { get; protected set; }
     public int repairCounter { get; protected set; } //If greater than zero, this tile object cannot be repaired
     public int numOfActionsBeingPerformedOnThis { get; private set; } //this is increased, when the action of another character stops this characters movement
     public ILocationAwareness currentLocationAwareness { get; private set; }
-    //public bool isInPendingAwarenessList { get; private set; }
     public bool isDamageContributorToStructure { get; private set; }
-    private bool hasSubscribedToListeners;
-    public virtual StructureConnector structureConnector { get; protected set; }
-    
+
     //Components
     public LogComponent logComponent { get; protected set; }
     public TileObjectHiddenComponent hiddenComponent { get; private set; }
@@ -111,7 +109,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     }
     #endregion
 
-    public TileObject() {
+    protected TileObject() {
         allJobsTargetingThis = new List<JobQueueItem>();
         allExistingJobsTargetingThis = new List<JobQueueItem>();
         charactersThatAlreadyAssumed = new List<Character>();
@@ -119,14 +117,16 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         hiddenComponent = new TileObjectHiddenComponent(); hiddenComponent.SetOwner(this);
         eventDispatcher = new TileObjectEventDispatcher();
         bookmarkEventDispatcher = new BookmarkableEventDispatcher();
+        resourceStorageComponent = new ResourceStorageComponent();
     }
-    public TileObject(SaveDataTileObject data) {
+    protected TileObject(SaveDataTileObject data) {
         allJobsTargetingThis = new List<JobQueueItem>();
         allExistingJobsTargetingThis = new List<JobQueueItem>();
         charactersThatAlreadyAssumed = new List<Character>();
         advertisedActions = new List<INTERACTION_TYPE>(data.advertisedActions);
         eventDispatcher = new TileObjectEventDispatcher();
         bookmarkEventDispatcher = new BookmarkableEventDispatcher();
+        resourceStorageComponent = data.resourceStorageComponent.Load();
     }
 
 
@@ -140,7 +140,6 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         currentHP = maxHP;
         CreateTraitContainer();
         traitContainer.AddTrait(this, "Flammable");
-        ConstructResources();
         if (shouldAddCommonAdvertisements) {
             AddCommonAdvertisements();
         }
@@ -153,7 +152,6 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         id = UtilityScripts.Utilities.SetID(this, data.id);
         tileObjectType = data.tileObjectType;
         name = data.name;
-        
         hasCreatedSlots = false;
         maxHP = TileObjectDB.GetTileObjectData(tileObjectType).maxHP;
         currentHP = data.currentHP;
@@ -162,16 +160,14 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         isStoredAsTarget = data.isStoredAsTarget;
         SetPOIState(data.poiState);
         CreateTraitContainer();
-        LoadResources(data);
         ConstructDefaultActions();
         logComponent = data.logComponent.Load(); logComponent.SetOwner(this);
         hiddenComponent = data.hiddenComponent.Load(); hiddenComponent.SetOwner(this);
         DatabaseManager.Instance.tileObjectDatabase.RegisterTileObject(this);
         SubscribeListeners();
     }
-
-    public virtual void UpdateSettlementResourcesParent() { }
-    public virtual void RemoveFromSettlementResourcesParent() { }
+    protected virtual void UpdateSettlementResourcesParent() { }
+    protected virtual void RemoveFromSettlementResourcesParent() { }
 
     #region Loading
     /// <summary>
@@ -775,7 +771,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     }
 #endregion
 
-#region Traits
+    #region Traits
     public ITraitContainer traitContainer { get; private set; }
     public TraitProcessor traitProcessor => TraitManager.tileObjectTraitProcessor;
     public void CreateTraitContainer() {
@@ -787,9 +783,9 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     protected void ProcessTraitsOnTickStarted() {
         traitContainer.ProcessOnTickStarted(this);
     }
-#endregion
+    #endregion
 
-#region GOAP
+    #region GOAP
     /// <summary>
     /// Does this tile object advertise a given action type.
     /// </summary>
@@ -819,9 +815,9 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         }
         return true;
     }
-#endregion
+    #endregion
 
-#region Tile Object Slots
+    #region Tile Object Slots
     protected virtual void OnPlaceTileObjectAtTile(LocationGridTile tile) {
         if (hasCreatedSlots) {
             RepositionTileSlots(tile);
@@ -934,10 +930,10 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
             CreateTileObjectSlots();
         }
     }
-#endregion
+    #endregion
 
-#region Users
-    public virtual bool AddUser(Character newUser) {
+    #region Users
+    protected virtual bool AddUser(Character newUser) {
         if (newUser != null && users.Contains(newUser)) {
             return true;
         }
@@ -996,9 +992,9 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         }
         return _users;
     }
-#endregion
+    #endregion
 
-#region Utilities
+    #region Utilities
     public void DoCleanup() {
         traitContainer?.RemoveAllTraitsAndStatuses(this);
     }
@@ -1207,9 +1203,9 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         }
         return worldPosition;
     }
-#endregion
+    #endregion
 
-#region Inspect
+    #region Inspect
     public virtual void OnInspect(Character inspector) { //, out Log log
         //if (LocalizationManager.Instance.HasLocalizedValue("TileObject", this.GetType().ToString(), "on_inspect")) {
         //    log = GameManager.CreateNewLog(GameManager.Instance.Today(), "TileObject", this.GetType().ToString(), "on_inspect");
@@ -1218,9 +1214,9 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         //}
         
     }
-#endregion
+    #endregion
 
-#region Map Object
+    #region Map Object
     protected override void CreateMapObjectVisual() {
         GameObject obj = InnerMapManager.Instance.mapObjectFactory.CreateNewTileObjectMapVisual(tileObjectType);
         mapVisual = obj.GetComponent<TileObjectGameObject>();
@@ -1286,64 +1282,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
 #endif
         }
     }
-#endregion
-
-#region Resources
-    public void ConstructResources() {
-        storedResources = new Dictionary<RESOURCE, int>() {
-            { RESOURCE.FOOD, 0 },
-            { RESOURCE.WOOD, 0 },
-            { RESOURCE.STONE, 0 },
-            { RESOURCE.METAL, 0 },
-        };
-        ConstructMaxResources();
-    }
-    public void LoadResources(SaveDataTileObject saveDataTileObject) {
-        // storedResources = saveDataTileObject.storedResources;
-        Assert.IsTrue(saveDataTileObject.resourceValues.Length == 4, $"Resource values in {this} save data is inconsistent with actual resource dictionary");
-        storedResources = new Dictionary<RESOURCE, int>() {
-            { RESOURCE.FOOD, saveDataTileObject.resourceValues[0] },
-            { RESOURCE.WOOD, saveDataTileObject.resourceValues[1] },
-            { RESOURCE.STONE, saveDataTileObject.resourceValues[2] },
-            { RESOURCE.METAL, saveDataTileObject.resourceValues[3] },
-        };
-        ConstructMaxResources();
-    }
-    protected virtual void ConstructMaxResources() {
-        maxResourceValues = new Dictionary<RESOURCE, int>();
-        RESOURCE[] resourceTypes = CollectionUtilities.GetEnumValues<RESOURCE>();
-        for (int i = 0; i < resourceTypes.Length; i++) {
-            RESOURCE resourceType = resourceTypes[i];
-            maxResourceValues.Add(resourceType, 1000);
-        }
-    }
-    public void SetResource(RESOURCE resourceType, int amount) {
-        storedResources[resourceType] = amount;
-        storedResources[resourceType] = Mathf.Max(storedResources[resourceType], 0);
-    }
-    public void AdjustResource(RESOURCE resourceType, int amount) {
-        storedResources[resourceType] += amount;
-        storedResources[resourceType] = Mathf.Max(storedResources[resourceType], 0);
-    }
-    public void ClearAllResources() {
-        foreach (var kvp in storedResources) {
-            storedResources[kvp.Key] = 0;
-        }
-    }
-    public bool HasResourceAmount(RESOURCE resourceType, int amount) {
-        return storedResources[resourceType] >= amount;
-    }
-    public bool IsAtMaxResource(RESOURCE resource) {
-        return storedResources[resource] >= maxResourceValues[resource];
-    }
-    public int GetMaxResourceValue(RESOURCE resource) {
-        return maxResourceValues[resource];
-    }
-    public bool HasEnoughSpaceFor(RESOURCE resource, int amount) {
-        int newAmount = storedResources[resource] + amount;
-        return newAmount <= maxResourceValues[resource];
-    }
-#endregion
+    #endregion
 
     public override string ToString() {
         return $"{name} {id.ToString()}";

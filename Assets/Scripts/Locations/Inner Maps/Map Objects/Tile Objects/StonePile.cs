@@ -4,7 +4,7 @@ using System.Linq;
 using UnityEngine;
 
 public class StonePile : ResourcePile {
-
+    public override CONCRETE_RESOURCES specificProvidedResource => CONCRETE_RESOURCES.Stone;
     public StonePile() : base(RESOURCE.STONE) {
         Initialize(TILE_OBJECT_TYPE.STONE_PILE, false);
         SetResourceInPile(100);

@@ -56,7 +56,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public List<TileObject> ownedItems { get; private set; }
     public List<JobQueueItem> allJobsTargetingThis { get; private set; }
     public List<Trait> traitsNeededToBeRemoved { get; private set; }
-    public Dictionary<RESOURCE, int> storedResources { get; protected set; }
     public bool hasUnresolvedCrime { get; protected set; }
     public bool isConversing { get; protected set; }
     public bool isInLimbo { get; protected set; }
@@ -125,6 +124,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     //public BuffStatsBonus buffStatsBonus { get; private set; }
     public EquipmentComponent equipmentComponent { get; private set; }
     public CharacterMoneyComponent moneyComponent { get; private set; }
+    public ResourceStorageComponent resourceStorageComponent { get; private set; }
 
     //IMPORTANT: This component is not applicable to all characters, only VILLAGERS! So, this can be null if the character is NOT A VILLAGER.
     public CharacterTalentComponent talentComponent { get; private set; }
@@ -301,7 +301,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         forcedCancelJobsOnTickEnded = new List<JobQueueItem>();
         interestedItemNames = new List<string>();
         SetPOIState(POI_STATE.ACTIVE);
-        ConstructResources();
 
         jobQueue = new JobQueue(this);
         trapStructure = new TrapStructure();
@@ -339,6 +338,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         //buffStatsBonus = new BuffStatsBonus();
         equipmentComponent = new EquipmentComponent();
         needsComponent.ResetSleepTicks();
+        resourceStorageComponent = new ResourceStorageComponent();
     }
     public Character(SaveDataCharacter data) {
         skillCauseOfDeath = PLAYER_SKILL_TYPE.NONE;
@@ -371,7 +371,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         advertisedActions = new List<INTERACTION_TYPE>(data.advertisedActions);
         canCombat = data.canCombat;
         deathStr = data.deathStr;
-        storedResources = new Dictionary<RESOURCE, int>(data.storedResources);
         hasUnresolvedCrime = data.hasUnresolvedCrime;
         isInLimbo = data.isInLimbo;
         isLimboCharacter = data.isLimboCharacter;
@@ -426,6 +425,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         //buffStatsBonus = data.buffStatusBonus.Load();
         eventDispatcher = new CharacterEventDispatcher();
         bookmarkEventDispatcher = new BookmarkableEventDispatcher();
+        resourceStorageComponent = data.resourceStorageComponent.Load();
 
         if (data.hasMinion) {
             _minion = data.minion.Load(this);
@@ -2707,7 +2707,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         amount = processedAmount;
         if ((amount < 0 && (ignoreIndestructibleTrait || CanBeDamaged())) || amount > 0) {
             if (hasMarker) {
-                marker.ShowHealthAdjustmentEffect(amount);
+                marker.ShowHealthAdjustmentEffect(amount, combatComponent.damageDone);
             }
             //only added checking here because even if objects cannot be damaged,
             //they should still be able to react to the elements
@@ -4415,7 +4415,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
 #if DEBUG_LOG
             if (plan.startingNode != null && plan.startingNode.singleNode != null && plan.startingNode.singleNode.actor != this) {
                 Debug.LogError($"{name} has a finished job from another character {currentTopPrioJob.jobType.ToString()} {currentTopPrioJob.ToString()} of {plan.startingNode.singleNode.actor?.name}");
-                jobQueue.RemoveJobInQueue(currentTopPrioJob, false, string.Empty);
+                // jobQueue.RemoveJobInQueue(currentTopPrioJob, false, string.Empty);
                 return;
             }
 #endif
@@ -5126,33 +5126,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         //}
         //Messenger.Broadcast(Signals.ON_UNSEIZE_CHARACTER, this);
     }
-#endregion
+    #endregion
 
-#region Resources
-    public void ConstructResources() {
-        storedResources = new Dictionary<RESOURCE, int>() {
-            { RESOURCE.FOOD, 0 },
-            { RESOURCE.WOOD, 0 },
-            { RESOURCE.STONE, 0 },
-            { RESOURCE.METAL, 0 },
-        };
-    }
-    public void SetResource(RESOURCE resourceType, int amount) {
-        int currentAmount = storedResources[resourceType];
-        storedResources[resourceType] = amount;
-        storedResources[resourceType] = Mathf.Max(0, currentAmount);
-    }
-    public void AdjustResource(RESOURCE resourceType, int amount) {
-        int currentAmount = storedResources[resourceType];
-        storedResources[resourceType] += amount;
-        storedResources[resourceType] = Mathf.Max(0, currentAmount);
-    }
-    public bool HasResourceAmount(RESOURCE resourceType, int amount) {
-        return storedResources[resourceType] >= amount;
-    }
-#endregion
-
-#region Hostility
+    #region Hostility
     /// <summary>
     /// Function to encapsulate, whether or not this character treats another character as hostile.
     /// </summary>
@@ -5255,9 +5231,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
         return true;
     }
-#endregion
+    #endregion
 
-#region Pathfinding
+    #region Pathfinding
     public void PopulateTilesInRadius(List<LocationGridTile> tiles, int radius, int radiusLimit = 0, bool includeCenterTile = false, bool includeTilesInDifferentStructure = false) {
         if(currentRegion == null) { return; }
         int mapSizeX = currentRegion.innerMap.map.GetUpperBound(0);
@@ -5289,7 +5265,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             }
         }
     }
-#endregion
+    #endregion
 
     //#region States
     //private void OnCharacterStartedState(Character characterThatStartedState, CharacterState state) {

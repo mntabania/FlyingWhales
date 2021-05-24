@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
@@ -13,6 +14,7 @@ using UnityEngine;
 using UnityEngine.Assertions;
 using UtilityScripts;
 using Debug = UnityEngine.Debug;
+using Random = System.Random;
 
 public class TileFeatureGeneration : MapGenerationComponent {
 
@@ -54,9 +56,6 @@ public class TileFeatureGeneration : MapGenerationComponent {
 			stopwatch.Stop();
 			AddLog($"TryAssignSettlementTiles took {stopwatch.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)} seconds to complete.");
 		}
-		
-#if DEBUG_LOG
-#endif
 	}
 	private void GenerateFeaturesForAllTiles(MapGenerationData data) {
 		// Stopwatch stopwatch = new Stopwatch();
@@ -188,7 +187,7 @@ public class TileFeatureGeneration : MapGenerationComponent {
 					if (!alreadyReservedAreas.Contains(currentAreaBeingChecked)) {
 						if (currentAreaBeingChecked.elevationComponent.elevationType == ELEVATION.PLAIN) {
 							//if the tile has at least 8 Tree Spots, tag it as Wood Source
-							if (currentAreaBeingChecked.tileObjectComponent.GetNumberOfTileObjectsInHexTile(TILE_OBJECT_TYPE.TREE_OBJECT, TILE_OBJECT_TYPE.BIG_TREE_OBJECT) >= 8) {
+							if (currentAreaBeingChecked.tileObjectComponent.GetNumberOfTileObjectsInHexTile(TILE_OBJECT_TYPE.TREE_OBJECT, TILE_OBJECT_TYPE.BIG_TREE_OBJECT, p_data) >= 8) {
 								currentAreaBeingChecked.featureComponent.AddFeature(AreaFeatureDB.Wood_Source_Feature, currentAreaBeingChecked);
 							}
 							connectedPlainAreas.Add(currentAreaBeingChecked);
@@ -262,6 +261,7 @@ public class TileFeatureGeneration : MapGenerationComponent {
 					unreservedAreas.ListRemoveRange(connectedPlainAreas);
 					unreservedAreas.ListRemoveRange(waterAreas);
 					unreservedAreas.ListRemoveRange(caveAreas);
+					AdditionalResourceCreationForVillageSpots(villageSpot, p_data);
 				}
 				RuinarchListPool<Area>.Release(areasToCheck);
 				RuinarchListPool<Area>.Release(checkedAreas);
@@ -288,7 +288,10 @@ public class TileFeatureGeneration : MapGenerationComponent {
 			if (!currentAreaBeingChecked.tileObjectComponent.HasTileObjectOfTypeInHexTile(TILE_OBJECT_TYPE.ORE_VEIN)) {
 				//add a Ore Vein to a random cave tile inside area.
 				LocationGridTile oreVeinLocation = p_data.GetFirstUnoccupiedNonEdgeCaveTile(currentAreaBeingChecked);
-				currentAreaBeingChecked.region.innerMap.CreateOreVein(oreVeinLocation);
+				if (oreVeinLocation != null) {
+					currentAreaBeingChecked.region.innerMap.CreateOreVein(oreVeinLocation);
+					p_data.SetGeneratedMapPerlinDetails(oreVeinLocation, TILE_OBJECT_TYPE.NONE);	
+				}
 			}
 		}
 	}
@@ -310,6 +313,42 @@ public class TileFeatureGeneration : MapGenerationComponent {
 			}
 		}
 		return false;
+	}
+	private void AdditionalResourceCreationForVillageSpots(VillageSpot p_villageSpot, MapGenerationData p_data) {
+		int randomResourceCount = UnityEngine.Random.Range(1, 4);
+		List<Area> areaChoices = RuinarchListPool<Area>.Claim();
+		areaChoices.AddRange(p_villageSpot.reservedAreas);
+		areaChoices.Remove(p_villageSpot.mainSpot);
+
+		List<TILE_OBJECT_TYPE> randomResourceChoices = RuinarchListPool<TILE_OBJECT_TYPE>.Claim();
+		randomResourceChoices.Add(TILE_OBJECT_TYPE.BOAR_DEN);
+		randomResourceChoices.Add(TILE_OBJECT_TYPE.WOLF_DEN);
+		randomResourceChoices.Add(TILE_OBJECT_TYPE.BEAR_DEN);
+		randomResourceChoices.Add(TILE_OBJECT_TYPE.RABBIT_HOLE);
+		randomResourceChoices.Add(TILE_OBJECT_TYPE.SHEEP_SPAWNING_SPOT);
+		randomResourceChoices.Add(TILE_OBJECT_TYPE.MINK_HOLE);
+		randomResourceChoices.Add(TILE_OBJECT_TYPE.MOONCRAWLER_HOLE);
+		
+		if (areaChoices.Count > 0) {
+			for (int i = 0; i < randomResourceCount; i++) {
+				TILE_OBJECT_TYPE randomType = CollectionUtilities.GetRandomElement(randomResourceChoices);
+				Area randomArea = CollectionUtilities.GetRandomElement(areaChoices);
+				List<LocationGridTile> unoccupiedTiles = RuinarchListPool<LocationGridTile>.Claim();
+				for (int j = 0; j < randomArea.gridTileComponent.gridTiles.Count; j++) {
+					LocationGridTile tile = randomArea.gridTileComponent.gridTiles[j];
+					if (tile.tileObjectComponent.objHere == null && tile.IsPassable()) {
+						unoccupiedTiles.Add(tile);
+					}
+				}
+				if (unoccupiedTiles.Count > 0) {
+					LocationGridTile randomLocation = CollectionUtilities.GetRandomElement(unoccupiedTiles);
+					TileObject tileObject = InnerMapManager.Instance.CreateNewTileObject<TileObject>(randomType);
+					randomLocation.structure.AddPOI(tileObject, randomLocation);
+					Debug.Log($"Added animal den - {randomType.ToString()} to {randomLocation.ToString()}");
+				}
+				RuinarchListPool<LocationGridTile>.Release(unoccupiedTiles);
+			}	
+		}
 	}
 	private bool TryAssignSettlementTiles(MapGenerationData data) {
 		int createdVillages = 0;
@@ -350,9 +389,9 @@ public class TileFeatureGeneration : MapGenerationComponent {
 		}
 		return createdVillages == startingVillagesToCreate;
 	}
-#endregion
+	#endregion
 
-#region Settlement Generation Utilities
+	#region Settlement Generation Utilities
 	private List<Area> GetNeighbouringTiles(List<Area> tiles) {
 		List<Area> neighbouringTiles = new List<Area>();
 		for (int i = 0; i < tiles.Count; i++) {
@@ -366,9 +405,9 @@ public class TileFeatureGeneration : MapGenerationComponent {
 		}
 		return neighbouringTiles;
 	}
-#endregion
+	#endregion
 
-#region Scenario Maps
+	#region Scenario Maps
 	public override IEnumerator LoadScenarioData(MapGenerationData data, ScenarioMapData scenarioMapData) {
 		SaveDataArea[,] savedMap = scenarioMapData.worldMapSave.GetSaveDataMap();
 		for (int x = 0; x < data.width; x++) {
@@ -385,6 +424,14 @@ public class TileFeatureGeneration : MapGenerationComponent {
 				yield return null;
 			}
 		}
+		List<VillageSpot> villageSpots = RuinarchListPool<VillageSpot>.Claim();
+		for (int i = 0; i < scenarioMapData.worldMapSave.villageSpots.Count; i++) {
+			SaveDataVillageSpot saveDataVillageSpot = scenarioMapData.worldMapSave.villageSpots[i];
+			VillageSpot villageSpot = saveDataVillageSpot.Load();
+			villageSpots.Add(villageSpot);
+		}
+		GridMap.Instance.mainRegion.SetVillageSpots(villageSpots);
+		RuinarchListPool<VillageSpot>.Release(villageSpots);
 	}
 	private void DetermineSettlementsForTutorial() {
 		List<Area> chosenTiles = new List<Area> {
@@ -400,7 +447,7 @@ public class TileFeatureGeneration : MapGenerationComponent {
 			chosenTile.featureComponent.AddFeature(AreaFeatureDB.Inhabited_Feature, chosenTile);
 		}
 		
-		List<Area> neighbouringTiles = GetNeighbouringTiles(chosenTiles);
+		// List<Area> neighbouringTiles = GetNeighbouringTiles(chosenTiles);
 		//if settlement is not adjacent to any water hex tile create one
 		// if (neighbouringTiles.Any(h => h.elevationType == ELEVATION.WATER) == false) {
 		// 	Area randomTile = CollectionUtilities.GetRandomElement(neighbouringTiles);
@@ -564,9 +611,9 @@ public class TileFeatureGeneration : MapGenerationComponent {
 			}
 		}
 	}
-#endregion
+	#endregion
 	
-#region Saved World
+	#region Saved World
 	public override IEnumerator LoadSavedData(MapGenerationData data, SaveDataCurrentProgress saveData) {
 		SaveDataArea[,] savedMap = saveData.worldMapSave.GetSaveDataMap();
 		for (int x = 0; x < data.width; x++) {
@@ -584,5 +631,5 @@ public class TileFeatureGeneration : MapGenerationComponent {
 			}
 		}
 	}
-#endregion
+	#endregion
 }

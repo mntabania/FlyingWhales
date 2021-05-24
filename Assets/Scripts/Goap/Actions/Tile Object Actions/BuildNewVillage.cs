@@ -75,7 +75,11 @@ public class BuildNewVillage : GoapAction {
                     LandmarkManager.Instance.OwnSettlement(goapNode.actor.faction, settlement);
                 }
 
-                settlement.AddAreaToSettlement(genericTileObject.gridTileLocation.area);
+                Area area = genericTileObject.gridTileLocation.area;
+                settlement.AddAreaToSettlement(area);
+                VillageSpot villageSpot = goapNode.actor.currentRegion.GetVillageSpotOnArea(area);
+                Assert.IsNotNull(villageSpot, $"New village {settlement} founded by {goapNode.actor.name} is being placed on area without a village spot! Area is {area}");
+                settlement.SetOccupiedVillageSpot(villageSpot);
                 
                 List<LocationStructure> createdStructures = new List<LocationStructure>();
                 createdStructures.Add(LandmarkManager.Instance.PlaceIndividualBuiltStructureForSettlement(settlement, goapNode.actor.currentRegion.innerMap, genericTileObject.gridTileLocation, prefabName));

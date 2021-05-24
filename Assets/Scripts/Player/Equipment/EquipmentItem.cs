@@ -25,7 +25,6 @@ public class EquipmentItem : TileObject {
         }
 
     }
-
     public void MakeQualityHigh() {
         maxHP += (int)(maxHP * 0.5f);
         additionalQualityBonusPercentage = 25;

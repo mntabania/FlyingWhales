@@ -700,7 +700,11 @@ public class CharacterManager : BaseMonoBehaviour {
                         break;
                 }
             } else {
-                tileObjectType = poi is Crops ? TILE_OBJECT_TYPE.VEGETABLES : TILE_OBJECT_TYPE.ANIMAL_MEAT;
+                if (poi is Crops crops) {
+                    tileObjectType = crops.producedObjectOnHarvest;
+                } else {
+                    tileObjectType = TILE_OBJECT_TYPE.ANIMAL_MEAT;
+                }
             }
 
             if(poi != null) {

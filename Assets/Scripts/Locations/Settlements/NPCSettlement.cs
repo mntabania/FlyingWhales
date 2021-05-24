@@ -6,6 +6,7 @@ using Databases;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
 using Locations;
+using Locations.Area_Features;
 using Locations.Settlements;
 using Locations.Settlements.Components;
 using Locations.Settlements.Settlement_Types;
@@ -28,16 +29,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
     public bool isPlagued { get; private set; }
     public bool hasTriedToStealCorpse { get; private set; }
     public LocationStructure exterminateTargetStructure { get; private set; }
-
-    private SettlementResources m_settlementResources;
-    public override SettlementResources SettlementResources {
-        get {
-            if (m_settlementResources == null) {
-                m_settlementResources = new SettlementResources();
-            }
-            return m_settlementResources;
-        }
-    }
+    public override SettlementResources SettlementResources => m_settlementResources ?? (m_settlementResources = new SettlementResources());
 
     //structures
     public List<JobQueueItem> availableJobs { get; }
@@ -50,6 +42,12 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
     public NPCSettlementEventDispatcher npcSettlementEventDispatcher { get; }
     public bool hasPeasants { get; private set; }
     public bool hasWorkers { get; private set; }
+    /// <summary>
+    /// What village spot does this village occupy?
+    /// Note: At the time of making, this variable is only set once and is never cleared since Villages City Center cannot be destroyed.
+    /// Note: This value is only set on VILLAGE type settlements.
+    /// </summary>
+    public VillageSpot occupiedVillageSpot { get; private set; }
 
     //Components
     public SettlementVillageMigrationComponent migrationComponent { get; private set; }
@@ -59,6 +57,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
     private int newRulerDesignationChance;
     private string _plaguedExpiryKey;
     private readonly List<TILE_OBJECT_TYPE> _neededObjects;
+    private SettlementResources m_settlementResources;
 
     #region getters
     public override Type serializedData => typeof(SaveDataNPCSettlement);
@@ -151,6 +150,12 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
             //    }    
             //}
             migrationComponent.LoadReferences(saveDataNpcSettlement);
+            if (saveDataNpcSettlement.hasOccupiedVillageSpot) {
+                Area area = GameUtilities.GetHexTileGivenCoordinates(saveDataNpcSettlement.occupiedVillageSpot, GridMap.Instance.map);
+                Assert.IsNotNull(area, $"{name}'s save data has occupied village spot but no area is at {saveDataNpcSettlement.occupiedVillageSpot.ToString()}");
+                occupiedVillageSpot = region.GetVillageSpotOnArea(area);
+                Assert.IsNotNull(occupiedVillageSpot, $"{name}'s save data has occupied village spot but no village spot could be found on {area}");
+            }
         }
     }
     private void LoadJobs(SaveDataNPCSettlement data) {
@@ -395,9 +400,9 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         Profiler.EndSample();
 #endif
     }
-#endregion
+    #endregion
 
-#region Tiles
+    #region Tiles
     public override bool RemoveAreaFromSettlement(Area area) {
         if (base.RemoveAreaFromSettlement(area)) {
             npcSettlementEventDispatcher.ExecuteTileRemovedEvent(area, this);
@@ -405,9 +410,9 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         }
         return false;
     }
-#endregion
+    #endregion
 
-#region Characters
+    #region Characters
     public int GetNumberOfUnoccupiedStructure(STRUCTURE_TYPE structureType) {
         if (PlayerManager.Instance.player != null && PlayerManager.Instance.player.playerSettlement.id == id) {
             return 0;
@@ -870,9 +875,9 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         }
         return true;
     }
-#endregion
+    #endregion
 
-#region Tile Objects
+    #region Tile Objects
     public void OnItemAddedToLocation(TileObject item, LocationStructure structure) {
         CheckIfInventoryJobsAreStillValid(item, structure);
         settlementJobTriggerComponent.OnItemAddedToStructure(item, structure);
@@ -917,9 +922,9 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
             // }
         }
     }
-#endregion
+    #endregion
 
-#region Structures
+    #region Structures
     protected override void OnStructureAdded(LocationStructure structure) {
         base.OnStructureAdded(structure);
         if(cityCenter == null && structure.structureType == STRUCTURE_TYPE.CITY_CENTER) {
@@ -1017,7 +1022,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         return count;
     }
     public bool HasFoodProducingStructure() {
-        return HasStructure(STRUCTURE_TYPE.HUNTER_LODGE) || HasStructure(STRUCTURE_TYPE.FARM) || HasStructure(STRUCTURE_TYPE.FISHING_SHACK);
+        return HasStructure(STRUCTURE_TYPE.HUNTER_LODGE) || HasStructure(STRUCTURE_TYPE.FARM) || HasStructure(STRUCTURE_TYPE.FISHERY);
     }
     public StructureSetting GetValidFoodProducingStructure() {
         Assert.IsNotNull(owner);
@@ -1025,7 +1030,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         PopulateSurroundingAreas(surroundingAreas);
         WeightedDictionary<StructureSetting> choices = new WeightedDictionary<StructureSetting>();
         if (surroundingAreas.Count(t => t.elevationType == ELEVATION.WATER) > 0) {
-            choices.AddElement(new StructureSetting(STRUCTURE_TYPE.FISHING_SHACK, owner.factionType.mainResource), 100);
+            choices.AddElement(new StructureSetting(STRUCTURE_TYPE.FISHERY, owner.factionType.mainResource), 100);
         }
         if (HasAvailableStructureConnectorsBasedOnGameFeature()) {
             choices.AddElement(new StructureSetting(STRUCTURE_TYPE.HUNTER_LODGE, owner.factionType.mainResource), 20);    
@@ -1034,9 +1039,156 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         ObjectPoolManager.Instance.ReturnAreaListToPool(surroundingAreas);
         return choices.PickRandomElementGivenWeights();
     }
-#endregion
+    public void PopulateStructureConnectorsForStructureType(List<StructureConnector> p_connectors, STRUCTURE_TYPE p_structureType) {
+        switch (p_structureType) {
+            case STRUCTURE_TYPE.FISHERY:
+                PopulateAvailableFishingSpotConnectors(p_connectors);
+                break;
+            case STRUCTURE_TYPE.QUARRY:
+                PopulateAvailableRockConnectors(p_connectors);
+                break;
+            case STRUCTURE_TYPE.LUMBERYARD:
+                PopulateAvailableTreeConnectors(p_connectors);
+                break;
+            case STRUCTURE_TYPE.HUNTER_LODGE:
+                PopulateAvailableStructureConnectorsBasedOnGameFeature(p_connectors);
+                break;
+            case STRUCTURE_TYPE.MINE:
+                PopulateAvailableOreVeinConnectors(p_connectors);
+                break;
+            default:
+                PopulateAvailableStructureConnectors(p_connectors);
+                break;
+        } 
+    }
+    private void PopulateAvailableStructureConnectors(List<StructureConnector> connectors) {
+        for (int i = 0; i < allStructures.Count; i++) {
+            LocationStructure structure = allStructures[i];
+            if (structure is ManMadeStructure manMadeStructure && manMadeStructure.structureObj != null) {
+                for (int j = 0; j < manMadeStructure.structureObj.connectors.Length; j++) {
+                    StructureConnector connector = manMadeStructure.structureObj.connectors[j];
+                    if (connector.isOpen) {
+                        connectors.Add(connector);    
+                    }
+                }
+            }
+        }
+    }
+    private void PopulateAvailableStructureConnectorsBasedOnGameFeature(List<StructureConnector> connectors) {
+        for (int i = 0; i < allStructures.Count; i++) {
+            LocationStructure structure = allStructures[i];
+            if (structure is ManMadeStructure manMadeStructure && manMadeStructure.structureObj != null) {
+                for (int j = 0; j < manMadeStructure.structureObj.connectors.Length; j++) {
+                    StructureConnector connector = manMadeStructure.structureObj.connectors[j];
+                    if (connector.isOpen) {
+                        if (connector.tileLocation != null &&
+                            (connector.tileLocation.area.featureComponent.HasFeature(AreaFeatureDB.Game_Feature) || 
+                             connector.tileLocation.area.neighbourComponent.HasNeighbourWithFeature(AreaFeatureDB.Game_Feature))) {
+                            connectors.Add(connector);    
+                        }
+                    }
+                }
+            }
+        }
+    }
+    private bool HasAvailableStructureConnectorsBasedOnGameFeature() {
+        for (int i = 0; i < allStructures.Count; i++) {
+            LocationStructure structure = allStructures[i];
+            if (structure is ManMadeStructure manMadeStructure && manMadeStructure.structureObj != null) {
+                for (int j = 0; j < manMadeStructure.structureObj.connectors.Length; j++) {
+                    StructureConnector connector = manMadeStructure.structureObj.connectors[j];
+                    if (connector.isOpen) {
+                        if (connector.tileLocation != null && 
+                            (connector.tileLocation.area.featureComponent.HasFeature(AreaFeatureDB.Game_Feature) || 
+                             connector.tileLocation.area.neighbourComponent.HasNeighbourWithFeature(AreaFeatureDB.Game_Feature))) {
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+        return false;
+    }
+    private void PopulateAvailableRockConnectors(List<StructureConnector> connectors) {
+        for (int i = 0; i < SettlementResources.rocks.Count; i++) {
+            Rock rock = SettlementResources.rocks[i];
+            if (rock.structureConnector != null && rock.structureConnector.isOpen) {
+                connectors.Add(rock.structureConnector);
+            }
+        }
+    }
+    private void PopulateAvailableTreeConnectors(List<StructureConnector> connectors) {
+        for (int i = 0; i < SettlementResources.trees.Count; i++) {
+            TreeObject treeObject = SettlementResources.trees[i];
+            if (treeObject.structureConnector != null && treeObject.structureConnector.isOpen) {
+                connectors.Add(treeObject.structureConnector);
+            }
+        }
+        for (int i = 0; i < occupiedVillageSpot.reservedAreas.Count; i++) {
+            Area area = occupiedVillageSpot.reservedAreas[i];
+            for (int j = 0; j < area.tileObjectComponent.itemsInArea.Count; j++) {
+                TileObject tileObject = area.tileObjectComponent.itemsInArea[j];
+                if (tileObject is TreeObject treeObject) {
+                    if (treeObject.structureConnector != null && treeObject.structureConnector.isOpen && 
+                        !connectors.Contains(treeObject.structureConnector)) {
+                        connectors.Add(treeObject.structureConnector);
+                    }
+                }
+            }
+        }
+    }
+    private void PopulateAvailableFishingSpotConnectors(List<StructureConnector> connectors) {
+        for (int i = 0; i < SettlementResources.fishingSpots.Count; i++) {
+            FishingSpot fishingSpot = SettlementResources.fishingSpots[i];
+            if (fishingSpot.structureConnector != null && fishingSpot.structureConnector.isOpen) {
+                connectors.Add(fishingSpot.structureConnector);
+            }
+        }
+        for (int i = 0; i < occupiedVillageSpot.reservedAreas.Count; i++) {
+            Area area = occupiedVillageSpot.reservedAreas[i];
+            for (int j = 0; j < area.tileObjectComponent.itemsInArea.Count; j++) {
+                TileObject tileObject = area.tileObjectComponent.itemsInArea[j];
+                if (tileObject is FishingSpot fishingSpot) {
+                    if (fishingSpot.structureConnector != null && fishingSpot.structureConnector.isOpen && 
+                        !connectors.Contains(fishingSpot.structureConnector)) {
+                        connectors.Add(fishingSpot.structureConnector);
+                    }
+                }
+            }
+        }
+    }
+    private void PopulateAvailableOreVeinConnectors(List<StructureConnector> connectors) {
+        for (int i = 0; i < SettlementResources.oreVeins.Count; i++) {
+            OreVein oreVein = SettlementResources.oreVeins[i];
+            if (oreVein.structureConnector != null && oreVein.structureConnector.isOpen) {
+                connectors.Add(oreVein.structureConnector);
+            }
+        }
+        for (int i = 0; i < occupiedVillageSpot.reservedAreas.Count; i++) {
+            Area area = occupiedVillageSpot.reservedAreas[i];
+            for (int j = 0; j < area.tileObjectComponent.itemsInArea.Count; j++) {
+                TileObject tileObject = area.tileObjectComponent.itemsInArea[j];
+                if (tileObject is OreVein oreVein) {
+                    if (oreVein.structureConnector != null && oreVein.structureConnector.isOpen && 
+                        !connectors.Contains(oreVein.structureConnector)) {
+                        connectors.Add(oreVein.structureConnector);
+                    }
+                }
+            }
+        }
+    }
+    public bool HasReservedSpotWithFeature(string p_feature) {
+        for (int i = 0; i < occupiedVillageSpot.reservedAreas.Count; i++) {
+            Area area = occupiedVillageSpot.reservedAreas[i];
+            if (area.featureComponent.HasFeature(p_feature)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    #endregion
 
-#region Inner Map
+    #region Inner Map
     public IEnumerator PlaceInitialObjectsCoroutine() {
         PlaceResourcePiles();
         yield return null;
@@ -1052,10 +1204,6 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         StonePile stonePile = InnerMapManager.Instance.CreateNewTileObject<StonePile>(TILE_OBJECT_TYPE.STONE_PILE);
         mainStorage.AddPOI(stonePile);
         stonePile.SetResourceInPile(500);
-
-        MetalPile metalPile = InnerMapManager.Instance.CreateNewTileObject<MetalPile>(TILE_OBJECT_TYPE.METAL_PILE);
-        mainStorage.AddPOI(metalPile);
-        metalPile.SetResourceInPile(500);
 
         FoodPile foodPile = InnerMapManager.Instance.CreateNewTileObject<FoodPile>(TILE_OBJECT_TYPE.ANIMAL_MEAT);
         mainStorage.AddPOI(foodPile);
@@ -1116,9 +1264,9 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
     public void LoadMainStorage(LocationStructure mainStorage) {
         SetMainStorage(mainStorage);
     }
-#endregion
+    #endregion
 
-#region POI
+    #region POI
     public void PopulateTileObjectsFromStructures<T>(List<TileObject> objs, STRUCTURE_TYPE structureType) where T : TileObject {
         if (HasStructure(structureType)) {
             List<LocationStructure> structureList = structures[structureType];
@@ -1139,9 +1287,9 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         }
         return null;
     }
-#endregion
+    #endregion
 
-#region Jobs
+    #region Jobs
     public void AddToAvailableJobs(JobQueueItem job, int position = -1) {
         if (position == -1) {
             availableJobs.Add(job);
@@ -1649,9 +1797,9 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
             }
         }
     }
-#endregion
+    #endregion
 
-#region IJobOwner
+    #region IJobOwner
     public void OnJobAddedToCharacterJobQueue(JobQueueItem job, Character character) {
         //RemoveFromAvailableJobs(job);
     }
@@ -1679,9 +1827,9 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
             forcedCancelJobsOnTickEnded.Clear();
         }
     }
-#endregion
+    #endregion
 
-#region Faction
+    #region Faction
     public override void SetOwner(Faction p_newOwner) {
         Faction previousOwner = this.owner;
         base.SetOwner(p_newOwner);
@@ -1695,9 +1843,9 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         migrationComponent.ForceRandomizePerHourIncrement();
         npcSettlementEventDispatcher.ExecuteFactionOwnerChangedEvent(previousOwner, p_newOwner, this);
     }
-#endregion
+    #endregion
 
-#region Settlement Type
+    #region Settlement Type
     public void SetSettlementType(SETTLEMENT_TYPE type) {
         if (locationType == LOCATION_TYPE.VILLAGE) {
             //Only set settlement type for villages. Do not include Dungeons. NOTE: Might be better to separate villages and dungeons into their own classes.
@@ -1721,7 +1869,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         //     SetSettlementType(SETTLEMENT_TYPE.Default_Elf);
         // }
     }
-#endregion
+    #endregion
 
 #region Needed Items
     public void AddNeededItems(TILE_OBJECT_TYPE tileObjectType) {
@@ -1747,6 +1895,15 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         AddPlayerAction(PLAYER_SKILL_TYPE.INDUCE_MIGRATION);
         AddPlayerAction(PLAYER_SKILL_TYPE.STIFLE_MIGRATION);
         //AddPlayerAction(PLAYER_SKILL_TYPE.SCHEME);
+    }
+#endregion
+
+#region Village Spot
+    public void SetOccupiedVillageSpot(VillageSpot p_spot) {
+        occupiedVillageSpot = p_spot;
+    }
+    public void UnOccupyVillageSpot() {
+        occupiedVillageSpot = null;
     }
 #endregion
 

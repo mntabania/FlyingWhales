@@ -61,7 +61,7 @@ public class BedClinic : BaseBed, CharacterEventDispatcher.ITraitListener {
                 break;
         }
     }
-    public override bool AddUser(Character character) {
+    protected override bool AddUser(Character character) {
         if (base.AddUser(character)) {
             character.eventDispatcher.SubscribeToCharacterLostTrait(this);
             return true;

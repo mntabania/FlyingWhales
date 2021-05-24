@@ -31,7 +31,9 @@ public interface IPointOfInterest : ITraitable, ISelectable, ILogFiller {
     new LocationGridTile gridTileLocation { get; }
     //List<INTERACTION_TYPE> advertisedActions { get; }
     List<JobQueueItem> allJobsTargetingThis { get; }
-    Dictionary<RESOURCE, int> storedResources { get; }
+    ResourceStorageComponent resourceStorageComponent { get; }
+    // Dictionary<RESOURCE, int> storedResources { get; }
+    // Dictionary<CONCRETE_RESOURCES, int> specificStoredResources { get; }
 
 
     void SetGridTileLocation(LocationGridTile tile);
@@ -49,10 +51,11 @@ public interface IPointOfInterest : ITraitable, ISelectable, ILogFiller {
     void OnPlacePOI();
     void OnLoadPlacePOI();
     void OnDestroyPOI();
-    void ConstructResources();
-    void SetResource(RESOURCE resourceType, int amount);
-    void AdjustResource(RESOURCE resourceType, int amount);
-    bool HasResourceAmount(RESOURCE resourceType, int amount);
+    // void ConstructResources();
+    // void ConstructSpecificResourcesStorage();
+    // void SetResource(RESOURCE resourceType, int amount);
+    // void AdjustResource(RESOURCE resourceType, int amount);
+    // bool HasResourceAmount(RESOURCE resourceType, int amount);
     void OnSeizePOI();
     void OnUnseizePOI(LocationGridTile tileLocation);
     void CancelRemoveStatusFeedAndRepairJobsTargetingThis();

@@ -100,9 +100,24 @@ public class CombatComponent : CharacterComponent {
     }
     #endregion
 
+    public struct DamageDoneType {
+        public enum DamageType { Normal = 0, Crit }
+        public int amount;
+        public DamageType damageType;
+    }
+    public DamageDoneType damageDone;
+
     #region General
     public int GetAttackWithCritRateBonus() {
-        return attack * (GameUtilities.RandomBetweenTwoNumbers(0, 99) < critRate ? 2 : 1);
+        int multiplier = 1;
+        if(GameUtilities.RandomBetweenTwoNumbers(0, 99) < critRate) {
+            multiplier = 2;
+            damageDone.damageType = DamageDoneType.DamageType.Crit;
+        } else {
+            damageDone.damageType = DamageDoneType.DamageType.Normal;
+        }
+        damageDone.amount = attack * multiplier;
+        return attack * multiplier;
     }
     //public void OnThisCharacterEndedCombatState() {
     //    SetOnProcessCombatAction(null);

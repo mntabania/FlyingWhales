@@ -8,7 +8,6 @@ using Locations.Region_Features;
 using Locations.Settlements;
 using Logs;
 using PathFind;
-using SpriteGlow;
 using UnityEngine;
 using UtilityScripts;
 using Random = UnityEngine.Random;
@@ -898,7 +897,7 @@ public class Region : ISavable, ILogFiller {
     }
 #endregion
 
-    #region Village Spots
+#region Village Spots
     public void SetVillageSpots(List<VillageSpot> p_villageSpots) {
         villageSpots.Clear();
         villageSpots.AddRange(p_villageSpots);
@@ -912,7 +911,16 @@ public class Region : ISavable, ILogFiller {
         }
         return null;
     }
-    #endregion
+    public VillageSpot GetVillageSpotOnArea(Area p_area) {
+        for (int i = 0; i < villageSpots.Count; i++) {
+            VillageSpot villageSpot = villageSpots[i];
+            if (villageSpot.mainSpot == p_area) {
+                return villageSpot;
+            }
+        }
+        return null;
+    }
+#endregion
 
     public void CleanUp() {
         areas?.Clear();
@@ -932,27 +940,4 @@ public class Region : ISavable, ILogFiller {
         villageSpots = null;
     }
     
-}
-
-public class Border {
-    private SpriteRenderer borderSprite { get; }
-    private SpriteGlowEffect glowEffect { get; }
-
-    public Border(SpriteRenderer _borderSprite, SpriteGlowEffect _glowEffect) {
-        borderSprite = _borderSprite;
-        glowEffect = _glowEffect;
-        SetGlowState(false);
-    }
-    
-    public void SetBorderState(bool state) {
-        borderSprite.gameObject.SetActive(state);
-    }
-    public void SetGlowState(bool state) {
-        glowEffect.enabled = state;
-    }
-
-    public void SetColor(Color color) {
-        borderSprite.color = color;
-        glowEffect.GlowColor = color;
-    }
 }

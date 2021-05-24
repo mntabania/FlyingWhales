@@ -184,7 +184,7 @@ namespace UtilityScripts {
         }
         private static void PopulatePriorityLocationsForProduceFood(NPCSettlement settlement, GoapPlanJob job) {
             List<LocationStructure> farms = settlement.GetStructuresOfType(STRUCTURE_TYPE.FARM);
-            List<LocationStructure> fishingShacks = settlement.GetStructuresOfType(STRUCTURE_TYPE.FISHING_SHACK);
+            List<LocationStructure> fishingShacks = settlement.GetStructuresOfType(STRUCTURE_TYPE.FISHERY);
             List<LocationStructure> hunterLodge = settlement.GetStructuresOfType(STRUCTURE_TYPE.HUNTER_LODGE);
 
             if (farms != null) {
@@ -195,7 +195,7 @@ namespace UtilityScripts {
             }
             if (fishingShacks != null) {
                 for (int i = 0; i < fishingShacks.Count; i++) {
-                    FishingShack fishingShack = fishingShacks[i] as FishingShack;
+                    Fishery fishingShack = fishingShacks[i] as Fishery;
                     job.AddPriorityLocation(INTERACTION_TYPE.NONE, fishingShack.connectedOcean);
                     //needed to add areas of fishing spots, since oceans do not have location awareness added to them based on LocationAwarenessUtility.AddToAwarenessList
                     List<TileObject> fishingSpots = RuinarchListPool<TileObject>.Claim();
@@ -238,11 +238,11 @@ namespace UtilityScripts {
             }
         }
         private static void PopulatePriorityLocationsForProduceMetal(NPCSettlement settlement, GoapPlanJob job) {
-            List<LocationStructure> mineShacks = settlement.GetStructuresOfType(STRUCTURE_TYPE.MINE_SHACK);
+            List<LocationStructure> mineShacks = settlement.GetStructuresOfType(STRUCTURE_TYPE.MINE);
 
             if (mineShacks != null) {
                 for (int i = 0; i < mineShacks.Count; i++) {
-                    MineShack mineShack = mineShacks[i] as MineShack;
+                    Inner_Maps.Location_Structures.Mine mineShack = mineShacks[i] as Inner_Maps.Location_Structures.Mine;
                     job.AddPriorityLocation(INTERACTION_TYPE.NONE, mineShack.connectedCave);
                 }
             }
