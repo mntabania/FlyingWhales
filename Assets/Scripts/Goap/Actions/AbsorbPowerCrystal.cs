@@ -50,7 +50,7 @@ public class AbsorbPowerCrystal : GoapAction {
 
     #region State Effects
     public void PreAbsorbCrystalSuccess(ActualGoapNode goapNode) {
-        Character targetCharacter = goapNode.poiTarget as Character;
+        //Character targetCharacter = goapNode.poiTarget as Character;
         //goapNode.descriptionLog.AddToFillers(null, targetCharacter.name + "POWER CRYSTAL ABSORB", LOG_IDENTIFIER.STRING_1);
     }
     public void AfterAbsorbCrystalSuccess(ActualGoapNode goapNode) {
