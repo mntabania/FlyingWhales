@@ -732,6 +732,11 @@ public class ObjectPoolManager : MonoBehaviour {
     private GoapPlan CreateNewGoapPlan() {
         if (_goapPlanPool.Count > 0) {
             GoapPlan data = _goapPlanPool[0];
+#if DEBUG_LOG
+            if (data == null) {
+                Debug.LogError($"Goap Plan is null!");
+            }
+#endif
             _goapPlanPool.RemoveAt(0);
             return data;
         }
@@ -741,11 +746,17 @@ public class ObjectPoolManager : MonoBehaviour {
 #if DEBUG_LOG
         Debug.Log($"Returned plan to pool:\n {data.LogPlan()}");
 #endif
-        if (!_goapPlanPool.Contains(data)) {
-            _goapPlanPool.Add(data);
+        if (data != null) {
+            if (!_goapPlanPool.Contains(data)) {
+                _goapPlanPool.Add(data);
+            } else {
+#if DEBUG_LOG
+                Debug.LogError($"Goap Plan has duplicate in pool: {data.LogPlan()}");
+#endif
+            }
         } else {
 #if DEBUG_LOG
-            Debug.LogError($"Goap Plan has duplicate in pool: {data.LogPlan()}");
+            Debug.LogError($"Goap Plan is null, will not return to pool!");
 #endif
         }
         data.Reset();
@@ -765,11 +776,17 @@ public class ObjectPoolManager : MonoBehaviour {
         return new SingleJobNode();
     }
     public void ReturnSingleJobNodeToPool(SingleJobNode data) {
-        if (!_jobNodePool.Contains(data)) {
-            _jobNodePool.Add(data);
+        if (data != null) {
+            if (!_jobNodePool.Contains(data)) {
+                _jobNodePool.Add(data);
+            } else {
+#if DEBUG_LOG
+                Debug.LogError($"Job Node has duplicate in pool: Actor: {data.singleNode?.actor.name}, Target: {data.singleNode?.poiTarget?.name}, Action: {data.singleNode?.action.name}, Job: {data.singleNode?.associatedJobType.ToString()}");
+#endif
+            }
         } else {
 #if DEBUG_LOG
-            Debug.LogError($"Job Node has duplicate in pool: Actor: {data.singleNode?.actor.name}, Target: {data.singleNode?.poiTarget?.name}, Action: {data.singleNode?.action.name}, Job: {data.singleNode?.associatedJobType.ToString()}");
+            Debug.LogError($"Single Job Node is null, will not return to pool!");
 #endif
         }
         data.Reset();

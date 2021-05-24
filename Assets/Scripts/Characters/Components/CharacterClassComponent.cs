@@ -109,7 +109,7 @@ public class CharacterClassComponent : CharacterComponent {
 
     #region Able Classes
     public bool AddAbleClass(string p_className) {
-        if (!ableClasses.Contains(p_className)) {
+        if (!HasAbleClass(p_className)) {
             ableClasses.Add(p_className);
             return true;
         }
@@ -117,6 +117,19 @@ public class CharacterClassComponent : CharacterComponent {
     }
     public bool RemoveAbleClass(string p_className) {
         return ableClasses.Remove(p_className);
+    }
+    public bool HasAbleClass(string p_className) {
+        return ableClasses.Contains(p_className);
+    }
+    public string GetAbleClassesText() {
+        string log = string.Empty;
+        for (int i = 0; i < ableClasses.Count; i++) {
+            if (i > 0) {
+                log += ", ";
+            }
+            log += ableClasses[i];
+        }
+        return log;
     }
     #endregion
 
