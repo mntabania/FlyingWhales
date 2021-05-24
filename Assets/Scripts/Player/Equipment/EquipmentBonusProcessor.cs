@@ -150,6 +150,13 @@ public static class EquipmentBonusProcessor
             //float computedAttack = p_targetCharacter.combatComponent.unModifiedAttack * (p_equipItem.equipmentData.equipmentUpgradeData.AdditionalAttackPercentage / 100f);
             p_targetCharacter.combatComponent.AdjustAttackPercentModifier(-p_equipItem.equipmentData.equipmentUpgradeData.AdditionalAttackPercentage);
             break;
+            case EQUIPMENT_BONUS.Int_Actual:
+            p_targetCharacter.combatComponent.AdjustIntelligenceModifier(-p_equipItem.equipmentData.equipmentUpgradeData.GetProcessedAdditionalInt(p_equipItem.quality));
+            break;
+            case EQUIPMENT_BONUS.Int_Percentage:
+            //float computedAttack = p_targetCharacter.combatComponent.unModifiedAttack * (p_equipItem.equipmentData.equipmentUpgradeData.AdditionalAttackPercentage / 100f);
+            p_targetCharacter.combatComponent.AdjustIntelligencePercentModifier(-p_equipItem.equipmentData.equipmentUpgradeData.AdditionalIntPercentage);
+            break;
             case EQUIPMENT_BONUS.Max_HP_Actual:
             p_targetCharacter.combatComponent.AdjustMaxHPModifier(-p_equipItem.equipmentData.equipmentUpgradeData.GetProcessedAdditionalmaxHP(p_equipItem.quality));
             break;

@@ -2707,7 +2707,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         amount = processedAmount;
         if ((amount < 0 && (ignoreIndestructibleTrait || CanBeDamaged())) || amount > 0) {
             if (hasMarker) {
-                marker.ShowHealthAdjustmentEffect(amount);
+                marker.ShowHealthAdjustmentEffect(amount, combatComponent.damageDone);
             }
             //only added checking here because even if objects cannot be damaged,
             //they should still be able to react to the elements

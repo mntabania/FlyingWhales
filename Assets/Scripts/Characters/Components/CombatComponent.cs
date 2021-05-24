@@ -54,7 +54,6 @@ public class CombatComponent : CharacterComponent {
         SetCombatMode(COMBAT_MODE.Aggressive);
         SetElementalType(ELEMENTAL_TYPE.Normal);
         initialElementalType = ELEMENTAL_TYPE.Normal;
-        critRate = 50;
         //UpdateBasicData(true);
     }
     public CombatComponent(SaveDataCombatComponent data) {
@@ -83,7 +82,6 @@ public class CombatComponent : CharacterComponent {
         numOfKilledCharacters = data.numOfKilledCharacters;
         specialSkillParent = data.specialSkillParent.Load();
         combatBehaviourParent = data.combatBehaviourParent.Load();
-        critRate = 50;
     }
 
     #region Signals
@@ -102,13 +100,23 @@ public class CombatComponent : CharacterComponent {
     }
     #endregion
 
+    public struct DamageDoneType {
+        public enum DamageType { Normal = 0, Crit }
+        public int amount;
+        public DamageType damageType;
+    }
+    public DamageDoneType damageDone;
+
     #region General
     public int GetAttackWithCritRateBonus() {
         int multiplier = 1;
         if(GameUtilities.RandomBetweenTwoNumbers(0, 99) < critRate) {
             multiplier = 2;
-            Debug.LogError(owner.name + " CRIT");
-		}
+            damageDone.damageType = DamageDoneType.DamageType.Crit;
+        } else {
+            damageDone.damageType = DamageDoneType.DamageType.Normal;
+        }
+        damageDone.amount = attack * multiplier;
         return attack * multiplier;
     }
     //public void OnThisCharacterEndedCombatState() {
