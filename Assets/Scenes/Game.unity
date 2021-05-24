@@ -309,7 +309,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -627.5, y: 0}
+  m_AnchoredPosition: {x: -628, y: 0}
   m_SizeDelta: {x: 200, y: 53}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &4452501
@@ -7718,7 +7718,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0.5}
   m_AnchorMax: {x: 1, y: 0.5}
-  m_AnchoredPosition: {x: -960.5, y: -110.92999}
+  m_AnchoredPosition: {x: -960, y: -110.92999}
   m_SizeDelta: {x: 100, y: 50.18994}
   m_Pivot: {x: 0, y: 1}
 --- !u!21 &318403846
@@ -21244,7 +21244,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0.5}
   m_AnchorMax: {x: 1, y: 0.5}
-  m_AnchoredPosition: {x: -960.5, y: 440.07}
+  m_AnchoredPosition: {x: -960, y: 440.07}
   m_SizeDelta: {x: 100, y: 50.18994}
   m_Pivot: {x: 0, y: 1}
 --- !u!1 &672408560
@@ -40084,7 +40084,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -274.39844, y: 0}
+  m_AnchoredPosition: {x: -274, y: 0}
   m_SizeDelta: {x: 178, y: 53}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &1414646975
@@ -42179,7 +42179,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   racesDictionary:
-    m_keys: 17000000200000001a0000000e000000080000001300000002000000160000000f0000001f000000060000001200000001000000140000001b000000150000001c0000001800000022000000190000000d0000001e00000011000000070000001d0000000a00000021000000230000002400000025000000260000002700000028000000
+    m_keys: 17000000200000001a0000000e000000080000001300000002000000160000000f0000001f000000060000001200000001000000140000001b000000150000001c0000001800000022000000190000000d0000001e00000011000000070000001d0000000a000000210000002300000024000000250000002600000027000000280000002d0000002e0000002f0000003000000031000000
     m_values:
     - {fileID: 11400000, guid: d2664475901456e4899b4b95f8666be6, type: 2}
     - {fileID: 11400000, guid: f51b6309caa63724db7613b6286d6622, type: 2}
@@ -42214,6 +42214,11 @@ MonoBehaviour:
     - {fileID: 11400000, guid: 097fff931b51da3479bcad5f346ed8e7, type: 2}
     - {fileID: 11400000, guid: 6f076bf03c47a664daced83824add8e8, type: 2}
     - {fileID: 11400000, guid: 32f4af9024fdcf3478eeee8a3f155c21, type: 2}
+    - {fileID: 11400000, guid: 187a5a1161df59d4fa96361b2a9802bc, type: 2}
+    - {fileID: 11400000, guid: 866a722dda668ee4a9bbb0d61810d246, type: 2}
+    - {fileID: 11400000, guid: 7746216e1f51f8f45b15885a43a6b8e0, type: 2}
+    - {fileID: 11400000, guid: 6288ec2be94f21944bbdef3c349977c5, type: 2}
+    - {fileID: 11400000, guid: 10bf968c9b12c1449a47edf40d87d521, type: 2}
 --- !u!1 &1476203693
 GameObject:
   m_ObjectHideFlags: 0
@@ -43627,7 +43632,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -440.5, y: 0}
+  m_AnchoredPosition: {x: -440, y: 0}
   m_SizeDelta: {x: 200, y: 53}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &1533776042
@@ -44220,7 +44225,7 @@ MonoBehaviour:
   stoneFloorTile: {fileID: 11400000, guid: 016c45b2f2cc25a4c870fcfb895e0177, type: 2}
   poisonRuleTile: {fileID: 11400000, guid: df7f2aa1c99588d43a2c8200d6ae6c77, type: 2}
   tileObjectTiles:
-    m_keys: 00000000030000000400000005000000060000000700000008000000090000000b0000000c0000000e0000001400000015000000160000001700000018000000190000001d0000001e0000001f000000200000002100000022000000230000002400000025000000260000002700000028000000290000002a0000002b0000002c0000002d0000002e0000002f000000300000003100000032000000330000003400000035000000360000003700000038000000390000003a0000003b0000003c0000003d0000003e0000003f000000400000004100000042000000430000004400000045000000460000004700000048000000490000004a0000004b0000004c0000004d0000004e0000004f0000005000000051000000520000005300000054000000550000005600000057000000580000005900000060000000610000006200000063000000650000005c000000640000006600000067000000680000005d0000006a0000006b00000088000000890000008c0000008d0000008e0000008f0000009000000091000000920000009300000094000000950000009600000097000000980000009b0000009d0000009c0000009e000000a3000000a4000000a7000000a60000009f000000aa000000820000007a0000007b0000007c00000073000000b7000000b8000000b9000000ba000000bc000000bb000000
+    m_keys: 00000000030000000400000005000000060000000700000008000000090000000b0000000c0000000e0000001400000015000000160000001700000018000000190000001a0000001d0000001e0000001f000000200000002100000022000000230000002400000025000000260000002700000028000000290000002a0000002b0000002c0000002d0000002e0000002f000000300000003100000032000000330000003400000035000000360000003700000038000000390000003a0000003b0000003c0000003d0000003e0000003f000000400000004100000042000000430000004400000045000000460000004700000048000000490000004a0000004b0000004c0000004d0000004e0000004f0000005000000051000000520000005300000054000000550000005600000057000000580000005900000060000000610000006200000063000000650000005c000000640000006600000067000000680000005d0000006a0000006b00000088000000890000008c0000008d0000008e0000008f0000009000000091000000920000009300000094000000950000009600000097000000980000009b0000009d0000009c0000009e000000a3000000a4000000a7000000a60000009f000000aa000000820000007a0000007b0000007c00000073000000b7000000b8000000b9000000ba000000bc000000bb000000bd000000be000000bf000000c0000000c1000000c2000000c3000000c4000000c5000000c6000000c7000000c8000000c9000000ca000000cb000000cc000000cd000000ce000000cf000000d0000000d1000000d2000000d3000000d4000000d5000000d6000000d7000000d8000000d9000000da000000db000000dc000000dd000000de000000df000000
     m_values:
     - biomeAssets:
         m_keys: 06000000
@@ -44357,6 +44362,13 @@ MonoBehaviour:
         m_values:
         - activeTile:
           - {fileID: 21300000, guid: aa10dfc76002394428480256299305c6, type: 3}
+          inactiveTile: []
+          tileBase: []
+    - biomeAssets:
+        m_keys: 06000000
+        m_values:
+        - activeTile:
+          - {fileID: 21300000, guid: 2a43bee26a8ecef47bd5bd0799ca709a, type: 3}
           inactiveTile: []
           tileBase: []
     - biomeAssets:
@@ -45277,6 +45289,286 @@ MonoBehaviour:
           inactiveTile:
           - {fileID: 21300000, guid: 1a1e5ab546ca0a84dbb98d6ed6388ea6, type: 3}
           tileBase: []
+    - biomeAssets:
+        m_keys: 06000000
+        m_values:
+        - activeTile:
+          - {fileID: 21300000, guid: 8daf6297da115824baceb6a0a6a63fa9, type: 3}
+          inactiveTile:
+          - {fileID: 21300000, guid: 8daf6297da115824baceb6a0a6a63fa9, type: 3}
+          tileBase: []
+    - biomeAssets:
+        m_keys: 06000000
+        m_values:
+        - activeTile:
+          - {fileID: 21300000, guid: 263b829918332514c83a88d36e41a17f, type: 3}
+          inactiveTile:
+          - {fileID: 21300000, guid: 263b829918332514c83a88d36e41a17f, type: 3}
+          tileBase: []
+    - biomeAssets:
+        m_keys: 06000000
+        m_values:
+        - activeTile:
+          - {fileID: 21300000, guid: 8c9ade4b7d3a25b4f9aff76a4622b6a0, type: 3}
+          inactiveTile:
+          - {fileID: 21300000, guid: 8c9ade4b7d3a25b4f9aff76a4622b6a0, type: 3}
+          tileBase: []
+    - biomeAssets:
+        m_keys: 06000000
+        m_values:
+        - activeTile:
+          - {fileID: 21300000, guid: 2e7420a848810bc4a9b5c48527bd5ea5, type: 3}
+          inactiveTile:
+          - {fileID: 21300000, guid: 2e7420a848810bc4a9b5c48527bd5ea5, type: 3}
+          tileBase: []
+    - biomeAssets:
+        m_keys: 06000000
+        m_values:
+        - activeTile:
+          - {fileID: 21300000, guid: 3ea8443d42d55cb438560a336b7cb641, type: 3}
+          inactiveTile:
+          - {fileID: 21300000, guid: 3ea8443d42d55cb438560a336b7cb641, type: 3}
+          tileBase: []
+    - biomeAssets:
+        m_keys: 06000000
+        m_values:
+        - activeTile:
+          - {fileID: 21300000, guid: fec9c6054e0f1f444967cf7e568498e1, type: 3}
+          inactiveTile:
+          - {fileID: 21300000, guid: fec9c6054e0f1f444967cf7e568498e1, type: 3}
+          tileBase: []
+    - biomeAssets:
+        m_keys: 06000000
+        m_values:
+        - activeTile:
+          - {fileID: 21300000, guid: 4607f7ebd609c834aa223506f53dde80, type: 3}
+          inactiveTile:
+          - {fileID: 21300000, guid: 4607f7ebd609c834aa223506f53dde80, type: 3}
+          tileBase: []
+    - biomeAssets:
+        m_keys: 06000000
+        m_values:
+        - activeTile:
+          - {fileID: 21300000, guid: f1aa09a115c8d1243bb532c24353dce8, type: 3}
+          inactiveTile:
+          - {fileID: 21300000, guid: f1aa09a115c8d1243bb532c24353dce8, type: 3}
+          tileBase: []
+    - biomeAssets:
+        m_keys: 06000000
+        m_values:
+        - activeTile:
+          - {fileID: 21300000, guid: a94216cda3d61f241a8b05360dea7195, type: 3}
+          inactiveTile:
+          - {fileID: 21300000, guid: a94216cda3d61f241a8b05360dea7195, type: 3}
+          tileBase: []
+    - biomeAssets:
+        m_keys: 06000000
+        m_values:
+        - activeTile:
+          - {fileID: 21300000, guid: c22f2395153e7f64d956dadfc891c7a2, type: 3}
+          inactiveTile:
+          - {fileID: 21300000, guid: c22f2395153e7f64d956dadfc891c7a2, type: 3}
+          tileBase: []
+    - biomeAssets:
+        m_keys: 06000000
+        m_values:
+        - activeTile:
+          - {fileID: 21300000, guid: 9c19f7b71ae5ede44a8bdd82860023a8, type: 3}
+          inactiveTile:
+          - {fileID: 21300000, guid: 9c19f7b71ae5ede44a8bdd82860023a8, type: 3}
+          tileBase: []
+    - biomeAssets:
+        m_keys: 06000000
+        m_values:
+        - activeTile:
+          - {fileID: 21300000, guid: ce796ebb143f43a4c89d4a3dcd0e539a, type: 3}
+          inactiveTile:
+          - {fileID: 21300000, guid: ce796ebb143f43a4c89d4a3dcd0e539a, type: 3}
+          tileBase: []
+    - biomeAssets:
+        m_keys: 06000000
+        m_values:
+        - activeTile:
+          - {fileID: 21300000, guid: 54607b2d671d8254fb62aae411eba12b, type: 3}
+          inactiveTile:
+          - {fileID: 21300000, guid: 54607b2d671d8254fb62aae411eba12b, type: 3}
+          tileBase: []
+    - biomeAssets:
+        m_keys: 06000000
+        m_values:
+        - activeTile:
+          - {fileID: 21300000, guid: 7e3348110f39cff438609e6b7364b9b5, type: 3}
+          inactiveTile:
+          - {fileID: 21300000, guid: 7e3348110f39cff438609e6b7364b9b5, type: 3}
+          tileBase: []
+    - biomeAssets:
+        m_keys: 06000000
+        m_values:
+        - activeTile:
+          - {fileID: 21300000, guid: b07b8d42984843c408bd9fa93da4e5c7, type: 3}
+          inactiveTile:
+          - {fileID: 21300000, guid: b07b8d42984843c408bd9fa93da4e5c7, type: 3}
+          tileBase: []
+    - biomeAssets:
+        m_keys: 06000000
+        m_values:
+        - activeTile:
+          - {fileID: 21300000, guid: 0f60cd867c1e1794a93da5cb36a7a0bc, type: 3}
+          inactiveTile:
+          - {fileID: 21300000, guid: 0f60cd867c1e1794a93da5cb36a7a0bc, type: 3}
+          tileBase: []
+    - biomeAssets:
+        m_keys: 06000000
+        m_values:
+        - activeTile:
+          - {fileID: 21300000, guid: 1d1ed9d05b1e0094586671a066d104da, type: 3}
+          inactiveTile:
+          - {fileID: 21300000, guid: 1d1ed9d05b1e0094586671a066d104da, type: 3}
+          tileBase: []
+    - biomeAssets:
+        m_keys: 06000000
+        m_values:
+        - activeTile:
+          - {fileID: 21300000, guid: f329759a7e93a7247959541f6daf1a7c, type: 3}
+          inactiveTile:
+          - {fileID: 21300000, guid: f329759a7e93a7247959541f6daf1a7c, type: 3}
+          tileBase: []
+    - biomeAssets:
+        m_keys: 06000000
+        m_values:
+        - activeTile:
+          - {fileID: 21300000, guid: e0aeab698b06f9b4881be1cce550af47, type: 3}
+          inactiveTile:
+          - {fileID: 21300000, guid: e0aeab698b06f9b4881be1cce550af47, type: 3}
+          tileBase: []
+    - biomeAssets:
+        m_keys: 06000000
+        m_values:
+        - activeTile:
+          - {fileID: 21300000, guid: 1a1e5ab546ca0a84dbb98d6ed6388ea6, type: 3}
+          inactiveTile:
+          - {fileID: 21300000, guid: 1a1e5ab546ca0a84dbb98d6ed6388ea6, type: 3}
+          tileBase: []
+    - biomeAssets:
+        m_keys: 06000000
+        m_values:
+        - activeTile:
+          - {fileID: 21300000, guid: 458f3f3a5e9ecfc48b31b2dd7ffd3b91, type: 3}
+          inactiveTile:
+          - {fileID: 21300000, guid: 458f3f3a5e9ecfc48b31b2dd7ffd3b91, type: 3}
+          tileBase: []
+    - biomeAssets:
+        m_keys: 06000000
+        m_values:
+        - activeTile:
+          - {fileID: 21300000, guid: 7b4b0b58f4040704f9dffa3a4b1cdaf2, type: 3}
+          inactiveTile:
+          - {fileID: 21300000, guid: 7b4b0b58f4040704f9dffa3a4b1cdaf2, type: 3}
+          tileBase: []
+    - biomeAssets:
+        m_keys: 06000000
+        m_values:
+        - activeTile:
+          - {fileID: 21300000, guid: 863aa5bcd01f1574181c14d1a1160665, type: 3}
+          inactiveTile:
+          - {fileID: 21300000, guid: 863aa5bcd01f1574181c14d1a1160665, type: 3}
+          tileBase: []
+    - biomeAssets:
+        m_keys: 06000000
+        m_values:
+        - activeTile:
+          - {fileID: 21300000, guid: 6a5857bfd580ac743bddd9dae4abac3a, type: 3}
+          inactiveTile:
+          - {fileID: 21300000, guid: 6a5857bfd580ac743bddd9dae4abac3a, type: 3}
+          tileBase: []
+    - biomeAssets:
+        m_keys: 06000000
+        m_values:
+        - activeTile:
+          - {fileID: 21300000, guid: 08cf146e7e025da44b3980eef7f16598, type: 3}
+          inactiveTile:
+          - {fileID: 21300000, guid: 08cf146e7e025da44b3980eef7f16598, type: 3}
+          tileBase: []
+    - biomeAssets:
+        m_keys: 06000000
+        m_values:
+        - activeTile:
+          - {fileID: 21300000, guid: 7cbd88047dcee054f9b977eb7537f580, type: 3}
+          inactiveTile:
+          - {fileID: 21300000, guid: 7cbd88047dcee054f9b977eb7537f580, type: 3}
+          tileBase: []
+    - biomeAssets:
+        m_keys: 06000000
+        m_values:
+        - activeTile:
+          - {fileID: 21300000, guid: 8d76515ebedb4cd4ba470a99ac48ce32, type: 3}
+          inactiveTile:
+          - {fileID: 21300000, guid: 8d76515ebedb4cd4ba470a99ac48ce32, type: 3}
+          tileBase: []
+    - biomeAssets:
+        m_keys: 06000000
+        m_values:
+        - activeTile:
+          - {fileID: 21300000, guid: 9678ab36065c87d449e488211fb124c5, type: 3}
+          inactiveTile:
+          - {fileID: 21300000, guid: 9678ab36065c87d449e488211fb124c5, type: 3}
+          tileBase: []
+    - biomeAssets:
+        m_keys: 06000000
+        m_values:
+        - activeTile:
+          - {fileID: 21300000, guid: 9e15b1f0c76416648a73b58de20b6666, type: 3}
+          inactiveTile:
+          - {fileID: 21300000, guid: 9e15b1f0c76416648a73b58de20b6666, type: 3}
+          tileBase: []
+    - biomeAssets:
+        m_keys: 06000000
+        m_values:
+        - activeTile:
+          - {fileID: 21300000, guid: 6ec293672da3f2d49a19f45177155557, type: 3}
+          inactiveTile:
+          - {fileID: 21300000, guid: 6ec293672da3f2d49a19f45177155557, type: 3}
+          tileBase: []
+    - biomeAssets:
+        m_keys: 06000000
+        m_values:
+        - activeTile:
+          - {fileID: 21300000, guid: 7e895e4ff89a68b418d346d1e2dfec76, type: 3}
+          inactiveTile:
+          - {fileID: 21300000, guid: 7e895e4ff89a68b418d346d1e2dfec76, type: 3}
+          tileBase: []
+    - biomeAssets:
+        m_keys: 06000000
+        m_values:
+        - activeTile:
+          - {fileID: 21300000, guid: 66046b8cc9143554dbd1510dffbd7baa, type: 3}
+          inactiveTile:
+          - {fileID: 21300000, guid: 66046b8cc9143554dbd1510dffbd7baa, type: 3}
+          tileBase: []
+    - biomeAssets:
+        m_keys: 06000000
+        m_values:
+        - activeTile:
+          - {fileID: 21300000, guid: 83d156a4d91d81048b2ad70e8533c960, type: 3}
+          inactiveTile:
+          - {fileID: 21300000, guid: 83d156a4d91d81048b2ad70e8533c960, type: 3}
+          tileBase: []
+    - biomeAssets:
+        m_keys: 06000000
+        m_values:
+        - activeTile:
+          - {fileID: 21300000, guid: bbc3a4022697c1f4b9c87b662d66a4d6, type: 3}
+          inactiveTile:
+          - {fileID: 21300000, guid: bbc3a4022697c1f4b9c87b662d66a4d6, type: 3}
+          tileBase: []
+    - biomeAssets:
+        m_keys: 06000000
+        m_values:
+        - activeTile:
+          - {fileID: 21300000, guid: d426d16409b59454aa161e09a6069d8a, type: 3}
+          inactiveTile:
+          - {fileID: 21300000, guid: d426d16409b59454aa161e09a6069d8a, type: 3}
+          tileBase: []
   corruptedTileObjectAssets:
     m_keys: 090000004b000000
     m_values:
@@ -45299,7 +45591,9 @@ MonoBehaviour:
           tileBase: []
   allTileObjectSprites:
     m_keys:
+    - accessory_belt
     - accessory_bracer
+    - accessory_necklace
     - accessory_ring
     - animal_den
     - ankh
@@ -45308,6 +45602,11 @@ MonoBehaviour:
     - ANVIL#2
     - ARCHERY_TARGET#1
     - ARCHERY_TARGET#2
+    - axe_copper
+    - axe_gold
+    - axe_iron
+    - axe_mithril
+    - axe_orichalcum
     - BANDAGES
     - BARREL#1
     - BARREL#2
@@ -45331,6 +45630,11 @@ MonoBehaviour:
     - boneGround_decor02
     - boneGround_decor03
     - boneRows00
+    - bow_copper
+    - bow_gold
+    - bow_iron
+    - bow_mithril
+    - bow_orichalcum
     - BRAZIER#1
     - BRAZIER#1_LIT
     - BRAZIER#2
@@ -45344,6 +45648,9 @@ MonoBehaviour:
     - chaos_orb
     - cloth_fur
     - cloth_mink
+    - cloth_moonthread
+    - cloth_spidersilk
+    - cloth_wool
     - Copper Sword
     - corruptedBones00
     - corruptedBones01
@@ -45363,14 +45670,17 @@ MonoBehaviour:
     - corruptedTreeSmall00
     - corruptedTreeSmall01
     - corruptedTreeSmall02
-    - COUNTER_TOP#1
-    - COUNTER_TOP#2
     - CRATE#1
     - CRATE#2
     - CRATE#3
     - CULT_ALTAR#1
     - CULT_CIRCLE#1
     - CULT_CROSS#1
+    - dagger_copper
+    - dagger_gold
+    - dagger_iron
+    - dagger_mithril
+    - dagger_orichalcum
     - demonBarsHorz00
     - demonBarsHorz01
     - demonBarsVertical00
@@ -45472,6 +45782,11 @@ MonoBehaviour:
     - humanMeat
     - ice_crystal
     - ice_shard
+    - leather_bearhide
+    - leather_boarhide
+    - leather_dragonhide
+    - leather_scalehide
+    - leather_wolfhide
     - lightning_crystal
     - magicCircle00
     - MAGIC_CIRCLE#1
@@ -45491,10 +45806,16 @@ MonoBehaviour:
     - PLANT#5
     - PLANT#6
     - PLANT#7
+    - plate_copper
+    - plate_gold
+    - plate_iron
+    - plate_mithril
+    - plate_orichalcum
     - PLINTH_BOOK#2
     - plinth_book
     - Poison Flask
     - poison_crystal
+    - Power Crystal
     - rabbit00
     - RACH_FARMING_TOOLS
     - rack_staves
@@ -45542,11 +45863,19 @@ MonoBehaviour:
     - spirits_red_idle
     - spirits_red_KO
     - spirit_energy_icon
+    - staff_copper
+    - staff_gold
+    - staff_iron
+    - staff_mithril
+    - staff_orichalcum
     - stake
     - stone_pile
     - stump
     - supplies
+    - sword_gold
     - sword_iron
+    - sword_mithril
+    - sword_orichalcum
     - table2Slots
     - table4Slots
     - table_alchemy
@@ -45883,7 +46212,9 @@ MonoBehaviour:
     - prison_192x192
     - spire_128x384
     m_values:
+    - {fileID: 21300000, guid: bbc3a4022697c1f4b9c87b662d66a4d6, type: 3}
     - {fileID: 21300000, guid: 7d44162b82650cd4788e091ab7b7e290, type: 3}
+    - {fileID: 21300000, guid: 83d156a4d91d81048b2ad70e8533c960, type: 3}
     - {fileID: 21300000, guid: 11539cea24b72df4682c57a99db1ddce, type: 3}
     - {fileID: 21300000, guid: 47925766893f5664493bc782e664f4b9, type: 3}
     - {fileID: 21300000, guid: 87f6c55abd2da114ebc141713ab6dba3, type: 3}
@@ -45892,6 +46223,11 @@ MonoBehaviour:
     - {fileID: 21300000, guid: d1580a218a2441c4296543f45522d66e, type: 3}
     - {fileID: 21300000, guid: bc48ed5a5f9381c46837127679790a15, type: 3}
     - {fileID: 21300000, guid: 144c13afc7766324286416c2ca2ec998, type: 3}
+    - {fileID: 21300000, guid: 2e7420a848810bc4a9b5c48527bd5ea5, type: 3}
+    - {fileID: 21300000, guid: 60947c1aa79733b4192377fe07543c48, type: 3}
+    - {fileID: 21300000, guid: 3ea8443d42d55cb438560a336b7cb641, type: 3}
+    - {fileID: 21300000, guid: fec9c6054e0f1f444967cf7e568498e1, type: 3}
+    - {fileID: 21300000, guid: 4607f7ebd609c834aa223506f53dde80, type: 3}
     - {fileID: 21300000, guid: 4c56eca481454084e84429c667d7b8d1, type: 3}
     - {fileID: 21300000, guid: 72a1eb18646efa64f9c1d8bf2a859f90, type: 3}
     - {fileID: 21300000, guid: 711d3fb7a2e987149b56455b1fc25858, type: 3}
@@ -45915,6 +46251,11 @@ MonoBehaviour:
     - {fileID: 21300000, guid: c606ab49a2feecd42b91d88174394fc1, type: 3}
     - {fileID: 21300000, guid: c89da1e1ddf8f5247ba2269139aa2f2c, type: 3}
     - {fileID: 21300000, guid: f9293d2b767cd4c41a29ab152106b14e, type: 3}
+    - {fileID: 21300000, guid: f1aa09a115c8d1243bb532c24353dce8, type: 3}
+    - {fileID: 21300000, guid: 5b835fe2e75e9bd41a5d2f7f3eadfc54, type: 3}
+    - {fileID: 21300000, guid: a94216cda3d61f241a8b05360dea7195, type: 3}
+    - {fileID: 21300000, guid: c22f2395153e7f64d956dadfc891c7a2, type: 3}
+    - {fileID: 21300000, guid: 9c19f7b71ae5ede44a8bdd82860023a8, type: 3}
     - {fileID: 21300000, guid: 2a30a1a97f1dfa947a9d78809407e79a, type: 3}
     - {fileID: 21300000, guid: 41dd6ea24235fe24d905aa79a806c686, type: 3}
     - {fileID: 21300000, guid: 365e8f360c16e564abd9732ed59c13af, type: 3}
@@ -45928,6 +46269,9 @@ MonoBehaviour:
     - {fileID: 21300000, guid: 14b3250c3a370374a93e774bffae363b, type: 3}
     - {fileID: 21300000, guid: 1a1e5ab546ca0a84dbb98d6ed6388ea6, type: 3}
     - {fileID: 21300000, guid: b3dd9f090c86ffd4b9cf3b2743960233, type: 3}
+    - {fileID: 21300000, guid: 863aa5bcd01f1574181c14d1a1160665, type: 3}
+    - {fileID: 21300000, guid: 7b4b0b58f4040704f9dffa3a4b1cdaf2, type: 3}
+    - {fileID: 21300000, guid: 458f3f3a5e9ecfc48b31b2dd7ffd3b91, type: 3}
     - {fileID: 21300000, guid: 08c5768de165af04683bc8e58c0b1d0b, type: 3}
     - {fileID: 21300000, guid: 13f726f15ee6ea34cbd60eca21aad16e, type: 3}
     - {fileID: 21300000, guid: c2c6bbeed0739774a8fc8398abfee8d7, type: 3}
@@ -45947,14 +46291,17 @@ MonoBehaviour:
     - {fileID: 21300000, guid: f1a8a8c7d4e3844499cab5fc440effad, type: 3}
     - {fileID: 21300000, guid: cef00f6294c550a4aa9ca7f1c95721a2, type: 3}
     - {fileID: 21300000, guid: 0ea8ef0a2cbd1ef45875aa7603a88a9b, type: 3}
-    - {fileID: 21300000, guid: b153a2928d66ab94bb8557f2671cdaaf, type: 3}
-    - {fileID: 21300000, guid: 3e7c2c8153fcb5e46a3cea2ad901fa6b, type: 3}
     - {fileID: 21300000, guid: f4b4c4cf00362f348b61c6bf8639fdea, type: 3}
     - {fileID: 21300000, guid: 22ff750ded684d945a241b880c86643c, type: 3}
     - {fileID: 21300000, guid: 3ae05e38a27cf6649bff4837de03ed84, type: 3}
     - {fileID: 21300000, guid: d08501ffa7e91ae488ea4514be6d6435, type: 3}
     - {fileID: 21300000, guid: fde912f820ba93348a89ef419cf609e8, type: 3}
     - {fileID: 21300000, guid: c4fffde0f6c286a4c8f82927c4097e8f, type: 3}
+    - {fileID: 21300000, guid: 0f60cd867c1e1794a93da5cb36a7a0bc, type: 3}
+    - {fileID: 21300000, guid: 80437f6a95476f54e955a457e62eced6, type: 3}
+    - {fileID: 21300000, guid: 1d1ed9d05b1e0094586671a066d104da, type: 3}
+    - {fileID: 21300000, guid: f329759a7e93a7247959541f6daf1a7c, type: 3}
+    - {fileID: 21300000, guid: e0aeab698b06f9b4881be1cce550af47, type: 3}
     - {fileID: 21300000, guid: 6518a3d7d49d9714fbe9c58435ef980f, type: 3}
     - {fileID: 21300000, guid: ab5a342c41425e64494213145079405b, type: 3}
     - {fileID: 21300000, guid: 9530e8ae20a049b4caa08d16e9218894, type: 3}
@@ -46056,6 +46403,11 @@ MonoBehaviour:
     - {fileID: 21300000, guid: 21026743ceb7c414fa9dab72a7a5cf0c, type: 3}
     - {fileID: 21300000, guid: 760ca0925ac4df049937e3d0a7e430e9, type: 3}
     - {fileID: 21300000, guid: 44607122ecf1f5b40afe658cc8efe3d1, type: 3}
+    - {fileID: 21300000, guid: 7cbd88047dcee054f9b977eb7537f580, type: 3}
+    - {fileID: 21300000, guid: 6a5857bfd580ac743bddd9dae4abac3a, type: 3}
+    - {fileID: 21300000, guid: 9678ab36065c87d449e488211fb124c5, type: 3}
+    - {fileID: 21300000, guid: 8d76515ebedb4cd4ba470a99ac48ce32, type: 3}
+    - {fileID: 21300000, guid: 08cf146e7e025da44b3980eef7f16598, type: 3}
     - {fileID: 21300000, guid: c9970af481f449e49b064d9530a763ca, type: 3}
     - {fileID: 21300000, guid: fc52d1b2285534747b486ee03709a4c8, type: 3}
     - {fileID: 21300000, guid: eb364cd623b388648ac33bd9f4b12421, type: 3}
@@ -46075,10 +46427,16 @@ MonoBehaviour:
     - {fileID: 21300000, guid: a59f64f686562b440b9a6ca17d9f63f6, type: 3}
     - {fileID: 21300000, guid: ea711b554137465409f56413a2777d0e, type: 3}
     - {fileID: 21300000, guid: e94b30a2fd325964bbf14fe81b0cd71f, type: 3}
+    - {fileID: 21300000, guid: 9e15b1f0c76416648a73b58de20b6666, type: 3}
+    - {fileID: 21300000, guid: a862d89c93901b34a8e0ea6846c35177, type: 3}
+    - {fileID: 21300000, guid: 6ec293672da3f2d49a19f45177155557, type: 3}
+    - {fileID: 21300000, guid: 7e895e4ff89a68b418d346d1e2dfec76, type: 3}
+    - {fileID: 21300000, guid: 66046b8cc9143554dbd1510dffbd7baa, type: 3}
     - {fileID: 21300000, guid: 3588670d8cf989844a8e6148d0269703, type: 3}
     - {fileID: 21300000, guid: 5739df68820aaf44db588444cc9eba20, type: 3}
     - {fileID: 21300000, guid: a5ad80f1abcaa054c8e4236074ed79a8, type: 3}
     - {fileID: 21300000, guid: 7dcd4be0175214f46913254eb8a78af8, type: 3}
+    - {fileID: 21300000, guid: 8daf6297da115824baceb6a0a6a63fa9, type: 3}
     - {fileID: 21300000, guid: 56be2c264d164374aa09a794d74609a5, type: 3}
     - {fileID: 21300000, guid: 8d7ef620c8b8bab4d897c4602535778f, type: 3}
     - {fileID: 21300000, guid: bbb8422927a72754fb7a5745c70a7e84, type: 3}
@@ -46126,11 +46484,19 @@ MonoBehaviour:
     - {fileID: 21300000, guid: 01f0efcc5652ee84cb4381a9e942e3e3, type: 3}
     - {fileID: 21300000, guid: 68ed339a21348e944b49d142f6f8c2bb, type: 3}
     - {fileID: 21300000, guid: 2027a42708fba5a44aa223f9c18089a0, type: 3}
+    - {fileID: 21300000, guid: ce796ebb143f43a4c89d4a3dcd0e539a, type: 3}
+    - {fileID: 21300000, guid: b9674e9bcfc40664cac03fab7a0d1b9f, type: 3}
+    - {fileID: 21300000, guid: 54607b2d671d8254fb62aae411eba12b, type: 3}
+    - {fileID: 21300000, guid: 7e3348110f39cff438609e6b7364b9b5, type: 3}
+    - {fileID: 21300000, guid: b07b8d42984843c408bd9fa93da4e5c7, type: 3}
     - {fileID: 21300000, guid: 87ce134795f668b409001e3d605ebe27, type: 3}
     - {fileID: 21300000, guid: aa10dfc76002394428480256299305c6, type: 3}
     - {fileID: 21300000, guid: 095c036e22c10bb44b1aea6ee3923ccd, type: 3}
     - {fileID: 21300000, guid: e85247b9c5ad0ba48b54c98a216a9cff, type: 3}
+    - {fileID: 21300000, guid: 9f2a82694ddb7b34aa509bbebed764a0, type: 3}
     - {fileID: 21300000, guid: 52be75f6a62dc45428d5795bbb44a384, type: 3}
+    - {fileID: 21300000, guid: 263b829918332514c83a88d36e41a17f, type: 3}
+    - {fileID: 21300000, guid: 8c9ade4b7d3a25b4f9aff76a4622b6a0, type: 3}
     - {fileID: 21300000, guid: fe44eb493c3bcf5469fa584116794486, type: 3}
     - {fileID: 21300000, guid: f6a5febe714d1e446ad84ab66890939a, type: 3}
     - {fileID: 21300000, guid: b87bc403c479a644fb79b860105bdfc6, type: 3}
@@ -48712,16 +49078,44 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   allEquipmentsData:
+  - {fileID: 11400000, guid: 657dce0ddce22b54481e09c903b4eedb, type: 2}
+  - {fileID: 11400000, guid: 181c584d847a470489f623f000539790, type: 2}
+  - {fileID: 11400000, guid: cc13363295fdc0645b1e5530e0596f0e, type: 2}
+  - {fileID: 11400000, guid: e8489521f8cab364d895bd37d125c513, type: 2}
   - {fileID: 11400000, guid: 2702c52b03d55114bab2ae5acd91cec2, type: 2}
-  - {fileID: 11400000, guid: e06a59ef952aa6246958eb3dd0c7e8e1, type: 2}
+  - {fileID: 11400000, guid: 2117661be4df1e947a42267f72ad4123, type: 2}
+  - {fileID: 11400000, guid: 2cc3fdb358efec641a40c1c7a02f1d37, type: 2}
   - {fileID: 11400000, guid: 6fb4083d105f9a643ad41c41d56a966b, type: 2}
-  - {fileID: 11400000, guid: 4db10385217fdbb4fb476fa818ba12a9, type: 2}
-  - {fileID: 11400000, guid: 786aabbaa38225043a6869f1a958f328, type: 2}
+  - {fileID: 11400000, guid: 20e4b5282a84027429c75f8e68476881, type: 2}
   - {fileID: 11400000, guid: 8f43678c1b7027b47ba491adc858d867, type: 2}
-  - {fileID: 11400000, guid: 6941afab77fa18b4c9b4a47b0e49eec5, type: 2}
-  - {fileID: 11400000, guid: aeb9bf56ca34c664684402bc4cdb83c3, type: 2}
+  - {fileID: 11400000, guid: 1ce8a0fdebd5b8441a896b6b9906981d, type: 2}
+  - {fileID: 11400000, guid: b9f6d1dcff2009d43acac9850272fcf6, type: 2}
+  - {fileID: 11400000, guid: 8cdd00012e4360f43bf1bf7f2bb94b82, type: 2}
+  - {fileID: 11400000, guid: f772e6aea88846c47b5477462bb08915, type: 2}
+  - {fileID: 11400000, guid: 66329f479f94cc541816cb9b439d5366, type: 2}
+  - {fileID: 11400000, guid: 306c17aadfe0d8643b99e7583a4d013c, type: 2}
+  - {fileID: 11400000, guid: 5be5e81bead6c254998ee9db39bdabed, type: 2}
+  - {fileID: 11400000, guid: 41341543dfc6011469a66e8862fe0c0d, type: 2}
+  - {fileID: 11400000, guid: 21b4a7d1dc7ccd74c94b774abd609d59, type: 2}
+  - {fileID: 11400000, guid: 0b56b9ea2947e8b4583e4d83de1daf34, type: 2}
+  - {fileID: 11400000, guid: e06a59ef952aa6246958eb3dd0c7e8e1, type: 2}
+  - {fileID: 11400000, guid: 828a2b4cb92491a4db3930c74d9fc771, type: 2}
+  - {fileID: 11400000, guid: 620fb3d5ed0a3294da2905d672a7fc7b, type: 2}
+  - {fileID: 11400000, guid: ef1ee52d55aeaf345895399c02a41a21, type: 2}
+  - {fileID: 11400000, guid: 786aabbaa38225043a6869f1a958f328, type: 2}
   - {fileID: 11400000, guid: 99163614a3da7ab42b2f42242098fb98, type: 2}
+  - {fileID: 11400000, guid: a356e185fd4a3bf4f9eec9ac97e9e094, type: 2}
   - {fileID: 11400000, guid: 7c30e5273914e514a824cdcae176daa9, type: 2}
+  - {fileID: 11400000, guid: 54c42bbf80c4007428782b37325dcf4b, type: 2}
+  - {fileID: 11400000, guid: 18ded47567edbfb4c9973c840560a2b0, type: 2}
+  - {fileID: 11400000, guid: 2a3f51dde10ad134296342184c3e3bef, type: 2}
+  - {fileID: 11400000, guid: eb1ba2c4d78d0054baffcbc926ed0f2b, type: 2}
+  - {fileID: 11400000, guid: d9cdb806341ecf8478edf6d482abfacf, type: 2}
+  - {fileID: 11400000, guid: aeb9bf56ca34c664684402bc4cdb83c3, type: 2}
+  - {fileID: 11400000, guid: b6b660cf976bbd14791af43ec579924c, type: 2}
+  - {fileID: 11400000, guid: 6941afab77fa18b4c9b4a47b0e49eec5, type: 2}
+  - {fileID: 11400000, guid: c6967805d3cda8b4596f13b09b5af64d, type: 2}
+  - {fileID: 11400000, guid: d2f95339891a451438e9310e08995061, type: 2}
 --- !u!1 &1647954979
 GameObject:
   m_ObjectHideFlags: 0
@@ -49359,6 +49753,11 @@ PrefabInstance:
     - target: {fileID: 224657538717953538, guid: bb062f8c3be91104299ceda438b731f4,
         type: 3}
       propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 224657538717953538, guid: bb062f8c3be91104299ceda438b731f4,
+        type: 3}
+      propertyPath: m_AnchorMin.y
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5887194569051060141, guid: bb062f8c3be91104299ceda438b731f4,
@@ -55649,7 +56048,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 485, y: -464.93}
+  m_AnchoredPosition: {x: 485, y: -465}
   m_SizeDelta: {x: 949, y: 834}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1888326232
@@ -65312,7 +65711,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0.5}
   m_AnchorMax: {x: 0, y: 0.5}
-  m_AnchoredPosition: {x: 11.700195, y: 430}
+  m_AnchoredPosition: {x: 12, y: 430}
   m_SizeDelta: {x: 467, y: 33}
   m_Pivot: {x: 0, y: 0.5}
 --- !u!1001 &6115299095950001358

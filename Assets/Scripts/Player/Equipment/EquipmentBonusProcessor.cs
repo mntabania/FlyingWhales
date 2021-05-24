@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 using Traits;
-
+using UtilityScripts;
 public static class EquipmentBonusProcessor
 {
     private static Dictionary<EQUIPMENT_SLAYER_BONUS, string> traitDictionaryForSlayer = new Dictionary<EQUIPMENT_SLAYER_BONUS, string>
@@ -128,7 +128,6 @@ public static class EquipmentBonusProcessor
             break;
         }
     }
-
     static void RemoveEachBonusToTarget(EquipmentItem p_equipItem, EQUIPMENT_BONUS p_equipBonus, Character p_targetCharacter) {
         switch (p_equipBonus) {
             case EQUIPMENT_BONUS.Atk_Actual:
@@ -225,14 +224,24 @@ public static class EquipmentBonusProcessor
         } else if (p_equipItem.equipmentData.equipmentUpgradeData.bonuses.Contains(EQUIPMENT_BONUS.Increased_5_Random_Resistance)) {
             resistanceCount = 5;
         }
-        var sequence = Enumerable.Range(1, (int)RESISTANCE.Physical).OrderBy(n => n * n + UnityEngine.Random.Range(1, (int)RESISTANCE.Physical) * (new System.Random()).Next());
 
-        var result = sequence.Distinct().Take(resistanceCount);
-
+        List<int> result = GameUtilities.GetUniqueRandomNumbersInBetween(1, (int)RESISTANCE.Physical, resistanceCount);
         foreach (var item in result) {
             RESISTANCE addElem = (RESISTANCE)item;
             p_equipItem.resistanceBonuses.Add(addElem);
         }
+    }
+
+    public static void SetBonusResistanceOnPowerCrystal(PowerCrystal p_crystal, int p_numberOfresistance) {
+        /*
+        List<int> result = GameUtilities.GetUniqueRandomNumbersInBetween(1, (int)RESISTANCE.Physical, p_numberOfresistance);
+
+        foreach (var item in result) {
+            RESISTANCE addElem = (RESISTANCE)item;
+            p_crystal.resistanceBonuses.Add(addElem);
+        }*/
+        int res = GameUtilities.RandomBetweenTwoNumbers(1, ((int)RESISTANCE.Physical - 1));
+        p_crystal.resistanceBonuses.Add((RESISTANCE)res);
     }
 
     public static float GetSlayerBonusDamage(Character p_damager, Character p_damageReceiver, float p_currentAmountDagame) {

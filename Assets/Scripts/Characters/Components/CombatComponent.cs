@@ -8,8 +8,12 @@ using Locations.Settlements;
 
 public class CombatComponent : CharacterComponent {
     public int attack { get; private set; }
-    public int attackModification { get; private set; }
-    public float attackPercentModification { get; private set; }
+    //public int strength { get; private set; } //used as attack if character is physical damage type
+    //public int intelligence { get; private set; } //used as attack if character is magical damage type
+    public int strengthModification { get; private set; }
+    public float strengthPercentModification { get; private set; }
+    public int intelligenceModification { get; private set; }
+    public float intelligencePercentModification { get; private set; }
     public int maxHP { get; private set; }
     public int maxHPModification { get; private set; }
     public float maxHPPercentModification { get; private set; }
@@ -26,6 +30,8 @@ public class CombatComponent : CharacterComponent {
     public CharacterCombatBehaviourParent combatBehaviourParent { get; private set; }
     public CombatSpecialSkillWrapper specialSkillParent { get; private set; }
     public bool willProcessCombat { get; private set; }
+
+    public int critRate { get; private set; }
 
     #region getters
     public bool isInCombat => owner.stateComponent.currentState != null && owner.stateComponent.currentState.characterState == CHARACTER_STATE.COMBAT;
@@ -57,7 +63,13 @@ public class CombatComponent : CharacterComponent {
         combatDataDictionary = new Dictionary<IPointOfInterest, CombatData>();
 
         attack = data.attack;
-        attackModification = data.attackModification;
+        //strength = data.strength;
+        strengthModification = data.strengthModification;
+        critRate = data.critRate;
+        strengthPercentModification = data.strengthPercentModification;
+        //intelligence = data.intelligence;
+        intelligenceModification = data.intelligenceModification;
+        intelligencePercentModification = data.intelligencePercentModification;
         maxHP = data.maxHP;
         maxHPModification = data.maxHPModification;
         attackSpeed = data.attackSpeed;
@@ -89,6 +101,9 @@ public class CombatComponent : CharacterComponent {
     #endregion
 
     #region General
+    public int GetAttackWithCritRateBonus() {
+        return attack * (GameUtilities.RandomBetweenTwoNumbers(0, 99) < critRate ? 2 : 1);
+    }
     //public void OnThisCharacterEndedCombatState() {
     //    SetOnProcessCombatAction(null);
     //}
@@ -1288,9 +1303,12 @@ public class CombatComponent : CharacterComponent {
             UpdateMaxHPAndProportionateHP();
         }
     }
-    private void UpdateAttack() {
-        int modifiedAttack = unModifiedAttack + attackModification;
-        attack = Mathf.RoundToInt(modifiedAttack * ((attackPercentModification / 100f) + 1f));
+    public void UpdateAttack() {
+        int modifier = owner.characterClass.attackType == ATTACK_TYPE.PHYSICAL ? strengthModification : intelligenceModification;
+        float modifierPercent = owner.characterClass.attackType == ATTACK_TYPE.PHYSICAL ? strengthPercentModification : intelligencePercentModification;
+
+        int modifiedAttack = unModifiedAttack + modifier;
+        attack = Mathf.RoundToInt(modifiedAttack * ((modifierPercent / 100f) + 1f));
     }
     private void UpdateMaxHP() {
         int modifiedHP = unModifiedMaxHP + maxHPModification;
@@ -1320,21 +1338,42 @@ public class CombatComponent : CharacterComponent {
         maxHPModification += modification;
         UpdateMaxHPAndProportionateHP();
     }
-    public void AdjustAttackModifier(int modification) {
-        attackModification += modification;
-        UpdateAttack();
-    }
     public void AdjustMaxHPPercentModifier(float modification) {
         maxHPPercentModification += modification;
         UpdateMaxHPAndProportionateHP();
     }
-    public void AdjustAttackPercentModifier(float modification) {
-        attackPercentModification += modification;
+    public void AdjustAttackModifier(int modification) {
+        strengthModification += modification;
+        intelligenceModification += modification;
         UpdateAttack();
     }
-#endregion
+    public void AdjustAttackPercentModifier(float modification) {
+        strengthPercentModification += modification;
+        intelligencePercentModification += modification; 
+        UpdateAttack();
+    }
+    public void AdjustStrengthModifier(int modification) {
+        strengthModification += modification;
+        UpdateAttack();
+    }
+    public void AdjustStrengthPercentModifier(float modification) {
+        strengthPercentModification += modification;
+        UpdateAttack();
+    }
+    public void AdjustIntelligenceModifier(int modification) {
+        intelligenceModification += modification;
+        UpdateAttack();
+    }
+    public void AdjustIntelligencePercentModifier(float modification) {
+        intelligencePercentModification += modification;
+        UpdateAttack();
+    }
+    public void AdjustCritRate(int modification) {
+        critRate += modification;
+    }
+    #endregion
 
-#region Prisoner
+    #region Prisoner
     private void OnCharacterBecomePrisoner(Prisoner prisoner) {
         if (prisoner.IsConsideredPrisonerOf(owner)) {
             CombatData combatData = GetCombatData(prisoner.owner);
@@ -1484,11 +1523,14 @@ public class SaveDataCombatData : SaveData<CombatData> {
 [System.Serializable]
 public class SaveDataCombatComponent : SaveData<CombatComponent> {
     public int attack;
-    public int attackModification;
-    public int attackModificationFromWeapon;
+    //public int strength;
+    //public int intelligence;
+    public int strengthModification;
+    public float strengthPercentModification;
+    public int intelligenceModification;
+    public float intelligencePercentModification;
     public int maxHP;
     public int maxHPModification;
-    public int maxHPModificationFromWeapon;
     public int attackSpeed;
     public int numOfKilledCharacters;
 
@@ -1511,12 +1553,18 @@ public class SaveDataCombatComponent : SaveData<CombatComponent> {
     public SaveDataCombatSpecialSkillWrapper specialSkillParent;
 
     public bool willProcessCombat;
+    public int critRate;
 
 #region Overrides
     public override void Save(CombatComponent data) {
         attack = data.attack;
-        attackModification = data.attackModification;
-        maxHP = data.maxHP;
+        //strength = data.strength;
+        strengthModification = data.strengthModification;
+        critRate = data.critRate;
+        strengthPercentModification = data.strengthPercentModification;
+        //intelligence = data.intelligence;
+        intelligenceModification = data.intelligenceModification;
+        intelligencePercentModification = data.intelligencePercentModification; maxHP = data.maxHP;
         maxHPModification = data.maxHPModification;
         attackSpeed = data.attackSpeed;
         combatMode = data.combatMode;

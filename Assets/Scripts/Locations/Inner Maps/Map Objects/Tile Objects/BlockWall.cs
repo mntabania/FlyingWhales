@@ -64,7 +64,7 @@ public class BlockWall : TileObject {
         //}
         Vector2 size = new Vector2(0.5f, 0.5f);
         mapVisual.InitializeGUS(Vector2.zero, size, tile);
-        Debug.Log($"Placed {name} on {tile}");
+        // Debug.Log($"Placed {name} on {tile}");
         ////Thin walls cannot co-exist with block walls, so if a block wall is placed, all thin walls must be destroyed
         //if(tile.tileObjectComponent.walls.Count > 0) {
         //    for (int i = 0; i < tile.tileObjectComponent.walls.Count; i++) {

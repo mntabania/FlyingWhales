@@ -615,24 +615,47 @@ namespace Inner_Maps {
             for (int i = 0; i < 2; i++) {
                 mainStorage.AddPOI(CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.ANTIDOTE));
             }
-            for (int i = 0; i < 4; i++) {
+            
+            for (int i = 0; i < 1; i++) {
+                mainStorage.AddPOI(CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.POWER_CRYSTAL));
+            }
+            for (int i = 0; i < 1; i++) {
                 mainStorage.AddPOI(CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.COPPER_SWORD));
             }
-            for (int i = 0; i < 4; i++) {
-                mainStorage.AddPOI(CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.IRON_SWORD));
+            for (int i = 0; i < 1; i++) {
+                mainStorage.AddPOI(CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.IRON_BOW));
             }
-            for (int i = 0; i < 4; i++) {
-                mainStorage.AddPOI(CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.RING));
+            for (int i = 0; i < 1; i++) {
+                mainStorage.AddPOI(CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.ORICHALCUM_DAGGER));
             }
-            for (int i = 0; i < 4; i++) {
-                mainStorage.AddPOI(CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.BRACER));
+            for (int i = 0; i < 1; i++) {
+                mainStorage.AddPOI(CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.ORICHALCUM_ARMOR));
             }
-            for (int i = 0; i < 4; i++) {
-                mainStorage.AddPOI(CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.MINK_SHIRT));
+            for (int i = 0; i < 1; i++) {
+                mainStorage.AddPOI(CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.BOAR_HIDE_ARMOR));
             }
-            for (int i = 0; i < 4; i++) {
-                mainStorage.AddPOI(CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.FUR_SHIRT));
+            for (int i = 0; i < 1; i++) {
+                mainStorage.AddPOI(CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.WOOL_SHIRT));
             }
+            for (int i = 0; i < 1; i++) {
+                mainStorage.AddPOI(CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.COPPER_ARMOR));
+            }
+            for (int i = 0; i < 1; i++) {
+                mainStorage.AddPOI(CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.SCROLL));
+            }
+            for (int i = 0; i < 1; i++) {
+                mainStorage.AddPOI(CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.BELT));
+            }
+            for (int i = 0; i < 1; i++) {
+                mainStorage.AddPOI(CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.ORICHALCUM_BOW));
+            }
+            for (int i = 0; i < 1; i++) {
+                mainStorage.AddPOI(CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.COPPER_STAFF));
+            }
+            for (int i = 0; i < 1; i++) {
+                mainStorage.AddPOI(CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.IRON_DAGGER));
+            }
+
             //for (int i = 0; i < 2; i++) {
             //    mainStorage.AddPOI(CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.WATER_FLASK));
             //}

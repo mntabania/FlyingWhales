@@ -404,10 +404,44 @@ public static class Extensions {
             case TILE_OBJECT_TYPE.PHYLACTERY:
             case TILE_OBJECT_TYPE.COPPER_SWORD:
             case TILE_OBJECT_TYPE.IRON_SWORD:
+            case TILE_OBJECT_TYPE.MITHRIL_SWORD:
+            case TILE_OBJECT_TYPE.ORICHALCUM_SWORD:
+            case TILE_OBJECT_TYPE.COPPER_AXE:
+            case TILE_OBJECT_TYPE.IRON_AXE:
+            case TILE_OBJECT_TYPE.MITHRIL_AXE:
+            case TILE_OBJECT_TYPE.ORICHALCUM_AXE:
+            case TILE_OBJECT_TYPE.COPPER_BOW:
+            case TILE_OBJECT_TYPE.IRON_BOW:
+            case TILE_OBJECT_TYPE.MITHRIL_BOW:
+            case TILE_OBJECT_TYPE.ORICHALCUM_BOW:
+            case TILE_OBJECT_TYPE.COPPER_STAFF:
+            case TILE_OBJECT_TYPE.IRON_STAFF:
+            case TILE_OBJECT_TYPE.MITHRIL_STAFF:
+            case TILE_OBJECT_TYPE.ORICHALCUM_STAFF:
+            case TILE_OBJECT_TYPE.COPPER_DAGGER:
+            case TILE_OBJECT_TYPE.IRON_DAGGER:
+            case TILE_OBJECT_TYPE.MITHRIL_DAGGER:
+            case TILE_OBJECT_TYPE.ORICHALCUM_DAGGER:
             case TILE_OBJECT_TYPE.RING:
             case TILE_OBJECT_TYPE.BRACER:
+            case TILE_OBJECT_TYPE.BELT:
+            case TILE_OBJECT_TYPE.SCROLL:
+            case TILE_OBJECT_TYPE.NECKLACE:
             case TILE_OBJECT_TYPE.MINK_SHIRT:
             case TILE_OBJECT_TYPE.FUR_SHIRT:
+            case TILE_OBJECT_TYPE.RABBIT_SHIRT:
+            case TILE_OBJECT_TYPE.WOOL_SHIRT:
+            case TILE_OBJECT_TYPE.SPIDER_SILK_SHIRT:
+            case TILE_OBJECT_TYPE.MOON_WALKER_SHIRT:
+            case TILE_OBJECT_TYPE.BOAR_HIDE_ARMOR:
+            case TILE_OBJECT_TYPE.WOLF_HIDE_ARMOR:
+            case TILE_OBJECT_TYPE.BEAR_HIDE_ARMOR:
+            case TILE_OBJECT_TYPE.SCALE_ARMOR:
+            case TILE_OBJECT_TYPE.DRAGON_ARMOR:
+            case TILE_OBJECT_TYPE.IRON_ARMOR:
+            case TILE_OBJECT_TYPE.COPPER_ARMOR:
+            case TILE_OBJECT_TYPE.MITHRIL_ARMOR:
+            case TILE_OBJECT_TYPE.ORICHALCUM_ARMOR:
             return true;
             default:
                 return false;
@@ -444,7 +478,8 @@ public static class Extensions {
             case TILE_OBJECT_TYPE.DEFENSE_POINT_TILE_OBJECT:
             case TILE_OBJECT_TYPE.ANIMAL_MEAT:
             case TILE_OBJECT_TYPE.RAT_MEAT:
-                return true;
+            case TILE_OBJECT_TYPE.POWER_CRYSTAL:
+            return true;
             default:
                 return tileObjectType.IsTileObjectAnItem();
         }
@@ -505,10 +540,44 @@ public static class Extensions {
             case TILE_OBJECT_TYPE.DESERT_ROSE:
             case TILE_OBJECT_TYPE.COPPER_SWORD:
             case TILE_OBJECT_TYPE.IRON_SWORD:
+            case TILE_OBJECT_TYPE.MITHRIL_SWORD:
+            case TILE_OBJECT_TYPE.ORICHALCUM_SWORD:
+            case TILE_OBJECT_TYPE.COPPER_AXE:
+            case TILE_OBJECT_TYPE.IRON_AXE:
+            case TILE_OBJECT_TYPE.MITHRIL_AXE:
+            case TILE_OBJECT_TYPE.ORICHALCUM_AXE:
+            case TILE_OBJECT_TYPE.COPPER_BOW:
+            case TILE_OBJECT_TYPE.IRON_BOW:
+            case TILE_OBJECT_TYPE.MITHRIL_BOW:
+            case TILE_OBJECT_TYPE.ORICHALCUM_BOW:
+            case TILE_OBJECT_TYPE.COPPER_STAFF:
+            case TILE_OBJECT_TYPE.IRON_STAFF:
+            case TILE_OBJECT_TYPE.MITHRIL_STAFF:
+            case TILE_OBJECT_TYPE.ORICHALCUM_STAFF:
+            case TILE_OBJECT_TYPE.COPPER_DAGGER:
+            case TILE_OBJECT_TYPE.IRON_DAGGER:
+            case TILE_OBJECT_TYPE.MITHRIL_DAGGER:
+            case TILE_OBJECT_TYPE.ORICHALCUM_DAGGER:
             case TILE_OBJECT_TYPE.RING:
             case TILE_OBJECT_TYPE.BRACER:
+            case TILE_OBJECT_TYPE.BELT:
+            case TILE_OBJECT_TYPE.SCROLL:
+            case TILE_OBJECT_TYPE.NECKLACE:
             case TILE_OBJECT_TYPE.MINK_SHIRT:
             case TILE_OBJECT_TYPE.FUR_SHIRT:
+            case TILE_OBJECT_TYPE.RABBIT_SHIRT:
+            case TILE_OBJECT_TYPE.WOOL_SHIRT:
+            case TILE_OBJECT_TYPE.SPIDER_SILK_SHIRT:
+            case TILE_OBJECT_TYPE.MOON_WALKER_SHIRT:
+            case TILE_OBJECT_TYPE.BOAR_HIDE_ARMOR:
+            case TILE_OBJECT_TYPE.WOLF_HIDE_ARMOR:
+            case TILE_OBJECT_TYPE.BEAR_HIDE_ARMOR:
+            case TILE_OBJECT_TYPE.SCALE_ARMOR:
+            case TILE_OBJECT_TYPE.DRAGON_ARMOR:
+            case TILE_OBJECT_TYPE.IRON_ARMOR:
+            case TILE_OBJECT_TYPE.COPPER_ARMOR:
+            case TILE_OBJECT_TYPE.MITHRIL_ARMOR:
+            case TILE_OBJECT_TYPE.ORICHALCUM_ARMOR:
             return true;
             default:
                 return false;
@@ -679,9 +748,9 @@ public static class Extensions {
             case JOB_TYPE.ZOMBIE_STROLL:
                 priority = 915;
                 break;
-            //case JOB_TYPE.RECOVER_HP:
-            //    priority = 920;
-            //    break;
+            case JOB_TYPE.ABSORB_CRYSTAL:
+                priority = 920;
+                break;
             case JOB_TYPE.UNDERMINE:
             case JOB_TYPE.POISON_FOOD:
             case JOB_TYPE.PLACE_TRAP:

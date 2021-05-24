@@ -24,7 +24,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     private string _surName;
     protected bool _isDead;
     private GENDER _gender;
-    private CharacterClass _characterClass;
     private RaceData _raceSetting;
     private Faction _faction;
     private Minion _minion;
@@ -75,7 +74,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public bool isWildMonster { get; protected set; }
     public Log deathLog { get; private set; }
     public List<string> interestedItemNames { get; private set; }
-    public string previousClassName { get; private set; }
     public List<JobQueueItem> forcedCancelJobsOnTickEnded { get; private set; }
     public Area territory { get; private set; }
     public LycanthropeData lycanData { get; protected set; }
@@ -95,6 +93,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     //Components / Managers
     public TrapStructure trapStructure { get; private set; }
     public GoapPlanner planner { get; private set; }
+    public CharacterClassComponent classComponent { get; private set; }
     public CharacterNeedsComponent needsComponent { get; private set; }
     public BuildStructureComponent buildStructureComponent { get; private set; }
     public CharacterStateComponent stateComponent { get; private set; }
@@ -122,10 +121,13 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public PreviousCharacterDataComponent previousCharacterDataComponent { get; }
     public CharacterTraitComponent traitComponent { get; private set; }
     public BookmarkableEventDispatcher bookmarkEventDispatcher { get; }
-    public BuffStatsBonus buffStatsBonus { get; private set; }
+    //public BuffStatsBonus buffStatsBonus { get; private set; }
     public EquipmentComponent equipmentComponent { get; private set; }
     public CharacterMoneyComponent moneyComponent { get; private set; }
     public ResourceStorageComponent resourceStorageComponent { get; private set; }
+
+    //IMPORTANT: This component is not applicable to all characters, only VILLAGERS! So, this can be null if the character is NOT A VILLAGER.
+    public CharacterTalentComponent talentComponent { get; private set; }
 
     #region getters / setters
     public string bookmarkName => lycanData != null ? lycanData.activeForm.visuals.GetCharacterNameWithIconAndColor() : visuals.GetCharacterNameWithIconAndColor();
@@ -187,7 +189,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public POINT_OF_INTEREST_TYPE poiType => POINT_OF_INTEREST_TYPE.CHARACTER;
     public RACE race => _raceSetting.race;
     public JOB_OWNER ownerType => JOB_OWNER.CHARACTER;
-    public CharacterClass characterClass => _characterClass;
+    public CharacterClass characterClass => classComponent.characterClass;
     public RaceData raceSetting => _raceSetting;
     public Faction faction => _faction;
     public Faction factionOwner => _faction;
@@ -257,7 +259,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         persistentID = UtilityScripts.Utilities.GetNewUniqueID();
         _id = id == -1 ? UtilityScripts.Utilities.SetID(this) : UtilityScripts.Utilities.SetID(this, id);
         _gender = gender;
-        AssignClass(className, true);
+        classComponent.AssignClass(className, true);
         AssignRace(race, true);
         SetSexuality(sexuality);
         visuals = new CharacterVisuals(this);
@@ -272,7 +274,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         persistentID = UtilityScripts.Utilities.GetNewUniqueID();
         _id = UtilityScripts.Utilities.SetID(this);
         _gender = gender;
-        AssignClass(className, true);
+        classComponent.AssignClass(className, true);
         AssignRace(race, true);
         GenerateSexuality();
         visuals = new CharacterVisuals(this);
@@ -285,7 +287,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     private Character() {
         SetIsDead(false);
         //_overrideThoughts = new List<string>();
-        previousClassName = string.Empty;
+        //previousClassName = string.Empty; //Moved to CharacterClassComponent
 
         //Traits
         CreateTraitContainer();
@@ -307,6 +309,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         logComponent = new LogComponent(); logComponent.SetOwner(this);
 
         //Components
+        classComponent = new CharacterClassComponent(); classComponent.SetOwner(this);
         needsComponent = new CharacterNeedsComponent(); needsComponent.SetOwner(this);
         stateComponent = new CharacterStateComponent(); stateComponent.SetOwner(this);
         nonActionEventsComponent = new NonActionEventsComponent(); nonActionEventsComponent.SetOwner(this);
@@ -332,7 +335,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         moneyComponent = new CharacterMoneyComponent(); moneyComponent.SetOwner(this);
         eventDispatcher = new CharacterEventDispatcher();
         bookmarkEventDispatcher = new BookmarkableEventDispatcher();
-        buffStatsBonus = new BuffStatsBonus();
+        //buffStatsBonus = new BuffStatsBonus();
         equipmentComponent = new EquipmentComponent();
         needsComponent.ResetSleepTicks();
         resourceStorageComponent = new ResourceStorageComponent();
@@ -352,7 +355,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         jobQueue = new JobQueue(this);
         planner = new GoapPlanner(this);
         visuals = new CharacterVisuals(this, data);
-        _characterClass = CharacterManager.Instance.CreateNewCharacterClass(data.className);
+        //_characterClass = CharacterManager.Instance.CreateNewCharacterClass(data.className); //Moved to CharacterClassComponent
         _raceSetting = RaceManager.Instance.GetRaceData(data.race);
         CreateTraitContainer();
 
@@ -377,7 +380,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         interestedItemNames = data.interestedItemNames;
         state = data.state;
         causeOfDeath = data.causeOfDeath;
-        previousClassName = data.previousClassName;
+        //previousClassName = data.classComponent.previousClassName; //Moved to CharacterClassComponent
         isPreplaced = data.isPreplaced;
         isStoredAsTarget = data.isStoredAsTarget;
 
@@ -387,6 +390,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             afflictionsSkillsInflictedByPlayer = new List<PLAYER_SKILL_TYPE>();
         }
         trapStructure = data.trapStructure.Load();
+        classComponent = data.classComponent.Load(); classComponent.SetOwner(this);
         needsComponent = data.needsComponent.Load(); needsComponent.SetOwner(this);
         buildStructureComponent = data.buildStructureComponent.Load(); buildStructureComponent.SetOwner(this);
         stateComponent = data.stateComponent.Load(); stateComponent.SetOwner(this);
@@ -414,7 +418,11 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         traitComponent = data.traitComponent.Load(); traitComponent.SetOwner(this);
         moneyComponent = data.moneyComponent.Load(); moneyComponent.SetOwner(this);
 
-        buffStatsBonus = data.buffStatusBonus.Load();
+        if (data.talentComponent != null) {
+            talentComponent = data.talentComponent.Load(); talentComponent.SetOwner(this);
+        }
+
+        //buffStatsBonus = data.buffStatusBonus.Load();
         eventDispatcher = new CharacterEventDispatcher();
         bookmarkEventDispatcher = new BookmarkableEventDispatcher();
         resourceStorageComponent = data.resourceStorageComponent.Load();
@@ -437,12 +445,17 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public virtual void Initialize() {
         ConstructDefaultActions();
         OnUpdateRace();
-        OnUpdateCharacterClass();
+        classComponent.OnUpdateCharacterClass();
         moodComponent.SetMoodValue(50);
         if (needsComponent.HasNeeds()) {
             needsComponent.Initialize();    
         }
         religionComponent.Initialize();
+        if (race != RACE.DEMON) {
+            //Demons and Summons/Monsters can't have talents
+            talentComponent = new CharacterTalentComponent(); talentComponent.SetOwner(this);
+            talentComponent.ConstructAllTalents();
+        }
     }
     public void InitialCharacterPlacement(LocationGridTile tile) {
         if (needsComponent.HasNeeds()) {
@@ -502,7 +515,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         Messenger.AddListener<Faction, Character>(FactionSignals.CREATE_FACTION_INTERRUPT, OnFactionCreated);
         Messenger.AddListener<ITraitable, Trait>(TraitSignals.TRAITABLE_GAINED_TRAIT, OnTraitableGainedTrait);
         Messenger.AddListener<Faction, Faction, FACTION_RELATIONSHIP_STATUS, FACTION_RELATIONSHIP_STATUS>(FactionSignals.CHANGE_FACTION_RELATIONSHIP, OnChangeFactionRelationship);
-        
+        Messenger.AddListener<Character, PowerCrystal>(CharacterSignals.ON_ELF_ABSORB_CRYSTAL, OnPowerCrystalAbsorbedByAnElf);
         needsComponent.SubscribeToSignals();
         jobComponent.SubscribeToListeners();
         stateAwarenessComponent.SubscribeSignals();
@@ -792,105 +805,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public virtual void PerTickDuringMovement() {
         //NOTE: Moved All Per Tick Movement effects to TryProcessTraitsOnTickEndedWhileStationaryOrUnoccupied because of task
         //https://trello.com/c/DqNguu3v/2941-symptoms-triggered-while-moving-should-also-be-triggered-when-character-is-stationary-and-not-doing-anything-and-not-sleeping
-    }
-#endregion
-
-#region Character Class
-    public virtual string GetClassForRole(CharacterRole role) {
-        if (role == CharacterRole.BEAST) {
-            return GameUtilities.GetRespectiveBeastClassNameFromByRace(race);
-        } else {
-            //string className = CharacterManager.Instance.GetRandomClassByIdentifier(role.classNameOrIdentifier);
-            //if (className != string.Empty) {
-            //    return className;
-            //} else {
-            //    return role.classNameOrIdentifier;
-            //}
-        }
-        return string.Empty;
-    }
-    public void RemoveClass() {
-        if (_characterClass == null) { return; }
-        traitContainer.RemoveTrait(this, traitContainer.GetTraitOrStatus<Trait>(_characterClass.traitNames)); //Remove traits from class
-        _characterClass = null;
-    }
-    public void AssignClass(string className, bool isInitial = false) {
-        if(characterClass == null || className != characterClass.className) {
-            if (CharacterManager.Instance.HasCharacterClass(className)) {
-                AssignClass(CharacterManager.Instance.CreateNewCharacterClass(className), isInitial);
-            } else {
-                throw new Exception($"There is no class named {className} but it is being assigned to {name}");
-            }
-        }
-    }
-    protected void OnUpdateCharacterClass() {
-        CharacterClassData classData = CharacterManager.Instance.GetOrCreateCharacterClassData(_characterClass.className);
-        if(classData != null) {
-            combatComponent.combatBehaviourParent.SetCombatBehaviour(classData.combatBehaviourType, this);
-            combatComponent.specialSkillParent.SetSpecialSkill(classData.combatSpecialSkillType);
-        }
-        for (int i = 0; i < _characterClass.traitNames.Length; i++) {
-            traitContainer.AddTrait(this, _characterClass.traitNames[i]);
-        }
-        if (_characterClass.interestedItemNames != null) {
-            AddItemAsInteresting(_characterClass.interestedItemNames);
-        }
-        combatComponent.UpdateBasicData(false);
-        needsComponent.UpdateBaseStaminaDecreaseRate();
-        visuals.UpdateAllVisuals(this);    
-        
-        UpdateCanCombatState();
-
-        //Misc
-        if (previousClassName == "Ratman") {
-            movementComponent.SetEnableDigging(false);
-        }
-        if(_characterClass.className == "Ratman") {
-            movementComponent.SetEnableDigging(true);
-        }
-        //Should not remove necromancer trait when necromancer becomes werewolf because it is only temporary
-        if(previousClassName == "Necromancer" && _characterClass.className != "Werewolf") {
-            traitContainer.RemoveTrait(this, "Necromancer");
-        }
-        if (_characterClass.className == "Necromancer" && previousClassName != "Werewolf") {
-            traitContainer.AddTrait(this, "Necromancer");
-        }
-        if (_characterClass.className == "Hero") {
-            //Reference: https://www.notion.so/ruinarch/Hero-9697369ffca6410296f852f295ee0090
-            traitContainer.RemoveAllTraitsByType(this, TRAIT_TYPE.FLAW);
-            Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "Generic", "became_hero", providedTags: LOG_TAG.Major);
-            log.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-            log.AddLogToDatabase();
-            PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
-            LogPool.Release(log);
-            traitContainer.AddTrait(this, "Blessed");
-        }
-    }
-    public void AssignClass(CharacterClass characterClass, bool isInitial = false) {
-        CharacterClass previousClass = _characterClass;
-        if (previousClass != null) {
-            homeSettlement?.UnapplyAbleJobsFromSettlement(this);
-            previousClassName = previousClass.className;
-            //This means that the character currently has a class and it will be replaced with a new class
-            for (int i = 0; i < previousClass.traitNames.Length; i++) {
-                traitContainer.RemoveTrait(this, previousClass.traitNames[i]); //Remove traits from class
-            }
-            if (previousClass.interestedItemNames != null) {
-                RemoveItemAsInteresting(previousClass.interestedItemNames);    
-            }
-        }
-        _characterClass = characterClass;
-        movementComponent.OnAssignedClass(characterClass);
-        //behaviourComponent.OnChangeClass(_characterClass, previousClass);
-        if (!isInitial) {
-            homeSettlement?.UpdateAbleJobsOfResident(this);
-            OnUpdateCharacterClass();
-            Messenger.Broadcast(CharacterSignals.CHARACTER_CLASS_CHANGE, this, previousClass, _characterClass);
-        }
-        combatComponent.UpdateElementalType();
-    }
-    public void OverridePreviousClassName(string p_className) {
-        previousClassName = p_className;
     }
 #endregion
 
@@ -2683,9 +2597,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             chanceToKnockout = Mathf.RoundToInt(chanceToKnockout * 0.35f);
         }
         ELEMENTAL_TYPE elementalType = characterThatAttacked.combatComponent.elementalDamage.type;
-        AdjustHP(-characterThatAttacked.combatComponent.attack, elementalType, source: characterThatAttacked, showHPBar: true, piercingPower: characterThatAttacked.piercingAndResistancesComponent.piercingPower, isPlayerSource: isPlayerSource);
+        AdjustHP(-characterThatAttacked.combatComponent.GetAttackWithCritRateBonus(), elementalType, source: characterThatAttacked, showHPBar: true, piercingPower: characterThatAttacked.piercingAndResistancesComponent.piercingPower, isPlayerSource: isPlayerSource);
 #if DEBUG_LOG
-        attackSummary += $"\nDealt damage {stateComponent.owner.combatComponent.attack}";
+        attackSummary += $"\nDealt damage {stateComponent.owner.combatComponent.GetAttackWithCritRateBonus()}";
 #endif
 
         //If the hostile reaches 0 hp, evaluate if he/she dies, get knock out, or get injured
@@ -5629,7 +5543,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public void TransformToWerewolfForm() {
         if (isLycanthrope && !lycanData.isInWerewolfForm) {
             lycanData.SetIsInWerewolfForm(true);
-            AssignClass("Werewolf");
+            classComponent.AssignClass("Werewolf");
             if (visuals != null) {
                 visuals.UpdateAllVisuals(this);
             }
@@ -5638,9 +5552,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public void RevertFromWerewolfForm() {
         if (isLycanthrope && lycanData.isInWerewolfForm) {
             lycanData.SetIsInWerewolfForm(false);
-            if(previousClassName != "Werewolf") {
+            if(classComponent.previousClassName != "Werewolf") {
                 //Reverting back from werewolf form should mean that the class to be assigned must not be werewolf
-                AssignClass(previousClassName);
+                classComponent.AssignClass(classComponent.previousClassName);
             }
             if (visuals != null) {
                 visuals.UpdateAllVisuals(this);
@@ -5819,7 +5733,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         if (_isDead) {
             //SetRaisedFromDeadAsSkeleton(true);
             AssignRace(race);
-            AssignClass(className);
+            classComponent.AssignClass(className);
 
             ReturnToLife();
 
@@ -6546,17 +6460,17 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     }
 #endregion
 
-    #region apply equipment effects upon load
-    void ApplyStackCountForTraits() {
-        equipmentInventory.ForEach((eachEquip) => {
-            (eachEquip as EquipmentItem).AssignData();
-            equipmentComponent.SetEquipment(eachEquip as EquipmentItem, this, true);
-        });
-    }
-	#endregion
+#region apply equipment effects upon load
+void ApplyStackCountForTraits() {
+    equipmentInventory.ForEach((eachEquip) => {
+        (eachEquip as EquipmentItem).AssignData();
+        equipmentComponent.SetEquipment(eachEquip as EquipmentItem, this, true);
+    });
+}
+#endregion
 
-#region IBookmarkable
-	public void OnSelectBookmark() {
+    #region IBookmarkable
+    public void OnSelectBookmark() {
         LeftSelectAction();
     }
     public void RemoveBookmark() {
@@ -6570,11 +6484,88 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     }
 #endregion
 
-#region Death Tile
+    #region Death Tile
     public void SetDeathLocation(LocationGridTile p_tile) {
         deathTilePosition = p_tile;
     }
-#endregion
+	#endregion
+
+	#region villager progression HUMANS = skill levelup, Elven = Power Crystal absorbed
+    //function to be attached on skill levelup NOTE!! - only humans should gain from this call
+    void OnSkillLevelUp() {
+        CharacterClassData classData = CharacterManager.Instance.GetOrCreateCharacterClassData(classComponent.characterClass.className);
+        piercingAndResistancesComponent.AdjustPiercing(classData.characterSkillUpdateData.GetPiercingBonus());
+        if (classData.characterSkillUpdateData.GetAllElementResistanceBonus() > 0) {
+            for (int x = 1; x < (int)RESISTANCE.Physical; ++x) {
+                piercingAndResistancesComponent.AdjustResistance((RESISTANCE)x, classData.characterSkillUpdateData.GetAllElementResistanceBonus());
+            }
+        } else {
+            for (int x = 1; x < (int)RESISTANCE.Physical; ++x) {
+                piercingAndResistancesComponent.AdjustResistance((RESISTANCE)x, classData.characterSkillUpdateData.GetBonusBaseOnElement((RESISTANCE)x));
+            }
+        }
+    }
+
+    //function to be attached on signal that 1 elven got a power crystal
+    //check if they are on the same village
+    //NOTE!! - only elves should gain from this call
+    void OnPowerCrystalAbsorbedByAnElf(Character p_powerCrystalAbsorber, PowerCrystal p_crystal) {
+        if(this != p_powerCrystalAbsorber && race == RACE.ELVES && homeSettlement == p_powerCrystalAbsorber.homeSettlement) {
+            ApplyCrystalBonus(p_crystal);
+        }
+    }
+
+    //the signal should be called here and also the absorber will gain the bonus from this function
+    //NOTE!! - only elves should gain from this call
+    public void AbsorbCrystal(PowerCrystal p_crystal) {
+        ApplyCrystalBonus(p_crystal);
+        
+        Log log;
+        string crystalBonus = string.Empty;
+        bool isPiercingBonus = false;
+        if(p_crystal.amountBonusPiercing > 0) {
+            isPiercingBonus = true;
+        }
+        if (currentSettlement == null || currentSettlement?.locationType != LOCATION_TYPE.VILLAGE) {
+            if (isPiercingBonus) {
+                crystalBonus = name + " gained " + p_crystal.amountBonusPiercing + " Piercing";
+            } else {
+                crystalBonus = name + " gained " + p_crystal.amountBonusResistance + " " + p_crystal.resistanceBonuses[0] + " Resistance";
+            }
+            log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "Power Crystal", "absorb_crystal_homeless", null, LOG_TAG.Major);
+            log.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            log.AddToFillers(null, crystalBonus, LOG_IDENTIFIER.STRING_1);
+            log.AddLogToDatabase();
+            PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
+        } else {
+            if (isPiercingBonus) {
+                crystalBonus = " gained " + p_crystal.amountBonusPiercing + " Piercing";
+            } else {
+                crystalBonus = " gained " + p_crystal.amountBonusResistance + " " + p_crystal.resistanceBonuses[0] + " Resistance";
+            }
+            Messenger.Broadcast(CharacterSignals.ON_ELF_ABSORB_CRYSTAL, this, p_crystal);
+            log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "Power Crystal", "absorb_crystal_villager", null, LOG_TAG.Major);
+            log.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            log.AddToFillers(homeSettlement, homeSettlement.name, LOG_IDENTIFIER.LANDMARK_1);
+            log.AddToFillers(null, crystalBonus, LOG_IDENTIFIER.STRING_1);
+            log.AddLogToDatabase();
+            PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
+        }
+    }
+
+    public void ApplyCrystalBonus(PowerCrystal p_crystal) {
+        p_crystal.resistanceBonuses.ForEach((eachResistance) => {
+            piercingAndResistancesComponent.AdjustResistance(eachResistance, p_crystal.amountBonusResistance);
+        });
+        piercingAndResistancesComponent.AdjustPiercing(p_crystal.amountBonusPiercing);
+    }
+    #endregion
+
+    #region Talents
+    public bool HasTalents() {
+        return talentComponent != null;
+    }
+    #endregion
 
     public void CleanUp() {
         visuals?.CleanUp();

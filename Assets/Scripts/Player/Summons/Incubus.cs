@@ -16,7 +16,4 @@ public class Incubus : SeducerSummon {
     public Incubus(SaveDataSummon data) : base(data) {
         //combatComponent.SetElementalType(ELEMENTAL_TYPE.Electric);
     }
-    public override string GetClassForRole(CharacterRole role) {
-        return ClassName;
-    }
 }

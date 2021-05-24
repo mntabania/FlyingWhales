@@ -347,6 +347,14 @@ namespace UtilityScripts {
             int roll = UnityEngine.Random.Range(p_min, p_max + 1);
             return roll;
         }
+
+        public static List<int> GetUniqueRandomNumbersInBetween(int p_min, int p_max, int p_count) {
+            var sequence = Enumerable.Range(p_min, p_max).OrderBy(n => n * n + UnityEngine.Random.Range(p_min, p_max) * (new System.Random()).Next());
+
+            var result = sequence.Distinct().Take(p_count);
+
+            return result.ToList<int>();
+        }
         public static List<Area> GetHexTilesGivenCoordinates(List<Point> coordinates, Area[,] map) {
             List<Area> tiles = new List<Area>();
             for (int i = 0; i < coordinates.Count; i++) {

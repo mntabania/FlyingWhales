@@ -3,7 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class EquipmentItem : TileObject {
+
     public List<RESISTANCE> resistanceBonuses = new List<RESISTANCE>();
+    public EQUIPMENT_QUALITY quality = EQUIPMENT_QUALITY.Normal;
+    public float additionalQualityBonusPercentage = 0;
     public EquipmentData equipmentData;
 
     public override System.Type serializedData => typeof(SaveDataEquipmentItem);
@@ -20,6 +23,21 @@ public class EquipmentItem : TileObject {
                 resistanceBonuses.Add(eachResistance);
             });
         }
+
+    }
+
+    public void MakeQualityHigh() {
+        maxHP += (int)(maxHP * 0.5f);
+        additionalQualityBonusPercentage = 25;
+    }
+
+    public void MakeQualityPremium() {
+        maxHP = (int)(maxHP * 2f);
+        additionalQualityBonusPercentage = 50;
+    }
+
+    public float GetAdditionaliQualityBonusPercentage() { 
+        return additionalQualityBonusPercentage = 50;
     }
 
     public EquipmentItem() {
@@ -29,6 +47,9 @@ public class EquipmentItem : TileObject {
         AddAdvertisedAction(INTERACTION_TYPE.SCRAP);
         AddAdvertisedAction(INTERACTION_TYPE.PICK_UP);
         AddAdvertisedAction(INTERACTION_TYPE.BOOBY_TRAP);
+
+        maxHP = 700;
+        currentHP = maxHP;
     }
 
     #region Save Data
