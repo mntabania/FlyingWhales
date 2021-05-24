@@ -204,10 +204,18 @@ public class AreaSpellsComponent : AreaComponent {
         // }
     }
     public void AddEarthquakeTileObject(IPointOfInterest poi) {
+        if (poi is MovingTileObject || poi.traitContainer.HasTrait("Immovable")) {
+            //Moving tile objects and immovable tile objects cannot be moved by earthquakes
+            return;
+        }
         earthquakeTileObjects.Add(poi);
         //POIShake(poi);
     }
     public void AddPendingEarthquakeTileObject(IPointOfInterest poi) {
+        if (poi is MovingTileObject || poi.traitContainer.HasTrait("Immovable")) {
+            //Moving tile objects and immovable tile objects cannot be moved by earthquakes
+            return;
+        }
         pendingEarthquakeTileObjects.Add(poi);
     }
     public void RemoveEarthquakeTileObject(IPointOfInterest poi) {
@@ -275,17 +283,18 @@ public class AreaSpellsComponent : AreaComponent {
         float piercing = PlayerSkillManager.Instance.GetAdditionalPiercePerLevelBaseOnLevel(earthquakeData);
         for (int i = 0; i < earthquakeTileObjects.Count; i++) {
             IPointOfInterest poi = earthquakeTileObjects[i];
-            if (poi.gridTileLocation == null) {
+            LocationGridTile gridTile = poi.gridTileLocation;
+            if (gridTile == null) {
                 RemoveEarthquakeTileObject(poi);
                 i--;
                 continue;
             }
             poi.AdjustHP(processedDamage, ELEMENTAL_TYPE.Normal, showHPBar: true, piercingPower: piercing, isPlayerSource: true, source: earthquakeData); //right now, earthquake is always player source because we do not have any other way to create earthquake
-            if (poi.gridTileLocation != null && !poi.traitContainer.HasTrait("Immovable")) {
+            if (gridTile != null) {
                 if (!DOTween.IsTweening(poi.mapObjectVisual.transform)) {
                     if (UnityEngine.Random.Range(0, 100) < 30) {
                         List<LocationGridTile> adjacentTiles = RuinarchListPool<LocationGridTile>.Claim();
-                        poi.gridTileLocation.PopulateUnoccupiedNeighboursWithNoCharactersInSameAreaAndStructure(adjacentTiles);
+                        gridTile.PopulateUnoccupiedNeighboursWithNoCharactersInSameAreaAndStructure(adjacentTiles);
                         if (adjacentTiles.Count > 0) {
                             POIMove(poi, adjacentTiles[GameUtilities.RandomBetweenTwoNumbers(0, adjacentTiles.Count - 1)]);
                         }

@@ -15,9 +15,9 @@ public class SaveDataCharacter : SaveData<Character>, ISavableCounterpart {
     public bool isDead;
     public GENDER gender;
     public SEXUALITY sexuality;
-    public string className;
+    //public string className; //Moved to CharacterClassComponent
     public RACE race;
-    public string previousClassName;
+    //public string previousClassName; //Moved to CharacterClassComponent
 
     public int currentHP;
     public int doNotRecoverHP;
@@ -36,7 +36,6 @@ public class SaveDataCharacter : SaveData<Character>, ISavableCounterpart {
     public List<INTERACTION_TYPE> advertisedActions;
     public bool canCombat;
     public string deathStr;
-    public Dictionary<RESOURCE, int> storedResources;
     public bool hasUnresolvedCrime;
     public bool isInLimbo;
     public bool isLimboCharacter;
@@ -72,6 +71,7 @@ public class SaveDataCharacter : SaveData<Character>, ISavableCounterpart {
 
     public string territory;
     public List<string> items;
+    public List<string> equipmentInventory;
     public List<string> ownedItems;
     public List<string> jobs;
     public List<string> forceCancelJobsOnTickEnded;
@@ -83,6 +83,7 @@ public class SaveDataCharacter : SaveData<Character>, ISavableCounterpart {
     public SaveDataBaseRelationshipContainer saveDataBaseRelationshipContainer;
 
     public SaveDataTrapStructure trapStructure;
+    public SaveDataCharacterClassComponent classComponent;
     public SaveDataCharacterNeedsComponent needsComponent;
     public SaveDataBuildStructureComponent buildStructureComponent;
     public SaveDataCharacterStateComponent stateComponent;
@@ -108,7 +109,11 @@ public class SaveDataCharacter : SaveData<Character>, ISavableCounterpart {
     public SaveDataPiercingAndResistancesComponent piercingAndResistancesComponent;
     public SaveDataPreviousCharacterDataComponent previousCharacterDataComponent;
     public SaveDataCharacterTraitComponent traitComponent;
-    public SaveDataBuffStatsBonus buffStatusBonus;
+    public SaveDataCharacterMoneyComponent moneyComponent;
+    //public SaveDataBuffStatsBonus buffStatusBonus;
+    public SaveDataCharacterTalentComponent talentComponent;
+    public SaveDataResourceStorageComponent resourceStorageComponent;
+    //public SaveDataEquipmentComponent equipmentComponent;
     #region getters
     public OBJECT_TYPE objectType => OBJECT_TYPE.Character;
     #endregion
@@ -121,7 +126,7 @@ public class SaveDataCharacter : SaveData<Character>, ISavableCounterpart {
         isDead = data.isDead;
         gender = data.gender;
         sexuality = data.sexuality;
-        className = data.characterClass.className;
+        //className = data.characterClass.className;//Moved to CharacterClassComponent
         race = data.race;
         //isAlliedWithPlayer = data.isAlliedWithPlayer;
         currentHP = data.currentHP;
@@ -130,7 +135,6 @@ public class SaveDataCharacter : SaveData<Character>, ISavableCounterpart {
         advertisedActions = data.advertisedActions;
         canCombat = data.canCombat;
         deathStr = data.deathStr;
-        storedResources = data.storedResources;
         hasUnresolvedCrime = data.hasUnresolvedCrime;
         isInLimbo = data.isInLimbo;
         isLimboCharacter = data.isLimboCharacter;
@@ -140,7 +144,7 @@ public class SaveDataCharacter : SaveData<Character>, ISavableCounterpart {
         interestedItemNames = data.interestedItemNames;
         state = data.state;
         causeOfDeath = data.causeOfDeath;
-        previousClassName = data.previousClassName;
+        //previousClassName = data.classComponent.previousClassName; //Moved to CharacterClassComponent
         isPreplaced = data.isPreplaced;
         afflictionsSkillsInflictedByPlayer = data.afflictionsSkillsInflictedByPlayer;
         isStoredAsTarget = data.isStoredAsTarget;
@@ -159,6 +163,7 @@ public class SaveDataCharacter : SaveData<Character>, ISavableCounterpart {
         deathTileLocation = data.deathTilePosition != null ? new TileLocationSave(data.deathTilePosition) : new TileLocationSave();
 
         trapStructure = new SaveDataTrapStructure(); trapStructure.Save(data.trapStructure);
+        classComponent = new SaveDataCharacterClassComponent(); classComponent.Save(data.classComponent);
         needsComponent = new SaveDataCharacterNeedsComponent(); needsComponent.Save(data.needsComponent);
         buildStructureComponent = new SaveDataBuildStructureComponent(); buildStructureComponent.Save(data.buildStructureComponent);
         stateComponent = new SaveDataCharacterStateComponent(); stateComponent.Save(data.stateComponent);
@@ -184,7 +189,14 @@ public class SaveDataCharacter : SaveData<Character>, ISavableCounterpart {
         piercingAndResistancesComponent = new SaveDataPiercingAndResistancesComponent(); piercingAndResistancesComponent.Save(data.piercingAndResistancesComponent);
         previousCharacterDataComponent = new SaveDataPreviousCharacterDataComponent(); previousCharacterDataComponent.Save(data.previousCharacterDataComponent);
         traitComponent = new SaveDataCharacterTraitComponent(); traitComponent.Save(data.traitComponent);
-        buffStatusBonus = new SaveDataBuffStatsBonus(); buffStatusBonus.Save(data.buffStatsBonus);
+        //buffStatusBonus = new SaveDataBuffStatsBonus(); buffStatusBonus.Save(data.buffStatsBonus);
+        moneyComponent = new SaveDataCharacterMoneyComponent(); moneyComponent.Save(data.moneyComponent);
+        resourceStorageComponent = new SaveDataResourceStorageComponent(); resourceStorageComponent.Save(data.resourceStorageComponent);
+
+        if (data.talentComponent != null) {
+            talentComponent = new SaveDataCharacterTalentComponent(); talentComponent.Save(data.talentComponent);
+        }
+        //equipmentComponent = new SaveDataEquipmentComponent(); equipmentComponent.Save(data.equipmentComponent);
 
         isInfoUnlocked = data.isInfoUnlocked;
 
@@ -249,6 +261,10 @@ public class SaveDataCharacter : SaveData<Character>, ISavableCounterpart {
         items = new List<string>();
         for (int i = 0; i < data.items.Count; i++) {
             items.Add(data.items[i].persistentID);
+        }
+        equipmentInventory = new List<string>();
+        for (int i = 0; i < data.equipmentInventory.Count; i++) {
+            equipmentInventory.Add(data.equipmentInventory[i].persistentID);
         }
         ownedItems = new List<string>();
         for (int i = 0; i < data.ownedItems.Count; i++) {

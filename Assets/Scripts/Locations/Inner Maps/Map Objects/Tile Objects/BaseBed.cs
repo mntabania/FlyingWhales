@@ -50,7 +50,7 @@ public abstract class BaseBed : TileObject {
         }
         return false;
     }
-    public override bool AddUser(Character character) {
+     protected override bool AddUser(Character character) {
         for (int i = 0; i < bedUsers.Length; i++) {
             if (bedUsers[i] == null) {
                 bedUsers[i] = character;

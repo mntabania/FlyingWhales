@@ -42,6 +42,9 @@ public class RegionInnerMapGeneration : MapGenerationComponent {
             Region location = DatabaseManager.Instance.regionDatabase.GetRegionByPersistentID(saveDataLocationStructure.regionLocationID);
             LocationStructure createdStructure = saveDataLocationStructure.InitialLoad(location);
             if (createdStructure != null && !createdStructure.hasBeenDestroyed) {
+                if (createdStructure is Wilderness wilderness) {
+                    location.LoadWilderness(wilderness);
+                }
                 //only add undestroyed structures to location.
                 location.AddStructure(createdStructure);
                 if (!string.IsNullOrEmpty(saveDataLocationStructure.settlementLocationID)) {

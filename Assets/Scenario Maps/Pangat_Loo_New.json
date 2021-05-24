@@ -108,6 +108,8 @@
         }
       ]
     },
+    "warpWeight": 0.39,
+    "temperatureSeed": 0.25,
     "hextileSaves": null,
     "areaSaves": [
       {
@@ -2432,13 +2434,6 @@
       },
       {
         "location": {
-          "X": 6,
-          "Y": 1
-        },
-        "structureType": "ANCIENT_GRAVEYARD"
-      },
-      {
-        "location": {
           "X": 3,
           "Y": 3
         },
@@ -2464,6 +2459,38 @@
           "Y": 4
         },
         "structureType": "ANCIENT_GRAVEYARD"
+      }
+    ],
+    "villageSpots":[
+      {
+        "mainArea":{"X":9,"Y":4},
+        "reservedAreas":[
+          {"X":9,"Y":5},
+          {"X":8,"Y":5},
+          {"X":10,"Y":5},
+          {"X":10,"Y":4},
+          {"X":9,"Y":3},
+          {"X":10,"Y":3},
+          {"X":11,"Y":3},
+          {"X":12,"Y":3},
+          {"X":12,"Y":4},
+          {"X":11,"Y":4},
+          {"X":8,"Y":4}
+        ]
+      },
+      {
+        "mainArea":{"X":6,"Y":3},
+        "reservedAreas":[
+          {"X":5,"Y":3},
+          {"X":6,"Y":4},
+          {"X":5,"Y":4},
+          {"X":6,"Y":2},
+          {"X":6,"Y":1},
+          {"X":5,"Y":1},
+          {"X":7,"Y":1},
+          {"X":6,"Y":0},
+          {"X":7,"Y":3}
+        ]
       }
     ]
   },

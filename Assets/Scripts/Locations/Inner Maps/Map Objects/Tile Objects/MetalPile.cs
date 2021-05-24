@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class MetalPile : ResourcePile {
+public abstract class MetalPile : ResourcePile {
 
-    public MetalPile() : base(RESOURCE.METAL) {
-        Initialize(TILE_OBJECT_TYPE.METAL_PILE, false);
+    public MetalPile(TILE_OBJECT_TYPE tileObjectType) : base(RESOURCE.METAL) {
+        Initialize(tileObjectType, false);
         //AddAdvertisedAction(INTERACTION_TYPE.ASSAULT);
         //SetResourceInPile(50);
         SetResourceInPile(100);
@@ -21,9 +21,6 @@ public class MetalPile : ResourcePile {
     //}
     public override string ToString() {
         return $"Metal Pile {id.ToString()}";
-    }
-    public virtual bool CanBeReplaced() {
-        return true;
     }
 }
 

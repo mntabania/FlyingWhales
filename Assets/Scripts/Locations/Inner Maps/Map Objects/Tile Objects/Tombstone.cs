@@ -35,7 +35,7 @@ public class Tombstone : TileObject {
         _users = new Character[1];
         _respawnCorpseOnDestroy = true;
     }
-    public Tombstone(SaveDataTombstone data) {
+    public Tombstone(SaveDataTombstone data) : base(data) {
         _users = new Character[1];
         _respawnCorpseOnDestroy = true;
     }

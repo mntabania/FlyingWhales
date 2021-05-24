@@ -24,9 +24,6 @@ public class Golem : Summon {
     }
 
     #region Overrides
-    public override string GetClassForRole(CharacterRole role) {
-        return "Barbarian"; //all golems are barbarians
-    }
     public override void Initialize() {
         base.Initialize();
         behaviourComponent.ChangeDefaultBehaviourSet(CharacterManager.Golem_Behaviour);

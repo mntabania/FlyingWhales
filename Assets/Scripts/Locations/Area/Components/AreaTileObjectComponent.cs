@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Inner_Maps;
 using UnityEngine;
 using UtilityScripts;
 
@@ -19,12 +20,49 @@ public class AreaTileObjectComponent : AreaComponent {
     public bool RemoveItemInArea(TileObject item) {
         return itemsInArea.Remove(item);
     }
+    public bool HasTileObjectOfTypeInHexTile(TILE_OBJECT_TYPE type) {
+        for (int i = 0; i < itemsInArea.Count; i++) {
+            if (itemsInArea[i].tileObjectType == type) {
+                return true;
+            }
+        }
+        return false;
+    }
     public int GetNumberOfTileObjectsInHexTile(TILE_OBJECT_TYPE type) {
         int count = 0;
         for (int i = 0; i < itemsInArea.Count; i++) {
             if (itemsInArea[i].tileObjectType == type) {
                 count++;
             }
+        }
+        return count;
+    }
+    public int GetNumberOfTileObjectsInHexTile(TILE_OBJECT_TYPE type, TILE_OBJECT_TYPE type2) {
+        int count = 0;
+        for (int i = 0; i < itemsInArea.Count; i++) {
+            TileObject tileObject = itemsInArea[i];
+            if (tileObject.tileObjectType == type || tileObject.tileObjectType == type2) {
+                count++;
+            }
+        }
+        return count;
+    }
+    public int GetNumberOfTileObjectsInHexTile(TILE_OBJECT_TYPE type, TILE_OBJECT_TYPE type2, MapGenerationData p_data) {
+        int count = 0;
+        for (int i = 0; i < owner.gridTileComponent.gridTiles.Count; i++) {
+            LocationGridTile tile = owner.gridTileComponent.gridTiles[i];
+            if (tile.tileObjectComponent.objHere != null) {
+                TileObject tileObject = tile.tileObjectComponent.objHere;
+                if (tileObject.tileObjectType == type || tileObject.tileObjectType == type2) {
+                    count++;
+                }    
+            } else {
+                TILE_OBJECT_TYPE tileObjectType = p_data.GetGeneratedObjectOnTile(tile);
+                if (tileObjectType == type || tileObjectType == type2) {
+                    count++;
+                }
+            }
+            
         }
         return count;
     }

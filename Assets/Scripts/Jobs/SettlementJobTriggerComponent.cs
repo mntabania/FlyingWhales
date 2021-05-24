@@ -145,7 +145,9 @@ public class SettlementJobTriggerComponent : JobTriggerComponent, SettlementClas
 	}
 	private void OnResourceInPileChangedVillage(ResourcePile resourcePile) {
 		if (resourcePile.gridTileLocation != null && resourcePile.structureLocation == _owner.mainStorage) {
-			CheckResource(resourcePile.providedResource);
+			if (resourcePile.providedResource == RESOURCE.FOOD || resourcePile.providedResource == RESOURCE.WOOD || resourcePile.providedResource == RESOURCE.STONE) {
+				CheckResource(resourcePile.providedResource);
+			}
 			Messenger.Broadcast(JobSignals.CHECK_JOB_APPLICABILITY, JOB_TYPE.COMBINE_STOCKPILE, resourcePile as IPointOfInterest);
 			TryCreateCombineStockpile(resourcePile);
 		}
@@ -175,7 +177,9 @@ public class SettlementJobTriggerComponent : JobTriggerComponent, SettlementClas
 				Messenger.Broadcast(JobSignals.CHECK_JOB_APPLICABILITY, JOB_TYPE.COMBINE_STOCKPILE, resourcePile as IPointOfInterest);
 				if (tile.IsPartOfSettlement(_owner)) {
 					if (_owner.mainStorage == resourcePile.structureLocation) {
-						CheckResource(resourcePile.providedResource);
+						if (resourcePile.providedResource == RESOURCE.FOOD || resourcePile.providedResource == RESOURCE.WOOD || resourcePile.providedResource == RESOURCE.STONE) {
+							CheckResource(resourcePile.providedResource);
+						}
 						TryCreateCombineStockpile(resourcePile);	
 					}
 				}
@@ -186,7 +190,9 @@ public class SettlementJobTriggerComponent : JobTriggerComponent, SettlementClas
 	private void OnTileObjectRemoved(TileObject tileObject, Character removedBy, LocationGridTile removedFrom) {
 		if (tileObject is ResourcePile resourcePile) {
 			if (removedFrom.parentMap.region == _owner.region && removedFrom.structure == _owner.mainStorage) {
-				CheckResource(resourcePile.providedResource);	
+				if (resourcePile.providedResource == RESOURCE.FOOD || resourcePile.providedResource == RESOURCE.WOOD || resourcePile.providedResource == RESOURCE.STONE) {
+					CheckResource(resourcePile.providedResource);
+				}
 			}
 		}
 	}
@@ -436,7 +442,6 @@ public class SettlementJobTriggerComponent : JobTriggerComponent, SettlementClas
 		CheckResource(RESOURCE.FOOD);
 		CheckResource(RESOURCE.WOOD);
 		CheckResource(RESOURCE.STONE);
-		CheckResource(RESOURCE.METAL);
 	}
 	private void CheckResource(RESOURCE resource) {
 		switch (resource) {
@@ -448,9 +453,6 @@ public class SettlementJobTriggerComponent : JobTriggerComponent, SettlementClas
 				break;
 			case RESOURCE.STONE:
 				CheckResource<StonePile>(resource);
-				break;
-			case RESOURCE.METAL:
-				CheckResource<MetalPile>(resource);
 				break;
 		}
 	}
@@ -481,9 +483,6 @@ public class SettlementJobTriggerComponent : JobTriggerComponent, SettlementClas
 						break;
 					case RESOURCE.STONE:
 						tileObjectType = TILE_OBJECT_TYPE.STONE_PILE;
-						break;
-					case RESOURCE.METAL:
-						tileObjectType = TILE_OBJECT_TYPE.METAL_PILE;
 						break;
 					default:
 						throw new Exception($"There was no tile object type found for resource {resourceType.ToString()}");
@@ -637,7 +636,7 @@ public class SettlementJobTriggerComponent : JobTriggerComponent, SettlementClas
 		if (pile.mapObjectState != MAP_OBJECT_STATE.BUILT) {
 			return;
 		}
-		if (pile.IsAtMaxResource(pile.providedResource)) {
+		if (pile.resourceStorageComponent.IsAtMaxResource(pile.providedResource)) {
 			return; //if given pile is at maximum capacity, then do not create combine job for it
 		}
 		if (_owner.HasJob(JOB_TYPE.COMBINE_STOCKPILE, pile)) {
@@ -651,8 +650,9 @@ public class SettlementJobTriggerComponent : JobTriggerComponent, SettlementClas
         if(resourcePiles != null) {
             for (int i = 0; i < resourcePiles.Count; i++) {
                 ResourcePile currPile = resourcePiles[i] as ResourcePile;
-                if (currPile != pile && currPile.mapObjectState == MAP_OBJECT_STATE.BUILT && currPile.IsAtMaxResource(pile.providedResource) == false
-                    && currPile.HasEnoughSpaceFor(pile.providedResource, pile.resourceInPile)) {
+                if (currPile != pile && currPile.mapObjectState == MAP_OBJECT_STATE.BUILT && 
+                    currPile.resourceStorageComponent.IsAtMaxResource(pile.providedResource) == false
+                    && currPile.resourceStorageComponent.HasEnoughSpaceFor(pile.providedResource, pile.resourceInPile)) {
                     targetPile = currPile;
                     break;
                 }
@@ -998,7 +998,7 @@ public class SettlementJobTriggerComponent : JobTriggerComponent, SettlementClas
 
 #region Mining
 	private void TryCreateMiningJob() {
-		if (GameManager.Instance.GetHoursBasedOnTicks(GameManager.Instance.Today().tick) == 6 && !_owner.HasJob(JOB_TYPE.MINE) && _owner.HasStructure(STRUCTURE_TYPE.MINE_SHACK)) { //6
+		if (GameManager.Instance.GetHoursBasedOnTicks(GameManager.Instance.Today().tick) == 6 && !_owner.HasJob(JOB_TYPE.MINE) && _owner.HasStructure(STRUCTURE_TYPE.MINE)) { //6
 			GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.MINE, INTERACTION_TYPE.BEGIN_MINE, null, _owner);
 			_owner.AddToAvailableJobs(job);
 		}

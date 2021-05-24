@@ -4,7 +4,7 @@ public class Eyeball : TileObject{
     public Eyeball() {
         Initialize(TILE_OBJECT_TYPE.EYEBALL);
     }
-    public Eyeball(SaveDataTileObject data) { }
+    public Eyeball(SaveDataTileObject data) : base(data) { }
 
     #region Overrides
     public override bool CanBeSelected() {

@@ -9,6 +9,8 @@ using UnityEngine.Tilemaps;
 namespace Inner_Maps {
     public class InnerMapAssetManager : BaseMonoBehaviour {
 
+        public TileTypeAssetDictionary tileTypeAssets;
+        
         [Header("Grassland Tiles")]
         public TileBase outsideTile;
         public TileBase grassTile;
@@ -82,7 +84,7 @@ namespace Inner_Maps {
         
         [Header("Demon")]
         public TileBase demonStoneRuleTile;
-
+        
         public TileBase GetOutsideFloorTile(BIOMES p_biomeType) {
             switch (p_biomeType) {
                 case BIOMES.SNOW:
@@ -229,5 +231,9 @@ namespace Inner_Maps {
         }
 #endif
 #endregion
+
+        public TileBase GetGroundAssetForTile(LocationGridTile p_tile) {
+            return tileTypeAssets[p_tile.specificBiomeTileType];
+        }
             }
         }

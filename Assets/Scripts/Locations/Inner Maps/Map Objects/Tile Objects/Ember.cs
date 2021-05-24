@@ -10,5 +10,5 @@ public class Ember : TileObject{
         AddAdvertisedAction(INTERACTION_TYPE.PICK_UP);
         AddAdvertisedAction(INTERACTION_TYPE.BOOBY_TRAP);
     }
-    public Ember(SaveDataTileObject data) { }
+    public Ember(SaveDataTileObject data) : base(data) { }
 }

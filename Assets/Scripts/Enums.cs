@@ -67,6 +67,11 @@ public enum RACE{
     HARPY = 38,
     TRITON = 39,
     IMP = 40,
+    BEAR = 45,
+    BOAR = 46,
+    MOONWALKER = 47,
+    MINK = 48,
+    RABBIT = 49,
 }
 public enum HEXTILE_DIRECTION {
     NORTH_WEST,
@@ -518,6 +523,8 @@ public enum INTERACTION_TYPE {
     DISPOSE_FOOD = 223,
     IS_IMPRISONED = 224,
     STEAL_ANYTHING = 225,
+    ABSORB_POWER_CRYSTAL = 226,
+    STEAL_COINS = 227,
 }
 public enum INTERRUPT {
     None,
@@ -662,15 +669,9 @@ public enum STRUCTURE_TYPE {
     WILDERNESS = 5,
     CEMETERY = 8,
     PRISON = 9,
-    POND = 10,
     CITY_CENTER = 11,
-    SMITHY = 12,
     BARRACKS = 13,
     HOSPICE = 14,
-    GRANARY = 15,
-    MINER_CAMP = 16,
-    RAIDER_CAMP = 17,
-    ASSASSIN_GUILD = 18,
     HUNTER_LODGE = 19,
     MAGE_QUARTERS = 20,
     NONE = 21,
@@ -692,7 +693,7 @@ public enum STRUCTURE_TYPE {
     TORTURE_CHAMBERS = 37,
     FARM = 39,
     LUMBERYARD = 40,
-    MINE_SHACK = 41,
+    MINE = 41,
     ANCIENT_GRAVEYARD = 42,
     TEMPLE = 43,
     RUINED_ZOO = 44,
@@ -700,15 +701,16 @@ public enum STRUCTURE_TYPE {
     CULT_TEMPLE = 46,
     BIOLAB = 47,
     QUARRY = 48,
-    CRAFTING = 49,
+    WORKSHOP = 49,
     TAILORING = 50,
     TANNERY = 51,
-    FISHING_SHACK = 52,
+    FISHERY = 52,
     SPIRE = 53,
     MANA_PIT = 54,
     MARAUD = 55,
     DEFENSE_POINT = 56,
     IMP_HUT = 57,
+    BUTCHERS_SHOP = 58,
 }
 public enum RELATIONSHIP_TYPE {
     NONE = 0,
@@ -750,7 +752,7 @@ public enum TILE_OBJECT_TYPE {
     GODDESS_STATUE = 23,
     STRUCTURE_TILE_OBJECT = 24,
     STONE_PILE = 25,
-    METAL_PILE = 26,
+    // METAL_PILE = 26,
     TORNADO = 27,
     BANDAGES = 29,
     TABLE_MEDICINE = 30,
@@ -867,7 +869,6 @@ public enum TILE_OBJECT_TYPE {
     VAPOR_VENT = 141,
     ELF_MEAT = 142,
     HUMAN_MEAT = 143,
-    VEGETABLES = 144,
     FISH_PILE = 145,
     DIAMOND = 146,
     GOLD = 147,
@@ -906,6 +907,80 @@ public enum TILE_OBJECT_TYPE {
     TORTURE_CHAMBERS_TILE_OBJECT = 180,
     DEMONIC_STRUCTURE_BLOCKER_TILE_OBJECT = 181,
     KENNEL_TILE_OBJECT = 182,
+    COPPER_SWORD = 183,
+    IRON_SWORD = 184,
+    RING = 185,
+    BRACER = 186,
+    FUR_SHIRT = 187,
+    MINK_SHIRT = 188,
+    POWER_CRYSTAL = 189,
+    MITHRIL_SWORD = 190,
+    ORICHALCUM_SWORD = 191,
+    COPPER_AXE = 192,
+    IRON_AXE = 193,
+    MITHRIL_AXE = 194,
+    ORICHALCUM_AXE = 195,
+    COPPER_BOW = 196,
+    IRON_BOW = 197,
+    MITHRIL_BOW = 198,
+    ORICHALCUM_BOW = 199,
+    COPPER_STAFF = 200,
+    IRON_STAFF = 201,
+    MITHRIL_STAFF = 202,
+    ORICHALCUM_STAFF = 203,
+    COPPER_DAGGER = 204,
+    IRON_DAGGER = 205,
+    MITHRIL_DAGGER = 206,
+    ORICHALCUM_DAGGER = 207,
+    RABBIT_SHIRT = 208,
+    WOOL_SHIRT = 209,
+    SPIDER_SILK_SHIRT = 210,
+    MOON_WALKER_SHIRT = 211,
+    BOAR_HIDE_ARMOR = 212,
+    WOLF_HIDE_ARMOR = 213,
+    BEAR_HIDE_ARMOR = 214,
+    SCALE_ARMOR = 215,
+    DRAGON_ARMOR = 216,
+    COPPER_ARMOR = 217,
+    IRON_ARMOR = 218,
+    MITHRIL_ARMOR = 219,
+    ORICHALCUM_ARMOR = 220,
+    NECKLACE = 221,
+    BELT = 222,
+    SCROLL = 223,
+    MITHRIL = 224,
+    ORICHALCUM = 225,
+    IRON = 226,
+    COPPER = 227,
+    CORN = 228,
+    POTATO = 229,
+    PINEAPPLE = 230,
+    ICEBERRY = 231,
+    HYPNO_HERB = 232,
+    WOOL = 233,
+    MINK_CLOTH = 234,
+    MOONCRAWLER_CLOTH = 235,
+    BOAR_HIDE = 236,
+    WOLF_HIDE = 237,
+    BEAR_HIDE = 238,
+    DRAGON_HIDE = 239,
+    RABBIT_CLOTH = 240,
+    SCALE_HIDE = 241,
+    SPIDER_SILK = 242,
+    MOON_THREAD = 243,
+    HYPNO_HERB_CROP = 244,
+    ICEBERRY_CROP = 245,
+    PINEAPPLE_CROP = 246,
+    POTATO_CROP = 247,
+    VEGETABLES = 248,
+    COUNTER_TOP = 249,
+    BOAR_DEN = 250,
+    WOLF_DEN = 251,
+    BEAR_DEN = 252,
+    RABBIT_HOLE = 253,
+    SHEEP_SPAWNING_SPOT = 254,
+    MINK_HOLE = 255,
+    MOONCRAWLER_HOLE = 256,
 }
 public enum POI_STATE {
     ACTIVE,
@@ -940,7 +1015,7 @@ public enum JOB_TYPE { NONE, UNDERMINE, ENERGY_RECOVERY_URGENT, FULLNESS_RECOVER
         , ROAM_AROUND_STRUCTURE, MONSTER_INVADE, PARTY_GO_TO, KIDNAP, RECRUIT, RAID, FLEE_CRIME, HOST_SOCIAL_PARTY, PARTYING, CRAFT_MISSING_FURNITURE, FULLNESS_RECOVERY_ON_SIGHT, HOARD, ZOMBIE_STROLL, WARM_UP, NO_PATH_IDLE, REPORT_CRIME
         , PREACH, HUNT_HEIRLOOM, SNATCH, DROP_ITEM_PARTY, GO_TO_WAITING, PRODUCE_FOOD_FOR_CAMP, KIDNAP_RAID, STEAL_RAID, BUILD_CAMP, CAPTURE_CHARACTER, BURY_IN_ACTIVE_PARTY, VAMPIRIC_EMBRACE, BUILD_VAMPIRE_CASTLE, FIND_NEW_VILLAGE
         , IMPRISON_BLOOD_SOURCE, OFFER_BLOOD, CURE_MAGICAL_AFFLICTION, LYCAN_HUNT_PREY, STEAL_CORPSE, SUMMON_BONE_GOLEM, CHANGE_CLASS, QUARANTINE, PLAGUE_CARE, TORTURE, MONSTER_EAT_CORPSE, TRITON_KIDNAP, RETURN_STOLEN_THING
-        , DISPOSE_FOOD_PILE, SNATCH_RESTRAIN, KLEPTOMANIAC_STEAL, LAZY_NAP, FIND_AFFAIR
+        , DISPOSE_FOOD_PILE, SNATCH_RESTRAIN, KLEPTOMANIAC_STEAL, LAZY_NAP, FIND_AFFAIR, ABSORB_CRYSTAL,
 }
 
 public enum JOB_OWNER { CHARACTER, SETTLEMENT, FACTION, PARTY }
@@ -1075,13 +1150,18 @@ public enum SUMMON_TYPE {
     Triton,
     Imp,
     Dire_Wolf,
+    Bear,
+    Boar,
+    Moonwalker,
+    Mink,
+    Rabbit,
 }
 public enum ARTIFACT_TYPE { None, Necronomicon, Ankh_Of_Anubis, Berserk_Orb, Heart_Of_The_Wind, Gorgon_Eye }
 public enum ABILITY_TAG { NONE, MAGIC, SUPPORT, DEBUFF, CRIME, PHYSICAL, }
 public enum LANDMARK_YIELD_TYPE { SUMMON, ARTIFACT, ABILITY, SKIRMISH, STORY_EVENT, }
 public enum SERIAL_VICTIM_TYPE { None, Gender, Race, Class, Trait }
 public enum DEADLY_SIN_ACTION { SPELL_SOURCE, INSTIGATOR, BUILDER, SABOTEUR, INVADER, FIGHTER, RESEARCHER, }
-public enum RESOURCE { FOOD, WOOD, STONE, METAL, NONE }
+public enum RESOURCE { FOOD, WOOD, STONE, METAL, NONE, CLOTH, LEATHER }
 public enum MAP_OBJECT_STATE { BUILT, UNBUILT, BUILDING }
 public enum FACTION_IDEOLOGY { Inclusive = 0, Exclusive = 1, Warmonger = 2, Peaceful = 3, Divine_Worship = 4, Nature_Worship = 5, Demon_Worship = 6,
     Reveres_Vampires = 7, Reveres_Werewolves = 8, Hates_Vampires = 9, Hates_Werewolves = 10, Bone_Golem_Makers = 11,
@@ -1211,6 +1291,28 @@ public enum UPGRADE_BONUS {
     Damage = 0, Pierce, HP_HEAL_Percentage, HP_Actual_Amount, Max_HP_Percentage, Max_HP_Actual, Atk_Percentage, Atk_Actual_Amount, Mana_Received, Amplify_Effect_By_Percentage, Duration, Chance_Bonus_Percentage, Tile_Range, Decrease_Movement_Speed, Cooldown, Skill_Movement_Speed, Applied_Blessed_On_Max_Level, None,
 }
 
+public enum EQUIPMENT_BONUS {
+    Increased_Piercing = 0, Increased_3_Random_Resistance, Increased_4_Random_Resistance, Increased_5_Random_Resistance, Max_HP_Percentage, Max_HP_Actual, Atk_Percentage, Atk_Actual, Attack_Element, Slayer_Bonus, Ward_Bonus, Flight, Int_Percentage, Int_Actual, None,
+}
+
+public enum EQUIPMENT_SLAYER_BONUS { 
+    Monster_Slayer = 0, Elf_Slayer, Human_Slayer, Undead_SLayer, Demon_Slayer,
+}
+
+public enum EQUIPMENT_WARD_BONUS {
+    Monster_Ward = 0, Elf_Wawrd, Human_Ward, Undead_Ward, Demon_Ward,
+}
+
+public enum EQUIPMENT_CLASS_COMPATIBILITY {
+    Knight = 0, Noble, Hero, Barbarian, Marauder, Cult_Leader, Archer, Hunter, Stalker, Mage, Shaman, Druid, Necromancer, Non_Combatant,
+}
+
+public enum CONCRETE_RESOURCES { 
+    Copper = 0, Iron, Mithril, Orichalcum, Rabbit_Cloth, Mink_Cloth, Wool, Spider_Silk, Moon_Thread, Boar_Hide, Scale_Hide, Dragon_Hide, Stone, Diamond, 
+    Elf_Meat, Human_Meat, Animal_Meat, Fish, Corn, Potato, Pineapple, Iceberry, Mushroom, Wood, Wolf_Hide, Bear_Hide, Mooncrawler_Cloth, Gold, Hypno_Herb,
+    Rat_Meat, Vegetables
+}
+
 public enum UNLOCKING_SKILL_REQUIREMENT {
     Archetype = 0, Skills, actions_count, affliction_count, spells_count, tier1_count, tier2_count, tier3_count, portal_level,
 }
@@ -1266,6 +1368,11 @@ public enum OPINIONS {
     NoOne = 0, Rival, Enemy, Acquaintance, Everyone,
 }
 
+public enum EQUIP_MATERIAL {
+    Diamond = 0, Stone, Mithrill, Wolf_Hide, Any_Metal, Any_Wood, Any_Cloth, Any_Leather,
+}
+
+
 public enum CHANCE_TYPE {
     Kleptomania_Pickpocket_Level_1, Kleptomania_Pickpocket_Level_2, Kleptomania_Rob_Other_House, Kleptomania_Rob_Any_Place,
     Base_Cult_Leader_Spawn_Chance, Laziness_Nap_Level_2, Laziness_Nap_Level_3, Unfaithful_Active_Search_Affair,
@@ -1287,3 +1394,21 @@ public enum CHANCE_TYPE {
     Ent_Spawn,
     Mimic_Spawn
 }
+public enum Gradient_Direction {
+    Top, Bottom, Left, Right
+}
+public enum Biome_Tile_Type {
+    Desert, Oasis, Grassland, Jungle, Taiga, Tundra, Snow
+}
+public enum Tile_Tag {
+    Decor, Tree, Berry_Shrub, None
+}
+public enum Temperature_Type {
+    Coldest, Colder, Cold, Hot, Hotter, Hottest
+}
+public enum Precipitation_Type {
+    Dryest, Dryer, Dry, Wet, Wetter, Wettest
+}
+public enum CHARACTER_TALENT { None, Martial_Arts, Combat_Magic, Healing_Magic, Crafting, Resources, Food, Social }
+
+public enum EQUIPMENT_QUALITY { Normal = 0, High, Premium }

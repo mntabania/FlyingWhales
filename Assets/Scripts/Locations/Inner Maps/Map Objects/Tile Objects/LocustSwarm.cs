@@ -18,7 +18,7 @@ public class LocustSwarm : MovingTileObject {
         AddAdvertisedAction(INTERACTION_TYPE.RESOLVE_COMBAT);
         expiryDate = GameManager.Instance.Today().AddTicks(processedTick);
     }
-    public LocustSwarm(SaveDataLocustSwarm data) {
+    public LocustSwarm(SaveDataLocustSwarm data) : base(data) {
         //SaveDataLocustSwarm saveDataLocustSwarm = data as SaveDataLocustSwarm;
         Assert.IsNotNull(data);
         expiryDate = data.expiryDate;

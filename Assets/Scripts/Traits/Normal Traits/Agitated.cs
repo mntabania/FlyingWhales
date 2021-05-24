@@ -6,7 +6,10 @@ using UnityEngine;
 
 namespace Traits {
     public class Agitated : Status {
-        public override bool isSingleton => true;
+        //public override bool isSingleton => true;
+
+        private float _addedAttackPercent;
+        private float _addedHPPercent;
         
         public Agitated() {
             name = "Agitated";
@@ -25,11 +28,13 @@ namespace Traits {
                 if (character.marker) {
                     character.marker.BerserkedMarker();
                 }
-                character.buffStatsBonus.originalAttack = Mathf.RoundToInt(character.combatComponent.unModifiedAttack * (PlayerSkillManager.Instance.GetAdditionalAttackPercentagePerLevelBaseOnLevel(PLAYER_SKILL_TYPE.AGITATE) / 100f));
-                character.combatComponent.AdjustAttackModifier(character.buffStatsBonus.originalAttack);
+                //character.buffStatsBonus.originalAttack = Mathf.RoundToInt(character.combatComponent.unModifiedAttack * (PlayerSkillManager.Instance.GetAdditionalAttackPercentagePerLevelBaseOnLevel(PLAYER_SKILL_TYPE.AGITATE) / 100f));
+                _addedAttackPercent = PlayerSkillManager.Instance.GetAdditionalAttackPercentagePerLevelBaseOnLevel(PLAYER_SKILL_TYPE.AGITATE);
+                character.combatComponent.AdjustAttackPercentModifier(_addedAttackPercent);
 
-                character.buffStatsBonus.originalHP = Mathf.RoundToInt(character.combatComponent.unModifiedMaxHP * (PlayerSkillManager.Instance.GetAdditionalMaxHpPercentagePerLevelBaseOnLevel(PLAYER_SKILL_TYPE.AGITATE) / 100f));
-                character.combatComponent.AdjustMaxHPModifier(character.buffStatsBonus.originalHP);
+                //character.buffStatsBonus.originalHP = Mathf.RoundToInt(character.combatComponent.unModifiedMaxHP * (PlayerSkillManager.Instance.GetAdditionalMaxHpPercentagePerLevelBaseOnLevel(PLAYER_SKILL_TYPE.AGITATE) / 100f));
+                _addedHPPercent = PlayerSkillManager.Instance.GetAdditionalMaxHpPercentagePerLevelBaseOnLevel(PLAYER_SKILL_TYPE.AGITATE);
+                character.combatComponent.AdjustMaxHPPercentModifier(_addedHPPercent);
             }
         }
         public override void LoadTraitOnLoadTraitContainer(ITraitable addTo) {
@@ -48,9 +53,9 @@ namespace Traits {
                         character.marker.UnberserkedMarker();
                     }
                 }
-                character.combatComponent.AdjustMaxHPModifier(-character.buffStatsBonus.originalHP);
-                character.combatComponent.AdjustAttackModifier(-character.buffStatsBonus.originalAttack);
-                character.buffStatsBonus.Reset();
+                character.combatComponent.AdjustAttackPercentModifier(-_addedAttackPercent);
+                character.combatComponent.AdjustMaxHPPercentModifier(-_addedHPPercent);
+                //character.buffStatsBonus.Reset();
             }
         }
         public override void OnInitiateMapObjectVisual(ITraitable traitable) {

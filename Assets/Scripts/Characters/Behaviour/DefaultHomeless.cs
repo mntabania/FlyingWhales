@@ -69,7 +69,7 @@ public class DefaultHomeless : CharacterBehaviourComponent {
 #if DEBUG_LOG
                     log += $"\n-{character.currentSettlement.name} is not {character.name}'s home. Will Create job to move to wilderness.";
 #endif
-                    LocationGridTile targetTile = CollectionUtilities.GetRandomElement(character.currentRegion.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS).tiles);
+                    LocationGridTile targetTile = CollectionUtilities.GetRandomElement(character.currentRegion.wilderness.tiles);
                     return character.jobComponent.CreateGoToJob(targetTile, out producedJob);
                 }
             }

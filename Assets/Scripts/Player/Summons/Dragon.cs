@@ -57,7 +57,7 @@ public class Dragon : Summon {
     #region Overrides
     public override void Initialize() {
         base.Initialize();
-        movementComponent.SetIsFlying(true);
+        movementComponent.SetToFlying();
         behaviourComponent.ChangeDefaultBehaviourSet(CharacterManager.Dragon_Behaviour);
     }
     public override void SubscribeToSignals() {

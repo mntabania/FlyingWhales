@@ -25,7 +25,7 @@ public class RavenousSpirit : TileObject {
         Initialize(TILE_OBJECT_TYPE.RAVENOUS_SPIRIT, false);
         traitContainer.AddTrait(this, "Ravenous");
     }
-    public RavenousSpirit(SaveDataRavenousSpirit data) {
+    public RavenousSpirit(SaveDataRavenousSpirit data) : base(data) {
         //SaveDataRavenousSpirit saveDataRavenousSpirit = data as SaveDataRavenousSpirit;
         Assert.IsNotNull(data);
         _currentDuration = data.currentDuration;

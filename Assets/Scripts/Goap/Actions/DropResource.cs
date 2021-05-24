@@ -116,7 +116,7 @@ public class DropResource : GoapAction {
     public void AfterDropSuccess(ActualGoapNode goapNode) {
         if (goapNode.actor.carryComponent.carriedPOI is ResourcePile carriedPile) {
             if (goapNode.poiTarget is Table table) {
-                table.AdjustFood(carriedPile.resourceInPile);
+                table.AdjustFood(carriedPile.specificProvidedResource, carriedPile.resourceInPile);
             } else if (goapNode.poiTarget is ResourcePile resourcePile) {
                 resourcePile.AdjustResourceInPile(carriedPile.resourceInPile);
             }

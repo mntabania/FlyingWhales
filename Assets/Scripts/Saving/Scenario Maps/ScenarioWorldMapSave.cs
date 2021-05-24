@@ -6,25 +6,29 @@ namespace Scenario_Maps {
     public class ScenarioWorldMapSave {
         public WorldMapTemplate worldMapTemplate;
         public List<SaveDataArea> areaSaves;
-        public PerlinNoiseSettings biomePerlinNoiseSettings;
         public PerlinNoiseSettings elevationPerlinNoiseSettings;
         public int xSeed;
         public int ySeed;
+        public float warpWeight;
+        public float temperatureSeed;
         public List<SpecialStructureSetting> specialStructureSaves;
+        public List<SaveDataVillageSpot> villageSpots;
         
-        public void SaveWorld(WorldMapTemplate p_worldMapTemplate, List<Area> p_areas, PerlinNoiseSettings p_biomeSettings, PerlinNoiseSettings p_elevationSettings) {
+        public void SaveWorld(WorldMapTemplate p_worldMapTemplate, List<Area> p_areas, PerlinNoiseSettings p_elevationSettings, float p_warpWeight, float p_temperatureSeed, List<VillageSpot> villageSpots) {
             worldMapTemplate = p_worldMapTemplate;
-            biomePerlinNoiseSettings = p_biomeSettings;
             elevationPerlinNoiseSettings = p_elevationSettings;
+            warpWeight = p_warpWeight;
+            temperatureSeed = p_temperatureSeed;
             SaveAreas(p_areas);
+            SaveVillageSpots(villageSpots);
         }
 
         #region Hex Tiles
-        public void SaveAreas(List<Area> tiles) {
+        public void SaveAreas(List<Area> p_tiles) {
             areaSaves = new List<SaveDataArea>();
             specialStructureSaves = new List<SpecialStructureSetting>();
-            for (int i = 0; i < tiles.Count; i++) {
-                Area currTile = tiles[i];
+            for (int i = 0; i < p_tiles.Count; i++) {
+                Area currTile = p_tiles[i];
                 SaveDataArea newSaveData = new SaveDataArea();
                 newSaveData.Save(currTile);
                 if (currTile.primaryStructureInArea != null && currTile.primaryStructureInArea.structureType.IsSpecialStructure() && currTile.primaryStructureInArea.structureType != STRUCTURE_TYPE.CAVE) {
@@ -52,6 +56,18 @@ namespace Scenario_Maps {
         //     }
         //     return tiles;
         // }
+        #endregion
+
+        #region Village Spots
+        private void SaveVillageSpots(List<VillageSpot> p_villageSpots) {
+            villageSpots = new List<SaveDataVillageSpot>();
+            for (int i = 0; i < p_villageSpots.Count; i++) {
+                VillageSpot villageSpot = p_villageSpots[i];
+                SaveDataVillageSpot saveData = new SaveDataVillageSpot();
+                saveData.Save(villageSpot);
+                villageSpots.Add(saveData);
+            }
+        }
         #endregion
     
     }

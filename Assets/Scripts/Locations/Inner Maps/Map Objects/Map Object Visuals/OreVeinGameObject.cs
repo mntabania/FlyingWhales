@@ -22,5 +22,11 @@ namespace Inner_Maps.Map_Objects.Map_Object_Visuals {
                 }
             }
         }
+        public override void Reset() {
+            base.Reset();
+            if (_structureConnector != null) {
+                _structureConnector.Reset();
+            }
+        }
     }
 }

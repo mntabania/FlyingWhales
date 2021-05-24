@@ -38,7 +38,7 @@ namespace Traits {
                 //goapNode.actor.needsComponent.AdjustStamina(2f);
                 if(owner is Table) {
                     goapNode.actor.needsComponent.AdjustHappiness(0.83f);
-                    owner.AdjustResource(RESOURCE.FOOD, -1);
+                    owner.resourceStorageComponent.ReduceMainResourceUsingRandomSpecificResources(RESOURCE.FOOD, 1);
                 } else if (owner is FoodPile foodPile) {
                     goapNode.actor.needsComponent.AdjustHappiness(-0.415f);
                     foodPile.AdjustResourceInPile(-1);

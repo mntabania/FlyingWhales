@@ -45,7 +45,7 @@ public class ChangeClass : GoapAction {
     #region Effects
     public void AfterChangeClassSuccess(ActualGoapNode goapNode) {
         string className = (string) goapNode.otherData[0].obj;
-        goapNode.actor.AssignClass(className);
+        goapNode.actor.classComponent.AssignClass(className);
     }
     #endregion
 }

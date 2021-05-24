@@ -280,7 +280,8 @@ public class PartyBehaviour : CharacterBehaviourComponent {
         FoodPile chosenFoodPile = null;
         for (int i = 0; i < p_area.gridTileComponent.gridTiles.Count; i++) {
             LocationGridTile tile = p_area.gridTileComponent.gridTiles[i];
-            if (tile.tileObjectComponent.objHere != null && tile.tileObjectComponent.objHere is FoodPile foodPile && foodPile.storedResources[RESOURCE.FOOD] >= 12) {
+            if (tile.tileObjectComponent.objHere != null && tile.tileObjectComponent.objHere is FoodPile foodPile && 
+                foodPile.resourceStorageComponent.GetResourceValue(RESOURCE.FOOD) >= 12) {
                 chosenFoodPile = foodPile;
                 break;
             }

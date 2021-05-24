@@ -7,6 +7,9 @@ using Traits;
 using UnityEngine.Assertions;
 namespace Traits {
     public class Necromancer : Trait {
+
+        public const int MaxSkeletonFollowers = 25;
+        
         public Character owner { get; private set; }
         public LocationStructure lairStructure { get; private set; }
         public NPCSettlement attackVillageTarget { get; private set; }
@@ -17,8 +20,10 @@ namespace Traits {
         public GameDate spawnLairDate { get; private set; }
 
         #region getters
-        public int numOfSkeletonFollowers => GetNumOfSkeletonFollowers();
-        public int numOfSkeletonFollowersInSameRegion => GetNumOfSkeletonFollowersInSameRegion();
+        //Commented this out since nothing uses it anymore, and technically GetNumOfSkeletonFollowersInSameRegion()
+        //is same as number of skeleton followers since we only have 1 region now
+        // public int numOfSkeletonFollowers => GetNumOfSkeletonFollowers(); 
+        public int numOfSkeletonFollowers => GetNumOfSkeletonFollowersInSameRegion();
         public override Type serializedData => typeof(SaveDataNecromancer);
         public override bool affectsNameIcon => true;
         #endregion
@@ -30,6 +35,7 @@ namespace Traits {
             effect = TRAIT_EFFECT.NEUTRAL;
             ticksDuration = 0;
             advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.BUILD_LAIR, INTERACTION_TYPE.SPAWN_SKELETON, INTERACTION_TYPE.READ_NECRONOMICON, INTERACTION_TYPE.MEDITATE, INTERACTION_TYPE.REGAIN_ENERGY };
+            AddTraitOverrideFunctionIdentifier(TraitManager.See_Poi_Trait);
         }
 
         #region Loading
@@ -95,6 +101,26 @@ namespace Traits {
             owner.movementComponent.SetAvoidSettlements(false);
             Messenger.Broadcast(PlayerSkillSignals.RELOAD_PLAYER_ACTIONS, owner as IPlayerActionTarget);
         }
+        public override bool OnSeePOI(IPointOfInterest targetPOI, Character characterThatWillDoJob) {
+            if (targetPOI is Character || targetPOI is Tombstone) {
+                Character targetCharacter = null;
+                if (targetPOI is Character character) {
+                    if (character is Summon summon) {
+                        if (!summon.hasBeenRaisedFromDead) {
+                            targetCharacter = character;        
+                        }
+                    } else {
+                        targetCharacter = character;
+                    }
+                } else if (targetPOI is Tombstone tombstone) {
+                    targetCharacter = tombstone.character;
+                }
+                if (targetCharacter != null && targetCharacter.isDead && targetCharacter.hasMarker && numOfSkeletonFollowers < MaxSkeletonFollowers) {
+                    return characterThatWillDoJob.jobComponent.TriggerRaiseCorpse(targetCharacter);
+                }
+            }
+            return false;
+        }
         #endregion
 
         #region Utilities
@@ -107,15 +133,15 @@ namespace Traits {
         public void AdjustEnergy(int amount) {
             energy += amount;
         }
-        private int GetNumOfSkeletonFollowers() {
-            int count = 0;
-            for (int i = 0; i < owner.faction.characters.Count; i++) {
-                if(owner.faction.characters[i].race == RACE.SKELETON) {
-                    count++;
-                }
-            }
-            return count;
-        }
+        // private int GetNumOfSkeletonFollowers() {
+        //     int count = 0;
+        //     for (int i = 0; i < owner.faction.characters.Count; i++) {
+        //         if(owner.faction.characters[i].race == RACE.SKELETON) {
+        //             count++;
+        //         }
+        //     }
+        //     return count;
+        // }
         private int GetNumOfSkeletonFollowersInSameRegion() {
             int count = 0;
             for (int i = 0; i < owner.faction.characters.Count; i++) {

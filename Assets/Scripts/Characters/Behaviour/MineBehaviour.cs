@@ -15,11 +15,11 @@ public class MineBehaviour : CharacterBehaviourComponent {
         producedJob = null;
         NPCSettlement homeSettlement = character.homeSettlement;
         if (homeSettlement != null) {
-            List<LocationStructure> mineShacks = homeSettlement.GetStructuresOfType(STRUCTURE_TYPE.MINE_SHACK);
+            List<LocationStructure> mineShacks = homeSettlement.GetStructuresOfType(STRUCTURE_TYPE.MINE);
             LocationGridTile targetTile = null;
             if(mineShacks != null && mineShacks.Count > 0) {
                 for (int i = 0; i < mineShacks.Count; i++) {
-                    MineShack mineShack = mineShacks[i] as MineShack;
+                    Inner_Maps.Location_Structures.Mine mineShack = mineShacks[i] as Inner_Maps.Location_Structures.Mine;
                     if(mineShack != null && mineShack.connectedCave != null) {
                         targetTile = mineShack.connectedCave.GetRandomPassableTileThatIsNotOccupied();
                         if (targetTile != null) {

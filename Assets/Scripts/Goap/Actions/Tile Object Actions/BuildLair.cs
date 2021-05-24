@@ -87,7 +87,7 @@ public class BuildLair : GoapAction {
 
         List<LocationGridTile> locationGridTiles = targetArea.gridTileComponent.gridTiles; //.ToList()// new List<LocationGridTile>(targetHex.locationGridTiles);
 
-        LocationStructure wilderness = targetArea.region.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
+        LocationStructure wilderness = targetArea.region.wilderness;
         InnerMapManager.Instance.MonsterLairCellAutomata(locationGridTiles, structure, targetArea.region, wilderness);
 
         structure.SetOccupiedArea(targetArea);

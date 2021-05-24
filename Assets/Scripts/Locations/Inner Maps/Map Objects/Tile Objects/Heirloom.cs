@@ -13,7 +13,7 @@ public class Heirloom : TileObject{
         traitContainer.AddTrait(this, "Indestructible");
         traitContainer.AddTrait(this, "Fire Resistant");
     }
-    public Heirloom(SaveDataTileObject data) { }
+    public Heirloom(SaveDataTileObject data) : base(data) { }
 
     public void SetStructureSpot(LocationStructure structure) {
         structureSpot = structure;

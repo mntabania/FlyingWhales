@@ -148,7 +148,7 @@ public class MapGenerationFinalization : MapGenerationComponent {
 	private IEnumerator RegionalItemGeneration() {
 		for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
 			Region region = GridMap.Instance.allRegions[i];
-			LocationStructure wilderness = region.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
+			LocationStructure wilderness = region.wilderness;
 			List<LocationGridTile> locationChoices = wilderness.unoccupiedTiles.Where(t =>
 				t.area.settlementOnArea == null && t.elevationType == ELEVATION.PLAIN).ToList();
 			if (locationChoices.Count > 0) {
@@ -351,7 +351,7 @@ public class MapGenerationFinalization : MapGenerationComponent {
 		} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Oona) {
 			//always spawn Ankh of anubis
 			Region randomRegion = CollectionUtilities.GetRandomElement(GridMap.Instance.allRegions);
-			LocationStructure targetStructure = randomRegion.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
+			LocationStructure targetStructure = randomRegion.wilderness;
 			Artifact artifact = InnerMapManager.Instance.CreateNewArtifact(ARTIFACT_TYPE.Ankh_Of_Anubis);
 			targetStructure.AddPOI(artifact);
 			// //excalibur

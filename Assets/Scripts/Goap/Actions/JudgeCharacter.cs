@@ -285,7 +285,7 @@ public class JudgeCharacter : GoapAction {
         LocationStructure targetStructure = null;
         LocationGridTile targetTile = null;
         if(actor.currentRegion != null) {
-            targetStructure = actor.currentRegion.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
+            targetStructure = actor.currentRegion.wilderness;
         }
         if(targetStructure != null) {
             if (actor.homeSettlement != null) {

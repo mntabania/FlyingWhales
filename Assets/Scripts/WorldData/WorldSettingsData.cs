@@ -40,8 +40,8 @@ public class WorldSettingsData {
     }
 
     public bool AreSettingsValid(out string invalidityReason) {
-        if (factionSettings.GetCurrentTotalVillageCountBasedOnFactions() > mapSettings.GetMaxVillages()) {
-            invalidityReason = $"{UtilityScripts.Utilities.NotNormalizedConversionEnumToString(mapSettings.mapSize.ToString())} maps can only have up to {mapSettings.GetMaxVillages().ToString()} Village/s!";
+        if (factionSettings.GetCurrentTotalVillageCountBasedOnFactions() > mapSettings.GetMaxStartingVillages()) {
+            invalidityReason = $"{UtilityScripts.Utilities.NotNormalizedConversionEnumToString(mapSettings.mapSize.ToString())} maps can only have up to {mapSettings.GetMaxStartingVillages().ToString()} Village/s!";
             return false;
         }
         invalidityReason = string.Empty;

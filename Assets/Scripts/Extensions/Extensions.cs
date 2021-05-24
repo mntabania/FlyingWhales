@@ -39,7 +39,6 @@ public static class Extensions {
         switch (sub) {
             case STRUCTURE_TYPE.WILDERNESS:
             case STRUCTURE_TYPE.CEMETERY:
-            case STRUCTURE_TYPE.POND:
             case STRUCTURE_TYPE.CITY_CENTER:
             case STRUCTURE_TYPE.THE_PORTAL:
             case STRUCTURE_TYPE.SNOOPER:
@@ -51,6 +50,9 @@ public static class Extensions {
             case STRUCTURE_TYPE.MANA_PIT:
             case STRUCTURE_TYPE.OCEAN:
             case STRUCTURE_TYPE.ANCIENT_GRAVEYARD:
+            case STRUCTURE_TYPE.MINE:
+            case STRUCTURE_TYPE.FARM:
+            case STRUCTURE_TYPE.FISHERY:
                 return true;
             default:
                 return false;
@@ -62,25 +64,21 @@ public static class Extensions {
             case STRUCTURE_TYPE.CEMETERY:
             case STRUCTURE_TYPE.PRISON:
             case STRUCTURE_TYPE.DWELLING:
-            case STRUCTURE_TYPE.SMITHY:
             case STRUCTURE_TYPE.BARRACKS:
             case STRUCTURE_TYPE.HOSPICE:
-            case STRUCTURE_TYPE.GRANARY:
-            case STRUCTURE_TYPE.MINER_CAMP:
-            case STRUCTURE_TYPE.RAIDER_CAMP:
-            case STRUCTURE_TYPE.ASSASSIN_GUILD:
             case STRUCTURE_TYPE.HUNTER_LODGE:
             case STRUCTURE_TYPE.MAGE_QUARTERS:
             case STRUCTURE_TYPE.FARM:
             case STRUCTURE_TYPE.LUMBERYARD:
-            case STRUCTURE_TYPE.MINE_SHACK:
+            case STRUCTURE_TYPE.MINE:
             case STRUCTURE_TYPE.TAVERN:
             case STRUCTURE_TYPE.CULT_TEMPLE:
             case STRUCTURE_TYPE.QUARRY:
-            case STRUCTURE_TYPE.CRAFTING:
+            case STRUCTURE_TYPE.WORKSHOP:
             case STRUCTURE_TYPE.TAILORING:
             case STRUCTURE_TYPE.TANNERY:
-            case STRUCTURE_TYPE.FISHING_SHACK:
+            case STRUCTURE_TYPE.FISHERY:
+            case STRUCTURE_TYPE.BUTCHERS_SHOP:
                 return true;
             default:
                 return false;
@@ -92,7 +90,7 @@ public static class Extensions {
             case STRUCTURE_TYPE.CITY_CENTER:
             case STRUCTURE_TYPE.WAREHOUSE:
             case STRUCTURE_TYPE.FARM:
-            case STRUCTURE_TYPE.MINE_SHACK:
+            case STRUCTURE_TYPE.MINE:
             case STRUCTURE_TYPE.LUMBERYARD:
             case STRUCTURE_TYPE.HOSPICE:
             case STRUCTURE_TYPE.CEMETERY:
@@ -101,10 +99,11 @@ public static class Extensions {
             case STRUCTURE_TYPE.CULT_TEMPLE:
             case STRUCTURE_TYPE.QUARRY:
             case STRUCTURE_TYPE.HUNTER_LODGE:
-            case STRUCTURE_TYPE.CRAFTING:
+            case STRUCTURE_TYPE.WORKSHOP:
             case STRUCTURE_TYPE.TAILORING:
             case STRUCTURE_TYPE.TANNERY:
-            case STRUCTURE_TYPE.FISHING_SHACK:
+            case STRUCTURE_TYPE.FISHERY:
+            case STRUCTURE_TYPE.BUTCHERS_SHOP:
                 return true;
             default:
                 return false;
@@ -136,7 +135,6 @@ public static class Extensions {
     public static int StructurePriority(this STRUCTURE_TYPE sub) {
         switch (sub) {
             case STRUCTURE_TYPE.WILDERNESS:
-            case STRUCTURE_TYPE.POND:
                 return -1;
             case STRUCTURE_TYPE.DWELLING:
                 return 0;
@@ -157,20 +155,15 @@ public static class Extensions {
             case STRUCTURE_TYPE.DWELLING:
             case STRUCTURE_TYPE.TAVERN:
             case STRUCTURE_TYPE.PRISON:
-            case STRUCTURE_TYPE.SMITHY:
-            case STRUCTURE_TYPE.GRANARY:
             case STRUCTURE_TYPE.BARRACKS:
-            case STRUCTURE_TYPE.MINER_CAMP:
             case STRUCTURE_TYPE.WAREHOUSE:
             case STRUCTURE_TYPE.HOSPICE:
-            case STRUCTURE_TYPE.RAIDER_CAMP:
             case STRUCTURE_TYPE.HUNTER_LODGE:
-            case STRUCTURE_TYPE.ASSASSIN_GUILD:
             case STRUCTURE_TYPE.TORTURE_CHAMBERS:
             case STRUCTURE_TYPE.MAGE_TOWER:
             case STRUCTURE_TYPE.ABANDONED_MINE:
             case STRUCTURE_TYPE.LUMBERYARD:
-            case STRUCTURE_TYPE.MINE_SHACK:
+            case STRUCTURE_TYPE.MINE:
             case STRUCTURE_TYPE.MAGE_QUARTERS:
             case STRUCTURE_TYPE.CRYPT:
             case STRUCTURE_TYPE.OSTRACIZER:
@@ -181,10 +174,10 @@ public static class Extensions {
             case STRUCTURE_TYPE.RUINED_ZOO:
             case STRUCTURE_TYPE.BIOLAB:
             case STRUCTURE_TYPE.QUARRY:
-            case STRUCTURE_TYPE.CRAFTING:
+            case STRUCTURE_TYPE.WORKSHOP:
             case STRUCTURE_TYPE.TAILORING:
             case STRUCTURE_TYPE.TANNERY:
-            case STRUCTURE_TYPE.FISHING_SHACK:
+            case STRUCTURE_TYPE.FISHERY:
             case STRUCTURE_TYPE.TEMPLE:
             case STRUCTURE_TYPE.CULT_TEMPLE:
             case STRUCTURE_TYPE.MONSTER_LAIR:
@@ -193,6 +186,7 @@ public static class Extensions {
             case STRUCTURE_TYPE.MARAUD:
             case STRUCTURE_TYPE.DEFENSE_POINT:
             case STRUCTURE_TYPE.IMP_HUT:
+            case STRUCTURE_TYPE.BUTCHERS_SHOP:
                 return true;
             default:
                 return false;
@@ -225,9 +219,9 @@ public static class Extensions {
         switch (structureType) {
             case STRUCTURE_TYPE.QUARRY:
                 return SettlementResources.StructureRequirement.ROCK;
-            case STRUCTURE_TYPE.HUNTER_LODGE:
-                return SettlementResources.StructureRequirement.FEATURE_GAME;
-            case STRUCTURE_TYPE.MINE_SHACK:
+            // case STRUCTURE_TYPE.HUNTER_LODGE:
+            //     return SettlementResources.StructureRequirement.FEATURE_GAME;
+            case STRUCTURE_TYPE.MINE:
                 return SettlementResources.StructureRequirement.ORE_VEIN;
             case STRUCTURE_TYPE.ABANDONED_MINE:
             case STRUCTURE_TYPE.ANCIENT_GRAVEYARD:
@@ -408,7 +402,47 @@ public static class Extensions {
             case TILE_OBJECT_TYPE.EXCALIBUR:
             case TILE_OBJECT_TYPE.WEREWOLF_PELT:
             case TILE_OBJECT_TYPE.PHYLACTERY:
-                return true;
+            case TILE_OBJECT_TYPE.COPPER_SWORD:
+            case TILE_OBJECT_TYPE.IRON_SWORD:
+            case TILE_OBJECT_TYPE.MITHRIL_SWORD:
+            case TILE_OBJECT_TYPE.ORICHALCUM_SWORD:
+            case TILE_OBJECT_TYPE.COPPER_AXE:
+            case TILE_OBJECT_TYPE.IRON_AXE:
+            case TILE_OBJECT_TYPE.MITHRIL_AXE:
+            case TILE_OBJECT_TYPE.ORICHALCUM_AXE:
+            case TILE_OBJECT_TYPE.COPPER_BOW:
+            case TILE_OBJECT_TYPE.IRON_BOW:
+            case TILE_OBJECT_TYPE.MITHRIL_BOW:
+            case TILE_OBJECT_TYPE.ORICHALCUM_BOW:
+            case TILE_OBJECT_TYPE.COPPER_STAFF:
+            case TILE_OBJECT_TYPE.IRON_STAFF:
+            case TILE_OBJECT_TYPE.MITHRIL_STAFF:
+            case TILE_OBJECT_TYPE.ORICHALCUM_STAFF:
+            case TILE_OBJECT_TYPE.COPPER_DAGGER:
+            case TILE_OBJECT_TYPE.IRON_DAGGER:
+            case TILE_OBJECT_TYPE.MITHRIL_DAGGER:
+            case TILE_OBJECT_TYPE.ORICHALCUM_DAGGER:
+            case TILE_OBJECT_TYPE.RING:
+            case TILE_OBJECT_TYPE.BRACER:
+            case TILE_OBJECT_TYPE.BELT:
+            case TILE_OBJECT_TYPE.SCROLL:
+            case TILE_OBJECT_TYPE.NECKLACE:
+            case TILE_OBJECT_TYPE.MINK_SHIRT:
+            case TILE_OBJECT_TYPE.FUR_SHIRT:
+            case TILE_OBJECT_TYPE.RABBIT_SHIRT:
+            case TILE_OBJECT_TYPE.WOOL_SHIRT:
+            case TILE_OBJECT_TYPE.SPIDER_SILK_SHIRT:
+            case TILE_OBJECT_TYPE.MOON_WALKER_SHIRT:
+            case TILE_OBJECT_TYPE.BOAR_HIDE_ARMOR:
+            case TILE_OBJECT_TYPE.WOLF_HIDE_ARMOR:
+            case TILE_OBJECT_TYPE.BEAR_HIDE_ARMOR:
+            case TILE_OBJECT_TYPE.SCALE_ARMOR:
+            case TILE_OBJECT_TYPE.DRAGON_ARMOR:
+            case TILE_OBJECT_TYPE.IRON_ARMOR:
+            case TILE_OBJECT_TYPE.COPPER_ARMOR:
+            case TILE_OBJECT_TYPE.MITHRIL_ARMOR:
+            case TILE_OBJECT_TYPE.ORICHALCUM_ARMOR:
+            return true;
             default:
                 return false;
         }
@@ -421,7 +455,6 @@ public static class Extensions {
             case TILE_OBJECT_TYPE.HEIRLOOM:
             case TILE_OBJECT_TYPE.GUITAR:
             case TILE_OBJECT_TYPE.FISH_PILE:
-            case TILE_OBJECT_TYPE.METAL_PILE:
             case TILE_OBJECT_TYPE.STONE_PILE:
             case TILE_OBJECT_TYPE.WOOD_PILE:
             case TILE_OBJECT_TYPE.TABLE:
@@ -444,9 +477,9 @@ public static class Extensions {
             case TILE_OBJECT_TYPE.CRYPT_TILE_OBJECT:
             case TILE_OBJECT_TYPE.DEFENSE_POINT_TILE_OBJECT:
             case TILE_OBJECT_TYPE.ANIMAL_MEAT:
-            case TILE_OBJECT_TYPE.VEGETABLES:
             case TILE_OBJECT_TYPE.RAT_MEAT:
-                return true;
+            case TILE_OBJECT_TYPE.POWER_CRYSTAL:
+            return true;
             default:
                 return tileObjectType.IsTileObjectAnItem();
         }
@@ -505,7 +538,47 @@ public static class Extensions {
             case TILE_OBJECT_TYPE.MAGIC_CIRCLE:
             case TILE_OBJECT_TYPE.BLOCK_WALL:
             case TILE_OBJECT_TYPE.DESERT_ROSE:
-                return true;
+            case TILE_OBJECT_TYPE.COPPER_SWORD:
+            case TILE_OBJECT_TYPE.IRON_SWORD:
+            case TILE_OBJECT_TYPE.MITHRIL_SWORD:
+            case TILE_OBJECT_TYPE.ORICHALCUM_SWORD:
+            case TILE_OBJECT_TYPE.COPPER_AXE:
+            case TILE_OBJECT_TYPE.IRON_AXE:
+            case TILE_OBJECT_TYPE.MITHRIL_AXE:
+            case TILE_OBJECT_TYPE.ORICHALCUM_AXE:
+            case TILE_OBJECT_TYPE.COPPER_BOW:
+            case TILE_OBJECT_TYPE.IRON_BOW:
+            case TILE_OBJECT_TYPE.MITHRIL_BOW:
+            case TILE_OBJECT_TYPE.ORICHALCUM_BOW:
+            case TILE_OBJECT_TYPE.COPPER_STAFF:
+            case TILE_OBJECT_TYPE.IRON_STAFF:
+            case TILE_OBJECT_TYPE.MITHRIL_STAFF:
+            case TILE_OBJECT_TYPE.ORICHALCUM_STAFF:
+            case TILE_OBJECT_TYPE.COPPER_DAGGER:
+            case TILE_OBJECT_TYPE.IRON_DAGGER:
+            case TILE_OBJECT_TYPE.MITHRIL_DAGGER:
+            case TILE_OBJECT_TYPE.ORICHALCUM_DAGGER:
+            case TILE_OBJECT_TYPE.RING:
+            case TILE_OBJECT_TYPE.BRACER:
+            case TILE_OBJECT_TYPE.BELT:
+            case TILE_OBJECT_TYPE.SCROLL:
+            case TILE_OBJECT_TYPE.NECKLACE:
+            case TILE_OBJECT_TYPE.MINK_SHIRT:
+            case TILE_OBJECT_TYPE.FUR_SHIRT:
+            case TILE_OBJECT_TYPE.RABBIT_SHIRT:
+            case TILE_OBJECT_TYPE.WOOL_SHIRT:
+            case TILE_OBJECT_TYPE.SPIDER_SILK_SHIRT:
+            case TILE_OBJECT_TYPE.MOON_WALKER_SHIRT:
+            case TILE_OBJECT_TYPE.BOAR_HIDE_ARMOR:
+            case TILE_OBJECT_TYPE.WOLF_HIDE_ARMOR:
+            case TILE_OBJECT_TYPE.BEAR_HIDE_ARMOR:
+            case TILE_OBJECT_TYPE.SCALE_ARMOR:
+            case TILE_OBJECT_TYPE.DRAGON_ARMOR:
+            case TILE_OBJECT_TYPE.IRON_ARMOR:
+            case TILE_OBJECT_TYPE.COPPER_ARMOR:
+            case TILE_OBJECT_TYPE.MITHRIL_ARMOR:
+            case TILE_OBJECT_TYPE.ORICHALCUM_ARMOR:
+            return true;
             default:
                 return false;
         }
@@ -675,9 +748,9 @@ public static class Extensions {
             case JOB_TYPE.ZOMBIE_STROLL:
                 priority = 915;
                 break;
-            //case JOB_TYPE.RECOVER_HP:
-            //    priority = 920;
-            //    break;
+            case JOB_TYPE.ABSORB_CRYSTAL:
+                priority = 920;
+                break;
             case JOB_TYPE.UNDERMINE:
             case JOB_TYPE.POISON_FOOD:
             case JOB_TYPE.PLACE_TRAP:
@@ -1458,6 +1531,71 @@ public static class Extensions {
                 return 11;
             default:
                 return (int)p_type;
+        }
+    }
+    #endregion
+
+    #region Biomes
+    public static BIOMES GetMainBiomeForTileType(this Biome_Tile_Type p_tileType) {
+        switch (p_tileType) {
+            case Biome_Tile_Type.Desert:
+            case Biome_Tile_Type.Oasis:
+                return BIOMES.DESERT;
+            case Biome_Tile_Type.Grassland:
+            case Biome_Tile_Type.Jungle:
+                return BIOMES.GRASSLAND;
+            case Biome_Tile_Type.Taiga:
+            case Biome_Tile_Type.Tundra:
+            case Biome_Tile_Type.Snow:
+                return BIOMES.SNOW;
+            default:
+                throw new ArgumentOutOfRangeException(nameof(p_tileType), p_tileType, null);
+        }
+    }
+    #endregion
+
+    #region Resources
+    public static RESOURCE GetResourceCategory(this CONCRETE_RESOURCES p_resource) {
+        switch (p_resource) {
+            case CONCRETE_RESOURCES.Copper:
+            case CONCRETE_RESOURCES.Iron:
+            case CONCRETE_RESOURCES.Mithril:
+            case CONCRETE_RESOURCES.Orichalcum:
+            case CONCRETE_RESOURCES.Diamond:
+            case CONCRETE_RESOURCES.Gold:
+                return RESOURCE.METAL;
+            case CONCRETE_RESOURCES.Rabbit_Cloth:
+            case CONCRETE_RESOURCES.Mink_Cloth:
+            case CONCRETE_RESOURCES.Wool:
+            case CONCRETE_RESOURCES.Spider_Silk:
+            case CONCRETE_RESOURCES.Moon_Thread:
+            case CONCRETE_RESOURCES.Mooncrawler_Cloth:
+                return RESOURCE.CLOTH;
+            case CONCRETE_RESOURCES.Boar_Hide:
+            case CONCRETE_RESOURCES.Scale_Hide:
+            case CONCRETE_RESOURCES.Dragon_Hide:
+            case CONCRETE_RESOURCES.Wolf_Hide:
+            case CONCRETE_RESOURCES.Bear_Hide:
+                return RESOURCE.LEATHER;
+            case CONCRETE_RESOURCES.Stone:
+                return RESOURCE.STONE;
+            case CONCRETE_RESOURCES.Elf_Meat:
+            case CONCRETE_RESOURCES.Human_Meat:
+            case CONCRETE_RESOURCES.Animal_Meat:
+            case CONCRETE_RESOURCES.Fish:
+            case CONCRETE_RESOURCES.Corn:
+            case CONCRETE_RESOURCES.Potato:
+            case CONCRETE_RESOURCES.Pineapple:
+            case CONCRETE_RESOURCES.Iceberry:
+            case CONCRETE_RESOURCES.Mushroom:
+            case CONCRETE_RESOURCES.Hypno_Herb:
+            case CONCRETE_RESOURCES.Rat_Meat:
+            case CONCRETE_RESOURCES.Vegetables:
+                return RESOURCE.FOOD;
+            case CONCRETE_RESOURCES.Wood:
+                return RESOURCE.WOOD;
+            default:
+                throw new ArgumentOutOfRangeException(nameof(p_resource), p_resource, null);
         }
     }
     #endregion

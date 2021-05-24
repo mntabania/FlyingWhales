@@ -294,6 +294,10 @@ namespace UtilityScripts {
             result.y = a.y - b.y;
             return result;
         }
+        public static int Roll() {
+            int roll = UnityEngine.Random.Range(0, 100);
+            return roll;
+        }
         /// <summary>
         /// Roll a chance. This rolls from 0 - 100.
         /// </summary>
@@ -343,6 +347,14 @@ namespace UtilityScripts {
             int roll = UnityEngine.Random.Range(p_min, p_max + 1);
             return roll;
         }
+
+        public static List<int> GetUniqueRandomNumbersInBetween(int p_min, int p_max, int p_count) {
+            var sequence = Enumerable.Range(p_min, p_max).OrderBy(n => n * n + UnityEngine.Random.Range(p_min, p_max) * (new System.Random()).Next());
+
+            var result = sequence.Distinct().Take(p_count);
+
+            return result.ToList<int>();
+        }
         public static List<Area> GetHexTilesGivenCoordinates(List<Point> coordinates, Area[,] map) {
             List<Area> tiles = new List<Area>();
             for (int i = 0; i < coordinates.Count; i++) {
@@ -351,6 +363,19 @@ namespace UtilityScripts {
                 tiles.Add(tile);
             }
             return tiles;
+        }
+        public static List<Area> GetHexTilesGivenCoordinates(Point[] coordinates, Area[,] map) {
+            List<Area> tiles = new List<Area>();
+            for (int i = 0; i < coordinates.Length; i++) {
+                Point point = coordinates[i];
+                Area tile = map[point.X, point.Y];
+                tiles.Add(tile);
+            }
+            return tiles;
+        }
+        public static Area GetHexTileGivenCoordinates(Point point, Area[,] map) {
+            Area tile = map[point.X, point.Y];
+            return tile;
         }
         public static Color GetUpgradeButtonTextColor(bool p_interactable) {
             return p_interactable ? _normalColor : _grayedOutColor;

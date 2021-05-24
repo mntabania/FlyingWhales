@@ -83,11 +83,13 @@ namespace Inner_Maps {
 
         public bool isAnInnerMapShowing => currentlyShowingMap != null;
         private LocationGridTile lastClickedTile;
+        private Dictionary<TILE_OBJECT_TYPE, TileObjectScriptableObject> _tileObjectScriptableObjects;
         
         #region Monobehaviours
         private void Awake() {
             Instance = this;
             mainGraphMask = 0;
+            _tileObjectScriptableObjects = new Dictionary<TILE_OBJECT_TYPE, TileObjectScriptableObject>();
         }
         public void LateUpdate() {
             if (GameManager.showAllTilesTooltip) {
@@ -369,6 +371,16 @@ namespace Inner_Maps {
             }
             return points;
         }
+        public TileObjectScriptableObject GetTileObjectScriptableObject(TILE_OBJECT_TYPE p_tileObjectType) {
+            if (!_tileObjectScriptableObjects.ContainsKey(p_tileObjectType)) {
+                TileObjectScriptableObject loadedData = Resources.Load<TileObjectScriptableObject>($"Tile Object Data/{p_tileObjectType.ToString()}");
+                if (loadedData == null) {
+                    throw new Exception($"{p_tileObjectType} has no scriptable object!");
+                }
+                _tileObjectScriptableObjects.Add(p_tileObjectType, loadedData);
+            }
+            return _tileObjectScriptableObjects[p_tileObjectType];
+        }
         #endregion
 
         #region For Testing
@@ -384,51 +396,25 @@ namespace Inner_Maps {
                 || UIManager.Instance.poiTestingUI.poi == character)) {
                 return; //do not show tooltip if right click menu is currently targeting the hovered object
             }
-            //else if (UIManager.Instance.minionCommandsUI.gameObject.activeSelf && 
-            //           (UIManager.Instance.minionCommandsUI.targetPOI == tile.tileObjectComponent.objHere 
-            //            || UIManager.Instance.minionCommandsUI.targetPOI == character)) {
-            //    return; //do not show tooltip if right click menu is currently targeting the hovered object
-            //}
 
             //|| DEVELOPMENT_BUILD
 #if UNITY_EDITOR
             Area area = tile.area;
             string summary = tile.localPlace.ToString();
-            // summary = $"{summary}\n<b>Tile Persistent ID:</b>{tile.persistentID}";
-            // summary = $"{summary}\n<b>Is Tile Default:</b>{tile.isDefault.ToString()}";
-            // summary = $"{summary}\n<b>Initial Ground Type:</b>{tile.initialGroundType.ToString()}";
-            // summary = $"{summary}\n<b>Path Area:</b>{tile.graphNode?.Area.ToString()}";
-            // summary = $"{summary}\n<b>Is Path Possible to Selected Character:</b>{isPathPossible.ToString()}";
             summary = $"{summary}\n<b>Area:</b>{(area.name ?? "None")}";
+            summary = $"{summary}<b>Area Biome:</b>{area.biomeType.ToString()}";
             summary = $"{summary}<b>Area Elevation:</b>{(area.elevationType.ToString() ?? "None")}";
             summary = $"{summary}<b>Area Passable Tiles:</b>{area.gridTileComponent.passableTiles.Count.ToString()}";
-            summary = $"{summary}\n<b>Settlement on Area:</b>{(area.settlementOnArea?.name ?? "None")}";
-            
-            summary = $"{summary}<b>Tile Biome:</b>{tile.biomeType.ToString()}";
+            summary = $"{summary}<b>Settlement on Area:</b>{(area.settlementOnArea?.name ?? "None")}";
+            summary = $"{summary}\n<b>Area Features:</b>{area.featureComponent.features.ComafyList()}";
+            summary = $"{summary}\n<b>Tile Biome:</b>{tile.mainBiomeType.ToString()}";
             summary = $"{summary}<b>Tile Elevation:</b>{tile.elevationType.ToString()}";
-            // summary = $"{summary}\n<b>Local Location:</b>{tile.localLocation.ToString()}";
-            // summary = $"{summary} <b>World Location:</b>{tile.worldLocation.ToString()}";
-            // summary = $"{summary} <b>Centered World Location:</b>{tile.centeredWorldLocation.ToString()}";
-            summary = $"{summary} <b>Ground Type:</b>{tile.groundType.ToString()}";
-            summary = $"{summary} <b>Is Occupied:</b>{tile.isOccupied.ToString()}";
-            summary = $"{summary} <b>Tile Type:</b>{tile.tileType.ToString()}";
-            summary = $"{summary} <b>Tile State:</b>{tile.tileState.ToString()}";
-            summary = $"{summary} <b>Current Tile Asset:</b>{(tile.parentTileMap.GetSprite(tile.localPlace)?.name ?? "Null")}";
-            summary = $"{summary} <b>Has Mouse Events:</b>{tile.mouseEventsComponent.hasMouseEvents.ToString()}";
-            // summary = $"{summary}\nTile Traits: ";
-            // if (tile.tileObjectComponent.genericTileObject != null && tile.traits.Count > 0) {
-            //     summary = $"{summary}\n";
-            //     summary = tile.traits.Aggregate(summary, (current, t) => $"{current}|{t.name}|");
-            // } else {
-            //     summary = $"{summary}None";
-            // }
-            // summary = $"{summary}\nTile Statuses: ";
-            // if (tile.tileObjectComponent.genericTileObject != null && tile.statuses.Count > 0) {
-            //     summary = $"{summary}\n";
-            //     summary = tile.statuses.Aggregate(summary, (current, t) => $"{current}|{t.name}|");
-            // } else {
-            //     summary = $"{summary}None";
-            // }
+            summary = $"{summary}<b>Ground Type:</b>{tile.groundType.ToString()}";
+            summary = $"{summary}<b>Is Occupied:</b>{tile.isOccupied.ToString()}";
+            summary = $"{summary}<b>Tile Type:</b>{tile.tileType.ToString()}";
+            summary = $"{summary}<b>Tile State:</b>{tile.tileState.ToString()}";
+            summary = $"{summary}<b>Current Tile Asset:</b>{(tile.parentTileMap.GetSprite(tile.localPlace)?.name ?? "Null")}";
+            summary = $"{summary}<b>Has Mouse Events:</b>{tile.mouseEventsComponent.hasMouseEvents.ToString()}";
 
             summary = $"{summary}\nWalls: ";
             if (tile.tileObjectComponent.walls != null && tile.tileObjectComponent.walls.Count > 0) {
@@ -587,7 +573,7 @@ namespace Inner_Maps {
                 T obj = System.Activator.CreateInstance(type) as T;
                 return obj;
             }
-            throw new System.Exception($"Could not create new instance of tile object of type {tileObjectType}");
+            throw new System.Exception($"Could not create new instance of tile object of type {tileObjectType.ToString()}");
         }
         public T LoadTileObject<T>(SaveDataTileObject saveDataTileObject) where T : TileObject {
             var typeName = $"{UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(saveDataTileObject.tileObjectType.ToString())}, Assembly-CSharp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
@@ -629,6 +615,47 @@ namespace Inner_Maps {
             for (int i = 0; i < 2; i++) {
                 mainStorage.AddPOI(CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.ANTIDOTE));
             }
+            
+            for (int i = 0; i < 1; i++) {
+                mainStorage.AddPOI(CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.POWER_CRYSTAL));
+            }
+            for (int i = 0; i < 1; i++) {
+                mainStorage.AddPOI(CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.COPPER_SWORD));
+            }
+            for (int i = 0; i < 1; i++) {
+                mainStorage.AddPOI(CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.IRON_BOW));
+            }
+            for (int i = 0; i < 1; i++) {
+                mainStorage.AddPOI(CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.ORICHALCUM_DAGGER));
+            }
+            for (int i = 0; i < 1; i++) {
+                mainStorage.AddPOI(CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.ORICHALCUM_ARMOR));
+            }
+            for (int i = 0; i < 1; i++) {
+                mainStorage.AddPOI(CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.BOAR_HIDE_ARMOR));
+            }
+            for (int i = 0; i < 1; i++) {
+                mainStorage.AddPOI(CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.WOOL_SHIRT));
+            }
+            for (int i = 0; i < 1; i++) {
+                mainStorage.AddPOI(CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.COPPER_ARMOR));
+            }
+            for (int i = 0; i < 1; i++) {
+                mainStorage.AddPOI(CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.SCROLL));
+            }
+            for (int i = 0; i < 1; i++) {
+                mainStorage.AddPOI(CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.BELT));
+            }
+            for (int i = 0; i < 1; i++) {
+                mainStorage.AddPOI(CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.ORICHALCUM_BOW));
+            }
+            for (int i = 0; i < 1; i++) {
+                mainStorage.AddPOI(CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.COPPER_STAFF));
+            }
+            for (int i = 0; i < 1; i++) {
+                mainStorage.AddPOI(CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.IRON_DAGGER));
+            }
+
             //for (int i = 0; i < 2; i++) {
             //    mainStorage.AddPOI(CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.WATER_FLASK));
             //}
@@ -711,17 +738,14 @@ namespace Inner_Maps {
                     return ScriptableObjectsManager.Instance.artifactDataDictionary[artifact.type].sprite;
                 }
             } else {
-                var assetDictionary = corrupted ? assetManager.corruptedTileObjectAssets : assetManager.tileObjectTiles;
-                if (assetDictionary.ContainsKey(tileObject.tileObjectType) == false) {
-                    //if the provided asset dictionary does not have assets for the tile object, then try and use the default asset dictionary.
-                    assetDictionary = assetManager.tileObjectTiles;
+                TileObjectScriptableObject tileObjectScriptableObject = GetTileObjectScriptableObject(tileObject.tileObjectType);
+                TileObjectTileSetting setting = corrupted ? tileObjectScriptableObject.corruptedTileObjectAssets : tileObjectScriptableObject.tileObjectAssets;
+                if (setting.biomeAssets.Count <= 0) {
+                    //if in case tile object does not have a corrupted version, use normal assets instead. 
+                    setting = tileObjectScriptableObject.tileObjectAssets;
                 }
-                if (assetDictionary.ContainsKey(tileObject.tileObjectType)) {
-                    TileObjectTileSetting setting = assetDictionary[tileObject.tileObjectType];
-                    BiomeTileObjectTileSetting biomeSetting = setting.biomeAssets.ContainsKey(biome) ? setting.biomeAssets[biome] 
-                        : setting.biomeAssets[BIOMES.NONE];
-                    return CollectionUtilities.GetRandomElement(state == POI_STATE.ACTIVE ? biomeSetting.activeTile : biomeSetting.inactiveTile);
-                }
+                BiomeTileObjectTileSetting biomeSetting = setting.biomeAssets.ContainsKey(biome) ? setting.biomeAssets[biome] : setting.biomeAssets[BIOMES.NONE];
+                return CollectionUtilities.GetRandomElement(state == POI_STATE.ACTIVE ? biomeSetting.activeTile : biomeSetting.inactiveTile);
             }
             return null;
         }
@@ -732,16 +756,15 @@ namespace Inner_Maps {
                     return ScriptableObjectsManager.Instance.artifactDataDictionary[artifact.type].sprite;
                 }
             } else {
-                var assetDictionary = corrupted ? assetManager.corruptedTileObjectAssets : assetManager.tileObjectTiles;
-                if (assetDictionary.ContainsKey(tileObject.tileObjectType) == false) {
-                    //if the provided asset dictionary does not have assets for the tile object, then try and use the default asset dictionary.
-                    assetDictionary = assetManager.tileObjectTiles;
+                TileObjectScriptableObject tileObjectScriptableObject = GetTileObjectScriptableObject(tileObject.tileObjectType);
+                TileObjectTileSetting setting = corrupted ? tileObjectScriptableObject.corruptedTileObjectAssets : tileObjectScriptableObject.tileObjectAssets;
+                if (setting.biomeAssets.Count <= 0) {
+                    //if in case tile object does not have a corrupted version, use normal assets instead. 
+                    setting = tileObjectScriptableObject.tileObjectAssets;
                 }
-                if (assetDictionary.ContainsKey(tileObject.tileObjectType)) {
-                    TileObjectTileSetting setting = assetDictionary[tileObject.tileObjectType];
-                    BiomeTileObjectTileSetting biomeSetting = setting.biomeAssets[BIOMES.NONE];
-                    return CollectionUtilities.GetRandomElement(state == POI_STATE.ACTIVE ? biomeSetting.activeTile : biomeSetting.inactiveTile);
-                }
+                BiomeTileObjectTileSetting biomeSetting = setting.biomeAssets[BIOMES.NONE];
+                return CollectionUtilities.GetRandomElement(state == POI_STATE.ACTIVE ? biomeSetting.activeTile : biomeSetting.inactiveTile);
+                
             }
             return null;
         }
@@ -885,6 +908,7 @@ namespace Inner_Maps {
                 }
                 tile.CreateSeamlessEdgesForSelfAndNeighbours();
             // }
+            if (!GameManager.Instance.gameHasStarted) { tile.parentMap.detailsTilemap.SetTile(tile.localPlace, null); }
 		    tile.SetGroundTilemapVisual(assetManager.monsterLairGroundTile);	
 		    tile.SetTileType(LocationGridTile.Tile_Type.Wall);
 		    tile.SetTileState(LocationGridTile.Tile_State.Occupied);
@@ -897,6 +921,7 @@ namespace Inner_Maps {
                 }
                 tile.CreateSeamlessEdgesForSelfAndNeighbours();
             // }
+            if (!GameManager.Instance.gameHasStarted) { tile.parentMap.detailsTilemap.SetTile(tile.localPlace, null); }
 		    tile.SetStructure(structure);
 		    tile.SetGroundTilemapVisual(assetManager.monsterLairGroundTile);
 		    // tile.SetStructure(structure);
@@ -993,6 +1018,8 @@ namespace Inner_Maps {
                 Destroy(pathfinder);
                 tileObjectSlotSettings?.Clear();
                 wallResourceAssets?.Clear();
+                _tileObjectScriptableObjects.Clear();
+                _tileObjectScriptableObjects = null;
                 base.OnDestroy();
                 Instance = null;    
             }

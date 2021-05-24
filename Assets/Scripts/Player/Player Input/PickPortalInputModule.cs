@@ -85,7 +85,6 @@ namespace Player_Input {
         private void PlacePortal(LocationGridTile p_tile) {
             PlayerSettlement playerSettlement = LandmarkManager.Instance.CreateNewPlayerSettlement(p_tile.area);
             playerSettlement.SetName("Demonic Intrusion");
-            WorldConfigManager.Instance.mapGenerationData.portal = p_tile.area;
             PlayerManager.Instance.InitializePlayer(p_tile.area);
         
             // p_tile.area.gridTileComponent.StartCorruption(p_tile.area);

@@ -8,9 +8,15 @@ using Locations.Settlements;
 
 public class CombatComponent : CharacterComponent {
     public int attack { get; private set; }
-    public int attackModification { get; private set; }
+    //public int strength { get; private set; } //used as attack if character is physical damage type
+    //public int intelligence { get; private set; } //used as attack if character is magical damage type
+    public int strengthModification { get; private set; }
+    public float strengthPercentModification { get; private set; }
+    public int intelligenceModification { get; private set; }
+    public float intelligencePercentModification { get; private set; }
     public int maxHP { get; private set; }
     public int maxHPModification { get; private set; }
+    public float maxHPPercentModification { get; private set; }
     public int attackSpeed { get; private set; }  //in milliseconds, The lower the amount the faster the attack rate
     public int numOfKilledCharacters { get; private set; }
     public COMBAT_MODE combatMode { get; private set; }
@@ -19,9 +25,13 @@ public class CombatComponent : CharacterComponent {
     public List<Character> bannedFromHostileList { get; private set; }
     public Dictionary<IPointOfInterest, CombatData> combatDataDictionary { get; private set; }
     public ElementalDamageData elementalDamage { get; private set; }
+    public ELEMENTAL_TYPE initialElementalType { get; private set; }
+    public List<ELEMENTAL_TYPE> elementalStatusWaitingList = new List<ELEMENTAL_TYPE>();
     public CharacterCombatBehaviourParent combatBehaviourParent { get; private set; }
     public CombatSpecialSkillWrapper specialSkillParent { get; private set; }
     public bool willProcessCombat { get; private set; }
+
+    public int critRate { get; private set; }
 
     #region getters
     public bool isInCombat => owner.stateComponent.currentState != null && owner.stateComponent.currentState.characterState == CHARACTER_STATE.COMBAT;
@@ -43,8 +53,9 @@ public class CombatComponent : CharacterComponent {
         combatBehaviourParent = new CharacterCombatBehaviourParent();
         SetCombatMode(COMBAT_MODE.Aggressive);
         SetElementalType(ELEMENTAL_TYPE.Normal);
+        initialElementalType = ELEMENTAL_TYPE.Normal;
         //UpdateBasicData(true);
-	}
+    }
     public CombatComponent(SaveDataCombatComponent data) {
         hostilesInRange = new List<IPointOfInterest>();
         avoidInRange = new List<IPointOfInterest>();
@@ -52,12 +63,21 @@ public class CombatComponent : CharacterComponent {
         combatDataDictionary = new Dictionary<IPointOfInterest, CombatData>();
 
         attack = data.attack;
-        attackModification = data.attackModification;
+        //strength = data.strength;
+        strengthModification = data.strengthModification;
+        critRate = data.critRate;
+        strengthPercentModification = data.strengthPercentModification;
+        //intelligence = data.intelligence;
+        intelligenceModification = data.intelligenceModification;
+        intelligencePercentModification = data.intelligencePercentModification;
         maxHP = data.maxHP;
         maxHPModification = data.maxHPModification;
         attackSpeed = data.attackSpeed;
         combatMode = data.combatMode;
         elementalDamage = ScriptableObjectsManager.Instance.GetElementalDamageData(data.elementalDamageType);
+        initialElementalType = data.initialElementalDamageType;
+        elementalStatusWaitingList = new List<ELEMENTAL_TYPE>();
+        data.elementalStatusWaitingList.ForEach((eachElem) => elementalStatusWaitingList.Add(eachElem));
         willProcessCombat = data.willProcessCombat;
         numOfKilledCharacters = data.numOfKilledCharacters;
         specialSkillParent = data.specialSkillParent.Load();
@@ -80,7 +100,25 @@ public class CombatComponent : CharacterComponent {
     }
     #endregion
 
+    public struct DamageDoneType {
+        public enum DamageType { Normal = 0, Crit }
+        public int amount;
+        public DamageType damageType;
+    }
+    public DamageDoneType damageDone;
+
     #region General
+    public int GetAttackWithCritRateBonus() {
+        int multiplier = 1;
+        if(GameUtilities.RandomBetweenTwoNumbers(0, 99) < critRate) {
+            multiplier = 2;
+            damageDone.damageType = DamageDoneType.DamageType.Crit;
+        } else {
+            damageDone.damageType = DamageDoneType.DamageType.Normal;
+        }
+        damageDone.amount = attack * multiplier;
+        return attack * multiplier;
+    }
     //public void OnThisCharacterEndedCombatState() {
     //    SetOnProcessCombatAction(null);
     //}
@@ -165,17 +203,19 @@ public class CombatComponent : CharacterComponent {
         elementalDamage = ScriptableObjectsManager.Instance.GetElementalDamageData(elementalType);
     }
     public void UpdateElementalType() {
-        bool hasSetElementalType = false;
-        for (int i = (owner.traitContainer.traits.Count - 1); i >= 0; i--) {
-            Trait currTrait = owner.traitContainer.traits[i];
-            if (currTrait.elementalType != ELEMENTAL_TYPE.Normal) {
-                SetElementalType(currTrait.elementalType);
+        if (!owner.equipmentComponent.HasEquips()) {
+            bool hasSetElementalType = false;
+            elementalStatusWaitingList.ForEach((eachElem) => Debug.LogError(eachElem));
+            if (elementalStatusWaitingList.Count > 0) {
+                int index = UnityEngine.Random.Range(0, elementalStatusWaitingList.Count);
                 hasSetElementalType = true;
-                break;
+                SetElementalType(elementalStatusWaitingList[index]);
             }
-        }
-        if (!hasSetElementalType) {
-            SetElementalType(owner.characterClass.elementalType);
+            if (!hasSetElementalType) {
+                SetElementalType(initialElementalType);
+            }
+        } else {
+            
         }
     }
     //public void SetActionAndJobThatTriggeredCombat(ActualGoapNode node, GoapPlanJob job) {
@@ -1278,11 +1318,16 @@ public class CombatComponent : CharacterComponent {
             UpdateMaxHPAndProportionateHP();
         }
     }
-    private void UpdateAttack() {
-        attack = unModifiedAttack + attackModification;
+    public void UpdateAttack() {
+        int modifier = owner.characterClass.attackType == ATTACK_TYPE.PHYSICAL ? strengthModification : intelligenceModification;
+        float modifierPercent = owner.characterClass.attackType == ATTACK_TYPE.PHYSICAL ? strengthPercentModification : intelligencePercentModification;
+
+        int modifiedAttack = unModifiedAttack + modifier;
+        attack = Mathf.RoundToInt(modifiedAttack * ((modifierPercent / 100f) + 1f));
     }
     private void UpdateMaxHP() {
-        maxHP = unModifiedMaxHP + maxHPModification;
+        int modifiedHP = unModifiedMaxHP + maxHPModification;
+        maxHP = Mathf.RoundToInt(modifiedHP * ((maxHPPercentModification / 100f) + 1f));
         if (maxHP < 0) {
             maxHP = 1;
         }
@@ -1308,21 +1353,42 @@ public class CombatComponent : CharacterComponent {
         maxHPModification += modification;
         UpdateMaxHPAndProportionateHP();
     }
+    public void AdjustMaxHPPercentModifier(float modification) {
+        maxHPPercentModification += modification;
+        UpdateMaxHPAndProportionateHP();
+    }
     public void AdjustAttackModifier(int modification) {
-        attackModification += modification;
+        strengthModification += modification;
+        intelligenceModification += modification;
         UpdateAttack();
     }
-    public void AddAttackBaseOnPercentage(float modification) {
-        attackModification += (int)(modification * attack);
+    public void AdjustAttackPercentModifier(float modification) {
+        strengthPercentModification += modification;
+        intelligencePercentModification += modification; 
         UpdateAttack();
     }
-    public void SubtractAttackBaseOnPercentage(float modification) {
-        attackModification -= (int)(modification * attack);
+    public void AdjustStrengthModifier(int modification) {
+        strengthModification += modification;
         UpdateAttack();
     }
-#endregion
+    public void AdjustStrengthPercentModifier(float modification) {
+        strengthPercentModification += modification;
+        UpdateAttack();
+    }
+    public void AdjustIntelligenceModifier(int modification) {
+        intelligenceModification += modification;
+        UpdateAttack();
+    }
+    public void AdjustIntelligencePercentModifier(float modification) {
+        intelligencePercentModification += modification;
+        UpdateAttack();
+    }
+    public void AdjustCritRate(int modification) {
+        critRate += modification;
+    }
+    #endregion
 
-#region Prisoner
+    #region Prisoner
     private void OnCharacterBecomePrisoner(Prisoner prisoner) {
         if (prisoner.IsConsideredPrisonerOf(owner)) {
             CombatData combatData = GetCombatData(prisoner.owner);
@@ -1388,6 +1454,9 @@ public class CombatComponent : CharacterComponent {
                 bannedFromHostileList.Add(character);
             }
         }
+        initialElementalType = data.initialElementalDamageType;
+        elementalStatusWaitingList = new List<ELEMENTAL_TYPE>();
+        data.elementalStatusWaitingList.ForEach((eachElem) => elementalStatusWaitingList.Add(eachElem));
         combatBehaviourParent.LoadReferences(data.combatBehaviourParent);
         specialSkillParent.LoadReferences();
     }
@@ -1469,7 +1538,12 @@ public class SaveDataCombatData : SaveData<CombatData> {
 [System.Serializable]
 public class SaveDataCombatComponent : SaveData<CombatComponent> {
     public int attack;
-    public int attackModification;
+    //public int strength;
+    //public int intelligence;
+    public int strengthModification;
+    public float strengthPercentModification;
+    public int intelligenceModification;
+    public float intelligencePercentModification;
     public int maxHP;
     public int maxHPModification;
     public int attackSpeed;
@@ -1488,19 +1562,29 @@ public class SaveDataCombatComponent : SaveData<CombatComponent> {
     public Dictionary<string, SaveDataCombatData> tileObjectCombatData;
 
     public ELEMENTAL_TYPE elementalDamageType;
+    public ELEMENTAL_TYPE initialElementalDamageType;
+    public List<ELEMENTAL_TYPE> elementalStatusWaitingList = new List<ELEMENTAL_TYPE>();
     public SaveDataCharacterCombatBehaviourParent combatBehaviourParent;
     public SaveDataCombatSpecialSkillWrapper specialSkillParent;
 
     public bool willProcessCombat;
+    public int critRate;
 
 #region Overrides
     public override void Save(CombatComponent data) {
         attack = data.attack;
-        attackModification = data.attackModification;
-        maxHP = data.maxHP;
+        //strength = data.strength;
+        strengthModification = data.strengthModification;
+        critRate = data.critRate;
+        strengthPercentModification = data.strengthPercentModification;
+        //intelligence = data.intelligence;
+        intelligenceModification = data.intelligenceModification;
+        intelligencePercentModification = data.intelligencePercentModification; maxHP = data.maxHP;
         maxHPModification = data.maxHPModification;
         attackSpeed = data.attackSpeed;
         combatMode = data.combatMode;
+        initialElementalDamageType = data.initialElementalType;
+        data.elementalStatusWaitingList.ForEach((eachElem) => elementalStatusWaitingList.Add(eachElem));
         elementalDamageType = data.elementalDamage.type;
         willProcessCombat = data.willProcessCombat;
         numOfKilledCharacters = data.numOfKilledCharacters;

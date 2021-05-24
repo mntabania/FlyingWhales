@@ -19,31 +19,34 @@ namespace Inner_Maps {
             name = $"{region.name}'s Inner Map";
             region.SetRegionInnerMap(this);
             ClearAllTileMaps();
+            Stopwatch stopwatch = new Stopwatch();
             Vector2Int regionDimensions = GetRegionDimensions(region);
             Vector2Int innerMapSize = GetInnerMapSizeGivenRegionDimensions(regionDimensions);
-            yield return StartCoroutine(GenerateGrid(innerMapSize.x, innerMapSize.y, mapGenerationComponent));
-            PopulateNeededAreaDataAfterGridGeneration(mapGenerationComponent, regionDimensions.x, regionDimensions.y);
+            yield return StartCoroutine(GenerateGrid(innerMapSize.x, innerMapSize.y, mapGenerationComponent, stopwatch));
+            PopulateNeededAreaDataAfterGridGeneration(mapGenerationComponent, regionDimensions.x, regionDimensions.y, stopwatch);
             
-            int minX = allTiles.Min(t => t.localPlace.x);
-            int maxX = allTiles.Max(t => t.localPlace.x);
-            int minY = allTiles.Min(t => t.localPlace.y);
-            int maxY = allTiles.Max(t => t.localPlace.y);
-            int xSize = maxX - minX;
-            int ySize = maxY - minY;
+            // int minX = allTiles.Min(t => t.localPlace.x);
+            // int maxX = allTiles.Max(t => t.localPlace.x);
+            // int minY = allTiles.Min(t => t.localPlace.y);
+            // int maxY = allTiles.Max(t => t.localPlace.y);
+            int xSize = width - 1;
+            int ySize = height - 1;
             
-            yield return StartCoroutine(GroundPerlin(allTiles, xSize, ySize, xSeed, ySeed));
-            yield return StartCoroutine(GenerateElevationMap(mapGenerationComponent, data));
-            yield return StartCoroutine(GenerateDetails(mapGenerationComponent, xSize, ySize));
+            yield return StartCoroutine(GroundPerlin(allTiles, xSize, ySize, xSeed, ySeed, data));
+            yield return StartCoroutine(GenerateElevationMap(mapGenerationComponent, data, stopwatch));
+            // yield return StartCoroutine(GenerateDetails(mapGenerationComponent, xSize, ySize, stopwatch));
+            StartCoroutine(GraduallyGenerateTileObjects(data));
             groundMapLocalBounds = groundTilemap.localBounds;
         }
         public IEnumerator LoadMap(MapGenerationComponent mapGenerationComponent, SaveDataInnerMap saveDataInnerMap, SaveDataCurrentProgress saveData) {
             name = $"{region.name}'s Inner Map";
             region.SetRegionInnerMap(this);
             ClearAllTileMaps();
+            Stopwatch stopwatch = new Stopwatch();
             Vector2Int regionDimensions = GetRegionDimensions(region);
             Vector2Int innerMapSize = GetInnerMapSizeGivenRegionDimensions(regionDimensions);
             yield return StartCoroutine(LoadGrid(innerMapSize.x, innerMapSize.y, mapGenerationComponent, saveDataInnerMap, saveData));
-            PopulateNeededAreaDataAfterGridGeneration(mapGenerationComponent, regionDimensions.x, regionDimensions.y);
+            PopulateNeededAreaDataAfterGridGeneration(mapGenerationComponent, regionDimensions.x, regionDimensions.y, stopwatch);
             int minX = allTiles.Min(t => t.localPlace.x);
             int maxX = allTiles.Max(t => t.localPlace.x);
             int minY = allTiles.Min(t => t.localPlace.y);
@@ -51,14 +54,14 @@ namespace Inner_Maps {
             int xSize = maxX - minX;
             int ySize = maxY - minY;
             
-            yield return StartCoroutine(GroundPerlin(allTiles, xSize, ySize, saveDataInnerMap.xSeed, saveDataInnerMap.ySeed));
+            yield return StartCoroutine(GroundPerlin(allTiles, xSize, ySize, saveDataInnerMap.xSeed, saveDataInnerMap.ySeed, null));
             // yield return StartCoroutine(GenerateBiomeTransitions());
             groundMapLocalBounds = groundTilemap.localBounds;
         }
 
         #region Areas
-        private void PopulateNeededAreaDataAfterGridGeneration(MapGenerationComponent mapGenerationComponent, int gridWidth, int gridHeight) {
-            Stopwatch stopwatch = new Stopwatch();
+        private void PopulateNeededAreaDataAfterGridGeneration(MapGenerationComponent mapGenerationComponent, int gridWidth, int gridHeight, Stopwatch stopwatch) {
+            stopwatch.Reset();
             stopwatch.Start();
 
             for (int x = 0; x < gridWidth; x++) {

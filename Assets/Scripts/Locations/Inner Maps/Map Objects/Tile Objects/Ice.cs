@@ -10,7 +10,7 @@ public class Ice : TileObject{
         AddAdvertisedAction(INTERACTION_TYPE.PICK_UP);
         AddAdvertisedAction(INTERACTION_TYPE.STEAL_ANYTHING);
     }
-    public Ice(SaveDataTileObject data) { }
+    public Ice(SaveDataTileObject data) : base(data) { }
     
     public override void OnDestroyPOI() {
         base.OnDestroyPOI();
@@ -22,7 +22,7 @@ public class Ice : TileObject{
 
     public override void OnPlacePOI() {
         base.OnPlacePOI();
-        if(gridTileLocation.biomeType != BIOMES.SNOW) {
+        if(gridTileLocation.mainBiomeType != BIOMES.SNOW) {
             traitContainer.AddTrait(this, "Melting");
         } else {
             traitContainer.RemoveTrait(this, "Melting");

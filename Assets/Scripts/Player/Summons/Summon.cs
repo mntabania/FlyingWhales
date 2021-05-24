@@ -35,12 +35,14 @@ public class Summon : Character {
         showNotificationOnDeath = true;
         isVolatileMonster = false;
         isInfoUnlocked = true;
+        isWildMonster = true;
     }
     protected Summon(SaveDataSummon data) : base(data) {
         summonType = data.summonType;
         showNotificationOnDeath = true;
         isVolatileMonster = data.isVolatileMonster;
         isInfoUnlocked = true;
+        isWildMonster = true;
     }
 
     #region Overrides
@@ -48,7 +50,7 @@ public class Summon : Character {
         combatComponent.SetCombatMode(defaultCombatMode);
         ConstructDefaultActions();
         OnUpdateRace();
-        OnUpdateCharacterClass();
+        classComponent.OnUpdateCharacterClass();
 
         moodComponent.OnCharacterBecomeMinionOrSummon();
         moodComponent.SetMoodValue(50);

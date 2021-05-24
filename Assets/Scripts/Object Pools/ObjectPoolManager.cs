@@ -3,6 +3,7 @@ using System.Collections;
 using EZObjectPools;
 using System.Collections.Generic;
 using System;
+using System.Diagnostics;
 using System.Linq;
 using Interrupts;
 using Inner_Maps.Location_Structures;
@@ -10,7 +11,8 @@ using Inner_Maps;
 using Locations.Settlements;
 using Locations;
 using Threads;
-
+using Debug = UnityEngine.Debug;
+using Character_Talents;
 public class ObjectPoolManager : MonoBehaviour {
 
     public static ObjectPoolManager Instance = null;
@@ -36,6 +38,7 @@ public class ObjectPoolManager : MonoBehaviour {
     private List<ScheduledAction> _scheduledActionPool;
     private List<SingleJobNode> _jobNodePool;
     private List<GoapPlan> _goapPlanPool;
+    private List<CharacterTalent> _characterTalentPool;
 
     private List<List<GoapEffect>> _expectedEffectsListPool;
     private List<List<Precondition>> _preconditionsListPool;
@@ -77,9 +80,9 @@ public class ObjectPoolManager : MonoBehaviour {
         for (int i = 0; i < otherPrefabs.Length; i++) {
             GameObject currPrefab = otherPrefabs[i];
             int size = 0;
-            if (currPrefab.name == "TileObjectGameObject") {
-                size = 5000;
-            }
+            // if (currPrefab.name == "TileObjectGameObject") {
+            //     size = 5000;
+            // }
             CreateNewPool(currPrefab, currPrefab.name, size, true, true, false); //50    
         }
         ConstructExpectedEffectsListPool();
@@ -110,6 +113,18 @@ public class ObjectPoolManager : MonoBehaviour {
         ConstructScheduledActionPool();
         ConstructSingleJobNodePool();
         ConstructGoapPlanPool();
+        ConstructCharacterTalentPool();
+        
+        InitialPoolObjectCreation("TILEOBJECTGAMEOBJECT", 20000);
+    }
+    
+    private void InitialPoolObjectCreation(string p_poolName, int p_objectCount) {
+        if (!allObjectPools.ContainsKey(p_poolName)) {
+            throw new Exception($"Object Pool does not have key {p_poolName}");
+        }
+        EZObjectPool objectPoolToUse = allObjectPools[p_poolName];
+        Stopwatch stopwatch = new Stopwatch();
+        StartCoroutine(objectPoolToUse.InstantiatePoolCoroutine(p_objectCount, stopwatch));
     }
 
     public GameObject InstantiateObjectFromPool(string poolName, Vector3 position, Quaternion rotation, Transform parent = null, bool isWorldPosition = false) {
@@ -717,6 +732,11 @@ public class ObjectPoolManager : MonoBehaviour {
     private GoapPlan CreateNewGoapPlan() {
         if (_goapPlanPool.Count > 0) {
             GoapPlan data = _goapPlanPool[0];
+#if DEBUG_LOG
+            if (data == null) {
+                Debug.LogError($"Goap Plan is null!");
+            }
+#endif
             _goapPlanPool.RemoveAt(0);
             return data;
         }
@@ -726,11 +746,17 @@ public class ObjectPoolManager : MonoBehaviour {
 #if DEBUG_LOG
         Debug.Log($"Returned plan to pool:\n {data.LogPlan()}");
 #endif
-        if (!_goapPlanPool.Contains(data)) {
-            _goapPlanPool.Add(data);
+        if (data != null) {
+            if (!_goapPlanPool.Contains(data)) {
+                _goapPlanPool.Add(data);
+            } else {
+#if DEBUG_LOG
+                Debug.LogError($"Goap Plan has duplicate in pool: {data.LogPlan()}");
+#endif
+            }
         } else {
 #if DEBUG_LOG
-            Debug.LogError($"Goap Plan has duplicate in pool: {data.LogPlan()}");
+            Debug.LogError($"Goap Plan is null, will not return to pool!");
 #endif
         }
         data.Reset();
@@ -750,14 +776,38 @@ public class ObjectPoolManager : MonoBehaviour {
         return new SingleJobNode();
     }
     public void ReturnSingleJobNodeToPool(SingleJobNode data) {
-        if (!_jobNodePool.Contains(data)) {
-            _jobNodePool.Add(data);
+        if (data != null) {
+            if (!_jobNodePool.Contains(data)) {
+                _jobNodePool.Add(data);
+            } else {
+#if DEBUG_LOG
+                Debug.LogError($"Job Node has duplicate in pool: Actor: {data.singleNode?.actor.name}, Target: {data.singleNode?.poiTarget?.name}, Action: {data.singleNode?.action.name}, Job: {data.singleNode?.associatedJobType.ToString()}");
+#endif
+            }
         } else {
 #if DEBUG_LOG
-            Debug.LogError($"Job Node has duplicate in pool: Actor: {data.singleNode?.actor.name}, Target: {data.singleNode?.poiTarget?.name}, Action: {data.singleNode?.action.name}, Job: {data.singleNode?.associatedJobType.ToString()}");
+            Debug.LogError($"Single Job Node is null, will not return to pool!");
 #endif
         }
         data.Reset();
+    }
+    #endregion
+
+    #region Character Talent
+    private void ConstructCharacterTalentPool() {
+        _characterTalentPool = new List<CharacterTalent>();
+    }
+    public CharacterTalent CreateNewCharacterTalent() {
+        if (_characterTalentPool.Count > 0) {
+            CharacterTalent data = _characterTalentPool[0];
+            _characterTalentPool.RemoveAt(0);
+            return data;
+        }
+        return new CharacterTalent();
+    }
+    public void ReturnCharacterTalentToPool(CharacterTalent data) {
+        data.Reset();
+        _characterTalentPool.Add(data);
     }
     #endregion
 

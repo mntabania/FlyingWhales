@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UtilityScripts;
 
 public class SettlementResources
 {
@@ -10,17 +11,6 @@ public class SettlementResources
     public List<FishingSpot> fishingSpots = new List<FishingSpot>();
     public List<OreVein> oreVeins = new List<OreVein>();
     public List<Character> characters = new List<Character>();
-
-    public TileObject GetAvailableRequiredObject(StructureRequirement p_structureRequirement) {
-        switch (p_structureRequirement) {
-            case StructureRequirement.ROCK: return rocks[UnityEngine.Random.Range(0, rocks.Count - 1)];
-            case StructureRequirement.TREE: return trees[UnityEngine.Random.Range(0, rocks.Count - 1)];
-            case StructureRequirement.FISHING_SPOT: return fishingSpots[UnityEngine.Random.Range(0, rocks.Count - 1)];
-            case StructureRequirement.ORE_VEIN: return oreVeins[UnityEngine.Random.Range(0, rocks.Count - 1)];
-        }
-        return null;
-    }
-
     public bool IsRequirementAvailable(StructureRequirement p_structureRequirement) {
         switch (p_structureRequirement) {
             case StructureRequirement.ROCK: if (rocks.Count > 0) return true; else return false;
@@ -31,7 +21,7 @@ public class SettlementResources
         return true;
     }
 
-    public void AddToListbaseOnRequirement(StructureRequirement p_structureRequirement, TileObject p_tileObject) {
+    public void AddToListBasedOnRequirement(StructureRequirement p_structureRequirement, TileObject p_tileObject) {
         switch (p_structureRequirement) {
             case StructureRequirement.ROCK:
             if (!rocks.Contains(p_tileObject as Rock)) {
@@ -66,5 +56,10 @@ public class SettlementResources
         if (characters.Contains(p_character)) {
             characters.Remove(p_character);
         }
+    }
+    public bool HasResourceAmount(NPCSettlement p_settlement, RESOURCE p_resource, int p_amount) {
+        if (p_resource == RESOURCE.NONE) { return true; }
+        int totalResource = p_settlement.mainStorage.GetTotalResourceInStructure(p_resource);
+        return totalResource >= p_amount;
     }
 }

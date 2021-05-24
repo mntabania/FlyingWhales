@@ -75,11 +75,12 @@ namespace Inner_Maps.Location_Structures {
                 Messenger.Broadcast(StructureSignals.STRUCTURE_CONNECTOR_REMOVED, _tileLocation);    
             }
             _isOpen = true;
+            _tileLocation = null;
         }
         #endregion
 
         public override string ToString() {
-            return $"Connector at {transform.position.ToString()}";
+            return $"Connector at {_tileLocation}";
         }
     }
 }

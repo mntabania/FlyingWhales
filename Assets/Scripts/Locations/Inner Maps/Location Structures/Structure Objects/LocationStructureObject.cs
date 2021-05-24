@@ -6,6 +6,9 @@ using System.Linq;
 using System.Runtime.Remoting.Contexts;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
+using UnityEditor;
+using UnityEditor.Experimental.SceneManagement;
+using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.EventSystems;
@@ -155,21 +158,6 @@ public class LocationStructureObject : PooledObject, ISelectable {
     #endregion
 
     #region Tile Objects
-    private void RegisterPreplacedObjectsOfType(LocationStructure structure, InnerTileMap innerMap, params TILE_OBJECT_TYPE[] validTileObjectTypes) {
-        StructureTemplateObjectData[] preplacedObjs = GetPreplacedObjects();
-        for (int i = 0; i < preplacedObjs.Length; i++) {
-            StructureTemplateObjectData preplacedObj = preplacedObjs[i];
-            if (validTileObjectTypes.Contains(preplacedObj.tileObjectType)) {
-                Vector3Int tileCoords = innerMap.groundTilemap.WorldToCell(preplacedObj.transform.position);
-                LocationGridTile tile = innerMap.map[tileCoords.x, tileCoords.y];
-                TileObject newTileObject = InnerMapManager.Instance.CreateNewTileObject<TileObject>(preplacedObj.tileObjectType);
-                newTileObject.SetIsPreplaced(true);
-            
-                PreplacedObjectProcessing(preplacedObj, tile, structure, newTileObject);    
-            }
-        }
-        SetPreplacedObjectsState(false);
-    }
     private void RegisterPreplacedObjects(LocationStructure structure, InnerTileMap innerMap) {
         StructureTemplateObjectData[] preplacedObjs = GetPreplacedObjects();
         for (int i = 0; i < preplacedObjs.Length; i++) {
@@ -184,43 +172,21 @@ public class LocationStructureObject : PooledObject, ISelectable {
                     tile.structure.RemovePOI(tile.tileObjectComponent.objHere);    
                 }
             }
-            TileObject newTileObject = InnerMapManager.Instance.CreateNewTileObject<TileObject>(preplacedObj.tileObjectType);
+            TileObject newTileObject = InstantiatePreplacedObject(preplacedObj.tileObjectType, tile);
             newTileObject.SetIsPreplaced(true);
             
             PreplacedObjectProcessing(preplacedObj, tile, structure, newTileObject);
         }
         SetPreplacedObjectsState(false);
     }
-    protected virtual void PreplacedObjectProcessing(StructureTemplateObjectData preplacedObj,
-        LocationGridTile tile, LocationStructure structure, TileObject newTileObject) {
+    protected virtual TileObject InstantiatePreplacedObject(TILE_OBJECT_TYPE p_type, LocationGridTile p_tile) {
+        return InnerMapManager.Instance.CreateNewTileObject<TileObject>(p_type);
+    }
+    protected virtual void PreplacedObjectProcessing(StructureTemplateObjectData preplacedObj, LocationGridTile tile, LocationStructure structure, TileObject newTileObject) {
         tile.structure.AddPOI(newTileObject, tile);
         newTileObject.mapVisual.SetVisual(preplacedObj.spriteRenderer.sprite);
         newTileObject.mapVisual.SetRotation(preplacedObj.transform.localEulerAngles.z);
         newTileObject.RevalidateTileObjectSlots();
-        if (structureType == STRUCTURE_TYPE.IMP_HUT && newTileObject.tileObjectType == TILE_OBJECT_TYPE.IMP_HUT_TILE_OBJECT) {
-            structure.AddObjectAsDamageContributor(newTileObject);    
-        } else if (structureType == STRUCTURE_TYPE.SNOOPER && newTileObject.tileObjectType == TILE_OBJECT_TYPE.SNOOPER_TILE_OBJECT) {
-            structure.AddObjectAsDamageContributor(newTileObject);    
-        } else if (structureType == STRUCTURE_TYPE.BIOLAB && newTileObject.tileObjectType == TILE_OBJECT_TYPE.BIOLAB_TILE_OBJECT) {
-            structure.AddObjectAsDamageContributor(newTileObject);    
-        } else if (structureType == STRUCTURE_TYPE.DEFENSE_POINT && newTileObject.tileObjectType == TILE_OBJECT_TYPE.DEFENSE_POINT_TILE_OBJECT) {
-            structure.AddObjectAsDamageContributor(newTileObject);    
-        } else if (structureType == STRUCTURE_TYPE.MANA_PIT && newTileObject.tileObjectType == TILE_OBJECT_TYPE.MANA_PIT_TILE_OBJECT) {
-            structure.AddObjectAsDamageContributor(newTileObject);    
-        } else if (structureType == STRUCTURE_TYPE.MARAUD && newTileObject.tileObjectType == TILE_OBJECT_TYPE.MARAUD_TILE_OBJECT) {
-            structure.AddObjectAsDamageContributor(newTileObject);    
-        } else if (structureType == STRUCTURE_TYPE.SPIRE && newTileObject.tileObjectType == TILE_OBJECT_TYPE.SPIRE_TILE_OBJECT) {
-            structure.AddObjectAsDamageContributor(newTileObject);
-        } else if (structureType == STRUCTURE_TYPE.MEDDLER && newTileObject.tileObjectType == TILE_OBJECT_TYPE.MEDDLER_TILE_OBJECT) {
-            structure.AddObjectAsDamageContributor(newTileObject);
-        } else if (structureType == STRUCTURE_TYPE.CRYPT && newTileObject.tileObjectType == TILE_OBJECT_TYPE.CRYPT_TILE_OBJECT) {
-            structure.AddObjectAsDamageContributor(newTileObject);
-        } else if (structureType == STRUCTURE_TYPE.DEFILER && newTileObject.tileObjectType == TILE_OBJECT_TYPE.DEFILER_TILE_OBJECT) {
-            structure.AddObjectAsDamageContributor(newTileObject);
-        } else if (structureType == STRUCTURE_TYPE.KENNEL && 
-                   (newTileObject.tileObjectType == TILE_OBJECT_TYPE.KENNEL_TILE_OBJECT || newTileObject.tileObjectType == TILE_OBJECT_TYPE.DEMONIC_STRUCTURE_BLOCKER_TILE_OBJECT)) {
-            structure.AddObjectAsDamageContributor(newTileObject);
-        }
     }
     public void PlacePreplacedObjectsAsBlueprints(LocationStructure structure, InnerTileMap areaMap, NPCSettlement npcSettlement) {
         StructureTemplateObjectData[] preplacedObjs = GetPreplacedObjects();
@@ -901,11 +867,11 @@ public class LocationStructureObject : PooledObject, ISelectable {
                 o_cannotPlaceReason = string.Empty;
                 return false;
             }
-            LocationStructure mostImportantStructure = areaOwner.structureComponent.GetMostImportantStructureOnTile();
-            if (mostImportantStructure != null && mostImportantStructure.structureType.IsSpecialStructure()) {
-                o_cannotPlaceReason = string.Empty;
-                return false;
-            }
+            // LocationStructure mostImportantStructure = areaOwner.structureComponent.GetMostImportantStructureOnTile();
+            // if (mostImportantStructure != null && mostImportantStructure.structureType.IsSpecialStructure()) {
+            //     o_cannotPlaceReason = string.Empty;
+            //     return false;
+            // }
         }
         //Note: Demonic structure can now be built if there is one tile that is on or beside a corrupted tile, so the checker for it is now moved to DemonicStructurePlayerSkill - CanBuildDemonicStructureOn
         //if (structureType != STRUCTURE_TYPE.THE_PORTAL && structureType.IsPlayerStructure() && !tile.corruptionComponent.isCorrupted) {
@@ -934,13 +900,13 @@ public class LocationStructureObject : PooledObject, ISelectable {
                 o_cannotPlaceReason = LocalizationManager.Instance.GetLocalizedValue("Locations", "Structures", "invalid_build_has_blueprint");
                 return false; //if bordering tile has a blueprint, then do not allow this structure to be placed. This is to prevent structures from being directly adjacent with each other, while they are still blueprints.
             }
-            if (structureType == STRUCTURE_TYPE.MINE_SHACK) {
+            if (structureType == STRUCTURE_TYPE.MINE) {
                 if (neighbour.structure.structureType != STRUCTURE_TYPE.WILDERNESS && neighbour.structure.structureType != STRUCTURE_TYPE.CITY_CENTER && neighbour.structure.structureType != STRUCTURE_TYPE.CAVE) {
                     // Debug.Log($"Could not place {structureType} because {tile} has neighbour {neighbour} that is not Wilderness, City CEnter and Cave!");
                     o_cannotPlaceReason = string.Empty;
                     return false;
                 }    
-            } else if (structureType == STRUCTURE_TYPE.FISHING_SHACK) {
+            } else if (structureType == STRUCTURE_TYPE.FISHERY) {
                 if (neighbour.structure.structureType != STRUCTURE_TYPE.WILDERNESS && neighbour.structure.structureType != STRUCTURE_TYPE.CITY_CENTER && neighbour.structure.structureType != STRUCTURE_TYPE.OCEAN) {
                     // Debug.Log($"Could not place {structureType} because {tile} has neighbour {neighbour} that is not Wilderness, City CEnter and Ocean!");
                     o_cannotPlaceReason = string.Empty;
@@ -1074,19 +1040,146 @@ public class LocationStructureObject : PooledObject, ISelectable {
                         if (tile.name.Contains("BotLeft")) {
                             cornerPos.x -= 0.5f;
                             cornerPos.y -= 0.5f;
-                            Instantiate(cornerPrefab, cornerPos, Quaternion.identity, wallVisual.transform);
+                            InstantiateCorner(cornerPos, wallVisual.transform);
+                            
+                            Vector3Int topNeighbourPos = new Vector3Int(x, y + 1, 0);
+                            TileBase top = wallTileMap.GetTile(topNeighbourPos);
+                            if (top == null) {
+                                //add corner to top
+                                cornerPos = centeredPos;
+                                cornerPos.x -= 0.5f;
+                                cornerPos.y += 0.5f;
+                                InstantiateCorner(cornerPos, wallVisual.transform);
+                            }
+                            
+                            Vector3Int rightNeighbourPos = new Vector3Int(x + 1, y, 0);
+                            TileBase right = wallTileMap.GetTile(rightNeighbourPos);
+                            if (right == null) {
+                                //add corner to right
+                                cornerPos = centeredPos;
+                                cornerPos.x += 0.5f;
+                                cornerPos.y -= 0.5f;
+                                InstantiateCorner(cornerPos, wallVisual.transform);
+                            }
+                            
                         } else if (tile.name.Contains("BotRight")) {
                             cornerPos.x += 0.5f;
                             cornerPos.y -= 0.5f;
-                            Instantiate(cornerPrefab, cornerPos, Quaternion.identity, wallVisual.transform);
+                            InstantiateCorner(cornerPos, wallVisual.transform);
+                            
+                            Vector3Int topNeighbourPos = new Vector3Int(x, y + 1, 0);
+                            TileBase top = wallTileMap.GetTile(topNeighbourPos);
+                            if (top == null) {
+                                //add corner to top
+                                cornerPos = centeredPos;
+                                cornerPos.x += 0.5f;
+                                cornerPos.y += 0.5f;
+                                InstantiateCorner(cornerPos, wallVisual.transform);
+                            }
+                            Vector3Int leftNeighbourPos = new Vector3Int(x - 1, y, 0);
+                            TileBase left = wallTileMap.GetTile(leftNeighbourPos);
+                            if (left == null) {
+                                //add corner to left
+                                cornerPos = centeredPos;
+                                cornerPos.x -= 0.5f;
+                                cornerPos.y -= 0.5f;
+                                InstantiateCorner(cornerPos, wallVisual.transform);
+                            }
+                            
                         } else if (tile.name.Contains("TopLeft")) {
                             cornerPos.x -= 0.5f;
                             cornerPos.y += 0.5f;
-                            Instantiate(cornerPrefab, cornerPos, Quaternion.identity, wallVisual.transform);
+                            InstantiateCorner(cornerPos, wallVisual.transform);
+                            
+                            Vector3Int bottomNeighbourPos = new Vector3Int(x, y - 1, 0);
+                            TileBase bottom = wallTileMap.GetTile(bottomNeighbourPos);
+                            if (bottom == null) {
+                                //add corner to bottom
+                                cornerPos = centeredPos;
+                                cornerPos.x -= 0.5f;
+                                cornerPos.y -= 0.5f;
+                                InstantiateCorner(cornerPos, wallVisual.transform);
+                            }
+                            
+                            Vector3Int rightNeighbourPos = new Vector3Int(x + 1, y, 0);
+                            TileBase right = wallTileMap.GetTile(rightNeighbourPos);
+                            if (right == null) {
+                                //add corner to right
+                                cornerPos = centeredPos;
+                                cornerPos.x += 0.5f;
+                                cornerPos.y += 0.5f;
+                                InstantiateCorner(cornerPos, wallVisual.transform);
+                            }
                         } else if (tile.name.Contains("TopRight")) {
                             cornerPos.x += 0.5f;
                             cornerPos.y += 0.5f;
-                            Instantiate(cornerPrefab, cornerPos, Quaternion.identity, wallVisual.transform);
+                            InstantiateCorner(cornerPos, wallVisual.transform);
+                            
+                            Vector3Int bottomNeighbourPos = new Vector3Int(x, y - 1, 0);
+                            TileBase bottom = wallTileMap.GetTile(bottomNeighbourPos);
+                            if (bottom == null) {
+                                //add corner to bottom
+                                cornerPos = centeredPos;
+                                cornerPos.x += 0.5f;
+                                cornerPos.y -= 0.5f;
+                                InstantiateCorner(cornerPos, wallVisual.transform);
+                            }
+                            
+                            Vector3Int leftNeighbourPos = new Vector3Int(x - 1, y, 0);
+                            TileBase left = wallTileMap.GetTile(leftNeighbourPos);
+                            if (left == null) {
+                                //add corner to left
+                                cornerPos = centeredPos;
+                                cornerPos.x -= 0.5f;
+                                cornerPos.y += 0.5f;
+                                InstantiateCorner(cornerPos, wallVisual.transform);
+                            }
+                            
+                        } else if (tile.name.Contains("Left") || tile.name.Contains("Right")) {
+                            bool isRight = tile.name.Contains("Right");
+                            if (isRight) {
+                                cornerPos.x = centeredPos.x + 0.5f;    
+                            } else {
+                                cornerPos.x = centeredPos.x - 0.5f;
+                            }
+                            //check top and bottom tiles, if no asset was found, add corner to corresponding direction
+                            Vector3Int topNeighbourPos = new Vector3Int(x, y + 1, 0);
+                            TileBase top = wallTileMap.GetTile(topNeighbourPos);
+                            if (top == null) {
+                                //add corner to top
+                                cornerPos.y = centeredPos.y + 0.5f;
+                                InstantiateCorner(cornerPos, wallVisual.transform);
+                            }
+                            
+                            Vector3Int bottomNeighbourPos = new Vector3Int(x, y - 1, 0);
+                            TileBase bottom = wallTileMap.GetTile(bottomNeighbourPos);
+                            if (bottom == null) {
+                                //add corner to bottom
+                                cornerPos.y = centeredPos.y - 0.5f;
+                                InstantiateCorner(cornerPos, wallVisual.transform);
+                            }
+                        } else if (tile.name.Contains("Top") || tile.name.Contains("Bot")) {
+                            bool isTop = tile.name.Contains("Top");
+                            if (isTop) {
+                                cornerPos.y = centeredPos.y + 0.5f;    
+                            } else {
+                                cornerPos.y = centeredPos.y - 0.5f;
+                            }
+                            //check left and right tiles, if no asset was found, add corner to corresponding direction
+                            Vector3Int rightNeighbourPos = new Vector3Int(x + 1, y, 0);
+                            TileBase right = wallTileMap.GetTile(rightNeighbourPos);
+                            if (right == null) {
+                                //add corner to right
+                                cornerPos.x = centeredPos.x + 0.5f;
+                                InstantiateCorner(cornerPos, wallVisual.transform); }
+                            
+                            Vector3Int leftNeighbourPos = new Vector3Int(x - 1, y, 0);
+                            TileBase left = wallTileMap.GetTile(leftNeighbourPos);
+                            if (left == null) {
+                                //add corner to left
+                                cornerPos.x = centeredPos.x - 0.5f;
+                                InstantiateCorner(cornerPos, wallVisual.transform);
+                            }
                         }
                         if (_thinWallResource != RESOURCE.WOOD) {
                             //only update asset if wall resource is not wood.
@@ -1098,6 +1191,13 @@ public class LocationStructureObject : PooledObject, ISelectable {
         }
         wallTileMap.enabled = false;
         wallTileMap.GetComponent<TilemapRenderer>().enabled = false;
+        
+#if UNITY_EDITOR
+        var prefabStage = PrefabStageUtility.GetCurrentPrefabStage();
+        if (prefabStage != null) {
+            EditorSceneManager.MarkSceneDirty(prefabStage.scene);
+        }
+#endif
     }
 
     [ContextMenu("Set Pivot Point")]
@@ -1106,13 +1206,22 @@ public class LocationStructureObject : PooledObject, ISelectable {
     }
     
     private ThinWallGameObject InstantiateWall(GameObject wallPrefab, Vector3 centeredPos, Transform parent, bool updateWallAsset) {
-        GameObject wallGO = Instantiate(wallPrefab, parent);
+#if UNITY_EDITOR
+        GameObject wallGO = PrefabUtility.InstantiatePrefab(wallPrefab, parent) as GameObject;
         wallGO.transform.position = centeredPos;
         ThinWallGameObject wallVisual = wallGO.GetComponent<ThinWallGameObject>();
         if (updateWallAsset) {
             wallVisual.UpdateWallAssets(_thinWallResource);    
         }
         return wallVisual;
+#endif
+        return null;
+    }
+    private void InstantiateCorner(Vector3 p_pos, Transform parent) {
+#if UNITY_EDITOR
+        GameObject wallGO = PrefabUtility.InstantiatePrefab(cornerPrefab, parent) as GameObject;
+        wallGO.transform.position = p_pos;
+#endif
     }
 
     [ContextMenu("Convert Objects")]
@@ -1159,6 +1268,12 @@ public class LocationStructureObject : PooledObject, ISelectable {
         }
         _detailTileMap.enabled = false;
         _detailTileMapRenderer.enabled = false;
+#if UNITY_EDITOR
+        var prefabStage = PrefabStageUtility.GetCurrentPrefabStage();
+        if (prefabStage != null) {
+            EditorSceneManager.MarkSceneDirty(prefabStage.scene);
+        }
+#endif
     }
 
     [Header("Predetermine Structure Tiles")] 

@@ -2,7 +2,7 @@
     public Sigil() {
         Initialize(TILE_OBJECT_TYPE.SIGIL);
     }
-    public Sigil(SaveDataTileObject data) {
+    public Sigil(SaveDataTileObject data) : base(data) {
         
     }
 }

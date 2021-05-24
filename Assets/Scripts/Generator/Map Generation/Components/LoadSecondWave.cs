@@ -443,7 +443,6 @@ public class LoadSecondWave : MapGenerationComponent {
     private IEnumerator LoadPlayerReferences(MapGenerationData data, SaveDataCurrentProgress saveData) {
         LevelLoaderManager.Instance.UpdateLoadingInfo("Loading Player Data...");
         saveData.LoadPlayerReferences();
-        data.portal = PlayerManager.Instance.player.portalArea;
         yield return null;
     }
     #endregion

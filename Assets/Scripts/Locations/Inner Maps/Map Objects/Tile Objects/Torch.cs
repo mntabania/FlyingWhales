@@ -7,7 +7,7 @@ public class Torch : TileObject{
         Initialize(TILE_OBJECT_TYPE.TORCH);
         traitContainer.AddTrait(this, "Immovable");
     }
-    public Torch(SaveDataTileObject data) {
+    public Torch(SaveDataTileObject data) : base(data) {
         
     }
 }

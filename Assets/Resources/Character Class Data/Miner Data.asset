@@ -62,3 +62,16 @@ MonoBehaviour:
       - {fileID: 21300000, guid: 2b378e10fbf186c40b3692863b0e5dd0, type: 3}
       - {fileID: 21300000, guid: fd21286882ae66d41b200d14642c15a3, type: 3}
       - {fileID: 21300000, guid: df32bff98d127ee44b9d7e84521a10ff, type: 3}
+  characterSkillUpdateData:
+    piercingBonus: 15
+    mentalResistanceBonus: 0
+    physicalResistanceBonus: 15
+    normalResistanceBonus: 0
+    fireResistanceBonus: 0
+    poisonResistanceBonus: 0
+    waterResistanceBonus: 0
+    iceResistanceBonus: 0
+    electricResistanceBonus: 0
+    earthResistanceBonus: 0
+    windResistanceBonus: 0
+    allElementresistanceBonus: 2

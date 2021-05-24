@@ -16,7 +16,7 @@ public class PortalTileObject : TileObject {
         RemoveAdvertisedAction(INTERACTION_TYPE.STEAL_ANYTHING);
         traitContainer.AddTrait(this, "Immovable");
     }
-    public PortalTileObject(SaveDataTileObject data) {
+    public PortalTileObject(SaveDataTileObject data) : base(data) {
         
     }
     public override bool CanBeSelected() {

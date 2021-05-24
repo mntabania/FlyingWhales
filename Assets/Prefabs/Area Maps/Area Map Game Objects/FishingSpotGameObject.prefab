@@ -1,17 +1,5 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!114 &7741162915420648466
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7966529858762546027}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f62d3d928b2f4526930058bbe6df9cce, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &5955880778590205152
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -34,6 +22,18 @@ MonoBehaviour:
   particleEffectParent: {fileID: 1032619423266128767}
   statusIconsParent: {fileID: 3173268901581422493}
   _structureConnector: {fileID: 7741162915420648466}
+--- !u!114 &7741162915420648466
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7966529858762546027}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f62d3d928b2f4526930058bbe6df9cce, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!61 &6749103177372989536
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -137,7 +137,7 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Sprite
       value: 
-      objectReference: {fileID: 21300000, guid: 8d5be34aa581ef048a849d0f85afe42c,
+      objectReference: {fileID: 21300000, guid: 99d0b1fe44fb06140a363f47ebd6c47d,
         type: 3}
     m_RemovedComponents:
     - {fileID: 114838845938423678, guid: d9d549510a4f590468f27e4140b34e5e, type: 3}
@@ -153,30 +153,6 @@ GameObject:
 --- !u!61 &7948995843347205235 stripped
 BoxCollider2D:
   m_CorrespondingSourceObject: {fileID: 61518028179232044, guid: d9d549510a4f590468f27e4140b34e5e,
-    type: 3}
-  m_PrefabInstance: {fileID: 7965196244826167647}
-  m_PrefabAsset: {fileID: 0}
---- !u!212 &7816251744562851805 stripped
-SpriteRenderer:
-  m_CorrespondingSourceObject: {fileID: 212487511842338434, guid: d9d549510a4f590468f27e4140b34e5e,
-    type: 3}
-  m_PrefabInstance: {fileID: 7965196244826167647}
-  m_PrefabAsset: {fileID: 0}
---- !u!4 &3173268901581422493 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 4792877324128118466, guid: d9d549510a4f590468f27e4140b34e5e,
-    type: 3}
-  m_PrefabInstance: {fileID: 7965196244826167647}
-  m_PrefabAsset: {fileID: 0}
---- !u!212 &7816249704856476947 stripped
-SpriteRenderer:
-  m_CorrespondingSourceObject: {fileID: 212489938902139980, guid: d9d549510a4f590468f27e4140b34e5e,
-    type: 3}
-  m_PrefabInstance: {fileID: 7965196244826167647}
-  m_PrefabAsset: {fileID: 0}
---- !u!1 &7966526269277180983 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 1344318140190056, guid: d9d549510a4f590468f27e4140b34e5e,
     type: 3}
   m_PrefabInstance: {fileID: 7965196244826167647}
   m_PrefabAsset: {fileID: 0}
@@ -210,6 +186,30 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!212 &7816251744562851805 stripped
+SpriteRenderer:
+  m_CorrespondingSourceObject: {fileID: 212487511842338434, guid: d9d549510a4f590468f27e4140b34e5e,
+    type: 3}
+  m_PrefabInstance: {fileID: 7965196244826167647}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &3173268901581422493 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4792877324128118466, guid: d9d549510a4f590468f27e4140b34e5e,
+    type: 3}
+  m_PrefabInstance: {fileID: 7965196244826167647}
+  m_PrefabAsset: {fileID: 0}
+--- !u!212 &7816249704856476947 stripped
+SpriteRenderer:
+  m_CorrespondingSourceObject: {fileID: 212489938902139980, guid: d9d549510a4f590468f27e4140b34e5e,
+    type: 3}
+  m_PrefabInstance: {fileID: 7965196244826167647}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &7966526269277180983 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1344318140190056, guid: d9d549510a4f590468f27e4140b34e5e,
+    type: 3}
+  m_PrefabInstance: {fileID: 7965196244826167647}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &1032619423266128767 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6980181590153484832, guid: d9d549510a4f590468f27e4140b34e5e,

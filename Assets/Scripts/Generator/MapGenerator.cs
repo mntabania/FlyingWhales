@@ -25,7 +25,7 @@ public class MapGenerator : BaseMonoBehaviour {
         SaveManager.Instance.SetUseSaveData(false);
         DatabaseManager.Instance.mainSQLDatabase.InitializeDatabase(); //Initialize main SQL database
         MapGenerationComponent[] mapGenerationComponents = {
-            new AreaGeneration(), new ElevationGeneration(), new SupportingFactionGeneration(), 
+            new AreaGeneration(), /*new ElevationGeneration(),*/ new SupportingFactionGeneration(), 
             new WorldMapRegionGeneration(), /*new WorldMapBiomeGeneration(),*/ new FamilyTreeGeneration(), new RegionInnerMapGeneration(), /*new ElevationStructureGeneration(),*/ 
             new TileFeatureGeneration(), new RegionFeatureGeneration(), new VillageGeneration(),  new SpecialStructureGeneration(),
             new FactionFinalization(), new CharacterFinalization(), new SettlementFinalization(), new FeaturesActivation(), 
@@ -42,6 +42,7 @@ public class MapGenerator : BaseMonoBehaviour {
         bool componentFailed = false;
         
         MapGenerationData data = new MapGenerationData();
+        WorldConfigManager.Instance.mapGenerationData = data;
         Stopwatch componentWatch = new Stopwatch();
         float progressPerComponent = 1f / components.Length;
         float currentProgress = 0f;
@@ -66,6 +67,7 @@ public class MapGenerator : BaseMonoBehaviour {
         componentWatch.Stop();
         if (componentFailed) {
             //reload scene
+            WorldConfigManager.Instance.mapGenerationData = null;
             Debug.LogWarning("A component in world generation failed! Reloading scene...");
             SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         } else {
@@ -75,7 +77,7 @@ public class MapGenerator : BaseMonoBehaviour {
 #if DEBUG_LOG
             Debug.Log($"{loadingDetails}\nTotal loading time is {loadingWatch.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)} seconds");
 #endif
-            WorldConfigManager.Instance.mapGenerationData = data;
+            data.SetFinishedMapGenerationCoroutine(true);
             AudioManager.Instance.TransitionToWorld();
             
             UIManager.Instance.initialWorldSetupMenu.Initialize();
@@ -108,6 +110,7 @@ public class MapGenerator : BaseMonoBehaviour {
         bool componentFailed = false;
         
         MapGenerationData data = new MapGenerationData();
+        WorldConfigManager.Instance.mapGenerationData = data;
         Stopwatch componentWatch = new Stopwatch();
         float progressPerComponent = 1f / components.Length;
         float currentProgress = 0f;
@@ -132,6 +135,7 @@ public class MapGenerator : BaseMonoBehaviour {
         componentWatch.Stop();
         if (componentFailed) {
             //reload scene
+            WorldConfigManager.Instance.mapGenerationData = null;
             Debug.LogWarning("A component in world generation failed! Reloading scene...");
             SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         } else {
@@ -142,8 +146,8 @@ public class MapGenerator : BaseMonoBehaviour {
 #if DEBUG_LOG
             Debug.Log($"{loadingDetails}\nTotal loading time is {loadingWatch.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)} seconds");
 #endif
-
-            WorldConfigManager.Instance.mapGenerationData = data;
+            
+            data.SetFinishedMapGenerationCoroutine(true);
             AudioManager.Instance.TransitionToWorld();
             
             UIManager.Instance.initialWorldSetupMenu.Initialize();
@@ -179,6 +183,7 @@ public class MapGenerator : BaseMonoBehaviour {
         bool componentFailed = false;
         
         MapGenerationData data = new MapGenerationData();
+        WorldConfigManager.Instance.mapGenerationData = data;
         Stopwatch componentWatch = new Stopwatch();
         float progressPerComponent = 0.6f / components.Length;
         float currentProgress = 0.4f;
@@ -203,6 +208,7 @@ public class MapGenerator : BaseMonoBehaviour {
         componentWatch.Stop();
         if (componentFailed) {
             //reload scene
+            WorldConfigManager.Instance.mapGenerationData = null;
 #if DEBUG_LOG
             Debug.LogWarning("A component in world generation failed! Reloading scene...");
 #endif
@@ -214,7 +220,6 @@ public class MapGenerator : BaseMonoBehaviour {
 #if DEBUG_LOG
             Debug.Log($"{loadingDetails}\nTotal loading time is {loadingWatch.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)} seconds");
 #endif
-            WorldConfigManager.Instance.mapGenerationData = data;
             AudioManager.Instance.TransitionToWorld();
             
             UIManager.Instance.initialWorldSetupMenu.Initialize();

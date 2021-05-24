@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
+using Locations.Area_Features;
 using Locations.Region_Features;
 using Scenario_Maps;
 using UnityEngine;
@@ -12,29 +13,184 @@ using UtilityScripts;
 namespace Generator.Map_Generation.Components {
     public class SpecialStructureGeneration : MapGenerationComponent {
 
-	    private readonly STRUCTURE_TYPE[] specialStructuresToGenerate = new[] {
+	    private readonly STRUCTURE_TYPE[] specialStructureChoices = new[] {
 		    STRUCTURE_TYPE.MONSTER_LAIR,
 		    STRUCTURE_TYPE.ABANDONED_MINE,
 		    STRUCTURE_TYPE.TEMPLE,
 		    STRUCTURE_TYPE.MAGE_TOWER,
 		    STRUCTURE_TYPE.ANCIENT_GRAVEYARD,
-		    STRUCTURE_TYPE.RUINED_ZOO,
+		    // STRUCTURE_TYPE.RUINED_ZOO,
 		    STRUCTURE_TYPE.ANCIENT_RUIN,
 	    };
 	    
         public override IEnumerator ExecuteRandomGeneration(MapGenerationData data) {
-	        for (int i = 0; i < specialStructuresToGenerate.Length; i++) {
-		        STRUCTURE_TYPE structureType = specialStructuresToGenerate[i];
-		        int loopCount = GetLoopCount(structureType, data);
-		        int chancePerLoop = GetChance(structureType);
-		        List<Area> locationChoices = GetLocationChoices(structureType);
-		        if (locationChoices != null && locationChoices.Count > 0) {
-			        yield return MapGenerator.Instance.StartCoroutine(TryCreateSpecialStructure(structureType, locationChoices, loopCount, chancePerLoop));    
-		        } else {
-			        Debug.LogWarning($"Could not find areas to spawn {structureType.ToString()}");
+	        //Reference: https://www.notion.so/ruinarch/World-Generation-08714a9e2e574174a9336d75f10d6547#1cb5f4c8c9dc4939b6443b88fb51e1e1
+	        int specialStructuresToCreate = WorldSettings.Instance.worldSettingsData.mapSettings.GetSpecialStructuresToCreate();
+	        List<Area> locationChoices = RuinarchListPool<Area>.Claim();
+	        for (int i = 0; i < data.unreservedAreas.Count; i++) {
+		        Area area = data.unreservedAreas[i];
+		        if (area.elevationComponent.IsFully(ELEVATION.PLAIN) && area.featureComponent.features.Count == 0 && area.primaryStructureInArea is Wilderness) {
+			        locationChoices.Add(area);
 		        }
 	        }
+	        List<Area> occupiedLocations = RuinarchListPool<Area>.Claim();
+	        Debug.Log($"Will create {specialStructuresToCreate.ToString()} special structures. \nLocation Choices({locationChoices.Count.ToString()}): {locationChoices.ComafyList()}");
+	        for (int i = 0; i < specialStructuresToCreate; i++) {
+		        if (locationChoices.Count == 0) { break; }
+		        STRUCTURE_TYPE structureToCreate = CollectionUtilities.GetRandomElement(specialStructureChoices);
+		        Area targetArea = CollectionUtilities.GetRandomElement(locationChoices);
+		        locationChoices.Remove(targetArea);
+		        occupiedLocations.Add(targetArea);
+		        yield return MapGenerator.Instance.StartCoroutine(TryCreateSpecialStructure(structureToCreate, targetArea));
+		        Debug.Log($"Created {structureToCreate.ToString()} at {targetArea}");
+	        }
+	        
+	        //go through each biome and add unique features
+	        string summary = "Will go through biomes and add features...";
+	        for (int i = 0; i < GridMap.Instance.mainRegion.biomeDivisionComponent.divisions.Count; i++) {
+		        BiomeDivision biomeDivision = GridMap.Instance.mainRegion.biomeDivisionComponent.divisions[i];
+		        List<Area> unreservedFullyFlatAreasInBiome = RuinarchListPool<Area>.Claim();
+		        biomeDivision.PopulateUnreservedFullyFlatTiles(unreservedFullyFlatAreasInBiome, data.reservedAreas);
+		        unreservedFullyFlatAreasInBiome.ListRemoveRange(occupiedLocations);
+		        summary = $"{summary}\nBiome Division: {biomeDivision.biome.ToString()}";
+		        if (biomeDivision.areas.Count > 0 && unreservedFullyFlatAreasInBiome.Count > 0) {
+			        if ((biomeDivision.biome == BIOMES.DESERT || biomeDivision.biome == BIOMES.GRASSLAND || biomeDivision.biome == BIOMES.SNOW) && GameUtilities.RollChance(6)) {
+				        //if Biome is Desert or Jungle or Snow, 6% chance that it has plenty of Ruins:
+				        summary = $"{summary}\nBiome is Desert or Jungle or Snow, 6% chance that it has plenty of Ruins";
+				        int count = 0;
+				        for (int j = 0; j < 4; j++) {
+					        if (unreservedFullyFlatAreasInBiome.Count == 0) { break; }
+					        Area randomArea = CollectionUtilities.GetRandomElement(unreservedFullyFlatAreasInBiome);
+					        unreservedFullyFlatAreasInBiome.Remove(randomArea);
+					        Assert.IsTrue(randomArea.elevationComponent.IsFully(ELEVATION.PLAIN));
+					        yield return MapGenerator.Instance.StartCoroutine(TryCreateSpecialStructure(STRUCTURE_TYPE.ANCIENT_RUIN, randomArea));
+					        count++;
+				        }
+				        summary = $"{summary}\nCreated {count} Ruins";
+			        } else if ((biomeDivision.biome == BIOMES.DESERT || biomeDivision.biome == BIOMES.SNOW) && GameUtilities.RollChance(6)) {
+				        // if Biome is Desert or Snow, 6% chance that it has plenty of Ancient Graveyards:
+				        summary = $"{summary}\nBiome is Desert or Snow, 6% chance that it has plenty of Ancient Graveyards";
+				        int count = 0;
+				        for (int j = 0; j < 4; j++) {
+					        if (unreservedFullyFlatAreasInBiome.Count == 0) { break; }
+					        Area randomArea = CollectionUtilities.GetRandomElement(unreservedFullyFlatAreasInBiome);
+					        unreservedFullyFlatAreasInBiome.Remove(randomArea);
+					        yield return MapGenerator.Instance.StartCoroutine(TryCreateSpecialStructure(STRUCTURE_TYPE.ANCIENT_GRAVEYARD, randomArea));
+					        count++;
+				        }
+				        summary = $"{summary}\nCreated {count} Ancient Graveyards";
+			        } else if (biomeDivision.biome == BIOMES.GRASSLAND && GameUtilities.RollChance(6)) {
+				        //if Biome is Grassland, 6% chance to add Teeming tag to the Biome
+				        summary = $"{summary}\nBiome is Grassland, 6% chance to add Teeming tag to the Biome";
+				        ApplyTeemingEffect(biomeDivision, ref summary);
+			        }else if (GameUtilities.RollChance(3)) {
+				        //3% chance it has plenty of Poison Vents:
+				        summary = $"{summary}\n3% chance it has plenty of Poison Vents";
+				        Area randomArea = CollectionUtilities.GetRandomElement(unreservedFullyFlatAreasInBiome);
+				        unreservedFullyFlatAreasInBiome.Remove(randomArea);
+				        List<LocationGridTile> validTiles = RuinarchListPool<LocationGridTile>.Claim();
+				        PopulateValidTilesForVents(validTiles, randomArea);
+				        int count = 0;
+				        for (int j = 0; j < 8; j++) {
+					        if (validTiles.Count == 0) { break; }
+					        LocationGridTile poisonVentLocation = CollectionUtilities.GetRandomElement(validTiles);
+					        TileObject tileObject = InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.POISON_VENT);
+					        poisonVentLocation.structure.AddPOI(tileObject, poisonVentLocation);
+					        validTiles.Remove(poisonVentLocation);
+					        count++;
+				        }
+				        RuinarchListPool<LocationGridTile>.Release(validTiles);
+				        summary = $"{summary}\nCreated {count} Poison Vents";
+			        }else if (GameUtilities.RollChance(3)) {
+				        //3% chance it has plenty of Vapor Vents:
+				        summary = $"{summary}\n3% chance it has plenty of Vapor Vents";
+				        Area randomArea = CollectionUtilities.GetRandomElement(unreservedFullyFlatAreasInBiome);
+				        unreservedFullyFlatAreasInBiome.Remove(randomArea);
+				        List<LocationGridTile> validTiles = RuinarchListPool<LocationGridTile>.Claim();
+				        PopulateValidTilesForVents(validTiles, randomArea);
+				        int count = 0;
+				        for (int j = 0; j < 8; j++) {
+					        if (validTiles.Count == 0) { break; }
+					        LocationGridTile vaporVentLocation = CollectionUtilities.GetRandomElement(validTiles);
+					        TileObject tileObject = InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.VAPOR_VENT);
+					        vaporVentLocation.structure.AddPOI(tileObject, vaporVentLocation);
+					        validTiles.Remove(vaporVentLocation);
+					        count++;
+				        }
+				        RuinarchListPool<LocationGridTile>.Release(validTiles);
+				        summary = $"{summary}\nCreated {count} Vapor Vents";
+			        }
+		        }
+		        RuinarchListPool<Area>.Release(unreservedFullyFlatAreasInBiome);
+	        }
+	        RuinarchListPool<Area>.Release(occupiedLocations);
+	        RuinarchListPool<Area>.Release(locationChoices);
+	        Debug.Log(summary);
+	        // for (int i = 0; i < specialStructureChoices.Length; i++) {
+	        //  STRUCTURE_TYPE structureType = specialStructureChoices[i];
+	        //  int loopCount = GetLoopCount(structureType, data);
+	        //  int chancePerLoop = GetChance(structureType);
+	        //  List<Area> locationChoices = GetLocationChoices(structureType);
+	        //  if (locationChoices != null && locationChoices.Count > 0) {
+	        //   yield return MapGenerator.Instance.StartCoroutine(TryCreateSpecialStructure(structureType, locationChoices, loopCount, chancePerLoop));    
+	        //  } else {
+	        //   Debug.LogWarning($"Could not find areas to spawn {structureType.ToString()}");
+	        //  }
+	        // }
 	        SpecialStructureSecondPass();
+        }
+        private void PopulateValidTilesForVents(List<LocationGridTile> p_tiles, Area p_area) {
+	        for (int i = 0; i < p_area.gridTileComponent.passableTiles.Count; i++) {
+		        LocationGridTile tile = p_area.gridTileComponent.passableTiles[i];
+		        if (tile.tileObjectComponent.objHere == null && !tile.isOccupied && tile.mainBiomeType == p_area.biomeType) {
+			        p_tiles.Add(tile);
+		        }
+	        }
+        }
+        private void ApplyTeemingEffect(BiomeDivision p_biomeDivision, ref string p_summary) {
+	        List<GameFeature> gameFeatures = RuinarchListPool<GameFeature>.Claim();
+	        PopulateGameFeaturesInBiomeDivision(gameFeatures, p_biomeDivision);
+	        if (gameFeatures.Count < 6) {
+		        int missing = UnityEngine.Random.Range(6, 10) - gameFeatures.Count;
+		        //choose from random flat/tree tile without game feature
+		        List<Area> choices = RuinarchListPool<Area>.Claim();
+		        for (int i = 0; i < p_biomeDivision.areas.Count; i++) {
+			        Area currArea = p_biomeDivision.areas[i];
+			        if(currArea.elevationType == ELEVATION.PLAIN && !currArea.featureComponent.HasFeature(AreaFeatureDB.Game_Feature)) {
+				        choices.Add(currArea);
+			        }
+		        }
+		        p_summary = $"{p_summary}\nWill add game feature to {missing.ToString()} areas:";
+		        int count = 0;
+		        for (int i = 0; i < missing; i++) {
+			        if (choices.Count == 0) { break; }
+			        Area chosenArea = CollectionUtilities.GetRandomElement(choices);
+			        GameFeature feature = LandmarkManager.Instance.CreateAreaFeature<GameFeature>(AreaFeatureDB.Game_Feature);
+			        chosenArea.featureComponent.AddFeature(feature, chosenArea);
+			        gameFeatures.Add(feature);
+			        choices.Remove(chosenArea);
+			        p_summary = $"{p_summary}|Added game feature to {chosenArea}|"; 
+			        count++;
+		        }
+		        p_summary = $"{p_summary}\nAdded game feature to {count.ToString()} areas"; 
+		        RuinarchListPool<Area>.Release(choices);
+	        }
+
+	        //set spawn type to same for every feature
+	        SUMMON_TYPE animalType = CollectionUtilities.GetRandomElement(GameFeature.spawnChoices);
+	        for (int i = 0; i < gameFeatures.Count; i++) {
+		        GameFeature gameFeature = gameFeatures[i];
+		        gameFeature.SetSpawnType(animalType);
+	        }
+        }
+        private void PopulateGameFeaturesInBiomeDivision(List<GameFeature> p_gameFeatures, BiomeDivision p_biomeDivision) {
+	        for (int i = 0; i < p_biomeDivision.areas.Count; i++) {
+		        Area area = p_biomeDivision.areas[i];
+		        GameFeature feature = area.featureComponent.GetFeature<GameFeature>();
+		        if (feature != null) {
+			        p_gameFeatures.Add(feature);
+		        }
+	        }
         }
         private void SpecialStructureSecondPass() {
 			for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
@@ -69,29 +225,34 @@ namespace Generator.Map_Generation.Components {
 		}
 		#endregion
 
-        private IEnumerator TryCreateSpecialStructure(STRUCTURE_TYPE p_structureType, List<Area> p_choices, int p_loopCount, int p_chancePerLoop) {
-	        int createdCount = 0;
-	        for (int i = 0; i < p_loopCount; i++) {
-		        if (GameUtilities.RollChance(p_chancePerLoop)) {
-			        if (p_choices.Count > 0) {
-				        Area chosenArea = CollectionUtilities.GetRandomElement(p_choices);
-				        STRUCTURE_TYPE structureType = GetStructureTypeToCreate(p_structureType, chosenArea);
-				        chosenArea.featureComponent.RemoveAllFeatures(chosenArea);
-				        chosenArea.SetElevation(ELEVATION.PLAIN);
-				        p_choices.Remove(chosenArea);
-				        p_choices.ListRemoveRange(chosenArea.neighbourComponent.neighbours);
-				        NPCSettlement settlement = LandmarkManager.Instance.CreateNewSettlement(chosenArea.region, LOCATION_TYPE.DUNGEON, chosenArea);
-				        yield return MapGenerator.Instance.StartCoroutine(CreateSpecialStructure(structureType, chosenArea.region, chosenArea, settlement));
-				        createdCount++;
-			        } else {
-				        break;
-			        }
-		        }
-	        }
-	        yield return null;
+        // private IEnumerator TryCreateSpecialStructure(STRUCTURE_TYPE p_structureType, List<Area> p_choices, int p_loopCount, int p_chancePerLoop) {
+	       //  int createdCount = 0;
+	       //  for (int i = 0; i < p_loopCount; i++) {
+		      //   if (GameUtilities.RollChance(p_chancePerLoop)) {
+			     //    if (p_choices.Count > 0) {
+				    //     Area chosenArea = CollectionUtilities.GetRandomElement(p_choices);
+				    //     STRUCTURE_TYPE structureType = GetStructureTypeToCreate(p_structureType, chosenArea);
+				    //     // chosenArea.featureComponent.RemoveAllFeatures(chosenArea);
+				    //     chosenArea.SetElevation(ELEVATION.PLAIN);
+				    //     p_choices.Remove(chosenArea);
+				    //     p_choices.ListRemoveRange(chosenArea.neighbourComponent.neighbours);
+				    //     NPCSettlement settlement = LandmarkManager.Instance.CreateNewSettlement(chosenArea.region, LOCATION_TYPE.DUNGEON, chosenArea);
+				    //     yield return MapGenerator.Instance.StartCoroutine(CreateSpecialStructure(structureType, chosenArea.region, chosenArea, settlement));
+				    //     createdCount++;
+			     //    } else {
+				    //     break;
+			     //    }
+		      //   }
+	       //  }
+	       //  yield return null;
 #if DEBUG_LOG
-	        Debug.Log($"Created {createdCount.ToString()} {p_structureType.ToString()}");
+	       //  Debug.Log($"Created {createdCount.ToString()} {p_structureType.ToString()}"); 
+        // }
 #endif
+        private IEnumerator TryCreateSpecialStructure(STRUCTURE_TYPE p_structureType, Area p_area) {
+	        // chosenArea.featureComponent.RemoveAllFeatures(chosenArea);
+	        NPCSettlement settlement = LandmarkManager.Instance.CreateNewSettlement(p_area.region, LOCATION_TYPE.DUNGEON, p_area);
+	        yield return MapGenerator.Instance.StartCoroutine(CreateSpecialStructure(p_structureType, p_area.region, p_area, settlement));
         }
 
 #region Structure Creation
@@ -105,7 +266,7 @@ namespace Generator.Map_Generation.Components {
 		}
 		private IEnumerator GenerateMonsterLair(Area hexTile, LocationStructure structure) {
 			List<LocationGridTile> locationGridTiles = new List<LocationGridTile>(hexTile.gridTileComponent.gridTiles);
-			LocationStructure wilderness = hexTile.region.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
+			LocationStructure wilderness = hexTile.region.wilderness;
 			InnerMapManager.Instance.MonsterLairCellAutomata(locationGridTiles, structure, hexTile.region, wilderness);
 			structure.SetOccupiedArea(hexTile);
 			yield return null;

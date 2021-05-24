@@ -1,7 +1,10 @@
 ﻿using System;
+using System.Collections;
 using UnityEngine;
 using System.Collections.Generic;
-
+using System.Diagnostics;
+using System.Globalization;
+using Debug = UnityEngine.Debug;
 namespace EZObjectPools
 {
     [AddComponentMenu("EZ Object Pool/Object Pool")]
@@ -156,6 +159,23 @@ namespace EZObjectPools
                 //g.SetActive(false);
                 ObjectList.Add(g);
             }
+        }
+        public IEnumerator InstantiatePoolCoroutine(int p_poolSize, Stopwatch p_stopwatch) {
+            p_stopwatch.Reset();
+            p_stopwatch.Start();
+            int count = 0;
+            for (int i = 0; i < p_poolSize; i++) {
+                GameObject g = NewActiveObject();
+                g.GetComponent<PooledObject>().SendObjectBackToPool();
+                ObjectList.Add(g);
+                count++;
+                if (count > 20) {
+                    count = 0;
+                    yield return null;
+                }
+            }
+            p_stopwatch.Stop();
+            Debug.Log($"Instantiate Pool {PoolName} took {p_stopwatch.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)} seconds to complete.");
         }
 
         /// <summary>

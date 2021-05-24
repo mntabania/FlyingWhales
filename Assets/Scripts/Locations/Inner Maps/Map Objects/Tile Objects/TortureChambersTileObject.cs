@@ -11,7 +11,7 @@ public class TortureChambersTileObject : TileObject {
         RemoveAdvertisedAction(INTERACTION_TYPE.STEAL_ANYTHING);
         traitContainer.AddTrait(this, "Immovable");
     }
-    public TortureChambersTileObject(SaveDataTileObject data) {
+    public TortureChambersTileObject(SaveDataTileObject data) : base(data) {
         
     }
     public override bool CanBeSelected() {

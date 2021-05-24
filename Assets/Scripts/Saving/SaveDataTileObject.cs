@@ -14,8 +14,6 @@ public class SaveDataTileObject : SaveData<TileObject>, ISavableCounterpart {
     public int regionLocationID;
     public TileLocationSave tileLocationID;
     public bool isPreplaced;
-    public int[] resourceValues; //food, wood, stone, metal
-    // public Dictionary<RESOURCE, int> storedResources;
     public string isBeingCarriedByID;
     public POI_STATE poiState;
     public List<INTERACTION_TYPE> advertisedActions;
@@ -24,6 +22,9 @@ public class SaveDataTileObject : SaveData<TileObject>, ISavableCounterpart {
     public MAP_OBJECT_STATE mapObjectState;
     public bool isDamageContributorToStructure;
     public bool isStoredAsTarget;
+    
+    //resources
+    public SaveDataResourceStorageComponent resourceStorageComponent;
 
     //hp
     public int currentHP;
@@ -85,13 +86,9 @@ public class SaveDataTileObject : SaveData<TileObject>, ISavableCounterpart {
             spriteName = data.mapObjectVisual.usedSprite.name;
             rotation = data.mapObjectVisual.rotation;
         }
-        
-        resourceValues = new int[data.storedResources.Count];
-        int index = 0;
-        foreach (var storedResource in data.storedResources) {
-            resourceValues[index] = storedResource.Value;
-            index++;
-        }
+
+        resourceStorageComponent = new SaveDataResourceStorageComponent();
+        resourceStorageComponent.Save(data.resourceStorageComponent);
 
         isBeingCarriedByID = data.isBeingCarriedBy != null ? data.isBeingCarriedBy.persistentID : string.Empty;
         

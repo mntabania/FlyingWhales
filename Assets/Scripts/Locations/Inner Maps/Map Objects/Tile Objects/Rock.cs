@@ -8,7 +8,7 @@ using Inner_Maps.Map_Objects.Map_Object_Visuals;
 public class Rock : TileObject{
     public int yield { get; private set; }
     public override Type serializedData => typeof(SaveDataRock);
-    public override StructureConnector structureConnector {
+    public StructureConnector structureConnector {
         get {
             if (_rockGameObject != null) {
                 return _rockGameObject.structureConnector;
@@ -16,6 +16,7 @@ public class Rock : TileObject{
             return null;
         }
     }
+    public BaseSettlement parentSettlement { get; private set; }
     
     private RockGameObject _rockGameObject;
     public Rock() {
@@ -27,7 +28,7 @@ public class Rock : TileObject{
         SetYield(50);
         BaseSettlement.onSettlementBuilt += UpdateSettlementResourcesParent;
     }
-    public Rock(SaveDataTileObject data) { }
+    public Rock(SaveDataTileObject data) : base(data) { }
     protected override void CreateMapObjectVisual() {
         base.CreateMapObjectVisual();
         _rockGameObject = mapVisual as RockGameObject;
@@ -48,21 +49,20 @@ public class Rock : TileObject{
     public void SetYield(int amount) {
         yield = amount;
     }
-
-    public override void UpdateSettlementResourcesParent() {
+    protected override void UpdateSettlementResourcesParent() {
         if (gridTileLocation != null) {
             if (gridTileLocation.area.settlementOnArea != null) {
-                gridTileLocation.area.settlementOnArea.SettlementResources?.AddToListbaseOnRequirement(SettlementResources.StructureRequirement.ROCK, this);
+                gridTileLocation.area.settlementOnArea.SettlementResources?.AddToListBasedOnRequirement(SettlementResources.StructureRequirement.ROCK, this);
             }
             gridTileLocation.area.neighbourComponent.neighbours.ForEach((eachNeighbor) => {
                 if (eachNeighbor.settlementOnArea != null) {
-                    eachNeighbor.settlementOnArea.SettlementResources?.AddToListbaseOnRequirement(SettlementResources.StructureRequirement.ROCK, this);
+                    eachNeighbor.settlementOnArea.SettlementResources?.AddToListBasedOnRequirement(SettlementResources.StructureRequirement.ROCK, this);
                     parentSettlement = eachNeighbor.settlementOnArea;
                 }
             });
         }
     }
-    public override void RemoveFromSettlementResourcesParent() {
+    protected override void RemoveFromSettlementResourcesParent() {
         if (parentSettlement != null && parentSettlement.SettlementResources != null) {
             if (parentSettlement.SettlementResources.rocks.Remove(this)) {
                 parentSettlement = null;

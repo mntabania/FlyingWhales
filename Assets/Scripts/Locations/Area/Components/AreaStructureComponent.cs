@@ -50,7 +50,7 @@ public class AreaStructureComponent : AreaComponent {
             }
         }
         if(mostImportant == null) {
-            mostImportant = owner.region.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
+            mostImportant = owner.region.wilderness;
         }
         return mostImportant;
         //foreach (KeyValuePair<STRUCTURE_TYPE, List<LocationStructure>> pair in region.structures) {

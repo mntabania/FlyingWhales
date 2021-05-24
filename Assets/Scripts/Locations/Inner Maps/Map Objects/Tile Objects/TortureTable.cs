@@ -4,7 +4,7 @@ public class TortureTable : TileObject{
     public TortureTable() {
         Initialize(TILE_OBJECT_TYPE.TORTURE_TABLE);
     }
-    public TortureTable(SaveDataTileObject data) {
+    public TortureTable(SaveDataTileObject data) : base(data) {
         
     }
 }

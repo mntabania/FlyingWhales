@@ -61,7 +61,7 @@ public class Mine : GoapAction {
                 goapNode.actor.gridTileLocation.structure.AddPOI(InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.GOLD), goapNode.actor.gridTileLocation);
                 break;
             case Cave.Yield_Metal:
-                goapNode.actor.gridTileLocation.structure.AddPOI(InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.METAL_PILE), goapNode.actor.gridTileLocation);
+                goapNode.actor.gridTileLocation.structure.AddPOI(InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.IRON), goapNode.actor.gridTileLocation);
                 break;
             case Cave.Yield_Stone:
                 goapNode.actor.gridTileLocation.structure.AddPOI(InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.STONE_PILE), goapNode.actor.gridTileLocation);

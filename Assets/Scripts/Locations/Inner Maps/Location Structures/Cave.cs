@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
 using UnityEngine;
@@ -109,8 +110,8 @@ namespace Inner_Maps.Location_Structures {
             if (occupiedArea != null) {
                 float centerX = 0f;
                 float centerY = 0f;
-                for (int i = 0; i < occupiedAreas.Count; i++) {
-                    Area area = occupiedAreas[i];
+                for (int i = 0; i < occupiedAreas.Keys.Count; i++) {
+                    Area area = occupiedAreas.Keys.ElementAt(i);
                     Vector2 worldLocation = area.gridTileComponent.centerGridTile.centeredWorldLocation;
                     centerX += worldLocation.x;
                     centerY += worldLocation.y;

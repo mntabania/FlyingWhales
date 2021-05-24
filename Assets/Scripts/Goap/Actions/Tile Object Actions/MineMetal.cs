@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using Inner_Maps;
 using UnityEngine;  
@@ -54,11 +55,9 @@ public class MineMetal : GoapAction {
         LocationGridTile tile = ore.gridTileLocation;
         ore.AdjustYield(-metal);
 
-        // MetalPile metalPile = InnerMapManager.Instance.CreateNewTileObject<MetalPile>(TILE_OBJECT_TYPE.METAL_PILE);
-        // metalPile.SetResourceInPile(metal);
-        // tile.structure.AddPOI(metalPile, tile);
+        throw new NotImplementedException("Randomize metal produced by mine metal not yet implemented");
         
-        InnerMapManager.Instance.CreateNewResourcePileAndTryCreateHaulJob<MetalPile>(TILE_OBJECT_TYPE.METAL_PILE, metal,
+        InnerMapManager.Instance.CreateNewResourcePileAndTryCreateHaulJob<MetalPile>(TILE_OBJECT_TYPE.IRON, metal,
             goapNode.actor, tile);
     }
 #endregion

@@ -18,7 +18,7 @@ public class DemonEye : TileObject {
         hiddenComponent.SetIsHidden(true, false);
         PlayerManager.Instance.player.tileObjectComponent.AddEyeWard(this);
     }
-    public DemonEye(SaveDataTileObject data) {
+    public DemonEye(SaveDataTileObject data) : base(data) {
         tilesInRadius = new List<LocationGridTile>();
         //AddPlayerAction(PLAYER_SKILL_TYPE.DESTROY_EYE_WARD);
     }

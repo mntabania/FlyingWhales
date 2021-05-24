@@ -69,7 +69,7 @@ namespace Traits {
                 if (character.characterClass.className == "Vampire Lord") {
                     //make character a peasant when he/she loses Vampire trait while they are a Vampire Lord
                     //This is to ensure that anytime this trait is removed from a Vampire Lord that its class will be changed.
-                    character.AssignClass("Peasant");
+                    character.classComponent.AssignClass("Peasant");
                 }
             }
             base.OnRemoveTrait(sourceCharacter, removedBy);

@@ -43,10 +43,7 @@ public class Area: IPlayerActionTarget, IPartyTargetDestination, ILocation {
     public OBJECT_TYPE objectType => OBJECT_TYPE.Area;
     public Type serializedData => typeof(SaveDataArea);
     public int id => areaData.id;
-    public float elevationNoise => areaData.elevationNoise;
-    public float moistureNoise => areaData.moistureNoise;
-    public float temperature => areaData.temperature;
-    public BIOMES biomeType => areaData.biomeType;
+    public BIOMES biomeType => biomeComponent.biomeType;
     public ELEVATION elevationType => elevationComponent.elevationType;  //areaData.elevationType;
     public bool hasBeenDestroyed => false;
     public PARTY_TARGET_DESTINATION_TYPE partyTargetDestinationType => PARTY_TARGET_DESTINATION_TYPE.Area;
@@ -105,12 +102,6 @@ public class Area: IPlayerActionTarget, IPartyTargetDestination, ILocation {
     public override string ToString() {
         return $"{locationName} - {elevationType.ToString()} - {region?.name ?? "No Region"}";
     }
-
-    #region Elevation
-    public void SetElevation(ELEVATION elevationType) {
-        areaData.elevationType = elevationType;
-    }
-    #endregion
 
     #region Area Utilities
     public void SetAreaItem(AreaItem p_areaItem) {

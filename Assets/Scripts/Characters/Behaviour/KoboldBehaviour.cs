@@ -191,7 +191,7 @@ public class KoboldBehaviour : BaseMonsterBehaviour {
             character.homeSettlement.PopulateSurroundingAreasInSameRegionWithLessThanNumOfFreezingTraps(areas, character.homeRegion, 4);
         } else if (character.homeStructure != null) {
             if (character.homeStructure is Cave cave) {
-                homeArea = CollectionUtilities.GetRandomElement(cave.occupiedAreas);
+                homeArea = CollectionUtilities.GetRandomElement(cave.occupiedAreas.Keys);
                 //return homeArea.neighbourComponent.neighbours.Where(x => x.region == homeArea.region && x.freezingTraps < 4).ToList();
             } else {
                 homeArea = character.homeStructure.occupiedArea;
@@ -239,7 +239,7 @@ public class KoboldBehaviour : BaseMonsterBehaviour {
             character.homeSettlement.PopulateSurroundingAreas(areas);
         } else if (character.homeStructure != null) {
             if (character.homeStructure is Cave cave) {
-                homeArea = CollectionUtilities.GetRandomElement(cave.occupiedAreas);
+                homeArea = CollectionUtilities.GetRandomElement(cave.occupiedAreas.Keys);
                 //return homeArea.AllNeighbours.Where(x => x.region == homeArea.region).ToList();
             } else {
                 homeArea = character.homeStructure.occupiedArea;

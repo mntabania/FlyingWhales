@@ -194,7 +194,8 @@ public class CrimeManager : BaseMonoBehaviour {
         } else if (actionType == INTERACTION_TYPE.STEAL
             || actionType == INTERACTION_TYPE.STEAL_ANYTHING
             || actionType == INTERACTION_TYPE.POISON
-            || actionType == INTERACTION_TYPE.PICKPOCKET) {
+            || actionType == INTERACTION_TYPE.PICKPOCKET
+            || actionType == INTERACTION_TYPE.STEAL_COINS) {
             return CRIME_SEVERITY.Misdemeanor;
         } else if (actionType == INTERACTION_TYPE.PICK_UP) {
             if(consideredAction.poiTarget is TileObject targetTileObject) {

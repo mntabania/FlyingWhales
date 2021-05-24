@@ -4,7 +4,7 @@ using System.Linq;
 using UnityEngine;
 
 public class WoodPile : ResourcePile {
-
+    public override CONCRETE_RESOURCES specificProvidedResource => CONCRETE_RESOURCES.Wood;
     public WoodPile() : base(RESOURCE.WOOD) {
         Initialize(TILE_OBJECT_TYPE.WOOD_PILE, false);
         SetResourceInPile(100);

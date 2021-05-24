@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
+using Traits;
 using UtilityScripts;
 
 public class NecromancerBehaviour : CharacterBehaviourComponent {
@@ -41,10 +42,10 @@ public class NecromancerBehaviour : CharacterBehaviourComponent {
                     log += $"\n-Character saw a dead character, has a 80% chance to raise corpse";
 #endif
                     if (UnityEngine.Random.Range(0, 100) < 80) {
-                        int followersInRegion = character.necromancerTrait.numOfSkeletonFollowersInSameRegion;
-                        if(followersInRegion > 25) {
+                        int followersInRegion = character.necromancerTrait.numOfSkeletonFollowers;
+                        if(followersInRegion > Necromancer.MaxSkeletonFollowers) {
 #if DEBUG_LOG
-                            log += $"\n-Character will no longer raise corpse because the number of followers in region is above 25";
+                            log += $"\n-Character will no longer raise corpse because the number of followers in region is above {Necromancer.MaxSkeletonFollowers.ToString()}";
 #endif
                         } else {
 #if DEBUG_LOG
@@ -72,10 +73,10 @@ public class NecromancerBehaviour : CharacterBehaviourComponent {
                         log += $"\n-Character saw a tombstone, has a 80% chance to raise corpse";
 #endif
                         if (UnityEngine.Random.Range(0, 100) < 80) {
-                            int followersInRegion = character.necromancerTrait.numOfSkeletonFollowersInSameRegion;
-                            if (followersInRegion > 25) {
+                            int followersInRegion = character.necromancerTrait.numOfSkeletonFollowers;
+                            if (followersInRegion > Necromancer.MaxSkeletonFollowers) {
 #if DEBUG_LOG
-                                log += $"\n-Character will no longer raise corpse because the number of followers in region is above 25";
+                                log += $"\n-Character will no longer raise corpse because the number of followers in region is above {Necromancer.MaxSkeletonFollowers.ToString()}";
 #endif
                             } else {
 #if DEBUG_LOG
@@ -92,11 +93,20 @@ public class NecromancerBehaviour : CharacterBehaviourComponent {
 #if DEBUG_LOG
                     log += $"\n-Character saw a dead summon will try to absorb power";
 #endif
-                    ELEMENTAL_TYPE elementalType = deadSummon.characterClass.elementalType;
-                    if (elementalType != ELEMENTAL_TYPE.Normal) {
-                        if (!character.traitContainer.HasTrait(elementalType.ToString() + " Attacker")) {
-                            //NOTE: Rename to absorb element
-                            character.jobComponent.TriggerAbsorbPower(deadSummon, out producedJob);
+                    //Removed absorbing element since characters can now equip weapons that can change elements also
+                    //This will conflict the new system of changing elements
+                    //ELEMENTAL_TYPE elementalType = deadSummon.characterClass.elementalType;
+                    //if (elementalType != ELEMENTAL_TYPE.Normal) {
+                    //    if (!character.traitContainer.HasTrait(elementalType.ToString() + " Attacker")) {
+                    //        //NOTE: Rename to absorb element
+                    //        if(character.jobComponent.TriggerAbsorbPower(deadSummon, out producedJob)) {
+                    //            return true;
+                    //        }
+                    //    }
+                    //}
+                    if (!character.traitContainer.HasTrait("Enhanced Power")) {
+                        if (character.jobComponent.TriggerAbsorbPower(deadSummon, out producedJob)) {
+                            //Will absorb power that will enhance attack damage temporarily (12 hours)
                             return true;
                         }
                     }
@@ -135,10 +145,10 @@ public class NecromancerBehaviour : CharacterBehaviourComponent {
                                 return true;
                             }
                         } else {
-                            int followersInRegion = character.necromancerTrait.numOfSkeletonFollowersInSameRegion;
-                            if (followersInRegion > 25) {
+                            int followersInRegion = character.necromancerTrait.numOfSkeletonFollowers;
+                            if (followersInRegion > Necromancer.MaxSkeletonFollowers) {
 #if DEBUG_LOG
-                                log += $"\n-Character will no longer visit Graveyards/Cemeteries because the number of followers in region is above 25";
+                                log += $"\n-Character will no longer visit Graveyards/Cemeteries because the number of followers in region is above {Necromancer.MaxSkeletonFollowers.ToString()}";
 #endif
                             } else {
                                 int roll = UnityEngine.Random.Range(0, 100);
@@ -193,7 +203,7 @@ public class NecromancerBehaviour : CharacterBehaviourComponent {
                     bool hasCreated = false;
                     if (character.necromancerTrait.energy > 0) {
                         //hasCreated = character.jobComponent.TriggerSpawnSkeleton(out producedJob);
-                        int followersInRegion = character.necromancerTrait.numOfSkeletonFollowersInSameRegion;
+                        int followersInRegion = character.necromancerTrait.numOfSkeletonFollowers;
                         if (followersInRegion > 15) {
 #if DEBUG_LOG
                             log += $"\n-Character will no longer visit create skeletons because the number of followers in region is above 15";

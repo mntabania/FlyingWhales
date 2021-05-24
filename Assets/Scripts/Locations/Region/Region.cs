@@ -8,7 +8,6 @@ using Locations.Region_Features;
 using Locations.Settlements;
 using Logs;
 using PathFind;
-using SpriteGlow;
 using UnityEngine;
 using UtilityScripts;
 using Random = UnityEngine.Random;
@@ -24,7 +23,7 @@ public class Region : ISavable, ILogFiller {
     public List<Faction> factionsHere { get; private set; }
     public List<Character> residents { get; private set; }
     public List<Character> charactersAtLocation { get; private set; }
-    public Area[,] areaMap => GridMap.Instance.map; //TODO:
+    public Area[,] areaMap => GridMap.Instance.map;
     public Dictionary<STRUCTURE_TYPE, List<LocationStructure>> structures { get; private set; }
     public List<LocationStructure> allStructures { get; private set; }
     public List<BaseSettlement> settlementsInRegion { get; private set; }
@@ -41,6 +40,9 @@ public class Region : ISavable, ILogFiller {
     /// NOTE: This just includes BUILT objects!
     /// </summary>
     public Dictionary<TILE_OBJECT_TYPE, int> objectsInRegionCount { get; private set; }
+    public LocationStructure wilderness { get; private set; }
+    public List<VillageSpot> villageSpots { get; private set; }
+    
 
     private RegionInnerTileMap _regionInnerTileMap; //inner map of the region, this should only be used if this region does not have an npcSettlement. 
     private string _activeEventAfterEffectScheduleId;
@@ -60,6 +62,7 @@ public class Region : ISavable, ILogFiller {
         regionFeatureComponent = new RegionFeatureComponent();
         settlementsInRegion = new List<BaseSettlement>();
         objectsInRegionCount = new Dictionary<TILE_OBJECT_TYPE, int>();
+        villageSpots = new List<VillageSpot>();
     }
     public Region(Area coreTile, string p_name = "") : this() {
         persistentID = System.Guid.NewGuid().ToString();
@@ -88,6 +91,9 @@ public class Region : ISavable, ILogFiller {
     }
 
 #region Loading
+    public void LoadWilderness(Wilderness p_wilderness) {
+        wilderness = p_wilderness;
+    }
     public void LoadReferences(SaveDataRegion saveDataRegion) {
 #if DEBUG_LOG
         string summary = $"Loading {name} references:";
@@ -129,6 +135,11 @@ public class Region : ISavable, ILogFiller {
             string factionHereID = saveDataRegion.factionsHereIDs[i];
             Faction faction = DatabaseManager.Instance.factionDatabase.GetFactionBasedOnPersistentID(factionHereID);
             factionsHere.Add(faction);
+        }
+        //village spots
+        for (int i = 0; i < saveDataRegion.villageSpots.Length; i++) {
+            VillageSpot villageSpot = saveDataRegion.villageSpots[i].Load();
+            villageSpots.Add(villageSpot);
         }
 #if DEBUG_LOG
         Debug.Log(summary);
@@ -424,7 +435,7 @@ public class Region : ISavable, ILogFiller {
     }
     public void GenerateStructures() {
         CreateStructureList();
-        LandmarkManager.Instance.CreateNewStructureAt(this, STRUCTURE_TYPE.WILDERNESS);
+        wilderness = LandmarkManager.Instance.CreateNewStructureAt(this, STRUCTURE_TYPE.WILDERNESS);
     }
     public void AddStructure(LocationStructure structure) {
         Debug.Assert(!structure.hasBeenDestroyed, $"Structure {structure} has been destroyed but is being added to {name}");
@@ -852,7 +863,7 @@ public class Region : ISavable, ILogFiller {
                 count++;
             }
         }
-        return count >= WorldSettings.Instance.worldSettingsData.mapSettings.GetMaxVillagesDuringPlay();
+        return count >= villageSpots.Count;
     }
 #endregion
 
@@ -886,6 +897,31 @@ public class Region : ISavable, ILogFiller {
     }
 #endregion
 
+#region Village Spots
+    public void SetVillageSpots(List<VillageSpot> p_villageSpots) {
+        villageSpots.Clear();
+        villageSpots.AddRange(p_villageSpots);
+    }
+    public VillageSpot GetRandomUnoccupiedVillageSpot() {
+        for (int i = 0; i < villageSpots.Count; i++) {
+            VillageSpot villageSpot = villageSpots[i];
+            if (!villageSpot.mainSpot.structureComponent.HasStructureInArea() && !villageSpot.mainSpot.IsNextToOrPartOfVillage() && !villageSpot.mainSpot.gridTileComponent.HasCorruption()) {
+                return villageSpot;
+            }
+        }
+        return null;
+    }
+    public VillageSpot GetVillageSpotOnArea(Area p_area) {
+        for (int i = 0; i < villageSpots.Count; i++) {
+            VillageSpot villageSpot = villageSpots[i];
+            if (villageSpot.mainSpot == p_area) {
+                return villageSpot;
+            }
+        }
+        return null;
+    }
+#endregion
+
     public void CleanUp() {
         areas?.Clear();
         areas = null;
@@ -900,28 +936,8 @@ public class Region : ISavable, ILogFiller {
         structures = null;
         settlementsInRegion?.Clear();
         settlementsInRegion = null;
-    }
-}
-
-public class Border {
-    private SpriteRenderer borderSprite { get; }
-    private SpriteGlowEffect glowEffect { get; }
-
-    public Border(SpriteRenderer _borderSprite, SpriteGlowEffect _glowEffect) {
-        borderSprite = _borderSprite;
-        glowEffect = _glowEffect;
-        SetGlowState(false);
+        villageSpots?.Clear();
+        villageSpots = null;
     }
     
-    public void SetBorderState(bool state) {
-        borderSprite.gameObject.SetActive(state);
-    }
-    public void SetGlowState(bool state) {
-        glowEffect.enabled = state;
-    }
-
-    public void SetColor(Color color) {
-        borderSprite.color = color;
-        glowEffect.GlowColor = color;
-    }
 }

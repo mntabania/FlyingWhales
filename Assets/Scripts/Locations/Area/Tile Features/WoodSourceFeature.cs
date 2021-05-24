@@ -27,25 +27,25 @@ namespace Locations.Area_Features {
         
             int bigTreesCount = p_area.tileObjectComponent.GetNumberOfTileObjectsInHexTile(TILE_OBJECT_TYPE.BIG_TREE_OBJECT);
             currentBigTreeCount = bigTreesCount;
-            if (bigTreesCount < MaxBigTrees) {
-                int missingTrees = MaxBigTrees - bigTreesCount;
-                for (int i = 0; i <= missingTrees; i++) {
-                    if (CreateNewBigTree() == false) {
-                        break;
-                    }
-                }
-            }
-        
+            // if (bigTreesCount < MaxBigTrees) {
+            //     int missingTrees = MaxBigTrees - bigTreesCount;
+            //     for (int i = 0; i <= missingTrees; i++) {
+            //         if (CreateNewBigTree() == false) {
+            //             break;
+            //         }
+            //     }
+            // }
+            //
             int smallTreesCount = p_area.tileObjectComponent.GetNumberOfTileObjectsInHexTile(TILE_OBJECT_TYPE.TREE_OBJECT);
             currentSmallTreeCount = smallTreesCount;
-            if (smallTreesCount < MaxSmallTrees) {
-                int missingTrees = MaxSmallTrees - smallTreesCount;
-                for (int i = 0; i <= missingTrees; i++) {
-                    if (CreateNewSmallTree() == false) {
-                        break;
-                    }
-                }
-            }
+            // if (smallTreesCount < MaxSmallTrees) {
+            //     int missingTrees = MaxSmallTrees - smallTreesCount;
+            //     for (int i = 0; i <= missingTrees; i++) {
+            //         if (CreateNewSmallTree() == false) {
+            //             break;
+            //         }
+            //     }
+            // }
         }
         public override void OnRemoveFeature(Area p_area) {
             base.OnRemoveFeature(p_area);

@@ -2233,9 +2233,18 @@ public class CharacterMarker : MapObjectVisual<Character> {
 #endregion
 
 #region Effects
-    public void ShowHealthAdjustmentEffect(int damage) {
-        Color color = damage > 0 ? Color.green : Color.red;
+    public void ShowHealthAdjustmentEffect(int damage, CombatComponent.DamageDoneType p_damageType) {
+        Color color = Color.green;
         float startSize = 1.5f;
+        switch (p_damageType.damageType) {
+            case CombatComponent.DamageDoneType.DamageType.Normal:
+            color = damage > 0 ? Color.green : Color.red;
+            break;
+            case CombatComponent.DamageDoneType.DamageType.Crit:
+            color = Color.yellow;
+            startSize = 2.5f;
+            break;
+        }
         textRendererParticleSystem.SpawnParticle(transform.position, damage, color, startSize);
     }
     public void ShowHealthAdjustmentEffect(float damage) {

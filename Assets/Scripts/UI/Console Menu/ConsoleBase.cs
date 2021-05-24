@@ -14,7 +14,7 @@ using UnityEngine.Events;
 using UtilityScripts;
 using Locations.Settlements;
 using Object_Pools;
-
+using Character_Talents;
 public class ConsoleBase : InfoUIBase {
 
     private Dictionary<string, Action<string[]>> _consoleActions;
@@ -110,7 +110,10 @@ public class ConsoleBase : InfoUIBase {
             {"/log_alive_villagers", LogAliveVillagers},
             {"/kill_villagers", KillAllVillagers},
             {"/adjust_se", AdjustSpiritEnergy},
-            {"/adjust_mm", AdjustMigrationMeter}
+            {"/adjust_mm", AdjustMigrationMeter},
+            {"/toggle_vs", ToggleVillageSpots},
+            {"/coins", AdjustCoins},
+            {"/talent_level_up", TalentLevelUp}
         };
         
         SchemeData.alwaysSuccessScheme = false;
@@ -123,7 +126,6 @@ public class ConsoleBase : InfoUIBase {
         tglShowPOIHoverData.onValueChanged.RemoveAllListeners();
         tglShowPOIHoverData.onValueChanged.AddListener(OnToggleShowPOIHoverData);
     }
-    
     private void Update() {
         if (!isShowing) {
             return;
@@ -1070,6 +1072,56 @@ public class ConsoleBase : InfoUIBase {
         }
         AddSuccessMessage($"Killed {count} villagers!");
     }
+    private void AdjustCoins(string[] parameters) {
+        if (parameters.Length != 2) { //parameters command, item
+            AddCommandHistory(consoleLbl.text);
+            AddErrorMessage("There was an error in the command format of AdjustCoins");
+            return;
+        }
+        string characterParameterString = parameters[0];
+
+        Character character = CharacterManager.Instance.GetCharacterByName(characterParameterString);
+
+        if (character == null) {
+            AddErrorMessage($"There is no character named {characterParameterString}");
+            return;
+        }
+        string amountParameterString = parameters[1];
+
+        int value = 0;
+        if (!int.TryParse(amountParameterString, out value)) {
+            AddErrorMessage($"Amount parameter is not an integer: {amountParameterString}");
+            return;
+        }
+        character.moneyComponent.AdjustCoins( value);
+        AddSuccessMessage($"Adjusted Coins of {character.name} by {value}");
+    }
+    private void TalentLevelUp(string[] parameters) {
+        if (parameters.Length != 2) { //parameters command, item
+            AddCommandHistory(consoleLbl.text);
+            AddErrorMessage("There was an error in the command format of TalentLevelUp");
+            return;
+        }
+        string characterParameterString = parameters[0];
+        string talentParameterString = parameters[1];
+
+        Character character = CharacterManager.Instance.GetCharacterByName(characterParameterString);
+
+        if (character == null) {
+            AddErrorMessage($"There is no character named {characterParameterString}");
+            return;
+        }
+
+        CHARACTER_TALENT type;
+        if (!Enum.TryParse(talentParameterString, out type)) {
+            AddErrorMessage($"There is no talent {talentParameterString}");
+        }
+        if (character.HasTalents()) {
+            CharacterTalent talent = character.talentComponent.GetTalent(type);
+            talent.LevelUp(character);
+            AddSuccessMessage($"{character.name}'s {talentParameterString} is leveled up!");
+        }
+    }
     #endregion
 
     #region Faction
@@ -1591,6 +1643,22 @@ public class ConsoleBase : InfoUIBase {
             LocationGridTile tile = GridMap.Instance.mainRegion.innerMap.allTiles[i];
             if (tile.structure == null) {
                 AddErrorMessage($"{tile.ToString()} has no structure!");
+            }
+        }
+    }
+    private void ToggleVillageSpots(string[] obj) {
+        if (GridMap.Instance.mainRegion.innerMap.perlinTilemap.gameObject.activeInHierarchy) {
+            //deactivate
+            GridMap.Instance.mainRegion.innerMap.perlinTilemap.ClearAllTiles();
+            GridMap.Instance.mainRegion.innerMap.perlinTilemap.gameObject.SetActive(false);
+        } else {
+            //activate
+            GridMap.Instance.mainRegion.innerMap.perlinTilemap.gameObject.SetActive(true);
+            for (int i = 0; i < GridMap.Instance.mainRegion.villageSpots.Count; i++) {
+                VillageSpot villageSpot = GridMap.Instance.mainRegion.villageSpots[i];
+                Color color = Color.black;
+                color.a = 0.5f;
+                villageSpot.ColorArea(villageSpot.mainSpot, color);
             }
         }
     }

@@ -44,7 +44,7 @@ public class Strangle : GoapAction {
         if (actor.homeStructure != null) {
             return actor.homeStructure;
         } else {
-            return actor.currentRegion.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
+            return actor.currentRegion.wilderness;
         }
     }
     public override void PopulateReactionsToActor(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {

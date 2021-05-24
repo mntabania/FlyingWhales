@@ -1090,7 +1090,7 @@ public class ReactionComponent : CharacterComponent {
 #endif
                                             if (!targetCharacter.IsPOICurrentlyTargetedByAPerformingAction(JOB_TYPE.MOVE_CHARACTER)) {
                                                 if (targetCharacter.currentActionNode == null) {
-                                                    actor.jobComponent.TryTriggerMoveCharacter(targetCharacter, targetCharacter.currentRegion.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS));
+                                                    actor.jobComponent.TryTriggerMoveCharacter(targetCharacter, targetCharacter.currentRegion.wilderness);
                                                 }
                                             } else {
 #if DEBUG_LOG
@@ -1585,6 +1585,15 @@ public class ReactionComponent : CharacterComponent {
             } else if(targetTileObject is WoodPile || targetTileObject is StonePile || targetTileObject is MetalPile || targetTileObject is Gold || targetTileObject is Diamond) {
                 if (actor.homeStructure != null && targetTileObject.gridTileLocation.structure != actor.homeStructure && !actor.jobQueue.HasJob(JOB_TYPE.DROP_ITEM)) {
                     actor.jobComponent.CreateHoardItemJob(targetTileObject, actor.homeStructure, true);
+                }
+            }
+        }
+        if (targetTileObject is PowerCrystal) {
+            if (actor.race == RACE.ELVES && !targetTileObject.HasJobTargetingThis(JOB_TYPE.ABSORB_CRYSTAL)) {
+				if (!actor.jobComponent.HasHigherPriorityJobThan(JOB_TYPE.ABSORB_CRYSTAL)) {
+                    actor.jobComponent.TriggerAbsorbPowerCrystal(targetTileObject);
+                    //targetTileObject.DestroyMapVisualGameObject();
+                    //targetTileObject.DestroyPermanently();
                 }
             }
         }

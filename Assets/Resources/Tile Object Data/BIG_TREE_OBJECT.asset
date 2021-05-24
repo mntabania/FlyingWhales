@@ -1,0 +1,49 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb8e6d0a90de4764a5b7b75189e1ffa2, type: 3}
+  m_Name: BIG_TREE_OBJECT
+  m_EditorClassIdentifier: 
+  defaultTileMapAsset: {fileID: 11400000, guid: 8f5e300a5ffcee44bb9187a364acac5d,
+    type: 2}
+  defaultSprite: {fileID: 21300000, guid: c5018b4cb25d48445a48272dbf7753f0, type: 3}
+  tileObjectAssets:
+    biomeAssets:
+      m_keys: 060000000100000003000000
+      m_values:
+      - activeTile:
+        - {fileID: 21300000, guid: c5018b4cb25d48445a48272dbf7753f0, type: 3}
+        inactiveTile: []
+        tileBase:
+        - {fileID: 11400000, guid: 8f5e300a5ffcee44bb9187a364acac5d, type: 2}
+      - activeTile:
+        - {fileID: 21300000, guid: 9ff393812f83af14098e33d1d553bc79, type: 3}
+        - {fileID: 21300000, guid: f6ac7caed00cf71478c14b1e19a1572d, type: 3}
+        inactiveTile: []
+        tileBase:
+        - {fileID: 11400000, guid: afcac8512970cab488eb15ec3d8c4b66, type: 2}
+        - {fileID: 11400000, guid: d3ea9de9568d34d45933c26bc78e3310, type: 2}
+      - activeTile:
+        - {fileID: 21300000, guid: 8e86b874bfeb274498f082b256b12120, type: 3}
+        - {fileID: 21300000, guid: c4558169e7ada4948bca7e75db2273f7, type: 3}
+        inactiveTile: []
+        tileBase:
+        - {fileID: 11400000, guid: d17839f24336ce7498d47502ae4d97c3, type: 2}
+        - {fileID: 11400000, guid: 70f4a6fa15c34e046b122fdba3602383, type: 2}
+  corruptedTileObjectAssets:
+    biomeAssets:
+      m_keys: 06000000
+      m_values:
+      - activeTile:
+        - {fileID: 21300000, guid: b70306f1d978865459ad97b9221c25e8, type: 3}
+        - {fileID: 21300000, guid: 8f0518dd59fee494a97f26c057d3cdaa, type: 3}
+        inactiveTile: []
+        tileBase: []

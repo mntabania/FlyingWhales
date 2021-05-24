@@ -246,48 +246,48 @@ public class AreaGridTileComponent : AreaComponent {
             }
         }
     }
-    public void ChangeGridTilesBiome() {
-        for (int i = 0; i < gridTiles.Count; i++) {
-            LocationGridTile currTile = gridTiles[i];
-            Vector3Int position = currTile.localPlace;
-            TileBase groundTile = InnerTileMap.GetGroundAssetPerlin(currTile.floorSample, owner.areaData.biomeType);
-            if (currTile.structure.isInterior || currTile.corruptionComponent.isCorrupted) {
-                //set the previous tile to the new biome, so that when the structure is destroyed
-                //it will revert to the right asset
-            } else {
-                currTile.parentMap.groundTilemap.SetTile(position, groundTile);
-                currTile.UpdateGroundTypeBasedOnAsset();
-                TileObject tileObject = currTile.tileObjectComponent.objHere;
-                if (tileObject != null && tileObject.mapVisual) {
-                    tileObject.mapVisual.UpdateTileObjectVisual(tileObject);
-                }
-                currTile.CreateSeamlessEdgesForSelfAndNeighbours();
-            }
-        }
-    }
-    public IEnumerator ChangeGridTilesBiomeCoroutine(System.Action onFinishChangeAction) {
-        // List<LocationGridTile> gridTiles = new List<LocationGridTile>(locationGridTiles);
-        // gridTiles = UtilityScripts.CollectionUtilities.Shuffle(gridTiles);
-        for (int i = 0; i < gridTiles.Count; i++) {
-            LocationGridTile currTile = gridTiles[i];
-            Vector3Int position = currTile.localPlace;
-            TileBase groundTile = InnerTileMap.GetGroundAssetPerlin(currTile.floorSample, owner.areaData.biomeType);
-            if (currTile.structure.isInterior || currTile.corruptionComponent.isCorrupted) {
-                //do not change tiles of interior or corrupted structures.
-                continue;
-            }
-
-            currTile.parentMap.groundTilemap.SetTile(position, groundTile);
-            currTile.UpdateGroundTypeBasedOnAsset();
-            TileObject tileObject = currTile.tileObjectComponent.objHere;
-            if (tileObject != null && tileObject.mapVisual) {
-                tileObject.mapVisual.UpdateTileObjectVisual(tileObject);
-            }
-            currTile.CreateSeamlessEdgesForSelfAndNeighbours();
-            yield return null;
-        }
-        onFinishChangeAction.Invoke();
-    }
+    // public void ChangeGridTilesBiome() {
+    //     for (int i = 0; i < gridTiles.Count; i++) {
+    //         LocationGridTile currTile = gridTiles[i];
+    //         Vector3Int position = currTile.localPlace;
+    //         TileBase groundTile = InnerTileMap.GetGroundAssetPerlin(currTile.floorSample, owner.areaData.biomeType);
+    //         if (currTile.structure.isInterior || currTile.corruptionComponent.isCorrupted) {
+    //             //set the previous tile to the new biome, so that when the structure is destroyed
+    //             //it will revert to the right asset
+    //         } else {
+    //             currTile.parentMap.groundTilemap.SetTile(position, groundTile);
+    //             currTile.UpdateGroundTypeBasedOnAsset();
+    //             TileObject tileObject = currTile.tileObjectComponent.objHere;
+    //             if (tileObject != null && tileObject.mapVisual) {
+    //                 tileObject.mapVisual.UpdateTileObjectVisual(tileObject);
+    //             }
+    //             currTile.CreateSeamlessEdgesForSelfAndNeighbours();
+    //         }
+    //     }
+    // }
+    // public IEnumerator ChangeGridTilesBiomeCoroutine(System.Action onFinishChangeAction) {
+    //     // List<LocationGridTile> gridTiles = new List<LocationGridTile>(locationGridTiles);
+    //     // gridTiles = UtilityScripts.CollectionUtilities.Shuffle(gridTiles);
+    //     for (int i = 0; i < gridTiles.Count; i++) {
+    //         LocationGridTile currTile = gridTiles[i];
+    //         Vector3Int position = currTile.localPlace;
+    //         TileBase groundTile = InnerTileMap.GetGroundAssetPerlin(currTile.floorSample, owner.areaData.biomeType);
+    //         if (currTile.structure.isInterior || currTile.corruptionComponent.isCorrupted) {
+    //             //do not change tiles of interior or corrupted structures.
+    //             continue;
+    //         }
+    //
+    //         currTile.parentMap.groundTilemap.SetTile(position, groundTile);
+    //         currTile.UpdateGroundTypeBasedOnAsset();
+    //         TileObject tileObject = currTile.tileObjectComponent.objHere;
+    //         if (tileObject != null && tileObject.mapVisual) {
+    //             tileObject.mapVisual.UpdateTileObjectVisual(tileObject);
+    //         }
+    //         currTile.CreateSeamlessEdgesForSelfAndNeighbours();
+    //         yield return null;
+    //     }
+    //     onFinishChangeAction.Invoke();
+    // }
     public bool HasCorruption() {
         for (int i = 0; i < gridTiles.Count; i++) {
             LocationGridTile currTile = gridTiles[i];
@@ -297,27 +297,27 @@ public class AreaGridTileComponent : AreaComponent {
         }
         return false;
     }
-    public void StartCorruption(Area p_area) {
-        InstantlyCorruptAllOwnedInnerMapTiles();
-        OnCorruptSuccess(p_area);
-    }
-    public void RemoveCorruption(Area p_area) {
-        PlayerManager.Instance.player.playerSettlement.RemoveAreaFromSettlement(p_area);
-        for (int i = 0; i < gridTiles.Count; i++) {
-            LocationGridTile tile = gridTiles[i];
-            tile.corruptionComponent.UncorruptTile();
-        }
-    }
-    private void InstantlyCorruptAllOwnedInnerMapTiles() {
-        for (int i = 0; i < gridTiles.Count; i++) {
-            LocationGridTile tile = gridTiles[i];
-            tile.corruptionComponent.CorruptTile();
-        }
-    }
-    private void OnCorruptSuccess(Area p_area) {
-        PlayerManager.Instance.player.playerSettlement.AddAreaToSettlement(p_area);
-        //remove features
-        p_area.featureComponent.RemoveAllFeatures(p_area);
-    }
+    // public void StartCorruption(Area p_area) {
+    //     InstantlyCorruptAllOwnedInnerMapTiles();
+    //     OnCorruptSuccess(p_area);
+    // }
+    // public void RemoveCorruption(Area p_area) {
+    //     PlayerManager.Instance.player.playerSettlement.RemoveAreaFromSettlement(p_area);
+    //     for (int i = 0; i < gridTiles.Count; i++) {
+    //         LocationGridTile tile = gridTiles[i];
+    //         tile.corruptionComponent.UncorruptTile();
+    //     }
+    // }
+    // private void InstantlyCorruptAllOwnedInnerMapTiles() {
+    //     for (int i = 0; i < gridTiles.Count; i++) {
+    //         LocationGridTile tile = gridTiles[i];
+    //         tile.corruptionComponent.CorruptTile();
+    //     }
+    // }
+    // private void OnCorruptSuccess(Area p_area) {
+    //     PlayerManager.Instance.player.playerSettlement.AddAreaToSettlement(p_area);
+    //     //remove features
+    //     p_area.featureComponent.RemoveAllFeatures(p_area);
+    // }
     #endregion
 }
