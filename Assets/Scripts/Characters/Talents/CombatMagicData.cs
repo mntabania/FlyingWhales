@@ -32,14 +32,14 @@ namespace Character_Talents {
             p_character.classComponent.AddAbleClass("Druid");
         }
         private void Level2(Character p_character) {
-            p_character.combatComponent.AdjustStrengthPercentModifier(15f);
+            p_character.combatComponent.AdjustIntelligencePercentModifier(15f);
             p_character.combatComponent.AdjustCritRate(5);
         }
         private void Level3(Character p_character) {
             p_character.classComponent.AddAbleClass("Shaman");
         }
         private void Level4(Character p_character) {
-            p_character.combatComponent.AdjustStrengthPercentModifier(15f);
+            p_character.combatComponent.AdjustIntelligencePercentModifier(15f);
             p_character.combatComponent.AdjustCritRate(5);
         }
         private void Level5(Character p_character) {

@@ -33,15 +33,19 @@ namespace Character_Talents {
         }
         private void Level2(Character p_character) {
             //+50 Weight in Popularity Succession
+            p_character.faction?.successionComponent.UpdateSuccessors();
         }
         private void Level3(Character p_character) {
             //+100 Weight in Popularity Succession
+            p_character.faction?.successionComponent.UpdateSuccessors();
         }
         private void Level4(Character p_character) {
             //+250 Weight in Popularity Succession
+            p_character.faction?.successionComponent.UpdateSuccessors();
         }
         private void Level5(Character p_character) {
             //+250 Weight in Popularity Succession
+            p_character.faction?.successionComponent.UpdateSuccessors();
         }
         #endregion
     }

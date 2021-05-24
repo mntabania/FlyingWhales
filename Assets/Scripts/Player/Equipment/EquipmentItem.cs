@@ -23,9 +23,14 @@ public class EquipmentItem : TileObject {
                 resistanceBonuses.Add(eachResistance);
             });
         }
-
     }
-    public void MakeQualityHigh() {
+
+    //this is for testing purpose only OnPlacePOI()
+    public override void OnPlacePOI() {
+		base.OnPlacePOI();
+        traitContainer.AddTrait(this, "Treasure");
+    }
+	public void MakeQualityHigh() {
         maxHP += (int)(maxHP * 0.5f);
         additionalQualityBonusPercentage = 25;
     }

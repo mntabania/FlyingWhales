@@ -2707,7 +2707,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         amount = processedAmount;
         if ((amount < 0 && (ignoreIndestructibleTrait || CanBeDamaged())) || amount > 0) {
             if (hasMarker) {
-                marker.ShowHealthAdjustmentEffect(amount);
+                marker.ShowHealthAdjustmentEffect(amount, combatComponent.damageDone);
             }
             //only added checking here because even if objects cannot be damaged,
             //they should still be able to react to the elements
@@ -6522,12 +6522,8 @@ void ApplyStackCountForTraits() {
         
         Log log;
         string crystalBonus = string.Empty;
-        bool isPiercingBonus = false;
-        if(p_crystal.amountBonusPiercing > 0) {
-            isPiercingBonus = true;
-        }
         if (currentSettlement == null || currentSettlement?.locationType != LOCATION_TYPE.VILLAGE) {
-            if (isPiercingBonus) {
+            if (p_crystal.amountBonusPiercing > 0) {
                 crystalBonus = name + " gained " + p_crystal.amountBonusPiercing + " Piercing";
             } else {
                 crystalBonus = name + " gained " + p_crystal.amountBonusResistance + " " + p_crystal.resistanceBonuses[0] + " Resistance";
@@ -6538,7 +6534,7 @@ void ApplyStackCountForTraits() {
             log.AddLogToDatabase();
             PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
         } else {
-            if (isPiercingBonus) {
+            if (p_crystal.amountBonusPiercing > 0) {
                 crystalBonus = " gained " + p_crystal.amountBonusPiercing + " Piercing";
             } else {
                 crystalBonus = " gained " + p_crystal.amountBonusResistance + " " + p_crystal.resistanceBonuses[0] + " Resistance";
