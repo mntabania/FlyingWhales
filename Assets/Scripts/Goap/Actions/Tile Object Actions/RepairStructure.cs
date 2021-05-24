@@ -21,7 +21,6 @@ public class RepairStructure : GoapAction {
 
         _stonePrecondition = new Precondition(new GoapEffect(GOAP_EFFECT_CONDITION.TAKE_POI, "Stone Pile", false, GOAP_EFFECT_TARGET.ACTOR), HasResource);
         _woodPrecondition = new Precondition(new GoapEffect(GOAP_EFFECT_CONDITION.TAKE_POI, "Wood Pile", false, GOAP_EFFECT_TARGET.ACTOR), HasResource);
-        _metalPrecondition = new Precondition(new GoapEffect(GOAP_EFFECT_CONDITION.TAKE_POI, "Metal Pile", false, GOAP_EFFECT_TARGET.ACTOR), HasResource);
 
     }
 
@@ -44,8 +43,6 @@ public class RepairStructure : GoapAction {
                 p = _woodPrecondition;
             } else if (actor.homeSettlement.mainStorage.HasBuiltTileObjectOfType(TILE_OBJECT_TYPE.STONE_PILE)) {
                 p = _stonePrecondition;
-            } else if (actor.homeSettlement.mainStorage.HasBuiltTileObjectOfType(TILE_OBJECT_TYPE.METAL_PILE)) {
-                p = _metalPrecondition;
             }
         } else {
             StructureTileObject structureTileObject = target as StructureTileObject;
@@ -56,9 +53,6 @@ public class RepairStructure : GoapAction {
                         break;
                     case RESOURCE.STONE:
                         p = _stonePrecondition;
-                        break;
-                    case RESOURCE.METAL:
-                        p = _metalPrecondition;
                         break;
                     default:
                         p = _woodPrecondition;
@@ -102,7 +96,7 @@ public class RepairStructure : GoapAction {
         Assert.IsNotNull(manMadeStructure, $"Parent structure is not Man Made structure! {tileObj.structureParent}");
         RESOURCE neededResourceType = manMadeStructure.wallsAreMadeOf;
         
-        if (poiTarget.HasResourceAmount(neededResourceType, manMadeStructure.structureObj.repairCost)) {
+        if (poiTarget.resourceStorageComponent.HasResourceAmount(neededResourceType, manMadeStructure.structureObj.repairCost)) {
             return true; //if structure tile object already has needed resources then precondition is met
         }
         //allow precondition if actor is already carrying any resource pile that is not food pile.
@@ -141,7 +135,7 @@ public class RepairStructure : GoapAction {
             ResourcePile carriedPile = goapNode.actor.carryComponent.carriedPOI as ResourcePile;
             //place needed resources at structure tile object, this is so that if a character has already started 
             //repairing a particular structure, he/she will not need to get more resources if ever he/she is stopped.
-            goapNode.poiTarget.AdjustResource(carriedPile.providedResource, carriedPile.resourceInPile);
+            goapNode.poiTarget.resourceStorageComponent.AdjustResource(carriedPile.specificProvidedResource, carriedPile.resourceInPile);
             carriedPile.AdjustResourceInPile(-carriedPile.resourceInPile);
         }
     }
@@ -159,8 +153,7 @@ public class RepairStructure : GoapAction {
         }
         if (goapNode.poiTarget is StructureTileObject structureTileObject && structureTileObject.structureParent is ManMadeStructure manMadeStructure) {
             //clear out resources stored at structure tile object
-            RESOURCE neededResourceType = manMadeStructure.wallsAreMadeOf;
-            goapNode.poiTarget.SetResource(neededResourceType, 0);
+            goapNode.poiTarget.resourceStorageComponent.ClearAllResources();
         }
     }
     #endregion

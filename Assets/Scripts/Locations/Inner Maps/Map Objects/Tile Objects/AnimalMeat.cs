@@ -1,5 +1,5 @@
 ﻿public class AnimalMeat : FoodPile {
-
+    public override CONCRETE_RESOURCES specificProvidedResource => CONCRETE_RESOURCES.Animal_Meat;
     public AnimalMeat() : base(TILE_OBJECT_TYPE.ANIMAL_MEAT) { }
     public AnimalMeat(SaveDataTileObject saveDataTileObject) : base(saveDataTileObject) { }
 

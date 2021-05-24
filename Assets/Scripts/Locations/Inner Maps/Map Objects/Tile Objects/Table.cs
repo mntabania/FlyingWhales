@@ -4,10 +4,11 @@ using System.Linq;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
 using UnityEngine;
+using UnityEngine.Assertions;
 using UtilityScripts;
 
 public class Table : TileObject {
-    public int food => storedResources[RESOURCE.FOOD];
+    public int food => resourceStorageComponent.storedResources[RESOURCE.FOOD];
     public Table() {
         Initialize(TILE_OBJECT_TYPE.TABLE);
         AddAdvertisedAction(INTERACTION_TYPE.DRINK);
@@ -16,7 +17,7 @@ public class Table : TileObject {
         AddAdvertisedAction(INTERACTION_TYPE.DROP_ITEM);
         AddAdvertisedAction(INTERACTION_TYPE.PICK_UP);
 
-        SetFood(UnityEngine.Random.Range(20, 81)); //20
+        SetFood(CONCRETE_RESOURCES.Animal_Meat, UnityEngine.Random.Range(20, 81)); //20
         traitContainer.AddTrait(this, "Edible");
     }
 
@@ -32,6 +33,16 @@ public class Table : TileObject {
         //    //    gridTileLocation.parentAreaMap.UpdateTileObjectVisual(this); //update visual based on state
         //    //}
         //}
+    }
+    protected override void Initialize(TILE_OBJECT_TYPE tileObjectType, bool shouldAddCommonAdvertisements = true) {
+        base.Initialize(tileObjectType, shouldAddCommonAdvertisements);
+        RESOURCE[] resourceTypes = CollectionUtilities.GetEnumValues<RESOURCE>();
+        for (int i = 0; i < resourceTypes.Length; i++) {
+            RESOURCE resourceType = resourceTypes[i];
+            if (resourceType != RESOURCE.NONE) {
+                resourceStorageComponent.SetResourceCap(resourceType, resourceType == RESOURCE.FOOD ? 100 : 0);
+            }
+        }
     }
     public override string ToString() {
         return $"Table {id.ToString()}";
@@ -83,14 +94,6 @@ public class Table : TileObject {
     public override void OnRemoveTileObject(Character removedBy, LocationGridTile removedFrom, bool removeTraits = true, bool destroyTileSlots = true) {
         base.OnRemoveTileObject(removedBy, removedFrom, removeTraits, destroyTileSlots);
         mapVisual.DestroyExistingGUS();
-    }
-    protected override void ConstructMaxResources() {
-        maxResourceValues = new Dictionary<RESOURCE, int>();
-        RESOURCE[] resourceTypes = CollectionUtilities.GetEnumValues<RESOURCE>();
-        for (int i = 0; i < resourceTypes.Length; i++) {
-            RESOURCE resourceType = resourceTypes[i];
-            maxResourceValues.Add(resourceType, resourceType == RESOURCE.FOOD ? 100 : 0);
-        }
     }
     public override string GetAdditionalTestingData() {
         string data = base.GetAdditionalTestingData();
@@ -273,16 +276,16 @@ public class Table : TileObject {
     #endregion
 
     #region Food
-    public void AdjustFood(int amount) {
-        storedResources[RESOURCE.FOOD] += amount;
-        storedResources[RESOURCE.FOOD] = Mathf.Clamp(storedResources[RESOURCE.FOOD], 0, maxResourceValues[RESOURCE.FOOD]);
+    public void AdjustFood(CONCRETE_RESOURCES p_foodType, int p_amount) {
+        Assert.IsTrue(p_foodType.GetResourceCategory() == RESOURCE.FOOD, $"A non-food resource is being used to increase food resource of {nameWithID}");
+        resourceStorageComponent.AdjustResource(p_foodType, p_amount);
         if (gridTileLocation != null && structureLocation is Dwelling) {
             Messenger.Broadcast(StructureSignals.FOOD_IN_DWELLING_CHANGED, this);   
         }
     }
-    public void SetFood(int amount) {
-        storedResources[RESOURCE.FOOD] = amount;
-        storedResources[RESOURCE.FOOD] = Mathf.Clamp(storedResources[RESOURCE.FOOD], 0, maxResourceValues[RESOURCE.FOOD]);
+    private void SetFood(CONCRETE_RESOURCES p_foodType, int p_amount) {
+        Assert.IsTrue(p_foodType.GetResourceCategory() == RESOURCE.FOOD, $"A non-food resource is being used to increase food resource of {nameWithID}");
+        resourceStorageComponent.SetResource(p_foodType, p_amount);
         if (gridTileLocation != null && structureLocation is Dwelling) {
             Messenger.Broadcast(StructureSignals.FOOD_IN_DWELLING_CHANGED, this);   
         }

@@ -221,9 +221,9 @@ namespace Ruinarch {
         }
         public void SetSpecificHotkeyEnabledState(KeyCode p_keyCode, bool p_state) {
             _allowedHotKeys[p_keyCode] = p_state;
-#if DEBUG_LOG
-            Debug.Log($"Set hotkeys state of {p_keyCode} to {p_state}");
-#endif
+// #if DEBUG_LOG
+//             Debug.Log($"Set hotkeys state of {p_keyCode} to {p_state}");
+// #endif
         }
 #endregion
 
@@ -290,9 +290,9 @@ namespace Ruinarch {
             }
             currentCursorType = type;
             Cursor.SetCursor(cursors[type], hotSpot, cursorMode);
-#if DEBUG_LOG
-            Debug.Log($"Set cursor to {currentCursorType.ToString()}");
-#endif
+// #if DEBUG_LOG
+//             Debug.Log($"Set cursor to {currentCursorType.ToString()}");
+// #endif
         }
         public void RevertToPreviousCursor() {
             SetCursorTo(previousCursorType);

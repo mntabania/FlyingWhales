@@ -239,7 +239,7 @@ public class DepositResourcePile : GoapAction {
                 actor.UncarryPOI(poiTarget, dropLocation: goapNode.targetTile);
             } else {
                 //Deposit resource pile
-                if(pileToBeDepositedTo.IsAtMaxResource(poiTarget.providedResource) == false) {
+                if(pileToBeDepositedTo.resourceStorageComponent.IsAtMaxResource(poiTarget.providedResource) == false) {
                     if (pileToBeDepositedTo.mapObjectState == MAP_OBJECT_STATE.UNBUILT) {
                         pileToBeDepositedTo.SetMapObjectState(MAP_OBJECT_STATE.BUILT);
                     }

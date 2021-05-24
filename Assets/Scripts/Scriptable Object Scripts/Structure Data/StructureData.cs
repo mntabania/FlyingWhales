@@ -45,7 +45,7 @@ public class CreateStructureScriptableObjects {
         string baseStructurePrefabsPath = "Assets/Prefabs/Area Maps/Structure Prefabs/";
         for (int i = 0; i < arrStructureTypes.Length; i++) {
             STRUCTURE_TYPE structureType = arrStructureTypes[i];
-            if (structureType == STRUCTURE_TYPE.WILDERNESS || structureType == STRUCTURE_TYPE.CAVE || structureType == STRUCTURE_TYPE.POND || structureType == STRUCTURE_TYPE.OCEAN) {
+            if (structureType == STRUCTURE_TYPE.WILDERNESS || structureType == STRUCTURE_TYPE.CAVE || structureType == STRUCTURE_TYPE.OCEAN) {
                 continue;
             }
             StructureData structureDataAsset = ScriptableObject.CreateInstance<StructureData>();

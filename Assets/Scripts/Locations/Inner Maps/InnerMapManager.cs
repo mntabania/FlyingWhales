@@ -374,6 +374,9 @@ namespace Inner_Maps {
         public TileObjectScriptableObject GetTileObjectScriptableObject(TILE_OBJECT_TYPE p_tileObjectType) {
             if (!_tileObjectScriptableObjects.ContainsKey(p_tileObjectType)) {
                 TileObjectScriptableObject loadedData = Resources.Load<TileObjectScriptableObject>($"Tile Object Data/{p_tileObjectType.ToString()}");
+                if (loadedData == null) {
+                    throw new Exception($"{p_tileObjectType} has no scriptable object!");
+                }
                 _tileObjectScriptableObjects.Add(p_tileObjectType, loadedData);
             }
             return _tileObjectScriptableObjects[p_tileObjectType];
@@ -570,7 +573,7 @@ namespace Inner_Maps {
                 T obj = System.Activator.CreateInstance(type) as T;
                 return obj;
             }
-            throw new System.Exception($"Could not create new instance of tile object of type {tileObjectType}");
+            throw new System.Exception($"Could not create new instance of tile object of type {tileObjectType.ToString()}");
         }
         public T LoadTileObject<T>(SaveDataTileObject saveDataTileObject) where T : TileObject {
             var typeName = $"{UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(saveDataTileObject.tileObjectType.ToString())}, Assembly-CSharp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
@@ -735,16 +738,14 @@ namespace Inner_Maps {
                     return ScriptableObjectsManager.Instance.artifactDataDictionary[artifact.type].sprite;
                 }
             } else {
-                var assetDictionary = corrupted ? assetManager.corruptedTileObjectAssets : assetManager.tileObjectTiles;
-                if (assetDictionary.ContainsKey(tileObject.tileObjectType) == false) {
-                    //if the provided asset dictionary does not have assets for the tile object, then try and use the default asset dictionary.
-                    assetDictionary = assetManager.tileObjectTiles;
+                TileObjectScriptableObject tileObjectScriptableObject = GetTileObjectScriptableObject(tileObject.tileObjectType);
+                TileObjectTileSetting setting = corrupted ? tileObjectScriptableObject.corruptedTileObjectAssets : tileObjectScriptableObject.tileObjectAssets;
+                if (setting.biomeAssets.Count <= 0) {
+                    //if in case tile object does not have a corrupted version, use normal assets instead. 
+                    setting = tileObjectScriptableObject.tileObjectAssets;
                 }
-                if (assetDictionary.ContainsKey(tileObject.tileObjectType)) {
-                    TileObjectTileSetting setting = assetDictionary[tileObject.tileObjectType];
-                    BiomeTileObjectTileSetting biomeSetting = setting.biomeAssets.ContainsKey(biome) ? setting.biomeAssets[biome] : setting.biomeAssets[BIOMES.NONE];
-                    return CollectionUtilities.GetRandomElement(state == POI_STATE.ACTIVE ? biomeSetting.activeTile : biomeSetting.inactiveTile);
-                }
+                BiomeTileObjectTileSetting biomeSetting = setting.biomeAssets.ContainsKey(biome) ? setting.biomeAssets[biome] : setting.biomeAssets[BIOMES.NONE];
+                return CollectionUtilities.GetRandomElement(state == POI_STATE.ACTIVE ? biomeSetting.activeTile : biomeSetting.inactiveTile);
             }
             return null;
         }
@@ -755,33 +756,15 @@ namespace Inner_Maps {
                     return ScriptableObjectsManager.Instance.artifactDataDictionary[artifact.type].sprite;
                 }
             } else {
-                var assetDictionary = corrupted ? assetManager.corruptedTileObjectAssets : assetManager.tileObjectTiles;
-                if (assetDictionary.ContainsKey(tileObject.tileObjectType) == false) {
-                    //if the provided asset dictionary does not have assets for the tile object, then try and use the default asset dictionary.
-                    assetDictionary = assetManager.tileObjectTiles;
+                TileObjectScriptableObject tileObjectScriptableObject = GetTileObjectScriptableObject(tileObject.tileObjectType);
+                TileObjectTileSetting setting = corrupted ? tileObjectScriptableObject.corruptedTileObjectAssets : tileObjectScriptableObject.tileObjectAssets;
+                if (setting.biomeAssets.Count <= 0) {
+                    //if in case tile object does not have a corrupted version, use normal assets instead. 
+                    setting = tileObjectScriptableObject.tileObjectAssets;
                 }
-                if (assetDictionary.ContainsKey(tileObject.tileObjectType)) {
-                    TileObjectTileSetting setting = assetDictionary[tileObject.tileObjectType];
-                    BiomeTileObjectTileSetting biomeSetting = setting.biomeAssets[BIOMES.NONE];
-                    return CollectionUtilities.GetRandomElement(state == POI_STATE.ACTIVE ? biomeSetting.activeTile : biomeSetting.inactiveTile);
-                }
-            }
-            return null;
-        }
-        public Sprite GetTileObjectAsset(TILE_OBJECT_TYPE tileObjectType, POI_STATE state, BIOMES biome, bool corrupted = false) {
-            if (tileObjectType == TILE_OBJECT_TYPE.ARTIFACT) {
-                throw new Exception($"Artifact asset from just TILE_OBJECT_TYPE has not been handled yet.");
-            } else {
-                var assetDictionary = corrupted ? assetManager.corruptedTileObjectAssets : assetManager.tileObjectTiles;
-                if (!assetDictionary.ContainsKey(tileObjectType)) {
-                    //if the provided asset dictionary does not have assets for the tile object, then try and use the default asset dictionary.
-                    assetDictionary = assetManager.tileObjectTiles;
-                }
-                if (assetDictionary.ContainsKey(tileObjectType)) {
-                    TileObjectTileSetting setting = assetDictionary[tileObjectType];
-                    BiomeTileObjectTileSetting biomeSetting = setting.biomeAssets.ContainsKey(biome) ? setting.biomeAssets[biome] : setting.biomeAssets[BIOMES.NONE];
-                    return CollectionUtilities.GetRandomElement(state == POI_STATE.ACTIVE ? biomeSetting.activeTile : biomeSetting.inactiveTile);
-                }
+                BiomeTileObjectTileSetting biomeSetting = setting.biomeAssets[BIOMES.NONE];
+                return CollectionUtilities.GetRandomElement(state == POI_STATE.ACTIVE ? biomeSetting.activeTile : biomeSetting.inactiveTile);
+                
             }
             return null;
         }

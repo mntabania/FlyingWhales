@@ -40,7 +40,7 @@ public class WaterWell : TileObject {
 
     public override void OnPlacePOI() {
         base.OnPlacePOI();
-        if(structureLocation.structureType == STRUCTURE_TYPE.POND || structureLocation.structureType == STRUCTURE_TYPE.OCEAN) {
+        if(structureLocation.structureType == STRUCTURE_TYPE.OCEAN) {
             // traitContainer.AddTrait(this, "Indestructible");
             // name = "a Lake";
             // AddAdvertisedAction(INTERACTION_TYPE.FISH);
@@ -59,13 +59,13 @@ public class WaterWell : TileObject {
         if (traitName == "Wet") {
             return true; //allow water well to be wet.
         }
-        return structureLocation.structureType != STRUCTURE_TYPE.POND && structureLocation.structureType != STRUCTURE_TYPE.OCEAN;
+        return structureLocation.structureType != STRUCTURE_TYPE.OCEAN;
     }
     public override bool CanBeDamaged() {
-        return structureLocation.structureType != STRUCTURE_TYPE.POND && structureLocation.structureType != STRUCTURE_TYPE.OCEAN;
+        return structureLocation.structureType != STRUCTURE_TYPE.OCEAN;
     }
     public override bool CanBeSelected() {
-        return structureLocation != null && structureLocation.structureType != STRUCTURE_TYPE.POND && structureLocation.structureType != STRUCTURE_TYPE.OCEAN;
+        return structureLocation != null && structureLocation.structureType != STRUCTURE_TYPE.OCEAN;
     }
     public override string ToString() {
         return $"Well {id.ToString()}";

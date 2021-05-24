@@ -5,7 +5,7 @@ using Locations.Settlements;
 using UnityEngine;
 
 public class OreVein : TileObject {
-    public override StructureConnector structureConnector {
+    public StructureConnector structureConnector {
         get {
             if (_oreVeinGameObject != null) {
                 return _oreVeinGameObject.structureConnector;
@@ -13,27 +13,25 @@ public class OreVein : TileObject {
             return null;
         }
     }
+    public BaseSettlement parentSettlement { get; private set; }
     private OreVeinGameObject _oreVeinGameObject;
-    
     public OreVein() {
         Initialize(TILE_OBJECT_TYPE.ORE_VEIN);
         BaseSettlement.onSettlementBuilt += UpdateSettlementResourcesParent;
     }
     public OreVein(SaveDataTileObject data) : base(data) { }
-    
-    public override void UpdateSettlementResourcesParent() {
+    protected override void UpdateSettlementResourcesParent() {
         if (gridTileLocation.area.settlementOnArea != null) {
-            gridTileLocation.area.settlementOnArea.SettlementResources?.AddToListbaseOnRequirement(SettlementResources.StructureRequirement.ORE_VEIN, this);
+            gridTileLocation.area.settlementOnArea.SettlementResources?.AddToListBasedOnRequirement(SettlementResources.StructureRequirement.ORE_VEIN, this);
         }
         gridTileLocation.area.neighbourComponent.neighbours.ForEach((eachNeighbor) => {
             if (eachNeighbor.settlementOnArea != null) {
-                eachNeighbor.settlementOnArea.SettlementResources?.AddToListbaseOnRequirement(SettlementResources.StructureRequirement.ORE_VEIN, this);
+                eachNeighbor.settlementOnArea.SettlementResources?.AddToListBasedOnRequirement(SettlementResources.StructureRequirement.ORE_VEIN, this);
                 parentSettlement = eachNeighbor.settlementOnArea;
             }
         });
     }
-
-    public override void RemoveFromSettlementResourcesParent() {
+    protected override void RemoveFromSettlementResourcesParent() {
         if (parentSettlement != null && parentSettlement.SettlementResources != null) {
             if (parentSettlement.SettlementResources.oreVeins.Remove(this)) {
                 parentSettlement = null;

@@ -140,15 +140,19 @@ public class CraftTileObject : GoapAction {
                 } else if (neededItem == "Stone Pile") {
                     ResourcePile resourcePile = actor.GetItem(TILE_OBJECT_TYPE.STONE_PILE) as ResourcePile;
                     resourcePile?.AdjustResourceInPile(-ingredient.amount);
-                } else if (neededItem == "Metal Pile") {
-                    ResourcePile resourcePile = actor.GetItem(TILE_OBJECT_TYPE.METAL_PILE) as ResourcePile;
-                    resourcePile?.AdjustResourceInPile(-ingredient.amount);
                 } else {
-                    if (!actor.UnobtainItem(neededItem)) {
+                    TileObject objectToUse = actor.GetItem(neededItem);
+                    if (objectToUse is ResourcePile resourcePile) {
+                        resourcePile.AdjustResourceInPile(-ingredient.amount);
+                    } else {
+                        if (!actor.UnobtainItem(neededItem)) {
 #if DEBUG_LOG
-                        actor.logComponent.PrintLogErrorIfActive("Trying to craft " + obj.name + " but " + actor + " does not have " + neededItem);
+                            actor.logComponent.PrintLogErrorIfActive("Trying to craft " + obj.name + " but " + actor + " does not have " + neededItem);
 #endif
+                        }    
                     }
+                    
+                    
                 }
             }
             //for (int i = 0; i < recipe.ingredients.Length; i++) {
@@ -218,11 +222,7 @@ public class CraftTileObject : GoapAction {
         return poiTarget is TileObject tileObject && actor.GetItem(TILE_OBJECT_TYPE.STONE_PILE) is ResourcePile pile && 
                pile.resourceInPile >= TileObjectDB.GetTileObjectData(tileObject.tileObjectType).mainRecipe.GetNeededAmountForIngredient(TILE_OBJECT_TYPE.STONE_PILE); 
     }
-    private bool HasMetal(Character actor, IPointOfInterest poiTarget, OtherData[] otherData, JOB_TYPE jobType) {
-        return poiTarget is TileObject tileObject && actor.GetItem(TILE_OBJECT_TYPE.METAL_PILE) is ResourcePile pile && 
-               pile.resourceInPile >= TileObjectDB.GetTileObjectData(tileObject.tileObjectType).mainRecipe.GetNeededAmountForIngredient(TILE_OBJECT_TYPE.METAL_PILE); 
-    }
-#endregion
+    #endregion
 
 #region Requirement
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, OtherData[] otherData, JobQueueItem job) {

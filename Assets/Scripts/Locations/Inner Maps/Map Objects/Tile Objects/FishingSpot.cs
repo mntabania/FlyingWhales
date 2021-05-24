@@ -4,7 +4,7 @@ using Inner_Maps.Map_Objects.Map_Object_Visuals;
 using Locations.Settlements;
 
 public class FishingSpot : TileObject {
-    public override StructureConnector structureConnector {
+    public StructureConnector structureConnector {
         get {
             if (_fishingSpotGameObject != null) {
                 return _fishingSpotGameObject.structureConnector;
@@ -14,7 +14,8 @@ public class FishingSpot : TileObject {
     }
     private FishingSpotGameObject _fishingSpotGameObject;
     
-    public FishingShack connectedFishingShack { get; private set; }
+    public Fishery connectedFishingShack { get; private set; }
+    public BaseSettlement parentSettlement { get; private set; }
     public override Type serializedData => typeof(SaveDataFishingSpot);
     public FishingSpot() {
         Initialize(TILE_OBJECT_TYPE.FISHING_SPOT);
@@ -33,7 +34,7 @@ public class FishingSpot : TileObject {
         base.LoadSecondWave(data);
         SaveDataFishingSpot saveDataFishingSpot = data as SaveDataFishingSpot;
         if (!string.IsNullOrEmpty(saveDataFishingSpot.connectedFishingShackID)) {
-            connectedFishingShack = DatabaseManager.Instance.structureDatabase.GetStructureByPersistentID(saveDataFishingSpot.connectedFishingShackID) as FishingShack;
+            connectedFishingShack = DatabaseManager.Instance.structureDatabase.GetStructureByPersistentID(saveDataFishingSpot.connectedFishingShackID) as Fishery;
         }
     }
     #endregion
@@ -47,18 +48,18 @@ public class FishingSpot : TileObject {
         base.DestroyMapVisualGameObject();
         _fishingSpotGameObject = null;
     }
-    public override void UpdateSettlementResourcesParent() {
+    protected override void UpdateSettlementResourcesParent() {
         if (gridTileLocation.area.settlementOnArea != null) {
-            gridTileLocation.area.settlementOnArea.SettlementResources?.AddToListbaseOnRequirement(SettlementResources.StructureRequirement.FISHING_SPOT, this);
+            gridTileLocation.area.settlementOnArea.SettlementResources?.AddToListBasedOnRequirement(SettlementResources.StructureRequirement.FISHING_SPOT, this);
         }
         gridTileLocation.area.neighbourComponent.neighbours.ForEach((eachNeighbor) => {
             if (eachNeighbor.settlementOnArea != null) {
-                eachNeighbor.settlementOnArea.SettlementResources?.AddToListbaseOnRequirement(SettlementResources.StructureRequirement.FISHING_SPOT, this);
+                eachNeighbor.settlementOnArea.SettlementResources?.AddToListBasedOnRequirement(SettlementResources.StructureRequirement.FISHING_SPOT, this);
                 parentSettlement = eachNeighbor.settlementOnArea;
             }
         });
     }
-    public override void RemoveFromSettlementResourcesParent() {
+    protected override void RemoveFromSettlementResourcesParent() {
         if (parentSettlement != null && parentSettlement.SettlementResources != null) {
             if (parentSettlement.SettlementResources.fishingSpots.Remove(this)) {
                 parentSettlement = null;
@@ -85,13 +86,13 @@ public class FishingSpot : TileObject {
         if (traitName == "Wet") {
             return true; //allow water well to be wet.
         }
-        return structureLocation.structureType != STRUCTURE_TYPE.POND && structureLocation.structureType != STRUCTURE_TYPE.OCEAN;
+        return structureLocation.structureType != STRUCTURE_TYPE.OCEAN;
     }
     public override bool CanBeDamaged() {
-        return structureLocation.structureType != STRUCTURE_TYPE.POND && structureLocation.structureType != STRUCTURE_TYPE.OCEAN;
+        return structureLocation.structureType != STRUCTURE_TYPE.OCEAN;
     }
     public override bool CanBeSelected() {
-        return structureLocation != null && structureLocation.structureType != STRUCTURE_TYPE.POND && structureLocation.structureType != STRUCTURE_TYPE.OCEAN;
+        return structureLocation != null && structureLocation.structureType != STRUCTURE_TYPE.OCEAN;
     }
     public override string ToString() {
         return $"Fishing Spot {id.ToString()}";
@@ -108,7 +109,7 @@ public class FishingSpot : TileObject {
     #endregion
 
     #region Structure
-    public void SetConnectedFishingShack(FishingShack p_fishingShack) {
+    public void SetConnectedFishingShack(Fishery p_fishingShack) {
         connectedFishingShack = p_fishingShack;
         if (connectedFishingShack != null) {
             Messenger.AddListener<LocationStructure>(StructureSignals.STRUCTURE_DESTROYED, OnStructureDestroyed);

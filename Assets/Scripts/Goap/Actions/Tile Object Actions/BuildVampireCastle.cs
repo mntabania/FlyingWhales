@@ -121,6 +121,7 @@ public class BuildVampireCastle : GoapAction {
             if (LandmarkManager.Instance.HasEnoughSpaceForStructure(prefabName, genericTileObject.gridTileLocation)) {
                 NPCSettlement settlement = goapNode.actor.homeSettlement;
                 bool createdNewSettlement = false;
+                Area area = genericTileObject.gridTileLocation.area;
                 //create new settlement if vampire has no home settlement yet
                 if (goapNode.actor.homeSettlement == null) {
                     createdNewSettlement = true;
@@ -134,9 +135,12 @@ public class BuildVampireCastle : GoapAction {
                     // } else {
                     //     settlement.SetSettlementType(SETTLEMENT_TYPE.Default_Human);
                     // }
+                    VillageSpot villageSpot = goapNode.actor.currentRegion.GetVillageSpotOnArea(area);
+                    Assert.IsNotNull(villageSpot, $"New village {settlement} founded by {goapNode.actor.name} is being placed on area without a village spot! Area is {area}");
+                    settlement.SetOccupiedVillageSpot(villageSpot);
                 }
-
-                settlement.AddAreaToSettlement(genericTileObject.gridTileLocation.area);
+                
+                settlement.AddAreaToSettlement(area);
 
                 List<LocationStructure> createdStructures = new List<LocationStructure>();
                 createdStructures.Add(LandmarkManager.Instance.PlaceIndividualBuiltStructureForSettlement(settlement, goapNode.actor.currentRegion.innerMap, genericTileObject.gridTileLocation, prefabName));

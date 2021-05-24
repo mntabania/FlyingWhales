@@ -6865,6 +6865,109 @@
         },
         "structureType": "MAGE_TOWER"
       }
+    ],
+    "villageSpots":[
+      {
+        "mainArea":{"X":4,"Y":3},
+        "reservedAreas":[
+          {"X":3,"Y":3},
+          {"X":4,"Y":2},
+          {"X":5,"Y":2},
+          {"X":4,"Y":4},
+          {"X":5,"Y":4},
+          {"X":3,"Y":2},
+          {"X":4,"Y":1},
+          {"X":5,"Y":1},
+          {"X":2,"Y":3}
+        ]
+      },
+      {
+        "mainArea":{"X":9,"Y":5},
+        "reservedAreas":[
+          {"X":8,"Y":5},
+          {"X":9,"Y":6},
+          {"X":8,"Y":4},
+          {"X":9,"Y":4},
+          {"X":10,"Y":4},
+          {"X":10,"Y":5},
+          {"X":11,"Y":4},
+          {"X":8,"Y":3},
+          {"X":9,"Y":3},
+          {"X":11,"Y":3},
+          {"X":12,"Y":4}
+        ]
+      },
+      {
+        "mainArea":{"X":12,"Y":11},
+        "reservedAreas":[
+          {"X":11,"Y":11},
+          {"X":11,"Y":10},
+          {"X":12,"Y":10},
+          {"X":13,"Y":10},
+          {"X":13,"Y":11},
+          {"X":13,"Y":12},
+          {"X":12,"Y":13},
+          {"X":11,"Y":13},
+          {"X":11,"Y":12},
+          {"X":14,"Y":12},
+          {"X":13,"Y":13}
+        ]
+      },
+      {
+        "mainArea":{"X":3,"Y":11},
+        "reservedAreas":[
+          {"X":3,"Y":12},
+          {"X":2,"Y":11},
+          {"X":4,"Y":11},
+          {"X":4,"Y":12},
+          {"X":3,"Y":10},
+          {"X":2,"Y":10},
+          {"X":4,"Y":10},
+          {"X":3,"Y":13},
+          {"X":4,"Y":13},
+          {"X":5,"Y":10},
+          {"X":6,"Y":10}
+        ]
+      },
+      {
+        "mainArea":{"X":1,"Y":1},
+        "reservedAreas":[
+          {"X":0,"Y":1},
+          {"X":0,"Y":0},
+          {"X":1,"Y":0},
+          {"X":2,"Y":1},
+          {"X":2,"Y":0},
+          {"X":3,"Y":0},
+          {"X":0,"Y":2},
+          {"X":1,"Y":2}
+        ]
+      },
+      {
+        "mainArea":{"X":8,"Y":1},
+        "reservedAreas":[
+          {"X":7,"Y":1},
+          {"X":7,"Y":0},
+          {"X":9,"Y":1},
+          {"X":9,"Y":2},
+          {"X":8,"Y":2},
+          {"X":10,"Y":2},
+          {"X":7,"Y":2},
+          {"X":8,"Y":0}
+        ]
+      },
+      {
+        "mainArea":{"X":2,"Y":6},
+        "reservedAreas":[
+          {"X":2,"Y":7},
+          {"X":1,"Y":7},
+          {"X":3,"Y":7},
+          {"X":4,"Y":7},
+          {"X":4,"Y":6},
+          {"X":3,"Y":6},
+          {"X":1,"Y":6},
+          {"X":0,"Y":6}
+        ]
+      }
     ]
   },
   "villageSettlementTemplates": [
@@ -6889,7 +6992,7 @@
           "structureType": "DWELLING"
         },
         {
-          "resource": "WOOD",
+          "resource": "NONE",
           "structureType": "LUMBERYARD"
         },
         {
@@ -6966,8 +7069,8 @@
           "structureType": "DWELLING"
         },
         {
-          "resource": "STONE",
-          "structureType": "MINE_SHACK"
+          "resource": "NONE",
+          "structureType": "MINE"
         },
         {
           "resource": "STONE",
@@ -7023,7 +7126,7 @@
           "structureType": "DWELLING"
         },
         {
-          "resource": "WOOD",
+          "resource": "NONE",
           "structureType": "LUMBERYARD"
         },
         {
@@ -7072,8 +7175,8 @@
           "structureType": "DWELLING"
         },
         {
-          "resource": "STONE",
-          "structureType": "MINE_SHACK"
+          "resource": "NONE",
+          "structureType": "MINE"
         },
         {
           "resource": "STONE",

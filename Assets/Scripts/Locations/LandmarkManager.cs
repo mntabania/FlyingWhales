@@ -95,10 +95,6 @@ public partial class LandmarkManager : BaseMonoBehaviour {
             Area tile = tiles[i];
             newNpcSettlement.AddAreaToSettlement(tile);
         }
-        if (saveDataNpcSettlement.reservedAreas != null) {
-            List<Area> reservedAreas = GameUtilities.GetHexTilesGivenCoordinates(saveDataNpcSettlement.reservedAreas, GridMap.Instance.map);
-            newNpcSettlement.AddReservedAreas(reservedAreas);    
-        }
         Messenger.Broadcast(SettlementSignals.SETTLEMENT_CREATED, newNpcSettlement);
         DatabaseManager.Instance.settlementDatabase.RegisterSettlement(newNpcSettlement);
         return newNpcSettlement;
@@ -118,12 +114,6 @@ public partial class LandmarkManager : BaseMonoBehaviour {
             Area tile = tiles[i];
             newPlayerSettlement.AddAreaToSettlement(tile);
         }
-
-        if (saveDataPlayerSettlement.reservedAreas != null) {
-            List<Area> reservedAreas = GameUtilities.GetHexTilesGivenCoordinates(saveDataPlayerSettlement.reservedAreas, GridMap.Instance.map);
-            newPlayerSettlement.AddReservedAreas(reservedAreas);    
-        }
-        
         Messenger.Broadcast(SettlementSignals.SETTLEMENT_CREATED, newPlayerSettlement);
         DatabaseManager.Instance.settlementDatabase.RegisterSettlement(newPlayerSettlement);
         return newPlayerSettlement;
@@ -245,12 +235,12 @@ public partial class LandmarkManager : BaseMonoBehaviour {
         }
     }
     private void ConstructRaceStructureRequirements() {
-        humanSurvivalStructures = new STRUCTURE_TYPE[] { STRUCTURE_TYPE.WAREHOUSE, STRUCTURE_TYPE.CEMETERY, STRUCTURE_TYPE.PRISON, STRUCTURE_TYPE.SMITHY, STRUCTURE_TYPE.BARRACKS, STRUCTURE_TYPE.HOSPICE };
-        humanUtilityStructures = new STRUCTURE_TYPE[] { STRUCTURE_TYPE.GRANARY, STRUCTURE_TYPE.MINER_CAMP, STRUCTURE_TYPE.TAVERN };
-        humanCombatStructures = new STRUCTURE_TYPE[] { STRUCTURE_TYPE.RAIDER_CAMP, STRUCTURE_TYPE.ASSASSIN_GUILD, STRUCTURE_TYPE.HUNTER_LODGE, STRUCTURE_TYPE.MAGE_QUARTERS };
+        humanSurvivalStructures = new STRUCTURE_TYPE[] { STRUCTURE_TYPE.WAREHOUSE, STRUCTURE_TYPE.CEMETERY, STRUCTURE_TYPE.PRISON, STRUCTURE_TYPE.BARRACKS, STRUCTURE_TYPE.HOSPICE };
+        humanUtilityStructures = new STRUCTURE_TYPE[] { STRUCTURE_TYPE.TAVERN };
+        humanCombatStructures = new STRUCTURE_TYPE[] { STRUCTURE_TYPE.HUNTER_LODGE, STRUCTURE_TYPE.MAGE_QUARTERS };
         elfSurvivalStructures = new STRUCTURE_TYPE[] { STRUCTURE_TYPE.HUNTER_LODGE, STRUCTURE_TYPE.HOSPICE, STRUCTURE_TYPE.MAGE_QUARTERS };
-        elfUtilityStructures = new STRUCTURE_TYPE[] { STRUCTURE_TYPE.TAVERN, STRUCTURE_TYPE.WAREHOUSE, STRUCTURE_TYPE.CEMETERY, STRUCTURE_TYPE.PRISON, STRUCTURE_TYPE.GRANARY, STRUCTURE_TYPE.MINER_CAMP };
-        elfCombatStructures = new STRUCTURE_TYPE[] { STRUCTURE_TYPE.SMITHY, STRUCTURE_TYPE.BARRACKS, STRUCTURE_TYPE.RAIDER_CAMP, STRUCTURE_TYPE.ASSASSIN_GUILD };
+        elfUtilityStructures = new STRUCTURE_TYPE[] { STRUCTURE_TYPE.TAVERN, STRUCTURE_TYPE.WAREHOUSE, STRUCTURE_TYPE.CEMETERY, STRUCTURE_TYPE.PRISON };
+        elfCombatStructures = new STRUCTURE_TYPE[] { STRUCTURE_TYPE.BARRACKS };
     }
     public STRUCTURE_TYPE[] GetRaceStructureRequirements(RACE race, string category) {
         if (race == RACE.ELVES) {

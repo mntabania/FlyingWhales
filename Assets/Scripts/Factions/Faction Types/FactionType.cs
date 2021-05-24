@@ -160,23 +160,9 @@ namespace Factions.Faction_Types {
         #endregion
 
         #region Structures
-        // public void AddNeededStructure(StructureSetting structureSetting) {
-        //     neededStructures.Add(structureSetting);
-        // }
-        // public void AddNeededStructure(STRUCTURE_TYPE structureType, RESOURCE resource) {
-        //     StructureSetting structureSetting = new StructureSetting(structureType, resource);
-        //     neededStructures.Add(structureSetting);
-        // }
-        // public StructureSetting GetStructureSettingFor(STRUCTURE_TYPE structureType) {
-        //     for (int i = 0; i < neededStructures.Count; i++) {
-        //         StructureSetting structureSetting = neededStructures[i];
-        //         if (structureSetting.structureType == structureType) {
-        //             return structureSetting;
-        //         }
-        //     }
-        //     Debug.LogWarning($"{type} has no structure setting for {structureType}");
-        //     return default;
-        // }
+        public virtual StructureSetting ProcessStructureSetting(StructureSetting p_setting, NPCSettlement p_settlement) {
+            return p_setting;
+        }
         #endregion
 
         #region Combatants

@@ -30,16 +30,10 @@ public static class TileObjectDB {
         { TILE_OBJECT_TYPE.HUMAN_MEAT, new TileObjectData() {
             maxHP = 300,
         } },
-        { TILE_OBJECT_TYPE.VEGETABLES, new TileObjectData() {
-            maxHP = 300,
-        } },
         { TILE_OBJECT_TYPE.FISH_PILE, new TileObjectData() {
             maxHP = 300,
         } },
         { TILE_OBJECT_TYPE.STONE_PILE, new TileObjectData() {
-            maxHP = 600,
-        } },
-        { TILE_OBJECT_TYPE.METAL_PILE, new TileObjectData() {
             maxHP = 600,
         } },
         { TILE_OBJECT_TYPE.WURM_HOLE, new TileObjectData() {
@@ -278,7 +272,6 @@ public static class TileObjectDB {
             craftRecipes = new [] {
                 new TileObjectRecipe(new TileObjectRecipeIngredient(TILE_OBJECT_TYPE.WOOD_PILE, 10)),
                 new TileObjectRecipe(new TileObjectRecipeIngredient(TILE_OBJECT_TYPE.STONE_PILE, 10)),
-                new TileObjectRecipe(new TileObjectRecipeIngredient(TILE_OBJECT_TYPE.METAL_PILE, 10)),
             }
         } },
         { TILE_OBJECT_TYPE.DEMON_EYE, new TileObjectData() {

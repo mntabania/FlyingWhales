@@ -57,7 +57,7 @@ public class Bed : BaseBed {
                 break;
         }
     }
-    public override bool AddUser(Character character) {
+    protected override bool AddUser(Character character) {
         if (base.AddUser(character)) {
             if (!IsSlotAvailable()) {
                 SetPOIState(POI_STATE.INACTIVE); //if all slots in the bed are occupied, set it as inactive

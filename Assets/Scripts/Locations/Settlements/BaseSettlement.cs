@@ -32,7 +32,6 @@ namespace Locations.Settlements {
         public string bookmarkName => $"{iconRichText} {name}";
         public BOOKMARK_TYPE bookmarkType => BOOKMARK_TYPE.Text_With_Cancel;
         public BookmarkableEventDispatcher bookmarkEventDispatcher { get; }
-        public List<Area> reservedAreas { get; }
 
         #region getters
         public OBJECT_TYPE objectType => OBJECT_TYPE.Settlement;
@@ -60,7 +59,6 @@ namespace Locations.Settlements {
             allStructures = new List<LocationStructure>();
             parties = new List<Party>();
             bookmarkEventDispatcher = new BookmarkableEventDispatcher();
-            reservedAreas = new List<Area>();
             SetLocationType(locationType);
             StartListeningForFires();
             ConstructDefaultActions();
@@ -77,7 +75,6 @@ namespace Locations.Settlements {
             allStructures = new List<LocationStructure>();
             parties = new List<Party>();
             bookmarkEventDispatcher = new BookmarkableEventDispatcher();
-            reservedAreas = new List<Area>();
             SetLocationType(data.locationType);
             StartListeningForFires();
             ConstructDefaultActions();
@@ -410,7 +407,7 @@ namespace Locations.Settlements {
         }
 #endregion
 
-#region Faction
+        #region Faction
         public virtual void SetOwner(Faction p_newOwner) {
             this.owner = p_newOwner;
         
@@ -425,9 +422,9 @@ namespace Locations.Settlements {
                 area.areaItem.UpdatePathfindingGraph();
             }
         }
-#endregion
+        #endregion
 
-#region Structures
+        #region Structures
         public void GenerateStructures(params LocationStructure[] preCreatedStructures) {
             for (int i = 0; i < preCreatedStructures.Length; i++) {
                 LocationStructure structure = preCreatedStructures[i];
@@ -551,13 +548,13 @@ namespace Locations.Settlements {
         public bool HasStructureForProducingResource(RESOURCE resourceType) {
             switch (resourceType) {
                 case RESOURCE.FOOD:
-                    return HasStructure(STRUCTURE_TYPE.HUNTER_LODGE, STRUCTURE_TYPE.FARM, STRUCTURE_TYPE.FISHING_SHACK);
+                    return HasStructure(STRUCTURE_TYPE.HUNTER_LODGE, STRUCTURE_TYPE.FARM, STRUCTURE_TYPE.FISHERY);
                 case RESOURCE.WOOD:
                     return HasStructure(STRUCTURE_TYPE.LUMBERYARD);
                 case RESOURCE.STONE:
                     return HasStructure(STRUCTURE_TYPE.QUARRY);
                 case RESOURCE.METAL:
-                    return HasStructure(STRUCTURE_TYPE.MINE_SHACK);
+                    return HasStructure(STRUCTURE_TYPE.MINE);
                 default:
                     return false;
             }
@@ -609,133 +606,6 @@ namespace Locations.Settlements {
             RuinarchListPool<LocationStructure>.Release(choices);
             return chosenStructure;
         }
-        public void PopulateStructureConnectorsForStructureType(List<StructureConnector> p_connectors, STRUCTURE_TYPE p_structureType) {
-            switch (p_structureType) {
-                case STRUCTURE_TYPE.FISHING_SHACK:
-                    PopulateAvailableFishingSpotConnectors(p_connectors);
-                    break;
-                case STRUCTURE_TYPE.QUARRY:
-                    PopulateAvailableRockConnectors(p_connectors);
-                    break;
-                case STRUCTURE_TYPE.LUMBERYARD:
-                    PopulateAvailableTreeConnectors(p_connectors);
-                    break;
-                case STRUCTURE_TYPE.HUNTER_LODGE:
-                    PopulateAvailableStructureConnectorsBasedOnGameFeature(p_connectors);
-                    break;
-                case STRUCTURE_TYPE.MINE_SHACK:
-                    PopulateAvailableOreVeinConnectors(p_connectors);
-                    break;
-                default:
-                    PopulateAvailableStructureConnectors(p_connectors);
-                    break;
-            }
-        }
-        private void PopulateAvailableStructureConnectors(List<StructureConnector> connectors) {
-            for (int i = 0; i < allStructures.Count; i++) {
-                LocationStructure structure = allStructures[i];
-                if (structure is ManMadeStructure manMadeStructure && manMadeStructure.structureObj != null) {
-                    for (int j = 0; j < manMadeStructure.structureObj.connectors.Length; j++) {
-                        StructureConnector connector = manMadeStructure.structureObj.connectors[j];
-                        if (connector.isOpen) {
-                            connectors.Add(connector);    
-                        }
-                    }
-                }
-            }
-        }
-        private void PopulateAvailableStructureConnectorsBasedOnGameFeature(List<StructureConnector> connectors) {
-            for (int i = 0; i < allStructures.Count; i++) {
-                LocationStructure structure = allStructures[i];
-                if (structure is ManMadeStructure manMadeStructure && manMadeStructure.structureObj != null) {
-                    for (int j = 0; j < manMadeStructure.structureObj.connectors.Length; j++) {
-                        StructureConnector connector = manMadeStructure.structureObj.connectors[j];
-                        if (connector.isOpen) {
-                            if (connector.tileLocation != null &&
-                                (connector.tileLocation.area.featureComponent.HasFeature(AreaFeatureDB.Game_Feature) || 
-                                 connector.tileLocation.area.neighbourComponent.HasNeighbourWithFeature(AreaFeatureDB.Game_Feature))) {
-                                connectors.Add(connector);    
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        public bool HasAvailableStructureConnectorsBasedOnGameFeature() {
-            for (int i = 0; i < allStructures.Count; i++) {
-                LocationStructure structure = allStructures[i];
-                if (structure is ManMadeStructure manMadeStructure && manMadeStructure.structureObj != null) {
-                    for (int j = 0; j < manMadeStructure.structureObj.connectors.Length; j++) {
-                        StructureConnector connector = manMadeStructure.structureObj.connectors[j];
-                        if (connector.isOpen) {
-                            if (connector.tileLocation != null && 
-                                (connector.tileLocation.area.featureComponent.HasFeature(AreaFeatureDB.Game_Feature) || 
-                                 connector.tileLocation.area.neighbourComponent.HasNeighbourWithFeature(AreaFeatureDB.Game_Feature))) {
-                                return true;
-                            }
-                        }
-                    }
-                }
-            }
-            return false;
-        }
-        private void PopulateAvailableRockConnectors(List<StructureConnector> connectors) {
-            for (int i = 0; i < SettlementResources.rocks.Count; i++) {
-                Rock rock = SettlementResources.rocks[i];
-                if (rock.structureConnector != null && rock.structureConnector.isOpen) {
-                    connectors.Add(rock.structureConnector);
-                }
-            }
-        }
-        private void PopulateAvailableTreeConnectors(List<StructureConnector> connectors) {
-            for (int i = 0; i < SettlementResources.trees.Count; i++) {
-                TreeObject treeObject = SettlementResources.trees[i];
-                if (treeObject.structureConnector != null && treeObject.structureConnector.isOpen) {
-                    connectors.Add(treeObject.structureConnector);
-                }
-            }
-        }
-        private void PopulateAvailableFishingSpotConnectors(List<StructureConnector> connectors) {
-            for (int i = 0; i < SettlementResources.fishingSpots.Count; i++) {
-                FishingSpot fishingSpot = SettlementResources.fishingSpots[i];
-                if (fishingSpot.structureConnector != null && fishingSpot.structureConnector.isOpen) {
-                    connectors.Add(fishingSpot.structureConnector);
-                }
-            }
-            for (int i = 0; i < reservedAreas.Count; i++) {
-                Area area = reservedAreas[i];
-                for (int j = 0; j < area.tileObjectComponent.itemsInArea.Count; j++) {
-                    TileObject tileObject = area.tileObjectComponent.itemsInArea[j];
-                    if (tileObject is FishingSpot fishingSpot) {
-                        if (fishingSpot.structureConnector != null && fishingSpot.structureConnector.isOpen && 
-                            !connectors.Contains(fishingSpot.structureConnector)) {
-                            connectors.Add(fishingSpot.structureConnector);
-                        }
-                    }
-                }
-            }
-        }
-        private void PopulateAvailableOreVeinConnectors(List<StructureConnector> connectors) {
-            for (int i = 0; i < SettlementResources.oreVeins.Count; i++) {
-                OreVein oreVein = SettlementResources.oreVeins[i];
-                if (oreVein.structureConnector != null && oreVein.structureConnector.isOpen) {
-                    connectors.Add(oreVein.structureConnector);
-                }
-            }
-            for (int i = 0; i < reservedAreas.Count; i++) {
-                Area area = reservedAreas[i];
-                for (int j = 0; j < area.tileObjectComponent.itemsInArea.Count; j++) {
-                    TileObject tileObject = area.tileObjectComponent.itemsInArea[j];
-                    if (tileObject is OreVein oreVein) {
-                        if (oreVein.structureConnector != null && oreVein.structureConnector.isOpen && 
-                            !connectors.Contains(oreVein.structureConnector)) {
-                            connectors.Add(oreVein.structureConnector);
-                        }
-                    }
-                }
-            }
-        }
-
         public int GetStructureCount(STRUCTURE_TYPE structureType) {
             if (HasStructure(structureType)) {
                 return structures[structureType].Count;
@@ -871,19 +741,7 @@ namespace Locations.Settlements {
             ObjectPoolManager.Instance.ReturnAreaListToPool(choices);
             return chosenArea;
         }
-        public void AddReservedAreas(List<Area> p_areas) {
-            reservedAreas.AddRange(p_areas);
-        }
-        public bool HasReservedSpotWithFeature(string p_feature) {
-            for (int i = 0; i < reservedAreas.Count; i++) {
-                Area area = reservedAreas[i];
-                if (area.featureComponent.HasFeature(p_feature)) {
-                    return true;
-                }
-            }
-            return false;
-        }
-#endregion
+        #endregion
 
 #region Fire
         private void StartListeningForFires() {

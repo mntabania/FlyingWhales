@@ -101,7 +101,8 @@ public class SaveManager : MonoBehaviour {
             GridMap.Instance.allAreas,
             GridMap.Instance.mainRegion.innerMap.elevationPerlinSettings,
             GridMap.Instance.mainRegion.innerMap.warpWeight,
-            GridMap.Instance.mainRegion.innerMap.temperatureSeed
+            GridMap.Instance.mainRegion.innerMap.temperatureSeed,
+            GridMap.Instance.mainRegion.villageSpots
         );
         scenarioSave.worldMapSave = worldMapSave;
 
