@@ -54,6 +54,7 @@ public class CombatComponent : CharacterComponent {
         SetCombatMode(COMBAT_MODE.Aggressive);
         SetElementalType(ELEMENTAL_TYPE.Normal);
         initialElementalType = ELEMENTAL_TYPE.Normal;
+        critRate = 50;
         //UpdateBasicData(true);
     }
     public CombatComponent(SaveDataCombatComponent data) {
@@ -82,6 +83,7 @@ public class CombatComponent : CharacterComponent {
         numOfKilledCharacters = data.numOfKilledCharacters;
         specialSkillParent = data.specialSkillParent.Load();
         combatBehaviourParent = data.combatBehaviourParent.Load();
+        critRate = 50;
     }
 
     #region Signals
@@ -102,7 +104,12 @@ public class CombatComponent : CharacterComponent {
 
     #region General
     public int GetAttackWithCritRateBonus() {
-        return attack * (GameUtilities.RandomBetweenTwoNumbers(0, 99) < critRate ? 2 : 1);
+        int multiplier = 1;
+        if(GameUtilities.RandomBetweenTwoNumbers(0, 99) < critRate) {
+            multiplier = 2;
+            Debug.LogError(owner.name + " CRIT");
+		}
+        return attack * multiplier;
     }
     //public void OnThisCharacterEndedCombatState() {
     //    SetOnProcessCombatAction(null);

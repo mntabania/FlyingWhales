@@ -13,6 +13,8 @@ public class EquipmentUpgradeDataEditor : Editor {
     private float m_additionalMaxHPActual;
     private float m_additionalAttackPercentage;
     private float m_additionalAttackActual;
+    private float m_additionalIntPercentage;
+    private float m_additionalIntActual;
     private float m_resitanceBonusActualValue;
     private ELEMENTAL_TYPE m_elementalBonus;
     private EQUIPMENT_SLAYER_BONUS m_equipmentSlayerBonus;
@@ -88,6 +90,14 @@ public class EquipmentUpgradeDataEditor : Editor {
             }
             if (data.equipmentUpgradeData.bonuses.Contains(EQUIPMENT_BONUS.Atk_Actual)) {
                 m_additionalAttackActual = data.equipmentUpgradeData.AdditionalAttackActual = EditorGUILayout.IntField("Additional Attack(actual)", data.equipmentUpgradeData.AdditionalAttackActual);
+                EditorGUILayout.Space();
+            }
+            if (data.equipmentUpgradeData.bonuses.Contains(EQUIPMENT_BONUS.Int_Actual)) {
+                m_additionalIntActual = data.equipmentUpgradeData.AdditionalIntActual = EditorGUILayout.IntField("Additional Int(actual)", data.equipmentUpgradeData.AdditionalIntActual);
+                EditorGUILayout.Space();
+            }
+            if (data.equipmentUpgradeData.bonuses.Contains(EQUIPMENT_BONUS.Int_Percentage)) {
+                m_additionalIntPercentage = data.equipmentUpgradeData.AdditionalIntPercentage = EditorGUILayout.FloatField("Additional Int(percentage)", data.equipmentUpgradeData.AdditionalIntPercentage);
                 EditorGUILayout.Space();
             }
             if (data.equipmentUpgradeData.bonuses.Contains(EQUIPMENT_BONUS.Increased_3_Random_Resistance) || data.equipmentUpgradeData.bonuses.Contains(EQUIPMENT_BONUS.Increased_4_Random_Resistance) || data.equipmentUpgradeData.bonuses.Contains(EQUIPMENT_BONUS.Increased_5_Random_Resistance)) {
