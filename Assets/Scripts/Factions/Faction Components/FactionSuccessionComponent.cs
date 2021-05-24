@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-
+using UtilityScripts;
 public class FactionSuccessionComponent : FactionComponent {
     private const int SUCCESSOR_LIMIT = 3;
     public Character[] successors { get; private set; }
@@ -77,9 +77,9 @@ public class FactionSuccessionComponent : FactionComponent {
     #endregion
 
     #region Succession
-    private void UpdateSuccessors() {
+    public void UpdateSuccessors() {
         _successionWeightedDictionary.Clear();
-        List<Character> successorList = ObjectPoolManager.Instance.CreateNewCharactersList();
+        List<Character> successorList = RuinarchListPool<Character>.Claim();
         ResetSuccessors();
         owner.factionType.succession.PopulateSuccessorListWeightsInOrder(successorList, _successionWeightedDictionary, owner);
 
@@ -92,7 +92,7 @@ public class FactionSuccessionComponent : FactionComponent {
             }
         }
         Messenger.Broadcast(FactionSignals.UPDATED_SUCCESSORS, owner);
-        ObjectPoolManager.Instance.ReturnCharactersListToPool(successorList);
+        RuinarchListPool<Character>.Release(successorList);
     }
     private void ResetSuccessors() {
         for (int i = 0; i < successors.Length; i++) {
