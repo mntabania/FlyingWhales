@@ -43,7 +43,7 @@ SpriteAtlas:
     variantMultiplier: 1
     packables:
     - {fileID: 102900000, guid: 129c2b5e0c8f0e14d9fb8b1c30296b6d, type: 3}
-    totalSpriteSurfaceArea: 5402773
+    totalSpriteSurfaceArea: 5411546
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
@@ -126,6 +126,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 0f942e7124c7aa34ea6d9823804ef426, type: 3}
   - {fileID: 21300000, guid: 9ff393812f83af14098e33d1d553bc79, type: 3}
   - {fileID: 21300000, guid: 50629881a5fbaa842a1aa6aa26ccc1ec, type: 3}
+  - {fileID: 21300000, guid: 3e7c2c8153fcb5e46a3cea2ad901fa6b, type: 3}
   - {fileID: 21300000, guid: 461b1d81bc616a144b71f69e3cd63a36, type: 3}
   - {fileID: 21300000, guid: 797c7e8110f63d34c9fbba42fd8b2ac4, type: 3}
   - {fileID: 21300000, guid: b5c4cb9157cfa6644a6479fbe8c1df7d, type: 3}
@@ -179,6 +180,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 81df5e8222d54164d913903c035bc8cf, type: 3}
   - {fileID: 21300000, guid: 760ca0925ac4df049937e3d0a7e430e9, type: 3}
   - {fileID: 21300000, guid: cb013192df2d8e44e9140e8f63c50dac, type: 3}
+  - {fileID: 21300000, guid: b153a2928d66ab94bb8557f2671cdaaf, type: 3}
   - {fileID: 21300000, guid: c236f4926fa5e114ea5b76f7125fe18a, type: 3}
   - {fileID: 21300000, guid: d51a16924eb09e241bad4446e2292281, type: 3}
   - {fileID: 21300000, guid: ae40eb92eb4f1ec429a90d1bec4f48c8, type: 3}
@@ -977,6 +979,7 @@ SpriteAtlas:
   - demonWallA-11101110-00
   - BIG_TREE_OBJECT#4
   - spider_eggs
+  - COUNTER_TOP#2
   - well00
   - corruptedSpike01
   - stone_h00
@@ -1030,6 +1033,7 @@ SpriteAtlas:
   - shore11111111-00
   - ice_crystal
   - demonDeskScrolls00
+  - COUNTER_TOP#1
   - DESK
   - dirtSnow01
   - water_crystal
