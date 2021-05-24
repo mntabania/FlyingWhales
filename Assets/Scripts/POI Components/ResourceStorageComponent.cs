@@ -13,14 +13,16 @@ public class ResourceStorageComponent {
     /// Dictionary used for looping specificStoredResources, but loop needs to
     /// edit values inside specificStoredResources. This is to prevent
     /// InvalidOperationException: Collection was modified; enumeration operation may not execute.
-    /// when using function <see cref="ReduceMainResourceUsingRandomSpecificResources"/>
+    /// when using function <see cref="ReduceMainResourceUsingRandomSpecificResources"/> and <see cref="ClearAllResources"/>
     /// </summary>
     private Dictionary<CONCRETE_RESOURCES, int> _specificStoredResourcesCopy;
+    private Dictionary<RESOURCE, int> _storedResourcesCopy;
     
     public ResourceStorageComponent() {
         storedResources = new Dictionary<RESOURCE, int>();
         maxResourceValues = new Dictionary<RESOURCE, int>();
         _specificStoredResourcesCopy = new Dictionary<CONCRETE_RESOURCES, int>();
+        _storedResourcesCopy = new Dictionary<RESOURCE, int>();
         RESOURCE[] resourceTypes = CollectionUtilities.GetEnumValues<RESOURCE>();
         for (int i = 0; i < resourceTypes.Length; i++) {
             RESOURCE resourceType = resourceTypes[i];
@@ -59,10 +61,21 @@ public class ResourceStorageComponent {
         storedResources[resourceType] = Mathf.Max(storedResources[resourceType], 0);
     }
     public void ClearAllResources() {
+        //clear stored resources
+        _storedResourcesCopy.Clear();
         foreach (var kvp in storedResources) {
+            _storedResourcesCopy.Add(kvp.Key, kvp.Value);    
+        }
+        foreach (var kvp in _storedResourcesCopy) {
             storedResources[kvp.Key] = 0;
         }
+        
+        //clear specific resources
+        _specificStoredResourcesCopy.Clear();
         foreach (var kvp in specificStoredResources) {
+            _specificStoredResourcesCopy.Add(kvp.Key, kvp.Value);    
+        }
+        foreach (var kvp in _specificStoredResourcesCopy) {
             specificStoredResources[kvp.Key] = 0;
         }
     }

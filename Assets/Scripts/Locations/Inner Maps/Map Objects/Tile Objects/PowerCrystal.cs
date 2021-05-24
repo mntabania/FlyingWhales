@@ -19,6 +19,7 @@ public class PowerCrystal : TileObject {
             EquipmentBonusProcessor.SetBonusResistanceOnPowerCrystal(this, 1);
         }
     }
+    public PowerCrystal(SaveDataTileObject data) : base(data) { }
 
     public override void LoadSecondWave(SaveDataTileObject data) {
         base.LoadSecondWave(data);

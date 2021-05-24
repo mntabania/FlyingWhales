@@ -839,8 +839,9 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
             Sprite usedAsset = mapVisual.usedSprite;
             List<TileObjectSlotSetting> slotSettings = InnerMapManager.Instance.GetTileObjectSlotSettings(usedAsset);
             if(slotsParent == null) {
-                slotsParent = Object.Instantiate(InnerMapManager.Instance.tileObjectSlotsParentPrefab, mapVisual.transform);
+                slotsParent = Object.Instantiate(InnerMapManager.Instance.tileObjectSlotsParentPrefab, mapVisual.objectSpriteRenderer.transform);
                 slotsParent.transform.localPosition = Vector3.zero;
+                slotsParent.transform.rotation = Quaternion.identity;
                 slotsParent.name = $"{ToString()} Slots";
             }
             slots = new TileObjectSlotItem[slotSettings.Count];
