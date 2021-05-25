@@ -1,22 +1,23 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Inner_Maps;
 using UnityEngine;
 using UtilityScripts;
 
 public class SettlementResources
 {
-    public enum StructureRequirement { NONE = 0, ROCK, TREE, FISHING_SPOT, FEATURE_GAME, ORE_VEIN, CHARACTER }
+    public enum StructureRequirement { NONE = 0, ROCK, TREE, FISHING_SPOT, FEATURE_GAME, MINE_SHACK_SPOT, CHARACTER }
     public List<Rock> rocks = new List<Rock>();
     public List<TreeObject> trees = new List<TreeObject>();
     public List<FishingSpot> fishingSpots = new List<FishingSpot>();
-    public List<OreVein> oreVeins = new List<OreVein>();
+    public List<LocationGridTile> mineShackSpots = new List<LocationGridTile>();
     public List<Character> characters = new List<Character>();
     public bool IsRequirementAvailable(StructureRequirement p_structureRequirement) {
         switch (p_structureRequirement) {
             case StructureRequirement.ROCK: if (rocks.Count > 0) return true; else return false;
             case StructureRequirement.TREE: if (trees.Count > 0) return true; else return false;
             case StructureRequirement.FISHING_SPOT: if (fishingSpots.Count > 0) return true; else return false;
-            case StructureRequirement.ORE_VEIN: if (oreVeins.Count > 0) return true; else return false;
+            case StructureRequirement.MINE_SHACK_SPOT: if (mineShackSpots.Count > 0) return true; else return false;
         }
         return true;
     }
@@ -38,9 +39,9 @@ public class SettlementResources
                 fishingSpots.Add(p_tileObject as FishingSpot);
             }
             break;
-            case StructureRequirement.ORE_VEIN:
-            if (!oreVeins.Contains(p_tileObject as OreVein)) {
-                oreVeins.Add(p_tileObject as OreVein);
+            case StructureRequirement.MINE_SHACK_SPOT:
+            if (!mineShackSpots.Contains(p_tileObject.gridTileLocation)) {
+                mineShackSpots.Add(p_tileObject.gridTileLocation);
             }
             break;
         }

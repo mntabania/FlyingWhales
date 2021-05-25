@@ -101,7 +101,7 @@ namespace Inner_Maps.Location_Structures {
 
         #region Utilities
         private void OnStructureDamaged() {
-            if (structureType.IsOpenSpace() || structureType.IsSettlementStructure() == false) {
+            if (structureType.IsOpenSpace() || structureType.IsVillageStructure() == false) {
                 return; //do not check for damage if structure is open space or structure is not a settlement structure
             }
             CheckInteriorState(); //check if the damage made this structure an exterior one.

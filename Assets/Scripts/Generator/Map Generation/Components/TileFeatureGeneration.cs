@@ -167,7 +167,7 @@ public class TileFeatureGeneration : MapGenerationComponent {
 		while (p_data.villageSpots.Count < villageSpotsToCreate) {
 			if (villageSpotChoices.Count == 0) { break; }
 			Area candidate = CollectionUtilities.GetRandomElement(villageSpotChoices);
-			if (IsAreaValidVillageSpotCandidate(candidate)) {
+			if (IsAreaValidVillageSpotCandidate(candidate, p_data)) {
 				villageSpotChoices.Remove(candidate);
 				//must be connected to at least 6 unreserved contiguous flat external tiles
 				List<Area> connectedPlainAreas = RuinarchListPool<Area>.Claim();
@@ -180,6 +180,9 @@ public class TileFeatureGeneration : MapGenerationComponent {
 				areasToCheck.AddRange(candidate.neighbourComponent.cardinalNeighbours);
 				checkedAreas.Add(candidate);
 
+				int lumberyardSpots = 0;
+				int miningSpots = 0;
+				
 				while (areasToCheck.Count > 0) {
 					if (connectedPlainAreas.Count >= 12) { break; }
 					Area currentAreaBeingChecked = areasToCheck[0];
@@ -189,6 +192,7 @@ public class TileFeatureGeneration : MapGenerationComponent {
 							//if the tile has at least 8 Tree Spots, tag it as Wood Source
 							if (currentAreaBeingChecked.tileObjectComponent.GetNumberOfTileObjectsInHexTile(TILE_OBJECT_TYPE.TREE_OBJECT, TILE_OBJECT_TYPE.BIG_TREE_OBJECT, p_data) >= 8) {
 								currentAreaBeingChecked.featureComponent.AddFeature(AreaFeatureDB.Wood_Source_Feature, currentAreaBeingChecked);
+								lumberyardSpots++;
 							}
 							connectedPlainAreas.Add(currentAreaBeingChecked);
 							//add neighbours as tile to be checked
@@ -210,6 +214,7 @@ public class TileFeatureGeneration : MapGenerationComponent {
 									//add ore vein to area and tag as Metal Source
 									ReservedCaveAreaMetalSourceProcessing(p_data, currentAreaBeingChecked);
 									caveAreas.Add(currentAreaBeingChecked);
+									miningSpots++;
 								}
 							}
 							villageSpotChoices.Remove(currentAreaBeingChecked);
@@ -220,7 +225,7 @@ public class TileFeatureGeneration : MapGenerationComponent {
 				}
 
 				if (connectedPlainAreas.Count >= 6) {
-					VillageSpot villageSpot = p_data.AddVillageSpot(candidate, connectedPlainAreas);
+					VillageSpot villageSpot = p_data.AddVillageSpot(candidate, connectedPlainAreas, lumberyardSpots, miningSpots);
 					//try to add more cave and water areas if less than 2
 					if (waterAreas.Count < 2 || caveAreas.Count < 2) {
 						for (int i = 0; i < villageSpot.reservedAreas.Count; i++) {
@@ -287,7 +292,7 @@ public class TileFeatureGeneration : MapGenerationComponent {
 			currentAreaBeingChecked.featureComponent.AddFeature(AreaFeatureDB.Metal_Source_Feature, currentAreaBeingChecked);
 			if (!currentAreaBeingChecked.tileObjectComponent.HasTileObjectOfTypeInHexTile(TILE_OBJECT_TYPE.ORE_VEIN)) {
 				//add a Ore Vein to a random cave tile inside area.
-				LocationGridTile oreVeinLocation = p_data.GetFirstUnoccupiedNonEdgeCaveTile(currentAreaBeingChecked);
+				LocationGridTile oreVeinLocation = p_data.GetFirstUnoccupiedNonEdgeCaveTile(currentAreaBeingChecked, p_data);
 				if (oreVeinLocation != null) {
 					currentAreaBeingChecked.region.innerMap.CreateOreVein(oreVeinLocation);
 					p_data.SetGeneratedMapPerlinDetails(oreVeinLocation, TILE_OBJECT_TYPE.NONE);	
@@ -305,10 +310,10 @@ public class TileFeatureGeneration : MapGenerationComponent {
 			}
 		}
 	}
-	private bool IsAreaValidVillageSpotCandidate(Area p_area) {
+	private bool IsAreaValidVillageSpotCandidate(Area p_area, MapGenerationData p_mapGenerationData) {
 		if (p_area.elevationComponent.elevationType == ELEVATION.PLAIN && p_area.elevationComponent.IsFully(ELEVATION.PLAIN)) {
-			if (p_area.neighbourComponent.HasCardinalNeighbourWithElevation(ELEVATION.WATER) || 
-			    p_area.neighbourComponent.HasCardinalNeighbourWithElevation(ELEVATION.MOUNTAIN)) {
+			if (p_area.neighbourComponent.HasCardinalNeighbourWithElevationThatIsNotReservedByOtherVillage(ELEVATION.WATER, p_mapGenerationData.villageSpots) || 
+			    p_area.neighbourComponent.HasCardinalNeighbourWithElevationThatIsNotReservedByOtherVillage(ELEVATION.MOUNTAIN, p_mapGenerationData.villageSpots)) {
 				return true;
 			}
 		}
@@ -364,23 +369,50 @@ public class TileFeatureGeneration : MapGenerationComponent {
 					return false; //not enough village spots 
 				}
 				VillageSpot chosenSpot = null;
-				if (j == 0) {
-					//if no preferred tiles are available, then just choose at random from available village spots
-					chosenSpot = CollectionUtilities.GetRandomElement(data.villageSpots);
-				} else {
-					//if not first village pick a spot nearest to First Village
-					float nearestDistance = Mathf.Infinity;
-					Vector2 firstVillagePos = data.determinedVillages[factionTemplate][0].mainSpot.areaData.position;
-					for (int k = 0; k < data.villageSpots.Count; k++) {
-						VillageSpot villageSpot = data.villageSpots[k];
-						Vector2 directionToTarget = villageSpot.mainSpot.areaData.position - firstVillagePos;
-						float distance = directionToTarget.sqrMagnitude;
-						if (distance < nearestDistance) {
-							nearestDistance = distance;
-							chosenSpot = villageSpot;
-						}
+				List<VillageSpot> choices = RuinarchListPool<VillageSpot>.Claim();
+				for (int k = 0; k < data.villageSpots.Count; k++) {
+					VillageSpot spot = data.villageSpots[k];
+					if (spot.CanAccommodateFaction(factionTemplate.factionType)) {
+						choices.Add(spot);
 					}
 				}
+				if (choices.Count > 0) {
+					chosenSpot = CollectionUtilities.GetRandomElement(choices);
+				} else {
+					//if no preferred tiles are available, then just choose at random from available village spots
+					// chosenSpot = CollectionUtilities.GetRandomElement(data.villageSpots);
+					return false; //no valid village spot found
+				}
+				// if (j == 0) {
+				// 	List<VillageSpot> choices = RuinarchListPool<VillageSpot>.Claim();
+				// 	for (int k = 0; k < data.villageSpots.Count; k++) {
+				// 		VillageSpot spot = data.villageSpots[k];
+				// 		if (spot.CanAccommodateFaction(factionTemplate.factionType)) {
+				// 			choices.Add(spot);
+				// 		}
+				// 	}
+				// 	if (choices.Count > 0) {
+				// 		chosenSpot = CollectionUtilities.GetRandomElement(choices);
+				// 	} else {
+				// 		//if no preferred tiles are available, then just choose at random from available village spots
+				// 		// chosenSpot = CollectionUtilities.GetRandomElement(data.villageSpots);
+				// 		return false; //no valid village spot found
+				// 	}
+				// 	
+				// } else {
+				// 	//if not first village pick a spot nearest to First Village
+				// 	float nearestDistance = Mathf.Infinity;
+				// 	Vector2 firstVillagePos = data.determinedVillages[factionTemplate][0].mainSpot.areaData.position;
+				// 	for (int k = 0; k < data.villageSpots.Count; k++) {
+				// 		VillageSpot villageSpot = data.villageSpots[k];
+				// 		Vector2 directionToTarget = villageSpot.mainSpot.areaData.position - firstVillagePos;
+				// 		float distance = directionToTarget.sqrMagnitude;
+				// 		if (distance < nearestDistance) {
+				// 			nearestDistance = distance;
+				// 			chosenSpot = villageSpot;
+				// 		}
+				// 	}
+				// }
 				Assert.IsNotNull(chosenSpot, $"Could not find village spot for {factionTemplate.name}'s Village #{j.ToString()}");
 				data.AddDeterminedVillage(factionTemplate, chosenSpot);
 				data.RemoveVillageSpot(chosenSpot);
@@ -466,7 +498,7 @@ public class TileFeatureGeneration : MapGenerationComponent {
 			Area chosenTile = chosenTiles[i];
 			chosenTile.featureComponent.RemoveAllFeatures(chosenTile);
 			chosenTile.featureComponent.AddFeature(AreaFeatureDB.Inhabited_Feature, chosenTile);
-			data.AddDeterminedVillage(factionTemplate, new VillageSpot(chosenTile));
+			data.AddDeterminedVillage(factionTemplate, new VillageSpot(chosenTile, 1, 1));
 		}
 	}
 	private void DetermineSettlementsForIcalawa(MapGenerationData data) {
@@ -481,7 +513,7 @@ public class TileFeatureGeneration : MapGenerationComponent {
 			Area chosenTile = chosenTiles[i];
 			chosenTile.featureComponent.RemoveAllFeatures(chosenTile);
 			chosenTile.featureComponent.AddFeature(AreaFeatureDB.Inhabited_Feature, chosenTile);
-			data.AddDeterminedVillage(factionTemplate, new VillageSpot(chosenTile));
+			data.AddDeterminedVillage(factionTemplate, new VillageSpot(chosenTile, 1, 1));
 		}
 	}
 	private void DetermineSettlementsForPangatLoo(MapGenerationData data) {
@@ -496,7 +528,7 @@ public class TileFeatureGeneration : MapGenerationComponent {
 			Area chosenTile = chosenTiles[i];
 			chosenTile.featureComponent.RemoveAllFeatures(chosenTile);
 			chosenTile.featureComponent.AddFeature(AreaFeatureDB.Inhabited_Feature, chosenTile);
-			data.AddDeterminedVillage(factionTemplate, new VillageSpot(chosenTile));
+			data.AddDeterminedVillage(factionTemplate, new VillageSpot(chosenTile, 1, 1));
 		}
 	}
 	private void DetermineSettlementsForAffatt(MapGenerationData data) {
@@ -517,9 +549,9 @@ public class TileFeatureGeneration : MapGenerationComponent {
 			chosenTile.featureComponent.RemoveAllFeatures(chosenTile);
 			chosenTile.featureComponent.AddFeature(AreaFeatureDB.Inhabited_Feature, chosenTile);
 			if (i == 0 || i == 1) {
-				data.AddDeterminedVillage(factionTemplate1, new VillageSpot(chosenTile));
+				data.AddDeterminedVillage(factionTemplate1, new VillageSpot(chosenTile, 1, 1));
 			} else {
-				data.AddDeterminedVillage(factionTemplate2, new VillageSpot(chosenTile));
+				data.AddDeterminedVillage(factionTemplate2, new VillageSpot(chosenTile, 1, 1));
 			}
 		}
 	}
@@ -555,13 +587,13 @@ public class TileFeatureGeneration : MapGenerationComponent {
 			chosenTile.featureComponent.RemoveAllFeatures(chosenTile);
 			chosenTile.featureComponent.AddFeature(AreaFeatureDB.Inhabited_Feature, chosenTile);
 			if (i == 0) {
-				data.AddDeterminedVillage(factionTemplate1, new VillageSpot(chosenTile));
+				data.AddDeterminedVillage(factionTemplate1, new VillageSpot(chosenTile, 1, 1));
 			} else if (i == 1) {
-				data.AddDeterminedVillage(factionTemplate2, new VillageSpot(chosenTile));
+				data.AddDeterminedVillage(factionTemplate2, new VillageSpot(chosenTile, 1, 1));
 			} else if (i == 2) {
-				data.AddDeterminedVillage(factionTemplate3, new VillageSpot(chosenTile));
+				data.AddDeterminedVillage(factionTemplate3, new VillageSpot(chosenTile, 1, 1));
 			} else {
-				data.AddDeterminedVillage(factionTemplate4, new VillageSpot(chosenTile));
+				data.AddDeterminedVillage(factionTemplate4, new VillageSpot(chosenTile, 1, 1));
 			}
 		}
 	}
@@ -582,9 +614,9 @@ public class TileFeatureGeneration : MapGenerationComponent {
 			chosenTile.featureComponent.RemoveAllFeatures(chosenTile);
 			chosenTile.featureComponent.AddFeature(AreaFeatureDB.Inhabited_Feature, chosenTile);
 			if (i == 0) {
-				data.AddDeterminedVillage(factionTemplate1, new VillageSpot(chosenTile));
+				data.AddDeterminedVillage(factionTemplate1, new VillageSpot(chosenTile, 1, 1));
 			} else {
-				data.AddDeterminedVillage(factionTemplate2, new VillageSpot(chosenTile));
+				data.AddDeterminedVillage(factionTemplate2, new VillageSpot(chosenTile, 1, 1));
 			}
 		}
 	}
@@ -605,9 +637,9 @@ public class TileFeatureGeneration : MapGenerationComponent {
 			chosenTile.featureComponent.RemoveAllFeatures(chosenTile);
 			chosenTile.featureComponent.AddFeature(AreaFeatureDB.Inhabited_Feature, chosenTile);
 			if (i == 0) {
-				data.AddDeterminedVillage(factionTemplate1, new VillageSpot(chosenTile));
+				data.AddDeterminedVillage(factionTemplate1, new VillageSpot(chosenTile, 1, 1));
 			} else {
-				data.AddDeterminedVillage(factionTemplate2, new VillageSpot(chosenTile));
+				data.AddDeterminedVillage(factionTemplate2, new VillageSpot(chosenTile, 1, 1));
 			}
 		}
 	}

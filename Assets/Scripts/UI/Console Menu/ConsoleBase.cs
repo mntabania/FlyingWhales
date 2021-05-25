@@ -15,6 +15,8 @@ using UtilityScripts;
 using Locations.Settlements;
 using Object_Pools;
 using Character_Talents;
+using Random = System.Random;
+
 public class ConsoleBase : InfoUIBase {
 
     private Dictionary<string, Action<string[]>> _consoleActions;
@@ -1656,9 +1658,28 @@ public class ConsoleBase : InfoUIBase {
             GridMap.Instance.mainRegion.innerMap.perlinTilemap.gameObject.SetActive(true);
             for (int i = 0; i < GridMap.Instance.mainRegion.villageSpots.Count; i++) {
                 VillageSpot villageSpot = GridMap.Instance.mainRegion.villageSpots[i];
-                Color color = Color.black;
-                color.a = 0.5f;
-                villageSpot.ColorArea(villageSpot.mainSpot, color);
+                Color color;
+                if (i == 0) {
+                    color = Color.red;
+                } else if (i == 1) {
+                    color = Color.cyan;
+                } else if (i == 2) {
+                    color = Color.magenta;
+                } else if (i == 3) {
+                    color = Color.yellow;
+                } else if (i == 4) {
+                    color = Color.blue;
+                } else if (i == 5) {
+                    color = Color.green;
+                } else if (i == 6) {
+                    color = Color.gray;
+                } else {
+                    color = UnityEngine.Random.ColorHSV();
+                }
+                villageSpot.ColorVillageSpots(color);
+                // Color color = Color.black;
+                // color.a = 0.5f;
+                // villageSpot.ColorArea(villageSpot.mainSpot, color);
             }
         }
     }

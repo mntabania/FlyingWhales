@@ -1,4 +1,5 @@
-﻿using Inner_Maps;
+﻿using System;
+using Inner_Maps;
 using Inner_Maps.Location_Structures;
 using JetBrains.Annotations;
 using UnityEngine.Assertions;
@@ -52,21 +53,19 @@ public class Mine : GoapAction {
         //}
         Cave cave = goapNode.targetStructure as Cave;
         Assert.IsNotNull(cave, $"Cave of mine performed by {goapNode.actor.name} is null!");
-        string mineResult = cave.resourceYield.PickRandomElementGivenWeights();
+        CONCRETE_RESOURCES mineResult = cave.producedResource;
         switch (mineResult) {
-            case Cave.Yield_Diamond:
-                goapNode.actor.gridTileLocation.structure.AddPOI(InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.DIAMOND), goapNode.actor.gridTileLocation);
+            case CONCRETE_RESOURCES.Copper:
+                goapNode.actor.gridTileLocation.structure.AddPOI(InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.COPPER), goapNode.actor.gridTileLocation);
                 break;
-            case Cave.Yield_Gold:
-                goapNode.actor.gridTileLocation.structure.AddPOI(InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.GOLD), goapNode.actor.gridTileLocation);
-                break;
-            case Cave.Yield_Metal:
+            case CONCRETE_RESOURCES.Iron:
                 goapNode.actor.gridTileLocation.structure.AddPOI(InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.IRON), goapNode.actor.gridTileLocation);
                 break;
-            case Cave.Yield_Stone:
-                goapNode.actor.gridTileLocation.structure.AddPOI(InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.STONE_PILE), goapNode.actor.gridTileLocation);
+            case CONCRETE_RESOURCES.Mithril:
+                goapNode.actor.gridTileLocation.structure.AddPOI(InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.MITHRIL), goapNode.actor.gridTileLocation);
                 break;
-            case Cave.Yield_Nothing:
+            case CONCRETE_RESOURCES.Orichalcum:
+                goapNode.actor.gridTileLocation.structure.AddPOI(InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.ORICHALCUM), goapNode.actor.gridTileLocation);
                 break;
         }
     }

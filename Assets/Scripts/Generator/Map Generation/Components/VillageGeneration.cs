@@ -47,6 +47,7 @@ public class VillageGeneration : MapGenerationComponent {
 			LOCATION_TYPE locationType = GetLocationTypeForRace(faction.race);
 			for (int i = 0; i < setting.Value.Count; i++) {
 				VillageSpot villageSpot = setting.Value[i]; 
+				Assert.IsNotNull(villageSpot);
 				Area settlementTile = villageSpot.mainSpot;
 				VillageSetting villageSetting = factionTemplate.villageSettings[i];
 				NPCSettlement npcSettlement = LandmarkManager.Instance.CreateNewSettlement(region, locationType, settlementTile);
@@ -185,7 +186,7 @@ public class VillageGeneration : MapGenerationComponent {
 		for (int j = 0; j < prefabChoices.Count; j++) {
 			GameObject prefabGO = prefabChoices[j];
 			LocationStructureObject prefabObject = prefabGO.GetComponent<LocationStructureObject>();
-			StructureConnector validConnector = prefabObject.GetFirstValidConnector(availableStructureConnectors, region.innerMap, out var connectorIndex, out LocationGridTile tileToPlaceStructure, out LocationGridTile connectorTile, structureSetting);
+			StructureConnector validConnector = prefabObject.GetFirstValidConnector(availableStructureConnectors, region.innerMap, npcSettlement, out var connectorIndex, out LocationGridTile tileToPlaceStructure, out LocationGridTile connectorTile, structureSetting);
 			if (validConnector != null) {
 				//instantiate structure object at tile.
 				LocationStructure structure =  LandmarkManager.Instance.PlaceIndividualBuiltStructureForSettlement(npcSettlement, region.innerMap, prefabGO, tileToPlaceStructure);

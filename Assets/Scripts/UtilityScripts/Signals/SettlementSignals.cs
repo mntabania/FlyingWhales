@@ -8,4 +8,12 @@
     /// Parameters (NPCSettlement affectedSettlement, bool siegeState)
     /// </summary>
     public static string SETTLEMENT_UNDER_SIEGE_STATE_CHANGED = "OnSettlementSiegeStateChanged";
+    /// <summary>
+    /// Parameters (Area area, BaseSettlement settlement)
+    /// </summary>
+    public static string SETTLEMENT_ADDED_AREA = "OnAreaAddedToSettlement";
+    /// <summary>
+    /// Parameters (Area area, BaseSettlement settlement)
+    /// </summary>
+    public static string SETTLEMENT_REMOVED_AREA = "OnAreaRemovedFromSettlement";
 }

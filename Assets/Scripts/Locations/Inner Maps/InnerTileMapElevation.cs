@@ -206,6 +206,58 @@ namespace Inner_Maps {
             StartCoroutine(MountainCellAutomata(p_island.tiles.ToList(), p_caveStructure, mapGenerationData));
             stopwatch.Stop();
             mapGenerationComponent.AddLog($"{region.name} Draw Cave Cell Automata took {stopwatch.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)} seconds to complete.");
+            
+            //generate ores
+            List<LocationGridTile> validWallsForOreVeins = RuinarchListPool<LocationGridTile>.Claim();
+            p_caveStructure.PopulateTileObjectsOfTypeThatIsBlockWallValidForOreVein2(validWallsForOreVeins, mapGenerationData);
+		    
+            var randomOreAmount = p_caveStructure.occupiedAreas.Count == 1 ? UnityEngine.Random.Range(4, 11) : UnityEngine.Random.Range(8, 16);
+            for (int i = 0; i < randomOreAmount; i++) {
+                if (validWallsForOreVeins.Count == 0) { break; }
+                LocationGridTile oreVeinLocation = CollectionUtilities.GetRandomElement(validWallsForOreVeins);
+                CreateOreVein(oreVeinLocation);
+                mapGenerationData.SetGeneratedMapPerlinDetails(oreVeinLocation, TILE_OBJECT_TYPE.NONE);
+                validWallsForOreVeins.Remove(oreVeinLocation);
+                //create structure connector on ore vein location, this is so that even if ore vein is destroyed villagers can still create mines.
+                oreVeinLocation.tileObjectComponent.genericTileObject.CreateStructureConnector();
+            }
+            RuinarchListPool<LocationGridTile>.Release(validWallsForOreVeins);
+            
+            //generate stone and ore spots
+            Cave cave = p_caveStructure as Cave;
+            Assert.IsNotNull(cave);
+            
+            List<LocationGridTile> spotChoices = RuinarchListPool<LocationGridTile>.Claim();
+            spotChoices.AddRange(p_caveStructure.passableTiles);
+            
+            int randomStoneSpots = GameUtilities.RandomBetweenTwoNumbers(4, 6);
+            for (int i = 0; i < randomStoneSpots; i++) {
+                if (spotChoices.Count == 0) {
+                    //if no more spots were found try to re-add passable tiles.
+                    //if still no tiles were found, then break loop
+                    spotChoices.AddRange(p_caveStructure.passableTiles);
+                    if (spotChoices.Count == 0) { break; }
+                }
+                LocationGridTile spot = CollectionUtilities.GetRandomElement(spotChoices);
+                cave.AddStoneSpot(spot);
+                spotChoices.Remove(spot);
+            }
+            
+            int randomOreSpots = GameUtilities.RandomBetweenTwoNumbers(2, 4);
+            for (int i = 0; i < randomOreSpots; i++) {
+                if (spotChoices.Count == 0) {
+                    //if no more spots were found try to re-add passable tiles.
+                    //if still no tiles were found, then break loop
+                    spotChoices.AddRange(p_caveStructure.passableTiles);
+                    if (spotChoices.Count == 0) { break; }
+                }
+                LocationGridTile spot = CollectionUtilities.GetRandomElement(spotChoices);
+                cave.AddOreSpot(spot);
+                spotChoices.Remove(spot);
+            }
+            
+            RuinarchListPool<LocationGridTile>.Release(spotChoices);
+            
         }
         public void SetAsMountainWall(LocationGridTile tile, LocationStructure structure, MapGenerationData mapGenerationData) {
             if (tile.tileObjectComponent.objHere is BlockWall) { return; }
@@ -236,14 +288,14 @@ namespace Inner_Maps {
         }
         private IEnumerator MountainCellAutomata(List<LocationGridTile> locationGridTiles, LocationStructure elevationStructure, MapGenerationData mapGenerationData) {
             LocationGridTile[,] tileMap = CellularAutomataGenerator.ConvertListToGridMap(locationGridTiles);
-		    int fillPercent = 25;
+		    int fillPercent = 20;
 		    int smoothing = 1;
 		    if (locationGridTiles.Count > 200) { 
-			    fillPercent = 35;
+			    fillPercent = 30;
             } else if (locationGridTiles.Count > 300) { 
-                fillPercent = 55;
+                fillPercent = 50;
             } else if (locationGridTiles.Count > 500) { 
-                fillPercent = 75;
+                fillPercent = 60;
             }
 		    int[,] cellMap = CellularAutomataGenerator.GenerateMap(tileMap, locationGridTiles, smoothing, fillPercent);
 		    
@@ -251,19 +303,6 @@ namespace Inner_Maps {
 		    
 		    yield return MapGenerator.Instance.StartCoroutine(CellularAutomataGenerator.DrawElevationMapCoroutine(
                 tileMap, cellMap, InnerMapManager.Instance.assetManager.caveWallTile, null, ELEVATION.MOUNTAIN, elevationStructure, mapGenerationData));
-            
-		    List<LocationGridTile> validWallsForOreVeins = RuinarchListPool<LocationGridTile>.Claim();
-            elevationStructure.PopulateTileObjectsOfTypeThatIsBlockWallValidForOreVein2(validWallsForOreVeins, mapGenerationData);
-		    
-		    var randomOreAmount = elevationStructure.occupiedAreas.Count == 1 ? UnityEngine.Random.Range(4, 11) : UnityEngine.Random.Range(8, 16);
-		    for (int i = 0; i < randomOreAmount; i++) {
-			    if (validWallsForOreVeins.Count == 0) { break; }
-                LocationGridTile oreVeinLocation = CollectionUtilities.GetRandomElement(validWallsForOreVeins);
-			    CreateOreVein(oreVeinLocation);
-                mapGenerationData.SetGeneratedMapPerlinDetails(oreVeinLocation, TILE_OBJECT_TYPE.NONE);
-			    validWallsForOreVeins.Remove(oreVeinLocation);
-		    }
-            RuinarchListPool<LocationGridTile>.Release(validWallsForOreVeins);
         }
         //private bool IsBlockWallValidForOreVein(BlockWall p_blockWall) {
         //    if (p_blockWall.gridTileLocation != null) {
