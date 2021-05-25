@@ -785,26 +785,30 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
             EndEffectNormal(shouldDoAfterEffect);
         }
     }
-    private void EndEffectNormal(bool shouldDoAfterEffect) {
-        if (shouldDoAfterEffect) {
-            if (descriptionLog != null && action.shouldAddLogs && CharacterManager.Instance.CanAddCharacterLogOrShowNotif(action.goapType)) { //only add logs if both the parent action and this state should add logs
-                descriptionLog.AddLogToDatabase();
-                //Only show notif if an action can be stored as an intel to reduce notifications and info overload to the player
-                if (action.ShouldActionBeAnIntel(this)) {
-                    bool cannotBeStoredAsIntel = !actor.isNormalCharacter && (!(poiTarget is Character) || !(poiTarget as Character).isNormalCharacter);
-                    if (!cannotBeStoredAsIntel) {
-                        PlayerManager.Instance.player.ShowNotificationFrom(actor, InteractionManager.Instance.CreateNewIntel(this) as IIntel);
-                    }
-                } else if (action.goapType == INTERACTION_TYPE.EXPLORE || action.goapType == INTERACTION_TYPE.COUNTERATTACK_ACTION
-                    || action.goapType == INTERACTION_TYPE.EXTERMINATE || action.goapType == INTERACTION_TYPE.HUNT_HEIRLOOM || action.goapType == INTERACTION_TYPE.RAID
-                    || action.goapType == INTERACTION_TYPE.RESCUE || action.goapType == INTERACTION_TYPE.HOST_SOCIAL_PARTY || action.goapType == INTERACTION_TYPE.JUDGE_CHARACTER 
-                    || action.goapType == INTERACTION_TYPE.NEUTRALIZE) {
-                    PlayerManager.Instance.player.ShowNotificationFromPlayer(descriptionLog);
-                } else if (action.showNotification) {
-                    PlayerManager.Instance.player.ShowNotificationFrom(actor, descriptionLog);
+
+    public void LogAction(Log p_log) {
+        if (p_log != null && action.shouldAddLogs && CharacterManager.Instance.CanAddCharacterLogOrShowNotif(action.goapType)) { //only add logs if both the parent action and this state should add logs
+            p_log.AddLogToDatabase();
+            //Only show notif if an action can be stored as an intel to reduce notifications and info overload to the player
+            if (action.ShouldActionBeAnIntel(this)) {
+                bool cannotBeStoredAsIntel = !actor.isNormalCharacter && (!(poiTarget is Character) || !(poiTarget as Character).isNormalCharacter);
+                if (!cannotBeStoredAsIntel) {
+                    PlayerManager.Instance.player.ShowNotificationFrom(actor, InteractionManager.Instance.CreateNewIntel(this) as IIntel);
                 }
+            } else if (action.goapType == INTERACTION_TYPE.EXPLORE || action.goapType == INTERACTION_TYPE.COUNTERATTACK_ACTION
+                || action.goapType == INTERACTION_TYPE.EXTERMINATE || action.goapType == INTERACTION_TYPE.HUNT_HEIRLOOM || action.goapType == INTERACTION_TYPE.RAID
+                || action.goapType == INTERACTION_TYPE.RESCUE || action.goapType == INTERACTION_TYPE.HOST_SOCIAL_PARTY || action.goapType == INTERACTION_TYPE.JUDGE_CHARACTER
+                || action.goapType == INTERACTION_TYPE.NEUTRALIZE) {
+                PlayerManager.Instance.player.ShowNotificationFromPlayer(p_log);
+            } else if (action.showNotification) {
+                PlayerManager.Instance.player.ShowNotificationFrom(actor, p_log);
             }
         }
+    }
+    private void EndEffectNormal(bool shouldDoAfterEffect) {
+        if (shouldDoAfterEffect) {
+            LogAction(descriptionLog);
+        } 
         GoapActionState currentState = action.states[currentStateName];
         ActionResult(currentState);
 

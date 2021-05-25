@@ -3335,6 +3335,50 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
         }
     }
     #endregion
+
+    #region new Jobs
+    public void TriggerMineOre(GenericTileObject p_tileObject) {
+        if (!owner.jobQueue.HasJob(JOB_TYPE.MINE_ORE)) {
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.MINE_ORE, INTERACTION_TYPE.MINE_ORE, p_tileObject, owner);
+            owner.jobQueue.AddJobInQueue(job);
+        }
+    }
+
+    public void TriggerFindFish(GenericTileObject p_tileObject) {
+        if (!owner.jobQueue.HasJob(JOB_TYPE.FIND_FISH)) {
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.FIND_FISH, INTERACTION_TYPE.FIND_FISH, p_tileObject, owner);
+            owner.jobQueue.AddJobInQueue(job);
+        }
+    }
+
+    public void TriggerHarvestCrops(GenericTileObject p_tileObject) {
+        if (!owner.jobQueue.HasJob(JOB_TYPE.HARVEST_CROPS)) {
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.HARVEST_CROPS, INTERACTION_TYPE.HARVEST_CROPS, p_tileObject, owner);
+            owner.jobQueue.AddJobInQueue(job);
+        }
+    }
+
+    public void TriggerTillTile(GenericTileObject p_tileObject) {
+        if (!owner.jobQueue.HasJob(JOB_TYPE.TILL_TILE)) {
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.TILL_TILE, INTERACTION_TYPE.TILL_TILE, p_tileObject, owner);
+            owner.jobQueue.AddJobInQueue(job);
+        }
+    }
+
+    public void TriggerShearAnimal(Character p_animal) {
+        if (!owner.jobQueue.HasJob(JOB_TYPE.SHEAR_ANIMAL)) {
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.SHEAR_ANIMAL, INTERACTION_TYPE.SHEAR_ANIMAL, p_animal, owner);
+            owner.jobQueue.AddJobInQueue(job);
+        }
+    }
+
+    public void TriggerSkinAnimal(Character p_animal) {
+        if (!owner.jobQueue.HasJob(JOB_TYPE.SKIN_ANIMAL)) {
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.SKIN_ANIMAL, INTERACTION_TYPE.SKIN_ANIMAL, p_animal, owner);
+            owner.jobQueue.AddJobInQueue(job);
+        }
+    }
+    #endregion
 }
 
 [System.Serializable]
