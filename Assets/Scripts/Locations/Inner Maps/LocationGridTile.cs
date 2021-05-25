@@ -1799,11 +1799,13 @@ namespace Inner_Maps {
 #endregion
 
 #region Connectors
-        public void AddConnector() {
+        public void AddConnector(StructureConnector p_connector) {
             connectorsOnTile++;
+            area.structureComponent.AddStructureConnector(p_connector);
         }
-        public void RemoveConnector() {
+        public void RemoveConnector(StructureConnector p_connector) {
             connectorsOnTile--;
+            area.structureComponent.RemoveStructureConnector(p_connector);
         }
 #endregion
 

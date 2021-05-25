@@ -2271,7 +2271,9 @@
     			{"X":5,"Y":3},
     			{"X":5,"Y":4},
     			{"X":8,"Y":5}
-    		]
+    		],
+    		"lumberyardSpots": "1",
+    		"miningSpots": "1"
     	},
     	{
     		"mainArea":{"X":0,"Y":0},
@@ -2283,7 +2285,9 @@
     			{"X":3,"Y":1},
     			{"X":3,"Y":0},
     			{"X":3,"Y":2}
-    		]
+    		],
+    		"lumberyardSpots": "1",
+    		"miningSpots": "1"
     	}
     ]
   },

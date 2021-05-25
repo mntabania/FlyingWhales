@@ -9,10 +9,13 @@ using UtilityScripts;
 
 public class AreaStructureComponent : AreaComponent {
     public List<LocationStructure> structures { get; private set; }
-    private AutoDestroyParticle _buildParticles;
+    public List<StructureConnector> structureConnectors { get; private set; }
     
+    private AutoDestroyParticle _buildParticles;
+
     public AreaStructureComponent() {
         structures = new List<LocationStructure>();
+        structureConnectors = new List<StructureConnector>();
     }
 
     #region Utilities
@@ -194,6 +197,17 @@ public class AreaStructureComponent : AreaComponent {
         //     return true;
         // }
         // return false;
+    }
+    #endregion
+
+    #region Structure Connectors
+    public void AddStructureConnector(StructureConnector p_connector) {
+        if (!structureConnectors.Contains(p_connector)) {
+            structureConnectors.Add(p_connector);
+        }
+    }
+    public void RemoveStructureConnector(StructureConnector p_connector) {
+        structureConnectors.Remove(p_connector);
     }
     #endregion
 }

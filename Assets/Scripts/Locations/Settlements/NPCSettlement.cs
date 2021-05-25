@@ -1054,7 +1054,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
                 PopulateAvailableStructureConnectorsBasedOnGameFeature(p_connectors);
                 break;
             case STRUCTURE_TYPE.MINE:
-                PopulateAvailableOreVeinConnectors(p_connectors);
+                PopulateAvailableMineShackConnectors(p_connectors);
                 break;
             default:
                 PopulateAvailableStructureConnectors(p_connectors);
@@ -1067,8 +1067,19 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
             if (structure is ManMadeStructure manMadeStructure && manMadeStructure.structureObj != null) {
                 for (int j = 0; j < manMadeStructure.structureObj.connectors.Length; j++) {
                     StructureConnector connector = manMadeStructure.structureObj.connectors[j];
+                    //Limit village expansion to within reserved spots
+                    //Reference: https://trello.com/c/qBvoisWj/4699-world-gen-updates
                     if (connector.isOpen) {
-                        connectors.Add(connector);    
+                        bool shouldAddConnector;
+                        if (connector.tileLocation != null) {
+                            shouldAddConnector = occupiedVillageSpot.reservedAreas.Contains(connector.tileLocation.area);
+                        } else {
+                            LocationGridTile tileLocation = connector.GetLocationGridTileGivenCurrentPosition(region.innerMap);
+                            shouldAddConnector = tileLocation != null && occupiedVillageSpot.reservedAreas.Contains(tileLocation.area);
+                        }
+                        if (shouldAddConnector) {
+                            connectors.Add(connector);    
+                        }
                     }
                 }
             }
@@ -1157,24 +1168,31 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
             }
         }
     }
-    private void PopulateAvailableOreVeinConnectors(List<StructureConnector> connectors) {
-        for (int i = 0; i < SettlementResources.oreVeins.Count; i++) {
-            OreVein oreVein = SettlementResources.oreVeins[i];
-            if (oreVein.structureConnector != null && oreVein.structureConnector.isOpen) {
-                connectors.Add(oreVein.structureConnector);
+    private void PopulateAvailableMineShackConnectors(List<StructureConnector> connectors) {
+        for (int i = 0; i < SettlementResources.mineShackSpots.Count; i++) {
+            LocationGridTile oreVein = SettlementResources.mineShackSpots[i];
+            if (oreVein.tileObjectComponent.genericTileObject.structureConnector != null && oreVein.tileObjectComponent.genericTileObject.structureConnector.isOpen) {
+                connectors.Add(oreVein.tileObjectComponent.genericTileObject.structureConnector);
             }
         }
         for (int i = 0; i < occupiedVillageSpot.reservedAreas.Count; i++) {
             Area area = occupiedVillageSpot.reservedAreas[i];
-            for (int j = 0; j < area.tileObjectComponent.itemsInArea.Count; j++) {
-                TileObject tileObject = area.tileObjectComponent.itemsInArea[j];
-                if (tileObject is OreVein oreVein) {
-                    if (oreVein.structureConnector != null && oreVein.structureConnector.isOpen && 
-                        !connectors.Contains(oreVein.structureConnector)) {
-                        connectors.Add(oreVein.structureConnector);
-                    }
+            for (int j = 0; j < area.structureComponent.structureConnectors.Count; j++) {
+                StructureConnector connector = area.structureComponent.structureConnectors[j];
+                if (connector.tileLocation != null && connector.isOpen && !connectors.Contains(connector) && connector.tileLocation.structure is Cave) {
+                    connectors.Add(connector);
                 }
             }
+            // for (int j = 0; j < area.tileObjectComponent.itemsInArea.Count; j++) {
+            //     TileObject tileObject = area.tileObjectComponent.itemsInArea[j];
+            //     if (tileObject is OreVein oreVein) {
+            //         if (oreVein.gridTileLocation.tileObjectComponent.genericTileObject.structureConnector != null && 
+            //             oreVein.gridTileLocation.tileObjectComponent.genericTileObject.structureConnector.isOpen && 
+            //             !connectors.Contains(oreVein.gridTileLocation.tileObjectComponent.genericTileObject.structureConnector)) {
+            //             connectors.Add(oreVein.gridTileLocation.tileObjectComponent.genericTileObject.structureConnector);
+            //         }
+            //     }
+            // }
         }
     }
     public bool HasReservedSpotWithFeature(string p_feature) {
@@ -1902,10 +1920,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
     public void SetOccupiedVillageSpot(VillageSpot p_spot) {
         occupiedVillageSpot = p_spot;
     }
-    public void UnOccupyVillageSpot() {
-        occupiedVillageSpot = null;
-    }
-#endregion
+    #endregion
 
     public override string ToString() {
         return name;

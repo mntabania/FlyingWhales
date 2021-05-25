@@ -4,6 +4,7 @@ using System.Reflection;
 using System;
 using Inner_Maps;
 using Locations.Area_Features;
+using Locations.Settlements;
 using Traits;
 using Tutorial;
 using UnityEngine;
@@ -58,7 +59,7 @@ public static class Extensions {
                 return false;
         }
     }
-    public static bool IsSettlementStructure(this STRUCTURE_TYPE sub) {
+    public static bool IsVillageStructure(this STRUCTURE_TYPE sub) {
         switch (sub) {
             case STRUCTURE_TYPE.CITY_CENTER:
             case STRUCTURE_TYPE.CEMETERY:
@@ -222,7 +223,7 @@ public static class Extensions {
             // case STRUCTURE_TYPE.HUNTER_LODGE:
             //     return SettlementResources.StructureRequirement.FEATURE_GAME;
             case STRUCTURE_TYPE.MINE:
-                return SettlementResources.StructureRequirement.ORE_VEIN;
+                return SettlementResources.StructureRequirement.MINE_SHACK_SPOT;
             case STRUCTURE_TYPE.ABANDONED_MINE:
             case STRUCTURE_TYPE.ANCIENT_GRAVEYARD:
             case STRUCTURE_TYPE.ANCIENT_RUIN:
@@ -235,15 +236,19 @@ public static class Extensions {
                 return SettlementResources.StructureRequirement.NONE;
         }
     }
-    public static bool IsValidCenterTileForStructure(this STRUCTURE_TYPE structureType, LocationGridTile p_tile) {
-        switch (structureType) {
-            case STRUCTURE_TYPE.LUMBERYARD:
-                return p_tile.area.featureComponent.HasFeature(AreaFeatureDB.Wood_Source_Feature);
-            case STRUCTURE_TYPE.HUNTER_LODGE:
-                return p_tile.area.featureComponent.HasFeature(AreaFeatureDB.Game_Feature);
-            default:
-                return true;
+    public static bool IsValidCenterTileForStructure(this STRUCTURE_TYPE structureType, LocationGridTile p_tile, BaseSettlement p_settlement) {
+        if (structureType.IsVillageStructure() && p_settlement is NPCSettlement npcSettlement) {
+            return npcSettlement.occupiedVillageSpot.reservedAreas.Contains(p_tile.area) || !p_tile.area.IsReservedByOtherVillage(npcSettlement.occupiedVillageSpot);
         }
+        return true;
+        // switch (structureType) {
+        //     // case STRUCTURE_TYPE.LUMBERYARD:
+        //     //     return p_tile.area.featureComponent.HasFeature(AreaFeatureDB.Wood_Source_Feature);
+        //     // case STRUCTURE_TYPE.HUNTER_LODGE:
+        //     //     return p_tile.area.featureComponent.HasFeature(AreaFeatureDB.Game_Feature);
+        //     default:
+        //         return true;
+        // }
     }
     public static string StructureName(this STRUCTURE_TYPE structureType) {
         switch (structureType) {

@@ -251,6 +251,27 @@ public class Area: IPlayerActionTarget, IPartyTargetDestination, ILocation {
         return _blueprintsOnTile > 0;
     }
     #endregion
+
+    #region Village Spot
+    /// <summary>
+    /// Is this area reserved be a village spot that is not the provided one.
+    /// </summary>
+    /// <param name="p_villageSpot">The village spot to check against.</param>
+    /// <returns>true or false</returns>
+    public bool IsReservedByOtherVillage(VillageSpot p_villageSpot) {
+        return GetOccupyingVillageSpot() != p_villageSpot;
+    }
+    public VillageSpot GetOccupyingVillageSpot() {
+        for (int i = 0; i < GridMap.Instance.mainRegion.villageSpots.Count; i++) {
+            VillageSpot spot = GridMap.Instance.mainRegion.villageSpots[i];
+            if (spot.reservedAreas.Contains(this)) {
+                return spot;
+            }
+        }
+        return null;
+    }
+    #endregion
+    
 }
 
 [System.Serializable]

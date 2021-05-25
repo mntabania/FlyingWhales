@@ -7,86 +7,47 @@ using UnityEngine;
 namespace Inner_Maps.Location_Structures {
     public class Cave : NaturalStructure {
 
-        public const string Yield_Nothing = "Nothing";
-        public const string Yield_Metal = "Metal";
-        public const string Yield_Diamond = "Diamond";
-        public const string Yield_Gold = "Gold";
-        public const string Yield_Stone = "Stone";
+        private static WeightedDictionary<CONCRETE_RESOURCES> _resourceWeights;
 
-        public WeightedDictionary<string> resourceYield { get; }
-
-        //#region getters
-        //public override System.Type serializedData => typeof(SaveDataCave);
-        //#endregion
-
-        ///// <summary>
-        ///// Separate field for the occupied hex tiles of this cave.
-        ///// Since caves can occupy multiple hex tiles.
-        ///// </summary>
-        //public override Area occupiedArea => occupiedAreas.Count > 0 ? occupiedAreas[0] : null;
+        public CONCRETE_RESOURCES producedResource { get; }
+        public List<LocationGridTile> stoneSpots { get; }
+        public List<LocationGridTile> oreSpots { get; }
+        
+        
+        #region getters
+        public override System.Type serializedData => typeof(SaveDataCave);
+        #endregion
 
         public Cave(Region location) : base(STRUCTURE_TYPE.CAVE, location) {
-            resourceYield = GetRandomResourceYield();
+            if (_resourceWeights == null) {
+                _resourceWeights = new WeightedDictionary<CONCRETE_RESOURCES>();
+                _resourceWeights.AddElement(CONCRETE_RESOURCES.Copper, 100);
+                _resourceWeights.AddElement(CONCRETE_RESOURCES.Iron, 80);
+                _resourceWeights.AddElement(CONCRETE_RESOURCES.Mithril, 40);
+                _resourceWeights.AddElement(CONCRETE_RESOURCES.Orichalcum, 20);
+            }
+            producedResource = _resourceWeights.PickRandomElementGivenWeights();
+            stoneSpots = new List<LocationGridTile>();
+            oreSpots = new List<LocationGridTile>();
         }
 
         public Cave(Region location, SaveDataNaturalStructure data) : base(location, data) {
-            resourceYield = GetRandomResourceYield();
-        }
-
-        //#region Loading
-        //public void LoadOccupiedHexTiles(SaveDataCave saveDataCave) {
-        //    for (int i = 0; i < saveDataCave.occupiedAreas.Count; i++) {
-        //        string areaID = saveDataCave.occupiedAreas[i];
-        //        if (!string.IsNullOrEmpty(areaID)) {
-        //            Area area = DatabaseManager.Instance.areaDatabase.GetAreaByPersistentID(areaID);
-        //            caveAreas.Add(area);
-        //        }
-        //    }
-        //}
-        //#endregion
-
-        private WeightedDictionary<string> GetRandomResourceYield() {
-            WeightedDictionary<string> randomYield = new WeightedDictionary<string>();
+            SaveDataCave saveDataCave = data as SaveDataCave;
+            producedResource = saveDataCave.producedResource;
             
-            WeightedDictionary<int> chances = new WeightedDictionary<int>();
-            chances.AddElement(0, 20);
-            chances.AddElement(1, 20);
-            chances.AddElement(2, 20);
-            chances.AddElement(3, 20);
-            chances.AddElement(4, 20);
-            int chosen = chances.PickRandomElementGivenWeights();
-            if (chosen == 0) {
-                randomYield.AddElement(Yield_Nothing, 100);
-                randomYield.AddElement(Yield_Stone, 50);
-                randomYield.AddElement(Yield_Metal, 20);
-                randomYield.AddElement(Yield_Diamond, 2);
-                randomYield.AddElement(Yield_Gold, 0);
-            } else if (chosen == 1) {
-                randomYield.AddElement(Yield_Nothing, 100);
-                randomYield.AddElement(Yield_Stone, 50);
-                randomYield.AddElement(Yield_Metal, 0);
-                randomYield.AddElement(Yield_Diamond, 0);
-                randomYield.AddElement(Yield_Gold, 10);
-            } else if (chosen == 2) {
-                randomYield.AddElement(Yield_Nothing, 100);
-                randomYield.AddElement(Yield_Stone, 50);
-                randomYield.AddElement(Yield_Metal, 0);
-                randomYield.AddElement(Yield_Diamond, 10);
-                randomYield.AddElement(Yield_Gold, 0);
-            } else if (chosen == 3) {
-                randomYield.AddElement(Yield_Nothing, 100);
-                randomYield.AddElement(Yield_Stone, 50);
-                randomYield.AddElement(Yield_Metal, 30);
-                randomYield.AddElement(Yield_Diamond, 0);
-                randomYield.AddElement(Yield_Gold, 0);
-            } else if (chosen == 4) {
-                randomYield.AddElement(Yield_Nothing, 100);
-                randomYield.AddElement(Yield_Stone, 50);
-                randomYield.AddElement(Yield_Metal, 20);
-                randomYield.AddElement(Yield_Diamond, 0);
-                randomYield.AddElement(Yield_Gold, 2);
+            oreSpots = new List<LocationGridTile>();
+            for (int i = 0; i < saveDataCave.oreSpots.Length; i++) {
+                TileLocationSave saveData = saveDataCave.oreSpots[i];
+                LocationGridTile tile = DatabaseManager.Instance.locationGridTileDatabase.GetTileBySavedData(saveData);
+                oreSpots.Add(tile);
             }
-            return randomYield;
+            
+            stoneSpots = new List<LocationGridTile>();
+            for (int i = 0; i < saveDataCave.stoneSpots.Length; i++) {
+                TileLocationSave saveData = saveDataCave.stoneSpots[i];
+                LocationGridTile tile = DatabaseManager.Instance.locationGridTileDatabase.GetTileBySavedData(saveData);
+                stoneSpots.Add(tile);
+            }
         }
         protected override void OnTileAddedToStructure(LocationGridTile tile) {
             base.OnTileAddedToStructure(tile);
@@ -121,20 +82,52 @@ namespace Inner_Maps.Location_Structures {
             }
         }
         public override void ShowSelectorOnStructure() { }
+
+        #region Mining Spots
+        public void AddStoneSpot(LocationGridTile p_tile) {
+            //TODO: Add mine advertisement here
+            stoneSpots.Add(p_tile);
+        }
+        public void AddOreSpot(LocationGridTile p_tile) {
+            //TODO: Add mine advertisement here
+            oreSpots.Add(p_tile);
+        }
+        #endregion
+
+        #region Testing
+        public override string GetTestingInfo() {
+            string info = base.GetTestingInfo();
+            info = $"{info}\nProduced Resource: {producedResource.ToString()}";
+            info = $"{info}\nStone Spots: {stoneSpots.ComafyList()}";
+            info = $"{info}\nOre Spots: {oreSpots.ComafyList()}";
+            return info;
+        }
+        #endregion
+        
     }
 }
 
-//#region Save Data
-//public class SaveDataCave : SaveDataNaturalStructure {
-//    public List<string> occupiedAreas;
-//    public override void Save(LocationStructure structure) {
-//        base.Save(structure);
-//        Cave cave = structure as Cave;
-//        occupiedAreas = new List<string>();
-//        for (int i = 0; i < cave.caveAreas.Count; i++) {
-//            HexTile hexTile = cave.caveAreas[i];
-//            occupiedAreas.Add(hexTile.persistentID);
-//        }
-//    }
-//}
-//#endregion
+#region Save Data
+public class SaveDataCave : SaveDataNaturalStructure {
+    public CONCRETE_RESOURCES producedResource;
+    public TileLocationSave[] stoneSpots;
+    public TileLocationSave[] oreSpots;
+    public override void Save(LocationStructure structure) {
+        base.Save(structure);
+        Cave cave = structure as Cave;
+        producedResource = cave.producedResource;
+        
+        oreSpots = new TileLocationSave[cave.oreSpots.Count];
+        for (int i = 0; i < oreSpots.Length; i++) {
+            LocationGridTile oreSpot = cave.oreSpots[i];
+            oreSpots[i] = new TileLocationSave(oreSpot);
+        }
+        
+        stoneSpots = new TileLocationSave[cave.stoneSpots.Count];
+        for (int i = 0; i < stoneSpots.Length; i++) {
+            LocationGridTile stoneSpot = cave.stoneSpots[i];
+            stoneSpots[i] = new TileLocationSave(stoneSpot);
+        }
+    }
+}
+#endregion

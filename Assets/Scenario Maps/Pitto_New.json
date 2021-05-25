@@ -5399,7 +5399,9 @@
           {"X":12,"Y":7},
           {"X":11,"Y":8},
           {"X":10,"Y":8}
-        ]
+        ],
+        "lumberyardSpots": "1",
+        "miningSpots": "1"
       },
       {
         "mainArea":{"X":7,"Y":9},
@@ -5415,7 +5417,9 @@
           {"X":8,"Y":11},
           {"X":7,"Y":11},
           {"X":6,"Y":11},
-        ]
+        ],
+        "lumberyardSpots": "1",
+        "miningSpots": "1"
       },
       {
         "mainArea":{"X":3,"Y":1},
@@ -5431,7 +5435,9 @@
           {"X":5,"Y":1},
           {"X":5,"Y":2},
           {"X":4,"Y":2}
-        ]
+        ],
+        "lumberyardSpots": "1",
+        "miningSpots": "1"
       },
       {
         "mainArea":{"X":12,"Y":1},
@@ -5444,7 +5450,9 @@
           {"X":13,"Y":1},
           {"X":13,"Y":0},
           {"X":13,"Y":3}
-        ]
+        ],
+        "lumberyardSpots": "1",
+        "miningSpots": "1"
       },
       {
         "mainArea":{"X":1,"Y":4},
@@ -5458,7 +5466,9 @@
           {"X":1,"Y":5},
           {"X":0,"Y":5},
           {"X":1,"Y":6}
-        ]
+        ],
+        "lumberyardSpots": "1",
+        "miningSpots": "1"
       }
     ]
   },

@@ -35,7 +35,7 @@ namespace Inner_Maps.Location_Structures {
         public void OnPlaceConnector(InnerTileMap innerTileMap) {
             _tileLocation = GetLocationGridTileGivenCurrentPosition(innerTileMap);
             if (_tileLocation != null) {
-                _tileLocation.AddConnector();
+                _tileLocation.AddConnector(this);
                 Messenger.AddListener<LocationGridTile>(StructureSignals.STRUCTURE_CONNECTOR_PLACED, OnStructureConnectorPlaced);
                 Messenger.AddListener<LocationGridTile>(StructureSignals.STRUCTURE_CONNECTOR_REMOVED, OnStructureConnectorRemoved);
                 Messenger.Broadcast(StructureSignals.STRUCTURE_CONNECTOR_PLACED, _tileLocation);
@@ -71,7 +71,7 @@ namespace Inner_Maps.Location_Structures {
             if (_tileLocation != null) {
                 Messenger.RemoveListener<LocationGridTile>(StructureSignals.STRUCTURE_CONNECTOR_PLACED, OnStructureConnectorPlaced);
                 Messenger.RemoveListener<LocationGridTile>(StructureSignals.STRUCTURE_CONNECTOR_REMOVED, OnStructureConnectorRemoved);
-                _tileLocation.RemoveConnector();
+                _tileLocation.RemoveConnector(this);
                 Messenger.Broadcast(StructureSignals.STRUCTURE_CONNECTOR_REMOVED, _tileLocation);    
             }
             _isOpen = true;
