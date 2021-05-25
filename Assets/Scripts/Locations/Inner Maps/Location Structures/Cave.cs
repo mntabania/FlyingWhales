@@ -89,12 +89,22 @@ namespace Inner_Maps.Location_Structures {
 
         #region Mining Spots
         public void AddStoneSpot(LocationGridTile p_tile) {
-            //TODO: Add mine advertisement here
-            stoneSpots.Add(p_tile);
+            if (!stoneSpots.Contains(p_tile)) {
+                stoneSpots.Add(p_tile);
+                //create rock at location
+                TileObject tileObject = InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.ROCK);
+                AddPOI(tileObject, p_tile);
+            }
+            
         }
         public void AddOreSpot(LocationGridTile p_tile) {
-            //TODO: Add mine advertisement here
-            oreSpots.Add(p_tile);
+            if (!oreSpots.Contains(p_tile)) {
+                oreSpots.Add(p_tile);
+                //create ore vein at location
+                Ore tileObject = InnerMapManager.Instance.CreateNewTileObject<Ore>(TILE_OBJECT_TYPE.ORE);
+                tileObject.SetProvidedMetal(producedResource);
+                AddPOI(tileObject, p_tile);    
+            }
         }
         #endregion
 
