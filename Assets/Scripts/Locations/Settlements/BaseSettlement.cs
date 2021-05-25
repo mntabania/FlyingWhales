@@ -640,12 +640,8 @@ namespace Locations.Settlements {
                 Debug.Log($"Added tile {p_area.ToString()} to settlement {name}");
 #endif
                 p_area.SetSettlementOnArea(this);
-                //if (locationType == LOCATION_TYPE.DEMONIC_INTRUSION) {
-                //    p_area.SetCorruption(true);
-                //}
-                //if (p_area.landmarkOnTile != null) {
-                //    p_area.UpdateLandmarkVisuals();    
-                //}
+                Messenger.Broadcast(SettlementSignals.SETTLEMENT_ADDED_AREA, p_area, this);    
+                
             }
         }
         public void AddAreaToSettlement(params Area[] p_areas) {
@@ -660,6 +656,7 @@ namespace Locations.Settlements {
                 Debug.Log($"Removed tile {p_area.ToString()} from settlement {name}");
 #endif
                 p_area.SetSettlementOnArea(null);
+                Messenger.Broadcast(SettlementSignals.SETTLEMENT_REMOVED_AREA, p_area, this);
                 //if (locationType == LOCATION_TYPE.DEMONIC_INTRUSION) {
                 //    p_area.SetCorruption(false);
                 //}

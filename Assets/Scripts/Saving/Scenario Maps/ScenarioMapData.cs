@@ -27,7 +27,7 @@ namespace Scenario_Maps {
                 List<StructureSetting> structureSettings = new List<StructureSetting>();
                 for (int j = 0; j < settlement.allStructures.Count; j++) {
                     LocationStructure structure = settlement.allStructures[j];
-                    if (structure.structureType.IsSettlementStructure() && structure.structureType != STRUCTURE_TYPE.DWELLING && structure is ManMadeStructure manMadeStructure) { 
+                    if (structure.structureType.IsVillageStructure() && structure.structureType != STRUCTURE_TYPE.DWELLING && structure is ManMadeStructure manMadeStructure) { 
                         //Ignored dwellings because in the templates, dwellings are only part of the more important structures i.e. (Farms, City Center, etc.)
                         StructureSetting structureSetting = new StructureSetting(structure.structureType, manMadeStructure.wallsAreMadeOf);
                         structureSettings.Add(structureSetting);

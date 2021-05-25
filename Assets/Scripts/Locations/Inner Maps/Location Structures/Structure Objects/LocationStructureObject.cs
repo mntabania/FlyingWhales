@@ -6,6 +6,7 @@ using System.Linq;
 using System.Runtime.Remoting.Contexts;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
+using Locations.Settlements;
 using UnityEditor;
 using UnityEditor.Experimental.SceneManagement;
 using UnityEditor.SceneManagement;
@@ -716,12 +717,13 @@ public class LocationStructureObject : PooledObject, ISelectable {
     /// </summary>
     /// <param name="connectionChoices">A list of all OPEN connector choices.</param>
     /// <param name="innerTileMap">The inner map that this structure will be placed on.</param>
+    /// <param name="p_settlement">The settlement that this structure will be part of. Can be null.</param>
     /// <param name="usedConnectorIndex">The index of the connector that was used by this structure object.</param>
     /// <param name="tileToPlaceStructure">The LocationGridTile to place the structure at. This is the computed center of the structure.</param>
     /// <param name="connectorTile">The LocationGridTile that the chosen connector is placed at.</param>
     /// <param name="p_structureSetting">The structure setting to place.</param>
     /// <returns>The first valid connector from the list of choices.</returns>
-    public StructureConnector GetFirstValidConnector(List<StructureConnector> connectionChoices, InnerTileMap innerTileMap, out int usedConnectorIndex, out LocationGridTile tileToPlaceStructure, out LocationGridTile connectorTile, StructureSetting p_structureSetting) {
+    public StructureConnector GetFirstValidConnector(List<StructureConnector> connectionChoices, InnerTileMap innerTileMap, BaseSettlement p_settlement, out int usedConnectorIndex, out LocationGridTile tileToPlaceStructure, out LocationGridTile connectorTile, StructureSetting p_structureSetting) {
         //loop through connection choices
         for (int i = 0; i < connectionChoices.Count; i++) {
             StructureConnector connectorA = connectionChoices[i];
@@ -741,7 +743,7 @@ public class LocationStructureObject : PooledObject, ISelectable {
                 Vector2Int computedCenterLocation = new Vector2Int(connectorATileLocation.localPlace.x + distanceFromCenter.x, connectorATileLocation.localPlace.y + distanceFromCenter.y);
                 
                 LocationGridTile centerTile = innerTileMap.GetTileFromMapCoordinates(computedCenterLocation.x, computedCenterLocation.y);
-                if (centerTile != null && p_structureSetting.structureType.IsValidCenterTileForStructure(centerTile) && HasEnoughSpaceIfPlacedOn(centerTile)) {
+                if (centerTile != null && p_structureSetting.structureType.IsValidCenterTileForStructure(centerTile, p_settlement) && HasEnoughSpaceIfPlacedOn(centerTile)) {
                     tileToPlaceStructure = centerTile;
                     usedConnectorIndex = j;
                     connectorTile = connectorA.GetLocationGridTileGivenCurrentPosition(innerTileMap);

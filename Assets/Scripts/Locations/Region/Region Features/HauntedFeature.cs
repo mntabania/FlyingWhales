@@ -18,7 +18,7 @@ namespace Locations.Region_Features {
                     if (currArea.elevationComponent.IsFully(ELEVATION.PLAIN) &&
                         currArea.structureComponent.HasStructureInArea() == false && //with no Features yet
                         !currArea.neighbourComponent.neighbours.Any( //and not adjacent to player Portal, Settlement or other non-cave landmarks
-                            n => n.structureComponent.HasStructureInArea() && n.primaryStructureInArea.structureType.IsSettlementStructure())) {
+                            n => n.structureComponent.HasStructureInArea() && n.primaryStructureInArea.structureType.IsVillageStructure())) {
                         choices.Add(currArea);
                     }
                 }

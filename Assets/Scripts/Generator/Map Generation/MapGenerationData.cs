@@ -69,8 +69,8 @@ public class MapGenerationData {
 	#endregion
 	
 	#region Village Spots
-	public VillageSpot AddVillageSpot(Area p_villageSpot, List<Area> p_areas) {
-		VillageSpot villageSpot = new VillageSpot(p_villageSpot, p_areas);
+	public VillageSpot AddVillageSpot(Area p_villageSpot, List<Area> p_areas, int p_lumberyardSpots, int p_miningSpots) {
+		VillageSpot villageSpot = new VillageSpot(p_villageSpot, p_areas, p_lumberyardSpots, p_miningSpots);
 		villageSpots.Add(villageSpot);
 		return villageSpot;
 	}
@@ -135,12 +135,12 @@ public class MapGenerationData {
 			}
 		}
 	}
-	public LocationGridTile GetFirstUnoccupiedNonEdgeCaveTile(Area p_area) {
+	public LocationGridTile GetFirstUnoccupiedNonEdgeCaveTile(Area p_area, MapGenerationData p_data) {
 		if (caveBorderTilesCategorizedByArea.ContainsKey(p_area)) {
 			List<LocationGridTile> tiles = caveBorderTilesCategorizedByArea[p_area];
 			for (int i = 0; i < tiles.Count; i++) {
 				LocationGridTile tile = tiles[i];
-				if (tile.tileObjectComponent.objHere is BlockWall && !tile.IsAtEdgeOfMap()) {
+				if ((tile.tileObjectComponent.objHere is BlockWall || p_data.GetGeneratedObjectOnTile(tile) == TILE_OBJECT_TYPE.BLOCK_WALL) && !tile.IsAtEdgeOfMap()) {
 					return tile;
 				}
 			}

@@ -115,7 +115,7 @@ public class ObjectPoolManager : MonoBehaviour {
         ConstructGoapPlanPool();
         ConstructCharacterTalentPool();
         
-        InitialPoolObjectCreation("TILEOBJECTGAMEOBJECT", 20000);
+        InitialPoolObjectCreation("TILEOBJECTGAMEOBJECT", 10000);
     }
     
     private void InitialPoolObjectCreation(string p_poolName, int p_objectCount) {

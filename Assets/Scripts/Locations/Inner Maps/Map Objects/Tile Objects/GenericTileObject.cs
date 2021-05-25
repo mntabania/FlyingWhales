@@ -33,9 +33,13 @@ public class GenericTileObject : TileObject {
     /// this is the date that it will be finished
     /// </summary>
     public GameDate selfBuildingStructureDueDate { get; private set; }
+    public StructureConnector structureConnector { get; private set; }
+    
     public BaseSettlement selfBuildingStructureSettlement { get; private set; }
     private LocationGridTile _owner;
     private string _expiryKey;
+    
+    
 
     #region getters
     public override Type serializedData => typeof(SaveDataGenericTileObject);
@@ -221,8 +225,8 @@ public class GenericTileObject : TileObject {
         return mapVisual;
     }
     public bool TryDestroyMapVisual() {
-        if (traitContainer.HasTangibleTrait() == false) {
-            if (ReferenceEquals(mapVisual, null) == false) {
+        if (!traitContainer.HasTangibleTrait() && structureConnector == null) {
+            if (!ReferenceEquals(mapVisual, null)) {
                 DestroyMapVisualGameObject();
             }
             return true;
@@ -258,7 +262,7 @@ public class GenericTileObject : TileObject {
         // SetGridTileLocation(tile);
     }
 
-#region Structure Blueprints
+    #region Structure Blueprints
     public bool PlaceExpiringBlueprintOnTile(string prefabName) {
         if (PlaceBlueprintOnTile(prefabName, out var blueprint)) {
             ScheduleBlueprintExpiry();
@@ -426,9 +430,9 @@ public class GenericTileObject : TileObject {
         BuildBlueprint(blueprintOnTile, p_settlement, null);
         selfBuildingStructureSettlement = null;
     }
-#endregion
+    #endregion
 
-#region Loading
+    #region Loading
     public override void LoadSecondWave(SaveDataTileObject data) {
         base.LoadSecondWave(data);
         SaveDataGenericTileObject saveDataGenericTileObject = data as SaveDataGenericTileObject;
@@ -447,6 +451,9 @@ public class GenericTileObject : TileObject {
                 }
             }
             
+        }
+        if (saveDataGenericTileObject.hasStructureConnector) {
+            CreateStructureConnector();
         }
     }
     private void LoadBlueprintOnTile(string prefabName) {
@@ -468,7 +475,32 @@ public class GenericTileObject : TileObject {
         structureObject.SetTilesInStructure(occupiedTiles.ToArray());
         blueprintOnTile = structureObject;
     }
-#endregion
+    #endregion
+
+    #region Structure Connectors
+    public void CreateStructureConnector() {
+        BaseMapObjectVisual objectVisual = GetOrCreateMapVisual();
+        StructureConnector connector = objectVisual.gameObject.AddComponent<StructureConnector>();
+        connector.OnPlaceConnector(gridTileLocation.parentMap);
+        structureConnector = connector;
+        if (gridTileLocation.area.settlementOnArea != null) {
+            gridTileLocation.area.settlementOnArea.SettlementResources?.AddToListBasedOnRequirement(SettlementResources.StructureRequirement.MINE_SHACK_SPOT, this);
+        }
+        Messenger.AddListener<Area, BaseSettlement>(SettlementSignals.SETTLEMENT_ADDED_AREA, OnSettlementAddedArea);
+        Messenger.AddListener<Area, BaseSettlement>(SettlementSignals.SETTLEMENT_REMOVED_AREA, OnSettlementRemovedArea);
+        gridTileLocation.SetIsDefault(false);
+    }
+    private void OnSettlementAddedArea(Area p_area, BaseSettlement p_settlement) {
+        if (gridTileLocation.area == p_area && p_settlement is NPCSettlement npcSettlement) {
+            npcSettlement.SettlementResources?.AddToListBasedOnRequirement(SettlementResources.StructureRequirement.MINE_SHACK_SPOT, this);
+        }
+    }
+    private void OnSettlementRemovedArea(Area p_area, BaseSettlement p_settlement) {
+        if (gridTileLocation.area == p_area && p_settlement is NPCSettlement npcSettlement) {
+            npcSettlement.SettlementResources?.mineShackSpots.Remove(gridTileLocation);
+        }
+    }
+    #endregion
 }
 
 #region Save Data
@@ -479,6 +511,7 @@ public class SaveDataGenericTileObject : SaveDataTileObject {
     public GameDate blueprintAutoBuildDate;
     public bool isCurrentlyBuilding;
     public string selfBuildingStructureSettlement;
+    public bool hasStructureConnector;
     public override void Save(TileObject data) {
         base.Save(data);
         GenericTileObject genericTileObject = data as GenericTileObject;
@@ -492,6 +525,7 @@ public class SaveDataGenericTileObject : SaveDataTileObject {
                 selfBuildingStructureSettlement = genericTileObject.selfBuildingStructureSettlement.persistentID;
             }
         }
+        hasStructureConnector = genericTileObject.structureConnector != null;
     }
     public override TileObject Load() {
         GenericTileObject genericTileObject = InnerMapManager.Instance.LoadTileObject<GenericTileObject>(this);

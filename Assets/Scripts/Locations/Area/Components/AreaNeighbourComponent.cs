@@ -62,6 +62,25 @@ public class AreaNeighbourComponent : AreaComponent {
         }
         return false;
     }
+    public bool HasCardinalNeighbourWithElevationThatIsNotReservedByOtherVillage(ELEVATION elevation, List<VillageSpot> p_villageSpots) {
+        for (int i = 0; i < cardinalNeighbours.Count; i++) {
+            Area neighbour = cardinalNeighbours[i];
+            if (neighbour.elevationType == elevation) {
+                bool isReservedByAVillageSpot = false;
+                for (int j = 0; j < p_villageSpots.Count; j++) {
+                    VillageSpot villageSpot = p_villageSpots[j];
+                    if (villageSpot.reservedAreas.Contains(neighbour)) {
+                        isReservedByAVillageSpot = true;
+                        break;
+                    }
+                }
+                if (!isReservedByAVillageSpot) {
+                    return true;    
+                }
+            }
+        }
+        return false;
+    }
     public bool HasNeighbourWithFeature(string feature) {
         for (int i = 0; i < neighbours.Count; i++) {
             Area neighbour = neighbours[i];
