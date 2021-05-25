@@ -58,7 +58,8 @@ public class StateAwarenessComponent : CharacterComponent {
     #endregion
 
     public void OnCharacterWasSeenBy(Character characterThatSaw) {
-        if (characterThatSaw.isNormalCharacter) {
+        //Should only be available when seen by its own factionmate
+        if (characterThatSaw.isNormalCharacter && characterThatSaw.faction == owner.faction) {
             StopMissingTimer();
             if (owner.isDead) {
                 characterThatSaw.relationshipContainer.SetAwarenessState(characterThatSaw, owner, AWARENESS_STATE.Presumed_Dead);

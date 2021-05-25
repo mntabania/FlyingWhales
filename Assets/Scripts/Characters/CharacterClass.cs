@@ -192,6 +192,9 @@ public class CharacterClass {
         }
         return false;
     }
+    public bool IsFoodProducer() {
+        return className == "Fisher" || className == "Farmer" || className == "Butcher";
+    }
     public bool IsZombie() {
         return identifier == "Zombie";
     }

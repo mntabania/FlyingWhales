@@ -34,10 +34,8 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
     //structures
     public List<JobQueueItem> availableJobs { get; }
     public LocationEventManager eventManager { get; private set; }
-    public SettlementJobPriorityComponent jobPriorityComponent { get; }
     public SettlementType settlementType { get; private set; }
     public GameDate plaguedExpiryDate { get; private set; }
-    public SettlementJobTriggerComponent settlementJobTriggerComponent { get; }
     public SettlementClassTracker settlementClassTracker { get; }
     public NPCSettlementEventDispatcher npcSettlementEventDispatcher { get; }
     public bool hasPeasants { get; private set; }
@@ -50,6 +48,8 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
     public VillageSpot occupiedVillageSpot { get; private set; }
 
     //Components
+    public SettlementJobTriggerComponent settlementJobTriggerComponent { get; }
+    public SettlementJobPriorityComponent jobPriorityComponent { get; }
     public SettlementVillageMigrationComponent migrationComponent { get; private set; }
 
     private readonly Region _region;

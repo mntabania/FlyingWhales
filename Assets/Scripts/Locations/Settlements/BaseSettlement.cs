@@ -338,7 +338,7 @@ namespace Locations.Settlements {
             RuinarchListPool<Character>.Release(choices);
             return chosenCharacter;
         }
-        public int GetNumOfResidentsThatIsHasRaceAndClassOf(RACE p_race, string p_className, Type p_behaviourTypeException = null) {
+        public int GetNumOfResidentsThatHasRaceAndClassOf(RACE p_race, string p_className, Type p_behaviourTypeException = null) {
             int count = 0;
             for (int i = 0; i < residents.Count; i++) {
                 Character resident = residents[i];
