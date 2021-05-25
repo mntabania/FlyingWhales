@@ -848,6 +848,7 @@ namespace Inner_Maps {
             stopwatch.Stop();
             Debug.Log($"{region.name} GraduallyGenerateTileObjects took {stopwatch.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)} seconds to complete.");
             p_data.SetGeneratingTileObjectsState(false);
+            Messenger.Broadcast(Signals.TILE_OBJECT_GENERATION_FINISHED);
         }
         private Tile_Tag RandomizeTileTag(Biome_Tile_Type p_tileType) {
             switch (p_tileType) {

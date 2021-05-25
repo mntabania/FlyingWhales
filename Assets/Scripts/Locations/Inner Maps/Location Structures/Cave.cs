@@ -34,15 +34,19 @@ namespace Inner_Maps.Location_Structures {
         public Cave(Region location, SaveDataNaturalStructure data) : base(location, data) {
             SaveDataCave saveDataCave = data as SaveDataCave;
             producedResource = saveDataCave.producedResource;
-            
             oreSpots = new List<LocationGridTile>();
+            stoneSpots = new List<LocationGridTile>();
+        }
+        public override void LoadReferences(SaveDataLocationStructure saveDataLocationStructure) {
+            base.LoadReferences(saveDataLocationStructure);
+            SaveDataCave saveDataCave = saveDataLocationStructure as SaveDataCave;
+            
             for (int i = 0; i < saveDataCave.oreSpots.Length; i++) {
                 TileLocationSave saveData = saveDataCave.oreSpots[i];
                 LocationGridTile tile = DatabaseManager.Instance.locationGridTileDatabase.GetTileBySavedData(saveData);
                 oreSpots.Add(tile);
             }
             
-            stoneSpots = new List<LocationGridTile>();
             for (int i = 0; i < saveDataCave.stoneSpots.Length; i++) {
                 TileLocationSave saveData = saveDataCave.stoneSpots[i];
                 LocationGridTile tile = DatabaseManager.Instance.locationGridTileDatabase.GetTileBySavedData(saveData);

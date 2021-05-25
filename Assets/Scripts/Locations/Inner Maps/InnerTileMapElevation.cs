@@ -215,8 +215,8 @@ namespace Inner_Maps {
             for (int i = 0; i < randomOreAmount; i++) {
                 if (validWallsForOreVeins.Count == 0) { break; }
                 LocationGridTile oreVeinLocation = CollectionUtilities.GetRandomElement(validWallsForOreVeins);
-                CreateOreVein(oreVeinLocation);
                 mapGenerationData.SetGeneratedMapPerlinDetails(oreVeinLocation, TILE_OBJECT_TYPE.NONE);
+                CreateOreVein(oreVeinLocation);
                 validWallsForOreVeins.Remove(oreVeinLocation);
                 //create structure connector on ore vein location, this is so that even if ore vein is destroyed villagers can still create mines.
                 oreVeinLocation.tileObjectComponent.genericTileObject.CreateStructureConnector();

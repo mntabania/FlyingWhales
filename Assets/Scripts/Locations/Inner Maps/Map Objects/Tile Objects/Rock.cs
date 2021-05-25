@@ -72,6 +72,9 @@ public class Rock : TileObject{
 
     public override void OnPlacePOI() {
         base.OnPlacePOI();
+        if (structureConnector != null && gridTileLocation != null) {
+            structureConnector.OnPlaceConnector(gridTileLocation.parentMap);    
+        }
         UpdateSettlementResourcesParent();
     }
     public override void OnDestroyPOI() {
