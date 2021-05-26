@@ -95,7 +95,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public GoapPlanner planner { get; private set; }
     public CharacterClassComponent classComponent { get; private set; }
     public CharacterNeedsComponent needsComponent { get; private set; }
-    public BuildStructureComponent buildStructureComponent { get; private set; }
+    public CharacterStructureComponent structureComponent { get; private set; }
     public CharacterStateComponent stateComponent { get; private set; }
     public NonActionEventsComponent nonActionEventsComponent { get; private set; }
     public InterruptComponent interruptComponent { get; private set; }
@@ -266,7 +266,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         visuals.Initialize();
         needsComponent.UpdateBaseStaminaDecreaseRate();
         combatComponent.UpdateBasicData(true);
-        buildStructureComponent = new BuildStructureComponent(); buildStructureComponent.SetOwner(this);
+        structureComponent = new CharacterStructureComponent(); structureComponent.SetOwner(this);
         afflictionsSkillsInflictedByPlayer = new List<PLAYER_SKILL_TYPE>();
     }
     public Character(string className, RACE race, GENDER gender) : this() {
@@ -281,7 +281,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         visuals.Initialize();
         needsComponent.UpdateBaseStaminaDecreaseRate();
         combatComponent.UpdateBasicData(true);
-        buildStructureComponent = new BuildStructureComponent(); buildStructureComponent.SetOwner(this);
+        structureComponent = new CharacterStructureComponent(); structureComponent.SetOwner(this);
         afflictionsSkillsInflictedByPlayer = new List<PLAYER_SKILL_TYPE>();
     }
     private Character() {
@@ -392,7 +392,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         trapStructure = data.trapStructure.Load();
         classComponent = data.classComponent.Load(); classComponent.SetOwner(this);
         needsComponent = data.needsComponent.Load(); needsComponent.SetOwner(this);
-        buildStructureComponent = data.buildStructureComponent.Load(); buildStructureComponent.SetOwner(this);
+        structureComponent = data.structureComponent.Load(); structureComponent.SetOwner(this);
         stateComponent = data.stateComponent.Load(); stateComponent.SetOwner(this);
         nonActionEventsComponent = data.nonActionEventsComponent.Load(); nonActionEventsComponent.SetOwner(this);
         interruptComponent = data.interruptComponent.Load(); interruptComponent.SetOwner(this);
@@ -4294,6 +4294,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             AddAdvertisedAction(INTERACTION_TYPE.STUDY_MONSTER);
             AddAdvertisedAction(INTERACTION_TYPE.PICKPOCKET);
             AddAdvertisedAction(INTERACTION_TYPE.STEAL_COINS);
+            AddAdvertisedAction(INTERACTION_TYPE.CHANGE_CLASS);
 
             //NOTE: Removed the creation of healing potion, etc. on the fly because it conflicts with the current crafting of objects
             //It is confusing to have a crafting then another one the creates them in the inventory without any crafting
@@ -6324,7 +6325,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
 
         trapStructure.LoadReferences(data.trapStructure);
         needsComponent.LoadReferences(data.needsComponent);
-        buildStructureComponent.LoadReferences(data.buildStructureComponent);
+        structureComponent.LoadReferences(data.structureComponent);
         stateComponent.LoadReferences(data.stateComponent);
         nonActionEventsComponent.LoadReferences(data.nonActionEventsComponent);
         interruptComponent.LoadReferences(data.interruptComponent);

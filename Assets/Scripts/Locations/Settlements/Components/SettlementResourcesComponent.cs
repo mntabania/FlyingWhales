@@ -22,7 +22,7 @@ public class SettlementResourcesComponent : NPCSettlementComponent {
         int supply = 0;
         for (int i = 0; i < owner.residents.Count; i++) {
             Character c = owner.residents[i];
-            if (!c.isDead && c.characterClass.IsFoodProducer()) {
+            if (!c.isDead && c.characterClass.className.IsFoodProducerClassName()) {
                 LocationGridTile gridTile = c.gridTileLocation;
                 //If character is paralyzed, restrained or quarantined and is outside his home settlement, he should not be counted
                 bool isAvailable = !(c.traitContainer.HasTrait("Paralyzed", "Restrained", "Quarantined") && gridTile != null && c.hasMarker && !gridTile.IsPartOfSettlement(owner));
@@ -49,9 +49,17 @@ public class SettlementResourcesComponent : NPCSettlementComponent {
         return supply;
     }
     public int GetResourceSupplyCapacity() {
+        //TODO: Checking of Village Spot Miner and Logger Capacity
         int supply = 0;
         if (owner.owner?.factionType.type == FACTION_TYPE.Human_Empire) {
             int numOfResidents = GetNumOfResidentsThatHasClass("Miner");
+            supply += numOfResidents * 8;
+        } else if (owner.owner?.factionType.type == FACTION_TYPE.Elven_Kingdom) {
+            int numOfResidents = GetNumOfResidentsThatHasClass("Logger");
+            supply += numOfResidents * 8;
+        } else {
+            int numOfResidents = GetNumOfResidentsThatHasClass("Miner", "Logger");
+            supply += numOfResidents * 8;
         }
         return supply;
     }
@@ -63,6 +71,19 @@ public class SettlementResourcesComponent : NPCSettlementComponent {
             //If character is paralyzed, restrained or quarantined and is outside his home settlement, he should not be counted
             bool isAvailable = !(c.traitContainer.HasTrait("Paralyzed", "Restrained", "Quarantined") && gridTile != null && c.hasMarker && !gridTile.IsPartOfSettlement(owner));
             if (!c.isDead && isAvailable && c.characterClass.className == p_className) {
+                count++;
+            }
+        }
+        return count;
+    }
+    private int GetNumOfResidentsThatHasClass(string p_className1, string p_className2) {
+        int count = 0;
+        for (int i = 0; i < owner.residents.Count; i++) {
+            Character c = owner.residents[i];
+            LocationGridTile gridTile = c.gridTileLocation;
+            //If character is paralyzed, restrained or quarantined and is outside his home settlement, he should not be counted
+            bool isAvailable = !(c.traitContainer.HasTrait("Paralyzed", "Restrained", "Quarantined") && gridTile != null && c.hasMarker && !gridTile.IsPartOfSettlement(owner));
+            if (!c.isDead && isAvailable && (c.characterClass.className == p_className1 || c.characterClass.className == p_className2)) {
                 count++;
             }
         }

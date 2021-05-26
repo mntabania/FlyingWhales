@@ -32,7 +32,7 @@ namespace Locations.Settlements.Settlement_Events {
             DetermineLeaderResponse(leaderThatWillDecide, p_settlement);
             SubscribeListeners(p_settlement);
             ScheduleEnd(p_settlement);
-            p_settlement.settlementClassTracker.AddNeededClass("Druid");
+            //p_settlement.settlementClassTracker.AddNeededClass("Druid");
         }
         public override void DeactivateEvent(NPCSettlement p_settlement) {
             if (p_settlement.owner != null) { RevertFactionEffects(p_settlement.owner); }
@@ -44,7 +44,7 @@ namespace Locations.Settlements.Settlement_Events {
             }
             RuinarchListPool<JobQueueItem>.Release(jobs);
             UnsubscribeListeners(p_settlement);
-            p_settlement.settlementClassTracker.RemoveNeededClass("Druid");
+            //p_settlement.settlementClassTracker.RemoveNeededClass("Druid");
             if (!string.IsNullOrEmpty(_endScheduleTicket)) { SchedulingManager.Instance.RemoveSpecificEntry(_endScheduleTicket); }
         }
         public override SaveDataSettlementEvent Save() {

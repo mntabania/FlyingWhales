@@ -10,6 +10,15 @@ public static class JobsListExtension {
         }
         return false;
     }
+    public static bool HasJobWithFoodProducerOtherData(this List<JobQueueItem> availableJobs, JOB_TYPE p_jobType, INTERACTION_TYPE p_otherDataType) {
+        for (int i = 0; i < availableJobs.Count; i++) {
+            JobQueueItem jobQueueItem = availableJobs[i];
+            if (jobQueueItem.jobType == p_jobType && jobQueueItem is GoapPlanJob goapPlanJob && goapPlanJob.HasFoodProducerOtherData(p_otherDataType)) {
+                return true;
+            }
+        }
+        return false;
+    }
     public static List<JobQueueItem> GetJobsWithOtherData(this List<JobQueueItem> availableJobs, JOB_TYPE p_jobType, INTERACTION_TYPE p_otherDataType, object p_otherDataObj) {
         List<JobQueueItem> foundJobs = null;
         for (int i = 0; i < availableJobs.Count; i++) {

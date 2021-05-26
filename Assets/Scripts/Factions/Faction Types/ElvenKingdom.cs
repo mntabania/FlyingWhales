@@ -121,7 +121,7 @@ namespace Factions.Faction_Types {
             return CRIME_SEVERITY.None;
         }
         public override int GetAdditionalMigrationMeterGain(NPCSettlement p_settlement) {
-            int nobleAmount = p_settlement.settlementClassTracker.GetCurrentResidentClassAmount("Noble");
+            int nobleAmount = p_settlement.classComponent.GetCurrentResidentClassAmount("Noble");
             return Mathf.Min(nobleAmount, 3);
         }
     }

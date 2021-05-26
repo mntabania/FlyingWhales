@@ -1699,7 +1699,7 @@ public class ConsoleBase : InfoUIBase {
         string className = parameters[1];
         BaseSettlement settlement = DatabaseManager.Instance.settlementDatabase.GetSettlementByName(settlementName);
         if (settlement is NPCSettlement npcSettlement) {
-            npcSettlement.settlementClassTracker.RemoveNeededClass(className);
+            //npcSettlement.settlementClassTracker.RemoveNeededClass(className);
             AddSuccessMessage($"Removed needed class {className} from {settlement.name}'s needed classes");
         }
         else {

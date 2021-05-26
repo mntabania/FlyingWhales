@@ -36,7 +36,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
     public LocationEventManager eventManager { get; private set; }
     public SettlementType settlementType { get; private set; }
     public GameDate plaguedExpiryDate { get; private set; }
-    public SettlementClassTracker settlementClassTracker { get; }
+    //public SettlementClassTracker settlementClassTracker { get; }//Removed this, data moved to SettlementClassComponent
     public NPCSettlementEventDispatcher npcSettlementEventDispatcher { get; }
     public bool hasPeasants { get; private set; }
     public bool hasWorkers { get; private set; }
@@ -51,6 +51,8 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
     public SettlementJobTriggerComponent settlementJobTriggerComponent { get; }
     public SettlementJobPriorityComponent jobPriorityComponent { get; }
     public SettlementVillageMigrationComponent migrationComponent { get; private set; }
+    public SettlementResourcesComponent resourcesComponent { get; private set; }
+    public SettlementClassComponent classComponent { get; private set; }
 
     private readonly Region _region;
     private readonly WeightedDictionary<Character> newRulerDesignationWeights;
@@ -76,7 +78,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         eventManager = new LocationEventManager(this);
         jobPriorityComponent = new SettlementJobPriorityComponent(this);
         settlementJobTriggerComponent = new SettlementJobTriggerComponent(this);
-        settlementClassTracker = new SettlementClassTracker();
+        //settlementClassTracker = new SettlementClassTracker();
         npcSettlementEventDispatcher = new NPCSettlementEventDispatcher();
         _plaguedExpiryKey = string.Empty;
         _neededObjects = new List<TILE_OBJECT_TYPE>() {
@@ -86,6 +88,8 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         };
 
         migrationComponent = new SettlementVillageMigrationComponent(); migrationComponent.SetOwner(this);
+        resourcesComponent = new SettlementResourcesComponent(); resourcesComponent.SetOwner(this);
+        classComponent = new SettlementClassComponent(); classComponent.SetOwner(this);
     }
     public NPCSettlement(SaveDataBaseSettlement saveDataBaseSettlement) : base (saveDataBaseSettlement) {
         SaveDataNPCSettlement saveData = saveDataBaseSettlement as SaveDataNPCSettlement;
@@ -99,12 +103,14 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         // eventManager = new LocationEventManager(this, saveData.eventManager); //loaded event manager at LoadReferences
         jobPriorityComponent = new SettlementJobPriorityComponent(this);
         settlementJobTriggerComponent = new SettlementJobTriggerComponent(this);
-        settlementClassTracker = new SettlementClassTracker(saveData.classTracker);
+        //settlementClassTracker = new SettlementClassTracker(saveData.classTracker);
         npcSettlementEventDispatcher = new NPCSettlementEventDispatcher();
         _plaguedExpiryKey = string.Empty;
         _neededObjects = new List<TILE_OBJECT_TYPE>(saveData.neededObjects);
 
         migrationComponent = saveData.migrationComponent.Load(); migrationComponent.SetOwner(this);
+        resourcesComponent = saveData.resourcesComponent.Load(); resourcesComponent.SetOwner(this);
+        classComponent = saveData.classComponent.Load(); classComponent.SetOwner(this);
     }
 
     #region Loading
@@ -150,6 +156,9 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
             //    }    
             //}
             migrationComponent.LoadReferences(saveDataNpcSettlement);
+            resourcesComponent.LoadReferences(saveDataNpcSettlement.resourcesComponent);
+            classComponent.LoadReferences(saveDataNpcSettlement.classComponent);
+
             if (saveDataNpcSettlement.hasOccupiedVillageSpot) {
                 Area area = GameUtilities.GetHexTileGivenCoordinates(saveDataNpcSettlement.occupiedVillageSpot, GridMap.Instance.map);
                 Assert.IsNotNull(area, $"{name}'s save data has occupied village spot but no area is at {saveDataNpcSettlement.occupiedVillageSpot.ToString()}");
@@ -229,7 +238,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         } else if (locationType == LOCATION_TYPE.DUNGEON) {
             settlementJobTriggerComponent.SubscribeToDungeonListeners();
         }
-        settlementJobTriggerComponent.HookToSettlementClassTrackerEvents(settlementClassTracker);
+        //settlementJobTriggerComponent.HookToSettlementClassTrackerEvents(settlementClassTracker);
     }
     private void UnsubscribeToSignals() {
         Messenger.RemoveListener<Character, CharacterClass, CharacterClass>(CharacterSignals.CHARACTER_CLASS_CHANGE, OnCharacterClassChange);
@@ -251,7 +260,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         } else if (locationType == LOCATION_TYPE.DUNGEON) {
             settlementJobTriggerComponent.UnsubscribeFromDungeonListeners();
         }
-        settlementJobTriggerComponent.UnHookToSettlementClassTrackerEvents(settlementClassTracker);
+        //settlementJobTriggerComponent.UnHookToSettlementClassTrackerEvents(settlementClassTracker);
     }
     private void OnCharacterAddedToFaction(Character character, Faction faction) {
         //once a resident character changes its faction, check if all the residents of this settlement share the same faction,
@@ -430,7 +439,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
     }
     private void OnCharacterClassChange(Character character, CharacterClass previousClass, CharacterClass currentClass) {
         if (character.homeSettlement == this) {
-            settlementClassTracker.OnResidentChangedClass(previousClass.className, character);
+            classComponent.OnResidentChangedClass(previousClass.className, character);
             jobPriorityComponent.ChangeClassResidentResetPrimaryJob(character);
         }
     }
@@ -825,8 +834,8 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
     }
     private void OnAddResident(Character character) {
         eventManager.OnResidentAdded(character);
-        settlementClassTracker.OnResidentAdded(character);
-        if(residents.Count == 1 && locationType == LOCATION_TYPE.VILLAGE && GameManager.Instance.gameHasStarted) {
+        classComponent.OnResidentAdded(character);
+        if (residents.Count == 1 && locationType == LOCATION_TYPE.VILLAGE && GameManager.Instance.gameHasStarted) {
             //First resident
             ChangeSettlementTypeAccordingTo(character);
         }
@@ -846,7 +855,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
     }
     private void OnRemoveResident(Character character) {
         eventManager.OnResidentRemoved(character);
-        settlementClassTracker.OnResidentRemoved(character);
+        classComponent.OnResidentRemoved(character);
         UnapplyAbleJobsFromSettlement(character);
         if (character.characterClass.className == "Peasant") {
             UpdateHasPeasants();
@@ -1657,6 +1666,15 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
                 if (goapJob.targetPOI == target) {
                     AddForcedCancelJobsOnTickEnded(goapJob);
                 }
+            }
+        }
+    }
+    public void ForceCancelJobTypes(JOB_TYPE jobType) {
+        for (int i = 0; i < availableJobs.Count; i++) {
+            JobQueueItem job = availableJobs[i];
+            if (job.jobType == jobType && job is GoapPlanJob) {
+                GoapPlanJob goapJob = job as GoapPlanJob;
+                AddForcedCancelJobsOnTickEnded(goapJob);
             }
         }
     }
