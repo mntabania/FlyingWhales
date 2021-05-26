@@ -614,6 +614,7 @@ public enum INTERRUPT {
     Narcoleptic_Nap_Short,
     Narcoleptic_Nap_Medium,
     Narcoleptic_Nap_Long,
+    Claim_Work_Structure,
 }
 
 public enum TRAIT_TYPE {

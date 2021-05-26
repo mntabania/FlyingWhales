@@ -26,7 +26,6 @@ public class WorkBehaviour : CharacterBehaviourComponent {
                 }
             }
         }
-
         if (character.moodComponent.moodState == MOOD_STATE.Normal) {
 #if DEBUG_LOG
             log = $"{log}\n-{character.name} is in normal mood, will do settlement work";
