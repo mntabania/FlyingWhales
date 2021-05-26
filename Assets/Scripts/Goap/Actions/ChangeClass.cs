@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using Inner_Maps.Location_Structures;
 public class ChangeClass : GoapAction {
     public override ACTION_CATEGORY actionCategory { get { return ACTION_CATEGORY.DIRECT; } }
 
@@ -46,8 +46,21 @@ public class ChangeClass : GoapAction {
 
     #region Effects
     public void AfterChangeClassSuccess(ActualGoapNode goapNode) {
-        string className = (string) goapNode.otherData[0].obj;
+        OtherData[] otherData = goapNode.otherData;
+        string className = (string) otherData[0].obj;
         goapNode.actor.classComponent.AssignClass(className);
+
+        if (otherData.Length > 1) {
+            OtherData structureOtherData = otherData[1];
+            if (structureOtherData != null) {
+                ManMadeStructure workStructure = structureOtherData.obj as ManMadeStructure;
+                if (workStructure != null && !workStructure.hasBeenDestroyed) {
+                    //Upon changing class assign worker immediately to the attached structure
+                    workStructure.SetAssignedWorker(goapNode.actor);
+                    goapNode.actor.interruptComponent.TriggerInterrupt(INTERRUPT.Claim_Work_Structure, goapNode.actor);
+                }
+            }
+        }
     }
     #endregion
 }

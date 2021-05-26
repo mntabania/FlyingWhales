@@ -51,7 +51,7 @@ public class WorkBehaviour : CharacterBehaviourComponent {
                         log = $"{log}\n-Character will find unclaimed work structure type of " + workStructureType.ToString();
 #endif
                         if (workStructureType != STRUCTURE_TYPE.NONE) {
-                            ManMadeStructure noWorkerStructure = homeSettlement.GetFirstStructureOfTypeThatHasNoWorker(workStructureType) as ManMadeStructure;
+                            ManMadeStructure noWorkerStructure = homeSettlement.GetFirstStructureOfTypeThatHasNoWorkerAndIsNotReserved(workStructureType) as ManMadeStructure;
                             if (noWorkerStructure != null) {
 #if DEBUG_LOG
                                 log = $"{log}\n-Found unclaimed work structure: " + noWorkerStructure.name;

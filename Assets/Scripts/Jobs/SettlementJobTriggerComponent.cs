@@ -1240,10 +1240,14 @@ public class SettlementJobTriggerComponent : JobTriggerComponent/*, SettlementCl
 		  //  _owner.AddToAvailableJobs(job);    
 	   // }
     //}
-	public void TriggerChangeClassJob(string className) {
+	public void TriggerChangeClassJob(string className, LocationStructure p_reservedStructure) {
 		GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.CHANGE_CLASS, INTERACTION_TYPE.CHANGE_CLASS, null, _owner);
 		job.SetCanTakeThisJobChecker(JobManager.Can_Take_Change_Class);
-		job.AddOtherData(INTERACTION_TYPE.CHANGE_CLASS, new object[] { className });
+        if (p_reservedStructure != null) {
+			job.AddOtherData(INTERACTION_TYPE.CHANGE_CLASS, new object[] { className, p_reservedStructure });
+		} else {
+			job.AddOtherData(INTERACTION_TYPE.CHANGE_CLASS, new object[] { className });
+		}
 		_owner.AddToAvailableJobs(job);
 	}
 	#endregion

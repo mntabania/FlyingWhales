@@ -150,26 +150,26 @@ public class SettlementClassComponent : NPCSettlementComponent {
             //If Villagers exceeds Food Supply Capacity, check if there is no existing Change To A Needed Class job for Food Producers
             //If no settlement job to change class to a food producer, proceed here
             //Identify which food producer is needed
-            LocationStructure noWorkerStructure = owner.GetFirstStructureOfTypeThatHasNoWorker(STRUCTURE_TYPE.FARM);
+            LocationStructure noWorkerStructure = owner.GetFirstStructureOfTypeThatHasNoWorkerAndIsNotReserved(STRUCTURE_TYPE.FARM);
             if (noWorkerStructure != null) {
                 //if there is a Farm in the Village that hasn't been claimed yet
                 //Create Change Class Job To Farmer
-                owner.settlementJobTriggerComponent.TriggerChangeClassJob("Farmer");
+                owner.settlementJobTriggerComponent.TriggerChangeClassJob("Farmer", noWorkerStructure);
             } else {
                 //otherwise, if there is a Fishery in the Village that hasn't been claimed yet and there is a resident that can become a Fisher
                 //Create Change Class Job To Fisher
-                noWorkerStructure = owner.GetFirstStructureOfTypeThatHasNoWorker(STRUCTURE_TYPE.FISHERY);
+                noWorkerStructure = owner.GetFirstStructureOfTypeThatHasNoWorkerAndIsNotReserved(STRUCTURE_TYPE.FISHERY);
                 if (noWorkerStructure != null) {
                     if (owner.GetFirstResidentThatIsAbleAndCanBecomeClass("Fisher") != null) {
-                        owner.settlementJobTriggerComponent.TriggerChangeClassJob("Fisher");
+                        owner.settlementJobTriggerComponent.TriggerChangeClassJob("Fisher", noWorkerStructure);
                     }
                 } else {
                     //otherwise, if there is a Butcher's Shop in the Village that hasn't been claimed yet and there is a resident that can become a Butcher
                     //Create Change Class Job To Butcher
-                    noWorkerStructure = owner.GetFirstStructureOfTypeThatHasNoWorker(STRUCTURE_TYPE.BUTCHERS_SHOP);
+                    noWorkerStructure = owner.GetFirstStructureOfTypeThatHasNoWorkerAndIsNotReserved(STRUCTURE_TYPE.BUTCHERS_SHOP);
                     if (noWorkerStructure != null) {
                         if (owner.GetFirstResidentThatIsAbleAndCanBecomeClass("Butcher") != null) {
-                            owner.settlementJobTriggerComponent.TriggerChangeClassJob("Butcher");
+                            owner.settlementJobTriggerComponent.TriggerChangeClassJob("Butcher", noWorkerStructure);
                         }
                     }
                 }
@@ -180,17 +180,17 @@ public class SettlementClassComponent : NPCSettlementComponent {
         if (numOfActiveResidents > resourceSupplyCapacity) {
             //If Villagers exceeds Resource Supply Capacity, a Basic Resource Gatherer is needed
             //Identify which resource producer is needed
-            LocationStructure noWorkerStructure = owner.GetFirstStructureOfTypeThatHasNoWorker(STRUCTURE_TYPE.LUMBERYARD);
+            LocationStructure noWorkerStructure = owner.GetFirstStructureOfTypeThatHasNoWorkerAndIsNotReserved(STRUCTURE_TYPE.LUMBERYARD);
             if (noWorkerStructure != null) {
                 //if there is a Lumberyard in the Village that hasn't been claimed yet
                 //Create Change Class Job To Logger
-                owner.settlementJobTriggerComponent.TriggerChangeClassJob("Logger");
+                owner.settlementJobTriggerComponent.TriggerChangeClassJob("Logger", noWorkerStructure);
             } else {
                 //if there is a Mine in the Village that hasn't been claimed yet and there is a resident that can become a Miner
                 //Create Change Class Job To Miner
-                noWorkerStructure = owner.GetFirstStructureOfTypeThatHasNoWorker(STRUCTURE_TYPE.MINE);
+                noWorkerStructure = owner.GetFirstStructureOfTypeThatHasNoWorkerAndIsNotReserved(STRUCTURE_TYPE.MINE);
                 if (noWorkerStructure != null) {
-                    owner.settlementJobTriggerComponent.TriggerChangeClassJob("Miner");
+                    owner.settlementJobTriggerComponent.TriggerChangeClassJob("Miner", noWorkerStructure);
                 }
             }
         }
@@ -199,30 +199,30 @@ public class SettlementClassComponent : NPCSettlementComponent {
         if (numOfCombatants < neededCombatants) {
             //Combatant is needed
             string combatantClass = CharacterManager.Instance.GetRandomCombatant();
-            owner.settlementJobTriggerComponent.TriggerChangeClassJob(combatantClass);
+            owner.settlementJobTriggerComponent.TriggerChangeClassJob(combatantClass, null);
         }
     }
     private void ProcessNeededSpecialClasses(int numberOfAvailableVillagers) {
         int numOfChangeClassJob = owner.GetNumberOfJobsWith(JOB_TYPE.CHANGE_CLASS);
         if (numOfChangeClassJob < numberOfAvailableVillagers) {
             //If number of villagers that can still change class exceeds the number of change class jobs in settlement - this means that there are still spare residents that can change class to special worker class
-            LocationStructure noWorkerStructure = owner.GetFirstStructureOfTypeThatHasNoWorker(STRUCTURE_TYPE.HUNTER_LODGE);
+            LocationStructure noWorkerStructure = owner.GetFirstStructureOfTypeThatHasNoWorkerAndIsNotReserved(STRUCTURE_TYPE.HUNTER_LODGE);
             if (noWorkerStructure != null) {
                 //if there is a Skinner's Lodge in the Village that hasn't been claimed yet
                 //Create Change Class Job To Skinner
-                owner.settlementJobTriggerComponent.TriggerChangeClassJob("Skinner");
+                owner.settlementJobTriggerComponent.TriggerChangeClassJob("Skinner", noWorkerStructure);
             } else {
                 //otherwise, if there is a Workshop in the Village that hasn't been claimed yet and there is a resident that can become a Craftsman
                 //Create Change Class Job To Craftsman
-                noWorkerStructure = owner.GetFirstStructureOfTypeThatHasNoWorker(STRUCTURE_TYPE.WORKSHOP);
+                noWorkerStructure = owner.GetFirstStructureOfTypeThatHasNoWorkerAndIsNotReserved(STRUCTURE_TYPE.WORKSHOP);
                 if (noWorkerStructure != null) {
-                    owner.settlementJobTriggerComponent.TriggerChangeClassJob("Craftsman");
+                    owner.settlementJobTriggerComponent.TriggerChangeClassJob("Craftsman", noWorkerStructure);
                 } else {
                     //otherwise, if there is a Tavern in the Village that hasn't been claimed yet and there is a resident that can become a Merchant
                     //Create Change Class Job To Merchant
-                    noWorkerStructure = owner.GetFirstStructureOfTypeThatHasNoWorker(STRUCTURE_TYPE.TAVERN);
+                    noWorkerStructure = owner.GetFirstStructureOfTypeThatHasNoWorkerAndIsNotReserved(STRUCTURE_TYPE.TAVERN);
                     if (noWorkerStructure != null) {
-                        owner.settlementJobTriggerComponent.TriggerChangeClassJob("Merchant");
+                        owner.settlementJobTriggerComponent.TriggerChangeClassJob("Merchant", noWorkerStructure);
                     }
                 }
             }
