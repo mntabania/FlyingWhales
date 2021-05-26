@@ -30,7 +30,7 @@ public class InfestorBehaviour : CharacterBehaviourComponent {
                 if (roll < 1) {
                     int currentCapacity = 0;
                     if(character.homeSettlement != null) {
-                        currentCapacity = character.homeSettlement.GetNumOfResidentsThatIsHasRaceAndClassOf(character.race, character.characterClass.className);
+                        currentCapacity = character.homeSettlement.GetNumOfResidentsThatHasRaceAndClassOf(character.race, character.characterClass.className);
                     } else {
                         Area area = character.areaLocation;
                         currentCapacity = area.locationCharacterTracker.GetNumOfCharactersInsideHexThatHasRaceAndClassOf(character.race, character.characterClass.className);
@@ -51,7 +51,7 @@ public class InfestorBehaviour : CharacterBehaviourComponent {
             if (roll < 7) { //7
                 int currentCapacity = 0;
                 if (character.homeSettlement != null) {
-                    currentCapacity = character.homeSettlement.GetNumOfResidentsThatIsHasRaceAndClassOf(character.race, character.characterClass.className, typeof(MonsterInvadeBehaviour));
+                    currentCapacity = character.homeSettlement.GetNumOfResidentsThatHasRaceAndClassOf(character.race, character.characterClass.className, typeof(MonsterInvadeBehaviour));
                 } else {
                     Area area = character.areaLocation;
                     currentCapacity = area.locationCharacterTracker.GetNumOfCharactersInsideHexThatHasRaceAndClassOf(character.race, character.characterClass.className, typeof(MonsterInvadeBehaviour));

@@ -12,6 +12,11 @@ public class CharacterClassComponent : CharacterComponent {
     public CharacterClass characterClass { get; private set; }
     public string previousClassName { get; private set; }
     public List<string> ableClasses { get; private set; }
+    public bool shouldChangeClass { get; private set; }
+
+    #region getters
+    public bool canChangeClass => !characterClass.IsSpecialClass() && characterClass.className != "Ratman";
+    #endregion
     public CharacterClassComponent() {
         previousClassName = string.Empty;
         ableClasses = new List<string>();
@@ -20,6 +25,7 @@ public class CharacterClassComponent : CharacterComponent {
     public CharacterClassComponent(SaveDataCharacterClassComponent data) {
         characterClass = CharacterManager.Instance.CreateNewCharacterClass(data.className);
         previousClassName = data.previousClassName;
+        shouldChangeClass = data.shouldChangeClass;
     }
 
     #region General
@@ -105,6 +111,9 @@ public class CharacterClassComponent : CharacterComponent {
     public void OverridePreviousClassName(string p_className) {
         previousClassName = p_className;
     }
+    public void SetShouldChangeClass(bool p_state) {
+        shouldChangeClass = p_state;
+    }
     #endregion
 
     #region Able Classes
@@ -144,11 +153,13 @@ public class CharacterClassComponent : CharacterComponent {
 public class SaveDataCharacterClassComponent : SaveData<CharacterClassComponent> {
     public string className;
     public string previousClassName;
+    public bool shouldChangeClass;
 
     #region Overrides
     public override void Save(CharacterClassComponent data) {
         className = data.characterClass.className;
         previousClassName = data.previousClassName;
+        shouldChangeClass = data.shouldChangeClass;
     }
 
     public override CharacterClassComponent Load() {

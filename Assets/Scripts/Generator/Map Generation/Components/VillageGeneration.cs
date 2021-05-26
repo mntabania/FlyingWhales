@@ -399,7 +399,7 @@ public class VillageGeneration : MapGenerationComponent {
 	}
 	private void TrySpawnSingleCharacter(NPCSettlement npcSettlement, Faction faction, MapGenerationData data, Dwelling dwelling, ref List<Character> createdCharacters, ref int citizenCount, string className = "") {
 		PreCharacterData singleCharacter = GetAvailableSingleCharacterForSettlement(faction.race, data, npcSettlement);
-		string classString = string.IsNullOrEmpty(className) ? npcSettlement.settlementClassTracker.GetNextClassToCreateAndIncrementOrder(faction) : className;
+		string classString = string.IsNullOrEmpty(className) ? npcSettlement.classComponent.GetNextClassToCreateAndIncrementOrder(faction) : className;
 		if (singleCharacter != null) {
 			createdCharacters.Add(SpawnCharacter(singleCharacter, classString, dwelling, faction, npcSettlement));
 			citizenCount += 1;
@@ -590,7 +590,7 @@ public class VillageGeneration : MapGenerationComponent {
 		//single
 		PreCharacterData singleCharacter = GetAvailableSingleCharacterForSettlement(faction.race, data, npcSettlement);
 		if (singleCharacter != null) {
-			createdCharacters.Add(SpawnCharacter(singleCharacter, string.IsNullOrEmpty(providedClass) ? npcSettlement.settlementClassTracker.GetNextClassToCreateAndIncrementOrder(faction) : providedClass, dwelling, faction, npcSettlement));
+			createdCharacters.Add(SpawnCharacter(singleCharacter, string.IsNullOrEmpty(providedClass) ? npcSettlement.classComponent.GetNextClassToCreateAndIncrementOrder(faction) : providedClass, dwelling, faction, npcSettlement));
 			citizenCount += 1;
 		}
 		else {
@@ -600,7 +600,7 @@ public class VillageGeneration : MapGenerationComponent {
 			DatabaseManager.Instance.familyTreeDatabase.AddFamilyTree(newFamily);
 			singleCharacter = GetAvailableSingleCharacterForSettlement(faction.race, data, npcSettlement);
 			Assert.IsNotNull(singleCharacter, $"Generation tried to generate a new family for spawning a needed citizen. But still could not find a single character!");
-			createdCharacters.Add(SpawnCharacter(singleCharacter, string.IsNullOrEmpty(providedClass) ? npcSettlement.settlementClassTracker.GetNextClassToCreateAndIncrementOrder(faction) : providedClass, dwelling, faction, npcSettlement));
+			createdCharacters.Add(SpawnCharacter(singleCharacter, string.IsNullOrEmpty(providedClass) ? npcSettlement.classComponent.GetNextClassToCreateAndIncrementOrder(faction) : providedClass, dwelling, faction, npcSettlement));
 			citizenCount += 1;
 		}
 	}
@@ -622,7 +622,7 @@ public class VillageGeneration : MapGenerationComponent {
 				//no more sibling Couples	
 				PreCharacterData singleCharacter = GetAvailableSingleCharacterForSettlement(faction.race, data, npcSettlement);
 				if (singleCharacter != null) {
-					createdCharacters.Add(SpawnCharacter(singleCharacter, string.IsNullOrEmpty(providedClass1) ? npcSettlement.settlementClassTracker.GetNextClassToCreateAndIncrementOrder(faction) : providedClass1, dwelling, faction, npcSettlement));
+					createdCharacters.Add(SpawnCharacter(singleCharacter, string.IsNullOrEmpty(providedClass1) ? npcSettlement.classComponent.GetNextClassToCreateAndIncrementOrder(faction) : providedClass1, dwelling, faction, npcSettlement));
 					citizenCount += 1;
 				}
 				else {
@@ -632,7 +632,7 @@ public class VillageGeneration : MapGenerationComponent {
 					DatabaseManager.Instance.familyTreeDatabase.AddFamilyTree(newFamily);
 					singleCharacter = GetAvailableSingleCharacterForSettlement(faction.race, data, npcSettlement);
 					Assert.IsNotNull(singleCharacter, $"Generation tried to generate a new family for spawning a needed citizen. But still could not find a single character!");
-					createdCharacters.Add(SpawnCharacter(singleCharacter, string.IsNullOrEmpty(providedClass1) ? npcSettlement.settlementClassTracker.GetNextClassToCreateAndIncrementOrder(faction) : providedClass1, dwelling, faction, npcSettlement));
+					createdCharacters.Add(SpawnCharacter(singleCharacter, string.IsNullOrEmpty(providedClass1) ? npcSettlement.classComponent.GetNextClassToCreateAndIncrementOrder(faction) : providedClass1, dwelling, faction, npcSettlement));
 					citizenCount += 1;
 				}
 			}
@@ -717,8 +717,8 @@ public class VillageGeneration : MapGenerationComponent {
 	}
 	private List<Character> SpawnCouple(Couple couple, Dwelling dwelling, Faction faction, NPCSettlement npcSettlement, string className1 = "", string className2 = "") {
 		List<Character> characters = new List<Character>() {
-			SpawnCharacter(couple.character1, string.IsNullOrEmpty(className1) ? npcSettlement.settlementClassTracker.GetNextClassToCreateAndIncrementOrder(faction) : className1, dwelling, faction, npcSettlement),
-			SpawnCharacter(couple.character2, string.IsNullOrEmpty(className2) ? npcSettlement.settlementClassTracker.GetNextClassToCreateAndIncrementOrder(faction) : className2, dwelling, faction, npcSettlement)	
+			SpawnCharacter(couple.character1, string.IsNullOrEmpty(className1) ? npcSettlement.classComponent.GetNextClassToCreateAndIncrementOrder(faction) : className1, dwelling, faction, npcSettlement),
+			SpawnCharacter(couple.character2, string.IsNullOrEmpty(className2) ? npcSettlement.classComponent.GetNextClassToCreateAndIncrementOrder(faction) : className2, dwelling, faction, npcSettlement)	
 		};
 		return characters;
 	}

@@ -1,8 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Inner_Maps.Location_Structures;
 
-public class BuildStructureComponent : CharacterComponent {
+public class CharacterStructureComponent : CharacterComponent {
     private const string Dwelling = "Dwelling";
     private const string Survival_Structures = "Survival Structures"; //Hunter's Lodge/Apothecary/Mage Quarters
     private const string Utility_Structures = "Utility Structures"; //Inn/Warehouse/Cemetery/Prison/Granary/Miner's Camp
@@ -22,7 +23,9 @@ public class BuildStructureComponent : CharacterComponent {
     private List<STRUCTURE_TYPE> missingStructures;
     private List<string> buildStructureOrder;
 
-    public BuildStructureComponent() {
+    public ManMadeStructure workPlaceStructure { get; private set; } //Do not save this because the loading of this is handled in ManMadeStructure - LoadReferences
+
+    public CharacterStructureComponent() {
         startLoopIndex = 0;
         currentIndex = 0;
         survivalStructures = new List<STRUCTURE_TYPE>();
@@ -30,7 +33,7 @@ public class BuildStructureComponent : CharacterComponent {
         combatStructures = new List<STRUCTURE_TYPE>();
         missingStructures = new List<STRUCTURE_TYPE>();
     }
-    public BuildStructureComponent(SaveDataBuildStructureComponent data) {
+    public CharacterStructureComponent(SaveDataCharacterStructureComponent data) {
         currentIndex = data.currentIndex;
         startLoopIndex = data.startLoopIndex;
         survivalStructures = new List<STRUCTURE_TYPE>();
@@ -103,6 +106,12 @@ public class BuildStructureComponent : CharacterComponent {
     public void OnDestroyStructure(STRUCTURE_TYPE destroyedStructureType) {
         missingStructures.Add(destroyedStructureType);
     }
+    public void SetWorkPlaceStructure(ManMadeStructure p_structure) {
+        workPlaceStructure = p_structure;
+    }
+    public bool HasWorkPlaceStructure() {
+        return workPlaceStructure != null;
+    }
     #endregion
 
     #region Categorized Structures
@@ -173,25 +182,25 @@ public class BuildStructureComponent : CharacterComponent {
     #endregion
 
     #region Loading
-    public void LoadReferences(SaveDataBuildStructureComponent data) {
+    public void LoadReferences(SaveDataCharacterStructureComponent data) {
         //Currently N/A
     }
     #endregion
 }
 
 [System.Serializable]
-public class SaveDataBuildStructureComponent : SaveData<BuildStructureComponent> {
+public class SaveDataCharacterStructureComponent : SaveData<CharacterStructureComponent> {
     public int currentIndex;
     public int startLoopIndex;
 
     #region Overrides
-    public override void Save(BuildStructureComponent data) {
+    public override void Save(CharacterStructureComponent data) {
         currentIndex = data.currentIndex;
         startLoopIndex = data.startLoopIndex;
     }
 
-    public override BuildStructureComponent Load() {
-        BuildStructureComponent component = new BuildStructureComponent(this);
+    public override CharacterStructureComponent Load() {
+        CharacterStructureComponent component = new CharacterStructureComponent(this);
         return component;
     }
     #endregion
