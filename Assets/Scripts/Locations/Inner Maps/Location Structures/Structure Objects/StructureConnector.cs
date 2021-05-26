@@ -60,9 +60,22 @@ namespace Inner_Maps.Location_Structures {
         #endregion
 
         #region Loading
-        public void LoadReferences(SaveDataStructureConnector saveData, InnerTileMap innerTileMap) {
+        public void LoadReferencesForStructureObjects(SaveDataStructureConnector saveData, InnerTileMap innerTileMap) {
             _isOpen = saveData.isOpen;
             _tileLocation = GetLocationGridTileGivenCurrentPosition(innerTileMap); //no need too add connector to tile, since that number is saved on SaveDataLocationGridTile.
+            if (_tileLocation != null) {
+                _tileLocation.area.structureComponent.AddStructureConnector(this);
+            }
+            Messenger.AddListener<LocationGridTile>(StructureSignals.STRUCTURE_CONNECTOR_PLACED, OnStructureConnectorPlaced);
+            Messenger.AddListener<LocationGridTile>(StructureSignals.STRUCTURE_CONNECTOR_REMOVED, OnStructureConnectorRemoved);
+        }
+        public void LoadConnectorForTileObjects(InnerTileMap innerTileMap) {
+            _tileLocation = GetLocationGridTileGivenCurrentPosition(innerTileMap);
+            if (_tileLocation != null) {
+                _tileLocation.area.structureComponent.AddStructureConnector(this);
+                Messenger.AddListener<LocationGridTile>(StructureSignals.STRUCTURE_CONNECTOR_PLACED, OnStructureConnectorPlaced);
+                Messenger.AddListener<LocationGridTile>(StructureSignals.STRUCTURE_CONNECTOR_REMOVED, OnStructureConnectorRemoved);
+            }
         }
         #endregion
         

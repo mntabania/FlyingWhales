@@ -34,15 +34,19 @@ namespace Inner_Maps.Location_Structures {
         public Cave(Region location, SaveDataNaturalStructure data) : base(location, data) {
             SaveDataCave saveDataCave = data as SaveDataCave;
             producedResource = saveDataCave.producedResource;
-            
             oreSpots = new List<LocationGridTile>();
+            stoneSpots = new List<LocationGridTile>();
+        }
+        public override void LoadReferences(SaveDataLocationStructure saveDataLocationStructure) {
+            base.LoadReferences(saveDataLocationStructure);
+            SaveDataCave saveDataCave = saveDataLocationStructure as SaveDataCave;
+            
             for (int i = 0; i < saveDataCave.oreSpots.Length; i++) {
                 TileLocationSave saveData = saveDataCave.oreSpots[i];
                 LocationGridTile tile = DatabaseManager.Instance.locationGridTileDatabase.GetTileBySavedData(saveData);
                 oreSpots.Add(tile);
             }
             
-            stoneSpots = new List<LocationGridTile>();
             for (int i = 0; i < saveDataCave.stoneSpots.Length; i++) {
                 TileLocationSave saveData = saveDataCave.stoneSpots[i];
                 LocationGridTile tile = DatabaseManager.Instance.locationGridTileDatabase.GetTileBySavedData(saveData);
@@ -85,12 +89,22 @@ namespace Inner_Maps.Location_Structures {
 
         #region Mining Spots
         public void AddStoneSpot(LocationGridTile p_tile) {
-            //TODO: Add mine advertisement here
-            stoneSpots.Add(p_tile);
+            if (!stoneSpots.Contains(p_tile)) {
+                stoneSpots.Add(p_tile);
+                //create rock at location
+                TileObject tileObject = InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.ROCK);
+                AddPOI(tileObject, p_tile);
+            }
+            
         }
         public void AddOreSpot(LocationGridTile p_tile) {
-            //TODO: Add mine advertisement here
-            oreSpots.Add(p_tile);
+            if (!oreSpots.Contains(p_tile)) {
+                oreSpots.Add(p_tile);
+                //create ore vein at location
+                Ore tileObject = InnerMapManager.Instance.CreateNewTileObject<Ore>(TILE_OBJECT_TYPE.ORE);
+                tileObject.SetProvidedMetal(producedResource);
+                AddPOI(tileObject, p_tile);    
+            }
         }
         #endregion
 

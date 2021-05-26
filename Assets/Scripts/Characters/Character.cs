@@ -128,6 +128,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
 
     //IMPORTANT: This component is not applicable to all characters, only VILLAGERS! So, this can be null if the character is NOT A VILLAGER.
     public CharacterTalentComponent talentComponent { get; private set; }
+    public DailyScheduleComponent dailyScheduleComponent { get; private set; }
 
     #region getters / setters
     public string bookmarkName => lycanData != null ? lycanData.activeForm.visuals.GetCharacterNameWithIconAndColor() : visuals.GetCharacterNameWithIconAndColor();
@@ -339,6 +340,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         equipmentComponent = new EquipmentComponent();
         needsComponent.ResetSleepTicks();
         resourceStorageComponent = new ResourceStorageComponent();
+        dailyScheduleComponent = new DailyScheduleComponent(); dailyScheduleComponent.SetOwner(this);
     }
     public Character(SaveDataCharacter data) {
         skillCauseOfDeath = PLAYER_SKILL_TYPE.NONE;
@@ -417,6 +419,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         previousCharacterDataComponent = data.previousCharacterDataComponent.Load(); previousCharacterDataComponent.SetOwner(this);
         traitComponent = data.traitComponent.Load(); traitComponent.SetOwner(this);
         moneyComponent = data.moneyComponent.Load(); moneyComponent.SetOwner(this);
+        dailyScheduleComponent = data.dailyScheduleComponent.Load(); dailyScheduleComponent.SetOwner(this);
 
         if (data.talentComponent != null) {
             talentComponent = data.talentComponent.Load(); talentComponent.SetOwner(this);
@@ -6346,6 +6349,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         crimeComponent.LoadReferences(data.crimeComponent);
         previousCharacterDataComponent.LoadReferences(data.previousCharacterDataComponent);
         traitComponent.LoadReferences(data.traitComponent);
+        dailyScheduleComponent.LoadReferences(data.dailyScheduleComponent);
         //Place marker after loading references
         if (data.hasMarker) {
             if (!marker) {

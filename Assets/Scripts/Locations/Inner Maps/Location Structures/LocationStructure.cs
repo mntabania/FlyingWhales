@@ -599,36 +599,70 @@ namespace Inner_Maps.Location_Structures {
                 }
             }
         }
-        public void PopulateTileObjectsOfTypeThatIsBlockWallValidForOreVein2(List<LocationGridTile> p_tiles, MapGenerationData p_data) {
-            for (int i = 0; i < tiles.Count; i++) {
-                LocationGridTile tile = tiles.ElementAt(i);
-                TILE_OBJECT_TYPE tileObjectType = p_data.GetGeneratedObjectOnTile(tile);
-                if (tileObjectType == TILE_OBJECT_TYPE.BLOCK_WALL) {
-                    List<LocationGridTile> caveNeighbours = RuinarchListPool<LocationGridTile>.Claim();
-                    tile.PopulateFourNeighboursThatHasTileObjectOfType(caveNeighbours, TILE_OBJECT_TYPE.BLOCK_WALL, p_data);
-                    int wildernessNeighboursCount = tile.GetCountOfFourNeighboursInStructureType(STRUCTURE_TYPE.WILDERNESS);
-                    if (caveNeighbours.Count == 2 && wildernessNeighboursCount == 1) {
-                        List<GridNeighbourDirection> directions = RuinarchListPool<GridNeighbourDirection>.Claim();
-                        for (int j = 0; j < caveNeighbours.Count; j++) {
-                            LocationGridTile neighbour = caveNeighbours[j];
-                            tile.TryGetNeighbourDirection(neighbour, out GridNeighbourDirection direction);
-                            directions.Add(direction);
+        public void PopulateTileObjectsOfTypeThatIsBlockWallValidForOreVein2<T>(List<T> objs) where T : TileObject {
+            for (int i = 0; i < pointsOfInterest.Count; i++) {
+                IPointOfInterest poi = pointsOfInterest.ElementAt(i);
+                if (poi is T t) {
+                    if (t.gridTileLocation != null) {
+                        List<LocationGridTile> caveNeighbours = RuinarchListPool<LocationGridTile>.Claim();
+                        t.gridTileLocation.PopulateFourNeighboursThatHasTileObjectOfType(caveNeighbours, TILE_OBJECT_TYPE.BLOCK_WALL);
+                        int wildernessNeighboursCount = t.gridTileLocation.GetCountOfFourNeighboursInStructureType(STRUCTURE_TYPE.WILDERNESS);
+                        if (caveNeighbours.Count == 2 && wildernessNeighboursCount == 1) {
+                            List<GridNeighbourDirection> directions = RuinarchListPool<GridNeighbourDirection>.Claim();
+                            for (int j = 0; j < caveNeighbours.Count; j++) {
+                                LocationGridTile neighbour = caveNeighbours[j];
+                                t.gridTileLocation.TryGetNeighbourDirection(neighbour, out GridNeighbourDirection direction);
+                                directions.Add(direction);
+                            }
+                            if ((directions[0] == GridNeighbourDirection.North && directions[1] == GridNeighbourDirection.South) ||
+                                (directions[0] == GridNeighbourDirection.South && directions[1] == GridNeighbourDirection.North) ||
+                                (directions[0] == GridNeighbourDirection.East && directions[1] == GridNeighbourDirection.West) ||
+                                directions[0] == GridNeighbourDirection.West && directions[1] == GridNeighbourDirection.East) {
+                                objs.Add(t);
+                            }
+                            RuinarchListPool<GridNeighbourDirection>.Release(directions);
                         }
-                        if((directions[0] == GridNeighbourDirection.North && directions[1] == GridNeighbourDirection.South) || (directions[0] == GridNeighbourDirection.South && directions[1] == GridNeighbourDirection.North) ||
-                           (directions[0] == GridNeighbourDirection.East && directions[1] == GridNeighbourDirection.West) || directions[0] == GridNeighbourDirection.West && directions[1] == GridNeighbourDirection.East) {
-                            p_tiles.Add(tile);
+                        else if (caveNeighbours.Count == 3 && wildernessNeighboursCount == 1) {
+                            if (t.gridTileLocation.GetCountOfNeighboursThatHasTileObjectOfType(TILE_OBJECT_TYPE.BLOCK_WALL) == 5 &&
+                                t.gridTileLocation.GetCountOfNeighboursInStructureType(STRUCTURE_TYPE.WILDERNESS) == 3) {
+                                objs.Add(t);
+                            }
                         }
-                        RuinarchListPool<GridNeighbourDirection>.Release(directions);
-                    } else if (caveNeighbours.Count == 3 && wildernessNeighboursCount == 1) {
-                        if(tile.GetCountOfNeighboursThatHasTileObjectOfType(TILE_OBJECT_TYPE.BLOCK_WALL, p_data) == 5 &&
-                           tile.GetCountOfNeighboursInStructureType(STRUCTURE_TYPE.WILDERNESS) == 3) {
-                            p_tiles.Add(tile);
-                        }
+                        RuinarchListPool<LocationGridTile>.Release(caveNeighbours);
                     }
-                    RuinarchListPool<LocationGridTile>.Release(caveNeighbours);    
                 }
             }
         }
+        // public void PopulateTileObjectsOfTypeThatIsBlockWallValidForOreVein2(List<LocationGridTile> p_tiles, MapGenerationData p_data) {
+        //     for (int i = 0; i < tiles.Count; i++) {
+        //         LocationGridTile tile = tiles.ElementAt(i);
+        //         TILE_OBJECT_TYPE tileObjectType = p_data.GetGeneratedObjectOnTile(tile);
+        //         if (tileObjectType == TILE_OBJECT_TYPE.BLOCK_WALL) {
+        //             List<LocationGridTile> caveNeighbours = RuinarchListPool<LocationGridTile>.Claim();
+        //             tile.PopulateFourNeighboursThatHasTileObjectOfType(caveNeighbours, TILE_OBJECT_TYPE.BLOCK_WALL, p_data);
+        //             int wildernessNeighboursCount = tile.GetCountOfFourNeighboursInStructureType(STRUCTURE_TYPE.WILDERNESS);
+        //             if (caveNeighbours.Count == 2 && wildernessNeighboursCount == 1) {
+        //                 List<GridNeighbourDirection> directions = RuinarchListPool<GridNeighbourDirection>.Claim();
+        //                 for (int j = 0; j < caveNeighbours.Count; j++) {
+        //                     LocationGridTile neighbour = caveNeighbours[j];
+        //                     tile.TryGetNeighbourDirection(neighbour, out GridNeighbourDirection direction);
+        //                     directions.Add(direction);
+        //                 }
+        //                 if((directions[0] == GridNeighbourDirection.North && directions[1] == GridNeighbourDirection.South) || (directions[0] == GridNeighbourDirection.South && directions[1] == GridNeighbourDirection.North) ||
+        //                    (directions[0] == GridNeighbourDirection.East && directions[1] == GridNeighbourDirection.West) || directions[0] == GridNeighbourDirection.West && directions[1] == GridNeighbourDirection.East) {
+        //                     p_tiles.Add(tile);
+        //                 }
+        //                 RuinarchListPool<GridNeighbourDirection>.Release(directions);
+        //             } else if (caveNeighbours.Count == 3 && wildernessNeighboursCount == 1) {
+        //                 if(tile.GetCountOfNeighboursThatHasTileObjectOfType(TILE_OBJECT_TYPE.BLOCK_WALL, p_data) == 5 &&
+        //                    tile.GetCountOfNeighboursInStructureType(STRUCTURE_TYPE.WILDERNESS) == 3) {
+        //                     p_tiles.Add(tile);
+        //                 }
+        //             }
+        //             RuinarchListPool<LocationGridTile>.Release(caveNeighbours);    
+        //         }
+        //     }
+        // }
         public T GetRandomTileObjectOfTypeThatHasTileLocation<T>() where T : TileObject {
             List<TileObject> objs = RuinarchListPool<TileObject>.Claim();
             for (int i = 0; i < pointsOfInterest.Count; i++) {

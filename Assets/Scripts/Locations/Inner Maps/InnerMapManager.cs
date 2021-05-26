@@ -406,6 +406,7 @@ namespace Inner_Maps {
             summary = $"{summary}<b>Area Elevation:</b>{(area.elevationType.ToString() ?? "None")}";
             summary = $"{summary}<b>Area Passable Tiles:</b>{area.gridTileComponent.passableTiles.Count.ToString()}";
             summary = $"{summary}<b>Settlement on Area:</b>{(area.settlementOnArea?.name ?? "None")}";
+            summary = $"{summary}<b>Structure Connectors on Area:</b>{area.structureComponent.structureConnectors.Count.ToString()}";
             summary = $"{summary}\n<b>Area Features:</b>{area.featureComponent.features.ComafyList()}";
             summary = $"{summary}\n<b>Tile Biome:</b>{tile.mainBiomeType.ToString()}";
             summary = $"{summary}<b>Tile Elevation:</b>{tile.elevationType.ToString()}";

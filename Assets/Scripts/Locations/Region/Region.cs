@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Inner_Maps;
+using Inner_Maps.Grid_Tile_Features;
 using Inner_Maps.Location_Structures;
 using Locations.Region_Features;
 using Locations.Settlements;
@@ -32,6 +33,7 @@ public class Region : ISavable, ILogFiller {
     //Components
     public RegionFeatureComponent regionFeatureComponent { get; }
     public BiomeDivisionComponent biomeDivisionComponent { get; }
+    public GridTileFeatureComponent gridTileFeatureComponent { get; }
     /// <summary>
     /// Number of tile objects in this region categorized by type.
     /// NOTE: This isn't saved/loaded since this is updated every time a new tile object is placed.
@@ -73,6 +75,8 @@ public class Region : ISavable, ILogFiller {
         AddTile(coreTile);
         regionColor = GenerateRandomRegionColor();
         biomeDivisionComponent = new BiomeDivisionComponent();
+        gridTileFeatureComponent = new GridTileFeatureComponent();
+        gridTileFeatureComponent.Initialize();
 #if DEBUG_LOG
         Debug.Log($"Created region {this.name} with core tile {coreTile.ToString()}");
 #endif
@@ -88,6 +92,7 @@ public class Region : ISavable, ILogFiller {
 
         //Components
         biomeDivisionComponent = data.regionDivisionComponent.Load();
+        gridTileFeatureComponent = data.gridTileFeatureComponent.Load();
     }
 
 #region Loading
@@ -141,6 +146,7 @@ public class Region : ISavable, ILogFiller {
             VillageSpot villageSpot = saveDataRegion.villageSpots[i].Load();
             villageSpots.Add(villageSpot);
         }
+        gridTileFeatureComponent.LoadReferences(saveDataRegion.gridTileFeatureComponent);
 #if DEBUG_LOG
         Debug.Log(summary);
 #endif

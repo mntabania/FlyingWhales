@@ -1413,3 +1413,4 @@ public enum Precipitation_Type {
 public enum CHARACTER_TALENT { None, Martial_Arts, Combat_Magic, Healing_Magic, Crafting, Resources, Food, Social }
 
 public enum EQUIPMENT_QUALITY { Normal = 0, High, Premium }
+public enum DAILY_SCHEDULE { Free_Time, Work, Sleep }

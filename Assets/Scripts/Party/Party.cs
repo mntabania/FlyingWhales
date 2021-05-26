@@ -789,11 +789,13 @@ public class Party : ILogFiller, ISavable, IJobOwner, IBookmarkable {
     private void OnAddMember(Character character) {
         character.partyComponent.SetCurrentParty(this);
         character.behaviourComponent.AddBehaviourComponent(typeof(PartyBehaviour));
+        character.dailyScheduleComponent.OnCharacterJoinedParty(character);
         Messenger.Broadcast(PartySignals.CHARACTER_JOINED_PARTY, this, character);
     }
     private void OnRemoveMember(Character character) {
         character.partyComponent.SetCurrentParty(null);
         character.behaviourComponent.RemoveBehaviourComponent(typeof(PartyBehaviour));
+        character.dailyScheduleComponent.OnCharacterLeftParty(character);
         character.jobQueue.CancelAllPartyJobs();
         if (character.isDead) {
             CharacterDies(character);
@@ -804,6 +806,7 @@ public class Party : ILogFiller, ISavable, IJobOwner, IBookmarkable {
     private void OnRemoveMemberOnDisband(Character character) {
         character.partyComponent.SetCurrentParty(null);
         character.behaviourComponent.RemoveBehaviourComponent(typeof(PartyBehaviour));
+        character.dailyScheduleComponent.OnCharacterLeftParty(character);
         character.jobQueue.CancelAllPartyJobs();
         RemoveMemberThatJoinedQuest(character);
         Messenger.Broadcast(PartySignals.CHARACTER_LEFT_PARTY_DISBAND, this, character);

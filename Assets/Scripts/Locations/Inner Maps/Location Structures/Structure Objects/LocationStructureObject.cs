@@ -993,7 +993,7 @@ public class LocationStructureObject : PooledObject, ISelectable {
         for (int i = 0; i < _connectors.Length; i++) {
             StructureConnector connector = _connectors[i];
             SaveDataStructureConnector saveData = connectorSaves[i];
-            connector.LoadReferences(saveData, innerTileMap);
+            connector.LoadReferencesForStructureObjects(saveData, innerTileMap);
         }
     }
     #endregion

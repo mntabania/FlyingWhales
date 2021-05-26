@@ -6,6 +6,7 @@ using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using Cellular_Automata;
+using Inner_Maps.Grid_Tile_Features;
 using Inner_Maps.Location_Structures;
 using Perlin_Noise;
 using UnityEngine;
@@ -206,78 +207,26 @@ namespace Inner_Maps {
             StartCoroutine(MountainCellAutomata(p_island.tiles.ToList(), p_caveStructure, mapGenerationData));
             stopwatch.Stop();
             mapGenerationComponent.AddLog($"{region.name} Draw Cave Cell Automata took {stopwatch.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)} seconds to complete.");
-            
-            //generate ores
-            List<LocationGridTile> validWallsForOreVeins = RuinarchListPool<LocationGridTile>.Claim();
-            p_caveStructure.PopulateTileObjectsOfTypeThatIsBlockWallValidForOreVein2(validWallsForOreVeins, mapGenerationData);
-		    
-            var randomOreAmount = p_caveStructure.occupiedAreas.Count == 1 ? UnityEngine.Random.Range(4, 11) : UnityEngine.Random.Range(8, 16);
-            for (int i = 0; i < randomOreAmount; i++) {
-                if (validWallsForOreVeins.Count == 0) { break; }
-                LocationGridTile oreVeinLocation = CollectionUtilities.GetRandomElement(validWallsForOreVeins);
-                CreateOreVein(oreVeinLocation);
-                mapGenerationData.SetGeneratedMapPerlinDetails(oreVeinLocation, TILE_OBJECT_TYPE.NONE);
-                validWallsForOreVeins.Remove(oreVeinLocation);
-                //create structure connector on ore vein location, this is so that even if ore vein is destroyed villagers can still create mines.
-                oreVeinLocation.tileObjectComponent.genericTileObject.CreateStructureConnector();
-            }
-            RuinarchListPool<LocationGridTile>.Release(validWallsForOreVeins);
-            
-            //generate stone and ore spots
-            Cave cave = p_caveStructure as Cave;
-            Assert.IsNotNull(cave);
-            
-            List<LocationGridTile> spotChoices = RuinarchListPool<LocationGridTile>.Claim();
-            spotChoices.AddRange(p_caveStructure.passableTiles);
-            
-            int randomStoneSpots = GameUtilities.RandomBetweenTwoNumbers(4, 6);
-            for (int i = 0; i < randomStoneSpots; i++) {
-                if (spotChoices.Count == 0) {
-                    //if no more spots were found try to re-add passable tiles.
-                    //if still no tiles were found, then break loop
-                    spotChoices.AddRange(p_caveStructure.passableTiles);
-                    if (spotChoices.Count == 0) { break; }
-                }
-                LocationGridTile spot = CollectionUtilities.GetRandomElement(spotChoices);
-                cave.AddStoneSpot(spot);
-                spotChoices.Remove(spot);
-            }
-            
-            int randomOreSpots = GameUtilities.RandomBetweenTwoNumbers(2, 4);
-            for (int i = 0; i < randomOreSpots; i++) {
-                if (spotChoices.Count == 0) {
-                    //if no more spots were found try to re-add passable tiles.
-                    //if still no tiles were found, then break loop
-                    spotChoices.AddRange(p_caveStructure.passableTiles);
-                    if (spotChoices.Count == 0) { break; }
-                }
-                LocationGridTile spot = CollectionUtilities.GetRandomElement(spotChoices);
-                cave.AddOreSpot(spot);
-                spotChoices.Remove(spot);
-            }
-            
-            RuinarchListPool<LocationGridTile>.Release(spotChoices);
-            
         }
         public void SetAsMountainWall(LocationGridTile tile, LocationStructure structure, MapGenerationData mapGenerationData) {
             if (tile.tileObjectComponent.objHere is BlockWall) { return; }
             tile.SetTileType(LocationGridTile.Tile_Type.Wall);
             
-            //had to add this checking since block walls aren't immediately created here,
-            //but we don't want monsters to spawn on a tile set as a wall, so we set this tile as impassable.
-            //Didn't add this to tile.SetTileType function since the above case is only a problem on initial world creation,
-            //and is unnecessary for actual game time.
-            tile.structure.RemovePassableTile(tile);
-            tile.area.gridTileComponent.RemovePassableTile(tile);
+            // //had to add this checking since block walls aren't immediately created here,
+            // //but we don't want monsters to spawn on a tile set as a wall, so we set this tile as impassable.
+            // //Didn't add this to tile.SetTileType function since the above case is only a problem on initial world creation,
+            // //and is unnecessary for actual game time.
+            // tile.structure.RemovePassableTile(tile);
+            // tile.area.gridTileComponent.RemovePassableTile(tile);
             
             tile.SetTileState(LocationGridTile.Tile_State.Occupied);
-            mapGenerationData.SetGeneratedMapPerlinDetails(tile, TILE_OBJECT_TYPE.BLOCK_WALL);
+            mapGenerationData.SetGeneratedMapPerlinDetails(tile, TILE_OBJECT_TYPE.NONE);
             tile.SetIsDefault(false);
 
-            // //create wall tile object
-            // BlockWall blockWall = InnerMapManager.Instance.CreateNewTileObject<BlockWall>(TILE_OBJECT_TYPE.BLOCK_WALL);
-            // blockWall.SetWallType(WALL_TYPE.Stone);
-            // structure.AddPOI(blockWall, tile);
+            //create wall tile object
+            BlockWall blockWall = InnerMapManager.Instance.CreateNewTileObject<BlockWall>(TILE_OBJECT_TYPE.BLOCK_WALL);
+            blockWall.SetWallType(WALL_TYPE.Stone);
+            structure.AddPOI(blockWall, tile);
         }
         private void SetAsMountainGround(LocationGridTile tile, LocationStructure structure, MapGenerationData mapGenerationData) {
             if (tile.tileObjectComponent.objHere != null) { tile.structure.RemovePOI(tile.tileObjectComponent.objHere); }
@@ -285,8 +234,10 @@ namespace Inner_Maps {
             tile.SetGroundType(LocationGridTile.Ground_Type.Cave);
             tile.SetIsDefault(false);
             mapGenerationData.SetGeneratedMapPerlinDetails(tile, TILE_OBJECT_TYPE.NONE);
+            GridMap.Instance.mainRegion.gridTileFeatureComponent.RemoveFeatureFromTile<SmallTreeSpotFeature>(tile);
+            GridMap.Instance.mainRegion.gridTileFeatureComponent.RemoveFeatureFromTile<BigTreeSpotFeature>(tile);
         }
-        private IEnumerator MountainCellAutomata(List<LocationGridTile> locationGridTiles, LocationStructure elevationStructure, MapGenerationData mapGenerationData) {
+        private IEnumerator MountainCellAutomata(List<LocationGridTile> locationGridTiles, LocationStructure p_caveStructure, MapGenerationData mapGenerationData) {
             LocationGridTile[,] tileMap = CellularAutomataGenerator.ConvertListToGridMap(locationGridTiles);
 		    int fillPercent = 20;
 		    int smoothing = 1;
@@ -299,10 +250,49 @@ namespace Inner_Maps {
             }
 		    int[,] cellMap = CellularAutomataGenerator.GenerateMap(tileMap, locationGridTiles, smoothing, fillPercent);
 		    
-		    Assert.IsNotNull(cellMap, $"There was no cellmap generated for elevation structure {elevationStructure.ToString()}");
+		    Assert.IsNotNull(cellMap, $"There was no cellmap generated for elevation structure {p_caveStructure.ToString()}");
 		    
 		    yield return MapGenerator.Instance.StartCoroutine(CellularAutomataGenerator.DrawElevationMapCoroutine(
-                tileMap, cellMap, InnerMapManager.Instance.assetManager.caveWallTile, null, ELEVATION.MOUNTAIN, elevationStructure, mapGenerationData));
+                tileMap, cellMap, InnerMapManager.Instance.assetManager.caveWallTile, null, ELEVATION.MOUNTAIN, p_caveStructure, mapGenerationData));
+            
+            
+            //generate ores
+            List<BlockWall> validWallsForOreVeins = RuinarchListPool<BlockWall>.Claim();
+            p_caveStructure.PopulateTileObjectsOfTypeThatIsBlockWallValidForOreVein2(validWallsForOreVeins);
+		    
+            var randomOreAmount = p_caveStructure.occupiedAreas.Count == 1 ? UnityEngine.Random.Range(4, 11) : UnityEngine.Random.Range(8, 16);
+            for (int i = 0; i < randomOreAmount; i++) {
+                if (validWallsForOreVeins.Count == 0) { break; }
+                BlockWall oreVeinLocation = CollectionUtilities.GetRandomElement(validWallsForOreVeins);
+                mapGenerationData.SetGeneratedMapPerlinDetails(oreVeinLocation.gridTileLocation, TILE_OBJECT_TYPE.NONE);
+                
+                //create structure connector on ore vein location, this is so that even if ore vein is destroyed villagers can still create mines.
+                oreVeinLocation.gridTileLocation.tileObjectComponent.genericTileObject.CreateStructureConnector();
+                CreateOreVein(oreVeinLocation.gridTileLocation);
+                validWallsForOreVeins.Remove(oreVeinLocation);
+            }
+            RuinarchListPool<BlockWall>.Release(validWallsForOreVeins);
+            
+            //generate stone and ore spots
+            Cave cave = p_caveStructure as Cave;
+            Assert.IsNotNull(cave);
+
+            int randomStoneSpots = GameUtilities.RandomBetweenTwoNumbers(4, 6);
+            for (int i = 0; i < randomStoneSpots; i++) {
+                if (p_caveStructure.passableTiles.Count == 0) { break; }
+                LocationGridTile spot = CollectionUtilities.GetRandomElement(p_caveStructure.passableTiles);
+                cave.AddStoneSpot(spot);
+            }
+            
+            int randomOreSpots = GameUtilities.RandomBetweenTwoNumbers(2, 4);
+            for (int i = 0; i < randomOreSpots; i++) {
+                if (p_caveStructure.passableTiles.Count == 0) { break; }
+                LocationGridTile spot = CollectionUtilities.GetRandomElement(p_caveStructure.passableTiles);
+                cave.AddOreSpot(spot);
+                GridMap.Instance.mainRegion.gridTileFeatureComponent.AddFeatureToTile<MetalOreSpotFeature>(spot);
+            }
+            
+            
         }
         //private bool IsBlockWallValidForOreVein(BlockWall p_blockWall) {
         //    if (p_blockWall.gridTileLocation != null) {
@@ -412,6 +402,8 @@ namespace Inner_Maps {
             tile.SetStructure(structure);
             tile.tileObjectComponent.genericTileObject.traitContainer.AddTrait(tile.tileObjectComponent.genericTileObject, "Wet", overrideDuration: 0);
             mapGenerationData.SetGeneratedMapPerlinDetails(tile, TILE_OBJECT_TYPE.NONE);
+            GridMap.Instance.mainRegion.gridTileFeatureComponent.RemoveFeatureFromTile<SmallTreeSpotFeature>(tile);
+            GridMap.Instance.mainRegion.gridTileFeatureComponent.RemoveFeatureFromTile<BigTreeSpotFeature>(tile);
         }
         #endregion
     }

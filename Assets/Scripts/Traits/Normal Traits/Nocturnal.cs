@@ -25,6 +25,7 @@ namespace Traits {
                 character.needsComponent.SetFullnessForcedTick();
                 character.needsComponent.SetTirednessForcedTick();
                 character.needsComponent.SetHappinessForcedTick();
+                character.dailyScheduleComponent.OnCharacterGainedNocturnal(character);
             }
         }
         public override void OnRemoveTrait(ITraitable sourcePOI, Character removedBy) {
@@ -37,6 +38,7 @@ namespace Traits {
                 character.needsComponent.SetFullnessForcedTick();
                 character.needsComponent.SetTirednessForcedTick();
                 character.needsComponent.SetHappinessForcedTick();
+                character.dailyScheduleComponent.OnCharacterLostNocturnal(character);
             }
         }
         #endregion

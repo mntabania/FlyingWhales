@@ -77,6 +77,13 @@ public class FishingSpot : TileObject {
             structureConnector.OnPlaceConnector(gridTileLocation.parentMap);    
         }
     }
+    public override void OnLoadPlacePOI() {
+        DefaultProcessOnPlacePOI();
+        Messenger.AddListener(Signals.HOUR_STARTED, HourStarted);
+        if (structureConnector != null && gridTileLocation != null) {
+            structureConnector.LoadConnectorForTileObjects(gridTileLocation.parentMap);    
+        }
+    }
     public override void OnDestroyPOI() {
         base.OnDestroyPOI();
         Messenger.RemoveListener(Signals.HOUR_STARTED, HourStarted);
