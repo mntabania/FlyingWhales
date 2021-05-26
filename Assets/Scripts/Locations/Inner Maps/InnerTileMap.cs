@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
+using Inner_Maps.Grid_Tile_Features;
 using Inner_Maps.Location_Structures;
 using Locations.Settlements;
 using Pathfinding;
@@ -792,6 +793,16 @@ namespace Inner_Maps {
                             } else {
                                 p_data.SetGeneratedMapPerlinDetails(tile, tileObjectType);    
                             }
+                            //add tree spots to region grid tile features so that they can be replenished
+                            //https://trello.com/c/qBvoisWj/4699-world-gen-updates
+                            switch (tileObjectType) {
+                                case TILE_OBJECT_TYPE.TREE_OBJECT:
+                                    GridMap.Instance.mainRegion.gridTileFeatureComponent.AddFeatureToTile<SmallTreeSpotFeature>(tile);
+                                    break;
+                                case TILE_OBJECT_TYPE.BIG_TREE_OBJECT:
+                                    GridMap.Instance.mainRegion.gridTileFeatureComponent.AddFeatureToTile<BigTreeSpotFeature>(tile);
+                                    break;
+                            }
                         } else {
                             p_data.SetGeneratedMapPerlinDetails(tile, TILE_OBJECT_TYPE.NONE);
                         }
@@ -814,7 +825,7 @@ namespace Inner_Maps {
                 for (int y = 0; y < height; y++) {
                     LocationGridTile tile = map[x, y];
                     TILE_OBJECT_TYPE tileObjectType = p_data.generatedMapPerlinDetailsMap[x][y];
-                    if (tileObjectType != TILE_OBJECT_TYPE.NONE && (tile.structure is Wilderness || tile.structure is Ocean || tile.structure is Cave)) {
+                    if (tileObjectType != TILE_OBJECT_TYPE.NONE && (tile.structure is Wilderness || tile.structure is Ocean || tile.structure is Cave) && tile.tileObjectComponent.objHere == null) {
                         Sprite sprite = detailsTilemap.GetSprite(tile.localPlace);
                         TileObject obj = InnerMapManager.Instance.CreateNewTileObject<TileObject>(tileObjectType);
                         if (obj is BlockWall blockWall) {
@@ -848,6 +859,7 @@ namespace Inner_Maps {
             stopwatch.Stop();
             Debug.Log($"{region.name} GraduallyGenerateTileObjects took {stopwatch.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)} seconds to complete.");
             p_data.SetGeneratingTileObjectsState(false);
+            Messenger.Broadcast(Signals.TILE_OBJECT_GENERATION_FINISHED);
         }
         private Tile_Tag RandomizeTileTag(Biome_Tile_Type p_tileType) {
             switch (p_tileType) {

@@ -22,6 +22,7 @@ public class SaveDataRegion : SaveData<Region> {
 
     //Components
     public SaveDataRegionDivisionComponent regionDivisionComponent;
+    public SaveDataGridTileFeatureComponent gridTileFeatureComponent;
 
     public override void Save(Region region) {
         persistentID = region.persistentID;
@@ -73,5 +74,6 @@ public class SaveDataRegion : SaveData<Region> {
 
         //Components
         regionDivisionComponent = new SaveDataRegionDivisionComponent(); regionDivisionComponent.Save(region.biomeDivisionComponent);
+        gridTileFeatureComponent = new SaveDataGridTileFeatureComponent(); gridTileFeatureComponent.Save(region.gridTileFeatureComponent);
     }
 }

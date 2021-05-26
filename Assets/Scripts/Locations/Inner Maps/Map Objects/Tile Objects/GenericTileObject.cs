@@ -453,7 +453,7 @@ public class GenericTileObject : TileObject {
             
         }
         if (saveDataGenericTileObject.hasStructureConnector) {
-            CreateStructureConnector();
+            LoadStructureConnector();
         }
     }
     private void LoadBlueprintOnTile(string prefabName) {
@@ -489,6 +489,19 @@ public class GenericTileObject : TileObject {
         Messenger.AddListener<Area, BaseSettlement>(SettlementSignals.SETTLEMENT_ADDED_AREA, OnSettlementAddedArea);
         Messenger.AddListener<Area, BaseSettlement>(SettlementSignals.SETTLEMENT_REMOVED_AREA, OnSettlementRemovedArea);
         gridTileLocation.SetIsDefault(false);
+    }
+    private void LoadStructureConnector() {
+        BaseMapObjectVisual objectVisual = GetOrCreateMapVisual();
+        StructureConnector connector = objectVisual.gameObject.AddComponent<StructureConnector>();
+        structureConnector = connector;
+        if (gridTileLocation.area.settlementOnArea != null) {
+            gridTileLocation.area.settlementOnArea.SettlementResources?.AddToListBasedOnRequirement(SettlementResources.StructureRequirement.MINE_SHACK_SPOT, this);
+        }
+        Messenger.AddListener<Area, BaseSettlement>(SettlementSignals.SETTLEMENT_ADDED_AREA, OnSettlementAddedArea);
+        Messenger.AddListener<Area, BaseSettlement>(SettlementSignals.SETTLEMENT_REMOVED_AREA, OnSettlementRemovedArea);
+        if (structureConnector != null && gridTileLocation != null) {
+            structureConnector.LoadConnectorForTileObjects(gridTileLocation.parentMap);
+        }
     }
     private void OnSettlementAddedArea(Area p_area, BaseSettlement p_settlement) {
         if (gridTileLocation.area == p_area && p_settlement is NPCSettlement npcSettlement) {
