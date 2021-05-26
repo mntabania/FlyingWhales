@@ -23,6 +23,17 @@ namespace Inner_Maps.Location_Structures {
             assignedWorkerID = data.assignedWorkerID;
         }
 
+        #region Behaviours
+        public void ProcessWorkerBehaviour(out JobQueueItem producedJob) {
+            //We wrapped the actual process of getting worker jobs by structure in here so that the assignedWorker is only called once 
+            //and be passed down as a parameter since assignedWorker is a getter
+            //It would be waste of processing to call it every time
+            Character worker = assignedWorker;
+            ProcessWorkStructureJobsByWorker(worker, out producedJob);
+        }
+        protected virtual void ProcessWorkStructureJobsByWorker(Character p_worker, out JobQueueItem producedJob) { producedJob = null; }
+        #endregion
+
         #region Listeners
         protected override void SubscribeListeners() {
             if (hasBeenDestroyed) { return; }
