@@ -151,16 +151,15 @@ namespace UtilityScripts {
         summary = $"{summary}{"\nPriority Jobs: " + activeCharacter.jobComponent.GetPriorityJobs()}";
         summary = $"{summary}{"\nSecondary Jobs: " + activeCharacter.jobComponent.GetSecondaryJobs()}";
         summary = $"{summary}{"\nAble Jobs: " + activeCharacter.jobComponent.GetAbleJobs()}";
-        summary = $"{summary}{"\nAdditional Priority Jobs: " + activeCharacter.jobComponent.GetAdditionalPriorityJobs()}";
+        // summary = $"{summary}{"\nAdditional Priority Jobs: " + activeCharacter.jobComponent.GetAdditionalPriorityJobs()}";
         summary = $"{summary}{("\nParty: " + (activeCharacter.partyComponent.hasParty ? activeCharacter.partyComponent.currentParty.partyName : "None") + ", State: " + activeCharacter.partyComponent.currentParty?.partyState.ToString() + ", Members: " + activeCharacter.partyComponent.currentParty?.members.Count + ", Beacon: " + activeCharacter.partyComponent.currentParty?.beaconComponent.currentBeaconCharacter?.name + ", Is Following: " + activeCharacter.partyComponent.isFollowingBeacon)}";
         summary = $"{summary}{"\nPrimary Bed: " + (activeCharacter.tileObjectComponent.primaryBed != null ? activeCharacter.tileObjectComponent.primaryBed.name : "None")}";
         summary = $"{summary}{"\nEnable Digging: " + activeCharacter.movementComponent.enableDigging.ToString()}";
-        summary = $"{summary}{"\nAvoid Settlements: " + activeCharacter.movementComponent.avoidSettlements.ToString()}";
+        // summary = $"{summary}{"\nAvoid Settlements: " + activeCharacter.movementComponent.avoidSettlements.ToString()}";
         summary = $"{summary}{"\nPlanner Status: " + activeCharacter.planner.status.ToString()}";
         summary = $"{summary}{"\nNum of action being performed: " + activeCharacter.numOfActionsBeingPerformedOnThis}";
 
-
-            if (activeCharacter.stateComponent.currentState != null) {
+        if (activeCharacter.stateComponent.currentState != null) {
             summary = $"{summary}\nCurrent State: {activeCharacter.stateComponent.currentState}";
             summary = $"{summary}\n\tDuration in state: {activeCharacter.stateComponent.currentState.currentDuration.ToString()}/{activeCharacter.stateComponent.currentState.duration.ToString()}";
         }
@@ -191,17 +190,8 @@ namespace UtilityScripts {
         } else {
             summary += "None";
         }
-        
-        // summary += "\nCharacters with opinion: ";
-        // if (activeCharacter.relationshipContainer.charactersWithOpinion.Count > 0) {
-        //     for (int i = 0; i < activeCharacter.relationshipContainer.charactersWithOpinion.Count; i++) {
-        //         Character characterWithOpinion = activeCharacter.relationshipContainer.charactersWithOpinion[i];
-        //         summary += $"{characterWithOpinion}, ";
-        //     }
-        // } else {
-        //     summary += "None";
-        // }
-        // summary += "\n" + activeCharacter.needsComponent.GetNeedsSummary();
+        summary += $"\nCurrent Schedule Type: {activeCharacter.dailyScheduleComponent.schedule.GetScheduleType(GameManager.Instance.Today().tick).ToString()}";
+        summary += $"\nDaily Schedule: {activeCharacter.dailyScheduleComponent.schedule.GetScheduleSummary()}";
         UIManager.Instance.ShowSmallInfo(summary);
 #endif
     }
