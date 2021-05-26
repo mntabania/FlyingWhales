@@ -103,6 +103,19 @@ public class SaveDataLocationStructure : SaveData<LocationStructure> {
 public class SaveDataNaturalStructure : SaveDataLocationStructure {
     //No Unique data for now
 }
+public class SaveDataAnimalDen : SaveDataNaturalStructure {
+    public string structureTemplateName;
+    public Vector3Save structureObjectWorldPosition;
+    public override void Save(LocationStructure structure) {
+        base.Save(structure);
+        AnimalDen animalDen = structure as AnimalDen;
+        Assert.IsNotNull(animalDen);
+        string templateName = animalDen.structureObj.name;
+        templateName = templateName.Replace("(Clone)", "");
+        structureTemplateName = templateName;
+        structureObjectWorldPosition = animalDen.structureObj.transform.position; 
+    }
+}
 
 public class SaveDataManMadeStructure : SaveDataLocationStructure {
 

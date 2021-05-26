@@ -45563,6 +45563,7 @@ MonoBehaviour:
     - accessory_bracer
     - accessory_necklace
     - accessory_ring
+    - animalBurrow
     - animal_den
     - ankh
     - Antidote
@@ -46186,6 +46187,7 @@ MonoBehaviour:
     - {fileID: 21300000, guid: 7d44162b82650cd4788e091ab7b7e290, type: 3}
     - {fileID: 21300000, guid: 83d156a4d91d81048b2ad70e8533c960, type: 3}
     - {fileID: 21300000, guid: 11539cea24b72df4682c57a99db1ddce, type: 3}
+    - {fileID: 21300000, guid: c61348a1ac9ca0446ab0b5da8ebbf5e6, type: 3}
     - {fileID: 21300000, guid: 47925766893f5664493bc782e664f4b9, type: 3}
     - {fileID: 21300000, guid: 87f6c55abd2da114ebc141713ab6dba3, type: 3}
     - {fileID: 21300000, guid: 63884d5f4c549d3428e8988d83c95e38, type: 3}

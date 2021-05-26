@@ -379,11 +379,13 @@ public class GenericTileObject : TileObject {
             }
         }
         
-        Assert.IsTrue(structure is DemonicStructure || structure is ManMadeStructure);
+        Assert.IsTrue(structure is DemonicStructure || structure is ManMadeStructure || structure is AnimalDen);
         if (structure is DemonicStructure demonicStructure) {
             demonicStructure.SetStructureObject(p_blueprint);    
         } else if (structure is ManMadeStructure manMadeStructure) {
             manMadeStructure.SetStructureObject(p_blueprint);    
+        } else if (structure is AnimalDen animalDen) {
+            animalDen.SetStructureObject(p_blueprint);    
         }
         
         structure.SetOccupiedArea(hexTile);

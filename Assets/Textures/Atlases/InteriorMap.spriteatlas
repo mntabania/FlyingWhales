@@ -43,7 +43,7 @@ SpriteAtlas:
     variantMultiplier: 1
     packables:
     - {fileID: 102900000, guid: 129c2b5e0c8f0e14d9fb8b1c30296b6d, type: 3}
-    totalSpriteSurfaceArea: 5411546
+    totalSpriteSurfaceArea: 5427930
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
@@ -131,6 +131,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 797c7e8110f63d34c9fbba42fd8b2ac4, type: 3}
   - {fileID: 21300000, guid: b5c4cb9157cfa6644a6479fbe8c1df7d, type: 3}
   - {fileID: 21300000, guid: b4653f91d7eebfc41a2f642020052773, type: 3}
+  - {fileID: 21300000, guid: c61348a1ac9ca0446ab0b5da8ebbf5e6, type: 3}
   - {fileID: 21300000, guid: f1aa09a115c8d1243bb532c24353dce8, type: 3}
   - {fileID: 21300000, guid: e03a6ba104270db4da3c7921d7db87cd, type: 3}
   - {fileID: 21300000, guid: a8409da1cfb8eec4c86e6259651c3262, type: 3}
@@ -984,6 +985,7 @@ SpriteAtlas:
   - corruptedSpike01
   - stone_h00
   - cobble03
+  - animalBurrow
   - bow_copper
   - demonSigilPentagon03
   - snow_h00

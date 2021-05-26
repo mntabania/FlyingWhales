@@ -711,6 +711,12 @@ public enum STRUCTURE_TYPE {
     DEFENSE_POINT = 56,
     IMP_HUT = 57,
     BUTCHERS_SHOP = 58,
+    BOAR_DEN = 59,
+    WOLF_DEN = 60,
+    BEAR_DEN = 61,
+    RABBIT_HOLE = 62,
+    MINK_HOLE = 63,
+    MOONCRAWLER_HOLE = 64,
 }
 public enum RELATIONSHIP_TYPE {
     NONE = 0,

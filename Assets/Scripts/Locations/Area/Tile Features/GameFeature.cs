@@ -21,9 +21,6 @@ namespace Locations.Area_Features {
             SUMMON_TYPE.Pig,
             SUMMON_TYPE.Sheep,
             SUMMON_TYPE.Chicken,
-            SUMMON_TYPE.Moonwalker,
-            SUMMON_TYPE.Mink,
-            SUMMON_TYPE.Rabbit,
         }; 
     
         public GameFeature() {
@@ -81,6 +78,9 @@ namespace Locations.Area_Features {
         public void SetSpawnType(SUMMON_TYPE summon) {
             Assert.IsTrue(spawnChoices.Contains(summon), $"Setting spawn type of Game Feature to {summon.ToString()} but it is not part of the given spawn choices!");
             animalTypeBeingSpawned = summon;
+#if DEBUG_LOG
+            Debug.Log($"Set spawn type of game feature to {summon.ToString()}");
+#endif
         }
 
         private void RemoveOwnedAnimal(Animal animal) {

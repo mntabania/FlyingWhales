@@ -329,6 +329,30 @@ public static class TileObjectDB {
             maxHP = 3000,
             occupiedSize = new Point(1, 1)
         } },
+        { TILE_OBJECT_TYPE.BOAR_DEN, new TileObjectData() {
+            maxHP = 3000,
+            occupiedSize = new Point(2, 2)
+        } },
+        { TILE_OBJECT_TYPE.WOLF_DEN, new TileObjectData() {
+            maxHP = 3000,
+            occupiedSize = new Point(2, 2)
+        } },
+        { TILE_OBJECT_TYPE.BEAR_DEN, new TileObjectData() {
+            maxHP = 3000,
+            occupiedSize = new Point(2, 2)
+        } },
+        { TILE_OBJECT_TYPE.RABBIT_HOLE, new TileObjectData() {
+            maxHP = 3000,
+            occupiedSize = new Point(2, 2)
+        } },
+        { TILE_OBJECT_TYPE.MINK_HOLE, new TileObjectData() {
+            maxHP = 3000,
+            occupiedSize = new Point(2, 2)
+        } },
+        { TILE_OBJECT_TYPE.MOONCRAWLER_HOLE, new TileObjectData() {
+            maxHP = 3000,
+            occupiedSize = new Point(2, 2)
+        } },
     };
 
     public static bool HasTileObjectData(TILE_OBJECT_TYPE objType) {
