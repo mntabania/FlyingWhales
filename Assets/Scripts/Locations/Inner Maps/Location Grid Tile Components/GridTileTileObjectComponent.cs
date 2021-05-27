@@ -144,12 +144,12 @@ namespace Inner_Maps {
         public TileObject RemoveObjectHereWithoutDestroying() {
             if (objHere != null) {
                 TileObject removedObj = objHere;
-                LocationGridTile gridTile = objHere.gridTileLocation;
+                //LocationGridTile gridTile = objHere.gridTileLocation;
                 objHere.SetGridTileLocation(null);
                 SetOccupyingObject(null);
                 removedObj.previousTile?.area.OnRemovePOIInHex(removedObj);
                 owner.SetTileState(LocationGridTile.Tile_State.Empty);
-                removedObj.OnRemoveTileObject(null, gridTile, false, false);
+                removedObj.OnRemoveTileObject(null, owner, false, false);
                 //if (removedObj is TileObject tileObject) {
                 //    tileObject.OnRemoveTileObject(null, gridTile, false, false);
                 //}
@@ -163,12 +163,12 @@ namespace Inner_Maps {
         public TileObject RemoveObjectHereDestroyVisualOnly(Character remover = null) {
             if (objHere != null) {
                 TileObject removedObj = objHere;
-                LocationGridTile gridTile = objHere.gridTileLocation;
+                //LocationGridTile gridTile = objHere.gridTileLocation;
                 objHere.SetGridTileLocation(null);
                 SetOccupyingObject(null);
                 removedObj.previousTile?.area.OnRemovePOIInHex(removedObj);
                 owner.SetTileState(LocationGridTile.Tile_State.Empty);
-                removedObj.OnRemoveTileObject(null, gridTile, false, false);
+                removedObj.OnRemoveTileObject(null, owner, false, false);
                 removedObj.DestroyMapVisualGameObject();
                 //if (removedObj is TileObject removedTileObj) {
                 //    removedTileObj.OnRemoveTileObject(null, gridTile, false, false);

@@ -90,6 +90,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         migrationComponent = new SettlementVillageMigrationComponent(); migrationComponent.SetOwner(this);
         resourcesComponent = new SettlementResourcesComponent(); resourcesComponent.SetOwner(this);
         classComponent = new SettlementClassComponent(); classComponent.SetOwner(this);
+        classComponent.InitialScheduleProcessingOfNeededClasses();
     }
     public NPCSettlement(SaveDataBaseSettlement saveDataBaseSettlement) : base (saveDataBaseSettlement) {
         SaveDataNPCSettlement saveData = saveDataBaseSettlement as SaveDataNPCSettlement;
