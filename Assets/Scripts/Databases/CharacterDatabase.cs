@@ -86,10 +86,12 @@ public class CharacterDatabase {
         return limboCharactersList.Remove(character);
     }
     internal Character GetCharacterByPersistentID(string id) {
-        if (DatabaseManager.Instance.characterDatabase.allCharacters.TryGetValue(id, out Character character)) {
-            return character;
-        } else if (DatabaseManager.Instance.characterDatabase.limboCharacters.TryGetValue(id, out character)) {
-            return character;
+        if (id != null) {
+            if (DatabaseManager.Instance.characterDatabase.allCharacters.TryGetValue(id, out Character character)) {
+                return character;
+            } else if (DatabaseManager.Instance.characterDatabase.limboCharacters.TryGetValue(id, out character)) {
+                return character;
+            }
         }
         return null;
     }

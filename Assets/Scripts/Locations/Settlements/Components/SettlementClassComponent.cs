@@ -154,7 +154,7 @@ public class SettlementClassComponent : NPCSettlementComponent {
         ProcessNeededSpecialClasses(numberOfAvailableVillagers, ref log);
 
 #if DEBUG_LOG
-        Debug.LogError(log);
+        Debug.Log(log);
 #endif
     }
     private void ProcessNeededFoodProducerClasses(int numOfActiveResidents, int foodSupplyCapacity, ref string log) {
