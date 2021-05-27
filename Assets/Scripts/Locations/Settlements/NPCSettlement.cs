@@ -1472,12 +1472,13 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
             if (job.assignedCharacter == null && character.jobQueue.CanJobBeAddedToQueue(job)) {
                 if (job.jobType == character.jobComponent.primaryJob) {
                     return job;
-                } else if (chosenPriorityJob == null && character.characterClass.priorityJobs != null
-                    && (character.characterClass.priorityJobs.Contains(job.jobType) || character.jobComponent.priorityJobs.Contains(job.jobType) || character.jobComponent.additionalPriorityJobs.Contains(job.jobType))) {
+                } else if (chosenPriorityJob == null && (character.jobComponent.priorityJobs.Contains(job.jobType) || character.jobComponent.additionalPriorityJobs.Contains(job.jobType))) {
                     chosenPriorityJob = job;
-                } else if (chosenSecondaryJob == null && character.characterClass.secondaryJobs != null && character.characterClass.secondaryJobs.Contains(job.jobType)) {
-                    chosenSecondaryJob = job;
-                } else if (chosenAbleJob == null) {
+                } 
+                //else if (chosenSecondaryJob == null && character.characterClass.secondaryJobs != null && character.characterClass.secondaryJobs.Contains(job.jobType)) {
+                //    chosenSecondaryJob = job;
+                //} 
+                else if (chosenAbleJob == null) {
                     bool isAble = character.characterClass.ableJobs != null && character.characterClass.ableJobs.Contains(job.jobType);
                     if (isAble) {
                         chosenAbleJob = job;    
@@ -1784,15 +1785,15 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         if (!hasPeasants) {
             if (character.characterClass.className != "Noble") {
                 CharacterClass peasantClass = CharacterManager.Instance.GetCharacterClass("Peasant");
-                character.jobComponent.AddAdditionalPriorityJob(peasantClass.priorityJobs);
-                character.jobComponent.AddAdditionalPriorityJob(peasantClass.secondaryJobs);
+                //character.jobComponent.AddAdditionalPriorityJob(peasantClass.priorityJobs);
+                //character.jobComponent.AddAdditionalPriorityJob(peasantClass.secondaryJobs);
                 character.jobComponent.AddAdditionalPriorityJob(peasantClass.ableJobs);
             }
         } else {
             if (character.characterClass.className != "Noble") {
                 CharacterClass peasantClass = CharacterManager.Instance.GetCharacterClass("Peasant");
-                character.jobComponent.RemoveAdditionalPriorityJob(peasantClass.priorityJobs);
-                character.jobComponent.RemoveAdditionalPriorityJob(peasantClass.secondaryJobs);
+                //character.jobComponent.RemoveAdditionalPriorityJob(peasantClass.priorityJobs);
+                //character.jobComponent.RemoveAdditionalPriorityJob(peasantClass.secondaryJobs);
                 character.jobComponent.RemoveAdditionalPriorityJob(peasantClass.ableJobs);
             }
         }
@@ -1801,15 +1802,15 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         if (!hasWorkers) {
             if (character.characterClass.className == "Noble") {
                 CharacterClass peasantClass = CharacterManager.Instance.GetCharacterClass("Peasant");
-                character.jobComponent.AddAdditionalPriorityJob(peasantClass.priorityJobs);
-                character.jobComponent.AddAdditionalPriorityJob(peasantClass.secondaryJobs);
+                //character.jobComponent.AddAdditionalPriorityJob(peasantClass.priorityJobs);
+                //character.jobComponent.AddAdditionalPriorityJob(peasantClass.secondaryJobs);
                 character.jobComponent.AddAdditionalPriorityJob(peasantClass.ableJobs);
             }
         } else {
             if (character.characterClass.className == "Noble") {
                 CharacterClass peasantClass = CharacterManager.Instance.GetCharacterClass("Peasant");
-                character.jobComponent.RemoveAdditionalPriorityJob(peasantClass.priorityJobs);
-                character.jobComponent.RemoveAdditionalPriorityJob(peasantClass.secondaryJobs);
+                //character.jobComponent.RemoveAdditionalPriorityJob(peasantClass.priorityJobs);
+                //character.jobComponent.RemoveAdditionalPriorityJob(peasantClass.secondaryJobs);
                 character.jobComponent.RemoveAdditionalPriorityJob(peasantClass.ableJobs);
             }
         }
@@ -1819,8 +1820,8 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         if (!hasPeasants) {
             if (character.characterClass.className != "Noble") {
                 CharacterClass peasantClass = CharacterManager.Instance.GetCharacterClass("Peasant");
-                character.jobComponent.RemoveAdditionalPriorityJob(peasantClass.priorityJobs);
-                character.jobComponent.RemoveAdditionalPriorityJob(peasantClass.secondaryJobs);
+                //character.jobComponent.RemoveAdditionalPriorityJob(peasantClass.priorityJobs);
+                //character.jobComponent.RemoveAdditionalPriorityJob(peasantClass.secondaryJobs);
                 character.jobComponent.RemoveAdditionalPriorityJob(peasantClass.ableJobs);
             }
         }
@@ -1828,8 +1829,8 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         if (!hasWorkers) {
             if (character.characterClass.className == "Noble") {
                 CharacterClass peasantClass = CharacterManager.Instance.GetCharacterClass("Peasant");
-                character.jobComponent.RemoveAdditionalPriorityJob(peasantClass.priorityJobs);
-                character.jobComponent.RemoveAdditionalPriorityJob(peasantClass.secondaryJobs);
+                //character.jobComponent.RemoveAdditionalPriorityJob(peasantClass.priorityJobs);
+                //character.jobComponent.RemoveAdditionalPriorityJob(peasantClass.secondaryJobs);
                 character.jobComponent.RemoveAdditionalPriorityJob(peasantClass.ableJobs);
             }
         }
