@@ -2623,13 +2623,13 @@
         }
         ,
         {
-          "resource": "STONE",
+          "resource": "NONE",
           "structureType": "FARM",
           "hasValue": true,
           "isCorrupted": false
         },
         {
-          "resource": "STONE",
+          "resource": "NONE",
           "structureType": "FARM",
           "hasValue": true,
           "isCorrupted": false

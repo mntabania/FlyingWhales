@@ -266,7 +266,7 @@ public class TileFeatureGeneration : MapGenerationComponent {
 					unreservedAreas.ListRemoveRange(connectedPlainAreas);
 					unreservedAreas.ListRemoveRange(waterAreas);
 					unreservedAreas.ListRemoveRange(caveAreas);
-					AdditionalResourceCreationForVillageSpots(villageSpot, p_data);
+					AdditionalResourceCreationForVillageSpots(villageSpot);
 				}
 				RuinarchListPool<Area>.Release(areasToCheck);
 				RuinarchListPool<Area>.Release(checkedAreas);
@@ -319,7 +319,7 @@ public class TileFeatureGeneration : MapGenerationComponent {
 		}
 		return false;
 	}
-	private void AdditionalResourceCreationForVillageSpots(VillageSpot p_villageSpot, MapGenerationData p_data) {
+	private void AdditionalResourceCreationForVillageSpots(VillageSpot p_villageSpot) {
 		int randomResourceCount = UnityEngine.Random.Range(1, 4);
 		List<Area> areaChoices = RuinarchListPool<Area>.Claim();
 		areaChoices.AddRange(p_villageSpot.reservedAreas);
@@ -350,7 +350,7 @@ public class TileFeatureGeneration : MapGenerationComponent {
 						LocationGridTile tile = randomArea.gridTileComponent.gridTiles[j];
 						if (tile.structure is Wilderness && tile.tileObjectComponent.objHere == null && tile.IsPassable()) {
 							List<LocationGridTile> overlappedTiles = tile.parentMap.GetTiles(new Point(4, 4), tile); //had to check 4x4 so that dens will not be directly adjacent to other structures
-							int invalidOverlap = overlappedTiles.Count(t => t.tileObjectComponent.objHere != null || t.structure.structureType != STRUCTURE_TYPE.WILDERNESS);
+							int invalidOverlap = overlappedTiles.Count(t => t.tileObjectComponent.objHere != null || t.structure.structureType != STRUCTURE_TYPE.WILDERNESS || t.IsAtEdgeOfMap());
 							if (invalidOverlap <= 0) {
 								unoccupiedTiles.Add(tile);	
 							}
@@ -362,7 +362,7 @@ public class TileFeatureGeneration : MapGenerationComponent {
 						LocationStructure structure =  LandmarkManager.Instance.PlaceIndividualBuiltStructureForSettlement(settlement, GridMap.Instance.mainRegion.innerMap, structurePrefab, randomLocation);
 						// TileObject tileObject = InnerMapManager.Instance.CreateNewTileObject<TileObject>(structureType);
 						// randomLocation.structure.AddPOI(tileObject, randomLocation);
-						// Debug.Log($"Added animal den - {randomType.ToString()} to {randomLocation.ToString()}");
+						Debug.Log($"Added animal den - {randomType.ToString()} to {randomLocation.ToString()}");
 					}
 					RuinarchListPool<LocationGridTile>.Release(unoccupiedTiles);
 				}
@@ -370,6 +370,7 @@ public class TileFeatureGeneration : MapGenerationComponent {
 				if (areaChoices.Count == 0) { break; }
 			}	
 		}
+		RuinarchListPool<string>.Release(randomResourceChoices);
 	}
 	private bool TryAssignSettlementTiles(MapGenerationData data) {
 		int createdVillages = 0;
@@ -477,6 +478,7 @@ public class TileFeatureGeneration : MapGenerationComponent {
 			SaveDataVillageSpot saveDataVillageSpot = scenarioMapData.worldMapSave.villageSpots[i];
 			VillageSpot villageSpot = saveDataVillageSpot.Load();
 			villageSpots.Add(villageSpot);
+			AdditionalResourceCreationForVillageSpots(villageSpot);
 		}
 		GridMap.Instance.mainRegion.SetVillageSpots(villageSpots);
 		RuinarchListPool<VillageSpot>.Release(villageSpots);

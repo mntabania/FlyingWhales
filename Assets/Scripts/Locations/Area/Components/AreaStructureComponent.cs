@@ -41,6 +41,15 @@ public class AreaStructureComponent : AreaComponent {
         }
         return false;
     }
+    public bool HasStructureInArea(List<STRUCTURE_TYPE> p_structureTypes) {
+        for (int i = 0; i < structures.Count; i++) {
+            LocationStructure structure = structures[i];
+            if(p_structureTypes.Contains(structure.structureType)) {
+                return true;
+            }
+        }
+        return false;
+    }
     public LocationStructure GetMostImportantStructureOnTile() {
         LocationStructure mostImportant = null;
         for (int i = 0; i < structures.Count; i++) {

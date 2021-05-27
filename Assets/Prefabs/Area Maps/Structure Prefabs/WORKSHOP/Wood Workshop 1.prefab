@@ -357,7 +357,6 @@ MonoBehaviour:
   _blockWallsTilemap: {fileID: 0}
   _size: {x: 4, y: 5}
   _center: {x: 2, y: 2, z: 0}
-  _craftCost: 100
   _repairCost: 5
   objectsParent: {fileID: 5831878171823878866}
   _blockWallType: 0
@@ -540,7 +539,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8fd7182b7dcb98949856eb51bac9ae25, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tileObjectType: 214
+  tileObjectType: 249
   spriteRenderer: {fileID: 8755940585074398599}
 --- !u!212 &8755940585074398599
 SpriteRenderer:
@@ -637,7 +636,7 @@ Tilemap:
     second:
       serializedVersion: 2
       m_TileIndex: 5
-      m_TileSpriteIndex: 9
+      m_TileSpriteIndex: 8
       m_TileMatrixIndex: 0
       m_TileColorIndex: 0
       m_TileObjectToInstantiateIndex: 65535
@@ -817,9 +816,9 @@ Tilemap:
     m_Data: {fileID: 21300000, guid: 3229e72770a2cb448bb5b5dd4cf20e3a, type: 3}
   - m_RefCount: 4
     m_Data: {fileID: 21300000, guid: 57f83423e69b25346a6823cc60bd07a1, type: 3}
-  - m_RefCount: 0
-    m_Data: {fileID: 0}
-  - m_RefCount: 2
+  - m_RefCount: 1
+    m_Data: {fileID: 21300000, guid: 80deb517aa362ca4692d227826ab98d7, type: 3}
+  - m_RefCount: 1
     m_Data: {fileID: 21300000, guid: acd979997eb35524b8cb032c7c3dd425, type: 3}
   - m_RefCount: 2
     m_Data: {fileID: 21300000, guid: 9e70eb347cc091f4194765e6de46ad52, type: 3}
@@ -1062,7 +1061,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8fd7182b7dcb98949856eb51bac9ae25, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tileObjectType: 214
+  tileObjectType: 249
   spriteRenderer: {fileID: 5126949887228197287}
 --- !u!212 &5126949887228197287
 SpriteRenderer:

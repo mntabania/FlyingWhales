@@ -90,6 +90,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         migrationComponent = new SettlementVillageMigrationComponent(); migrationComponent.SetOwner(this);
         resourcesComponent = new SettlementResourcesComponent(); resourcesComponent.SetOwner(this);
         classComponent = new SettlementClassComponent(); classComponent.SetOwner(this);
+        classComponent.InitialScheduleProcessingOfNeededClasses();
     }
     public NPCSettlement(SaveDataBaseSettlement saveDataBaseSettlement) : base (saveDataBaseSettlement) {
         SaveDataNPCSettlement saveData = saveDataBaseSettlement as SaveDataNPCSettlement;
@@ -884,6 +885,15 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         }
         return true;
     }
+    public bool HasResidentThatIsOrCanBecomeClass(string p_className) {
+        for (int i = 0; i < residents.Count; i++) {
+            Character character = residents[i];
+            if (character.characterClass.className == p_className || character.classComponent.HasAbleClass(p_className)) {
+                return true;
+            }
+        }
+        return false;
+    }
     #endregion
 
     #region Tile Objects
@@ -1053,15 +1063,15 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
             case STRUCTURE_TYPE.FISHERY:
                 PopulateAvailableFishingSpotConnectors(p_connectors);
                 break;
-            case STRUCTURE_TYPE.QUARRY:
-                PopulateAvailableRockConnectors(p_connectors);
-                break;
+            // case STRUCTURE_TYPE.QUARRY:
+            //     PopulateAvailableRockConnectors(p_connectors);
+            //     break;
             case STRUCTURE_TYPE.LUMBERYARD:
                 PopulateAvailableTreeConnectors(p_connectors);
                 break;
-            case STRUCTURE_TYPE.HUNTER_LODGE:
-                PopulateAvailableStructureConnectorsBasedOnGameFeature(p_connectors);
-                break;
+            // case STRUCTURE_TYPE.HUNTER_LODGE:
+            //     PopulateAvailableStructureConnectorsBasedOnGameFeature(p_connectors);
+            //     break;
             case STRUCTURE_TYPE.MINE:
                 PopulateAvailableMineShackConnectors(p_connectors);
                 break;
@@ -1907,7 +1917,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
     }
     #endregion
 
-#region Needed Items
+    #region Needed Items
     public void AddNeededItems(TILE_OBJECT_TYPE tileObjectType) {
         //Allowed duplicate entries because multiple events can add the same item, and we don't want that item to be removed when only one event ends
         //And this is alright since the inventory jobs can handle duplicate values.
@@ -1917,24 +1927,24 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
     public void RemoveNeededItems(TILE_OBJECT_TYPE tileObjectType) {
         neededObjects.Remove(tileObjectType);
     }
-#endregion
+    #endregion
 
-#region Party Quests
+    #region Party Quests
     public void OnFinishedQuest(PartyQuest quest) {
         migrationComponent.OnFinishedQuest(quest);
     }
-#endregion
+    #endregion
 
-#region IPlayerActionTarget
+    #region IPlayerActionTarget
     public override void ConstructDefaultActions() {
         base.ConstructDefaultActions();
         AddPlayerAction(PLAYER_SKILL_TYPE.INDUCE_MIGRATION);
         AddPlayerAction(PLAYER_SKILL_TYPE.STIFLE_MIGRATION);
         //AddPlayerAction(PLAYER_SKILL_TYPE.SCHEME);
     }
-#endregion
+    #endregion
 
-#region Village Spot
+    #region Village Spot
     public void SetOccupiedVillageSpot(VillageSpot p_spot) {
         occupiedVillageSpot = p_spot;
     }

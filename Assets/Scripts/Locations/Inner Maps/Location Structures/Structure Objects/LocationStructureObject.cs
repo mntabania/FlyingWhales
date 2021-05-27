@@ -32,7 +32,6 @@ public class LocationStructureObject : PooledObject, ISelectable {
     [Header("Template Data")]
     [SerializeField] private Vector2Int _size;
     [SerializeField] private Vector3Int _center;
-    [SerializeField] private int _craftCost = 50;
     [SerializeField] private int _repairCost = 5;
 
     [Header("Objects")]
@@ -82,7 +81,7 @@ public class LocationStructureObject : PooledObject, ISelectable {
         }
     }
     public RESOURCE thinWallResource => _thinWallResource;
-    public int craftCost => _craftCost;
+    public int craftCost => structureType.GetResourceBuildCost();
     public int repairCost => _repairCost;
     #endregion
 
@@ -986,6 +985,7 @@ public class LocationStructureObject : PooledObject, ISelectable {
         for (int i = 0; i < _connectors.Length; i++) {
             StructureConnector connector = _connectors[i];
             connector.OnPlaceConnector(structure.region.innerMap);
+            connector.SetIsPartOfLocationStructureObject(true);
         }
     }
     private void LoadConnectors(SaveDataStructureConnector[] connectorSaves, InnerTileMap innerTileMap) {

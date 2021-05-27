@@ -441,7 +441,7 @@ public class VillageGeneration : MapGenerationComponent {
 		List<Area> tilesInRange = RuinarchListPool<Area>.Claim();
 		villageCenterTile.PopulateAreasInRange(tilesInRange, 3);
 		if (faction.factionType.type == FACTION_TYPE.Elven_Kingdom || settlement.settlementType.settlementType == SETTLEMENT_TYPE.Elven_Hamlet) {
-			structureWeights.AddElement(new StructureSetting(STRUCTURE_TYPE.FARM, RESOURCE.WOOD), 1);
+			structureWeights.AddElement(new StructureSetting(STRUCTURE_TYPE.FARM, RESOURCE.NONE), 1);
 			if (!structureTypes.Contains(STRUCTURE_TYPE.TAVERN)) {
 				structureWeights.AddElement(new StructureSetting(STRUCTURE_TYPE.TAVERN, RESOURCE.WOOD), 3);
 			}
@@ -449,7 +449,7 @@ public class VillageGeneration : MapGenerationComponent {
 				structureWeights.AddElement(new StructureSetting(STRUCTURE_TYPE.CEMETERY, RESOURCE.WOOD), 2);
 			}
 			if (!structureTypes.Contains(STRUCTURE_TYPE.FARM)) {
-				structureWeights.AddElement(new StructureSetting(STRUCTURE_TYPE.FARM, RESOURCE.WOOD), 15);
+				structureWeights.AddElement(new StructureSetting(STRUCTURE_TYPE.FARM, RESOURCE.NONE), 15);
 			}
 			if (settlement.HasReservedSpotWithFeature(AreaFeatureDB.Fish_Source) && !structureTypes.Contains(STRUCTURE_TYPE.FISHERY)) {
 				structureWeights.AddElement(new StructureSetting(STRUCTURE_TYPE.FISHERY, RESOURCE.WOOD), 5);
@@ -477,7 +477,7 @@ public class VillageGeneration : MapGenerationComponent {
 				structureWeights.AddElement(new StructureSetting(STRUCTURE_TYPE.CEMETERY, RESOURCE.STONE), 2);
 			}
 			if (!structureTypes.Contains(STRUCTURE_TYPE.FARM)) {
-				structureWeights.AddElement(new StructureSetting(STRUCTURE_TYPE.FARM, RESOURCE.STONE), 15);
+				structureWeights.AddElement(new StructureSetting(STRUCTURE_TYPE.FARM, RESOURCE.NONE), 15);
 			}
 			if (settlement.HasReservedSpotWithFeature(AreaFeatureDB.Fish_Source) && !structureTypes.Contains(STRUCTURE_TYPE.FISHERY)) {
 				structureWeights.AddElement(new StructureSetting(STRUCTURE_TYPE.FISHERY, RESOURCE.WOOD), 5);

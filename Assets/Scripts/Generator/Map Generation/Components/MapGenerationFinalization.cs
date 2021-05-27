@@ -233,7 +233,7 @@ public class MapGenerationFinalization : MapGenerationComponent {
 		LandmarkManager.Instance.PopulateAllSpecialStructures(allSpecialStructures);
 		for (int i = 0; i < allSpecialStructures.Count; i++) {
 			LocationStructure structure = allSpecialStructures[i];
-			if (structure.structureType != STRUCTURE_TYPE.CAVE) {
+			if (structure.structureType != STRUCTURE_TYPE.CAVE && !(structure is AnimalDen)) {
 				StructureData landmarkData = LandmarkManager.Instance.GetStructureData(structure.structureType);
 				if (landmarkData.itemGenerationSetting != null) {
 					List<ItemSetting> itemChoices = landmarkData.itemGenerationSetting.GetItemChoicesForBiome();

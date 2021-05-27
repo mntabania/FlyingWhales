@@ -165,9 +165,9 @@ namespace Inner_Maps {
                 }
                 LocationStructure elevationStructure = LandmarkManager.Instance.CreateNewStructureAt(region, structureType, settlement);
                 if (structureType == STRUCTURE_TYPE.CAVE) {
-                    StartCoroutine(DrawCave(elevationIsland, elevationStructure, mapGenerationComponent, stopwatch, mapGenerationData));
+                    yield return StartCoroutine(DrawCave(elevationIsland, elevationStructure, mapGenerationComponent, stopwatch, mapGenerationData));
                 } else if (structureType == STRUCTURE_TYPE.OCEAN) {
-                    StartCoroutine(DrawOcean(elevationIsland, elevationStructure, mapGenerationComponent, stopwatch, mapGenerationData));
+                    yield return StartCoroutine(DrawOcean(elevationIsland, elevationStructure, mapGenerationComponent, stopwatch, mapGenerationData));
                 }
                 elevationStructure.SetOccupiedArea(elevationIsland.occupiedAreas.First());
                 yield return null;
@@ -204,7 +204,7 @@ namespace Inner_Maps {
             stopwatch.Reset();
             RuinarchListPool<LocationGridTile>.Release(groundTiles);
             stopwatch.Start();
-            StartCoroutine(MountainCellAutomata(p_island.tiles.ToList(), p_caveStructure, mapGenerationData));
+            yield return StartCoroutine(MountainCellAutomata(p_island.tiles.ToList(), p_caveStructure, mapGenerationData));
             stopwatch.Stop();
             mapGenerationComponent.AddLog($"{region.name} Draw Cave Cell Automata took {stopwatch.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)} seconds to complete.");
         }
@@ -267,7 +267,7 @@ namespace Inner_Maps {
                 mapGenerationData.SetGeneratedMapPerlinDetails(oreVeinLocation.gridTileLocation, TILE_OBJECT_TYPE.NONE);
                 
                 //create structure connector on ore vein location, this is so that even if ore vein is destroyed villagers can still create mines.
-                oreVeinLocation.gridTileLocation.tileObjectComponent.genericTileObject.CreateStructureConnector();
+                oreVeinLocation.gridTileLocation.tileObjectComponent.genericTileObject.CreateMineShackSpotStructureConnector();
                 CreateOreVein(oreVeinLocation.gridTileLocation);
                 validWallsForOreVeins.Remove(oreVeinLocation);
             }
@@ -404,6 +404,7 @@ namespace Inner_Maps {
             mapGenerationData.SetGeneratedMapPerlinDetails(tile, TILE_OBJECT_TYPE.NONE);
             GridMap.Instance.mainRegion.gridTileFeatureComponent.RemoveFeatureFromTile<SmallTreeSpotFeature>(tile);
             GridMap.Instance.mainRegion.gridTileFeatureComponent.RemoveFeatureFromTile<BigTreeSpotFeature>(tile);
+            tile.area.gridTileComponent.RemovePassableTile(tile);
         }
         #endregion
     }

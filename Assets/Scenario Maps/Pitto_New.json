@@ -5500,7 +5500,7 @@
           "isCorrupted": false
         },
         {
-          "resource": "STONE",
+          "resource": "NONE",
           "structureType": "FARM",
           "hasValue": true,
           "isCorrupted": false
@@ -5609,7 +5609,7 @@
           "isCorrupted": false
         },
         {
-          "resource": "STONE",
+          "resource": "NONE",
           "structureType": "FARM",
           "hasValue": true,
           "isCorrupted": false

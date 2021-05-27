@@ -1718,7 +1718,6 @@ MonoBehaviour:
   _blockWallsTilemap: {fileID: 0}
   _size: {x: 4, y: 5}
   _center: {x: 2, y: 2, z: 0}
-  _craftCost: 100
   _repairCost: 5
   objectsParent: {fileID: 3616929675522431442}
   _blockWallType: 0
@@ -2094,7 +2093,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8fd7182b7dcb98949856eb51bac9ae25, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tileObjectType: 214
+  tileObjectType: 249
   spriteRenderer: {fileID: 1402308482351389882}
 --- !u!212 &1402308482351389882
 SpriteRenderer:
@@ -2190,7 +2189,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8fd7182b7dcb98949856eb51bac9ae25, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tileObjectType: 214
+  tileObjectType: 249
   spriteRenderer: {fileID: 2591318090625498912}
 --- !u!212 &2591318090625498912
 SpriteRenderer:

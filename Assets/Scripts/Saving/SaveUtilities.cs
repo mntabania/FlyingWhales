@@ -55,6 +55,17 @@ public static class SaveUtilities {
         }
         return objects;
     }
+    public static List<Summon> ConvertIDListToMonsters(List<string> ids) {
+        List<Summon> objects = new List<Summon>();
+        for (int i = 0; i < ids.Count; i++) {
+            string pid = ids[i];
+            Character character = DatabaseManager.Instance.characterDatabase.GetCharacterByPersistentID(pid);
+            if (character is Summon summon) {
+                objects.Add(summon);    
+            }
+        }
+        return objects;
+    }
     public static List<TileObject> ConvertIDListToTileObjects(List<string> ids) {
         List<TileObject> objects = new List<TileObject>();
         for (int i = 0; i < ids.Count; i++) {

@@ -42,6 +42,12 @@ public class AreaElevationComponent : AreaComponent {
         }
         return true;
     }
+    public bool HasElevation(ELEVATION p_elevation) {
+        if (elevationDictionary.ContainsKey(p_elevation)) {
+            return elevationDictionary[p_elevation] > 0;
+        }
+        return false;
+    }
     private void UpdateElevationBasedOnVotes() {
         int highestVotes = Int32.MinValue;
         ELEVATION majorityElevation = ELEVATION.PLAIN;

@@ -26,7 +26,6 @@ public class SettlementClassComponent : NPCSettlementComponent {
     public SettlementClassComponent() {
         _currentClassOrderIndex = 0;
         _currentResidentClasses = new List<string>();
-        InitialScheduleProcessingOfNeededClasses();
     }
     public SettlementClassComponent(SaveDataSettlementClassComponent data) {
         _currentClassOrderIndex = data.currentClassOrderIndex;

@@ -15,7 +15,7 @@ namespace Inner_Maps.Location_Structures {
         #region Getters
         public override Vector2 selectableSize => structureObj.size;
         public override System.Type serializedData => typeof(SaveDataManMadeStructure);
-        public Character assignedWorker => CharacterManager.Instance.GetCharacterByPersistentID(assignedWorkerID);
+        public Character assignedWorker => string.IsNullOrEmpty(assignedWorkerID) ? null : CharacterManager.Instance.GetCharacterByPersistentID(assignedWorkerID);
         #endregion
 
         protected ManMadeStructure(STRUCTURE_TYPE structureType, Region location) : base(structureType, location) { }

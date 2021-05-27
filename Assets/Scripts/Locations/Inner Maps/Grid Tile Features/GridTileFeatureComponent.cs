@@ -47,14 +47,14 @@ namespace Inner_Maps.Grid_Tile_Features {
             GridTileFeature feature = GetFeature<T>();
             feature.RemoveTile(p_tile);
         }
-        private GridTileFeature GetFeature<T>() {
+        public T GetFeature<T>() {
             for (int i = 0; i < _features.Count; i++) {
                 GridTileFeature feature = _features[i];
-                if (feature is T) {
-                    return feature;
+                if (feature is T tileFeature) {
+                    return tileFeature;
                 }
             }
-            return null;
+            return default;
         }
     }
 }
