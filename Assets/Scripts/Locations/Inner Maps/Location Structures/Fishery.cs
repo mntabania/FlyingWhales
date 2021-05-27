@@ -2,6 +2,8 @@
 using Inner_Maps.Location_Structures;
 using UnityEngine;
 using UnityEngine.Assertions;
+using System.Collections.Generic;
+
 namespace Inner_Maps.Location_Structures {
     public class Fishery : ManMadeStructure {
         public override Vector3 worldPosition => structureObj.transform.position;
@@ -38,6 +40,44 @@ namespace Inner_Maps.Location_Structures {
         protected override void AfterStructureDestruction(Character p_responsibleCharacter = null) {
             base.AfterStructureDestruction(p_responsibleCharacter);
             connectedOcean = null;
+        }
+
+        List<ResourcePile> CheckForMultipleSameResourcePileInsideStructure() {
+            return DoesMultipleResourcePileExist(GetAllFishResourcePileOnTiles());
+        }
+
+        List<ResourcePile> DoesMultipleResourcePileExist(List<ResourcePile> p_allPiles) {
+            List<ResourcePile> fishPile = new List<ResourcePile>();
+            p_allPiles.ForEach((eachList) => {
+                if (eachList is FishPile) {
+                    fishPile.Add(eachList);
+                }
+            });
+            if (fishPile.Count > 1) {
+                return fishPile;
+            }
+            return null;
+        }
+
+        List<ResourcePile> GetAllFishResourcePileOnTiles() {
+            List<ResourcePile> pilePool = new List<ResourcePile>();
+            passableTiles.ForEach((eachTile) => {
+                if (eachTile.tileObjectComponent.objHere != null && eachTile.tileObjectComponent.objHere is ResourcePile resourcePile) {
+                    pilePool.Add(resourcePile);
+                }
+            });
+            return pilePool;
+        }
+
+        protected override void ProcessWorkStructureJobsByWorker(Character p_worker, out JobQueueItem producedJob) {
+            producedJob = null;
+            if (p_worker.currentSettlement.SettlementResources.GetRandomPileOfFishes() != null) {
+                //do haul job
+            } else if (CheckForMultipleSameResourcePileInsideStructure() != null) {
+                //do combine resourcepiles job
+            } else { 
+                //fishing
+            }
         }
     }
 }

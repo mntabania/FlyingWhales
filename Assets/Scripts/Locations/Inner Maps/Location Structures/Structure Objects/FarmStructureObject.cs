@@ -1,12 +1,16 @@
 ﻿using UnityEngine;
+using System.Collections.Generic;
 namespace Inner_Maps.Location_Structures {
     public class FarmStructureObject : LocationStructureObject {
+
+        public List<LocationGridTile> farmTiles = new List<LocationGridTile>();
         protected override void PreplacedObjectProcessing(StructureTemplateObjectData preplacedObj,
             LocationGridTile tile, LocationStructure structure, TileObject newTileObject) {
             base.PreplacedObjectProcessing(preplacedObj, tile, structure, newTileObject);
             if (newTileObject.tileObjectType == TILE_OBJECT_TYPE.CORN_CROP || newTileObject.tileObjectType == TILE_OBJECT_TYPE.HYPNO_HERB_CROP || 
                 newTileObject.tileObjectType == TILE_OBJECT_TYPE.ICEBERRY_CROP || newTileObject.tileObjectType == TILE_OBJECT_TYPE.PINEAPPLE_CROP ||
                 newTileObject.tileObjectType == TILE_OBJECT_TYPE.POTATO_CROP) {
+                farmTiles.Add(tile);
                 structure.AddObjectAsDamageContributor(newTileObject);
                 Sprite originalSprite = InnerMapManager.Instance.GetTileObjectScriptableObject(newTileObject.tileObjectType).defaultSprite;
                 if (originalSprite != null) { newTileObject.mapVisual.SetVisual(originalSprite); }
