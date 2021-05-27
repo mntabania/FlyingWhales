@@ -371,7 +371,7 @@ public static class GoapActionStateDB {
             new StateNameAndDuration(){ name = "Combat Success", status = InteractionManager.Goap_State_Success, duration = 0 },
         } },
         {INTERACTION_TYPE.CHANGE_CLASS, new[]{
-            new StateNameAndDuration(){ name = "Change Class Success", status = InteractionManager.Goap_State_Success, duration = 10 },
+            new StateNameAndDuration(){ name = "Change Class Success", status = InteractionManager.Goap_State_Success, duration = 0 },
         } },
         {INTERACTION_TYPE.VISIT, new[]{
             new StateNameAndDuration(){ name = "Visit Success", status = InteractionManager.Goap_State_Success, duration = 0 },

@@ -105,10 +105,7 @@ public class SettlementClassComponent : NPCSettlementComponent {
         int foodSupplyCapacity = owner.resourcesComponent.GetFoodSupplyCapacity();
         int resourceSupplyCapacity = owner.resourcesComponent.GetResourceSupplyCapacity();
         int numOfCombatants = owner.GetNumOfResidentsThatIsAliveCombatant();
-        int neededCombatants = 5;
-        if (numOfActiveResidents > 8) {
-            neededCombatants = (numOfActiveResidents / 8) * 5;
-        }
+        int neededCombatants = Mathf.CeilToInt((numOfActiveResidents / 8f) * 3f);
 
         //Determine who should change classes and who should not change class
         //Put this here so that looping through all residents is only done once
