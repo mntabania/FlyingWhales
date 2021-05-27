@@ -840,9 +840,9 @@ public class CharacterManager : BaseMonoBehaviour {
     #endregion
 
     #region Character Class Manager
-    public CharacterClass CreateNewCharacterClass(string className) {
-        return classManager.CreateNewCharacterClass(className);
-    }
+    //public CharacterClass CreateNewCharacterClass(string className) {
+    //    return classManager.GetCharacterClass(className);
+    //}
     //public string GetRandomClassByIdentifier(string identifier) {
     //    return classManager.GetRandomClassByIdentifier(identifier);
     //}

@@ -23,7 +23,7 @@ public class CharacterClassComponent : CharacterComponent {
     }
 
     public CharacterClassComponent(SaveDataCharacterClassComponent data) {
-        characterClass = CharacterManager.Instance.CreateNewCharacterClass(data.className);
+        characterClass = CharacterManager.Instance.GetCharacterClass(data.className);
         previousClassName = data.previousClassName;
         shouldChangeClass = data.shouldChangeClass;
     }
@@ -32,7 +32,7 @@ public class CharacterClassComponent : CharacterComponent {
     public void AssignClass(string className, bool isInitial = false) {
         if (characterClass == null || className != characterClass.className) {
             if (CharacterManager.Instance.HasCharacterClass(className)) {
-                AssignClass(CharacterManager.Instance.CreateNewCharacterClass(className), isInitial);
+                AssignClass(CharacterManager.Instance.GetCharacterClass(className), isInitial);
             } else {
                 throw new Exception($"There is no class named {className} but it is being assigned to {owner.name}");
             }

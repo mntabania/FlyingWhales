@@ -49,17 +49,28 @@ public class SettlementResourcesComponent : NPCSettlementComponent {
         return supply;
     }
     public int GetResourceSupplyCapacity() {
-        //TODO: Checking of Village Spot Miner and Logger Capacity
         int supply = 0;
         if (owner.owner?.factionType.type == FACTION_TYPE.Human_Empire) {
-            int numOfResidents = GetNumOfResidentsThatHasClass("Miner");
-            supply += numOfResidents * 8;
+            int numOfMiners = GetNumOfResidentsThatHasClass("Miner");
+            int minerCapacity = owner.occupiedVillageSpot.minerCapacity;
+            int minerMultiplier = Mathf.Min(numOfMiners, minerCapacity);
+
+            supply += minerMultiplier * 8;
         } else if (owner.owner?.factionType.type == FACTION_TYPE.Elven_Kingdom) {
-            int numOfResidents = GetNumOfResidentsThatHasClass("Logger");
-            supply += numOfResidents * 8;
+            int numOfLoggers = GetNumOfResidentsThatHasClass("Logger");
+            int loggerCapacity = owner.occupiedVillageSpot.loggerCapacity;
+            int loggerMultiplier = Mathf.Min(numOfLoggers, loggerCapacity);
+
+            supply += loggerMultiplier * 8;
         } else {
-            int numOfResidents = GetNumOfResidentsThatHasClass("Miner", "Logger");
-            supply += numOfResidents * 8;
+            int numOfMiners = GetNumOfResidentsThatHasClass("Miner");
+            int minerCapacity = owner.occupiedVillageSpot.minerCapacity;
+            int numOfLoggers = GetNumOfResidentsThatHasClass("Logger");
+            int loggerCapacity = owner.occupiedVillageSpot.loggerCapacity;
+
+            int minerMultiplier = Mathf.Min(numOfMiners, minerCapacity);
+            int loggerMultiplier = Mathf.Min(numOfLoggers, loggerCapacity);
+            supply += ((minerMultiplier + loggerMultiplier) * 8);
         }
         return supply;
     }

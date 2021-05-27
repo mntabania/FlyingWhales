@@ -96,6 +96,10 @@ public class SettlementClassComponent : NPCSettlementComponent {
         SchedulingManager.Instance.AddEntry(scheduleDateForProcessingOfNeededClasses, ProcessingOfNeededClasses, null);
     }
     private void ProcessNeededClasses() {
+        string log = string.Empty;
+#if DEBUG_LOG
+        log = GameManager.Instance.TodayLogString() + owner.name + " will process needed classes";
+#endif
         owner.ForceCancelJobTypes(JOB_TYPE.CHANGE_CLASS);
         int numOfActiveResidents = owner.GetNumberOfResidentsThatIsAliveVillager();
         int foodSupplyCapacity = owner.resourcesComponent.GetFoodSupplyCapacity();
@@ -138,19 +142,37 @@ public class SettlementClassComponent : NPCSettlementComponent {
                 }
             }
         }
-        
-        ProcessNeededFoodProducerClasses(numOfActiveResidents, foodSupplyCapacity);
-        ProcessNeededResourceClasses(numOfActiveResidents, resourceSupplyCapacity);
-        ProcessNeededCombatantClasses(numOfCombatants, neededCombatants);
-        ProcessNeededSpecialClasses(numberOfAvailableVillagers);
+
+#if DEBUG_LOG
+        log += "\nINFO:";
+        log += "\nVillagers = " + numOfActiveResidents + ", FSP = " + foodSupplyCapacity + ", RSP = " + resourceSupplyCapacity + ", Combatants = " + numOfCombatants + ", Needed Combatants = " + neededCombatants + ", Non-Reserved = " + numberOfAvailableVillagers;
+#endif
+
+        ProcessNeededFoodProducerClasses(numOfActiveResidents, foodSupplyCapacity, ref log);
+        ProcessNeededResourceClasses(numOfActiveResidents, resourceSupplyCapacity, ref log);
+        ProcessNeededCombatantClasses(numOfCombatants, neededCombatants, ref log);
+        ProcessNeededSpecialClasses(numberOfAvailableVillagers, ref log);
+
+#if DEBUG_LOG
+        Debug.Log(log);
+#endif
     }
-    private void ProcessNeededFoodProducerClasses(int numOfActiveResidents, int foodSupplyCapacity) {
+    private void ProcessNeededFoodProducerClasses(int numOfActiveResidents, int foodSupplyCapacity, ref string log) {
+#if DEBUG_LOG
+        log += "\nProcess Needed Food Producers";
+#endif
         if (numOfActiveResidents > foodSupplyCapacity) {
+#if DEBUG_LOG
+            log += "\nVillagers exceeds Food Supply Capacity";
+#endif
             //If Villagers exceeds Food Supply Capacity, check if there is no existing Change To A Needed Class job for Food Producers
             //If no settlement job to change class to a food producer, proceed here
             //Identify which food producer is needed
             LocationStructure noWorkerStructure = owner.GetFirstStructureOfTypeThatHasNoWorkerAndIsNotReserved(STRUCTURE_TYPE.FARM);
             if (noWorkerStructure != null) {
+#if DEBUG_LOG
+                log += "\nUnclaimed Farm: " + noWorkerStructure.name;
+#endif
                 //if there is a Farm in the Village that hasn't been claimed yet
                 //Create Change Class Job To Farmer
                 owner.settlementJobTriggerComponent.TriggerChangeClassJob("Farmer", noWorkerStructure);
@@ -159,7 +181,13 @@ public class SettlementClassComponent : NPCSettlementComponent {
                 //Create Change Class Job To Fisher
                 noWorkerStructure = owner.GetFirstStructureOfTypeThatHasNoWorkerAndIsNotReserved(STRUCTURE_TYPE.FISHERY);
                 if (noWorkerStructure != null) {
+#if DEBUG_LOG
+                    log += "\nUnclaimed Fishery: " + noWorkerStructure.name;
+#endif
                     if (owner.GetFirstResidentThatIsAbleAndCanBecomeClass("Fisher") != null) {
+#if DEBUG_LOG
+                        log += "\nHas Villager that can become Fisher";
+#endif
                         owner.settlementJobTriggerComponent.TriggerChangeClassJob("Fisher", noWorkerStructure);
                     }
                 } else {
@@ -167,7 +195,13 @@ public class SettlementClassComponent : NPCSettlementComponent {
                     //Create Change Class Job To Butcher
                     noWorkerStructure = owner.GetFirstStructureOfTypeThatHasNoWorkerAndIsNotReserved(STRUCTURE_TYPE.BUTCHERS_SHOP);
                     if (noWorkerStructure != null) {
+#if DEBUG_LOG
+                        log += "\nUnclaimed Butcher's Shop: " + noWorkerStructure.name;
+#endif
                         if (owner.GetFirstResidentThatIsAbleAndCanBecomeClass("Butcher") != null) {
+#if DEBUG_LOG
+                            log += "\nHas Villager that can become Butcher";
+#endif
                             owner.settlementJobTriggerComponent.TriggerChangeClassJob("Butcher", noWorkerStructure);
                         }
                     }
@@ -175,12 +209,21 @@ public class SettlementClassComponent : NPCSettlementComponent {
             }
         }
     }
-    private void ProcessNeededResourceClasses(int numOfActiveResidents, int resourceSupplyCapacity) {
+    private void ProcessNeededResourceClasses(int numOfActiveResidents, int resourceSupplyCapacity, ref string log) {
+#if DEBUG_LOG
+        log += "\nProcess Needed Resource Producers";
+#endif
         if (numOfActiveResidents > resourceSupplyCapacity) {
+#if DEBUG_LOG
+            log += "\nVillagers exceeds Resource Supply Capacity";
+#endif
             //If Villagers exceeds Resource Supply Capacity, a Basic Resource Gatherer is needed
             //Identify which resource producer is needed
             LocationStructure noWorkerStructure = owner.GetFirstStructureOfTypeThatHasNoWorkerAndIsNotReserved(STRUCTURE_TYPE.LUMBERYARD);
             if (noWorkerStructure != null) {
+#if DEBUG_LOG
+                log += "\nUnclaimed Lumberyard: " + noWorkerStructure.name;
+#endif
                 //if there is a Lumberyard in the Village that hasn't been claimed yet
                 //Create Change Class Job To Logger
                 owner.settlementJobTriggerComponent.TriggerChangeClassJob("Logger", noWorkerStructure);
@@ -189,24 +232,43 @@ public class SettlementClassComponent : NPCSettlementComponent {
                 //Create Change Class Job To Miner
                 noWorkerStructure = owner.GetFirstStructureOfTypeThatHasNoWorkerAndIsNotReserved(STRUCTURE_TYPE.MINE);
                 if (noWorkerStructure != null) {
+#if DEBUG_LOG
+                    log += "\nUnclaimed Mine: " + noWorkerStructure.name;
+#endif
                     owner.settlementJobTriggerComponent.TriggerChangeClassJob("Miner", noWorkerStructure);
                 }
             }
         }
     }
-    private void ProcessNeededCombatantClasses(int numOfCombatants, int neededCombatants) {
+    private void ProcessNeededCombatantClasses(int numOfCombatants, int neededCombatants, ref string log) {
+#if DEBUG_LOG
+        log += "\nProcess Needed Combatants";
+#endif
         if (numOfCombatants < neededCombatants) {
             //Combatant is needed
             string combatantClass = CharacterManager.Instance.GetRandomCombatant();
+#if DEBUG_LOG
+            log += "\nCurrent Combatants is less than needed, will create change to combatant class job";
+            log += "\nChosen Combatant: " + combatantClass;
+#endif
             owner.settlementJobTriggerComponent.TriggerChangeClassJob(combatantClass, null);
         }
     }
-    private void ProcessNeededSpecialClasses(int numberOfAvailableVillagers) {
+    private void ProcessNeededSpecialClasses(int numberOfAvailableVillagers, ref string log) {
+#if DEBUG_LOG
+        log += "\nProcess Needed Special Worker Classes";
+#endif
         int numOfChangeClassJob = owner.GetNumberOfJobsWith(JOB_TYPE.CHANGE_CLASS);
         if (numOfChangeClassJob < numberOfAvailableVillagers) {
+#if DEBUG_LOG
+            log += "\nChange Class Jobs is less than Non-Reserved Villagers";
+#endif
             //If number of villagers that can still change class exceeds the number of change class jobs in settlement - this means that there are still spare residents that can change class to special worker class
             LocationStructure noWorkerStructure = owner.GetFirstStructureOfTypeThatHasNoWorkerAndIsNotReserved(STRUCTURE_TYPE.HUNTER_LODGE);
             if (noWorkerStructure != null) {
+#if DEBUG_LOG
+                log += "\nUnclaimed Skinner's Lodge: " + noWorkerStructure.name;
+#endif
                 //if there is a Skinner's Lodge in the Village that hasn't been claimed yet
                 //Create Change Class Job To Skinner
                 owner.settlementJobTriggerComponent.TriggerChangeClassJob("Skinner", noWorkerStructure);
@@ -215,27 +277,33 @@ public class SettlementClassComponent : NPCSettlementComponent {
                 //Create Change Class Job To Craftsman
                 noWorkerStructure = owner.GetFirstStructureOfTypeThatHasNoWorkerAndIsNotReserved(STRUCTURE_TYPE.WORKSHOP);
                 if (noWorkerStructure != null) {
+#if DEBUG_LOG
+                    log += "\nUnclaimed Workshop: " + noWorkerStructure.name;
+#endif
                     owner.settlementJobTriggerComponent.TriggerChangeClassJob("Craftsman", noWorkerStructure);
                 } else {
                     //otherwise, if there is a Tavern in the Village that hasn't been claimed yet and there is a resident that can become a Merchant
                     //Create Change Class Job To Merchant
                     noWorkerStructure = owner.GetFirstStructureOfTypeThatHasNoWorkerAndIsNotReserved(STRUCTURE_TYPE.TAVERN);
                     if (noWorkerStructure != null) {
+#if DEBUG_LOG
+                        log += "\nUnclaimed Tavern: " + noWorkerStructure.name;
+#endif
                         owner.settlementJobTriggerComponent.TriggerChangeClassJob("Merchant", noWorkerStructure);
                     }
                 }
             }
         }
     }
-    #endregion
+#endregion
 
-    #region Loading
+#region Loading
     public void LoadReferences(SaveDataSettlementClassComponent data) {
         if (owner.locationType == LOCATION_TYPE.VILLAGE) {
             SchedulingManager.Instance.AddEntry(scheduleDateForProcessingOfNeededClasses, ProcessingOfNeededClasses, null);
         }
     }
-    #endregion
+#endregion
 
 }
 
@@ -244,7 +312,7 @@ public class SaveDataSettlementClassComponent : SaveData<SettlementClassComponen
     public List<string> currentResidentClasses;
     public GameDate scheduleDateForProcessingOfNeededClasses;
 
-    #region Overrides
+#region Overrides
     public override void Save(SettlementClassComponent data) {
         currentClassOrderIndex = data.currentClassOrderIndex;
         currentResidentClasses = data.currentResidentClasses;
@@ -255,5 +323,5 @@ public class SaveDataSettlementClassComponent : SaveData<SettlementClassComponen
         SettlementClassComponent component = new SettlementClassComponent(this);
         return component;
     }
-    #endregion
+#endregion
 }
