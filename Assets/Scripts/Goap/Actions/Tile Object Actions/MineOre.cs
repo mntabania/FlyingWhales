@@ -43,35 +43,36 @@ public class MineOre : GoapAction {
 
 	public override void OnStopWhilePerforming(ActualGoapNode node) {
 		base.OnStopWhilePerforming(node);
-        ProduceOrePile(node);
+        ProduceMatsPile(node);
     }
 	#endregion
 
 	#region State Effects
-    public void AfterMineOreSuccess(ActualGoapNode goapNode) {
-        ProduceOrePile(goapNode);
+    public void AfterMineOreSuccess(ActualGoapNode p_node) {
+        p_node.actor.homeSettlement.settlementJobTriggerComponent.TryCreateHaulJob(ProduceMatsPile(p_node));
     }
     #endregion
 
-    void ProduceOrePile(ActualGoapNode p_node) {
+    ResourcePile ProduceMatsPile(ActualGoapNode p_node) {
         LocationGridTile tileToSpawnPile = p_node.actor.gridTileLocation;
         if (tileToSpawnPile != null && tileToSpawnPile.tileObjectComponent.objHere != null) {
             tileToSpawnPile = p_node.actor.gridTileLocation.GetFirstNearestTileFromThisWithNoObject();
         }
-        
-        int amount = p_node.currentStateDuration * m_amountProducedPerTick;
-        StonePile stonePile = InnerMapManager.Instance.CreateNewTileObject<StonePile>(TILE_OBJECT_TYPE.STONE_PILE);
-        stonePile.SetResourceInPile(amount);
-        tileToSpawnPile.structure.AddPOI(stonePile, tileToSpawnPile);
+        ResourcePile matsToHaul = InnerMapManager.Instance.CreateNewTileObject<ResourcePile>(TILE_OBJECT_TYPE.ORE);
+        matsToHaul.SetResourceInPile(p_node.currentStateDuration * m_amountProducedPerTick);
+        tileToSpawnPile.structure.AddPOI(matsToHaul, tileToSpawnPile);
         ProduceLogs(p_node);
         (p_node.target as TileObject).DestroyMapVisualGameObject();
         (p_node.target as TileObject).DestroyPermanently();
+
+        return matsToHaul;
     }
 
     public void ProduceLogs(ActualGoapNode p_node) {
+        string addOnText = (p_node.currentStateDuration * m_amountProducedPerTick).ToString() + " ores";
         Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "GoapAction", name, "produced_resources", p_node, LOG_TAG.Work);
         log.AddToFillers(p_node.actor, p_node.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-        log.AddToFillers(null, (p_node.currentStateDuration * m_amountProducedPerTick).ToString(), LOG_IDENTIFIER.STRING_1);
+        log.AddToFillers(null, addOnText, LOG_IDENTIFIER.STRING_1);
         p_node.LogAction(log);
     }
 }

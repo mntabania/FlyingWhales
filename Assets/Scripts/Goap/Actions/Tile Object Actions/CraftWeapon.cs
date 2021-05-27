@@ -5,21 +5,23 @@ using UnityEngine;
 using Traits;
 using Inner_Maps;
 
-public class FindFish : GoapAction {
+public class CraftWeapon : GoapAction {
 
-    public int m_amountProducedPerTick = 1;
-
-    public FindFish() : base(INTERACTION_TYPE.FIND_FISH) {
-        actionIconString = GoapActionStateDB.Mine_Icon;
+    public CraftWeapon() : base(INTERACTION_TYPE.CRAFT_WEAPON) {
+        actionIconString = GoapActionStateDB.Chop_Icon;
         //advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
         racesThatCanDoAction = new RACE[] { RACE.ELVES, RACE.HUMANS, RACE.RATMAN, };
         logTags = new[] { LOG_TAG.Work };
     }
 
     #region Overrides
+    //protected override void ConstructBasePreconditionsAndEffects() {
+    //    AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.DEATH, conditionKey = string.Empty, isKeyANumber = false, target = GOAP_EFFECT_TARGET.TARGET }, IsTargetDead);
+    //    AddExpectedEffect(new GoapEffect(GOAP_EFFECT_CONDITION.ABSORB_LIFE, string.Empty, false, GOAP_EFFECT_TARGET.ACTOR));
+    //}
     public override void Perform(ActualGoapNode goapNode) {
         base.Perform(goapNode);
-        SetState("Find Fish Success", goapNode);
+        SetState("Craft Weapon Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
 #if DEBUG_LOG
@@ -44,7 +46,7 @@ public class FindFish : GoapAction {
     #endregion
 
     #region State Effects
-    public void AfterFindFishSuccess(ActualGoapNode p_node) {
+    public void AfterChopWoodSuccess(ActualGoapNode p_node) {
         p_node.actor.homeSettlement.settlementJobTriggerComponent.TryCreateHaulJob(ProduceMatsPile(p_node));
     }
     #endregion
@@ -54,8 +56,8 @@ public class FindFish : GoapAction {
         if (tileToSpawnPile != null && tileToSpawnPile.tileObjectComponent.objHere != null) {
             tileToSpawnPile = p_node.actor.gridTileLocation.GetFirstNearestTileFromThisWithNoObject();
         }
-        FishPile matsToHaul = InnerMapManager.Instance.CreateNewTileObject<FishPile>(TILE_OBJECT_TYPE.FISH_PILE);
-        matsToHaul.SetResourceInPile(p_node.currentStateDuration * m_amountProducedPerTick);
+        WoodPile matsToHaul = InnerMapManager.Instance.CreateNewTileObject<WoodPile>(TILE_OBJECT_TYPE.WOOD_PILE);
+        matsToHaul.SetResourceInPile(1);
         tileToSpawnPile.structure.AddPOI(matsToHaul, tileToSpawnPile);
         ProduceLogs(p_node);
         (p_node.target as TileObject).DestroyMapVisualGameObject();
@@ -65,9 +67,10 @@ public class FindFish : GoapAction {
     }
 
     public void ProduceLogs(ActualGoapNode p_node) {
+        //string addOnText = (p_node.currentStateDuration * m_amountProducedPerTick).ToString() + " stones";
         Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "GoapAction", name, "produced_resources", p_node, LOG_TAG.Work);
         log.AddToFillers(p_node.actor, p_node.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-        log.AddToFillers(null, (p_node.currentStateDuration * m_amountProducedPerTick).ToString(), LOG_IDENTIFIER.STRING_1);
+        log.AddToFillers(null, "", LOG_IDENTIFIER.STRING_1);
         p_node.LogAction(log);
     }
 }

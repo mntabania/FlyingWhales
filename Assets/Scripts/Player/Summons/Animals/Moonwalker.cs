@@ -12,4 +12,6 @@ public class Moonwalker : Animal {
     }
     public Moonwalker(SaveDataSummon data) : base(data) {
     }
+
+    public override TILE_OBJECT_TYPE produceableMaterial => TILE_OBJECT_TYPE.MOONCRAWLER_CLOTH;
 }

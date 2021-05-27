@@ -3344,6 +3344,13 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
         }
     }
 
+    public void TriggerCreateWeapon(TILE_OBJECT_TYPE p_weaponType) {
+        if (!owner.jobQueue.HasJob(JOB_TYPE.CRAFT_WEAPON)) {
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.CRAFT_WEAPON, INTERACTION_TYPE.CRAFT_WEAPON, null, owner);
+            owner.jobQueue.AddJobInQueue(job);
+        }
+    }
+
     public void TriggerFindFish(GenericTileObject p_tileObject) {
         if (!owner.jobQueue.HasJob(JOB_TYPE.FIND_FISH)) {
             GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.FIND_FISH, INTERACTION_TYPE.FIND_FISH, p_tileObject, owner);

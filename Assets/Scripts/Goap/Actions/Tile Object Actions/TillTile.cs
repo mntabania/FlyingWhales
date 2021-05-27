@@ -44,8 +44,13 @@ public class TillTile : GoapAction {
 
     #region State Effects
     public void AfterTillTileSuccess(ActualGoapNode goapNode) {
-        Debug.LogError("DONE");
-        LocationGridTile tileToTill = goapNode.target.gridTileLocation;
+        //TileObject currentTileObject = p_targetTile.tileObjectComponent.hiddenObjHere;
+        if (goapNode.target.gridTileLocation.tileObjectComponent.objHere != null) {
+            goapNode.target.gridTileLocation.structure.RemovePOI(goapNode.target.gridTileLocation.tileObjectComponent.objHere);
+        }
+        //TileObject tileLot = goapNode.target as TileObject;
+        //tileLot.gridTileLocation.tileObjectComponent.objHere
+        //LocationGridTile tileToTill = goapNode.target.gridTileLocation;
     }
     #endregion
 }

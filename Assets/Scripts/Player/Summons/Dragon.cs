@@ -17,6 +17,8 @@ public class Dragon : Summon {
     public List<Character> charactersThatAreWary { get; private set; }
     private readonly int _leaveWorldTimer;
 
+    public override TILE_OBJECT_TYPE produceableMaterial => TILE_OBJECT_TYPE.BEAR_HIDE;
+
     public override bool defaultDigMode => true;
 
     public Dragon() : base(SUMMON_TYPE.Dragon, "Dragon", RACE.DRAGON, UtilityScripts.Utilities.GetRandomGender()) {

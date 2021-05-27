@@ -12,4 +12,6 @@ public class Mink : Animal {
     }
     public Mink(SaveDataSummon data) : base(data) {
     }
+
+    public override TILE_OBJECT_TYPE produceableMaterial => TILE_OBJECT_TYPE.MINK_CLOTH;
 }

@@ -452,6 +452,14 @@ public class ReactionComponent : CharacterComponent {
 #endif
             return;    
         }
+        if(targetCharacter is Animal animal && targetCharacter.isDead && animal.isShearable) {
+            if (!targetCharacter.HasJobTargetingThis(JOB_TYPE.SHEAR_ANIMAL)) {
+                if (!actor.jobComponent.HasHigherPriorityJobThan(JOB_TYPE.SHEAR_ANIMAL)) {
+                    actor.jobComponent.TriggerShearAnimal(targetCharacter);
+                    return;
+                }
+            }
+        }
         if (actor is VengefulGhost) {
 #if DEBUG_LOG
             debugLog = $"{debugLog}\n-actor is vengeful ghost, do not react!";
@@ -1588,15 +1596,16 @@ public class ReactionComponent : CharacterComponent {
                 }
             }
         }
-        /*
+        
+        
         if (targetTileObject is PowerCrystal) {
-            if (!targetTileObject.HasJobTargetingThis(JOB_TYPE.HARVEST_CROPS)) {
-				if (!actor.jobComponent.HasHigherPriorityJobThan(JOB_TYPE.HARVEST_CROPS)) {
-                    actor.jobComponent.TriggerHarvestCrops(targetTileObject as GenericTileObject);
+            if (!targetTileObject.HasJobTargetingThis(JOB_TYPE.MINE_ORE)) {
+				if (!actor.jobComponent.HasHigherPriorityJobThan(JOB_TYPE.MINE_ORE)) {
+                    actor.jobComponent.TriggerMineOre(targetTileObject as GenericTileObject);
                 }
             }
         }
-        */
+        
         if (targetTileObject is ResourcePile resourcePile && actor.homeSettlement != null) {
             //if character sees a resource pile that is outside his/her home settlement or
             //is not at his/her settlement's main storage

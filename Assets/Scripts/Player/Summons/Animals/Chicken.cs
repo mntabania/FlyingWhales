@@ -14,7 +14,9 @@ public class Chicken : Animal {
     public Chicken(SaveDataSummon data) : base(data) {
         //combatComponent.SetCombatMode(COMBAT_MODE.Passive);
     }
-    
+
+    public override TILE_OBJECT_TYPE produceableMaterial => TILE_OBJECT_TYPE.RABBIT_CLOTH;
+
     // #region Listeners
     // public override void SubscribeToSignals() {
     //     base.SubscribeToSignals();

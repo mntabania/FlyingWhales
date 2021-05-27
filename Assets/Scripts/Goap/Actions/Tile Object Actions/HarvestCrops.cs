@@ -39,36 +39,36 @@ public class HarvestCrops : GoapAction {
 
     public override void OnStopWhilePerforming(ActualGoapNode node) {
         base.OnStopWhilePerforming(node);
-        ProduceFishPile(node);
+        ProduceMatsPile(node);
     }
     #endregion
 
     #region State Effects
-    public void AfterHarvestCropsSuccess(ActualGoapNode goapNode) {
-        ProduceFishPile(goapNode);
+    public void AfterHarvestCropsSuccess(ActualGoapNode p_node) {
+        p_node.actor.homeSettlement.settlementJobTriggerComponent.TryCreateHaulJob(ProduceMatsPile(p_node));
     }
     #endregion
 
-    void ProduceFishPile(ActualGoapNode p_node) {
-        LocationGridTile tileToSpawnPile = p_node.actor.gridTileLocation;
-        if (tileToSpawnPile != null && tileToSpawnPile.tileObjectComponent.objHere != null) {
-            tileToSpawnPile = p_node.actor.gridTileLocation.GetFirstNearestTileFromThisWithNoObject();
+    ResourcePile ProduceMatsPile(ActualGoapNode p_node) {
+        LocationGridTile tileToSpawnItem = p_node.actor.gridTileLocation;
+        if (tileToSpawnItem != null && tileToSpawnItem.tileObjectComponent.objHere != null) {
+            tileToSpawnItem = p_node.actor.gridTileLocation.GetFirstNearestTileFromThisWithNoObject();
         }
+        Summon summon = p_node.target as Summon;
 
-        int amount = p_node.currentStateDuration * m_amountProducedPerTick;
-        FishPile fishPile = InnerMapManager.Instance.CreateNewTileObject<FishPile>(TILE_OBJECT_TYPE.FISH_PILE);
-        fishPile.SetResourceInPile(amount);
-        tileToSpawnPile.structure.AddPOI(fishPile, tileToSpawnPile);
-        ProduceLogs(p_node);
-        (p_node.target as TileObject).DestroyMapVisualGameObject();
-        (p_node.target as TileObject).DestroyPermanently();
+        FoodPile matsToHaul = InnerMapManager.Instance.CreateNewTileObject<FoodPile>((p_node.target as TileObject).tileObjectType);
+        matsToHaul.SetResourceInPile(p_node.currentStateDuration * m_amountProducedPerTick);
+        tileToSpawnItem.structure.AddPOI(matsToHaul, tileToSpawnItem);
+        p_node.actor.homeSettlement.settlementJobTriggerComponent.TryCreateHaulJob(matsToHaul);
+
+        return matsToHaul;
     }
 
     public void ProduceLogs(ActualGoapNode p_node) {
+        string addOnText = (p_node.currentStateDuration * m_amountProducedPerTick).ToString() + " " + (p_node.target as TileObject).tileObjectType;
         Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "GoapAction", name, "produced_resources", p_node, LOG_TAG.Work);
         log.AddToFillers(p_node.actor, p_node.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-        log.AddToFillers(null, (p_node.currentStateDuration * m_amountProducedPerTick).ToString(), LOG_IDENTIFIER.STRING_1);
-
+        log.AddToFillers(null, addOnText, LOG_IDENTIFIER.STRING_1);
         p_node.LogAction(log);
     }
 }

@@ -126,14 +126,14 @@ public class TileFeatureGeneration : MapGenerationComponent {
 		// 	tile.featureComponent.AddFeature(AreaFeatureDB.Vapor_Vents, tile);
 		// 	ventChoices.Remove(tile);
 		// }
-		
+
 		if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Tutorial) {
 			//pigs
 			Area pigTile = GridMap.Instance.map[2, 4];
 			GameFeature pigGameFeature = LandmarkManager.Instance.CreateAreaFeature<GameFeature>(AreaFeatureDB.Game_Feature);
 			pigGameFeature.SetSpawnType(SUMMON_TYPE.Pig);
 			pigTile.featureComponent.AddFeature(pigGameFeature, pigTile);
-			
+
 			//sheep
 			Area sheepTile = GridMap.Instance.map[4, 3];
 			GameFeature sheepGameFeature = LandmarkManager.Instance.CreateAreaFeature<GameFeature>(AreaFeatureDB.Game_Feature);
@@ -145,13 +145,12 @@ public class TileFeatureGeneration : MapGenerationComponent {
 			GameFeature pigGameFeature = LandmarkManager.Instance.CreateAreaFeature<GameFeature>(AreaFeatureDB.Game_Feature);
 			pigGameFeature.SetSpawnType(SUMMON_TYPE.Pig);
 			pigTile.featureComponent.AddFeature(pigGameFeature, pigTile);
-		} else {
-			// for (int i = 0; i < gameCount; i++) {
-			// 	if (flatTilesWithNoFeatures.Count <= 0) { break; }
-			// 	Area tile = CollectionUtilities.GetRandomElement(flatTilesWithNoFeatures);
-			// 	tile.featureComponent.AddFeature(AreaFeatureDB.Game_Feature, tile);
-			// 	flatTilesWithNoFeatures.Remove(tile);
-			// }	
+		} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Custom) {
+			//Add 2 pigs 2 tiles away from village 
+			Area pigTile = GridMap.Instance.map[5, 5];
+			GameFeature pigGameFeature = LandmarkManager.Instance.CreateAreaFeature<GameFeature>(AreaFeatureDB.Game_Feature);
+			pigGameFeature.SetSpawnType(SUMMON_TYPE.Chicken);
+			pigTile.featureComponent.AddFeature(pigGameFeature, pigTile);
 		}
 	}
 	private IEnumerator DetermineVillageSpots(MapGenerationData p_data) {

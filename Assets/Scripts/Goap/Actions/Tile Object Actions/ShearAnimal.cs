@@ -7,6 +7,7 @@ using Inner_Maps;
 
 public class ShearAnimal : GoapAction {
 
+    public int m_amountProducedPerTick = 1;
     public ShearAnimal() : base(INTERACTION_TYPE.SHEAR_ANIMAL) {
         actionIconString = GoapActionStateDB.Work_Icon;
         //advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
@@ -19,6 +20,7 @@ public class ShearAnimal : GoapAction {
         base.Perform(goapNode);
         SetState("Shear Animal Success", goapNode);
     }
+
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
 #if DEBUG_LOG
         string costLog = $"\n{name} {target.nameWithID}: +10(Constant)";
@@ -37,8 +39,35 @@ public class ShearAnimal : GoapAction {
     #endregion
 
     #region State Effects
-    public void AfterShearAnimalSuccess(ActualGoapNode goapNode) {
-        //add shear output here
+    public override void OnStopWhilePerforming(ActualGoapNode node) {
+        base.OnStopWhilePerforming(node);
+        ProduceMatsPile(node);
+    }
+    public void AfterShearAnimalSuccess(ActualGoapNode p_node) {
+        p_node.actor.homeSettlement.settlementJobTriggerComponent.TryCreateHaulJob(ProduceMatsPile(p_node));
     }
     #endregion
+
+    ResourcePile ProduceMatsPile(ActualGoapNode p_node) {
+        LocationGridTile tileToSpawnPile = p_node.actor.gridTileLocation;
+        if (tileToSpawnPile != null && tileToSpawnPile.tileObjectComponent.objHere != null) {
+            tileToSpawnPile = p_node.actor.gridTileLocation.GetFirstNearestTileFromThisWithNoObject();
+        }
+        ResourcePile matsToHaul = InnerMapManager.Instance.CreateNewTileObject<ResourcePile>((p_node.target as Animal).produceableMaterial);
+        matsToHaul.SetResourceInPile(p_node.currentStateDuration * m_amountProducedPerTick);
+        tileToSpawnPile.structure.AddPOI(matsToHaul, tileToSpawnPile);
+        ProduceLogs(p_node);
+        (p_node.target as TileObject).DestroyMapVisualGameObject();
+        (p_node.target as TileObject).DestroyPermanently();
+
+        return matsToHaul;
+    }
+
+    public void ProduceLogs(ActualGoapNode p_node) {
+        string addOnText = (p_node.currentStateDuration * m_amountProducedPerTick).ToString() + " " + (p_node.target as Animal).produceableMaterial;
+        Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "GoapAction", name, "produced_resources", p_node, LOG_TAG.Work);
+        log.AddToFillers(p_node.actor, p_node.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+        log.AddToFillers(null, addOnText, LOG_IDENTIFIER.STRING_1);
+        p_node.LogAction(log);
+    }
 }
