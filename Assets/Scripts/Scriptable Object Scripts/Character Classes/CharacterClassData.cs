@@ -11,6 +11,8 @@ public class CharacterClassData : ScriptableObject {
     [Header("Combat")]
     public CHARACTER_COMBAT_BEHAVIOUR combatBehaviourType;
     public COMBAT_SPECIAL_SKILL combatSpecialSkillType;
+    [Header("Structure")]
+    public STRUCTURE_TYPE workStructureType;
     [Header("Misc")] 
     public int summonCost;
     [Header("Visuals")]

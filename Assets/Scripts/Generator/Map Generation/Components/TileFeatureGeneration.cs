@@ -293,8 +293,8 @@ public class TileFeatureGeneration : MapGenerationComponent {
 				//add a Ore Vein to a random cave tile inside area.
 				LocationGridTile oreVeinLocation = p_data.GetFirstUnoccupiedNonEdgeCaveTile(currentAreaBeingChecked, p_data);
 				if (oreVeinLocation != null) {
-					currentAreaBeingChecked.region.innerMap.CreateOreVein(oreVeinLocation);
 					p_data.SetGeneratedMapPerlinDetails(oreVeinLocation, TILE_OBJECT_TYPE.NONE);	
+					currentAreaBeingChecked.region.innerMap.CreateOreVein(oreVeinLocation);
 				}
 			}
 		}

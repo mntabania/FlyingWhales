@@ -72,14 +72,9 @@ public class CharacterManager : BaseMonoBehaviour {
     
     public const int VISION_RANGE = 8;
     public const int AVOID_COMBAT_VISION_RANGE = 12;
-
-    public GameObject characterIconPrefab;
-    public Transform characterIconsParent;
     public bool lessenCharacterLogs;
-    //private List<CharacterAvatar> _allCharacterAvatars;
-    
+
     [Header("Character Portrait Assets")]
-    [SerializeField] private GameObject _characterPortraitPrefab;
     [SerializeField] private List<RacePortraitAssets> portraitAssets;
     [SerializeField] private RolePortraitFramesDictionary portraitFrames;
     [SerializeField] private Vector3[] hairColors;
@@ -434,12 +429,10 @@ public class CharacterManager : BaseMonoBehaviour {
     #region getters/setters
     public List<Character> allCharacters => DatabaseManager.Instance.characterDatabase.allCharactersList;
     public List<Character> limboCharacters => DatabaseManager.Instance.characterDatabase.limboCharactersList;
-    public GameObject characterPortraitPrefab => _characterPortraitPrefab;
     #endregion
 
     private void Awake() {
         Instance = this;
-        //_allCharacterAvatars = new List<CharacterAvatar>();
     }
 
     public void Initialize() {
@@ -461,6 +454,7 @@ public class CharacterManager : BaseMonoBehaviour {
         rumorWorthyActions = new List<string>() { Make_Love, Steal, Poison_Food, Place_Trap, Flirt, Transform_To_Wolf, Drink_Blood };
         ConstructEmotionData();
         ConstructCharacterBehaviours();
+        ConstructDailySchedules();
         Messenger.AddListener<ActualGoapNode>(JobSignals.CHARACTER_FINISHED_ACTION, OnCharacterFinishedAction);
         Messenger.AddListener<string, string>(CharacterSignals.RENAME_CHARACTER, OnRenameCharacter);
     }
@@ -846,9 +840,9 @@ public class CharacterManager : BaseMonoBehaviour {
     #endregion
 
     #region Character Class Manager
-    public CharacterClass CreateNewCharacterClass(string className) {
-        return classManager.CreateNewCharacterClass(className);
-    }
+    //public CharacterClass CreateNewCharacterClass(string className) {
+    //    return classManager.GetCharacterClass(className);
+    //}
     //public string GetRandomClassByIdentifier(string identifier) {
     //    return classManager.GetRandomClassByIdentifier(identifier);
     //}
@@ -1640,6 +1634,31 @@ public class CharacterManager : BaseMonoBehaviour {
             character.InitialCharacterPlacement(p_gridTile);
         }
         return true;
+    }
+    #endregion
+
+    #region Daily Schedules
+    public List<DailySchedule> allDailySchedules { get; private set; }
+    private void ConstructDailySchedules() {
+        allDailySchedules = ReflectiveEnumerator.GetEnumerableOfType<DailySchedule>().ToList();
+    }
+    public DailySchedule GetDailySchedule<T>() {
+        for (int i = 0; i < allDailySchedules.Count; i++) {
+            DailySchedule schedule = allDailySchedules[i];
+            if (schedule is T) {
+                return schedule;
+            }
+        }
+        return null;
+    }
+    public DailySchedule GetDailySchedule(System.Type p_type) {
+        for (int i = 0; i < allDailySchedules.Count; i++) {
+            DailySchedule schedule = allDailySchedules[i];
+            if (schedule.GetType() == p_type) {
+                return schedule;
+            }
+        }
+        return null;
     }
     #endregion
 

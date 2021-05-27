@@ -8,6 +8,8 @@ public class Ore : TileObject {
     public int yield { get; private set; }
     public override System.Type serializedData => typeof(SaveDataOre);
     
+    public CONCRETE_RESOURCES providedMetal { get; private set; }
+    
     public Ore() {
         Initialize(TILE_OBJECT_TYPE.ORE, false);
         AddAdvertisedAction(INTERACTION_TYPE.ASSAULT);
@@ -16,7 +18,10 @@ public class Ore : TileObject {
 
         SetYield(50);
     }
-    public Ore(SaveDataOre data) : base(data) { }
+    public Ore(SaveDataOre data) : base(data) {
+        yield = data.yield;
+        providedMetal = data.providedMetal;
+    }
 
     #region Overrides
     public override string ToString() {
@@ -29,6 +34,12 @@ public class Ore : TileObject {
         }
     }
     #endregion
+
+    #region Metal
+    public void SetProvidedMetal(CONCRETE_RESOURCES p_providedMetal) {
+        providedMetal = p_providedMetal;
+    }
+    #endregion
     
     public void AdjustYield(int amount) {
         yield += amount;
@@ -38,7 +49,7 @@ public class Ore : TileObject {
             structureLocation.RemovePOI(this);
         }
     }
-    public void SetYield(int amount) {
+    private void SetYield(int amount) {
         yield = amount;
     }
     public override string GetAdditionalTestingData() {
@@ -51,16 +62,17 @@ public class Ore : TileObject {
 #region Save Data
 public class SaveDataOre : SaveDataTileObject {
     public int yield;
+    public CONCRETE_RESOURCES providedMetal;
 
     public override void Save(TileObject tileObject) {
         base.Save(tileObject);
         Ore obj = tileObject as Ore;
         yield = obj.yield;
+        providedMetal = obj.providedMetal;
     }
 
     public override TileObject Load() {
         Ore obj = base.Load() as Ore;
-        obj.SetYield(yield);
         return obj;
     }
 }

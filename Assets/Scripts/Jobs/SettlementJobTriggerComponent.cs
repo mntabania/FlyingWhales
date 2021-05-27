@@ -13,7 +13,7 @@ using Locations.Settlements;
 using Locations.Settlements.Components;
 using UnityEngine.Profiling;
 using UtilityScripts;
-public class SettlementJobTriggerComponent : JobTriggerComponent, SettlementClassTracker.ISettlementTrackerListener, NPCSettlementEventDispatcher.ITileListener {
+public class SettlementJobTriggerComponent : JobTriggerComponent/*, SettlementClassTracker.ISettlementTrackerListener*/, NPCSettlementEventDispatcher.ITileListener {
 
 	private readonly NPCSettlement _owner;
 
@@ -103,12 +103,12 @@ public class SettlementJobTriggerComponent : JobTriggerComponent, SettlementClas
     public void UnsubscribeFromDungeonListeners() {
         Messenger.RemoveListener<ResourcePile>(TileObjectSignals.RESOURCE_IN_PILE_CHANGED, OnResourceInPileChangedDungeon);
     }
-    public void HookToSettlementClassTrackerEvents(SettlementClassTracker p_classTracker) {
-	    p_classTracker.SubscribeToNeededClassRemoved(this);
-    }
-    public void UnHookToSettlementClassTrackerEvents(SettlementClassTracker p_classTracker) {
-	    p_classTracker.UnsubscribeToNeededClassRemoved(this);
-    }
+    //public void HookToSettlementClassTrackerEvents(SettlementClassTracker p_classTracker) {
+	   // p_classTracker.SubscribeToNeededClassRemoved(this);
+    //}
+    //public void UnHookToSettlementClassTrackerEvents(SettlementClassTracker p_classTracker) {
+	   // p_classTracker.UnsubscribeToNeededClassRemoved(this);
+    //}
     private void OnGameLoadedVillage() {
 		Messenger.RemoveListener(Signals.GAME_LOADED, OnGameLoadedVillage);
 		if (SaveManager.Instance.useSaveData) {
@@ -137,7 +137,7 @@ public class SettlementJobTriggerComponent : JobTriggerComponent, SettlementClas
 #endif
 		CreatePatrolJobs();
 		TryCreateMiningJob();
-		HourlyCheckForNeededCharacterClasses();
+		//HourlyCheckForNeededCharacterClasses();
 		TryCreateMissingFoodProducingStructure();
 #if DEBUG_PROFILER
 		Profiler.EndSample();
@@ -1195,55 +1195,65 @@ public class SettlementJobTriggerComponent : JobTriggerComponent, SettlementClas
 #endregion
 
 #region Change Class
-    public void OnNeededClassRemoved(string p_removedClass) {
-	    //cancel all change class jobs targeting removed class
-	    List<JobQueueItem> changeClassJobs = _owner.availableJobs.GetJobsWithOtherData(JOB_TYPE.CHANGE_CLASS, INTERACTION_TYPE.CHANGE_CLASS, p_removedClass);
-	    changeClassJobs?.CancelJobs(false, $"{p_removedClass} is no longer needed.");
-    }
-    private void HourlyCheckForNeededCharacterClasses() {
-	    if (_owner.settlementClassTracker.neededClasses.Count > 0) {
-		    ProfessionPedestal professionPedestal = _owner.GetFirstTileObjectOfTypeThatIsAvailable<ProfessionPedestal>();
-		    if (professionPedestal != null) {
-			    for (int i = 0; i < _owner.settlementClassTracker.neededClasses.Count; i++) {
-				    string neededClass = _owner.settlementClassTracker.neededClasses[i];
-				    if (ShouldCreateChangeClassJob(neededClass)) {
-					    TriggerChangeClassJob(professionPedestal, neededClass);
-				    }
-			    }    
-		    }
-	    }
-    }
-    private int GetAbleResidentsClassAmount(NPCSettlement p_settlement, string p_className) {
-	    int classCount = 0;
-	    for (int i = 0; i < p_settlement.residents.Count; i++) {
-		    Character resident = p_settlement.residents[i];
-		    if (resident.characterClass.className == p_className && !resident.traitContainer.HasTrait("Paralyzed", "Quarantined")) {
-			    classCount++;
-		    }
-	    }
-	    return classCount;
-    }
-    private bool ShouldCreateChangeClassJob(string p_className) {
-	    int neededAmount = Mathf.FloorToInt((float)_owner.residents.Count * 0.15f);
-	    neededAmount = Mathf.Max(1, neededAmount);
-	    int currentClassAmount = GetAbleResidentsClassAmount(_owner, p_className);
-	    if (currentClassAmount < neededAmount) {
-		    return true;
-	    }
-	    return false;
-    }
-    private void TriggerChangeClassJob(ProfessionPedestal professionPedestal, string className) {
-	    if (!_owner.availableJobs.HasJobWithOtherData(JOB_TYPE.CHANGE_CLASS, INTERACTION_TYPE.CHANGE_CLASS, className)) {
-		    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.CHANGE_CLASS, INTERACTION_TYPE.CHANGE_CLASS, professionPedestal, _owner);
-		    job.SetCanTakeThisJobChecker(JobManager.Can_Take_Change_Class);
-		    job.AddOtherData(INTERACTION_TYPE.CHANGE_CLASS, new object[] { className });
-		    _owner.AddToAvailableJobs(job);    
-	    }
-    }
-#endregion
+    //public void OnNeededClassRemoved(string p_removedClass) {
+	   // //cancel all change class jobs targeting removed class
+	   // List<JobQueueItem> changeClassJobs = _owner.availableJobs.GetJobsWithOtherData(JOB_TYPE.CHANGE_CLASS, INTERACTION_TYPE.CHANGE_CLASS, p_removedClass);
+	   // changeClassJobs?.CancelJobs(false, $"{p_removedClass} is no longer needed.");
+    //}
+    //private void HourlyCheckForNeededCharacterClasses() {
+	   // if (_owner.settlementClassTracker.neededClasses.Count > 0) {
+		  //  ProfessionPedestal professionPedestal = _owner.GetFirstTileObjectOfTypeThatIsAvailable<ProfessionPedestal>();
+		  //  if (professionPedestal != null) {
+			 //   for (int i = 0; i < _owner.settlementClassTracker.neededClasses.Count; i++) {
+				//    string neededClass = _owner.settlementClassTracker.neededClasses[i];
+				//    if (ShouldCreateChangeClassJob(neededClass)) {
+				//	    TriggerChangeClassJob(professionPedestal, neededClass);
+				//    }
+			 //   }    
+		  //  }
+	   // }
+    //}
+    //private int GetAbleResidentsClassAmount(NPCSettlement p_settlement, string p_className) {
+	   // int classCount = 0;
+	   // for (int i = 0; i < p_settlement.residents.Count; i++) {
+		  //  Character resident = p_settlement.residents[i];
+		  //  if (resident.characterClass.className == p_className && !resident.traitContainer.HasTrait("Paralyzed", "Quarantined")) {
+			 //   classCount++;
+		  //  }
+	   // }
+	   // return classCount;
+    //}
+    //private bool ShouldCreateChangeClassJob(string p_className) {
+	   // int neededAmount = Mathf.FloorToInt((float)_owner.residents.Count * 0.15f);
+	   // neededAmount = Mathf.Max(1, neededAmount);
+	   // int currentClassAmount = GetAbleResidentsClassAmount(_owner, p_className);
+	   // if (currentClassAmount < neededAmount) {
+		  //  return true;
+	   // }
+	   // return false;
+    //}
+    //private void TriggerChangeClassJob(ProfessionPedestal professionPedestal, string className) {
+	   // if (!_owner.availableJobs.HasJobWithOtherData(JOB_TYPE.CHANGE_CLASS, INTERACTION_TYPE.CHANGE_CLASS, className)) {
+		  //  GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.CHANGE_CLASS, INTERACTION_TYPE.CHANGE_CLASS, professionPedestal, _owner);
+		  //  job.SetCanTakeThisJobChecker(JobManager.Can_Take_Change_Class);
+		  //  job.AddOtherData(INTERACTION_TYPE.CHANGE_CLASS, new object[] { className });
+		  //  _owner.AddToAvailableJobs(job);    
+	   // }
+    //}
+	public void TriggerChangeClassJob(string className, LocationStructure p_reservedStructure) {
+		GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.CHANGE_CLASS, INTERACTION_TYPE.CHANGE_CLASS, null, _owner);
+		job.SetCanTakeThisJobChecker(JobManager.Can_Take_Change_Class);
+        if (p_reservedStructure != null) {
+			job.AddOtherData(INTERACTION_TYPE.CHANGE_CLASS, new object[] { className, p_reservedStructure });
+		} else {
+			job.AddOtherData(INTERACTION_TYPE.CHANGE_CLASS, new object[] { className });
+		}
+		_owner.AddToAvailableJobs(job);
+	}
+	#endregion
 
-#region Food Producing Structure
-    private void TryCreateMissingFoodProducingStructure() {
+	#region Food Producing Structure
+	private void TryCreateMissingFoodProducingStructure() {
 	    if (!_owner.HasFoodProducingStructure()) {
 		    TriggerBuildFoodProducingStructure();
 	    }

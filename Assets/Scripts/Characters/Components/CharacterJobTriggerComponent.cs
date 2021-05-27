@@ -229,14 +229,14 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
     }
     public string GetPriorityJobs() {
         string jobs = string.Empty;
-        if (owner.characterClass.priorityJobs != null && owner.characterClass.priorityJobs.Length > 0) {
-            for (int i = 0; i < owner.characterClass.priorityJobs.Length; i++) {
-                if (i > 0) {
-                    jobs += ",";
-                }
-                jobs += owner.characterClass.priorityJobs[i].ToString();
-            }
-        }
+        //if (owner.characterClass.priorityJobs != null && owner.characterClass.priorityJobs.Length > 0) {
+        //    for (int i = 0; i < owner.characterClass.priorityJobs.Length; i++) {
+        //        if (i > 0) {
+        //            jobs += ",";
+        //        }
+        //        jobs += owner.characterClass.priorityJobs[i].ToString();
+        //    }
+        //}
         if(owner.jobComponent.priorityJobs.Count > 0) {
             if(jobs != string.Empty) {
                 jobs += ",";
@@ -250,18 +250,18 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
         }
         return jobs;
     }
-    public string GetSecondaryJobs() {
-        string jobs = string.Empty;
-        if (owner.characterClass.secondaryJobs != null && owner.characterClass.secondaryJobs.Length > 0) {
-            for (int i = 0; i < owner.characterClass.secondaryJobs.Length; i++) {
-                if (i > 0) {
-                    jobs += ",";
-                }
-                jobs += owner.characterClass.secondaryJobs[i].ToString();
-            }
-        }
-        return jobs;
-    }
+    //public string GetSecondaryJobs() {
+    //    string jobs = string.Empty;
+    //    if (owner.characterClass.secondaryJobs != null && owner.characterClass.secondaryJobs.Length > 0) {
+    //        for (int i = 0; i < owner.characterClass.secondaryJobs.Length; i++) {
+    //            if (i > 0) {
+    //                jobs += ",";
+    //            }
+    //            jobs += owner.characterClass.secondaryJobs[i].ToString();
+    //        }
+    //    }
+    //    return jobs;
+    //}
     public string GetAbleJobs() {
         string jobs = string.Empty;
         if (owner.characterClass.ableJobs != null && owner.characterClass.ableJobs.Length > 0) {
@@ -3319,9 +3319,9 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 	    p_producedJob = null;
 	    return false;
     }
-#endregion
+    #endregion
 
-#region Loading
+    #region Loading
     public void LoadReferences(SaveDataCharacterJobTriggerComponent data) {
         //Currently N/A
     }

@@ -85,7 +85,7 @@ public class SaveDataCharacter : SaveData<Character>, ISavableCounterpart {
     public SaveDataTrapStructure trapStructure;
     public SaveDataCharacterClassComponent classComponent;
     public SaveDataCharacterNeedsComponent needsComponent;
-    public SaveDataBuildStructureComponent buildStructureComponent;
+    public SaveDataCharacterStructureComponent structureComponent;
     public SaveDataCharacterStateComponent stateComponent;
     public SaveDataNonActionEventsComponent nonActionEventsComponent;
     public SaveDataInterruptComponent interruptComponent;
@@ -113,6 +113,7 @@ public class SaveDataCharacter : SaveData<Character>, ISavableCounterpart {
     //public SaveDataBuffStatsBonus buffStatusBonus;
     public SaveDataCharacterTalentComponent talentComponent;
     public SaveDataResourceStorageComponent resourceStorageComponent;
+    public SaveDataDailyScheduleComponent dailyScheduleComponent;
     //public SaveDataEquipmentComponent equipmentComponent;
     #region getters
     public OBJECT_TYPE objectType => OBJECT_TYPE.Character;
@@ -165,7 +166,7 @@ public class SaveDataCharacter : SaveData<Character>, ISavableCounterpart {
         trapStructure = new SaveDataTrapStructure(); trapStructure.Save(data.trapStructure);
         classComponent = new SaveDataCharacterClassComponent(); classComponent.Save(data.classComponent);
         needsComponent = new SaveDataCharacterNeedsComponent(); needsComponent.Save(data.needsComponent);
-        buildStructureComponent = new SaveDataBuildStructureComponent(); buildStructureComponent.Save(data.buildStructureComponent);
+        structureComponent = new SaveDataCharacterStructureComponent(); structureComponent.Save(data.structureComponent);
         stateComponent = new SaveDataCharacterStateComponent(); stateComponent.Save(data.stateComponent);
         nonActionEventsComponent = new SaveDataNonActionEventsComponent(); nonActionEventsComponent.Save(data.nonActionEventsComponent);
         interruptComponent = new SaveDataInterruptComponent(); interruptComponent.Save(data.interruptComponent);
@@ -192,6 +193,7 @@ public class SaveDataCharacter : SaveData<Character>, ISavableCounterpart {
         //buffStatusBonus = new SaveDataBuffStatsBonus(); buffStatusBonus.Save(data.buffStatsBonus);
         moneyComponent = new SaveDataCharacterMoneyComponent(); moneyComponent.Save(data.moneyComponent);
         resourceStorageComponent = new SaveDataResourceStorageComponent(); resourceStorageComponent.Save(data.resourceStorageComponent);
+        dailyScheduleComponent = new SaveDataDailyScheduleComponent(); dailyScheduleComponent.Save(data.dailyScheduleComponent);
 
         if (data.talentComponent != null) {
             talentComponent = new SaveDataCharacterTalentComponent(); talentComponent.Save(data.talentComponent);

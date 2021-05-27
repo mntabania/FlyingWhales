@@ -135,6 +135,17 @@ public class TreeObject : TileObject {
         }
         UpdateSettlementResourcesParent();
     }
+    public override void OnLoadPlacePOI() {
+        DefaultProcessOnPlacePOI();
+        if (ent != null) {
+            ent.marker.PlaceMarkerAt(gridTileLocation);
+            ent.marker.SetVisualState(false);
+        }
+        if (structureConnector != null && gridTileLocation != null) {
+            structureConnector.LoadConnectorForTileObjects(gridTileLocation.parentMap);    
+        }
+        UpdateSettlementResourcesParent();
+    }
     protected override void CreateMapObjectVisual() {
         base.CreateMapObjectVisual();
         _treeGameObject = mapVisual as TreeGameObject;

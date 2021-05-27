@@ -91,9 +91,9 @@ public class CharacterClassManager : BaseMonoBehaviour {
         }
 
     }
-    public CharacterClass CreateNewCharacterClass(string className) {
+    public CharacterClass GetCharacterClass(string className) {
         if (classesDictionary.ContainsKey(className)) {
-            return classesDictionary[className].CreateNewCopy();
+            return classesDictionary[className];
         }
         return null;
     }

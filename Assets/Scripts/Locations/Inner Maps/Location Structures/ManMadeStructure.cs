@@ -10,15 +10,30 @@ namespace Inner_Maps.Location_Structures {
 
         public RESOURCE wallsAreMadeOf { get; protected set; }
         public LocationStructureObject structureObj {get; private set;}
+        public string assignedWorkerID { get; private set; }
 
         #region Getters
         public override Vector2 selectableSize => structureObj.size;
         public override System.Type serializedData => typeof(SaveDataManMadeStructure);
+        public Character assignedWorker => CharacterManager.Instance.GetCharacterByPersistentID(assignedWorkerID);
         #endregion
 
         protected ManMadeStructure(STRUCTURE_TYPE structureType, Region location) : base(structureType, location) { }
-        protected ManMadeStructure(Region location, SaveDataManMadeStructure data) : base(location, data) { }
-        
+        protected ManMadeStructure(Region location, SaveDataManMadeStructure data) : base(location, data) {
+            assignedWorkerID = data.assignedWorkerID;
+        }
+
+        #region Behaviours
+        public void ProcessWorkerBehaviour(out JobQueueItem producedJob) {
+            //We wrapped the actual process of getting worker jobs by structure in here so that the assignedWorker is only called once 
+            //and be passed down as a parameter since assignedWorker is a getter
+            //It would be waste of processing to call it every time
+            Character worker = assignedWorker;
+            ProcessWorkStructureJobsByWorker(worker, out producedJob);
+        }
+        protected virtual void ProcessWorkStructureJobsByWorker(Character p_worker, out JobQueueItem producedJob) { producedJob = null; }
+        #endregion
+
         #region Listeners
         protected override void SubscribeListeners() {
             if (hasBeenDestroyed) { return; }
@@ -199,6 +214,35 @@ namespace Inner_Maps.Location_Structures {
             position.x -= 0.5f;
             position.y -= 0.5f;
             worldPosition = position;
+        }
+        #endregion
+
+        #region Worker
+        public void SetAssignedWorker(Character p_assignedWorker) {
+            if (p_assignedWorker.persistentID != assignedWorkerID) {
+                Character prevWorker = assignedWorker;
+                assignedWorkerID = p_assignedWorker.persistentID;
+                Character newWorker = assignedWorker;
+                if (prevWorker != null) {
+                    prevWorker.structureComponent.SetWorkPlaceStructure(null);
+                }
+                if (newWorker != null) {
+                    newWorker.structureComponent.SetWorkPlaceStructure(this);
+                }
+            }
+        }
+        public bool HasAssignedWorker() {
+            return assignedWorker != null;
+        }
+        #endregion
+
+        #region Loading
+        public override void LoadReferences(SaveDataLocationStructure saveDataLocationStructure) {
+            base.LoadReferences(saveDataLocationStructure);
+            Character worker = assignedWorker;
+            if (worker != null) {
+                worker.structureComponent.SetWorkPlaceStructure(this);
+            }
         }
         #endregion
     }

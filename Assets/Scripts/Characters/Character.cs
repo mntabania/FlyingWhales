@@ -95,7 +95,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public GoapPlanner planner { get; private set; }
     public CharacterClassComponent classComponent { get; private set; }
     public CharacterNeedsComponent needsComponent { get; private set; }
-    public BuildStructureComponent buildStructureComponent { get; private set; }
+    public CharacterStructureComponent structureComponent { get; private set; }
     public CharacterStateComponent stateComponent { get; private set; }
     public NonActionEventsComponent nonActionEventsComponent { get; private set; }
     public InterruptComponent interruptComponent { get; private set; }
@@ -128,6 +128,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
 
     //IMPORTANT: This component is not applicable to all characters, only VILLAGERS! So, this can be null if the character is NOT A VILLAGER.
     public CharacterTalentComponent talentComponent { get; private set; }
+    public DailyScheduleComponent dailyScheduleComponent { get; private set; }
 
     #region getters / setters
     public string bookmarkName => lycanData != null ? lycanData.activeForm.visuals.GetCharacterNameWithIconAndColor() : visuals.GetCharacterNameWithIconAndColor();
@@ -266,7 +267,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         visuals.Initialize();
         needsComponent.UpdateBaseStaminaDecreaseRate();
         combatComponent.UpdateBasicData(true);
-        buildStructureComponent = new BuildStructureComponent(); buildStructureComponent.SetOwner(this);
+        structureComponent = new CharacterStructureComponent(); structureComponent.SetOwner(this);
         afflictionsSkillsInflictedByPlayer = new List<PLAYER_SKILL_TYPE>();
     }
     public Character(string className, RACE race, GENDER gender) : this() {
@@ -281,7 +282,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         visuals.Initialize();
         needsComponent.UpdateBaseStaminaDecreaseRate();
         combatComponent.UpdateBasicData(true);
-        buildStructureComponent = new BuildStructureComponent(); buildStructureComponent.SetOwner(this);
+        structureComponent = new CharacterStructureComponent(); structureComponent.SetOwner(this);
         afflictionsSkillsInflictedByPlayer = new List<PLAYER_SKILL_TYPE>();
     }
     private Character() {
@@ -339,6 +340,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         equipmentComponent = new EquipmentComponent();
         needsComponent.ResetSleepTicks();
         resourceStorageComponent = new ResourceStorageComponent();
+        dailyScheduleComponent = new DailyScheduleComponent(); dailyScheduleComponent.SetOwner(this);
     }
     public Character(SaveDataCharacter data) {
         skillCauseOfDeath = PLAYER_SKILL_TYPE.NONE;
@@ -392,7 +394,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         trapStructure = data.trapStructure.Load();
         classComponent = data.classComponent.Load(); classComponent.SetOwner(this);
         needsComponent = data.needsComponent.Load(); needsComponent.SetOwner(this);
-        buildStructureComponent = data.buildStructureComponent.Load(); buildStructureComponent.SetOwner(this);
+        structureComponent = data.structureComponent.Load(); structureComponent.SetOwner(this);
         stateComponent = data.stateComponent.Load(); stateComponent.SetOwner(this);
         nonActionEventsComponent = data.nonActionEventsComponent.Load(); nonActionEventsComponent.SetOwner(this);
         interruptComponent = data.interruptComponent.Load(); interruptComponent.SetOwner(this);
@@ -417,6 +419,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         previousCharacterDataComponent = data.previousCharacterDataComponent.Load(); previousCharacterDataComponent.SetOwner(this);
         traitComponent = data.traitComponent.Load(); traitComponent.SetOwner(this);
         moneyComponent = data.moneyComponent.Load(); moneyComponent.SetOwner(this);
+        dailyScheduleComponent = data.dailyScheduleComponent.Load(); dailyScheduleComponent.SetOwner(this);
 
         if (data.talentComponent != null) {
             talentComponent = data.talentComponent.Load(); talentComponent.SetOwner(this);
@@ -4298,6 +4301,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             AddAdvertisedAction(INTERACTION_TYPE.STUDY_MONSTER);
             AddAdvertisedAction(INTERACTION_TYPE.PICKPOCKET);
             AddAdvertisedAction(INTERACTION_TYPE.STEAL_COINS);
+            AddAdvertisedAction(INTERACTION_TYPE.CHANGE_CLASS);
 
             //NOTE: Removed the creation of healing potion, etc. on the fly because it conflicts with the current crafting of objects
             //It is confusing to have a crafting then another one the creates them in the inventory without any crafting
@@ -6328,7 +6332,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
 
         trapStructure.LoadReferences(data.trapStructure);
         needsComponent.LoadReferences(data.needsComponent);
-        buildStructureComponent.LoadReferences(data.buildStructureComponent);
+        structureComponent.LoadReferences(data.structureComponent);
         stateComponent.LoadReferences(data.stateComponent);
         nonActionEventsComponent.LoadReferences(data.nonActionEventsComponent);
         interruptComponent.LoadReferences(data.interruptComponent);
@@ -6349,6 +6353,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         crimeComponent.LoadReferences(data.crimeComponent);
         previousCharacterDataComponent.LoadReferences(data.previousCharacterDataComponent);
         traitComponent.LoadReferences(data.traitComponent);
+        dailyScheduleComponent.LoadReferences(data.dailyScheduleComponent);
         //Place marker after loading references
         if (data.hasMarker) {
             if (!marker) {
