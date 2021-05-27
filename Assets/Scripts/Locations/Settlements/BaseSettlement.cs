@@ -338,13 +338,33 @@ namespace Locations.Settlements {
             RuinarchListPool<Character>.Release(choices);
             return chosenCharacter;
         }
-        public int GetNumOfResidentsThatIsHasRaceAndClassOf(RACE p_race, string p_className, Type p_behaviourTypeException = null) {
+        public Character GetFirstResidentThatIsAbleAndCanBecomeClass(string p_className) {
+            for (int i = 0; i < residents.Count; i++) {
+                Character c = residents[i];
+                if (!c.isDead && c.classComponent.HasAbleClass(p_className)) {
+                    return c;
+                }
+            }
+            return null;
+        }
+
+        public int GetNumOfResidentsThatHasRaceAndClassOf(RACE p_race, string p_className, Type p_behaviourTypeException = null) {
             int count = 0;
             for (int i = 0; i < residents.Count; i++) {
                 Character resident = residents[i];
                 if (resident.race == p_race 
                     && resident.characterClass.className == p_className 
                     && (p_behaviourTypeException == null || !resident.behaviourComponent.HasBehaviour(p_behaviourTypeException))) {
+                    count++;
+                }
+            }
+            return count;
+        }
+        public int GetNumOfResidentsThatIsAliveCombatant() {
+            int count = 0;
+            for (int i = 0; i < residents.Count; i++) {
+                Character c = residents[i];
+                if (!c.isDead && c.characterClass.IsCombatant()) {
                     count++;
                 }
             }
@@ -365,6 +385,16 @@ namespace Locations.Settlements {
             for (int i = 0; i < residents.Count; i++) {
                 Character c = residents[i];
                 if (c.traitContainer.HasTrait(p_traitName)) {
+                    count++;
+                }
+            }
+            return count;
+        }
+        public int GetNumberOfResidentsThatIsAliveVillager() {
+            int count = 0;
+            for (int i = 0; i < residents.Count; i++) {
+                Character c = residents[i];
+                if (!c.isDead && c.isNormalCharacter) {
                     count++;
                 }
             }
@@ -498,6 +528,22 @@ namespace Locations.Settlements {
                 List<LocationStructure> structuresOfType = structures[type];
                 if(structuresOfType != null && structuresOfType.Count > 0) {
                     return structuresOfType[0];
+                }
+            }
+            return null;
+        }
+        public LocationStructure GetFirstStructureOfTypeThatHasNoWorkerAndIsNotReserved(STRUCTURE_TYPE type) {
+            if (HasStructure(type)) {
+                List<LocationStructure> structuresOfType = structures[type];
+                if (structuresOfType != null && structuresOfType.Count > 0) {
+                    for (int i = 0; i < structuresOfType.Count; i++) {
+                        ManMadeStructure s = structuresOfType[i] as ManMadeStructure;
+                        if (!s.HasAssignedWorker()) {
+                            if (!owner.availableJobs.HasJobWithOtherData(JOB_TYPE.CHANGE_CLASS, INTERACTION_TYPE.CHANGE_CLASS, s)) {
+                                return s;
+                            }
+                        }
+                    }
                 }
             }
             return null;

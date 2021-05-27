@@ -12,7 +12,7 @@ public class SaveDataNPCSettlement : SaveDataBaseSettlement {
     public string rulerID;
     public SaveDataSettlementType settlementType;
     public SaveDataLocationEventManager eventManager;
-    public SaveDataSettlementClassTracker classTracker;
+    //public SaveDataSettlementClassTracker classTracker;
     public List<TILE_OBJECT_TYPE> neededObjects;
     public bool hasTriedToStealCorpse;
     public bool isUnderSiege;
@@ -25,6 +25,8 @@ public class SaveDataNPCSettlement : SaveDataBaseSettlement {
 
     //Components
     public SaveDataSettlementVillageMigrationComponent migrationComponent;
+    public SaveDataSettlementResourcesComponent resourcesComponent;
+    public SaveDataSettlementClassComponent classComponent;
 
     public override void Save(BaseSettlement baseSettlement) {
         base.Save(baseSettlement);
@@ -58,8 +60,8 @@ public class SaveDataNPCSettlement : SaveDataBaseSettlement {
         eventManager = new SaveDataLocationEventManager();
         eventManager.Save(npcSettlement.eventManager);
         
-        classTracker = new SaveDataSettlementClassTracker();
-        classTracker.Save(npcSettlement.settlementClassTracker);
+        //classTracker = new SaveDataSettlementClassTracker();
+        //classTracker.Save(npcSettlement.settlementClassTracker);
         
         neededObjects = new List<TILE_OBJECT_TYPE>(npcSettlement.neededObjects);
 
@@ -72,6 +74,8 @@ public class SaveDataNPCSettlement : SaveDataBaseSettlement {
         hasWorkers = npcSettlement.hasWorkers;
 
         migrationComponent = new SaveDataSettlementVillageMigrationComponent(); migrationComponent.Save(npcSettlement.migrationComponent);
+        resourcesComponent = new SaveDataSettlementResourcesComponent(); resourcesComponent.Save(npcSettlement.resourcesComponent);
+        classComponent = new SaveDataSettlementClassComponent(); classComponent.Save(npcSettlement.classComponent);
 
         hasOccupiedVillageSpot = npcSettlement.occupiedVillageSpot != null;
         if (npcSettlement.occupiedVillageSpot != null) {

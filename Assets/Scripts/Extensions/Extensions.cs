@@ -1272,6 +1272,12 @@ public static class Extensions {
     public static bool CaseInsensitiveContains(this string text, string value, StringComparison stringComparison = StringComparison.CurrentCultureIgnoreCase) {
         return text.IndexOf(value, stringComparison) >= 0;
     }
+    public static bool IsFoodProducerClassName(this string text) {
+        return text == "Fisher" || text == "Farmer" || text == "Butcher";
+    }
+    public static bool IsResourceProducerClassName(this string text) {
+        return text == "Miner" || text == "Logger";
+    }
     #endregion
 
     #region RectTransform

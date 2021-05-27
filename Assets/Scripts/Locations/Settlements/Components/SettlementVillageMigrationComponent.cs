@@ -302,7 +302,7 @@ public class SettlementVillageMigrationComponent : NPCSettlementComponent {
             unspawnedCharacters.Remove(characterToSpawn);
 
             string classToCreate;
-            if (owner.settlementClassTracker.GetCurrentResidentClassAmount("Peasant") > 0) {
+            if (owner.classComponent.GetCurrentResidentClassAmount("Peasant") > 0) {
                 //village already has at least 1 peasant
                 classToCreate = GameUtilities.RollChance(90) ? CollectionUtilities.GetRandomElement(owner.owner.factionType.combatantClasses) : "Noble";
             } else {

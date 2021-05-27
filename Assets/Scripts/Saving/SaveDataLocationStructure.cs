@@ -124,12 +124,14 @@ public class SaveDataManMadeStructure : SaveDataLocationStructure {
     public RESOURCE wallsMadeOf;
     public Vector3Save structureObjectWorldPosition;
     public SaveDataStructureConnector[] structureConnectors;
-    
+    public string assignedWorkerID;
+
     public override void Save(LocationStructure locationStructure) {
         base.Save(locationStructure);
         ManMadeStructure manMadeStructure = locationStructure as ManMadeStructure;
         Assert.IsNotNull(manMadeStructure);
 
+        assignedWorkerID = manMadeStructure.assignedWorkerID;
         if (manMadeStructure.hasBeenDestroyed) {
             structureTemplateName = string.Empty;
             structureObjectWorldPosition = Vector3.zero;

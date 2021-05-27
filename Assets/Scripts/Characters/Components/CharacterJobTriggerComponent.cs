@@ -3319,9 +3319,9 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 	    p_producedJob = null;
 	    return false;
     }
-#endregion
+    #endregion
 
-#region Loading
+    #region Loading
     public void LoadReferences(SaveDataCharacterJobTriggerComponent data) {
         //Currently N/A
     }

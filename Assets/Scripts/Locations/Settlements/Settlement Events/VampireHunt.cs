@@ -34,7 +34,7 @@
             p_settlement.AddNeededItems(TILE_OBJECT_TYPE.PHYLACTERY);
             ScheduleEnd();
             SubscribeListeners();
-            p_settlement.settlementClassTracker.AddNeededClass("Shaman");
+            //p_settlement.settlementClassTracker.AddNeededClass("Shaman");
             
             Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Settlement Event", "Vampire Hunt", "started", null, LOG_TAG.Major);
             log.AddToFillers(p_settlement, p_settlement.name, LOG_IDENTIFIER.LANDMARK_1);
@@ -51,7 +51,7 @@
             }
             p_settlement.RemoveNeededItems(TILE_OBJECT_TYPE.PHYLACTERY);
             UnsubscribeListeners();
-            p_settlement.settlementClassTracker.RemoveNeededClass("Shaman");
+            //p_settlement.settlementClassTracker.RemoveNeededClass("Shaman");
 
             Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Settlement Event", "Vampire Hunt", "ended", null, LOG_TAG.Major);
             log.AddToFillers(p_settlement, p_settlement.name, LOG_IDENTIFIER.LANDMARK_1);

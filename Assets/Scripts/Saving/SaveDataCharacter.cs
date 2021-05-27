@@ -85,7 +85,7 @@ public class SaveDataCharacter : SaveData<Character>, ISavableCounterpart {
     public SaveDataTrapStructure trapStructure;
     public SaveDataCharacterClassComponent classComponent;
     public SaveDataCharacterNeedsComponent needsComponent;
-    public SaveDataBuildStructureComponent buildStructureComponent;
+    public SaveDataCharacterStructureComponent structureComponent;
     public SaveDataCharacterStateComponent stateComponent;
     public SaveDataNonActionEventsComponent nonActionEventsComponent;
     public SaveDataInterruptComponent interruptComponent;
@@ -166,7 +166,7 @@ public class SaveDataCharacter : SaveData<Character>, ISavableCounterpart {
         trapStructure = new SaveDataTrapStructure(); trapStructure.Save(data.trapStructure);
         classComponent = new SaveDataCharacterClassComponent(); classComponent.Save(data.classComponent);
         needsComponent = new SaveDataCharacterNeedsComponent(); needsComponent.Save(data.needsComponent);
-        buildStructureComponent = new SaveDataBuildStructureComponent(); buildStructureComponent.Save(data.buildStructureComponent);
+        structureComponent = new SaveDataCharacterStructureComponent(); structureComponent.Save(data.structureComponent);
         stateComponent = new SaveDataCharacterStateComponent(); stateComponent.Save(data.stateComponent);
         nonActionEventsComponent = new SaveDataNonActionEventsComponent(); nonActionEventsComponent.Save(data.nonActionEventsComponent);
         interruptComponent = new SaveDataInterruptComponent(); interruptComponent.Save(data.interruptComponent);
