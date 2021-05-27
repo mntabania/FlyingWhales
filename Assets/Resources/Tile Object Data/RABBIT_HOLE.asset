@@ -12,19 +12,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eb8e6d0a90de4764a5b7b75189e1ffa2, type: 3}
   m_Name: RABBIT_HOLE
   m_EditorClassIdentifier: 
-  defaultTileMapAsset: {fileID: 11400000, guid: 255a803eba6c96f43abaa523fc5a39ce,
+  defaultTileMapAsset: {fileID: 11400000, guid: ce7b4b61d96b26d419bbb54d51daba8a,
     type: 2}
-  defaultSprite: {fileID: 21300000, guid: 47925766893f5664493bc782e664f4b9, type: 3}
+  defaultSprite: {fileID: 21300000, guid: c61348a1ac9ca0446ab0b5da8ebbf5e6, type: 3}
   tileObjectAssets:
     biomeAssets:
       m_keys: 06000000
       m_values:
       - activeTile:
-        - {fileID: 21300000, guid: 47925766893f5664493bc782e664f4b9, type: 3}
+        - {fileID: 21300000, guid: c61348a1ac9ca0446ab0b5da8ebbf5e6, type: 3}
         inactiveTile:
-        - {fileID: 21300000, guid: 47925766893f5664493bc782e664f4b9, type: 3}
+        - {fileID: 21300000, guid: c61348a1ac9ca0446ab0b5da8ebbf5e6, type: 3}
         tileBase:
-        - {fileID: 11400000, guid: 255a803eba6c96f43abaa523fc5a39ce, type: 2}
+        - {fileID: 11400000, guid: ce7b4b61d96b26d419bbb54d51daba8a, type: 2}
   corruptedTileObjectAssets:
     biomeAssets:
       m_keys: 

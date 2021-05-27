@@ -157,11 +157,19 @@ namespace Factions.Faction_Types {
             }
             return CRIME_TYPE.None;
         }
+        public bool IsActionConsideredACrime(CRIME_TYPE p_crimeType) {
+            CRIME_SEVERITY severity = GetCrimeSeverity(p_crimeType);
+            return severity != CRIME_SEVERITY.Unapplicable && severity != CRIME_SEVERITY.None;
+        }
         #endregion
 
         #region Structures
         public virtual StructureSetting ProcessStructureSetting(StructureSetting p_setting, NPCSettlement p_settlement) {
             return p_setting;
+        }
+        public virtual StructureSetting CreateStructureSettingForStructure(STRUCTURE_TYPE structureType, NPCSettlement p_settlement) {
+            RESOURCE resource = structureType.RequiresResourceToBuild() ? RESOURCE.STONE : RESOURCE.NONE;
+            return new StructureSetting(structureType, resource, false);
         }
         #endregion
 

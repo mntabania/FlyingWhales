@@ -633,11 +633,13 @@ namespace Inner_Maps {
                     tile.SetStructure(structure);
                 }
                 
-                Assert.IsTrue(structure is DemonicStructure || structure is ManMadeStructure);
+                Assert.IsTrue(structure is DemonicStructure || structure is ManMadeStructure || structure is AnimalDen);
                 if (structure is DemonicStructure demonicStructure) {
                     demonicStructure.SetStructureObject(structureObject);    
                 } else if (structure is ManMadeStructure manMadeStructure) {
                     manMadeStructure.SetStructureObject(structureObject);    
+                } else if (structure is AnimalDen animalDen) {
+                    animalDen.SetStructureObject(structureObject);    
                 }
                 
                 structure.SetOccupiedArea(p_area);
@@ -680,11 +682,13 @@ namespace Inner_Maps {
                 tile.SetStructure(structure);
             }
             
-            Assert.IsTrue(structure is DemonicStructure || structure is ManMadeStructure);
+            Assert.IsTrue(structure is DemonicStructure || structure is ManMadeStructure || structure is AnimalDen);
             if (structure is DemonicStructure demonicStructure) {
                 demonicStructure.SetStructureObject(structureObject);    
             } else if (structure is ManMadeStructure manMadeStructure) {
                 manMadeStructure.SetStructureObject(structureObject);    
+            } else if (structure is AnimalDen animalDen) {
+                animalDen.SetStructureObject(structureObject);    
             }
             
             structure.SetOccupiedArea(centerTile.area);

@@ -19,7 +19,7 @@ namespace Generator.Map_Generation.Components {
                     yield return MapGenerator.Instance.StartCoroutine(VillageGeneration.PlaceStructure(npcSettlement.region, foodProducingStructure, npcSettlement));
                     if (!npcSettlement.HasStructure(foodProducingStructure.structureType)) {
                         //if structure was not placed, then just place a farm
-                        yield return MapGenerator.Instance.StartCoroutine(VillageGeneration.PlaceStructure(npcSettlement.region, new StructureSetting(STRUCTURE_TYPE.FARM, faction.factionType.mainResource, faction.factionType.usesCorruptedStructures), npcSettlement));    
+                        yield return MapGenerator.Instance.StartCoroutine(VillageGeneration.PlaceStructure(npcSettlement.region, new StructureSetting(STRUCTURE_TYPE.FARM, RESOURCE.NONE, faction.factionType.usesCorruptedStructures), npcSettlement));    
                     }
                 }
                 yield return null;
@@ -38,10 +38,8 @@ namespace Generator.Map_Generation.Components {
             if (settlement.occupiedVillageSpot.reservedAreas.Count(t => t.elevationType == ELEVATION.WATER) > 0) {
                 choices.AddElement(new StructureSetting(STRUCTURE_TYPE.FISHERY, RESOURCE.WOOD, faction.factionType.usesCorruptedStructures), 200);
             }
-            if (!faction.factionType.usesCorruptedStructures) {
-                choices.AddElement(new StructureSetting(STRUCTURE_TYPE.HUNTER_LODGE, faction.factionType.mainResource), 20);    
-            }
-            choices.AddElement(new StructureSetting(STRUCTURE_TYPE.FARM, faction.factionType.mainResource, faction.factionType.usesCorruptedStructures), 20);
+            choices.AddElement(new StructureSetting(STRUCTURE_TYPE.HUNTER_LODGE, faction.factionType.mainResource, faction.factionType.usesCorruptedStructures), 20);    
+            choices.AddElement(new StructureSetting(STRUCTURE_TYPE.FARM, RESOURCE.NONE, faction.factionType.usesCorruptedStructures), 20);
             return choices.PickRandomElementGivenWeights();
         }
         private void ProcessBeforePlacingFoodProducingStructure(StructureSetting p_foodProducingStructure, NPCSettlement p_settlement) {

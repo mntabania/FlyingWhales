@@ -1099,7 +1099,7 @@ Tilemap:
     second:
       serializedVersion: 2
       m_TileIndex: 5
-      m_TileSpriteIndex: 2
+      m_TileSpriteIndex: 3
       m_TileMatrixIndex: 0
       m_TileColorIndex: 0
       m_TileObjectToInstantiateIndex: 65535
@@ -1123,10 +1123,10 @@ Tilemap:
     m_Data: {fileID: 0}
   - m_RefCount: 0
     m_Data: {fileID: 0}
-  - m_RefCount: 1
-    m_Data: {fileID: 21300000, guid: 912ee9aad9236ca46acef8ade43cf63e, type: 3}
   - m_RefCount: 0
     m_Data: {fileID: 0}
+  - m_RefCount: 1
+    m_Data: {fileID: 21300000, guid: 912ee9aad9236ca46acef8ade43cf63e, type: 3}
   - m_RefCount: 5
     m_Data: {fileID: 21300000, guid: 4982222acd0a30a4ba1007f2fd963b8c, type: 3}
   - m_RefCount: 2
@@ -1850,11 +1850,10 @@ MonoBehaviour:
   _blockWallsTilemap: {fileID: 0}
   _size: {x: 5, y: 5}
   _center: {x: 2, y: 2, z: 0}
-  _craftCost: 100
   _repairCost: 5
   objectsParent: {fileID: 5812929030986789069}
   _blockWallType: 0
-  _thinWallResource: 2
+  _thinWallResource: 4
   _predeterminedOccupiedCoordinates: []
   _connectors:
   - {fileID: 6909862108512848376}

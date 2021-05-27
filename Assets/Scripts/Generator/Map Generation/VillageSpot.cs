@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using Inner_Maps;
+using Inner_Maps.Grid_Tile_Features;
+using Inner_Maps.Location_Structures;
+using Locations.Area_Features;
 using UnityEngine;
 using UtilityScripts;
 
@@ -92,6 +95,77 @@ public class VillageSpot {
                 return false;
         }
     }
+
+    #region Resources
+    public bool HasUnusedFishingSpot() {
+        for (int i = 0; i < reservedAreas.Count; i++) {
+            Area area = reservedAreas[i];
+            if (area.elevationComponent.HasElevation(ELEVATION.WATER)) {
+                for (int j = 0; j < area.tileObjectComponent.itemsInArea.Count; j++) {
+                    TileObject item = area.tileObjectComponent.itemsInArea[j];
+                    if (item is FishingSpot fishingSpot && fishingSpot.structureConnector != null && fishingSpot.structureConnector.isOpen) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+    public bool HasAccessToAnimals() {
+        for (int i = 0; i < reservedAreas.Count; i++) {
+            Area area = reservedAreas[i];
+            if (area.featureComponent.HasFeature(AreaFeatureDB.Game_Feature) || 
+                area.structureComponent.HasStructureInArea(GameUtilities.animalStructures)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    public bool HasUnusedMiningSpots() {
+        for (int i = 0; i < reservedAreas.Count; i++) {
+            Area area = reservedAreas[i];
+            if (area.elevationComponent.HasElevation(ELEVATION.MOUNTAIN)) {
+                for (int j = 0; j < area.structureComponent.structureConnectors.Count; j++) {
+                    StructureConnector structureConnector = area.structureComponent.structureConnectors[j];
+                    //NOTE: Did not add null checking for structureConnector.tileLocation since I expect that all structure connectors
+                    //in an area should have a tile location. Also added checking for isPartOfLocationStructureObject so that structure connectors
+                    //that are part of settlement structures will not be counted as mining spots, even though they are inside a cave.
+                    if (structureConnector.tileLocation.structure is Cave && !structureConnector.isPartOfLocationStructureObject) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+    public bool HasUnusedLumberyardSpots() {
+        BigTreeSpotFeature bigTreeSpotFeature = GridMap.Instance.mainRegion.gridTileFeatureComponent.GetFeature<BigTreeSpotFeature>();
+        SmallTreeSpotFeature smallTreeSpotFeature = GridMap.Instance.mainRegion.gridTileFeatureComponent.GetFeature<SmallTreeSpotFeature>();
+        
+        for (int i = 0; i < reservedAreas.Count; i++) {
+            Area area = reservedAreas[i];
+            List<LocationGridTile> bigTreeTiles = bigTreeSpotFeature.GetFeatureTilesInArea(area);
+            List<LocationGridTile> smallTreeTiles = smallTreeSpotFeature.GetFeatureTilesInArea(area);
+            if (bigTreeTiles != null) {
+                for (int j = 0; j < bigTreeTiles.Count; j++) {
+                    LocationGridTile tile = bigTreeTiles[j];
+                    if (tile.tileObjectComponent.objHere is TreeObject treeObject && treeObject.structureConnector != null && treeObject.structureConnector.isOpen) {
+                        return true;
+                    }
+                }
+            }
+            if (smallTreeTiles != null) {
+                for (int j = 0; j < smallTreeTiles.Count; j++) {
+                    LocationGridTile tile = smallTreeTiles[j];
+                    if (tile.tileObjectComponent.objHere is TreeObject treeObject && treeObject.structureConnector != null && treeObject.structureConnector.isOpen) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+    #endregion
 }
 
 public class SaveDataVillageSpot : SaveData<VillageSpot> {

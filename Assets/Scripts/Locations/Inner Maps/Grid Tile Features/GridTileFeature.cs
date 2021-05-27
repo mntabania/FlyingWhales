@@ -5,6 +5,7 @@ namespace Inner_Maps.Grid_Tile_Features {
     public abstract class GridTileFeature {
 
         protected List<LocationGridTile> _tilesWithFeature;
+        protected Dictionary<Area, List<LocationGridTile>> _tilesWithFeatureCategorizedByArea;
 
         #region getters
         public List<LocationGridTile> tilesWithFeature => _tilesWithFeature;
@@ -13,6 +14,7 @@ namespace Inner_Maps.Grid_Tile_Features {
         
         public GridTileFeature() {
             _tilesWithFeature = new List<LocationGridTile>();
+            _tilesWithFeatureCategorizedByArea = new Dictionary<Area, List<LocationGridTile>>();
         }
         public GridTileFeature(SaveDataGridTileFeature p_data) : this() { }
 
@@ -22,6 +24,10 @@ namespace Inner_Maps.Grid_Tile_Features {
                 TileLocationSave tileLocationSave = p_data.tiles[i];
                 LocationGridTile tile = DatabaseManager.Instance.locationGridTileDatabase.GetTileBySavedData(tileLocationSave);
                 _tilesWithFeature.Add(tile);
+                if (!_tilesWithFeatureCategorizedByArea.ContainsKey(tile.area)) {
+                    _tilesWithFeatureCategorizedByArea.Add(tile.area, new List<LocationGridTile>());
+                }
+                _tilesWithFeatureCategorizedByArea[tile.area].Add(tile);
             }
         }
         #endregion
@@ -34,10 +40,26 @@ namespace Inner_Maps.Grid_Tile_Features {
         public void AddTile(LocationGridTile p_tile) {
             if (!_tilesWithFeature.Contains(p_tile)) {
                 _tilesWithFeature.Add(p_tile);
+                if (!_tilesWithFeatureCategorizedByArea.ContainsKey(p_tile.area)) {
+                    _tilesWithFeatureCategorizedByArea.Add(p_tile.area, new List<LocationGridTile>());
+                }
+                _tilesWithFeatureCategorizedByArea[p_tile.area].Add(p_tile);
             }
         }
         public virtual bool RemoveTile(LocationGridTile p_tile) {
-            return _tilesWithFeature.Remove(p_tile);
+            if (_tilesWithFeature.Remove(p_tile)) {
+                if (_tilesWithFeatureCategorizedByArea.ContainsKey(p_tile.area)) {
+                    _tilesWithFeatureCategorizedByArea[p_tile.area].Remove(p_tile);
+                }
+                return true;
+            }
+            return false;
+        }
+        public List<LocationGridTile> GetFeatureTilesInArea(Area p_area) {
+            if (_tilesWithFeatureCategorizedByArea.ContainsKey(p_area)) {
+                return _tilesWithFeatureCategorizedByArea[p_area];    
+            }
+            return null;
         }
         #endregion
     }

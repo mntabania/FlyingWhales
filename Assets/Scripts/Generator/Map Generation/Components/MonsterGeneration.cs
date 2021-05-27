@@ -72,7 +72,7 @@ public class MonsterGeneration : MapGenerationComponent {
 		List<LocationGridTile> locationChoices = RuinarchListPool<LocationGridTile>.Claim();
 		for (int i = 0; i < allSpecialStructures.Count; i++) {
 			LocationStructure structure = allSpecialStructures[i];
-			if (structure.structureType != STRUCTURE_TYPE.CAVE) {
+			if (structure.structureType != STRUCTURE_TYPE.CAVE && !(structure is AnimalDen)) {
 				if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Pangat_Loo && structure.structureType == STRUCTURE_TYPE.ANCIENT_GRAVEYARD) {
 					continue; //do not spawn other monsters in ancient graveyard for Pangat Loo since there are already skeletons there.
 				}

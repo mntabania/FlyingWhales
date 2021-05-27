@@ -168,14 +168,24 @@ public class RegionInnerMapGeneration : MapGenerationComponent {
             yield return null;
         } else if (structure is NaturalStructure naturalStructure && saveDataLocationStructure is SaveDataNaturalStructure saveDataNaturalStructure) {
             //natural structures
-            //if (naturalStructure is Cave cave && saveDataNaturalStructure is SaveDataCave saveDataCave) {
-            //    cave.LoadOccupiedHexTiles(saveDataCave);
-            //} else {
-                if (!string.IsNullOrEmpty(saveDataLocationStructure.occupiedAreaID)) {
-                    Area occupiedArea = DatabaseManager.Instance.areaDatabase.GetAreaByPersistentID(saveDataLocationStructure.occupiedAreaID);
-                    structure.SetOccupiedArea(occupiedArea);
-                }
-            //}
+            if (!string.IsNullOrEmpty(saveDataLocationStructure.occupiedAreaID)) {
+                Area occupiedArea = DatabaseManager.Instance.areaDatabase.GetAreaByPersistentID(saveDataLocationStructure.occupiedAreaID);
+                structure.SetOccupiedArea(occupiedArea);
+            }
+            if (naturalStructure is AnimalDen animalDen && saveDataNaturalStructure is SaveDataAnimalDen saveDataAnimalDen) {
+                GameObject structurePrefab = ObjectPoolManager.Instance.InstantiateObjectFromPool(saveDataAnimalDen.structureTemplateName, saveDataAnimalDen.structureObjectWorldPosition,
+                    Quaternion.identity, region.innerMap.structureParent, true);
+                LocationStructureObject structureObject = structurePrefab.GetComponent<LocationStructureObject>();
+
+                structureObject.RefreshAllTilemaps();
+                List<LocationGridTile> occupiedTiles = structureObject.GetTilesOccupiedByStructure(region.innerMap);
+                structureObject.SetTilesInStructure(occupiedTiles.ToArray());
+                animalDen.SetStructureObject(structureObject);
+
+                structureObject.OnLoadStructureObjectPlaced(region.innerMap, structure, saveDataLocationStructure);
+                structure.CreateRoomsBasedOnStructureObject(structureObject);
+                structure.OnDoneLoadStructure();
+            }
             
         }
     }

@@ -28,6 +28,10 @@ MonoBehaviour:
       structureType: 14
       hasValue: 1
       isCorrupted: 0
+    - resource: 1
+      structureType: 14
+      hasValue: 1
+      isCorrupted: 1
     m_values:
     - data:
       - {fileID: 1961635413776408567, guid: 391ed83381576ca499d9b50d63a5cf41, type: 3}
@@ -35,3 +39,5 @@ MonoBehaviour:
       - {fileID: 1961635413776408567, guid: ef4bd84d533038243bed6140dfcacdcb, type: 3}
     - data:
       - {fileID: 570548150421663453, guid: 3de2bb8e183624148943603e9a08663d, type: 3}
+    - data:
+      - {fileID: 1961635413776408567, guid: e91a1051d5016514284ff80f1d0aff2f, type: 3}

@@ -12,7 +12,7 @@ namespace Locations.Settlements.Settlement_Types {
         public override void ApplyDefaultSettings() {
             SetInitialFacilityWeightAndCap(new StructureSetting(STRUCTURE_TYPE.MINE, RESOURCE.NONE), 300, 1);
             SetInitialFacilityWeightAndCap(new StructureSetting(STRUCTURE_TYPE.TAVERN, RESOURCE.STONE), 30, 1);
-            SetInitialFacilityWeightAndCap(new StructureSetting(STRUCTURE_TYPE.FARM, RESOURCE.STONE), 30, 1);
+            SetInitialFacilityWeightAndCap(new StructureSetting(STRUCTURE_TYPE.FARM, RESOURCE.NONE), 30, 1);
             SetInitialFacilityWeightAndCap(new StructureSetting(STRUCTURE_TYPE.FISHERY, RESOURCE.WOOD), 30, 1);
             SetInitialFacilityWeightAndCap(new StructureSetting(STRUCTURE_TYPE.HUNTER_LODGE, RESOURCE.STONE), 30, 1);
             SetInitialFacilityWeightAndCap(new StructureSetting(STRUCTURE_TYPE.CEMETERY, RESOURCE.STONE), 10, 1);

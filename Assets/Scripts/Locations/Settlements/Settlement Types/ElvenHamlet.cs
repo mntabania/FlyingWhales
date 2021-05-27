@@ -14,7 +14,7 @@ namespace Locations.Settlements.Settlement_Types {
             SetInitialFacilityWeightAndCap(new StructureSetting(STRUCTURE_TYPE.FISHERY, RESOURCE.WOOD), 30, 1);
             SetInitialFacilityWeightAndCap(new StructureSetting(STRUCTURE_TYPE.HUNTER_LODGE, RESOURCE.WOOD), 30, 1);
             SetInitialFacilityWeightAndCap(new StructureSetting(STRUCTURE_TYPE.MINE, RESOURCE.NONE), 10, 1);
-            SetInitialFacilityWeightAndCap(new StructureSetting(STRUCTURE_TYPE.FARM, RESOURCE.WOOD), 30, 1);
+            SetInitialFacilityWeightAndCap(new StructureSetting(STRUCTURE_TYPE.FARM, RESOURCE.NONE), 30, 1);
             SetInitialFacilityWeightAndCap(new StructureSetting(STRUCTURE_TYPE.TAVERN, RESOURCE.WOOD), 30, 1);
             SetInitialFacilityWeightAndCap(new StructureSetting(STRUCTURE_TYPE.BARRACKS, RESOURCE.WOOD), 20, 1);
             SetInitialFacilityWeightAndCap(new StructureSetting(STRUCTURE_TYPE.CEMETERY, RESOURCE.WOOD), 10, 1);

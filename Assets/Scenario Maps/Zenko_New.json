@@ -7026,7 +7026,7 @@
           "structureType": "DWELLING"
         },
         {
-          "resource": "WOOD",
+          "resource": "NONE",
           "structureType": "FARM"
         },
         {
@@ -7128,7 +7128,7 @@
           "structureType": "DWELLING"
         },
         {
-          "resource": "WOOD",
+          "resource": "NONE",
           "structureType": "FARM"
         },
         {
@@ -7177,7 +7177,7 @@
           "structureType": "DWELLING"
         },
         {
-          "resource": "STONE",
+          "resource": "NONE",
           "structureType": "FARM"
         },
         {

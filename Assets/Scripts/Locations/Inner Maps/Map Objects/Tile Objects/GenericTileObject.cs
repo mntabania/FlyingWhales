@@ -93,9 +93,9 @@ public class GenericTileObject : TileObject {
         }
         if (trait is Status status) {
             if(status.isTangible) {
-                //if status is wet, and this tile is not part of a settlement, then do not create a map visual, since
-                //characters do not react to wet tiles outside their settlement.
-                bool willCreateVisual = !(status is Wet && gridTileLocation.IsPartOfSettlement() == false);
+                //if status is wet, and this tile is part of an Ocean, then do not create a map visual, since
+                //characters do not react to Ocean Tiles
+                bool willCreateVisual = !(status is Wet && gridTileLocation.structure is Ocean);
                 if (willCreateVisual) {
                     GetOrCreateMapVisual();
                     SubscribeListeners();    
@@ -379,11 +379,13 @@ public class GenericTileObject : TileObject {
             }
         }
         
-        Assert.IsTrue(structure is DemonicStructure || structure is ManMadeStructure);
+        Assert.IsTrue(structure is DemonicStructure || structure is ManMadeStructure || structure is AnimalDen);
         if (structure is DemonicStructure demonicStructure) {
             demonicStructure.SetStructureObject(p_blueprint);    
         } else if (structure is ManMadeStructure manMadeStructure) {
             manMadeStructure.SetStructureObject(p_blueprint);    
+        } else if (structure is AnimalDen animalDen) {
+            animalDen.SetStructureObject(p_blueprint);    
         }
         
         structure.SetOccupiedArea(hexTile);
@@ -453,7 +455,7 @@ public class GenericTileObject : TileObject {
             
         }
         if (saveDataGenericTileObject.hasStructureConnector) {
-            LoadStructureConnector();
+            LoadMineShackSpotStructureConnector();
         }
     }
     private void LoadBlueprintOnTile(string prefabName) {
@@ -478,7 +480,7 @@ public class GenericTileObject : TileObject {
     #endregion
 
     #region Structure Connectors
-    public void CreateStructureConnector() {
+    public void CreateMineShackSpotStructureConnector() {
         BaseMapObjectVisual objectVisual = GetOrCreateMapVisual();
         StructureConnector connector = objectVisual.gameObject.AddComponent<StructureConnector>();
         connector.OnPlaceConnector(gridTileLocation.parentMap);
@@ -490,7 +492,7 @@ public class GenericTileObject : TileObject {
         Messenger.AddListener<Area, BaseSettlement>(SettlementSignals.SETTLEMENT_REMOVED_AREA, OnSettlementRemovedArea);
         gridTileLocation.SetIsDefault(false);
     }
-    private void LoadStructureConnector() {
+    private void LoadMineShackSpotStructureConnector() {
         BaseMapObjectVisual objectVisual = GetOrCreateMapVisual();
         StructureConnector connector = objectVisual.gameObject.AddComponent<StructureConnector>();
         structureConnector = connector;

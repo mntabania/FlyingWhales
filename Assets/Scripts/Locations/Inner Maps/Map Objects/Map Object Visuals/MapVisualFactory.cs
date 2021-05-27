@@ -149,6 +149,14 @@ public class MapVisualFactory {
             case TILE_OBJECT_TYPE.POTATO_CROP:
                 obj = ObjectPoolManager.Instance.InstantiateObjectFromPool("PotatoCropMapObjectVisual", Vector3.zero, Quaternion.identity);
                 break;
+            case TILE_OBJECT_TYPE.BOAR_DEN:
+            case TILE_OBJECT_TYPE.WOLF_DEN:
+            case TILE_OBJECT_TYPE.BEAR_DEN:
+            case TILE_OBJECT_TYPE.RABBIT_HOLE:
+            case TILE_OBJECT_TYPE.MINK_HOLE:
+            case TILE_OBJECT_TYPE.MOONCRAWLER_HOLE:
+                obj = ObjectPoolManager.Instance.InstantiateObjectFromPool("AnimalBurrowGameObject", Vector3.zero, Quaternion.identity);
+                break;
             default:
                 obj = ObjectPoolManager.Instance.InstantiateObjectFromPool(Tile_Object_Prefab_Name, Vector3.zero, Quaternion.identity);
                 break;
