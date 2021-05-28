@@ -49,7 +49,7 @@ public class MineOre : GoapAction {
 
 	#region State Effects
     public void AfterMineOreSuccess(ActualGoapNode p_node) {
-        p_node.actor.homeSettlement.settlementJobTriggerComponent.TryCreateHaulJob(ProduceMatsPile(p_node));
+        p_node.actor.jobComponent.TryCreateHaulJob(ProduceMatsPile(p_node));
     }
     #endregion
 
@@ -58,7 +58,7 @@ public class MineOre : GoapAction {
         if (tileToSpawnPile != null && tileToSpawnPile.tileObjectComponent.objHere != null) {
             tileToSpawnPile = p_node.actor.gridTileLocation.GetFirstNearestTileFromThisWithNoObject();
         }
-        ResourcePile matsToHaul = InnerMapManager.Instance.CreateNewTileObject<ResourcePile>(TILE_OBJECT_TYPE.ORE);
+        MetalPile matsToHaul = InnerMapManager.Instance.CreateNewTileObject<MetalPile>((p_node.target as Ore).providedMetal.ConvertResourcesToTileObjectType());
         matsToHaul.SetResourceInPile(p_node.currentStateDuration * m_amountProducedPerTick);
         tileToSpawnPile.structure.AddPOI(matsToHaul, tileToSpawnPile);
         ProduceLogs(p_node);

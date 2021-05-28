@@ -793,6 +793,7 @@ public static class Extensions {
             case JOB_TYPE.SKIN_ANIMAL:
             case JOB_TYPE.HARVEST_CROPS:
             case JOB_TYPE.CHOP_WOOD:
+            case JOB_TYPE.MINE_STONE:
             priority = 920;
                 break;
             case JOB_TYPE.UNDERMINE:
@@ -1087,6 +1088,7 @@ public static class Extensions {
             case RACE.SHEEP:
             case RACE.MINK:
             case RACE.MOONWALKER:
+            case RACE.CHICKEN:
             return true;
         }
         return false;
@@ -1669,6 +1671,25 @@ public static class Extensions {
                 return RESOURCE.WOOD;
             default:
                 throw new ArgumentOutOfRangeException(nameof(p_resource), p_resource, null);
+        }
+    }
+
+    public static TILE_OBJECT_TYPE ConvertResourcesToTileObjectType(this CONCRETE_RESOURCES p_resrouce) {
+        switch (p_resrouce) {
+            case CONCRETE_RESOURCES.Copper:
+            return TILE_OBJECT_TYPE.COPPER;
+            case CONCRETE_RESOURCES.Iron:
+            return TILE_OBJECT_TYPE.IRON;
+            case CONCRETE_RESOURCES.Mithril:
+            return TILE_OBJECT_TYPE.MITHRIL;
+            case CONCRETE_RESOURCES.Orichalcum:
+            return TILE_OBJECT_TYPE.ORICHALCUM;
+            case CONCRETE_RESOURCES.Gold:
+            return TILE_OBJECT_TYPE.GOLD;
+            case CONCRETE_RESOURCES.Diamond:
+            return TILE_OBJECT_TYPE.DIAMOND;
+            default:
+            return TILE_OBJECT_TYPE.NONE;
         }
     }
     #endregion

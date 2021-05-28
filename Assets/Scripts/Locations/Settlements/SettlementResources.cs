@@ -231,13 +231,19 @@ public class SettlementResources
     }
 
     public List<Summon> GetAllAnimalsThatProducesMats() {
-        return animalsThatProducesMats;
+        List<Summon> allAvailableAnimals = new List<Summon>();
+        for (int x = 0; x < animalsThatProducesMats.Count; ++x) {
+            if ((animalsThatProducesMats[x].HasJobTargetingThis(JOB_TYPE.MONSTER_BUTCHER) || animalsThatProducesMats[x].HasJobTargetingThis(JOB_TYPE.SHEAR_ANIMAL) || animalsThatProducesMats[x].HasJobTargetingThis(JOB_TYPE.SKIN_ANIMAL))) {
+                allAvailableAnimals.Add(animalsThatProducesMats[x]);
+            }
+        }
+        return allAvailableAnimals;
     }
 
     public List<Summon> GetAllAnimalsThatAreShearable() {
         List<Summon> ableToShearTodayList = new List<Summon>();
         for(int x = 0; x < shearables.Count; ++x) {
-            if (shearables[x] is Animal target && target.isShearable) {
+            if (shearables[x] is Animal target && target.isShearable && (target.HasJobTargetingThis(JOB_TYPE.MONSTER_BUTCHER) || target.HasJobTargetingThis(JOB_TYPE.SHEAR_ANIMAL) || target.HasJobTargetingThis(JOB_TYPE.SKIN_ANIMAL))) {
                 ableToShearTodayList.Add(shearables[x]);
             }
 		}
@@ -245,6 +251,38 @@ public class SettlementResources
     }
 
     public List<Summon> GetAllAnimalsThatAreSkinnable() {
-        return skinnables;
+        List<Summon> ableToSkinAnimals = new List<Summon>();
+        for (int x = 0; x < skinnables.Count; ++x) {
+            if ((skinnables[x].HasJobTargetingThis(JOB_TYPE.MONSTER_BUTCHER) || skinnables[x].HasJobTargetingThis(JOB_TYPE.SHEAR_ANIMAL) || skinnables[x].HasJobTargetingThis(JOB_TYPE.SKIN_ANIMAL))) {
+                ableToSkinAnimals.Add(skinnables[x]);
+            }
+        }
+        return ableToSkinAnimals;
+    }
+
+    public ResourcePile GetRandomPileOfMetalOrStone() {
+        //bool found = false;
+        List<TileObject> pilePool = RuinarchListPool<TileObject>.Claim();
+        for (int x = 0; x < resourcePiles.Count; ++x) {
+            ResourcePile pile = resourcePiles[x];
+            if (pile.tileObjectType == TILE_OBJECT_TYPE.COPPER ||
+               pile.tileObjectType == TILE_OBJECT_TYPE.IRON ||
+               pile.tileObjectType == TILE_OBJECT_TYPE.MITHRIL ||
+               pile.tileObjectType == TILE_OBJECT_TYPE.ORICHALCUM ||
+               pile.tileObjectType == TILE_OBJECT_TYPE.DIAMOND ||
+               pile.tileObjectType == TILE_OBJECT_TYPE.GOLD ||
+               pile.tileObjectType == TILE_OBJECT_TYPE.STONE_PILE) {
+                if (pile.currentStructure.structureType != STRUCTURE_TYPE.CITY_CENTER && pile.currentStructure.structureType != STRUCTURE_TYPE.HUNTER_LODGE && !pile.HasJobTargetingThis(JOB_TYPE.HAUL)) {
+                    pilePool.Add(pile);
+                    //found = true;
+                }
+            }
+        }
+        ResourcePile chosenPile = null;
+        if (pilePool.Count > 0) {
+            chosenPile = pilePool[GameUtilities.RandomBetweenTwoNumbers(0, pilePool.Count - 1)] as ResourcePile;
+        }
+        RuinarchListPool<TileObject>.Release(pilePool);
+        return chosenPile;
     }
 }
