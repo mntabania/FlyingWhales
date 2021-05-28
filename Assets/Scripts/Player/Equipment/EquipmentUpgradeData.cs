@@ -22,6 +22,8 @@ public class EquipmentUpgradeData {
     [HideInInspector]
     public int AdditionalIntActual;
     [HideInInspector]
+    public int AdditionalCritRate;
+    [HideInInspector]
     public float additionalResistanceBonus;
     [HideInInspector]
     public ELEMENTAL_TYPE elementAttackBonus;
@@ -67,6 +69,19 @@ public class EquipmentUpgradeData {
             break;
         }
         return processedInt;
+    }
+
+    public int GetProcessedAdditionalCritRate(EQUIPMENT_QUALITY p_quality) {
+        int processedCritRate = AdditionalCritRate;
+        switch (p_quality) {
+            case EQUIPMENT_QUALITY.High:
+            processedCritRate += (int)(processedCritRate * .25f);
+            break;
+            case EQUIPMENT_QUALITY.Premium:
+            processedCritRate += (int)(processedCritRate * .5f);
+            break;
+        }
+        return processedCritRate;
     }
 
     public int GetProcessedAdditionalmaxHP(EQUIPMENT_QUALITY p_quality) {

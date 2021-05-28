@@ -9,4 +9,6 @@ public class Bear : Summon {
     public Bear() : base(SUMMON_TYPE.Bear, "Bear", RACE.BEAR, UtilityScripts.Utilities.GetRandomGender()) { }
     public Bear(string className) : base(SUMMON_TYPE.Bear, className, RACE.BEAR, UtilityScripts.Utilities.GetRandomGender()) { }
     public Bear(SaveDataSummon data) : base(data) { }
+
+    public override TILE_OBJECT_TYPE produceableMaterial => TILE_OBJECT_TYPE.BEAR_HIDE;
 }

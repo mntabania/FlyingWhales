@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using Inner_Maps;
 using UnityEngine;
 using UtilityScripts;
+using Locations.Settlements;
 
 public class AreaTileObjectComponent : AreaComponent {
     public List<TileObject> itemsInArea { get; private set; }
-
     public AreaTileObjectComponent() {
         itemsInArea = new List<TileObject>();
     }
@@ -15,9 +15,21 @@ public class AreaTileObjectComponent : AreaComponent {
     public void AddItemInArea(TileObject item) {
         if (!itemsInArea.Contains(item)) {
             itemsInArea.Add(item);
+            if (item is ResourcePile resourcePile) {
+                BaseSettlement settlement = null;
+                if (owner.gridTileComponent.centerGridTile.IsPartOfSettlement(out settlement)) {
+                    settlement.SettlementResources.AddToResourcePiles(resourcePile);
+                }
+            }
         }
     }
     public bool RemoveItemInArea(TileObject item) {
+        if (item is ResourcePile resourcePile) {
+            BaseSettlement settlement = null;
+            if (owner.gridTileComponent.centerGridTile.IsPartOfSettlement(out settlement)) {
+                settlement.SettlementResources.RemoveFromResourcePiles(resourcePile);
+            }
+        }
         return itemsInArea.Remove(item);
     }
     public bool HasTileObjectOfTypeInHexTile(TILE_OBJECT_TYPE type) {

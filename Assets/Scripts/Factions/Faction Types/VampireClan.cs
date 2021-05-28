@@ -100,6 +100,8 @@ namespace Factions.Faction_Types {
         }
         public override StructureSetting CreateStructureSettingForStructure(STRUCTURE_TYPE structureType, NPCSettlement p_settlement) {
             if (!structureType.RequiresResourceToBuild()) { return new StructureSetting(structureType, RESOURCE.NONE); }
+            if (structureType == STRUCTURE_TYPE.FISHERY) { return new StructureSetting(structureType, RESOURCE.WOOD); }
+            if (structureType == STRUCTURE_TYPE.BUTCHERS_SHOP) { return new StructureSetting(structureType, RESOURCE.STONE); }
             if (p_settlement.SettlementResources.HasResourceAmount(p_settlement, RESOURCE.WOOD, structureType.GetResourceBuildCost())) {
                 return new StructureSetting(structureType, RESOURCE.WOOD);
             } else {

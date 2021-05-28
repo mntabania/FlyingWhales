@@ -786,7 +786,13 @@ public static class Extensions {
                 priority = 915;
                 break;
             case JOB_TYPE.ABSORB_CRYSTAL:
-                priority = 920;
+            case JOB_TYPE.MINE_ORE:
+            case JOB_TYPE.FIND_FISH:
+            case JOB_TYPE.TILL_TILE:
+            case JOB_TYPE.SHEAR_ANIMAL:
+            case JOB_TYPE.SKIN_ANIMAL:
+            case JOB_TYPE.HARVEST_CROPS:
+            priority = 920;
                 break;
             case JOB_TYPE.UNDERMINE:
             case JOB_TYPE.POISON_FOOD:

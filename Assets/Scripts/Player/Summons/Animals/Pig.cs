@@ -16,6 +16,8 @@ public class Pig : Animal {
         //combatComponent.SetCombatMode(COMBAT_MODE.Passive);
     }
 
+    public override TILE_OBJECT_TYPE produceableMaterial => TILE_OBJECT_TYPE.RABBIT_CLOTH;
+
     // #region Listeners
     // public override void SubscribeToSignals() {
     //     base.SubscribeToSignals();

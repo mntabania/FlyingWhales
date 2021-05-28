@@ -10,6 +10,8 @@ public class GiantSpider : Summon {
     public override string raceClassName => $"Giant Spider";
     public override bool defaultDigMode => true;
 
+    public override TILE_OBJECT_TYPE produceableMaterial => TILE_OBJECT_TYPE.SPIDER_SILK;
+
     public GiantSpider() : base(SUMMON_TYPE.Giant_Spider, ClassName, RACE.SPIDER, UtilityScripts.Utilities.GetRandomGender()) {
         //combatComponent.SetCombatMode(COMBAT_MODE.Aggressive);
     }

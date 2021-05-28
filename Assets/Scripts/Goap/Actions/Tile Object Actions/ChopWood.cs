@@ -1,28 +1,29 @@
-﻿using System.Collections;
+﻿
+using System.Collections;
 using System.Collections.Generic;
-using Inner_Maps;
-using UnityEngine;  
+using UnityEngine;
 using Traits;
+using Inner_Maps;
 
 public class ChopWood : GoapAction {
-    //private const int MAX_SUPPLY = 50;
+
+    public int m_amountProducedPerTick = 1;
 
     public ChopWood() : base(INTERACTION_TYPE.CHOP_WOOD) {
         actionIconString = GoapActionStateDB.Chop_Icon;
-        
-        //advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.TILE_OBJECT };
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.SKELETON, RACE.RATMAN };
-        logTags = new[] {LOG_TAG.Work};
+        //advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
+        racesThatCanDoAction = new RACE[] { RACE.ELVES, RACE.HUMANS, RACE.RATMAN, };
+        logTags = new[] { LOG_TAG.Work };
     }
 
     #region Overrides
-    protected override void ConstructBasePreconditionsAndEffects() {
-        //AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_WOOD, conditionKey = MAX_SUPPLY.ToString(), isKeyANumber = true, target = GOAP_EFFECT_TARGET.ACTOR });
-        AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.PRODUCE_WOOD, conditionKey = string.Empty, isKeyANumber = false, target = GOAP_EFFECT_TARGET.ACTOR });
-    }
+    //protected override void ConstructBasePreconditionsAndEffects() {
+    //    AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.DEATH, conditionKey = string.Empty, isKeyANumber = false, target = GOAP_EFFECT_TARGET.TARGET }, IsTargetDead);
+    //    AddExpectedEffect(new GoapEffect(GOAP_EFFECT_CONDITION.ABSORB_LIFE, string.Empty, false, GOAP_EFFECT_TARGET.ACTOR));
+    //}
     public override void Perform(ActualGoapNode goapNode) {
         base.Perform(goapNode);
-        SetState("Chop Success", goapNode);
+        SetState("Chop Wood Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
 #if DEBUG_LOG
@@ -31,60 +32,47 @@ public class ChopWood : GoapAction {
 #endif
         return 10;
     }
-    //public override void OnStopWhilePerforming(ActualGoapNode node) {
-    //    base.OnStopWhilePerforming(node);
-    //    if (node.actor.characterClass.IsCombatant()) {
-    //        node.actor.needsComponent.AdjustDoNotGetBored(-1);
-    //    }
-    //}
-    public override bool IsHappinessRecoveryAction() {
-        return true;
-    }
-#endregion
+    #endregion
 
-#region Requirements
-    protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, OtherData[] otherData, JobQueueItem job) { 
+    #region Requirements
+    protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, OtherData[] otherData, JobQueueItem job) {
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData, job);
-        if (satisfied) {
-            return poiTarget.IsAvailable() && poiTarget.gridTileLocation != null /*&& actor.characterClass.CanDoJob(JOB_TYPE.PRODUCE_WOOD)*/;
+
+        return satisfied;
+    }
+
+    public override void OnStopWhilePerforming(ActualGoapNode node) {
+        base.OnStopWhilePerforming(node);
+        ProduceMatsPile(node);
+    }
+    #endregion
+
+    #region State Effects
+    public void AfterChopWoodSuccess(ActualGoapNode p_node) {
+        p_node.actor.homeSettlement.settlementJobTriggerComponent.TryCreateHaulJob(ProduceMatsPile(p_node));
+    }
+    #endregion
+
+    ResourcePile ProduceMatsPile(ActualGoapNode p_node) {
+        LocationGridTile tileToSpawnPile = p_node.actor.gridTileLocation;
+        if (tileToSpawnPile != null && tileToSpawnPile.tileObjectComponent.objHere != null) {
+            tileToSpawnPile = p_node.actor.gridTileLocation.GetFirstNearestTileFromThisWithNoObject();
         }
-        return false;
-    }
-#endregion
+        WoodPile matsToHaul = InnerMapManager.Instance.CreateNewTileObject<WoodPile>(TILE_OBJECT_TYPE.WOOD_PILE);
+        matsToHaul.SetResourceInPile(p_node.currentStateDuration * m_amountProducedPerTick);
+        tileToSpawnPile.structure.AddPOI(matsToHaul, tileToSpawnPile);
+        ProduceLogs(p_node);
+        (p_node.target as TileObject).DestroyMapVisualGameObject();
+        (p_node.target as TileObject).DestroyPermanently();
 
-#region State Effects
-    public void PreChopSuccess(ActualGoapNode goapNode) {
-        TreeObject tree = goapNode.poiTarget as TreeObject;
-        //GoapActionState currentState = goapNode.action.states[goapNode.currentStateName];
-        goapNode.descriptionLog.AddToFillers(null, tree.yield.ToString(), LOG_IDENTIFIER.STRING_1);
-        //goapNode.descriptionLog.AddToFillers(goapNode.targetStructure.location, goapNode.targetStructure.GetNameRelativeTo(goapNode.actor), LOG_IDENTIFIER.LANDMARK_1);
-        //if (goapNode.actor.characterClass.IsCombatant()) {
-        //    goapNode.actor.needsComponent.AdjustDoNotGetBored(1);
-        //}
+        return matsToHaul;
     }
-    public void PerTickChopSuccess(ActualGoapNode goapNode) {
-        TreeObject tree = goapNode.poiTarget as TreeObject;
-        tree.AdjustHP(-1, ELEMENTAL_TYPE.Normal);
-        if (goapNode.actor.characterClass.IsCombatant()) {
-            goapNode.actor.needsComponent.AdjustHappiness(-1);
-        }
-    }
-    
-    public void AfterChopSuccess(ActualGoapNode goapNode) {
-        //if (goapNode.actor.characterClass.IsCombatant()) {
-        //    goapNode.actor.needsComponent.AdjustDoNotGetBored(-1);
-        //}
-        TreeObject tree = goapNode.poiTarget as TreeObject;
-        LocationGridTile tile = tree.gridTileLocation;
-        int wood = tree.yield;
-        tree.AdjustYield(-wood);
 
-        // WoodPile woodPile = InnerMapManager.Instance.CreateNewTileObject<WoodPile>(TILE_OBJECT_TYPE.WOOD_PILE);
-        // woodPile.SetResourceInPile(wood);
-        // tile.structure.AddPOI(woodPile, tile);
-
-        InnerMapManager.Instance.CreateNewResourcePileAndTryCreateHaulJob<WoodPile>(TILE_OBJECT_TYPE.WOOD_PILE, wood,
-            goapNode.actor, tile);
+    public void ProduceLogs(ActualGoapNode p_node) {
+        string addOnText = (p_node.currentStateDuration * m_amountProducedPerTick).ToString() + " stones";
+        Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "GoapAction", name, "produced_resources", p_node, LOG_TAG.Work);
+        log.AddToFillers(p_node.actor, p_node.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+        log.AddToFillers(null, addOnText, LOG_IDENTIFIER.STRING_1);
+        p_node.LogAction(log);
     }
-#endregion
 }

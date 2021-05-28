@@ -12,4 +12,6 @@ public class Rabbit : Animal {
     }
     public Rabbit(SaveDataSummon data) : base(data) {
     }
+
+    public override TILE_OBJECT_TYPE produceableMaterial => TILE_OBJECT_TYPE.RABBIT_CLOTH;
 }

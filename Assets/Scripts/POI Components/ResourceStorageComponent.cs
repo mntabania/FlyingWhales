@@ -20,7 +20,7 @@ public class ResourceStorageComponent {
     
     public ResourceStorageComponent() {
         storedResources = new Dictionary<RESOURCE, int>();
-        maxResourceValues = new Dictionary<RESOURCE, int>();
+        //maxResourceValues = new Dictionary<RESOURCE, int>();
         _specificStoredResourcesCopy = new Dictionary<CONCRETE_RESOURCES, int>();
         _storedResourcesCopy = new Dictionary<RESOURCE, int>();
         RESOURCE[] resourceTypes = CollectionUtilities.GetEnumValues<RESOURCE>();
@@ -28,7 +28,7 @@ public class ResourceStorageComponent {
             RESOURCE resourceType = resourceTypes[i];
             if (resourceType != RESOURCE.NONE) {
                 storedResources.Add(resourceType, 0);
-                maxResourceValues.Add(resourceType, 1000);
+                //maxResourceValues.Add(resourceType, 1000);
             }
         }
         specificStoredResources = new Dictionary<CONCRETE_RESOURCES, int>();
@@ -40,17 +40,17 @@ public class ResourceStorageComponent {
     }
     public ResourceStorageComponent(SaveDataResourceStorageComponent p_data) {
         storedResources = p_data.storedResources;
-        maxResourceValues = p_data.maxResources;
+        //maxResourceValues = p_data.maxResources;
         specificStoredResources = p_data.specificStoredResources;
         _specificStoredResourcesCopy = new Dictionary<CONCRETE_RESOURCES, int>();
     }
 
     #region Resource Management
     public void SetResourceCap(RESOURCE p_resource, int p_cap) {
-        if (!maxResourceValues.ContainsKey(p_resource)) {
-            maxResourceValues.Add(p_resource, 0);
-        }
-        maxResourceValues[p_resource] = p_cap;
+        //if (!maxResourceValues.ContainsKey(p_resource)) {
+        //    maxResourceValues.Add(p_resource, 0);
+       //// }
+        //maxResourceValues[p_resource] = p_cap;
     }
     private void SetResource(RESOURCE resourceType, int amount) {
         storedResources[resourceType] = amount;
@@ -132,14 +132,13 @@ public class ResourceStorageComponent {
         return storedResources[resourceType] >= amount;
     }
     public bool IsAtMaxResource(RESOURCE resource) {
-        return storedResources[resource] >= maxResourceValues[resource];
-    }
-    public int GetMaxResourceValue(RESOURCE resource) {
-        return maxResourceValues[resource];
+        return false;
+        //return storedResources[resource] >= maxResourceValues[resource];
     }
     public bool HasEnoughSpaceFor(RESOURCE resource, int amount) {
         int newAmount = storedResources[resource] + amount;
-        return newAmount <= maxResourceValues[resource];
+        return true;
+        //return newAmount <= maxResourceValues[resource];
     }
     public int GetResourceValue(RESOURCE resource) {
         return storedResources[resource];
