@@ -3429,7 +3429,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
         }
     }
 
-    public void TryCreateCombineStockpile(ResourcePile toBeDpositted, ResourcePile targetDrop, out JobQueueItem jobQueueItem) {
+    public void TryCreateCombineStockpile(ResourcePile p_pileToDeposit, ResourcePile targetDrop, out JobQueueItem jobQueueItem) {
         jobQueueItem = null;
         if (owner.jobQueue.HasJob(JOB_TYPE.COMBINE_STOCKPILE)) {
             return; //already has job to combine stockpile.
@@ -3437,7 +3437,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
         
         if (targetDrop != null) { //only create job if chosen target pile does not already have a job to combine it with another pile
             GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.COMBINE_STOCKPILE,
-                INTERACTION_TYPE.DEPOSIT_RESOURCE_PILE, toBeDpositted, owner);
+                INTERACTION_TYPE.DEPOSIT_RESOURCE_PILE, p_pileToDeposit, owner);
             job.AddOtherData(INTERACTION_TYPE.DEPOSIT_RESOURCE_PILE, new object[] { targetDrop });
             job.SetStillApplicableChecker(JobManager.Combine_Stockpile_Applicability);
             jobQueueItem = job;

@@ -16,18 +16,16 @@ public class AreaTileObjectComponent : AreaComponent {
         if (!itemsInArea.Contains(item)) {
             itemsInArea.Add(item);
             if (item is ResourcePile resourcePile) {
-                BaseSettlement settlement = null;
-                if (owner.gridTileComponent.centerGridTile.IsPartOfSettlement(out settlement)) {
-                    settlement.SettlementResources.AddToResourcePiles(resourcePile);
+                if (owner.settlementOnArea != null) {
+                    owner.settlementOnArea.SettlementResources.AddToResourcePiles(resourcePile);
                 }
             }
         }
     }
     public bool RemoveItemInArea(TileObject item) {
         if (item is ResourcePile resourcePile) {
-            BaseSettlement settlement = null;
-            if (owner.gridTileComponent.centerGridTile.IsPartOfSettlement(out settlement)) {
-                settlement.SettlementResources.RemoveFromResourcePiles(resourcePile);
+            if (owner.settlementOnArea != null) {
+                owner.settlementOnArea.SettlementResources.RemoveFromResourcePiles(resourcePile);
             }
         }
         return itemsInArea.Remove(item);

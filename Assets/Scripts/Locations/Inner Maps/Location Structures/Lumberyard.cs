@@ -4,7 +4,6 @@ using UtilityScripts;
 namespace Inner_Maps.Location_Structures {
     public class Lumberyard : ManMadeStructure {
 
-        List<TileObject> builtPilesInSideStructure = RuinarchListPool<TileObject>.Claim();
         
         public override Vector3 worldPosition => structureObj.transform.position;
 
@@ -15,21 +14,19 @@ namespace Inner_Maps.Location_Structures {
             SetMaxHP(8000);
         }
                 
-        void CreateWoodPileListInsideStructure() {
-            List<TileObject> pilePool = RuinarchListPool<TileObject>.Claim();
-            builtPilesInSideStructure.Clear();
-            pilePool = GetTileObjectsOfType(TILE_OBJECT_TYPE.WOOD_PILE);
+        void PopulateWoodPileListInsideStructure(List<TileObject> builtPilesInSideStructure) {
+            List<TileObject> pilePool = GetTileObjectsOfType(TILE_OBJECT_TYPE.WOOD_PILE);
             if(pilePool != null) {
-                pilePool.ForEach((eachList) => {
-                    if (eachList.mapObjectState == MAP_OBJECT_STATE.BUILT && !((eachList as TileObject).HasJobTargetingThis(JOB_TYPE.HAUL))) {
-                        builtPilesInSideStructure.Add(eachList);
+                for (int i = 0; i < pilePool.Count; i++) {
+                    TileObject t = pilePool[i];
+                    if (t.mapObjectState == MAP_OBJECT_STATE.BUILT && !t.HasJobTargetingThis(JOB_TYPE.HAUL)) {
+                        builtPilesInSideStructure.Add(t);
                     }
-                });
-                RuinarchListPool<TileObject>.Release(pilePool);
+                }
             }
         }
 
-        TileObject GetRandomTree() {
+        TileObject GetFirstTree() {
             for(int x = 0; x < occupiedArea.tileObjectComponent.itemsInArea.Count; ++x) {
                 if (occupiedArea.tileObjectComponent.itemsInArea[x] is TreeObject) {
                     return occupiedArea.tileObjectComponent.itemsInArea[x];
@@ -41,7 +38,7 @@ namespace Inner_Maps.Location_Structures {
         protected override void ProcessWorkStructureJobsByWorker(Character p_worker, out JobQueueItem producedJob) {
             producedJob = null;
             //check if there are woodpiles that can be hauled inside settlement
-            ResourcePile woodPile = p_worker.homeSettlement.SettlementResources.GetRandomPileOfWoods();
+            ResourcePile woodPile = p_worker.homeSettlement.SettlementResources.GetRandomPileOfWoodsForHaul();
             if (woodPile != null) {
                 p_worker.jobComponent.TryCreateHaulJob(woodPile, out producedJob);
                 if(producedJob != null) {
@@ -49,17 +46,20 @@ namespace Inner_Maps.Location_Structures {
 				}
             }
             //check if there are multiple woodpiles inside this structure
-            CreateWoodPileListInsideStructure();
-            if (builtPilesInSideStructure != null && builtPilesInSideStructure.Count > 1) {
+            List<TileObject> builtPilesInSideStructure = RuinarchListPool<TileObject>.Claim();
+            PopulateWoodPileListInsideStructure(builtPilesInSideStructure);
+            if (builtPilesInSideStructure.Count > 1) {
                 p_worker.jobComponent.TryCreateCombineStockpile(builtPilesInSideStructure[0] as ResourcePile, builtPilesInSideStructure[1] as ResourcePile, out producedJob);
                 if (producedJob != null) {
+                    RuinarchListPool<TileObject>.Release(builtPilesInSideStructure);
                     return;
                 }
             }
+            RuinarchListPool<TileObject>.Release(builtPilesInSideStructure);
             //check if there are available tree that can be chopped
-            TileObject tree = GetRandomTree();
+            TileObject tree = GetFirstTree();
             if (tree != null){
-                TileObject targetTree = GetRandomTree();
+                TileObject targetTree = GetFirstTree();
                 p_worker.jobComponent.TriggerChopWood(targetTree, out producedJob);
             }
         }
