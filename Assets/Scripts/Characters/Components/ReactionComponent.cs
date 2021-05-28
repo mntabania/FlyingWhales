@@ -1610,20 +1610,21 @@ public class ReactionComponent : CharacterComponent {
         if (targetTileObject is ResourcePile resourcePile && actor.homeSettlement != null) {
             //if character sees a resource pile that is outside his/her home settlement or
             //is not at his/her settlement's main storage
-            if (resourcePile.gridTileLocation.IsPartOfSettlement(actor.homeSettlement) == false ||
-                resourcePile.gridTileLocation.structure != actor.homeSettlement.mainStorage) {
-                //do not create haul job for human and elven meat if actor is part of major faction
-                if(actor.faction?.factionType.type == FACTION_TYPE.Ratmen) {
-                    if(resourcePile is FoodPile) {
-                        actor.homeSettlement.settlementJobTriggerComponent.TryCreateHaulJob(resourcePile);
-                    }
-                } else {
-                    bool cannotCreateHaulJob = (resourcePile.tileObjectType == TILE_OBJECT_TYPE.ELF_MEAT || resourcePile.tileObjectType == TILE_OBJECT_TYPE.HUMAN_MEAT) && actor.faction != null && actor.faction.isMajorNonPlayer;
-                    if (!cannotCreateHaulJob) {
-                        actor.homeSettlement.settlementJobTriggerComponent.TryCreateHaulJob(resourcePile);
-                    }
-                }
-            }
+            //Do not haul to city center anymore because hauling is now a personal job and resource piles will be hauled to respective structures
+            //if (resourcePile.gridTileLocation.IsPartOfSettlement(actor.homeSettlement) == false ||
+            //    resourcePile.gridTileLocation.structure != actor.homeSettlement.mainStorage) {
+            //    //do not create haul job for human and elven meat if actor is part of major faction
+            //    if(actor.faction?.factionType.type == FACTION_TYPE.Ratmen) {
+            //        if(resourcePile is FoodPile) {
+            //            actor.homeSettlement.settlementJobTriggerComponent.TryCreateHaulJob(resourcePile);
+            //        }
+            //    } else {
+            //        bool cannotCreateHaulJob = (resourcePile.tileObjectType == TILE_OBJECT_TYPE.ELF_MEAT || resourcePile.tileObjectType == TILE_OBJECT_TYPE.HUMAN_MEAT) && actor.faction != null && actor.faction.isMajorNonPlayer;
+            //        if (!cannotCreateHaulJob) {
+            //            actor.homeSettlement.settlementJobTriggerComponent.TryCreateHaulJob(resourcePile);
+            //        }
+            //    }
+            //}
             if (actor.race.IsSapient() && (resourcePile.tileObjectType == TILE_OBJECT_TYPE.ELF_MEAT || resourcePile.tileObjectType == TILE_OBJECT_TYPE.HUMAN_MEAT) && resourcePile is FoodPile foodPile && 
                 !actor.traitContainer.HasTrait("Cannibal") && !actor.traitContainer.HasTrait("Malnourished")) {
                 if (!actor.defaultCharacterTrait.HasAlreadyReactedToFoodPile(foodPile)) {
