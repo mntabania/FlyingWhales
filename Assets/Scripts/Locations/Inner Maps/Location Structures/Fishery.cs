@@ -3,6 +3,7 @@ using Inner_Maps.Location_Structures;
 using UnityEngine;
 using UnityEngine.Assertions;
 using System.Collections.Generic;
+using UtilityScripts;
 
 namespace Inner_Maps.Location_Structures {
     public class Fishery : ManMadeStructure {
@@ -41,42 +42,52 @@ namespace Inner_Maps.Location_Structures {
             base.AfterStructureDestruction(p_responsibleCharacter);
             connectedOcean = null;
         }
-
-        List<ResourcePile> CheckForMultipleSameResourcePileInsideStructure() {
-            return DoesMultipleResourcePileExist(GetAllFishResourcePileOnTiles());
-        }
-
-        List<ResourcePile> DoesMultipleResourcePileExist(List<ResourcePile> p_allPiles) {
-            List<ResourcePile> fishPile = new List<ResourcePile>();
-            p_allPiles.ForEach((eachList) => {
-                if (eachList is FishPile) {
-                    fishPile.Add(eachList);
+        private void PopulateFishPileListInsideStructure(List<TileObject> builtPilesInSideStructure) {
+            List<TileObject> pilePool = GetTileObjectsOfType(TILE_OBJECT_TYPE.FISH_PILE);
+            if (pilePool != null) {
+                for (int i = 0; i < pilePool.Count; i++) {
+                    TileObject t = pilePool[i];
+                    if (t.mapObjectState == MAP_OBJECT_STATE.BUILT && !t.HasJobTargetingThis(JOB_TYPE.HAUL, JOB_TYPE.COMBINE_STOCKPILE)) {
+                        builtPilesInSideStructure.Add(t);
+                    }
                 }
-            });
-            if (fishPile.Count > 1) {
-                return fishPile;
+            }
+        }
+        private TileObject GetRandomFishingSpot() {
+            List<TileObject> fishingSpots = connectedOcean.GetTileObjectsOfType(TILE_OBJECT_TYPE.FISHING_SPOT);
+            if (fishingSpots != null && fishingSpots.Count > 0) {
+                return fishingSpots[GameUtilities.RandomBetweenTwoNumbers(0, fishingSpots.Count - 1)];
             }
             return null;
         }
-
-        List<ResourcePile> GetAllFishResourcePileOnTiles() {
-            List<ResourcePile> pilePool = new List<ResourcePile>();
-            passableTiles.ForEach((eachTile) => {
-                if (eachTile.tileObjectComponent.objHere != null && eachTile.tileObjectComponent.objHere is ResourcePile resourcePile) {
-                    pilePool.Add(resourcePile);
-                }
-            });
-            return pilePool;
-        }
-
         protected override void ProcessWorkStructureJobsByWorker(Character p_worker, out JobQueueItem producedJob) {
             producedJob = null;
-            if (p_worker.currentSettlement.SettlementResources.GetRandomPileOfFishes() != null) {
+            ResourcePile pileToHaul = p_worker.currentSettlement.SettlementResources.GetRandomPileOfFishes();
+            if (pileToHaul != null) {
                 //do haul job
-            } else if (CheckForMultipleSameResourcePileInsideStructure() != null) {
-                //do combine resourcepiles job
-            } else { 
-                //fishing
+                p_worker.jobComponent.TryCreateHaulJob(pileToHaul, out producedJob);
+                if (producedJob != null) {
+                    return;
+                }
+            }
+
+            //do combine resourcepiles job
+            List<TileObject> builtPilesInSideStructure = RuinarchListPool<TileObject>.Claim();
+            PopulateFishPileListInsideStructure(builtPilesInSideStructure);
+            if (builtPilesInSideStructure.Count > 1) {
+                p_worker.jobComponent.TryCreateCombineStockpile(builtPilesInSideStructure[0] as ResourcePile, builtPilesInSideStructure[1] as ResourcePile, out producedJob);
+                if (producedJob != null) {
+                    RuinarchListPool<TileObject>.Release(builtPilesInSideStructure);
+                    return;
+                }
+            }
+            RuinarchListPool<TileObject>.Release(builtPilesInSideStructure);
+
+            //Find Fish
+            TileObject fishingSpot = GetRandomFishingSpot();
+            if (fishingSpot != null) {
+                //do harvest crops
+                p_worker.jobComponent.TriggerFindFish(fishingSpot as FishingSpot, out producedJob);
             }
         }
     }

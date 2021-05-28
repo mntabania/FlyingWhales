@@ -14,7 +14,7 @@ namespace Inner_Maps.Location_Structures {
             SetMaxHP(8000);
         }
                 
-        void PopulateWoodPileListInsideStructure(List<TileObject> builtPilesInSideStructure) {
+        private void PopulateWoodPileListInsideStructure(List<TileObject> builtPilesInSideStructure) {
             List<TileObject> pilePool = GetTileObjectsOfType(TILE_OBJECT_TYPE.WOOD_PILE);
             if(pilePool != null) {
                 for (int i = 0; i < pilePool.Count; i++) {
@@ -26,7 +26,7 @@ namespace Inner_Maps.Location_Structures {
             }
         }
 
-        TileObject GetFirstTree() {
+        private TileObject GetFirstTree() {
             for(int x = 0; x < occupiedArea.tileObjectComponent.itemsInArea.Count; ++x) {
                 if (occupiedArea.tileObjectComponent.itemsInArea[x] is TreeObject) {
                     return occupiedArea.tileObjectComponent.itemsInArea[x];
@@ -59,8 +59,7 @@ namespace Inner_Maps.Location_Structures {
             //check if there are available tree that can be chopped
             TileObject tree = GetFirstTree();
             if (tree != null){
-                TileObject targetTree = GetFirstTree();
-                p_worker.jobComponent.TriggerChopWood(targetTree, out producedJob);
+                p_worker.jobComponent.TriggerChopWood(tree, out producedJob);
             }
         }
     }
