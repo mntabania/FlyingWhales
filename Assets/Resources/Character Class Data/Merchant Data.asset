@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   combatBehaviourType: 0
   combatSpecialSkillType: 0
+  workStructureType: 1
   summonCost: 50
   portraitSprite: {fileID: 0}
   defaultSprites:
@@ -63,15 +64,15 @@ MonoBehaviour:
       - {fileID: 21300000, guid: b9aba09a4d7b35b4895147e3955affa4, type: 3}
       - {fileID: 21300000, guid: 3d8bd9579c25cf244bc68cfb1d6feefe, type: 3}
   characterSkillUpdateData:
-    piercingBonus: 5
-    mentalResistanceBonus: 20
-    physicalResistanceBonus: 5
-    normalResistanceBonus: 0
-    fireResistanceBonus: 0
-    poisonResistanceBonus: 0
-    waterResistanceBonus: 0
-    iceResistanceBonus: 0
-    electricResistanceBonus: 0
-    earthResistanceBonus: 0
-    windResistanceBonus: 0
-    allElementresistanceBonus: 5
+    m_piercingBonus: 0
+    m_mentalResistanceBonus: 0
+    m_physicalResistanceBonus: 0
+    m_normalResistanceBonus: 0
+    m_fireResistanceBonus: 0
+    m_poisonResistanceBonus: 0
+    m_waterResistanceBonus: 0
+    m_iceResistanceBonus: 0
+    m_electricResistanceBonus: 0
+    m_earthResistanceBonus: 0
+    m_windResistanceBonus: 0
+    m_allElementresistanceBonus: 0

@@ -26,6 +26,7 @@ public class CharacterClassComponent : CharacterComponent {
         characterClass = CharacterManager.Instance.GetCharacterClass(data.className);
         previousClassName = data.previousClassName;
         shouldChangeClass = data.shouldChangeClass;
+        ableClasses = data.ableClasses;
     }
 
     #region General
@@ -154,12 +155,13 @@ public class SaveDataCharacterClassComponent : SaveData<CharacterClassComponent>
     public string className;
     public string previousClassName;
     public bool shouldChangeClass;
-
+    public List<string> ableClasses;
     #region Overrides
     public override void Save(CharacterClassComponent data) {
         className = data.characterClass.className;
         previousClassName = data.previousClassName;
         shouldChangeClass = data.shouldChangeClass;
+        ableClasses = data.ableClasses;
     }
 
     public override CharacterClassComponent Load() {

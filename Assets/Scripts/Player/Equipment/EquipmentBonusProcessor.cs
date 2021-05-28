@@ -224,7 +224,9 @@ public static class EquipmentBonusProcessor
 
     static void ProcessElementAfterRemovingSomeItem(EquipmentComponent ec, EquipmentItem ei, Character p_targetCharacter) {
         if (ei != null) {
-            p_targetCharacter.combatComponent.SetElementalType(ei.equipmentData.equipmentUpgradeData.elementAttackBonus);
+            if (ei.equipmentData.equipmentUpgradeData.bonuses.Contains(EQUIPMENT_BONUS.Attack_Element)) {
+                p_targetCharacter.combatComponent.SetElementalType(ei.equipmentData.equipmentUpgradeData.elementAttackBonus);
+            }
         } else if (p_targetCharacter.combatComponent.elementalStatusWaitingList.Count > 0) {
             p_targetCharacter.combatComponent.UpdateElementalType();
         } else {

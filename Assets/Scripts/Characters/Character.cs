@@ -4220,7 +4220,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     //public void SetNumWaitingForGoapThread(int amount) {
     //    _numOfWaitingForGoapThread = amount;
     //}
-    public void ConstructInitialGoapAdvertisementActions() {
+    public virtual void ConstructInitialGoapAdvertisementActions() {
         //poiGoapActions = new List<INTERACTION_TYPE>();
         AddAdvertisedAction(INTERACTION_TYPE.ASSAULT);
         AddAdvertisedAction(INTERACTION_TYPE.SLEEP_OUTSIDE);

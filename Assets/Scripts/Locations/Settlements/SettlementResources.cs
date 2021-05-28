@@ -74,7 +74,7 @@ public class SettlementResources
     }
 
     public ResourcePile GetRandomPileOfCrops() {
-        bool found = false;
+        //bool found = false;
         List<TileObject> pilePool = RuinarchListPool<TileObject>.Claim();
         for (int x = 0; x < resourcePiles.Count; ++x) {
             ResourcePile pile = resourcePiles[x];
@@ -85,7 +85,7 @@ public class SettlementResources
                pile.tileObjectType == TILE_OBJECT_TYPE.POTATO) {
                 if (pile.currentStructure.structureType != STRUCTURE_TYPE.CITY_CENTER && pile.currentStructure.structureType != STRUCTURE_TYPE.FARM && !pile.HasJobTargetingThis(JOB_TYPE.HAUL)) {
                     pilePool.Add(pile);
-                    found = true;
+                    //found = true;
                 }    
             }
         }
@@ -93,13 +93,13 @@ public class SettlementResources
         if (pilePool.Count > 0) {
             chosenPile = pilePool[GameUtilities.RandomBetweenTwoNumbers(0, pilePool.Count - 1)] as ResourcePile;
         }
-        resourcePiles.Remove(chosenPile);
+        //resourcePiles.Remove(chosenPile);
         RuinarchListPool<TileObject>.Release(pilePool);
-        return found ? chosenPile : null;
+        return chosenPile;
     }
 
     public ResourcePile GetRandomPileOfClothOrLeather() {
-        bool found = false;
+        //bool found = false;
         List<TileObject> pilePool = RuinarchListPool<TileObject>.Claim();
         for (int x = 0; x < resourcePiles.Count; ++x) {
             ResourcePile pile = resourcePiles[x];
@@ -113,7 +113,7 @@ public class SettlementResources
                pile.tileObjectType == TILE_OBJECT_TYPE.WOLF_HIDE) {
                 if (pile.currentStructure.structureType != STRUCTURE_TYPE.CITY_CENTER && pile.currentStructure.structureType != STRUCTURE_TYPE.HUNTER_LODGE && !pile.HasJobTargetingThis(JOB_TYPE.HAUL)) {
                     pilePool.Add(pile);
-                    found = true;
+                    //found = true;
                 }
             }
         }
@@ -121,13 +121,13 @@ public class SettlementResources
         if (pilePool.Count > 0) {
             chosenPile = pilePool[GameUtilities.RandomBetweenTwoNumbers(0, pilePool.Count - 1)] as ResourcePile;
         }
-        resourcePiles.Remove(chosenPile);
+        //resourcePiles.Remove(chosenPile);
         RuinarchListPool<TileObject>.Release(pilePool);
-        return found ? chosenPile : null;
+        return chosenPile;
     }
 
     public ResourcePile GetRandomPileOfMeats() {
-        bool found = false;
+        //bool found = false;
         List<TileObject> pilePool = RuinarchListPool<TileObject>.Claim();
         for (int x = 0; x < resourcePiles.Count; ++x) {
             ResourcePile pile = resourcePiles[x];
@@ -136,7 +136,7 @@ public class SettlementResources
                pile.tileObjectType == TILE_OBJECT_TYPE.HUMAN_MEAT) {
                 if (pile.currentStructure.structureType != STRUCTURE_TYPE.CITY_CENTER && pile.currentStructure.structureType != STRUCTURE_TYPE.BUTCHERS_SHOP && !pile.HasJobTargetingThis(JOB_TYPE.HAUL)) {
                     pilePool.Add(pile);
-                    found = true;
+                    //found = true;
                 }
             }
         }
@@ -144,20 +144,20 @@ public class SettlementResources
         if (pilePool.Count > 0) {
             chosenPile = pilePool[GameUtilities.RandomBetweenTwoNumbers(0, pilePool.Count - 1)] as ResourcePile;
         }
-        resourcePiles.Remove(chosenPile);
+        //resourcePiles.Remove(chosenPile);
         RuinarchListPool<TileObject>.Release(pilePool);
-        return found ? chosenPile : null;
+        return chosenPile;
     }
 
     public ResourcePile GetRandomPileOfFishes() {
-        bool found = false;
+        //bool found = false;
         List<TileObject> pilePool = RuinarchListPool<TileObject>.Claim();
         for (int x = 0; x < resourcePiles.Count; ++x) {
             ResourcePile pile = resourcePiles[x];
             if (pile.tileObjectType == TILE_OBJECT_TYPE.FISH_PILE) {
                 if (pile.currentStructure.structureType != STRUCTURE_TYPE.CITY_CENTER && pile.currentStructure.structureType != STRUCTURE_TYPE.FISHERY && !pile.HasJobTargetingThis(JOB_TYPE.HAUL)) {
                     pilePool.Add(pile);
-                    found = true;
+                    //found = true;
                 }
             }
         }
@@ -165,20 +165,20 @@ public class SettlementResources
         if (pilePool.Count > 0) {
             chosenPile = pilePool[GameUtilities.RandomBetweenTwoNumbers(0, pilePool.Count - 1)] as ResourcePile;
         }
-        resourcePiles.Remove(chosenPile);
+        //resourcePiles.Remove(chosenPile);
         RuinarchListPool<TileObject>.Release(pilePool);
-        return found ? chosenPile : null;
+        return chosenPile;
     }
 
-    public ResourcePile GetRandomPileOfWoods() {
-        bool found = false;
+    public ResourcePile GetRandomPileOfWoodsForHaul() {
+        //bool found = false;
         List<TileObject> pilePool = RuinarchListPool<TileObject>.Claim();
         for (int x = 0; x < resourcePiles.Count; ++x) {
             ResourcePile pile = resourcePiles[x];
             if (pile.tileObjectType == TILE_OBJECT_TYPE.WOOD_PILE) {
                 if (pile.currentStructure.structureType != STRUCTURE_TYPE.CITY_CENTER && pile.currentStructure.structureType != STRUCTURE_TYPE.LUMBERYARD && !pile.HasJobTargetingThis(JOB_TYPE.HAUL)) {
                     pilePool.Add(pile);
-                    found = true;
+                    //found = true;
                 }
             }
         }
@@ -186,9 +186,9 @@ public class SettlementResources
         if (pilePool.Count > 0) {
             chosenPile = pilePool[GameUtilities.RandomBetweenTwoNumbers(0, pilePool.Count - 1)] as ResourcePile;
         }
-        resourcePiles.Remove(chosenPile);
+        //resourcePiles.Remove(chosenPile);
         RuinarchListPool<TileObject>.Release(pilePool);
-        return found ? chosenPile : null;
+        return chosenPile;
     }
 
     public TreeObject GetAvailableTree() { 
