@@ -51,10 +51,19 @@ public class DemonDefendBehaviour : CharacterBehaviourComponent {
              for (int i = 0; i < PlayerManager.Instance.player.playerSettlement.allStructures.Count; i++) {
                  LocationStructure structure = PlayerManager.Instance.player.playerSettlement.allStructures[i];
                  if (structure is DemonicStructure demonicStructure && demonicStructure.currentAttackers.Count > 0) {
-                     Character attacker = demonicStructure.currentAttackers.First();
-                     character.combatComponent.Fight(attacker, CombatManager.Defending_Home, null, true);
-                     producedJob = null;
-                     return true;
+                     Character attacker = null;
+                     for (int j = 0; j < demonicStructure.currentAttackers.Count; j++) {
+                         Character c = demonicStructure.currentAttackers.ElementAt(j);
+                         if (!c.isBeingSeized) {
+                             attacker = c;
+                             break;
+                         }
+                     }
+                     if (attacker != null) {
+                         character.combatComponent.Fight(attacker, CombatManager.Defending_Home, null, true);
+                         producedJob = null;
+                         return true;    
+                     }
                  }
              }
 

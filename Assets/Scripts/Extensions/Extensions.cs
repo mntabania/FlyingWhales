@@ -792,6 +792,7 @@ public static class Extensions {
             case JOB_TYPE.SHEAR_ANIMAL:
             case JOB_TYPE.SKIN_ANIMAL:
             case JOB_TYPE.HARVEST_CROPS:
+            case JOB_TYPE.CHOP_WOOD:
             priority = 920;
                 break;
             case JOB_TYPE.UNDERMINE:

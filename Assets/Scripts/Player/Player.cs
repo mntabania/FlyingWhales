@@ -307,6 +307,7 @@ public class Player : ILeader, IObjectManipulator {
             //Do not process when setting the same intel
             return;
         }
+        Debug.Log($"Will set current active intel to {intel?.log.logText ?? "null"}");
         IIntel previousIntel = currentActiveIntel;
         currentActiveIntel = intel;
         if(previousIntel != null) {

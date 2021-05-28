@@ -23,7 +23,7 @@ public class ChopWood : GoapAction {
     //}
     public override void Perform(ActualGoapNode goapNode) {
         base.Perform(goapNode);
-        SetState("Chop Wood Success", goapNode);
+        SetState("Chop Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
 #if DEBUG_LOG
@@ -48,8 +48,8 @@ public class ChopWood : GoapAction {
     #endregion
 
     #region State Effects
-    public void AfterChopWoodSuccess(ActualGoapNode p_node) {
-        p_node.actor.homeSettlement.settlementJobTriggerComponent.TryCreateHaulJob(ProduceMatsPile(p_node));
+    public void AfterChopSuccess(ActualGoapNode p_node) {
+        p_node.actor.jobComponent.TryCreateHaulJob(ProduceMatsPile(p_node));
     }
     #endregion
 
@@ -69,7 +69,7 @@ public class ChopWood : GoapAction {
     }
 
     public void ProduceLogs(ActualGoapNode p_node) {
-        string addOnText = (p_node.currentStateDuration * m_amountProducedPerTick).ToString() + " stones";
+        string addOnText = (p_node.currentStateDuration * m_amountProducedPerTick).ToString() + " wood pile";
         Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "GoapAction", name, "produced_resources", p_node, LOG_TAG.Work);
         log.AddToFillers(p_node.actor, p_node.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         log.AddToFillers(null, addOnText, LOG_IDENTIFIER.STRING_1);

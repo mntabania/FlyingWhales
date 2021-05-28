@@ -103,10 +103,15 @@ public class PlayerManager : BaseMonoBehaviour {
         }
     }
     public void AddPlayerInputModule(PlayerInputModule p_module) {
-        _playerInputModules.Add(p_module);
+        if (!_playerInputModules.Contains(p_module)) {
+            _playerInputModules.Add(p_module);
+            Debug.Log($"Added Player Input Module: {p_module.GetType().ToString()}");
+        }
     }
     public void RemovePlayerInputModule(PlayerInputModule p_module) {
-        _playerInputModules.Remove(p_module);
+        if (_playerInputModules.Remove(p_module)) {
+            Debug.Log($"Removed Player Input Module: {p_module.GetType().ToString()}");    
+        }
     }
     #endregion
     
