@@ -70,6 +70,12 @@ public static class EquipmentBonusProcessor
             //float computedAttack = p_targetCharacter.combatComponent.unModifiedAttack * (p_equipItem.equipmentData.equipmentUpgradeData.AdditionalAttackPercentage / 100f);
             p_targetCharacter.combatComponent.AdjustIntelligencePercentModifier(p_equipItem.equipmentData.equipmentUpgradeData.AdditionalIntPercentage);
             break;
+            case EQUIPMENT_BONUS.Crit_Rate_Actual:
+            if (p_initializedStackCountOnly) {
+                return;
+            }
+            p_targetCharacter.combatComponent.AdjustCritRate(p_equipItem.equipmentData.equipmentUpgradeData.GetProcessedAdditionalCritRate(p_equipItem.quality));
+            break;
             case EQUIPMENT_BONUS.Max_HP_Actual:
             if (p_initializedStackCountOnly) {
                 return;
@@ -156,6 +162,10 @@ public static class EquipmentBonusProcessor
             case EQUIPMENT_BONUS.Int_Percentage:
             //float computedAttack = p_targetCharacter.combatComponent.unModifiedAttack * (p_equipItem.equipmentData.equipmentUpgradeData.AdditionalAttackPercentage / 100f);
             p_targetCharacter.combatComponent.AdjustIntelligencePercentModifier(-p_equipItem.equipmentData.equipmentUpgradeData.AdditionalIntPercentage);
+            break;
+            case EQUIPMENT_BONUS.Crit_Rate_Actual:
+            //float computedAttack = p_targetCharacter.combatComponent.unModifiedAttack * (p_equipItem.equipmentData.equipmentUpgradeData.AdditionalAttackPercentage / 100f);
+            p_targetCharacter.combatComponent.AdjustCritRate(-p_equipItem.equipmentData.equipmentUpgradeData.GetProcessedAdditionalCritRate(p_equipItem.quality));
             break;
             case EQUIPMENT_BONUS.Max_HP_Actual:
             p_targetCharacter.combatComponent.AdjustMaxHPModifier(-p_equipItem.equipmentData.equipmentUpgradeData.GetProcessedAdditionalmaxHP(p_equipItem.quality));

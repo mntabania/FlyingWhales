@@ -77,8 +77,10 @@ public class DepositResourcePile : GoapAction {
             } else if (otherData[0].obj is Area area) {
                 LocationGridTile centerTile = area.gridTileComponent.centerGridTile;
                 return centerTile.structure;
+            } else if (otherData[0].obj is LocationStructure locationStructure) {
+                return locationStructure;
             }
-            if(node.actor.homeSettlement != null) {
+            if (node.actor.homeSettlement != null) {
                 return node.actor.homeSettlement.mainStorage;
             }
         } else {

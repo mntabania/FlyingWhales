@@ -36,13 +36,16 @@ public class Table : TileObject {
     }
     protected override void Initialize(TILE_OBJECT_TYPE tileObjectType, bool shouldAddCommonAdvertisements = true) {
         base.Initialize(tileObjectType, shouldAddCommonAdvertisements);
-        RESOURCE[] resourceTypes = CollectionUtilities.GetEnumValues<RESOURCE>();
+
+        /*
+         * RESOURCE[] resourceTypes = CollectionUtilities.GetEnumValues<RESOURCE>();
         for (int i = 0; i < resourceTypes.Length; i++) {
             RESOURCE resourceType = resourceTypes[i];
             if (resourceType != RESOURCE.NONE) {
                 resourceStorageComponent.SetResourceCap(resourceType, resourceType == RESOURCE.FOOD ? 100 : 0);
             }
         }
+        */
     }
     public override string ToString() {
         return $"Table {id.ToString()}";

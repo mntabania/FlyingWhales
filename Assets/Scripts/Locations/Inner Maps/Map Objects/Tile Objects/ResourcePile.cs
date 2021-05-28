@@ -65,14 +65,17 @@ public abstract class ResourcePile : TileObject {
     public override void SetCharacterOwner(Character characterOwner) { } //do not set character owner of resource pile. Reference: https://trello.com/c/TRzgjik6/1352-resources-like-food-pile-and-wood-pile-should-not-have-owners-at-any-time
     protected override void Initialize(TILE_OBJECT_TYPE tileObjectType, bool shouldAddCommonAdvertisements = true) {
         base.Initialize(tileObjectType, shouldAddCommonAdvertisements);
-        RESOURCE[] resourceTypes = CollectionUtilities.GetEnumValues<RESOURCE>();
-        for (int i = 0; i < resourceTypes.Length; i++) {
+
+        /*
+         * RESOURCE[] resourceTypes = CollectionUtilities.GetEnumValues<RESOURCE>();
+         * for (int i = 0; i < resourceTypes.Length; i++) {
             RESOURCE resourceType = resourceTypes[i];
             if (resourceType != RESOURCE.NONE) {
                 //only allow resource type of what this resource pile provides.
                 resourceStorageComponent.SetResourceCap(resourceType, resourceType == providedResource ? 1000 : 0);    
             }
         }
+        */
     }
     #endregion
 }

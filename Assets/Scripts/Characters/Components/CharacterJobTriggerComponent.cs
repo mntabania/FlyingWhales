@@ -3345,6 +3345,81 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
         }
     }
     #endregion
+
+    #region new Jobs
+    public void TriggerMineOre(GenericTileObject p_tileObject) {
+        if (!owner.jobQueue.HasJob(JOB_TYPE.MINE_ORE)) {
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.MINE_ORE, INTERACTION_TYPE.MINE_ORE, p_tileObject, owner);
+            owner.jobQueue.AddJobInQueue(job);
+        }
+    }
+
+    public void TriggerCreateWeapon(TILE_OBJECT_TYPE p_weaponType) {
+        if (!owner.jobQueue.HasJob(JOB_TYPE.CRAFT_WEAPON)) {
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.CRAFT_WEAPON, INTERACTION_TYPE.CRAFT_WEAPON, null, owner);
+            owner.jobQueue.AddJobInQueue(job);
+        }
+    }
+
+    public void TriggerFindFish(GenericTileObject p_tileObject) {
+        if (!owner.jobQueue.HasJob(JOB_TYPE.FIND_FISH)) {
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.FIND_FISH, INTERACTION_TYPE.FIND_FISH, p_tileObject, owner);
+            owner.jobQueue.AddJobInQueue(job);
+        }
+    }
+
+    public void TriggerHarvestCrops(GenericTileObject p_tileObject) {
+        if (!owner.jobQueue.HasJob(JOB_TYPE.HARVEST_CROPS)) {
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.HARVEST_CROPS, INTERACTION_TYPE.HARVEST_CROPS, p_tileObject, owner);
+            owner.jobQueue.AddJobInQueue(job);
+        }
+    }
+
+    public void TriggerTillTile(GenericTileObject p_tileObject) {
+        if (!owner.jobQueue.HasJob(JOB_TYPE.TILL_TILE)) {
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.TILL_TILE, INTERACTION_TYPE.TILL_TILE, p_tileObject, owner);
+            owner.jobQueue.AddJobInQueue(job);
+        }
+    }
+
+    public void TriggerShearAnimal(Character p_animal) {
+        if (!owner.jobQueue.HasJob(JOB_TYPE.SHEAR_ANIMAL)) {
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.SHEAR_ANIMAL, INTERACTION_TYPE.SHEAR_ANIMAL, p_animal, owner);
+            owner.jobQueue.AddJobInQueue(job);
+        }
+    }
+
+    public void TriggerSkinAnimal(Character p_animal) {
+        if (!owner.jobQueue.HasJob(JOB_TYPE.SKIN_ANIMAL)) {
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.SKIN_ANIMAL, INTERACTION_TYPE.SKIN_ANIMAL, p_animal, owner);
+            owner.jobQueue.AddJobInQueue(job);
+        }
+    }
+
+    public void TriggerChopWood(TileObject p_tree) {
+        if (!owner.jobQueue.HasJob(JOB_TYPE.CHOP_WOOD)) {
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.CHOP_WOOD, INTERACTION_TYPE.CHOP_WOOD, p_tree, owner);
+            owner.jobQueue.AddJobInQueue(job);
+        }
+    }
+
+    public void TryCreateHaulJob(ResourcePile target) {
+        if (owner.jobQueue.HasJob(JOB_TYPE.HAUL) == false) {
+            //ResourcePile chosenPileToDepositTo = target;// owner.mainStorage.GetResourcePileObjectWithLowestCount(target.tileObjectType);
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.HAUL,
+                new GoapEffect(GOAP_EFFECT_CONDITION.DEPOSIT_RESOURCE, string.Empty, false, GOAP_EFFECT_TARGET.TARGET), target, owner);
+            if (true) {
+                job.AddOtherData(INTERACTION_TYPE.DEPOSIT_RESOURCE_PILE, new object[] { owner.structureComponent.workPlaceStructure });
+            }
+            /*
+            job.SetStillApplicableChecker(JobManager.Haul_Applicability);
+            job.SetCanTakeThisJobChecker(JobManager.Can_Take_Haul);
+            //_owner.AddToAvailableJobs(job);
+            */
+            owner.jobQueue.AddJobInQueue(job);
+        }
+    }
+    #endregion
 }
 
 [System.Serializable]

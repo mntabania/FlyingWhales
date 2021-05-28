@@ -20,8 +20,12 @@ public class Summon : Character {
     public virtual Faction defaultFaction => FactionManager.Instance.neutralFaction;
     public virtual int gainedKennelSummonCapacity => 3;
 
-    #region getters
-    public virtual SUMMON_TYPE adultSummonType => SUMMON_TYPE.None;
+	#region shearing and skinning data
+	public virtual TILE_OBJECT_TYPE produceableMaterial => TILE_OBJECT_TYPE.NONE;
+	#endregion
+
+	#region getters
+	public virtual SUMMON_TYPE adultSummonType => SUMMON_TYPE.None;
     public virtual COMBAT_MODE defaultCombatMode => COMBAT_MODE.Aggressive;
     public virtual bool defaultDigMode => false;
     public virtual string bredBehaviour => characterClass.traitNameOnTamedByPlayer;

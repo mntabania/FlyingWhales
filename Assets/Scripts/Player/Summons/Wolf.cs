@@ -10,6 +10,8 @@ public class Wolf : Summon {
     public Wolf(string className) : base(SUMMON_TYPE.Wolf, className, RACE.WOLF, UtilityScripts.Utilities.GetRandomGender()) { }
     public Wolf(SaveDataSummon data) : base(data) { }
 
+    public override TILE_OBJECT_TYPE produceableMaterial => TILE_OBJECT_TYPE.WOLF_HIDE;
+
     #region Overrides
     //public override void OnPlaceSummon(LocationGridTile tile) {
     //    base.OnPlaceSummon(tile);

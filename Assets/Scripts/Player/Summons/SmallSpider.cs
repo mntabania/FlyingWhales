@@ -10,6 +10,8 @@ public class SmallSpider : Summon {
     public override SUMMON_TYPE adultSummonType => SUMMON_TYPE.Giant_Spider;
     public override System.Type serializedData => typeof(SaveDataSmallSpider);
 
+    public override TILE_OBJECT_TYPE produceableMaterial => TILE_OBJECT_TYPE.SPIDER_SILK;
+
     public GameDate growUpDate { get; private set; }
     public bool shouldGrowUpOnUnSeize { get; private set; }
 

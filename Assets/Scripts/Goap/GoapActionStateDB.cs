@@ -698,6 +698,24 @@ public static class GoapActionStateDB {
         {INTERACTION_TYPE.ABSORB_POWER_CRYSTAL, new[]{
             new StateNameAndDuration(){ name = "Absorb Crystal Success", status = InteractionManager.Goap_State_Success, duration = 20 },
         } },
+        {INTERACTION_TYPE.MINE_ORE, new[]{
+            new StateNameAndDuration(){ name = "Mine Ore Success", status = InteractionManager.Goap_State_Success, duration = 20 },
+        } },
+        {INTERACTION_TYPE.FIND_FISH, new[]{
+            new StateNameAndDuration(){ name = "Find Fish Success", status = InteractionManager.Goap_State_Success, duration = 20 },
+        } },
+        {INTERACTION_TYPE.TILL_TILE, new[]{
+            new StateNameAndDuration(){ name = "Till Tile Success", status = InteractionManager.Goap_State_Success, duration = 10 },
+        } },
+        {INTERACTION_TYPE.SHEAR_ANIMAL, new[]{
+            new StateNameAndDuration(){ name = "Shear Animal Success", status = InteractionManager.Goap_State_Success, duration = 10 },
+        } },
+        {INTERACTION_TYPE.SKIN_ANIMAL, new[]{
+            new StateNameAndDuration(){ name = "Skin Animal Success", status = InteractionManager.Goap_State_Success, duration = 10 },
+        } },
+        {INTERACTION_TYPE.HARVEST_CROPS, new[]{
+            new StateNameAndDuration(){ name = "Harvest Crops Success", status = InteractionManager.Goap_State_Success, duration = 20 },
+        } },
     };
 }
 
