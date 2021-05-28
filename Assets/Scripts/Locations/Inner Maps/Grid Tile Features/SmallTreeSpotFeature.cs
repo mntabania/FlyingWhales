@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using Inner_Maps;
 using Inner_Maps.Grid_Tile_Features;
+using Inner_Maps.Location_Structures;
 using UnityEngine.Assertions;
 using UtilityScripts;
 namespace Inner_Maps.Grid_Tile_Features {
@@ -59,7 +60,7 @@ namespace Inner_Maps.Grid_Tile_Features {
         private void OnDayStarted() {
             for (int i = 0; i < unoccupiedSpots.Count; i++) {
                 LocationGridTile tile = unoccupiedSpots[i];
-                if (tile.tileObjectComponent.objHere == null) {
+                if (tile.tileObjectComponent.objHere == null && tile.structure is Wilderness) {
                     if (GameUtilities.RollChance(30)) {
                         //Spawn tree.
                         TileObject tileObject = InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.TREE_OBJECT);
