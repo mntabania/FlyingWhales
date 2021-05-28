@@ -1325,6 +1325,24 @@ public class CombatComponent : CharacterComponent {
         int modifiedAttack = unModifiedAttack + modifier;
         attack = Mathf.RoundToInt(modifiedAttack * ((modifierPercent / 100f) + 1f));
     }
+    public int GetComputedStrength() {
+        int baseStrength = 0;
+        if (owner.characterClass.attackType == ATTACK_TYPE.PHYSICAL) {
+            baseStrength = unModifiedAttack;
+        }
+        int modifiedStrength = baseStrength + strengthModification;
+        int finalStrength = Mathf.RoundToInt(modifiedStrength * ((strengthPercentModification / 100f) + 1f));
+        return finalStrength;
+    }
+    public int GetComputedIntelligence() {
+        int baseIntelligence = 0;
+        if (owner.characterClass.attackType == ATTACK_TYPE.MAGICAL) {
+            baseIntelligence = unModifiedAttack;
+        }
+        int modifiedIntelligence = baseIntelligence + intelligenceModification;
+        int finalIntelligence = Mathf.RoundToInt(modifiedIntelligence * ((intelligencePercentModification / 100f) + 1f));
+        return finalIntelligence;
+    }
     private void UpdateMaxHP() {
         int modifiedHP = unModifiedMaxHP + maxHPModification;
         maxHP = Mathf.RoundToInt(modifiedHP * ((maxHPPercentModification / 100f) + 1f));
