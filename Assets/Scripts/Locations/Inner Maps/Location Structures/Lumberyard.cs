@@ -1,7 +1,10 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
+using UtilityScripts;
 namespace Inner_Maps.Location_Structures {
     public class Lumberyard : ManMadeStructure {
+
+        List<TileObject> builtPiles = RuinarchListPool<TileObject>.Claim();
         public override Vector3 worldPosition => structureObj.transform.position;
         public Lumberyard(Region location) : base(STRUCTURE_TYPE.LUMBERYARD, location){
             SetMaxHPAndReset(8000);
@@ -10,53 +13,51 @@ namespace Inner_Maps.Location_Structures {
             SetMaxHP(8000);
         }
 
-        List<ResourcePile> CheckForMultipleSameResourcePileInsideStructure() {
-            return DoesMultipleResourcePileExist(GetAllWoodResourcePileOnTiles());
-        }
-
-        List<ResourcePile> GetAllWoodResourcePileOnTiles() {
-            List<ResourcePile> pilePool = new List<ResourcePile>();
-            passableTiles.ForEach((eachTile) => {
-                if (eachTile.tileObjectComponent.objHere != null && eachTile.tileObjectComponent.objHere is ResourcePile resourcePile) {
-                    pilePool.Add(resourcePile);
+        
+        void CreateWoodPileList() {
+            List<TileObject> pilePool = RuinarchListPool<TileObject>.Claim();
+            builtPiles.Clear();
+            pilePool = GetTileObjectsOfType(TILE_OBJECT_TYPE.WOOD_PILE);
+            pilePool.ForEach((eachList) => {
+                if (eachList.mapObjectState == MAP_OBJECT_STATE.BUILT) {
+                    builtPiles.Add(eachList);
                 }
             });
-            return pilePool;
+            RuinarchListPool<TileObject>.Release(pilePool);
         }
 
-        List<ResourcePile> DoesMultipleResourcePileExist(List<ResourcePile> p_allPiles) {
-            List<ResourcePile> woodPile = new List<ResourcePile>();
-            p_allPiles.ForEach((eachList) => {
-                if (eachList is WoodPile) {
-                    woodPile.Add(eachList);
+        TileObject GetRandomTree() {
+            for(int x = 0; x < occupiedArea.tileObjectComponent.itemsInArea.Count; ++x) {
+                if (occupiedArea.tileObjectComponent.itemsInArea[x] is TreeObject) {
+                    return occupiedArea.tileObjectComponent.itemsInArea[x];
                 }
-            });
-            if (woodPile.Count > 1) {
-                return woodPile;
-            }
+			}
             return null;
-        }
-
-        TileObject GetrandomTree(Character p_worker) {
-            TileObject tree = p_worker.currentSettlement.SettlementResources.GetAvailableTree();
-            return tree;
         }
 
         protected override void ProcessWorkStructureJobsByWorker(Character p_worker, out JobQueueItem producedJob) {
             producedJob = null;
-            if (p_worker.currentSettlement.SettlementResources.GetRandomPileOfWoods() != null) {
+            CreateWoodPileList();
+            Debug.LogError(builtPiles.Count);
+            if (builtPiles != null && builtPiles.Count > 0) {
                 Debug.LogError(p_worker.name + " HAUL Lumberyard to resource pile");
-                p_worker.homeSettlement.settlementJobTriggerComponent.TryCreateHaulJob(p_worker.currentSettlement.SettlementResources.GetRandomPileOfWoods());
-                //do haul job
-            } else if (CheckForMultipleSameResourcePileInsideStructure() != null) {
-                //p_worker.homeSettlement.settlementJobTriggerComponent.combine(p_worker.currentSettlement.SettlementResources.GetRandomPileOfWoods());
-                //do combine resourcepiles job
-            } else if(GetrandomTree(p_worker) != null){
+                p_worker.jobComponent.TryCreateHaulJob(builtPiles[0] as ResourcePile, out producedJob);
+                if(producedJob != null) {
+                    return;
+				}
+            } 
+            if (builtPiles != null && builtPiles.Count > 1) {
+                Debug.LogError(p_worker.name + " COMBINE WOOD PILE Lumberyard to resource pile");
+                p_worker.jobComponent.TryCreateCombineStockpile(builtPiles[0] as ResourcePile, builtPiles[1] as ResourcePile, out producedJob);
+                if (producedJob != null) {
+                    return;
+                }
+            }
+            TileObject tree = GetRandomTree();
+            if (tree != null){
                 Debug.LogError(p_worker.name + " CHOP Lumberyard to resource pile");
-                TileObject targetTree = GetrandomTree(p_worker);
-                p_worker.jobComponent.TriggerChopWood(targetTree);
-                producedJob = p_worker.jobQueue.GetJob(JOB_TYPE.CHOP_WOOD);
-                //do chop wood job
+                TileObject targetTree = GetRandomTree();
+                p_worker.jobComponent.TriggerChopWood(targetTree, out producedJob);
             }
         }
     }
