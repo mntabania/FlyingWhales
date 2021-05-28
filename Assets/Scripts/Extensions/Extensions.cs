@@ -1082,13 +1082,34 @@ public static class Extensions {
         }
         return priority;
     }
+
+    public static bool IsButcherableWhenDeadOrAlive(this RACE type) {
+        switch (type) {
+            case RACE.RABBIT:
+            case RACE.SHEEP:
+            case RACE.PIG:
+            case RACE.CHICKEN:
+            return true;
+        }
+        return false;
+    }
+
+    public static bool IsButcherableWhenDead(this RACE type) {
+        switch (type) {
+            case RACE.BOAR:
+            case RACE.WOLF:
+            case RACE.BEAR:
+            return true;
+        }
+        return false;
+    }
+
     public static bool IsShearable(this RACE type) {
         switch (type) {
             case RACE.RABBIT:
             case RACE.SHEEP:
             case RACE.MINK:
             case RACE.MOONWALKER:
-            case RACE.CHICKEN:
             return true;
         }
         return false;

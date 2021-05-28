@@ -16,6 +16,8 @@ public class SettlementResources
     public List<Summon> animalsThatProducesMats = new List<Summon>();
     public List<Summon> shearables = new List<Summon>();
     public List<Summon> skinnables = new List<Summon>();
+    public List<Summon> butcherables = new List<Summon>();
+
     public bool IsRequirementAvailable(StructureRequirement p_structureRequirement) {
         switch (p_structureRequirement) {
             case StructureRequirement.ROCK: if (rocks.Count > 0) return true; else return false;
@@ -66,6 +68,11 @@ public class SettlementResources
     public void AddAnimalToSettlement(Summon p_character) {
         if (!animalsThatProducesMats.Contains(p_character)) {
             animalsThatProducesMats.Add(p_character);
+            if (p_character.race.IsButcherableWhenDead() || p_character.race.IsButcherableWhenDeadOrAlive()) {
+                if (!butcherables.Contains(p_character)) {
+                    butcherables.Add(p_character);
+                }
+            }
             if (p_character is Animal && p_character.race.IsShearable()) {
                 shearables.Add(p_character);
             } else if (p_character.race.IsSkinnable()) {
@@ -83,6 +90,9 @@ public class SettlementResources
 		}
         if (skinnables.Contains(p_character)) {
             skinnables.Remove(p_character);
+        }
+        if (butcherables.Contains(p_character)) {
+            butcherables.Remove(p_character);
         }
     }
     public bool HasResourceAmount(NPCSettlement p_settlement, RESOURCE p_resource, int p_amount) {
@@ -258,6 +268,15 @@ public class SettlementResources
             }
         }
         return ableToSkinAnimals;
+    }
+
+    public Summon GetRandomButcherableAnimal() {
+        for (int x = 0; x < butcherables.Count; ++x) {
+            if (butcherables[x].currentStructure.structureType != STRUCTURE_TYPE.CITY_CENTER && butcherables[x].currentStructure.structureType != STRUCTURE_TYPE.FARM && (butcherables[x].HasJobTargetingThis(JOB_TYPE.MONSTER_BUTCHER) || skinnables[x].HasJobTargetingThis(JOB_TYPE.SHEAR_ANIMAL) || skinnables[x].HasJobTargetingThis(JOB_TYPE.SKIN_ANIMAL))) {
+                return butcherables[x];
+            }
+        }
+        return null;
     }
 
     public ResourcePile GetRandomPileOfMetalOrStone() {

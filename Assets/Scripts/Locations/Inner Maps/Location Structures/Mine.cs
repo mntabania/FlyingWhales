@@ -9,7 +9,6 @@ namespace Inner_Maps.Location_Structures {
     public class Mine : ManMadeStructure {
 
         List<TileObject> builtPilesInSideStructure = RuinarchListPool<TileObject>.Claim();
-
         public Cave connectedCave { get; private set; }
         public override Type serializedData => typeof(SaveDataMine);
         public Mine(Region location) : base(STRUCTURE_TYPE.MINE, location) {
