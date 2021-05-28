@@ -28,8 +28,8 @@ namespace Traits {
                 character.AddPlayerAction(PLAYER_SKILL_TYPE.EVANGELIZE);
                 character.AddPlayerAction(PLAYER_SKILL_TYPE.SPREAD_RUMOR);
                 character.AddPlayerAction(PLAYER_SKILL_TYPE.FOUND_CULT);
-                character.jobComponent.AddPriorityJob(JOB_TYPE.STEAL_CORPSE);
-                character.jobComponent.AddPriorityJob(JOB_TYPE.SUMMON_BONE_GOLEM);
+                character.jobComponent.AddAbleJob(JOB_TYPE.STEAL_CORPSE);
+                character.jobComponent.AddAbleJob(JOB_TYPE.SUMMON_BONE_GOLEM);
             }
         }
         #endregion
@@ -47,8 +47,8 @@ namespace Traits {
                 character.AddPlayerAction(PLAYER_SKILL_TYPE.EVANGELIZE);
                 character.AddPlayerAction(PLAYER_SKILL_TYPE.SPREAD_RUMOR);
                 character.AddPlayerAction(PLAYER_SKILL_TYPE.FOUND_CULT);
-                character.jobComponent.AddPriorityJob(JOB_TYPE.STEAL_CORPSE);
-                character.jobComponent.AddPriorityJob(JOB_TYPE.SUMMON_BONE_GOLEM);
+                character.jobComponent.AddAbleJob(JOB_TYPE.STEAL_CORPSE);
+                character.jobComponent.AddAbleJob(JOB_TYPE.SUMMON_BONE_GOLEM);
                 character.traitContainer.AddTrait(character, "Nocturnal");
 
                 //if necromancer is a cultist then make the undead faction friendly towards the player.
@@ -72,8 +72,8 @@ namespace Traits {
                 character.RemovePlayerAction(PLAYER_SKILL_TYPE.EVANGELIZE);
                 character.RemovePlayerAction(PLAYER_SKILL_TYPE.SPREAD_RUMOR);
                 character.RemovePlayerAction(PLAYER_SKILL_TYPE.FOUND_CULT);
-                character.jobComponent.RemovePriorityJob(JOB_TYPE.STEAL_CORPSE);
-                character.jobComponent.RemovePriorityJob(JOB_TYPE.SUMMON_BONE_GOLEM);
+                character.jobComponent.RemoveAbleJob(JOB_TYPE.STEAL_CORPSE);
+                character.jobComponent.RemoveAbleJob(JOB_TYPE.SUMMON_BONE_GOLEM);
                 
                 Messenger.Broadcast(CharacterSignals.CHARACTER_NO_LONGER_CULTIST, character);
             }

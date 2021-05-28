@@ -49,7 +49,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
 
     //Components
     public SettlementJobTriggerComponent settlementJobTriggerComponent { get; }
-    public SettlementJobPriorityComponent jobPriorityComponent { get; }
+    //public SettlementJobPriorityComponent jobPriorityComponent { get; }
     public SettlementVillageMigrationComponent migrationComponent { get; private set; }
     public SettlementResourcesComponent resourcesComponent { get; private set; }
     public SettlementClassComponent classComponent { get; private set; }
@@ -76,7 +76,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         ResetNewRulerDesignationChance();
         availableJobs = new List<JobQueueItem>();
         eventManager = new LocationEventManager(this);
-        jobPriorityComponent = new SettlementJobPriorityComponent(this);
+        //jobPriorityComponent = new SettlementJobPriorityComponent(this);
         settlementJobTriggerComponent = new SettlementJobTriggerComponent(this);
         //settlementClassTracker = new SettlementClassTracker();
         npcSettlementEventDispatcher = new NPCSettlementEventDispatcher();
@@ -102,7 +102,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         ResetNewRulerDesignationChance();
         availableJobs = new List<JobQueueItem>();
         // eventManager = new LocationEventManager(this, saveData.eventManager); //loaded event manager at LoadReferences
-        jobPriorityComponent = new SettlementJobPriorityComponent(this);
+        //jobPriorityComponent = new SettlementJobPriorityComponent(this);
         settlementJobTriggerComponent = new SettlementJobTriggerComponent(this);
         //settlementClassTracker = new SettlementClassTracker(saveData.classTracker);
         npcSettlementEventDispatcher = new NPCSettlementEventDispatcher();
@@ -441,7 +441,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
     private void OnCharacterClassChange(Character character, CharacterClass previousClass, CharacterClass currentClass) {
         if (character.homeSettlement == this) {
             classComponent.OnResidentChangedClass(previousClass.className, character);
-            jobPriorityComponent.ChangeClassResidentResetPrimaryJob(character);
+            //jobPriorityComponent.ChangeClassResidentResetPrimaryJob(character);
         }
     }
     public override bool AddResident(Character character, LocationStructure chosenHome = null, bool ignoreCapacity = true) {
@@ -450,9 +450,9 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
             OnAddResident(character);
             character.SetHomeSettlement(this);
             if (character.race == RACE.DEMON || character is Summon) { return true; }
-            if (character.isNormalCharacter && locationType == LOCATION_TYPE.VILLAGE) {
-                jobPriorityComponent.OnAddResident(character);    
-            }
+            //if (character.isNormalCharacter && locationType == LOCATION_TYPE.VILLAGE) {
+            //    jobPriorityComponent.OnAddResident(character);    
+            //}
             return true;
         }
         return false;
@@ -462,9 +462,9 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
             //region.RemoveResident(character);
             character.SetHomeSettlement(null);
             OnRemoveResident(character);
-            if (character.isNormalCharacter && locationType == LOCATION_TYPE.VILLAGE) {
-                jobPriorityComponent.OnRemoveResident(character);
-            }
+            //if (character.isNormalCharacter && locationType == LOCATION_TYPE.VILLAGE) {
+            //    jobPriorityComponent.OnRemoveResident(character);
+            //}
             UnassignJobsTakenBy(character);
             return true;
         }
@@ -491,14 +491,14 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         if(previousRuler != null) {
             previousRuler.behaviourComponent.RemoveBehaviourComponent(typeof(SettlementRulerBehaviour));
             if (!previousRuler.isFactionLeader) {
-                previousRuler.jobComponent.RemovePriorityJob(JOB_TYPE.JUDGE_PRISONER);
-                previousRuler.jobComponent.RemovePriorityJob(JOB_TYPE.PLACE_BLUEPRINT);
+                previousRuler.jobComponent.RemoveAbleJob(JOB_TYPE.JUDGE_PRISONER);
+                previousRuler.jobComponent.RemoveAbleJob(JOB_TYPE.PLACE_BLUEPRINT);
             }
         }
         if(ruler != null) {
             ruler.behaviourComponent.AddBehaviourComponent(typeof(SettlementRulerBehaviour));
-            ruler.jobComponent.AddPriorityJob(JOB_TYPE.JUDGE_PRISONER);
-            ruler.jobComponent.AddPriorityJob(JOB_TYPE.PLACE_BLUEPRINT);
+            ruler.jobComponent.AddAbleJob(JOB_TYPE.JUDGE_PRISONER);
+            ruler.jobComponent.AddAbleJob(JOB_TYPE.PLACE_BLUEPRINT);
             //ResetNewRulerDesignationChance();
             Messenger.Broadcast(CharacterSignals.ON_SET_AS_SETTLEMENT_RULER, ruler, previousRuler);
         } else {
@@ -1479,9 +1479,10 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         for (int i = 0; i < availableJobs.Count; i++) {
             JobQueueItem job = availableJobs[i];
             if (job.assignedCharacter == null && character.jobQueue.CanJobBeAddedToQueue(job)) {
-                if (job.jobType == character.jobComponent.primaryJob) {
-                    return job;
-                } else if (chosenPriorityJob == null && (character.jobComponent.priorityJobs.Contains(job.jobType) || character.jobComponent.additionalPriorityJobs.Contains(job.jobType))) {
+                //if (job.jobType == character.jobComponent.primaryJob) {
+                //    return job;
+                //} else 
+                if (chosenPriorityJob == null && (character.jobComponent.ableJobs.Contains(job.jobType) || character.jobComponent.additionalPriorityJobs.Contains(job.jobType))) {
                     chosenPriorityJob = job;
                 } 
                 //else if (chosenSecondaryJob == null && character.characterClass.secondaryJobs != null && character.characterClass.secondaryJobs.Contains(job.jobType)) {

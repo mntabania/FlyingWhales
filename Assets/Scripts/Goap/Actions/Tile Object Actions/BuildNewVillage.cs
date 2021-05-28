@@ -103,7 +103,7 @@ public class BuildNewVillage : GoapAction {
 
                 //This is added since the character will be the first character in the settlement, it should learn how to build structures, so that when he place blueprints to build houses, etc, he can also build them
                 //If we do not add this, the character will just place blueprints and will not build them if his class does not know how to build, so he will end up waiting for another character to join the settlement that can build structures
-                goapNode.actor.jobComponent.AddPriorityJob(JOB_TYPE.BUILD_BLUEPRINT);
+                goapNode.actor.jobComponent.AddAbleJob(JOB_TYPE.BUILD_BLUEPRINT);
             }
         }
     }

@@ -5961,9 +5961,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 SetHomeRegion(home); //keep this data with character to prevent errors
                 //SetHomeStructure(homeStructure); //keep this data with character to prevent errors
             }
-            if (homeSettlement != null) {
-                homeSettlement.jobPriorityComponent.UnassignResidentToPrimaryJob(this);
-            }
+            //if (homeSettlement != null) {
+            //    homeSettlement.jobPriorityComponent.UnassignResidentToPrimaryJob(this);
+            //}
             //if (homeNpcSettlement != null) {
             //    NPCSettlement home = homeNpcSettlement;
             //    Dwelling homeStructure = this.homeStructure;

@@ -147,8 +147,8 @@ namespace UtilityScripts {
         summary = $"{summary}{"\nCombat Behaviour: " + activeCharacter.combatComponent.combatBehaviourParent.currentCombatBehaviour?.name}";
         summary = $"{summary}{"\nCombat Special Skill: " + activeCharacter.combatComponent.specialSkillParent.specialSkill?.name + ", Cooldown: " + activeCharacter.combatComponent.specialSkillParent.currentCooldown + "/" + activeCharacter.combatComponent.specialSkillParent.specialSkill?.cooldownInTicks}";
         summary = $"{summary}{"\nElemental Type: " + activeCharacter.combatComponent.elementalDamage.name}";
-        summary = $"{summary}{"\nPrimary Job: " + activeCharacter.jobComponent.primaryJob.ToString()}";
-        summary = $"{summary}{"\nPriority Jobs: " + activeCharacter.jobComponent.GetPriorityJobs()}";
+        //summary = $"{summary}{"\nPrimary Job: " + activeCharacter.jobComponent.primaryJob.ToString()}";
+        //summary = $"{summary}{"\nPriority Jobs: " + activeCharacter.jobComponent.GetPriorityJobs()}";
         //summary = $"{summary}{"\nSecondary Jobs: " + activeCharacter.jobComponent.GetSecondaryJobs()}";
         summary = $"{summary}{"\nAble Jobs: " + activeCharacter.jobComponent.GetAbleJobs()}";
         // summary = $"{summary}{"\nAdditional Priority Jobs: " + activeCharacter.jobComponent.GetAdditionalPriorityJobs()}";

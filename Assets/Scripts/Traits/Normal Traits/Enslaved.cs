@@ -50,8 +50,8 @@ namespace Traits {
                         targetCharacter.MigrateHomeTo(characterResponsible.homeSettlement);
                     }
                 }
-                targetCharacter.jobComponent.AddPriorityJob(JOB_TYPE.PRODUCE_FOOD);
-                targetCharacter.jobComponent.AddPriorityJob(JOB_TYPE.HAUL);
+                targetCharacter.jobComponent.AddAbleJob(JOB_TYPE.PRODUCE_FOOD);
+                targetCharacter.jobComponent.AddAbleJob(JOB_TYPE.HAUL);
                 Messenger.Broadcast(PlayerSkillSignals.RELOAD_PLAYER_ACTIONS, targetCharacter as IPlayerActionTarget);
             }
         }
@@ -61,8 +61,8 @@ namespace Traits {
                 targetCharacter.ChangeToDefaultFaction();
                 targetCharacter.MigrateHomeStructureTo(null);
                 targetCharacter.behaviourComponent.UpdateDefaultBehaviourSet();
-                targetCharacter.jobComponent.RemovePriorityJob(JOB_TYPE.PRODUCE_FOOD);
-                targetCharacter.jobComponent.RemovePriorityJob(JOB_TYPE.HAUL);
+                targetCharacter.jobComponent.RemoveAbleJob(JOB_TYPE.PRODUCE_FOOD);
+                targetCharacter.jobComponent.RemoveAbleJob(JOB_TYPE.HAUL);
                 Messenger.Broadcast(PlayerSkillSignals.RELOAD_PLAYER_ACTIONS, targetCharacter as IPlayerActionTarget);
             }
         }

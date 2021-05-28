@@ -15,9 +15,8 @@ using Random = UnityEngine.Random;
 
 public class CharacterJobTriggerComponent : JobTriggerComponent {
 	public Character owner { get; private set; }
-
-    public JOB_TYPE primaryJob { get; private set; }
-    public List<JOB_TYPE> priorityJobs { get; private set; }
+    //public JOB_TYPE primaryJob { get; private set; }
+    public List<JOB_TYPE> ableJobs { get; private set; }
     public Dictionary<INTERACTION_TYPE, int> numOfTimesActionDone { get; private set; }
     public List<JOB_TYPE> primaryJobCandidates { get; private set; }
     public List<string> obtainPersonalItemUnownedRandomList { get; private set; }
@@ -30,13 +29,13 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
         canReportDemonicStructure = true;
         numOfTimesActionDone = new Dictionary<INTERACTION_TYPE, int>();
         primaryJobCandidates = new List<JOB_TYPE>();
-        priorityJobs = new List<JOB_TYPE>();
+        ableJobs = new List<JOB_TYPE>();
         additionalPriorityJobs = new List<JOB_TYPE>();
-        SetPrimaryJob(JOB_TYPE.NONE);
+        //SetPrimaryJob(JOB_TYPE.NONE);
 	}
     public CharacterJobTriggerComponent(SaveDataCharacterJobTriggerComponent data) {
-        primaryJob = data.primaryJob;
-        priorityJobs = data.priorityJobs;
+        //primaryJob = data.primaryJob;
+        ableJobs = data.ableJobs;
         numOfTimesActionDone = data.numOfTimesActionDone;
         primaryJobCandidates = data.primaryJobCandidates;
         obtainPersonalItemUnownedRandomList = data.obtainPersonalItemUnownedRandomList;
@@ -224,32 +223,32 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
     #endregion
 
     #region Utilities
-    public void SetPrimaryJob(JOB_TYPE jobType) {
-        primaryJob = jobType;
-    }
-    public string GetPriorityJobs() {
-        string jobs = string.Empty;
-        //if (owner.characterClass.priorityJobs != null && owner.characterClass.priorityJobs.Length > 0) {
-        //    for (int i = 0; i < owner.characterClass.priorityJobs.Length; i++) {
-        //        if (i > 0) {
-        //            jobs += ",";
-        //        }
-        //        jobs += owner.characterClass.priorityJobs[i].ToString();
-        //    }
-        //}
-        if(owner.jobComponent.priorityJobs.Count > 0) {
-            if(jobs != string.Empty) {
-                jobs += ",";
-            }
-            for (int i = 0; i < owner.jobComponent.priorityJobs.Count; i++) {
-                if (i > 0) {
-                    jobs += ",";
-                }
-                jobs += owner.jobComponent.priorityJobs[i].ToString();
-            }
-        }
-        return jobs;
-    }
+    //public void SetPrimaryJob(JOB_TYPE jobType) {
+    //    primaryJob = jobType;
+    //}
+    //public string GetPriorityJobs() {
+    //    string jobs = string.Empty;
+    //    if (owner.characterClass.priorityJobs != null && owner.characterClass.priorityJobs.Length > 0) {
+    //        for (int i = 0; i < owner.characterClass.priorityJobs.Length; i++) {
+    //            if (i > 0) {
+    //                jobs += ",";
+    //            }
+    //            jobs += owner.characterClass.priorityJobs[i].ToString();
+    //        }
+    //    }
+    //    if (owner.jobComponent.ableJobs.Count > 0) {
+    //        if(jobs != string.Empty) {
+    //            jobs += ",";
+    //        }
+    //        for (int i = 0; i < owner.jobComponent.ableJobs.Count; i++) {
+    //            if (i > 0) {
+    //                jobs += ",";
+    //            }
+    //            jobs += owner.jobComponent.ableJobs[i].ToString();
+    //        }
+    //    }
+    //    return jobs;
+    //}
     //public string GetSecondaryJobs() {
     //    string jobs = string.Empty;
     //    if (owner.characterClass.secondaryJobs != null && owner.characterClass.secondaryJobs.Length > 0) {
@@ -272,6 +271,17 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
                 jobs += owner.characterClass.ableJobs[i].ToString();
             }
         }
+        if (owner.jobComponent.ableJobs.Count > 0) {
+            if (jobs != string.Empty) {
+                jobs += ",";
+            }
+            for (int i = 0; i < owner.jobComponent.ableJobs.Count; i++) {
+                if (i > 0) {
+                    jobs += ",";
+                }
+                jobs += owner.jobComponent.ableJobs[i].ToString();
+            }
+        }
         return jobs;
     }
     public string GetAdditionalPriorityJobs() {
@@ -286,13 +296,13 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 	    }
 	    return jobs;
     }
-    public void AddPriorityJob(JOB_TYPE jobType) {
-        if (!priorityJobs.Contains(jobType)) {
-            priorityJobs.Add(jobType);
+    public void AddAbleJob(JOB_TYPE jobType) {
+        if (!ableJobs.Contains(jobType)) {
+            ableJobs.Add(jobType);
         }
     }
-    public bool RemovePriorityJob(JOB_TYPE jobType) {
-        return priorityJobs.Remove(jobType);
+    public bool RemoveAbleJob(JOB_TYPE jobType) {
+        return ableJobs.Remove(jobType);
     }
     /// <summary>
     /// Does this character have a job that is higher priority than the
@@ -308,7 +318,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 	    }
     }
     public bool CanDoJob(JOB_TYPE jobType) {
-	    return owner.jobComponent.primaryJob == jobType || owner.characterClass.CanDoJob(jobType) || priorityJobs.Contains(jobType) || additionalPriorityJobs.Contains(jobType);
+	    return /*owner.jobComponent.primaryJob == jobType || */owner.characterClass.CanDoJob(jobType) || ableJobs.Contains(jobType) || additionalPriorityJobs.Contains(jobType);
     }
     public void AddAdditionalPriorityJob(JOB_TYPE jobType) {
 		additionalPriorityJobs.Add(jobType);    
@@ -3339,8 +3349,8 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 
 [System.Serializable]
 public class SaveDataCharacterJobTriggerComponent : SaveData<CharacterJobTriggerComponent> {
-    public JOB_TYPE primaryJob;
-    public List<JOB_TYPE> priorityJobs;
+    //public JOB_TYPE primaryJob;
+    public List<JOB_TYPE> ableJobs;
     public Dictionary<INTERACTION_TYPE, int> numOfTimesActionDone;
     public List<JOB_TYPE> primaryJobCandidates;
     public List<JOB_TYPE> additionalPriorityJobs;
@@ -3353,8 +3363,8 @@ public class SaveDataCharacterJobTriggerComponent : SaveData<CharacterJobTrigger
 
 #region Overrides
     public override void Save(CharacterJobTriggerComponent data) {
-        primaryJob = data.primaryJob;
-        priorityJobs = data.priorityJobs;
+        //primaryJob = data.primaryJob;
+        ableJobs = data.ableJobs;
         numOfTimesActionDone = data.numOfTimesActionDone;
         primaryJobCandidates = data.primaryJobCandidates;
         obtainPersonalItemUnownedRandomList = data.obtainPersonalItemUnownedRandomList;
