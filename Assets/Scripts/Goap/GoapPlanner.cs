@@ -64,7 +64,7 @@ public class GoapPlanner {
             job.assignedPlan.SetIsBeingRecalculated(true);
             status = GOAP_PLANNING_STATUS.RUNNING;
             GoapThread thread = ObjectPoolManager.Instance.CreateNewGoapThread();
-            thread.Initialize(owner, job.assignedPlan, job);
+            thread.InitializeForRecalculation(owner, job.assignedPlan, job);
             MultiThreadPool.Instance.AddToThreadPool(thread);
             job.SetIsInMultithread(true);
         }
@@ -266,7 +266,7 @@ public class GoapPlanner {
     //    GoapPlan plan = new GoapPlan(cheapestStartingNode, goalEffects, category, isPersonalPlan);
     //    return plan;
     //}
-    public GoapPlan PlanActions(IPointOfInterest target, GoapEffect goalEffect, bool isPersonalPlan, ref string log, GoapPlanJob job) {
+    public GoapPlan PlanActions(IPointOfInterest target, GoapEffect goalEffect, bool isPersonalPlan, ref string log, GoapPlanJob job, GoapThread goapThread) {
         //Cache all needed data
         Dictionary<GOAP_EFFECT_CONDITION, List<GoapAction>> actionsCategorizedByEffect = InteractionManager.Instance.actionsCategorizedByEffect;
         _rawPlan.Clear();
@@ -320,14 +320,17 @@ public class GoapPlanner {
             owner.logComponent.PrintCostLog();
 #endif
             List<JobNode> actualNodes = TransformRawPlanToActualNodes(_rawPlan, job);
-            GoapPlan plan = ObjectPoolManager.Instance.CreateNewGoapPlan(actualNodes, target);
+            // GoapPlan plan = ObjectPoolManager.Instance.CreateNewGoapPlan(actualNodes, target);
+            GoapPlan plan = goapThread.cachedPlan;
+            plan.SetNodes(actualNodes);
+            plan.SetTarget(target);
             plan.SetIsPersonalPlan(isPersonalPlan);
             return plan;
         }
         owner.logComponent.PrintCostLog();
         return null;
     }
-    public GoapPlan PlanActions(IPointOfInterest target, GoapAction goalAction, bool isPersonalPlan, ref string log, GoapPlanJob job) {
+    public GoapPlan PlanActions(IPointOfInterest target, GoapAction goalAction, bool isPersonalPlan, ref string log, GoapPlanJob job, GoapThread goapThread) {
         Dictionary<GOAP_EFFECT_CONDITION, List<GoapAction>> actionsCategorizedByEffect = InteractionManager.Instance.actionsCategorizedByEffect;
         _rawPlan.Clear();
         failedPrecondition = null;
@@ -361,7 +364,10 @@ public class GoapPlanner {
 #endif
             //has a created plan
             List<JobNode> actualNodes = TransformRawPlanToActualNodes(_rawPlan, job);
-            GoapPlan plan = ObjectPoolManager.Instance.CreateNewGoapPlan(actualNodes, target);
+            // GoapPlan plan = ObjectPoolManager.Instance.CreateNewGoapPlan(actualNodes, target);
+            GoapPlan plan = goapThread.cachedPlan;
+            plan.SetNodes(actualNodes);
+            plan.SetTarget(target);
             plan.SetIsPersonalPlan(isPersonalPlan);
             return plan;
         }

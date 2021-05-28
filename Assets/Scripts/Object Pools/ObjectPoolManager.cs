@@ -595,9 +595,9 @@ public class ObjectPoolManager : MonoBehaviour {
         job.Reset();
         _stateJobPool.Add(job);
     }
-#endregion
+    #endregion
 
-#region Conversation
+    #region Conversation
     private void ConstructConversationPool() {
         _conversationDataPool = new List<ConversationData>();
         _conversationDataListPool = new List<List<ConversationData>>();
@@ -633,9 +633,9 @@ public class ObjectPoolManager : MonoBehaviour {
         data.Clear();
         _conversationDataListPool.Add(data);
     }
-#endregion
+    #endregion
 
-#region Emotions
+    #region Emotions
     private void ConstructEmotionListPool() {
         _emotionListPool = new List<List<EMOTION>>();
     }
@@ -651,9 +651,9 @@ public class ObjectPoolManager : MonoBehaviour {
         data.Clear();
         _emotionListPool.Add(data);
     }
-#endregion
+    #endregion
 
-#region ILocation
+    #region ILocation
     private void ConstructILocationListPool() {
         _ilocationListPool = new List<List<ILocation>>();
     }
@@ -669,9 +669,9 @@ public class ObjectPoolManager : MonoBehaviour {
         data.Clear();
         _ilocationListPool.Add(data);
     }
-#endregion
+    #endregion
     
-#region Area
+    #region Area
     private void ConstructAreaListPool() {
         _areaListPool = new List<List<Area>>();
     }
@@ -687,9 +687,9 @@ public class ObjectPoolManager : MonoBehaviour {
         data.Clear();
         _areaListPool.Add(data);
     }
-#endregion
+    #endregion
 
-#region Scheduled Actions
+    #region Scheduled Actions
     private void ConstructScheduledActionPool() {
         _scheduledActionPool = new List<ScheduledAction>();
     }
@@ -705,11 +705,15 @@ public class ObjectPoolManager : MonoBehaviour {
         data.Reset();
         _scheduledActionPool.Add(data);
     }
-#endregion
+    #endregion
 
-#region Goap Plan
+    #region Goap Plan
     private void ConstructGoapPlanPool() {
         _goapPlanPool = new List<GoapPlan>();
+    }
+    public GoapPlan CreateNewGoapPlanForInitialGoapThread() {
+        GoapPlan plan = CreateNewGoapPlan();
+        return plan;
     }
     public GoapPlan CreateNewGoapPlan(List<JobNode> p_nodes, IPointOfInterest p_target) {
         GoapPlan plan = CreateNewGoapPlan();
@@ -738,15 +742,19 @@ public class ObjectPoolManager : MonoBehaviour {
             }
 #endif
             _goapPlanPool.RemoveAt(0);
+// #if DEBUG_LOG
+//             Debug.Log($"Took new job from plan object pool with id {data.id}");
+// #endif
             return data;
         }
-        return new GoapPlan();
+        return new GoapPlan();    
     }
     public void ReturnGoapPlanToPool(GoapPlan data) {
-#if DEBUG_LOG
-        Debug.Log($"Returned plan to pool:\n {data.LogPlan()}");
-#endif
         if (data != null) {
+#if DEBUG_LOG
+            Debug.Log($"Returned plan to pool:\n {data.LogPlan()}");
+#endif
+            data.Reset();
             if (!_goapPlanPool.Contains(data)) {
                 _goapPlanPool.Add(data);
             } else {
@@ -758,8 +766,7 @@ public class ObjectPoolManager : MonoBehaviour {
 #if DEBUG_LOG
             Debug.LogError($"Goap Plan is null, will not return to pool!");
 #endif
-        }
-        data.Reset();
+        }    
     }
     #endregion
 
@@ -768,28 +775,32 @@ public class ObjectPoolManager : MonoBehaviour {
         _jobNodePool = new List<SingleJobNode>();
     }
     public SingleJobNode CreateNewSingleJobNode() {
-        if (_jobNodePool.Count > 0) {
-            SingleJobNode data = _jobNodePool[0];
-            _jobNodePool.RemoveAt(0);
-            return data;
+        lock (_jobNodePool) {
+            if (_jobNodePool.Count > 0) {
+                SingleJobNode data = _jobNodePool[0];
+                _jobNodePool.RemoveAt(0);
+                return data;
+            }
+            return new SingleJobNode();    
         }
-        return new SingleJobNode();
     }
     public void ReturnSingleJobNodeToPool(SingleJobNode data) {
-        if (data != null) {
-            if (!_jobNodePool.Contains(data)) {
-                _jobNodePool.Add(data);
+        lock (_jobNodePool) {
+            if (data != null) {
+                if (!_jobNodePool.Contains(data)) {
+                    _jobNodePool.Add(data);
+                } else {
+#if DEBUG_LOG
+                    Debug.LogError($"Job Node has duplicate in pool: Actor: {data.singleNode?.actor.name}, Target: {data.singleNode?.poiTarget?.name}, Action: {data.singleNode?.action.name}, Job: {data.singleNode?.associatedJobType.ToString()}");
+#endif
+                }
+                data.Reset();
             } else {
 #if DEBUG_LOG
-                Debug.LogError($"Job Node has duplicate in pool: Actor: {data.singleNode?.actor.name}, Target: {data.singleNode?.poiTarget?.name}, Action: {data.singleNode?.action.name}, Job: {data.singleNode?.associatedJobType.ToString()}");
+                Debug.LogError($"Single Job Node is null, will not return to pool!");
 #endif
             }
-        } else {
-#if DEBUG_LOG
-            Debug.LogError($"Single Job Node is null, will not return to pool!");
-#endif
         }
-        data.Reset();
     }
     #endregion
 
