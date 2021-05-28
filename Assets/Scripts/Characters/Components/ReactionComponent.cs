@@ -452,6 +452,7 @@ public class ReactionComponent : CharacterComponent {
 #endif
             return;    
         }
+        /*
         if(targetCharacter is Animal animal && targetCharacter.isDead && animal.isShearable) {
             if (!targetCharacter.HasJobTargetingThis(JOB_TYPE.SHEAR_ANIMAL)) {
                 if (!actor.jobComponent.HasHigherPriorityJobThan(JOB_TYPE.SHEAR_ANIMAL)) {
@@ -459,7 +460,7 @@ public class ReactionComponent : CharacterComponent {
                     return;
                 }
             }
-        }
+        }*/
         if (actor is VengefulGhost) {
 #if DEBUG_LOG
             debugLog = $"{debugLog}\n-actor is vengeful ghost, do not react!";
