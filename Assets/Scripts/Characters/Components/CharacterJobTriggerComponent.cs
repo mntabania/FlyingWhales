@@ -3396,10 +3396,24 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
         }
     }
 
-    public void TriggerChopWood(TileObject p_tree) {
+    public void TriggerChopWood(TileObject p_tree, out JobQueueItem jobQueueItem) {
+        jobQueueItem = null;
         if (!owner.jobQueue.HasJob(JOB_TYPE.CHOP_WOOD)) {
             GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.CHOP_WOOD, INTERACTION_TYPE.CHOP_WOOD, p_tree, owner);
-            owner.jobQueue.AddJobInQueue(job);
+            jobQueueItem = job;
+        }
+    }
+
+    public void TryCreateHaulJob(ResourcePile target, out JobQueueItem jobQueueItem) {
+        jobQueueItem = null;
+        if (owner.jobQueue.HasJob(JOB_TYPE.HAUL) == false) {
+            //ResourcePile chosenPileToDepositTo = target;// owner.mainStorage.GetResourcePileObjectWithLowestCount(target.tileObjectType);
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.HAUL,
+                new GoapEffect(GOAP_EFFECT_CONDITION.DEPOSIT_RESOURCE, string.Empty, false, GOAP_EFFECT_TARGET.TARGET), target, owner);
+            if (owner.structureComponent.workPlaceStructure != null) {
+                job.AddOtherData(INTERACTION_TYPE.DEPOSIT_RESOURCE_PILE, new object[] { owner.structureComponent.workPlaceStructure });
+            }
+            jobQueueItem = job;
         }
     }
 
@@ -3408,15 +3422,25 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
             //ResourcePile chosenPileToDepositTo = target;// owner.mainStorage.GetResourcePileObjectWithLowestCount(target.tileObjectType);
             GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.HAUL,
                 new GoapEffect(GOAP_EFFECT_CONDITION.DEPOSIT_RESOURCE, string.Empty, false, GOAP_EFFECT_TARGET.TARGET), target, owner);
-            if (true) {
+            if (owner.structureComponent.workPlaceStructure != null) {
                 job.AddOtherData(INTERACTION_TYPE.DEPOSIT_RESOURCE_PILE, new object[] { owner.structureComponent.workPlaceStructure });
             }
-            /*
-            job.SetStillApplicableChecker(JobManager.Haul_Applicability);
-            job.SetCanTakeThisJobChecker(JobManager.Can_Take_Haul);
-            //_owner.AddToAvailableJobs(job);
-            */
             owner.jobQueue.AddJobInQueue(job);
+        }
+    }
+
+    public void TryCreateCombineStockpile(ResourcePile toBeDpositted, ResourcePile targetDrop, out JobQueueItem jobQueueItem) {
+        jobQueueItem = null;
+        if (owner.jobQueue.HasJob(JOB_TYPE.COMBINE_STOCKPILE)) {
+            return; //already has job to combine stockpile.
+        }
+        
+        if (targetDrop != null) { //only create job if chosen target pile does not already have a job to combine it with another pile
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.COMBINE_STOCKPILE,
+                INTERACTION_TYPE.DEPOSIT_RESOURCE_PILE, toBeDpositted, owner);
+            job.AddOtherData(INTERACTION_TYPE.DEPOSIT_RESOURCE_PILE, new object[] { targetDrop });
+            job.SetStillApplicableChecker(JobManager.Combine_Stockpile_Applicability);
+            jobQueueItem = job;
         }
     }
     #endregion

@@ -44,6 +44,8 @@ public class CharacterInfoUI : InfoUIBase {
     [SerializeField] private TextMeshProUGUI piercingLbl;
     [SerializeField] private TextMeshProUGUI raceLbl;
     [SerializeField] private TextMeshProUGUI elementLbl;
+    [SerializeField] private TextMeshProUGUI intLbl;
+    [SerializeField] private TextMeshProUGUI critRateLbl;
 
     [Space(10)] [Header("Traits")]
     [SerializeField] private TextMeshProUGUI statusTraitsLbl;
@@ -395,8 +397,10 @@ public class CharacterInfoUI : InfoUIBase {
     #region Stats
     private void UpdateStatInfo() {
         hpLbl.text = $"{_activeCharacter.currentHP.ToString()}/{_activeCharacter.maxHP.ToString()}";
-        attackLbl.text = $"{_activeCharacter.combatComponent.attack.ToString()}";
+        attackLbl.text = $"{_activeCharacter.combatComponent.GetComputedStrength().ToString()}";
         speedLbl.text =  $"{_activeCharacter.combatComponent.attackSpeed / 1000f}s";
+        intLbl.text = $"{_activeCharacter.combatComponent.GetComputedIntelligence()}";
+        critRateLbl.text = $"{_activeCharacter.combatComponent.critRate}";
         raceLbl.text = $"{UtilityScripts.GameUtilities.GetNormalizedSingularRace(_activeCharacter.race)}";
         elementLbl.text = UtilityScripts.Utilities.GetRichTextIconForElement(_activeCharacter.combatComponent.elementalDamage.type) + $"{_activeCharacter.combatComponent.elementalDamage.type}";
         piercingLbl.text = $"{_activeCharacter.piercingAndResistancesComponent.piercingPower}";
