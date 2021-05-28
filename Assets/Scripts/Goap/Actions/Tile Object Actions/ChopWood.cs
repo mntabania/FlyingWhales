@@ -57,8 +57,10 @@ public class ChopWood : GoapAction {
     ResourcePile ProduceMatsPile(ActualGoapNode p_node) {
         TileObject targetTree = p_node.target as TileObject;
         Assert.IsNotNull(targetTree);
-        targetTree.gridTileLocation.structure.RemovePOI(targetTree);
-        
+        if (targetTree.gridTileLocation != null) {
+            targetTree.gridTileLocation.structure.RemovePOI(targetTree);    
+        }
+
         LocationGridTile tileToSpawnPile = p_node.actor.gridTileLocation;
         if (tileToSpawnPile != null && tileToSpawnPile.tileObjectComponent.objHere != null) {
             tileToSpawnPile = p_node.actor.gridTileLocation.GetFirstNearestTileFromThisWithNoObject();
