@@ -15,7 +15,7 @@ namespace Inner_Maps.Location_Structures {
             wallsAreMadeOf = RESOURCE.WOOD;
         }
 
-        public List<LocationGridTile> farmTile => (structureObj as FarmStructureObject).farmTiles;
+        public List<LocationGridTile> farmTiles => (structureObj as FarmStructureObject).farmTiles;
 
         public override void Initialize() {
              
@@ -45,117 +45,117 @@ namespace Inner_Maps.Location_Structures {
                 RuinarchListPool<TileObject>.Release(tileObjects);
             }
         }
-
-        List<ResourcePile> CheckForMultipleSameResourcePileInsideStructure() {
-            return DoesMultipleResourcePileExist(GetAllCropsResourcePileOnTiles());
-        }
-
-        List<ResourcePile> DoesMultipleResourcePileExist(List<ResourcePile> p_allPiles) {
-            List<ResourcePile> cornPile = new List<ResourcePile>();
-            List<ResourcePile> pineApplePile = new List<ResourcePile>();
-            List<ResourcePile> hypnoPile = new List<ResourcePile>();
-            List<ResourcePile> iceBerryPile = new List<ResourcePile>();
-            List<ResourcePile> potatoPile = new List<ResourcePile>();
-            p_allPiles.ForEach((eachList) => {
-                switch (eachList.tileObjectType) {
-                    case TILE_OBJECT_TYPE.CORN:
-                    cornPile.Add(eachList);
-                    break;
-                    case TILE_OBJECT_TYPE.PINEAPPLE:
-                    pineApplePile.Add(eachList);
-                    break;
-                    case TILE_OBJECT_TYPE.HYPNO_HERB:
-                    hypnoPile.Add(eachList);
-                    break;
-                    case TILE_OBJECT_TYPE.ICEBERRY:
-                    iceBerryPile.Add(eachList);
-                    break;
-                    case TILE_OBJECT_TYPE.POTATO:
-                    potatoPile.Add(eachList);
-                    break;
+        private void PopulateListOfFoodPilesOfSameType(List<TileObject> p_list) {
+            PopulateListOfFoodPilesOfType(p_list, TILE_OBJECT_TYPE.CORN);
+            if (p_list.Count <= 1) {
+                p_list.Clear();
+                PopulateListOfFoodPilesOfType(p_list, TILE_OBJECT_TYPE.PINEAPPLE);
+                if (p_list.Count <= 1) {
+                    p_list.Clear();
+                    PopulateListOfFoodPilesOfType(p_list, TILE_OBJECT_TYPE.HYPNO_HERB);
+                    if (p_list.Count <= 1) {
+                        p_list.Clear();
+                        PopulateListOfFoodPilesOfType(p_list, TILE_OBJECT_TYPE.ICEBERRY);
+                        if (p_list.Count <= 1) {
+                            p_list.Clear();
+                            PopulateListOfFoodPilesOfType(p_list, TILE_OBJECT_TYPE.POTATO);
+                        }
+                    }
                 }
-            });
-            if(cornPile.Count > 1) {
-                return cornPile;
-			}
-            if (pineApplePile.Count > 1) {
-                return cornPile;
             }
-            if (hypnoPile.Count > 1) {
-                return cornPile;
-            }
-            if (iceBerryPile.Count > 1) {
-                return cornPile;
-            }
-            if (potatoPile.Count > 1) {
-                return cornPile;
-            }
-            return null;
         }
-
-        List<ResourcePile> GetAllCropsResourcePileOnTiles() {
-            List<ResourcePile> pilePool = new List<ResourcePile>();
-            passableTiles.ForEach((eachTile) => {
-                if (eachTile.tileObjectComponent.objHere != null && eachTile.tileObjectComponent.objHere is ResourcePile resourcePile) {
-                    pilePool.Add(resourcePile);
+        private void PopulateListOfFoodPilesOfType(List<TileObject> p_list, TILE_OBJECT_TYPE p_type) {
+            List<TileObject> pilePool = GetTileObjectsOfType(p_type);
+            if (pilePool != null && pilePool.Count > 1) {
+                for (int i = 0; i < pilePool.Count; i++) {
+                    TileObject t = pilePool[i];
+                    if (t.mapObjectState == MAP_OBJECT_STATE.BUILT && !t.HasJobTargetingThis(JOB_TYPE.HAUL, JOB_TYPE.COMBINE_STOCKPILE)) {
+                        p_list.Add(t);
+                    }
                 }
-            });
-            return pilePool;
+            }
         }
 
         #region tilling section
-        private TileObject GetUntilledFarmTile() {
-            for (int x = 0; x < farmTile.Count; ++x) {
-                if (!CheckIfTileIsTilled(farmTile[x].tileObjectComponent.genericTileObject)) {
-                    return farmTile[x].tileObjectComponent.genericTileObject;
+        private GenericTileObject GetUntilledFarmTile() {
+            List<LocationGridTile> farmTiles = this.farmTiles;
+            for (int x = 0; x < farmTiles.Count; ++x) {
+                if (!CheckIfTileIsTilled(farmTiles[x])) {
+                    return farmTiles[x].tileObjectComponent.genericTileObject;
                 }
             }
             return null;
         }
 
-        private bool CheckIfTileIsTilled(TileObject p_targetTile) {
-            if (p_targetTile.gridTileLocation.tileObjectComponent.objHere == null) {
+        private bool CheckIfTileIsTilled(LocationGridTile p_targetTile) {
+            if (p_targetTile.tileObjectComponent.objHere == null) {
                 return false;
             }
-            return (p_targetTile.gridTileLocation.tileObjectComponent.objHere.tileObjectType == TILE_OBJECT_TYPE.CORN_CROP ||
-                p_targetTile.gridTileLocation.tileObjectComponent.objHere.tileObjectType == TILE_OBJECT_TYPE.HYPNO_HERB_CROP ||
-                p_targetTile.gridTileLocation.tileObjectComponent.objHere.tileObjectType == TILE_OBJECT_TYPE.ICEBERRY_CROP ||
-                p_targetTile.gridTileLocation.tileObjectComponent.objHere.tileObjectType == TILE_OBJECT_TYPE.PINEAPPLE_CROP ||
-                p_targetTile.gridTileLocation.tileObjectComponent.objHere.tileObjectType == TILE_OBJECT_TYPE.POTATO_CROP);
+            return (p_targetTile.tileObjectComponent.objHere.tileObjectType == TILE_OBJECT_TYPE.CORN_CROP ||
+                p_targetTile.tileObjectComponent.objHere.tileObjectType == TILE_OBJECT_TYPE.HYPNO_HERB_CROP ||
+                p_targetTile.tileObjectComponent.objHere.tileObjectType == TILE_OBJECT_TYPE.ICEBERRY_CROP ||
+                p_targetTile.tileObjectComponent.objHere.tileObjectType == TILE_OBJECT_TYPE.PINEAPPLE_CROP ||
+                p_targetTile.tileObjectComponent.objHere.tileObjectType == TILE_OBJECT_TYPE.POTATO_CROP);
         }
         #endregion tilling section
 
         #region harvesting section
         private TileObject GetHarvestableCrop() {
-            for (int x = 0; x < farmTile.Count; ++x) {
-                if (CheckIfTileHasHarvestableCrop(farmTile[x].tileObjectComponent.genericTileObject)) {
-                    return farmTile[x].tileObjectComponent.objHere;
+            List<LocationGridTile> farmTiles = this.farmTiles;
+            for (int x = 0; x < farmTiles.Count; ++x) {
+                if (CheckIfTileHasHarvestableCrop(farmTiles[x])) {
+                    return farmTiles[x].tileObjectComponent.objHere;
                 }
             }
             return null;
         }
-        private bool CheckIfTileHasHarvestableCrop(TileObject p_targetTile) {
-            if (p_targetTile.gridTileLocation.tileObjectComponent.objHere == null) {
+        private bool CheckIfTileHasHarvestableCrop(LocationGridTile p_targetTile) {
+            if (p_targetTile.tileObjectComponent.objHere == null) {
                 return false;
             }
-            return (p_targetTile.gridTileLocation.tileObjectComponent.objHere.tileObjectType == TILE_OBJECT_TYPE.CORN ||
-                p_targetTile.gridTileLocation.tileObjectComponent.objHere.tileObjectType == TILE_OBJECT_TYPE.HYPNO_HERB ||
-                p_targetTile.gridTileLocation.tileObjectComponent.objHere.tileObjectType == TILE_OBJECT_TYPE.ICEBERRY ||
-                p_targetTile.gridTileLocation.tileObjectComponent.objHere.tileObjectType == TILE_OBJECT_TYPE.PINEAPPLE ||
-                p_targetTile.gridTileLocation.tileObjectComponent.objHere.tileObjectType == TILE_OBJECT_TYPE.POTATO);
+            return (p_targetTile.tileObjectComponent.objHere.tileObjectType == TILE_OBJECT_TYPE.CORN ||
+                p_targetTile.tileObjectComponent.objHere.tileObjectType == TILE_OBJECT_TYPE.HYPNO_HERB ||
+                p_targetTile.tileObjectComponent.objHere.tileObjectType == TILE_OBJECT_TYPE.ICEBERRY ||
+                p_targetTile.tileObjectComponent.objHere.tileObjectType == TILE_OBJECT_TYPE.PINEAPPLE ||
+                p_targetTile.tileObjectComponent.objHere.tileObjectType == TILE_OBJECT_TYPE.POTATO);
         }
 		#endregion
 
 		protected override void ProcessWorkStructureJobsByWorker(Character p_worker, out JobQueueItem producedJob) {
             producedJob = null;
-            if (p_worker.currentSettlement.SettlementResources.GetRandomPileOfCrops() != null) {
+            ResourcePile pileToHaul = p_worker.currentSettlement.SettlementResources.GetRandomPileOfCrops();
+            if (pileToHaul != null) {
                 //do haul job
-            } else if (GetUntilledFarmTile() != null) {
+                p_worker.jobComponent.TryCreateHaulJob(pileToHaul, out producedJob);
+                if (producedJob != null) {
+                    return;
+                }
+            }
+            GenericTileObject untilledTileObject = GetUntilledFarmTile();
+            if (untilledTileObject != null) {
                 //do till farm tile
-            } else if (CheckForMultipleSameResourcePileInsideStructure() != null) {
-                //do combine resourcepiles job
-            } else if (GetHarvestableCrop() != null) {
+                p_worker.jobComponent.TriggerTillTile(untilledTileObject, out producedJob);
+                if (producedJob != null) {
+                    return;
+                }
+            }
+
+            //do combine resourcepiles job
+            List<TileObject> builtPilesInSideStructure = RuinarchListPool<TileObject>.Claim();
+            PopulateListOfFoodPilesOfSameType(builtPilesInSideStructure);
+            if (builtPilesInSideStructure.Count > 1) {
+                p_worker.jobComponent.TryCreateCombineStockpile(builtPilesInSideStructure[0] as ResourcePile, builtPilesInSideStructure[1] as ResourcePile, out producedJob);
+                if (producedJob != null) {
+                    RuinarchListPool<TileObject>.Release(builtPilesInSideStructure);
+                    return;
+                }
+            }
+            RuinarchListPool<TileObject>.Release(builtPilesInSideStructure);
+
+            TileObject crop = GetHarvestableCrop();
+            if (crop != null) {
                 //do harvest crops
+                p_worker.jobComponent.TriggerHarvestCrops(crop, out producedJob);
             }
         }
     }
