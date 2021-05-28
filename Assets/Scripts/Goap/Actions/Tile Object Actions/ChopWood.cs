@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Traits;
 using Inner_Maps;
+using UnityEngine.Assertions;
 
 public class ChopWood : GoapAction {
 
@@ -54,16 +55,21 @@ public class ChopWood : GoapAction {
     #endregion
 
     ResourcePile ProduceMatsPile(ActualGoapNode p_node) {
+        TileObject targetTree = p_node.target as TileObject;
+        Assert.IsNotNull(targetTree);
+        if (targetTree.gridTileLocation != null) {
+            targetTree.gridTileLocation.structure.RemovePOI(targetTree);    
+        }
+
         LocationGridTile tileToSpawnPile = p_node.actor.gridTileLocation;
         if (tileToSpawnPile != null && tileToSpawnPile.tileObjectComponent.objHere != null) {
             tileToSpawnPile = p_node.actor.gridTileLocation.GetFirstNearestTileFromThisWithNoObject();
         }
+        
         WoodPile matsToHaul = InnerMapManager.Instance.CreateNewTileObject<WoodPile>(TILE_OBJECT_TYPE.WOOD_PILE);
         matsToHaul.SetResourceInPile(p_node.currentStateDuration * m_amountProducedPerTick);
         tileToSpawnPile.structure.AddPOI(matsToHaul, tileToSpawnPile);
         ProduceLogs(p_node);
-        (p_node.target as TileObject).DestroyMapVisualGameObject();
-        (p_node.target as TileObject).DestroyPermanently();
 
         return matsToHaul;
     }

@@ -55,11 +55,13 @@ public abstract class Crops : TileObject {
             _remainingRipeningTicks = -1;
             StartPerTickGrowth();
             RemoveAdvertisedAction(INTERACTION_TYPE.HARVEST_PLANT);
+            RemoveAdvertisedAction(INTERACTION_TYPE.HARVEST_CROPS);
             traitContainer.RemoveTrait(this, "Edible");
         } else if (growthState == Growth_State.Ripe) {
             _remainingRipeningTicks = 0;
             StopPerTickGrowth();
             AddAdvertisedAction(INTERACTION_TYPE.HARVEST_PLANT);
+            AddAdvertisedAction(INTERACTION_TYPE.HARVEST_CROPS);
             if (!traitContainer.HasTrait("Edible")) {
                 traitContainer.AddTrait(this, "Edible");    
             }

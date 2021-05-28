@@ -46,6 +46,18 @@ public class CharacterTalentComponent : CharacterComponent {
         }
         return null;
     }
+    public string GetTalentSummary() {
+        string text = string.Empty;
+        for (int i = 0; i < allTalents.Count; i++) {
+            if (i > 0) {
+                text += "\n";
+            }
+            CharacterTalent talent = allTalents[i];
+            CharacterTalentData talentData = CharacterManager.Instance.talentManager.GetOrCreateCharacterTalentData(talent.talentType);
+            text += "Lvl." + talent.level + " " + talentData.name + ": " + talent.experience + "/" + CharacterTalentManager.CHARACTER_TALENT_MAX_EXP;
+        }
+        return text;
+    }
     #endregion
 
     #region Loading

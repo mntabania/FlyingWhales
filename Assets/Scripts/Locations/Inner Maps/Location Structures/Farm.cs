@@ -1,4 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using Inner_Maps;
+using Inner_Maps.Location_Structures;
 using UnityEngine;
 using UtilityScripts;
 
@@ -6,19 +9,36 @@ namespace Inner_Maps.Location_Structures {
     public class Farm : ManMadeStructure {
         // public override Vector2 selectableSize { get; }
         // public override Vector3 worldPosition => structureObj.transform.position;
+        public List<LocationGridTile> farmTiles { get; private set; }
+
+        #region getters
+        public override Type serializedData => typeof(SaveDataFarm);
+        #endregion
+        
         public Farm(Region location) : base(STRUCTURE_TYPE.FARM, location){
             // selectableSize = new Vector2(5f, 5f);
             wallsAreMadeOf = RESOURCE.WOOD;
+            farmTiles = new List<LocationGridTile>();
         }
         public Farm(Region location, SaveDataManMadeStructure data) : base(location, data) {
             // selectableSize = new Vector2(5f, 5f);
             wallsAreMadeOf = RESOURCE.WOOD;
+            farmTiles = new List<LocationGridTile>();
         }
 
-        public List<LocationGridTile> farmTiles => (structureObj as FarmStructureObject).farmTiles;
-
+        #region Loading
+        public override void LoadReferences(SaveDataLocationStructure saveDataLocationStructure) {
+            base.LoadReferences(saveDataLocationStructure);
+            SaveDataFarm saveDataFarm = saveDataLocationStructure as SaveDataFarm;
+            for (int i = 0; i < saveDataFarm.farmTiles.Length; i++) {
+                TileLocationSave tileLocationSave = saveDataFarm.farmTiles[i];
+                LocationGridTile tile = DatabaseManager.Instance.locationGridTileDatabase.GetTileBySavedData(tileLocationSave);
+                farmTiles.Add(tile);
+            }
+        }
+        #endregion
+        
         public override void Initialize() {
-             
             base.Initialize();
             Messenger.AddListener(Signals.HOUR_STARTED, OnHourStarted);
         }
@@ -113,14 +133,28 @@ namespace Inner_Maps.Location_Structures {
             if (p_targetTile.tileObjectComponent.objHere == null) {
                 return false;
             }
-            return (p_targetTile.tileObjectComponent.objHere.tileObjectType == TILE_OBJECT_TYPE.CORN ||
-                p_targetTile.tileObjectComponent.objHere.tileObjectType == TILE_OBJECT_TYPE.HYPNO_HERB ||
-                p_targetTile.tileObjectComponent.objHere.tileObjectType == TILE_OBJECT_TYPE.ICEBERRY ||
-                p_targetTile.tileObjectComponent.objHere.tileObjectType == TILE_OBJECT_TYPE.PINEAPPLE ||
-                p_targetTile.tileObjectComponent.objHere.tileObjectType == TILE_OBJECT_TYPE.POTATO);
+
+            Crops crops = p_targetTile.tileObjectComponent.objHere as Crops;
+            if (crops == null) {
+                return false;
+            }
+
+            return crops.currentGrowthState == Crops.Growth_State.Ripe;
+            
+            // return (p_targetTile.tileObjectComponent.objHere.tileObjectType == TILE_OBJECT_TYPE.CORN ||
+            //     p_targetTile.tileObjectComponent.objHere.tileObjectType == TILE_OBJECT_TYPE.HYPNO_HERB ||
+            //     p_targetTile.tileObjectComponent.objHere.tileObjectType == TILE_OBJECT_TYPE.ICEBERRY ||
+            //     p_targetTile.tileObjectComponent.objHere.tileObjectType == TILE_OBJECT_TYPE.PINEAPPLE ||
+            //     p_targetTile.tileObjectComponent.objHere.tileObjectType == TILE_OBJECT_TYPE.POTATO);
         }
 		#endregion
 
+        #region Farm Tiles
+        public void AddFarmTile(LocationGridTile p_tile) {
+            farmTiles.Add(p_tile);
+        }
+        #endregion
+        
 		protected override void ProcessWorkStructureJobsByWorker(Character p_worker, out JobQueueItem producedJob) {
             producedJob = null;
             ResourcePile pileToHaul = p_worker.currentSettlement.SettlementResources.GetRandomPileOfCrops();
@@ -160,3 +194,18 @@ namespace Inner_Maps.Location_Structures {
         }
     }
 }
+
+#region Save Data
+public class SaveDataFarm : SaveDataManMadeStructure {
+    public TileLocationSave[] farmTiles;
+    public override void Save(LocationStructure locationStructure) {
+        base.Save(locationStructure);
+        Farm farm = locationStructure as Farm;
+        farmTiles = new TileLocationSave[farm.farmTiles.Count];
+        for (int i = 0; i < farm.farmTiles.Count; i++) {
+            LocationGridTile farmTile = farm.farmTiles[i];
+            farmTiles[i] = new TileLocationSave(farmTile);
+        }
+    }
+}
+#endregion

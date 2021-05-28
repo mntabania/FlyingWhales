@@ -133,6 +133,9 @@ public class CharacterNameplateItem : NameplateItem<Character> {
 #region Race Icon
     public void OnHoverRaceIcon() {
         string message = GameUtilities.GetNormalizedSingularRace(character.race);
+        if (character.talentComponent != null) {
+            message += "\n" + character.talentComponent.GetTalentSummary();
+        }
         UIManager.Instance.ShowSmallInfo(message);
     }
     public void OnHoverExitRaceIcon() {
