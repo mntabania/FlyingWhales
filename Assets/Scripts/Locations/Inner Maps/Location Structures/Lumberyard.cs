@@ -21,7 +21,7 @@ namespace Inner_Maps.Location_Structures {
             pilePool = GetTileObjectsOfType(TILE_OBJECT_TYPE.WOOD_PILE);
             if(pilePool != null) {
                 pilePool.ForEach((eachList) => {
-                    if (eachList.mapObjectState == MAP_OBJECT_STATE.BUILT && (eachList as TileObject).HasJobTargetingThis(JOB_TYPE.HAUL)) {
+                    if (eachList.mapObjectState == MAP_OBJECT_STATE.BUILT && !((eachList as TileObject).HasJobTargetingThis(JOB_TYPE.HAUL))) {
                         builtPilesInSideStructure.Add(eachList);
                     }
                 });
