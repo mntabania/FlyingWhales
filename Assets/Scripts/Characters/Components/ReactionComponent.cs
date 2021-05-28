@@ -1597,14 +1597,14 @@ public class ReactionComponent : CharacterComponent {
             }
         }
         
-        
+        /*
         if (targetTileObject is PowerCrystal) {
             if (!targetTileObject.HasJobTargetingThis(JOB_TYPE.MINE_ORE)) {
 				if (!actor.jobComponent.HasHigherPriorityJobThan(JOB_TYPE.MINE_ORE)) {
                     actor.jobComponent.TriggerMineOre(targetTileObject as GenericTileObject);
                 }
             }
-        }
+        }*/
         
         if (targetTileObject is ResourcePile resourcePile && actor.homeSettlement != null) {
             //if character sees a resource pile that is outside his/her home settlement or

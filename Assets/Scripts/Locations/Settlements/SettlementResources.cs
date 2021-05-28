@@ -175,4 +175,13 @@ public class SettlementResources
         RuinarchListPool<TileObject>.Release(pilePool);
         return found ? chosenPile : null;
     }
+
+    public TreeObject GetAvailableTree() { 
+        for(int x = 0; x < trees.Count; ++x) {
+            if (!trees[x].HasJobTargetingThis(JOB_TYPE.PRODUCE_WOOD)) {
+                return trees[x];
+            }
+		}
+        return null;
+    }
 }

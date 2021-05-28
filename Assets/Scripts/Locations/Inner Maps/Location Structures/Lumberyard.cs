@@ -37,18 +37,25 @@ namespace Inner_Maps.Location_Structures {
             return null;
         }
 
-        TileObject GetrandomTree() {
-            TileObject tree = null;
+        TileObject GetrandomTree(Character p_worker) {
+            TileObject tree = p_worker.currentSettlement.SettlementResources.GetAvailableTree();
             return tree;
         }
 
         protected override void ProcessWorkStructureJobsByWorker(Character p_worker, out JobQueueItem producedJob) {
             producedJob = null;
             if (p_worker.currentSettlement.SettlementResources.GetRandomPileOfWoods() != null) {
+                Debug.LogError(p_worker.name + " HAUL Lumberyard to resource pile");
+                p_worker.homeSettlement.settlementJobTriggerComponent.TryCreateHaulJob(p_worker.currentSettlement.SettlementResources.GetRandomPileOfWoods());
                 //do haul job
             } else if (CheckForMultipleSameResourcePileInsideStructure() != null) {
+                //p_worker.homeSettlement.settlementJobTriggerComponent.combine(p_worker.currentSettlement.SettlementResources.GetRandomPileOfWoods());
                 //do combine resourcepiles job
-            } else if(GetrandomTree() != null){
+            } else if(GetrandomTree(p_worker) != null){
+                Debug.LogError(p_worker.name + " CHOP Lumberyard to resource pile");
+                TileObject targetTree = GetrandomTree(p_worker);
+                p_worker.jobComponent.TriggerChopWood(targetTree);
+                producedJob = p_worker.jobQueue.GetJob(JOB_TYPE.CHOP_WOOD);
                 //do chop wood job
             }
         }
