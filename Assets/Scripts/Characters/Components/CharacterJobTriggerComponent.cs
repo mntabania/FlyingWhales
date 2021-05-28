@@ -3368,17 +3368,33 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
         }
     }
 
-    public void TriggerHarvestCrops(GenericTileObject p_tileObject) {
+    public void TriggerHarvestCrops(TileObject p_tileObject) {
+        JobQueueItem job;
+        TriggerHarvestCrops(p_tileObject, out job);
+        if (job != null) {
+            owner.jobQueue.AddJobInQueue(job);
+        }
+    }
+    public void TriggerHarvestCrops(TileObject p_tileObject, out JobQueueItem producedJob) {
+        producedJob = null;
         if (!owner.jobQueue.HasJob(JOB_TYPE.HARVEST_CROPS)) {
             GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.HARVEST_CROPS, INTERACTION_TYPE.HARVEST_CROPS, p_tileObject, owner);
-            owner.jobQueue.AddJobInQueue(job);
+            producedJob = job;
         }
     }
 
     public void TriggerTillTile(GenericTileObject p_tileObject) {
+        JobQueueItem job;
+        TriggerTillTile(p_tileObject, out job);
+        if (job != null) {
+            owner.jobQueue.AddJobInQueue(job);
+        }
+    }
+    public void TriggerTillTile(GenericTileObject p_tileObject, out JobQueueItem producedJob) {
+        producedJob = null;
         if (!owner.jobQueue.HasJob(JOB_TYPE.TILL_TILE)) {
             GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.TILL_TILE, INTERACTION_TYPE.TILL_TILE, p_tileObject, owner);
-            owner.jobQueue.AddJobInQueue(job);
+            producedJob = job;
         }
     }
 

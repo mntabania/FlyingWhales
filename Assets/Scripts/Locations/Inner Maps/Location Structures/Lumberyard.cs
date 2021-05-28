@@ -19,7 +19,7 @@ namespace Inner_Maps.Location_Structures {
             if(pilePool != null) {
                 for (int i = 0; i < pilePool.Count; i++) {
                     TileObject t = pilePool[i];
-                    if (t.mapObjectState == MAP_OBJECT_STATE.BUILT && !t.HasJobTargetingThis(JOB_TYPE.HAUL)) {
+                    if (t.mapObjectState == MAP_OBJECT_STATE.BUILT && !t.HasJobTargetingThis(JOB_TYPE.HAUL, JOB_TYPE.COMBINE_STOCKPILE)) {
                         builtPilesInSideStructure.Add(t);
                     }
                 }
