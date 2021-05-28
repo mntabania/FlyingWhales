@@ -512,17 +512,6 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     public bool RemoveExistingJobTargetingThis(JobQueueItem job) {
         return allExistingJobsTargetingThis.Remove(job);
     }
-    public bool HasJobTargetingThis(params JOB_TYPE[] jobTypes) {
-        for (int i = 0; i < allJobsTargetingThis.Count; i++) {
-            JobQueueItem job = allJobsTargetingThis[i];
-            for (int j = 0; j < jobTypes.Length; j++) {
-                if (job.jobType == jobTypes[j]) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
     public bool HasJobTargetingThis(JOB_TYPE jobType) {
         for (int i = 0; i < allJobsTargetingThis.Count; i++) {
             JobQueueItem job = allJobsTargetingThis[i];
