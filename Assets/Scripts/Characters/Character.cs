@@ -2052,7 +2052,11 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         if (character.id != id) {
             //RemoveRelationship(characterThatDied); //do not remove relationships when dying
             marker.OnSeizeOtherCharacter(character);
-            currentSettlement?.SettlementResources?.RemoveCharacterFromSettlement(this);
+            if (character is Summon) {
+                currentSettlement?.SettlementResources?.RemoveAnimalFromSettlement(character as Summon);
+            } else {
+                currentSettlement?.SettlementResources?.RemoveCharacterFromSettlement(this);
+            }
         }
     }
     private void OnBeforeSeizingTileObject(TileObject tileObject) {

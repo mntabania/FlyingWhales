@@ -28,6 +28,18 @@ public class SkinAnimal : GoapAction {
         return 10;
     }
 
+    protected override void ConstructBasePreconditionsAndEffects() {
+        SetPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.DEATH, conditionKey = string.Empty, isKeyANumber = false, target = GOAP_EFFECT_TARGET.TARGET }, IsTargetDead);
+        AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.PRODUCE_CLOTH, conditionKey = string.Empty, isKeyANumber = false, target = GOAP_EFFECT_TARGET.ACTOR });
+    }
+
+    private bool IsTargetDead(Character actor, IPointOfInterest poiTarget, object[] otherData, JOB_TYPE jobType) {
+        if (poiTarget is Character character) {
+            return character.isDead;
+        }
+        return true;
+    }
+
     public override void OnStopWhilePerforming(ActualGoapNode node) {
         base.OnStopWhilePerforming(node);
         ProduceMatsPile(node);

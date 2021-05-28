@@ -1081,6 +1081,29 @@ public static class Extensions {
         }
         return priority;
     }
+    public static bool IsShearable(this RACE type) {
+        switch (type) {
+            case RACE.RABBIT:
+            case RACE.SHEEP:
+            case RACE.MINK:
+            case RACE.MOONWALKER:
+            return true;
+        }
+        return false;
+    }
+
+    public static bool IsSkinnable(this RACE type) {
+        switch (type) {
+            case RACE.BOAR:
+            case RACE.BEAR:
+            case RACE.WOLF:
+            case RACE.DRAGON:
+            case RACE.SPIDER:
+            return true;
+        }
+        return false;
+    }
+
     public static bool IsJobLethal(this JOB_TYPE type) {
         switch (type) {
             case JOB_TYPE.APPREHEND:

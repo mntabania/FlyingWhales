@@ -13,6 +13,9 @@ public class SettlementResources
     public List<LocationGridTile> mineShackSpots = new List<LocationGridTile>();
     public List<ResourcePile> resourcePiles = new List<ResourcePile>();
     public List<Character> characters = new List<Character>();
+    public List<Summon> animalsThatProducesMats = new List<Summon>();
+    public List<Summon> shearables = new List<Summon>();
+    public List<Summon> skinnables = new List<Summon>();
     public bool IsRequirementAvailable(StructureRequirement p_structureRequirement) {
         switch (p_structureRequirement) {
             case StructureRequirement.ROCK: if (rocks.Count > 0) return true; else return false;
@@ -59,6 +62,29 @@ public class SettlementResources
             characters.Remove(p_character);
         }
     }
+
+    public void AddAnimalToSettlement(Summon p_character) {
+        if (!animalsThatProducesMats.Contains(p_character)) {
+            animalsThatProducesMats.Add(p_character);
+            if (p_character is Animal && p_character.race.IsShearable()) {
+                shearables.Add(p_character);
+            } else if (p_character.race.IsSkinnable()) {
+                skinnables.Add(p_character);
+            }
+        }
+    }
+
+    public void RemoveAnimalFromSettlement(Summon p_character) {
+        if (animalsThatProducesMats.Contains(p_character)) {
+            animalsThatProducesMats.Remove(p_character);
+        }
+		if (shearables.Contains(p_character)) {
+            shearables.Remove(p_character);
+		}
+        if (skinnables.Contains(p_character)) {
+            skinnables.Remove(p_character);
+        }
+    }
     public bool HasResourceAmount(NPCSettlement p_settlement, RESOURCE p_resource, int p_amount) {
         if (p_resource == RESOURCE.NONE) { return true; }
         int totalResource = p_settlement.mainStorage.GetTotalResourceInStructure(p_resource);
@@ -93,7 +119,6 @@ public class SettlementResources
         if (pilePool.Count > 0) {
             chosenPile = pilePool[GameUtilities.RandomBetweenTwoNumbers(0, pilePool.Count - 1)] as ResourcePile;
         }
-        resourcePiles.Remove(chosenPile);
         RuinarchListPool<TileObject>.Release(pilePool);
         return found ? chosenPile : null;
     }
@@ -121,7 +146,6 @@ public class SettlementResources
         if (pilePool.Count > 0) {
             chosenPile = pilePool[GameUtilities.RandomBetweenTwoNumbers(0, pilePool.Count - 1)] as ResourcePile;
         }
-        resourcePiles.Remove(chosenPile);
         RuinarchListPool<TileObject>.Release(pilePool);
         return found ? chosenPile : null;
     }
@@ -144,7 +168,6 @@ public class SettlementResources
         if (pilePool.Count > 0) {
             chosenPile = pilePool[GameUtilities.RandomBetweenTwoNumbers(0, pilePool.Count - 1)] as ResourcePile;
         }
-        resourcePiles.Remove(chosenPile);
         RuinarchListPool<TileObject>.Release(pilePool);
         return found ? chosenPile : null;
     }
@@ -165,7 +188,6 @@ public class SettlementResources
         if (pilePool.Count > 0) {
             chosenPile = pilePool[GameUtilities.RandomBetweenTwoNumbers(0, pilePool.Count - 1)] as ResourcePile;
         }
-        resourcePiles.Remove(chosenPile);
         RuinarchListPool<TileObject>.Release(pilePool);
         return found ? chosenPile : null;
     }
@@ -176,7 +198,7 @@ public class SettlementResources
         for (int x = 0; x < resourcePiles.Count; ++x) {
             ResourcePile pile = resourcePiles[x];
             if (pile.tileObjectType == TILE_OBJECT_TYPE.WOOD_PILE) {
-                if (pile.currentStructure.structureType != STRUCTURE_TYPE.CITY_CENTER && pile.currentStructure.structureType != STRUCTURE_TYPE.LUMBERYARD && !pile.HasJobTargetingThis(JOB_TYPE.HAUL)) {
+                if (pile.mapObjectState == MAP_OBJECT_STATE.BUILT && pile.currentStructure.structureType != STRUCTURE_TYPE.CITY_CENTER && pile.currentStructure.structureType != STRUCTURE_TYPE.LUMBERYARD && !pile.HasJobTargetingThis(JOB_TYPE.HAUL)) {
                     pilePool.Add(pile);
                     found = true;
                 }
@@ -186,7 +208,6 @@ public class SettlementResources
         if (pilePool.Count > 0) {
             chosenPile = pilePool[GameUtilities.RandomBetweenTwoNumbers(0, pilePool.Count - 1)] as ResourcePile;
         }
-        resourcePiles.Remove(chosenPile);
         RuinarchListPool<TileObject>.Release(pilePool);
         return found ? chosenPile : null;
     }
@@ -198,5 +219,32 @@ public class SettlementResources
             }
 		}
         return null;
+    }
+
+    public Summon GetAvailableSherable() {
+        for (int x = 0; x < animalsThatProducesMats.Count; ++x) {
+            if (animalsThatProducesMats[x] is Animal && animalsThatProducesMats[x].race.IsShearable() && !animalsThatProducesMats[x].HasJobTargetingThis(JOB_TYPE.SHEAR_ANIMAL)) {
+                return animalsThatProducesMats[x];
+            }
+        }
+        return null;
+    }
+
+    public List<Summon> GetAllAnimalsThatProducesMats() {
+        return animalsThatProducesMats;
+    }
+
+    public List<Summon> GetAllAnimalsThatAreShearable() {
+        List<Summon> ableToShearTodayList = new List<Summon>();
+        for(int x = 0; x < shearables.Count; ++x) {
+            if (shearables[x] is Animal target && target.isShearable) {
+                ableToShearTodayList.Add(shearables[x]);
+            }
+		}
+        return ableToShearTodayList;
+    }
+
+    public List<Summon> GetAllAnimalsThatAreSkinnable() {
+        return skinnables;
     }
 }
