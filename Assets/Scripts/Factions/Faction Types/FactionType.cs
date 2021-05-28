@@ -169,6 +169,8 @@ namespace Factions.Faction_Types {
         }
         public virtual StructureSetting CreateStructureSettingForStructure(STRUCTURE_TYPE structureType, NPCSettlement p_settlement) {
             RESOURCE resource = structureType.RequiresResourceToBuild() ? RESOURCE.STONE : RESOURCE.NONE;
+            if (structureType == STRUCTURE_TYPE.FISHERY) { resource = RESOURCE.WOOD; }
+            if (structureType == STRUCTURE_TYPE.BUTCHERS_SHOP) { resource = RESOURCE.STONE; }
             return new StructureSetting(structureType, resource, false);
         }
         #endregion
