@@ -117,7 +117,7 @@ public class CharacterClass {
         return identifier == "Zombie";
     }
     public bool CanDoJob(JOB_TYPE jobType) {
-        return ableJobs.Contains(jobType);
+        return ableJobs != null && ableJobs.Contains(jobType);
     }
     public bool IsSpecialClass() {
         return identifier == "Special";

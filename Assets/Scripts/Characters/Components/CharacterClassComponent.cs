@@ -41,7 +41,7 @@ public class CharacterClassComponent : CharacterComponent {
     public void AssignClass(CharacterClass characterClass, bool isInitial = false) {
         CharacterClass previousClass = characterClass;
         if (previousClass != null) {
-            owner.homeSettlement?.UnapplyAbleJobsFromSettlement(owner);
+            //owner.homeSettlement?.UnapplyAbleJobsFromSettlement(owner);
             previousClassName = previousClass.className;
             //This means that the character currently has a class and it will be replaced with a new class
             for (int i = 0; i < previousClass.traitNames.Length; i++) {
@@ -55,7 +55,7 @@ public class CharacterClassComponent : CharacterComponent {
         owner.movementComponent.OnAssignedClass(characterClass);
         //behaviourComponent.OnChangeClass(_characterClass, previousClass);
         if (!isInitial) {
-            owner.homeSettlement?.UpdateAbleJobsOfResident(owner);
+            //owner.homeSettlement?.UpdateAbleJobsOfResident(owner);
             OnUpdateCharacterClass();
             Messenger.Broadcast(CharacterSignals.CHARACTER_CLASS_CHANGE, owner, previousClass, this.characterClass);
         }

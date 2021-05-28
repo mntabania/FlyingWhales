@@ -840,30 +840,30 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
             //First resident
             ChangeSettlementTypeAccordingTo(character);
         }
-        bool hasUpdatedPeasantSwitch = false;
-        if (character.characterClass.className == "Peasant") {
-            hasUpdatedPeasantSwitch = UpdateHasPeasants();
-        }
-        bool hasUpdatedWorkerSwitch = false;
-        if (character.traitContainer.HasTrait("Worker")) {
-            hasUpdatedWorkerSwitch = UpdateHasWorkers();
-        }
-        if (!hasUpdatedPeasantSwitch && !hasUpdatedWorkerSwitch) {
-            //if neither the switches was updated, manually call the update resident able jobs since it is possible that one of the switches are already off
-            //and not calling it will result in the new residents able jobs not being updated.
-            UpdateAbleJobsOfResident(character);
-        }
+        //bool hasUpdatedPeasantSwitch = false;
+        //if (character.characterClass.className == "Peasant") {
+        //    hasUpdatedPeasantSwitch = UpdateHasPeasants();
+        //}
+        //bool hasUpdatedWorkerSwitch = false;
+        //if (character.traitContainer.HasTrait("Worker")) {
+        //    hasUpdatedWorkerSwitch = UpdateHasWorkers();
+        //}
+        //if (!hasUpdatedPeasantSwitch && !hasUpdatedWorkerSwitch) {
+        //    //if neither the switches was updated, manually call the update resident able jobs since it is possible that one of the switches are already off
+        //    //and not calling it will result in the new residents able jobs not being updated.
+        //    UpdateAbleJobsOfResident(character);
+        //}
     }
     private void OnRemoveResident(Character character) {
         eventManager.OnResidentRemoved(character);
         classComponent.OnResidentRemoved(character);
-        UnapplyAbleJobsFromSettlement(character);
-        if (character.characterClass.className == "Peasant") {
-            UpdateHasPeasants();
-        }
-        if (character.traitContainer.HasTrait("Worker")) {
-            UpdateHasWorkers();
-        }
+        //UnapplyAbleJobsFromSettlement(character);
+        //if (character.characterClass.className == "Peasant") {
+        //    UpdateHasPeasants();
+        //}
+        //if (character.traitContainer.HasTrait("Worker")) {
+        //    UpdateHasWorkers();
+        //}
     }
     private void CheckSlaveResidents() {
         if (AreAllResidentsSlaves()) {
@@ -1472,37 +1472,41 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         return false;
     }
     public JobQueueItem GetFirstUnassignedJobToCharacterJob(Character character) {
-        JobQueueItem chosenPriorityJob = null;
-        JobQueueItem chosenSecondaryJob = null;
-        JobQueueItem chosenAbleJob = null;
+        //JobQueueItem chosenPriorityJob = null;
+        //JobQueueItem chosenSecondaryJob = null;
+        //JobQueueItem chosenAbleJob = null;
 
         for (int i = 0; i < availableJobs.Count; i++) {
             JobQueueItem job = availableJobs[i];
             if (job.assignedCharacter == null && character.jobQueue.CanJobBeAddedToQueue(job)) {
-                //if (job.jobType == character.jobComponent.primaryJob) {
-                //    return job;
-                //} else 
-                if (chosenPriorityJob == null && (character.jobComponent.ableJobs.Contains(job.jobType) || character.jobComponent.additionalPriorityJobs.Contains(job.jobType))) {
-                    chosenPriorityJob = job;
-                } 
-                //else if (chosenSecondaryJob == null && character.characterClass.secondaryJobs != null && character.characterClass.secondaryJobs.Contains(job.jobType)) {
-                //    chosenSecondaryJob = job;
+                ////if (job.jobType == character.jobComponent.primaryJob) {
+                ////    return job;
+                ////} else 
+                //if (chosenPriorityJob == null && (character.jobComponent.ableJobs.Contains(job.jobType) || character.jobComponent.additionalPriorityJobs.Contains(job.jobType))) {
+                //    chosenPriorityJob = job;
                 //} 
-                else if (chosenAbleJob == null) {
-                    bool isAble = character.characterClass.ableJobs != null && character.characterClass.ableJobs.Contains(job.jobType);
-                    if (isAble) {
-                        chosenAbleJob = job;    
-                    }
+                ////else if (chosenSecondaryJob == null && character.characterClass.secondaryJobs != null && character.characterClass.secondaryJobs.Contains(job.jobType)) {
+                ////    chosenSecondaryJob = job;
+                ////} 
+                //else if (chosenAbleJob == null) {
+                //    bool isAble = character.characterClass.ableJobs != null && character.characterClass.ableJobs.Contains(job.jobType);
+                //    if (isAble) {
+                //        chosenAbleJob = job;    
+                //    }
+                //}
+
+                if (character.characterClass.CanDoJob(job.jobType) || character.jobComponent.ableJobs.Contains(job.jobType)) {
+                    return job;
                 }
             }
         }
-        if (chosenPriorityJob != null) {
-            return chosenPriorityJob;
-        } else if (chosenSecondaryJob != null) {
-            return chosenSecondaryJob;
-        } else if (chosenAbleJob != null) {
-            return chosenAbleJob;
-        }
+        //if (chosenPriorityJob != null) {
+        //    return chosenPriorityJob;
+        //} else if (chosenSecondaryJob != null) {
+        //    return chosenSecondaryJob;
+        //} else if (chosenAbleJob != null) {
+        //    return chosenAbleJob;
+        //}
         return null;
     }
     public bool AssignCharacterToJobBasedOnVision(Character character) {
@@ -1721,130 +1725,132 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
             }
         }
     }
+
+    //NOTE: Removed this section since the design has changed, the one that will handles this is now the Change To Needed Class processings
     /// <summary>
     /// Whenever a resident updates its class also update the
     /// hasPeasants and hasWorkers switch
     /// </summary>
-    public void OnResidentUpdatedClass() {
-        UpdateHasPeasants();
-        UpdateHasWorkers();
-    }
+    //public void OnResidentUpdatedClass() {
+    //    UpdateHasPeasants();
+    //    UpdateHasWorkers();
+    //}
     /// <summary>
     /// Update the hasPeasants switch.
     /// </summary>
     /// <returns>Whether or not a change happened</returns>
-    private bool UpdateHasPeasants() {
-        for (int i = 0; i < residents.Count; i++) {
-            Character resident = residents[i];
-            if (resident.characterClass.className == "Peasant") {
-                return SetHasPeasants(true);
-            }
-        }
-        return SetHasPeasants(false);
-    }
+    //private bool UpdateHasPeasants() {
+    //    for (int i = 0; i < residents.Count; i++) {
+    //        Character resident = residents[i];
+    //        if (resident.characterClass.className == "Peasant") {
+    //            return SetHasPeasants(true);
+    //        }
+    //    }
+    //    return SetHasPeasants(false);
+    //}
     /// <summary>
     /// Update the hasWorkers switch.
     /// </summary>
     /// <returns>Whether or not a change happened</returns>
-    private bool UpdateHasWorkers() {
-        for (int i = 0; i < residents.Count; i++) {
-            Character resident = residents[i];
-            if (resident.traitContainer.HasTrait("Worker")) {
-                return SetHasWorkers(true);
-            }
-        }
-        return SetHasWorkers(false);
-    }
+    //private bool UpdateHasWorkers() {
+    //    for (int i = 0; i < residents.Count; i++) {
+    //        Character resident = residents[i];
+    //        if (resident.traitContainer.HasTrait("Worker")) {
+    //            return SetHasWorkers(true);
+    //        }
+    //    }
+    //    return SetHasWorkers(false);
+    //}
     /// <summary>
     /// Switch the has peasants switch on/off
     /// </summary>
     /// <param name="state">The state to switch to</param>
     /// <returns>Whether or not the switched was toggled</returns>
-    private bool SetHasPeasants(bool state) {
-        if (hasPeasants != state) {
-            hasPeasants = state;
-            UpdateAbleJobsOfAllResidents();
-            return true;
-        }
-        return false;
-    }
+    //private bool SetHasPeasants(bool state) {
+    //    if (hasPeasants != state) {
+    //        hasPeasants = state;
+    //        UpdateAbleJobsOfAllResidents();
+    //        return true;
+    //    }
+    //    return false;
+    //}
     /// <summary>
     /// Switch the has workers switch on/off
     /// </summary>
     /// <param name="state">The state to switch to</param>
     /// <returns>Whether or not the switched was toggled</returns>
-    private bool SetHasWorkers(bool state) {
-        if (hasWorkers != state) {
-            hasWorkers = state;
-            UpdateAbleJobsOfAllResidents();
-            return true;
-        }
-        return false;
-    }
-    private void UpdateAbleJobsOfAllResidents() {
-        if (owner != null && owner.factionType.type == FACTION_TYPE.Ratmen) { return; }
-        for (int i = 0; i < residents.Count; i++) {
-            Character character = residents[i];
-            UpdateAbleJobsOfResident(character);
-        }
-    }
-    public void UpdateAbleJobsOfResident(Character character) {
-        if (owner != null && owner.factionType.type == FACTION_TYPE.Ratmen) { return; }
-        if (!character.race.IsSapient() && character.minion == null) { return; }
-        //update jobs based on hasPeasants switch
-        if (!hasPeasants) {
-            if (character.characterClass.className != "Noble") {
-                CharacterClass peasantClass = CharacterManager.Instance.GetCharacterClass("Peasant");
-                //character.jobComponent.AddAdditionalPriorityJob(peasantClass.priorityJobs);
-                //character.jobComponent.AddAdditionalPriorityJob(peasantClass.secondaryJobs);
-                character.jobComponent.AddAdditionalPriorityJob(peasantClass.ableJobs);
-            }
-        } else {
-            if (character.characterClass.className != "Noble") {
-                CharacterClass peasantClass = CharacterManager.Instance.GetCharacterClass("Peasant");
-                //character.jobComponent.RemoveAdditionalPriorityJob(peasantClass.priorityJobs);
-                //character.jobComponent.RemoveAdditionalPriorityJob(peasantClass.secondaryJobs);
-                character.jobComponent.RemoveAdditionalPriorityJob(peasantClass.ableJobs);
-            }
-        }
+    //private bool SetHasWorkers(bool state) {
+    //    if (hasWorkers != state) {
+    //        hasWorkers = state;
+    //        UpdateAbleJobsOfAllResidents();
+    //        return true;
+    //    }
+    //    return false;
+    //}
+    //private void UpdateAbleJobsOfAllResidents() {
+    //    if (owner != null && owner.factionType.type == FACTION_TYPE.Ratmen) { return; }
+    //    for (int i = 0; i < residents.Count; i++) {
+    //        Character character = residents[i];
+    //        UpdateAbleJobsOfResident(character);
+    //    }
+    //}
+    //public void UpdateAbleJobsOfResident(Character character) {
+    //    if (owner != null && owner.factionType.type == FACTION_TYPE.Ratmen) { return; }
+    //    if (!character.race.IsSapient() && character.minion == null) { return; }
+    //    //update jobs based on hasPeasants switch
+    //    if (!hasPeasants) {
+    //        if (character.characterClass.className != "Noble") {
+    //            CharacterClass peasantClass = CharacterManager.Instance.GetCharacterClass("Peasant");
+    //            //character.jobComponent.AddAdditionalPriorityJob(peasantClass.priorityJobs);
+    //            //character.jobComponent.AddAdditionalPriorityJob(peasantClass.secondaryJobs);
+    //            character.jobComponent.AddAdditionalPriorityJob(peasantClass.ableJobs);
+    //        }
+    //    } else {
+    //        if (character.characterClass.className != "Noble") {
+    //            CharacterClass peasantClass = CharacterManager.Instance.GetCharacterClass("Peasant");
+    //            //character.jobComponent.RemoveAdditionalPriorityJob(peasantClass.priorityJobs);
+    //            //character.jobComponent.RemoveAdditionalPriorityJob(peasantClass.secondaryJobs);
+    //            character.jobComponent.RemoveAdditionalPriorityJob(peasantClass.ableJobs);
+    //        }
+    //    }
         
-        //update jobs based on hasWorkers switch
-        if (!hasWorkers) {
-            if (character.characterClass.className == "Noble") {
-                CharacterClass peasantClass = CharacterManager.Instance.GetCharacterClass("Peasant");
-                //character.jobComponent.AddAdditionalPriorityJob(peasantClass.priorityJobs);
-                //character.jobComponent.AddAdditionalPriorityJob(peasantClass.secondaryJobs);
-                character.jobComponent.AddAdditionalPriorityJob(peasantClass.ableJobs);
-            }
-        } else {
-            if (character.characterClass.className == "Noble") {
-                CharacterClass peasantClass = CharacterManager.Instance.GetCharacterClass("Peasant");
-                //character.jobComponent.RemoveAdditionalPriorityJob(peasantClass.priorityJobs);
-                //character.jobComponent.RemoveAdditionalPriorityJob(peasantClass.secondaryJobs);
-                character.jobComponent.RemoveAdditionalPriorityJob(peasantClass.ableJobs);
-            }
-        }
-    }
-    public void UnapplyAbleJobsFromSettlement(Character character) {
-        if (!character.race.IsSapient() && character.minion == null) { return; }
-        if (!hasPeasants) {
-            if (character.characterClass.className != "Noble") {
-                CharacterClass peasantClass = CharacterManager.Instance.GetCharacterClass("Peasant");
-                //character.jobComponent.RemoveAdditionalPriorityJob(peasantClass.priorityJobs);
-                //character.jobComponent.RemoveAdditionalPriorityJob(peasantClass.secondaryJobs);
-                character.jobComponent.RemoveAdditionalPriorityJob(peasantClass.ableJobs);
-            }
-        }
+    //    //update jobs based on hasWorkers switch
+    //    if (!hasWorkers) {
+    //        if (character.characterClass.className == "Noble") {
+    //            CharacterClass peasantClass = CharacterManager.Instance.GetCharacterClass("Peasant");
+    //            //character.jobComponent.AddAdditionalPriorityJob(peasantClass.priorityJobs);
+    //            //character.jobComponent.AddAdditionalPriorityJob(peasantClass.secondaryJobs);
+    //            character.jobComponent.AddAdditionalPriorityJob(peasantClass.ableJobs);
+    //        }
+    //    } else {
+    //        if (character.characterClass.className == "Noble") {
+    //            CharacterClass peasantClass = CharacterManager.Instance.GetCharacterClass("Peasant");
+    //            //character.jobComponent.RemoveAdditionalPriorityJob(peasantClass.priorityJobs);
+    //            //character.jobComponent.RemoveAdditionalPriorityJob(peasantClass.secondaryJobs);
+    //            character.jobComponent.RemoveAdditionalPriorityJob(peasantClass.ableJobs);
+    //        }
+    //    }
+    //}
+    //public void UnapplyAbleJobsFromSettlement(Character character) {
+    //    if (!character.race.IsSapient() && character.minion == null) { return; }
+    //    if (!hasPeasants) {
+    //        if (character.characterClass.className != "Noble") {
+    //            CharacterClass peasantClass = CharacterManager.Instance.GetCharacterClass("Peasant");
+    //            //character.jobComponent.RemoveAdditionalPriorityJob(peasantClass.priorityJobs);
+    //            //character.jobComponent.RemoveAdditionalPriorityJob(peasantClass.secondaryJobs);
+    //            character.jobComponent.RemoveAdditionalPriorityJob(peasantClass.ableJobs);
+    //        }
+    //    }
         
-        if (!hasWorkers) {
-            if (character.characterClass.className == "Noble") {
-                CharacterClass peasantClass = CharacterManager.Instance.GetCharacterClass("Peasant");
-                //character.jobComponent.RemoveAdditionalPriorityJob(peasantClass.priorityJobs);
-                //character.jobComponent.RemoveAdditionalPriorityJob(peasantClass.secondaryJobs);
-                character.jobComponent.RemoveAdditionalPriorityJob(peasantClass.ableJobs);
-            }
-        }
-    }
+    //    if (!hasWorkers) {
+    //        if (character.characterClass.className == "Noble") {
+    //            CharacterClass peasantClass = CharacterManager.Instance.GetCharacterClass("Peasant");
+    //            //character.jobComponent.RemoveAdditionalPriorityJob(peasantClass.priorityJobs);
+    //            //character.jobComponent.RemoveAdditionalPriorityJob(peasantClass.secondaryJobs);
+    //            character.jobComponent.RemoveAdditionalPriorityJob(peasantClass.ableJobs);
+    //        }
+    //    }
+    //}
     #endregion
 
     #region IJobOwner
