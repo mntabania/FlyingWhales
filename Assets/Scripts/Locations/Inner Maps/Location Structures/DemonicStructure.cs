@@ -212,7 +212,7 @@ namespace Inner_Maps.Location_Structures {
             }
         }
         private void OnCharacterRemovedBehaviour(Character p_character, CharacterBehaviourComponent p_removedBehaviour) {
-            if (p_removedBehaviour is AttackDemonicStructureBehaviour) {
+            if (p_removedBehaviour is AttackDemonicStructureBehaviour || p_removedBehaviour is DemonRescueBehaviour) {
                 RemoveAttacker(p_character);    
             }
         }

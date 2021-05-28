@@ -11,7 +11,7 @@ namespace Inner_Maps.Location_Structures {
                 newTileObject.tileObjectType == TILE_OBJECT_TYPE.ICEBERRY_CROP || newTileObject.tileObjectType == TILE_OBJECT_TYPE.PINEAPPLE_CROP ||
                 newTileObject.tileObjectType == TILE_OBJECT_TYPE.POTATO_CROP) {
                 farmTiles.Add(tile);
-                structure.AddObjectAsDamageContributor(newTileObject);
+                // structure.AddObjectAsDamageContributor(newTileObject);
                 Sprite originalSprite = InnerMapManager.Instance.GetTileObjectScriptableObject(newTileObject.tileObjectType).defaultSprite;
                 if (originalSprite != null) { newTileObject.mapVisual.SetVisual(originalSprite); }
             }

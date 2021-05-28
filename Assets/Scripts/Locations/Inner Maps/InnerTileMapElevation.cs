@@ -277,20 +277,27 @@ namespace Inner_Maps {
             Cave cave = p_caveStructure as Cave;
             Assert.IsNotNull(cave);
 
+            List<LocationGridTile> locationChoices = RuinarchListPool<LocationGridTile>.Claim(); 
+            locationChoices.AddRange(p_caveStructure.passableTiles);
+            
             int randomStoneSpots = GameUtilities.RandomBetweenTwoNumbers(4, 6);
             for (int i = 0; i < randomStoneSpots; i++) {
-                if (p_caveStructure.passableTiles.Count == 0) { break; }
-                LocationGridTile spot = CollectionUtilities.GetRandomElement(p_caveStructure.passableTiles);
+                if (locationChoices.Count == 0) { break; }
+                LocationGridTile spot = CollectionUtilities.GetRandomElement(locationChoices);
                 cave.AddStoneSpot(spot);
+                locationChoices.Remove(spot);
             }
             
             int randomOreSpots = GameUtilities.RandomBetweenTwoNumbers(2, 4);
             for (int i = 0; i < randomOreSpots; i++) {
-                if (p_caveStructure.passableTiles.Count == 0) { break; }
-                LocationGridTile spot = CollectionUtilities.GetRandomElement(p_caveStructure.passableTiles);
+                if (locationChoices.Count == 0) { break; }
+                LocationGridTile spot = CollectionUtilities.GetRandomElement(locationChoices);
                 cave.AddOreSpot(spot);
                 GridMap.Instance.mainRegion.gridTileFeatureComponent.AddFeatureToTile<MetalOreSpotFeature>(spot);
+                locationChoices.Remove(spot);
             }
+            
+            RuinarchListPool<LocationGridTile>.Release(locationChoices);
             
             
         }

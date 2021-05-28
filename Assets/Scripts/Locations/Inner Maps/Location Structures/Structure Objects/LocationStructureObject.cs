@@ -283,6 +283,11 @@ public class LocationStructureObject : PooledObject, ISelectable {
                 }
                 
             }
+
+            if (!GameManager.Instance.gameHasStarted) {
+                MapGenerationData mapGenerationData = WorldConfigManager.Instance.mapGenerationData;
+                if (mapGenerationData != null) { mapGenerationData.SetGeneratedMapPerlinDetails(tile, TILE_OBJECT_TYPE.NONE); }
+            }
             
             tile.parentMap.detailsTilemap.SetTile(tile.localPlace, null);
             tile.parentMap.northEdgeTilemap.SetTile(tile.localPlace, null);
