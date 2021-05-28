@@ -1298,6 +1298,9 @@ public class CharacterInfoUI : InfoUIBase {
             return;
         }
         string message = GameUtilities.GetNormalizedSingularRace(activeCharacter.race);
+        if (activeCharacter.talentComponent != null) {
+            message += "\n" + activeCharacter.talentComponent.GetTalentSummary();
+        }
         UIManager.Instance.ShowSmallInfo(message);
     }
     public void OnHoverExitRaceIcon() {
