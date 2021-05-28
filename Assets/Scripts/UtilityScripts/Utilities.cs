@@ -34,6 +34,7 @@ namespace UtilityScripts {
         private static int _lastRegionID;
         private static int _lastJobID;
         private static int _lastBurningSourceID;
+        private static int _lastGoapPlanID;
         public static LANGUAGES defaultLanguage = LANGUAGES.ENGLISH;
         public static string dataPath => $"{Application.streamingAssetsPath}/Data/";
         public static string gameSavePath => $"{Application.persistentDataPath}/Ruinarch Game Saves/";
@@ -89,6 +90,10 @@ namespace UtilityScripts {
             if (obj is BurningSource) {
                 _lastBurningSourceID += 1;
                 return _lastBurningSourceID;
+            }
+            if (obj is GoapPlan) {
+                _lastGoapPlanID += 1;
+                return _lastGoapPlanID;
             }
             return 0;
         }
@@ -2171,6 +2176,7 @@ namespace UtilityScripts {
         }
 
         private static RACE[,] opposingRaces = new RACE[,] { { RACE.HUMANS, RACE.ELVES }, { RACE.FAERY, RACE.GOBLIN } };
+        
         public static bool AreTwoCharactersFromOpposingRaces(Character character1, Character character2) {
             if(character1.race != character2.race) {
                 int outerLength = opposingRaces.GetLength(0);

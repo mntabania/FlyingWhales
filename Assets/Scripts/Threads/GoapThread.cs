@@ -16,6 +16,10 @@ public class GoapThread : Multithread {
     //For recalculation
     public GoapPlan recalculationPlan;
 
+    //This is where initial plan is stored. This is used to prevent
+    //race conditions in multi-threaded access of GoapPlan Object Pools 
+    public GoapPlan cachedPlan; 
+
     private Character owner;
 
     public void Initialize(Character actor, IPointOfInterest target, GoapEffect goalEffect, bool isPersonalPlan, GoapPlanJob job) {//, List<INTERACTION_TYPE> actorAllowedActions, List<GoapAction> usableActions
@@ -27,9 +31,9 @@ public class GoapThread : Multithread {
         this.isPersonalPlan = isPersonalPlan;
         this.job = job;
         owner = actor;
+        cachedPlan = ObjectPoolManager.Instance.CreateNewGoapPlanForInitialGoapThread();
     }
-    public void Initialize(Character actor, INTERACTION_TYPE goalType, IPointOfInterest target
-        , bool isPersonalPlan, GoapPlanJob job) {//, List<INTERACTION_TYPE> actorAllowedActions, List<GoapAction> usableActions
+    public void Initialize(Character actor, INTERACTION_TYPE goalType, IPointOfInterest target, bool isPersonalPlan, GoapPlanJob job) {//, List<INTERACTION_TYPE> actorAllowedActions, List<GoapAction> usableActions
         this.createdPlan = null;
         this.recalculationPlan = null;
         this.actor = actor;
@@ -37,10 +41,10 @@ public class GoapThread : Multithread {
         this.goalType = goalType;
         this.isPersonalPlan = isPersonalPlan;
         this.job = job;
-
         owner = actor;
+        cachedPlan = ObjectPoolManager.Instance.CreateNewGoapPlanForInitialGoapThread();
     }
-    public void Initialize(Character actor, GoapPlan currentPlan, GoapPlanJob job) {//, List<GoapAction> usableActions
+    public void InitializeForRecalculation(Character actor, GoapPlan currentPlan, GoapPlanJob job) {//, List<GoapAction> usableActions
         this.createdPlan = null;
         this.actor = actor;
         this.recalculationPlan = currentPlan;
@@ -108,7 +112,7 @@ public class GoapThread : Multithread {
 #if DEBUG_LOG
                 log += $"\n{target.name} Can advertise actions to {actor.name}";
 #endif
-                plan = actor.planner.PlanActions(target, action, isPersonalPlan, ref planLog, job);
+                plan = actor.planner.PlanActions(target, action, isPersonalPlan, ref planLog, job, this);
             } else {
 #if DEBUG_LOG
                 log += $"\n{target.name} Cannot advertise actions to {actor.name}";
@@ -116,7 +120,7 @@ public class GoapThread : Multithread {
             }
         } else {
             //default
-            plan = actor.planner.PlanActions(target, goalEffect, isPersonalPlan, ref planLog, job);
+            plan = actor.planner.PlanActions(target, goalEffect, isPersonalPlan, ref planLog, job, this);
         }
 #if DEBUG_LOG
         log += $"\nGOAP TREE LOG: {planLog}";
@@ -180,7 +184,8 @@ public class GoapThread : Multithread {
         isPersonalPlan = false;
         job = null;
         log = null;
-
+        cachedPlan = null;    
+        
         //For recalculation
         recalculationPlan = null;
         owner = null;

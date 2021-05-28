@@ -6,6 +6,7 @@ using UtilityScripts;
 public class GoapPlan {
 
     //public string name { get; private set; }
+    // public string id { get; private set; }
     public IPointOfInterest target { get; private set; }
     public JobNode startingNode { get; private set; }
     public JobNode endNode { get; private set; } //IMPORTANT! End node must always be Single Job Node
@@ -21,7 +22,9 @@ public class GoapPlan {
     public GOAP_PLAN_STATE state { get; private set; }
     public bool resetPlanOnFinishRecalculation { get; private set; }
 
-    public GoapPlan() { }
+    public GoapPlan() {
+        // id = UtilityScripts.Utilities.SetID(this).ToString();
+    }
     public GoapPlan(SaveDataGoapPlan data) {
         if (!string.IsNullOrEmpty(data.poiTargetID)) {
             if (data.targetObjectType == OBJECT_TYPE.Character) {
