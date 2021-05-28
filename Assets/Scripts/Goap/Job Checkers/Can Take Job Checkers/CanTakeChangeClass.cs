@@ -19,6 +19,9 @@
                         //if characters class is already the target class to change to, then do not allow this character to take the job
                         return false;
                     }
+                    if (!character.classComponent.HasAbleClass(classToChangeTo)) {
+                        return false;
+                    }
                 }
                 return true;
             }
