@@ -89,7 +89,10 @@ public class SettlementResources
                 }    
             }
         }
-        ResourcePile chosenPile = pilePool[GameUtilities.RandomBetweenTwoNumbers(0, pilePool.Count - 1)] as ResourcePile;
+        ResourcePile chosenPile = null;
+        if (pilePool.Count > 0) {
+            chosenPile = pilePool[GameUtilities.RandomBetweenTwoNumbers(0, pilePool.Count - 1)] as ResourcePile;
+        }
         resourcePiles.Remove(chosenPile);
         RuinarchListPool<TileObject>.Release(pilePool);
         return found ? chosenPile : null;
@@ -114,7 +117,10 @@ public class SettlementResources
                 }
             }
         }
-        ResourcePile chosenPile = pilePool[GameUtilities.RandomBetweenTwoNumbers(0, pilePool.Count - 1)] as ResourcePile;
+        ResourcePile chosenPile = null;
+        if (pilePool.Count > 0) {
+            chosenPile = pilePool[GameUtilities.RandomBetweenTwoNumbers(0, pilePool.Count - 1)] as ResourcePile;
+        }
         resourcePiles.Remove(chosenPile);
         RuinarchListPool<TileObject>.Release(pilePool);
         return found ? chosenPile : null;
@@ -134,7 +140,10 @@ public class SettlementResources
                 }
             }
         }
-        ResourcePile chosenPile = pilePool[GameUtilities.RandomBetweenTwoNumbers(0, pilePool.Count - 1)] as ResourcePile;
+        ResourcePile chosenPile = null;
+        if (pilePool.Count > 0) {
+            chosenPile = pilePool[GameUtilities.RandomBetweenTwoNumbers(0, pilePool.Count - 1)] as ResourcePile;
+        }
         resourcePiles.Remove(chosenPile);
         RuinarchListPool<TileObject>.Release(pilePool);
         return found ? chosenPile : null;
@@ -152,7 +161,10 @@ public class SettlementResources
                 }
             }
         }
-        ResourcePile chosenPile = pilePool[GameUtilities.RandomBetweenTwoNumbers(0, pilePool.Count - 1)] as ResourcePile;
+        ResourcePile chosenPile = null;
+        if (pilePool.Count > 0) {
+            chosenPile = pilePool[GameUtilities.RandomBetweenTwoNumbers(0, pilePool.Count - 1)] as ResourcePile;
+        }
         resourcePiles.Remove(chosenPile);
         RuinarchListPool<TileObject>.Release(pilePool);
         return found ? chosenPile : null;
@@ -170,7 +182,10 @@ public class SettlementResources
                 }
             }
         }
-        ResourcePile chosenPile = pilePool[GameUtilities.RandomBetweenTwoNumbers(0, pilePool.Count - 1)] as ResourcePile;
+        ResourcePile chosenPile = null;
+        if (pilePool.Count > 0) {
+            chosenPile = pilePool[GameUtilities.RandomBetweenTwoNumbers(0, pilePool.Count - 1)] as ResourcePile;
+        }
         resourcePiles.Remove(chosenPile);
         RuinarchListPool<TileObject>.Release(pilePool);
         return found ? chosenPile : null;
