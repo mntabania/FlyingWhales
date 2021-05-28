@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 namespace Inner_Maps.Location_Structures {
     public class Lumberyard : ManMadeStructure {
-        public override Vector3 worldPosition => structureObj.transform.position;
+        // public override Vector3 worldPosition => structureObj.transform.position;
         public Lumberyard(Region location) : base(STRUCTURE_TYPE.LUMBERYARD, location){
             SetMaxHPAndReset(8000);
         }
