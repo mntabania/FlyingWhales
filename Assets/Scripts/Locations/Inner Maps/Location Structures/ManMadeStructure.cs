@@ -236,6 +236,12 @@ namespace Inner_Maps.Location_Structures {
         }
         #endregion
 
+        public override string GetTestingInfo() {
+            string info = base.GetTestingInfo();
+            info = $"{info}\n Assigned Worker: {assignedWorker?.name}";
+            return info;
+        }
+
         #region Loading
         public override void LoadReferences(SaveDataLocationStructure saveDataLocationStructure) {
             base.LoadReferences(saveDataLocationStructure);

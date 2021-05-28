@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Traits;
 using Inner_Maps;
+using UnityEngine.Assertions;
 
 public class HarvestCrops : GoapAction {
 
@@ -54,9 +55,10 @@ public class HarvestCrops : GoapAction {
         if (tileToSpawnItem != null && tileToSpawnItem.tileObjectComponent.objHere != null) {
             tileToSpawnItem = p_node.actor.gridTileLocation.GetFirstNearestTileFromThisWithNoObject();
         }
-        Summon summon = p_node.target as Summon;
-
-        FoodPile matsToHaul = InnerMapManager.Instance.CreateNewTileObject<FoodPile>((p_node.target as TileObject).tileObjectType);
+        Crops crop = p_node.target as Crops;
+        Assert.IsNotNull(crop);
+        crop.SetGrowthState(Crops.Growth_State.Growing);
+        FoodPile matsToHaul = InnerMapManager.Instance.CreateNewTileObject<FoodPile>(crop.producedObjectOnHarvest);
         matsToHaul.SetResourceInPile(p_node.currentStateDuration * m_amountProducedPerTick);
         tileToSpawnItem.structure.AddPOI(matsToHaul, tileToSpawnItem);
         p_node.actor.homeSettlement.settlementJobTriggerComponent.TryCreateHaulJob(matsToHaul);

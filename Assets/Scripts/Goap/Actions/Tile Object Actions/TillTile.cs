@@ -1,4 +1,5 @@
 ﻿
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -45,12 +46,33 @@ public class TillTile : GoapAction {
     #region State Effects
     public void AfterTillTileSuccess(ActualGoapNode goapNode) {
         //TileObject currentTileObject = p_targetTile.tileObjectComponent.hiddenObjHere;
-        if (goapNode.target.gridTileLocation.tileObjectComponent.objHere != null) {
-            goapNode.target.gridTileLocation.structure.RemovePOI(goapNode.target.gridTileLocation.tileObjectComponent.objHere);
+        LocationGridTile tileLocation = goapNode.target.gridTileLocation;
+        if (tileLocation.tileObjectComponent.objHere != null) {
+            tileLocation.structure.RemovePOI(tileLocation.tileObjectComponent.objHere);
         }
+
+        //add crop to tile.
+        TILE_OBJECT_TYPE tileObjectType = GetCropToCreate(tileLocation);
+        tileLocation.structure.AddPOI(InnerMapManager.Instance.CreateNewTileObject<TileObject>(tileObjectType), tileLocation);
+
         //TileObject tileLot = goapNode.target as TileObject;
         //tileLot.gridTileLocation.tileObjectComponent.objHere
         //LocationGridTile tileToTill = goapNode.target.gridTileLocation;
+    }
+    private TILE_OBJECT_TYPE GetCropToCreate(LocationGridTile p_tile) {
+        if (p_tile.specificBiomeTileType == Biome_Tile_Type.Grassland) {
+            return TILE_OBJECT_TYPE.CORN_CROP;
+        } else if (p_tile.specificBiomeTileType == Biome_Tile_Type.Jungle) {
+            return TILE_OBJECT_TYPE.POTATO_CROP;
+        } else if (p_tile.specificBiomeTileType == Biome_Tile_Type.Desert || 
+                   p_tile.specificBiomeTileType == Biome_Tile_Type.Oasis) {
+            return TILE_OBJECT_TYPE.PINEAPPLE_CROP;
+        } else if (p_tile.specificBiomeTileType == Biome_Tile_Type.Snow || 
+                   p_tile.specificBiomeTileType == Biome_Tile_Type.Taiga || 
+                   p_tile.specificBiomeTileType == Biome_Tile_Type.Tundra) {
+            return TILE_OBJECT_TYPE.ICEBERRY_CROP;
+        }
+        throw new Exception($"No crop production case for {p_tile.specificBiomeTileType.ToString()}");
     }
     #endregion
 }
