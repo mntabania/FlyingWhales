@@ -7,8 +7,6 @@ using UnityEngine.Assertions;
 using UtilityScripts;
 namespace Inner_Maps.Location_Structures {
     public class Mine : ManMadeStructure {
-
-        List<TileObject> builtPilesInSideStructure = RuinarchListPool<TileObject>.Claim();
         public Cave connectedCave { get; private set; }
         public override Type serializedData => typeof(SaveDataMine);
         public Mine(Region location) : base(STRUCTURE_TYPE.MINE, location) {
@@ -85,49 +83,44 @@ namespace Inner_Maps.Location_Structures {
             connectedCave = null;
         }
 
-        List<TileObject> CreateClothAndLeatherList(TILE_OBJECT_TYPE p_type, LocationStructure p_targetStructure = null) {
-            if(p_targetStructure == null) {
-                p_targetStructure = this;
-            }
-            List<TileObject> createdList = RuinarchListPool<TileObject>.Claim();
-            List < TileObject > unsortedList = p_targetStructure.GetTileObjectsOfType(p_type);
+        private void PopulateClothAndLeatherList(List<TileObject> p_list, TILE_OBJECT_TYPE p_type) {
+            List<TileObject> unsortedList = GetTileObjectsOfType(p_type);
             if (unsortedList != null) {
                 for (int x = 0; x < unsortedList.Count; ++x) {
-                    if (unsortedList[x].mapObjectState == MAP_OBJECT_STATE.BUILT && !((unsortedList[x] as TileObject).HasJobTargetingThis(JOB_TYPE.HAUL))) {
-                        createdList.Add(unsortedList[x]);
+                    if (unsortedList[x].mapObjectState == MAP_OBJECT_STATE.BUILT && !unsortedList[x].HasJobTargetingThis(JOB_TYPE.HAUL, JOB_TYPE.COMBINE_STOCKPILE)) {
+                        p_list.Add(unsortedList[x]);
                     }
                 }
             }
-            return createdList;
         }
 
-        void SetListToVariable(LocationStructure p_targetStructure = null) {
-            builtPilesInSideStructure = CreateClothAndLeatherList(TILE_OBJECT_TYPE.COPPER, p_targetStructure);
-            if (builtPilesInSideStructure != null && builtPilesInSideStructure.Count > 1) {
+        void SetListToVariable(List<TileObject> builtPilesInSideStructure) {
+            PopulateClothAndLeatherList(builtPilesInSideStructure, TILE_OBJECT_TYPE.COPPER);
+            if (builtPilesInSideStructure.Count > 1) {
                 return;
             }
-            builtPilesInSideStructure = CreateClothAndLeatherList(TILE_OBJECT_TYPE.IRON, p_targetStructure);
-            if (builtPilesInSideStructure != null && builtPilesInSideStructure.Count > 1) {
+            PopulateClothAndLeatherList(builtPilesInSideStructure, TILE_OBJECT_TYPE.IRON);
+            if (builtPilesInSideStructure.Count > 1) {
                 return;
             }
-            builtPilesInSideStructure = CreateClothAndLeatherList(TILE_OBJECT_TYPE.ORICHALCUM, p_targetStructure);
-            if (builtPilesInSideStructure != null && builtPilesInSideStructure.Count > 1) {
+            PopulateClothAndLeatherList(builtPilesInSideStructure, TILE_OBJECT_TYPE.ORICHALCUM);
+            if (builtPilesInSideStructure.Count > 1) {
                 return;
             }
-            builtPilesInSideStructure = CreateClothAndLeatherList(TILE_OBJECT_TYPE.MITHRIL, p_targetStructure);
-            if (builtPilesInSideStructure != null && builtPilesInSideStructure.Count > 1) {
+            PopulateClothAndLeatherList(builtPilesInSideStructure, TILE_OBJECT_TYPE.MITHRIL);
+            if (builtPilesInSideStructure.Count > 1) {
                 return;
             }
-            builtPilesInSideStructure = CreateClothAndLeatherList(TILE_OBJECT_TYPE.DIAMOND, p_targetStructure);
-            if (builtPilesInSideStructure != null && builtPilesInSideStructure.Count > 1) {
+            PopulateClothAndLeatherList(builtPilesInSideStructure, TILE_OBJECT_TYPE.DIAMOND);
+            if (builtPilesInSideStructure.Count > 1) {
                 return;
             }
-            builtPilesInSideStructure = CreateClothAndLeatherList(TILE_OBJECT_TYPE.GOLD, p_targetStructure);
-            if (builtPilesInSideStructure != null && builtPilesInSideStructure.Count > 1) {
+            PopulateClothAndLeatherList(builtPilesInSideStructure, TILE_OBJECT_TYPE.GOLD);
+            if (builtPilesInSideStructure.Count > 1) {
                 return;
             }
-            builtPilesInSideStructure = CreateClothAndLeatherList(TILE_OBJECT_TYPE.STONE_PILE, p_targetStructure);
-            if (builtPilesInSideStructure != null && builtPilesInSideStructure.Count > 1) {
+            PopulateClothAndLeatherList(builtPilesInSideStructure, TILE_OBJECT_TYPE.STONE_PILE);
+            if (builtPilesInSideStructure.Count > 1) {
                 return;
             }
         }
@@ -135,67 +128,83 @@ namespace Inner_Maps.Location_Structures {
         protected override void ProcessWorkStructureJobsByWorker(Character p_worker, out JobQueueItem producedJob) {
             producedJob = null;
             ResourcePile pile = p_worker.currentSettlement.SettlementResources.GetRandomPileOfMetalOrStone();
+            if (pile == null && connectedCave != null) {
+                pile = connectedCave.GetRandomTileObjectOfTypeThatHasTileLocationAndIsBuiltAndIsNotTargetedByHaulOrCombine<StonePile>();
+                if (pile == null) {
+                    pile = connectedCave.GetRandomTileObjectOfTypeThatHasTileLocationAndIsBuiltAndIsNotTargetedByHaulOrCombine<MetalPile>();
+                }
+            }
             if (pile != null) {
                 p_worker.jobComponent.TryCreateHaulJob(pile, out producedJob);
                 if (producedJob != null) {
                     return;
                 }
-            } else {
-                SetListToVariable(connectedCave);
-                if (builtPilesInSideStructure != null && builtPilesInSideStructure.Count > 0) {
-                    p_worker.jobComponent.TryCreateHaulJob(builtPilesInSideStructure[0] as ResourcePile, out producedJob);
-                    if (producedJob != null) {
-                        return;
-                    }
-                }
             }
-            SetListToVariable();
-            if (builtPilesInSideStructure != null && builtPilesInSideStructure.Count > 1) {
+            //else {
+            //    SetListToVariable(connectedCave);
+            //    if (builtPilesInSideStructure != null && builtPilesInSideStructure.Count > 0) {
+            //        p_worker.jobComponent.TryCreateHaulJob(builtPilesInSideStructure[0] as ResourcePile, out producedJob);
+            //        if (producedJob != null) {
+            //            return;
+            //        }
+            //    }
+            //}
+            List<TileObject> builtPilesInSideStructure = RuinarchListPool<TileObject>.Claim();
+            SetListToVariable(builtPilesInSideStructure);
+            if (builtPilesInSideStructure.Count > 1) {
                 p_worker.jobComponent.TryCreateCombineStockpile(builtPilesInSideStructure[0] as ResourcePile, builtPilesInSideStructure[1] as ResourcePile, out producedJob);
                 if (producedJob != null) {
+                    RuinarchListPool<TileObject>.Release(builtPilesInSideStructure);
                     return;
                 }
             }
+            RuinarchListPool<TileObject>.Release(builtPilesInSideStructure);
+
             List<TileObject> piles = RuinarchListPool<TileObject>.Claim();
             if (p_worker.talentComponent.GetTalent(CHARACTER_TALENT.Resources).level >= 4) {
-                piles = GetMetalTypeResourcePiles();
-                if (piles != null && piles.Count > 0) {
-                    p_worker.jobComponent.TriggerMineOre(piles[0], out producedJob);
+                PopulateMetalTypeResourcePiles(piles);
+                if (piles.Count > 0) {
+                    TileObject chosenPile = piles[GameUtilities.RandomBetweenTwoNumbers(0, piles.Count - 1)];
+                    p_worker.jobComponent.TriggerMineOre(chosenPile, out producedJob);
                     if (producedJob != null) {
+                        RuinarchListPool<TileObject>.Release(piles);
                         return;
                     }
                 }
             } else {
-                piles = GetStonelTypeResourcePiles();
-                if (piles != null && piles.Count > 0) {
-                    p_worker.jobComponent.TriggerMineStone(piles[0], out producedJob);
+                PopulateStoneTypeResourcePiles(piles);
+                if (piles.Count > 0) {
+                    TileObject chosenPile = piles[GameUtilities.RandomBetweenTwoNumbers(0, piles.Count - 1)];
+                    p_worker.jobComponent.TriggerMineStone(chosenPile, out producedJob);
                     if (producedJob != null) {
+                        RuinarchListPool<TileObject>.Release(piles);
                         return;
                     }
                 }
             }
+            RuinarchListPool<TileObject>.Release(piles);
         }
 
-        public List<TileObject> GetMetalTypeResourcePiles() {
-            List<TileObject> metals = connectedCave.GetTileObjectsOfType(TILE_OBJECT_TYPE.ORE);
-            List<TileObject> availMetals = connectedCave.GetTileObjectsOfType(TILE_OBJECT_TYPE.ORE);
+        public void PopulateMetalTypeResourcePiles(List<TileObject> availMetals) {
+            List<TileObject> metals = RuinarchListPool<TileObject>.Claim();
+            connectedCave.PopulateTileObjectsOfType<MetalPile>(metals);
             for (int x = 0; x < metals.Count; ++x) {
-                if (metals[x].HasJobTargetingThis(JOB_TYPE.HAUL)) {
+                if (metals[x].mapObjectState == MAP_OBJECT_STATE.BUILT && !metals[x].HasJobTargetingThis(JOB_TYPE.HAUL, JOB_TYPE.COMBINE_STOCKPILE)) {
                     availMetals.Add(metals[x]);
                 }
             }
-            return availMetals;
+            RuinarchListPool<TileObject>.Release(metals);
         }
 
-        public List<TileObject> GetStonelTypeResourcePiles() {
-            List<TileObject> stones = connectedCave.GetTileObjectsOfType(TILE_OBJECT_TYPE.ORE);
-            List<TileObject> availStone = connectedCave.GetTileObjectsOfType(TILE_OBJECT_TYPE.ORE);
+        public void PopulateStoneTypeResourcePiles(List<TileObject> availStones) {
+            List<TileObject> stones = RuinarchListPool<TileObject>.Claim();
+            connectedCave.PopulateTileObjectsOfType<StonePile>(stones);
             for (int x = 0; x < stones.Count; ++x) {
-                if (stones[x].HasJobTargetingThis(JOB_TYPE.HAUL)) {
-                    availStone.Add(stones[x]);
+                if (stones[x].mapObjectState == MAP_OBJECT_STATE.BUILT && !stones[x].HasJobTargetingThis(JOB_TYPE.HAUL, JOB_TYPE.COMBINE_STOCKPILE)) {
+                    availStones.Add(stones[x]);
                 }
             }
-            return availStone;
+            RuinarchListPool<TileObject>.Release(stones);
         }
     }
 }
