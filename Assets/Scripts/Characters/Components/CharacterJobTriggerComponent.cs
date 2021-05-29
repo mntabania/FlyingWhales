@@ -3415,7 +3415,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
         }
     }
 
-    public void TriggerShearAnimal(Summon p_animal, out JobQueueItem producedJob) {
+    public void TriggerShearAnimal(Character p_animal, out JobQueueItem producedJob) {
         producedJob = null;
         if (!owner.jobQueue.HasJob(JOB_TYPE.SHEAR_ANIMAL)) {
             GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.SHEAR_ANIMAL, INTERACTION_TYPE.SHEAR_ANIMAL, p_animal, owner);

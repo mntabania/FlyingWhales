@@ -44,18 +44,18 @@ public static class EquipmentBonusProcessor
 
     static void ApplyEachBonusToTarget(EquipmentItem p_equipItem, EQUIPMENT_BONUS p_equipBonus, Character p_targetCharacter, bool p_initializedStackCountOnly = false) {
         switch (p_equipBonus) {
-            case EQUIPMENT_BONUS.Atk_Actual:
+            case EQUIPMENT_BONUS.Str_Actual:
             if (p_initializedStackCountOnly) {
                 return;
             }
-            p_targetCharacter.combatComponent.AdjustAttackModifier(p_equipItem.equipmentData.equipmentUpgradeData.GetProcessedAdditionalAttack(p_equipItem.quality));
+            p_targetCharacter.combatComponent.AdjustStrengthModifier(p_equipItem.equipmentData.equipmentUpgradeData.GetProcessedAdditionalAttack(p_equipItem.quality));
             break;
-            case EQUIPMENT_BONUS.Atk_Percentage:
+            case EQUIPMENT_BONUS.Str_Percentage:
             if (p_initializedStackCountOnly) {
                 return;
             }
             //float computedAttack = p_targetCharacter.combatComponent.unModifiedAttack * (p_equipItem.equipmentData.equipmentUpgradeData.AdditionalAttackPercentage / 100f);
-            p_targetCharacter.combatComponent.AdjustAttackPercentModifier(p_equipItem.equipmentData.equipmentUpgradeData.AdditionalAttackPercentage);
+            p_targetCharacter.combatComponent.AdjustStrengthPercentModifier(p_equipItem.equipmentData.equipmentUpgradeData.AdditionalAttackPercentage);
             break;
             case EQUIPMENT_BONUS.Int_Actual:
             if (p_initializedStackCountOnly) {
@@ -149,12 +149,12 @@ public static class EquipmentBonusProcessor
     }
     static void RemoveEachBonusToTarget(EquipmentItem p_equipItem, EQUIPMENT_BONUS p_equipBonus, Character p_targetCharacter) {
         switch (p_equipBonus) {
-            case EQUIPMENT_BONUS.Atk_Actual:
-            p_targetCharacter.combatComponent.AdjustAttackModifier(-p_equipItem.equipmentData.equipmentUpgradeData.GetProcessedAdditionalAttack(p_equipItem.quality));
+            case EQUIPMENT_BONUS.Str_Actual:
+            p_targetCharacter.combatComponent.AdjustStrengthModifier(-p_equipItem.equipmentData.equipmentUpgradeData.GetProcessedAdditionalAttack(p_equipItem.quality));
             break;
-            case EQUIPMENT_BONUS.Atk_Percentage:
+            case EQUIPMENT_BONUS.Str_Percentage:
             //float computedAttack = p_targetCharacter.combatComponent.unModifiedAttack * (p_equipItem.equipmentData.equipmentUpgradeData.AdditionalAttackPercentage / 100f);
-            p_targetCharacter.combatComponent.AdjustAttackPercentModifier(-p_equipItem.equipmentData.equipmentUpgradeData.AdditionalAttackPercentage);
+            p_targetCharacter.combatComponent.AdjustStrengthPercentModifier(-p_equipItem.equipmentData.equipmentUpgradeData.AdditionalAttackPercentage);
             break;
             case EQUIPMENT_BONUS.Int_Actual:
             p_targetCharacter.combatComponent.AdjustIntelligenceModifier(-p_equipItem.equipmentData.equipmentUpgradeData.GetProcessedAdditionalInt(p_equipItem.quality));
