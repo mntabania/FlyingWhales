@@ -21,12 +21,15 @@ MonoBehaviour:
   description: 
   imgIcon: {fileID: 0}
   equipmentUpgradeData:
-    bonuses: 000000000700000002000000
+    bonuses: 0e000000
     AdditionalPiercing: 10
     AdditionalMaxHPPercentage: 0
     AdditionalMaxHPActual: 0
     AdditionalAttackPercentage: 0
     AdditionalAttackActual: 10
+    AdditionalIntPercentage: 0
+    AdditionalIntActual: 0
+    AdditionalCritRate: 100
     additionalResistanceBonus: 0
     elementAttackBonus: 0
     slayerBonus: 0

@@ -21,12 +21,15 @@ MonoBehaviour:
   description: This is Oricalchum Sword
   imgIcon: {fileID: 21300000, guid: 8c9ade4b7d3a25b4f9aff76a4622b6a0, type: 3}
   equipmentUpgradeData:
-    bonuses: 0000000006000000
+    bonuses: 07000000
     AdditionalPiercing: 150
-    AdditionalmaxHPPercentage: 0
-    AdditionalmaxHPActual: 0
+    AdditionalMaxHPPercentage: 0
+    AdditionalMaxHPActual: 0
     AdditionalAttackPercentage: 100
-    AdditionalAttackActual: 0
+    AdditionalAttackActual: 30
+    AdditionalIntPercentage: 0
+    AdditionalIntActual: 0
+    AdditionalCritRate: 0
     additionalResistanceBonus: 0
     elementAttackBonus: 0
     slayerBonus: 0
