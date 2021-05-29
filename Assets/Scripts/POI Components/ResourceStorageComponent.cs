@@ -115,7 +115,7 @@ public class ResourceStorageComponent {
         AdjustResource(resourceCategory, p_amount);
     }
     public void SetResource(CONCRETE_RESOURCES p_resource, int p_amount) {
-        Assert.IsTrue(p_amount > 0, $"A concrete resource is being set as negative! Resource is {p_resource.ToString()}");
+        Assert.IsTrue(p_amount >= 0, $"A concrete resource is being set as negative! Resource is {p_resource.ToString()}");
         int previousAmount = specificStoredResources[p_resource];
         specificStoredResources[p_resource] = p_amount;
         specificStoredResources[p_resource] = Mathf.Max(specificStoredResources[p_resource], 0);

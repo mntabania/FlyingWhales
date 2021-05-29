@@ -85,12 +85,12 @@ public class EquipmentUpgradeDataEditor : Editor {
                 m_additionalMaxHPActual = data.equipmentUpgradeData.AdditionalMaxHPActual = EditorGUILayout.IntField("Additional Max HP(actual)", data.equipmentUpgradeData.AdditionalMaxHPActual);
                 EditorGUILayout.Space();
             }
-            if (data.equipmentUpgradeData.bonuses.Contains(EQUIPMENT_BONUS.Atk_Percentage)) {
-                m_additionalAttackPercentage = data.equipmentUpgradeData.AdditionalAttackPercentage = EditorGUILayout.FloatField("Additional Attack(%)", data.equipmentUpgradeData.AdditionalAttackPercentage);
+            if (data.equipmentUpgradeData.bonuses.Contains(EQUIPMENT_BONUS.Str_Percentage)) {
+                m_additionalAttackPercentage = data.equipmentUpgradeData.AdditionalAttackPercentage = EditorGUILayout.FloatField("Additional Strength(%)", data.equipmentUpgradeData.AdditionalAttackPercentage);
                 EditorGUILayout.Space();
             }
-            if (data.equipmentUpgradeData.bonuses.Contains(EQUIPMENT_BONUS.Atk_Actual)) {
-                m_additionalAttackActual = data.equipmentUpgradeData.AdditionalAttackActual = EditorGUILayout.IntField("Additional Attack(actual)", data.equipmentUpgradeData.AdditionalAttackActual);
+            if (data.equipmentUpgradeData.bonuses.Contains(EQUIPMENT_BONUS.Str_Actual)) {
+                m_additionalAttackActual = data.equipmentUpgradeData.AdditionalAttackActual = EditorGUILayout.IntField("Additional Strength(actual)", data.equipmentUpgradeData.AdditionalAttackActual);
                 EditorGUILayout.Space();
             }
             if (data.equipmentUpgradeData.bonuses.Contains(EQUIPMENT_BONUS.Int_Actual)) {
