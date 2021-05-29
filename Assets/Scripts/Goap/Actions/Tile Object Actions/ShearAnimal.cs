@@ -20,7 +20,7 @@ public class ShearAnimal : GoapAction {
         base.Perform(goapNode);
         SetState("Shear Animal Success", goapNode);
     }
-
+    
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
 #if DEBUG_LOG
         string costLog = $"\n{name} {target.nameWithID}: +10(Constant)";
@@ -44,7 +44,7 @@ public class ShearAnimal : GoapAction {
         ProduceMatsPile(node);
     }
     public void AfterShearAnimalSuccess(ActualGoapNode p_node) {
-        p_node.actor.homeSettlement.settlementJobTriggerComponent.TryCreateHaulJob(ProduceMatsPile(p_node));
+        p_node.actor.jobComponent.TryCreateHaulJob(ProduceMatsPile(p_node));
     }
     #endregion
 
@@ -53,13 +53,13 @@ public class ShearAnimal : GoapAction {
         if (tileToSpawnPile != null && tileToSpawnPile.tileObjectComponent.objHere != null) {
             tileToSpawnPile = p_node.actor.gridTileLocation.GetFirstNearestTileFromThisWithNoObject();
         }
-        ResourcePile matsToHaul = InnerMapManager.Instance.CreateNewTileObject<ResourcePile>((p_node.target as Animal).produceableMaterial);
+        Animal targetAnimal = (p_node.target as Animal);
+        ResourcePile matsToHaul = InnerMapManager.Instance.CreateNewTileObject<ResourcePile>(targetAnimal.produceableMaterial);
         matsToHaul.SetResourceInPile(p_node.currentStateDuration * m_amountProducedPerTick);
+        targetAnimal.isShearable = false;
         tileToSpawnPile.structure.AddPOI(matsToHaul, tileToSpawnPile);
         ProduceLogs(p_node);
-        (p_node.target as TileObject).DestroyMapVisualGameObject();
-        (p_node.target as TileObject).DestroyPermanently();
-
+        
         return matsToHaul;
     }
 

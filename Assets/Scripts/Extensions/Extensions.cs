@@ -793,6 +793,7 @@ public static class Extensions {
             case JOB_TYPE.SKIN_ANIMAL:
             case JOB_TYPE.HARVEST_CROPS:
             case JOB_TYPE.CHOP_WOOD:
+            case JOB_TYPE.MINE_STONE:
             priority = 920;
                 break;
             case JOB_TYPE.UNDERMINE:
@@ -1081,6 +1082,51 @@ public static class Extensions {
         }
         return priority;
     }
+
+    public static bool IsButcherableWhenDeadOrAlive(this RACE type) {
+        switch (type) {
+            case RACE.RABBIT:
+            case RACE.SHEEP:
+            case RACE.PIG:
+            case RACE.CHICKEN:
+            return true;
+        }
+        return false;
+    }
+
+    public static bool IsButcherableWhenDead(this RACE type) {
+        switch (type) {
+            case RACE.BOAR:
+            case RACE.WOLF:
+            case RACE.BEAR:
+            return true;
+        }
+        return false;
+    }
+
+    public static bool IsShearable(this RACE type) {
+        switch (type) {
+            case RACE.RABBIT:
+            case RACE.SHEEP:
+            case RACE.MINK:
+            case RACE.MOONWALKER:
+            return true;
+        }
+        return false;
+    }
+
+    public static bool IsSkinnable(this RACE type) {
+        switch (type) {
+            case RACE.BOAR:
+            case RACE.BEAR:
+            case RACE.WOLF:
+            case RACE.DRAGON:
+            case RACE.SPIDER:
+            return true;
+        }
+        return false;
+    }
+
     public static bool IsJobLethal(this JOB_TYPE type) {
         switch (type) {
             case JOB_TYPE.APPREHEND:
@@ -1646,6 +1692,25 @@ public static class Extensions {
                 return RESOURCE.WOOD;
             default:
                 throw new ArgumentOutOfRangeException(nameof(p_resource), p_resource, null);
+        }
+    }
+
+    public static TILE_OBJECT_TYPE ConvertResourcesToTileObjectType(this CONCRETE_RESOURCES p_resrouce) {
+        switch (p_resrouce) {
+            case CONCRETE_RESOURCES.Copper:
+            return TILE_OBJECT_TYPE.COPPER;
+            case CONCRETE_RESOURCES.Iron:
+            return TILE_OBJECT_TYPE.IRON;
+            case CONCRETE_RESOURCES.Mithril:
+            return TILE_OBJECT_TYPE.MITHRIL;
+            case CONCRETE_RESOURCES.Orichalcum:
+            return TILE_OBJECT_TYPE.ORICHALCUM;
+            case CONCRETE_RESOURCES.Gold:
+            return TILE_OBJECT_TYPE.GOLD;
+            case CONCRETE_RESOURCES.Diamond:
+            return TILE_OBJECT_TYPE.DIAMOND;
+            default:
+            return TILE_OBJECT_TYPE.NONE;
         }
     }
     #endregion

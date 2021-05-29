@@ -3347,10 +3347,19 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
     #endregion
 
     #region new Jobs
-    public void TriggerMineOre(GenericTileObject p_tileObject) {
+    public void TriggerMineOre(TileObject p_tileObject, out JobQueueItem jobQueueItem) {
+        jobQueueItem = null;
         if (!owner.jobQueue.HasJob(JOB_TYPE.MINE_ORE)) {
             GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.MINE_ORE, INTERACTION_TYPE.MINE_ORE, p_tileObject, owner);
-            owner.jobQueue.AddJobInQueue(job);
+            jobQueueItem = job;
+        }
+    }
+
+    public void TriggerMineStone(TileObject p_tileObject, out JobQueueItem jobQueueItem) {
+        jobQueueItem = null;
+        if (!owner.jobQueue.HasJob(JOB_TYPE.MINE_STONE)) {
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.MINE_STONE, INTERACTION_TYPE.MINE_STONE, p_tileObject, owner);
+            jobQueueItem = job;
         }
     }
 
@@ -3406,17 +3415,19 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
         }
     }
 
-    public void TriggerShearAnimal(Character p_animal) {
+    public void TriggerShearAnimal(Summon p_animal, out JobQueueItem producedJob) {
+        producedJob = null;
         if (!owner.jobQueue.HasJob(JOB_TYPE.SHEAR_ANIMAL)) {
             GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.SHEAR_ANIMAL, INTERACTION_TYPE.SHEAR_ANIMAL, p_animal, owner);
-            owner.jobQueue.AddJobInQueue(job);
+            producedJob = job;
         }
     }
 
-    public void TriggerSkinAnimal(Character p_animal) {
+    public void TriggerSkinAnimal(Character p_animal, out JobQueueItem producedJob) {
+        producedJob = null;
         if (!owner.jobQueue.HasJob(JOB_TYPE.SKIN_ANIMAL)) {
             GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.SKIN_ANIMAL, INTERACTION_TYPE.SKIN_ANIMAL, p_animal, owner);
-            owner.jobQueue.AddJobInQueue(job);
+            producedJob = job;
         }
     }
 

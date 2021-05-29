@@ -23,7 +23,7 @@ public class MineStone : GoapAction {
     //}
     public override void Perform(ActualGoapNode goapNode) {
         base.Perform(goapNode);
-        SetState("Mine Stone Success", goapNode);
+        SetState("Mine Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
 #if DEBUG_LOG
@@ -48,8 +48,8 @@ public class MineStone : GoapAction {
     #endregion
 
     #region State Effects
-    public void AfterMineStoneSuccess(ActualGoapNode p_node) {
-        p_node.actor.homeSettlement.settlementJobTriggerComponent.TryCreateHaulJob(ProduceMatsPile(p_node));
+    public void AfterMineSuccess(ActualGoapNode p_node) {
+        p_node.actor.jobComponent.TryCreateHaulJob(ProduceMatsPile(p_node));
     }
     #endregion
 
