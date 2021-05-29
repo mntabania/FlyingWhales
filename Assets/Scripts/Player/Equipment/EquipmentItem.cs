@@ -27,10 +27,10 @@ public class EquipmentItem : TileObject {
 
     //this is for testing purpose only OnPlacePOI()
     public override void OnPlacePOI() {
-		base.OnPlacePOI();
+        base.OnPlacePOI();
         traitContainer.AddTrait(this, "Treasure");
     }
-	public void MakeQualityHigh() {
+    public void MakeQualityHigh() {
         maxHP += (int)(maxHP * 0.5f);
         additionalQualityBonusPercentage = 25;
     }
@@ -40,7 +40,7 @@ public class EquipmentItem : TileObject {
         additionalQualityBonusPercentage = 50;
     }
 
-    public float GetAdditionaliQualityBonusPercentage() { 
+    public float GetAdditionaliQualityBonusPercentage() {
         return additionalQualityBonusPercentage = 50;
     }
 
@@ -54,6 +54,12 @@ public class EquipmentItem : TileObject {
 
         maxHP = 700;
         currentHP = maxHP;
+    }
+
+    public string GetBonusDescription() {
+        string description = equipmentData.equipmentUpgradeData.GetBonusDescription();
+        resistanceBonuses.ForEach((eachBonus) => description += ("\n" + eachBonus.ToString()));
+        return description;
     }
 
     #region Save Data

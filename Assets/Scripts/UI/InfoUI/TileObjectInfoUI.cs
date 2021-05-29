@@ -23,6 +23,8 @@ public class TileObjectInfoUI : InfoUIBase {
     [SerializeField] private TextMeshProUGUI carriedByLbl;
     [SerializeField] private EventLabel carriedByEventLbl;
     [SerializeField] private TextMeshProUGUI statusTraitsLbl;
+    [SerializeField] private GameObject equipBonusGO;
+    [SerializeField] private TextMeshProUGUI equipBonusLbl;
     [SerializeField] private TextMeshProUGUI normalTraitsLbl;
     [SerializeField] private EventLabel statusTraitsEventLbl;
     [SerializeField] private EventLabel normalTraitsEventLbl;
@@ -211,6 +213,7 @@ public class TileObjectInfoUI : InfoUIBase {
     private void UpdateTraits() {
         string statusTraits = string.Empty;
         string normalTraits = string.Empty;
+        string equipTraits = string.Empty;
 
         for (int i = 0; i < activeTileObject.traitContainer.statuses.Count; i++) {
             Status currStatus = activeTileObject.traitContainer.statuses[i];
@@ -241,6 +244,16 @@ public class TileObjectInfoUI : InfoUIBase {
         }
 
         statusTraitsLbl.text = string.Empty;
+        if (activeTileObject is EquipmentItem) {
+            equipBonusGO.gameObject.SetActive(true);
+            equipTraits += "\n" + (activeTileObject as EquipmentItem).GetBonusDescription();
+            if (string.IsNullOrEmpty(equipTraits) == false) {
+                //character has status traits
+                equipBonusLbl.text = equipTraits;
+            }
+        } else {
+            equipBonusGO.gameObject.SetActive(false);
+        }
         if (string.IsNullOrEmpty(statusTraits) == false) {
             //character has status traits
             statusTraitsLbl.text = statusTraits;

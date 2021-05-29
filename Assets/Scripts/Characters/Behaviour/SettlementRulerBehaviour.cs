@@ -129,8 +129,8 @@ public class SettlementRulerBehaviour : CharacterBehaviourComponent {
 #endif
                         }
 
-                        // chance = 100;
-                        
+                        chance = 100;
+                        determinedStructureToUse = STRUCTURE_TYPE.BUTCHERS_SHOP;
                         if (GameUtilities.RollChance(chance, ref log)) {
                             if (determinedStructureToUse == STRUCTURE_TYPE.NONE) {
 #if DEBUG_LOG
