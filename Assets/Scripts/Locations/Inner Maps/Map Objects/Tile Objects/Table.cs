@@ -17,7 +17,8 @@ public class Table : TileObject {
         AddAdvertisedAction(INTERACTION_TYPE.DROP_ITEM);
         AddAdvertisedAction(INTERACTION_TYPE.PICK_UP);
 
-        SetFood(CONCRETE_RESOURCES.Animal_Meat, UnityEngine.Random.Range(20, 81)); //20
+        //SetFood(CONCRETE_RESOURCES.Animal_Meat, UnityEngine.Random.Range(20, 81)); //20
+        SetFood(CONCRETE_RESOURCES.Animal_Meat, 1000);
         traitContainer.AddTrait(this, "Edible");
     }
 

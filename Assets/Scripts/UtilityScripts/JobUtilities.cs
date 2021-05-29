@@ -17,12 +17,28 @@ namespace UtilityScripts {
                 if (homeSettlement != null) {
                     LocationStructure cityCenter = homeSettlement.GetFirstStructureOfType(STRUCTURE_TYPE.CITY_CENTER);
                     LocationStructure tavern = homeSettlement.GetFirstStructureOfType(STRUCTURE_TYPE.TAVERN);
+                    LocationStructure fishery = homeSettlement.GetFirstStructureOfType(STRUCTURE_TYPE.FISHERY);
+                    LocationStructure farm = homeSettlement.GetFirstStructureOfType(STRUCTURE_TYPE.FISHERY);
+                    LocationStructure butcherShop = homeSettlement.GetFirstStructureOfType(STRUCTURE_TYPE.BUTCHERS_SHOP);
+
                     if (cityCenter != null) {
                         job.AddPriorityLocation(INTERACTION_TYPE.NONE, cityCenter);
                         hasPrioLocation = true;
                     }
                     if (tavern != null) {
                         job.AddPriorityLocation(INTERACTION_TYPE.NONE, tavern);
+                        hasPrioLocation = true;
+                    }
+                    if (fishery != null) {
+                        job.AddPriorityLocation(INTERACTION_TYPE.NONE, fishery);
+                        hasPrioLocation = true;
+                    }
+                    if (farm != null) {
+                        job.AddPriorityLocation(INTERACTION_TYPE.NONE, farm);
+                        hasPrioLocation = true;
+                    }
+                    if (butcherShop != null) {
+                        job.AddPriorityLocation(INTERACTION_TYPE.NONE, butcherShop);
                         hasPrioLocation = true;
                     }
                 }
