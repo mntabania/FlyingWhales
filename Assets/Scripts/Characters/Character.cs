@@ -3855,6 +3855,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
 
     void RemoveBonusForUnobtainedEquipment(TileObject p_tileObject) {
         if (p_tileObject is EquipmentItem equipItem) {
+            equipItem.SetInventoryOwner(null);
             equipmentComponent.RemoveEquipment(equipItem, this);
         }
     }
