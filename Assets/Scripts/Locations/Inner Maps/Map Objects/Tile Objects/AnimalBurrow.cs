@@ -9,7 +9,7 @@ public abstract class AnimalBurrow : TileObject {
     public SUMMON_TYPE monsterToSpawn { get; private set; }
     public List<Summon> spawnedMonsters { get; private set; }
 
-    private const int MaxMonsters = 5;
+    private const int MaxMonsters = 3;
 
     #region getters
     public override Vector2 selectableSize => new Vector2(1.7f, 1.7f);
