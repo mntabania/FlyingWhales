@@ -697,6 +697,23 @@ namespace Inner_Maps.Location_Structures {
             RuinarchListPool<TileObject>.Release(objs);
             return chosenObj;
         }
+        public T GetRandomTileObjectOfTypeThatHasTileLocationAndIsBuiltAndIsNotTargetedByHaulOrCombine<T>() where T : TileObject {
+            List<TileObject> objs = RuinarchListPool<TileObject>.Claim();
+            for (int i = 0; i < pointsOfInterest.Count; i++) {
+                IPointOfInterest poi = pointsOfInterest.ElementAt(i);
+                if (poi is T t) {
+                    if (t.mapObjectState == MAP_OBJECT_STATE.BUILT && t.gridTileLocation != null && !t.HasJobTargetingThis(JOB_TYPE.HAUL, JOB_TYPE.COMBINE_STOCKPILE)) {
+                        objs.Add(t);
+                    }
+                }
+            }
+            T chosenObj = null;
+            if (objs.Count > 0) {
+                chosenObj = objs[UnityEngine.Random.Range(0, objs.Count)] as T;
+            }
+            RuinarchListPool<TileObject>.Release(objs);
+            return chosenObj;
+        }
         public T GetFirstTileObjectOfTypeThatIsAvailable<T>() where T : TileObject {
             for (int i = 0; i < pointsOfInterest.Count; i++) {
                 IPointOfInterest poi = pointsOfInterest.ElementAt(i);
