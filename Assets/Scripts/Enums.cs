@@ -1306,7 +1306,7 @@ public enum UPGRADE_BONUS {
 }
 
 public enum EQUIPMENT_BONUS {
-    Increased_Piercing = 0, Increased_3_Random_Resistance, Increased_4_Random_Resistance, Increased_5_Random_Resistance, Max_HP_Percentage, Max_HP_Actual, Atk_Percentage, Atk_Actual, Attack_Element, Slayer_Bonus, Ward_Bonus, Flight, Int_Percentage, Int_Actual, Crit_Rate_Actual, None,
+    Increased_Piercing = 0, Increased_3_Random_Resistance, Increased_4_Random_Resistance, Increased_5_Random_Resistance, Max_HP_Percentage, Max_HP_Actual, Str_Percentage, Str_Actual, Attack_Element, Slayer_Bonus, Ward_Bonus, Flight, Int_Percentage, Int_Actual, Crit_Rate_Actual, None,
 }
 
 public enum EQUIPMENT_SLAYER_BONUS { 
