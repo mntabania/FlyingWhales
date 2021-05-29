@@ -125,7 +125,7 @@ public class SettlementResources
                pile.tileObjectType == TILE_OBJECT_TYPE.PINEAPPLE ||
                pile.tileObjectType == TILE_OBJECT_TYPE.HYPNO_HERB ||
                pile.tileObjectType == TILE_OBJECT_TYPE.POTATO) {
-                if (pile.currentStructure.structureType != STRUCTURE_TYPE.CITY_CENTER && pile.currentStructure.structureType != STRUCTURE_TYPE.FARM && !pile.HasJobTargetingThis(JOB_TYPE.HAUL)) {
+                if (pile.currentStructure.structureType != STRUCTURE_TYPE.CITY_CENTER && pile.currentStructure.structureType != STRUCTURE_TYPE.FARM && !pile.HasJobTargetingThis(JOB_TYPE.HAUL, JOB_TYPE.COMBINE_STOCKPILE)) {
                     pilePool.Add(pile);
                     //found = true;
                 }    
@@ -152,7 +152,7 @@ public class SettlementResources
                pile.tileObjectType == TILE_OBJECT_TYPE.DRAGON_HIDE ||
                pile.tileObjectType == TILE_OBJECT_TYPE.SCALE_HIDE ||
                pile.tileObjectType == TILE_OBJECT_TYPE.WOLF_HIDE) {
-                if (pile.currentStructure.structureType != STRUCTURE_TYPE.CITY_CENTER && pile.currentStructure.structureType != STRUCTURE_TYPE.HUNTER_LODGE && !pile.HasJobTargetingThis(JOB_TYPE.HAUL)) {
+                if (pile.currentStructure.structureType != STRUCTURE_TYPE.CITY_CENTER && pile.currentStructure.structureType != STRUCTURE_TYPE.HUNTER_LODGE && !pile.HasJobTargetingThis(JOB_TYPE.HAUL, JOB_TYPE.COMBINE_STOCKPILE)) {
                     pilePool.Add(pile);
                     //found = true;
                 }
@@ -174,7 +174,7 @@ public class SettlementResources
             if (pile.tileObjectType == TILE_OBJECT_TYPE.ANIMAL_MEAT ||
                pile.tileObjectType == TILE_OBJECT_TYPE.ELF_MEAT ||
                pile.tileObjectType == TILE_OBJECT_TYPE.HUMAN_MEAT) {
-                if (pile.currentStructure.structureType != STRUCTURE_TYPE.CITY_CENTER && pile.currentStructure.structureType != STRUCTURE_TYPE.BUTCHERS_SHOP && !pile.HasJobTargetingThis(JOB_TYPE.HAUL)) {
+                if (pile.currentStructure.structureType != STRUCTURE_TYPE.CITY_CENTER && pile.currentStructure.structureType != STRUCTURE_TYPE.BUTCHERS_SHOP && !pile.HasJobTargetingThis(JOB_TYPE.HAUL, JOB_TYPE.COMBINE_STOCKPILE)) {
                     pilePool.Add(pile);
                     //found = true;
                 }
@@ -194,7 +194,7 @@ public class SettlementResources
         for (int x = 0; x < resourcePiles.Count; ++x) {
             ResourcePile pile = resourcePiles[x];
             if (pile.tileObjectType == TILE_OBJECT_TYPE.FISH_PILE) {
-                if (pile.currentStructure.structureType != STRUCTURE_TYPE.CITY_CENTER && pile.currentStructure.structureType != STRUCTURE_TYPE.FISHERY && !pile.HasJobTargetingThis(JOB_TYPE.HAUL)) {
+                if (pile.currentStructure.structureType != STRUCTURE_TYPE.CITY_CENTER && pile.currentStructure.structureType != STRUCTURE_TYPE.FISHERY && !pile.HasJobTargetingThis(JOB_TYPE.HAUL, JOB_TYPE.COMBINE_STOCKPILE)) {
                     pilePool.Add(pile);
                     //found = true;
                 }
@@ -214,7 +214,7 @@ public class SettlementResources
         for (int x = 0; x < resourcePiles.Count; ++x) {
             ResourcePile pile = resourcePiles[x];
             if (pile.tileObjectType == TILE_OBJECT_TYPE.WOOD_PILE) {
-                if (pile.mapObjectState == MAP_OBJECT_STATE.BUILT && pile.currentStructure.structureType != STRUCTURE_TYPE.CITY_CENTER && pile.currentStructure.structureType != STRUCTURE_TYPE.LUMBERYARD && !pile.HasJobTargetingThis(JOB_TYPE.HAUL)) {
+                if (pile.mapObjectState == MAP_OBJECT_STATE.BUILT && pile.currentStructure.structureType != STRUCTURE_TYPE.CITY_CENTER && pile.currentStructure.structureType != STRUCTURE_TYPE.LUMBERYARD && !pile.HasJobTargetingThis(JOB_TYPE.HAUL, JOB_TYPE.COMBINE_STOCKPILE)) {
                     pilePool.Add(pile);
                     //found = true;
                 }
@@ -248,7 +248,7 @@ public class SettlementResources
 
     public void PopulateAllAnimalsThatProducesMats(List<Character> allAvailableAnimals) {
         for (int x = 0; x < animalsThatProducesMats.Count; ++x) {
-            if ((!animalsThatProducesMats[x].HasJobTargetingThis(JOB_TYPE.MONSTER_BUTCHER) || !animalsThatProducesMats[x].HasJobTargetingThis(JOB_TYPE.SHEAR_ANIMAL) || !animalsThatProducesMats[x].HasJobTargetingThis(JOB_TYPE.SKIN_ANIMAL))) {
+            if (!animalsThatProducesMats[x].HasJobTargetingThis(JOB_TYPE.MONSTER_BUTCHER, JOB_TYPE.SHEAR_ANIMAL, JOB_TYPE.SKIN_ANIMAL)) {
                 allAvailableAnimals.Add(animalsThatProducesMats[x]);
             }
         }
@@ -256,7 +256,7 @@ public class SettlementResources
 
     public void PopulateAllAnimalsThatAreShearable(List<Character> ableToShearTodayList) {
         for(int x = 0; x < shearables.Count; ++x) {
-            if (shearables[x] is Animal target && target.isShearable && (!target.HasJobTargetingThis(JOB_TYPE.MONSTER_BUTCHER) || !target.HasJobTargetingThis(JOB_TYPE.SHEAR_ANIMAL) || !target.HasJobTargetingThis(JOB_TYPE.SKIN_ANIMAL))) {
+            if (shearables[x] is Animal target && target.isShearable && !target.HasJobTargetingThis(JOB_TYPE.MONSTER_BUTCHER, JOB_TYPE.SHEAR_ANIMAL, JOB_TYPE.SKIN_ANIMAL)) {
                 ableToShearTodayList.Add(shearables[x]);
             }
 		}
@@ -265,7 +265,7 @@ public class SettlementResources
     public List<Summon> GetAllAnimalsThatAreSkinnable() {
         List<Summon> ableToSkinAnimals = new List<Summon>();
         for (int x = 0; x < skinnables.Count; ++x) {
-            if ((!skinnables[x].HasJobTargetingThis(JOB_TYPE.MONSTER_BUTCHER) || !skinnables[x].HasJobTargetingThis(JOB_TYPE.SHEAR_ANIMAL) || !skinnables[x].HasJobTargetingThis(JOB_TYPE.SKIN_ANIMAL))) {
+            if (!skinnables[x].HasJobTargetingThis(JOB_TYPE.MONSTER_BUTCHER, JOB_TYPE.SHEAR_ANIMAL, JOB_TYPE.SKIN_ANIMAL)) {
                 ableToSkinAnimals.Add(skinnables[x]);
             }
         }
@@ -274,7 +274,8 @@ public class SettlementResources
 
     public Summon GetRandomButcherableAnimal() {
         for (int x = 0; x < butcherables.Count; ++x) {
-            if ((butcherables[x].currentStructure != null && butcherables[x].currentStructure.structureType != STRUCTURE_TYPE.CITY_CENTER && butcherables[x].currentStructure.structureType != STRUCTURE_TYPE.FARM) && (!butcherables[x].HasJobTargetingThis(JOB_TYPE.MONSTER_BUTCHER) || !butcherables[x].HasJobTargetingThis(JOB_TYPE.SHEAR_ANIMAL) || !butcherables[x].HasJobTargetingThis(JOB_TYPE.SKIN_ANIMAL))) {
+            if (butcherables[x].currentStructure != null && butcherables[x].currentStructure.structureType != STRUCTURE_TYPE.CITY_CENTER && butcherables[x].currentStructure.structureType != STRUCTURE_TYPE.FARM
+                && !butcherables[x].HasJobTargetingThis(JOB_TYPE.MONSTER_BUTCHER, JOB_TYPE.SHEAR_ANIMAL, JOB_TYPE.SKIN_ANIMAL)) {
                 return butcherables[x];
             }
         }
@@ -293,7 +294,7 @@ public class SettlementResources
                pile.tileObjectType == TILE_OBJECT_TYPE.DIAMOND ||
                pile.tileObjectType == TILE_OBJECT_TYPE.GOLD ||
                pile.tileObjectType == TILE_OBJECT_TYPE.STONE_PILE) {
-                if (pile.currentStructure.structureType != STRUCTURE_TYPE.CITY_CENTER && pile.currentStructure.structureType != STRUCTURE_TYPE.HUNTER_LODGE && !pile.HasJobTargetingThis(JOB_TYPE.HAUL)) {
+                if (pile.currentStructure.structureType != STRUCTURE_TYPE.CITY_CENTER && pile.currentStructure.structureType != STRUCTURE_TYPE.HUNTER_LODGE && !pile.HasJobTargetingThis(JOB_TYPE.HAUL, JOB_TYPE.COMBINE_STOCKPILE)) {
                     pilePool.Add(pile);
                     //found = true;
                 }

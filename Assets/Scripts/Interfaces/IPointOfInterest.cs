@@ -41,6 +41,7 @@ public interface IPointOfInterest : ITraitable, ISelectable, ILogFiller {
     bool RemoveJobTargetingThis(JobQueueItem job);
     bool HasJobTargetingThis(JOB_TYPE jobType);
     bool HasJobTargetingThis(JOB_TYPE jobType1, JOB_TYPE jobType2);
+    bool HasJobTargetingThis(JOB_TYPE jobType1, JOB_TYPE jobType2, JOB_TYPE jobType3);
     void SetPOIState(POI_STATE state);
     bool IsAvailable();
     LocationGridTile GetNearestUnoccupiedTileFromThis();

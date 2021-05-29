@@ -956,6 +956,15 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
         return false;
     }
+    public bool HasJobTargetingThis(JOB_TYPE jobType1, JOB_TYPE jobType2, JOB_TYPE jobType3) {
+        for (int i = 0; i < allJobsTargetingThis.Count; i++) {
+            JobQueueItem job = allJobsTargetingThis[i];
+            if (job.jobType == jobType1 || job.jobType == jobType2 || job.jobType == jobType3) {
+                return true;
+            }
+        }
+        return false;
+    }
     public int GetNumOfJobsTargettingThisCharacter(JOB_TYPE jobType) {
         int count = 0;
         for (int i = 0; i < allJobsTargetingThis.Count; i++) {
