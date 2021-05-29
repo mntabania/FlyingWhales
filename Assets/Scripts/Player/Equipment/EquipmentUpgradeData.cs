@@ -128,6 +128,9 @@ public class EquipmentUpgradeData {
         if (bonuses.Contains(EQUIPMENT_BONUS.Attack_Element)) {
             descriptopn += ("Element: " + elementAttackBonus + "\n");
         }
+        if (bonuses.Contains(EQUIPMENT_BONUS.Flight)) {
+            descriptopn += ("Flight: YES" + "\n");
+        }
         if (bonuses.Contains(EQUIPMENT_BONUS.Increased_3_Random_Resistance) || bonuses.Contains(EQUIPMENT_BONUS.Increased_4_Random_Resistance) || bonuses.Contains(EQUIPMENT_BONUS.Increased_5_Random_Resistance)) {
             if (additionalResistanceBonus > 0) {
                 descriptopn += ("Additional Resistance Bonus: " + additionalResistanceBonus + "\n");
