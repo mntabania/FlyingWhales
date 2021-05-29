@@ -246,24 +246,20 @@ public class SettlementResources
         return null;
     }
 
-    public List<Summon> GetAllAnimalsThatProducesMats() {
-        List<Summon> allAvailableAnimals = new List<Summon>();
+    public void PopulateAllAnimalsThatProducesMats(List<Character> allAvailableAnimals) {
         for (int x = 0; x < animalsThatProducesMats.Count; ++x) {
             if ((animalsThatProducesMats[x].HasJobTargetingThis(JOB_TYPE.MONSTER_BUTCHER) || animalsThatProducesMats[x].HasJobTargetingThis(JOB_TYPE.SHEAR_ANIMAL) || animalsThatProducesMats[x].HasJobTargetingThis(JOB_TYPE.SKIN_ANIMAL))) {
                 allAvailableAnimals.Add(animalsThatProducesMats[x]);
             }
         }
-        return allAvailableAnimals;
     }
 
-    public List<Summon> GetAllAnimalsThatAreShearable() {
-        List<Summon> ableToShearTodayList = new List<Summon>();
+    public void PopulateAllAnimalsThatAreShearable(List<Character> ableToShearTodayList) {
         for(int x = 0; x < shearables.Count; ++x) {
             if (shearables[x] is Animal target && target.isShearable && (target.HasJobTargetingThis(JOB_TYPE.MONSTER_BUTCHER) || target.HasJobTargetingThis(JOB_TYPE.SHEAR_ANIMAL) || target.HasJobTargetingThis(JOB_TYPE.SKIN_ANIMAL))) {
                 ableToShearTodayList.Add(shearables[x]);
             }
 		}
-        return ableToShearTodayList;
     }
 
     public List<Summon> GetAllAnimalsThatAreSkinnable() {

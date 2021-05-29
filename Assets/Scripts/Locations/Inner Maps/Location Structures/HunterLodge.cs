@@ -2,8 +2,6 @@
 using UtilityScripts;
 namespace Inner_Maps.Location_Structures {
     public class HunterLodge : ManMadeStructure {
-
-        List<TileObject> builtPilesInSideStructure = RuinarchListPool<TileObject>.Claim();
         public HunterLodge(Region location) : base(STRUCTURE_TYPE.HUNTER_LODGE, location) {
             SetMaxHPAndReset(8000);
         }
@@ -11,50 +9,56 @@ namespace Inner_Maps.Location_Structures {
             SetMaxHP(8000);
         }
 
-        List<TileObject> CreateClothAndLeatherList(TILE_OBJECT_TYPE p_type) {
-            List<TileObject> createdList = RuinarchListPool<TileObject>.Claim();
+        private void PopulateClothAndLeatherList(List<TileObject> p_list, TILE_OBJECT_TYPE p_type) {
             List<TileObject> unsortedList = GetTileObjectsOfType(p_type);
             if (unsortedList != null) {
-                unsortedList.ForEach((eachList) => {
-                    if (eachList.mapObjectState == MAP_OBJECT_STATE.BUILT && !((eachList as TileObject).HasJobTargetingThis(JOB_TYPE.HAUL))) {
-                        createdList.Add(eachList);
+                for (int i = 0; i < unsortedList.Count; i++) {
+                    TileObject t = unsortedList[i];
+                    if (t.mapObjectState == MAP_OBJECT_STATE.BUILT && !t.HasJobTargetingThis(JOB_TYPE.HAUL, JOB_TYPE.COMBINE_STOCKPILE)) {
+                        p_list.Add(t);
                     }
-                });
+                }
             }
-            return createdList;
         }
 
-        void SetListToVariable() {
-            builtPilesInSideStructure = CreateClothAndLeatherList(TILE_OBJECT_TYPE.MINK_CLOTH);
-            if (builtPilesInSideStructure != null && builtPilesInSideStructure.Count > 1) {
+        private void SetListToVariable(List<TileObject> builtPilesInSideStructure) {
+            PopulateClothAndLeatherList(builtPilesInSideStructure, TILE_OBJECT_TYPE.MINK_CLOTH);
+            if (builtPilesInSideStructure.Count > 1) {
                 return;
             }
-            builtPilesInSideStructure = CreateClothAndLeatherList(TILE_OBJECT_TYPE.MOONCRAWLER_CLOTH);
-            if (builtPilesInSideStructure != null && builtPilesInSideStructure.Count > 1) {
+            builtPilesInSideStructure.Clear();
+            PopulateClothAndLeatherList(builtPilesInSideStructure, TILE_OBJECT_TYPE.MOONCRAWLER_CLOTH);
+            if (builtPilesInSideStructure.Count > 1) {
                 return;
             }
-            builtPilesInSideStructure = CreateClothAndLeatherList(TILE_OBJECT_TYPE.RABBIT_CLOTH);
-            if (builtPilesInSideStructure != null && builtPilesInSideStructure.Count > 1) {
+            builtPilesInSideStructure.Clear();
+            PopulateClothAndLeatherList(builtPilesInSideStructure, TILE_OBJECT_TYPE.RABBIT_CLOTH);
+            if (builtPilesInSideStructure.Count > 1) {
                 return;
             }
-            builtPilesInSideStructure = CreateClothAndLeatherList(TILE_OBJECT_TYPE.BEAR_HIDE);
-            if (builtPilesInSideStructure != null && builtPilesInSideStructure.Count > 1) {
+            builtPilesInSideStructure.Clear();
+            PopulateClothAndLeatherList(builtPilesInSideStructure, TILE_OBJECT_TYPE.BEAR_HIDE);
+            if (builtPilesInSideStructure.Count > 1) {
                 return;
             }
-            builtPilesInSideStructure = CreateClothAndLeatherList(TILE_OBJECT_TYPE.BOAR_HIDE);
-            if (builtPilesInSideStructure != null && builtPilesInSideStructure.Count > 1) {
+            builtPilesInSideStructure.Clear();
+            PopulateClothAndLeatherList(builtPilesInSideStructure, TILE_OBJECT_TYPE.BOAR_HIDE);
+            if (builtPilesInSideStructure.Count > 1) {
                 return;
             }
-            builtPilesInSideStructure = CreateClothAndLeatherList(TILE_OBJECT_TYPE.DRAGON_HIDE);
-            if (builtPilesInSideStructure != null && builtPilesInSideStructure.Count > 1) {
+            builtPilesInSideStructure.Clear();
+            PopulateClothAndLeatherList(builtPilesInSideStructure, TILE_OBJECT_TYPE.DRAGON_HIDE);
+            if (builtPilesInSideStructure.Count > 1) {
                 return;
             }
-            builtPilesInSideStructure = CreateClothAndLeatherList(TILE_OBJECT_TYPE.SCALE_HIDE);
-            if (builtPilesInSideStructure != null && builtPilesInSideStructure.Count > 1) {
+            builtPilesInSideStructure.Clear();
+            PopulateClothAndLeatherList(builtPilesInSideStructure, TILE_OBJECT_TYPE.SCALE_HIDE);
+            if (builtPilesInSideStructure.Count > 1) {
                 return;
             }
-            builtPilesInSideStructure = CreateClothAndLeatherList(TILE_OBJECT_TYPE.WOLF_HIDE);
-            if (builtPilesInSideStructure != null && builtPilesInSideStructure.Count > 1) {
+            builtPilesInSideStructure.Clear();
+            PopulateClothAndLeatherList(builtPilesInSideStructure, TILE_OBJECT_TYPE.WOLF_HIDE);
+            if (builtPilesInSideStructure.Count > 1) {
                 return;
             }
         }
@@ -67,20 +71,28 @@ namespace Inner_Maps.Location_Structures {
                     return;
 				}
             }
-            SetListToVariable();
-            if (builtPilesInSideStructure != null && builtPilesInSideStructure.Count > 1) {
+
+            //Combine resource piles
+            List<TileObject> builtPilesInSideStructure = RuinarchListPool<TileObject>.Claim();
+            SetListToVariable(builtPilesInSideStructure);
+            if (builtPilesInSideStructure.Count > 1) {
                 p_worker.jobComponent.TryCreateCombineStockpile(builtPilesInSideStructure[0] as ResourcePile, builtPilesInSideStructure[1] as ResourcePile, out producedJob);
                 if (producedJob != null) {
+                    RuinarchListPool<TileObject>.Release(builtPilesInSideStructure);
                     return;
                 }
             }
-            List<Summon> targetAnimals = RuinarchListPool<Summon>.Claim();
+            RuinarchListPool<TileObject>.Release(builtPilesInSideStructure);
+
+
+            List<Character> targetAnimals = RuinarchListPool<Character>.Claim();
             if (!p_worker.faction.factionType.IsActionConsideredACrime(CRIME_TYPE.Animal_Killing)) {
-                targetAnimals = p_worker.currentSettlement.SettlementResources.GetAllAnimalsThatProducesMats();
+                p_worker.currentSettlement.SettlementResources.PopulateAllAnimalsThatProducesMats(targetAnimals);
             } else {
-                targetAnimals = p_worker.currentSettlement.SettlementResources.GetAllAnimalsThatAreShearable();
+                p_worker.currentSettlement.SettlementResources.PopulateAllAnimalsThatAreShearable(targetAnimals);
             }
-            Summon randomTarget = targetAnimals[GameUtilities.RandomBetweenTwoNumbers(0, targetAnimals.Count - 1)];
+            Character randomTarget = targetAnimals[GameUtilities.RandomBetweenTwoNumbers(0, targetAnimals.Count - 1)];
+            RuinarchListPool<Character>.Release(targetAnimals);
             if (randomTarget != null) {
                 if (randomTarget is Animal) {
                     p_worker.jobComponent.TriggerShearAnimal(randomTarget, out producedJob);
@@ -92,7 +104,6 @@ namespace Inner_Maps.Location_Structures {
                     return;
                 }
             }
-            RuinarchListPool<Summon>.Release(targetAnimals);
         }
     }
 }
