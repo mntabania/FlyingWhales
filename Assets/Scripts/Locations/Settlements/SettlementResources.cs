@@ -70,7 +70,13 @@ public class SettlementResources
             animalsThatProducesMats.Add(p_character);
             if (p_character.race.IsButcherableWhenDead() || p_character.race.IsButcherableWhenDeadOrAlive()) {
                 if (!butcherables.Contains(p_character)) {
-                    butcherables.Add(p_character);
+                    if (p_character.race.IsButcherableWhenDead()) {
+                        if (p_character.isDead) {
+                            butcherables.Add(p_character);
+                        }
+                    } else {
+                        butcherables.Add(p_character);
+                    }
                 }
             }
             if (p_character is Animal && p_character.race.IsShearable()) {

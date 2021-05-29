@@ -98,7 +98,7 @@ public static class GoapActionStateDB {
             new StateNameAndDuration(){ name = "Mine Success", status = InteractionManager.Goap_State_Success, duration = 4 },
         } },
         {INTERACTION_TYPE.MINE_STONE, new[]{
-            new StateNameAndDuration(){ name = "Mine Success", status = InteractionManager.Goap_State_Success, duration = 4 },
+            new StateNameAndDuration(){ name = "Mine Success", status = InteractionManager.Goap_State_Success, duration = 20 },
         } },
         {INTERACTION_TYPE.MINE, new[]{
             new StateNameAndDuration(){ name = "Mine Success", status = InteractionManager.Goap_State_Success, duration = 4 },
@@ -705,13 +705,13 @@ public static class GoapActionStateDB {
             new StateNameAndDuration(){ name = "Find Fish Success", status = InteractionManager.Goap_State_Success, duration = 20 },
         } },
         {INTERACTION_TYPE.TILL_TILE, new[]{
-            new StateNameAndDuration(){ name = "Till Tile Success", status = InteractionManager.Goap_State_Success, duration = 10 },
+            new StateNameAndDuration(){ name = "Till Tile Success", status = InteractionManager.Goap_State_Success, duration = 20 },
         } },
         {INTERACTION_TYPE.SHEAR_ANIMAL, new[]{
-            new StateNameAndDuration(){ name = "Shear Animal Success", status = InteractionManager.Goap_State_Success, duration = 10 },
+            new StateNameAndDuration(){ name = "Shear Animal Success", status = InteractionManager.Goap_State_Success, duration = 20 },
         } },
         {INTERACTION_TYPE.SKIN_ANIMAL, new[]{
-            new StateNameAndDuration(){ name = "Skin Animal Success", status = InteractionManager.Goap_State_Success, duration = 10 },
+            new StateNameAndDuration(){ name = "Skin Animal Success", status = InteractionManager.Goap_State_Success, duration = 20 },
         } },
         {INTERACTION_TYPE.HARVEST_CROPS, new[]{
             new StateNameAndDuration(){ name = "Harvest Crops Success", status = InteractionManager.Goap_State_Success, duration = 20 },

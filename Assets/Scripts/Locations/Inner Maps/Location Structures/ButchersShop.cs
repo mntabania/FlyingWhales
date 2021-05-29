@@ -69,7 +69,7 @@ namespace Inner_Maps.Location_Structures {
             List<ResourcePile> multiplePiles = CheckForMultipleSameResourcePileInsideStructure();
             if (multiplePiles != null && multiplePiles.Count > 1) {
                 p_worker.jobComponent.TryCreateCombineStockpile(multiplePiles[0], multiplePiles[1], out producedJob);
-                if(producedJob != null) {
+                if (producedJob != null) {
                     return;
 				}
             }
