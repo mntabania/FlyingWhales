@@ -278,7 +278,7 @@ public class SettlementResources
 
     public Summon GetRandomButcherableAnimal() {
         for (int x = 0; x < butcherables.Count; ++x) {
-            if (butcherables[x].currentStructure.structureType != STRUCTURE_TYPE.CITY_CENTER && butcherables[x].currentStructure.structureType != STRUCTURE_TYPE.FARM && (!butcherables[x].HasJobTargetingThis(JOB_TYPE.MONSTER_BUTCHER) || !butcherables[x].HasJobTargetingThis(JOB_TYPE.SHEAR_ANIMAL) || !butcherables[x].HasJobTargetingThis(JOB_TYPE.SKIN_ANIMAL))) {
+            if ((butcherables[x].currentStructure != null && butcherables[x].currentStructure.structureType != STRUCTURE_TYPE.CITY_CENTER && butcherables[x].currentStructure.structureType != STRUCTURE_TYPE.FARM) && (!butcherables[x].HasJobTargetingThis(JOB_TYPE.MONSTER_BUTCHER) || !butcherables[x].HasJobTargetingThis(JOB_TYPE.SHEAR_ANIMAL) || !butcherables[x].HasJobTargetingThis(JOB_TYPE.SKIN_ANIMAL))) {
                 return butcherables[x];
             }
         }
