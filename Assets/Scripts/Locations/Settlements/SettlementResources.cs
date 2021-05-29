@@ -249,7 +249,7 @@ public class SettlementResources
     public List<Summon> GetAllAnimalsThatProducesMats() {
         List<Summon> allAvailableAnimals = new List<Summon>();
         for (int x = 0; x < animalsThatProducesMats.Count; ++x) {
-            if ((animalsThatProducesMats[x].HasJobTargetingThis(JOB_TYPE.MONSTER_BUTCHER) || animalsThatProducesMats[x].HasJobTargetingThis(JOB_TYPE.SHEAR_ANIMAL) || animalsThatProducesMats[x].HasJobTargetingThis(JOB_TYPE.SKIN_ANIMAL))) {
+            if ((!animalsThatProducesMats[x].HasJobTargetingThis(JOB_TYPE.MONSTER_BUTCHER) || !animalsThatProducesMats[x].HasJobTargetingThis(JOB_TYPE.SHEAR_ANIMAL) || !animalsThatProducesMats[x].HasJobTargetingThis(JOB_TYPE.SKIN_ANIMAL))) {
                 allAvailableAnimals.Add(animalsThatProducesMats[x]);
             }
         }
@@ -259,7 +259,7 @@ public class SettlementResources
     public List<Summon> GetAllAnimalsThatAreShearable() {
         List<Summon> ableToShearTodayList = new List<Summon>();
         for(int x = 0; x < shearables.Count; ++x) {
-            if (shearables[x] is Animal target && target.isShearable && (target.HasJobTargetingThis(JOB_TYPE.MONSTER_BUTCHER) || target.HasJobTargetingThis(JOB_TYPE.SHEAR_ANIMAL) || target.HasJobTargetingThis(JOB_TYPE.SKIN_ANIMAL))) {
+            if (shearables[x] is Animal target && target.isShearable && (!target.HasJobTargetingThis(JOB_TYPE.MONSTER_BUTCHER) || !target.HasJobTargetingThis(JOB_TYPE.SHEAR_ANIMAL) || !target.HasJobTargetingThis(JOB_TYPE.SKIN_ANIMAL))) {
                 ableToShearTodayList.Add(shearables[x]);
             }
 		}
@@ -269,7 +269,7 @@ public class SettlementResources
     public List<Summon> GetAllAnimalsThatAreSkinnable() {
         List<Summon> ableToSkinAnimals = new List<Summon>();
         for (int x = 0; x < skinnables.Count; ++x) {
-            if ((skinnables[x].HasJobTargetingThis(JOB_TYPE.MONSTER_BUTCHER) || skinnables[x].HasJobTargetingThis(JOB_TYPE.SHEAR_ANIMAL) || skinnables[x].HasJobTargetingThis(JOB_TYPE.SKIN_ANIMAL))) {
+            if ((!skinnables[x].HasJobTargetingThis(JOB_TYPE.MONSTER_BUTCHER) || !skinnables[x].HasJobTargetingThis(JOB_TYPE.SHEAR_ANIMAL) || !skinnables[x].HasJobTargetingThis(JOB_TYPE.SKIN_ANIMAL))) {
                 ableToSkinAnimals.Add(skinnables[x]);
             }
         }
@@ -278,7 +278,7 @@ public class SettlementResources
 
     public Summon GetRandomButcherableAnimal() {
         for (int x = 0; x < butcherables.Count; ++x) {
-            if (butcherables[x].currentStructure.structureType != STRUCTURE_TYPE.CITY_CENTER && butcherables[x].currentStructure.structureType != STRUCTURE_TYPE.FARM && (butcherables[x].HasJobTargetingThis(JOB_TYPE.MONSTER_BUTCHER) || skinnables[x].HasJobTargetingThis(JOB_TYPE.SHEAR_ANIMAL) || skinnables[x].HasJobTargetingThis(JOB_TYPE.SKIN_ANIMAL))) {
+            if (butcherables[x].currentStructure.structureType != STRUCTURE_TYPE.CITY_CENTER && butcherables[x].currentStructure.structureType != STRUCTURE_TYPE.FARM && (!butcherables[x].HasJobTargetingThis(JOB_TYPE.MONSTER_BUTCHER) || !butcherables[x].HasJobTargetingThis(JOB_TYPE.SHEAR_ANIMAL) || !butcherables[x].HasJobTargetingThis(JOB_TYPE.SKIN_ANIMAL))) {
                 return butcherables[x];
             }
         }
