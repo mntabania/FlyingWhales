@@ -41,7 +41,9 @@ public class ShearAnimal : GoapAction {
     #region State Effects
     public override void OnStopWhilePerforming(ActualGoapNode node) {
         base.OnStopWhilePerforming(node);
-        ProduceMatsPile(node);
+        if (node.currentStateDuration > 0) {
+            ProduceMatsPile(node);
+        }
     }
     public void AfterShearAnimalSuccess(ActualGoapNode p_node) {
         p_node.actor.jobComponent.TryCreateHaulJob(ProduceMatsPile(p_node));

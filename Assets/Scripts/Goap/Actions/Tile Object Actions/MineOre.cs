@@ -43,7 +43,9 @@ public class MineOre : GoapAction {
 
 	public override void OnStopWhilePerforming(ActualGoapNode node) {
 		base.OnStopWhilePerforming(node);
-        ProduceMatsPile(node);
+        if (node.currentStateDuration > 0) {
+            ProduceMatsPile(node);
+        }
     }
 	#endregion
 
