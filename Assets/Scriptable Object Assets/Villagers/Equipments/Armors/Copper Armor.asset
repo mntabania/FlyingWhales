@@ -21,12 +21,15 @@ MonoBehaviour:
   description: This is Copper Armor
   imgIcon: {fileID: 21300000, guid: 9e15b1f0c76416648a73b58de20b6666, type: 3}
   equipmentUpgradeData:
-    bonuses: 0100000004000000
+    bonuses: 05000000
     AdditionalPiercing: 0
-    AdditionalmaxHPPercentage: 25
-    AdditionalmaxHPActual: 0
+    AdditionalMaxHPPercentage: 0
+    AdditionalMaxHPActual: 70
     AdditionalAttackPercentage: 25
     AdditionalAttackActual: 0
+    AdditionalIntPercentage: 0
+    AdditionalIntActual: 0
+    AdditionalCritRate: 0
     additionalResistanceBonus: 50
     elementAttackBonus: 0
     slayerBonus: 0
