@@ -148,8 +148,8 @@ public class SettlementJobTriggerComponent : JobTriggerComponent/*, SettlementCl
 			if (resourcePile.providedResource == RESOURCE.FOOD || resourcePile.providedResource == RESOURCE.WOOD || resourcePile.providedResource == RESOURCE.STONE) {
 				CheckResource(resourcePile.providedResource);
 			}
-			Messenger.Broadcast(JobSignals.CHECK_JOB_APPLICABILITY, JOB_TYPE.COMBINE_STOCKPILE, resourcePile as IPointOfInterest);
-			TryCreateCombineStockpile(resourcePile);
+			//Messenger.Broadcast(JobSignals.CHECK_JOB_APPLICABILITY, JOB_TYPE.COMBINE_STOCKPILE, resourcePile as IPointOfInterest);
+			//TryCreateCombineStockpile(resourcePile);
 		}
 	}
     private void OnResourceInPileChangedDungeon(ResourcePile resourcePile) {
@@ -174,13 +174,13 @@ public class SettlementJobTriggerComponent : JobTriggerComponent/*, SettlementCl
 		if (tileObject is ResourcePile resourcePile) {
 			if (resourcePile.resourceInPile > 0) {
 				Messenger.Broadcast(JobSignals.CHECK_JOB_APPLICABILITY, JOB_TYPE.HAUL, resourcePile as IPointOfInterest);
-				Messenger.Broadcast(JobSignals.CHECK_JOB_APPLICABILITY, JOB_TYPE.COMBINE_STOCKPILE, resourcePile as IPointOfInterest);
+				//Messenger.Broadcast(JobSignals.CHECK_JOB_APPLICABILITY, JOB_TYPE.COMBINE_STOCKPILE, resourcePile as IPointOfInterest);
 				if (tile.IsPartOfSettlement(_owner)) {
 					if (_owner.mainStorage == resourcePile.structureLocation) {
 						if (resourcePile.providedResource == RESOURCE.FOOD || resourcePile.providedResource == RESOURCE.WOOD || resourcePile.providedResource == RESOURCE.STONE) {
 							CheckResource(resourcePile.providedResource);
 						}
-						TryCreateCombineStockpile(resourcePile);	
+						//TryCreateCombineStockpile(resourcePile);	
 					}
 				}
 				// TryCreateHaulJob(resourcePile);	

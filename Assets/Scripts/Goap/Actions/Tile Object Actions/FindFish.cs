@@ -10,7 +10,7 @@ public class FindFish : GoapAction {
     public int m_amountProducedPerTick = 1;
 
     public FindFish() : base(INTERACTION_TYPE.FIND_FISH) {
-        actionIconString = GoapActionStateDB.Mine_Icon;
+        actionIconString = GoapActionStateDB.Fish_Icon;
         //advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
         racesThatCanDoAction = new RACE[] { RACE.ELVES, RACE.HUMANS, RACE.RATMAN, };
         logTags = new[] { LOG_TAG.Work };

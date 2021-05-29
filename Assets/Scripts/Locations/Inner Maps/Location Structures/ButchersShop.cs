@@ -1,7 +1,10 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
+using UtilityScripts;
 namespace Inner_Maps.Location_Structures {
     public class ButchersShop : ManMadeStructure {
+
+        List<TileObject> builtPilesInSideStructure = RuinarchListPool<TileObject>.Claim();
         public override Vector3 worldPosition => structureObj.transform.position;
 
         public ButchersShop(Region location) : base(STRUCTURE_TYPE.BUTCHERS_SHOP, location) {
@@ -47,26 +50,32 @@ namespace Inner_Maps.Location_Structures {
         List<ResourcePile> GetAllMeatResourcePileOnTiles() {
             List<ResourcePile> pilePool = new List<ResourcePile>();
             passableTiles.ForEach((eachTile) => {
-                if (eachTile.tileObjectComponent.objHere != null && eachTile.tileObjectComponent.objHere is ResourcePile resourcePile) {
+                if (eachTile.tileObjectComponent.objHere != null && eachTile.tileObjectComponent.objHere is FoodPile resourcePile) {
                     pilePool.Add(resourcePile);
                 }
             });
             return pilePool;
         }
 
-        Character GetTargetAnimal() {
-            Character targetAnimalToButcher = null;
-            return targetAnimalToButcher;
-        }
-
         protected override void ProcessWorkStructureJobsByWorker(Character p_worker, out JobQueueItem producedJob) {
             producedJob = null;
-            if (p_worker.currentSettlement.SettlementResources.GetRandomPileOfMeats() != null) {
-                //do haul job
-            } else if (CheckForMultipleSameResourcePileInsideStructure() != null) {
-                //do combine resourcepiles job
-            } else if(GetTargetAnimal() != null){
-                //do butcher
+            ResourcePile foodPile = p_worker.currentSettlement.SettlementResources.GetRandomPileOfMeats();
+            if (foodPile != null) {
+                p_worker.jobComponent.TryCreateHaulJob(foodPile, out producedJob);
+                if (producedJob != null) {
+                    return;
+                }
+            }
+            List<ResourcePile> multiplePiles = CheckForMultipleSameResourcePileInsideStructure();
+            if (multiplePiles != null && multiplePiles.Count > 1) {
+                p_worker.jobComponent.TryCreateCombineStockpile(multiplePiles[0], multiplePiles[1], out producedJob);
+                if(producedJob != null) {
+                    return;
+				}
+            }
+            Summon targetForButchering = p_worker.currentSettlement.SettlementResources.GetRandomButcherableAnimal();
+            if (targetForButchering != null){
+                p_worker.jobComponent.CreateButcherJob(targetForButchering, JOB_TYPE.MONSTER_BUTCHER, out producedJob);
             }
         }
     }

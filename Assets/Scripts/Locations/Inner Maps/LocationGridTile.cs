@@ -569,6 +569,12 @@ namespace Inner_Maps {
                     character.currentSettlement.SettlementResources?.RemoveCharacterFromSettlement(character);
                     area.settlementOnArea.SettlementResources?.AddCharacterToSettlement(character);
                 }
+            } else if (character.race.IsShearable() || character.race.IsSkinnable()) {
+                if (character.currentSettlement != null) {
+                    character.currentSettlement.SettlementResources?.RemoveAnimalFromSettlement(character as Summon);
+                    area.settlementOnArea.SettlementResources?.AddAnimalToSettlement(character as Summon);
+                }
+                
             }
                 
             // }
