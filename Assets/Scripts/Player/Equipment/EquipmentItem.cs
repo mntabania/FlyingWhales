@@ -57,6 +57,9 @@ public class EquipmentItem : TileObject {
     }
 
     public string GetBonusDescription() {
+        if(equipmentData == null) {
+            AssignData();
+        }
         string description = equipmentData.equipmentUpgradeData.GetBonusDescription();
         resistanceBonuses.ForEach((eachBonus) => description += ("\n" + eachBonus.ToString()));
         return description;

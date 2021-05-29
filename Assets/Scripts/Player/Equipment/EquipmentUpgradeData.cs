@@ -98,36 +98,51 @@ public class EquipmentUpgradeData {
     }
     public string GetBonusDescription() {
         string descriptopn = String.Empty;
-        if(AdditionalPiercing > 0) {
-            descriptopn += ("Additional Piercing: " + AdditionalPiercing + "\n");
-		}
-        if (AdditionalAttackActual > 0) {
+        if (bonuses.Contains(EQUIPMENT_BONUS.Increased_Piercing)) {
+            if (AdditionalPiercing > 0) {
+                descriptopn += ("Additional Piercing: " + AdditionalPiercing + "\n");
+            }
+        }
+        if (bonuses.Contains(EQUIPMENT_BONUS.Str_Actual)) { }
+            if (AdditionalAttackActual > 0) {
             descriptopn += ("Additional Attack(Actual): " + AdditionalAttackActual + "\n");
         }
-        if (AdditionalAttackPercentage > 0) {
-            descriptopn += ("Additional Attack(%): " + AdditionalAttackPercentage + "\n");
+        if (bonuses.Contains(EQUIPMENT_BONUS.Str_Percentage)) {
+            if (AdditionalAttackPercentage > 0) {
+                descriptopn += ("Additional Attack(%): " + AdditionalAttackPercentage + "\n");
+            }
         }
-        if (AdditionalMaxHPActual > 0) {
-            descriptopn += ("Additional Max HP(Actual): " + AdditionalMaxHPActual + "\n");
+        
+        if (bonuses.Contains(EQUIPMENT_BONUS.Max_HP_Actual)) {
+            if (AdditionalMaxHPActual > 0) {
+                descriptopn += ("Additional Max HP(Actual): " + AdditionalMaxHPActual + "\n");
+            }
         }
-        if (AdditionalMaxHPPercentage > 0) {
-            descriptopn += ("Additional Max HP(%): " + AdditionalMaxHPPercentage + "\n");
+        
+        if (bonuses.Contains(EQUIPMENT_BONUS.Max_HP_Percentage)) {
+            if (AdditionalMaxHPPercentage > 0) {
+                descriptopn += ("Additional Max HP(%): " + AdditionalMaxHPPercentage + "\n");
+            }
         }
-        if (AdditionalIntActual > 0) {
-            descriptopn += ("Additional int(Actual): " + AdditionalIntActual + "\n");
+        if (bonuses.Contains(EQUIPMENT_BONUS.Int_Actual)) {
+            if (AdditionalIntActual > 0) {
+                descriptopn += ("Additional int(Actual): " + AdditionalIntActual + "\n");
+            }
         }
-        if (AdditionalIntPercentage > 0) {
-            descriptopn += ("Additional Max HP(%): " + AdditionalIntPercentage + "\n");
+        if (bonuses.Contains(EQUIPMENT_BONUS.Int_Percentage)) {
+            if (AdditionalIntPercentage > 0) {
+                descriptopn += ("Additional Int(%): " + AdditionalIntPercentage + "\n");
+            }
         }
+        
         if (bonuses.Contains(EQUIPMENT_BONUS.Slayer_Bonus)) {
             descriptopn += ("Slayer Bonus: " + slayerBonus + "\n");
         }
+        
         if (bonuses.Contains(EQUIPMENT_BONUS.Ward_Bonus)) {
             descriptopn += ("ward Bonus: " + wardBonus + "\n");
         }
-        if (bonuses.Contains(EQUIPMENT_BONUS.Attack_Element)) {
-            descriptopn += ("Element: " + elementAttackBonus + "\n");
-        }
+        
         if (bonuses.Contains(EQUIPMENT_BONUS.Flight)) {
             descriptopn += ("Flight: YES" + "\n");
         }
