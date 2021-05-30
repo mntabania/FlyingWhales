@@ -134,7 +134,10 @@ public class EquipmentUpgradeData {
                 descriptopn += ("Additional Int(%): " + AdditionalIntPercentage + "\n");
             }
         }
-        
+        if (bonuses.Contains(EQUIPMENT_BONUS.Attack_Element)) {
+            descriptopn += ("Weapon Element: " + elementAttackBonus + "\n");
+        }
+
         if (bonuses.Contains(EQUIPMENT_BONUS.Slayer_Bonus)) {
             descriptopn += ("Slayer Bonus: " + slayerBonus + "\n");
         }
