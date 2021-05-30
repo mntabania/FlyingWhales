@@ -127,7 +127,7 @@ namespace Inner_Maps.Location_Structures {
 
         protected override void ProcessWorkStructureJobsByWorker(Character p_worker, out JobQueueItem producedJob) {
             producedJob = null;
-            ResourcePile pile = p_worker.currentSettlement.SettlementResources.GetRandomPileOfMetalOrStone();
+            ResourcePile pile = p_worker.homeSettlement.SettlementResources.GetRandomPileOfMetalOrStone();
             if (pile == null && connectedCave != null) {
                 pile = connectedCave.GetRandomTileObjectOfTypeThatHasTileLocationAndIsBuiltAndIsNotTargetedByHaulOrCombine<StonePile>();
                 if (pile == null) {

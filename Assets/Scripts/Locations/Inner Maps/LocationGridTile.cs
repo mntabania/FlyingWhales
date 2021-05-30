@@ -565,18 +565,17 @@ namespace Inner_Maps {
             // if (!charactersHere.Contains(character)) {
                 charactersHere.Add(character);
             if (character.race.IsSapient()) {
-                if (character.currentSettlement != null) {
-                    character.currentSettlement.SettlementResources?.RemoveCharacterFromSettlement(character);
-                    area.settlementOnArea.SettlementResources?.AddCharacterToSettlement(character);
-                }
+                //if (character.currentSettlement != null) {
+                //    character.currentSettlement.SettlementResources?.RemoveCharacterFromSettlement(character);
+                //}
+                area.settlementOnArea?.SettlementResources?.AddCharacterToSettlement(character);
             } else if (character.race.IsShearable() || character.race.IsSkinnable()) {
-                if (character.currentSettlement != null) {
-                    character.currentSettlement.SettlementResources?.RemoveAnimalFromSettlement(character as Summon);
-                    area.settlementOnArea.SettlementResources?.AddAnimalToSettlement(character as Summon);
-                }
-                
+                //if (character.currentSettlement != null) {
+                //    character.currentSettlement.SettlementResources?.RemoveAnimalFromSettlement(character as Summon);
+                //}
+                area.settlementOnArea?.SettlementResources?.AddAnimalToSettlement(character as Summon);
             }
-                
+
             // }
             if (tileObjectComponent.genericTileObject != null) {
                 List<Trait> traitOverrideFunctions = tileObjectComponent.genericTileObject.traitContainer.GetTraitOverrideFunctions(TraitManager.Enter_Grid_Tile_Trait);
@@ -735,7 +734,13 @@ namespace Inner_Maps {
             return null;
         }
         public void RemoveCharacterHere(Character character) {
-            charactersHere.Remove(character);
+            if (charactersHere.Remove(character)) {
+                if (character.race.IsSapient()) {
+                    area.settlementOnArea?.SettlementResources?.RemoveCharacterFromSettlement(character);
+                } else if (character.race.IsShearable() || character.race.IsSkinnable()) {
+                    area.settlementOnArea?.SettlementResources?.RemoveAnimalFromSettlement(character as Summon);
+                }
+            }
         }
         public bool IsInHomeOf(Character character) {
             if (character.homeSettlement != null) {

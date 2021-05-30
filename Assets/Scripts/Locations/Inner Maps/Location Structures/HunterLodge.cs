@@ -64,7 +64,7 @@ namespace Inner_Maps.Location_Structures {
         }
         protected override void ProcessWorkStructureJobsByWorker(Character p_worker, out JobQueueItem producedJob) {
             producedJob = null;
-            ResourcePile pile = p_worker.currentSettlement.SettlementResources.GetRandomPileOfClothOrLeather();
+            ResourcePile pile = p_worker.homeSettlement.SettlementResources.GetRandomPileOfClothOrLeather();
             if (pile != null) {
                 p_worker.jobComponent.TryCreateHaulJob(pile, out producedJob);
                 if (producedJob != null) {
@@ -87,9 +87,9 @@ namespace Inner_Maps.Location_Structures {
 
             List<Character> targetAnimals = RuinarchListPool<Character>.Claim();
             if (!p_worker.faction.factionType.IsActionConsideredACrime(CRIME_TYPE.Animal_Killing)) {
-                p_worker.currentSettlement.SettlementResources.PopulateAllAnimalsThatProducesMats(targetAnimals);
+                p_worker.homeSettlement.SettlementResources.PopulateAllAnimalsThatProducesMats(targetAnimals);
             } else {
-                p_worker.currentSettlement.SettlementResources.PopulateAllAnimalsThatAreShearable(targetAnimals);
+                p_worker.homeSettlement.SettlementResources.PopulateAllAnimalsThatAreShearable(targetAnimals);
             }
             Character randomTarget = targetAnimals[GameUtilities.RandomBetweenTwoNumbers(0, targetAnimals.Count - 1)];
             RuinarchListPool<Character>.Release(targetAnimals);

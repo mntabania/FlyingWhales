@@ -157,7 +157,7 @@ namespace Inner_Maps.Location_Structures {
         
 		protected override void ProcessWorkStructureJobsByWorker(Character p_worker, out JobQueueItem producedJob) {
             producedJob = null;
-            ResourcePile pileToHaul = p_worker.currentSettlement.SettlementResources.GetRandomPileOfCrops();
+            ResourcePile pileToHaul = p_worker.homeSettlement.SettlementResources.GetRandomPileOfCrops();
             if (pileToHaul != null) {
                 //do haul job
                 p_worker.jobComponent.TryCreateHaulJob(pileToHaul, out producedJob);
