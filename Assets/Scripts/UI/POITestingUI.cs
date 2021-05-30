@@ -65,6 +65,25 @@ public class POITestingUI : MonoBehaviour {
         //}
         HideUI();
     }
+    public void FightThisCharacter() {
+        //activeCharacter.combatComponent.Fight(poi as Character, CombatManager.Hostility);
+        if (poi is Character targetCharacter) {
+            activeCharacter.combatComponent.Fight(targetCharacter, CombatManager.Anger);
+            // CreateKnockoutJob(activeCharacter, poi as Character);
+        } 
+        
+        //else if (poi is Bed) {
+        //    Bed bed = poi as Bed;
+        //    if (bed.users[0] != null) {
+        //        CreateKnockoutJob(activeCharacter, bed.users[0]);
+        //    } else if (bed.users[1] != null) {
+        //        CreateKnockoutJob(activeCharacter, bed.users[1]);
+        //    }
+        //} else {
+        //    Debug.LogError($"{poi.name} is not a character!");
+        //}
+        HideUI();
+    }
     public bool CreateKnockoutJob(Character character, Character targetCharacter) {
         GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.BRAWL, new GoapEffect(GOAP_EFFECT_CONDITION.HAS_TRAIT, "Unconscious", false, GOAP_EFFECT_TARGET.TARGET), targetCharacter, character);
         character.jobQueue.AddJobInQueue(job);
