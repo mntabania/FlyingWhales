@@ -72,6 +72,7 @@ public class CombatComponent : CharacterComponent {
         intelligencePercentModification = data.intelligencePercentModification;
         maxHP = data.maxHP;
         maxHPModification = data.maxHPModification;
+        maxHPPercentModification = data.maxHPPercentModification;
         attackSpeed = data.attackSpeed;
         combatMode = data.combatMode;
         elementalDamage = ScriptableObjectsManager.Instance.GetElementalDamageData(data.elementalDamageType);
@@ -1564,6 +1565,7 @@ public class SaveDataCombatComponent : SaveData<CombatComponent> {
     public float intelligencePercentModification;
     public int maxHP;
     public int maxHPModification;
+    public float maxHPPercentModification;
     public int attackSpeed;
     public int numOfKilledCharacters;
 
@@ -1597,8 +1599,10 @@ public class SaveDataCombatComponent : SaveData<CombatComponent> {
         strengthPercentModification = data.strengthPercentModification;
         //intelligence = data.intelligence;
         intelligenceModification = data.intelligenceModification;
-        intelligencePercentModification = data.intelligencePercentModification; maxHP = data.maxHP;
+        intelligencePercentModification = data.intelligencePercentModification; 
+        maxHP = data.maxHP;
         maxHPModification = data.maxHPModification;
+        maxHPPercentModification = data.maxHPPercentModification;
         attackSpeed = data.attackSpeed;
         combatMode = data.combatMode;
         initialElementalDamageType = data.initialElementalType;
