@@ -10,11 +10,28 @@ namespace Locations {
             charactersAtLocation = new List<Character>();
         }
 
-        public void AddCharacterAtLocation(Character p_character) {
+        public void AddCharacterAtLocation(Character p_character, Area p_area) {
             charactersAtLocation.Add(p_character);
+            if (p_character.race.IsSapient()) {
+                //if (character.currentSettlement != null) {
+                //    character.currentSettlement.SettlementResources?.RemoveCharacterFromSettlement(character);
+                //}
+                p_area.settlementOnArea?.SettlementResources?.AddCharacterToSettlement(p_character);
+            } else if (p_character.race.IsShearable() || p_character.race.IsSkinnable()) {
+                //if (character.currentSettlement != null) {
+                //    character.currentSettlement.SettlementResources?.RemoveAnimalFromSettlement(character as Summon);
+                //}
+                p_area.settlementOnArea?.SettlementResources?.AddAnimalToSettlement(p_character as Summon);
+            }
         }
-        public void RemoveCharacterFromLocation(Character p_character) {
-            charactersAtLocation.Remove(p_character);
+        public void RemoveCharacterFromLocation(Character p_character, Area p_area) {
+            if (charactersAtLocation.Remove(p_character)) {
+                if (p_character.race.IsSapient()) {
+                    p_area.settlementOnArea?.SettlementResources?.RemoveCharacterFromSettlement(p_character);
+                } else if (p_character.race.IsShearable() || p_character.race.IsSkinnable()) {
+                    p_area.settlementOnArea?.SettlementResources?.RemoveAnimalFromSettlement(p_character as Summon);
+                }
+            }
 
 #if DEBUG_PROFILER
             Profiler.BeginSample($"Check job applicability - Remove Status");

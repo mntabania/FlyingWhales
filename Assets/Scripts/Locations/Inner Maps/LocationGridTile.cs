@@ -564,17 +564,6 @@ namespace Inner_Maps {
 #endif
             // if (!charactersHere.Contains(character)) {
                 charactersHere.Add(character);
-            if (character.race.IsSapient()) {
-                //if (character.currentSettlement != null) {
-                //    character.currentSettlement.SettlementResources?.RemoveCharacterFromSettlement(character);
-                //}
-                area.settlementOnArea?.SettlementResources?.AddCharacterToSettlement(character);
-            } else if (character.race.IsShearable() || character.race.IsSkinnable()) {
-                //if (character.currentSettlement != null) {
-                //    character.currentSettlement.SettlementResources?.RemoveAnimalFromSettlement(character as Summon);
-                //}
-                area.settlementOnArea?.SettlementResources?.AddAnimalToSettlement(character as Summon);
-            }
 
             // }
             if (tileObjectComponent.genericTileObject != null) {
@@ -734,13 +723,7 @@ namespace Inner_Maps {
             return null;
         }
         public void RemoveCharacterHere(Character character) {
-            if (charactersHere.Remove(character)) {
-                if (character.race.IsSapient()) {
-                    area.settlementOnArea?.SettlementResources?.RemoveCharacterFromSettlement(character);
-                } else if (character.race.IsShearable() || character.race.IsSkinnable()) {
-                    area.settlementOnArea?.SettlementResources?.RemoveAnimalFromSettlement(character as Summon);
-                }
-            }
+            charactersHere.Remove(character);
         }
         public bool IsInHomeOf(Character character) {
             if (character.homeSettlement != null) {

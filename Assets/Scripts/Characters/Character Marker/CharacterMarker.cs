@@ -1185,7 +1185,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
                 previousGridTile = character.gridTileLocation;
                 if (_previousAreaLocation == null || (_previousAreaLocation != character.areaLocation)) {
                     if (_previousAreaLocation != null) {
-                        _previousAreaLocation.locationCharacterTracker.RemoveCharacterFromLocation(character);
+                        _previousAreaLocation.locationCharacterTracker.RemoveCharacterFromLocation(character, _previousAreaLocation);
 
 #if DEBUG_PROFILER
                         Profiler.BeginSample($"{character.name} Character Exited Hextile Broadcast");
@@ -1209,7 +1209,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
                     //When character enters new hex tile it becomes the previous hex tile altogether
                     _previousAreaLocation = character.areaLocation;
                     
-                    _previousAreaLocation.locationCharacterTracker.AddCharacterAtLocation(character);
+                    _previousAreaLocation.locationCharacterTracker.AddCharacterAtLocation(character, _previousAreaLocation);
 
 #if DEBUG_PROFILER
                     Profiler.BeginSample($"{character.name} Character Entered Hextile Broadcast");
