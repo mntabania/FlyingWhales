@@ -50,9 +50,10 @@ public class Party : ILogFiller, ISavable, IJobOwner, IBookmarkable {
     //public bool cannotProduceFoodThisRestPeriod { get; private set; }
     //public bool hasStartedAcceptingQuests { get; private set; }
     public GameDate nextQuestCheckDate { get; private set; }
-
     public bool canAcceptQuests { get; private set; }
     public GameDate canAcceptQuestsAgainDate { get; private set; }
+    public GameDate nextWaitingCheckDate { get; private set; }
+    public bool hasSetNextSwitchToWaitingStateTrigger { get; private set; }
 
     public JobBoard jobBoard { get; private set; }
     public List<JobQueueItem> forcedCancelJobsOnTickEnded { get; private set; }
@@ -142,7 +143,7 @@ public class Party : ILogFiller, ISavable, IJobOwner, IBookmarkable {
         Messenger.AddListener<JobQueueItem, JobBoard>(JobSignals.JOB_REMOVED_FROM_JOB_BOARD, OnJobRemovedFromJobBoard);
         DatabaseManager.Instance.partyDatabase.AddParty(this);
 
-        ScheduleNextDateToCheckQuest();
+        InitialScheduleToCheckQuest();
     }
 
     public void Initialize(SaveDataParty data) { //In order to create a party, there must always be a party creator
@@ -164,6 +165,9 @@ public class Party : ILogFiller, ISavable, IJobOwner, IBookmarkable {
 
         canAcceptQuests = data.canAcceptQuests;
         canAcceptQuestsAgainDate = data.canAcceptQuestsAgainDate;
+
+        hasSetNextSwitchToWaitingStateTrigger = data.hasSetNextSwitchToWaitingStateTrigger;
+        nextWaitingCheckDate = data.nextWaitingCheckDate;
 
         prevQuestType = data.prevQuestType;
         plannedPartyType = data.plannedPartyType;
@@ -187,6 +191,9 @@ public class Party : ILogFiller, ISavable, IJobOwner, IBookmarkable {
         }
         if (partyState == PARTY_STATE.Waiting) {
             SchedulingManager.Instance.AddEntry(waitingEndDate, WaitingEndedDecisionMaking, this);
+        }
+        if (hasSetNextSwitchToWaitingStateTrigger) {
+            SchedulingManager.Instance.AddEntry(nextWaitingCheckDate, TryStartToWaitQuest, null);
         }
     }
 
@@ -258,12 +265,12 @@ public class Party : ILogFiller, ISavable, IJobOwner, IBookmarkable {
             SetMeetingPlace();
         }
     }
-    private void PerTickEndedWhileInactive() {
+    //private void PerTickEndedWhileInactive() {
         //Note: Commented this because we no longer have a fixed take quest schedule, the new algo for taking quest is every [X] hours after creation of party so that the party will often take quests
         //if (takeQuestSchedule == GameManager.Instance.currentTick && canAcceptQuests) {
         //    TryAcceptQuest();
         //}
-    }
+    //}
     public void TryAcceptQuest() {
         if (isDisbanded) {
             return;
@@ -286,16 +293,41 @@ public class Party : ILogFiller, ISavable, IJobOwner, IBookmarkable {
         }
         ScheduleNextDateToCheckQuest();
     }
-    private void ScheduleNextDateToCheckQuest() {
-        //This schedules the next time when the party will try to take a quest
-        nextQuestCheckDate = GameManager.Instance.Today().AddTicks(GameManager.Instance.GetTicksBasedOnHour(4));
+    private void TryStartToWaitQuest() {
+        hasSetNextSwitchToWaitingStateTrigger = false;
+        if (partyState == PARTY_STATE.None && isActive) {
+            SetPartyState(PARTY_STATE.Waiting);
+        }
+    }
+    private void InitialScheduleToCheckQuest() {
+        int minimumTick = GameManager.Instance.GetTicksBasedOnHour(5); //5 AM in ticks
+        int maximumTick = GameManager.Instance.GetTicksBasedOnHour(7); //7 AM in ticks
+
+        int scheduledTick = GameUtilities.RandomBetweenTwoNumbers(minimumTick, maximumTick);
+        GameDate schedule = GameManager.Instance.Today().AddDays(1);
+        schedule.SetTicks(scheduledTick);
+        nextQuestCheckDate = schedule;
         SchedulingManager.Instance.AddEntry(nextQuestCheckDate, TryAcceptQuest, null);
     }
-    private void PerTickEndedWhileActive() {
-        //if (restSchedule == GameManager.Instance.currentTick && partyState != PARTY_STATE.Resting) {
-        //    hasRested = false;
-        //}
+    private void ScheduleNextDateToCheckQuest() {
+        //This schedules the next time when the party will try to take a quest
+        nextQuestCheckDate = GameManager.Instance.Today().AddDays(1); //.AddTicks(GameManager.Instance.GetTicksBasedOnHour(4));
+        SchedulingManager.Instance.AddEntry(nextQuestCheckDate, TryAcceptQuest, null);
     }
+    private void ScheduleToStartWaitingQuest(Character partyMember) {
+        int tick = partyMember.dailyScheduleComponent.schedule.GetStartingTickOfScheduleType(DAILY_SCHEDULE.Work);
+
+        GameDate schedule = GameManager.Instance.Today();
+        schedule.SetTicks(tick);
+        nextWaitingCheckDate = schedule;
+        SchedulingManager.Instance.AddEntry(schedule, TryStartToWaitQuest, null);
+        hasSetNextSwitchToWaitingStateTrigger = true;
+    }
+    //private void PerTickEndedWhileActive() {
+    //if (restSchedule == GameManager.Instance.currentTick && partyState != PARTY_STATE.Resting) {
+    //    hasRested = false;
+    //}
+    //}
     private LocationStructure GetStructureToCheckFromSettlement(BaseSettlement settlement) {
         LocationStructure structure = settlement.GetFirstStructureOfType(STRUCTURE_TYPE.CITY_CENTER);
         if(structure == null) {
@@ -304,7 +336,9 @@ public class Party : ILogFiller, ISavable, IJobOwner, IBookmarkable {
         return structure;
     }
     public void GoBackHomeAndEndQuest() {
-        SetPartyState(PARTY_STATE.Moving, true);
+        //Party no longer goes back home to end quest, instead, with the new changes in party behaviour, upon finishing quest, party will end quest immediately
+        currentQuest.EndQuest("Finished quest");
+        //SetPartyState(PARTY_STATE.Moving, true);
     }
     public void SetTargetDestination(IPartyTargetDestination target) {
         if(targetDestination != target) {
@@ -396,7 +430,7 @@ public class Party : ILogFiller, ISavable, IJobOwner, IBookmarkable {
         perHourElapsedInWaiting = 0;
         int ticksToWait = 1; //If Demon Party, only wait for 1 tick before moving because we assume that this party is premade already
         if (!isPlayerParty) {
-            ticksToWait = GameManager.Instance.GetTicksBasedOnHour(5);
+            ticksToWait = GameManager.Instance.GetTicksBasedOnHour(2); //Waiting should be 2 hours only
         }
         waitingEndDate = GameManager.Instance.Today().AddTicks(ticksToWait);
         SchedulingManager.Instance.AddEntry(waitingEndDate, WaitingEndedDecisionMaking, this);
@@ -621,7 +655,10 @@ public class Party : ILogFiller, ISavable, IJobOwner, IBookmarkable {
         if (!isActive && quest != null) {
             SetCurrentQuest(quest);
             currentQuest.SetAssignedParty(this);
-            SetPartyState(PARTY_STATE.Waiting);
+
+            //Do not start waiting state first, waiting state will start upon the first time a member enters work schedule
+            //SetPartyState(PARTY_STATE.Waiting);
+            SetPartyState(PARTY_STATE.None);
 
             if (!partyFaction.isPlayerFaction) {
                 Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Party", "Quest", "accept_quest", null, LogUtilities.Party_Quest_Tags);
@@ -634,6 +671,7 @@ public class Party : ILogFiller, ISavable, IJobOwner, IBookmarkable {
             
             //OnAcceptQuest(quest);
             quest.OnAcceptQuest(this);
+            ScheduleToStartWaitingQuest(members[0]);
         }
     }
     //private void DistributeQuestToMembersThatJoinedParty() {
@@ -1290,6 +1328,7 @@ public class Party : ILogFiller, ISavable, IJobOwner, IBookmarkable {
         deadMembers.Clear();
         onQuestFailed = null;
         onQuestSucceed = null;
+        hasSetNextSwitchToWaitingStateTrigger = false;
         ClearMembersThatJoinedQuest(shouldDropQuest: false);
         _activeMembers.Clear();
         ForceCancelAllJobsImmediately();
@@ -1344,7 +1383,8 @@ public class SaveDataParty : SaveData<Party>, ISavableCounterpart {
     public GameDate nextQuestCheckDate;
     public bool canAcceptQuests;
     public GameDate canAcceptQuestsAgainDate;
-
+    public GameDate nextWaitingCheckDate;
+    public bool hasSetNextSwitchToWaitingStateTrigger;
 
     public string campSetter;
     public string foodProducer;
@@ -1411,6 +1451,9 @@ public class SaveDataParty : SaveData<Party>, ISavableCounterpart {
 
         canAcceptQuests = data.canAcceptQuests;
         canAcceptQuestsAgainDate = data.canAcceptQuestsAgainDate;
+
+        hasSetNextSwitchToWaitingStateTrigger = data.hasSetNextSwitchToWaitingStateTrigger;
+        nextWaitingCheckDate = data.nextWaitingCheckDate;
 
         waitingEndDate = data.waitingEndDate;
 

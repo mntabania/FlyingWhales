@@ -17,6 +17,15 @@ public abstract class DailySchedule {
         }
         throw new Exception($"Could not find schedule type for tick {p_tick.ToString()} on schedule {this.GetType()}");
     }
+    public int GetStartingTickOfScheduleType(DAILY_SCHEDULE p_scheduleType) {
+        for (int i = 0; i < schedule.Length; i++) {
+            DailyScheduleSection section = schedule[i];
+            if (section.scheduleType == p_scheduleType) {
+                return section.time.GetStartTick();
+            }
+        }
+        return -1;
+    }
     
     public string GetScheduleSummary() {
         string summary = GetType().ToString();

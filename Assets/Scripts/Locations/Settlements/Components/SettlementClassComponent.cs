@@ -78,8 +78,8 @@ public class SettlementClassComponent : NPCSettlementComponent {
     #region Needed Classes
     public void InitialScheduleProcessingOfNeededClasses() {
         if (owner.locationType == LOCATION_TYPE.VILLAGE) {
-            int minimumTick = 2 * GameManager.ticksPerHour; //2 AM in ticks
-            int maximumTick = 5 * GameManager.ticksPerHour; //5 AM in ticks
+            int minimumTick = GameManager.Instance.GetTicksBasedOnHour(2); //2 AM in ticks
+            int maximumTick = GameManager.Instance.GetTicksBasedOnHour(5); //5 AM in ticks
 
             int scheduledTick = GameUtilities.RandomBetweenTwoNumbers(minimumTick, maximumTick);
             GameDate schedule = GameManager.Instance.Today().AddDays(1);
