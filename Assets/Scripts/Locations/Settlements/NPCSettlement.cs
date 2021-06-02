@@ -1043,6 +1043,18 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
     public bool HasFoodProducingStructure() {
         return HasStructure(STRUCTURE_TYPE.HUNTER_LODGE) || HasStructure(STRUCTURE_TYPE.FARM) || HasStructure(STRUCTURE_TYPE.FISHERY);
     }
+    public bool HasBasicResourceProducingStructure() {
+        if (owner != null) {
+            if (owner.factionType.type == FACTION_TYPE.Human_Empire) {
+                return HasStructure(STRUCTURE_TYPE.MINE);
+            } else if (owner.factionType.type == FACTION_TYPE.Elven_Kingdom) {
+                return HasStructure(STRUCTURE_TYPE.LUMBERYARD);
+            } else if (owner.factionType.type == FACTION_TYPE.Demon_Cult || owner.factionType.type == FACTION_TYPE.Lycan_Clan || owner.factionType.type == FACTION_TYPE.Vampire_Clan) {
+                return HasStructure(STRUCTURE_TYPE.MINE) || HasStructure(STRUCTURE_TYPE.LUMBERYARD);
+            }
+        }
+        return false;
+    }
     public StructureSetting GetValidFoodProducingStructure() {
         Assert.IsNotNull(owner);
         List<Area> surroundingAreas = ObjectPoolManager.Instance.CreateNewAreaList();

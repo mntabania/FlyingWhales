@@ -504,7 +504,7 @@ namespace Inner_Maps.Location_Structures {
             }
             return false;
         }
-        public bool HasTileObjectThatBuiltFoodPile() {
+        public bool HasTileObjectThatIsBuiltFoodPile() {
             for (int i = 0; i < pointsOfInterest.Count; i++) {
                 IPointOfInterest poi = pointsOfInterest.ElementAt(i);
                 if (poi is FoodPile t && t.mapObjectState == MAP_OBJECT_STATE.BUILT) {
@@ -1006,7 +1006,7 @@ namespace Inner_Maps.Location_Structures {
             }
             return false;
         }
-        public bool RemovePOI(IPointOfInterest poi, Character removedBy = null, bool isPlayerSource = false) {
+        public virtual bool RemovePOI(IPointOfInterest poi, Character removedBy = null, bool isPlayerSource = false) {
             LocationGridTile tileLocation = poi.gridTileLocation;
             TileObject tileObj = poi as TileObject;
             if (tileObj != null && tileObj.isHidden) {

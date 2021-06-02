@@ -34,6 +34,9 @@ public class CharacterMoneyComponent : CharacterComponent {
     public bool HasCoins() {
         return coins > 0;
     }
+    public bool CanAfford(int p_amount) {
+        return coins >= p_amount;
+    }
     #endregion
 
     #region Gain Coins

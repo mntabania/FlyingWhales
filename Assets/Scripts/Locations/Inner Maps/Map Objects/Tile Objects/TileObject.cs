@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Characters.Villager_Wants;
 using UnityEngine;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
@@ -1248,7 +1249,10 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         Messenger.AddListener(TileObjectSignals.CHECK_UNBUILT_OBJECT_VALIDITY, CheckUnbuiltObjectValidity);
         if (gridTileLocation != null) {
             //remove tile object from region count.
-            gridTileLocation.parentMap.region.RemoveTileObjectInRegion(this);    
+            gridTileLocation.parentMap.region.RemoveTileObjectInRegion(this);
+            if (gridTileLocation.structure is Dwelling dwelling) {
+                dwelling.OnTileObjectInDwellingSetAsUnbuilt(this);
+            }
         }
     }
     protected virtual void OnSetObjectAsBuilding() {
@@ -1270,6 +1274,9 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         if (gridTileLocation != null) {
             //add tile object to region count. This will be called at DefaultProcessOnPlacePOI
             gridTileLocation.parentMap.region.AddTileObjectInRegion(this);
+            if (gridTileLocation.structure is Dwelling dwelling) {
+                dwelling.OnTileObjectInDwellingSetAsBuilt(this);
+            }
         }
     }
     private void CheckUnbuiltObjectValidity() {

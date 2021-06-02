@@ -192,6 +192,7 @@ namespace UtilityScripts {
         }
         summary += $"\nCurrent Schedule Type: {activeCharacter.dailyScheduleComponent.schedule.GetScheduleType(GameManager.Instance.Today().tick).ToString()}";
         summary += $"\nDaily Schedule: {activeCharacter.dailyScheduleComponent.schedule.GetScheduleSummary()}";
+        summary += $"\nToggled Wants: {activeCharacter.villagerWantsComponent?.wantsToProcess.ComafyList()}";
         UIManager.Instance.ShowSmallInfo(summary);
 #endif
     }

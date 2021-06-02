@@ -25,7 +25,6 @@ public interface IRelationshipContainer {
     bool HasRelationshipWith(Relatable relatable, RELATIONSHIP_TYPE relType1, RELATIONSHIP_TYPE relType2);
     bool HasRelationshipWith(Relatable relatable, RELATIONSHIP_TYPE relType1, RELATIONSHIP_TYPE relType2, RELATIONSHIP_TYPE relType3);
     bool HasRelationshipWith(Relatable relatable, RELATIONSHIP_TYPE relType1, RELATIONSHIP_TYPE relType2, RELATIONSHIP_TYPE relType3, RELATIONSHIP_TYPE relType4, RELATIONSHIP_TYPE relType5);
-
     bool HasSpecialRelationshipWith(Relatable relatable);
     bool HasRelationship(RELATIONSHIP_TYPE type);
     bool HasActiveRelationship(RELATIONSHIP_TYPE type1, RELATIONSHIP_TYPE type2);

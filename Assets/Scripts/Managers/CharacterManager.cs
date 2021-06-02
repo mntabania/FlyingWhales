@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Characters.Behaviour;
+using Characters.Villager_Wants;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
 using Locations.Settlements;
@@ -455,6 +456,7 @@ public class CharacterManager : BaseMonoBehaviour {
         ConstructEmotionData();
         ConstructCharacterBehaviours();
         ConstructDailySchedules();
+        CreateVillagerWantInstances();
         Messenger.AddListener<ActualGoapNode>(JobSignals.CHARACTER_FINISHED_ACTION, OnCharacterFinishedAction);
         Messenger.AddListener<string, string>(CharacterSignals.RENAME_CHARACTER, OnRenameCharacter);
     }
@@ -1656,6 +1658,36 @@ public class CharacterManager : BaseMonoBehaviour {
             DailySchedule schedule = allDailySchedules[i];
             if (schedule.GetType() == p_type) {
                 return schedule;
+            }
+        }
+        return null;
+    }
+    #endregion
+
+    #region Wants
+    private Dictionary<Type, VillagerWant> _allWants;
+    public Dictionary<Type, VillagerWant> allWants => _allWants;
+    private void CreateVillagerWantInstances() {
+        List<VillagerWant> wants = ReflectiveEnumerator.GetEnumerableOfType<VillagerWant>().ToList();
+        _allWants = new Dictionary<Type, VillagerWant>();
+        for (int i = 0; i < wants.Count; i++) {
+            VillagerWant want = wants[i];
+            allWants.Add(want.GetType(), want);
+        }
+    }
+    public T GetVillagerWantInstance<T>(System.Type p_type) where T: VillagerWant{
+        if (allWants.ContainsKey(p_type)) {
+            if (allWants[p_type] is T converted) {
+                return converted;
+            }
+        }
+        return null;
+    }
+    public T GetVillagerWantInstance<T>() where T: VillagerWant {
+        System.Type type = typeof(T);
+        if (allWants.ContainsKey(type)) {
+            if (allWants[type] is T converted) {
+                return converted;
             }
         }
         return null;

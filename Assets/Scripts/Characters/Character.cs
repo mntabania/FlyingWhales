@@ -125,10 +125,13 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public EquipmentComponent equipmentComponent { get; private set; }
     public CharacterMoneyComponent moneyComponent { get; private set; }
     public ResourceStorageComponent resourceStorageComponent { get; private set; }
+    public DailyScheduleComponent dailyScheduleComponent { get; private set; }
 
     //IMPORTANT: This component is not applicable to all characters, only VILLAGERS! So, this can be null if the character is NOT A VILLAGER.
     public CharacterTalentComponent talentComponent { get; private set; }
-    public DailyScheduleComponent dailyScheduleComponent { get; private set; }
+    //IMPORTANT: This component is not applicable to all characters, only VILLAGERS! So, this can be null if the character is NOT A VILLAGER.
+    public VillagerWantsComponent villagerWantsComponent { get; private set; }
+    
 
     #region getters / setters
     public string bookmarkName => lycanData != null ? lycanData.activeForm.visuals.GetCharacterNameWithIconAndColor() : visuals.GetCharacterNameWithIconAndColor();
@@ -424,6 +427,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         if (data.talentComponent != null) {
             talentComponent = data.talentComponent.Load(); talentComponent.SetOwner(this);
         }
+        if (data.villagerWantsComponent != null) {
+            villagerWantsComponent = data.villagerWantsComponent.Load(); villagerWantsComponent.SetOwner(this);
+        }
 
         //buffStatsBonus = data.buffStatusBonus.Load();
         eventDispatcher = new CharacterEventDispatcher();
@@ -458,6 +464,10 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             //Demons and Summons/Monsters can't have talents
             talentComponent = new CharacterTalentComponent(); talentComponent.SetOwner(this);
             talentComponent.ConstructAllTalents();
+        }
+        if (race.IsSapient()) {
+            villagerWantsComponent = new VillagerWantsComponent(); villagerWantsComponent.SetOwner(this);
+            villagerWantsComponent.Initialize(this);
         }
     }
     public void InitialCharacterPlacement(LocationGridTile tile) {
@@ -1341,6 +1351,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         if (_faction != null) {
             bookmarkEventDispatcher.ExecuteBookmarkChangedNameOrElementsEvent(this); //since characters can change name icons based on faction
             Messenger.Broadcast(FactionSignals.FACTION_SET, this);
+            eventDispatcher.ExecuteJoinedFaction(this, _faction);
         }
         return true;
     }
@@ -2889,6 +2900,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 tileObjectComponent.SetPrimaryBed(p_homeStructure.GetRandomTileObjectOfTypeThatHasTileLocationAndIsBuilt<Bed>());
             }
         }
+        eventDispatcher.ExecuteCharacterSetHomeStructure(this, p_homeStructure);
     }
     public bool MigrateHomeTo(BaseSettlement newHomeSettlement, LocationStructure homeStructure = null, bool broadcast = true, bool addToRegionResidents = true) {
         BaseSettlement previousHome = null;
@@ -3834,6 +3846,20 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
         return false;
     }
+    /// <summary>
+    /// Function to use if an equip will be replaced by another equipment.
+    /// NOTE: This will not call unequipped signals.
+    /// </summary>
+    /// <param name="item">The equipment to replace</param>
+    /// <returns></returns>
+    public bool UnobtainItemForEquipmentReplacement(EquipmentItem item) {
+        if (RemoveItem(item)) {
+            RemoveBonusForUnobtainedEquipment(item, true);
+            item.SetInventoryOwner(null);
+            return true;
+        }
+        return false;
+    }
     public bool UnobtainItem(TILE_OBJECT_TYPE itemType) {
         TileObject removedItem = RemoveItem(itemType);
         if (removedItem != null) {
@@ -3853,10 +3879,19 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         return false;
     }
 
-    void RemoveBonusForUnobtainedEquipment(TileObject p_tileObject) {
+    void RemoveBonusForUnobtainedEquipment(TileObject p_tileObject, bool willReplaceEquipment = false) {
         if (p_tileObject is EquipmentItem equipItem) {
             equipItem.SetInventoryOwner(null);
             equipmentComponent.RemoveEquipment(equipItem, this);
+            if (!willReplaceEquipment) {
+                if (equipItem is WeaponItem) {
+                    eventDispatcher.ExecuteWeaponUnequipped(this, equipItem);
+                } else if (equipItem is ArmorItem) {
+                    eventDispatcher.ExecuteArmorUnequipped(this, equipItem);
+                } else if (equipItem is AccessoryItem) {
+                    eventDispatcher.ExecuteAccessoryUnequipped(this, equipItem);
+                }
+            }
         }
     }
     //public bool ConsumeToken(SpecialToken token) {
@@ -3872,6 +3907,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 equipmentInventory.Add(item);
                 //item.OnTileObjectAddedToInventoryOf(this);
                 Messenger.Broadcast(CharacterSignals.CHARACTER_OBTAINED_ITEM, item, this);
+                eventDispatcher.ExecuteItemObtained(this, item);
                 return true;
             }
         } else {
@@ -3879,6 +3915,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 items.Add(item);
                 //item.OnTileObjectAddedToInventoryOf(this);
                 Messenger.Broadcast(CharacterSignals.CHARACTER_OBTAINED_ITEM, item, this);
+                eventDispatcher.ExecuteItemObtained(this, item);
                 return true;
             }
         }
@@ -3889,11 +3926,13 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         if (item is EquipmentItem) {
             if (equipmentInventory.Remove(item)) {
                 Messenger.Broadcast(CharacterSignals.CHARACTER_LOST_ITEM, item, this);
+                eventDispatcher.ExecuteItemLost(this, item);
                 return true;
             }
         } else {
             if (items.Remove(item)) {
                 Messenger.Broadcast(CharacterSignals.CHARACTER_LOST_ITEM, item, this);
+                eventDispatcher.ExecuteItemLost(this, item);
                 return true;
             }
         }
@@ -3929,6 +3968,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         if (item != null) {
             items.RemoveAt(index);
             Messenger.Broadcast(CharacterSignals.CHARACTER_LOST_ITEM, item, this);
+            eventDispatcher.ExecuteItemLost(this, item);
             return true;
         }
         return false;
@@ -6375,6 +6415,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         previousCharacterDataComponent.LoadReferences(data.previousCharacterDataComponent);
         traitComponent.LoadReferences(data.traitComponent);
         dailyScheduleComponent.LoadReferences(data.dailyScheduleComponent);
+        villagerWantsComponent?.LoadReferences(data.villagerWantsComponent, this);
         //Place marker after loading references
         if (data.hasMarker) {
             if (!marker) {

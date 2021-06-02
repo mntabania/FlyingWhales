@@ -1,29 +1,30 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Inner_Maps.Location_Structures;
 using UnityEngine;
 using UtilityScripts;
 namespace Inner_Maps.Location_Structures {
     public class Dwelling : ManMadeStructure {
 
-        //public List<Character> residents { get; private set; }
+        public int differentFoodPileKindsInDwelling { get; private set; }
 
         #region getters
         public override bool isDwelling => true;
+        public override Type serializedData => typeof(SaveDataDwelling);
         #endregion
 
-        //facilities
-
         public Dwelling(Region location) : base(STRUCTURE_TYPE.DWELLING, location) {
-            //residents = new List<Character>();
             maxResidentCapacity = 2;
             SetMaxHPAndReset(3500);
         }
 
         public Dwelling(Region location, SaveDataManMadeStructure data) : base(location, data) {
-            //residents = new List<Character>();
             maxResidentCapacity = 2;
             SetMaxHP(3500);
+            SaveDataDwelling saveDataDwelling = data as SaveDataDwelling;
+            differentFoodPileKindsInDwelling = saveDataDwelling.differentFoodPileKindsInDwelling;
         }
 
         #region Overrides
@@ -59,6 +60,66 @@ namespace Inner_Maps.Location_Structures {
         //        }
         //    }
         //}
+        public override bool AddPOI(IPointOfInterest poi, LocationGridTile tileLocation = null) {
+            if (base.AddPOI(poi, tileLocation)) {
+                if (poi is TileObject tileObject && poi.gridTileLocation != null) {
+                    if (tileObject is FoodPile foodPile && GetTileObjectsOfType(foodPile.tileObjectType).Count == 1) {
+                        differentFoodPileKindsInDwelling++;
+                    }
+                    for (int i = 0; i < residents.Count; i++) {
+                        Character resident = residents[i];
+                        resident.eventDispatcher.ExecuteObjectPlacedInCharactersDwelling(resident, this, tileObject);
+                    }
+                }
+                return true;
+            }
+            return false;
+        }
+        public override bool RemovePOI(IPointOfInterest poi, Character removedBy = null, bool isPlayerSource = false) {
+            if (base.RemovePOI(poi, removedBy, isPlayerSource)) {
+                if (poi is TileObject tileObject) {
+                    if (tileObject is FoodPile foodPile && GetTileObjectsOfType(foodPile.tileObjectType).Count <= 0) {
+                        differentFoodPileKindsInDwelling--;
+                    }
+                    for (int i = 0; i < residents.Count; i++) {
+                        Character resident = residents[i];
+                        resident.eventDispatcher.ExecuteObjectRemovedFromCharactersDwelling(resident, this, tileObject);
+                    }
+                }
+                return true;
+            }
+            return false;
+        }
+        public override bool RemovePOIWithoutDestroying(IPointOfInterest poi) {
+            if (base.RemovePOIWithoutDestroying(poi)) {
+                if (poi is TileObject tileObject) {
+                    if (tileObject is FoodPile foodPile && GetTileObjectsOfType(foodPile.tileObjectType).Count <= 0) {
+                        differentFoodPileKindsInDwelling--;
+                    }
+                    for (int i = 0; i < residents.Count; i++) {
+                        Character resident = residents[i];
+                        resident.eventDispatcher.ExecuteObjectRemovedFromCharactersDwelling(resident, this, tileObject);
+                    }
+                }
+                return true;
+            }
+            return false;
+        }
+        public override bool RemovePOIDestroyVisualOnly(IPointOfInterest poi, Character remover = null) {
+            if (base.RemovePOIDestroyVisualOnly(poi, remover)) {
+                if (poi is TileObject tileObject) {
+                    if (tileObject is FoodPile foodPile && GetTileObjectsOfType(foodPile.tileObjectType).Count <= 0) {
+                        differentFoodPileKindsInDwelling--;
+                    }
+                    for (int i = 0; i < residents.Count; i++) {
+                        Character resident = residents[i];
+                        resident.eventDispatcher.ExecuteObjectRemovedFromCharactersDwelling(resident, this, tileObject);
+                    }
+                }
+                return true;
+            }
+            return false;
+        }
         public override bool CanBeResidentHere(Character character) {
             if (residents.Count == 0) {
                 return true;
@@ -72,6 +133,21 @@ namespace Inner_Maps.Location_Structures {
                 }
             }
             return false;
+        }
+        #endregion
+
+        #region Tile Objects
+        public void OnTileObjectInDwellingSetAsUnbuilt(TileObject p_tileObject) {
+            for (int i = 0; i < residents.Count; i++) {
+                Character resident = residents[i];
+                resident.eventDispatcher.ExecuteObjectRemovedFromCharactersDwelling(resident, this, p_tileObject);
+            }
+        }
+        public void OnTileObjectInDwellingSetAsBuilt(TileObject p_tileObject) {
+            for (int i = 0; i < residents.Count; i++) {
+                Character resident = residents[i];
+                resident.eventDispatcher.ExecuteObjectPlacedInCharactersDwelling(resident, this, p_tileObject);
+            }
         }
         #endregion
 
@@ -103,3 +179,14 @@ namespace Inner_Maps.Location_Structures {
         #endregion
     }
 }
+
+#region Save Data
+public class SaveDataDwelling : SaveDataManMadeStructure {
+    public int differentFoodPileKindsInDwelling;
+    public override void Save(LocationStructure locationStructure) {
+        base.Save(locationStructure);
+        Dwelling dwelling = locationStructure as Dwelling;
+        differentFoodPileKindsInDwelling = dwelling.differentFoodPileKindsInDwelling;
+    }
+}
+#endregion

@@ -667,9 +667,19 @@ namespace Locations.Settlements {
             }
             return count;
         }
-#endregion
+        public bool HasUnclaimedDwelling() {
+            List<LocationStructure> dwellings = GetStructuresOfType(STRUCTURE_TYPE.DWELLING);
+            for (int i = 0; i < dwellings.Count; i++) {
+                LocationStructure dwelling = dwellings[i];
+                if (dwelling.residents.Count <= 0) {
+                    return true;
+                }
+            }
+            return false;
+        }
+        #endregion
 
-#region Tiles
+        #region Tiles
         public void AddAreaToSettlement(Area p_area) {
             if (p_area.settlementOnArea != null) {
                 //allow villages to overwrite settlement on area that is set to a cave or a special structure 
@@ -786,7 +796,7 @@ namespace Locations.Settlements {
         }
         #endregion
 
-#region Fire
+        #region Fire
         private void StartListeningForFires() {
             Messenger.AddListener<ITraitable, Trait>(TraitSignals.TRAITABLE_GAINED_TRAIT, OnTraitableGainedTrait);
             Messenger.AddListener<ITraitable, Trait, Character>(TraitSignals.TRAITABLE_LOST_TRAIT, OnTraitableLostTrait);
@@ -819,9 +829,9 @@ namespace Locations.Settlements {
             }
             
         }
-#endregion
+        #endregion
 
-#region Utilities
+        #region Utilities
         protected virtual void SettlementWipedOut() { }
         public bool HasPathTowardsTileInSettlement(Character character, int tileCount) {
             bool hasPath = false;
@@ -880,10 +890,9 @@ namespace Locations.Settlements {
                 }
             }
         }
+        #endregion
 
-#endregion
-
-#region Tile Object
+        #region Tile Object
         public bool HasTileObjectOfType(TILE_OBJECT_TYPE type) {
             for (int i = 0; i < allStructures.Count; i++) {
                 if (allStructures[i].HasTileObjectOfType(type)) {
@@ -978,9 +987,9 @@ namespace Locations.Settlements {
             }
             return count;
         }
-#endregion
+        #endregion
 
-#region Party
+        #region Party
         public void AddParty(Party party) {
             if (!parties.Contains(party)) {
                 parties.Add(party);
@@ -998,9 +1007,9 @@ namespace Locations.Settlements {
             }
             return null;
         }
-#endregion
+        #endregion
 
-#region IPartyTargetDestination
+        #region IPartyTargetDestination
         public LocationGridTile GetRandomPassableTile() {
             LocationStructure structure = GetFirstStructureOfType(STRUCTURE_TYPE.CITY_CENTER);
             if(structure == null) {
@@ -1014,9 +1023,9 @@ namespace Locations.Settlements {
         public bool IsAtTargetDestination(Character character) {
             return character.currentSettlement == this;
         }
-#endregion
+        #endregion
 
-#region Player Action Target
+        #region Player Action Target
         public virtual void ConstructDefaultActions() {
             actions = new List<PLAYER_SKILL_TYPE>();
         }
@@ -1034,18 +1043,18 @@ namespace Locations.Settlements {
         public void ClearPlayerActions() {
             actions.Clear();
         }
-#endregion
+        #endregion
 
-#region IStoredTarget
+        #region IStoredTarget
         public bool CanBeStoredAsTarget() {
             return true;
         }
         public void SetAsStoredTarget(bool p_state) {
             isStoredAsTarget = p_state;
         }
-#endregion
+        #endregion
 
-#region IBookmarkable
+        #region IBookmarkable
         public void OnSelectBookmark() {
             UIManager.Instance.ShowSettlementInfo(this);
         }
@@ -1054,14 +1063,14 @@ namespace Locations.Settlements {
         }
         public void OnHoverOverBookmarkItem(UIHoverPosition p_pos) { }
         public void OnHoverOutBookmarkItem() { }
-#endregion
+        #endregion
 
-#region Loading
+        #region Loading
         public virtual void LoadReferences(SaveDataBaseSettlement data) {
             if (!string.IsNullOrEmpty(data.factionOwnerID)) {
                 owner =  DatabaseManager.Instance.factionDatabase.GetFactionBasedOnPersistentID(data.factionOwnerID);    
             }
         }
-#endregion
+        #endregion
     }
 }

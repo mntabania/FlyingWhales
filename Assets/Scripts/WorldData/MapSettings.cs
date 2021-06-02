@@ -64,11 +64,11 @@ public class MapSettings {
     public Vector2 GetMapSize() {
         switch (mapSize) {
             case MAP_SIZE.Small:
-                return new Vector2(8, 8);
+                return new Vector2(10, 8);
             case MAP_SIZE.Medium:
-                return new Vector2(12, 8);
+                return new Vector2(13, 10);
             case MAP_SIZE.Large:
-                return new Vector2(16, 10);
+                return new Vector2(16, 12);
             case MAP_SIZE.Extra_Large:
                 return new Vector2(20, 14);
             default:
