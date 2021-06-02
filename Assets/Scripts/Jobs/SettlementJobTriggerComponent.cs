@@ -135,7 +135,8 @@ public class SettlementJobTriggerComponent : JobTriggerComponent/*, SettlementCl
 #if DEBUG_PROFILER
 		Profiler.BeginSample($"{_owner.name} settlement Hourly Job Actions");
 #endif
-		CreatePatrolJobs();
+		//No more patrol jobs since patrol is now party behaviour
+		//CreatePatrolJobs();
 		TryCreateMiningJob();
 		//HourlyCheckForNeededCharacterClasses();
 		// TryCreateMissingFoodProducingStructure();

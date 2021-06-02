@@ -20,6 +20,8 @@ public class PartyQuest : ISavable {
     public OBJECT_TYPE objectType => OBJECT_TYPE.Party_Quest;
     public bool isAssigned => assignedParty != null;
     public virtual bool shouldAssignedPartyRetreatUponKnockoutOrKill => false;
+    public virtual bool canStillJoinQuestAnytime => false;
+    public virtual bool workingStateImmediately => false;
     #endregion
 
     public PartyQuest(PARTY_QUEST_TYPE partyType) {

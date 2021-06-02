@@ -305,7 +305,11 @@ public class Party : ILogFiller, ISavable, IJobOwner, IBookmarkable {
         if (hasSetNextSwitchToWaitingStateTrigger) {
             hasSetNextSwitchToWaitingStateTrigger = false;
             if (partyState == PARTY_STATE.None && isActive) {
-                SetPartyState(PARTY_STATE.Waiting);
+                if (currentQuest.workingStateImmediately) {
+                    SetPartyState(PARTY_STATE.Working);
+                } else {
+                    SetPartyState(PARTY_STATE.Waiting);
+                }
             }
         }
     }
@@ -702,8 +706,8 @@ public class Party : ILogFiller, ISavable, IJobOwner, IBookmarkable {
                 PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
                 LogPool.Release(log);
             }
-            
-            //OnAcceptQuest(quest);
+
+            OnAcceptQuest(quest);
             quest.OnAcceptQuest(this);
             ScheduleToStartWaitingQuest(members[0]);
             ScheduleToEndQuest(members[0]);
@@ -750,6 +754,8 @@ public class Party : ILogFiller, ISavable, IJobOwner, IBookmarkable {
                 Messenger.Broadcast(PartySignals.PARTY_QUEST_FAILED, this);
                 onQuestFailed?.Invoke();
             }
+
+            OnAfterDropQuest(prevQuest);
         }
     }
     private void SetCurrentQuest(PartyQuest p_quest) {
@@ -762,6 +768,12 @@ public class Party : ILogFiller, ISavable, IJobOwner, IBookmarkable {
             currentQuest = p_quest;
         }
     }
+    private void OnAcceptQuest(PartyQuest quest) {
+        for (int i = 0; i < members.Count; i++) {
+            Character c = members[i];
+            c.dailyScheduleComponent.OnPartyAcceptedQuest(c, quest);
+        }
+    }
     private void OnDropQuest(PartyQuest quest) {
         //Every time a quest is dropped, always clear out the party jobs
         ForceCancelAllJobs();
@@ -771,6 +783,12 @@ public class Party : ILogFiller, ISavable, IJobOwner, IBookmarkable {
         if (!isDisbanded) {
             //After a party drops quest, the party must not take quest for 12 hours, so that they can recupirate
             StartNoQuestCooldown();
+        }
+    }
+    private void OnAfterDropQuest(PartyQuest quest) {
+        for (int i = 0; i < members.Count; i++) {
+            Character c = members[i];
+            c.dailyScheduleComponent.OnPartyEndQuest(c, quest);
         }
     }
     private void StartNoQuestCooldown() {

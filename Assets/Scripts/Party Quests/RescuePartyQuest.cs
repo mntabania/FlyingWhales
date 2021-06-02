@@ -29,21 +29,21 @@ public class RescuePartyQuest : PartyQuest, IRescuePartyQuest {
     }
 
     #region Overrides
-    public override void OnAcceptQuest(Party partyThatAcceptedQuest) {
-        base.OnAcceptQuest(partyThatAcceptedQuest);
-        Messenger.AddListener<Character>(CharacterSignals.CHARACTER_CAN_NO_LONGER_PERFORM, OnCharacterNoLongerPerform);
-        Messenger.AddListener<Character>(CharacterSignals.CHARACTER_CAN_NO_LONGER_MOVE, OnCharacterNoLongerMove);
-    }
-    public override void OnAcceptQuestFromSaveData(Party partyThatAcceptedQuest) {
-        base.OnAcceptQuestFromSaveData(partyThatAcceptedQuest);
-        Messenger.AddListener<Character>(CharacterSignals.CHARACTER_CAN_NO_LONGER_PERFORM, OnCharacterNoLongerPerform);
-        Messenger.AddListener<Character>(CharacterSignals.CHARACTER_CAN_NO_LONGER_MOVE, OnCharacterNoLongerMove);
-    }
-    protected override void OnEndQuest() {
-        base.OnEndQuest();
-        Messenger.RemoveListener<Character>(CharacterSignals.CHARACTER_CAN_NO_LONGER_PERFORM, OnCharacterNoLongerPerform);
-        Messenger.RemoveListener<Character>(CharacterSignals.CHARACTER_CAN_NO_LONGER_MOVE, OnCharacterNoLongerMove);
-    }
+    //public override void OnAcceptQuest(Party partyThatAcceptedQuest) {
+    //    base.OnAcceptQuest(partyThatAcceptedQuest);
+    //    Messenger.AddListener<Character>(CharacterSignals.CHARACTER_CAN_NO_LONGER_PERFORM, OnCharacterNoLongerPerform);
+    //    Messenger.AddListener<Character>(CharacterSignals.CHARACTER_CAN_NO_LONGER_MOVE, OnCharacterNoLongerMove);
+    //}
+    //public override void OnAcceptQuestFromSaveData(Party partyThatAcceptedQuest) {
+    //    base.OnAcceptQuestFromSaveData(partyThatAcceptedQuest);
+    //    Messenger.AddListener<Character>(CharacterSignals.CHARACTER_CAN_NO_LONGER_PERFORM, OnCharacterNoLongerPerform);
+    //    Messenger.AddListener<Character>(CharacterSignals.CHARACTER_CAN_NO_LONGER_MOVE, OnCharacterNoLongerMove);
+    //}
+    //protected override void OnEndQuest() {
+    //    base.OnEndQuest();
+    //    Messenger.RemoveListener<Character>(CharacterSignals.CHARACTER_CAN_NO_LONGER_PERFORM, OnCharacterNoLongerPerform);
+    //    Messenger.RemoveListener<Character>(CharacterSignals.CHARACTER_CAN_NO_LONGER_MOVE, OnCharacterNoLongerMove);
+    //}
     public override IPartyTargetDestination GetTargetDestination() {
         if(targetCharacter.currentStructure != null && targetCharacter.currentStructure.structureType != STRUCTURE_TYPE.WILDERNESS) {
             return targetCharacter.currentStructure;
@@ -136,52 +136,52 @@ public class RescuePartyQuest : PartyQuest, IRescuePartyQuest {
     //        }
     //    }
     //}
-    private void OnCharacterNoLongerPerform(Character character) {
-        if (character.limiterComponent.canMove) {
-            //If character can still move even if he/she cannot perform, do not end quest
-            //In order for the quest to be ended, character must be both cannot perform and move
-            //The reason is so the quest will not end if the character only sleeps or rests
-            return;
-        }
-        if (GameUtilities.RollChance(15)) {
-            if (assignedParty != null && assignedParty.membersThatJoinedQuest.Contains(character)) {
-                EndQuest(character.name + " is incapacitated");
-                return;
-            }
-        }
-        if (assignedParty != null) {
-            if (assignedParty.DidMemberJoinQuest(character) && !assignedParty.HasActiveMemberThatJoinedQuest()) {
-                EndQuest("Members are incapacitated");
-            }
-        }
-    }
-    private void OnCharacterNoLongerMove(Character character) {
-        if (character.limiterComponent.canPerform) {
-            //If character can still perform even if he/she cannot move, do not end quest
-            //In order for the quest to be ended, character must be both cannot perform and move
-            //The reason is so the quest will not end if the character only sleeps or rests
-            return;
-        }
-        if (GameUtilities.RollChance(15)) {
-            if (assignedParty != null && assignedParty.membersThatJoinedQuest.Contains(character)) {
-                EndQuest(character.name + " is incapacitated");
-                return;
-            }
-        }
-        if (assignedParty != null) {
-            if (assignedParty.DidMemberJoinQuest(character) && !assignedParty.HasActiveMemberThatJoinedQuest()) {
-                EndQuest("Members are incapacitated");
-            }
-        }
-    }
-    public override void OnCharacterDeath(Character p_character) {
-        base.OnCharacterDeath(p_character);
-        if (GameUtilities.RollChance(25)) {
-            if (assignedParty != null && assignedParty.membersThatJoinedQuest.Contains(p_character)) {
-                EndQuest(p_character.name + " died");
-            }
-        }
-    }
+    //private void OnCharacterNoLongerPerform(Character character) {
+    //    if (character.limiterComponent.canMove) {
+    //        //If character can still move even if he/she cannot perform, do not end quest
+    //        //In order for the quest to be ended, character must be both cannot perform and move
+    //        //The reason is so the quest will not end if the character only sleeps or rests
+    //        return;
+    //    }
+    //    if (GameUtilities.RollChance(15)) {
+    //        if (assignedParty != null && assignedParty.membersThatJoinedQuest.Contains(character)) {
+    //            EndQuest(character.name + " is incapacitated");
+    //            return;
+    //        }
+    //    }
+    //    if (assignedParty != null) {
+    //        if (assignedParty.DidMemberJoinQuest(character) && !assignedParty.HasActiveMemberThatJoinedQuest()) {
+    //            EndQuest("Members are incapacitated");
+    //        }
+    //    }
+    //}
+    //private void OnCharacterNoLongerMove(Character character) {
+    //    if (character.limiterComponent.canPerform) {
+    //        //If character can still perform even if he/she cannot move, do not end quest
+    //        //In order for the quest to be ended, character must be both cannot perform and move
+    //        //The reason is so the quest will not end if the character only sleeps or rests
+    //        return;
+    //    }
+    //    if (GameUtilities.RollChance(15)) {
+    //        if (assignedParty != null && assignedParty.membersThatJoinedQuest.Contains(character)) {
+    //            EndQuest(character.name + " is incapacitated");
+    //            return;
+    //        }
+    //    }
+    //    if (assignedParty != null) {
+    //        if (assignedParty.DidMemberJoinQuest(character) && !assignedParty.HasActiveMemberThatJoinedQuest()) {
+    //            EndQuest("Members are incapacitated");
+    //        }
+    //    }
+    //}
+    //public override void OnCharacterDeath(Character p_character) {
+    //    base.OnCharacterDeath(p_character);
+    //    if (GameUtilities.RollChance(25)) {
+    //        if (assignedParty != null && assignedParty.membersThatJoinedQuest.Contains(p_character)) {
+    //            EndQuest(p_character.name + " died");
+    //        }
+    //    }
+    //}
     #endregion
 
     #region Loading
