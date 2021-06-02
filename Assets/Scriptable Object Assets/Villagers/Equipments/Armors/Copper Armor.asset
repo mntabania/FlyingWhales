@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 49d866ce53a3fb34887a699eb039ad3a, type: 3}
   m_Name: Copper Armor
   m_EditorClassIdentifier: 
-  resourceType: 0
-  specificResource: 0
+  resourceType: 4
+  specificResource: 0000000002000000
   resourceAmount: 100
   purchaseCost: 50
   tier: 1

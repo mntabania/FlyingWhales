@@ -20,7 +20,6 @@ public class EquipmentUpgradeDataEditor : Editor {
     private ELEMENTAL_TYPE m_elementalBonus;
     private EQUIPMENT_SLAYER_BONUS m_equipmentSlayerBonus;
     private EQUIPMENT_WARD_BONUS m_equipmentWardBonus;
-    private CONCRETE_RESOURCES m_concreteResource;
     private RESOURCE m_resourceType;
 
     private bool m_isTypeResourcesNone;
@@ -63,7 +62,7 @@ public class EquipmentUpgradeDataEditor : Editor {
         m_resourceType = data.resourceType = (RESOURCE)EditorGUILayout.EnumPopup("Any of resource type", m_resourceType);
         EditorGUILayout.Space();
         if (m_isTypeResourcesNone) {
-            m_concreteResource = data.specificResource = (CONCRETE_RESOURCES)EditorGUILayout.EnumPopup("Specific Resource", m_concreteResource);
+            DisplayResourceList(data.specificResource, "Reource List (OR)");
             EditorGUILayout.Space();
         }
     }
@@ -147,6 +146,19 @@ public class EquipmentUpgradeDataEditor : Editor {
 
         for (int i = 0; i < list.Count; i++) {
             list[i] = (EQUIPMENT_CLASS_COMPATIBILITY)EditorGUILayout.EnumPopup((EQUIPMENT_CLASS_COMPATIBILITY)list[i]);
+        }
+    }
+
+    public void DisplayResourceList(List<CONCRETE_RESOURCES> listInt, string caption) {
+        var list = listInt;
+        int newCount = Mathf.Max(0, EditorGUILayout.IntField(caption, list.Count));
+        while (newCount < list.Count)
+            list.RemoveAt(list.Count - 1);
+        while (newCount > list.Count)
+            list.Add(0);
+
+        for (int i = 0; i < list.Count; i++) {
+            list[i] = (CONCRETE_RESOURCES)EditorGUILayout.EnumPopup((CONCRETE_RESOURCES)list[i]);
         }
     }
 }

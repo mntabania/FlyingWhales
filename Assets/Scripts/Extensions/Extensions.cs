@@ -440,6 +440,12 @@ public static class Extensions {
             case TILE_OBJECT_TYPE.WEREWOLF_PELT:
             case TILE_OBJECT_TYPE.PHYLACTERY:
             case TILE_OBJECT_TYPE.COPPER_SWORD:
+            case TILE_OBJECT_TYPE.BASIC_SWORD:
+            case TILE_OBJECT_TYPE.BASIC_AXE:
+            case TILE_OBJECT_TYPE.BASIC_BOW:
+            case TILE_OBJECT_TYPE.BASIC_DAGGER:
+            case TILE_OBJECT_TYPE.BASIC_CLOTH:
+            case TILE_OBJECT_TYPE.BASIC_STAFF:
             case TILE_OBJECT_TYPE.IRON_SWORD:
             case TILE_OBJECT_TYPE.MITHRIL_SWORD:
             case TILE_OBJECT_TYPE.ORICHALCUM_SWORD:
@@ -576,6 +582,12 @@ public static class Extensions {
             case TILE_OBJECT_TYPE.BLOCK_WALL:
             case TILE_OBJECT_TYPE.DESERT_ROSE:
             case TILE_OBJECT_TYPE.COPPER_SWORD:
+            case TILE_OBJECT_TYPE.BASIC_SWORD:
+            case TILE_OBJECT_TYPE.BASIC_AXE:
+            case TILE_OBJECT_TYPE.BASIC_BOW:
+            case TILE_OBJECT_TYPE.BASIC_DAGGER:
+            case TILE_OBJECT_TYPE.BASIC_CLOTH:
+            case TILE_OBJECT_TYPE.BASIC_STAFF:
             case TILE_OBJECT_TYPE.IRON_SWORD:
             case TILE_OBJECT_TYPE.MITHRIL_SWORD:
             case TILE_OBJECT_TYPE.ORICHALCUM_SWORD:
