@@ -32,6 +32,11 @@ public class DemonRescueBehaviour : CharacterBehaviourComponent {
                             return hasJob;
                         } else {
                             quest.EndQuest("Saw target is safe");
+                            //if target is paralyzed carry back home
+                            if (!quest.targetCharacter.IsPOICurrentlyTargetedByAPerformingAction(JOB_TYPE.MOVE_CHARACTER)) {
+                                //Do not set this as a party job
+                                character.jobComponent.TryTriggerMoveCharacter(quest.targetCharacter, false, out producedJob);
+                            }
                             return true;
                         }
                     } else {

@@ -720,6 +720,9 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
         return rel.relationshipStatus == FACTION_RELATIONSHIP_STATUS.Hostile;
     }
     public bool IsFriendlyWith(Faction faction) {
+        if (faction == null) {
+            return false;
+        }
         if (faction == this) {
             return true;
         }

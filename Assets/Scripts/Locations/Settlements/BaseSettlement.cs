@@ -495,6 +495,21 @@ namespace Locations.Settlements {
         public LocationStructure GetRandomStructure() {
             return CollectionUtilities.GetRandomElement(allStructures);
         }
+        public LocationStructure GetRandomDwellingOrResourceProducingStructure() {
+            LocationStructure chosenStructure = null;
+            List<LocationStructure> pool = RuinarchListPool<LocationStructure>.Claim();
+            for (int i = 0; i < allStructures.Count; i++) {
+                LocationStructure s = allStructures[i];
+                if (s is Dwelling || s.structureType.IsFoodProducingStructure() || s.structureType.IsResourceProducingStructure()) {
+                    pool.Add(s);
+                }
+            }
+            if (pool.Count > 0) {
+                chosenStructure = pool[GameUtilities.RandomBetweenTwoNumbers(0, pool.Count - 1)];
+            }
+            RuinarchListPool<LocationStructure>.Release(pool);
+            return chosenStructure;
+        }
         public LocationStructure GetStructureByID(STRUCTURE_TYPE type, int id) {
             if (structures.ContainsKey(type)) {
                 List<LocationStructure> locStructures = structures[type];

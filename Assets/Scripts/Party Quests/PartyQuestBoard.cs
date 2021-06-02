@@ -90,11 +90,13 @@ public class PartyQuestBoard {
             //Cannot post quests on faction that are not major
             return;
         }
-        ExplorationPartyQuest quest = PartyManager.Instance.CreateNewPartyQuest(PARTY_QUEST_TYPE.Exploration) as ExplorationPartyQuest;
-        quest.SetMadeInLocation(madeInLocation);
-        quest.SetRegionRefForGettingNewStructure(region);
-        quest.ProcessSettingTargetStructure();
-        AddPartyQuest(quest, questCreator);
+        LocationStructure targetStructure = region.GetRandomSpecialStructure();
+        if (targetStructure != null) {
+            ExplorationPartyQuest quest = PartyManager.Instance.CreateNewPartyQuest(PARTY_QUEST_TYPE.Exploration) as ExplorationPartyQuest;
+            quest.SetMadeInLocation(madeInLocation);
+            quest.SetTargetStructure(targetStructure);
+            AddPartyQuest(quest, questCreator);
+        }
     }
     public void CreateRescuePartyQuest(Character questCreator, BaseSettlement madeInLocation, Character targetCharacter) {
         if (!owner.isMajorFaction) {

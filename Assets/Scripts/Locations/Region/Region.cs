@@ -567,6 +567,21 @@ public class Region : ISavable, ILogFiller {
         RuinarchListPool<LocationStructure>.Release(structureChoices);
         return chosenStructure;
     }
+    public LocationStructure GetRandomSpecialStructure() {
+        List<LocationStructure> specialStructures = ObjectPoolManager.Instance.CreateNewStructuresList();
+        LocationStructure chosenStructure = null;
+        for (int i = 0; i < allStructures.Count; i++) {
+            LocationStructure currStructure = allStructures[i];
+            if (currStructure.settlementLocation != null && currStructure.settlementLocation.locationType == LOCATION_TYPE.DUNGEON && currStructure.passableTiles.Count > 0) {
+                specialStructures.Add(currStructure);
+            }
+        }
+        if (specialStructures != null && specialStructures.Count > 0) {
+            chosenStructure = specialStructures[UnityEngine.Random.Range(0, specialStructures.Count)];
+        }
+        ObjectPoolManager.Instance.ReturnStructuresListToPool(specialStructures);
+        return chosenStructure;
+    }
     public LocationStructure GetRandomSpecialStructureExcept(List<LocationStructure> exceptions) {
         List<LocationStructure> specialStructures = ObjectPoolManager.Instance.CreateNewStructuresList();
         LocationStructure chosenStructure = null;

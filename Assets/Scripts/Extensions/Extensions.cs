@@ -116,6 +116,26 @@ public static class Extensions {
                 return false;
         }
     }
+    public static bool IsResourceProducingStructure(this STRUCTURE_TYPE sub) {
+        switch (sub) {
+            case STRUCTURE_TYPE.MINE:
+            case STRUCTURE_TYPE.LUMBERYARD:
+            case STRUCTURE_TYPE.HUNTER_LODGE:
+                return true;
+            default:
+                return false;
+        }
+    }
+    public static bool IsFoodProducingStructure(this STRUCTURE_TYPE sub) {
+        switch (sub) {
+            case STRUCTURE_TYPE.FARM:
+            case STRUCTURE_TYPE.FISHERY:
+            case STRUCTURE_TYPE.BUTCHERS_SHOP:
+                return true;
+            default:
+                return false;
+        }
+    }
     public static bool IsPlayerStructure(this STRUCTURE_TYPE type) {
         switch (type) {
             case STRUCTURE_TYPE.THE_PORTAL:

@@ -721,6 +721,34 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 		}
 		return false;
 	}
+    public bool TryTriggerMoveCharacter(Character targetCharacter, bool doNotRecalculate = false) {
+        JobQueueItem job;
+        TryTriggerMoveCharacter(targetCharacter, doNotRecalculate, out job);
+        if (job != null) {
+            return owner.jobQueue.AddJobInQueue(job);
+        }
+        return false;
+    }
+    public bool TryTriggerMoveCharacter(Character targetCharacter, bool doNotRecalculate = false, out JobQueueItem producedJob) {
+        producedJob = null;
+        if (!targetCharacter.HasJobTargetingThis(JOB_TYPE.MOVE_CHARACTER)) {
+            LocationStructure dropLocationStructure = owner.homeSettlement?.GetFirstStructureOfType(STRUCTURE_TYPE.CITY_CENTER);
+            if (dropLocationStructure == null) {
+                dropLocationStructure = owner.homeSettlement?.GetRandomStructure();
+            }
+            if (dropLocationStructure == null) {
+                dropLocationStructure = owner.homeStructure;
+            }
+            if (dropLocationStructure != null) {
+                GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.MOVE_CHARACTER, INTERACTION_TYPE.DROP, targetCharacter, owner);
+                job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { dropLocationStructure });
+                job.SetDoNotRecalculate(doNotRecalculate);
+                producedJob = job;
+                return true;
+            }
+        }
+        return false;
+    }
     public bool TryTriggerMoveCharacter(Character targetCharacter, LocationStructure dropLocationStructure, LocationGridTile dropGridTile) {
 		if (!targetCharacter.HasJobTargetingThis(JOB_TYPE.MOVE_CHARACTER)) {
 			GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.MOVE_CHARACTER, INTERACTION_TYPE.DROP, targetCharacter, owner);

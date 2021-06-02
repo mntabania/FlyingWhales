@@ -276,12 +276,24 @@ namespace Traits {
                                 }
                             }
                         } else {
+                            //If a restrained Villager from same Faction or other allied Faction was seen: Release
+                            if (targetCharacter.traitContainer.HasTrait("Restrained")) {
+                                if (owner.partyComponent.hasParty && owner.partyComponent.currentParty.isActive) {
+                                    if (owner.faction != null && owner.partyComponent.currentParty.partyState == PARTY_STATE.Working) {
+                                        if (owner.partyComponent.currentParty.currentQuest is ExplorationPartyQuest || owner.partyComponent.currentParty.currentQuest is ExterminationPartyQuest) {
+                                            if (owner.faction == targetCharacter.faction || owner.faction.IsFriendlyWith(targetCharacter.faction)) {
+                                                owner.jobComponent.TriggerReleaseJob(targetCharacter);
+                                            }
+                                        }
+                                    }
+                                }
+                            }
                             if (targetCharacter.traitContainer.HasTrait("Restrained", "Unconscious", "Frozen", "Ensnared", "Enslaved")) {
                                 if (owner.partyComponent.hasParty && owner.partyComponent.currentParty.isActive) {
                                     if (owner.faction != null && owner.faction != targetCharacter.faction && owner.partyComponent.currentParty.partyState == PARTY_STATE.Working) {
-                                        if (owner.partyComponent.currentParty.currentQuest is ExplorationPartyQuest exploreParty) {
+                                        if (owner.partyComponent.currentParty.currentQuest is ExplorationPartyQuest || owner.partyComponent.currentParty.currentQuest is ExterminationPartyQuest) {
                                             if (owner.faction.factionType.HasIdeology(FACTION_IDEOLOGY.Warmonger)) {
-                                                if (UnityEngine.Random.Range(0, 100) < 15) {
+                                                if (UnityEngine.Random.Range(0, 100) < 25) {
                                                     if (owner.jobComponent.TriggerKidnapJob(targetCharacter)) {
                                                         owner.partyComponent.currentParty.RemoveMemberThatJoinedQuest(owner);
                                                     }

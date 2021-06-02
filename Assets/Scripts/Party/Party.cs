@@ -54,6 +54,8 @@ public class Party : ILogFiller, ISavable, IJobOwner, IBookmarkable {
     public GameDate canAcceptQuestsAgainDate { get; private set; }
     public GameDate nextWaitingCheckDate { get; private set; }
     public bool hasSetNextSwitchToWaitingStateTrigger { get; private set; }
+    public GameDate endQuestDate { get; private set; }
+    public bool hasSetEndQuestDate { get; private set; }
     public int chanceToRetreatUponKnockoutOrDeath { get; private set; }
 
     public JobBoard jobBoard { get; private set; }
@@ -198,6 +200,9 @@ public class Party : ILogFiller, ISavable, IJobOwner, IBookmarkable {
         if (hasSetNextSwitchToWaitingStateTrigger) {
             SchedulingManager.Instance.AddEntry(nextWaitingCheckDate, TryStartToWaitQuest, null);
         }
+        if (hasSetEndQuestDate) {
+            SchedulingManager.Instance.AddEntry(endQuestDate, TryScheduledEndQuest, null);
+        }
     }
 
     #region Listeners
@@ -297,9 +302,19 @@ public class Party : ILogFiller, ISavable, IJobOwner, IBookmarkable {
         ScheduleNextDateToCheckQuest();
     }
     private void TryStartToWaitQuest() {
-        hasSetNextSwitchToWaitingStateTrigger = false;
-        if (partyState == PARTY_STATE.None && isActive) {
-            SetPartyState(PARTY_STATE.Waiting);
+        if (hasSetNextSwitchToWaitingStateTrigger) {
+            hasSetNextSwitchToWaitingStateTrigger = false;
+            if (partyState == PARTY_STATE.None && isActive) {
+                SetPartyState(PARTY_STATE.Waiting);
+            }
+        }
+    }
+    private void TryScheduledEndQuest() {
+        if (hasSetEndQuestDate) {
+            hasSetEndQuestDate = false;
+            if (isActive) {
+                currentQuest.EndQuest("Done working");
+            }
         }
     }
     private void InitialScheduleToCheckQuest() {
@@ -318,13 +333,26 @@ public class Party : ILogFiller, ISavable, IJobOwner, IBookmarkable {
         SchedulingManager.Instance.AddEntry(nextQuestCheckDate, TryAcceptQuest, null);
     }
     private void ScheduleToStartWaitingQuest(Character partyMember) {
-        int tick = partyMember.dailyScheduleComponent.schedule.GetStartingTickOfScheduleType(DAILY_SCHEDULE.Work);
-
+        if (hasSetNextSwitchToWaitingStateTrigger) {
+            return;
+        }
+        hasSetNextSwitchToWaitingStateTrigger = true;
+        int tick = partyMember.dailyScheduleComponent.schedule.GetStartTickOfScheduleType(DAILY_SCHEDULE.Work);
         GameDate schedule = GameManager.Instance.Today();
         schedule.SetTicks(tick);
         nextWaitingCheckDate = schedule;
         SchedulingManager.Instance.AddEntry(schedule, TryStartToWaitQuest, null);
-        hasSetNextSwitchToWaitingStateTrigger = true;
+    }
+    private void ScheduleToEndQuest(Character partyMember) {
+        if (hasSetEndQuestDate) {
+            return;
+        }
+        hasSetEndQuestDate = true;
+        int tick = partyMember.dailyScheduleComponent.schedule.GetEndTickOfScheduleType(DAILY_SCHEDULE.Work);
+        GameDate schedule = GameManager.Instance.Today();
+        schedule.SetTicks(tick);
+        endQuestDate = schedule;
+        SchedulingManager.Instance.AddEntry(schedule, TryScheduledEndQuest, null);
     }
     //private void PerTickEndedWhileActive() {
     //if (restSchedule == GameManager.Instance.currentTick && partyState != PARTY_STATE.Resting) {
@@ -467,6 +495,9 @@ public class Party : ILogFiller, ISavable, IJobOwner, IBookmarkable {
                     SetPartyState(PARTY_STATE.Working);
                 } else {
                     SetPartyState(PARTY_STATE.Moving);
+                }
+                if (true) {
+
                 }
             } else {
                 //Drop quest only instead of ending quest so that the quest can still be taken by other parties
@@ -675,6 +706,7 @@ public class Party : ILogFiller, ISavable, IJobOwner, IBookmarkable {
             //OnAcceptQuest(quest);
             quest.OnAcceptQuest(this);
             ScheduleToStartWaitingQuest(members[0]);
+            ScheduleToEndQuest(members[0]);
             SetChanceToRetreatUponKnockoutOrDeath(25);
         }
     }
@@ -709,6 +741,7 @@ public class Party : ILogFiller, ISavable, IJobOwner, IBookmarkable {
             targetCamp = null;
             targetDestination = null;
             SetHasChangedTargetDestination(false);
+            hasSetEndQuestDate = false;
 
             if (prevQuest.isSuccessful) {
                 Messenger.Broadcast(PartySignals.PARTY_QUEST_FINISHED_SUCCESSFULLY, this);
@@ -1336,6 +1369,7 @@ public class Party : ILogFiller, ISavable, IJobOwner, IBookmarkable {
         onQuestFailed = null;
         onQuestSucceed = null;
         hasSetNextSwitchToWaitingStateTrigger = false;
+        hasSetEndQuestDate = false;
         chanceToRetreatUponKnockoutOrDeath = 25;
         ClearMembersThatJoinedQuest(shouldDropQuest: false);
         _activeMembers.Clear();
