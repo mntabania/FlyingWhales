@@ -16,6 +16,7 @@ public class ExterminationPartyQuest : PartyQuest {
     public override IPartyQuestTarget target => targetStructure;
     //public override HexTile waitingHexArea => waitingArea;
     public override System.Type serializedData => typeof(SaveDataExterminationPartyQuest);
+    public override bool shouldAssignedPartyRetreatUponKnockoutOrKill => true;
     #endregion
 
     public ExterminationPartyQuest() : base(PARTY_QUEST_TYPE.Extermination) {

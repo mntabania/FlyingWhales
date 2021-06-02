@@ -15,6 +15,7 @@ public class RaidPartyQuest : PartyQuest {
     public override IPartyQuestTarget target => targetSettlement;
     //public override HexTile waitingHexArea => waitingArea;
     public override System.Type serializedData => typeof(SaveDataRaidPartyQuest);
+    public override bool shouldAssignedPartyRetreatUponKnockoutOrKill => true;
     #endregion
 
     public RaidPartyQuest() : base(PARTY_QUEST_TYPE.Raid) {

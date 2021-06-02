@@ -17,6 +17,7 @@ public class DemonRescuePartyQuest : PartyQuest, IRescuePartyQuest {
     public override IPartyQuestTarget target => targetCharacter;
     public override System.Type serializedData => typeof(SaveDataDemonRescuePartyQuest);
     public override bool waitingToWorkingStateImmediately => true;
+    public override bool shouldAssignedPartyRetreatUponKnockoutOrKill => true;
     #endregion
 
     public DemonRescuePartyQuest() : base(PARTY_QUEST_TYPE.Demon_Rescue) {

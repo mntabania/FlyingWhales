@@ -17,6 +17,7 @@ public class ExplorationPartyQuest : PartyQuest {
     #region getters
     public override IPartyQuestTarget target => targetStructure;
     public override System.Type serializedData => typeof(SaveDataExplorationPartyQuest);
+    public override bool shouldAssignedPartyRetreatUponKnockoutOrKill => true;
     #endregion
 
     public ExplorationPartyQuest() : base(PARTY_QUEST_TYPE.Exploration) {

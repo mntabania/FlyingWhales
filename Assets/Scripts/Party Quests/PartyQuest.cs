@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Locations.Settlements;
-
+using UtilityScripts;
 public class PartyQuest : ISavable {
     public string persistentID { get; private set; }
     public PARTY_QUEST_TYPE partyQuestType { get; protected set; }
@@ -19,6 +19,7 @@ public class PartyQuest : ISavable {
     public virtual bool waitingToWorkingStateImmediately => false;
     public OBJECT_TYPE objectType => OBJECT_TYPE.Party_Quest;
     public bool isAssigned => assignedParty != null;
+    public virtual bool shouldAssignedPartyRetreatUponKnockoutOrKill => false;
     #endregion
 
     public PartyQuest(PARTY_QUEST_TYPE partyType) {
@@ -36,13 +37,24 @@ public class PartyQuest : ISavable {
     }
 
     #region Virtuals
-    public virtual void OnAcceptQuest(Party partyThatAcceptedQuest) { }
-    public virtual void OnAcceptQuestFromSaveData(Party partyThatAcceptedQuest) { }
+    public virtual void OnAcceptQuest(Party partyThatAcceptedQuest) {
+        if (shouldAssignedPartyRetreatUponKnockoutOrKill) {
+            Messenger.AddListener<Character>(CharacterSignals.CHARACTER_CAN_NO_LONGER_PERFORM, OnCharacterNoLongerPerform);
+        }
+    }
+    public virtual void OnAcceptQuestFromSaveData(Party partyThatAcceptedQuest) {
+        if (shouldAssignedPartyRetreatUponKnockoutOrKill) {
+            Messenger.AddListener<Character>(CharacterSignals.CHARACTER_CAN_NO_LONGER_PERFORM, OnCharacterNoLongerPerform);
+        }
+    }
     public virtual void OnWaitTimeOver() {
         isWaitTimeOver = true;
     }
     protected virtual void OnEndQuest() {
-        if(madeInLocation != null && madeInLocation is NPCSettlement npcSettlement) {
+        if (shouldAssignedPartyRetreatUponKnockoutOrKill) {
+            Messenger.RemoveListener<Character>(CharacterSignals.CHARACTER_CAN_NO_LONGER_PERFORM, OnCharacterNoLongerPerform);
+        }
+        if (madeInLocation != null && madeInLocation is NPCSettlement npcSettlement) {
             npcSettlement.OnFinishedQuest(this);
         }
     }
@@ -56,7 +68,16 @@ public class PartyQuest : ISavable {
     public virtual IPartyTargetDestination GetTargetDestination() { return null; }
     public virtual void OnRemoveMemberThatJoinedQuest(Character character) { }
     public virtual string GetPartyQuestTextInLog() { return string.Empty; }
-    public virtual void OnCharacterDeath (Character p_character) { }
+    public virtual void OnCharacterDeath(Character p_character) {
+        if (shouldAssignedPartyRetreatUponKnockoutOrKill) {
+            if (assignedParty != null && assignedParty.membersThatJoinedQuest.Contains(p_character)) {
+                if (GameUtilities.RollChance(assignedParty.chanceToRetreatUponKnockoutOrDeath)) {
+                    EndQuest(p_character.name + " is dead");
+                }
+                assignedParty.SetChanceToRetreatUponKnockoutOrDeath(100);
+            }
+        }
+    }
     #endregion
 
     #region General
@@ -76,6 +97,16 @@ public class PartyQuest : ISavable {
     public void EndQuest(string reason) {
         OnEndQuest();
         assignedParty.DropQuest(reason);
+    }
+    private void OnCharacterNoLongerPerform(Character character) {
+        if (character.traitContainer.HasTrait("Unconscious")) {
+            if (assignedParty != null && assignedParty.membersThatJoinedQuest.Contains(character)) {
+                if (GameUtilities.RollChance(assignedParty.chanceToRetreatUponKnockoutOrDeath)) {
+                    EndQuest(character.name + " is incapacitated");
+                }
+                assignedParty.SetChanceToRetreatUponKnockoutOrDeath(100);
+            }
+        }
     }
     #endregion
 

@@ -54,6 +54,7 @@ public class Party : ILogFiller, ISavable, IJobOwner, IBookmarkable {
     public GameDate canAcceptQuestsAgainDate { get; private set; }
     public GameDate nextWaitingCheckDate { get; private set; }
     public bool hasSetNextSwitchToWaitingStateTrigger { get; private set; }
+    public int chanceToRetreatUponKnockoutOrDeath { get; private set; }
 
     public JobBoard jobBoard { get; private set; }
     public List<JobQueueItem> forcedCancelJobsOnTickEnded { get; private set; }
@@ -171,6 +172,8 @@ public class Party : ILogFiller, ISavable, IJobOwner, IBookmarkable {
 
         prevQuestType = data.prevQuestType;
         plannedPartyType = data.plannedPartyType;
+
+        chanceToRetreatUponKnockoutOrDeath = data.chanceToRetreatUponKnockoutOrDeath;
 
         jobBoard.InitializeFromSaveData(data.jobBoard);
         beaconComponent.Initialize(data.beaconComponent);
@@ -672,6 +675,7 @@ public class Party : ILogFiller, ISavable, IJobOwner, IBookmarkable {
             //OnAcceptQuest(quest);
             quest.OnAcceptQuest(this);
             ScheduleToStartWaitingQuest(members[0]);
+            SetChanceToRetreatUponKnockoutOrDeath(25);
         }
     }
     //private void DistributeQuestToMembersThatJoinedParty() {
@@ -1294,6 +1298,9 @@ public class Party : ILogFiller, ISavable, IJobOwner, IBookmarkable {
             members[0].CenterOnCharacter();
         }
     }
+    public void SetChanceToRetreatUponKnockoutOrDeath(int p_chance) {
+        chanceToRetreatUponKnockoutOrDeath = p_chance;
+    }
 #endregion
 
 #region Object Pool
@@ -1329,6 +1336,7 @@ public class Party : ILogFiller, ISavable, IJobOwner, IBookmarkable {
         onQuestFailed = null;
         onQuestSucceed = null;
         hasSetNextSwitchToWaitingStateTrigger = false;
+        chanceToRetreatUponKnockoutOrDeath = 25;
         ClearMembersThatJoinedQuest(shouldDropQuest: false);
         _activeMembers.Clear();
         ForceCancelAllJobsImmediately();
@@ -1385,6 +1393,7 @@ public class SaveDataParty : SaveData<Party>, ISavableCounterpart {
     public GameDate canAcceptQuestsAgainDate;
     public GameDate nextWaitingCheckDate;
     public bool hasSetNextSwitchToWaitingStateTrigger;
+    public int chanceToRetreatUponKnockoutOrDeath;
 
     public string campSetter;
     public string foodProducer;
@@ -1459,6 +1468,8 @@ public class SaveDataParty : SaveData<Party>, ISavableCounterpart {
 
         prevQuestType = data.prevQuestType;
         plannedPartyType = data.plannedPartyType;
+
+        chanceToRetreatUponKnockoutOrDeath = data.chanceToRetreatUponKnockoutOrDeath;
 
         members = SaveUtilities.ConvertSavableListToIDs(data.members);
         membersThatJoinedQuest = SaveUtilities.ConvertSavableListToIDs(data.membersThatJoinedQuest);
