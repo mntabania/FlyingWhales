@@ -76,3 +76,6 @@ MonoBehaviour:
     m_earthResistanceBonus: 0
     m_windResistanceBonus: 0
     m_allElementresistanceBonus: 0
+  craftableWeapons: 02010000c0000000c1000000c2000000c3000000
+  craftableArmors: 05010000d0000000bc000000d1000000d3000000d9000000da000000db000000dc000000
+  craftableAccessories: ba000000

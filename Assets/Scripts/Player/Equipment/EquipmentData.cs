@@ -12,12 +12,11 @@ public class EquipmentData : ScriptableObject {
     public RESOURCE resourceType = RESOURCE.NONE;
     [HideInInspector]
     [Tooltip("if resources is not NONE, this one will be ignored")]
-    public CONCRETE_RESOURCES specificResource;
+    public List<CONCRETE_RESOURCES> specificResource = new List<CONCRETE_RESOURCES>();
     public int resourceAmount;
     public int purchaseCost;
     public int tier;
     [HideInInspector]
-    public List<EQUIPMENT_CLASS_COMPATIBILITY> compatibleClasses = new List<EQUIPMENT_CLASS_COMPATIBILITY>();
     public string description;
     public Sprite imgIcon;
 

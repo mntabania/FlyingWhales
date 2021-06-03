@@ -6,6 +6,13 @@ namespace Character_Talents {
     public class MartialArtsData : CharacterTalentData {
         public MartialArtsData() : base(CHARACTER_TALENT.Martial_Arts) {
             description = $"Prowess in physical combat.";
+            addOnBonusSetDisplay = new List<string>(new string[] {
+                "Unlocks the Marauder and Archer Classes.",
+                "Unlocks the Marauder and Archer Classes.\nStr: +15%\nMax HP: +10%",
+                "Unlocks the Marauder, Archer, Barbarian and Stalker Classes.\nStr: +15%\nMax HP: +10%",
+                "Unlocks the Marauder, Archer, Barbarian and Stalker Classes.\nStr: +30%\nMax HP: +20%",
+                "Unlocks the Marauder, Archer, Barbarian, Stalker, Knight and Hunter Classes.\nStr: +30%\nMax HP: +20%",
+            });
         }
 
         #region Levels

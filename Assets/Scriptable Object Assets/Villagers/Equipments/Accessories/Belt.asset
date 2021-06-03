@@ -13,13 +13,13 @@ MonoBehaviour:
   m_Name: Belt
   m_EditorClassIdentifier: 
   resourceType: 0
-  specificResource: 0
+  specificResource: 
   resourceAmount: 100
   purchaseCost: 10
   tier: 1
   compatibleClasses: 000000000200000004000000
   description: 
-  imgIcon: {fileID: 0}
+  imgIcon: {fileID: 21300000, guid: bbc3a4022697c1f4b9c87b662d66a4d6, type: 3}
   equipmentUpgradeData:
     bonuses: 0e000000
     AdditionalPiercing: 10

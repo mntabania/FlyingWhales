@@ -115,7 +115,8 @@ public class ConsoleBase : InfoUIBase {
             {"/adjust_mm", AdjustMigrationMeter},
             {"/toggle_vs", ToggleVillageSpots},
             {"/coins", AdjustCoins},
-            {"/talent_level_up", TalentLevelUp}
+            {"/talent_level_up", TalentLevelUp},
+            {"/adjust_resistance", AdjustResistance}
         };
         
         SchemeData.alwaysSuccessScheme = false;
@@ -1124,43 +1125,100 @@ public class ConsoleBase : InfoUIBase {
             AddSuccessMessage($"{character.name}'s {talentParameterString} is leveled up!");
         }
     }
-    #endregion
+	#endregion
 
-    #region Faction
-    //private void LogFactionLandmarkInfo(string[] parameters) {
-    //    if (parameters.Length != 1) {
-    //        AddCommandHistory(consoleLbl.text);
-    //        AddErrorMessage("There was an error in the command format of /lfli");
-    //        return;
-    //    }
-    //    string factionParameterString = parameters[0];
-    //    int factionID;
+	#region adjust resistance
+	private void AdjustResistance(string[] parameters) {
+        if (parameters.Length != 3) { //parameters command, item
+            AddCommandHistory(consoleLbl.text);
+            AddErrorMessage("There was an error in the command format of adjust resistance");
+            return;
+        }
+        string characterParameterString = parameters[0];
+        string element = parameters[1];
+        float count = 0;
+        Character character = CharacterManager.Instance.GetCharacterByName(characterParameterString);
 
-    //    bool isFactionParameterNumeric = int.TryParse(factionParameterString, out factionID);
-    //    Faction faction = null;
-    //    if (isFactionParameterNumeric) {
-    //        faction = FactionManager.Instance.GetFactionBasedOnID(factionID);
-    //        if (faction == null) {
-    //            AddErrorMessage("There was no faction with id " + factionID);
-    //            return;
-    //        }
-    //    } else {
-    //       faction = FactionManager.Instance.GetFactionBasedOnName(factionParameterString);
-    //        if (faction == null) {
-    //            AddErrorMessage("There was no faction with name " + factionParameterString);
-    //            return;
-    //        }
-    //    }
+        if (character == null) {
+            AddErrorMessage($"There is no character named {characterParameterString}");
+            return;
+        }
 
-    //     string text = faction.name + "'s Landmark Info: ";
-    //     for (int i = 0; i < faction.landmarkInfo.Count; i++) {
-    //         BaseLandmark currLandmark = faction.landmarkInfo[i];
-    //text += "\n" + currLandmark.landmarkName + " (" + currLandmark.tileLocation.name + ") ";
-    //     }
+        if (!float.TryParse(parameters[2], out count)) {
+            AddErrorMessage($"3rd parameter should be a number");
+            return;
+        }
 
-    //AddSuccessMessage(text);
-    //}
-    private void AddFactionIdeology(string[] parameters) {
+		switch (element) {
+            case "normal":
+            character.piercingAndResistancesComponent.AdjustResistance(RESISTANCE.Normal, count);
+            break;
+            case "fire":
+            character.piercingAndResistancesComponent.AdjustResistance(RESISTANCE.Fire, count);
+            break;
+            case "water":
+            character.piercingAndResistancesComponent.AdjustResistance(RESISTANCE.Water, count);
+            break;
+            case "wind":
+            character.piercingAndResistancesComponent.AdjustResistance(RESISTANCE.Wind, count);
+            break;
+            case "poison":
+            character.piercingAndResistancesComponent.AdjustResistance(RESISTANCE.Poison, count);
+            break;
+            case "mental":
+            character.piercingAndResistancesComponent.AdjustResistance(RESISTANCE.Mental, count);
+            break;
+            case "physical":
+            character.piercingAndResistancesComponent.AdjustResistance(RESISTANCE.Physical, count);
+            break;
+            case "ice":
+            character.piercingAndResistancesComponent.AdjustResistance(RESISTANCE.Ice, count);
+            break;
+            case "earth":
+            character.piercingAndResistancesComponent.AdjustResistance(RESISTANCE.Earth, count);
+            break;
+            case "electric":
+            character.piercingAndResistancesComponent.AdjustResistance(RESISTANCE.Electric, count);
+            break;
+        }
+    }
+	#endregion
+
+	#region Faction
+	//private void LogFactionLandmarkInfo(string[] parameters) {
+	//    if (parameters.Length != 1) {
+	//        AddCommandHistory(consoleLbl.text);
+	//        AddErrorMessage("There was an error in the command format of /lfli");
+	//        return;
+	//    }
+	//    string factionParameterString = parameters[0];
+	//    int factionID;
+
+	//    bool isFactionParameterNumeric = int.TryParse(factionParameterString, out factionID);
+	//    Faction faction = null;
+	//    if (isFactionParameterNumeric) {
+	//        faction = FactionManager.Instance.GetFactionBasedOnID(factionID);
+	//        if (faction == null) {
+	//            AddErrorMessage("There was no faction with id " + factionID);
+	//            return;
+	//        }
+	//    } else {
+	//       faction = FactionManager.Instance.GetFactionBasedOnName(factionParameterString);
+	//        if (faction == null) {
+	//            AddErrorMessage("There was no faction with name " + factionParameterString);
+	//            return;
+	//        }
+	//    }
+
+	//     string text = faction.name + "'s Landmark Info: ";
+	//     for (int i = 0; i < faction.landmarkInfo.Count; i++) {
+	//         BaseLandmark currLandmark = faction.landmarkInfo[i];
+	//text += "\n" + currLandmark.landmarkName + " (" + currLandmark.tileLocation.name + ") ";
+	//     }
+
+	//AddSuccessMessage(text);
+	//}
+	private void AddFactionIdeology(string[] parameters) {
         if (parameters.Length < 2) { //Faction, Ideology
             AddCommandHistory(consoleLbl.text);
             AddErrorMessage("There was an error in the command format of /add_ideology");

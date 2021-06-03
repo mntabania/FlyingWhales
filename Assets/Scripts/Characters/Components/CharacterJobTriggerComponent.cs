@@ -1494,7 +1494,6 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
             }
         }
         return false;
-
     }
     public bool TryCreateObtainPersonalItemJob(out JobQueueItem producedJob) {
 	    if (!owner.IsInventoryAtFullCapacity() && !owner.jobQueue.HasJob(JOB_TYPE.OBTAIN_PERSONAL_ITEM)) {
@@ -3357,6 +3356,34 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
     #endregion
 
     #region new Jobs
+    public void TriggerCraftHospiceAntidote(TileObject p_tileObject, out JobQueueItem jobQueueItem) {
+        jobQueueItem = null;
+        if (!owner.jobQueue.HasJob(JOB_TYPE.CREATE_HOSPICE_ANTIDOTE)) {
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.CREATE_HOSPICE_ANTIDOTE, INTERACTION_TYPE.CREATE_HOSPICE_ANTIDOTE, p_tileObject, owner);
+            jobQueueItem = job;
+        }
+    }
+    public void TriggerCraftHospicePotion(TileObject p_tileObject, out JobQueueItem jobQueueItem) {
+        jobQueueItem = null;
+        if (!owner.jobQueue.HasJob(JOB_TYPE.CREATE_HOSPICE_POTION)) {
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.CREATE_HOSPICE_POTION, INTERACTION_TYPE.CREATE_HOSPICE_POTION, p_tileObject, owner);
+            jobQueueItem = job;
+        }
+    }
+    public void TriggerGatherHerb(TileObject p_tileObject, out JobQueueItem jobQueueItem) {
+        jobQueueItem = null;
+        if (!owner.jobQueue.HasJob(JOB_TYPE.GATHER_HERB)) {
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.GATHER_HERB, INTERACTION_TYPE.GATHER_HERB, p_tileObject, owner);
+            jobQueueItem = job;
+        }
+    }
+    public void TriggerHealerCureCharacter(Character p_character, out JobQueueItem jobQueueItem) {
+        jobQueueItem = null;
+        if (!owner.jobQueue.HasJob(JOB_TYPE.HEALER_CURE)) {
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.HEALER_CURE, INTERACTION_TYPE.HEALER_CURE, p_character, owner);
+            jobQueueItem = job;
+        }
+    }
     public void TriggerMineOre(TileObject p_tileObject, out JobQueueItem jobQueueItem) {
         jobQueueItem = null;
         if (!owner.jobQueue.HasJob(JOB_TYPE.MINE_ORE)) {
@@ -3369,6 +3396,14 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
         jobQueueItem = null;
         if (!owner.jobQueue.HasJob(JOB_TYPE.MINE_STONE)) {
             GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.MINE_STONE, INTERACTION_TYPE.MINE_STONE, p_tileObject, owner);
+            jobQueueItem = job;
+        }
+    }
+
+    public void TryRecuperate(TileObject p_tileObject, out JobQueueItem jobQueueItem) {
+        jobQueueItem = null;
+        if (!owner.jobQueue.HasJob(JOB_TYPE.RECUPERATE)) {
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.RECUPERATE, INTERACTION_TYPE.RECUPERATE, p_tileObject, owner);
             jobQueueItem = job;
         }
     }
@@ -3447,6 +3482,24 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
             GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.CHOP_WOOD, INTERACTION_TYPE.CHOP_WOOD, p_tree, owner);
             jobQueueItem = job;
         }
+    }
+
+    public void TryCreateHaulJobItem(TileObject target) {
+        if (owner.jobQueue.HasJob(JOB_TYPE.HAUL) == false) {
+            //ResourcePile chosenPileToDepositTo = target;// owner.mainStorage.GetResourcePileObjectWithLowestCount(target.tileObjectType);
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.HAUL,
+                new GoapEffect(GOAP_EFFECT_CONDITION.DEPOSIT_RESOURCE, string.Empty, false, GOAP_EFFECT_TARGET.TARGET), target, owner);
+            if (owner.structureComponent.workPlaceStructure != null) {
+                job.AddOtherData(INTERACTION_TYPE.DEPOSIT_RESOURCE_PILE, new object[] { owner.structureComponent.workPlaceStructure });
+            }
+            if(job != null) {
+                owner.jobQueue.AddJobInQueue(job);
+            }
+        }
+    }
+
+    public void TryGatherHerb() { 
+        
     }
 
     public void TryCreateHaulJob(ResourcePile target, out JobQueueItem jobQueueItem) {

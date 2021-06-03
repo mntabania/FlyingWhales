@@ -13,20 +13,23 @@ MonoBehaviour:
   m_Name: Scroll
   m_EditorClassIdentifier: 
   resourceType: 0
-  specificResource: 0
+  specificResource: 
   resourceAmount: 0
   purchaseCost: 0
   tier: 0
   compatibleClasses: 
   description: 
-  imgIcon: {fileID: 0}
+  imgIcon: {fileID: 21300000, guid: d426d16409b59454aa161e09a6069d8a, type: 3}
   equipmentUpgradeData:
     bonuses: 
     AdditionalPiercing: 0
-    AdditionalmaxHPPercentage: 0
-    AdditionalmaxHPActual: 0
+    AdditionalMaxHPPercentage: 0
+    AdditionalMaxHPActual: 0
     AdditionalAttackPercentage: 0
     AdditionalAttackActual: 0
+    AdditionalIntPercentage: 0
+    AdditionalIntActual: 0
+    AdditionalCritRate: 0
     additionalResistanceBonus: 0
     elementAttackBonus: 0
     slayerBonus: 0

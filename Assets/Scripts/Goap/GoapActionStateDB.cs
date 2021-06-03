@@ -716,6 +716,21 @@ public static class GoapActionStateDB {
         {INTERACTION_TYPE.HARVEST_CROPS, new[]{
             new StateNameAndDuration(){ name = "Harvest Crops Success", status = InteractionManager.Goap_State_Success, duration = 20 },
         } },
+        {INTERACTION_TYPE.RECUPERATE, new[]{
+            new StateNameAndDuration(){ name = "Recuperate Success", status = InteractionManager.Goap_State_Success, duration = 480 },
+        } },
+        {INTERACTION_TYPE.HEALER_CURE, new[]{
+            new StateNameAndDuration(){ name = "Healer Cure Success", status = InteractionManager.Goap_State_Success, duration = 10 },
+        } },
+        {INTERACTION_TYPE.GATHER_HERB, new[]{
+            new StateNameAndDuration(){ name = "Gather Herb Success", status = InteractionManager.Goap_State_Success, duration = 10 },
+        } },
+        {INTERACTION_TYPE.CREATE_HOSPICE_POTION, new[]{
+            new StateNameAndDuration(){ name = "Create Hospice Potion Success", status = InteractionManager.Goap_State_Success, duration = 10 },
+        } },
+        {INTERACTION_TYPE.CREATE_HOSPICE_ANTIDOTE, new[]{
+            new StateNameAndDuration(){ name = "Create Hospice Antidote Success", status = InteractionManager.Goap_State_Success, duration = 10 },
+        } },
         {INTERACTION_TYPE.BUY_FOOD, new[]{
             new StateNameAndDuration(){ name = "Buy Success", status = InteractionManager.Goap_State_Success, duration = 0 },
             new StateNameAndDuration(){ name = "Take Success", status = InteractionManager.Goap_State_Success, duration = 0 },

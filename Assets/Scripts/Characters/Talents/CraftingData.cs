@@ -6,6 +6,13 @@ namespace Character_Talents {
     public class CraftingData : CharacterTalentData {
         public CraftingData() : base(CHARACTER_TALENT.Crafting) {
             description = $"Governs quality and speed of building construction, item creation and repair.";
+            addOnBonusSetDisplay = new List<string>(new string[] {
+                "Can craft Weapons at a Workshop.",
+                "Can craft Weapons and Armors at a Workshop.",
+                "Can craft Weapons and Armors at a Workshop.\nSmall chance to produce High Quality products.",
+                "Can craft Weapons, Armors and Accessories at a Workshop.\nSmall chance to produce High Quality products.",
+                "Can craft Weapons, Armors and Accessories at a Workshop.\nSmall chance to produce Premium products.",
+            });
         }
 
         #region Levels

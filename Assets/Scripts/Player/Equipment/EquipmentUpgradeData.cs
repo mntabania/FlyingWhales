@@ -45,6 +45,19 @@ public class EquipmentUpgradeData {
         return processedPiercing;
     }
 
+    public float GetProcessedAdditionalResistanceBonus(EQUIPMENT_QUALITY p_quality) {
+        float resistanceBonus = additionalResistanceBonus;
+        switch (p_quality) {
+            case EQUIPMENT_QUALITY.High:
+            resistanceBonus += (resistanceBonus * .25f);
+            break;
+            case EQUIPMENT_QUALITY.Premium:
+            resistanceBonus += (resistanceBonus * .5f);
+            break;
+        }
+        return resistanceBonus;
+    }
+
     public int GetProcessedAdditionalAttack(EQUIPMENT_QUALITY p_quality) {
         int processedAttack = AdditionalAttackActual;
         switch (p_quality) {
@@ -97,64 +110,65 @@ public class EquipmentUpgradeData {
         return processedMaxHP;
     }
     public string GetBonusDescription() {
-        string descriptopn = String.Empty;
+        string descripton = String.Empty;
         if (bonuses.Contains(EQUIPMENT_BONUS.Increased_Piercing)) {
             if (AdditionalPiercing > 0) {
-                descriptopn += ("Additional Piercing: " + AdditionalPiercing + "\n");
+                descripton += ("Additional Piercing: " + AdditionalPiercing + "\n");
             }
         }
-        if (bonuses.Contains(EQUIPMENT_BONUS.Str_Actual)) { }
+        if (bonuses.Contains(EQUIPMENT_BONUS.Str_Actual)) {
             if (AdditionalAttackActual > 0) {
-            descriptopn += ("Additional Attack(Actual): " + AdditionalAttackActual + "\n");
+                descripton += ("Additional Attack(Actual): " + AdditionalAttackActual + "\n");
+            }
         }
         if (bonuses.Contains(EQUIPMENT_BONUS.Str_Percentage)) {
             if (AdditionalAttackPercentage > 0) {
-                descriptopn += ("Additional Attack(%): " + AdditionalAttackPercentage + "\n");
+                descripton += ("Additional Attack(%): " + AdditionalAttackPercentage + "\n");
             }
         }
         
         if (bonuses.Contains(EQUIPMENT_BONUS.Max_HP_Actual)) {
             if (AdditionalMaxHPActual > 0) {
-                descriptopn += ("Additional Max HP(Actual): " + AdditionalMaxHPActual + "\n");
+                descripton += ("Additional Max HP(Actual): " + AdditionalMaxHPActual + "\n");
             }
         }
         
         if (bonuses.Contains(EQUIPMENT_BONUS.Max_HP_Percentage)) {
             if (AdditionalMaxHPPercentage > 0) {
-                descriptopn += ("Additional Max HP(%): " + AdditionalMaxHPPercentage + "\n");
+                descripton += ("Additional Max HP(%): " + AdditionalMaxHPPercentage + "\n");
             }
         }
         if (bonuses.Contains(EQUIPMENT_BONUS.Int_Actual)) {
             if (AdditionalIntActual > 0) {
-                descriptopn += ("Additional int(Actual): " + AdditionalIntActual + "\n");
+                descripton += ("Additional int(Actual): " + AdditionalIntActual + "\n");
             }
         }
         if (bonuses.Contains(EQUIPMENT_BONUS.Int_Percentage)) {
             if (AdditionalIntPercentage > 0) {
-                descriptopn += ("Additional Int(%): " + AdditionalIntPercentage + "\n");
+                descripton += ("Additional Int(%): " + AdditionalIntPercentage + "\n");
             }
         }
         if (bonuses.Contains(EQUIPMENT_BONUS.Attack_Element)) {
-            descriptopn += ("Weapon Element: " + elementAttackBonus + "\n");
+            descripton += ("Weapon Element: " + elementAttackBonus + "\n");
         }
 
         if (bonuses.Contains(EQUIPMENT_BONUS.Slayer_Bonus)) {
-            descriptopn += ("Slayer Bonus: " + slayerBonus + "\n");
+            descripton += ("Slayer Bonus: " + slayerBonus + "\n");
         }
         
         if (bonuses.Contains(EQUIPMENT_BONUS.Ward_Bonus)) {
-            descriptopn += ("ward Bonus: " + wardBonus + "\n");
+            descripton += ("ward Bonus: " + wardBonus + "\n");
         }
         
         if (bonuses.Contains(EQUIPMENT_BONUS.Flight)) {
-            descriptopn += ("Flight: YES" + "\n");
+            descripton += ("Flight: YES" + "\n");
         }
         if (bonuses.Contains(EQUIPMENT_BONUS.Increased_3_Random_Resistance) || bonuses.Contains(EQUIPMENT_BONUS.Increased_4_Random_Resistance) || bonuses.Contains(EQUIPMENT_BONUS.Increased_5_Random_Resistance)) {
             if (additionalResistanceBonus > 0) {
-                descriptopn += ("Additional Resistance Bonus: " + additionalResistanceBonus + "\n");
+                descripton += ("Additional Resistance Bonus: " + additionalResistanceBonus + "\n");
             }
         }
         
-        return descriptopn;
+        return descripton;
     }
 }

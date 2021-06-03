@@ -7,10 +7,11 @@ using Inner_Maps.Location_Structures;
 
 public class SettlementResources
 {
-    public enum StructureRequirement { NONE = 0, ROCK, TREE, FISHING_SPOT, FEATURE_GAME, MINE_SHACK_SPOT, CHARACTER, }
+    public enum StructureRequirement { NONE = 0, ROCK, TREE, FISHING_SPOT, FEATURE_GAME, MINE_SHACK_SPOT, CHARACTER, HERB_PLANT, }
     public List<Rock> rocks = new List<Rock>();
     public List<TreeObject> trees = new List<TreeObject>();
     public List<FishingSpot> fishingSpots = new List<FishingSpot>();
+    public List<HerbPlant> herbPlants = new List<HerbPlant>();
     public List<LocationGridTile> mineShackSpots = new List<LocationGridTile>();
     public List<ResourcePile> resourcePiles = new List<ResourcePile>();
     public List<Character> characters = new List<Character>();
@@ -49,6 +50,11 @@ public class SettlementResources
             case StructureRequirement.MINE_SHACK_SPOT:
             if (!mineShackSpots.Contains(p_tileObject.gridTileLocation)) {
                 mineShackSpots.Add(p_tileObject.gridTileLocation);
+            }
+            break;
+            case StructureRequirement.HERB_PLANT:
+            if (!herbPlants.Contains(p_tileObject as HerbPlant)) {
+                herbPlants.Add(p_tileObject as HerbPlant);
             }
             break;
         }
@@ -305,5 +311,16 @@ public class SettlementResources
         }
         RuinarchListPool<TileObject>.Release(pilePool);
         return chosenPile;
+    }
+
+    public HerbPlant GetAvailableHerbPlant() {
+        HerbPlant plant = null;
+        for (int x = 0; x < herbPlants.Count; ++x) {
+            if (!herbPlants[x].HasJobTargetingThis(JOB_TYPE.GATHER_HERB) || !herbPlants[x].HasJobTargetingThis(JOB_TYPE.HAUL)) {
+                plant = herbPlants[x];
+                break;
+            }
+        }
+        return plant;
     }
 }

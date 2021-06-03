@@ -43,7 +43,7 @@ SpriteAtlas:
     variantMultiplier: 1
     packables:
     - {fileID: 102900000, guid: 129c2b5e0c8f0e14d9fb8b1c30296b6d, type: 3}
-    totalSpriteSurfaceArea: 5427930
+    totalSpriteSurfaceArea: 5448410
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
@@ -212,6 +212,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: b87bc403c479a644fb79b860105bdfc6, type: 3}
   - {fileID: 21300000, guid: f65e95031a5778745b5b7e8740e9293b, type: 3}
   - {fileID: 21300000, guid: e905b903d82b2994195880c0355ee2f2, type: 3}
+  - {fileID: 21300000, guid: 8f1d1e03f1f5bfa468000a8f8b4b0d2e, type: 3}
   - {fileID: 21300000, guid: 2c5c5213b4934e64d97d81b698b53300, type: 3}
   - {fileID: 21300000, guid: 00106213aab07d346827fb0bdc33b2a4, type: 3}
   - {fileID: 21300000, guid: 405c671361b9fbf488f2263c1aa41203, type: 3}
@@ -229,6 +230,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 861a88531e5d1264b8f809ccfa1ee965, type: 3}
   - {fileID: 21300000, guid: 4c3a7363fcb019d4cbf36a6939427ea2, type: 3}
   - {fileID: 21300000, guid: 433ec56307549ad42bdfab0084104ce8, type: 3}
+  - {fileID: 21300000, guid: 153bbb639e2a1824b98cb77647850916, type: 3}
   - {fileID: 21300000, guid: 11906c63aaedadb42843a1861b2d282b, type: 3}
   - {fileID: 21300000, guid: 5754c683be215e54f989dea775f3d717, type: 3}
   - {fileID: 21300000, guid: 931db39314af6aa4b863b2996aac60a4, type: 3}
@@ -393,6 +395,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 7b611076b148ceb4ea1032e281a98a52, type: 3}
   - {fileID: 21300000, guid: b140e176bd7a372479810d3d871206b5, type: 3}
   - {fileID: 21300000, guid: 8ca5f6767fcc1b0488656b80f3af4c3a, type: 3}
+  - {fileID: 21300000, guid: 5d382c760971277498b70077ad3369a7, type: 3}
   - {fileID: 21300000, guid: 5238bc766068c3f4e952daeeb0fba307, type: 3}
   - {fileID: 21300000, guid: ba4d9f76d9900704fa5809a30c204a91, type: 3}
   - {fileID: 21300000, guid: df6eb5862522864408637fd98b64db26, type: 3}
@@ -474,6 +477,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 5d9748d7deff06443b2a493abd02760d, type: 3}
   - {fileID: 21300000, guid: 34ba4ed74a459ac47a3274e76678367e, type: 3}
   - {fileID: 21300000, guid: 0ccc17e7582860a4087e0e3855d0a156, type: 3}
+  - {fileID: 21300000, guid: 5c7297f74a9199b4d94d1e42c2c52643, type: 3}
   - {fileID: 21300000, guid: 2b8beb085ade55749a72b9166c1d52e5, type: 3}
   - {fileID: 21300000, guid: 563ffe08668c57d4db353ac29e91781c, type: 3}
   - {fileID: 21300000, guid: cd0960183410fde48a7e157f2a0a6b90, type: 3}
@@ -809,6 +813,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: cea6a94ea7d4efb41ac52ea373e82c87, type: 3}
   - {fileID: 21300000, guid: 8302bf4ef9710ac4ca272c251e9178da, type: 3}
   - {fileID: 21300000, guid: 8d76515ebedb4cd4ba470a99ac48ce32, type: 3}
+  - {fileID: 21300000, guid: 0769355e1f9f1e844b05e97094b3c9ff, type: 3}
   - {fileID: 21300000, guid: be30755e1fa3c7d45ae8868456da8fda, type: 3}
   - {fileID: 21300000, guid: e7546a5efc4565f4bb07353a49654947, type: 3}
   - {fileID: 21300000, guid: 095c036e22c10bb44b1aea6ee3923ccd, type: 3}
@@ -1066,6 +1071,7 @@ SpriteAtlas:
   - table_alchemy
   - TORCH#1
   - well01
+  - dagger_basic
   - tundraDirt03
   - oreWall9
   - tundraDirt00
@@ -1083,6 +1089,7 @@ SpriteAtlas:
   - demonBarsVertical01
   - crops_potato_grown
   - desertRocks03
+  - staff_basic
   - winter_rose
   - dirt00
   - GRAVE#1
@@ -1247,6 +1254,7 @@ SpriteAtlas:
   - grass01
   - snow00
   - poison00
+  - bow_basic
   - caveWallA-0111-00
   - TRASH#1
   - shore01000000-00
@@ -1328,6 +1336,7 @@ SpriteAtlas:
   - TREE_OBJECT#6
   - oreWall3
   - oreWall8
+  - cloth_basic
   - demonCage00
   - wood_pile
   - TopLeft
@@ -1663,6 +1672,7 @@ SpriteAtlas:
   - desertSand02
   - shore11000001-00
   - leather_scalehide
+  - axe_basic
   - oreWall4
   - dirt_h01
   - stump
