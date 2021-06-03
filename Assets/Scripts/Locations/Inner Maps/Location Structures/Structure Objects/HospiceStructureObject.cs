@@ -11,8 +11,8 @@ namespace Inner_Maps.Location_Structures {
             newTileObject.mapVisual.SetRotation(preplacedObj.transform.localEulerAngles.z);
             newTileObject.RevalidateTileObjectSlots();
             Hospice hospice = structure as Hospice;
-            if (structureType == STRUCTURE_TYPE.HOSPICE && newTileObject is BedClinic) {
-                hospice.beds.Add(newTileObject as BedClinic);
+            if (structureType == STRUCTURE_TYPE.HOSPICE && newTileObject is BedClinic bedClinic) {
+                hospice.AddBed(bedClinic);
             }
         }
     }

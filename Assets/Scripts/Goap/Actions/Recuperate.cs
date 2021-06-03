@@ -8,7 +8,7 @@ using Inner_Maps;
 public class Recuperate : GoapAction {
 
     public Recuperate() : base(INTERACTION_TYPE.RECUPERATE) {
-        actionIconString = GoapActionStateDB.Fish_Icon;
+        actionIconString = GoapActionStateDB.FirstAid_Icon;
         //advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
         racesThatCanDoAction = new RACE[] { RACE.ELVES, RACE.HUMANS, RACE.RATMAN, };
         logTags = new[] { LOG_TAG.Work };

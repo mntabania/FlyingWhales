@@ -44,8 +44,8 @@ public class BedClinic : BaseBed, CharacterEventDispatcher.ITraitListener {
                 mapVisual?.UpdateTileObjectVisual(this);
                 break;
             case INTERACTION_TYPE.RECUPERATE:
-            mapVisual?.UpdateTileObjectVisual(this);
-            AddUser(action.poiTarget as Character);
+                AddUser(action.actor);
+                mapVisual?.UpdateTileObjectVisual(this);
                 break;
 
         }
@@ -55,8 +55,11 @@ public class BedClinic : BaseBed, CharacterEventDispatcher.ITraitListener {
         switch (action.goapType) {
             case INTERACTION_TYPE.SLEEP:
             case INTERACTION_TYPE.NAP:
+                mapVisual?.UpdateTileObjectVisual(this);
+                break;
             case INTERACTION_TYPE.RECUPERATE:
-            mapVisual?.UpdateTileObjectVisual(this);
+                RemoveUser(action.actor);
+                mapVisual?.UpdateTileObjectVisual(this);
                 break;
         }
     }
@@ -65,8 +68,11 @@ public class BedClinic : BaseBed, CharacterEventDispatcher.ITraitListener {
         switch (action.goapType) {
             case INTERACTION_TYPE.SLEEP:
             case INTERACTION_TYPE.NAP:
+                mapVisual?.UpdateTileObjectVisual(this);
+                break;
             case INTERACTION_TYPE.RECUPERATE:
-            mapVisual?.UpdateTileObjectVisual(this);
+                RemoveUser(action.actor);
+                mapVisual?.UpdateTileObjectVisual(this);
                 break;
         }
     }

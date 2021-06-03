@@ -59,7 +59,7 @@ public class FreeTimeBehaviour : CharacterBehaviourComponent {
 #endif
         //obtain want
         //only villagers part of major faction can process wants since all of it requires a character that is part of a faction that lives in a village with the needed facilities.
-        if (GameUtilities.RollChance(100, ref log) && character.faction != null && character.faction.isMajorFaction) { //20 
+        if (GameUtilities.RollChance(20, ref log) && character.faction != null && character.faction.isMajorFaction) { //20 
             VillagerWant want = character.villagerWantsComponent.GetTopPriorityWant(character, out LocationStructure foundStructure);
 #if DEBUG_LOG
             log = $"{log}\n-Top priority want is {want?.name}.";
@@ -89,6 +89,7 @@ public class FreeTimeBehaviour : CharacterBehaviourComponent {
                     return true;
                 }
             } else if (want is EquipmentWant) {
+                CharacterClassData characterClassData = CharacterManager.Instance.GetOrCreateCharacterClassData(character.characterClass.className);
                 //If wanted Equipment is available at any favored Workshop, purchase and then equip it
                 //Otherwise, register wanted Equipment to a favored Workshop.
                 //- If the Equipment is Weapon, obtain the exact Weapon Type from the character's Class
@@ -286,8 +287,15 @@ public class FreeTimeBehaviour : CharacterBehaviourComponent {
 #if DEBUG_LOG
                     log = $"{log}\n  -Actor has Injured or Plagued and there is still an available Bed in the Hospice: Create Recuperate Job";
 #endif
+                    Hospice hospice = foundStructure as Hospice;
+                    BedClinic bedClinic = hospice.GetFirstUnoccupiedBed();
+                    if (bedClinic != null) {
+                        if (character.jobComponent.TryRecuperate(bedClinic, out producedJob)) {
+                            return true;
+                        }
+                    }
                 }
-                if (foundStructure is ManMadeStructure manMadeStructure && manMadeStructure.assignedWorker.talentComponent.GetTalent(CHARACTER_TALENT.Healing_Magic).level >= 5) {
+                if (character.currentStructure != foundStructure && foundStructure is ManMadeStructure manMadeStructure && manMadeStructure.assignedWorker.talentComponent.GetTalent(CHARACTER_TALENT.Healing_Magic).level >= 5) {
 #if DEBUG_LOG
                     log = $"{log}\n  -Hospice is claimed by a Villager with Level 5 Healing Magic:";
 #endif
@@ -296,12 +304,18 @@ public class FreeTimeBehaviour : CharacterBehaviourComponent {
                         //Go to hospice and wait there for 2 hours
 #if DEBUG_LOG
                         log = $"{log}\n  -Actor has Vampirism and disliked being a Vampire";
+                        character.PlanFixedJob(JOB_TYPE.VISIT_HOSPICE, INTERACTION_TYPE.VISIT, character, out producedJob,
+                            new OtherData[] {new LocationStructureOtherData(manMadeStructure)});
+                        return true;
 #endif
                     }
                     if (character.lycanData != null && character.lycanData.dislikesBeingLycan) {
                         //Go to hospice and wait there for 2 hours
 #if DEBUG_LOG
                         log = $"{log}\n  -If Actor has Lycanthropy and disliked being a Werewolf";
+                        character.PlanFixedJob(JOB_TYPE.VISIT_HOSPICE, INTERACTION_TYPE.VISIT, character, out producedJob,
+                            new OtherData[] {new LocationStructureOtherData(manMadeStructure)});
+                        return true;
 #endif
                     }
                 }
@@ -373,11 +387,19 @@ public class FreeTimeBehaviour : CharacterBehaviourComponent {
         log = $"{log}\n-{character.name} is at Hospice";
 #endif
         if (character.traitContainer.HasTrait("Injured") || character.traitContainer.HasTrait("Poisoned") || character.traitContainer.HasTrait("Plagued")) {
-            //TODO:
-            producedJob = null;
-            return false;
+            Hospice hospice = character.currentStructure as Hospice;
+            BedClinic bedClinic = hospice.GetFirstUnoccupiedBed();
+            if (bedClinic != null) {
+                if (character.jobComponent.TryRecuperate(bedClinic, out producedJob)) {
+                    return true;
+                }
+            }
+        }
+        if (!character.trapStructure.IsTrapped() && !character.trapStructure.IsTrappedInArea()) {
+            return character.jobComponent.PlanReturnHome(JOB_TYPE.IDLE_RETURN_HOME, out producedJob);    
         } else {
-            return character.jobComponent.PlanReturnHome(JOB_TYPE.IDLE_RETURN_HOME, out producedJob);
+            //character is trapped in hospice
+            return character.jobComponent.TriggerRoamAroundStructure(out producedJob);
         }
     }
 

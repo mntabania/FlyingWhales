@@ -874,6 +874,7 @@ public static class Extensions {
             case JOB_TYPE.BURY:
             case JOB_TYPE.TORTURE:
             case JOB_TYPE.CHANGE_CLASS:
+            case JOB_TYPE.VISIT_HOSPICE:
                 priority = 820;
                 break;
             case JOB_TYPE.PRODUCE_FOOD:

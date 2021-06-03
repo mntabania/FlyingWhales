@@ -3400,12 +3400,14 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
         }
     }
 
-    public void TryRecuperate(TileObject p_tileObject, out JobQueueItem jobQueueItem) {
+    public bool TryRecuperate(TileObject p_tileObject, out JobQueueItem jobQueueItem) {
         jobQueueItem = null;
         if (!owner.jobQueue.HasJob(JOB_TYPE.RECUPERATE)) {
             GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.RECUPERATE, INTERACTION_TYPE.RECUPERATE, p_tileObject, owner);
             jobQueueItem = job;
+            return true;
         }
+        return false;
     }
 
     public void TriggerCreateWeapon(TILE_OBJECT_TYPE p_weaponType) {

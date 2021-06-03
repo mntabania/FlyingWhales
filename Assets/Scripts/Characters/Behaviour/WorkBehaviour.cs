@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Traits;
 using UtilityScripts;
 using Inner_Maps.Location_Structures;
+using UnityEngine.Assertions;
 
 public class WorkBehaviour : CharacterBehaviourComponent {
     public WorkBehaviour() {
@@ -38,6 +39,55 @@ public class WorkBehaviour : CharacterBehaviourComponent {
 #if DEBUG_LOG
                 log = $"{log}\n-Character lives in a village";
 #endif
+                //visit hospice
+                if (character.currentSettlement != null && character.currentSettlement.HasStructureClaimedByNonEnemyOrSelf(STRUCTURE_TYPE.HOSPICE, character, out LocationStructure foundStructure)) {
+#if DEBUG_LOG
+                    log = $"{log}\n  -There is a Hospice in the Village claimed by a non-Enemy or by self: ";
+#endif
+                    if (character.traitContainer.HasTrait("Injured") || character.traitContainer.HasTrait("Plagued")) {
+                        //recuperate
+#if DEBUG_LOG
+                        log = $"{log}\n  -Actor has Injured or Plagued and there is still an available Bed in the Hospice: Create Recuperate Job";
+#endif
+                        Hospice hospice = foundStructure as Hospice;
+                        BedClinic bedClinic = hospice.GetFirstUnoccupiedBed();
+                        if (bedClinic != null) {
+                            if (character.jobComponent.TryRecuperate(bedClinic, out producedJob)) {
+                                return true;
+                            }
+                        }
+                    }
+                    if (character.currentStructure != foundStructure && foundStructure is ManMadeStructure manMadeStructure && manMadeStructure.assignedWorker.talentComponent.GetTalent(CHARACTER_TALENT.Healing_Magic).level >= 5) {
+#if DEBUG_LOG
+                        log = $"{log}\n  -Hospice is claimed by a Villager with Level 5 Healing Magic:";
+#endif
+                        Traits.Vampire vampire = character.traitContainer.GetTraitOrStatus<Traits.Vampire>("Vampire");
+                        if (vampire != null && vampire.dislikedBeingVampire) {
+                            //Go to hospice and wait there for 2 hours
+#if DEBUG_LOG
+                            log = $"{log}\n  -Actor has Vampirism and disliked being a Vampire";
+                            character.PlanFixedJob(JOB_TYPE.VISIT_HOSPICE, INTERACTION_TYPE.VISIT, character, out producedJob,
+                                new OtherData[] {new LocationStructureOtherData(manMadeStructure)});
+                            return true;
+#endif
+                        }
+                        if (character.lycanData != null && character.lycanData.dislikesBeingLycan) {
+                            //Go to hospice and wait there for 2 hours
+#if DEBUG_LOG
+                            log = $"{log}\n  -If Actor has Lycanthropy and disliked being a Werewolf";
+                            character.PlanFixedJob(JOB_TYPE.VISIT_HOSPICE, INTERACTION_TYPE.VISIT, character, out producedJob,
+                                new OtherData[] {new LocationStructureOtherData(manMadeStructure)});
+                            return true;
+#endif
+                        }
+                    }
+                    if (character.currentStructure == foundStructure && character.trapStructure.IsTrappedAndTrapStructureIs(foundStructure)) {
+                        //do not take jobs and remain inside hospice
+                        producedJob = null;
+                        return false;
+                    }
+                }
+                
                 if (character.moodComponent.moodState != MOOD_STATE.Critical) {
 #if DEBUG_LOG
                     log = $"{log}\n-Character is not in critical mood";
@@ -71,6 +121,7 @@ public class WorkBehaviour : CharacterBehaviourComponent {
 #endif
                             character.structureComponent.workPlaceStructure.ProcessWorkerBehaviour(out producedJob);
                             if (producedJob != null) {
+                                Assert.IsNotNull(producedJob.poiTarget, $"Produced job of {character.name} is {producedJob}. But its target is null!");
 #if DEBUG_LOG
                                 log = $"{log}\n-Character will do work job: " + producedJob.ToString() + " with target: " + producedJob.poiTarget.name;
 #endif
