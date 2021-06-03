@@ -326,8 +326,9 @@ public class SettlementVillageMigrationComponent : NPCSettlementComponent {
 #if DEBUG_LOG
             debugLog += $"\nSpawned new character {newCharacter.name} at {edgeTile}";
 #endif
-            newCharacter.interruptComponent.TriggerInterrupt(INTERRUPT.Set_Home, null);
-            newCharacter.jobComponent.PlanReturnHome(JOB_TYPE.RETURN_HOME_URGENT);
+            //removed set home, since new migrants should go through the process of buying a home
+            // newCharacter.interruptComponent.TriggerInterrupt(INTERRUPT.Set_Home, null);
+            newCharacter.jobComponent.PlanReturnHome(JOB_TYPE.RETURN_HOME_URGENT); //this will make the villager go to its home settlement
             Messenger.Broadcast(WorldEventSignals.NEW_VILLAGER_ARRIVED, newCharacter);
 
             Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "WorldEvents", "VillagerMigration", "new_villager", providedTags: LOG_TAG.Major);

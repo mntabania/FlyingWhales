@@ -10,4 +10,15 @@ public class Torch : TileObject{
     public Torch(SaveDataTileObject data) : base(data) {
         
     }
+    
+    protected override void OnSetObjectAsUnbuilt() {
+        base.OnSetObjectAsUnbuilt();
+        AddAdvertisedAction(INTERACTION_TYPE.CRAFT_FURNITURE_STONE);
+        AddAdvertisedAction(INTERACTION_TYPE.CRAFT_FURNITURE_WOOD);
+    }
+    protected override void OnSetObjectAsBuilt() {
+        base.OnSetObjectAsBuilt();
+        RemoveAdvertisedAction(INTERACTION_TYPE.CRAFT_FURNITURE_STONE);
+        RemoveAdvertisedAction(INTERACTION_TYPE.CRAFT_FURNITURE_WOOD);
+    }
 }

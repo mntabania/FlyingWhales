@@ -96,13 +96,14 @@ public class VillagerWantsComponent : CharacterComponent, CharacterEventDispatch
     #endregion
 
     #region Inquiry
-    public VillagerWant GetTopPriorityWant(Character p_character) {
+    public VillagerWant GetTopPriorityWant(Character p_character, out LocationStructure p_chosenStructure) {
         for (int i = 0; i < wantsToProcess.Count; i++) {
             VillagerWant want = wantsToProcess[i];
-            if (want.CanVillagerObtainWant(p_character)) {
+            if (want.CanVillagerObtainWant(p_character, out p_chosenStructure)) {
                 return want;
             }
         }
+        p_chosenStructure = null;
         return null;
     }
     #endregion

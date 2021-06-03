@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   combatBehaviourType: 0
   combatSpecialSkillType: 0
-  workStructureType: 21
+  workStructureType: 14
   summonCost: 50
   portraitSprite: {fileID: 0}
   defaultSprites:

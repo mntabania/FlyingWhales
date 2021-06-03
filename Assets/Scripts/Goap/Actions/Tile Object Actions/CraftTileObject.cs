@@ -108,7 +108,7 @@ public class CraftTileObject : GoapAction {
     }
 #endregion
 
-#region State Effects
+    #region State Effects
     public void PreCraftSuccess(ActualGoapNode goapNode) {
         Character actor = goapNode.actor;
         TileObject obj = goapNode.poiTarget as TileObject;
@@ -195,9 +195,9 @@ public class CraftTileObject : GoapAction {
         //ResourcePile carriedPile = goapNode.actor.ownParty.carriedPOI as ResourcePile;
         //carriedPile.AdjustResourceInPile(-TileObjectDB.GetTileObjectData((goapNode.poiTarget as TileObject).tileObjectType).constructionCost);
     }
-#endregion
+    #endregion
 
-#region Preconditions
+    #region Preconditions
     //private bool HasSupply(Character actor, IPointOfInterest poiTarget, object[] otherData) {
     //    int cost = TileObjectDB.GetTileObjectData((poiTarget as TileObject).tileObjectType).constructionCost;
     //    if (poiTarget.HasResourceAmount(RESOURCE.WOOD, cost)) {
@@ -224,7 +224,7 @@ public class CraftTileObject : GoapAction {
     }
     #endregion
 
-#region Requirement
+    #region Requirement
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, OtherData[] otherData, JobQueueItem job) {
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData, job);
         if (satisfied) {
@@ -235,6 +235,6 @@ public class CraftTileObject : GoapAction {
         }
         return false;
     }
-#endregion
+    #endregion
 
 }

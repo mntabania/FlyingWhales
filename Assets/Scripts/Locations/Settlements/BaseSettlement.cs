@@ -471,6 +471,7 @@ namespace Locations.Settlements {
                 allStructures.Add(structure);
                 structure.SetSettlementLocation(this);
                 OnStructureAdded(structure);
+                Debug.Log($"Added {structure.name} to {name}");
             }
         }
         public void RemoveStructure(LocationStructure structure) {
@@ -481,6 +482,7 @@ namespace Locations.Settlements {
                         structures.Remove(structure.structureType);
                     }
                     OnStructureRemoved(structure);
+                    Debug.Log($"Removed {structure.name} from {name}");
                 }
             }
         }
@@ -591,6 +593,24 @@ namespace Locations.Settlements {
         public bool HasStructure(STRUCTURE_TYPE type) {
             return structures.ContainsKey(type);
         }
+        public bool HasStructureClaimedByNonEnemyOrSelf(STRUCTURE_TYPE p_type, Character p_character, out LocationStructure foundStructure) {
+            if (HasStructure(p_type)) {
+                List<LocationStructure> structuresOfType = structures[p_type];
+                for (int i = 0; i < structuresOfType.Count; i++) {
+                    LocationStructure structure = structuresOfType[i];
+                    if (structure is ManMadeStructure manMadeStructure) {
+                        Character assignedWorker = manMadeStructure.assignedWorker;
+                        if (assignedWorker != null && (assignedWorker == p_character || !p_character.relationshipContainer.IsEnemiesWith(assignedWorker))) {
+                            //TODO: Check for available beds
+                            foundStructure = structure;
+                            return true;
+                        }
+                    }
+                }
+            }
+            foundStructure = null;
+            return false;
+        }
         public bool HasStructureForProducingResource(RESOURCE resourceType) {
             switch (resourceType) {
                 case RESOURCE.FOOD:
@@ -667,14 +687,16 @@ namespace Locations.Settlements {
             }
             return count;
         }
-        public bool HasUnclaimedDwelling() {
+        public bool HasUnclaimedDwellingThatIsNotPreviousHome(Character p_character, out LocationStructure foundStructure) {
             List<LocationStructure> dwellings = GetStructuresOfType(STRUCTURE_TYPE.DWELLING);
             for (int i = 0; i < dwellings.Count; i++) {
                 LocationStructure dwelling = dwellings[i];
-                if (dwelling.residents.Count <= 0) {
+                if (dwelling != p_character.previousCharacterDataComponent.previousHomeStructure && dwelling.residents.Count <= 0) {
+                    foundStructure = dwelling;
                     return true;
                 }
             }
+            foundStructure = null;
             return false;
         }
         #endregion

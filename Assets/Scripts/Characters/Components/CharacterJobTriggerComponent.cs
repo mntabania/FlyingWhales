@@ -1531,6 +1531,16 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
             owner.jobQueue.AddJobInQueue(job);
         }
     }
+    public bool CreateDropItemJob(JOB_TYPE jobType, TileObject target, LocationStructure dropLocation, out JobQueueItem producedJob) {
+	    if(!owner.jobQueue.HasJob(jobType, target)) {
+		    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType, INTERACTION_TYPE.DROP_ITEM, target, owner);
+		    job.AddOtherData(INTERACTION_TYPE.DROP_ITEM, new object[] { dropLocation });
+		    producedJob = job;
+		    return true;
+	    }
+	    producedJob = null;
+	    return false;
+    }
     public void CreateHoardItemJob(TileObject target, LocationStructure dropLocation, bool doNotRecalculate = false) {
         if (!owner.jobQueue.HasJob(JOB_TYPE.HOARD, target)) {
             GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.HOARD, INTERACTION_TYPE.DROP_ITEM, target, owner);
@@ -2904,7 +2914,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
     }
 #endregion
 
-#region Craft Missing Furniture
+	#region Craft Missing Furniture
     public bool CreateCraftMissingFurniture(TILE_OBJECT_TYPE tileObjectType, LocationStructure targetStructure, out JobQueueItem producedJob) {
 	    TileObject unbuiltFurniture = InnerMapManager.Instance.CreateNewTileObject<TileObject>(tileObjectType);
 	    targetStructure.AddPOI(unbuiltFurniture);
@@ -2915,7 +2925,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 	    producedJob = job;
 	    return true;
     }
-#endregion
+	#endregion
 
 #region Wolf Lair
     public void TriggerSpawnWolfLair(LocationGridTile targetTile, out JobQueueItem producedJob) {
@@ -3479,6 +3489,76 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
         }
     }
     #endregion
+
+    #region Stockpile Food
+    public bool TryCreateStockpileFood(Character p_character, LocationStructure p_preferredStore, out JobQueueItem producedJob) {
+	    if (!owner.jobQueue.HasJob(JOB_TYPE.STOCKPILE_FOOD)) {
+		    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.STOCKPILE_FOOD, INTERACTION_TYPE.STOCKPILE_FOOD, p_character, p_character);
+		    job.AddPriorityLocation(INTERACTION_TYPE.BUY_FOOD, p_preferredStore);
+		    producedJob = job;
+		    return true;
+	    }
+	    producedJob = null;
+	    return false;
+    }
+    #endregion
+    
+    #region Craft Furniture
+    public bool CreateCraftFurniture(TILE_OBJECT_TYPE tileObjectType, LocationStructure targetStructure, LocationStructure p_preferredStore, out JobQueueItem producedJob) {
+	    TileObject unbuiltFurniture = InnerMapManager.Instance.CreateNewTileObject<TileObject>(tileObjectType);
+	    if (targetStructure.AddPOI(unbuiltFurniture)) {
+		    unbuiltFurniture.SetMapObjectState(MAP_OBJECT_STATE.UNBUILT);
+		    int coinCost;
+		    switch (tileObjectType) {
+			    case TILE_OBJECT_TYPE.TABLE:
+				    coinCost = 10;
+				    break;
+			    case TILE_OBJECT_TYPE.BED:
+				    coinCost = 20;
+				    break;
+			    case TILE_OBJECT_TYPE.TORCH:
+				    coinCost = 5;
+				    break;
+			    case TILE_OBJECT_TYPE.GUITAR:
+				    coinCost = 30;
+				    break;
+			    default:
+				    coinCost = 10;
+				    break;
+		    }
+	    
+		    if (p_preferredStore is Lumberyard) {
+			    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.CRAFT_MISSING_FURNITURE, INTERACTION_TYPE.CRAFT_FURNITURE_WOOD, unbuiltFurniture, owner);
+			    job.AddPriorityLocation(INTERACTION_TYPE.BUY_WOOD, p_preferredStore);
+			    TileObjectData tileObjectData = TileObjectDB.GetTileObjectData(tileObjectType);
+			    job.AddOtherData(INTERACTION_TYPE.BUY_WOOD, new object[] { coinCost, tileObjectData.craftResourceCost });
+			    producedJob = job;
+			    return true;
+		    } else if (p_preferredStore is Inner_Maps.Location_Structures.Mine) {
+			    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.CRAFT_MISSING_FURNITURE, INTERACTION_TYPE.CRAFT_FURNITURE_STONE, unbuiltFurniture, owner);
+			    job.AddPriorityLocation(INTERACTION_TYPE.BUY_STONE, p_preferredStore);
+			    TileObjectData tileObjectData = TileObjectDB.GetTileObjectData(tileObjectType);
+			    job.AddOtherData(INTERACTION_TYPE.BUY_STONE, new object[] { coinCost, tileObjectData.craftResourceCost });
+			    producedJob = job;
+			    return true;
+		    }
+	    }
+	    producedJob = null;
+	    return false;
+    }
+    #endregion
+
+    #region Buy Item
+    public bool TryCreateBuyItem(Character p_character, TileObject p_targetObject, out JobQueueItem producedJob) {
+	    if (!owner.jobQueue.HasJob(JOB_TYPE.BUY_ITEM)) {
+		    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.BUY_ITEM, INTERACTION_TYPE.BUY_ITEM, p_targetObject, p_character);
+		    producedJob = job;
+		    return true;
+	    }
+	    producedJob = null;
+	    return false;
+    }
+    #endregion
 }
 
 [System.Serializable]
@@ -3495,7 +3575,7 @@ public class SaveDataCharacterJobTriggerComponent : SaveData<CharacterJobTrigger
     public bool doNotDoRecoverHPJob;
     public bool canReportDemonicStructure;
 
-#region Overrides
+	#region Overrides
     public override void Save(CharacterJobTriggerComponent data) {
         //primaryJob = data.primaryJob;
         ableJobs = data.ableJobs;
@@ -3512,5 +3592,5 @@ public class SaveDataCharacterJobTriggerComponent : SaveData<CharacterJobTrigger
         CharacterJobTriggerComponent component = new CharacterJobTriggerComponent(this);
         return component;
     }
-#endregion
+	#endregion
 }

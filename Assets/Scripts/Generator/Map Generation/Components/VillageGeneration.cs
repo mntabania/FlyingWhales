@@ -69,6 +69,16 @@ public class VillageGeneration : MapGenerationComponent {
 			}
 		}
 		
+		//Generate facilities
+		for (int i = 0; i < createdSettlements.Count; i++) {
+			NPCSettlement npcSettlement = createdSettlements[i];
+			VillageSetting villageSetting = villageSettings[i];
+			var structureSettings = GenerateFacilities(npcSettlement, npcSettlement.owner, villageSetting.GetRandomFacilityCount());
+			Debug.Log($"Will create facilities for {npcSettlement.name}: {structureSettings.ComafyList()}");
+			yield return MapGenerator.Instance.StartCoroutine(EnsuredStructurePlacement(region, structureSettings, npcSettlement));
+			yield return MapGenerator.Instance.StartCoroutine(npcSettlement.PlaceInitialObjectsCoroutine());
+		}
+		
 		//Generate Dwellings
 		for (int i = 0; i < createdSettlements.Count; i++) {
 			NPCSettlement npcSettlement = createdSettlements[i];
@@ -77,16 +87,10 @@ public class VillageGeneration : MapGenerationComponent {
 			yield return MapGenerator.Instance.StartCoroutine(EnsuredStructurePlacement(region, structureSettings, npcSettlement));
 			RuinarchListPool<StructureSetting>.Release(structureSettings);
 		}
-		
-		//Generate facilities and residents
+
+		//generate residents
 		for (int i = 0; i < createdSettlements.Count; i++) {
 			NPCSettlement npcSettlement = createdSettlements[i];
-			VillageSetting villageSetting = villageSettings[i];
-			var structureSettings = GenerateFacilities(npcSettlement, npcSettlement.owner, villageSetting.GetRandomFacilityCount());
-			Debug.Log($"Will create facilities for {npcSettlement.name}: {structureSettings.ComafyList()}");
-			yield return MapGenerator.Instance.StartCoroutine(EnsuredStructurePlacement(region, structureSettings, npcSettlement));
-			yield return MapGenerator.Instance.StartCoroutine(npcSettlement.PlaceInitialObjectsCoroutine());
-
 			if (npcSettlement.structures.ContainsKey(STRUCTURE_TYPE.DWELLING)) {
 				int dwellingCount = npcSettlement.structures[STRUCTURE_TYPE.DWELLING].Count;
 				List<Character> spawnedCharacters = GenerateSettlementResidents(dwellingCount, npcSettlement, npcSettlement.owner, data);
@@ -97,9 +101,10 @@ public class VillageGeneration : MapGenerationComponent {
 					tileObject.UpdateOwners();
 				}
 				RuinarchListPool<TileObject>.Release(objectsInDwellings);
-				CharacterManager.Instance.PlaceInitialCharacters(spawnedCharacters, npcSettlement);	
+				CharacterManager.Instance.PlaceInitialCharacters(spawnedCharacters, npcSettlement);
 			}
 		}
+
 		RuinarchListPool<NPCSettlement>.Release(createdSettlements);
 		RuinarchListPool<VillageSetting>.Release(villageSettings);
 	}

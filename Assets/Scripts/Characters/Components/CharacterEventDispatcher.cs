@@ -133,7 +133,7 @@ namespace Characters.Components {
             _objectPlacedInCharacterDwelling -= p_listener.OnObjectPlacedInHomeDwelling;
         }
         public void ExecuteObjectPlacedInCharactersDwelling(Character p_character, LocationStructure p_structure, TileObject p_tileObject) {
-            Assert.IsTrue(p_structure == p_character.homeStructure, $"Object placed on home structure event was fired with object {p_tileObject?.nameWithID} at {p_structure?.name} but it is not {p_character?.name}'s home structure which is {p_character?.homeStructure?.name}");
+            // Assert.IsTrue(p_structure == p_character.homeStructure, $"Object placed on home structure event was fired with object {p_tileObject?.nameWithID} at {p_structure?.name} but it is not {p_character?.name}'s home structure which is {p_character?.homeStructure?.name}");
             _objectPlacedInCharacterDwelling?.Invoke(p_character, p_structure, p_tileObject);
         }
         public void SubscribeToObjectRemovedFromCharactersDwelling(IHomeStructureListener p_listener) {
@@ -143,7 +143,7 @@ namespace Characters.Components {
             _objectRemovedFromCharacterDwelling -= p_listener.OnObjectRemovedFromHomeDwelling;
         }
         public void ExecuteObjectRemovedFromCharactersDwelling(Character p_character, LocationStructure p_structure, TileObject p_tileObject) {
-            Assert.IsTrue(p_structure == p_character.homeStructure, $"Object removed from home structure event was fired with object {p_tileObject?.nameWithID} at {p_structure?.name} but it is not {p_character?.name}'s home structure which is {p_character?.homeStructure?.name}");
+            // Assert.IsTrue(p_structure == p_character.homeStructure, $"Object removed from home structure event was fired with object {p_tileObject?.nameWithID} at {p_structure?.name} but it is not {p_character?.name}'s home structure which is {p_character?.homeStructure?.name}");
             _objectRemovedFromCharacterDwelling?.Invoke(p_character, p_structure, p_tileObject);
         }
         #endregion

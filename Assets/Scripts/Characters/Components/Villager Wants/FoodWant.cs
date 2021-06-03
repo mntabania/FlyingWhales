@@ -30,15 +30,19 @@ namespace Characters.Villager_Wants {
         /// </summary>
         /// <param name="p_character">The character to check.</param>
         /// <param name="needsToPay">Does this character need to pay for the goods.</param>
-        protected bool HasFoodProducingStructureInSameVillageOwnedByValidCharacter(Character p_character, out bool needsToPay) {
+        /// /// <param name="foundStructure">The found food producing structure</param>
+        protected bool HasFoodProducingStructureInSameVillageOwnedByValidCharacter(Character p_character, out bool needsToPay, out LocationStructure foundStructure) {
             Assert.IsNotNull(p_character.homeSettlement);
             if (!p_character.homeSettlement.HasFoodProducingStructure()) {
                 needsToPay = true;
+                foundStructure = null;
                 return false;
             }
-            if (p_character.structureComponent.HasWorkPlaceStructure() && p_character.structureComponent.workPlaceStructure.structureType.IsFoodProducingStructure()) {
+            if (p_character.structureComponent.HasWorkPlaceStructure() && p_character.structureComponent.workPlaceStructure.structureType.IsFoodProducingStructure() &&
+                p_character.structureComponent.workPlaceStructure.HasTileObjectThatIsBuiltFoodPileThatCharacterDoesntHaveAtHome(p_character)) {
                 //character works at a food producing structure
                 needsToPay = false;
+                foundStructure = p_character.structureComponent.workPlaceStructure;
                 return true;
             }
             
@@ -50,13 +54,13 @@ namespace Characters.Villager_Wants {
             List<LocationStructure> fishery = p_character.homeSettlement.GetStructuresOfType(STRUCTURE_TYPE.FISHERY);
             if (fishery != null) { foodProducingStructures.AddRange(fishery); }
 
-            LocationStructure foundStructure = null;
+            foundStructure = null;
             needsToPay = true;
             for (int i = 0; i < foodProducingStructures.Count; i++) {
                 LocationStructure structure = foodProducingStructures[i];
                 ManMadeStructure manMadeStructure = structure as ManMadeStructure;
                 Assert.IsNotNull(manMadeStructure, $"Food producing structure is not Man made! {structure?.name}");
-                if (manMadeStructure.HasTileObjectThatIsBuiltFoodPile() && manMadeStructure.CanPurchaseFromHereBasedOnAssignedWorker(p_character, out needsToPay)) {
+                if (manMadeStructure.HasTileObjectThatIsBuiltFoodPileThatCharacterDoesntHaveAtHome(p_character) && manMadeStructure.CanPurchaseFromHereBasedOnAssignedWorker(p_character, out needsToPay)) {
                     foundStructure = manMadeStructure;
                     if (!needsToPay) {
                         //if character found a structure that he/she doesn't need to pay at, break this loop,

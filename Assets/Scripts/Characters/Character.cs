@@ -341,7 +341,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         bookmarkEventDispatcher = new BookmarkableEventDispatcher();
         //buffStatsBonus = new BuffStatsBonus();
         equipmentComponent = new EquipmentComponent();
-        needsComponent.ResetSleepTicks();
+        // needsComponent.ResetSleepTicks();
         resourceStorageComponent = new ResourceStorageComponent();
         dailyScheduleComponent = new DailyScheduleComponent(); dailyScheduleComponent.SetOwner(this);
     }
@@ -3042,9 +3042,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             //affect settlement if home settlement structures have been reduced to 0
             bool affectSettlement = homeSettlement != null && homeSettlement.structures.Count == 0;
             MigrateHomeStructureTo(null, affectSettlement: affectSettlement);
-            interruptComponent.TriggerInterrupt(INTERRUPT.Set_Home, null);
-            //MigrateHomeTo(null);
-            //interruptComponent.TriggerInterrupt(INTERRUPT.Set_Home, null);
+            //removed this because we expect that villagers should purchase their dwellings. See FreeTimeBehaviour
+            // interruptComponent.TriggerInterrupt(INTERRUPT.Set_Home, null); 
         }
     }
     /// <summary>
@@ -3370,11 +3369,12 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         Profiler.BeginSample($"{name} On Hour Started");
 #endif
         ProcessTraitsOnHourStarted();
-        if (needsComponent.HasNeeds()) {
-            needsComponent.PlanScheduledFullnessRecovery();
-            needsComponent.PlanScheduledTirednessRecovery();
-            needsComponent.PlanScheduledSecondHappinessRecovery();
-        }
+        dailyScheduleComponent.OnHourStarted(this);
+        // if (needsComponent.HasNeeds()) {
+            // needsComponent.PlanScheduledFullnessRecovery();
+            // needsComponent.PlanScheduledTirednessRecovery();
+            // needsComponent.PlanScheduledSecondHappinessRecovery();
+        // }
 #if DEBUG_PROFILER
         Profiler.EndSample();
 #endif
@@ -4107,11 +4107,41 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
         return null;
     }
+    public T GetItem<T>() where T : TileObject {
+        for (int i = 0; i < items.Count; i++) {
+            if (items[i] is T converted) {
+                return converted;
+            }
+        }
+        return null;
+    }
+    public void PopulateItemsOfType<T>(List<T> p_list) where T : TileObject {
+        for (int i = 0; i < items.Count; i++) {
+            if (items[i] is T converted) {
+                p_list.Add(converted);
+            }
+        }
+    }
     public TileObject GetRandomItem() {
         if(items.Count > 0) {
             return items[UnityEngine.Random.Range(0, items.Count)];
         }
         return null;
+    }
+    public TileObject GetRandomItemThatIsNotOfType(TILE_OBJECT_TYPE p_type) {
+        List<TileObject> choices = RuinarchListPool<TileObject>.Claim();
+        for (int i = 0; i < items.Count; i++) {
+            TileObject item = items[i];
+            if (item.tileObjectType != p_type) {
+                choices.Add(item);
+            }
+        }
+        TileObject chosen = null;
+        if (choices.Count > 0) {
+            chosen = CollectionUtilities.GetRandomElement(choices);
+        }
+        RuinarchListPool<TileObject>.Release(choices);
+        return chosen;
     }
     public bool HasItem(TileObject item) {
         return GetItem(item) != null;
@@ -4122,8 +4152,19 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public bool HasItem(string itemName) {
         return GetItem(itemName) != null;
     }
+    public bool HasItem<T>() where T: TileObject{
+        return GetItem<T>() != null;
+    }
     public bool HasItem() {
         return items.Count > 0;
+    }
+    public bool HasItemOtherThan(TILE_OBJECT_TYPE p_type) {
+        for (int i = 0; i < items.Count; i++) {
+            if (items[i].tileObjectType != p_type) {
+                return true;
+            }
+        }
+        return false;
     }
     public int GetItemCount(string name) {
         int count = 0;
@@ -4363,6 +4404,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             AddAdvertisedAction(INTERACTION_TYPE.PICKPOCKET);
             AddAdvertisedAction(INTERACTION_TYPE.STEAL_COINS);
             AddAdvertisedAction(INTERACTION_TYPE.CHANGE_CLASS);
+            AddAdvertisedAction(INTERACTION_TYPE.STOCKPILE_FOOD);
 
             //NOTE: Removed the creation of healing potion, etc. on the fly because it conflicts with the current crafting of objects
             //It is confusing to have a crafting then another one the creates them in the inventory without any crafting
@@ -5827,24 +5869,15 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 marker.PlaceMarkerAt(tombstone.previousTile);
             }
             traitContainer.RemoveTrait(this, "Dead");
-            //for (int i = 0; i < traitContainer.traits.Count; i++) {
-            //    traitContainer.traits[i].OnReturnToLife(this);
-            //}
-            //RemoveAllNonPersistentTraits();
-            //ClearAllAwareness();
-            //NPCSettlement gloomhollow = LandmarkManager.Instance.GetAreaByName("Gloomhollow");
-            //ChangeHomeStructure(null);
-            needsComponent.SetTirednessForcedTick();
-            needsComponent.SetFullnessForcedTick();
-            needsComponent.SetHappinessForcedTick();
-            needsComponent.SetHasCancelledSleepSchedule(false);
-            needsComponent.ResetSleepTicks();
+            // needsComponent.SetTirednessForcedTick();
+            // needsComponent.SetFullnessForcedTick();
+            // needsComponent.SetHappinessForcedTick();
+            // needsComponent.SetHasCancelledSleepSchedule(false);
+            // needsComponent.ResetSleepTicks();
             visuals.UpdateAllVisuals(this);
             ConstructDefaultActions();
             Messenger.Broadcast(CharacterSignals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, this as IPointOfInterest, "");
             Messenger.Broadcast(CharacterSignals.FORCE_CANCEL_ALL_ACTIONS_TARGETING_POI, this as IPointOfInterest, "");
-            //MigrateHomeTo(null);
-            //AddInitialAwareness(gloomhollow);
             Messenger.Broadcast(CharacterSignals.CHARACTER_RETURNED_TO_LIFE, this);
             return true;
         }

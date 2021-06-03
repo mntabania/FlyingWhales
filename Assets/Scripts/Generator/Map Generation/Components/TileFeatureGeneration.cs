@@ -322,8 +322,13 @@ public class TileFeatureGeneration : MapGenerationComponent {
 		int randomResourceCount = UnityEngine.Random.Range(1, 4);
 		List<Area> areaChoices = RuinarchListPool<Area>.Claim();
 		areaChoices.AddRange(p_villageSpot.reservedAreas);
-		// areaChoices.Remove(p_villageSpot.mainSpot);
+		
 		areaChoices.Remove(p_villageSpot.mainSpot);
+		List<Area> areasAround = RuinarchListPool<Area>.Claim();
+		p_villageSpot.mainSpot.PopulateAreasInRange(areasAround, 2, true);
+		areaChoices.ListRemoveRange(areasAround);
+		RuinarchListPool<Area>.Release(areasAround);
+		
 		List<string> randomResourceChoices = RuinarchListPool<string>.Claim();
 		randomResourceChoices.Add("BOAR_DEN");
 		randomResourceChoices.Add("WOLF_DEN");
@@ -335,6 +340,7 @@ public class TileFeatureGeneration : MapGenerationComponent {
 		
 		if (areaChoices.Count > 0) {
 			for (int i = 0; i < randomResourceCount; i++) {
+				if (areaChoices.Count == 0) { break; }
 				string randomType = CollectionUtilities.GetRandomElement(randomResourceChoices);
 				Area randomArea = CollectionUtilities.GetRandomElement(areaChoices);
 
@@ -348,7 +354,7 @@ public class TileFeatureGeneration : MapGenerationComponent {
 					for (int j = 0; j < randomArea.gridTileComponent.gridTiles.Count; j++) {
 						LocationGridTile tile = randomArea.gridTileComponent.gridTiles[j];
 						if (tile.structure is Wilderness && tile.tileObjectComponent.objHere == null && tile.IsPassable()) {
-							List<LocationGridTile> overlappedTiles = tile.parentMap.GetTiles(new Point(6, 6), tile); //had to check 4x4 so that dens will not be directly adjacent to other structures
+							List<LocationGridTile> overlappedTiles = tile.parentMap.GetTiles(new Point(4, 4), tile); //had to check 4x4 so that dens will not be directly adjacent to other structures
 							int invalidOverlap = overlappedTiles.Count(t => t.tileObjectComponent.objHere != null || t.structure.structureType != STRUCTURE_TYPE.WILDERNESS || t.IsAtEdgeOfMap());
 							if (invalidOverlap <= 0) {
 								unoccupiedTiles.Add(tile);	
@@ -366,7 +372,6 @@ public class TileFeatureGeneration : MapGenerationComponent {
 					RuinarchListPool<LocationGridTile>.Release(unoccupiedTiles);
 				}
 				areaChoices.Remove(randomArea);
-				if (areaChoices.Count == 0) { break; }
 			}	
 		}
 		RuinarchListPool<string>.Release(randomResourceChoices);

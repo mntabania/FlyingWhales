@@ -3,12 +3,21 @@ namespace Characters.Villager_Wants {
     public class FoodWant_3 : FoodWant {
         public override int priority => 1;
         public override string name => "Food Want 3";
-        public override bool CanVillagerObtainWant(Character p_character) {
-            if (!CharacterHasFaction(p_character)) return false;
-            if (!CharacterLivesInAVillage(p_character)) return false;
-            if (!CharacterLivesInADwelling(p_character)) return false;
+        public override bool CanVillagerObtainWant(Character p_character, out LocationStructure p_preferredStructure) {
+            if (!CharacterHasFaction(p_character)) {
+                p_preferredStructure = null;
+                return false;
+            }
+            if (!CharacterLivesInAVillage(p_character)) {
+                p_preferredStructure = null;
+                return false;
+            }
+            if (!CharacterLivesInADwelling(p_character)) {
+                p_preferredStructure = null;
+                return false;
+            }
 
-            if (!HasFoodProducingStructureInSameVillageOwnedByValidCharacter(p_character, out var needsToPay)) {
+            if (!HasFoodProducingStructureInSameVillageOwnedByValidCharacter(p_character, out var needsToPay, out p_preferredStructure)) {
                 //could not find food producing structure that is owned by a valid character
                 return false;
             }

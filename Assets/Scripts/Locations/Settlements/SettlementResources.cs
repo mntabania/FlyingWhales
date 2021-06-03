@@ -117,7 +117,8 @@ public class SettlementResources
                pile.tileObjectType == TILE_OBJECT_TYPE.PINEAPPLE ||
                pile.tileObjectType == TILE_OBJECT_TYPE.HYPNO_HERB ||
                pile.tileObjectType == TILE_OBJECT_TYPE.POTATO) {
-                if (currentStructure.structureType != STRUCTURE_TYPE.CITY_CENTER && currentStructure.structureType != STRUCTURE_TYPE.FARM && !pile.HasJobTargetingThis(JOB_TYPE.HAUL, JOB_TYPE.COMBINE_STOCKPILE)) {
+                if (currentStructure.structureType != STRUCTURE_TYPE.CITY_CENTER && currentStructure.structureType != STRUCTURE_TYPE.FARM && 
+                    currentStructure.structureType != STRUCTURE_TYPE.DWELLING && !pile.HasJobTargetingThis(JOB_TYPE.HAUL, JOB_TYPE.COMBINE_STOCKPILE)) {
                     pilePool.Add(pile);
                     //found = true;
                 }    
@@ -292,7 +293,7 @@ public class SettlementResources
                pile.tileObjectType == TILE_OBJECT_TYPE.DIAMOND ||
                pile.tileObjectType == TILE_OBJECT_TYPE.GOLD ||
                pile.tileObjectType == TILE_OBJECT_TYPE.STONE_PILE) {
-                if (pile.currentStructure.structureType != STRUCTURE_TYPE.CITY_CENTER && pile.currentStructure.structureType != STRUCTURE_TYPE.HUNTER_LODGE && !pile.HasJobTargetingThis(JOB_TYPE.HAUL, JOB_TYPE.COMBINE_STOCKPILE)) {
+                if (pile.currentStructure.structureType != STRUCTURE_TYPE.CITY_CENTER && pile.currentStructure.structureType != STRUCTURE_TYPE.MINE && !pile.HasJobTargetingThis(JOB_TYPE.HAUL, JOB_TYPE.COMBINE_STOCKPILE)) {
                     pilePool.Add(pile);
                     //found = true;
                 }

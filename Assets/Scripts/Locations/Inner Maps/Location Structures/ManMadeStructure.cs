@@ -236,7 +236,11 @@ namespace Inner_Maps.Location_Structures {
         }
         public bool CanPurchaseFromHereBasedOnAssignedWorker(Character p_buyer, out bool needsToPay) {
             if (assignedWorker != null) {
-                if (p_buyer.relationshipContainer.HasRelationshipWith(assignedWorker, RELATIONSHIP_TYPE.LOVER)) {
+                if (assignedWorker == p_buyer) {
+                    //structure is owned by self
+                    needsToPay = false;
+                    return true;
+                } else if (p_buyer.relationshipContainer.HasRelationshipWith(assignedWorker, RELATIONSHIP_TYPE.LOVER)) {
                     //structure is owned by a lover
                     needsToPay = false;
                     return true;

@@ -84,9 +84,6 @@ public class Table : TileObject {
 
         }
     }
-    public virtual bool CanBeReplaced() {
-        return true;
-    }
     protected override void OnPlaceTileObjectAtTile(LocationGridTile tile) {
         base.OnPlaceTileObjectAtTile(tile);
         if (mapVisual.usedSprite.name.Contains("bartop")) {
@@ -103,6 +100,16 @@ public class Table : TileObject {
         string data = base.GetAdditionalTestingData();
         data = $"{data}\n\tFood in Table: {food.ToString()}";
         return data;
+    }
+    protected override void OnSetObjectAsUnbuilt() {
+        base.OnSetObjectAsUnbuilt();
+        AddAdvertisedAction(INTERACTION_TYPE.CRAFT_FURNITURE_STONE);
+        AddAdvertisedAction(INTERACTION_TYPE.CRAFT_FURNITURE_WOOD);
+    }
+    protected override void OnSetObjectAsBuilt() {
+        base.OnSetObjectAsBuilt();
+        RemoveAdvertisedAction(INTERACTION_TYPE.CRAFT_FURNITURE_STONE);
+        RemoveAdvertisedAction(INTERACTION_TYPE.CRAFT_FURNITURE_WOOD);
     }
     #endregion
 

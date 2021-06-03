@@ -47,9 +47,9 @@ namespace Traits {
             if (sourceCharacter is Character character) {
                 _owner = character;
                 character.jobQueue.CancelAllJobs(JOB_TYPE.FULLNESS_RECOVERY_NORMAL, JOB_TYPE.FULLNESS_RECOVERY_URGENT, JOB_TYPE.ENERGY_RECOVERY_NORMAL, JOB_TYPE.ENERGY_RECOVERY_URGENT);
-                character.needsComponent.SetTirednessForcedTick(0);
+                // character.needsComponent.SetTirednessForcedTick(0);
                 //character.needsComponent.SetForcedFullnessRecoveryTimeInWords(TIME_IN_WORDS.AFTER_MIDNIGHT);
-                character.needsComponent.SetFullnessForcedTick(0);
+                // character.needsComponent.SetFullnessForcedTick(0);
                 character.needsComponent.AdjustDoNotGetTired(1);
                 character.needsComponent.ResetTirednessMeter();
                 DetermineIfDesireOrDislike(character);
@@ -60,9 +60,9 @@ namespace Traits {
             if (sourceCharacter is Character) {
                 Character character = sourceCharacter as Character;
                 character.jobQueue.CancelAllJobs(JOB_TYPE.FULLNESS_RECOVERY_NORMAL, JOB_TYPE.FULLNESS_RECOVERY_URGENT);
-                character.needsComponent.SetTirednessForcedTick();
+                // character.needsComponent.SetTirednessForcedTick();
                 //character.needsComponent.SetForcedFullnessRecoveryTimeInWords(TIME_IN_WORDS.LUNCH_TIME);
-                character.needsComponent.SetFullnessForcedTick();
+                // character.needsComponent.SetFullnessForcedTick();
                 character.needsComponent.AdjustDoNotGetTired(-1);
                 character.behaviourComponent.RemoveBehaviourComponent(typeof(VampireBehaviour));
                 character.RevertFromVampireBatForm();

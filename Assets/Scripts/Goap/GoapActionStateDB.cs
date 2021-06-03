@@ -716,6 +716,31 @@ public static class GoapActionStateDB {
         {INTERACTION_TYPE.HARVEST_CROPS, new[]{
             new StateNameAndDuration(){ name = "Harvest Crops Success", status = InteractionManager.Goap_State_Success, duration = 20 },
         } },
+        {INTERACTION_TYPE.BUY_FOOD, new[]{
+            new StateNameAndDuration(){ name = "Buy Success", status = InteractionManager.Goap_State_Success, duration = 0 },
+            new StateNameAndDuration(){ name = "Take Success", status = InteractionManager.Goap_State_Success, duration = 0 },
+        } },
+        {INTERACTION_TYPE.STOCKPILE_FOOD, new[]{
+            new StateNameAndDuration(){ name = "Stockpile Success", status = InteractionManager.Goap_State_Success, duration = 0 },
+        } },
+        {INTERACTION_TYPE.CRAFT_FURNITURE_WOOD, new[]{
+            new StateNameAndDuration(){ name = "Craft Success", status = InteractionManager.Goap_State_Success, duration = 5 },
+        } },
+        {INTERACTION_TYPE.BUY_WOOD, new[]{
+            new StateNameAndDuration(){ name = "Buy Success", status = InteractionManager.Goap_State_Success, duration = 0 },
+            new StateNameAndDuration(){ name = "Take Success", status = InteractionManager.Goap_State_Success, duration = 0 },
+        } },
+        {INTERACTION_TYPE.CRAFT_FURNITURE_STONE, new[]{
+            new StateNameAndDuration(){ name = "Craft Success", status = InteractionManager.Goap_State_Success, duration = 5 },
+        } },
+        {INTERACTION_TYPE.BUY_STONE, new[]{
+            new StateNameAndDuration(){ name = "Buy Success", status = InteractionManager.Goap_State_Success, duration = 0 },
+            new StateNameAndDuration(){ name = "Take Success", status = InteractionManager.Goap_State_Success, duration = 0 },
+        } },
+        {INTERACTION_TYPE.BUY_ITEM, new[]{
+            new StateNameAndDuration(){ name = "Buy Success", status = InteractionManager.Goap_State_Success, duration = 0 },
+            new StateNameAndDuration(){ name = "Take Success", status = InteractionManager.Goap_State_Success, duration = 0 },
+        } },
     };
 }
 

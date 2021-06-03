@@ -1,12 +1,19 @@
-﻿namespace Characters.Villager_Wants {
-    public class AccessoryWant : VillagerWant {
+﻿using Inner_Maps.Location_Structures;
+namespace Characters.Villager_Wants {
+    public class AccessoryWant : EquipmentWant {
         public override int priority => 3;
         public override string name => "Accessory";
-        public override bool CanVillagerObtainWant(Character p_character) {
-            if (!CharacterHasFaction(p_character)) return false;
-            if (!CharacterLivesInAVillage(p_character)) return false;
+        public override bool CanVillagerObtainWant(Character p_character, out LocationStructure p_preferredStructure) {
+            if (!CharacterHasFaction(p_character)) {
+                p_preferredStructure = null; 
+                return false;
+            }
+            if (!CharacterLivesInAVillage(p_character)) {
+                p_preferredStructure = null;
+                return false;
+            }
             
-            if (!HasWorkshopInSameVillageOwnedByValidCharacter(p_character, out bool needsToPay)) {
+            if (!HasWorkshopInSameVillageOwnedByValidCharacter(p_character, out bool needsToPay, out p_preferredStructure)) {
                 //could not find workshop that is owned by a valid character
                 return false;
             }

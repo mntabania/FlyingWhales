@@ -199,6 +199,9 @@ public class SaveDataCharacter : SaveData<Character>, ISavableCounterpart {
         if (data.talentComponent != null) {
             talentComponent = new SaveDataCharacterTalentComponent(); talentComponent.Save(data.talentComponent);
         }
+        if (data.villagerWantsComponent != null) {
+            villagerWantsComponent = new SaveDataVillagerWantsComponent(); villagerWantsComponent.Save(data.villagerWantsComponent);
+        }
         //equipmentComponent = new SaveDataEquipmentComponent(); equipmentComponent.Save(data.equipmentComponent);
 
         isInfoUnlocked = data.isInfoUnlocked;

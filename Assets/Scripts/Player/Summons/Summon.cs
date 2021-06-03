@@ -66,9 +66,9 @@ public class Summon : Character {
         AddAdvertisedAction(INTERACTION_TYPE.ABSORB_LIFE);
         AddAdvertisedAction(INTERACTION_TYPE.ABSORB_POWER);
         ConstructInitialGoapAdvertisementActions();
-        needsComponent.SetFullnessForcedTick(0);
-        needsComponent.SetTirednessForcedTick(0);
-        needsComponent.SetHappinessForcedTick(0);
+        // needsComponent.SetFullnessForcedTick(0);
+        // needsComponent.SetTirednessForcedTick(0);
+        // needsComponent.SetHappinessForcedTick(0);
         behaviourComponent.ChangeDefaultBehaviourSet(CharacterManager.Default_Monster_Behaviour);
         // movementComponent.AvoidAllFactions();
     }

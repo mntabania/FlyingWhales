@@ -1,13 +1,24 @@
-﻿namespace Characters.Villager_Wants {
-    public class HomeTorchWant : VillagerWant {
+﻿using Inner_Maps.Location_Structures;
+namespace Characters.Villager_Wants {
+    public class HomeTorchWant : FurnitureWant {
         public override int priority => 5;
         public override string name => "Home Torch";
-        public override bool CanVillagerObtainWant(Character p_character) {
-            if (!CharacterHasFaction(p_character)) return false;
-            if (!CharacterLivesInAVillage(p_character)) return false;
-            if (!CharacterLivesInADwelling(p_character)) return false;
+        public override TILE_OBJECT_TYPE furnitureWanted => TILE_OBJECT_TYPE.TORCH;
+        public override bool CanVillagerObtainWant(Character p_character, out LocationStructure p_preferredStructure) {
+            if (!CharacterHasFaction(p_character)) {
+                p_preferredStructure = null;
+                return false;
+            }
+            if (!CharacterLivesInAVillage(p_character)) {
+                p_preferredStructure = null;
+                return false;
+            }
+            if (!CharacterLivesInADwelling(p_character)) {
+                p_preferredStructure = null;
+                return false;
+            }
             
-            if (!HasBasicResourceProducingStructureInSameVillageOwnedByValidCharacter(p_character, out bool needsToPay)) {
+            if (!HasBasicResourceProducingStructureInSameVillageOwnedByValidCharacter(p_character, out bool needsToPay, out p_preferredStructure)) {
                 //could not find basic resource producing structure that is owned by a valid character
                 return false;
             }

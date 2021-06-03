@@ -41,6 +41,18 @@ public class DailyScheduleComponent : CharacterComponent {
         Assert.IsTrue(p_character == owner);
         UpdateDailySchedule(p_character);
     }
+    public void OnHourStarted(Character p_character) {
+        GameDate previousDate = GameManager.Instance.Today();
+        previousDate.ReduceTicks(1);
+        DAILY_SCHEDULE previousSchedule = schedule.GetScheduleType(previousDate.tick);
+        DAILY_SCHEDULE currentSchedule = schedule.GetScheduleType(GameManager.Instance.currentTick);
+        if (previousSchedule == DAILY_SCHEDULE.Sleep && currentSchedule != DAILY_SCHEDULE.Sleep) {
+            //wake up character
+            if (p_character.currentJob != null && (p_character.currentJob.jobType == JOB_TYPE.ENERGY_RECOVERY_NORMAL || p_character.currentJob.jobType == JOB_TYPE.ENERGY_RECOVERY_URGENT)) {
+                p_character.currentJob.CancelJob(false, "Time to wake up");
+            }
+        }
+    }
     #endregion
     
 }

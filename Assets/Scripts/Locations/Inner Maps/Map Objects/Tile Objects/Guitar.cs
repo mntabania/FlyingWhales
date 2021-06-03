@@ -16,8 +16,14 @@ public class Guitar : TileObject {
     public override string ToString() {
         return $"Guitar {id.ToString()}";
     }
-
-    public virtual bool CanBeReplaced() {
-        return true;
+    protected override void OnSetObjectAsUnbuilt() {
+        base.OnSetObjectAsUnbuilt();
+        AddAdvertisedAction(INTERACTION_TYPE.CRAFT_FURNITURE_STONE);
+        AddAdvertisedAction(INTERACTION_TYPE.CRAFT_FURNITURE_WOOD);
+    }
+    protected override void OnSetObjectAsBuilt() {
+        base.OnSetObjectAsBuilt();
+        RemoveAdvertisedAction(INTERACTION_TYPE.CRAFT_FURNITURE_STONE);
+        RemoveAdvertisedAction(INTERACTION_TYPE.CRAFT_FURNITURE_WOOD);
     }
 }

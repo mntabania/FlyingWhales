@@ -1,12 +1,19 @@
-﻿namespace Characters.Villager_Wants {
+﻿using Inner_Maps.Location_Structures;
+namespace Characters.Villager_Wants {
     public class HealingPotionWant : VillagerWant {
         public override int priority => 7;
         public override string name => "Healing Potion";
-        public override bool CanVillagerObtainWant(Character p_character) {
-            if (!CharacterHasFaction(p_character)) return false;
-            if (!CharacterLivesInAVillage(p_character)) return false;
+        public override bool CanVillagerObtainWant(Character p_character, out LocationStructure p_preferredStructure) {
+            if (!CharacterHasFaction(p_character)) {
+                p_preferredStructure = null;
+                return false;
+            }
+            if (!CharacterLivesInAVillage(p_character)) {
+                p_preferredStructure = null;
+                return false;
+            }
             
-            if (!HasHospiceInSameVillageOwnedByValidCharacter(p_character, out bool needsToPay)) {
+            if (!HasHospiceInSameVillageOwnedByValidCharacter(p_character, out bool needsToPay, out p_preferredStructure)) {
                 //could not find hospice structure that is owned by a valid character
                 return false;
             }

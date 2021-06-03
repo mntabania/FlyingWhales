@@ -31,7 +31,6 @@ namespace Factions.Faction_Types {
             AddCombatantClass("Shaman");
 
             //TODO:
-            //AddCivilianClass("Peasant");
             AddCivilianClass("Miner");
             AddCivilianClass("Craftsman");
             AddCivilianClass("Farmer");

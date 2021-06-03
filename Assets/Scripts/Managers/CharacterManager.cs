@@ -133,7 +133,9 @@ public class CharacterManager : BaseMonoBehaviour {
                 typeof(DefaultFactionRelated),
                 typeof(DefaultHomeless),
                 typeof(WorkBehaviour),
-                typeof(DefaultAtHome),
+                // typeof(DefaultAtHome),
+                typeof(SleepBehaviour),
+                typeof(FreeTimeBehaviour),
                 typeof(DefaultOutside),
                 typeof(DefaultBaseStructure),
                 typeof(DefaultOtherStructure),
@@ -788,9 +790,9 @@ public class CharacterManager : BaseMonoBehaviour {
             target.ReturnToLife(faction, chosenRace, chosenClassName);
             target.traitContainer.RemoveTrait(target, "Transitioning"); //Remove transitioning status if the character turns into a zombie so that they will attack characters immediately
             target.MigrateHomeStructureTo(null);
-            target.needsComponent.SetTirednessForcedTick(0);
-            target.needsComponent.SetFullnessForcedTick(0);
-            target.needsComponent.SetHappinessForcedTick(0);
+            // target.needsComponent.SetTirednessForcedTick(0);
+            // target.needsComponent.SetFullnessForcedTick(0);
+            // target.needsComponent.SetHappinessForcedTick(0);
             if (!target.behaviourComponent.HasBehaviour(typeof(ZombieBehaviour))) {
                 target.behaviourComponent.AddBehaviourComponent(typeof(ZombieBehaviour));
             }

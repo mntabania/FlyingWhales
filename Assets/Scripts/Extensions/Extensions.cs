@@ -869,6 +869,7 @@ public static class Extensions {
             case JOB_TYPE.MONSTER_BUTCHER:
             case JOB_TYPE.QUARANTINE:
             case JOB_TYPE.PLAGUE_CARE:
+            case JOB_TYPE.STOCKPILE_FOOD:
                 priority = 800;
                 break;
             case JOB_TYPE.CRAFT_OBJECT:
@@ -952,6 +953,7 @@ public static class Extensions {
             case JOB_TYPE.ABDUCT:
             case JOB_TYPE.LEARN_MONSTER:
             case JOB_TYPE.TAKE_ARTIFACT:
+            case JOB_TYPE.BUY_ITEM:
                 priority = 260;
                 break;
             // case JOB_TYPE.MONSTER_EAT_CORPSE:

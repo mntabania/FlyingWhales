@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Inner_Maps;
 using UnityEngine;
 
 public class WoodPile : ResourcePile {
@@ -13,7 +14,19 @@ public class WoodPile : ResourcePile {
     public override string ToString() {
         return $"Wood Pile {id.ToString()}";
     }
-    public virtual bool CanBeReplaced() {
-        return true;
+
+    #region Overrides
+    public override void OnPlacePOI() {
+        base.OnPlacePOI();
+        if (gridTileLocation != null && gridTileLocation.structure.structureType == STRUCTURE_TYPE.LUMBERYARD) {
+            AddAdvertisedAction(INTERACTION_TYPE.BUY_WOOD);
+        } else {
+            RemoveAdvertisedAction(INTERACTION_TYPE.BUY_WOOD);
+        }
     }
+    public override void OnRemoveTileObject(Character removedBy, LocationGridTile removedFrom, bool removeTraits = true, bool destroyTileSlots = true) {
+        base.OnRemoveTileObject(removedBy, removedFrom, removeTraits, destroyTileSlots);
+        RemoveAdvertisedAction(INTERACTION_TYPE.BUY_WOOD);
+    }
+    #endregion
 }

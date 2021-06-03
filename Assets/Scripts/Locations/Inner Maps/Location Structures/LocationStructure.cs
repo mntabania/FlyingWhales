@@ -513,6 +513,15 @@ namespace Inner_Maps.Location_Structures {
             }
             return false;
         }
+        public bool HasTileObjectThatIsBuiltFoodPileThatCharacterDoesntHaveAtHome(Character p_character) {
+            for (int i = 0; i < pointsOfInterest.Count; i++) {
+                IPointOfInterest poi = pointsOfInterest.ElementAt(i);
+                if (poi is FoodPile t && t.mapObjectState == MAP_OBJECT_STATE.BUILT && !p_character.homeStructure.HasBuiltTileObjectOfType(t.tileObjectType)) {
+                    return true;
+                }
+            }
+            return false;
+        }
         //public List<T> GetTileObjectsOfType<T>(TILE_OBJECT_TYPE type) where T : TileObject {
         //    List<T> objs = new List<T>();
         //    for (int i = 0; i < pointsOfInterest.Count; i++) {
