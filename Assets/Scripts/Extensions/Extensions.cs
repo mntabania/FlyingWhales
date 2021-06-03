@@ -444,7 +444,7 @@ public static class Extensions {
             case TILE_OBJECT_TYPE.BASIC_AXE:
             case TILE_OBJECT_TYPE.BASIC_BOW:
             case TILE_OBJECT_TYPE.BASIC_DAGGER:
-            case TILE_OBJECT_TYPE.BASIC_CLOTH:
+            case TILE_OBJECT_TYPE.BASIC_SHIRT:
             case TILE_OBJECT_TYPE.BASIC_STAFF:
             case TILE_OBJECT_TYPE.IRON_SWORD:
             case TILE_OBJECT_TYPE.MITHRIL_SWORD:
@@ -586,7 +586,7 @@ public static class Extensions {
             case TILE_OBJECT_TYPE.BASIC_AXE:
             case TILE_OBJECT_TYPE.BASIC_BOW:
             case TILE_OBJECT_TYPE.BASIC_DAGGER:
-            case TILE_OBJECT_TYPE.BASIC_CLOTH:
+            case TILE_OBJECT_TYPE.BASIC_SHIRT:
             case TILE_OBJECT_TYPE.BASIC_STAFF:
             case TILE_OBJECT_TYPE.IRON_SWORD:
             case TILE_OBJECT_TYPE.MITHRIL_SWORD:
@@ -806,6 +806,9 @@ public static class Extensions {
             case JOB_TYPE.HARVEST_CROPS:
             case JOB_TYPE.CHOP_WOOD:
             case JOB_TYPE.MINE_STONE:
+            case JOB_TYPE.RECUPERATE:
+            case JOB_TYPE.CREATE_HOSPICE_ANTIDOTE:
+            case JOB_TYPE.CREATE_HOSPICE_POTION:
             priority = 920;
                 break;
             case JOB_TYPE.UNDERMINE:
@@ -860,6 +863,7 @@ public static class Extensions {
             case JOB_TYPE.MONSTER_BUTCHER:
             case JOB_TYPE.QUARANTINE:
             case JOB_TYPE.PLAGUE_CARE:
+            case JOB_TYPE.HEALER_CURE:
                 priority = 800;
                 break;
             case JOB_TYPE.CRAFT_OBJECT:
@@ -943,7 +947,8 @@ public static class Extensions {
             case JOB_TYPE.ABDUCT:
             case JOB_TYPE.LEARN_MONSTER:
             case JOB_TYPE.TAKE_ARTIFACT:
-                priority = 260;
+            case JOB_TYPE.GATHER_HERB:
+            priority = 260;
                 break;
             // case JOB_TYPE.MONSTER_EAT_CORPSE:
             //     priority = 255;

@@ -17,7 +17,6 @@ public class EquipmentData : ScriptableObject {
     public int purchaseCost;
     public int tier;
     [HideInInspector]
-    public List<EQUIPMENT_CLASS_COMPATIBILITY> compatibleClasses = new List<EQUIPMENT_CLASS_COMPATIBILITY>();
     public string description;
     public Sprite imgIcon;
 

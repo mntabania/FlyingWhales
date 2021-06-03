@@ -35,7 +35,6 @@ public class EquipmentUpgradeDataEditor : Editor {
         EditorGUILayout.Space();
         serializedObject.ApplyModifiedProperties();
         EditorGUILayout.Space();
-        DisplayCompatibleClasses();
         EditorGUILayout.TextArea("UPGRADE Stats/Skill Bonus");
         DisplayUpgradeBonus();
         serializedObject.ApplyModifiedProperties();
@@ -51,11 +50,6 @@ public class EquipmentUpgradeDataEditor : Editor {
 
     private void OnDisable() {
         //AssetDatabase.SaveAssets();
-    }
-
-    void DisplayCompatibleClasses() {
-        DisplayEnumList(data.compatibleClasses, "Classes That Can use this Equip");
-        EditorGUILayout.Space();
     }
 
     void DisplayResourcesEditor() {

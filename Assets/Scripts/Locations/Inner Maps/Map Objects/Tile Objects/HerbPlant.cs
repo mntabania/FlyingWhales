@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
-
+using Locations.Settlements;
 public class HerbPlant : TileObject{
+
+    public BaseSettlement parentSettlement { get; private set; }
     public HerbPlant() {
         Initialize(TILE_OBJECT_TYPE.HERB_PLANT, false);
         AddAdvertisedAction(INTERACTION_TYPE.ASSAULT);
@@ -8,6 +10,37 @@ public class HerbPlant : TileObject{
         AddAdvertisedAction(INTERACTION_TYPE.PICK_UP);
         AddAdvertisedAction(INTERACTION_TYPE.DROP_ITEM);
         AddAdvertisedAction(INTERACTION_TYPE.STEAL_ANYTHING);
+
+        BaseSettlement.onSettlementBuilt += UpdateSettlementResourcesParent;
     }
     public HerbPlant(SaveDataTileObject data) : base(data) { }
+
+    protected override void UpdateSettlementResourcesParent() {
+        if (gridTileLocation != null) {
+           if (gridTileLocation.area.settlementOnArea != null) {
+                gridTileLocation.area.settlementOnArea.SettlementResources?.AddToListBasedOnRequirement(SettlementResources.StructureRequirement.HERB_PLANT, this);
+            }
+            gridTileLocation.area.neighbourComponent.neighbours.ForEach((eachNeighbor) => {
+                if (eachNeighbor.settlementOnArea != null) {
+                    eachNeighbor.settlementOnArea.SettlementResources?.AddToListBasedOnRequirement(SettlementResources.StructureRequirement.HERB_PLANT, this);
+                    parentSettlement = eachNeighbor.settlementOnArea;
+                }
+            });
+        }
+    }
+    protected override void RemoveFromSettlementResourcesParent() {
+        if (parentSettlement != null && parentSettlement.SettlementResources != null) {
+            if (parentSettlement.SettlementResources.herbPlants.Remove(this)) {
+                parentSettlement = null;
+            }
+        }
+    }
+    public override void OnPlacePOI() {
+        base.OnPlacePOI();
+        UpdateSettlementResourcesParent();
+    }
+    public override void OnDestroyPOI() {
+        base.OnDestroyPOI();
+        BaseSettlement.onSettlementBuilt -= UpdateSettlementResourcesParent;
+    }
 }
