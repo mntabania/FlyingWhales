@@ -39,40 +39,12 @@ public class CraftWeapon : GoapAction {
         return satisfied;
     }
 
-    public override void OnStopWhilePerforming(ActualGoapNode node) {
-        base.OnStopWhilePerforming(node);
-        if (node.currentStateDuration > 0) {
-            ProduceMatsPile(node);
-        }
-    }
     #endregion
 
     #region State Effects
     public void AfterChopWoodSuccess(ActualGoapNode p_node) {
-        p_node.actor.homeSettlement.settlementJobTriggerComponent.TryCreateHaulJob(ProduceMatsPile(p_node));
+        
     }
     #endregion
 
-    ResourcePile ProduceMatsPile(ActualGoapNode p_node) {
-        LocationGridTile tileToSpawnPile = p_node.actor.gridTileLocation;
-        if (tileToSpawnPile != null && tileToSpawnPile.tileObjectComponent.objHere != null) {
-            tileToSpawnPile = p_node.actor.gridTileLocation.GetFirstNearestTileFromThisWithNoObject();
-        }
-        WoodPile matsToHaul = InnerMapManager.Instance.CreateNewTileObject<WoodPile>(TILE_OBJECT_TYPE.WOOD_PILE);
-        matsToHaul.SetResourceInPile(1);
-        tileToSpawnPile.structure.AddPOI(matsToHaul, tileToSpawnPile);
-        ProduceLogs(p_node);
-        (p_node.target as TileObject).DestroyMapVisualGameObject();
-        (p_node.target as TileObject).DestroyPermanently();
-
-        return matsToHaul;
-    }
-
-    public void ProduceLogs(ActualGoapNode p_node) {
-        //string addOnText = (p_node.currentStateDuration * m_amountProducedPerTick).ToString() + " stones";
-        Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "GoapAction", name, "produced_resources", p_node, LOG_TAG.Work);
-        log.AddToFillers(p_node.actor, p_node.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-        log.AddToFillers(null, "", LOG_IDENTIFIER.STRING_1);
-        p_node.LogAction(log);
-    }
 }

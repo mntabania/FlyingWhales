@@ -28,4 +28,9 @@ public class EquipmentDataHandler : MonoBehaviour
 		}
 		return null;
 	}
+
+	public List<CONCRETE_RESOURCES> GetResourcesNeeded(TILE_OBJECT_TYPE p_equipment) {
+		string name = p_equipment.ToString().Replace("_", "");
+		return GetEquipmentDataBaseOnName(name).specificResource;
+	}
 }
