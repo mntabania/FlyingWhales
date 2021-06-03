@@ -61,11 +61,11 @@ public class SettlementJobTriggerComponent : JobTriggerComponent/*, SettlementCl
 	#region Listeners
 	public void SubscribeToVillageListeners() {
 		Messenger.AddListener(Signals.HOUR_STARTED, HourlyJobActions);
-		Messenger.AddListener<ResourcePile>(TileObjectSignals.RESOURCE_IN_PILE_CHANGED, OnResourceInPileChangedVillage);
+		// Messenger.AddListener<ResourcePile>(TileObjectSignals.RESOURCE_IN_PILE_CHANGED, OnResourceInPileChangedVillage);
 		Messenger.AddListener<TileObject, int, bool>(TileObjectSignals.TILE_OBJECT_DAMAGED, OnTileObjectDamaged);
 		Messenger.AddListener<TileObject>(TileObjectSignals.TILE_OBJECT_FULLY_REPAIRED, OnTileObjectFullyRepaired);
 		Messenger.AddListener<TileObject, LocationGridTile>(GridTileSignals.TILE_OBJECT_PLACED, OnTileObjectPlaced);
-		Messenger.AddListener<TileObject, Character, LocationGridTile>(GridTileSignals.TILE_OBJECT_REMOVED, OnTileObjectRemoved);
+		// Messenger.AddListener<TileObject, Character, LocationGridTile>(GridTileSignals.TILE_OBJECT_REMOVED, OnTileObjectRemoved);
 		Messenger.AddListener<Character, LocationStructure>(CharacterSignals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
 		Messenger.AddListener<ITraitable, Trait>(TraitSignals.TRAITABLE_GAINED_TRAIT, OnTraitableGainedTrait);
 		Messenger.AddListener<ITraitable, Trait, Character>(TraitSignals.TRAITABLE_LOST_TRAIT, OnTraitableLostTrait);
@@ -80,11 +80,11 @@ public class SettlementJobTriggerComponent : JobTriggerComponent/*, SettlementCl
 	}
 	public void UnsubscribeFromVillageListeners() {
 		Messenger.RemoveListener(Signals.HOUR_STARTED, HourlyJobActions);
-		Messenger.RemoveListener<ResourcePile>(TileObjectSignals.RESOURCE_IN_PILE_CHANGED, OnResourceInPileChangedVillage);
+		// Messenger.RemoveListener<ResourcePile>(TileObjectSignals.RESOURCE_IN_PILE_CHANGED, OnResourceInPileChangedVillage);
 		Messenger.RemoveListener<TileObject, int, bool>(TileObjectSignals.TILE_OBJECT_DAMAGED, OnTileObjectDamaged);
 		Messenger.RemoveListener<TileObject>(TileObjectSignals.TILE_OBJECT_FULLY_REPAIRED, OnTileObjectFullyRepaired);
 		Messenger.RemoveListener<TileObject, LocationGridTile>(GridTileSignals.TILE_OBJECT_PLACED, OnTileObjectPlaced);
-		Messenger.RemoveListener<TileObject, Character, LocationGridTile>(GridTileSignals.TILE_OBJECT_REMOVED, OnTileObjectRemoved);
+		// Messenger.RemoveListener<TileObject, Character, LocationGridTile>(GridTileSignals.TILE_OBJECT_REMOVED, OnTileObjectRemoved);
 		Messenger.RemoveListener<Character, LocationStructure>(CharacterSignals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
 		Messenger.RemoveListener<ITraitable, Trait>(TraitSignals.TRAITABLE_GAINED_TRAIT, OnTraitableGainedTrait);
 		Messenger.RemoveListener<ITraitable, Trait, Character>(TraitSignals.TRAITABLE_LOST_TRAIT, OnTraitableLostTrait);
@@ -97,11 +97,11 @@ public class SettlementJobTriggerComponent : JobTriggerComponent/*, SettlementCl
         _owner.npcSettlementEventDispatcher.UnsubscribeToTileRemovedEvent(this);
     }
     public void SubscribeToDungeonListeners() {
-        Messenger.AddListener<ResourcePile>(TileObjectSignals.RESOURCE_IN_PILE_CHANGED, OnResourceInPileChangedDungeon);
+        // Messenger.AddListener<ResourcePile>(TileObjectSignals.RESOURCE_IN_PILE_CHANGED, OnResourceInPileChangedDungeon);
         Messenger.AddListener(Signals.GAME_LOADED, OnGameLoadedDungeon);
     }
     public void UnsubscribeFromDungeonListeners() {
-        Messenger.RemoveListener<ResourcePile>(TileObjectSignals.RESOURCE_IN_PILE_CHANGED, OnResourceInPileChangedDungeon);
+        // Messenger.RemoveListener<ResourcePile>(TileObjectSignals.RESOURCE_IN_PILE_CHANGED, OnResourceInPileChangedDungeon);
     }
     //public void HookToSettlementClassTrackerEvents(SettlementClassTracker p_classTracker) {
 	   // p_classTracker.SubscribeToNeededClassRemoved(this);
@@ -113,22 +113,22 @@ public class SettlementJobTriggerComponent : JobTriggerComponent/*, SettlementCl
 		Messenger.RemoveListener(Signals.GAME_LOADED, OnGameLoadedVillage);
 		if (SaveManager.Instance.useSaveData) {
 			//LoadTendFarmCheck();
-			LoadCheckResource();
+			// LoadCheckResource();
 		} else {
 			KickstartJobs();
 		}
 	}
     private void OnGameLoadedDungeon() {
         Messenger.RemoveListener(Signals.GAME_LOADED, OnGameLoadedDungeon);
-        if (SaveManager.Instance.useSaveData) {
-            LoadCheckFoodPile();
-        } else {
-            ScheduledCheckFoodPile();
-        }
+        // if (SaveManager.Instance.useSaveData) {
+        //     LoadCheckFoodPile();
+        // } else {
+        //     ScheduledCheckFoodPile();
+        // }
     }
     public void KickstartJobs() {
 		//CheckIfFarmShouldBeTended(true);
-		ScheduledCheckResource();
+		// ScheduledCheckResource();
 		TryCreateMiningJob();
 	}
 	private void HourlyJobActions() {
@@ -143,22 +143,22 @@ public class SettlementJobTriggerComponent : JobTriggerComponent/*, SettlementCl
 		Profiler.EndSample();
 #endif
 	}
-	private void OnResourceInPileChangedVillage(ResourcePile resourcePile) {
-		if (resourcePile.gridTileLocation != null && resourcePile.structureLocation == _owner.mainStorage) {
-			if (resourcePile.providedResource == RESOURCE.FOOD || resourcePile.providedResource == RESOURCE.WOOD || resourcePile.providedResource == RESOURCE.STONE) {
-				CheckResource(resourcePile.providedResource);
-			}
-			//Messenger.Broadcast(JobSignals.CHECK_JOB_APPLICABILITY, JOB_TYPE.COMBINE_STOCKPILE, resourcePile as IPointOfInterest);
-			//TryCreateCombineStockpile(resourcePile);
-		}
-	}
-    private void OnResourceInPileChangedDungeon(ResourcePile resourcePile) {
-        if(resourcePile is FoodPile) {
-            if (resourcePile.gridTileLocation != null && resourcePile.structureLocation == _owner.mainStorage) {
-                CheckFoodPile();
-            }
-        }
-    }
+	// private void OnResourceInPileChangedVillage(ResourcePile resourcePile) {
+	// 	if (resourcePile.gridTileLocation != null && resourcePile.structureLocation == _owner.mainStorage) {
+	// 		if (resourcePile.providedResource == RESOURCE.FOOD || resourcePile.providedResource == RESOURCE.WOOD || resourcePile.providedResource == RESOURCE.STONE) {
+	// 			CheckResource(resourcePile.providedResource);
+	// 		}
+	// 		//Messenger.Broadcast(JobSignals.CHECK_JOB_APPLICABILITY, JOB_TYPE.COMBINE_STOCKPILE, resourcePile as IPointOfInterest);
+	// 		//TryCreateCombineStockpile(resourcePile);
+	// 	}
+	// }
+ //    private void OnResourceInPileChangedDungeon(ResourcePile resourcePile) {
+ //        if(resourcePile is FoodPile) {
+ //            if (resourcePile.gridTileLocation != null && resourcePile.structureLocation == _owner.mainStorage) {
+ //                CheckFoodPile();
+ //            }
+ //        }
+ //    }
     private void OnTileObjectDamaged(TileObject tileObject, int amount, bool isPlayerSource) {
 		if (tileObject.gridTileLocation != null && tileObject.gridTileLocation.IsPartOfSettlement(_owner) && tileObject.tileObjectType.CanBeRepaired()) {
 			TryCreateRepairTileObjectJob(tileObject);
@@ -175,27 +175,27 @@ public class SettlementJobTriggerComponent : JobTriggerComponent/*, SettlementCl
 			if (resourcePile.resourceInPile > 0) {
 				Messenger.Broadcast(JobSignals.CHECK_JOB_APPLICABILITY, JOB_TYPE.HAUL, resourcePile as IPointOfInterest);
 				//Messenger.Broadcast(JobSignals.CHECK_JOB_APPLICABILITY, JOB_TYPE.COMBINE_STOCKPILE, resourcePile as IPointOfInterest);
-				if (tile.IsPartOfSettlement(_owner)) {
-					if (_owner.mainStorage == resourcePile.structureLocation) {
-						if (resourcePile.providedResource == RESOURCE.FOOD || resourcePile.providedResource == RESOURCE.WOOD || resourcePile.providedResource == RESOURCE.STONE) {
-							CheckResource(resourcePile.providedResource);
-						}
-						//TryCreateCombineStockpile(resourcePile);	
-					}
-				}
+				// if (tile.IsPartOfSettlement(_owner)) {
+				// 	if (_owner.mainStorage == resourcePile.structureLocation) {
+				// 		if (resourcePile.providedResource == RESOURCE.FOOD || resourcePile.providedResource == RESOURCE.WOOD || resourcePile.providedResource == RESOURCE.STONE) {
+				// 			CheckResource(resourcePile.providedResource);
+				// 		}
+				// 		//TryCreateCombineStockpile(resourcePile);	
+				// 	}
+				// }
 				// TryCreateHaulJob(resourcePile);	
 			}
 		}
 	}
-	private void OnTileObjectRemoved(TileObject tileObject, Character removedBy, LocationGridTile removedFrom) {
-		if (tileObject is ResourcePile resourcePile) {
-			if (removedFrom.parentMap.region == _owner.region && removedFrom.structure == _owner.mainStorage) {
-				if (resourcePile.providedResource == RESOURCE.FOOD || resourcePile.providedResource == RESOURCE.WOOD || resourcePile.providedResource == RESOURCE.STONE) {
-					CheckResource(resourcePile.providedResource);
-				}
-			}
-		}
-	}
+	// private void OnTileObjectRemoved(TileObject tileObject, Character removedBy, LocationGridTile removedFrom) {
+	// 	if (tileObject is ResourcePile resourcePile) {
+	// 		if (removedFrom.parentMap.region == _owner.region && removedFrom.structure == _owner.mainStorage) {
+	// 			if (resourcePile.providedResource == RESOURCE.FOOD || resourcePile.providedResource == RESOURCE.WOOD || resourcePile.providedResource == RESOURCE.STONE) {
+	// 				CheckResource(resourcePile.providedResource);
+	// 			}
+	// 		}
+	// 	}
+	// }
 	private void OnCharacterArrivedAtStructure(Character character, LocationStructure structure) {
 		if (structure.settlementLocation == _owner && structure.settlementLocation is NPCSettlement npcSettlement) {
 			if (structure == npcSettlement.prison) {
@@ -340,7 +340,7 @@ public class SettlementJobTriggerComponent : JobTriggerComponent/*, SettlementCl
 	//}
 	//#endregion
 
-#region Resources
+	#region Resources
 	public int GetTotalResource(RESOURCE resourceType) {
 		int resource = 0;
 		List<TileObject> piles = RuinarchListPool<TileObject>.Claim();
@@ -354,153 +354,153 @@ public class SettlementJobTriggerComponent : JobTriggerComponent/*, SettlementCl
 		RuinarchListPool<TileObject>.Release(piles);
 		return resource;
 	}
-	private int GetMinimumResource(RESOURCE resource) {
-		switch (resource) {
-			case RESOURCE.FOOD:
-				return ProduceResourceApplicabilityChecker.MinimumFood;
-			case RESOURCE.WOOD:
-				return ProduceResourceApplicabilityChecker.MinimumWood;
-			case RESOURCE.METAL:
-				return ProduceResourceApplicabilityChecker.MinimumMetal;
-			case RESOURCE.STONE:
-				return ProduceResourceApplicabilityChecker.MinimumStone;
-		}
-		throw new Exception($"There is no minimum resource for {resource.ToString()}");
-	}
-	private JOB_TYPE GetProduceResourceJobType(RESOURCE resource) {
-		switch (resource) {
-			case RESOURCE.FOOD:
-				return JOB_TYPE.PRODUCE_FOOD;
-			case RESOURCE.WOOD:
-				return JOB_TYPE.PRODUCE_WOOD;
-			case RESOURCE.METAL:
-				return JOB_TYPE.PRODUCE_METAL;
-			case RESOURCE.STONE:
-				return JOB_TYPE.PRODUCE_STONE;
-		}
-		throw new Exception($"There is no produce resource job type for {resource.ToString()}");
-	}
-	private GOAP_EFFECT_CONDITION GetProduceResourceGoapEffect(RESOURCE resource) {
-		switch (resource) {
-			case RESOURCE.FOOD:
-				return GOAP_EFFECT_CONDITION.PRODUCE_FOOD;
-			case RESOURCE.WOOD:
-				return GOAP_EFFECT_CONDITION.PRODUCE_WOOD;
-			case RESOURCE.METAL:
-				return GOAP_EFFECT_CONDITION.PRODUCE_METAL;
-			case RESOURCE.STONE:
-				return GOAP_EFFECT_CONDITION.PRODUCE_STONE;
-		}
-		throw new Exception($"There is no produce resource goap effect type for {resource.ToString()}");
-	}
-	private void ScheduledCheckResource() {
-		CheckAllResources();
-		GameDate dueDate = GameManager.Instance.Today();
-		dueDate.AddTicks(GameManager.Instance.GetTicksBasedOnHour(12));
-		SchedulingManager.Instance.AddEntry(dueDate, ScheduledCheckResource, this);
-	}
-    private void ScheduledCheckFoodPile() {
-        CheckFoodPile();
-        GameDate dueDate = GameManager.Instance.Today();
-        dueDate.AddTicks(GameManager.Instance.GetTicksBasedOnHour(12));
-        SchedulingManager.Instance.AddEntry(dueDate, ScheduledCheckFoodPile, this);
-    }
-    private void LoadCheckResource() {
-		if (GameManager.Instance.Today().tick < GameManager.Instance.GetTicksBasedOnHour(20)) {
-			//schedule check at 8pm
-			GameDate dueDate = GameManager.Instance.Today();
-			dueDate.SetTicks(GameManager.Instance.GetTicksBasedOnHour(20));
-			SchedulingManager.Instance.AddEntry(dueDate, ScheduledCheckResource, this);
-		} else {
-			//schedule check at 8am the next day
-			GameDate dueDate = GameManager.Instance.Today();
-			dueDate.AddDays(1);
-			dueDate.SetTicks(GameManager.Instance.GetTicksBasedOnHour(12));
-			SchedulingManager.Instance.AddEntry(dueDate, ScheduledCheckResource, this);	
-		}
-	}
-    private void LoadCheckFoodPile() {
-        if (GameManager.Instance.Today().tick < GameManager.Instance.GetTicksBasedOnHour(20)) {
-            //schedule check at 8pm
-            GameDate dueDate = GameManager.Instance.Today();
-            dueDate.SetTicks(GameManager.Instance.GetTicksBasedOnHour(20));
-            SchedulingManager.Instance.AddEntry(dueDate, ScheduledCheckFoodPile, this);
-        } else {
-            //schedule check at 8am the next day
-            GameDate dueDate = GameManager.Instance.Today();
-            dueDate.AddDays(1);
-            dueDate.SetTicks(GameManager.Instance.GetTicksBasedOnHour(12));
-            SchedulingManager.Instance.AddEntry(dueDate, ScheduledCheckFoodPile, this);
-        }
-    }
-    private void CheckFoodPile() {
-        if(_owner.owner?.factionType.type == FACTION_TYPE.Ratmen) {
-            CheckResource(RESOURCE.FOOD);
-        }
-    }
-    private void CheckAllResources() {
-		CheckResource(RESOURCE.FOOD);
-		CheckResource(RESOURCE.WOOD);
-		CheckResource(RESOURCE.STONE);
-	}
-	private void CheckResource(RESOURCE resource) {
-		switch (resource) {
-			case RESOURCE.FOOD:
-				CheckResource<FoodPile>(resource);
-				break;
-			case RESOURCE.WOOD:
-				CheckResource<WoodPile>(resource);
-				break;
-			case RESOURCE.STONE:
-				CheckResource<StonePile>(resource);
-				break;
-		}
-	}
-	private void CheckResource<T>(RESOURCE resource) where T : ResourcePile{
-		int totalResource = GetTotalResource(resource);
-		int minimumResource = GetMinimumResource(resource);
-		JOB_TYPE jobType = GetProduceResourceJobType(resource);
-		if (totalResource < minimumResource) {
-			TriggerProduceResource<T>(resource, jobType);
-		} else {
-			ResourcePile pile = _owner.mainStorage.GetResourcePileObjectWithLowestCount<T>(false);
-			Assert.IsNotNull(pile, $"{_owner.name} is trying to cancel produce resource {resource.ToString()}, but could not find any pile that produces {resource.ToString()}");
-			Messenger.Broadcast(JobSignals.CHECK_JOB_APPLICABILITY, jobType, pile as IPointOfInterest);
-			Messenger.Broadcast(TileObjectSignals.CHECK_UNBUILT_OBJECT_VALIDITY);
-		}
-	}
-	private void TriggerProduceResource<T>(RESOURCE resourceType, JOB_TYPE jobType) where T : ResourcePile {
-		if (_owner.HasJob(jobType) == false && _owner.HasStructureForProducingResource(resourceType)) {
-			ResourcePile targetPile = _owner.mainStorage.GetTileObjectOfType<T>();
-			if (targetPile == null) {
-				TILE_OBJECT_TYPE tileObjectType;
-				switch (resourceType) {
-					case RESOURCE.FOOD:
-						tileObjectType = TILE_OBJECT_TYPE.ANIMAL_MEAT;
-						break;
-					case RESOURCE.WOOD:
-						tileObjectType = TILE_OBJECT_TYPE.WOOD_PILE;
-						break;
-					case RESOURCE.STONE:
-						tileObjectType = TILE_OBJECT_TYPE.STONE_PILE;
-						break;
-					default:
-						throw new Exception($"There was no tile object type found for resource {resourceType.ToString()}");
-				}
-				ResourcePile newPile = InnerMapManager.Instance.CreateNewTileObject<ResourcePile>(tileObjectType);
-				_owner.mainStorage.AddPOI(newPile);
-				newPile.SetMapObjectState(MAP_OBJECT_STATE.UNBUILT);
-				targetPile = newPile;
-			}
-            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType,
-                new GoapEffect(GetProduceResourceGoapEffect(resourceType), string.Empty, false, GOAP_EFFECT_TARGET.ACTOR),
-                targetPile, _owner);
-            UtilityScripts.JobUtilities.PopulatePriorityLocationsForProduceResources(_owner, job, resourceType);
-            job.SetStillApplicableChecker(JobManager.Produce_Resource_Applicability);
-            _owner.AddToAvailableJobs(job);
-        }
-	}
-#endregion
+	// private int GetMinimumResource(RESOURCE resource) {
+	// 	switch (resource) {
+	// 		case RESOURCE.FOOD:
+	// 			return ProduceResourceApplicabilityChecker.MinimumFood;
+	// 		case RESOURCE.WOOD:
+	// 			return ProduceResourceApplicabilityChecker.MinimumWood;
+	// 		case RESOURCE.METAL:
+	// 			return ProduceResourceApplicabilityChecker.MinimumMetal;
+	// 		case RESOURCE.STONE:
+	// 			return ProduceResourceApplicabilityChecker.MinimumStone;
+	// 	}
+	// 	throw new Exception($"There is no minimum resource for {resource.ToString()}");
+	// }
+	// private JOB_TYPE GetProduceResourceJobType(RESOURCE resource) {
+	// 	switch (resource) {
+	// 		case RESOURCE.FOOD:
+	// 			return JOB_TYPE.PRODUCE_FOOD;
+	// 		case RESOURCE.WOOD:
+	// 			return JOB_TYPE.PRODUCE_WOOD;
+	// 		case RESOURCE.METAL:
+	// 			return JOB_TYPE.PRODUCE_METAL;
+	// 		case RESOURCE.STONE:
+	// 			return JOB_TYPE.PRODUCE_STONE;
+	// 	}
+	// 	throw new Exception($"There is no produce resource job type for {resource.ToString()}");
+	// }
+	// private GOAP_EFFECT_CONDITION GetProduceResourceGoapEffect(RESOURCE resource) {
+	// 	switch (resource) {
+	// 		case RESOURCE.FOOD:
+	// 			return GOAP_EFFECT_CONDITION.PRODUCE_FOOD;
+	// 		case RESOURCE.WOOD:
+	// 			return GOAP_EFFECT_CONDITION.PRODUCE_WOOD;
+	// 		case RESOURCE.METAL:
+	// 			return GOAP_EFFECT_CONDITION.PRODUCE_METAL;
+	// 		case RESOURCE.STONE:
+	// 			return GOAP_EFFECT_CONDITION.PRODUCE_STONE;
+	// 	}
+	// 	throw new Exception($"There is no produce resource goap effect type for {resource.ToString()}");
+	// }
+	// private void ScheduledCheckResource() {
+	// 	CheckAllResources();
+	// 	GameDate dueDate = GameManager.Instance.Today();
+	// 	dueDate.AddTicks(GameManager.Instance.GetTicksBasedOnHour(12));
+	// 	SchedulingManager.Instance.AddEntry(dueDate, ScheduledCheckResource, this);
+	// }
+ //    private void ScheduledCheckFoodPile() {
+ //        CheckFoodPile();
+ //        GameDate dueDate = GameManager.Instance.Today();
+ //        dueDate.AddTicks(GameManager.Instance.GetTicksBasedOnHour(12));
+ //        SchedulingManager.Instance.AddEntry(dueDate, ScheduledCheckFoodPile, this);
+ //    }
+ //    private void LoadCheckResource() {
+	// 	if (GameManager.Instance.Today().tick < GameManager.Instance.GetTicksBasedOnHour(20)) {
+	// 		//schedule check at 8pm
+	// 		GameDate dueDate = GameManager.Instance.Today();
+	// 		dueDate.SetTicks(GameManager.Instance.GetTicksBasedOnHour(20));
+	// 		SchedulingManager.Instance.AddEntry(dueDate, ScheduledCheckResource, this);
+	// 	} else {
+	// 		//schedule check at 8am the next day
+	// 		GameDate dueDate = GameManager.Instance.Today();
+	// 		dueDate.AddDays(1);
+	// 		dueDate.SetTicks(GameManager.Instance.GetTicksBasedOnHour(12));
+	// 		SchedulingManager.Instance.AddEntry(dueDate, ScheduledCheckResource, this);	
+	// 	}
+	// }
+ //    private void LoadCheckFoodPile() {
+ //        if (GameManager.Instance.Today().tick < GameManager.Instance.GetTicksBasedOnHour(20)) {
+ //            //schedule check at 8pm
+ //            GameDate dueDate = GameManager.Instance.Today();
+ //            dueDate.SetTicks(GameManager.Instance.GetTicksBasedOnHour(20));
+ //            SchedulingManager.Instance.AddEntry(dueDate, ScheduledCheckFoodPile, this);
+ //        } else {
+ //            //schedule check at 8am the next day
+ //            GameDate dueDate = GameManager.Instance.Today();
+ //            dueDate.AddDays(1);
+ //            dueDate.SetTicks(GameManager.Instance.GetTicksBasedOnHour(12));
+ //            SchedulingManager.Instance.AddEntry(dueDate, ScheduledCheckFoodPile, this);
+ //        }
+ //    }
+ //    private void CheckFoodPile() {
+ //        if(_owner.owner?.factionType.type == FACTION_TYPE.Ratmen) {
+ //            CheckResource(RESOURCE.FOOD);
+ //        }
+ //    }
+ //    private void CheckAllResources() {
+	// 	CheckResource(RESOURCE.FOOD);
+	// 	CheckResource(RESOURCE.WOOD);
+	// 	CheckResource(RESOURCE.STONE);
+	// }
+	// private void CheckResource(RESOURCE resource) {
+	// 	switch (resource) {
+	// 		case RESOURCE.FOOD:
+	// 			CheckResource<FoodPile>(resource);
+	// 			break;
+	// 		case RESOURCE.WOOD:
+	// 			CheckResource<WoodPile>(resource);
+	// 			break;
+	// 		case RESOURCE.STONE:
+	// 			CheckResource<StonePile>(resource);
+	// 			break;
+	// 	}
+	// }
+	// private void CheckResource<T>(RESOURCE resource) where T : ResourcePile{
+	// 	int totalResource = GetTotalResource(resource);
+	// 	int minimumResource = GetMinimumResource(resource);
+	// 	JOB_TYPE jobType = GetProduceResourceJobType(resource);
+	// 	if (totalResource < minimumResource) {
+	// 		TriggerProduceResource<T>(resource, jobType);
+	// 	} else {
+	// 		ResourcePile pile = _owner.mainStorage.GetResourcePileObjectWithLowestCount<T>(false);
+	// 		Assert.IsNotNull(pile, $"{_owner.name} is trying to cancel produce resource {resource.ToString()}, but could not find any pile that produces {resource.ToString()}");
+	// 		Messenger.Broadcast(JobSignals.CHECK_JOB_APPLICABILITY, jobType, pile as IPointOfInterest);
+	// 		Messenger.Broadcast(TileObjectSignals.CHECK_UNBUILT_OBJECT_VALIDITY);
+	// 	}
+	// }
+	// private void TriggerProduceResource<T>(RESOURCE resourceType, JOB_TYPE jobType) where T : ResourcePile {
+	// 	if (_owner.HasJob(jobType) == false && _owner.HasStructureForProducingResource(resourceType)) {
+	// 		ResourcePile targetPile = _owner.mainStorage.GetTileObjectOfType<T>();
+	// 		if (targetPile == null) {
+	// 			TILE_OBJECT_TYPE tileObjectType;
+	// 			switch (resourceType) {
+	// 				case RESOURCE.FOOD:
+	// 					tileObjectType = TILE_OBJECT_TYPE.ANIMAL_MEAT;
+	// 					break;
+	// 				case RESOURCE.WOOD:
+	// 					tileObjectType = TILE_OBJECT_TYPE.WOOD_PILE;
+	// 					break;
+	// 				case RESOURCE.STONE:
+	// 					tileObjectType = TILE_OBJECT_TYPE.STONE_PILE;
+	// 					break;
+	// 				default:
+	// 					throw new Exception($"There was no tile object type found for resource {resourceType.ToString()}");
+	// 			}
+	// 			ResourcePile newPile = InnerMapManager.Instance.CreateNewTileObject<ResourcePile>(tileObjectType);
+	// 			_owner.mainStorage.AddPOI(newPile);
+	// 			newPile.SetMapObjectState(MAP_OBJECT_STATE.UNBUILT);
+	// 			targetPile = newPile;
+	// 		}
+ //            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType,
+ //                new GoapEffect(GetProduceResourceGoapEffect(resourceType), string.Empty, false, GOAP_EFFECT_TARGET.ACTOR),
+ //                targetPile, _owner);
+ //            UtilityScripts.JobUtilities.PopulatePriorityLocationsForProduceResources(_owner, job, resourceType);
+ //            job.SetStillApplicableChecker(JobManager.Produce_Resource_Applicability);
+ //            _owner.AddToAvailableJobs(job);
+ //        }
+	// }
+	#endregion
 
 #region Repair
 	private void TryCreateRepairTileObjectJob(TileObject target) {

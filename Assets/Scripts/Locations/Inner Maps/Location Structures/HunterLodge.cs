@@ -91,7 +91,7 @@ namespace Inner_Maps.Location_Structures {
             } else {
                 p_worker.homeSettlement.SettlementResources.PopulateAllAnimalsThatAreShearable(targetAnimals);
             }
-            Character randomTarget = targetAnimals[GameUtilities.RandomBetweenTwoNumbers(0, targetAnimals.Count - 1)];
+            Character randomTarget = CollectionUtilities.GetRandomElement(targetAnimals);
             RuinarchListPool<Character>.Release(targetAnimals);
             if (randomTarget != null) {
                 if (randomTarget is Animal) {
