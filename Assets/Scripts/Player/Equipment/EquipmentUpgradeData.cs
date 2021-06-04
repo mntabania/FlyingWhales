@@ -71,6 +71,19 @@ public class EquipmentUpgradeData {
         return processedAttack;
     }
 
+    public float GetProcessedAdditionalAttackPercentage(EQUIPMENT_QUALITY p_quality) {
+        float processedAttack = AdditionalAttackPercentage;
+        switch (p_quality) {
+            case EQUIPMENT_QUALITY.High:
+            processedAttack += (int)(processedAttack * .25f);
+            break;
+            case EQUIPMENT_QUALITY.Premium:
+            processedAttack += (int)(processedAttack * .5f);
+            break;
+        }
+        return processedAttack;
+    }
+
     public int GetProcessedAdditionalInt(EQUIPMENT_QUALITY p_quality) {
         int processedInt = AdditionalIntActual;
         switch (p_quality) {
@@ -109,43 +122,56 @@ public class EquipmentUpgradeData {
         }
         return processedMaxHP;
     }
-    public string GetBonusDescription() {
+
+    public float GetProcessedAdditionalmaxHPPercentage(EQUIPMENT_QUALITY p_quality) {
+        float processedMaxHP = AdditionalMaxHPPercentage;
+        switch (p_quality) {
+            case EQUIPMENT_QUALITY.High:
+            processedMaxHP += (int)(processedMaxHP * .25f);
+            break;
+            case EQUIPMENT_QUALITY.Premium:
+            processedMaxHP += (int)(processedMaxHP * .5f);
+            break;
+        }
+        return processedMaxHP;
+    }
+    public string GetBonusDescription(EQUIPMENT_QUALITY p_quality) {
         string descripton = String.Empty;
         if (bonuses.Contains(EQUIPMENT_BONUS.Increased_Piercing)) {
             if (AdditionalPiercing > 0) {
-                descripton += ("Additional Piercing: " + AdditionalPiercing + "\n");
+                descripton += ("Additional Piercing: " + GetProcessedAdditionalPiercing(p_quality) + "\n");
             }
         }
         if (bonuses.Contains(EQUIPMENT_BONUS.Str_Actual)) {
             if (AdditionalAttackActual > 0) {
-                descripton += ("Additional Attack(Actual): " + AdditionalAttackActual + "\n");
+                descripton += ("Additional Attack(Actual): " + GetProcessedAdditionalAttack(p_quality) + "\n");
             }
         }
         if (bonuses.Contains(EQUIPMENT_BONUS.Str_Percentage)) {
             if (AdditionalAttackPercentage > 0) {
-                descripton += ("Additional Attack(%): " + AdditionalAttackPercentage + "\n");
+                descripton += ("Additional Attack(%): " + GetProcessedAdditionalAttackPercentage(p_quality) + "\n");
             }
         }
         
         if (bonuses.Contains(EQUIPMENT_BONUS.Max_HP_Actual)) {
             if (AdditionalMaxHPActual > 0) {
-                descripton += ("Additional Max HP(Actual): " + AdditionalMaxHPActual + "\n");
+                descripton += ("Additional Max HP(Actual): " + GetProcessedAdditionalmaxHP(p_quality) + "\n");
             }
         }
         
         if (bonuses.Contains(EQUIPMENT_BONUS.Max_HP_Percentage)) {
             if (AdditionalMaxHPPercentage > 0) {
-                descripton += ("Additional Max HP(%): " + AdditionalMaxHPPercentage + "\n");
+                descripton += ("Additional Max HP(%): " + GetProcessedAdditionalmaxHPPercentage(p_quality) + "\n");
             }
         }
         if (bonuses.Contains(EQUIPMENT_BONUS.Int_Actual)) {
             if (AdditionalIntActual > 0) {
-                descripton += ("Additional int(Actual): " + AdditionalIntActual + "\n");
+                descripton += ("Additional int(Actual): " + GetProcessedAdditionalResistanceBonus(p_quality) + "\n");
             }
         }
         if (bonuses.Contains(EQUIPMENT_BONUS.Int_Percentage)) {
             if (AdditionalIntPercentage > 0) {
-                descripton += ("Additional Int(%): " + AdditionalIntPercentage + "\n");
+                descripton += ("Additional Int(%): " + GetProcessedAdditionalInt(p_quality) + "\n");
             }
         }
         if (bonuses.Contains(EQUIPMENT_BONUS.Attack_Element)) {
@@ -165,7 +191,7 @@ public class EquipmentUpgradeData {
         }
         if (bonuses.Contains(EQUIPMENT_BONUS.Increased_3_Random_Resistance) || bonuses.Contains(EQUIPMENT_BONUS.Increased_4_Random_Resistance) || bonuses.Contains(EQUIPMENT_BONUS.Increased_5_Random_Resistance)) {
             if (additionalResistanceBonus > 0) {
-                descripton += ("Additional Resistance Bonus: " + additionalResistanceBonus + "\n");
+                descripton += ("Additional Resistance Bonus: " + GetProcessedAdditionalResistanceBonus(p_quality) + "\n");
             }
         }
         

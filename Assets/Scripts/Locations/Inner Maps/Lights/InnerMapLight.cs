@@ -12,6 +12,8 @@ public class InnerMapLight : MonoBehaviour{
     [SerializeField] private float _brightestIntensity;
     [SerializeField] private float _darkestIntensity;
 
+    private GameObject parent;
+
     private float randomOnValue;
     private void Awake() {
         randomOnValue = 0.95f;  //UnityEngine.Random.Range(0.9f, 0.95f);

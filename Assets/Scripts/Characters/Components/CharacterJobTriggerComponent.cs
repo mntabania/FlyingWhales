@@ -3356,6 +3356,21 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
     #endregion
 
     #region new Jobs
+    public bool CreateEquipment(TILE_OBJECT_TYPE tileObjectType, LocationStructure p_workStructure, out JobQueueItem producedJob) {
+        producedJob = null;
+        if (!owner.jobQueue.HasJob(JOB_TYPE.CRAFT_EQUIPMENT)) {
+            TileObject unbuiltEquipment = InnerMapManager.Instance.CreateNewTileObject<TileObject>(tileObjectType);
+            if (unbuiltEquipment is EquipmentItem equipmentItem && p_workStructure.AddPOI(unbuiltEquipment)) {
+	            unbuiltEquipment.SetMapObjectState(MAP_OBJECT_STATE.UNBUILT);
+	            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.CRAFT_EQUIPMENT, INTERACTION_TYPE.CRAFT_EQUIPMENT, unbuiltEquipment, owner);
+	            job.AddPriorityLocation(INTERACTION_TYPE.TAKE_RESOURCE, p_workStructure);
+	            job.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[]{equipmentItem.equipmentData.resourceAmount});
+	            producedJob = job;
+	            return true;    
+            }
+        }
+        return false;    
+    }
     public void TriggerCraftHospiceAntidote(TileObject p_tileObject, out JobQueueItem jobQueueItem) {
         jobQueueItem = null;
         if (!owner.jobQueue.HasJob(JOB_TYPE.CREATE_HOSPICE_ANTIDOTE)) {
@@ -3408,13 +3423,6 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
             return true;
         }
         return false;
-    }
-
-    public void TriggerCreateWeapon(TILE_OBJECT_TYPE p_weaponType) {
-        if (!owner.jobQueue.HasJob(JOB_TYPE.CRAFT_WEAPON)) {
-            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.CRAFT_WEAPON, INTERACTION_TYPE.CRAFT_WEAPON, null, owner);
-            owner.jobQueue.AddJobInQueue(job);
-        }
     }
 
     public void TriggerFindFish(FishingSpot p_tileObject) {

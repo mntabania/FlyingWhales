@@ -18,6 +18,7 @@ public class FreeTimeBehaviour : CharacterBehaviourComponent {
         //needs recovery
         if (character.needsComponent.isStarving) {
 #if DEBUG_LOG
+            
             log = $"{log}\n-{character.name} is starving will try to do fullness recovery.";
 #endif
             //add fullness recovery
@@ -125,7 +126,7 @@ public class FreeTimeBehaviour : CharacterBehaviourComponent {
                     } else {
                         if (!workshop.IsCharacterAlreadyHasRequest(character)) {
                             //request equipment
-                            Workshop.WorkShopRequestForm workShopRequestForm = new Workshop.WorkShopRequestForm();
+                            WorkShopRequestForm workShopRequestForm = new WorkShopRequestForm();
                             workShopRequestForm.requestingCharacter = character;
                             if (equipmentWant is WeaponWant) {
                                 workShopRequestForm.equipmentType = EQUIPMENT_TYPE.WEAPON;

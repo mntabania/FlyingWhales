@@ -756,6 +756,9 @@ public static class GoapActionStateDB {
             new StateNameAndDuration(){ name = "Buy Success", status = InteractionManager.Goap_State_Success, duration = 0 },
             new StateNameAndDuration(){ name = "Take Success", status = InteractionManager.Goap_State_Success, duration = 0 },
         } },
+        {INTERACTION_TYPE.CRAFT_EQUIPMENT, new[]{
+            new StateNameAndDuration(){ name = "Craft Equipment Success", status = InteractionManager.Goap_State_Success, duration = 30 },
+        } },
     };
 }
 
