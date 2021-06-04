@@ -53,7 +53,7 @@ public class EquipmentUpgradeDataEditor : Editor {
     }
 
     void DisplayResourcesEditor() {
-        m_resourceType = data.resourceType = (RESOURCE)EditorGUILayout.EnumPopup("Any of resource type", m_resourceType);
+        m_resourceType = data.resourceType = (RESOURCE)EditorGUILayout.EnumPopup("Any of resource type", data.resourceType);
         EditorGUILayout.Space();
         if (m_isTypeResourcesNone) {
             DisplayResourceList(data.specificResource, "Reource List (OR)");

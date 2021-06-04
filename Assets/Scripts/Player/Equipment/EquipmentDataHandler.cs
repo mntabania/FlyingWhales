@@ -34,6 +34,11 @@ public class EquipmentDataHandler : MonoBehaviour
 		return GetEquipmentDataBaseOnName(name).specificResource;
 	}
 
+	public RESOURCE GetGeneralResourcesNeeded(TILE_OBJECT_TYPE p_equipment) {
+		string name = p_equipment.ToString().Replace("_", "");
+		return GetEquipmentDataBaseOnName(name).resourceType;
+	}
+
 	public int GetResourcesNeededAmount(TILE_OBJECT_TYPE p_equipment) {
 		string name = p_equipment.ToString().Replace("_", "");
 		return GetEquipmentDataBaseOnName(name).resourceAmount;

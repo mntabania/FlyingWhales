@@ -867,6 +867,7 @@ public static class Extensions {
             case JOB_TYPE.CHOP_WOOD:
             case JOB_TYPE.MINE_STONE:
             case JOB_TYPE.RECUPERATE:
+            case JOB_TYPE.CRAFT_WEAPON:
             case JOB_TYPE.CREATE_HOSPICE_ANTIDOTE:
             case JOB_TYPE.CREATE_HOSPICE_POTION:
             priority = 920;

@@ -6,7 +6,6 @@ public class EquipmentItem : TileObject {
 
     public List<RESISTANCE> resistanceBonuses = new List<RESISTANCE>();
     public EQUIPMENT_QUALITY quality = EQUIPMENT_QUALITY.Normal;
-    public float additionalQualityBonusPercentage = 0;
     public EquipmentData equipmentData;
 
     public override System.Type serializedData => typeof(SaveDataEquipmentItem);
@@ -25,23 +24,14 @@ public class EquipmentItem : TileObject {
         }
     }
 
-    //this is for testing purpose only OnPlacePOI()
-    public override void OnPlacePOI() {
-        base.OnPlacePOI();
-        traitContainer.AddTrait(this, "Treasure");
-    }
     public void MakeQualityHigh() {
+        quality = EQUIPMENT_QUALITY.High;
         maxHP += (int)(maxHP * 0.5f);
-        additionalQualityBonusPercentage = 25;
     }
 
     public void MakeQualityPremium() {
-        maxHP = (int)(maxHP * 2f);
-        additionalQualityBonusPercentage = 50;
-    }
-
-    public float GetAdditionaliQualityBonusPercentage() {
-        return additionalQualityBonusPercentage = 50;
+        quality = EQUIPMENT_QUALITY.Premium;
+        maxHP += (int)(maxHP * 2f);
     }
 
     public EquipmentItem() {
@@ -51,6 +41,7 @@ public class EquipmentItem : TileObject {
         AddAdvertisedAction(INTERACTION_TYPE.SCRAP);
         AddAdvertisedAction(INTERACTION_TYPE.PICK_UP);
         AddAdvertisedAction(INTERACTION_TYPE.BOOBY_TRAP);
+        AddAdvertisedAction(INTERACTION_TYPE.CRAFT_WEAPON);
 
         maxHP = 700;
         currentHP = maxHP;
@@ -60,7 +51,8 @@ public class EquipmentItem : TileObject {
         if(equipmentData == null) {
             AssignData();
         }
-        string description = equipmentData.equipmentUpgradeData.GetBonusDescription();
+        string description = equipmentData.equipmentUpgradeData.GetBonusDescription(quality);
+        description += "\nQuality " + quality;
         resistanceBonuses.ForEach((eachBonus) => description += ("\n" + eachBonus.ToString()));
         return description;
     }

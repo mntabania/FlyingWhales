@@ -7,6 +7,7 @@ namespace Inner_Maps.Location_Structures {
             public Character requestingCharacter;
             public EQUIPMENT_TYPE equipmentType;
             public bool isSubjectForRemoval;
+
             public override string ToString() {
                 return $"{requestingCharacter.name} - {equipmentType.ToString()}";
             }
@@ -32,11 +33,20 @@ namespace Inner_Maps.Location_Structures {
         private List<TileObject> m_leather = new List<TileObject>();
         private List<TileObject> m_woods = new List<TileObject>();
         public Workshop(Region location) : base(STRUCTURE_TYPE.WORKSHOP, location) {
-            Messenger.AddListener<Character>(CharacterSignals.CHARACTER_DEATH, OnCharacterDied);
+            
             SetMaxHPAndReset(8000);
         }
         public Workshop(Region location, SaveDataManMadeStructure data) : base(location, data) {
             SetMaxHP(8000);
+        }
+
+        protected override void SubscribeListeners() {
+            base.SubscribeListeners();
+            Messenger.AddListener<Character>(CharacterSignals.CHARACTER_DEATH, OnCharacterDied);
+        }
+        protected override void UnsubscribeListeners() {
+            base.UnsubscribeListeners();
+            Messenger.RemoveListener<Character>(CharacterSignals.CHARACTER_DEATH, OnCharacterDied);
         }
 
         public void OnCharacterDied(Character p_Character) {
@@ -62,10 +72,21 @@ namespace Inner_Maps.Location_Structures {
 
         void EvaluateRequests() {
             requests.RemoveAll(item => item.isSubjectForRemoval == true);
-            if(m_doneRequest != null) {
+            
+        }
+
+        public void RemoveDoneJob() {
+            if (m_doneRequest != null) {
                 requests.Remove(m_doneRequest);
                 m_doneRequest = null;
-			}
+            }
+        }
+
+        public void AdjustResources(CONCRETE_RESOURCES p_concrete, int p_amount) {
+            /*switch (p_concrete.GetResourceCategory()) {
+                case RESOURCE.METAL:
+                    m_metals.Add 
+            }*/
         }
 
         TILE_OBJECT_TYPE GetEquipmentToMakeFromRequestList() {
@@ -87,12 +108,23 @@ namespace Inner_Maps.Location_Structures {
                     }
                     for (int y = 0; y < list.Count; ++y) {
                         List<CONCRETE_RESOURCES> resourcesNeeded = EquipmentDataHandler.Instance.GetResourcesNeeded(list[y]);
-                        if (CanBeCrafted(resourcesNeeded, EquipmentDataHandler.Instance.GetResourcesNeededAmount(list[y]))) {
-                            m_doneRequest = requests[x];
-                            availEquipment = list[y];
-                            break;
-                        } else {
-                            requests[x].isSubjectForRemoval = true;
+                        RESOURCE generalResource = EquipmentDataHandler.Instance.GetGeneralResourcesNeeded(list[y]);
+                        if (resourcesNeeded != null && resourcesNeeded.Count > 0) {
+                            if (CanBeCrafted(resourcesNeeded, EquipmentDataHandler.Instance.GetResourcesNeededAmount(list[y]))) {
+                                m_doneRequest = requests[x];
+                                availEquipment = list[y];
+                                break;
+                            } else {
+                                requests[x].isSubjectForRemoval = true;
+                            }
+                        } else if(generalResource != RESOURCE.NONE) {
+                            if (CanBeCrafted(generalResource, EquipmentDataHandler.Instance.GetResourcesNeededAmount(list[y]))) {
+                                m_doneRequest = requests[x];
+                                availEquipment = list[y];
+                                break;
+                            } else {
+                                requests[x].isSubjectForRemoval = true;
+                            }
                         }
                     }
                 }
@@ -113,7 +145,11 @@ namespace Inner_Maps.Location_Structures {
             TILE_OBJECT_TYPE equipToMake = GetEquipmentToMakeFromRequestList();
             if(equipToMake != TILE_OBJECT_TYPE.NONE) {
                 //do craft action/job
-			}
+                p_worker.jobComponent.CreateEquipment(equipToMake, this, out producedJob);
+                if (producedJob != null) {
+                    return;
+                }
+            }
 
             //haul part
             if (m_metals.Count < 40) {
@@ -167,7 +203,8 @@ namespace Inner_Maps.Location_Structures {
             }
         }
 
-        bool CanBeCrafted(List<CONCRETE_RESOURCES> p_needs, int p_count) {
+        //this one is used for specific resource
+        public bool CanBeCrafted(List<CONCRETE_RESOURCES> p_needs, int p_count) {
             for(int x = 0; x < p_needs.Count; ++x) {
                 List<TileObject> list = new List<TileObject>();
                 switch (p_needs[x].GetResourceCategory()) {
@@ -198,46 +235,58 @@ namespace Inner_Maps.Location_Structures {
             return true;
 		}
 
+        //this one is used for any type i.e any metals, any cloths, any leathers
+        public bool CanBeCrafted(RESOURCE p_generalResource, int p_count) {
+            List<TileObject> list = new List<TileObject>();
+            switch (p_generalResource) {
+                case RESOURCE.METAL:
+                list = m_metals;
+                break;
+                case RESOURCE.STONE:
+                list = m_stones;
+                break;
+                case RESOURCE.WOOD:
+                list = m_woods;
+                break;
+                case RESOURCE.CLOTH:
+                list = m_cloth;
+                break;
+                case RESOURCE.LEATHER:
+                list = m_leather;
+                break;
+            }
+            for (int y = 0; y < list.Count; ++y) {
+                if ((list[y] as ResourcePile).resourceInPile < p_count) {
+                    return false;
+                }
+            }
+            return true;
+        }
+
         void GetReferenceForAllMetals() {
             m_metals.Clear();
             PopulateTileObjectsOfType<MetalPile>(m_metals);
-            // m_metals = GetTileObjectsOfType(TILE_OBJECT_TYPE.COPPER);
-            // m_metals.AddRange(GetTileObjectsOfType(TILE_OBJECT_TYPE.IRON));
-            // m_metals.AddRange(GetTileObjectsOfType(TILE_OBJECT_TYPE.MITHRIL));
-            // m_metals.AddRange(GetTileObjectsOfType(TILE_OBJECT_TYPE.ORICHALCUM));
         }
 
 
         void GetReferenceForStones() {
             m_stones.Clear();
             PopulateTileObjectsOfType(m_stones, TILE_OBJECT_TYPE.STONE_PILE);
-            // m_stones = GetTileObjectsOfType(TILE_OBJECT_TYPE.STONE_PILE);
         }
 
         void GetReferenceForWood() {
             m_woods.Clear();
             PopulateTileObjectsOfType(m_woods, TILE_OBJECT_TYPE.WOOD_PILE);
-            // m_woods = GetTileObjectsOfType(TILE_OBJECT_TYPE.WOOD_PILE);
         }
 
         void GetReferenceForCloths() {
             m_cloth.Clear();
             PopulateTileObjectsOfType<ClothPile>(m_cloth);
-            // m_cloth = GetTileObjectsOfType(TILE_OBJECT_TYPE.MINK_CLOTH);
-            // m_cloth.AddRange(GetTileObjectsOfType(TILE_OBJECT_TYPE.MOONCRAWLER_CLOTH));
-            // m_cloth.AddRange(GetTileObjectsOfType(TILE_OBJECT_TYPE.RABBIT_CLOTH));
-            // m_cloth.AddRange(GetTileObjectsOfType(TILE_OBJECT_TYPE.SPIDER_SILK));
-            // m_cloth.AddRange(GetTileObjectsOfType(TILE_OBJECT_TYPE.WOOL));
         }
 
         void GetReferenceForLeathers() {
             m_leather.Clear();
             PopulateTileObjectsOfType<LeatherPile>(m_leather);
-            // m_leather = GetTileObjectsOfType(TILE_OBJECT_TYPE.BOAR_HIDE);
-            // m_leather.AddRange(GetTileObjectsOfType(TILE_OBJECT_TYPE.BEAR_HIDE));
-            // m_leather.AddRange(GetTileObjectsOfType(TILE_OBJECT_TYPE.WOLF_HIDE));
-            // m_leather.AddRange(GetTileObjectsOfType(TILE_OBJECT_TYPE.SCALE_ARMOR));
-            // m_leather.AddRange(GetTileObjectsOfType(TILE_OBJECT_TYPE.SCALE_HIDE));
         }
 
         #region For Testing
