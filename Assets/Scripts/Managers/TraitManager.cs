@@ -79,7 +79,7 @@ public class TraitManager : BaseMonoBehaviour {
     public List<string> unhiddenTraitsNotStatuses { get; private set; }
 
     public List<string> removeStatusTraits = new List<string> {
-        "Unconscious", "Injured", "Poisoned", "Freezing", "Frozen", "Burning",
+        "Unconscious", /*"Injured",*/ "Poisoned", "Freezing", "Frozen", "Burning", //Removed Injured since we expect that the Hospice worker will cure Injured statuses
         "Ensnared"
     };
 

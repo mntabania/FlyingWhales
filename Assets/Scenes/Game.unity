@@ -28322,7 +28322,6 @@ MonoBehaviour:
     type: 3}
   removeStatusTraits:
   - Unconscious
-  - Injured
   - Poisoned
   - Infected
   - Cursed

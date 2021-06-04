@@ -338,7 +338,7 @@ public class FreeTimeBehaviour : CharacterBehaviourComponent {
                         }
                     }
                 }
-                if (character.currentStructure != foundStructure && foundStructure is ManMadeStructure manMadeStructure && manMadeStructure.assignedWorker.talentComponent.GetTalent(CHARACTER_TALENT.Healing_Magic).level >= 5) {
+                if (GameUtilities.RollChance(5) && character.currentStructure != foundStructure && foundStructure is ManMadeStructure manMadeStructure && manMadeStructure.assignedWorker.talentComponent.GetTalent(CHARACTER_TALENT.Healing_Magic).level >= 5) {
 #if DEBUG_LOG
                     log = $"{log}\n  -Hospice is claimed by a Villager with Level 5 Healing Magic:";
 #endif
