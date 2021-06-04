@@ -10,7 +10,8 @@ namespace Inner_Maps.Location_Structures {
         }
 
         public List<WorkShopRequestForm> requests = new List<WorkShopRequestForm>();
-        private List<WorkShopRequestForm> m_tobeRemovedRequests = new List<WorkShopRequestForm>();
+
+        private WorkShopRequestForm m_doneRequest;
 
         public override Vector2 selectableSize { get; }
         public override Vector3 worldPosition => structureObj.transform.position;
@@ -21,10 +22,15 @@ namespace Inner_Maps.Location_Structures {
         private List<TileObject> m_leather = new List<TileObject>();
         private List<TileObject> m_woods = new List<TileObject>();
         public Workshop(Region location) : base(STRUCTURE_TYPE.WORKSHOP, location) {
+            Messenger.AddListener<Character>(CharacterSignals.CHARACTER_DEATH, OnCharacterDied);
             SetMaxHPAndReset(8000);
         }
         public Workshop(Region location, SaveDataManMadeStructure data) : base(location, data) {
             SetMaxHP(8000);
+        }
+
+        public void OnCharacterDied(Character p_Character) {
+            RemoveAllRequestFromCharacter(p_Character);
         }
 
         public void PostRequest(WorkShopRequestForm p_requestForm) {
@@ -44,8 +50,12 @@ namespace Inner_Maps.Location_Structures {
             requests.RemoveAll(item => item.requestingCharacter == p_character);
         }
 
-        void RemoveCantBeDoneRequests() {
+        void EvaluateRequests() {
             requests.RemoveAll(item => item.isSubjectForRemoval == true);
+            if(m_doneRequest != null) {
+                requests.Remove(m_doneRequest);
+                m_doneRequest = null;
+			}
         }
 
         TILE_OBJECT_TYPE GetEquipmentToMakeFromRequestList() {
@@ -68,6 +78,7 @@ namespace Inner_Maps.Location_Structures {
                     for (int y = 0; y < list.Count; ++y) {
                         List<CONCRETE_RESOURCES> resourcesNeeded = EquipmentDataHandler.Instance.GetResourcesNeeded(list[y]);
                         if (CanBeCrafted(resourcesNeeded, EquipmentDataHandler.Instance.GetResourcesNeededAmount(list[y]))) {
+                            m_doneRequest = requests[x];
                             availEquipment = list[y];
                             break;
                         } else {
@@ -76,7 +87,7 @@ namespace Inner_Maps.Location_Structures {
                     }
                 }
 			}
-            RemoveCantBeDoneRequests();
+            EvaluateRequests();
             return availEquipment;
         }
 
