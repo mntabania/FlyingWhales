@@ -3,6 +3,7 @@ using System.Linq;
 using Characters.Villager_Wants;
 using Inner_Maps.Location_Structures;
 using UnityEngine;
+using UnityEngine.Assertions;
 using UtilityScripts;
 
 public class FreeTimeBehaviour : CharacterBehaviourComponent {
@@ -89,6 +90,8 @@ public class FreeTimeBehaviour : CharacterBehaviourComponent {
                     return true;
                 }
             } else if (want is EquipmentWant equipmentWant) {
+                Workshop workshop = foundStructure as Workshop;
+                Assert.IsNotNull(workshop);
                 CharacterClassData characterClassData = CharacterManager.Instance.GetOrCreateCharacterClassData(character.characterClass.className);
                 List<TILE_OBJECT_TYPE> wantedEquipment = null;
                 if (equipmentWant is WeaponWant) {
@@ -120,12 +123,19 @@ public class FreeTimeBehaviour : CharacterBehaviourComponent {
                             return true;
                         }    
                     } else {
-                        //request equipment
-                        
-                        //Otherwise, register wanted Equipment to a favored Workshop.
-                        //- If the Equipment is Weapon, obtain the exact Weapon Type from the character's Class
-                        //- If the Equipment is Armor, obtain the exact Armor Type from the character's Class
-                        //- If the Equipment is Accessory, randomize between all possible Accessory types
+                        if (!workshop.IsCharacterAlreadyHasRequest(character)) {
+                            //request equipment
+                            Workshop.WorkShopRequestForm workShopRequestForm = new Workshop.WorkShopRequestForm();
+                            workShopRequestForm.requestingCharacter = character;
+                            if (equipmentWant is WeaponWant) {
+                                workShopRequestForm.equipmentType = EQUIPMENT_TYPE.WEAPON;
+                            } else if (equipmentWant is ArmorWant) {
+                                workShopRequestForm.equipmentType = EQUIPMENT_TYPE.ARMOR;
+                            } else if (equipmentWant is AccessoryWant) {
+                                workShopRequestForm.equipmentType = EQUIPMENT_TYPE.ACCESSORY;
+                            }
+                            workshop.PostRequest(workShopRequestForm);    
+                        }
                     }
                 }
             } else if (want is HealingPotionWant) {

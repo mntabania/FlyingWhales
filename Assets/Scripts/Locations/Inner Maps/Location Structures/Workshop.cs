@@ -7,14 +7,24 @@ namespace Inner_Maps.Location_Structures {
             public Character requestingCharacter;
             public EQUIPMENT_TYPE equipmentType;
             public bool isSubjectForRemoval;
+            public override string ToString() {
+                return $"{requestingCharacter.name} - {equipmentType.ToString()}";
+            }
         }
 
         public List<WorkShopRequestForm> requests = new List<WorkShopRequestForm>();
 
         private WorkShopRequestForm m_doneRequest;
 
-        public override Vector2 selectableSize { get; }
-        public override Vector3 worldPosition => structureObj.transform.position;
+        // public override Vector2 selectableSize { get; }
+        public override Vector3 worldPosition {
+            get {
+                Vector3 pos = structureObj.transform.position;
+                pos.x -= 0.5f;
+                pos.y -= 0.5f;
+                return pos;
+            }
+        }
 
         private List<TileObject> m_metals = new List<TileObject>();
         private List<TileObject> m_stones = new List<TileObject>();
@@ -190,39 +200,56 @@ namespace Inner_Maps.Location_Structures {
 
         void GetReferenceForAllMetals() {
             m_metals.Clear();
-            m_metals = GetTileObjectsOfType(TILE_OBJECT_TYPE.COPPER);
-            m_metals.AddRange(GetTileObjectsOfType(TILE_OBJECT_TYPE.IRON));
-            m_metals.AddRange(GetTileObjectsOfType(TILE_OBJECT_TYPE.MITHRIL));
-            m_metals.AddRange(GetTileObjectsOfType(TILE_OBJECT_TYPE.ORICHALCUM));
+            PopulateTileObjectsOfType<MetalPile>(m_metals);
+            // m_metals = GetTileObjectsOfType(TILE_OBJECT_TYPE.COPPER);
+            // m_metals.AddRange(GetTileObjectsOfType(TILE_OBJECT_TYPE.IRON));
+            // m_metals.AddRange(GetTileObjectsOfType(TILE_OBJECT_TYPE.MITHRIL));
+            // m_metals.AddRange(GetTileObjectsOfType(TILE_OBJECT_TYPE.ORICHALCUM));
         }
 
 
         void GetReferenceForStones() {
             m_stones.Clear();
-            m_stones = GetTileObjectsOfType(TILE_OBJECT_TYPE.STONE_PILE);
+            PopulateTileObjectsOfType(m_stones, TILE_OBJECT_TYPE.STONE_PILE);
+            // m_stones = GetTileObjectsOfType(TILE_OBJECT_TYPE.STONE_PILE);
         }
 
         void GetReferenceForWood() {
             m_woods.Clear();
-            m_woods = GetTileObjectsOfType(TILE_OBJECT_TYPE.WOOD_PILE);
+            PopulateTileObjectsOfType(m_woods, TILE_OBJECT_TYPE.WOOD_PILE);
+            // m_woods = GetTileObjectsOfType(TILE_OBJECT_TYPE.WOOD_PILE);
         }
 
         void GetReferenceForCloths() {
             m_cloth.Clear();
-            m_cloth = GetTileObjectsOfType(TILE_OBJECT_TYPE.MINK_CLOTH);
-            m_cloth.AddRange(GetTileObjectsOfType(TILE_OBJECT_TYPE.MOONCRAWLER_CLOTH));
-            m_cloth.AddRange(GetTileObjectsOfType(TILE_OBJECT_TYPE.RABBIT_CLOTH));
-            m_cloth.AddRange(GetTileObjectsOfType(TILE_OBJECT_TYPE.SPIDER_SILK));
-            m_cloth.AddRange(GetTileObjectsOfType(TILE_OBJECT_TYPE.WOOL));
+            PopulateTileObjectsOfType<ClothPile>(m_cloth);
+            // m_cloth = GetTileObjectsOfType(TILE_OBJECT_TYPE.MINK_CLOTH);
+            // m_cloth.AddRange(GetTileObjectsOfType(TILE_OBJECT_TYPE.MOONCRAWLER_CLOTH));
+            // m_cloth.AddRange(GetTileObjectsOfType(TILE_OBJECT_TYPE.RABBIT_CLOTH));
+            // m_cloth.AddRange(GetTileObjectsOfType(TILE_OBJECT_TYPE.SPIDER_SILK));
+            // m_cloth.AddRange(GetTileObjectsOfType(TILE_OBJECT_TYPE.WOOL));
         }
 
         void GetReferenceForLeathers() {
             m_leather.Clear();
-            m_leather = GetTileObjectsOfType(TILE_OBJECT_TYPE.BOAR_HIDE);
-            m_leather.AddRange(GetTileObjectsOfType(TILE_OBJECT_TYPE.BEAR_HIDE));
-            m_leather.AddRange(GetTileObjectsOfType(TILE_OBJECT_TYPE.WOLF_HIDE));
-            m_leather.AddRange(GetTileObjectsOfType(TILE_OBJECT_TYPE.SCALE_ARMOR));
-            m_leather.AddRange(GetTileObjectsOfType(TILE_OBJECT_TYPE.SCALE_HIDE));
+            PopulateTileObjectsOfType<LeatherPile>(m_leather);
+            // m_leather = GetTileObjectsOfType(TILE_OBJECT_TYPE.BOAR_HIDE);
+            // m_leather.AddRange(GetTileObjectsOfType(TILE_OBJECT_TYPE.BEAR_HIDE));
+            // m_leather.AddRange(GetTileObjectsOfType(TILE_OBJECT_TYPE.WOLF_HIDE));
+            // m_leather.AddRange(GetTileObjectsOfType(TILE_OBJECT_TYPE.SCALE_ARMOR));
+            // m_leather.AddRange(GetTileObjectsOfType(TILE_OBJECT_TYPE.SCALE_HIDE));
         }
+
+        #region For Testing
+        public override string GetTestingInfo() {
+            string info = base.GetTestingInfo();
+            info = $"{info}\nRequests: ";
+            for (int i = 0; i < requests.Count; i++) {
+                WorkShopRequestForm requestForm = requests[i];
+                info = $"{info}\n{requestForm.ToString()}";
+            }
+            return info;
+        }
+        #endregion
     }
 }
