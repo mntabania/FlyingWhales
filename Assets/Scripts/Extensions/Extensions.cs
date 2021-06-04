@@ -669,6 +669,45 @@ public static class Extensions {
                 return false;
         }
     }
+
+    public static bool IsMetal(this TILE_OBJECT_TYPE type) {
+        switch (type) {
+            case TILE_OBJECT_TYPE.COPPER:
+            case TILE_OBJECT_TYPE.IRON:
+            case TILE_OBJECT_TYPE.MITHRIL:
+            case TILE_OBJECT_TYPE.ORICHALCUM:
+            return true;
+            default:
+            return false;
+        }
+    }
+
+    public static bool IsCloth(this TILE_OBJECT_TYPE type) {
+        switch (type) {
+            case TILE_OBJECT_TYPE.MINK_CLOTH:
+            case TILE_OBJECT_TYPE.MOONCRAWLER_CLOTH:
+            case TILE_OBJECT_TYPE.RABBIT_CLOTH:
+            case TILE_OBJECT_TYPE.SPIDER_SILK:
+            case TILE_OBJECT_TYPE.WOOL:
+            return true;
+            default:
+            return false;
+        }
+    }
+
+    public static bool IsLeather(this TILE_OBJECT_TYPE type) {
+        switch (type) {
+            case TILE_OBJECT_TYPE.BOAR_HIDE:
+            case TILE_OBJECT_TYPE.BEAR_HIDE:
+            case TILE_OBJECT_TYPE.WOLF_HIDE:
+            case TILE_OBJECT_TYPE.DRAGON_HIDE:
+            case TILE_OBJECT_TYPE.SCALE_HIDE:
+            return true;
+            default:
+            return false;
+        }
+    }
+
     public static bool IsFullnessRecoveryTypeJob(this JOB_TYPE type) {
         switch (type) {
             case JOB_TYPE.FULLNESS_RECOVERY_URGENT:
