@@ -12,12 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 49d866ce53a3fb34887a699eb039ad3a, type: 3}
   m_Name: Orichalcum Sword
   m_EditorClassIdentifier: 
-  resourceType: 0
-  specificResource: 0
-  resourceAmount: 100
+  resourceType: 4
+  specificResource: 03000000
+  resourceAmount: 40
   purchaseCost: 50
   tier: 1
-  compatibleClasses: 000000000100000002000000
   description: This is Oricalchum Sword
   imgIcon: {fileID: 21300000, guid: 8c9ade4b7d3a25b4f9aff76a4622b6a0, type: 3}
   equipmentUpgradeData:

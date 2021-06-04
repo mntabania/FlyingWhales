@@ -13,11 +13,10 @@ MonoBehaviour:
   m_Name: Copper Sword
   m_EditorClassIdentifier: 
   resourceType: 4
-  specificResource: 0000000017000000
-  resourceAmount: 100
+  specificResource: 00000000
+  resourceAmount: 40
   purchaseCost: 50
   tier: 1
-  compatibleClasses: 000000000100000002000000
   description: This is Copper Sword
   imgIcon: {fileID: 21300000, guid: 08c5768de165af04683bc8e58c0b1d0b, type: 3}
   equipmentUpgradeData:

@@ -12,12 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 49d866ce53a3fb34887a699eb039ad3a, type: 3}
   m_Name: Scroll
   m_EditorClassIdentifier: 
-  resourceType: 0
+  resourceType: 1
   specificResource: 
-  resourceAmount: 0
+  resourceAmount: 40
   purchaseCost: 0
   tier: 0
-  compatibleClasses: 
   description: 
   imgIcon: {fileID: 21300000, guid: d426d16409b59454aa161e09a6069d8a, type: 3}
   equipmentUpgradeData:

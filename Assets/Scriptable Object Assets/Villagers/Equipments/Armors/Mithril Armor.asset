@@ -12,21 +12,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 49d866ce53a3fb34887a699eb039ad3a, type: 3}
   m_Name: Mithril Armor
   m_EditorClassIdentifier: 
-  resourceType: 0
-  specificResource: 0
-  resourceAmount: 100
+  resourceType: 4
+  specificResource: 02000000
+  resourceAmount: 40
   purchaseCost: 50
   tier: 1
-  compatibleClasses: 0000000001000000020000000300000004000000
   description: This is Mithril Armor
   imgIcon: {fileID: 21300000, guid: 7e895e4ff89a68b418d346d1e2dfec76, type: 3}
   equipmentUpgradeData:
     bonuses: 0400000002000000
     AdditionalPiercing: 12.5
-    AdditionalmaxHPPercentage: 75
-    AdditionalmaxHPActual: 0
+    AdditionalMaxHPPercentage: 0
+    AdditionalMaxHPActual: 0
     AdditionalAttackPercentage: 25
     AdditionalAttackActual: 0
+    AdditionalIntPercentage: 0
+    AdditionalIntActual: 0
+    AdditionalCritRate: 0
     additionalResistanceBonus: 100
     elementAttackBonus: 0
     slayerBonus: 0

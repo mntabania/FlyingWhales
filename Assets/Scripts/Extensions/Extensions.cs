@@ -268,6 +268,8 @@ public static class Extensions {
                 return "Prison";
             case STRUCTURE_TYPE.DEFENSE_POINT:
                 return "Prism";
+            case STRUCTURE_TYPE.HUNTER_LODGE:
+                return "Skinner's Lodge";
             default:
                 return UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(structureType.ToString());
         }
@@ -496,7 +498,7 @@ public static class Extensions {
             case TILE_OBJECT_TYPE.RABBIT_SHIRT:
             case TILE_OBJECT_TYPE.WOOL_SHIRT:
             case TILE_OBJECT_TYPE.SPIDER_SILK_SHIRT:
-            case TILE_OBJECT_TYPE.MOON_WALKER_SHIRT:
+            case TILE_OBJECT_TYPE.MOONWALKER_SHIRT:
             case TILE_OBJECT_TYPE.BOAR_HIDE_ARMOR:
             case TILE_OBJECT_TYPE.WOLF_HIDE_ARMOR:
             case TILE_OBJECT_TYPE.BEAR_HIDE_ARMOR:
@@ -638,7 +640,7 @@ public static class Extensions {
             case TILE_OBJECT_TYPE.RABBIT_SHIRT:
             case TILE_OBJECT_TYPE.WOOL_SHIRT:
             case TILE_OBJECT_TYPE.SPIDER_SILK_SHIRT:
-            case TILE_OBJECT_TYPE.MOON_WALKER_SHIRT:
+            case TILE_OBJECT_TYPE.MOONWALKER_SHIRT:
             case TILE_OBJECT_TYPE.BOAR_HIDE_ARMOR:
             case TILE_OBJECT_TYPE.WOLF_HIDE_ARMOR:
             case TILE_OBJECT_TYPE.BEAR_HIDE_ARMOR:
@@ -867,7 +869,7 @@ public static class Extensions {
             case JOB_TYPE.CHOP_WOOD:
             case JOB_TYPE.MINE_STONE:
             case JOB_TYPE.RECUPERATE:
-            case JOB_TYPE.CRAFT_WEAPON:
+            case JOB_TYPE.CRAFT_EQUIPMENT:
             case JOB_TYPE.CREATE_HOSPICE_ANTIDOTE:
             case JOB_TYPE.CREATE_HOSPICE_POTION:
             priority = 920;
@@ -1779,19 +1781,69 @@ public static class Extensions {
     public static TILE_OBJECT_TYPE ConvertResourcesToTileObjectType(this CONCRETE_RESOURCES p_resrouce) {
         switch (p_resrouce) {
             case CONCRETE_RESOURCES.Copper:
-            return TILE_OBJECT_TYPE.COPPER;
+                return TILE_OBJECT_TYPE.COPPER;
             case CONCRETE_RESOURCES.Iron:
-            return TILE_OBJECT_TYPE.IRON;
+                return TILE_OBJECT_TYPE.IRON;
             case CONCRETE_RESOURCES.Mithril:
-            return TILE_OBJECT_TYPE.MITHRIL;
+                return TILE_OBJECT_TYPE.MITHRIL;
             case CONCRETE_RESOURCES.Orichalcum:
-            return TILE_OBJECT_TYPE.ORICHALCUM;
+                return TILE_OBJECT_TYPE.ORICHALCUM;
             case CONCRETE_RESOURCES.Gold:
-            return TILE_OBJECT_TYPE.GOLD;
+                return TILE_OBJECT_TYPE.GOLD;
             case CONCRETE_RESOURCES.Diamond:
-            return TILE_OBJECT_TYPE.DIAMOND;
+                return TILE_OBJECT_TYPE.DIAMOND;
+            case CONCRETE_RESOURCES.Wood:
+                return TILE_OBJECT_TYPE.WOOD_PILE;
+            case CONCRETE_RESOURCES.Stone:
+                return TILE_OBJECT_TYPE.STONE_PILE;
+            case CONCRETE_RESOURCES.Rabbit_Cloth:
+                return TILE_OBJECT_TYPE.RABBIT_CLOTH;
+            case CONCRETE_RESOURCES.Mink_Cloth:
+                return TILE_OBJECT_TYPE.MINK_CLOTH;
+            case CONCRETE_RESOURCES.Wool:
+                return TILE_OBJECT_TYPE.WOOL;
+            case CONCRETE_RESOURCES.Spider_Silk:
+                return TILE_OBJECT_TYPE.SPIDER_SILK;
+            case CONCRETE_RESOURCES.Moon_Thread:
+                return TILE_OBJECT_TYPE.MOON_THREAD;
+            case CONCRETE_RESOURCES.Boar_Hide:
+                return TILE_OBJECT_TYPE.BOAR_HIDE;
+            case CONCRETE_RESOURCES.Scale_Hide:
+                return TILE_OBJECT_TYPE.SCALE_HIDE;
+            case CONCRETE_RESOURCES.Dragon_Hide:
+                return TILE_OBJECT_TYPE.DRAGON_HIDE;
+            case CONCRETE_RESOURCES.Elf_Meat:
+                return TILE_OBJECT_TYPE.ELF_MEAT;
+            case CONCRETE_RESOURCES.Human_Meat:
+                return TILE_OBJECT_TYPE.HUMAN_MEAT;
+            case CONCRETE_RESOURCES.Animal_Meat:
+                return TILE_OBJECT_TYPE.ANIMAL_MEAT;
+            case CONCRETE_RESOURCES.Fish:
+                return TILE_OBJECT_TYPE.FISH_PILE;
+            case CONCRETE_RESOURCES.Corn:
+                return TILE_OBJECT_TYPE.CORN;
+            case CONCRETE_RESOURCES.Potato:
+                return TILE_OBJECT_TYPE.POTATO;
+            case CONCRETE_RESOURCES.Pineapple:
+                return TILE_OBJECT_TYPE.PINEAPPLE;
+            case CONCRETE_RESOURCES.Iceberry:
+                return TILE_OBJECT_TYPE.ICEBERRY;
+            case CONCRETE_RESOURCES.Mushroom:
+                return TILE_OBJECT_TYPE.MUSHROOM;
+            case CONCRETE_RESOURCES.Wolf_Hide:
+                return TILE_OBJECT_TYPE.WOLF_HIDE;
+            case CONCRETE_RESOURCES.Bear_Hide:
+                return TILE_OBJECT_TYPE.BEAR_HIDE;
+            case CONCRETE_RESOURCES.Mooncrawler_Cloth:
+                return TILE_OBJECT_TYPE.MOONCRAWLER_CLOTH;
+            case CONCRETE_RESOURCES.Hypno_Herb:
+                return TILE_OBJECT_TYPE.HYPNO_HERB;
+            case CONCRETE_RESOURCES.Rat_Meat:
+                return TILE_OBJECT_TYPE.RAT_MEAT;
+            case CONCRETE_RESOURCES.Vegetables:
+                return TILE_OBJECT_TYPE.VEGETABLES;
             default:
-            return TILE_OBJECT_TYPE.NONE;
+                return TILE_OBJECT_TYPE.NONE;
         }
     }
     #endregion

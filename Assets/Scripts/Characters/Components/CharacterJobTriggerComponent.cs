@@ -3358,13 +3358,16 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
     #region new Jobs
     public bool CreateEquipment(TILE_OBJECT_TYPE tileObjectType, LocationStructure p_workStructure, out JobQueueItem producedJob) {
         producedJob = null;
-        if (!owner.jobQueue.HasJob(JOB_TYPE.CRAFT_WEAPON)) {
+        if (!owner.jobQueue.HasJob(JOB_TYPE.CRAFT_EQUIPMENT)) {
             TileObject unbuiltEquipment = InnerMapManager.Instance.CreateNewTileObject<TileObject>(tileObjectType);
-            p_workStructure.AddPOI(unbuiltEquipment);
-            unbuiltEquipment.SetMapObjectState(MAP_OBJECT_STATE.UNBUILT);
-            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.CRAFT_WEAPON, INTERACTION_TYPE.CRAFT_WEAPON, unbuiltEquipment, owner);
-            producedJob = job;
-            return true;
+            if (unbuiltEquipment is EquipmentItem equipmentItem && p_workStructure.AddPOI(unbuiltEquipment)) {
+	            unbuiltEquipment.SetMapObjectState(MAP_OBJECT_STATE.UNBUILT);
+	            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.CRAFT_EQUIPMENT, INTERACTION_TYPE.CRAFT_EQUIPMENT, unbuiltEquipment, owner);
+	            job.AddPriorityLocation(INTERACTION_TYPE.TAKE_RESOURCE, p_workStructure);
+	            job.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[]{equipmentItem.equipmentData.resourceAmount});
+	            producedJob = job;
+	            return true;    
+            }
         }
         return false;    
     }
