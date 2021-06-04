@@ -52,8 +52,7 @@ public class BuyItem : GoapAction {
         if (!invalidity.isInvalid) {
             if (node.poiTarget is TileObject tileObject && node.poiTarget.gridTileLocation != null && node.poiTarget.gridTileLocation.structure is ManMadeStructure manMadeStructure) {
                 if (manMadeStructure.CanPurchaseFromHereBasedOnAssignedWorker(node.actor, out bool needsToPay)) {
-                    TileObjectData tileObjectData = TileObjectDB.GetTileObjectData(tileObject.tileObjectType);
-                    var canAfford = !needsToPay || node.actor.moneyComponent.CanAfford(tileObjectData.purchaseCost);
+                    var canAfford = !needsToPay || node.actor.moneyComponent.CanAfford(GetPurchaseCost(tileObject));
                     if (!canAfford) {
                         invalidity.isInvalid = true;
                         invalidity.reason = "not_enough_money";    
@@ -85,8 +84,7 @@ public class BuyItem : GoapAction {
         base.AddFillersToLog(log, node);
         TileObject tileObject = node.poiTarget as TileObject;
         Assert.IsNotNull(tileObject);
-        TileObjectData tileObjectData = TileObjectDB.GetTileObjectData(tileObject.tileObjectType);
-        log.AddToFillers(null, tileObjectData.purchaseCost.ToString(), LOG_IDENTIFIER.STRING_1);
+        log.AddToFillers(null, GetPurchaseCost(tileObject).ToString(), LOG_IDENTIFIER.STRING_1);
     }
     #endregion
     
@@ -116,8 +114,7 @@ public class BuyItem : GoapAction {
         TakeItem(goapNode);
         TileObject tileObject = goapNode.poiTarget as TileObject;
         Assert.IsNotNull(tileObject);
-        TileObjectData tileObjectData = TileObjectDB.GetTileObjectData(tileObject.tileObjectType);
-        goapNode.actor.moneyComponent.AdjustCoins(-tileObjectData.purchaseCost);
+        goapNode.actor.moneyComponent.AdjustCoins(-GetPurchaseCost(tileObject));
     }
     public void AfterTakeSuccess(ActualGoapNode goapNode) {
         TakeItem(goapNode);
@@ -126,6 +123,19 @@ public class BuyItem : GoapAction {
         TileObject tileObject = goapNode.poiTarget as TileObject;
         Assert.IsNotNull(tileObject);
         goapNode.actor.PickUpItem(tileObject, setOwnership: true);
+    }
+    #endregion
+
+    #region Utilities
+    private int GetPurchaseCost(TileObject p_tileObject) {
+        if (p_tileObject is EquipmentItem equipmentItem) {
+            EquipmentData data = equipmentItem.equipmentData;
+            if (data != null) {
+                return data.purchaseCost;
+            }
+        }
+        TileObjectData tileObjectData = TileObjectDB.GetTileObjectData(p_tileObject.tileObjectType);
+        return tileObjectData.purchaseCost;
     }
     #endregion
 }

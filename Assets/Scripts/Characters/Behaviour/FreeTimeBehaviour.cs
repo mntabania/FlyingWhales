@@ -88,13 +88,46 @@ public class FreeTimeBehaviour : CharacterBehaviourComponent {
                 if (character.jobComponent.CreateCraftFurniture(furnitureWant.furnitureWanted, character.homeStructure, foundStructure, out producedJob)) {
                     return true;
                 }
-            } else if (want is EquipmentWant) {
+            } else if (want is EquipmentWant equipmentWant) {
                 CharacterClassData characterClassData = CharacterManager.Instance.GetOrCreateCharacterClassData(character.characterClass.className);
-                //If wanted Equipment is available at any favored Workshop, purchase and then equip it
-                //Otherwise, register wanted Equipment to a favored Workshop.
-                //- If the Equipment is Weapon, obtain the exact Weapon Type from the character's Class
-                //- If the Equipment is Armor, obtain the exact Armor Type from the character's Class
-                //- If the Equipment is Accessory, randomize between all possible Accessory types
+                List<TILE_OBJECT_TYPE> wantedEquipment = null;
+                if (equipmentWant is WeaponWant) {
+                    wantedEquipment = characterClassData.craftableWeapons;
+                } else if (equipmentWant is ArmorWant) {
+                    wantedEquipment = characterClassData.craftableArmors;
+                } else if (equipmentWant is AccessoryWant) {
+                    wantedEquipment = characterClassData.craftableAccessories;
+                }
+                if (wantedEquipment != null) {
+                    //If wanted Equipment is available at any favored Workshop, purchase and then equip it
+                    List<TileObject> availableEquipment = RuinarchListPool<TileObject>.Claim();
+                    for (int i = 0; i < wantedEquipment.Count; i++) {
+                        TILE_OBJECT_TYPE equipmentType = wantedEquipment[i];
+                        List<TileObject> foundObjects = foundStructure.GetTileObjectsOfType(equipmentType);
+                        if (foundObjects != null) {
+                            for (int j = 0; j < foundObjects.Count; j++) {
+                                TileObject equipment = foundObjects[j];
+                                if (equipment.mapObjectState == MAP_OBJECT_STATE.BUILT) {
+                                    availableEquipment.Add(equipment);
+                                }
+                            }    
+                        }
+                    }
+                    if (availableEquipment.Count > 0) {
+                        TileObject targetEquipment = CollectionUtilities.GetRandomElement(availableEquipment);
+                        //Purchase equipment
+                        if (character.jobComponent.TryCreateBuyItem(character, targetEquipment, out producedJob)) {
+                            return true;
+                        }    
+                    } else {
+                        //request equipment
+                        
+                        //Otherwise, register wanted Equipment to a favored Workshop.
+                        //- If the Equipment is Weapon, obtain the exact Weapon Type from the character's Class
+                        //- If the Equipment is Armor, obtain the exact Armor Type from the character's Class
+                        //- If the Equipment is Accessory, randomize between all possible Accessory types
+                    }
+                }
             } else if (want is HealingPotionWant) {
                 //If wanted Item is available at any favored Hospice, purchase and then equip it.
                 TileObject targetPotion = null;
