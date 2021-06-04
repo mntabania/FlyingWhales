@@ -301,20 +301,21 @@ public class SettlementVillageMigrationComponent : NPCSettlementComponent {
             characterToSpawn.hasBeenSpawned = true;
             unspawnedCharacters.Remove(characterToSpawn);
 
-            string classToCreate;
-            if (owner.classComponent.GetCurrentResidentClassAmount("Peasant") > 0) {
-                //village already has at least 1 peasant
-                classToCreate = GameUtilities.RollChance(90) ? CollectionUtilities.GetRandomElement(owner.owner.factionType.combatantClasses) : "Noble";
-            } else {
-                if (i == 0) {
-                    //one of the migrants should always be a peasant
-                    classToCreate = "Peasant";
-                } else {
-                    classToCreate = GameUtilities.RollChance(90) ? CollectionUtilities.GetRandomElement(owner.owner.factionType.combatantClasses) : "Noble";
-                }
-            }
+            string classToCreate = "Farmer";
+            // if (owner.classComponent.GetCurrentResidentClassAmount("Peasant") > 0) {
+            //     //village already has at least 1 peasant
+            //     classToCreate = GameUtilities.RollChance(90) ? CollectionUtilities.GetRandomElement(owner.owner.factionType.combatantClasses) : "Noble";
+            // } else {
+            //     if (i == 0) {
+            //         //one of the migrants should always be a peasant
+            //         classToCreate = "Peasant";
+            //     } else {
+            //         classToCreate = GameUtilities.RollChance(90) ? CollectionUtilities.GetRandomElement(owner.owner.factionType.combatantClasses) : "Noble";
+            //     }
+            // }
 
             Character newCharacter = CharacterManager.Instance.CreateNewCharacter(characterToSpawn, classToCreate, faction, owner);
+            newCharacter.classComponent.RandomizeCurrentClassBasedOnAbleClasses();
             RelationshipManager.Instance.ApplyPreGeneratedRelationships(WorldConfigManager.Instance.mapGenerationData, characterToSpawn, newCharacter);
             newCharacter.CreateRandomInitialTraits();
             if (WorldSettings.Instance.worldSettingsData.villageSettings.blessedMigrants) {

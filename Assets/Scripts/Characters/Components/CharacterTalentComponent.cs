@@ -5,6 +5,7 @@ using Traits;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
 using Character_Talents;
+using UtilityScripts;
 
 public class CharacterTalentComponent : CharacterComponent {
     public List<CharacterTalent> allTalents { get; private set; }
@@ -30,6 +31,22 @@ public class CharacterTalentComponent : CharacterComponent {
             allTalents.Add(talent);
             _talentDictionary.Add(talentType, talent);
         }
+    }
+    public void RandomizeInitialTalents(Character p_character) {
+        List<CHARACTER_TALENT> talentChoices = RuinarchListPool<CHARACTER_TALENT>.Claim();
+        talentChoices.AddRange(CharacterManager.Instance.talentManager.allTalentEnums);
+        //random talent +2 extra points
+        CHARACTER_TALENT chosenTalent = CollectionUtilities.GetRandomElement(talentChoices);
+        CharacterTalent talent = GetTalent(chosenTalent);
+        for (int i = 0; i < 2; i++) {
+            talent.LevelUp(p_character);
+        }
+        talentChoices.Remove(chosenTalent);
+        
+        //random talent +1 extra point
+        chosenTalent = CollectionUtilities.GetRandomElement(talentChoices);
+        talent = GetTalent(chosenTalent);
+        talent.LevelUp(p_character);
     }
     private void LoadAllTalents(SaveDataCharacterTalentComponent data) {
         allTalents = new List<CharacterTalent>();

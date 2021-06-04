@@ -464,6 +464,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             //Demons and Summons/Monsters can't have talents
             talentComponent = new CharacterTalentComponent(); talentComponent.SetOwner(this);
             talentComponent.ConstructAllTalents();
+            talentComponent.RandomizeInitialTalents(this);
         }
         if (race.IsSapient()) {
             villagerWantsComponent = new VillagerWantsComponent(); villagerWantsComponent.SetOwner(this);
