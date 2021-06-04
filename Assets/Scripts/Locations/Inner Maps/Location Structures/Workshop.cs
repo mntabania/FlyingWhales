@@ -1,6 +1,7 @@
 ﻿using System;
 using UnityEngine;
 using System.Collections.Generic;
+using System.Linq;
 using Inner_Maps.Location_Structures;
 namespace Inner_Maps.Location_Structures {
     public class Workshop : ManMadeStructure {
@@ -197,7 +198,7 @@ namespace Inner_Maps.Location_Structures {
             }
 
             //haul part
-            if (m_metals.Count < 40) {
+            if (m_metals.Sum(p => (p as ResourcePile).resourceInPile) < 40) {
                 ResourcePile metalPile = p_worker.homeSettlement.SettlementResources.GetRandomPileOfMetalForCraftsman(p_worker);
                 if (metalPile != null) {
                     p_worker.jobComponent.TryCreateHaulJob(metalPile, out producedJob);
@@ -207,7 +208,7 @@ namespace Inner_Maps.Location_Structures {
                 }
             }
 
-            if (m_stones.Count < 40) {
+            if (m_stones.Sum(p => (p as ResourcePile).resourceInPile) < 40) {
                 ResourcePile stonePile = p_worker.homeSettlement.SettlementResources.GetRandomPileOfStoneForCraftsman(p_worker);
                 if (stonePile != null) {
                     p_worker.jobComponent.TryCreateHaulJob(stonePile, out producedJob);
@@ -217,7 +218,7 @@ namespace Inner_Maps.Location_Structures {
                 }
             }
 
-            if (m_cloth.Count < 40) {
+            if (m_cloth.Sum(p => (p as ResourcePile).resourceInPile) < 40) {
                 ResourcePile clothPile = p_worker.homeSettlement.SettlementResources.GetRandomPileOfClothForCraftsman(p_worker);
                 if (clothPile != null) {
                     p_worker.jobComponent.TryCreateHaulJob(clothPile, out producedJob);
@@ -227,7 +228,7 @@ namespace Inner_Maps.Location_Structures {
                 }
             }
 
-            if (m_leather.Count < 40) {
+            if (m_leather.Sum(p => (p as ResourcePile).resourceInPile) < 40) {
                 ResourcePile leatherPile = p_worker.homeSettlement.SettlementResources.GetRandomPileOfLeatherForCraftsman(p_worker);
                 if (leatherPile != null) {
                     p_worker.jobComponent.TryCreateHaulJob(leatherPile, out producedJob);
@@ -237,7 +238,7 @@ namespace Inner_Maps.Location_Structures {
                 }
             }
 
-            if (m_woods.Count < 40) {
+            if (m_woods.Sum(p => (p as ResourcePile).resourceInPile) < 40) {
                 ResourcePile woodPile = p_worker.homeSettlement.SettlementResources.GetRandomPileOfWoodForCraftsman(p_worker);
                 if (woodPile != null) {
                     p_worker.jobComponent.TryCreateHaulJob(woodPile, out producedJob);
