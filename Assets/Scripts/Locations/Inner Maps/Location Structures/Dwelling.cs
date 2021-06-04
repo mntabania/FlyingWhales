@@ -8,6 +8,15 @@ using UtilityScripts;
 namespace Inner_Maps.Location_Structures {
     public class Dwelling : ManMadeStructure {
 
+        private InnerMapLight m_innerMapLight;
+        public InnerMapLight InnerMap {
+            get {
+                if (m_innerMapLight == null) {
+                    m_innerMapLight = structureObj.GetComponentInChildren<InnerMapLight>(true);
+                }
+                return m_innerMapLight;
+            }
+        }
         public int differentFoodPileKindsInDwelling { get; private set; }
 
         #region getters
@@ -27,6 +36,14 @@ namespace Inner_Maps.Location_Structures {
             differentFoodPileKindsInDwelling = saveDataDwelling.differentFoodPileKindsInDwelling;
         }
 
+        public void ProcessInnerLight() {
+            List<TileObject> torches = GetTileObjectsOfType(TILE_OBJECT_TYPE.TORCH);
+            if(torches == null || torches.Count <= 0) {
+                InnerMap.gameObject.SetActive(false);
+            } else if(torches != null && torches.Count > 0) {
+                InnerMap.gameObject.SetActive(true);
+            }
+        }
         #region Overrides
         protected override void OnAddResident(Character newResident) {
             base.OnAddResident(newResident);
@@ -70,6 +87,10 @@ namespace Inner_Maps.Location_Structures {
                         Character resident = residents[i];
                         resident.eventDispatcher.ExecuteObjectPlacedInCharactersDwelling(resident, this, tileObject);
                     }
+                    if(poi is Torch torch) {
+                        torch.DisableInnerMapLight();
+                        ProcessInnerLight();
+                    }
                 }
                 return true;
             }
@@ -84,6 +105,10 @@ namespace Inner_Maps.Location_Structures {
                     for (int i = 0; i < residents.Count; i++) {
                         Character resident = residents[i];
                         resident.eventDispatcher.ExecuteObjectRemovedFromCharactersDwelling(resident, this, tileObject);
+                    }
+                    if (poi is Torch torch) {
+                        torch.EnableInnermapLight();
+                        ProcessInnerLight();
                     }
                 }
                 return true;
@@ -100,6 +125,10 @@ namespace Inner_Maps.Location_Structures {
                         Character resident = residents[i];
                         resident.eventDispatcher.ExecuteObjectRemovedFromCharactersDwelling(resident, this, tileObject);
                     }
+                    if (poi is Torch torch) {
+                        torch.EnableInnermapLight();
+                        ProcessInnerLight();
+                    }
                 }
                 return true;
             }
@@ -114,6 +143,10 @@ namespace Inner_Maps.Location_Structures {
                     for (int i = 0; i < residents.Count; i++) {
                         Character resident = residents[i];
                         resident.eventDispatcher.ExecuteObjectRemovedFromCharactersDwelling(resident, this, tileObject);
+                    }
+                    if (poi is Torch torch) {
+                        torch.EnableInnermapLight();
+                        ProcessInnerLight();
                     }
                 }
                 return true;
