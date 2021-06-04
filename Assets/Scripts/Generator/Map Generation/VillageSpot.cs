@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Inner_Maps;
 using Inner_Maps.Grid_Tile_Features;
 using Inner_Maps.Location_Structures;
 using Locations.Area_Features;
 using UnityEngine;
 using UtilityScripts;
+using Locations.Settlements;
 
 public class VillageSpot {
     public Area mainSpot { get; }
@@ -16,6 +18,7 @@ public class VillageSpot {
     public List<Area> reservedAreas { get; }
     public int lumberyardSpots { get; }
     public int miningSpots { get; }
+    public List<string> linkedBeastDens { get; private set; }
 
     #region getters
     public int loggerCapacity => lumberyardSpots;
@@ -27,18 +30,24 @@ public class VillageSpot {
         reservedAreas = new List<Area>(p_areas);
         lumberyardSpots = p_lumberyardSpots;
         miningSpots = p_miningSpots;
+        linkedBeastDens = new List<string>();
     }
     public VillageSpot(Area p_spot, int p_lumberyardSpots, int p_miningSpots) {
         mainSpot = p_spot;
         reservedAreas = new List<Area> {p_spot};
         lumberyardSpots = p_lumberyardSpots;
         miningSpots = p_miningSpots;
+        linkedBeastDens = new List<string>();
     }
     public VillageSpot(SaveDataVillageSpot p_data) {
         mainSpot = GameUtilities.GetHexTileGivenCoordinates(p_data.mainArea, GridMap.Instance.map);
         reservedAreas = GameUtilities.GetHexTilesGivenCoordinates(p_data.reservedAreas, GridMap.Instance.map);
         lumberyardSpots = p_data.lumberyardSpots;
         miningSpots = p_data.miningSpots;
+        linkedBeastDens = p_data.linkedBeastDens;
+        if (linkedBeastDens == null) {
+            linkedBeastDens = new List<string>();
+        }
         if (!reservedAreas.Contains(mainSpot)) {
             reservedAreas.Add(mainSpot);
         }
@@ -166,6 +175,49 @@ public class VillageSpot {
         return false;
     }
     #endregion
+
+    #region Linked Beast Dens
+    public void AddLinkedBeastDen(LocationStructure p_structure) {
+        if (!linkedBeastDens.Contains(p_structure.persistentID)) {
+            linkedBeastDens.Add(p_structure.persistentID);
+        }
+    }
+    public LocationStructure GetRandomLinkedAliveBeastDen() {
+        LocationStructure chosenStructure = null;
+        List<LocationStructure> pool = RuinarchListPool<LocationStructure>.Claim();
+        for (int i = 0; i < linkedBeastDens.Count; i++) {
+            LocationStructure s = DatabaseManager.Instance.structureDatabase.GetStructureByPersistentIDSafe(linkedBeastDens[i]);
+            if (s != null) {
+                if (!s.hasBeenDestroyed) {
+                    LocationGridTile firstTile = s.GetFirstTileWithObject();
+                    AnimalBurrow burrow = firstTile.tileObjectComponent.objHere as AnimalBurrow;
+                    if (burrow != null && burrow.HasAliveSpawnedMonster()) {
+                        pool.Add(s);
+                    }
+                } else {
+                    //If already destroyed remove from list
+                    linkedBeastDens.RemoveAt(i);
+                    i--;
+                }
+            }
+        }
+        if (pool.Count > 0) {
+            chosenStructure = pool[GameUtilities.RandomBetweenTwoNumbers(0, pool.Count - 1)];
+        }
+        RuinarchListPool<LocationStructure>.Release(pool);
+        return chosenStructure;
+    }
+    public string GetLinkedBeastDensSummary() {
+        string log = string.Empty;
+        for (int i = 0; i < linkedBeastDens.Count; i++) {
+            if (i > 0) {
+                log += ",";
+            }
+            log += DatabaseManager.Instance.structureDatabase.GetStructureByPersistentIDSafe(linkedBeastDens[i])?.name;
+        }
+        return log;
+    }
+    #endregion
 }
 
 public class SaveDataVillageSpot : SaveData<VillageSpot> {
@@ -173,6 +225,8 @@ public class SaveDataVillageSpot : SaveData<VillageSpot> {
     public Point[] reservedAreas;
     public int lumberyardSpots;
     public int miningSpots;
+    public List<string> linkedBeastDens;
+
     public override void Save(VillageSpot data) {
         base.Save(data);
         mainArea = new Point(data.mainSpot.areaData.xCoordinate, data.mainSpot.areaData.yCoordinate);
@@ -181,6 +235,7 @@ public class SaveDataVillageSpot : SaveData<VillageSpot> {
             Area area = data.reservedAreas[i];
             reservedAreas[i] = new Point(area.areaData.xCoordinate, area.areaData.yCoordinate);
         }
+        linkedBeastDens = data.linkedBeastDens;
     }
     public override VillageSpot Load() {
         return new VillageSpot(this);

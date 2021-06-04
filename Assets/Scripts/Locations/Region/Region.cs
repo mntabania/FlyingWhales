@@ -27,6 +27,7 @@ public class Region : ISavable, ILogFiller {
     public Area[,] areaMap => GridMap.Instance.map;
     public Dictionary<STRUCTURE_TYPE, List<LocationStructure>> structures { get; private set; }
     public List<LocationStructure> allStructures { get; private set; }
+    public List<LocationStructure> allSpecialStructures { get; private set; }
     public List<BaseSettlement> settlementsInRegion { get; private set; }
 
 
@@ -438,6 +439,7 @@ public class Region : ISavable, ILogFiller {
     public void CreateStructureList() {
         structures = new Dictionary<STRUCTURE_TYPE, List<LocationStructure>>();
         allStructures = new List<LocationStructure>();
+        allSpecialStructures = new List<LocationStructure>();
     }
     public void GenerateStructures() {
         CreateStructureList();

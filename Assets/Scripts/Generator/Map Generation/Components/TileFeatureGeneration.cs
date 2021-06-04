@@ -328,10 +328,10 @@ public class TileFeatureGeneration : MapGenerationComponent {
 		randomResourceChoices.Add("BOAR_DEN");
 		randomResourceChoices.Add("WOLF_DEN");
 		randomResourceChoices.Add("BEAR_DEN");
-		randomResourceChoices.Add("RABBIT_HOLE");
-		randomResourceChoices.Add("Game Feature");
-		randomResourceChoices.Add("MINK_HOLE");
-		randomResourceChoices.Add("MOONCRAWLER_HOLE");
+		//randomResourceChoices.Add("RABBIT_HOLE");
+		//randomResourceChoices.Add("Game Feature");
+		//randomResourceChoices.Add("MINK_HOLE");
+		//randomResourceChoices.Add("MOONCRAWLER_HOLE");
 		
 		if (areaChoices.Count > 0) {
 			for (int i = 0; i < randomResourceCount; i++) {
@@ -477,9 +477,13 @@ public class TileFeatureGeneration : MapGenerationComponent {
 			SaveDataVillageSpot saveDataVillageSpot = scenarioMapData.worldMapSave.villageSpots[i];
 			VillageSpot villageSpot = saveDataVillageSpot.Load();
 			villageSpots.Add(villageSpot);
-			AdditionalResourceCreationForVillageSpots(villageSpot);
 		}
 		GridMap.Instance.mainRegion.SetVillageSpots(villageSpots);
+		//Creation of animal dens is in a separate loop because we now have to link to a village spots
+		//So, the region's list of village spots should be set first before creation of dens
+        for (int i = 0; i < villageSpots.Count; i++) {
+			AdditionalResourceCreationForVillageSpots(villageSpots[i]);
+		}
 		RuinarchListPool<VillageSpot>.Release(villageSpots);
 	}
 	private void DetermineSettlementsForTutorial() {

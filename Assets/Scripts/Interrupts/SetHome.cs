@@ -276,7 +276,7 @@ namespace Interrupts {
                 log += "\nCharacter is part of a habitable structure";
 #endif
                 int chance = 20;
-                if (actor.homeStructure.HasAliveResidentOtherThan(actor)) {
+                if (actor.homeStructure.HasAliveResident(actor)) {
 #if DEBUG_LOG
                     log += "\n3% chance: because there is a resident other than the actor";
 #endif

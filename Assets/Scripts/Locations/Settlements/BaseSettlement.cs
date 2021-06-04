@@ -338,6 +338,25 @@ namespace Locations.Settlements {
             RuinarchListPool<Character>.Release(choices);
             return chosenCharacter;
         }
+        public Character GetRandomResidentForRescue() {
+            Character chosenCharacter = null;
+            List<Character> choices = RuinarchListPool<Character>.Claim();
+            for (int i = 0; i < residents.Count; i++) {
+                Character resident = residents[i];
+                if (!resident.isBeingSeized
+                    && !resident.isDead
+                    && resident.gridTileLocation != null
+                    && !resident.gridTileLocation.IsNextToOrPartOfSettlement(this)
+                    && resident.traitContainer.HasTrait("Restrained", "Paralyzed")) {
+                    choices.Add(resident);
+                }
+            }
+            if (choices != null && choices.Count > 0) {
+                chosenCharacter = CollectionUtilities.GetRandomElement(choices);
+            }
+            RuinarchListPool<Character>.Release(choices);
+            return chosenCharacter;
+        }
         public Character GetFirstResidentThatIsAbleAndCanBecomeClass(string p_className) {
             for (int i = 0; i < residents.Count; i++) {
                 Character c = residents[i];

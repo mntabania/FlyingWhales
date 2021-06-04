@@ -51,7 +51,7 @@ public class PartyBehaviour : CharacterBehaviourComponent {
                     //if demon party, should not go through other behaviours, so return true here
                     return true;
                 }
-            } else {
+            } else if (party.partyState != PARTY_STATE.None) {
                 if (party.membersThatJoinedQuest.Contains(character)) {
                     NonWaitingJoinedQuestBehaviour(character, party, ref producedJob, ref hasJob, ref log);
                     if (hasJob) {
@@ -61,7 +61,13 @@ public class PartyBehaviour : CharacterBehaviourComponent {
                         return hasJob;
                     }
                 } else {
-
+                    NonWaitingNotJoinedQuestBehaviour(character, party, ref producedJob, ref hasJob, ref log);
+                    if (hasJob) {
+                        if (producedJob != null) {
+                            producedJob.SetIsThisAPartyJob(true);
+                        }
+                        return hasJob;
+                    }
                 }
             }
         }
@@ -181,7 +187,11 @@ public class PartyBehaviour : CharacterBehaviourComponent {
 #endif
         PartyQuest quest = party.currentQuest;
         if (quest.canStillJoinQuestAnytime) {
-
+#if DEBUG_LOG
+            log += $"\n-Character can still join quest anytime, will join quest";
+#endif
+            party.AddMemberThatJoinedQuest(character);
+            hasJob = true;
         }
     }
 

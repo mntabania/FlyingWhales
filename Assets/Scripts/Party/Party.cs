@@ -352,9 +352,16 @@ public class Party : ILogFiller, ISavable, IJobOwner, IBookmarkable {
             return;
         }
         hasSetEndQuestDate = true;
-        int tick = partyMember.dailyScheduleComponent.schedule.GetEndTickOfScheduleType(DAILY_SCHEDULE.Work);
-        GameDate schedule = GameManager.Instance.Today();
-        schedule.SetTicks(tick);
+        int startTick = partyMember.dailyScheduleComponent.schedule.GetStartTickOfScheduleType(DAILY_SCHEDULE.Work);
+        int endTick = partyMember.dailyScheduleComponent.schedule.GetEndTickOfScheduleType(DAILY_SCHEDULE.Work);
+        GameDate schedule;
+        if (endTick < startTick) {
+            //This means that the end tick is already the next day
+            schedule = GameManager.Instance.Today().AddDays(1);
+        } else {
+            schedule = GameManager.Instance.Today();
+        }
+        schedule.SetTicks(endTick);
         endQuestDate = schedule;
         SchedulingManager.Instance.AddEntry(schedule, TryScheduledEndQuest, null);
     }
@@ -698,6 +705,9 @@ public class Party : ILogFiller, ISavable, IJobOwner, IBookmarkable {
             //SetPartyState(PARTY_STATE.Waiting);
             SetPartyState(PARTY_STATE.None);
 
+
+            //Note: Accepting quest should no longer show notification and log, but for testing we should enable it
+#if DEBUG_LOG
             if (!partyFaction.isPlayerFaction) {
                 Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Party", "Quest", "accept_quest", null, LogUtilities.Party_Quest_Tags);
                 log.AddToFillers(this, partyName, LOG_IDENTIFIER.PARTY_1);
@@ -706,6 +716,7 @@ public class Party : ILogFiller, ISavable, IJobOwner, IBookmarkable {
                 PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
                 LogPool.Release(log);
             }
+#endif
 
             OnAcceptQuest(quest);
             quest.OnAcceptQuest(this);

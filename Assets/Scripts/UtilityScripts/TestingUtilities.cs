@@ -23,6 +23,9 @@ namespace UtilityScripts {
             }
             if (!isRatmanFaction) {
                 summary += $"\n<b>{npcSettlement.name}</b> Settlement Type: {npcSettlement.settlementType?.settlementType.ToString() ?? "None"}";
+                summary += $"\nNeeded Class Processing: {npcSettlement.classComponent.scheduleDateForProcessingOfNeededClasses.ToString()}";
+                summary += $"\nParty Quests Processing: {npcSettlement.partyComponent.scheduleDateForProcessingOfPartyQuests.ToString()}";
+                summary += $"\nLinked Beast Dens: {npcSettlement.occupiedVillageSpot?.GetLinkedBeastDensSummary()}";
                 summary += $"\nPoisoned Tiles: {npcSettlement.settlementJobTriggerComponent.poisonedTiles.Count.ToString()}";
                 summary += $"\nHas Peasants: {npcSettlement.hasPeasants.ToString()}, Has Workers: {npcSettlement.hasWorkers.ToString()}";
                 summary += $"\nStorage: {npcSettlement.mainStorage?.name ?? "None"}. Prison: {npcSettlement.prison?.name ?? "None"}";

@@ -25,6 +25,7 @@ namespace Inner_Maps.Location_Structures {
         public HashSet<IPointOfInterest> pointsOfInterest { get; private set; }
         public Dictionary<TILE_OBJECT_TYPE, List<TileObject>> groupedTileObjects { get; private set; }
         public Area occupiedArea { get; private set; }
+        public NPCSettlement linkedSettlement { get; private set; } //Do not save this because the settlement is one responsible for setting this
         //Inner Map
         public HashSet<LocationGridTile> tiles { get; private set; }
         public List<LocationGridTile> passableTiles { get; private set; }
@@ -179,7 +180,20 @@ namespace Inner_Maps.Location_Structures {
         /// NOTE: This is called instead of <see cref="OnBuiltNewStructure"/> when loading from save data.
         /// </summary>
         public virtual void OnDoneLoadStructure() { }
-        protected virtual void OnAddResident(Character newResident) { }
+        protected virtual void OnAddResident(Character newResident) {
+            if (residents.Count == 1) {
+                //If this is the first resident
+                if (structureType.IsSpecialStructure()) {
+                    if (newResident.isMonsterOrRatmanOrUndead) {
+                        if (linkedSettlement != null) {
+                            //Remove link to previous settlement first
+                            linkedSettlement.structureComponent.RemoveLinkedStructure(this);
+                        }
+                        LinkThisStructureToAVillage();
+                    }
+                }
+            }
+        }
         protected virtual void OnRemoveResident(Character newResident) {
             newResident.UnownOrTransferOwnershipOfItemsIn(this);
         }
@@ -188,9 +202,12 @@ namespace Inner_Maps.Location_Structures {
 
         #region Initialization
         public virtual void Initialize() {
+#if DEBUG_LOG
             Debug.Assert(!hasBeenDestroyed, $"Destroyed structure {this} is being initialized!");
+#endif
             SubscribeListeners();
             ConstructDefaultActions();
+            
         }
         #endregion
 
@@ -1292,6 +1309,15 @@ namespace Inner_Maps.Location_Structures {
             }
             return chosenTile;
         }
+        public LocationGridTile GetFirstTileWithObject() {
+            for (int i = 0; i < tiles.Count; i++) {
+                LocationGridTile t = tiles.ElementAt(i);
+                if (t.tileObjectComponent.objHere != null) {
+                    return t;
+                }
+            }
+            return null;
+        }
         public virtual void OnTileDamaged(LocationGridTile tile, int amount) { }
         public virtual void OnTileRepaired(LocationGridTile tile, int amount) { }
         private void AddOccupiedAreaVote(Area p_area) {
@@ -1416,6 +1442,9 @@ namespace Inner_Maps.Location_Structures {
                 Messenger.Broadcast(StructureSignals.STRUCTURE_DESTROYED_BY, this, p_responsibleCharacter);
             }
             eventDispatcher.ExecuteStructureDestroyed(this);
+            if (linkedSettlement != null) {
+                linkedSettlement.structureComponent.RemoveLinkedStructure(this);
+            }
         }
 #endregion
 
@@ -1617,11 +1646,22 @@ namespace Inner_Maps.Location_Structures {
             }
             return false;
         }
-        public bool HasAliveResidentOtherThan(Character p_character) {
+        public bool HasAliveResident(Character p_exception) {
             for (int i = 0; i < residents.Count; i++) {
                 Character resident = residents[i];
-                if (p_character != resident && !resident.isDead) {
+                if ((p_exception == null || p_exception != resident) && !resident.isDead) {
                     return true;
+                }
+            }
+            return false;
+        }
+        public bool HasAliveMonsterRatmanOrUndeadResident() {
+            for (int i = 0; i < residents.Count; i++) {
+                Character c = residents[i];
+                if (!c.isDead) {
+                    if (c.isMonsterOrRatmanOrUndead) {
+                        return true;
+                    }
                 }
             }
             return false;
@@ -1685,6 +1725,7 @@ namespace Inner_Maps.Location_Structures {
 #region Testing
         public virtual string GetTestingInfo() {
             string summary = $"{name} Info:";
+            summary += $"\nLinked Settlement: {linkedSettlement?.name}";
             summary += "\nDamage Contributing Objects:";
             for (int i = 0; i < objectsThatContributeToDamage.Count; i++) {
                 IDamageable damageable = objectsThatContributeToDamage.ElementAt(i);
@@ -1703,7 +1744,7 @@ namespace Inner_Maps.Location_Structures {
         }
 #endregion
 
-#region IBookmarkable
+        #region IBookmarkable
         public void OnSelectBookmark() {
             LeftSelectAction();
         }
@@ -1716,6 +1757,28 @@ namespace Inner_Maps.Location_Structures {
         public void OnHoverOutBookmarkItem() {
             UIManager.Instance.HideStructureNameplateTooltip();
         }
-#endregion
+        #endregion
+
+        #region Linked Settlement
+        public void SetLinkedSettlement(NPCSettlement p_settlement) {
+            linkedSettlement = p_settlement;
+        }
+        public void LinkThisStructureToAVillage(BaseSettlement exception = null) {
+            List<BaseSettlement> pool = RuinarchListPool<BaseSettlement>.Claim();
+            for (int i = 0; i < region.settlementsInRegion.Count; i++) {
+                BaseSettlement s = region.settlementsInRegion[i];
+                if ((exception == null || exception != s) && s.locationType == LOCATION_TYPE.VILLAGE) {
+                    if (s is NPCSettlement && s.HasResidentThatIsNotDead()) {
+                        pool.Add(s);
+                    }
+                }
+            }
+            if (pool.Count > 0) {
+                NPCSettlement chosenSettlement = pool[GameUtilities.RandomBetweenTwoNumbers(0, pool.Count - 1)] as NPCSettlement;
+                chosenSettlement.structureComponent.AddLinkedStructure(this);
+            }
+            RuinarchListPool<BaseSettlement>.Release(pool);
+        }
+        #endregion
     }
 }

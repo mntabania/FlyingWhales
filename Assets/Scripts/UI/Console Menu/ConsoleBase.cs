@@ -115,7 +115,7 @@ public class ConsoleBase : InfoUIBase {
             {"/adjust_mm", AdjustMigrationMeter},
             {"/toggle_vs", ToggleVillageSpots},
             {"/coins", AdjustCoins},
-            {"/talent_level_up", TalentLevelUp}
+            {"/talent_level_up", TalentLevelUp},
         };
         
         SchemeData.alwaysSuccessScheme = false;
@@ -1123,6 +1123,18 @@ public class ConsoleBase : InfoUIBase {
             talent.LevelUp(character);
             AddSuccessMessage($"{character.name}'s {talentParameterString} is leveled up!");
         }
+    }
+    private void Distance(string[] parameters) {
+        string parameter1 = parameters[0];
+        string parameter2 = parameters[1];
+        string parameter3 = parameters[2];
+        string parameter4 = parameters[3];
+
+        LocationGridTile tile1 = InnerMapManager.Instance.currentlyShowingLocation.innerMap.map[int.Parse(parameter1), int.Parse(parameter2)];
+        LocationGridTile tile2 = InnerMapManager.Instance.currentlyShowingLocation.innerMap.map[int.Parse(parameter3), int.Parse(parameter4)];
+
+        float distance = tile1.GetDistanceTo(tile2);
+        AddSuccessMessage($"Distance: {distance}");
     }
     #endregion
 

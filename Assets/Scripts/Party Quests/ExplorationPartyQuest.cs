@@ -10,7 +10,7 @@ public class ExplorationPartyQuest : PartyQuest {
     public LocationStructure targetStructure { get; private set; }
 
     //public List<LocationStructure> alreadyExplored { get; private set; }
-    public bool isExploring { get; private set; }
+    //public bool isExploring { get; private set; }
     //public int currentChance { get; private set; }
     //public Region regionRefForGettingNewStructure { get; private set; }
 
@@ -29,7 +29,7 @@ public class ExplorationPartyQuest : PartyQuest {
     }
     public ExplorationPartyQuest(SaveDataExplorationPartyQuest data) : base(data) {
         //alreadyExplored = new List<LocationStructure>();
-        isExploring = data.isExploring;
+        //isExploring = data.isExploring;
         //currentChance = data.currentChance;
     }
 
@@ -72,7 +72,8 @@ public class ExplorationPartyQuest : PartyQuest {
         base.OnAssignedPartySwitchedState(fromState, toState);
         if (toState == PARTY_STATE.Working) {
             SetIsSuccessful(true);
-            StartExplorationTimer();
+            //No more timer for exploring
+            //StartExplorationTimer();
         }
     }
     #endregion
@@ -129,19 +130,19 @@ public class ExplorationPartyQuest : PartyQuest {
 
     #region Exploration Timer
     private void StartExplorationTimer() {
-        if (!isExploring) {
-            isExploring = true;
-            GameDate dueDate = GameManager.Instance.Today();
-            dueDate.AddTicks(GameManager.Instance.GetTicksBasedOnHour(4));
-            SchedulingManager.Instance.AddEntry(dueDate, DoneExplorationTimer, this);
-        }
+        //if (!isExploring) {
+        //    isExploring = true;
+        //    GameDate dueDate = GameManager.Instance.Today();
+        //    dueDate.AddTicks(GameManager.Instance.GetTicksBasedOnHour(4));
+        //    SchedulingManager.Instance.AddEntry(dueDate, DoneExplorationTimer, this);
+        //}
     }
     private void DoneExplorationTimer() {
-        if (isExploring) {
-            isExploring = false;
-            //currentChance -= 35;
-            ProcessExplorationOrDisbandment();
-        }
+        //if (isExploring) {
+        //    isExploring = false;
+        //    //currentChance -= 35;
+        //    ProcessExplorationOrDisbandment();
+        //}
     }
     #endregion
 
@@ -226,7 +227,7 @@ public class ExplorationPartyQuest : PartyQuest {
 public class SaveDataExplorationPartyQuest : SaveDataPartyQuest {
     public string targetStructure;
     //public List<string> alreadyExplored;
-    public bool isExploring;
+    //public bool isExploring;
     //public int currentChance;
     //public string regionRefForGettingNewStructure;
 
@@ -243,7 +244,7 @@ public class SaveDataExplorationPartyQuest : SaveDataPartyQuest {
             //    alreadyExplored.Add(subData.alreadyExplored[i].persistentID);
             //}
 
-            isExploring = subData.isExploring;
+            //isExploring = subData.isExploring;
             //currentChance = subData.currentChance;
 
             //if (subData.regionRefForGettingNewStructure != null) {

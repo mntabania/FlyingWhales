@@ -723,13 +723,13 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 	}
     public bool TryTriggerMoveCharacter(Character targetCharacter, bool doNotRecalculate = false) {
         JobQueueItem job;
-        TryTriggerMoveCharacter(targetCharacter, doNotRecalculate, out job);
+        TryTriggerMoveCharacter(targetCharacter, out job, doNotRecalculate);
         if (job != null) {
             return owner.jobQueue.AddJobInQueue(job);
         }
         return false;
     }
-    public bool TryTriggerMoveCharacter(Character targetCharacter, bool doNotRecalculate = false, out JobQueueItem producedJob) {
+    public bool TryTriggerMoveCharacter(Character targetCharacter, out JobQueueItem producedJob, bool doNotRecalculate = false) {
         producedJob = null;
         if (!targetCharacter.HasJobTargetingThis(JOB_TYPE.MOVE_CHARACTER)) {
             LocationStructure dropLocationStructure = owner.homeSettlement?.GetFirstStructureOfType(STRUCTURE_TYPE.CITY_CENTER);

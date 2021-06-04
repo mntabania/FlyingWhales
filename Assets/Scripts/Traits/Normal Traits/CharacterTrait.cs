@@ -309,13 +309,13 @@ namespace Traits {
                                 if (owner.partyComponent.currentParty.currentQuest is RaidPartyQuest raidParty
                                     && targetCharacter.homeSettlement == raidParty.targetSettlement
                                     && (targetCharacter.faction == null || owner.faction == null || owner.faction.IsHostileWith(targetCharacter.faction))) {
-                                    //if (GameUtilities.RollChance(15)) {
-                                    if (!owner.jobQueue.HasJob(JOB_TYPE.STEAL_RAID)) {
-                                        if (owner.jobComponent.TriggerKidnapRaidJob(targetCharacter)) {
-                                            raidParty.SetIsSuccessful(true);
+                                    if (GameUtilities.RollChance(50)) {
+                                        if (!owner.jobQueue.HasJob(JOB_TYPE.STEAL_RAID)) {
+                                            if (owner.jobComponent.TriggerKidnapRaidJob(targetCharacter)) {
+                                                raidParty.SetIsSuccessful(true);
+                                            }
                                         }
                                     }
-                                    //}
                                 }
                             }
                         }

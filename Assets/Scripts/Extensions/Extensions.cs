@@ -240,6 +240,16 @@ public static class Extensions {
                 return false;
         }
     }
+    public static bool IsBeastDen(this STRUCTURE_TYPE sub) {
+        switch (sub) {
+            case STRUCTURE_TYPE.BEAR_DEN:
+            case STRUCTURE_TYPE.BOAR_DEN:
+            case STRUCTURE_TYPE.WOLF_DEN:
+                return true;
+            default:
+                return false;
+        }
+    }
     public static LANDMARK_TYPE GetLandmarkType(this STRUCTURE_TYPE structureType) {
         if (System.Enum.TryParse(structureType.ToString(), out LANDMARK_TYPE parsed)) {
             return parsed;
@@ -1186,6 +1196,16 @@ public static class Extensions {
         switch (type) {
             default:
                 return UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(type.ToString());
+        }
+    }
+    public static bool IsAnimalBeast(this SUMMON_TYPE type) {
+        switch (type) {
+            case SUMMON_TYPE.Boar:
+            case SUMMON_TYPE.Bear:
+            case SUMMON_TYPE.Wolf:
+                return true;
+            default:
+                return false;
         }
     }
     #endregion

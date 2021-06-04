@@ -205,6 +205,16 @@ public class PartyQuestBoard {
         quest.SetMadeInLocation(madeInLocation);
         AddPartyQuest(quest, questCreator);
     }
+    public void CreateHuntBeastPartyQuest(Character questCreator, BaseSettlement madeInLocation, LocationStructure targetStructure) {
+        if (!owner.isMajorFaction) {
+            //Cannot post quests on faction that are not major
+            return;
+        }
+        HuntBeastPartyQuest quest = PartyManager.Instance.CreateNewPartyQuest(PARTY_QUEST_TYPE.Hunt_Beast) as HuntBeastPartyQuest;
+        quest.SetMadeInLocation(madeInLocation);
+        quest.SetTargetStructure(targetStructure);
+        AddPartyQuest(quest, questCreator);
+    }
     //public void CreateMonsterInvadePartyQuest(BaseSettlement settlement, HexTile hexForJoining, LocationStructure targetStructure) {
     //    MonsterInvadePartyQuest quest = CreateNewPartyQuest(PARTY_QUEST_TYPE.Monster_Invade) as MonsterInvadePartyQuest;
     //    quest.SetHexForJoining(hexForJoining);
