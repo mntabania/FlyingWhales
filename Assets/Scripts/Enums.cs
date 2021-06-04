@@ -1317,6 +1317,8 @@ public enum UPGRADE_BONUS {
     Damage = 0, Pierce, HP_HEAL_Percentage, HP_Actual_Amount, Max_HP_Percentage, Max_HP_Actual, Atk_Percentage, Atk_Actual_Amount, Mana_Received, Amplify_Effect_By_Percentage, Duration, Chance_Bonus_Percentage, Tile_Range, Decrease_Movement_Speed, Cooldown, Skill_Movement_Speed, Applied_Blessed_On_Max_Level, None,
 }
 
+public enum EQUIPMENT_TYPE { WEAPON = 0, ARMOR, ACCESSORY }
+
 public enum EQUIPMENT_BONUS {
     Increased_Piercing = 0, Increased_3_Random_Resistance, Increased_4_Random_Resistance, Increased_5_Random_Resistance, Max_HP_Percentage, Max_HP_Actual, Str_Percentage, Str_Actual, Attack_Element, Slayer_Bonus, Ward_Bonus, Flight, Int_Percentage, Int_Actual, Crit_Rate_Actual, None,
 }

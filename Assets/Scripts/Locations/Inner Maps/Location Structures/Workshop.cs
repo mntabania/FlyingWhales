@@ -3,7 +3,15 @@ using System.Collections.Generic;
 namespace Inner_Maps.Location_Structures {
     public class Workshop : ManMadeStructure {
 
-        public List<TILE_OBJECT_TYPE> listOfEquipmentsToProduce = new List<TILE_OBJECT_TYPE>();
+        public class WorkShopRequestForm {
+            public Character requestingCharacter;
+            public EQUIPMENT_TYPE equipmentType;
+            public bool isSubjectForRemoval;
+        }
+
+        public List<WorkShopRequestForm> requests = new List<WorkShopRequestForm>();
+        private List<WorkShopRequestForm> m_tobeRemovedRequests = new List<WorkShopRequestForm>();
+
         public override Vector2 selectableSize { get; }
         public override Vector3 worldPosition => structureObj.transform.position;
 
@@ -19,6 +27,59 @@ namespace Inner_Maps.Location_Structures {
             SetMaxHP(8000);
         }
 
+        public void PostRequest(WorkShopRequestForm p_requestForm) {
+            requests.Add(p_requestForm);
+        }
+
+        public bool IsCharacterAlreadyHasRequest(Character p_requestor) {
+            for(int x = 0; x < requests.Count; ++x) {
+                if(requests[x].requestingCharacter == p_requestor) {
+                    return true;
+				}
+			}
+            return false;
+		}
+
+        public void RemoveAllRequestFromCharacter(Character p_character) {
+            requests.RemoveAll(item => item.requestingCharacter == p_character);
+        }
+
+        void RemoveCantBeDoneRequests() {
+            requests.RemoveAll(item => item.isSubjectForRemoval == true);
+        }
+
+        TILE_OBJECT_TYPE GetEquipmentToMakeFromRequestList() {
+            TILE_OBJECT_TYPE availEquipment = TILE_OBJECT_TYPE.NONE;
+            for(int x = 0; x < requests.Count; ++x) {
+                if (requests[x].requestingCharacter != null && !requests[x].requestingCharacter.isDead) {
+                    CharacterClassData cData = CharacterManager.Instance.GetOrCreateCharacterClassData(requests[x].requestingCharacter.characterClass.className);
+                    List<TILE_OBJECT_TYPE> list = new List<TILE_OBJECT_TYPE>();
+                    switch (requests[x].equipmentType) {
+                        case EQUIPMENT_TYPE.WEAPON:
+                        list = cData.craftableWeapons;
+                        break;
+                        case EQUIPMENT_TYPE.ARMOR:
+                        list = cData.craftableArmors;
+                        break;
+                        case EQUIPMENT_TYPE.ACCESSORY:
+                        list = cData.craftableAccessories;
+                        break;
+                    }
+                    for (int y = 0; y < list.Count; ++y) {
+                        List<CONCRETE_RESOURCES> resourcesNeeded = EquipmentDataHandler.Instance.GetResourcesNeeded(list[y]);
+                        if (CanBeCrafted(resourcesNeeded, EquipmentDataHandler.Instance.GetResourcesNeededAmount(list[y]))) {
+                            availEquipment = list[y];
+                            break;
+                        } else {
+                            requests[x].isSubjectForRemoval = true;
+                        }
+                    }
+                }
+			}
+            RemoveCantBeDoneRequests();
+            return availEquipment;
+        }
+
         protected override void ProcessWorkStructureJobsByWorker(Character p_worker, out JobQueueItem producedJob) {
             producedJob = null;
 
@@ -28,12 +89,10 @@ namespace Inner_Maps.Location_Structures {
             GetReferenceForCloths();
             GetReferenceForLeathers();
             //craft part
-            for (int x = 0; x < listOfEquipmentsToProduce.Count; ++x) {
-                List<CONCRETE_RESOURCES> resourcesNeeded = EquipmentDataHandler.Instance.GetResourcesNeeded(listOfEquipmentsToProduce[x]);
-                if (CanBeCrafted(resourcesNeeded, 40)) { 
-                    //craft weapon
-                }
-            }
+            TILE_OBJECT_TYPE equipToMake = GetEquipmentToMakeFromRequestList();
+            if(equipToMake != TILE_OBJECT_TYPE.NONE) {
+                //do craft action/job
+			}
 
             //haul part
             if (m_metals.Count < 40) {
@@ -89,54 +148,32 @@ namespace Inner_Maps.Location_Structures {
 
         bool CanBeCrafted(List<CONCRETE_RESOURCES> p_needs, int p_count) {
             for(int x = 0; x < p_needs.Count; ++x) {
+                List<TileObject> list = new List<TileObject>();
                 switch (p_needs[x].GetResourceCategory()) {
                     case RESOURCE.METAL:
-                    for (int y = 0; y < m_metals.Count; ++y) {
-                        if (m_metals[y].tileObjectType == p_needs[x].ConvertResourcesToTileObjectType()) { 
-                            if((m_metals[y] as ResourcePile).resourceInPile < p_count) {
-                                return false;
-                            }
-                        }
-                    }
+                    list = m_metals;
                     break;
                     case RESOURCE.STONE:
-                    for (int y = 0; y < m_stones.Count; ++y) {
-                        if (m_stones[y].tileObjectType == p_needs[x].ConvertResourcesToTileObjectType()) {
-                            if ((m_stones[y] as ResourcePile).resourceInPile < p_count) {
-                                return false;
-                            }
-                        }
-                    }
+                    list = m_stones;
                     break;
                     case RESOURCE.WOOD:
-                    for (int y = 0; y < m_woods.Count; ++y) {
-                        if (m_woods[y].tileObjectType == p_needs[x].ConvertResourcesToTileObjectType()) {
-                            if ((m_woods[y] as ResourcePile).resourceInPile < p_count) {
-                                return false;
-                            }
-                        }
-                    }
+                    list = m_woods;
                     break;
                     case RESOURCE.CLOTH:
-                    for (int y = 0; y < m_cloth.Count; ++y) {
-                        if (m_cloth[y].tileObjectType == p_needs[x].ConvertResourcesToTileObjectType()) {
-                            if ((m_cloth[y] as ResourcePile).resourceInPile < p_count) {
-                                return false;
-                            }
-                        }
-                    }
+                    list = m_cloth;
                     break;
                     case RESOURCE.LEATHER:
-                    for (int y = 0; y < m_leather.Count; ++y) {
-                        if (m_leather[y].tileObjectType == p_needs[x].ConvertResourcesToTileObjectType()) {
-                            if ((m_leather[y] as ResourcePile).resourceInPile < p_count) {
-                                return false;
-                            }
-                        }
-                    }
+                    list = m_leather;
                     break;
                 }
-			}
+                for (int y = 0; y < list.Count; ++y) {
+                    if (list[y].tileObjectType == p_needs[x].ConvertResourcesToTileObjectType()) {
+                        if ((list[y] as ResourcePile).resourceInPile < p_count) {
+                            return false;
+                        }
+                    }
+                }
+            }
             return true;
 		}
 
