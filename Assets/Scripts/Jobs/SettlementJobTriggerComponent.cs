@@ -73,7 +73,7 @@ public class SettlementJobTriggerComponent : JobTriggerComponent/*, SettlementCl
 		Messenger.AddListener<Table>(StructureSignals.FOOD_IN_DWELLING_CHANGED, OnFoodInDwellingChanged);
 		Messenger.AddListener<NPCSettlement, bool>(SettlementSignals.SETTLEMENT_UNDER_SIEGE_STATE_CHANGED, OnSettlementUnderSiegeChanged);
 		Messenger.AddListener<Character, IPointOfInterest>(CharacterSignals.CHARACTER_SAW, OnCharacterSaw);
-		Messenger.AddListener<NPCSettlement>(SettlementSignals.SETTLEMENT_CHANGE_STORAGE, OnSettlementChangedStorage);
+		// Messenger.AddListener<NPCSettlement>(SettlementSignals.SETTLEMENT_CHANGE_STORAGE, OnSettlementChangedStorage);
 		Messenger.AddListener<BurningSource>(InnerMapSignals.BURNING_SOURCE_INACTIVE, OnBurningSourceInactive);
 		Messenger.AddListener(Signals.GAME_LOADED, OnGameLoadedVillage);
 		_owner.npcSettlementEventDispatcher.SubscribeToTileRemovedEvent(this);
@@ -91,7 +91,7 @@ public class SettlementJobTriggerComponent : JobTriggerComponent/*, SettlementCl
 		//Messenger.RemoveListener<Character, Area>(CharacterSignals.CHARACTER_ENTERED_AREA, OnCharacterEnteredArea);
 		Messenger.RemoveListener<Table>(StructureSignals.FOOD_IN_DWELLING_CHANGED, OnFoodInDwellingChanged);
 		Messenger.RemoveListener<NPCSettlement, bool>(SettlementSignals.SETTLEMENT_UNDER_SIEGE_STATE_CHANGED, OnSettlementUnderSiegeChanged);
-		Messenger.RemoveListener<NPCSettlement>(SettlementSignals.SETTLEMENT_CHANGE_STORAGE, OnSettlementChangedStorage);
+		// Messenger.RemoveListener<NPCSettlement>(SettlementSignals.SETTLEMENT_CHANGE_STORAGE, OnSettlementChangedStorage);
 		Messenger.RemoveListener<BurningSource>(InnerMapSignals.BURNING_SOURCE_INACTIVE, OnBurningSourceInactive);
         Messenger.RemoveListener(Signals.GAME_LOADED, OnGameLoadedVillage);
         _owner.npcSettlementEventDispatcher.UnsubscribeToTileRemovedEvent(this);
@@ -129,14 +129,14 @@ public class SettlementJobTriggerComponent : JobTriggerComponent/*, SettlementCl
     public void KickstartJobs() {
 		//CheckIfFarmShouldBeTended(true);
 		// ScheduledCheckResource();
-		TryCreateMiningJob();
+		// TryCreateMiningJob();
 	}
 	private void HourlyJobActions() {
 #if DEBUG_PROFILER
 		Profiler.BeginSample($"{_owner.name} settlement Hourly Job Actions");
 #endif
 		CreatePatrolJobs();
-		TryCreateMiningJob();
+		// TryCreateMiningJob();
 		//HourlyCheckForNeededCharacterClasses();
 		// TryCreateMissingFoodProducingStructure();
 #if DEBUG_PROFILER
@@ -274,17 +274,17 @@ public class SettlementJobTriggerComponent : JobTriggerComponent/*, SettlementCl
 	// 		}
 	// 	}
 	// }
-	private void OnSettlementChangedStorage(NPCSettlement npcSettlement) {
-		if (npcSettlement == _owner) {
-			List<TileObject> resourcePiles = RuinarchListPool<TileObject>.Claim();
-			_owner.region.PopulateTileObjectsOfType<ResourcePile>(resourcePiles);
-			for (int i = 0; i < resourcePiles.Count; i++) {
-				ResourcePile resourcePile = resourcePiles[i] as ResourcePile;
-				TryCreateHaulJob(resourcePile);
-			}
-			RuinarchListPool<TileObject>.Release(resourcePiles);
-		}
-	}
+	// private void OnSettlementChangedStorage(NPCSettlement npcSettlement) {
+	// 	if (npcSettlement == _owner) {
+	// 		List<TileObject> resourcePiles = RuinarchListPool<TileObject>.Claim();
+	// 		_owner.region.PopulateTileObjectsOfType<ResourcePile>(resourcePiles);
+	// 		for (int i = 0; i < resourcePiles.Count; i++) {
+	// 			ResourcePile resourcePile = resourcePiles[i] as ResourcePile;
+	// 			TryCreateHaulJob(resourcePile);
+	// 		}
+	// 		RuinarchListPool<TileObject>.Release(resourcePiles);
+	// 	}
+	// }
 	private void OnBurningSourceInactive(BurningSource burningSource) {
 		// if (burningSource.location == _owner.region) {
 			CheckDouseFireJobsValidity();
@@ -996,14 +996,14 @@ public class SettlementJobTriggerComponent : JobTriggerComponent/*, SettlementCl
 	}
 #endregion
 
-#region Mining
-	private void TryCreateMiningJob() {
-		if (GameManager.Instance.GetHoursBasedOnTicks(GameManager.Instance.Today().tick) == 6 && !_owner.HasJob(JOB_TYPE.MINE) && _owner.HasStructure(STRUCTURE_TYPE.MINE)) { //6
-			GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.MINE, INTERACTION_TYPE.BEGIN_MINE, null, _owner);
-			_owner.AddToAvailableJobs(job);
-		}
-	}
-#endregion
+// #region Mining
+// 	private void TryCreateMiningJob() {
+// 		if (GameManager.Instance.GetHoursBasedOnTicks(GameManager.Instance.Today().tick) == 6 && !_owner.HasJob(JOB_TYPE.MINE) && _owner.HasStructure(STRUCTURE_TYPE.MINE)) { //6
+// 			GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.MINE, INTERACTION_TYPE.BEGIN_MINE, null, _owner);
+// 			_owner.AddToAvailableJobs(job);
+// 		}
+// 	}
+// #endregion
 
 #region Party
     //public bool TriggerExterminationJob(LocationStructure targetStructure) { //bool forceDoAction = false
