@@ -338,6 +338,25 @@ namespace Locations.Settlements {
             RuinarchListPool<Character>.Release(choices);
             return chosenCharacter;
         }
+        public Character GetRandomResidentForRescue() {
+            Character chosenCharacter = null;
+            List<Character> choices = RuinarchListPool<Character>.Claim();
+            for (int i = 0; i < residents.Count; i++) {
+                Character resident = residents[i];
+                if (!resident.isBeingSeized
+                    && !resident.isDead
+                    && resident.gridTileLocation != null
+                    && !resident.gridTileLocation.IsNextToOrPartOfSettlement(this)
+                    && resident.traitContainer.HasTrait("Restrained", "Paralyzed")) {
+                    choices.Add(resident);
+                }
+            }
+            if (choices != null && choices.Count > 0) {
+                chosenCharacter = CollectionUtilities.GetRandomElement(choices);
+            }
+            RuinarchListPool<Character>.Release(choices);
+            return chosenCharacter;
+        }
         public Character GetFirstResidentThatIsAbleAndCanBecomeClass(string p_className) {
             for (int i = 0; i < residents.Count; i++) {
                 Character c = residents[i];
@@ -496,6 +515,21 @@ namespace Locations.Settlements {
         }
         public LocationStructure GetRandomStructure() {
             return CollectionUtilities.GetRandomElement(allStructures);
+        }
+        public LocationStructure GetRandomDwellingOrResourceProducingStructure() {
+            LocationStructure chosenStructure = null;
+            List<LocationStructure> pool = RuinarchListPool<LocationStructure>.Claim();
+            for (int i = 0; i < allStructures.Count; i++) {
+                LocationStructure s = allStructures[i];
+                if (s is Dwelling || s.structureType.IsFoodProducingStructure() || s.structureType.IsResourceProducingStructure()) {
+                    pool.Add(s);
+                }
+            }
+            if (pool.Count > 0) {
+                chosenStructure = pool[GameUtilities.RandomBetweenTwoNumbers(0, pool.Count - 1)];
+            }
+            RuinarchListPool<LocationStructure>.Release(pool);
+            return chosenStructure;
         }
         public LocationStructure GetStructureByID(STRUCTURE_TYPE type, int id) {
             if (structures.ContainsKey(type)) {

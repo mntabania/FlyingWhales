@@ -261,6 +261,11 @@ public class DropRestrained : GoapAction {
                 quest.SetIsSuccessful(true);
                 goapNode.actor.partyComponent.currentParty.RemoveMemberThatJoinedQuest(goapNode.actor);
             }
+        } else if (goapNode.associatedJobType == JOB_TYPE.KIDNAP) {
+            if (goapNode.actor.partyComponent.hasParty && goapNode.actor.partyComponent.currentParty.isActive
+                && (goapNode.actor.partyComponent.currentParty.currentQuest is ExterminationPartyQuest || goapNode.actor.partyComponent.currentParty.currentQuest is ExplorationPartyQuest)) {
+                goapNode.actor.partyComponent.currentParty.RemoveMemberThatJoinedQuest(goapNode.actor);
+            }
         }
     }
 #endregion

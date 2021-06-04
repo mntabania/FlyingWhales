@@ -50,20 +50,20 @@ public class IsImprisoned : GoapAction {
             }
         }
     }
-    public override string ReactionToActor(Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
-        string reaction = base.ReactionToActor(actor, target, witness, node, status);
-        if (node.otherData.Length == 1 && node.otherData[0].obj is LocationStructure structure) {
-            if (witness.faction.isMajorNonPlayer && witness.homeSettlement != null && 
-                (witness.relationshipContainer.IsFriendsWith(actor) || witness.relationshipContainer.HasSpecialPositiveRelationshipWith(actor)) && 
-                !witness.relationshipContainer.IsEnemiesWith(actor) && structure == actor.currentStructure) {
-                if (!witness.faction.partyQuestBoard.HasPartyQuestWithTarget(PARTY_QUEST_TYPE.Rescue, actor) 
-                    && !witness.faction.partyQuestBoard.HasPartyQuestWithTarget(PARTY_QUEST_TYPE.Demon_Rescue, actor)) {
-                    witness.faction.partyQuestBoard.CreateRescuePartyQuest(witness, witness.homeSettlement, actor);
-                }
-            }
-        }
-        return reaction;
-    }
+    //public override string ReactionToActor(Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
+    //    string reaction = base.ReactionToActor(actor, target, witness, node, status);
+    //    if (node.otherData.Length == 1 && node.otherData[0].obj is LocationStructure structure) {
+    //        if (witness.faction.isMajorNonPlayer && witness.homeSettlement != null && 
+    //            (witness.relationshipContainer.IsFriendsWith(actor) || witness.relationshipContainer.HasSpecialPositiveRelationshipWith(actor)) && 
+    //            !witness.relationshipContainer.IsEnemiesWith(actor) && structure == actor.currentStructure) {
+    //            if (!witness.faction.partyQuestBoard.HasPartyQuestWithTarget(PARTY_QUEST_TYPE.Rescue, actor) 
+    //                && !witness.faction.partyQuestBoard.HasPartyQuestWithTarget(PARTY_QUEST_TYPE.Demon_Rescue, actor)) {
+    //                witness.faction.partyQuestBoard.CreateRescuePartyQuest(witness, witness.homeSettlement, actor);
+    //            }
+    //        }
+    //    }
+    //    return reaction;
+    //}
     public override REACTABLE_EFFECT GetReactableEffect(ActualGoapNode node, Character witness) {
         return REACTABLE_EFFECT.Neutral;
     }

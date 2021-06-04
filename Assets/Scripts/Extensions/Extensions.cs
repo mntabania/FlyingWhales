@@ -116,6 +116,26 @@ public static class Extensions {
                 return false;
         }
     }
+    public static bool IsResourceProducingStructure(this STRUCTURE_TYPE sub) {
+        switch (sub) {
+            case STRUCTURE_TYPE.MINE:
+            case STRUCTURE_TYPE.LUMBERYARD:
+            case STRUCTURE_TYPE.HUNTER_LODGE:
+                return true;
+            default:
+                return false;
+        }
+    }
+    public static bool IsFoodProducingStructure(this STRUCTURE_TYPE sub) {
+        switch (sub) {
+            case STRUCTURE_TYPE.FARM:
+            case STRUCTURE_TYPE.FISHERY:
+            case STRUCTURE_TYPE.BUTCHERS_SHOP:
+                return true;
+            default:
+                return false;
+        }
+    }
     public static bool IsPlayerStructure(this STRUCTURE_TYPE type) {
         switch (type) {
             case STRUCTURE_TYPE.THE_PORTAL:
@@ -215,6 +235,16 @@ public static class Extensions {
             case STRUCTURE_TYPE.RABBIT_HOLE:
             case STRUCTURE_TYPE.MINK_HOLE:
             case STRUCTURE_TYPE.MOONCRAWLER_HOLE:
+                return true;
+            default:
+                return false;
+        }
+    }
+    public static bool IsBeastDen(this STRUCTURE_TYPE sub) {
+        switch (sub) {
+            case STRUCTURE_TYPE.BEAR_DEN:
+            case STRUCTURE_TYPE.BOAR_DEN:
+            case STRUCTURE_TYPE.WOLF_DEN:
                 return true;
             default:
                 return false;
@@ -1249,6 +1279,16 @@ public static class Extensions {
         switch (type) {
             default:
                 return UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(type.ToString());
+        }
+    }
+    public static bool IsAnimalBeast(this SUMMON_TYPE type) {
+        switch (type) {
+            case SUMMON_TYPE.Boar:
+            case SUMMON_TYPE.Bear:
+            case SUMMON_TYPE.Wolf:
+                return true;
+            default:
+                return false;
         }
     }
     #endregion

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;  
 using Traits;
-
+using Inner_Maps.Location_Structures;
 public class ReleaseCharacter : GoapAction {
 
     public override ACTION_CATEGORY actionCategory { get { return ACTION_CATEGORY.DIRECT; } }
@@ -107,6 +107,11 @@ public class ReleaseCharacter : GoapAction {
                 quest.SetIsSuccessful(true);
                 quest.SetIsReleasing(false);
                 goapNode.actor.partyComponent.currentParty.currentQuest.EndQuest("Finished quest");
+
+                //if target is paralyzed carry back home
+                if (!target.IsPOICurrentlyTargetedByAPerformingAction(JOB_TYPE.MOVE_CHARACTER)) {
+                    goapNode.actor.jobComponent.TryTriggerMoveCharacter(target);
+                }
             }
         }
         if (isEnslaved) {

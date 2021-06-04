@@ -27,6 +27,8 @@ public class SaveDataNPCSettlement : SaveDataBaseSettlement {
     public SaveDataSettlementVillageMigrationComponent migrationComponent;
     public SaveDataSettlementResourcesComponent resourcesComponent;
     public SaveDataSettlementClassComponent classComponent;
+    public SaveDataSettlementPartyComponent partyComponent;
+    public SaveDataSettlementStructureComponent structureComponent;
 
     public override void Save(BaseSettlement baseSettlement) {
         base.Save(baseSettlement);
@@ -76,6 +78,8 @@ public class SaveDataNPCSettlement : SaveDataBaseSettlement {
         migrationComponent = new SaveDataSettlementVillageMigrationComponent(); migrationComponent.Save(npcSettlement.migrationComponent);
         resourcesComponent = new SaveDataSettlementResourcesComponent(); resourcesComponent.Save(npcSettlement.resourcesComponent);
         classComponent = new SaveDataSettlementClassComponent(); classComponent.Save(npcSettlement.classComponent);
+        partyComponent = new SaveDataSettlementPartyComponent(); partyComponent.Save(npcSettlement.partyComponent);
+        structureComponent = new SaveDataSettlementStructureComponent(); structureComponent.Save(npcSettlement.structureComponent);
 
         hasOccupiedVillageSpot = npcSettlement.occupiedVillageSpot != null;
         if (npcSettlement.occupiedVillageSpot != null) {

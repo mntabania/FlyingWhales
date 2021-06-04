@@ -25,19 +25,19 @@ public class EatAlive : GoapAction {
 #endif
         return 10;
     }
-    public override string ReactionToActor(Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
-        string reaction = base.ReactionToActor(actor, target, witness, node, status);
-        if (!actor.isNormalCharacter && witness.homeSettlement != null && witness.faction != null && actor.homeStructure != null && target is Character targetCharacter) {
-            Prisoner prisoner = targetCharacter.traitContainer.GetTraitOrStatus<Prisoner>("Prisoner");
-            if (node.targetStructure == actor.homeStructure || (prisoner != null && prisoner.IsConsideredPrisonerOf(actor))) {
-                string relationshipName = witness.relationshipContainer.GetRelationshipNameWith(targetCharacter);
-                if (relationshipName == RelationshipManager.Acquaintance || witness.relationshipContainer.IsFriendsWith(targetCharacter)) {
-                    witness.faction.partyQuestBoard.CreateExterminatePartyQuest(witness, witness.homeSettlement, actor.homeStructure, witness.homeSettlement);    
-                }    
-            }
-        }
-        return reaction;
-    }
+    //public override string ReactionToActor(Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
+    //    string reaction = base.ReactionToActor(actor, target, witness, node, status);
+    //    if (!actor.isNormalCharacter && witness.homeSettlement != null && witness.faction != null && actor.homeStructure != null && target is Character targetCharacter) {
+    //        Prisoner prisoner = targetCharacter.traitContainer.GetTraitOrStatus<Prisoner>("Prisoner");
+    //        if (node.targetStructure == actor.homeStructure || (prisoner != null && prisoner.IsConsideredPrisonerOf(actor))) {
+    //            string relationshipName = witness.relationshipContainer.GetRelationshipNameWith(targetCharacter);
+    //            if (relationshipName == RelationshipManager.Acquaintance || witness.relationshipContainer.IsFriendsWith(targetCharacter)) {
+    //                witness.faction.partyQuestBoard.CreateExterminatePartyQuest(witness, witness.homeSettlement, actor.homeStructure, witness.homeSettlement);    
+    //            }    
+    //        }
+    //    }
+    //    return reaction;
+    //}
     public override void PopulateReactionsToTarget(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
         base.PopulateReactionsToTarget(reactions, actor, target, witness, node, status);
         if (target is Character targetCharacter) {

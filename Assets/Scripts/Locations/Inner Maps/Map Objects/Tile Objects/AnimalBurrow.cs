@@ -113,6 +113,32 @@ public abstract class AnimalBurrow : TileObject {
         }
         RuinarchListPool<LocationGridTile>.Release(tiles);
     }
+    public Summon GetRandomAliveSpawnedMonster() {
+        Summon chosenMonster = null;
+        List<Character> pool = RuinarchListPool<Character>.Claim();
+        for (int i = 0; i < spawnedMonsters.Count; i++) {
+            Summon s = spawnedMonsters[i];
+            LocationGridTile gridTile = s.gridTileLocation;
+            if (!s.isDead && gridTile != null && s.hasMarker && gridTile.area == gridTileLocation.area) {
+                pool.Add(s);
+            }
+        }
+        if (pool.Count > 0) {
+            chosenMonster = pool[GameUtilities.RandomBetweenTwoNumbers(0, pool.Count - 1)] as Summon;
+        }
+        RuinarchListPool<Character>.Release(pool);
+        return chosenMonster;
+    }
+    public bool HasAliveSpawnedMonster() {
+        for (int i = 0; i < spawnedMonsters.Count; i++) {
+            Summon s = spawnedMonsters[i];
+            LocationGridTile gridTile = s.gridTileLocation;
+            if (!s.isDead && gridTile != null && s.hasMarker) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     #region Testing
     public override string GetAdditionalTestingData() {

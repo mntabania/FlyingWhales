@@ -24,24 +24,24 @@ namespace Interrupts {
             overrideEffectLog.AddToFillers(null, interruptHolder.identifier, LOG_IDENTIFIER.STRING_1);
             return true;
         }
-        public override string ReactionToActor(Character actor, IPointOfInterest target, Character witness,
-            InterruptHolder interrupt, REACTION_STATUS status) {
-            string response = base.ReactionToActor(actor, target, witness, interrupt, status);
-            if (actor != target && witness != target && target is Character targetCharacter) {
-                if (actor.relationshipContainer.GetAwarenessState(targetCharacter) == AWARENESS_STATE.Missing) {
-                    if (witness.relationshipContainer.IsFriendsWith(targetCharacter)) {
-                        if (witness.faction != null && !witness.faction.partyQuestBoard.HasPartyQuestWithTarget(PARTY_QUEST_TYPE.Rescue, targetCharacter)
-                             && !witness.faction.partyQuestBoard.HasPartyQuestWithTarget(PARTY_QUEST_TYPE.Demon_Rescue, targetCharacter)) {
-                            if (targetCharacter.IsConsideredInDangerBy(witness)) {
-                                witness.faction.partyQuestBoard.CreateRescuePartyQuest(witness, witness.homeSettlement, targetCharacter);
-                            }
-                        }
-                        //witness.jobComponent.TriggerRescueJob(targetCharacter);
-                    }
-                }
-            }
-            return response;
-        }
+        //public override string ReactionToActor(Character actor, IPointOfInterest target, Character witness,
+        //    InterruptHolder interrupt, REACTION_STATUS status) {
+        //    string response = base.ReactionToActor(actor, target, witness, interrupt, status);
+        //    if (actor != target && witness != target && target is Character targetCharacter) {
+        //        if (actor.relationshipContainer.GetAwarenessState(targetCharacter) == AWARENESS_STATE.Missing) {
+        //            if (witness.relationshipContainer.IsFriendsWith(targetCharacter)) {
+        //                if (witness.faction != null && !witness.faction.partyQuestBoard.HasPartyQuestWithTarget(PARTY_QUEST_TYPE.Rescue, targetCharacter)
+        //                     && !witness.faction.partyQuestBoard.HasPartyQuestWithTarget(PARTY_QUEST_TYPE.Demon_Rescue, targetCharacter)) {
+        //                    if (targetCharacter.IsConsideredInDangerBy(witness)) {
+        //                        witness.faction.partyQuestBoard.CreateRescuePartyQuest(witness, witness.homeSettlement, targetCharacter);
+        //                    }
+        //                }
+        //                //witness.jobComponent.TriggerRescueJob(targetCharacter);
+        //            }
+        //        }
+        //    }
+        //    return response;
+        //}
         public override void PopulateReactionsToActor(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness, InterruptHolder interrupt, REACTION_STATUS status) {
             base.PopulateReactionsToActor(reactions, actor, target, witness, interrupt, status);
 

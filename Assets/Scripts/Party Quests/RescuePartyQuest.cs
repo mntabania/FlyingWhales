@@ -9,11 +9,12 @@ public class RescuePartyQuest : PartyQuest, IRescuePartyQuest {
 
     public Character targetCharacter { get; private set; }
     public bool isReleasing { get; private set; }
-    public bool isSearching { get; private set; }
+    //public bool isSearching { get; private set; }
 
     #region getters
     public override IPartyQuestTarget target => targetCharacter;
     public override System.Type serializedData => typeof(SaveDataRescuePartyQuest);
+    public override bool shouldAssignedPartyRetreatUponKnockoutOrKill => true;
     #endregion
 
     public RescuePartyQuest() : base(PARTY_QUEST_TYPE.Rescue) {
@@ -24,25 +25,25 @@ public class RescuePartyQuest : PartyQuest, IRescuePartyQuest {
     }
     public RescuePartyQuest(SaveDataRescuePartyQuest data) : base(data) {
         isReleasing = data.isReleasing;
-        isSearching = data.isSearching;
+        //isSearching = data.isSearching;
     }
 
     #region Overrides
-    public override void OnAcceptQuest(Party partyThatAcceptedQuest) {
-        base.OnAcceptQuest(partyThatAcceptedQuest);
-        Messenger.AddListener<Character>(CharacterSignals.CHARACTER_CAN_NO_LONGER_PERFORM, OnCharacterNoLongerPerform);
-        Messenger.AddListener<Character>(CharacterSignals.CHARACTER_CAN_NO_LONGER_MOVE, OnCharacterNoLongerMove);
-    }
-    public override void OnAcceptQuestFromSaveData(Party partyThatAcceptedQuest) {
-        base.OnAcceptQuestFromSaveData(partyThatAcceptedQuest);
-        Messenger.AddListener<Character>(CharacterSignals.CHARACTER_CAN_NO_LONGER_PERFORM, OnCharacterNoLongerPerform);
-        Messenger.AddListener<Character>(CharacterSignals.CHARACTER_CAN_NO_LONGER_MOVE, OnCharacterNoLongerMove);
-    }
-    protected override void OnEndQuest() {
-        base.OnEndQuest();
-        Messenger.RemoveListener<Character>(CharacterSignals.CHARACTER_CAN_NO_LONGER_PERFORM, OnCharacterNoLongerPerform);
-        Messenger.RemoveListener<Character>(CharacterSignals.CHARACTER_CAN_NO_LONGER_MOVE, OnCharacterNoLongerMove);
-    }
+    //public override void OnAcceptQuest(Party partyThatAcceptedQuest) {
+    //    base.OnAcceptQuest(partyThatAcceptedQuest);
+    //    Messenger.AddListener<Character>(CharacterSignals.CHARACTER_CAN_NO_LONGER_PERFORM, OnCharacterNoLongerPerform);
+    //    Messenger.AddListener<Character>(CharacterSignals.CHARACTER_CAN_NO_LONGER_MOVE, OnCharacterNoLongerMove);
+    //}
+    //public override void OnAcceptQuestFromSaveData(Party partyThatAcceptedQuest) {
+    //    base.OnAcceptQuestFromSaveData(partyThatAcceptedQuest);
+    //    Messenger.AddListener<Character>(CharacterSignals.CHARACTER_CAN_NO_LONGER_PERFORM, OnCharacterNoLongerPerform);
+    //    Messenger.AddListener<Character>(CharacterSignals.CHARACTER_CAN_NO_LONGER_MOVE, OnCharacterNoLongerMove);
+    //}
+    //protected override void OnEndQuest() {
+    //    base.OnEndQuest();
+    //    Messenger.RemoveListener<Character>(CharacterSignals.CHARACTER_CAN_NO_LONGER_PERFORM, OnCharacterNoLongerPerform);
+    //    Messenger.RemoveListener<Character>(CharacterSignals.CHARACTER_CAN_NO_LONGER_MOVE, OnCharacterNoLongerMove);
+    //}
     public override IPartyTargetDestination GetTargetDestination() {
         if(targetCharacter.currentStructure != null && targetCharacter.currentStructure.structureType != STRUCTURE_TYPE.WILDERNESS) {
             return targetCharacter.currentStructure;
@@ -54,56 +55,24 @@ public class RescuePartyQuest : PartyQuest, IRescuePartyQuest {
     public override string GetPartyQuestTextInLog() {
         return "Rescue " + targetCharacter.name;
     }
-    public override void OnAssignedPartySwitchedState(PARTY_STATE fromState, PARTY_STATE toState) {
-        base.OnAssignedPartySwitchedState(fromState, toState);
-        if (toState == PARTY_STATE.Working) {
-            StartSearchTimer();
-        }
-    }
-    //public override bool IsAllowedToJoin(Character character) {
-    //    return (character.characterClass.IsCombatant() && character.characterClass.identifier == "Normal") || character.characterClass.className == "Noble"
-    //        || (character.isNormalCharacter && character.relationshipContainer.GetOpinionLabel(targetCharacter) == RelationshipManager.Close_Friend);
-    //}
-    //protected override void OnWaitTimeOver() {
-    //    base.OnWaitTimeOver();
-    //    Messenger.AddListener<Character, LocationStructure>(Signals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
-    //    for (int i = 0; i < members.Count; i++) {
-    //        Character member = members[i];
-    //        member.traitContainer.AddTrait(member, "Travelling");
-    //    }
-    //}
-    //protected override void OnAddMember(Character member) {
-    //    base.OnAddMember(member);
-    //    member.movementComponent.SetEnableDigging(true);
-    //}
-    //protected override void OnRemoveMember(Character member) {
-    //    base.OnRemoveMember(member);
-    //    member.movementComponent.SetEnableDigging(false);
-    //    member.traitContainer.RemoveTrait(member, "Travelling");
-    //}
-    //protected override void OnRemoveMemberOnDisband(Character member) {
-    //    base.OnRemoveMemberOnDisband(member);
-    //    member.movementComponent.SetEnableDigging(false);
-    //    member.traitContainer.RemoveTrait(member, "Travelling");
-    //}
-    //protected override void OnDisbandParty() {
-    //    base.OnDisbandParty();
-    //    if (Messenger.eventTable.ContainsKey(Signals.CHARACTER_ARRIVED_AT_STRUCTURE)) {
-    //        Messenger.RemoveListener<Character, LocationStructure>(Signals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
+    //public override void OnAssignedPartySwitchedState(PARTY_STATE fromState, PARTY_STATE toState) {
+    //    base.OnAssignedPartySwitchedState(fromState, toState);
+    //    if (toState == PARTY_STATE.Working) {
+    //        StartSearchTimer();
     //    }
     //}
     #endregion
 
     #region General
-    private void ProcessDisbandment() {
-        if (isReleasing) {
-            StartSearchTimer();
-            return;
-        }
-        if(assignedParty != null && assignedParty.isActive && assignedParty.currentQuest == this) {
-            assignedParty.GoBackHomeAndEndQuest();
-        }
-    }
+    //private void ProcessDisbandment() {
+    //    if (isReleasing) {
+    //        StartSearchTimer();
+    //        return;
+    //    }
+    //    if(assignedParty != null && assignedParty.isActive && assignedParty.currentQuest == this) {
+    //        assignedParty.GoBackHomeAndEndQuest();
+    //    }
+    //}
     public void SetTargetCharacter(Character character) {
         targetCharacter = character;
     }
@@ -112,20 +81,20 @@ public class RescuePartyQuest : PartyQuest, IRescuePartyQuest {
     }
     #endregion
 
-    #region Rescue Timer
-    private void StartSearchTimer() {
-        if (!isSearching) {
-            isSearching = true;
-            GameDate dueDate = GameManager.Instance.Today();
-            dueDate.AddTicks(GameManager.Instance.GetTicksBasedOnHour(3));
-            SchedulingManager.Instance.AddEntry(dueDate, DoneSearching, this);
-        }
-    }
-    private void DoneSearching() {
-        isSearching = false;
-        ProcessDisbandment();
-    }
-    #endregion
+    //#region Rescue Timer
+    //private void StartSearchTimer() {
+    //    if (!isSearching) {
+    //        isSearching = true;
+    //        GameDate dueDate = GameManager.Instance.Today();
+    //        dueDate.AddTicks(GameManager.Instance.GetTicksBasedOnHour(3));
+    //        SchedulingManager.Instance.AddEntry(dueDate, DoneSearching, this);
+    //    }
+    //}
+    //private void DoneSearching() {
+    //    isSearching = false;
+    //    ProcessDisbandment();
+    //}
+    //#endregion
 
     #region Listeners
     //private void OnCharacterArrivedAtStructure(Character character, LocationStructure structure) {
@@ -135,52 +104,52 @@ public class RescuePartyQuest : PartyQuest, IRescuePartyQuest {
     //        }
     //    }
     //}
-    private void OnCharacterNoLongerPerform(Character character) {
-        if (character.limiterComponent.canMove) {
-            //If character can still move even if he/she cannot perform, do not end quest
-            //In order for the quest to be ended, character must be both cannot perform and move
-            //The reason is so the quest will not end if the character only sleeps or rests
-            return;
-        }
-        if (GameUtilities.RollChance(15)) {
-            if (assignedParty != null && assignedParty.membersThatJoinedQuest.Contains(character)) {
-                EndQuest(character.name + " is incapacitated");
-                return;
-            }
-        }
-        if (assignedParty != null) {
-            if (assignedParty.DidMemberJoinQuest(character) && !assignedParty.HasActiveMemberThatJoinedQuest()) {
-                EndQuest("Members are incapacitated");
-            }
-        }
-    }
-    private void OnCharacterNoLongerMove(Character character) {
-        if (character.limiterComponent.canPerform) {
-            //If character can still perform even if he/she cannot move, do not end quest
-            //In order for the quest to be ended, character must be both cannot perform and move
-            //The reason is so the quest will not end if the character only sleeps or rests
-            return;
-        }
-        if (GameUtilities.RollChance(15)) {
-            if (assignedParty != null && assignedParty.membersThatJoinedQuest.Contains(character)) {
-                EndQuest(character.name + " is incapacitated");
-                return;
-            }
-        }
-        if (assignedParty != null) {
-            if (assignedParty.DidMemberJoinQuest(character) && !assignedParty.HasActiveMemberThatJoinedQuest()) {
-                EndQuest("Members are incapacitated");
-            }
-        }
-    }
-    public override void OnCharacterDeath(Character p_character) {
-        base.OnCharacterDeath(p_character);
-        if (GameUtilities.RollChance(25)) {
-            if (assignedParty != null && assignedParty.membersThatJoinedQuest.Contains(p_character)) {
-                EndQuest(p_character.name + " died");
-            }
-        }
-    }
+    //private void OnCharacterNoLongerPerform(Character character) {
+    //    if (character.limiterComponent.canMove) {
+    //        //If character can still move even if he/she cannot perform, do not end quest
+    //        //In order for the quest to be ended, character must be both cannot perform and move
+    //        //The reason is so the quest will not end if the character only sleeps or rests
+    //        return;
+    //    }
+    //    if (GameUtilities.RollChance(15)) {
+    //        if (assignedParty != null && assignedParty.membersThatJoinedQuest.Contains(character)) {
+    //            EndQuest(character.name + " is incapacitated");
+    //            return;
+    //        }
+    //    }
+    //    if (assignedParty != null) {
+    //        if (assignedParty.DidMemberJoinQuest(character) && !assignedParty.HasActiveMemberThatJoinedQuest()) {
+    //            EndQuest("Members are incapacitated");
+    //        }
+    //    }
+    //}
+    //private void OnCharacterNoLongerMove(Character character) {
+    //    if (character.limiterComponent.canPerform) {
+    //        //If character can still perform even if he/she cannot move, do not end quest
+    //        //In order for the quest to be ended, character must be both cannot perform and move
+    //        //The reason is so the quest will not end if the character only sleeps or rests
+    //        return;
+    //    }
+    //    if (GameUtilities.RollChance(15)) {
+    //        if (assignedParty != null && assignedParty.membersThatJoinedQuest.Contains(character)) {
+    //            EndQuest(character.name + " is incapacitated");
+    //            return;
+    //        }
+    //    }
+    //    if (assignedParty != null) {
+    //        if (assignedParty.DidMemberJoinQuest(character) && !assignedParty.HasActiveMemberThatJoinedQuest()) {
+    //            EndQuest("Members are incapacitated");
+    //        }
+    //    }
+    //}
+    //public override void OnCharacterDeath(Character p_character) {
+    //    base.OnCharacterDeath(p_character);
+    //    if (GameUtilities.RollChance(25)) {
+    //        if (assignedParty != null && assignedParty.membersThatJoinedQuest.Contains(p_character)) {
+    //            EndQuest(p_character.name + " died");
+    //        }
+    //    }
+    //}
     #endregion
 
     #region Loading
@@ -202,14 +171,14 @@ public class RescuePartyQuest : PartyQuest, IRescuePartyQuest {
 public class SaveDataRescuePartyQuest : SaveDataPartyQuest {
     public string targetCharacter;
     public bool isReleasing;
-    public bool isSearching;
+    //public bool isSearching;
 
     #region Overrides
     public override void Save(PartyQuest data) {
         base.Save(data);
         if (data is RescuePartyQuest subData) {
             isReleasing = subData.isReleasing;
-            isSearching = subData.isSearching;
+            //isSearching = subData.isSearching;
 
             if (subData.targetCharacter != null) {
                 targetCharacter = subData.targetCharacter.persistentID;

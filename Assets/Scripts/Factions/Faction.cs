@@ -12,6 +12,7 @@ using Logs;
 using Object_Pools;
 using UnityEngine.Assertions;
 using UnityEngine.Profiling;
+using UtilityScripts;
 using Random = UnityEngine.Random;
 
 public class Faction : IJobOwner, ISavable, ILogFiller {
@@ -720,6 +721,9 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
         return rel.relationshipStatus == FACTION_RELATIONSHIP_STATUS.Hostile;
     }
     public bool IsFriendlyWith(Faction faction) {
+        if (faction == null) {
+            return false;
+        }
         if (faction == this) {
             return true;
         }
@@ -799,29 +803,6 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
         }
         return false;
     }
-    public Faction GetFactionWithRelationship(FACTION_RELATIONSHIP_STATUS stat, bool excludePlayer = true) {
-        foreach (KeyValuePair<Faction, FactionRelationship> kvp in relationships) {
-            if (excludePlayer && kvp.Key.isPlayerFaction) {
-                continue; //exclude player faction
-            }
-            if (kvp.Value.relationshipStatus == stat) {
-                return kvp.Key;
-            }
-        }
-        return null;
-    }
-    public List<Faction> GetFactionsWithRelationship(FACTION_RELATIONSHIP_STATUS stat, bool excludePlayer = true) {
-        List<Faction> factions = new List<Faction>();
-        foreach (KeyValuePair<Faction, FactionRelationship> kvp in relationships) {
-            if (excludePlayer && kvp.Key.isPlayerFaction) {
-                continue; //exclude player faction
-            }
-            if (kvp.Value.relationshipStatus == stat) {
-                factions.Add(kvp.Key);
-            }
-        }
-        return factions;
-    }
     public bool SetRelationshipFor(Faction otherFaction, FACTION_RELATIONSHIP_STATUS status) {
         if (relationships.ContainsKey(otherFaction)) {
             return relationships[otherFaction].SetRelationshipStatus(status);
@@ -839,17 +820,18 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
         return false;
     }
     public Faction GetRandomAtWarFaction() {
-        List<Faction> factions = null;
+        Faction chosenFaction = null;
+        List<Faction> factions = RuinarchListPool<Faction>.Claim();
         foreach (KeyValuePair<Faction, FactionRelationship> kvp in relationships) {
             if (kvp.Key.isActive && kvp.Key.isMajorNonPlayer && kvp.Value.relationshipStatus == FACTION_RELATIONSHIP_STATUS.Hostile) {
-                if(factions == null) { factions = new List<Faction>(); }
                 factions.Add(kvp.Key);
             }
         }
-        if(factions != null && factions.Count > 0) {
-            return factions[UnityEngine.Random.Range(0, factions.Count)];
+        if(factions.Count > 0) {
+            chosenFaction = factions[GameUtilities.RandomBetweenTwoNumbers(0, factions.Count - 1)];
         }
-        return null;
+        RuinarchListPool<Faction>.Release(factions);
+        return chosenFaction;
     }
 #endregion
 
@@ -931,6 +913,21 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
         }
         return null;
     }
+    public BaseSettlement GetRandomOwnedVillage() {
+        BaseSettlement chosenVillage = null;
+        List<BaseSettlement> villages = RuinarchListPool<BaseSettlement>.Claim();
+        for (int i = 0; i < ownedSettlements.Count; i++) {
+            BaseSettlement s = ownedSettlements[i];
+            if (s.locationType == LOCATION_TYPE.VILLAGE) {
+                villages.Add(s);
+            }
+        }
+        if (villages.Count > 0) {
+            chosenVillage = villages[GameUtilities.RandomBetweenTwoNumbers(0, villages.Count - 1)];
+        }
+        RuinarchListPool<BaseSettlement>.Release(villages);
+        return chosenVillage;
+    }
     //public bool HasOwnedStructures() {
     //    return ownedStructures.Count > 0;
     //}
@@ -942,9 +939,9 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
     //    }
     //    return false;
     //}
-#endregion
+    #endregion
 
-#region Emblems
+    #region Emblems
     public void SetEmblem(Sprite sprite) {
         emblem = sprite;
     }
@@ -1013,54 +1010,6 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
             }
         }
         return false;
-    }
-    public bool HasJob(GoapEffect effect, IPointOfInterest target) {
-        for (int i = 0; i < availableJobs.Count; i++) {
-            JobQueueItem jqi = availableJobs[i];
-            if (jqi is GoapPlanJob) {
-                GoapPlanJob gpj = jqi as GoapPlanJob;
-                if (effect.conditionType == gpj.goal.conditionType
-                    && effect.conditionKey == gpj.goal.conditionKey
-                    && effect.target == gpj.goal.target
-                    && target == gpj.targetPOI) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-    public JobQueueItem GetJob(params JOB_TYPE[] jobTypes) {
-        for (int i = 0; i < availableJobs.Count; i++) {
-            for (int j = 0; j < jobTypes.Length; j++) {
-                JobQueueItem job = availableJobs[i];
-                if (job.jobType == jobTypes[j]) {
-                    return job;
-                }
-            }
-        }
-        return null;
-    }
-    public List<JobQueueItem> GetJobs(params JOB_TYPE[] jobTypes) {
-        List<JobQueueItem> jobs = new List<JobQueueItem>();
-        for (int i = 0; i < availableJobs.Count; i++) {
-            JobQueueItem job = availableJobs[i];
-            if (jobTypes.Contains(job.jobType)) {
-                jobs.Add(job);
-            }
-        }
-        return jobs;
-    }
-    public JobQueueItem GetJob(JOB_TYPE job, IPointOfInterest target) {
-        for (int i = 0; i < availableJobs.Count; i++) {
-            JobQueueItem jqi = availableJobs[i];
-            if (jqi is GoapPlanJob) {
-                GoapPlanJob gpj = jqi as GoapPlanJob;
-                if (job == gpj.jobType && target == gpj.targetPOI) {
-                    return gpj;
-                }
-            }
-        }
-        return null;
     }
     public JobQueueItem GetFirstUnassignedJobToCharacterJob(Character character) {
         for (int i = 0; i < availableJobs.Count; i++) {
