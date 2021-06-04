@@ -60,8 +60,6 @@ public class FindFish : GoapAction {
         matsToHaul.SetResourceInPile(p_node.currentStateDuration * m_amountProducedPerTick);
         tileToSpawnPile.structure.AddPOI(matsToHaul, tileToSpawnPile);
         ProduceLogs(p_node);
-        (p_node.target as TileObject).DestroyMapVisualGameObject();
-        (p_node.target as TileObject).DestroyPermanently();
 
         return matsToHaul;
     }

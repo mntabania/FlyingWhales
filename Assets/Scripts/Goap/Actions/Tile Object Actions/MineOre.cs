@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Traits;
 using Inner_Maps;
+using UnityEngine.Assertions;
 
 public class MineOre : GoapAction {
 
@@ -56,16 +57,21 @@ public class MineOre : GoapAction {
     #endregion
 
     ResourcePile ProduceMatsPile(ActualGoapNode p_node) {
+        Ore targetOre = p_node.target as Ore;
+        Assert.IsNotNull(targetOre);
+        if (targetOre.gridTileLocation != null) {
+            targetOre.gridTileLocation.structure.RemovePOI(targetOre);    
+        }
+
+        
         LocationGridTile tileToSpawnPile = p_node.actor.gridTileLocation;
         if (tileToSpawnPile != null && tileToSpawnPile.tileObjectComponent.objHere != null) {
             tileToSpawnPile = p_node.actor.gridTileLocation.GetFirstNearestTileFromThisWithNoObject();
         }
-        MetalPile matsToHaul = InnerMapManager.Instance.CreateNewTileObject<MetalPile>((p_node.target as Ore).providedMetal.ConvertResourcesToTileObjectType());
+        MetalPile matsToHaul = InnerMapManager.Instance.CreateNewTileObject<MetalPile>(targetOre.providedMetal.ConvertResourcesToTileObjectType());
         matsToHaul.SetResourceInPile(p_node.currentStateDuration * m_amountProducedPerTick);
         tileToSpawnPile.structure.AddPOI(matsToHaul, tileToSpawnPile);
         ProduceLogs(p_node);
-        (p_node.target as TileObject).DestroyMapVisualGameObject();
-        (p_node.target as TileObject).DestroyPermanently();
 
         return matsToHaul;
     }
