@@ -70,7 +70,7 @@ public class SkinAnimal : GoapAction {
         ResourcePile matsToHaul = InnerMapManager.Instance.CreateNewTileObject<ResourcePile>((p_node.target as Summon).produceableMaterial);
         matsToHaul.SetResourceInPile(p_node.currentStateDuration * m_amountProducedPerTick);
         tileToSpawnItem.structure.AddPOI(matsToHaul, tileToSpawnItem);
-        p_node.actor.homeSettlement.settlementJobTriggerComponent.TryCreateHaulJob(matsToHaul);
+        // p_node.actor.homeSettlement.settlementJobTriggerComponent.TryCreateHaulJob(matsToHaul);
 
         return matsToHaul;
     }
