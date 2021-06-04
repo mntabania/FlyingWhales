@@ -23,7 +23,7 @@ public class RescueBehaviour : CharacterBehaviourComponent {
                 log += $"\n-Character is at target destination, do work";
 #endif
                 RescuePartyQuest quest = party.currentQuest as RescuePartyQuest;
-                if (character.hasMarker && character.marker.IsPOIInVision(quest.targetCharacter)) {
+                if (character.hasMarker && party.targetDestination.IsAtTargetDestination(quest.targetCharacter)) {
                     if (quest.targetCharacter.traitContainer.HasTrait("Restrained", "Unconscious", "Frozen", "Ensnared", "Enslaved")) {
                         hasJob = character.jobComponent.TriggerReleaseJob(quest.targetCharacter, out producedJob);
                         if (hasJob) {
@@ -31,7 +31,7 @@ public class RescueBehaviour : CharacterBehaviourComponent {
                         }
                         return hasJob;
                     } else {
-                        quest.EndQuest("Saw target is safe");
+                        quest.EndQuest("Target is safe");
                         //if target is paralyzed carry back home
                         if (!quest.targetCharacter.IsPOICurrentlyTargetedByAPerformingAction(JOB_TYPE.MOVE_CHARACTER)) {
                             //Do not set this as a party job
@@ -39,6 +39,8 @@ public class RescueBehaviour : CharacterBehaviourComponent {
                         }
                         return true;
                     }
+                } else {
+                    quest.EndQuest("Target is nowhere to be found");
                 }
 
                 Character memberInCombat = party.GetMemberInCombatExcept(character);
