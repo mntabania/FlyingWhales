@@ -324,16 +324,16 @@ public static class Extensions {
                 return 100;
         }
     }
-    public static bool IsFoodProducingStructure(this STRUCTURE_TYPE structureType) {
-        switch (structureType) {
-            case STRUCTURE_TYPE.FARM:
-            case STRUCTURE_TYPE.FISHERY:
-            case STRUCTURE_TYPE.HUNTER_LODGE:
-                return true;
-            default:
-                return false;
-        }
-    }
+    //public static bool IsFoodProducingStructure(this STRUCTURE_TYPE structureType) {
+    //    switch (structureType) {
+    //        case STRUCTURE_TYPE.FARM:
+    //        case STRUCTURE_TYPE.FISHERY:
+    //        case STRUCTURE_TYPE.HUNTER_LODGE:
+    //            return true;
+    //        default:
+    //            return false;
+    //    }
+    //}
     public static bool IsBasicResourceProducingStructureForFaction(this STRUCTURE_TYPE structureType, FACTION_TYPE p_factionType) {
         if (p_factionType == FACTION_TYPE.Human_Empire) {
             return structureType == STRUCTURE_TYPE.MINE;

@@ -499,9 +499,9 @@ public class TileFeatureGeneration : MapGenerationComponent {
 		GridMap.Instance.mainRegion.SetVillageSpots(villageSpots);
 		//Creation of animal dens is in a separate loop because we now have to link to a village spots
 		//So, the region's list of village spots should be set first before creation of dens
-        for (int i = 0; i < villageSpots.Count; i++) {
-			AdditionalResourceCreationForVillageSpots(villageSpots[i]);
-		}
+  //      for (int i = 0; i < villageSpots.Count; i++) {
+		//	AdditionalResourceCreationForVillageSpots(villageSpots[i]);
+		//}
 		RuinarchListPool<VillageSpot>.Release(villageSpots);
 		AdditionalResourceCreation();
 	}

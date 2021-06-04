@@ -131,9 +131,9 @@ public class CharacterManager : BaseMonoBehaviour {
         { Default_Resident_Behaviour,
             new []{
                 typeof(DefaultFactionRelated),
-                typeof(DefaultHomeless),
+                //typeof(DefaultHomeless),
                 typeof(WorkBehaviour),
-                // typeof(DefaultAtHome),
+                typeof(DefaultAtHome),
                 typeof(SleepBehaviour),
                 typeof(FreeTimeBehaviour),
                 typeof(DefaultOutside),

@@ -24,20 +24,26 @@ public class DemonRescueBehaviour : CharacterBehaviourComponent {
             if (targetStructure.hasBeenDestroyed || targetStructure.objectsThatContributeToDamage.Count <= 0) {
                 if (IsInTargetDemonicStructure(character, quest)) {
                     if (character.hasMarker && IsInTargetDemonicStructure(quest.targetCharacter, quest)) {
-                        if (quest.targetCharacter.traitContainer.HasTrait("Restrained", "Unconscious", "Frozen", "Ensnared", "Enslaved")) {
-                            hasJob = character.jobComponent.TriggerReleaseJob(quest.targetCharacter, out producedJob);
-                            if (hasJob) {
-                                quest.SetIsReleasing(true);
-                            }
-                            return hasJob;
+                        if (quest.targetCharacter.isDead) {
+                            quest.EndQuest("Target is dead");
                         } else {
-                            quest.EndQuest("Target is safe");
-                            //if target is paralyzed carry back home
-                            if (!quest.targetCharacter.IsPOICurrentlyTargetedByAPerformingAction(JOB_TYPE.MOVE_CHARACTER)) {
-                                //Do not set this as a party job
-                                character.jobComponent.TryTriggerMoveCharacter(quest.targetCharacter, out producedJob, false);
+                            if (quest.targetCharacter.traitContainer.HasTrait("Restrained", "Unconscious", "Frozen", "Ensnared", "Enslaved")) {
+                                hasJob = character.jobComponent.TriggerReleaseJob(quest.targetCharacter, out producedJob);
+                                if (hasJob) {
+                                    quest.SetIsReleasing(true);
+                                }
+                                return hasJob;
+                            } else {
+                                quest.EndQuest("Target is safe");
+                                //if target is paralyzed carry back home
+                                if (quest.targetCharacter.traitContainer.HasTrait("Paralyzed")) {
+                                    if (!quest.targetCharacter.IsPOICurrentlyTargetedByAPerformingAction(JOB_TYPE.MOVE_CHARACTER)) {
+                                        //Do not set this as a party job
+                                        character.jobComponent.TryTriggerMoveCharacter(quest.targetCharacter, out producedJob, false);
+                                    }
+                                }
+                                return true;
                             }
-                            return true;
                         }
                     } else {
                         quest.EndQuest("Target is nowhere to be found");

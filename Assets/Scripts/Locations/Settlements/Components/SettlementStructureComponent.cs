@@ -54,6 +54,16 @@ public class SettlementStructureComponent : NPCSettlementComponent {
         RuinarchListPool<LocationStructure>.Release(pool);
         return chosenStructure;
     }
+    public string GetLinkedStructuresSummary() {
+        string log = string.Empty;
+        for (int i = 0; i < linkedStructures.Count; i++) {
+            if (i > 0) {
+                log += ",";
+            }
+            log += linkedStructures[i].name;
+        }
+        return log;
+    }
     #endregion
 
     #region Loading

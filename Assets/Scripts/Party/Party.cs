@@ -26,7 +26,7 @@ public class Party : ILogFiller, ISavable, IJobOwner, IBookmarkable {
     public bool startedTrueRestingState { get; private set; } //True resting state starts when party already has a campfire
     public bool isDisbanded { get; private set; }
     public bool hasChangedTargetDestination { get; private set; }
-    public int perHourElapsedInWaiting { get; private set; }
+    //public int perHourElapsedInWaiting { get; private set; }
     public BaseSettlement partySettlement { get; private set; }
     public Faction partyFaction { get; private set; }
     public LocationStructure meetingPlace { get; private set; }
@@ -128,7 +128,7 @@ public class Party : ILogFiller, ISavable, IJobOwner, IBookmarkable {
         isDisbanded = false;
         //hasRested = true;
         canAcceptQuests = true;
-        perHourElapsedInWaiting = 0;
+        //perHourElapsedInWaiting = 0;
         forcedCancelJobsOnTickEnded.Clear();
         jobBoard.Initialize();
         beaconComponent.Initialize();
@@ -161,7 +161,7 @@ public class Party : ILogFiller, ISavable, IJobOwner, IBookmarkable {
         isDisbanded = data.isDisbanded;
         //cannotProduceFoodThisRestPeriod = data.cannotProduceFoodThisRestPeriod;
         hasChangedTargetDestination = data.hasChangedTargetDestination;
-        perHourElapsedInWaiting = data.perHourElapsedInWaiting;
+        //perHourElapsedInWaiting = data.perHourElapsedInWaiting;
         waitingEndDate = data.waitingEndDate;
         //hasStartedAcceptingQuests = data.hasStartedAcceptingQuests;
         nextQuestCheckDate = data.nextQuestCheckDate;
@@ -469,7 +469,7 @@ public class Party : ILogFiller, ISavable, IJobOwner, IBookmarkable {
     private void OnSwitchFromWaitingState(PARTY_STATE prevState) {
     }
     private void StartWaitTimer() {
-        perHourElapsedInWaiting = 0;
+        //perHourElapsedInWaiting = 0;
         int ticksToWait = 1; //If Demon Party, only wait for 1 tick before moving because we assume that this party is premade already
         if (!isPlayerParty) {
             ticksToWait = GameManager.Instance.GetTicksBasedOnHour(2); //Waiting should be 2 hours only
@@ -479,12 +479,16 @@ public class Party : ILogFiller, ISavable, IJobOwner, IBookmarkable {
     }
     private void PerHourInWaitingState() {
         if (partyState == PARTY_STATE.Waiting) {
-            //Every hour after 2 hours, we must check if the members that joined is already enough so that the party will start the quest immediately, so we do not need to wait for the end of waiting period if the minimum party size of the quest is already met
-            perHourElapsedInWaiting++;
-            if (perHourElapsedInWaiting > 2) {
-                if (isActive && membersThatJoinedQuest.Count >= currentQuest.minimumPartySize) {
-                    WaitingEndedDecisionMaking();
-                }
+            ////Every hour after 2 hours, we must check if the members that joined is already enough so that the party will start the quest immediately, so we do not need to wait for the end of waiting period if the minimum party size of the quest is already met
+            //perHourElapsedInWaiting++;
+            //if (perHourElapsedInWaiting > 2) {
+            //    if (isActive && membersThatJoinedQuest.Count >= currentQuest.minimumPartySize) {
+            //        WaitingEndedDecisionMaking();
+            //    }
+            //}
+            //No more checking only after 2 hours because the waiting time is now reduced to 2 hours
+            if (isActive && membersThatJoinedQuest.Count >= currentQuest.minimumPartySize) {
+                WaitingEndedDecisionMaking();
             }
         }
     }
@@ -1390,7 +1394,7 @@ public class Party : ILogFiller, ISavable, IJobOwner, IBookmarkable {
         //cannotProduceFoodThisRestPeriod = false;
         hasChangedTargetDestination = false;
         canAcceptQuests = false;
-        perHourElapsedInWaiting = 0;
+        //perHourElapsedInWaiting = 0;
         bookmarkEventDispatcher.ClearAll();
         damageAccumulator?.Reset();
         members.Clear();
@@ -1439,7 +1443,7 @@ public class SaveDataParty : SaveData<Party>, ISavableCounterpart {
     public bool isDisbanded;
     //public bool cannotProduceFoodThisRestPeriod;
     public bool hasChangedTargetDestination;
-    public int perHourElapsedInWaiting;
+    //public int perHourElapsedInWaiting;
     public string partySettlement;
     public string partyFaction;
     public string meetingPlace;
@@ -1490,7 +1494,7 @@ public class SaveDataParty : SaveData<Party>, ISavableCounterpart {
         isDisbanded = data.isDisbanded;
         //cannotProduceFoodThisRestPeriod = data.cannotProduceFoodThisRestPeriod;
         hasChangedTargetDestination = data.hasChangedTargetDestination;
-        perHourElapsedInWaiting = data.perHourElapsedInWaiting;
+        //perHourElapsedInWaiting = data.perHourElapsedInWaiting;
         if(data.partySettlement == null) {
 #if UNITY_EDITOR
             string log = "Saving Party Error, No Party Settlement!";

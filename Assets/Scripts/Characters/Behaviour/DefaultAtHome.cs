@@ -6,7 +6,7 @@ using UtilityScripts;
 
 public class DefaultAtHome : CharacterBehaviourComponent {
     public DefaultAtHome() {
-        priority = 8;
+        priority = 10;
         //attributes = new[] { BEHAVIOUR_COMPONENT_ATTRIBUTE.WITHIN_HOME_SETTLEMENT_ONLY };
     }
     public override bool TryDoBehaviour(Character character, ref string log, out JobQueueItem producedJob) {

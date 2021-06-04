@@ -109,8 +109,11 @@ public class ReleaseCharacter : GoapAction {
                 goapNode.actor.partyComponent.currentParty.currentQuest.EndQuest("Finished quest");
 
                 //if target is paralyzed carry back home
-                if (!target.IsPOICurrentlyTargetedByAPerformingAction(JOB_TYPE.MOVE_CHARACTER)) {
-                    goapNode.actor.jobComponent.TryTriggerMoveCharacter(target);
+                if (target.traitContainer.HasTrait("Paralyzed")) {
+                    //if target is paralyzed carry back home
+                    if (!target.IsPOICurrentlyTargetedByAPerformingAction(JOB_TYPE.MOVE_CHARACTER)) {
+                        goapNode.actor.jobComponent.TryTriggerMoveCharacter(target);
+                    }
                 }
             }
         }

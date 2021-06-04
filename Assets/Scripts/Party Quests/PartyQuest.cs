@@ -105,8 +105,9 @@ public class PartyQuest : ISavable {
             if (assignedParty != null && assignedParty.membersThatJoinedQuest.Contains(character)) {
                 if (GameUtilities.RollChance(assignedParty.chanceToRetreatUponKnockoutOrDeath)) {
                     EndQuest(character.name + " is incapacitated");
+                } else {
+                    assignedParty.SetChanceToRetreatUponKnockoutOrDeath(100);
                 }
-                assignedParty.SetChanceToRetreatUponKnockoutOrDeath(100);
             }
         }
     }

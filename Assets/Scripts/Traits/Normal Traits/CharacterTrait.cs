@@ -252,7 +252,15 @@ namespace Traits {
                                     } else {
                                         //rescueParty.SetIsSuccessful(true);
                                         rescueParty.SetIsReleasing(false);
-                                        rescueParty.EndQuest("Saw target is safe");
+                                        rescueParty.EndQuest("Target is safe");
+
+                                        //if target is paralyzed carry back home
+                                        if (targetCharacter.traitContainer.HasTrait("Paralyzed")) {
+                                            if (!targetCharacter.IsPOICurrentlyTargetedByAPerformingAction(JOB_TYPE.MOVE_CHARACTER)) {
+                                                //Do not set this as a party job
+                                                owner.jobComponent.TryTriggerMoveCharacter(targetCharacter, false);
+                                            }
+                                        }
                                     }
                                 } else {
                                     rescueParty.SetIsReleasing(false);
