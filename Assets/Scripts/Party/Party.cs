@@ -146,7 +146,9 @@ public class Party : ILogFiller, ISavable, IJobOwner, IBookmarkable {
         Messenger.AddListener<JobQueueItem, JobBoard>(JobSignals.JOB_REMOVED_FROM_JOB_BOARD, OnJobRemovedFromJobBoard);
         DatabaseManager.Instance.partyDatabase.AddParty(this);
 
-        InitialScheduleToCheckQuest();
+        if (!isPlayerParty) {
+            InitialScheduleToCheckQuest();
+        }
     }
 
     public void Initialize(SaveDataParty data) { //In order to create a party, there must always be a party creator
