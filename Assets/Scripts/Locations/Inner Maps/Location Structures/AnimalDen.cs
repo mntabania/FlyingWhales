@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Linq;
+using UnityEngine;
 namespace Inner_Maps.Location_Structures {
     public abstract class AnimalDen : NaturalStructure {
         
@@ -31,7 +32,7 @@ namespace Inner_Maps.Location_Structures {
         public override void ShowSelectorOnStructure() {
             Selector.Instance.Select(this);
         }
-        
+
         #region Structure Object
         public virtual void SetStructureObject(LocationStructureObject structureObj) {
             this.structureObj = structureObj;

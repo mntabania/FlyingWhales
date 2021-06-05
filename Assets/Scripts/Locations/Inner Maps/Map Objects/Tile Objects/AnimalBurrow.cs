@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
 using UnityEngine;
@@ -144,6 +145,7 @@ public abstract class AnimalBurrow : TileObject {
     public override string GetAdditionalTestingData() {
         string data = base.GetAdditionalTestingData();
         data = $"{data}\n\tSpawned Monsters: {spawnedMonsters.ComafyList()}";
+        // data = $"{data}\nTiles({gridTileLocation.structure.tiles.Count.ToString()}): {gridTileLocation.structure.tiles.ToList().ComafyList()}";
         return data;
     }
     #endregion
