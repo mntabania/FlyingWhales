@@ -197,6 +197,7 @@ namespace Inner_Maps.Location_Structures {
             if (hexTile != null) {
                 hexTile.CheckIfSettlementIsStillOnArea();
             }
+            SetAssignedWorker(null);
         }
         #endregion
 
@@ -219,9 +220,9 @@ namespace Inner_Maps.Location_Structures {
 
         #region Worker
         public void SetAssignedWorker(Character p_assignedWorker) {
-            if (p_assignedWorker.persistentID != assignedWorkerID) {
-                Character prevWorker = assignedWorker;
-                assignedWorkerID = p_assignedWorker.persistentID;
+            Character prevWorker = assignedWorker;
+            if (p_assignedWorker != prevWorker) {
+                assignedWorkerID = p_assignedWorker != null ? p_assignedWorker.persistentID : string.Empty;
                 Character newWorker = assignedWorker;
                 if (prevWorker != null) {
                     prevWorker.structureComponent.SetWorkPlaceStructure(null);
