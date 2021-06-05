@@ -22,7 +22,8 @@ public class HerbPlant : TileObject{
             }
             gridTileLocation.area.neighbourComponent.neighbours.ForEach((eachNeighbor) => {
                 if (eachNeighbor.settlementOnArea != null) {
-                    eachNeighbor.settlementOnArea.SettlementResources?.AddToListBasedOnRequirement(SettlementResources.StructureRequirement.HERB_PLANT, this);
+                    //UnityEngine.Debug.LogError(gridTileLocation.area.settlementOnArea + " Added herb count B");
+                    //eachNeighbor.settlementOnArea.SettlementResources?.AddToListBasedOnRequirement(SettlementResources.StructureRequirement.HERB_PLANT, this);
                     parentSettlement = eachNeighbor.settlementOnArea;
                 }
             });
