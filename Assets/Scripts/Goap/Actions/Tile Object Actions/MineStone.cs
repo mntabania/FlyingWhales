@@ -76,7 +76,7 @@ public class MineStone : GoapAction {
     }
 
     public void ProduceLogs(ActualGoapNode p_node) {
-        string addOnText = (p_node.currentStateDuration * m_amountProducedPerTick).ToString() + " stones";
+        string addOnText = (p_node.currentStateDuration * m_amountProducedPerTick).ToString();
         Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "GoapAction", name, "produced_resources", p_node, LOG_TAG.Work);
         log.AddToFillers(p_node.actor, p_node.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         log.AddToFillers(null, addOnText, LOG_IDENTIFIER.STRING_1);
