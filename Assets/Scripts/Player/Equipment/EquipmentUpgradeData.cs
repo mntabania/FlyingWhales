@@ -97,6 +97,19 @@ public class EquipmentUpgradeData {
         return processedInt;
     }
 
+    public float GetProcessedAdditionalIntPercentage(EQUIPMENT_QUALITY p_quality) {
+        float processedInt = AdditionalIntPercentage;
+        switch (p_quality) {
+            case EQUIPMENT_QUALITY.High:
+            processedInt += (int)(processedInt * .25f);
+            break;
+            case EQUIPMENT_QUALITY.Premium:
+            processedInt += (int)(processedInt * .5f);
+            break;
+        }
+        return processedInt;
+    }
+
     public int GetProcessedAdditionalCritRate(EQUIPMENT_QUALITY p_quality) {
         int processedCritRate = AdditionalCritRate;
         switch (p_quality) {
@@ -166,12 +179,12 @@ public class EquipmentUpgradeData {
         }
         if (bonuses.Contains(EQUIPMENT_BONUS.Int_Actual)) {
             if (AdditionalIntActual > 0) {
-                descripton += ("Additional int(Actual): " + GetProcessedAdditionalResistanceBonus(p_quality) + "\n");
+                descripton += ("Additional int(Actual): " + GetProcessedAdditionalInt(p_quality) + "\n");
             }
         }
         if (bonuses.Contains(EQUIPMENT_BONUS.Int_Percentage)) {
             if (AdditionalIntPercentage > 0) {
-                descripton += ("Additional Int(%): " + GetProcessedAdditionalInt(p_quality) + "\n");
+                descripton += ("Additional Int(%): " + GetProcessedAdditionalIntPercentage(p_quality) + "\n");
             }
         }
         if (bonuses.Contains(EQUIPMENT_BONUS.Attack_Element)) {
