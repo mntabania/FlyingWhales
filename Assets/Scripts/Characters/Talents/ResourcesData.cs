@@ -6,6 +6,13 @@ namespace Character_Talents {
     public class ResourcesData : CharacterTalentData {
         public ResourcesData() : base(CHARACTER_TALENT.Resources) {
             description = $"Determines how quick they perform resource gathering tasks and how much quantity they obtain per action.";
+            addOnBonusSetDisplay = new List<string>(new string[] {
+                "Can chop for Wood at a Lumberyard.\nCan mine for Stone at a Mine.",
+                "Can chop for Wood at a Lumberyard.\nCan mine for Stone at a Mine.\nCan produce Cloth and Leather at a Skinner's Lodge.",
+                "Can chop for Wood at a Lumberyard.\nCan mine for Stone at a Mine.\nCan produce Cloth and Leather at a Skinner's Lodge.",
+                "Can chop for Wood at a Lumberyard.\nCan mine for Stone and Metals at a Mine.\nCan produce Cloth and Leather at a Skinner's Lodge.",
+                "Can chop for Wood at a Lumberyard.\nCan mine for Stone and Metals at a Mine.\nCan produce Cloth and Leather at a Skinner's Lodge.",
+            });
         }
 
         #region Levels

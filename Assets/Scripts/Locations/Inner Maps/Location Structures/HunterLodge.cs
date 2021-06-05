@@ -3,6 +3,8 @@ using UtilityScripts;
 namespace Inner_Maps.Location_Structures {
     public class HunterLodge : ManMadeStructure {
         public HunterLodge(Region location) : base(STRUCTURE_TYPE.HUNTER_LODGE, location) {
+            nameWithoutID = "Skinner's Lodge";
+            name = $"{nameWithoutID} {id.ToString()}";
             SetMaxHPAndReset(8000);
         }
         public HunterLodge(Region location, SaveDataManMadeStructure data) : base(location, data) {
@@ -91,7 +93,7 @@ namespace Inner_Maps.Location_Structures {
             } else {
                 p_worker.homeSettlement.SettlementResources.PopulateAllAnimalsThatAreShearable(targetAnimals);
             }
-            Character randomTarget = targetAnimals[GameUtilities.RandomBetweenTwoNumbers(0, targetAnimals.Count - 1)];
+            Character randomTarget = CollectionUtilities.GetRandomElement(targetAnimals);
             RuinarchListPool<Character>.Release(targetAnimals);
             if (randomTarget != null) {
                 if (randomTarget is Animal) {

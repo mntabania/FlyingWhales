@@ -6,6 +6,13 @@ namespace Character_Talents {
     public class CombatMagicData : CharacterTalentData {
         public CombatMagicData() : base(CHARACTER_TALENT.Combat_Magic) {
             description = $"Mastery of destructive magic used in combat.";
+            addOnBonusSetDisplay = new List<string>(new string[] {
+                "Unlocks the Druid Class.",
+                "Unlocks the Druid Class.\nInt: +15%\nCrit: +10%",
+                "Unlocks the Druid and Shaman Classes.\nInt: +15%\nCrit: +10%",
+                "Unlocks the Druid and Shaman Classes.\nInt: +30\nCrit: +10%",
+                "Unlocks the Druid, Shaman and Mage Classes.\nInt: +30\nCrit: +10%",
+            });
         }
 
         #region Levels

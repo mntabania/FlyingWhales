@@ -6,6 +6,13 @@ namespace Character_Talents {
     public class HealingMagicData : CharacterTalentData {
         public HealingMagicData() : base(CHARACTER_TALENT.Healing_Magic) {
             description = $"Mastery of restorative magic to cure physical and magical afflictions.";
+            addOnBonusSetDisplay = new List<string>(new string[] {
+                "No healing abilities.",
+                "Can work at the Hospice and heal Injuries.\nCan cast Basic Heal in combat.",
+                "Can work at the Hospice and heal Injuries and Plague.\nCan cast Expert Heal in combat.",
+                "Can work at the Hospice and heal Injuries and Plague.\nCan cast Max Heal in combat.",
+                "Can work at the Hospice and heal Injuries and Plague.\nCan cast Group Heal in combat.",
+            });
         }
 
         #region Levels

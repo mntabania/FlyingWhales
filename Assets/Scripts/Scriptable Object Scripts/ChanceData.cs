@@ -20,7 +20,7 @@ public static class ChanceData {
         {CHANCE_TYPE.Flirt_Friend_Become_Affair_Chance, 50},
         {CHANCE_TYPE.Flirt_On_Sight_Base_Chance, 1},
         {CHANCE_TYPE.Vampire_Lord_Chance, 10},
-        {CHANCE_TYPE.Host_Social_Party, 10},
+        {CHANCE_TYPE.Host_Social_Party, 5},
         {CHANCE_TYPE.Demonic_Decor_On_Corrupt, 15},
         {CHANCE_TYPE.Retaliation_Character_Death, 35},
         {CHANCE_TYPE.Retaliation_Structure_Destroy, 30},

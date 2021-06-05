@@ -6,6 +6,13 @@ namespace Character_Talents {
     public class FoodData : CharacterTalentData {
         public FoodData() : base(CHARACTER_TALENT.Food) {
             description = $"Determines how quick they perform food producing tasks and how much quantity they obtain per action.";
+            addOnBonusSetDisplay = new List<string>(new string[] {
+                "Can harvest crops at a Farm.",
+                "Can harvest crops at a Farm.\nCan fish at a Fishery.",
+                "Can harvest crops at a Farm.\nCan fish at a Fishery.",
+                "Can harvest crops at a Farm.\nCan fish at a Fishery.\nCan butcher for meat at a Butcher's Shop.",
+                "Can harvest crops at a Farm.\nCan fish at a Fishery.\nCan butcher for meat at a Butcher's Shop.",
+            });
         }
 
         #region Levels

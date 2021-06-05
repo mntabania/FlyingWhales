@@ -310,6 +310,10 @@ public class LocationStructureObject : PooledObject, ISelectable {
                 //     }
                 //     
                 // }
+                if (!GameManager.Instance.gameHasStarted) {
+                    MapGenerationData mapGenerationData = WorldConfigManager.Instance.mapGenerationData;
+                    if (mapGenerationData != null) { mapGenerationData.SetGeneratedMapPerlinDetails(diffTile, TILE_OBJECT_TYPE.NONE); }
+                }
                 diffTile.parentMap.detailsTilemap.SetTile(diffTile.localPlace, null);
 
                 GridNeighbourDirection dir;

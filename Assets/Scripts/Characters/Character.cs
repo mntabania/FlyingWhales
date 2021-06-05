@@ -125,10 +125,13 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public EquipmentComponent equipmentComponent { get; private set; }
     public CharacterMoneyComponent moneyComponent { get; private set; }
     public ResourceStorageComponent resourceStorageComponent { get; private set; }
+    public DailyScheduleComponent dailyScheduleComponent { get; private set; }
 
     //IMPORTANT: This component is not applicable to all characters, only VILLAGERS! So, this can be null if the character is NOT A VILLAGER.
     public CharacterTalentComponent talentComponent { get; private set; }
-    public DailyScheduleComponent dailyScheduleComponent { get; private set; }
+    //IMPORTANT: This component is not applicable to all characters, only VILLAGERS! So, this can be null if the character is NOT A VILLAGER.
+    public VillagerWantsComponent villagerWantsComponent { get; private set; }
+    
 
     #region getters / setters
     public string bookmarkName => lycanData != null ? lycanData.activeForm.visuals.GetCharacterNameWithIconAndColor() : visuals.GetCharacterNameWithIconAndColor();
@@ -171,6 +174,14 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public bool isNotSummonAndDemon => (this is Summon) == false && minion == null;
     public bool isNotSummonAndDemonAndZombie => (this is Summon) == false && minion == null && characterClass.IsZombie();
     public bool isConsideredRatman => faction?.factionType.type == FACTION_TYPE.Ratmen && race == RACE.RATMAN;
+    public bool isMonsterOrRatmanOrUndead {
+        get {
+            if (faction != null) {
+                return (race == RACE.RATMAN || this is Summon || faction.factionType.type == FACTION_TYPE.Undead) && faction.factionType.type != FACTION_TYPE.Demons && !faction.isMajorFaction;
+            }
+            return false;
+        }
+    }
     public bool canBeTargetedByLandActions => !movementComponent.isFlying && !reactionComponent.isHidden && !traitContainer.HasTrait("Disabler", "DeMooder");
 
     public int maxHP => combatComponent.maxHP;
@@ -338,7 +349,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         bookmarkEventDispatcher = new BookmarkableEventDispatcher();
         //buffStatsBonus = new BuffStatsBonus();
         equipmentComponent = new EquipmentComponent();
-        needsComponent.ResetSleepTicks();
+        // needsComponent.ResetSleepTicks();
         resourceStorageComponent = new ResourceStorageComponent();
         dailyScheduleComponent = new DailyScheduleComponent(); dailyScheduleComponent.SetOwner(this);
     }
@@ -424,6 +435,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         if (data.talentComponent != null) {
             talentComponent = data.talentComponent.Load(); talentComponent.SetOwner(this);
         }
+        if (data.villagerWantsComponent != null) {
+            villagerWantsComponent = data.villagerWantsComponent.Load(); villagerWantsComponent.SetOwner(this);
+        }
 
         //buffStatsBonus = data.buffStatusBonus.Load();
         eventDispatcher = new CharacterEventDispatcher();
@@ -458,6 +472,11 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             //Demons and Summons/Monsters can't have talents
             talentComponent = new CharacterTalentComponent(); talentComponent.SetOwner(this);
             talentComponent.ConstructAllTalents();
+            talentComponent.RandomizeInitialTalents(this);
+        }
+        if (race.IsSapient()) {
+            villagerWantsComponent = new VillagerWantsComponent(); villagerWantsComponent.SetOwner(this);
+            villagerWantsComponent.Initialize(this);
         }
     }
     public void InitialCharacterPlacement(LocationGridTile tile) {
@@ -1341,6 +1360,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         if (_faction != null) {
             bookmarkEventDispatcher.ExecuteBookmarkChangedNameOrElementsEvent(this); //since characters can change name icons based on faction
             Messenger.Broadcast(FactionSignals.FACTION_SET, this);
+            eventDispatcher.ExecuteJoinedFaction(this, _faction);
         }
         return true;
     }
@@ -2889,6 +2909,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 tileObjectComponent.SetPrimaryBed(p_homeStructure.GetRandomTileObjectOfTypeThatHasTileLocationAndIsBuilt<Bed>());
             }
         }
+        eventDispatcher.ExecuteCharacterSetHomeStructure(this, p_homeStructure);
     }
     public bool MigrateHomeTo(BaseSettlement newHomeSettlement, LocationStructure homeStructure = null, bool broadcast = true, bool addToRegionResidents = true) {
         BaseSettlement previousHome = null;
@@ -3030,9 +3051,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             //affect settlement if home settlement structures have been reduced to 0
             bool affectSettlement = homeSettlement != null && homeSettlement.structures.Count == 0;
             MigrateHomeStructureTo(null, affectSettlement: affectSettlement);
-            interruptComponent.TriggerInterrupt(INTERRUPT.Set_Home, null);
-            //MigrateHomeTo(null);
-            //interruptComponent.TriggerInterrupt(INTERRUPT.Set_Home, null);
+            //removed this because we expect that villagers should purchase their dwellings. See FreeTimeBehaviour
+            // interruptComponent.TriggerInterrupt(INTERRUPT.Set_Home, null); 
         }
     }
     /// <summary>
@@ -3358,11 +3378,12 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         Profiler.BeginSample($"{name} On Hour Started");
 #endif
         ProcessTraitsOnHourStarted();
-        if (needsComponent.HasNeeds()) {
-            needsComponent.PlanScheduledFullnessRecovery();
-            needsComponent.PlanScheduledTirednessRecovery();
-            needsComponent.PlanScheduledSecondHappinessRecovery();
-        }
+        dailyScheduleComponent.OnHourStarted(this);
+        // if (needsComponent.HasNeeds()) {
+            // needsComponent.PlanScheduledFullnessRecovery();
+            // needsComponent.PlanScheduledTirednessRecovery();
+            // needsComponent.PlanScheduledSecondHappinessRecovery();
+        // }
 #if DEBUG_PROFILER
         Profiler.EndSample();
 #endif
@@ -3834,6 +3855,20 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
         return false;
     }
+    /// <summary>
+    /// Function to use if an equip will be replaced by another equipment.
+    /// NOTE: This will not call unequipped signals.
+    /// </summary>
+    /// <param name="item">The equipment to replace</param>
+    /// <returns></returns>
+    public bool UnobtainItemForEquipmentReplacement(EquipmentItem item) {
+        if (RemoveItem(item)) {
+            RemoveBonusForUnobtainedEquipment(item, true);
+            item.SetInventoryOwner(null);
+            return true;
+        }
+        return false;
+    }
     public bool UnobtainItem(TILE_OBJECT_TYPE itemType) {
         TileObject removedItem = RemoveItem(itemType);
         if (removedItem != null) {
@@ -3853,10 +3888,19 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         return false;
     }
 
-    void RemoveBonusForUnobtainedEquipment(TileObject p_tileObject) {
+    void RemoveBonusForUnobtainedEquipment(TileObject p_tileObject, bool willReplaceEquipment = false) {
         if (p_tileObject is EquipmentItem equipItem) {
             equipItem.SetInventoryOwner(null);
             equipmentComponent.RemoveEquipment(equipItem, this);
+            if (!willReplaceEquipment) {
+                if (equipItem is WeaponItem) {
+                    eventDispatcher.ExecuteWeaponUnequipped(this, equipItem);
+                } else if (equipItem is ArmorItem) {
+                    eventDispatcher.ExecuteArmorUnequipped(this, equipItem);
+                } else if (equipItem is AccessoryItem) {
+                    eventDispatcher.ExecuteAccessoryUnequipped(this, equipItem);
+                }
+            }
         }
     }
     //public bool ConsumeToken(SpecialToken token) {
@@ -3872,6 +3916,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 equipmentInventory.Add(item);
                 //item.OnTileObjectAddedToInventoryOf(this);
                 Messenger.Broadcast(CharacterSignals.CHARACTER_OBTAINED_ITEM, item, this);
+                eventDispatcher.ExecuteItemObtained(this, item);
                 return true;
             }
         } else {
@@ -3879,6 +3924,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 items.Add(item);
                 //item.OnTileObjectAddedToInventoryOf(this);
                 Messenger.Broadcast(CharacterSignals.CHARACTER_OBTAINED_ITEM, item, this);
+                eventDispatcher.ExecuteItemObtained(this, item);
                 return true;
             }
         }
@@ -3889,11 +3935,13 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         if (item is EquipmentItem) {
             if (equipmentInventory.Remove(item)) {
                 Messenger.Broadcast(CharacterSignals.CHARACTER_LOST_ITEM, item, this);
+                eventDispatcher.ExecuteItemLost(this, item);
                 return true;
             }
         } else {
             if (items.Remove(item)) {
                 Messenger.Broadcast(CharacterSignals.CHARACTER_LOST_ITEM, item, this);
+                eventDispatcher.ExecuteItemLost(this, item);
                 return true;
             }
         }
@@ -3929,6 +3977,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         if (item != null) {
             items.RemoveAt(index);
             Messenger.Broadcast(CharacterSignals.CHARACTER_LOST_ITEM, item, this);
+            eventDispatcher.ExecuteItemLost(this, item);
             return true;
         }
         return false;
@@ -4067,11 +4116,41 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
         return null;
     }
+    public T GetItem<T>() where T : TileObject {
+        for (int i = 0; i < items.Count; i++) {
+            if (items[i] is T converted) {
+                return converted;
+            }
+        }
+        return null;
+    }
+    public void PopulateItemsOfType<T>(List<T> p_list) where T : TileObject {
+        for (int i = 0; i < items.Count; i++) {
+            if (items[i] is T converted) {
+                p_list.Add(converted);
+            }
+        }
+    }
     public TileObject GetRandomItem() {
         if(items.Count > 0) {
             return items[UnityEngine.Random.Range(0, items.Count)];
         }
         return null;
+    }
+    public TileObject GetRandomItemThatIsNotOfType(TILE_OBJECT_TYPE p_type) {
+        List<TileObject> choices = RuinarchListPool<TileObject>.Claim();
+        for (int i = 0; i < items.Count; i++) {
+            TileObject item = items[i];
+            if (item.tileObjectType != p_type) {
+                choices.Add(item);
+            }
+        }
+        TileObject chosen = null;
+        if (choices.Count > 0) {
+            chosen = CollectionUtilities.GetRandomElement(choices);
+        }
+        RuinarchListPool<TileObject>.Release(choices);
+        return chosen;
     }
     public bool HasItem(TileObject item) {
         return GetItem(item) != null;
@@ -4082,8 +4161,19 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public bool HasItem(string itemName) {
         return GetItem(itemName) != null;
     }
+    public bool HasItem<T>() where T: TileObject{
+        return GetItem<T>() != null;
+    }
     public bool HasItem() {
         return items.Count > 0;
+    }
+    public bool HasItemOtherThan(TILE_OBJECT_TYPE p_type) {
+        for (int i = 0; i < items.Count; i++) {
+            if (items[i].tileObjectType != p_type) {
+                return true;
+            }
+        }
+        return false;
     }
     public int GetItemCount(string name) {
         int count = 0;
@@ -4323,6 +4413,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             AddAdvertisedAction(INTERACTION_TYPE.PICKPOCKET);
             AddAdvertisedAction(INTERACTION_TYPE.STEAL_COINS);
             AddAdvertisedAction(INTERACTION_TYPE.CHANGE_CLASS);
+            AddAdvertisedAction(INTERACTION_TYPE.STOCKPILE_FOOD);
 
             //NOTE: Removed the creation of healing potion, etc. on the fly because it conflicts with the current crafting of objects
             //It is confusing to have a crafting then another one the creates them in the inventory without any crafting
@@ -5787,24 +5878,15 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 marker.PlaceMarkerAt(tombstone.previousTile);
             }
             traitContainer.RemoveTrait(this, "Dead");
-            //for (int i = 0; i < traitContainer.traits.Count; i++) {
-            //    traitContainer.traits[i].OnReturnToLife(this);
-            //}
-            //RemoveAllNonPersistentTraits();
-            //ClearAllAwareness();
-            //NPCSettlement gloomhollow = LandmarkManager.Instance.GetAreaByName("Gloomhollow");
-            //ChangeHomeStructure(null);
-            needsComponent.SetTirednessForcedTick();
-            needsComponent.SetFullnessForcedTick();
-            needsComponent.SetHappinessForcedTick();
-            needsComponent.SetHasCancelledSleepSchedule(false);
-            needsComponent.ResetSleepTicks();
+            // needsComponent.SetTirednessForcedTick();
+            // needsComponent.SetFullnessForcedTick();
+            // needsComponent.SetHappinessForcedTick();
+            // needsComponent.SetHasCancelledSleepSchedule(false);
+            // needsComponent.ResetSleepTicks();
             visuals.UpdateAllVisuals(this);
             ConstructDefaultActions();
             Messenger.Broadcast(CharacterSignals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, this as IPointOfInterest, "");
             Messenger.Broadcast(CharacterSignals.FORCE_CANCEL_ALL_ACTIONS_TARGETING_POI, this as IPointOfInterest, "");
-            //MigrateHomeTo(null);
-            //AddInitialAwareness(gloomhollow);
             Messenger.Broadcast(CharacterSignals.CHARACTER_RETURNED_TO_LIFE, this);
             return true;
         }
@@ -6375,6 +6457,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         previousCharacterDataComponent.LoadReferences(data.previousCharacterDataComponent);
         traitComponent.LoadReferences(data.traitComponent);
         dailyScheduleComponent.LoadReferences(data.dailyScheduleComponent);
+        villagerWantsComponent?.LoadReferences(data.villagerWantsComponent, this);
         //Place marker after loading references
         if (data.hasMarker) {
             if (!marker) {

@@ -247,12 +247,12 @@ public class Sleep : GoapAction {
     public void PerTickRestSuccess(ActualGoapNode goapNode) {
         Character actor = goapNode.actor;
         CharacterNeedsComponent needsComponent = actor.needsComponent;
-        if (needsComponent.currentSleepTicks == 1) { //If sleep ticks is down to 1 tick left, set current duration to end duration so that the action will end now, we need this because the character must only sleep the remaining hours of his sleep if ever that character is interrupted while sleeping
-            goapNode.OverrideCurrentStateDuration(goapNode.currentState.duration);
-        }
+        // if (needsComponent.currentSleepTicks == 1) { //If sleep ticks is down to 1 tick left, set current duration to end duration so that the action will end now, we need this because the character must only sleep the remaining hours of his sleep if ever that character is interrupted while sleeping
+        //     goapNode.OverrideCurrentStateDuration(goapNode.currentState.duration);
+        // }
         needsComponent.AdjustTiredness(0.417f);
         needsComponent.AdjustHappiness(0.083f);
-        needsComponent.AdjustSleepTicks(-1);
+        // needsComponent.AdjustSleepTicks(-1);
 
         //float staminaAdjustment = 0f;
         //if(actor.currentStructure == actor.homeStructure) {

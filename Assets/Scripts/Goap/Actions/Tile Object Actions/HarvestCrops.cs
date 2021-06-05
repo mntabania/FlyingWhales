@@ -11,7 +11,7 @@ public class HarvestCrops : GoapAction {
     public int m_amountProducedPerTick = 1;
 
     public HarvestCrops() : base(INTERACTION_TYPE.HARVEST_CROPS) {
-        actionIconString = GoapActionStateDB.Mine_Icon;
+        actionIconString = GoapActionStateDB.Harvest_Icon;
         //advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
         racesThatCanDoAction = new RACE[] { RACE.ELVES, RACE.HUMANS, RACE.RATMAN, };
         logTags = new[] { LOG_TAG.Work };
@@ -63,7 +63,7 @@ public class HarvestCrops : GoapAction {
         FoodPile matsToHaul = InnerMapManager.Instance.CreateNewTileObject<FoodPile>(crop.producedObjectOnHarvest);
         matsToHaul.SetResourceInPile(p_node.currentStateDuration * m_amountProducedPerTick);
         tileToSpawnItem.structure.AddPOI(matsToHaul, tileToSpawnItem);
-        p_node.actor.homeSettlement.settlementJobTriggerComponent.TryCreateHaulJob(matsToHaul);
+        // p_node.actor.homeSettlement.settlementJobTriggerComponent.TryCreateHaulJob(matsToHaul);
 
         return matsToHaul;
     }

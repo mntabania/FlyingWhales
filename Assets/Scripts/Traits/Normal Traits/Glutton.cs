@@ -27,7 +27,7 @@ namespace Traits {
                     SubscribeToAfflictionSignals();
                 }
                 additionalFullnessDecreaseRate = GetHungerDecreaseRate(character);
-                character.needsComponent.SetFullnessForcedTick(0);
+                // character.needsComponent.SetFullnessForcedTick(0);
                 character.needsComponent.AdjustFullnessDecreaseRate(additionalFullnessDecreaseRate);
                 character.behaviourComponent.AddBehaviourComponent(typeof(GluttonBehaviour));
             }
@@ -53,7 +53,7 @@ namespace Traits {
             if (removedFrom is Character character) {
                 UnsubscribeToAfflictionSignals();
                 character.traitComponent.UnsubscribeToGluttonLevelUpSignal();
-                character.needsComponent.SetFullnessForcedTick();
+                // character.needsComponent.SetFullnessForcedTick();
                 character.needsComponent.AdjustFullnessDecreaseRate(-additionalFullnessDecreaseRate);
                 character.behaviourComponent.RemoveBehaviourComponent(typeof(GluttonBehaviour));
             }

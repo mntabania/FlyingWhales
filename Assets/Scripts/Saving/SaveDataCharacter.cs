@@ -117,6 +117,7 @@ public class SaveDataCharacter : SaveData<Character>, ISavableCounterpart {
     //public SaveDataEquipmentComponent equipmentComponent;
     #region getters
     public OBJECT_TYPE objectType => OBJECT_TYPE.Character;
+    public SaveDataVillagerWantsComponent villagerWantsComponent { get; set; }
     #endregion
 
     public override void Save(Character data) {
@@ -197,6 +198,9 @@ public class SaveDataCharacter : SaveData<Character>, ISavableCounterpart {
 
         if (data.talentComponent != null) {
             talentComponent = new SaveDataCharacterTalentComponent(); talentComponent.Save(data.talentComponent);
+        }
+        if (data.villagerWantsComponent != null) {
+            villagerWantsComponent = new SaveDataVillagerWantsComponent(); villagerWantsComponent.Save(data.villagerWantsComponent);
         }
         //equipmentComponent = new SaveDataEquipmentComponent(); equipmentComponent.Save(data.equipmentComponent);
 

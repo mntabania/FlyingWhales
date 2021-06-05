@@ -4,10 +4,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using Traits;
 using Inner_Maps;
+using UnityEngine.Assertions;
 
-public class CraftWeapon : GoapAction {
+public class GatherHerb : GoapAction {
 
-    public CraftWeapon() : base(INTERACTION_TYPE.CRAFT_WEAPON) {
+    public int m_amountProducedPerTick = 1;
+
+    public GatherHerb() : base(INTERACTION_TYPE.GATHER_HERB) {
         actionIconString = GoapActionStateDB.Chop_Icon;
         //advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
         racesThatCanDoAction = new RACE[] { RACE.ELVES, RACE.HUMANS, RACE.RATMAN, };
@@ -21,7 +24,7 @@ public class CraftWeapon : GoapAction {
     //}
     public override void Perform(ActualGoapNode goapNode) {
         base.Perform(goapNode);
-        SetState("Craft Weapon Success", goapNode);
+        SetState("Gather Herb Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
 #if DEBUG_LOG
@@ -42,37 +45,34 @@ public class CraftWeapon : GoapAction {
     public override void OnStopWhilePerforming(ActualGoapNode node) {
         base.OnStopWhilePerforming(node);
         if (node.currentStateDuration > 0) {
-            ProduceMatsPile(node);
+            ProduceHerbPlant(node);
         }
     }
     #endregion
 
     #region State Effects
-    public void AfterChopWoodSuccess(ActualGoapNode p_node) {
-        p_node.actor.homeSettlement.settlementJobTriggerComponent.TryCreateHaulJob(ProduceMatsPile(p_node));
+    public void AfterGatherHerbSuccess(ActualGoapNode p_node) {
+        p_node.actor.jobComponent.TryCreateHaulJobItem(ProduceHerbPlant(p_node));
     }
     #endregion
 
-    ResourcePile ProduceMatsPile(ActualGoapNode p_node) {
-        LocationGridTile tileToSpawnPile = p_node.actor.gridTileLocation;
-        if (tileToSpawnPile != null && tileToSpawnPile.tileObjectComponent.objHere != null) {
-            tileToSpawnPile = p_node.actor.gridTileLocation.GetFirstNearestTileFromThisWithNoObject();
+    HerbPlant ProduceHerbPlant(ActualGoapNode p_node) {
+        HerbPlant herbPlant = p_node.target as HerbPlant;
+        Assert.IsNotNull(herbPlant);
+        if (herbPlant.gridTileLocation != null) {
+            herbPlant.gridTileLocation.structure.RemovePOI(herbPlant);
         }
-        WoodPile matsToHaul = InnerMapManager.Instance.CreateNewTileObject<WoodPile>(TILE_OBJECT_TYPE.WOOD_PILE);
-        matsToHaul.SetResourceInPile(1);
-        tileToSpawnPile.structure.AddPOI(matsToHaul, tileToSpawnPile);
-        ProduceLogs(p_node);
-        (p_node.target as TileObject).DestroyMapVisualGameObject();
-        (p_node.target as TileObject).DestroyPermanently();
 
-        return matsToHaul;
+        p_node.actor.ObtainItem(herbPlant);
+
+        return herbPlant;
     }
 
     public void ProduceLogs(ActualGoapNode p_node) {
-        //string addOnText = (p_node.currentStateDuration * m_amountProducedPerTick).ToString() + " stones";
+        string addOnText = (p_node.currentStateDuration * m_amountProducedPerTick).ToString() + " wood pile";
         Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "GoapAction", name, "produced_resources", p_node, LOG_TAG.Work);
         log.AddToFillers(p_node.actor, p_node.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-        log.AddToFillers(null, "", LOG_IDENTIFIER.STRING_1);
+        log.AddToFillers(null, addOnText, LOG_IDENTIFIER.STRING_1);
         p_node.LogAction(log);
     }
 }

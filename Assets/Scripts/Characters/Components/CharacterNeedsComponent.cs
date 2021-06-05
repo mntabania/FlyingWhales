@@ -42,10 +42,10 @@ public class CharacterNeedsComponent : CharacterComponent {
     //Tiredness
     public float tiredness { get; private set; }
     public float tirednessDecreaseRate { get; private set; }
-    public int tirednessForcedTick { get; private set; }
-    public int currentSleepTicks { get; private set; }
-    public string sleepScheduleJobID { get; set; }
-    public bool hasCancelledSleepSchedule { get; private set; }
+    // public int tirednessForcedTick { get; private set; }
+    // public int currentSleepTicks { get; private set; }
+    // public string sleepScheduleJobID { get; set; }
+    // public bool hasCancelledSleepSchedule { get; private set; }
     private float tirednessLowerBound; //how low can this characters tiredness go
     public const float TIREDNESS_DEFAULT = 100f;
     public const float EXHAUSTED_UPPER_LIMIT = 20f;
@@ -55,7 +55,7 @@ public class CharacterNeedsComponent : CharacterComponent {
     //Fullness
     public float fullness { get; private set; }
     public float fullnessDecreaseRate { get; private set; }
-    public int fullnessForcedTick { get; private set; }
+    // public int fullnessForcedTick { get; private set; }
     private float fullnessLowerBound; //how low can this characters fullness go
     public const float FULLNESS_DEFAULT = 100f;
     public const float STARVING_UPPER_LIMIT = 20f;
@@ -65,7 +65,7 @@ public class CharacterNeedsComponent : CharacterComponent {
     //Happiness
     public float happiness { get; private set; }
     public float happinessDecreaseRate { get; private set; }
-    public int happinessSecondForcedTick { get; private set; }
+    // public int happinessSecondForcedTick { get; private set; }
     private float happinessLowerBound; //how low can this characters happiness go
     public const float HAPPINESS_DEFAULT = 100f;
     public const float SULKING_UPPER_LIMIT = 20f;
@@ -93,9 +93,9 @@ public class CharacterNeedsComponent : CharacterComponent {
     public bool hasForcedFullness { get; set; }
     public bool hasForcedTiredness { get; set; }
     public bool hasForcedSecondHappiness { get; set; }
-    public TIME_IN_WORDS forcedFullnessRecoveryTimeInWords { get; private set; }
-    public TIME_IN_WORDS forcedTirednessRecoveryTimeInWords { get; private set; }
-    public TIME_IN_WORDS[] forcedHappinessRecoveryChoices { get; private set; }
+    // public TIME_IN_WORDS forcedFullnessRecoveryTimeInWords { get; private set; }
+    // public TIME_IN_WORDS forcedTirednessRecoveryTimeInWords { get; private set; }
+    // public TIME_IN_WORDS[] forcedHappinessRecoveryChoices { get; private set; }
 
     private bool _hasTriggeredThisHour;
 
@@ -105,12 +105,12 @@ public class CharacterNeedsComponent : CharacterComponent {
         SetHappinessLowerBound(0f);
         SetStaminaLowerBound(0f);
         SetHopeLowerBound(0f);
-        SetForcedFullnessRecoveryTimeInWords(TIME_IN_WORDS.LUNCH_TIME);
-        SetForcedTirednessRecoveryTimeInWords(TIME_IN_WORDS.LATE_NIGHT);
-        SetForcedHappinessRecoveryTimeChoices(TIME_IN_WORDS.MORNING, TIME_IN_WORDS.AFTERNOON, TIME_IN_WORDS.EARLY_NIGHT);
-        SetFullnessForcedTick();
-        SetTirednessForcedTick();
-        SetHappinessForcedTick();
+        // SetForcedFullnessRecoveryTimeInWords(TIME_IN_WORDS.LUNCH_TIME);
+        // SetForcedTirednessRecoveryTimeInWords(TIME_IN_WORDS.LATE_NIGHT);
+        // SetForcedHappinessRecoveryTimeChoices(TIME_IN_WORDS.MORNING, TIME_IN_WORDS.AFTERNOON, TIME_IN_WORDS.EARLY_NIGHT);
+        // SetFullnessForcedTick();
+        // SetTirednessForcedTick();
+        // SetHappinessForcedTick();
         //UpdateBaseStaminaDecreaseRate();
     }
     public CharacterNeedsComponent(SaveDataCharacterNeedsComponent data) {
@@ -128,18 +128,18 @@ public class CharacterNeedsComponent : CharacterComponent {
 
         tiredness = data.tiredness;
         tirednessDecreaseRate = data.tirednessDecreaseRate;
-        tirednessForcedTick = data.tirednessForcedTick;
-        currentSleepTicks = data.currentSleepTicks;
-        sleepScheduleJobID = data.sleepScheduleJobID;
-        hasCancelledSleepSchedule = data.hasCancelledSleepSchedule;
+        // tirednessForcedTick = data.tirednessForcedTick;
+        // currentSleepTicks = data.currentSleepTicks;
+        // sleepScheduleJobID = data.sleepScheduleJobID;
+        // hasCancelledSleepSchedule = data.hasCancelledSleepSchedule;
 
         fullness = data.fullness;
         fullnessDecreaseRate = data.fullnessDecreaseRate;
-        fullnessForcedTick = data.fullnessForcedTick;
+        // fullnessForcedTick = data.fullnessForcedTick;
 
         happiness = data.happiness;
         happinessDecreaseRate = data.happinessDecreaseRate;
-        happinessSecondForcedTick = data.happinessSecondForcedTick;
+        // happinessSecondForcedTick = data.happinessSecondForcedTick;
 
         stamina = data.stamina;
         staminaDecreaseRate = data.staminaDecreaseRate;
@@ -150,9 +150,9 @@ public class CharacterNeedsComponent : CharacterComponent {
         hasForcedFullness = data.hasForcedFullness;
         hasForcedTiredness = data.hasForcedTiredness;
         hasForcedSecondHappiness = data.hasForcedSecondHappiness;
-        forcedFullnessRecoveryTimeInWords = data.forcedFullnessRecoveryTimeInWords;
-        forcedTirednessRecoveryTimeInWords = data.forcedTirednessRecoveryTimeInWords;
-        forcedHappinessRecoveryChoices = data.forcedHappinessRecoveryChoices;
+        // forcedFullnessRecoveryTimeInWords = data.forcedFullnessRecoveryTimeInWords;
+        // forcedTirednessRecoveryTimeInWords = data.forcedTirednessRecoveryTimeInWords;
+        // forcedHappinessRecoveryChoices = data.forcedHappinessRecoveryChoices;
     }
 
     #region Initialization
@@ -366,7 +366,7 @@ public class CharacterNeedsComponent : CharacterComponent {
         hopeLowerBound = amount;
     }
 
-#region Tiredness
+    #region Tiredness
     public void ResetTirednessMeter() {
         bool wasTired = isTired;
         bool wasExhausted = isExhausted;
@@ -509,31 +509,31 @@ public class CharacterNeedsComponent : CharacterComponent {
             owner.traitContainer.RemoveTrait(owner, "Exhausted");
         }
     }
-    public void SetTirednessForcedTick() {
-        if (!hasForcedTiredness) {
-            if (forcedTirednessRecoveryTimeInWords == GameManager.Instance.GetCurrentTimeInWordsOfTick()) {
-                //If the forced recovery job has not been done yet and the character is already on the time of day when it is supposed to be done,
-                //the tick that will be assigned will be ensured that the character will not miss it
-                //Example if the time of day is Afternoon, the supposed tick range for it is 145 - 204
-                //So if the current tick of the game is already in 160, the range must be adjusted to 161 - 204, so as to ensure that the character will hit it
-                //But if the current tick of the game is already in 204, it cannot be 204 - 204, so, it will revert back to 145 - 204 
-                int newTick = GameManager.Instance.GetRandomTickFromTimeInWords(forcedTirednessRecoveryTimeInWords, GameManager.Instance.Today().tick + 1);
-                TIME_IN_WORDS timeInWords = GameManager.Instance.GetTimeInWordsOfTick(newTick);
-                if(timeInWords != forcedTirednessRecoveryTimeInWords) {
-                    newTick = GameManager.Instance.GetRandomTickFromTimeInWords(forcedTirednessRecoveryTimeInWords);
-                }
-                tirednessForcedTick = newTick;
-                return;
-            }
-        }
-        tirednessForcedTick = GameManager.Instance.GetRandomTickFromTimeInWords(forcedTirednessRecoveryTimeInWords);
-    }
-    public void SetTirednessForcedTick(int tick) {
-        tirednessForcedTick = tick;
-    }
-    public void SetForcedTirednessRecoveryTimeInWords(TIME_IN_WORDS timeInWords) {
-        forcedTirednessRecoveryTimeInWords = timeInWords;
-    }
+    // public void SetTirednessForcedTick() {
+    //     if (!hasForcedTiredness) {
+    //         if (forcedTirednessRecoveryTimeInWords == GameManager.Instance.GetCurrentTimeInWordsOfTick()) {
+    //             //If the forced recovery job has not been done yet and the character is already on the time of day when it is supposed to be done,
+    //             //the tick that will be assigned will be ensured that the character will not miss it
+    //             //Example if the time of day is Afternoon, the supposed tick range for it is 145 - 204
+    //             //So if the current tick of the game is already in 160, the range must be adjusted to 161 - 204, so as to ensure that the character will hit it
+    //             //But if the current tick of the game is already in 204, it cannot be 204 - 204, so, it will revert back to 145 - 204 
+    //             int newTick = GameManager.Instance.GetRandomTickFromTimeInWords(forcedTirednessRecoveryTimeInWords, GameManager.Instance.Today().tick + 1);
+    //             TIME_IN_WORDS timeInWords = GameManager.Instance.GetTimeInWordsOfTick(newTick);
+    //             if(timeInWords != forcedTirednessRecoveryTimeInWords) {
+    //                 newTick = GameManager.Instance.GetRandomTickFromTimeInWords(forcedTirednessRecoveryTimeInWords);
+    //             }
+    //             tirednessForcedTick = newTick;
+    //             return;
+    //         }
+    //     }
+    //     tirednessForcedTick = GameManager.Instance.GetRandomTickFromTimeInWords(forcedTirednessRecoveryTimeInWords);
+    // }
+    // public void SetTirednessForcedTick(int tick) {
+    //     tirednessForcedTick = tick;
+    // }
+    // public void SetForcedTirednessRecoveryTimeInWords(TIME_IN_WORDS timeInWords) {
+    //     forcedTirednessRecoveryTimeInWords = timeInWords;
+    // }
     public void AdjustDoNotGetTired(int amount) {
         doNotGetTired += amount;
     }
@@ -559,6 +559,17 @@ public class CharacterNeedsComponent : CharacterComponent {
                 return true;
             }
         }
+        return false;
+    }
+    public bool PlanTirednessRecoveryActionsForSleepBehaviour(out JobQueueItem producedJob) {
+        if (!owner.limiterComponent.canPerform) {
+            producedJob = null;
+            return false;
+        }
+        if (!owner.jobQueue.HasJob(JOB_TYPE.ENERGY_RECOVERY_URGENT, JOB_TYPE.ENERGY_RECOVERY_NORMAL)) {
+            return PlanTirednessRecovery(JOB_TYPE.ENERGY_RECOVERY_NORMAL, false, out producedJob);
+        }
+        producedJob = null;
         return false;
     }
     private bool PlanTirednessRecoveryActionsWhileInActiveParty() {
@@ -627,31 +638,31 @@ public class CharacterNeedsComponent : CharacterComponent {
         }
         return false;
     }
-    public void PlanScheduledTirednessRecovery() {
-        if (!hasForcedTiredness && tirednessForcedTick != 0 && GameManager.Instance.Today().tick >= tirednessForcedTick && owner.limiterComponent.canPerform && !doesNotGetTired) {
-            if (!owner.jobQueue.HasJob(JOB_TYPE.ENERGY_RECOVERY_NORMAL, JOB_TYPE.ENERGY_RECOVERY_URGENT)) {
-                JOB_TYPE jobType = JOB_TYPE.ENERGY_RECOVERY_NORMAL;
-                if (isExhausted) {
-                    jobType = JOB_TYPE.ENERGY_RECOVERY_URGENT;
-                }
-                PlanTirednessRecovery(jobType, true);
-            }
-            hasForcedTiredness = true;
-            SetTirednessForcedTick();
-        }
-        //If a character current sleep ticks is less than the default, this means that the character already started sleeping but was awaken midway that is why he/she did not finish the allotted sleeping time
-        //When this happens, make sure to queue tiredness recovery again so he can finish the sleeping time
-        else if ((hasCancelledSleepSchedule || currentSleepTicks < CharacterManager.Instance.defaultSleepTicks) && owner.limiterComponent.canPerform) {
-            if (!owner.jobQueue.HasJob(JOB_TYPE.ENERGY_RECOVERY_NORMAL, JOB_TYPE.ENERGY_RECOVERY_URGENT)) {
-                JOB_TYPE jobType = JOB_TYPE.ENERGY_RECOVERY_NORMAL;
-                if (isExhausted) {
-                    jobType = JOB_TYPE.ENERGY_RECOVERY_URGENT;
-                }
-                PlanTirednessRecovery(jobType, true);
-            }
-            SetHasCancelledSleepSchedule(false);
-        }
-    }
+    // public void PlanScheduledTirednessRecovery() {
+    //     if (!hasForcedTiredness && tirednessForcedTick != 0 && GameManager.Instance.Today().tick >= tirednessForcedTick && owner.limiterComponent.canPerform && !doesNotGetTired) {
+    //         if (!owner.jobQueue.HasJob(JOB_TYPE.ENERGY_RECOVERY_NORMAL, JOB_TYPE.ENERGY_RECOVERY_URGENT)) {
+    //             JOB_TYPE jobType = JOB_TYPE.ENERGY_RECOVERY_NORMAL;
+    //             if (isExhausted) {
+    //                 jobType = JOB_TYPE.ENERGY_RECOVERY_URGENT;
+    //             }
+    //             PlanTirednessRecovery(jobType, true);
+    //         }
+    //         hasForcedTiredness = true;
+    //         SetTirednessForcedTick();
+    //     }
+    //     //If a character current sleep ticks is less than the default, this means that the character already started sleeping but was awaken midway that is why he/she did not finish the allotted sleeping time
+    //     //When this happens, make sure to queue tiredness recovery again so he can finish the sleeping time
+    //     else if ((hasCancelledSleepSchedule || currentSleepTicks < CharacterManager.Instance.defaultSleepTicks) && owner.limiterComponent.canPerform) {
+    //         if (!owner.jobQueue.HasJob(JOB_TYPE.ENERGY_RECOVERY_NORMAL, JOB_TYPE.ENERGY_RECOVERY_URGENT)) {
+    //             JOB_TYPE jobType = JOB_TYPE.ENERGY_RECOVERY_NORMAL;
+    //             if (isExhausted) {
+    //                 jobType = JOB_TYPE.ENERGY_RECOVERY_URGENT;
+    //             }
+    //             PlanTirednessRecovery(jobType, true);
+    //         }
+    //         SetHasCancelledSleepSchedule(false);
+    //     }
+    // }
     private GoapPlanJob PlanTirednessRecovery(JOB_TYPE jobType, bool shouldSetScheduleJobID) {
         //This is to prevent the character from creating tiredness recovery when he/she is in an active party
         //because when a character is in an active party the party controls the needs recovery that is why we must be sure that he/she will not create its own needs recovery
@@ -660,6 +671,16 @@ public class CharacterNeedsComponent : CharacterComponent {
             return null;
         }
         return PlanTirednessRecoveryBase(jobType, shouldSetScheduleJobID);
+    }
+    private bool PlanTirednessRecovery(JOB_TYPE jobType, bool shouldSetScheduleJobID, out JobQueueItem producedJob) {
+        //This is to prevent the character from creating tiredness recovery when he/she is in an active party
+        //because when a character is in an active party the party controls the needs recovery that is why we must be sure that he/she will not create its own needs recovery
+        //If the character is in an active party and must create a needs recovery, we bypass this checking, meaning the PlanFullnessRecoveryBase is called directly, see CheckExtremeNeedsWhileInActiveParty
+        if (owner.partyComponent.isActiveMember) {
+            producedJob = null;
+            return false;
+        }
+        return PlanTirednessRecoveryBase(jobType, shouldSetScheduleJobID, out producedJob);
     }
     private GoapPlanJob PlanTirednessRecoveryBase(JOB_TYPE jobType, bool shouldSetScheduleJobID) {
         if (!owner.limiterComponent.canDoTirednessRecovery) {
@@ -687,34 +708,68 @@ public class CharacterNeedsComponent : CharacterComponent {
                 if(owner.homeStructure != null) {
                     job.AddPriorityLocation(INTERACTION_TYPE.SLEEP, owner.homeStructure);
                 }
-                //if (owner.homeSettlement != null) {
-                //    LocationStructure tavern = owner.homeSettlement.GetRandomStructureOfType(STRUCTURE_TYPE.TAVERN);
-                //    if (tavern != null) {
-                //        job.AddPriorityLocation(INTERACTION_TYPE.SLEEP, tavern);
-                //    }
-                //}
             }
             owner.jobQueue.AddJobInQueue(job);
-            if (shouldSetScheduleJobID) {
-                sleepScheduleJobID = job.persistentID;
-            }
+            // if (shouldSetScheduleJobID) {
+            //     sleepScheduleJobID = job.persistentID;
+            // }
         } else {
             spooked.TriggerFeelingSpooked();
         }
         return null;
     }
-    public void SetHasCancelledSleepSchedule(bool state) {
-        hasCancelledSleepSchedule = state;
-    }
-    public void ResetSleepTicks() {
-        currentSleepTicks = CharacterManager.Instance.defaultSleepTicks;
-    }
-    public void AdjustSleepTicks(int amount) {
-        currentSleepTicks += amount;
-        if(currentSleepTicks <= 0) {
-            this.ResetSleepTicks();
+    private bool PlanTirednessRecoveryBase(JOB_TYPE jobType, bool shouldSetScheduleJobID, out JobQueueItem producedJob) {
+        if (!owner.limiterComponent.canDoTirednessRecovery) {
+            //No matter what, if character has the limiter "cannot do tiredness recovery", he will not do tiredness recovery
+#if DEBUG_LOG
+            owner.logComponent.PrintLogIfActive($"\n{owner.name} is cannot do tiredness recovery");
+#endif
+            producedJob = null;
+            return false;
         }
+        //No matter what happens, we do not allow characters to sleep if they are burning/poisoned because it does not make sense
+        if (owner.traitContainer.HasTrait("Burning", "Poisoned")) {
+#if DEBUG_LOG
+            owner.logComponent.PrintLogIfActive($"\n{owner.name} is poisoned or burning will not plan tiredness recovery...");
+#endif
+            producedJob = null;
+            return false;
+        }
+        bool triggerSpooked = false;
+        Spooked spooked = owner.traitContainer.GetTraitOrStatus<Spooked>("Spooked");
+        if (spooked != null) {
+            triggerSpooked = UnityEngine.Random.Range(0, 100) < (25 * owner.traitContainer.stacks[spooked.name]);
+        }
+        if (!triggerSpooked) {
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType, new GoapEffect(GOAP_EFFECT_CONDITION.TIREDNESS_RECOVERY, string.Empty, false, GOAP_EFFECT_TARGET.ACTOR), owner, owner);
+            if (!owner.traitContainer.HasTrait("Travelling")) {
+                if(owner.homeStructure != null) {
+                    job.AddPriorityLocation(INTERACTION_TYPE.SLEEP, owner.homeStructure);
+                }
+            }
+            // if (shouldSetScheduleJobID) {
+            //     sleepScheduleJobID = job.persistentID;
+            // }
+            producedJob = job;
+            return true;
+        } else {
+            spooked.TriggerFeelingSpooked();
+        }
+        producedJob = null;
+        return false;
     }
+    // public void SetHasCancelledSleepSchedule(bool state) {
+    //     hasCancelledSleepSchedule = state;
+    // }
+    // public void ResetSleepTicks() {
+    //     currentSleepTicks = CharacterManager.Instance.defaultSleepTicks;
+    // }
+    // public void AdjustSleepTicks(int amount) {
+    //     currentSleepTicks += amount;
+    //     if(currentSleepTicks <= 0) {
+    //         this.ResetSleepTicks();
+    //     }
+    // }
     public void ExhaustCharacter(Character character) {
         if (!isExhausted) {
             SetTiredness(EXHAUSTED_UPPER_LIMIT);
@@ -727,9 +782,9 @@ public class CharacterNeedsComponent : CharacterComponent {
             }
         }
     }
-#endregion
+    #endregion
 
-#region Happiness
+    #region Happiness
     public void ResetHappinessMeter() {
         if (owner.traitContainer.HasTrait("Psychopath")) {
             //Psychopath's Happiness is always fixed at 50 and is not changed by anything.
@@ -853,15 +908,15 @@ public class CharacterNeedsComponent : CharacterComponent {
     //     }
     //     return false;
     // }
-    public void PlanScheduledSecondHappinessRecovery() {
-        if (!hasForcedSecondHappiness && happinessSecondForcedTick != 0 && GameManager.Instance.currentTick >= happinessSecondForcedTick && owner.limiterComponent.canPerform && !doesNotGetBored) {
-            hasForcedSecondHappiness = true;
-            if (!owner.jobQueue.HasJob(JOB_TYPE.HAPPINESS_RECOVERY)) {
-                PlanHappinessRecoveryActions();
-            }
-            SetHappinessForcedTick();
-        }
-    }
+    // public void PlanScheduledSecondHappinessRecovery() {
+    //     if (!hasForcedSecondHappiness && happinessSecondForcedTick != 0 && GameManager.Instance.currentTick >= happinessSecondForcedTick && owner.limiterComponent.canPerform && !doesNotGetBored) {
+    //         hasForcedSecondHappiness = true;
+    //         if (!owner.jobQueue.HasJob(JOB_TYPE.HAPPINESS_RECOVERY)) {
+    //             PlanHappinessRecoveryActions();
+    //         }
+    //         SetHappinessForcedTick();
+    //     }
+    // }
     public bool PlanHappinessRecoveryActions() {
         //This is to prevent the character from creating happiness recovery when he/she is in an active party
         //because when a character is in an active party the party controls the needs recovery that is why we must be sure that he/she will not create its own needs recovery
@@ -921,27 +976,27 @@ public class CharacterNeedsComponent : CharacterComponent {
         // }
         return false;
     }
-    public void SetHappinessForcedTick() {
-        //reroll happiness recovery range so character can schedule on another time of day
-        TIME_IN_WORDS chosenTime = CollectionUtilities.GetRandomElement(forcedHappinessRecoveryChoices);
-        // if (owner != null && !owner.traitContainer.HasTrait("Nocturnal")) {
-        //     SetForcedHappinessSecondRecoveryTimeInWords(GameUtilities.RollChance(50) ? TIME_IN_WORDS.AFTERNOON : TIME_IN_WORDS.EARLY_NIGHT);
-        // }
-       
-        int newTick = GameManager.Instance.GetRandomTickFromTimeInWords(chosenTime, GameManager.Instance.Today().tick + 1);
-        TIME_IN_WORDS timeInWords = GameManager.Instance.GetTimeInWordsOfTick(newTick);
-        if(timeInWords != chosenTime) {
-            newTick = GameManager.Instance.GetRandomTickFromTimeInWords(chosenTime);
-        }
-        happinessSecondForcedTick = newTick;
-    }
-    public void SetHappinessForcedTick(int tick) {
-        happinessSecondForcedTick = tick;
-    }
-    public void SetForcedHappinessRecoveryTimeChoices(params TIME_IN_WORDS[] timeInWords) {
-        forcedHappinessRecoveryChoices = timeInWords;
-    }
-#endregion
+    // public void SetHappinessForcedTick() {
+    //     //reroll happiness recovery range so character can schedule on another time of day
+    //     TIME_IN_WORDS chosenTime = CollectionUtilities.GetRandomElement(forcedHappinessRecoveryChoices);
+    //     // if (owner != null && !owner.traitContainer.HasTrait("Nocturnal")) {
+    //     //     SetForcedHappinessSecondRecoveryTimeInWords(GameUtilities.RollChance(50) ? TIME_IN_WORDS.AFTERNOON : TIME_IN_WORDS.EARLY_NIGHT);
+    //     // }
+    //    
+    //     int newTick = GameManager.Instance.GetRandomTickFromTimeInWords(chosenTime, GameManager.Instance.Today().tick + 1);
+    //     TIME_IN_WORDS timeInWords = GameManager.Instance.GetTimeInWordsOfTick(newTick);
+    //     if(timeInWords != chosenTime) {
+    //         newTick = GameManager.Instance.GetRandomTickFromTimeInWords(chosenTime);
+    //     }
+    //     happinessSecondForcedTick = newTick;
+    // }
+    // public void SetHappinessForcedTick(int tick) {
+    //     happinessSecondForcedTick = tick;
+    // }
+    // public void SetForcedHappinessRecoveryTimeChoices(params TIME_IN_WORDS[] timeInWords) {
+    //     forcedHappinessRecoveryChoices = timeInWords;
+    // }
+    #endregion
 
 #region Fullness
     public void ResetFullnessMeter() {
@@ -1094,67 +1149,67 @@ public class CharacterNeedsComponent : CharacterComponent {
             owner.traitContainer.RemoveTrait(owner, "Starving");
         }
     }
-    public void SetFullnessForcedTick() {
-        if (!hasForcedFullness) {
-            if (forcedFullnessRecoveryTimeInWords == GameManager.Instance.GetCurrentTimeInWordsOfTick()) {
-                //If the forced recovery job has not been done yet and the character is already on the time of day when it is supposed to be done,
-                //the tick that will be assigned will be ensured that the character will not miss it
-                //Example if the time of day is Afternoon, the supposed tick range for it is 145 - 204
-                //So if the current tick of the game is already in 160, the range must be adjusted to 161 - 204, so as to ensure that the character will hit it
-                //But if the current tick of the game is already in 204, it cannot be 204 - 204, so, it will revert back to 145 - 204 
-                int newTick = GameManager.Instance.GetRandomTickFromTimeInWords(forcedFullnessRecoveryTimeInWords, GameManager.Instance.Today().tick + 1);
-                TIME_IN_WORDS timeInWords = GameManager.Instance.GetTimeInWordsOfTick(newTick);
-                if (timeInWords != forcedFullnessRecoveryTimeInWords) {
-                    newTick = GameManager.Instance.GetRandomTickFromTimeInWords(forcedFullnessRecoveryTimeInWords);
-                }
-                fullnessForcedTick = newTick;
-                return;
-            }
-        }
-        fullnessForcedTick = GameManager.Instance.GetRandomTickFromTimeInWords(forcedFullnessRecoveryTimeInWords);
-    }
-    public void SetFullnessForcedTick(int tick) {
-        fullnessForcedTick = tick;
-    }
-    public void SetForcedFullnessRecoveryTimeInWords(TIME_IN_WORDS timeInWords) {
-        forcedFullnessRecoveryTimeInWords = timeInWords;
-    }
+    // public void SetFullnessForcedTick() {
+    //     if (!hasForcedFullness) {
+    //         if (forcedFullnessRecoveryTimeInWords == GameManager.Instance.GetCurrentTimeInWordsOfTick()) {
+    //             //If the forced recovery job has not been done yet and the character is already on the time of day when it is supposed to be done,
+    //             //the tick that will be assigned will be ensured that the character will not miss it
+    //             //Example if the time of day is Afternoon, the supposed tick range for it is 145 - 204
+    //             //So if the current tick of the game is already in 160, the range must be adjusted to 161 - 204, so as to ensure that the character will hit it
+    //             //But if the current tick of the game is already in 204, it cannot be 204 - 204, so, it will revert back to 145 - 204 
+    //             int newTick = GameManager.Instance.GetRandomTickFromTimeInWords(forcedFullnessRecoveryTimeInWords, GameManager.Instance.Today().tick + 1);
+    //             TIME_IN_WORDS timeInWords = GameManager.Instance.GetTimeInWordsOfTick(newTick);
+    //             if (timeInWords != forcedFullnessRecoveryTimeInWords) {
+    //                 newTick = GameManager.Instance.GetRandomTickFromTimeInWords(forcedFullnessRecoveryTimeInWords);
+    //             }
+    //             fullnessForcedTick = newTick;
+    //             return;
+    //         }
+    //     }
+    //     fullnessForcedTick = GameManager.Instance.GetRandomTickFromTimeInWords(forcedFullnessRecoveryTimeInWords);
+    // }
+    // public void SetFullnessForcedTick(int tick) {
+    //     fullnessForcedTick = tick;
+    // }
+    // public void SetForcedFullnessRecoveryTimeInWords(TIME_IN_WORDS timeInWords) {
+    //     forcedFullnessRecoveryTimeInWords = timeInWords;
+    // }
     public void AdjustDoNotGetHungry(int amount) {
         doNotGetHungry += amount;
     }
-    public void PlanScheduledFullnessRecovery() {
-        if (owner.traitContainer.HasTrait("Vampire")) {
-            //Note: Instead of just restricting the vampires from doing fullness recovery when it is not After Midnight, we will restrict the vampires from doing normal fullness recovery any time
-            //because their fullness recovery is now triggered in VampireBehaviour
-            //We did this to eliminate the conflict between nocturnals and vampires, because when a character becomes nocturnal, the fullnesss recovery sched is switched to Early Night, however, if it becomes a Vampire, it will switch to After Midnight
-            //Now, when a character becomes Nocturnal, after becoming a Vampire, the schedule will be on Early Night, not After Midnight
-            return;
-        }
-        if (!hasForcedFullness && fullnessForcedTick != 0 && GameManager.Instance.currentTick >= fullnessForcedTick && owner.limiterComponent.canPerform && !doesNotGetHungry) {
-            hasForcedFullness = true;
-            //if (owner.traitContainer.HasTrait("Vampire")) {
-            //    TIME_IN_WORDS currentTime = GameManager.GetCurrentTimeInWordsOfTick();
-            //    if (currentTime != TIME_IN_WORDS.AFTER_MIDNIGHT) {
-            //        //Vampires will only recover fullness after midnight, no matter how hungry they are
-            //        //https://trello.com/c/f0ICyIAj/2475-vampires-only-drink-blood-at-night
-            //        //The reason why the checking only happens here is because this is the one being called every hour, every time the character becomes starving, etc.
-            //        //Some fullness recovery actions especially the ones forced by the player (ex. Glutton trigger flaw) must still occur even if it is After Midnight
-            //        return;
-            //    }
-            //}
-            if (!owner.jobQueue.HasJob(JOB_TYPE.FULLNESS_RECOVERY_NORMAL, JOB_TYPE.FULLNESS_RECOVERY_URGENT, JOB_TYPE.FULLNESS_RECOVERY_URGENT)) {
-                JOB_TYPE jobType = JOB_TYPE.FULLNESS_RECOVERY_NORMAL;
-                if (isStarving) {
-                    jobType = JOB_TYPE.FULLNESS_RECOVERY_URGENT;
-                }
-                GoapPlanJob job = PlanFullnessRecovery(jobType);
-                if(job != null) {
-                    owner.jobQueue.AddJobInQueue(job);
-                }
-            }
-            SetFullnessForcedTick();
-        }
-    }
+    // public void PlanScheduledFullnessRecovery() {
+    //     if (owner.traitContainer.HasTrait("Vampire")) {
+    //         //Note: Instead of just restricting the vampires from doing fullness recovery when it is not After Midnight, we will restrict the vampires from doing normal fullness recovery any time
+    //         //because their fullness recovery is now triggered in VampireBehaviour
+    //         //We did this to eliminate the conflict between nocturnals and vampires, because when a character becomes nocturnal, the fullnesss recovery sched is switched to Early Night, however, if it becomes a Vampire, it will switch to After Midnight
+    //         //Now, when a character becomes Nocturnal, after becoming a Vampire, the schedule will be on Early Night, not After Midnight
+    //         return;
+    //     }
+    //     if (!hasForcedFullness && fullnessForcedTick != 0 && GameManager.Instance.currentTick >= fullnessForcedTick && owner.limiterComponent.canPerform && !doesNotGetHungry) {
+    //         hasForcedFullness = true;
+    //         //if (owner.traitContainer.HasTrait("Vampire")) {
+    //         //    TIME_IN_WORDS currentTime = GameManager.GetCurrentTimeInWordsOfTick();
+    //         //    if (currentTime != TIME_IN_WORDS.AFTER_MIDNIGHT) {
+    //         //        //Vampires will only recover fullness after midnight, no matter how hungry they are
+    //         //        //https://trello.com/c/f0ICyIAj/2475-vampires-only-drink-blood-at-night
+    //         //        //The reason why the checking only happens here is because this is the one being called every hour, every time the character becomes starving, etc.
+    //         //        //Some fullness recovery actions especially the ones forced by the player (ex. Glutton trigger flaw) must still occur even if it is After Midnight
+    //         //        return;
+    //         //    }
+    //         //}
+    //         if (!owner.jobQueue.HasJob(JOB_TYPE.FULLNESS_RECOVERY_NORMAL, JOB_TYPE.FULLNESS_RECOVERY_URGENT, JOB_TYPE.FULLNESS_RECOVERY_URGENT)) {
+    //             JOB_TYPE jobType = JOB_TYPE.FULLNESS_RECOVERY_NORMAL;
+    //             if (isStarving) {
+    //                 jobType = JOB_TYPE.FULLNESS_RECOVERY_URGENT;
+    //             }
+    //             GoapPlanJob job = PlanFullnessRecovery(jobType);
+    //             if(job != null) {
+    //                 owner.jobQueue.AddJobInQueue(job);
+    //             }
+    //         }
+    //         SetFullnessForcedTick();
+    //     }
+    // }
     public bool PlanFullnessRecoveryActions() {
         if (!owner.limiterComponent.canPerform) { //character.doNotDisturb > 0 || !character.limiterComponent.canWitness
             return false;
@@ -1197,6 +1252,33 @@ public class CharacterNeedsComponent : CharacterComponent {
                 return true;
             }
         } 
+        return false;
+    }
+    public bool PlanFullnessRecoveryActionsForFreeTime(out JobQueueItem producedJob) {
+        if (!owner.limiterComponent.canPerform) {
+            producedJob = null;
+            return false;
+        }
+        if (owner.traitContainer.HasTrait("Vampire")) {
+            //Note: Instead of just restricting the vampires from doing fullness recovery when it is not After Midnight, we will restrict the vampires from doing normal fullness recovery any time
+            //because their fullness recovery is now triggered in VampireBehaviour
+            //We did this to eliminate the conflict between nocturnals and vampires, because when a character becomes nocturnal, the fullnesss recovery sched is switched to Early Night, however, if it becomes a Vampire, it will switch to After Midnight
+            //Now, when a character becomes Nocturnal, after becoming a Vampire, the schedule will be on Early Night, not After Midnight
+            producedJob = null;
+            return false;
+        }
+        if (isStarving || isHungry) {
+            if (!owner.jobQueue.HasJob(JOB_TYPE.FULLNESS_RECOVERY_URGENT, JOB_TYPE.FULLNESS_RECOVERY_ON_SIGHT, JOB_TYPE.FULLNESS_RECOVERY_NORMAL)) {
+                JOB_TYPE jobType = JOB_TYPE.FULLNESS_RECOVERY_URGENT;
+                if (isHungry) { jobType = JOB_TYPE.FULLNESS_RECOVERY_NORMAL; }
+                GoapPlanJob job = PlanFullnessRecovery(jobType);
+                if (job != null) {
+                    producedJob = job;
+                    return true;
+                }
+            }
+        }
+        producedJob = null;
         return false;
     }
     public bool PlanFullnessRecoveryActionsVampire() {
@@ -1608,15 +1690,15 @@ public class SaveDataCharacterNeedsComponent : SaveData<CharacterNeedsComponent>
     //Tiredness
     public float tiredness;
     public float tirednessDecreaseRate;
-    public int tirednessForcedTick;
-    public int currentSleepTicks;
-    public string sleepScheduleJobID;
-    public bool hasCancelledSleepSchedule;
+    // public int tirednessForcedTick;
+    // public int currentSleepTicks;
+    // public string sleepScheduleJobID;
+    // public bool hasCancelledSleepSchedule;
 
     //Fullness
     public float fullness;
     public float fullnessDecreaseRate;
-    public int fullnessForcedTick;
+    // public int fullnessForcedTick;
 
     //Happiness
     public float happiness;
@@ -1634,8 +1716,8 @@ public class SaveDataCharacterNeedsComponent : SaveData<CharacterNeedsComponent>
     public bool hasForcedFullness;
     public bool hasForcedTiredness;
     public bool hasForcedSecondHappiness;
-    public TIME_IN_WORDS forcedFullnessRecoveryTimeInWords;
-    public TIME_IN_WORDS forcedTirednessRecoveryTimeInWords;
+    // public TIME_IN_WORDS forcedFullnessRecoveryTimeInWords;
+    // public TIME_IN_WORDS forcedTirednessRecoveryTimeInWords;
     public TIME_IN_WORDS[] forcedHappinessRecoveryChoices;
 
 #region Overrides
@@ -1648,18 +1730,18 @@ public class SaveDataCharacterNeedsComponent : SaveData<CharacterNeedsComponent>
 
         tiredness = data.tiredness;
         tirednessDecreaseRate = data.tirednessDecreaseRate;
-        tirednessForcedTick = data.tirednessForcedTick;
-        currentSleepTicks = data.currentSleepTicks;
-        sleepScheduleJobID = data.sleepScheduleJobID;
-        hasCancelledSleepSchedule = data.hasCancelledSleepSchedule;
+        // tirednessForcedTick = data.tirednessForcedTick;
+        // currentSleepTicks = data.currentSleepTicks;
+        // sleepScheduleJobID = data.sleepScheduleJobID;
+        // hasCancelledSleepSchedule = data.hasCancelledSleepSchedule;
 
         fullness = data.fullness;
         fullnessDecreaseRate = data.fullnessDecreaseRate;
-        fullnessForcedTick = data.fullnessForcedTick;
+        // fullnessForcedTick = data.fullnessForcedTick;
 
         happiness = data.happiness;
         happinessDecreaseRate = data.happinessDecreaseRate;
-        happinessSecondForcedTick = data.happinessSecondForcedTick;
+        // happinessSecondForcedTick = data.happinessSecondForcedTick;
 
         stamina = data.stamina;
         staminaDecreaseRate = data.staminaDecreaseRate;
@@ -1670,9 +1752,9 @@ public class SaveDataCharacterNeedsComponent : SaveData<CharacterNeedsComponent>
         hasForcedFullness = data.hasForcedFullness;
         hasForcedTiredness = data.hasForcedTiredness;
         hasForcedSecondHappiness = data.hasForcedSecondHappiness;
-        forcedFullnessRecoveryTimeInWords = data.forcedFullnessRecoveryTimeInWords;
-        forcedTirednessRecoveryTimeInWords = data.forcedTirednessRecoveryTimeInWords;
-        forcedHappinessRecoveryChoices = data.forcedHappinessRecoveryChoices;
+        // forcedFullnessRecoveryTimeInWords = data.forcedFullnessRecoveryTimeInWords;
+        // forcedTirednessRecoveryTimeInWords = data.forcedTirednessRecoveryTimeInWords;
+        // forcedHappinessRecoveryChoices = data.forcedHappinessRecoveryChoices;
     }
 
     public override CharacterNeedsComponent Load() {

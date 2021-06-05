@@ -9,6 +9,7 @@ public class BedClinic : BaseBed, CharacterEventDispatcher.ITraitListener {
         Initialize(TILE_OBJECT_TYPE.BED_CLINIC);
         AddAdvertisedAction(INTERACTION_TYPE.SLEEP);
         AddAdvertisedAction(INTERACTION_TYPE.NAP);
+        AddAdvertisedAction(INTERACTION_TYPE.RECUPERATE);
     }
     public BedClinic(SaveDataTileObject data) : base(data, 1) { }
     
@@ -27,6 +28,7 @@ public class BedClinic : BaseBed, CharacterEventDispatcher.ITraitListener {
         }
         AddAdvertisedAction(INTERACTION_TYPE.SLEEP);
         AddAdvertisedAction(INTERACTION_TYPE.NAP);
+        AddAdvertisedAction(INTERACTION_TYPE.RECUPERATE);
     }
     #endregion
     
@@ -41,6 +43,11 @@ public class BedClinic : BaseBed, CharacterEventDispatcher.ITraitListener {
             case INTERACTION_TYPE.NAP:
                 mapVisual?.UpdateTileObjectVisual(this);
                 break;
+            case INTERACTION_TYPE.RECUPERATE:
+                AddUser(action.actor);
+                mapVisual?.UpdateTileObjectVisual(this);
+                break;
+
         }
     }
     public override void OnDoneActionToObject(ActualGoapNode action) {
@@ -50,6 +57,10 @@ public class BedClinic : BaseBed, CharacterEventDispatcher.ITraitListener {
             case INTERACTION_TYPE.NAP:
                 mapVisual?.UpdateTileObjectVisual(this);
                 break;
+            case INTERACTION_TYPE.RECUPERATE:
+                RemoveUser(action.actor);
+                mapVisual?.UpdateTileObjectVisual(this);
+                break;
         }
     }
     public override void OnCancelActionTowardsObject(ActualGoapNode action) {
@@ -57,6 +68,10 @@ public class BedClinic : BaseBed, CharacterEventDispatcher.ITraitListener {
         switch (action.goapType) {
             case INTERACTION_TYPE.SLEEP:
             case INTERACTION_TYPE.NAP:
+                mapVisual?.UpdateTileObjectVisual(this);
+                break;
+            case INTERACTION_TYPE.RECUPERATE:
+                RemoveUser(action.actor);
                 mapVisual?.UpdateTileObjectVisual(this);
                 break;
         }

@@ -27,6 +27,7 @@ public class Region : ISavable, ILogFiller {
     public Area[,] areaMap => GridMap.Instance.map;
     public Dictionary<STRUCTURE_TYPE, List<LocationStructure>> structures { get; private set; }
     public List<LocationStructure> allStructures { get; private set; }
+    public List<LocationStructure> allSpecialStructures { get; private set; }
     public List<BaseSettlement> settlementsInRegion { get; private set; }
 
 
@@ -438,6 +439,7 @@ public class Region : ISavable, ILogFiller {
     public void CreateStructureList() {
         structures = new Dictionary<STRUCTURE_TYPE, List<LocationStructure>>();
         allStructures = new List<LocationStructure>();
+        allSpecialStructures = new List<LocationStructure>();
     }
     public void GenerateStructures() {
         CreateStructureList();
@@ -565,6 +567,21 @@ public class Region : ISavable, ILogFiller {
             chosenStructure = structureChoices[UnityEngine.Random.Range(0, structureChoices.Count)];
         }
         RuinarchListPool<LocationStructure>.Release(structureChoices);
+        return chosenStructure;
+    }
+    public LocationStructure GetRandomSpecialStructure() {
+        List<LocationStructure> specialStructures = ObjectPoolManager.Instance.CreateNewStructuresList();
+        LocationStructure chosenStructure = null;
+        for (int i = 0; i < allStructures.Count; i++) {
+            LocationStructure currStructure = allStructures[i];
+            if (currStructure.settlementLocation != null && currStructure.settlementLocation.locationType == LOCATION_TYPE.DUNGEON && currStructure.passableTiles.Count > 0) {
+                specialStructures.Add(currStructure);
+            }
+        }
+        if (specialStructures != null && specialStructures.Count > 0) {
+            chosenStructure = specialStructures[UnityEngine.Random.Range(0, specialStructures.Count)];
+        }
+        ObjectPoolManager.Instance.ReturnStructuresListToPool(specialStructures);
         return chosenStructure;
     }
     public LocationStructure GetRandomSpecialStructureExcept(List<LocationStructure> exceptions) {

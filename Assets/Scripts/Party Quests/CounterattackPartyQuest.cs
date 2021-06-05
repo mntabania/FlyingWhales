@@ -15,6 +15,7 @@ public class CounterattackPartyQuest : PartyQuest {
     public override IPartyQuestTarget target => targetStructure;
     public override System.Type serializedData => typeof(SaveDataCounterattackPartyQuest);
     public override bool waitingToWorkingStateImmediately => true;
+    public override bool shouldAssignedPartyRetreatUponKnockoutOrKill => true;
     #endregion
 
     public CounterattackPartyQuest() : base(PARTY_QUEST_TYPE.Counterattack) {

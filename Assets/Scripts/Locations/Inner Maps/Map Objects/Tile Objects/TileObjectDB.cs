@@ -46,6 +46,7 @@ public static class TileObjectDB {
             maxHP = 400,
             neededCharacterClass =  new string[] { "Craftsman" },
             repairCost = 5,
+            craftResourceCost = 15,
             craftRecipes = new [] {
                 new TileObjectRecipe(
                     new TileObjectRecipeIngredient(TILE_OBJECT_TYPE.WOOD_PILE, 10)    
@@ -66,6 +67,7 @@ public static class TileObjectDB {
             maxHP = 120,
             neededCharacterClass =  new string[] { "Craftsman" },
             repairCost = 5,
+            craftResourceCost = 10,
             craftRecipes = new [] {
                 new TileObjectRecipe(
                     new TileObjectRecipeIngredient(TILE_OBJECT_TYPE.WOOD_PILE, 10)    
@@ -76,6 +78,7 @@ public static class TileObjectDB {
             maxHP = 250,
             neededCharacterClass =  new string[] { "Craftsman" },
             repairCost = 5,
+            craftResourceCost = 20,
             craftRecipes = new [] {
                 new TileObjectRecipe(
                     new TileObjectRecipeIngredient(TILE_OBJECT_TYPE.WOOD_PILE, 10)    
@@ -94,6 +97,7 @@ public static class TileObjectDB {
         { TILE_OBJECT_TYPE.HEALING_POTION, new TileObjectData() {
             maxHP = 150,
             neededCharacterClass = null,
+            purchaseCost = 5,
             craftRecipes = new [] {
                 new TileObjectRecipe(
                     //new TileObjectRecipeIngredient(TILE_OBJECT_TYPE.WATER_FLASK, 1),
@@ -259,6 +263,7 @@ public static class TileObjectDB {
             maxHP = 200,
             neededCharacterClass = new string[] { "Craftsman" },
             repairCost = 5,
+            craftResourceCost = 5,
             craftRecipes = new [] {
                 new TileObjectRecipe(
                     new TileObjectRecipeIngredient(TILE_OBJECT_TYPE.WOOD_PILE, 30)
@@ -396,6 +401,8 @@ public class TileObjectData {
     /// </summary>
     public TileObjectRecipe[] craftRecipes;
     public int repairCost;
+    public int purchaseCost;
+    public int craftResourceCost;
     public TileObjectRecipe mainRecipe => craftRecipes.FirstOrDefault();
 
     public bool TryGetPossibleRecipe(Region region, out TileObjectRecipe possibleRecipe) {

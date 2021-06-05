@@ -116,6 +116,26 @@ public static class Extensions {
                 return false;
         }
     }
+    public static bool IsResourceProducingStructure(this STRUCTURE_TYPE sub) {
+        switch (sub) {
+            case STRUCTURE_TYPE.MINE:
+            case STRUCTURE_TYPE.LUMBERYARD:
+            case STRUCTURE_TYPE.HUNTER_LODGE:
+                return true;
+            default:
+                return false;
+        }
+    }
+    public static bool IsFoodProducingStructure(this STRUCTURE_TYPE sub) {
+        switch (sub) {
+            case STRUCTURE_TYPE.FARM:
+            case STRUCTURE_TYPE.FISHERY:
+            case STRUCTURE_TYPE.BUTCHERS_SHOP:
+                return true;
+            default:
+                return false;
+        }
+    }
     public static bool IsPlayerStructure(this STRUCTURE_TYPE type) {
         switch (type) {
             case STRUCTURE_TYPE.THE_PORTAL:
@@ -220,6 +240,16 @@ public static class Extensions {
                 return false;
         }
     }
+    public static bool IsBeastDen(this STRUCTURE_TYPE sub) {
+        switch (sub) {
+            case STRUCTURE_TYPE.BEAR_DEN:
+            case STRUCTURE_TYPE.BOAR_DEN:
+            case STRUCTURE_TYPE.WOLF_DEN:
+                return true;
+            default:
+                return false;
+        }
+    }
     public static LANDMARK_TYPE GetLandmarkType(this STRUCTURE_TYPE structureType) {
         if (System.Enum.TryParse(structureType.ToString(), out LANDMARK_TYPE parsed)) {
             return parsed;
@@ -268,6 +298,8 @@ public static class Extensions {
                 return "Prison";
             case STRUCTURE_TYPE.DEFENSE_POINT:
                 return "Prism";
+            case STRUCTURE_TYPE.HUNTER_LODGE:
+                return "Skinner's Lodge";
             default:
                 return UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(structureType.ToString());
         }
@@ -290,6 +322,27 @@ public static class Extensions {
                 return 0;
             default:
                 return 100;
+        }
+    }
+    //public static bool IsFoodProducingStructure(this STRUCTURE_TYPE structureType) {
+    //    switch (structureType) {
+    //        case STRUCTURE_TYPE.FARM:
+    //        case STRUCTURE_TYPE.FISHERY:
+    //        case STRUCTURE_TYPE.HUNTER_LODGE:
+    //            return true;
+    //        default:
+    //            return false;
+    //    }
+    //}
+    public static bool IsBasicResourceProducingStructureForFaction(this STRUCTURE_TYPE structureType, FACTION_TYPE p_factionType) {
+        if (p_factionType == FACTION_TYPE.Human_Empire) {
+            return structureType == STRUCTURE_TYPE.MINE;
+        } else if (p_factionType == FACTION_TYPE.Elven_Kingdom) {
+            return structureType == STRUCTURE_TYPE.LUMBERYARD;
+        } else if (p_factionType == FACTION_TYPE.Demon_Cult || p_factionType == FACTION_TYPE.Lycan_Clan || p_factionType == FACTION_TYPE.Vampire_Clan) {
+            return structureType == STRUCTURE_TYPE.LUMBERYARD || structureType == STRUCTURE_TYPE.MINE;
+        } else {
+            return false;
         }
     }
     #endregion
@@ -440,6 +493,12 @@ public static class Extensions {
             case TILE_OBJECT_TYPE.WEREWOLF_PELT:
             case TILE_OBJECT_TYPE.PHYLACTERY:
             case TILE_OBJECT_TYPE.COPPER_SWORD:
+            case TILE_OBJECT_TYPE.BASIC_SWORD:
+            case TILE_OBJECT_TYPE.BASIC_AXE:
+            case TILE_OBJECT_TYPE.BASIC_BOW:
+            case TILE_OBJECT_TYPE.BASIC_DAGGER:
+            case TILE_OBJECT_TYPE.BASIC_SHIRT:
+            case TILE_OBJECT_TYPE.BASIC_STAFF:
             case TILE_OBJECT_TYPE.IRON_SWORD:
             case TILE_OBJECT_TYPE.MITHRIL_SWORD:
             case TILE_OBJECT_TYPE.ORICHALCUM_SWORD:
@@ -469,7 +528,7 @@ public static class Extensions {
             case TILE_OBJECT_TYPE.RABBIT_SHIRT:
             case TILE_OBJECT_TYPE.WOOL_SHIRT:
             case TILE_OBJECT_TYPE.SPIDER_SILK_SHIRT:
-            case TILE_OBJECT_TYPE.MOON_WALKER_SHIRT:
+            case TILE_OBJECT_TYPE.MOONWALKER_SHIRT:
             case TILE_OBJECT_TYPE.BOAR_HIDE_ARMOR:
             case TILE_OBJECT_TYPE.WOLF_HIDE_ARMOR:
             case TILE_OBJECT_TYPE.BEAR_HIDE_ARMOR:
@@ -576,6 +635,12 @@ public static class Extensions {
             case TILE_OBJECT_TYPE.BLOCK_WALL:
             case TILE_OBJECT_TYPE.DESERT_ROSE:
             case TILE_OBJECT_TYPE.COPPER_SWORD:
+            case TILE_OBJECT_TYPE.BASIC_SWORD:
+            case TILE_OBJECT_TYPE.BASIC_AXE:
+            case TILE_OBJECT_TYPE.BASIC_BOW:
+            case TILE_OBJECT_TYPE.BASIC_DAGGER:
+            case TILE_OBJECT_TYPE.BASIC_SHIRT:
+            case TILE_OBJECT_TYPE.BASIC_STAFF:
             case TILE_OBJECT_TYPE.IRON_SWORD:
             case TILE_OBJECT_TYPE.MITHRIL_SWORD:
             case TILE_OBJECT_TYPE.ORICHALCUM_SWORD:
@@ -605,7 +670,7 @@ public static class Extensions {
             case TILE_OBJECT_TYPE.RABBIT_SHIRT:
             case TILE_OBJECT_TYPE.WOOL_SHIRT:
             case TILE_OBJECT_TYPE.SPIDER_SILK_SHIRT:
-            case TILE_OBJECT_TYPE.MOON_WALKER_SHIRT:
+            case TILE_OBJECT_TYPE.MOONWALKER_SHIRT:
             case TILE_OBJECT_TYPE.BOAR_HIDE_ARMOR:
             case TILE_OBJECT_TYPE.WOLF_HIDE_ARMOR:
             case TILE_OBJECT_TYPE.BEAR_HIDE_ARMOR:
@@ -636,6 +701,45 @@ public static class Extensions {
                 return false;
         }
     }
+
+    public static bool IsMetal(this TILE_OBJECT_TYPE type) {
+        switch (type) {
+            case TILE_OBJECT_TYPE.COPPER:
+            case TILE_OBJECT_TYPE.IRON:
+            case TILE_OBJECT_TYPE.MITHRIL:
+            case TILE_OBJECT_TYPE.ORICHALCUM:
+            return true;
+            default:
+            return false;
+        }
+    }
+
+    public static bool IsCloth(this TILE_OBJECT_TYPE type) {
+        switch (type) {
+            case TILE_OBJECT_TYPE.MINK_CLOTH:
+            case TILE_OBJECT_TYPE.MOONCRAWLER_CLOTH:
+            case TILE_OBJECT_TYPE.RABBIT_CLOTH:
+            case TILE_OBJECT_TYPE.SPIDER_SILK:
+            case TILE_OBJECT_TYPE.WOOL:
+            return true;
+            default:
+            return false;
+        }
+    }
+
+    public static bool IsLeather(this TILE_OBJECT_TYPE type) {
+        switch (type) {
+            case TILE_OBJECT_TYPE.BOAR_HIDE:
+            case TILE_OBJECT_TYPE.BEAR_HIDE:
+            case TILE_OBJECT_TYPE.WOLF_HIDE:
+            case TILE_OBJECT_TYPE.DRAGON_HIDE:
+            case TILE_OBJECT_TYPE.SCALE_HIDE:
+            return true;
+            default:
+            return false;
+        }
+    }
+
     public static bool IsFullnessRecoveryTypeJob(this JOB_TYPE type) {
         switch (type) {
             case JOB_TYPE.FULLNESS_RECOVERY_URGENT:
@@ -794,6 +898,10 @@ public static class Extensions {
             case JOB_TYPE.HARVEST_CROPS:
             case JOB_TYPE.CHOP_WOOD:
             case JOB_TYPE.MINE_STONE:
+            case JOB_TYPE.RECUPERATE:
+            case JOB_TYPE.CRAFT_EQUIPMENT:
+            case JOB_TYPE.CREATE_HOSPICE_ANTIDOTE:
+            case JOB_TYPE.CREATE_HOSPICE_POTION:
             priority = 920;
                 break;
             case JOB_TYPE.UNDERMINE:
@@ -838,6 +946,7 @@ public static class Extensions {
             case JOB_TYPE.BURY:
             case JOB_TYPE.TORTURE:
             case JOB_TYPE.CHANGE_CLASS:
+            case JOB_TYPE.VISIT_HOSPICE:
                 priority = 820;
                 break;
             case JOB_TYPE.PRODUCE_FOOD:
@@ -848,6 +957,8 @@ public static class Extensions {
             case JOB_TYPE.MONSTER_BUTCHER:
             case JOB_TYPE.QUARANTINE:
             case JOB_TYPE.PLAGUE_CARE:
+            case JOB_TYPE.HEALER_CURE:
+            case JOB_TYPE.STOCKPILE_FOOD:
                 priority = 800;
                 break;
             case JOB_TYPE.CRAFT_OBJECT:
@@ -931,7 +1042,9 @@ public static class Extensions {
             case JOB_TYPE.ABDUCT:
             case JOB_TYPE.LEARN_MONSTER:
             case JOB_TYPE.TAKE_ARTIFACT:
-                priority = 260;
+            case JOB_TYPE.GATHER_HERB:
+            case JOB_TYPE.BUY_ITEM:
+            priority = 260;
                 break;
             // case JOB_TYPE.MONSTER_EAT_CORPSE:
             //     priority = 255;
@@ -1166,6 +1279,16 @@ public static class Extensions {
         switch (type) {
             default:
                 return UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(type.ToString());
+        }
+    }
+    public static bool IsAnimalBeast(this SUMMON_TYPE type) {
+        switch (type) {
+            case SUMMON_TYPE.Boar:
+            case SUMMON_TYPE.Bear:
+            case SUMMON_TYPE.Wolf:
+                return true;
+            default:
+                return false;
         }
     }
     #endregion
@@ -1698,19 +1821,69 @@ public static class Extensions {
     public static TILE_OBJECT_TYPE ConvertResourcesToTileObjectType(this CONCRETE_RESOURCES p_resrouce) {
         switch (p_resrouce) {
             case CONCRETE_RESOURCES.Copper:
-            return TILE_OBJECT_TYPE.COPPER;
+                return TILE_OBJECT_TYPE.COPPER;
             case CONCRETE_RESOURCES.Iron:
-            return TILE_OBJECT_TYPE.IRON;
+                return TILE_OBJECT_TYPE.IRON;
             case CONCRETE_RESOURCES.Mithril:
-            return TILE_OBJECT_TYPE.MITHRIL;
+                return TILE_OBJECT_TYPE.MITHRIL;
             case CONCRETE_RESOURCES.Orichalcum:
-            return TILE_OBJECT_TYPE.ORICHALCUM;
+                return TILE_OBJECT_TYPE.ORICHALCUM;
             case CONCRETE_RESOURCES.Gold:
-            return TILE_OBJECT_TYPE.GOLD;
+                return TILE_OBJECT_TYPE.GOLD;
             case CONCRETE_RESOURCES.Diamond:
-            return TILE_OBJECT_TYPE.DIAMOND;
+                return TILE_OBJECT_TYPE.DIAMOND;
+            case CONCRETE_RESOURCES.Wood:
+                return TILE_OBJECT_TYPE.WOOD_PILE;
+            case CONCRETE_RESOURCES.Stone:
+                return TILE_OBJECT_TYPE.STONE_PILE;
+            case CONCRETE_RESOURCES.Rabbit_Cloth:
+                return TILE_OBJECT_TYPE.RABBIT_CLOTH;
+            case CONCRETE_RESOURCES.Mink_Cloth:
+                return TILE_OBJECT_TYPE.MINK_CLOTH;
+            case CONCRETE_RESOURCES.Wool:
+                return TILE_OBJECT_TYPE.WOOL;
+            case CONCRETE_RESOURCES.Spider_Silk:
+                return TILE_OBJECT_TYPE.SPIDER_SILK;
+            case CONCRETE_RESOURCES.Moon_Thread:
+                return TILE_OBJECT_TYPE.MOON_THREAD;
+            case CONCRETE_RESOURCES.Boar_Hide:
+                return TILE_OBJECT_TYPE.BOAR_HIDE;
+            case CONCRETE_RESOURCES.Scale_Hide:
+                return TILE_OBJECT_TYPE.SCALE_HIDE;
+            case CONCRETE_RESOURCES.Dragon_Hide:
+                return TILE_OBJECT_TYPE.DRAGON_HIDE;
+            case CONCRETE_RESOURCES.Elf_Meat:
+                return TILE_OBJECT_TYPE.ELF_MEAT;
+            case CONCRETE_RESOURCES.Human_Meat:
+                return TILE_OBJECT_TYPE.HUMAN_MEAT;
+            case CONCRETE_RESOURCES.Animal_Meat:
+                return TILE_OBJECT_TYPE.ANIMAL_MEAT;
+            case CONCRETE_RESOURCES.Fish:
+                return TILE_OBJECT_TYPE.FISH_PILE;
+            case CONCRETE_RESOURCES.Corn:
+                return TILE_OBJECT_TYPE.CORN;
+            case CONCRETE_RESOURCES.Potato:
+                return TILE_OBJECT_TYPE.POTATO;
+            case CONCRETE_RESOURCES.Pineapple:
+                return TILE_OBJECT_TYPE.PINEAPPLE;
+            case CONCRETE_RESOURCES.Iceberry:
+                return TILE_OBJECT_TYPE.ICEBERRY;
+            case CONCRETE_RESOURCES.Mushroom:
+                return TILE_OBJECT_TYPE.MUSHROOM;
+            case CONCRETE_RESOURCES.Wolf_Hide:
+                return TILE_OBJECT_TYPE.WOLF_HIDE;
+            case CONCRETE_RESOURCES.Bear_Hide:
+                return TILE_OBJECT_TYPE.BEAR_HIDE;
+            case CONCRETE_RESOURCES.Mooncrawler_Cloth:
+                return TILE_OBJECT_TYPE.MOONCRAWLER_CLOTH;
+            case CONCRETE_RESOURCES.Hypno_Herb:
+                return TILE_OBJECT_TYPE.HYPNO_HERB;
+            case CONCRETE_RESOURCES.Rat_Meat:
+                return TILE_OBJECT_TYPE.RAT_MEAT;
+            case CONCRETE_RESOURCES.Vegetables:
+                return TILE_OBJECT_TYPE.VEGETABLES;
             default:
-            return TILE_OBJECT_TYPE.NONE;
+                return TILE_OBJECT_TYPE.NONE;
         }
     }
     #endregion

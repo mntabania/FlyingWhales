@@ -372,22 +372,22 @@ namespace Inner_Maps {
             int northMost = p_oceanStructure.tiles.Max(t => t.localPlace.y);
 		
             LocationGridTile northTile = CollectionUtilities.GetRandomElement(p_oceanStructure.tiles.Where(t => t.localPlace.y == northMost && t.tileObjectComponent.objHere == null));
-            if (!northTile.IsAtEdgeOfMap()) {
+            if (northTile != null && !northTile.IsAtEdgeOfMap()) {
                 CreateFishingSpot(northTile);    
             }
             
             LocationGridTile southTile = CollectionUtilities.GetRandomElement(p_oceanStructure.tiles.Where(t => t.localPlace.y == southMost && t.tileObjectComponent.objHere == null));
-            if (!southTile.IsAtEdgeOfMap()) {
+            if (southTile != null && !southTile.IsAtEdgeOfMap()) {
                 CreateFishingSpot(southTile);
             }
 
             LocationGridTile westTile = CollectionUtilities.GetRandomElement(p_oceanStructure.tiles.Where(t => t.localPlace.x == westMost && t.tileObjectComponent.objHere == null));
-            if (!westTile.IsAtEdgeOfMap()) {
+            if (westTile != null && !westTile.IsAtEdgeOfMap()) {
                 CreateFishingSpot(westTile);
             }
 
             LocationGridTile eastTile = CollectionUtilities.GetRandomElement(p_oceanStructure.tiles.Where(t => t.localPlace.x == eastMost && t.tileObjectComponent.objHere == null));
-            if (!eastTile.IsAtEdgeOfMap()) {
+            if (eastTile != null && !eastTile.IsAtEdgeOfMap()) {
                 CreateFishingSpot(eastTile);
             }
 

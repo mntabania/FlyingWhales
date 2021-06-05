@@ -17,8 +17,8 @@ namespace Interrupts {
         public override bool ExecuteInterruptStartEffect(InterruptHolder interruptHolder,
             ref Log overrideEffectLog, ActualGoapNode goapNode = null) {
             Character actor = interruptHolder.actor;
-            actor.needsComponent.ResetSleepTicks();
-            actor.needsComponent.SetHasCancelledSleepSchedule(false);
+            // actor.needsComponent.ResetSleepTicks();
+            // actor.needsComponent.SetHasCancelledSleepSchedule(false);
             return true;
         }
         #endregion

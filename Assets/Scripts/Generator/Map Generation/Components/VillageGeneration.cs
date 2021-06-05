@@ -69,6 +69,16 @@ public class VillageGeneration : MapGenerationComponent {
 			}
 		}
 		
+		//Generate facilities
+		for (int i = 0; i < createdSettlements.Count; i++) {
+			NPCSettlement npcSettlement = createdSettlements[i];
+			VillageSetting villageSetting = villageSettings[i];
+			var structureSettings = GenerateFacilities(npcSettlement, npcSettlement.owner, villageSetting.GetRandomFacilityCount());
+			Debug.Log($"Will create facilities for {npcSettlement.name}: {structureSettings.ComafyList()}");
+			yield return MapGenerator.Instance.StartCoroutine(EnsuredStructurePlacement(region, structureSettings, npcSettlement));
+			yield return MapGenerator.Instance.StartCoroutine(npcSettlement.PlaceInitialObjectsCoroutine());
+		}
+		
 		//Generate Dwellings
 		for (int i = 0; i < createdSettlements.Count; i++) {
 			NPCSettlement npcSettlement = createdSettlements[i];
@@ -77,19 +87,15 @@ public class VillageGeneration : MapGenerationComponent {
 			yield return MapGenerator.Instance.StartCoroutine(EnsuredStructurePlacement(region, structureSettings, npcSettlement));
 			RuinarchListPool<StructureSetting>.Release(structureSettings);
 		}
-		
-		//Generate facilities and residents
+
+		//generate residents
 		for (int i = 0; i < createdSettlements.Count; i++) {
 			NPCSettlement npcSettlement = createdSettlements[i];
-			VillageSetting villageSetting = villageSettings[i];
-			var structureSettings = GenerateFacilities(npcSettlement, npcSettlement.owner, villageSetting.GetRandomFacilityCount());
-			Debug.Log($"Will create facilities for {npcSettlement.name}: {structureSettings.ComafyList()}");
-			yield return MapGenerator.Instance.StartCoroutine(EnsuredStructurePlacement(region, structureSettings, npcSettlement));
-			yield return MapGenerator.Instance.StartCoroutine(npcSettlement.PlaceInitialObjectsCoroutine());
-
 			if (npcSettlement.structures.ContainsKey(STRUCTURE_TYPE.DWELLING)) {
 				int dwellingCount = npcSettlement.structures[STRUCTURE_TYPE.DWELLING].Count;
 				List<Character> spawnedCharacters = GenerateSettlementResidents(dwellingCount, npcSettlement, npcSettlement.owner, data);
+
+				RandomizeCharacterClassesBasedOnTalents(npcSettlement, spawnedCharacters);
 				List<TileObject> objectsInDwellings = RuinarchListPool<TileObject>.Claim();
 				npcSettlement.PopulateTileObjectsFromStructures<TileObject>(objectsInDwellings, STRUCTURE_TYPE.DWELLING);
 				for (int j = 0; j < objectsInDwellings.Count; j++) {
@@ -97,7 +103,7 @@ public class VillageGeneration : MapGenerationComponent {
 					tileObject.UpdateOwners();
 				}
 				RuinarchListPool<TileObject>.Release(objectsInDwellings);
-				CharacterManager.Instance.PlaceInitialCharacters(spawnedCharacters, npcSettlement);	
+				CharacterManager.Instance.PlaceInitialCharacters(spawnedCharacters, npcSettlement);
 			}
 		}
 		RuinarchListPool<NPCSettlement>.Release(createdSettlements);
@@ -206,6 +212,13 @@ public class VillageGeneration : MapGenerationComponent {
 	#region Scenario Maps
 	public override IEnumerator LoadScenarioData(MapGenerationData data, ScenarioMapData scenarioMapData) {
 		if (scenarioMapData.villageSettlementTemplates != null) {
+			List<string> civilianClassOrder = RuinarchListPool<string>.Claim();
+			string foodProducer = "Food Producer";
+			string basicResourceProducer = "Basic Resource Producer";
+			string specialCivilian = "Special Civilian";
+			civilianClassOrder.Add(foodProducer);
+			civilianClassOrder.Add(basicResourceProducer);
+			civilianClassOrder.Add(specialCivilian);
 			for (int i = 0; i < scenarioMapData.villageSettlementTemplates.Length; i++) {
 				SettlementTemplate settlementTemplate = scenarioMapData.villageSettlementTemplates[i];
 				Area[] tilesInSettlement = settlementTemplate.GetTilesInTemplate(GridMap.Instance.map);
@@ -234,6 +247,10 @@ public class VillageGeneration : MapGenerationComponent {
 				int dwellingCount = npcSettlement.structures[STRUCTURE_TYPE.DWELLING].Count;
 				List<Character> spawnedCharacters = CreateSettlementResidentsForScenario(dwellingCount, npcSettlement, faction, data, settlementTemplate.minimumVillagerCount);
 
+				if (WorldSettings.Instance.worldSettingsData.worldType != WorldSettingsData.World_Type.Pangat_Loo) { //do not randomize classes in pangat loo since it has classes pre set.
+					RandomizeCharacterClassesBasedOnTalents(npcSettlement, spawnedCharacters);
+				}
+				
 				//update objects owners in dwellings
 				List<TileObject> objectsInDwellings = RuinarchListPool<TileObject>.Claim();
 				npcSettlement.PopulateTileObjectsFromStructures<TileObject>(objectsInDwellings, STRUCTURE_TYPE.DWELLING);
@@ -246,6 +263,7 @@ public class VillageGeneration : MapGenerationComponent {
 				// npcSettlement.Initialize();
 				yield return null;
 			}
+			RuinarchListPool<string>.Release(civilianClassOrder);
 			ApplyPreGeneratedCharacterRelationships(data);
 			for (int i = 0; i < DatabaseManager.Instance.settlementDatabase.allNonPlayerSettlements.Count; i++) {
 				NPCSettlement settlement = DatabaseManager.Instance.settlementDatabase.allNonPlayerSettlements[i];
@@ -397,23 +415,6 @@ public class VillageGeneration : MapGenerationComponent {
 			return GenerateSettlementResidents(dwellingCount, npcSettlement, faction, data, providedCitizenCount);	
 		}
 	}
-	private void TrySpawnSingleCharacter(NPCSettlement npcSettlement, Faction faction, MapGenerationData data, Dwelling dwelling, ref List<Character> createdCharacters, ref int citizenCount, string className = "") {
-		PreCharacterData singleCharacter = GetAvailableSingleCharacterForSettlement(faction.race, data, npcSettlement);
-		string classString = string.IsNullOrEmpty(className) ? npcSettlement.classComponent.GetNextClassToCreateAndIncrementOrder(faction) : className;
-		if (singleCharacter != null) {
-			createdCharacters.Add(SpawnCharacter(singleCharacter, classString, dwelling, faction, npcSettlement));
-			citizenCount += 1;
-		} else {
-			//no more characters to spawn
-			Debug.LogWarning("Could not find any more characters to spawn. Generating a new family tree.");
-			FamilyTree newFamily = FamilyTreeGenerator.GenerateFamilyTree(faction.race);
-			DatabaseManager.Instance.familyTreeDatabase.AddFamilyTree(newFamily);
-			singleCharacter = GetAvailableSingleCharacterForSettlement(faction.race, data, npcSettlement);
-			Assert.IsNotNull(singleCharacter, $"Generation tried to generate a new family for spawning a needed citizen. But still could not find a single character!");
-			createdCharacters.Add(SpawnCharacter(singleCharacter, classString, dwelling, faction, npcSettlement));
-			citizenCount += 1;
-		}
-	}
 	#endregion
 	
 	#region Saved World
@@ -514,7 +515,7 @@ public class VillageGeneration : MapGenerationComponent {
 	}
 	#endregion
 
-#region Residents
+	#region Residents
 	private void GenerateResidentConfiguration(int providedCitizenCount, int dwellingCount, out int coupleCharacters, out int singleCharacters) {
 		singleCharacters = 0;
 		coupleCharacters = 0;
@@ -590,7 +591,7 @@ public class VillageGeneration : MapGenerationComponent {
 		//single
 		PreCharacterData singleCharacter = GetAvailableSingleCharacterForSettlement(faction.race, data, npcSettlement);
 		if (singleCharacter != null) {
-			createdCharacters.Add(SpawnCharacter(singleCharacter, string.IsNullOrEmpty(providedClass) ? npcSettlement.classComponent.GetNextClassToCreateAndIncrementOrder(faction) : providedClass, dwelling, faction, npcSettlement));
+			createdCharacters.Add(SpawnCharacter(singleCharacter, string.IsNullOrEmpty(providedClass) ? "Farmer" : providedClass, dwelling, faction, npcSettlement));
 			citizenCount += 1;
 		}
 		else {
@@ -600,7 +601,7 @@ public class VillageGeneration : MapGenerationComponent {
 			DatabaseManager.Instance.familyTreeDatabase.AddFamilyTree(newFamily);
 			singleCharacter = GetAvailableSingleCharacterForSettlement(faction.race, data, npcSettlement);
 			Assert.IsNotNull(singleCharacter, $"Generation tried to generate a new family for spawning a needed citizen. But still could not find a single character!");
-			createdCharacters.Add(SpawnCharacter(singleCharacter, string.IsNullOrEmpty(providedClass) ? npcSettlement.classComponent.GetNextClassToCreateAndIncrementOrder(faction) : providedClass, dwelling, faction, npcSettlement));
+			createdCharacters.Add(SpawnCharacter(singleCharacter, string.IsNullOrEmpty(providedClass) ? "Farmer" : providedClass, dwelling, faction, npcSettlement));
 			citizenCount += 1;
 		}
 	}
@@ -622,7 +623,7 @@ public class VillageGeneration : MapGenerationComponent {
 				//no more sibling Couples	
 				PreCharacterData singleCharacter = GetAvailableSingleCharacterForSettlement(faction.race, data, npcSettlement);
 				if (singleCharacter != null) {
-					createdCharacters.Add(SpawnCharacter(singleCharacter, string.IsNullOrEmpty(providedClass1) ? npcSettlement.classComponent.GetNextClassToCreateAndIncrementOrder(faction) : providedClass1, dwelling, faction, npcSettlement));
+					createdCharacters.Add(SpawnCharacter(singleCharacter, string.IsNullOrEmpty(providedClass1) ? "Farmer" : providedClass1, dwelling, faction, npcSettlement));
 					citizenCount += 1;
 				}
 				else {
@@ -632,7 +633,7 @@ public class VillageGeneration : MapGenerationComponent {
 					DatabaseManager.Instance.familyTreeDatabase.AddFamilyTree(newFamily);
 					singleCharacter = GetAvailableSingleCharacterForSettlement(faction.race, data, npcSettlement);
 					Assert.IsNotNull(singleCharacter, $"Generation tried to generate a new family for spawning a needed citizen. But still could not find a single character!");
-					createdCharacters.Add(SpawnCharacter(singleCharacter, string.IsNullOrEmpty(providedClass1) ? npcSettlement.classComponent.GetNextClassToCreateAndIncrementOrder(faction) : providedClass1, dwelling, faction, npcSettlement));
+					createdCharacters.Add(SpawnCharacter(singleCharacter, string.IsNullOrEmpty(providedClass1) ? "Farmer" : providedClass1, dwelling, faction, npcSettlement));
 					citizenCount += 1;
 				}
 			}
@@ -717,8 +718,8 @@ public class VillageGeneration : MapGenerationComponent {
 	}
 	private List<Character> SpawnCouple(Couple couple, Dwelling dwelling, Faction faction, NPCSettlement npcSettlement, string className1 = "", string className2 = "") {
 		List<Character> characters = new List<Character>() {
-			SpawnCharacter(couple.character1, string.IsNullOrEmpty(className1) ? npcSettlement.classComponent.GetNextClassToCreateAndIncrementOrder(faction) : className1, dwelling, faction, npcSettlement),
-			SpawnCharacter(couple.character2, string.IsNullOrEmpty(className2) ? npcSettlement.classComponent.GetNextClassToCreateAndIncrementOrder(faction) : className2, dwelling, faction, npcSettlement)	
+			SpawnCharacter(couple.character1, string.IsNullOrEmpty(className1) ? "Farmer" : className1, dwelling, faction, npcSettlement),
+			SpawnCharacter(couple.character2, string.IsNullOrEmpty(className2) ? "Farmer" : className2, dwelling, faction, npcSettlement)	
 		};
 		return characters;
 	}
@@ -732,9 +733,85 @@ public class VillageGeneration : MapGenerationComponent {
 			p_character.religionComponent.ChangeReligion(RELIGION.Demon_Worship);
 		}
 	}
-#endregion
+	private void RandomizeCharacterClassesBasedOnTalents(NPCSettlement npcSettlement, List<Character> spawnedCharacters) {
+		List<string> civilianClassOrder = RuinarchListPool<string>.Claim();
+		string foodProducer = "Food Producer";
+		string basicResourceProducer = "Basic Resource Producer";
+		string specialCivilian = "Special Civilian";
+		civilianClassOrder.Add(foodProducer);
+		civilianClassOrder.Add(basicResourceProducer);
+		civilianClassOrder.Add(specialCivilian);
+#if DEBUG_LOG
+		string summary = $"Setting initial classes of {npcSettlement.name} residents ({spawnedCharacters.Count.ToString()})";
+#endif
+		List<Character> charactersToChangeClass = RuinarchListPool<Character>.Claim();
+		charactersToChangeClass.AddRange(spawnedCharacters);
+		//change class of spawned characters.
+		//combatants
+		int neededCombatants = spawnedCharacters.Count - SettlementClassComponent.GetNumberOfNeededCombatants(spawnedCharacters.Count);
+#if DEBUG_LOG
+		summary = $"{summary}\nGenerating {neededCombatants.ToString()} Combatants";
+#endif
+		for (int j = 0; j < neededCombatants; j++) {
+			Character chosenCharacter = CollectionUtilities.GetRandomElement(charactersToChangeClass);
+			charactersToChangeClass.Remove(chosenCharacter);
+			List<string> ableCombatantClasses = RuinarchListPool<string>.Claim();
+			chosenCharacter.classComponent.PopulateAbleCombatantClasses(ableCombatantClasses);
+			string chosenClass = CollectionUtilities.GetRandomElement(ableCombatantClasses);
+			chosenCharacter.classComponent.AssignClass(chosenClass, true);
+			chosenCharacter.classComponent.OnUpdateCharacterClass();
+#if DEBUG_LOG
+			summary = $"{summary}\n\tSet class of {chosenCharacter.name} to {chosenClass}";
+#endif
+			RuinarchListPool<string>.Release(ableCombatantClasses);
+		}
 
-#region Relationships
+		//civilians
+		int civilianCount = spawnedCharacters.Count - neededCombatants;
+#if DEBUG_LOG
+		summary = $"{summary}\nGenerating {civilianCount.ToString()} Civilians";
+#endif
+		int currentCivilianOrderIndex = 0;
+		for (int j = 0; j < civilianCount; j++) {
+			Character chosenCharacter = CollectionUtilities.GetRandomElement(charactersToChangeClass);
+			charactersToChangeClass.Remove(chosenCharacter);
+
+			//produce civilians based on civilianClassOrder.
+			//This will iterate through that list for each successful loop of this
+			string chosenClassType = civilianClassOrder[currentCivilianOrderIndex];
+			currentCivilianOrderIndex++;
+			if (currentCivilianOrderIndex >= civilianClassOrder.Count) {
+				currentCivilianOrderIndex = 0;
+			}
+
+			List<string> civilianClassChoices = RuinarchListPool<string>.Claim();
+			if (chosenClassType == foodProducer) {
+				chosenCharacter.classComponent.PopulateAbleFoodProducerClasses(civilianClassChoices);
+			}
+			else if (chosenClassType == basicResourceProducer) {
+				chosenCharacter.classComponent.PopulateBasicProducerClasses(civilianClassChoices, npcSettlement.owner.factionType.type);
+			}
+			else if (chosenClassType == specialCivilian) {
+				chosenCharacter.classComponent.PopulateAbleSpecialCivilianClasses(civilianClassChoices);
+			}
+			Assert.IsTrue(civilianClassChoices.Count > 0, $"{chosenCharacter.name} will set its initial class but it doesn't have any {chosenClassType} able classes.");
+			string chosenClass = CollectionUtilities.GetRandomElement(civilianClassChoices);
+			chosenCharacter.classComponent.AssignClass(chosenClass, true);
+			chosenCharacter.classComponent.OnUpdateCharacterClass();
+#if DEBUG_LOG
+			summary = $"{summary}\n\tSet class of {chosenCharacter.name} to {chosenClass}";
+#endif
+			RuinarchListPool<string>.Release(civilianClassChoices);
+		}
+		RuinarchListPool<Character>.Release(charactersToChangeClass);
+#if DEBUG_LOG
+		Debug.Log(summary);
+#endif
+		RuinarchListPool<string>.Release(civilianClassOrder);
+	}
+	#endregion
+
+	#region Relationships
 	private void ApplyPreGeneratedCharacterRelationships(MapGenerationData data) {
 		foreach (var pair in DatabaseManager.Instance.familyTreeDatabase.allFamilyTreesDictionary) {
 			for (int i = 0; i < pair.Value.Count; i++) {
@@ -749,9 +826,9 @@ public class VillageGeneration : MapGenerationComponent {
 			}
 		}
 	}
-#endregion
+	#endregion
 
-#region Settlement Generation Utilities
+	#region Settlement Generation Utilities
 	private LOCATION_TYPE GetLocationTypeForRace(RACE race) {
 		switch (race) {
 			case RACE.HUMANS:
@@ -761,6 +838,6 @@ public class VillageGeneration : MapGenerationComponent {
 				throw new Exception($"There was no location type provided for race {race.ToString()}");
 		}
 	}
-#endregion
+	#endregion
 	
 }

@@ -8,6 +8,7 @@ using Traits;
 using UtilityScripts;
 using Inner_Maps;
 using Ruinarch.Custom_UI;
+using Character_Talents;
 public class CharacterInfoUI : InfoUIBase {
 
     private enum VIEW_MODE { None = 0, Info, Mood, Relationship, Logs, }
@@ -22,6 +23,7 @@ public class CharacterInfoUI : InfoUIBase {
     [SerializeField] private TextMeshProUGUI partyLbl;
     [SerializeField] private EventLabel partyEventLbl;
     [SerializeField] private Image raceIcon;
+    [SerializeField] private TextMeshProUGUI coinsLbl;
 
     [Space(10)] [Header("Location")]
     [SerializeField] private TextMeshProUGUI factionLbl;
@@ -59,8 +61,33 @@ public class CharacterInfoUI : InfoUIBase {
 
     [Space(10)]
     [Header("Equips")]
-    [SerializeField] private TextMeshProUGUI equipsLbl;
-    [SerializeField] private EventLabel equipsEventLbl;
+    [SerializeField] private Image weaponImg;
+    [SerializeField] private Image armorImg;
+    [SerializeField] private Image accessoryImg;
+    [SerializeField] private HoverText weaponHoverText;
+    [SerializeField] private HoverText armorHoverText;
+    [SerializeField] private HoverText accessoryHoverText;
+    [SerializeField] private EventEquipButton weaponEventButton;
+    [SerializeField] private EventEquipButton armorEventButton;
+    [SerializeField] private EventEquipButton accessoryEventButton;
+
+    [Space(10)]
+    [Header("Talents")]
+    [SerializeField] private GameObject talentsParentObject;
+    [SerializeField] private TextMeshProUGUI martialArtsLbl;
+    [SerializeField] private TextMeshProUGUI combatMagicLbl;
+    [SerializeField] private TextMeshProUGUI healingMagicLbl;
+    [SerializeField] private TextMeshProUGUI craftingLbl;
+    [SerializeField] private TextMeshProUGUI resourcesLbl;
+    [SerializeField] private TextMeshProUGUI foodLbl;
+    [SerializeField] private TextMeshProUGUI socialLbl;
+    [SerializeField] private HoverText martialArtsHoverText;
+    [SerializeField] private HoverText combatMagicHoverText;
+    [SerializeField] private HoverText healingMagicHoverText;
+    [SerializeField] private HoverText craftingHoverText;
+    [SerializeField] private HoverText resourcesHoverText;
+    [SerializeField] private HoverText foodHoverText;
+    [SerializeField] private HoverText socialHoverText;
 
     [Space(10)] [Header("Relationships")]
     [SerializeField] private EventLabel relationshipNamesEventLbl;
@@ -161,8 +188,8 @@ public class CharacterInfoUI : InfoUIBase {
         itemsEventLbl.SetOnLeftClickAction(OnLeftClickItem);
         itemsEventLbl.SetOnRightClickAction(OnRightClickItem);
 
-        equipsEventLbl.SetOnLeftClickAction(OnLeftClickEquipment);
-        equipsEventLbl.SetOnRightClickAction(OnRightClickEquipment);
+        weaponEventButton.AddPointerRightClickAction(OnRightClickEquipment);
+        //weaponEventButton.AddPointerLeftClickAction(OnLeftClickEquipment);
 
         opinionsEventLabel.SetShouldColorHighlight(false);
         statusTraitsEventLbl.SetShouldColorHighlight(false);
@@ -399,6 +426,7 @@ public class CharacterInfoUI : InfoUIBase {
         hpLbl.text = $"{_activeCharacter.currentHP.ToString()}/{_activeCharacter.maxHP.ToString()}";
         attackLbl.text = $"{_activeCharacter.combatComponent.GetComputedStrength().ToString()}";
         speedLbl.text =  $"{_activeCharacter.combatComponent.attackSpeed / 1000f}s";
+        coinsLbl.text = $"{_activeCharacter.moneyComponent.coins}";
         intLbl.text = $"{_activeCharacter.combatComponent.GetComputedIntelligence()}";
         critRateLbl.text = $"{_activeCharacter.combatComponent.critRate}";
         raceLbl.text = $"{UtilityScripts.GameUtilities.GetNormalizedSingularRace(_activeCharacter.race)}";
@@ -411,9 +439,75 @@ public class CharacterInfoUI : InfoUIBase {
     #region Location
     private void UpdateLocationInfo() {
         factionLbl.text = _activeCharacter.faction != null ? $"<link=\"faction\">{UtilityScripts.Utilities.ColorizeAndBoldName(_activeCharacter.faction.name, FactionManager.Instance.GetFactionNameColorHex())}</link>" : "Factionless";
-        currentLocationLbl.text = _activeCharacter.currentRegion != null ? $"{_activeCharacter.currentRegion.name}" : "None";
+        currentLocationLbl.text = _activeCharacter.structureComponent.workPlaceStructure != null ? $"{_activeCharacter.structureComponent.workPlaceStructure.name}" : "None";
         homeRegionLbl.text = _activeCharacter.homeSettlement != null ? $"<link=\"home\">{UtilityScripts.Utilities.ColorizeAndBoldName(_activeCharacter.homeSettlement.name)}</link>" : "Homeless";
         houseLbl.text = _activeCharacter.homeStructure != null ? $"<link=\"house\">{UtilityScripts.Utilities.ColorizeAndBoldName(_activeCharacter.homeStructure.name)}</link>" : "Homeless";
+
+        UpdateEquipmentDisplay();
+        UpdatetalentsDisplay();
+    }
+
+    private void UpdateEquipmentDisplay() {
+        if (_activeCharacter.equipmentComponent.currentWeapon != null) {
+            weaponImg.enabled = true;
+            weaponImg.sprite = _activeCharacter.equipmentComponent.currentWeapon.equipmentData.imgIcon;
+            weaponHoverText.enabled = true;
+            weaponHoverText.SetText(_activeCharacter.equipmentComponent.currentWeapon.name + "\n\n" + _activeCharacter.equipmentComponent.currentWeapon.GetBonusDescription());
+            weaponEventButton.SetData(_activeCharacter, _activeCharacter.equipmentComponent.currentWeapon);
+        } else {
+            weaponHoverText.enabled = false;
+            weaponImg.enabled = false;
+        }
+        if (_activeCharacter.equipmentComponent.currentArmor != null) {
+            armorImg.enabled = true;
+            armorImg.sprite = _activeCharacter.equipmentComponent.currentArmor.equipmentData.imgIcon;
+            armorHoverText.enabled = true;
+            armorHoverText.SetText(_activeCharacter.equipmentComponent.currentArmor.name + "\n\n" + _activeCharacter.equipmentComponent.currentArmor.GetBonusDescription());
+            armorEventButton.SetData(_activeCharacter, _activeCharacter.equipmentComponent.currentArmor);
+        } else {
+            armorHoverText.enabled = false;
+            armorImg.enabled = false;
+        }
+        if (_activeCharacter.equipmentComponent.currentAccessory != null) {
+            accessoryImg.enabled = true;
+            accessoryImg.sprite = _activeCharacter.equipmentComponent.currentAccessory.equipmentData.imgIcon;
+            accessoryHoverText.enabled = true;
+            accessoryHoverText.SetText(_activeCharacter.equipmentComponent.currentAccessory.name + "\n\n" + _activeCharacter.equipmentComponent.currentAccessory.GetBonusDescription());
+            accessoryEventButton.SetData(_activeCharacter, _activeCharacter.equipmentComponent.currentAccessory);
+        } else {
+            accessoryHoverText.enabled = false;
+            accessoryImg.enabled = false;
+        }
+    }
+
+    private void UpdatetalentsDisplay() {
+        martialArtsLbl.text = _activeCharacter.talentComponent.GetTalent(CHARACTER_TALENT.Martial_Arts).level.ToString();
+        CharacterTalentData talentData = CharacterManager.Instance.talentManager.GetOrCreateCharacterTalentData(CHARACTER_TALENT.Martial_Arts);
+        martialArtsHoverText.SetText(talentData.bonusDescription(_activeCharacter.talentComponent.GetTalent(CHARACTER_TALENT.Martial_Arts).level));
+        
+        combatMagicLbl.text = _activeCharacter.talentComponent.GetTalent(CHARACTER_TALENT.Combat_Magic).level.ToString();
+        talentData = CharacterManager.Instance.talentManager.GetOrCreateCharacterTalentData(CHARACTER_TALENT.Combat_Magic);
+        combatMagicHoverText.SetText(talentData.bonusDescription(_activeCharacter.talentComponent.GetTalent(CHARACTER_TALENT.Combat_Magic).level));
+        
+        healingMagicLbl.text = _activeCharacter.talentComponent.GetTalent(CHARACTER_TALENT.Healing_Magic).level.ToString();
+        talentData = CharacterManager.Instance.talentManager.GetOrCreateCharacterTalentData(CHARACTER_TALENT.Healing_Magic);
+        healingMagicHoverText.SetText(talentData.bonusDescription(_activeCharacter.talentComponent.GetTalent(CHARACTER_TALENT.Healing_Magic).level));
+
+        craftingLbl.text = _activeCharacter.talentComponent.GetTalent(CHARACTER_TALENT.Crafting).level.ToString();
+        talentData = CharacterManager.Instance.talentManager.GetOrCreateCharacterTalentData(CHARACTER_TALENT.Crafting);
+        craftingHoverText.SetText(talentData.bonusDescription(_activeCharacter.talentComponent.GetTalent(CHARACTER_TALENT.Crafting).level));
+
+        resourcesLbl.text = _activeCharacter.talentComponent.GetTalent(CHARACTER_TALENT.Resources).level.ToString();
+        talentData = CharacterManager.Instance.talentManager.GetOrCreateCharacterTalentData(CHARACTER_TALENT.Resources);
+        resourcesHoverText.SetText(talentData.bonusDescription(_activeCharacter.talentComponent.GetTalent(CHARACTER_TALENT.Resources).level)); 
+        
+        foodLbl.text = _activeCharacter.talentComponent.GetTalent(CHARACTER_TALENT.Food).level.ToString();
+        talentData = CharacterManager.Instance.talentManager.GetOrCreateCharacterTalentData(CHARACTER_TALENT.Food);
+        foodHoverText.SetText(talentData.bonusDescription(_activeCharacter.talentComponent.GetTalent(CHARACTER_TALENT.Food).level)); 
+        
+        socialLbl.text = _activeCharacter.talentComponent.GetTalent(CHARACTER_TALENT.Social).level.ToString();
+        talentData = CharacterManager.Instance.talentManager.GetOrCreateCharacterTalentData(CHARACTER_TALENT.Social);
+        socialHoverText.SetText(talentData.bonusDescription(_activeCharacter.talentComponent.GetTalent(CHARACTER_TALENT.Social).level));
     }
     private void OnClickFaction(object obj) {
         UIManager.Instance.ShowFactionInfo(activeCharacter.faction);
@@ -423,7 +517,7 @@ public class CharacterInfoUI : InfoUIBase {
             UIManager.Instance.ShowSettlementInfo(_activeCharacter.homeSettlement);
         }
     }
-    private void OnRightClickHomeVillage(object obj) {
+    private void OnRightClickHomeVillage(object obj) { 
         if (_activeCharacter.homeSettlement != null) {
             UIManager.Instance.ShowPlayerActionContextMenu(_activeCharacter.homeSettlement, Input.mousePosition, true);
         }
@@ -438,8 +532,14 @@ public class CharacterInfoUI : InfoUIBase {
     }
     #endregion
 
-    #region Traits
-    private void UpdateTraitsFromSignal(Character character, Trait trait) {
+    #region Talents
+    public void ToggleTalents() {
+        talentsParentObject.SetActive(!talentsParentObject.activeSelf);
+    }
+	#endregion
+
+	#region Traits
+	private void UpdateTraitsFromSignal(Character character, Trait trait) {
         if(_activeCharacter == null || _activeCharacter != character) {
             return;
         }
@@ -571,22 +671,16 @@ public class CharacterInfoUI : InfoUIBase {
             }
         }
     }
-    private void OnLeftClickEquipment(object obj) {
-        if (obj is string text) {
-            int index = int.Parse(text);
-            TileObject tileObject = _activeCharacter.equipmentInventory.ElementAtOrDefault(index);
-            if (tileObject != null) {
-                UIManager.Instance.ShowTileObjectInfo(tileObject);
-            }
+    private void OnLeftClickEquipment(Character p_owner, TileObject targetWeapon) {
+        //TileObject tileObject = p_owner.equipmentInventory.ElementAtOrDefault(index);
+        if (targetWeapon != null) {
+            UIManager.Instance.ShowTileObjectInfo(targetWeapon);
         }
     }
-    private void OnRightClickEquipment(object obj) {
-        if (obj is string text) {
-            int index = int.Parse(text);
-            TileObject tileObject = _activeCharacter.equipmentInventory.ElementAtOrDefault(index);
-            if (tileObject != null) {
-                UIManager.Instance.ShowPlayerActionContextMenu(tileObject, Input.mousePosition, true);
-            }
+    private void OnRightClickEquipment(Character p_owner, TileObject targetWeapon) {
+        //TileObject tileObject = _activeCharacter.equipmentInventory.ElementAtOrDefault(index);
+        if (targetWeapon != null) {
+            UIManager.Instance.ShowPlayerActionContextMenu(targetWeapon, Input.mousePosition, true);
         }
     }
     private void UpdateInventoryInfo() {
@@ -596,14 +690,6 @@ public class CharacterInfoUI : InfoUIBase {
             itemsLbl.text = $"{itemsLbl.text}<link=\"{i.ToString()}\">{UtilityScripts.Utilities.ColorizeAndBoldName(currInventoryItem.name)}</link>";
             if (i < _activeCharacter.items.Count - 1) {
                 itemsLbl.text = $"{itemsLbl.text}, ";
-            }
-        }
-        equipsLbl.text = string.Empty;
-        for (int i = 0; i < _activeCharacter.equipmentInventory.Count; i++) {
-            TileObject currInventoryItem = _activeCharacter.equipmentInventory[i];
-            equipsLbl.text = $"{equipsLbl.text}<link=\"{i.ToString()}\">{UtilityScripts.Utilities.ColorizeAndBoldName(currInventoryItem.name)}</link>";
-            if (i < _activeCharacter.equipmentInventory.Count - 1) {
-                equipsLbl.text = $"{equipsLbl.text}, ";
             }
         }
     }

@@ -26,7 +26,7 @@ public class Party : ILogFiller, ISavable, IJobOwner, IBookmarkable {
     public bool startedTrueRestingState { get; private set; } //True resting state starts when party already has a campfire
     public bool isDisbanded { get; private set; }
     public bool hasChangedTargetDestination { get; private set; }
-    public int perHourElapsedInWaiting { get; private set; }
+    //public int perHourElapsedInWaiting { get; private set; }
     public BaseSettlement partySettlement { get; private set; }
     public Faction partyFaction { get; private set; }
     public LocationStructure meetingPlace { get; private set; }
@@ -50,9 +50,13 @@ public class Party : ILogFiller, ISavable, IJobOwner, IBookmarkable {
     //public bool cannotProduceFoodThisRestPeriod { get; private set; }
     //public bool hasStartedAcceptingQuests { get; private set; }
     public GameDate nextQuestCheckDate { get; private set; }
-
     public bool canAcceptQuests { get; private set; }
     public GameDate canAcceptQuestsAgainDate { get; private set; }
+    public GameDate nextWaitingCheckDate { get; private set; }
+    public bool hasSetNextSwitchToWaitingStateTrigger { get; private set; }
+    public GameDate endQuestDate { get; private set; }
+    public bool hasSetEndQuestDate { get; private set; }
+    public int chanceToRetreatUponKnockoutOrDeath { get; private set; }
 
     public JobBoard jobBoard { get; private set; }
     public List<JobQueueItem> forcedCancelJobsOnTickEnded { get; private set; }
@@ -124,7 +128,7 @@ public class Party : ILogFiller, ISavable, IJobOwner, IBookmarkable {
         isDisbanded = false;
         //hasRested = true;
         canAcceptQuests = true;
-        perHourElapsedInWaiting = 0;
+        //perHourElapsedInWaiting = 0;
         forcedCancelJobsOnTickEnded.Clear();
         jobBoard.Initialize();
         beaconComponent.Initialize();
@@ -142,7 +146,7 @@ public class Party : ILogFiller, ISavable, IJobOwner, IBookmarkable {
         Messenger.AddListener<JobQueueItem, JobBoard>(JobSignals.JOB_REMOVED_FROM_JOB_BOARD, OnJobRemovedFromJobBoard);
         DatabaseManager.Instance.partyDatabase.AddParty(this);
 
-        ScheduleNextDateToCheckQuest();
+        InitialScheduleToCheckQuest();
     }
 
     public void Initialize(SaveDataParty data) { //In order to create a party, there must always be a party creator
@@ -157,7 +161,7 @@ public class Party : ILogFiller, ISavable, IJobOwner, IBookmarkable {
         isDisbanded = data.isDisbanded;
         //cannotProduceFoodThisRestPeriod = data.cannotProduceFoodThisRestPeriod;
         hasChangedTargetDestination = data.hasChangedTargetDestination;
-        perHourElapsedInWaiting = data.perHourElapsedInWaiting;
+        //perHourElapsedInWaiting = data.perHourElapsedInWaiting;
         waitingEndDate = data.waitingEndDate;
         //hasStartedAcceptingQuests = data.hasStartedAcceptingQuests;
         nextQuestCheckDate = data.nextQuestCheckDate;
@@ -165,8 +169,13 @@ public class Party : ILogFiller, ISavable, IJobOwner, IBookmarkable {
         canAcceptQuests = data.canAcceptQuests;
         canAcceptQuestsAgainDate = data.canAcceptQuestsAgainDate;
 
+        hasSetNextSwitchToWaitingStateTrigger = data.hasSetNextSwitchToWaitingStateTrigger;
+        nextWaitingCheckDate = data.nextWaitingCheckDate;
+
         prevQuestType = data.prevQuestType;
         plannedPartyType = data.plannedPartyType;
+
+        chanceToRetreatUponKnockoutOrDeath = data.chanceToRetreatUponKnockoutOrDeath;
 
         jobBoard.InitializeFromSaveData(data.jobBoard);
         beaconComponent.Initialize(data.beaconComponent);
@@ -187,6 +196,12 @@ public class Party : ILogFiller, ISavable, IJobOwner, IBookmarkable {
         }
         if (partyState == PARTY_STATE.Waiting) {
             SchedulingManager.Instance.AddEntry(waitingEndDate, WaitingEndedDecisionMaking, this);
+        }
+        if (hasSetNextSwitchToWaitingStateTrigger) {
+            SchedulingManager.Instance.AddEntry(nextWaitingCheckDate, TryStartToWaitQuest, null);
+        }
+        if (hasSetEndQuestDate) {
+            SchedulingManager.Instance.AddEntry(endQuestDate, TryScheduledEndQuest, null);
         }
     }
 
@@ -258,12 +273,12 @@ public class Party : ILogFiller, ISavable, IJobOwner, IBookmarkable {
             SetMeetingPlace();
         }
     }
-    private void PerTickEndedWhileInactive() {
+    //private void PerTickEndedWhileInactive() {
         //Note: Commented this because we no longer have a fixed take quest schedule, the new algo for taking quest is every [X] hours after creation of party so that the party will often take quests
         //if (takeQuestSchedule == GameManager.Instance.currentTick && canAcceptQuests) {
         //    TryAcceptQuest();
         //}
-    }
+    //}
     public void TryAcceptQuest() {
         if (isDisbanded) {
             return;
@@ -286,16 +301,75 @@ public class Party : ILogFiller, ISavable, IJobOwner, IBookmarkable {
         }
         ScheduleNextDateToCheckQuest();
     }
-    private void ScheduleNextDateToCheckQuest() {
-        //This schedules the next time when the party will try to take a quest
-        nextQuestCheckDate = GameManager.Instance.Today().AddTicks(GameManager.Instance.GetTicksBasedOnHour(4));
+    private void TryStartToWaitQuest() {
+        if (hasSetNextSwitchToWaitingStateTrigger) {
+            hasSetNextSwitchToWaitingStateTrigger = false;
+            if (partyState == PARTY_STATE.None && isActive) {
+                if (currentQuest.workingStateImmediately) {
+                    SetPartyState(PARTY_STATE.Working);
+                } else {
+                    SetPartyState(PARTY_STATE.Waiting);
+                }
+            }
+        }
+    }
+    private void TryScheduledEndQuest() {
+        if (hasSetEndQuestDate) {
+            hasSetEndQuestDate = false;
+            if (isActive) {
+                currentQuest.EndQuest("Done working");
+            }
+        }
+    }
+    private void InitialScheduleToCheckQuest() {
+        int minimumTick = GameManager.Instance.GetTicksBasedOnHour(5); //5 AM in ticks
+        int maximumTick = GameManager.Instance.GetTicksBasedOnHour(7); //7 AM in ticks
+
+        int scheduledTick = GameUtilities.RandomBetweenTwoNumbers(minimumTick, maximumTick);
+        GameDate schedule = GameManager.Instance.Today().AddDays(1);
+        schedule.SetTicks(scheduledTick);
+        nextQuestCheckDate = schedule;
         SchedulingManager.Instance.AddEntry(nextQuestCheckDate, TryAcceptQuest, null);
     }
-    private void PerTickEndedWhileActive() {
-        //if (restSchedule == GameManager.Instance.currentTick && partyState != PARTY_STATE.Resting) {
-        //    hasRested = false;
-        //}
+    private void ScheduleNextDateToCheckQuest() {
+        //This schedules the next time when the party will try to take a quest
+        nextQuestCheckDate = GameManager.Instance.Today().AddDays(1); //.AddTicks(GameManager.Instance.GetTicksBasedOnHour(4));
+        SchedulingManager.Instance.AddEntry(nextQuestCheckDate, TryAcceptQuest, null);
     }
+    private void ScheduleToStartWaitingQuest(Character partyMember) {
+        if (hasSetNextSwitchToWaitingStateTrigger) {
+            return;
+        }
+        hasSetNextSwitchToWaitingStateTrigger = true;
+        int tick = partyMember.dailyScheduleComponent.schedule.GetStartTickOfScheduleType(DAILY_SCHEDULE.Work);
+        GameDate schedule = GameManager.Instance.Today();
+        schedule.SetTicks(tick);
+        nextWaitingCheckDate = schedule;
+        SchedulingManager.Instance.AddEntry(schedule, TryStartToWaitQuest, null);
+    }
+    private void ScheduleToEndQuest(Character partyMember) {
+        if (hasSetEndQuestDate) {
+            return;
+        }
+        hasSetEndQuestDate = true;
+        int startTick = partyMember.dailyScheduleComponent.schedule.GetStartTickOfScheduleType(DAILY_SCHEDULE.Work);
+        int endTick = partyMember.dailyScheduleComponent.schedule.GetEndTickOfScheduleType(DAILY_SCHEDULE.Work);
+        GameDate schedule;
+        if (endTick < startTick) {
+            //This means that the end tick is already the next day
+            schedule = GameManager.Instance.Today().AddDays(1);
+        } else {
+            schedule = GameManager.Instance.Today();
+        }
+        schedule.SetTicks(endTick);
+        endQuestDate = schedule;
+        SchedulingManager.Instance.AddEntry(schedule, TryScheduledEndQuest, null);
+    }
+    //private void PerTickEndedWhileActive() {
+    //if (restSchedule == GameManager.Instance.currentTick && partyState != PARTY_STATE.Resting) {
+    //    hasRested = false;
+    //}
+    //}
     private LocationStructure GetStructureToCheckFromSettlement(BaseSettlement settlement) {
         LocationStructure structure = settlement.GetFirstStructureOfType(STRUCTURE_TYPE.CITY_CENTER);
         if(structure == null) {
@@ -304,7 +378,9 @@ public class Party : ILogFiller, ISavable, IJobOwner, IBookmarkable {
         return structure;
     }
     public void GoBackHomeAndEndQuest() {
-        SetPartyState(PARTY_STATE.Moving, true);
+        //Party no longer goes back home to end quest, instead, with the new changes in party behaviour, upon finishing quest, party will end quest immediately
+        currentQuest.EndQuest("Finished quest");
+        //SetPartyState(PARTY_STATE.Moving, true);
     }
     public void SetTargetDestination(IPartyTargetDestination target) {
         if(targetDestination != target) {
@@ -393,22 +469,26 @@ public class Party : ILogFiller, ISavable, IJobOwner, IBookmarkable {
     private void OnSwitchFromWaitingState(PARTY_STATE prevState) {
     }
     private void StartWaitTimer() {
-        perHourElapsedInWaiting = 0;
+        //perHourElapsedInWaiting = 0;
         int ticksToWait = 1; //If Demon Party, only wait for 1 tick before moving because we assume that this party is premade already
         if (!isPlayerParty) {
-            ticksToWait = GameManager.Instance.GetTicksBasedOnHour(5);
+            ticksToWait = GameManager.Instance.GetTicksBasedOnHour(2); //Waiting should be 2 hours only
         }
         waitingEndDate = GameManager.Instance.Today().AddTicks(ticksToWait);
         SchedulingManager.Instance.AddEntry(waitingEndDate, WaitingEndedDecisionMaking, this);
     }
     private void PerHourInWaitingState() {
         if (partyState == PARTY_STATE.Waiting) {
-            //Every hour after 2 hours, we must check if the members that joined is already enough so that the party will start the quest immediately, so we do not need to wait for the end of waiting period if the minimum party size of the quest is already met
-            perHourElapsedInWaiting++;
-            if (perHourElapsedInWaiting > 2) {
-                if (isActive && membersThatJoinedQuest.Count >= currentQuest.minimumPartySize) {
-                    WaitingEndedDecisionMaking();
-                }
+            ////Every hour after 2 hours, we must check if the members that joined is already enough so that the party will start the quest immediately, so we do not need to wait for the end of waiting period if the minimum party size of the quest is already met
+            //perHourElapsedInWaiting++;
+            //if (perHourElapsedInWaiting > 2) {
+            //    if (isActive && membersThatJoinedQuest.Count >= currentQuest.minimumPartySize) {
+            //        WaitingEndedDecisionMaking();
+            //    }
+            //}
+            //No more checking only after 2 hours because the waiting time is now reduced to 2 hours
+            if (isActive && membersThatJoinedQuest.Count >= currentQuest.minimumPartySize) {
+                WaitingEndedDecisionMaking();
             }
         }
     }
@@ -430,6 +510,9 @@ public class Party : ILogFiller, ISavable, IJobOwner, IBookmarkable {
                     SetPartyState(PARTY_STATE.Working);
                 } else {
                     SetPartyState(PARTY_STATE.Moving);
+                }
+                if (true) {
+
                 }
             } else {
                 //Drop quest only instead of ending quest so that the quest can still be taken by other parties
@@ -621,8 +704,14 @@ public class Party : ILogFiller, ISavable, IJobOwner, IBookmarkable {
         if (!isActive && quest != null) {
             SetCurrentQuest(quest);
             currentQuest.SetAssignedParty(this);
-            SetPartyState(PARTY_STATE.Waiting);
 
+            //Do not start waiting state first, waiting state will start upon the first time a member enters work schedule
+            //SetPartyState(PARTY_STATE.Waiting);
+            SetPartyState(PARTY_STATE.None);
+
+
+            //Note: Accepting quest should no longer show notification and log, but for testing we should enable it
+#if DEBUG_LOG
             if (!partyFaction.isPlayerFaction) {
                 Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Party", "Quest", "accept_quest", null, LogUtilities.Party_Quest_Tags);
                 log.AddToFillers(this, partyName, LOG_IDENTIFIER.PARTY_1);
@@ -631,9 +720,13 @@ public class Party : ILogFiller, ISavable, IJobOwner, IBookmarkable {
                 PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
                 LogPool.Release(log);
             }
-            
-            //OnAcceptQuest(quest);
+#endif
+
+            OnAcceptQuest(quest);
             quest.OnAcceptQuest(this);
+            ScheduleToStartWaitingQuest(members[0]);
+            ScheduleToEndQuest(members[0]);
+            SetChanceToRetreatUponKnockoutOrDeath(25);
         }
     }
     //private void DistributeQuestToMembersThatJoinedParty() {
@@ -667,6 +760,7 @@ public class Party : ILogFiller, ISavable, IJobOwner, IBookmarkable {
             targetCamp = null;
             targetDestination = null;
             SetHasChangedTargetDestination(false);
+            hasSetEndQuestDate = false;
 
             if (prevQuest.isSuccessful) {
                 Messenger.Broadcast(PartySignals.PARTY_QUEST_FINISHED_SUCCESSFULLY, this);
@@ -675,6 +769,8 @@ public class Party : ILogFiller, ISavable, IJobOwner, IBookmarkable {
                 Messenger.Broadcast(PartySignals.PARTY_QUEST_FAILED, this);
                 onQuestFailed?.Invoke();
             }
+
+            OnAfterDropQuest(prevQuest);
         }
     }
     private void SetCurrentQuest(PartyQuest p_quest) {
@@ -687,6 +783,12 @@ public class Party : ILogFiller, ISavable, IJobOwner, IBookmarkable {
             currentQuest = p_quest;
         }
     }
+    private void OnAcceptQuest(PartyQuest quest) {
+        for (int i = 0; i < members.Count; i++) {
+            Character c = members[i];
+            c.dailyScheduleComponent.OnPartyAcceptedQuest(c, quest);
+        }
+    }
     private void OnDropQuest(PartyQuest quest) {
         //Every time a quest is dropped, always clear out the party jobs
         ForceCancelAllJobs();
@@ -696,6 +798,12 @@ public class Party : ILogFiller, ISavable, IJobOwner, IBookmarkable {
         if (!isDisbanded) {
             //After a party drops quest, the party must not take quest for 12 hours, so that they can recupirate
             StartNoQuestCooldown();
+        }
+    }
+    private void OnAfterDropQuest(PartyQuest quest) {
+        for (int i = 0; i < members.Count; i++) {
+            Character c = members[i];
+            c.dailyScheduleComponent.OnPartyEndQuest(c, quest);
         }
     }
     private void StartNoQuestCooldown() {
@@ -1256,6 +1364,9 @@ public class Party : ILogFiller, ISavable, IJobOwner, IBookmarkable {
             members[0].CenterOnCharacter();
         }
     }
+    public void SetChanceToRetreatUponKnockoutOrDeath(int p_chance) {
+        chanceToRetreatUponKnockoutOrDeath = p_chance;
+    }
 #endregion
 
 #region Object Pool
@@ -1283,13 +1394,16 @@ public class Party : ILogFiller, ISavable, IJobOwner, IBookmarkable {
         //cannotProduceFoodThisRestPeriod = false;
         hasChangedTargetDestination = false;
         canAcceptQuests = false;
-        perHourElapsedInWaiting = 0;
+        //perHourElapsedInWaiting = 0;
         bookmarkEventDispatcher.ClearAll();
         damageAccumulator?.Reset();
         members.Clear();
         deadMembers.Clear();
         onQuestFailed = null;
         onQuestSucceed = null;
+        hasSetNextSwitchToWaitingStateTrigger = false;
+        hasSetEndQuestDate = false;
+        chanceToRetreatUponKnockoutOrDeath = 25;
         ClearMembersThatJoinedQuest(shouldDropQuest: false);
         _activeMembers.Clear();
         ForceCancelAllJobsImmediately();
@@ -1329,7 +1443,7 @@ public class SaveDataParty : SaveData<Party>, ISavableCounterpart {
     public bool isDisbanded;
     //public bool cannotProduceFoodThisRestPeriod;
     public bool hasChangedTargetDestination;
-    public int perHourElapsedInWaiting;
+    //public int perHourElapsedInWaiting;
     public string partySettlement;
     public string partyFaction;
     public string meetingPlace;
@@ -1344,7 +1458,9 @@ public class SaveDataParty : SaveData<Party>, ISavableCounterpart {
     public GameDate nextQuestCheckDate;
     public bool canAcceptQuests;
     public GameDate canAcceptQuestsAgainDate;
-
+    public GameDate nextWaitingCheckDate;
+    public bool hasSetNextSwitchToWaitingStateTrigger;
+    public int chanceToRetreatUponKnockoutOrDeath;
 
     public string campSetter;
     public string foodProducer;
@@ -1378,7 +1494,7 @@ public class SaveDataParty : SaveData<Party>, ISavableCounterpart {
         isDisbanded = data.isDisbanded;
         //cannotProduceFoodThisRestPeriod = data.cannotProduceFoodThisRestPeriod;
         hasChangedTargetDestination = data.hasChangedTargetDestination;
-        perHourElapsedInWaiting = data.perHourElapsedInWaiting;
+        //perHourElapsedInWaiting = data.perHourElapsedInWaiting;
         if(data.partySettlement == null) {
 #if UNITY_EDITOR
             string log = "Saving Party Error, No Party Settlement!";
@@ -1412,10 +1528,15 @@ public class SaveDataParty : SaveData<Party>, ISavableCounterpart {
         canAcceptQuests = data.canAcceptQuests;
         canAcceptQuestsAgainDate = data.canAcceptQuestsAgainDate;
 
+        hasSetNextSwitchToWaitingStateTrigger = data.hasSetNextSwitchToWaitingStateTrigger;
+        nextWaitingCheckDate = data.nextWaitingCheckDate;
+
         waitingEndDate = data.waitingEndDate;
 
         prevQuestType = data.prevQuestType;
         plannedPartyType = data.plannedPartyType;
+
+        chanceToRetreatUponKnockoutOrDeath = data.chanceToRetreatUponKnockoutOrDeath;
 
         members = SaveUtilities.ConvertSavableListToIDs(data.members);
         membersThatJoinedQuest = SaveUtilities.ConvertSavableListToIDs(data.membersThatJoinedQuest);

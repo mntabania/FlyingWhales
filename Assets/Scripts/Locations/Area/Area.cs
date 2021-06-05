@@ -145,6 +145,19 @@ public class Area: IPlayerActionTarget, IPartyTargetDestination, ILocation {
         //Does not count if hextile is only a territory
         return settlementOnArea != null && settlementOnArea.HasResidentThatIsVillagerAndNotDead();
     }
+    public int GetAreaDistanceTo(Area p_targetArea) {
+        LocationGridTile targetCenterTile = p_targetArea.gridTileComponent.centerGridTile;
+        LocationGridTile sourceCenterTile = gridTileComponent.centerGridTile;
+
+        float gridTileDistance = sourceCenterTile.GetDistanceTo(targetCenterTile);
+
+        //Divide the center grid tile distance with the size of the area so we can get the area distance
+        //Example: if the target area is adjacent to the right of the source area, then the distance of the 2 center tiles should be 14 since the radius is 7
+        //meaning from source center tile to the right edge then left edge of target to its center tile
+        //So if we divide 14 from 14 the answer is 1, which is correct.
+        float areaDistance = gridTileDistance / InnerMapManager.AreaLocationGridTileSize.x;
+        return (int) areaDistance;
+    }
     #endregion
 
     #region Region

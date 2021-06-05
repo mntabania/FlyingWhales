@@ -83,7 +83,7 @@ namespace Inner_Maps.Location_Structures {
             connectedCave = null;
         }
 
-        private void PopulateClothAndLeatherList(List<TileObject> p_list, TILE_OBJECT_TYPE p_type) {
+        private void PopulateMetalList(List<TileObject> p_list, TILE_OBJECT_TYPE p_type) {
             List<TileObject> unsortedList = GetTileObjectsOfType(p_type);
             if (unsortedList != null) {
                 for (int x = 0; x < unsortedList.Count; ++x) {
@@ -95,31 +95,23 @@ namespace Inner_Maps.Location_Structures {
         }
 
         void SetListToVariable(List<TileObject> builtPilesInSideStructure) {
-            PopulateClothAndLeatherList(builtPilesInSideStructure, TILE_OBJECT_TYPE.COPPER);
+            PopulateMetalList(builtPilesInSideStructure, TILE_OBJECT_TYPE.COPPER);
             if (builtPilesInSideStructure.Count > 1) {
                 return;
             }
-            PopulateClothAndLeatherList(builtPilesInSideStructure, TILE_OBJECT_TYPE.IRON);
+            PopulateMetalList(builtPilesInSideStructure, TILE_OBJECT_TYPE.IRON);
             if (builtPilesInSideStructure.Count > 1) {
                 return;
             }
-            PopulateClothAndLeatherList(builtPilesInSideStructure, TILE_OBJECT_TYPE.ORICHALCUM);
+            PopulateMetalList(builtPilesInSideStructure, TILE_OBJECT_TYPE.ORICHALCUM);
             if (builtPilesInSideStructure.Count > 1) {
                 return;
             }
-            PopulateClothAndLeatherList(builtPilesInSideStructure, TILE_OBJECT_TYPE.MITHRIL);
+            PopulateMetalList(builtPilesInSideStructure, TILE_OBJECT_TYPE.MITHRIL);
             if (builtPilesInSideStructure.Count > 1) {
                 return;
             }
-            PopulateClothAndLeatherList(builtPilesInSideStructure, TILE_OBJECT_TYPE.DIAMOND);
-            if (builtPilesInSideStructure.Count > 1) {
-                return;
-            }
-            PopulateClothAndLeatherList(builtPilesInSideStructure, TILE_OBJECT_TYPE.GOLD);
-            if (builtPilesInSideStructure.Count > 1) {
-                return;
-            }
-            PopulateClothAndLeatherList(builtPilesInSideStructure, TILE_OBJECT_TYPE.STONE_PILE);
+            PopulateMetalList(builtPilesInSideStructure, TILE_OBJECT_TYPE.STONE_PILE);
             if (builtPilesInSideStructure.Count > 1) {
                 return;
             }
@@ -172,7 +164,7 @@ namespace Inner_Maps.Location_Structures {
                     }
                 }
             } else {
-                PopulateStoneTypeResourcePiles(piles);
+                PopulateStonesInCave(piles);
                 if (piles.Count > 0) {
                     TileObject chosenPile = piles[GameUtilities.RandomBetweenTwoNumbers(0, piles.Count - 1)];
                     p_worker.jobComponent.TriggerMineStone(chosenPile, out producedJob);
@@ -196,12 +188,13 @@ namespace Inner_Maps.Location_Structures {
             RuinarchListPool<TileObject>.Release(metals);
         }
 
-        public void PopulateStoneTypeResourcePiles(List<TileObject> availStones) {
+        public void PopulateStonesInCave(List<TileObject> availStones) {
             List<TileObject> stones = RuinarchListPool<TileObject>.Claim();
-            connectedCave.PopulateTileObjectsOfType<StonePile>(stones);
+            connectedCave.PopulateTileObjectsOfType<Rock>(stones);
             for (int x = 0; x < stones.Count; ++x) {
-                if (stones[x].mapObjectState == MAP_OBJECT_STATE.BUILT && !stones[x].HasJobTargetingThis(JOB_TYPE.HAUL, JOB_TYPE.COMBINE_STOCKPILE)) {
-                    availStones.Add(stones[x]);
+                TileObject stone = stones[x];
+                if (stone.mapObjectState == MAP_OBJECT_STATE.BUILT && !stone.HasJobTargetingThis(JOB_TYPE.MINE_STONE)) {
+                    availStones.Add(stone);
                 }
             }
             RuinarchListPool<TileObject>.Release(stones);

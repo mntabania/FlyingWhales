@@ -7,10 +7,11 @@ using Inner_Maps.Location_Structures;
 
 public class SettlementResources
 {
-    public enum StructureRequirement { NONE = 0, ROCK, TREE, FISHING_SPOT, FEATURE_GAME, MINE_SHACK_SPOT, CHARACTER, }
+    public enum StructureRequirement { NONE = 0, ROCK, TREE, FISHING_SPOT, FEATURE_GAME, MINE_SHACK_SPOT, CHARACTER, HERB_PLANT, }
     public List<Rock> rocks = new List<Rock>();
     public List<TreeObject> trees = new List<TreeObject>();
     public List<FishingSpot> fishingSpots = new List<FishingSpot>();
+    public List<HerbPlant> herbPlants = new List<HerbPlant>();
     public List<LocationGridTile> mineShackSpots = new List<LocationGridTile>();
     public List<ResourcePile> resourcePiles = new List<ResourcePile>();
     public List<Character> characters = new List<Character>();
@@ -49,6 +50,11 @@ public class SettlementResources
             case StructureRequirement.MINE_SHACK_SPOT:
             if (!mineShackSpots.Contains(p_tileObject.gridTileLocation)) {
                 mineShackSpots.Add(p_tileObject.gridTileLocation);
+            }
+            break;
+            case StructureRequirement.HERB_PLANT:
+            if (!herbPlants.Contains(p_tileObject as HerbPlant)) {
+                herbPlants.Add(p_tileObject as HerbPlant);
             }
             break;
         }
@@ -117,7 +123,8 @@ public class SettlementResources
                pile.tileObjectType == TILE_OBJECT_TYPE.PINEAPPLE ||
                pile.tileObjectType == TILE_OBJECT_TYPE.HYPNO_HERB ||
                pile.tileObjectType == TILE_OBJECT_TYPE.POTATO) {
-                if (currentStructure.structureType != STRUCTURE_TYPE.CITY_CENTER && currentStructure.structureType != STRUCTURE_TYPE.FARM && !pile.HasJobTargetingThis(JOB_TYPE.HAUL, JOB_TYPE.COMBINE_STOCKPILE)) {
+                if (currentStructure.structureType != STRUCTURE_TYPE.CITY_CENTER && currentStructure.structureType != STRUCTURE_TYPE.FARM && 
+                    currentStructure.structureType != STRUCTURE_TYPE.DWELLING && !pile.HasJobTargetingThis(JOB_TYPE.HAUL, JOB_TYPE.COMBINE_STOCKPILE)) {
                     pilePool.Add(pile);
                     //found = true;
                 }    
@@ -189,7 +196,8 @@ public class SettlementResources
             ResourcePile pile = resourcePiles[x];
             LocationStructure currentStructure = pile.currentStructure;
             if (pile.tileObjectType == TILE_OBJECT_TYPE.FISH_PILE) {
-                if (currentStructure.structureType != STRUCTURE_TYPE.CITY_CENTER && currentStructure.structureType != STRUCTURE_TYPE.FISHERY && !pile.HasJobTargetingThis(JOB_TYPE.HAUL, JOB_TYPE.COMBINE_STOCKPILE)) {
+                if (currentStructure.structureType != STRUCTURE_TYPE.CITY_CENTER && currentStructure.structureType != STRUCTURE_TYPE.FISHERY && 
+                    currentStructure.structureType != STRUCTURE_TYPE.DWELLING && !pile.HasJobTargetingThis(JOB_TYPE.HAUL, JOB_TYPE.COMBINE_STOCKPILE)) {
                     pilePool.Add(pile);
                     //found = true;
                 }
@@ -285,14 +293,8 @@ public class SettlementResources
         List<TileObject> pilePool = RuinarchListPool<TileObject>.Claim();
         for (int x = 0; x < resourcePiles.Count; ++x) {
             ResourcePile pile = resourcePiles[x];
-            if (pile.tileObjectType == TILE_OBJECT_TYPE.COPPER ||
-               pile.tileObjectType == TILE_OBJECT_TYPE.IRON ||
-               pile.tileObjectType == TILE_OBJECT_TYPE.MITHRIL ||
-               pile.tileObjectType == TILE_OBJECT_TYPE.ORICHALCUM ||
-               pile.tileObjectType == TILE_OBJECT_TYPE.DIAMOND ||
-               pile.tileObjectType == TILE_OBJECT_TYPE.GOLD ||
-               pile.tileObjectType == TILE_OBJECT_TYPE.STONE_PILE) {
-                if (pile.currentStructure.structureType != STRUCTURE_TYPE.CITY_CENTER && pile.currentStructure.structureType != STRUCTURE_TYPE.HUNTER_LODGE && !pile.HasJobTargetingThis(JOB_TYPE.HAUL, JOB_TYPE.COMBINE_STOCKPILE)) {
+            if (pile.tileObjectType.IsMetal() || pile.tileObjectType == TILE_OBJECT_TYPE.STONE_PILE) {
+                if (pile.currentStructure.structureType != STRUCTURE_TYPE.CITY_CENTER && pile.currentStructure.structureType != STRUCTURE_TYPE.MINE && pile.currentStructure.structureType != STRUCTURE_TYPE.WORKSHOP && !pile.HasJobTargetingThis(JOB_TYPE.HAUL, JOB_TYPE.COMBINE_STOCKPILE)) {
                     pilePool.Add(pile);
                     //found = true;
                 }
@@ -304,5 +306,136 @@ public class SettlementResources
         }
         RuinarchListPool<TileObject>.Release(pilePool);
         return chosenPile;
+    }
+
+    public ResourcePile GetRandomPileOfMetalForCraftsman(Character p_getter) {
+        //bool found = false;
+        List<TileObject> pilePool = RuinarchListPool<TileObject>.Claim();
+        for (int x = 0; x < resourcePiles.Count; ++x) {
+            ResourcePile pile = resourcePiles[x];
+            if (pile.tileObjectType.IsMetal()) {
+                if (pile.currentStructure.structureType == STRUCTURE_TYPE.CITY_CENTER && !pile.HasJobTargetingThis(JOB_TYPE.HAUL, JOB_TYPE.COMBINE_STOCKPILE)) {
+                    pilePool.Add(pile);
+                    //found = true;
+                } else if (pile.currentStructure.structureType == STRUCTURE_TYPE.MINE) {
+                    if (!p_getter.relationshipContainer.IsEnemiesWith((pile.currentStructure as Inner_Maps.Location_Structures.Mine).assignedWorker)) {
+                        pilePool.Add(pile);
+                    }
+                }
+            }
+        }
+        ResourcePile chosenPile = null;
+        if (pilePool.Count > 0) {
+            chosenPile = pilePool[GameUtilities.RandomBetweenTwoNumbers(0, pilePool.Count - 1)] as ResourcePile;
+        }
+        RuinarchListPool<TileObject>.Release(pilePool);
+        return chosenPile;
+    }
+
+    public ResourcePile GetRandomPileOfStoneForCraftsman(Character p_getter) {
+        //bool found = false;
+        List<TileObject> pilePool = RuinarchListPool<TileObject>.Claim();
+        for (int x = 0; x < resourcePiles.Count; ++x) {
+            ResourcePile pile = resourcePiles[x];
+            if (pile.tileObjectType == TILE_OBJECT_TYPE.STONE_PILE) {
+                if (pile.currentStructure.structureType == STRUCTURE_TYPE.CITY_CENTER && !pile.HasJobTargetingThis(JOB_TYPE.HAUL, JOB_TYPE.COMBINE_STOCKPILE)) {
+                    pilePool.Add(pile);
+                    //found = true;
+                } else if (pile.currentStructure.structureType == STRUCTURE_TYPE.MINE) {
+                    if (!p_getter.relationshipContainer.IsEnemiesWith((pile.currentStructure as Inner_Maps.Location_Structures.Mine).assignedWorker)) {
+                        pilePool.Add(pile);
+                    }
+                } 
+            }
+        }
+        ResourcePile chosenPile = null;
+        if (pilePool.Count > 0) {
+            chosenPile = pilePool[GameUtilities.RandomBetweenTwoNumbers(0, pilePool.Count - 1)] as ResourcePile;
+        }
+        RuinarchListPool<TileObject>.Release(pilePool);
+        return chosenPile;
+    }
+
+    public ResourcePile GetRandomPileOfWoodForCraftsman(Character p_getter) {
+        //bool found = false;
+        List<TileObject> pilePool = RuinarchListPool<TileObject>.Claim();
+        for (int x = 0; x < resourcePiles.Count; ++x) {
+            ResourcePile pile = resourcePiles[x];
+            if (pile.tileObjectType == TILE_OBJECT_TYPE.WOOD_PILE) {
+                if (pile.currentStructure.structureType == STRUCTURE_TYPE.CITY_CENTER && !pile.HasJobTargetingThis(JOB_TYPE.HAUL, JOB_TYPE.COMBINE_STOCKPILE)) {
+                    pilePool.Add(pile);
+                    //found = true;
+                } else if (pile.currentStructure.structureType == STRUCTURE_TYPE.LUMBERYARD) {
+                    if (!p_getter.relationshipContainer.IsEnemiesWith((pile.currentStructure as Inner_Maps.Location_Structures.Mine).assignedWorker)) {
+                        pilePool.Add(pile);
+                    }
+                }
+            }
+        }
+        ResourcePile chosenPile = null;
+        if (pilePool.Count > 0) {
+            chosenPile = pilePool[GameUtilities.RandomBetweenTwoNumbers(0, pilePool.Count - 1)] as ResourcePile;
+        }
+        RuinarchListPool<TileObject>.Release(pilePool);
+        return chosenPile;
+    }
+
+    public ResourcePile GetRandomPileOfClothForCraftsman(Character p_getter) {
+        //bool found = false;
+        List<TileObject> pilePool = RuinarchListPool<TileObject>.Claim();
+        for (int x = 0; x < resourcePiles.Count; ++x) {
+            ResourcePile pile = resourcePiles[x];
+            if (pile.tileObjectType.IsCloth()) {
+                if (pile.currentStructure.structureType == STRUCTURE_TYPE.CITY_CENTER && !pile.HasJobTargetingThis(JOB_TYPE.HAUL, JOB_TYPE.COMBINE_STOCKPILE)) {
+                    pilePool.Add(pile);
+                    //found = true;
+                } else if (pile.currentStructure.structureType == STRUCTURE_TYPE.HUNTER_LODGE) {
+                    if (!p_getter.relationshipContainer.IsEnemiesWith((pile.currentStructure as Inner_Maps.Location_Structures.Mine).assignedWorker)) {
+                        pilePool.Add(pile);
+                    }
+                }
+            }
+        }
+        ResourcePile chosenPile = null;
+        if (pilePool.Count > 0) {
+            chosenPile = pilePool[GameUtilities.RandomBetweenTwoNumbers(0, pilePool.Count - 1)] as ResourcePile;
+        }
+        RuinarchListPool<TileObject>.Release(pilePool);
+        return chosenPile;
+    }
+
+    public ResourcePile GetRandomPileOfLeatherForCraftsman(Character p_getter) {
+        //bool found = false;
+        List<TileObject> pilePool = RuinarchListPool<TileObject>.Claim();
+        for (int x = 0; x < resourcePiles.Count; ++x) {
+            ResourcePile pile = resourcePiles[x];
+            if (pile.tileObjectType.IsLeather()) {
+                if (pile.currentStructure.structureType == STRUCTURE_TYPE.CITY_CENTER && !pile.HasJobTargetingThis(JOB_TYPE.HAUL, JOB_TYPE.COMBINE_STOCKPILE)) {
+                    pilePool.Add(pile);
+                    //found = true;
+                } else if (pile.currentStructure.structureType == STRUCTURE_TYPE.HUNTER_LODGE) {
+                    if (!p_getter.relationshipContainer.IsEnemiesWith((pile.currentStructure as Inner_Maps.Location_Structures.Mine).assignedWorker)) {
+                        pilePool.Add(pile);
+                    }
+                }
+            }
+        }
+        ResourcePile chosenPile = null;
+        if (pilePool.Count > 0) {
+            chosenPile = pilePool[GameUtilities.RandomBetweenTwoNumbers(0, pilePool.Count - 1)] as ResourcePile;
+        }
+        RuinarchListPool<TileObject>.Release(pilePool);
+        return chosenPile;
+    }
+
+    public HerbPlant GetAvailableHerbPlant() {
+        HerbPlant plant = null;
+        for (int x = 0; x < herbPlants.Count; ++x) {
+            if (!herbPlants[x].HasJobTargetingThis(JOB_TYPE.GATHER_HERB) || !herbPlants[x].HasJobTargetingThis(JOB_TYPE.HAUL)) {
+                plant = herbPlants[x];
+                break;
+            }
+        }
+        return plant;
     }
 }

@@ -10,7 +10,13 @@ namespace Inner_Maps.Location_Structures {
         
         public AnimalDen(STRUCTURE_TYPE structureType, Region location) : base(structureType, location) { }
         public AnimalDen(Region location, SaveDataNaturalStructure data) : base(location, data) { }
-        
+
+        public override void OnBuiltNewStructure() {
+            base.OnBuiltNewStructure();
+            if (structureType.IsBeastDen()) {
+                LinkThisStructureToVillages();
+            }
+        }
         public override void CenterOnStructure() {
             if (InnerMapManager.Instance.isAnInnerMapShowing && InnerMapManager.Instance.currentlyShowingMap != region.innerMap) {
                 InnerMapManager.Instance.HideAreaMap();
@@ -35,5 +41,16 @@ namespace Inner_Maps.Location_Structures {
             worldPosition = position;
         }
         #endregion
+
+        protected void LinkThisStructureToVillages() {
+            Area sourceArea = occupiedArea;
+            for (int i = 0; i < region.villageSpots.Count; i++) {
+                VillageSpot spot = region.villageSpots[i];
+                Area targetArea = spot.mainSpot;
+                if (sourceArea.GetAreaDistanceTo(targetArea) <= 6) {
+                    spot.AddLinkedBeastDen(this);
+                }
+            }
+        }
     }
 }

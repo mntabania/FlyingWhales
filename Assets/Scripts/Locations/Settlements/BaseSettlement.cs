@@ -338,6 +338,25 @@ namespace Locations.Settlements {
             RuinarchListPool<Character>.Release(choices);
             return chosenCharacter;
         }
+        public Character GetRandomResidentForRescue() {
+            Character chosenCharacter = null;
+            List<Character> choices = RuinarchListPool<Character>.Claim();
+            for (int i = 0; i < residents.Count; i++) {
+                Character resident = residents[i];
+                if (!resident.isBeingSeized
+                    && !resident.isDead
+                    && resident.gridTileLocation != null
+                    && !resident.gridTileLocation.IsNextToOrPartOfSettlement(this)
+                    && resident.traitContainer.HasTrait("Restrained", "Paralyzed")) {
+                    choices.Add(resident);
+                }
+            }
+            if (choices != null && choices.Count > 0) {
+                chosenCharacter = CollectionUtilities.GetRandomElement(choices);
+            }
+            RuinarchListPool<Character>.Release(choices);
+            return chosenCharacter;
+        }
         public Character GetFirstResidentThatIsAbleAndCanBecomeClass(string p_className) {
             for (int i = 0; i < residents.Count; i++) {
                 Character c = residents[i];
@@ -471,6 +490,7 @@ namespace Locations.Settlements {
                 allStructures.Add(structure);
                 structure.SetSettlementLocation(this);
                 OnStructureAdded(structure);
+                Debug.Log($"Added {structure.name} to {name}");
             }
         }
         public void RemoveStructure(LocationStructure structure) {
@@ -481,6 +501,7 @@ namespace Locations.Settlements {
                         structures.Remove(structure.structureType);
                     }
                     OnStructureRemoved(structure);
+                    Debug.Log($"Removed {structure.name} from {name}");
                 }
             }
         }
@@ -494,6 +515,21 @@ namespace Locations.Settlements {
         }
         public LocationStructure GetRandomStructure() {
             return CollectionUtilities.GetRandomElement(allStructures);
+        }
+        public LocationStructure GetRandomDwellingOrResourceProducingStructure() {
+            LocationStructure chosenStructure = null;
+            List<LocationStructure> pool = RuinarchListPool<LocationStructure>.Claim();
+            for (int i = 0; i < allStructures.Count; i++) {
+                LocationStructure s = allStructures[i];
+                if (s is Dwelling || s.structureType.IsFoodProducingStructure() || s.structureType.IsResourceProducingStructure()) {
+                    pool.Add(s);
+                }
+            }
+            if (pool.Count > 0) {
+                chosenStructure = pool[GameUtilities.RandomBetweenTwoNumbers(0, pool.Count - 1)];
+            }
+            RuinarchListPool<LocationStructure>.Release(pool);
+            return chosenStructure;
         }
         public LocationStructure GetStructureByID(STRUCTURE_TYPE type, int id) {
             if (structures.ContainsKey(type)) {
@@ -591,6 +627,24 @@ namespace Locations.Settlements {
         public bool HasStructure(STRUCTURE_TYPE type) {
             return structures.ContainsKey(type);
         }
+        public bool HasStructureClaimedByNonEnemyOrSelf(STRUCTURE_TYPE p_type, Character p_character, out LocationStructure foundStructure) {
+            if (HasStructure(p_type)) {
+                List<LocationStructure> structuresOfType = structures[p_type];
+                for (int i = 0; i < structuresOfType.Count; i++) {
+                    LocationStructure structure = structuresOfType[i];
+                    if (structure is ManMadeStructure manMadeStructure) {
+                        Character assignedWorker = manMadeStructure.assignedWorker;
+                        if (assignedWorker != null && (assignedWorker == p_character || !p_character.relationshipContainer.IsEnemiesWith(assignedWorker))) {
+                            //TODO: Check for available beds
+                            foundStructure = structure;
+                            return true;
+                        }
+                    }
+                }
+            }
+            foundStructure = null;
+            return false;
+        }
         public bool HasStructureForProducingResource(RESOURCE resourceType) {
             switch (resourceType) {
                 case RESOURCE.FOOD:
@@ -667,9 +721,21 @@ namespace Locations.Settlements {
             }
             return count;
         }
-#endregion
+        public bool HasUnclaimedDwellingThatIsNotPreviousHome(Character p_character, out LocationStructure foundStructure) {
+            List<LocationStructure> dwellings = GetStructuresOfType(STRUCTURE_TYPE.DWELLING);
+            for (int i = 0; i < dwellings.Count; i++) {
+                LocationStructure dwelling = dwellings[i];
+                if (dwelling != p_character.previousCharacterDataComponent.previousHomeStructure && dwelling.residents.Count <= 0) {
+                    foundStructure = dwelling;
+                    return true;
+                }
+            }
+            foundStructure = null;
+            return false;
+        }
+        #endregion
 
-#region Tiles
+        #region Tiles
         public void AddAreaToSettlement(Area p_area) {
             if (p_area.settlementOnArea != null) {
                 //allow villages to overwrite settlement on area that is set to a cave or a special structure 
@@ -786,7 +852,7 @@ namespace Locations.Settlements {
         }
         #endregion
 
-#region Fire
+        #region Fire
         private void StartListeningForFires() {
             Messenger.AddListener<ITraitable, Trait>(TraitSignals.TRAITABLE_GAINED_TRAIT, OnTraitableGainedTrait);
             Messenger.AddListener<ITraitable, Trait, Character>(TraitSignals.TRAITABLE_LOST_TRAIT, OnTraitableLostTrait);
@@ -819,9 +885,9 @@ namespace Locations.Settlements {
             }
             
         }
-#endregion
+        #endregion
 
-#region Utilities
+        #region Utilities
         protected virtual void SettlementWipedOut() { }
         public bool HasPathTowardsTileInSettlement(Character character, int tileCount) {
             bool hasPath = false;
@@ -880,10 +946,9 @@ namespace Locations.Settlements {
                 }
             }
         }
+        #endregion
 
-#endregion
-
-#region Tile Object
+        #region Tile Object
         public bool HasTileObjectOfType(TILE_OBJECT_TYPE type) {
             for (int i = 0; i < allStructures.Count; i++) {
                 if (allStructures[i].HasTileObjectOfType(type)) {
@@ -978,9 +1043,9 @@ namespace Locations.Settlements {
             }
             return count;
         }
-#endregion
+        #endregion
 
-#region Party
+        #region Party
         public void AddParty(Party party) {
             if (!parties.Contains(party)) {
                 parties.Add(party);
@@ -998,9 +1063,9 @@ namespace Locations.Settlements {
             }
             return null;
         }
-#endregion
+        #endregion
 
-#region IPartyTargetDestination
+        #region IPartyTargetDestination
         public LocationGridTile GetRandomPassableTile() {
             LocationStructure structure = GetFirstStructureOfType(STRUCTURE_TYPE.CITY_CENTER);
             if(structure == null) {
@@ -1014,9 +1079,9 @@ namespace Locations.Settlements {
         public bool IsAtTargetDestination(Character character) {
             return character.currentSettlement == this;
         }
-#endregion
+        #endregion
 
-#region Player Action Target
+        #region Player Action Target
         public virtual void ConstructDefaultActions() {
             actions = new List<PLAYER_SKILL_TYPE>();
         }
@@ -1034,18 +1099,18 @@ namespace Locations.Settlements {
         public void ClearPlayerActions() {
             actions.Clear();
         }
-#endregion
+        #endregion
 
-#region IStoredTarget
+        #region IStoredTarget
         public bool CanBeStoredAsTarget() {
             return true;
         }
         public void SetAsStoredTarget(bool p_state) {
             isStoredAsTarget = p_state;
         }
-#endregion
+        #endregion
 
-#region IBookmarkable
+        #region IBookmarkable
         public void OnSelectBookmark() {
             UIManager.Instance.ShowSettlementInfo(this);
         }
@@ -1054,14 +1119,14 @@ namespace Locations.Settlements {
         }
         public void OnHoverOverBookmarkItem(UIHoverPosition p_pos) { }
         public void OnHoverOutBookmarkItem() { }
-#endregion
+        #endregion
 
-#region Loading
+        #region Loading
         public virtual void LoadReferences(SaveDataBaseSettlement data) {
             if (!string.IsNullOrEmpty(data.factionOwnerID)) {
                 owner =  DatabaseManager.Instance.factionDatabase.GetFactionBasedOnPersistentID(data.factionOwnerID);    
             }
         }
-#endregion
+        #endregion
     }
 }

@@ -236,13 +236,13 @@ public static class EquipmentBonusProcessor
 
     static void ApplyResistanceBonusOnCharacter(EquipmentItem p_equipItem, Character p_targetCharacter) {
         for (int x = 0; x < p_equipItem.resistanceBonuses.Count; ++x) {
-            p_targetCharacter.piercingAndResistancesComponent.AdjustResistance(p_equipItem.resistanceBonuses[x], p_equipItem.equipmentData.equipmentUpgradeData.additionalResistanceBonus);
+            p_targetCharacter.piercingAndResistancesComponent.AdjustResistance(p_equipItem.resistanceBonuses[x], p_equipItem.equipmentData.equipmentUpgradeData.GetProcessedAdditionalResistanceBonus(p_equipItem.quality));
         }
     }
 
     static void RemoveResistanceBonusOnCharacter(EquipmentItem p_equipItem, Character p_targetCharacter) {
         for (int x = 0; x < p_equipItem.resistanceBonuses.Count; ++x) {
-            p_targetCharacter.piercingAndResistancesComponent.AdjustResistance(p_equipItem.resistanceBonuses[x], -p_equipItem.equipmentData.equipmentUpgradeData.additionalResistanceBonus);
+            p_targetCharacter.piercingAndResistancesComponent.AdjustResistance(p_equipItem.resistanceBonuses[x], -p_equipItem.equipmentData.equipmentUpgradeData.GetProcessedAdditionalResistanceBonus(p_equipItem.quality));
         }
     }
 

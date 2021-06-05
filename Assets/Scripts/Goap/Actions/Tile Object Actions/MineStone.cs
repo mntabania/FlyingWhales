@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Traits;
 using Inner_Maps;
+using UnityEngine.Assertions;
 
 public class MineStone : GoapAction {
 
@@ -56,6 +57,12 @@ public class MineStone : GoapAction {
     #endregion
 
     ResourcePile ProduceMatsPile(ActualGoapNode p_node) {
+        TileObject targetStone = p_node.target as TileObject;
+        Assert.IsNotNull(targetStone);
+        if (targetStone.gridTileLocation != null) {
+            targetStone.gridTileLocation.structure.RemovePOI(targetStone);    
+        }
+        
         LocationGridTile tileToSpawnPile = p_node.actor.gridTileLocation;
         if (tileToSpawnPile != null && tileToSpawnPile.tileObjectComponent.objHere != null) {
             tileToSpawnPile = p_node.actor.gridTileLocation.GetFirstNearestTileFromThisWithNoObject();
@@ -64,8 +71,6 @@ public class MineStone : GoapAction {
         matsToHaul.SetResourceInPile(p_node.currentStateDuration * m_amountProducedPerTick);
         tileToSpawnPile.structure.AddPOI(matsToHaul, tileToSpawnPile);
         ProduceLogs(p_node);
-        (p_node.target as TileObject).DestroyMapVisualGameObject();
-        (p_node.target as TileObject).DestroyPermanently();
 
         return matsToHaul;
     }

@@ -78,6 +78,16 @@ public class Bed : BaseBed {
         }
         return false;
     }
+    protected override void OnSetObjectAsUnbuilt() {
+        base.OnSetObjectAsUnbuilt();
+        AddAdvertisedAction(INTERACTION_TYPE.CRAFT_FURNITURE_STONE);
+        AddAdvertisedAction(INTERACTION_TYPE.CRAFT_FURNITURE_WOOD);
+    }
+    protected override void OnSetObjectAsBuilt() {
+        base.OnSetObjectAsBuilt();
+        RemoveAdvertisedAction(INTERACTION_TYPE.CRAFT_FURNITURE_STONE);
+        RemoveAdvertisedAction(INTERACTION_TYPE.CRAFT_FURNITURE_WOOD);
+    }
     #endregion
 
     #region Inquiry

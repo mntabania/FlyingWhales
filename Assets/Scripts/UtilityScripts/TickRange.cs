@@ -32,6 +32,12 @@ public struct TickRange {
             return p_tick == m_startTick;
         }
     }
+    public int GetStartTick() {
+        return m_startTick;
+    }
+    public int GetEndTick() {
+        return m_endTick;
+    }
     public override string ToString() {
         if (GameManager.Instance != null) {
             return $"{GameManager.Instance.ConvertTickToTime(m_startTick)} - {GameManager.Instance.ConvertTickToTime(m_endTick)}";

@@ -46,7 +46,7 @@ SpriteAtlas:
     - {fileID: 102900000, guid: ff095aad844e46e488c1fae9e2f9b3e2, type: 3}
     - {fileID: 102900000, guid: b422e43e82f411843a77c74a9708c2aa, type: 3}
     - {fileID: 102900000, guid: 081cbc1d8bd888147aa1d93cd708500d, type: 3}
-    totalSpriteSurfaceArea: 4150289
+    totalSpriteSurfaceArea: 4167164
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
@@ -106,6 +106,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: cedec622ca7c924479b4d362719e2991, type: 3}
   - {fileID: 21300000, guid: ba0ca722388b4d6418352e1a37ae38a6, type: 3}
   - {fileID: 21300000, guid: a9032b222c4656444a92450f7a4d1f0e, type: 3}
+  - {fileID: 21300000, guid: 1a9a8e32cb7c693488ee83c35b1ac27c, type: 3}
   - {fileID: 21300000, guid: a8c4df329d4e4384bac5c14f093055f3, type: 3}
   - {fileID: 21300000, guid: 289de14257e60d54fb65f5b2271c259c, type: 3}
   - {fileID: 21300000, guid: e551cb52afd081a4cbd63246155d090e, type: 3}
@@ -258,6 +259,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: f5935138697722d4587b4039ebd57c51, type: 3}
   - {fileID: 21300000, guid: aae9733859b32cc4eac38f0ae63e6bf2, type: 3}
   - {fileID: 21300000, guid: 68d43a4826fefdf47b39441ee51a5686, type: 3}
+  - {fileID: 21300000, guid: 88a036584cd362146af6a4f658eb194d, type: 3}
   - {fileID: 21300000, guid: f56d96586b6f4de4684742593e1e1275, type: 3}
   - {fileID: 21300000, guid: 8aa19a68d3ea1d54e8ab581e3d5dd5ff, type: 3}
   - {fileID: 21300000, guid: 1f589b68222dcea4fa1e1d129cd7cbf5, type: 3}
@@ -382,6 +384,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 0cafb50c96a7cec44afb1ecebe056a95, type: 3}
   - {fileID: 21300000, guid: fe1a591c45577164caffea0071e2c890, type: 3}
   - {fileID: 21300000, guid: c101cb1c982e91d478d9503ab435474c, type: 3}
+  - {fileID: 21300000, guid: a5a10b3ca88c0164aad4895d508971e3, type: 3}
   - {fileID: 21300000, guid: cd0fdf3cea6343b489b62c13f949612b, type: 3}
   - {fileID: 21300000, guid: 32ddb04c496080b409702772751d00d9, type: 3}
   - {fileID: 21300000, guid: 54202d4c9c12b6c42b0a5d56630b9b11, type: 3}
@@ -537,6 +540,7 @@ SpriteAtlas:
   - minion_tab_skill_active
   - nameplate_disabled
   - bookmarks_container_ui
+  - equip_slot_hover
   - NotificationBarNoBorder
   - minion_tab_spells_default
   - tab_relations_default
@@ -689,6 +693,7 @@ SpriteAtlas:
   - button_skills_clicked
   - button_unlock_hover
   - ability_icon_afflictions
+  - equip_slot_clicked
   - Enlarged-Border-Gray
   - button_back_disabled
   - text_scroll_thumb
@@ -813,6 +818,7 @@ SpriteAtlas:
   - minion_tab_spells_disabled
   - Scroll-Circle-Selected
   - icon_cooldown
+  - equip_slot_default
   - notification_intel_button_hover
   - icon_target_disabled
   - button_close_hover

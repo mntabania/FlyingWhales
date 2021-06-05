@@ -78,8 +78,8 @@ public class SettlementClassComponent : NPCSettlementComponent {
     #region Needed Classes
     public void InitialScheduleProcessingOfNeededClasses() {
         if (owner.locationType == LOCATION_TYPE.VILLAGE) {
-            int minimumTick = 2 * GameManager.ticksPerHour; //2 AM in ticks
-            int maximumTick = 5 * GameManager.ticksPerHour; //5 AM in ticks
+            int minimumTick = GameManager.Instance.GetTicksBasedOnHour(2); //2 AM in ticks
+            int maximumTick = GameManager.Instance.GetTicksBasedOnHour(5); //5 AM in ticks
 
             int scheduledTick = GameUtilities.RandomBetweenTwoNumbers(minimumTick, maximumTick);
             GameDate schedule = GameManager.Instance.Today().AddDays(1);
@@ -105,7 +105,7 @@ public class SettlementClassComponent : NPCSettlementComponent {
         int foodSupplyCapacity = owner.resourcesComponent.GetFoodSupplyCapacity();
         int resourceSupplyCapacity = owner.resourcesComponent.GetResourceSupplyCapacity();
         int numOfCombatants = owner.GetNumOfResidentsThatIsAliveCombatant();
-        int neededCombatants = Mathf.CeilToInt((numOfActiveResidents / 8f) * 3f);
+        int neededCombatants = GetNumberOfNeededCombatants(numOfActiveResidents);
 
         //Determine who should change classes and who should not change class
         //Put this here so that looping through all residents is only done once
@@ -153,6 +153,9 @@ public class SettlementClassComponent : NPCSettlementComponent {
 #if DEBUG_LOG
         Debug.Log(log);
 #endif
+    }
+    public static int GetNumberOfNeededCombatants(int numOfActiveResidents) {
+        return Mathf.CeilToInt((numOfActiveResidents / 8f) * 3f);
     }
     private void ProcessNeededFoodProducerClasses(int numOfActiveResidents, int foodSupplyCapacity, ref string log) {
 #if DEBUG_LOG

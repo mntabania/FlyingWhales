@@ -2,7 +2,7 @@
     
     protected LeatherPile(TILE_OBJECT_TYPE tileObjectType) : base(RESOURCE.LEATHER) {
         Initialize(tileObjectType, false);
-        SetResourceInPile(20);
+        SetResourceInPile(100);
     }
     protected LeatherPile(SaveDataTileObject saveDataTileObject) : base(saveDataTileObject, RESOURCE.CLOTH) { }
     

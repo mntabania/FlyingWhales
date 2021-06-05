@@ -262,7 +262,7 @@ public class RatmanBehaviour : CharacterBehaviourComponent {
             return character.territory.tileObjectComponent.HasBuiltFoodPileInArea();
         }
         if(storage != null) {
-            return storage.HasTileObjectThatBuiltFoodPile();
+            return storage.HasTileObjectThatIsBuiltFoodPile();
         }
         return false;
     }

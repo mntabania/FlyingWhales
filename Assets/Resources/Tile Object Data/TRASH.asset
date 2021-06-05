@@ -39,7 +39,8 @@ MonoBehaviour:
         - {fileID: 21300000, guid: d97edaaaf3eb825479c110e7070a9696, type: 3}
         - {fileID: 21300000, guid: ffd7ab79c60f4bd48a80b50626c56326, type: 3}
         inactiveTile: []
-        tileBase: []
+        tileBase:
+        - {fileID: 11400000, guid: 4b20b942de2e6d34c9ae4a89a5b887e9, type: 2}
   corruptedTileObjectAssets:
     biomeAssets:
       m_keys: 

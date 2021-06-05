@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Inner_Maps;
 using UnityEngine;
 
 public class StonePile : ResourcePile {
@@ -14,7 +15,16 @@ public class StonePile : ResourcePile {
     public override string ToString() {
         return $"Stone Pile {id.ToString()}";
     }
-    public virtual bool CanBeReplaced() {
-        return true;
+    public override void OnPlacePOI() {
+        base.OnPlacePOI();
+        if (gridTileLocation != null && gridTileLocation.structure.structureType == STRUCTURE_TYPE.MINE) {
+            AddAdvertisedAction(INTERACTION_TYPE.BUY_STONE);
+        } else {
+            RemoveAdvertisedAction(INTERACTION_TYPE.BUY_STONE);
+        }
+    }
+    public override void OnRemoveTileObject(Character removedBy, LocationGridTile removedFrom, bool removeTraits = true, bool destroyTileSlots = true) {
+        base.OnRemoveTileObject(removedBy, removedFrom, removeTraits, destroyTileSlots);
+        RemoveAdvertisedAction(INTERACTION_TYPE.BUY_STONE);
     }
 }

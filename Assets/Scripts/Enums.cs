@@ -531,7 +531,19 @@ public enum INTERACTION_TYPE {
     SHEAR_ANIMAL = 231,
     SKIN_ANIMAL = 232,
     HARVEST_CROPS = 233,
-    CRAFT_WEAPON = 234,
+    CRAFT_EQUIPMENT = 234,
+    RECUPERATE = 235,
+    HEALER_CURE = 236,
+    GATHER_HERB = 237,
+    CREATE_HOSPICE_POTION = 238,
+    CREATE_HOSPICE_ANTIDOTE = 239,
+    STOCKPILE_FOOD,
+    BUY_FOOD,
+    BUY_WOOD,
+    CRAFT_FURNITURE_WOOD,
+    CRAFT_FURNITURE_STONE,
+    BUY_STONE,
+    BUY_ITEM
 }
 public enum INTERRUPT {
     None,
@@ -622,6 +634,7 @@ public enum INTERRUPT {
     Narcoleptic_Nap_Medium,
     Narcoleptic_Nap_Long,
     Claim_Work_Structure,
+    Buy_Home
 }
 
 public enum TRAIT_TYPE {
@@ -949,7 +962,7 @@ public enum TILE_OBJECT_TYPE {
     RABBIT_SHIRT = 208,
     WOOL_SHIRT = 209,
     SPIDER_SILK_SHIRT = 210,
-    MOON_WALKER_SHIRT = 211,
+    MOONWALKER_SHIRT = 211,
     BOAR_HIDE_ARMOR = 212,
     WOLF_HIDE_ARMOR = 213,
     BEAR_HIDE_ARMOR = 214,
@@ -995,6 +1008,12 @@ public enum TILE_OBJECT_TYPE {
     SHEEP_SPAWNING_SPOT = 254,
     MINK_HOLE = 255,
     MOONCRAWLER_HOLE = 256,
+    BASIC_SWORD = 257,
+    BASIC_AXE = 258,
+    BASIC_DAGGER = 259,
+    BASIC_STAFF = 260,
+    BASIC_SHIRT = 261,
+    BASIC_BOW = 262,
 }
 public enum POI_STATE {
     ACTIVE,
@@ -1009,7 +1028,7 @@ public enum GOAP_EFFECT_CONDITION { NONE, REMOVE_TRAIT, HAS_TRAIT, FULLNESS_RECO
         , PRODUCE_FOOD, PRODUCE_WOOD, PRODUCE_STONE, PRODUCE_METAL, DEPOSIT_RESOURCE, REMOVE_REGION_CORRUPTION, CLEAR_REGION_FACTION_OWNER, REGION_OWNED_BY_ACTOR_FACTION, FACTION_QUEST_DURATION_INCREASE
         , FACTION_QUEST_DURATION_DECREASE, DESTROY_REGION_LANDMARK, CHARACTER_TO_MINION, SEARCH
         , HAS_POI, TAKE_POI //The process of "take" in this manner is different from simply carrying the poi. In technicality, since the actor will only get an amount from the poi target, the actor will not carry the whole poi instead he/she will create a new poi with the amount that he/she needs while simultaneously reducing that amount from the poi target
-        , ABSORB_LIFE, RAISE_CORPSE, SUMMON, CARRIED_PATIENT, PRODUCE_CLOTH,
+        , ABSORB_LIFE, RAISE_CORPSE, SUMMON, CARRIED_PATIENT, PRODUCE_CLOTH, BUY_OBJECT
 }
 public enum GOAP_EFFECT_TARGET { ACTOR, TARGET, }
 public enum GOAP_PLAN_STATE { IN_PROGRESS, SUCCESS, FAILED, CANCELLED, }
@@ -1029,7 +1048,10 @@ public enum JOB_TYPE { NONE, UNDERMINE, ENERGY_RECOVERY_URGENT, FULLNESS_RECOVER
         , ROAM_AROUND_STRUCTURE, MONSTER_INVADE, PARTY_GO_TO, KIDNAP, RECRUIT, RAID, FLEE_CRIME, HOST_SOCIAL_PARTY, PARTYING, CRAFT_MISSING_FURNITURE, FULLNESS_RECOVERY_ON_SIGHT, HOARD, ZOMBIE_STROLL, WARM_UP, NO_PATH_IDLE, REPORT_CRIME
         , PREACH, HUNT_HEIRLOOM, SNATCH, DROP_ITEM_PARTY, GO_TO_WAITING, PRODUCE_FOOD_FOR_CAMP, KIDNAP_RAID, STEAL_RAID, BUILD_CAMP, CAPTURE_CHARACTER, BURY_IN_ACTIVE_PARTY, VAMPIRIC_EMBRACE, BUILD_VAMPIRE_CASTLE, FIND_NEW_VILLAGE
         , IMPRISON_BLOOD_SOURCE, OFFER_BLOOD, CURE_MAGICAL_AFFLICTION, LYCAN_HUNT_PREY, STEAL_CORPSE, SUMMON_BONE_GOLEM, CHANGE_CLASS, QUARANTINE, PLAGUE_CARE, TORTURE, MONSTER_EAT_CORPSE, TRITON_KIDNAP, RETURN_STOLEN_THING
-        , DISPOSE_FOOD_PILE, SNATCH_RESTRAIN, KLEPTOMANIAC_STEAL, LAZY_NAP, FIND_AFFAIR, ABSORB_CRYSTAL, MINE_ORE, FIND_FISH, TILL_TILE, SHEAR_ANIMAL, SKIN_ANIMAL, HARVEST_CROPS, CRAFT_WEAPON, CHOP_WOOD, MINE_STONE,
+        , DISPOSE_FOOD_PILE, SNATCH_RESTRAIN, KLEPTOMANIAC_STEAL, LAZY_NAP, FIND_AFFAIR, ABSORB_CRYSTAL, MINE_ORE, FIND_FISH, TILL_TILE, SHEAR_ANIMAL, SKIN_ANIMAL, HARVEST_CROPS, CRAFT_EQUIPMENT, CHOP_WOOD, MINE_STONE, RECUPERATE, HEALER_CURE
+        , GATHER_HERB, CREATE_HOSPICE_POTION, CREATE_HOSPICE_ANTIDOTE, STOCKPILE_FOOD,
+        BUY_ITEM,
+        VISIT_HOSPICE
 }
 
 public enum JOB_OWNER { CHARACTER, SETTLEMENT, FACTION, PARTY }
@@ -1209,7 +1231,7 @@ public enum REACTABLE_EFFECT { Neutral, Positive, Negative, }
 public enum STRUCTURE_TAG { Dangerous, Treasure, Monster_Spawner, Shelter, Physical_Power_Up, Magic_Power_Up, Counterattack, Resource }
 public enum LOG_TYPE { None, Action, Assumption, Witness, Informed }
 public enum AWARENESS_STATE { None, Available, Missing, Presumed_Dead }
-public enum PARTY_QUEST_TYPE { None, Exploration, Rescue, Extermination, Counterattack, Monster_Invade, Raid, Heirloom_Hunt, Demon_Defend, Demon_Snatch, Demon_Raid, Demon_Rescue }
+public enum PARTY_QUEST_TYPE { None, Exploration, Rescue, Extermination, Counterattack, Monster_Invade, Raid, Heirloom_Hunt, Demon_Defend, Demon_Snatch, Demon_Raid, Demon_Rescue, Morning_Patrol, Night_Patrol, Hunt_Beast, }
 public enum PARTY_STATE { None, Waiting, Moving, Resting, Working, }
 public enum GATHERING_TYPE { Social, Monster_Invade }
 public enum COMBAT_REACTION { None, Fight, Flight }
@@ -1304,6 +1326,8 @@ public enum RESISTANCE {
 public enum UPGRADE_BONUS {
     Damage = 0, Pierce, HP_HEAL_Percentage, HP_Actual_Amount, Max_HP_Percentage, Max_HP_Actual, Atk_Percentage, Atk_Actual_Amount, Mana_Received, Amplify_Effect_By_Percentage, Duration, Chance_Bonus_Percentage, Tile_Range, Decrease_Movement_Speed, Cooldown, Skill_Movement_Speed, Applied_Blessed_On_Max_Level, None,
 }
+
+public enum EQUIPMENT_TYPE { WEAPON = 0, ARMOR, ACCESSORY }
 
 public enum EQUIPMENT_BONUS {
     Increased_Piercing = 0, Increased_3_Random_Resistance, Increased_4_Random_Resistance, Increased_5_Random_Resistance, Max_HP_Percentage, Max_HP_Actual, Str_Percentage, Str_Actual, Attack_Element, Slayer_Bonus, Ward_Bonus, Flight, Int_Percentage, Int_Actual, Crit_Rate_Actual, None,
