@@ -104,7 +104,7 @@ public class WorldMapRegionGeneration : MapGenerationComponent {
 		LevelLoaderManager.Instance.UpdateLoadingInfo("Loading Regions...");
 		yield return MapGenerator.Instance.StartCoroutine(LoadRegions(saveData));
 		// LoadSavedRegionDivisions(data.chosenWorldMapTemplate, GridMap.Instance.allRegions.First());
-		CreateBiomeDivisions();
+		// CreateBiomeDivisions();
 	}
 	private IEnumerator LoadRegions(SaveDataCurrentProgress saveData) {
 		int lastX = 0;

@@ -68,12 +68,14 @@ public class SettlementStructureComponent : NPCSettlementComponent {
 
     #region Loading
     public void LoadReferences(SaveDataSettlementStructureComponent data) {
-        for (int i = 0; i < data.linkedStructures.Count; i++) {
-            LocationStructure structure = DatabaseManager.Instance.structureDatabase.GetStructureByPersistentIDSafe(data.linkedStructures[i]);
-            if (structure != null) {
-                linkedStructures.Add(structure);
-                structure.SetLinkedSettlement(owner);
-            }
+        if (data.linkedStructures != null) {
+            for (int i = 0; i < data.linkedStructures.Count; i++) {
+                LocationStructure structure = DatabaseManager.Instance.structureDatabase.GetStructureByPersistentIDSafe(data.linkedStructures[i]);
+                if (structure != null) {
+                    linkedStructures.Add(structure);
+                    structure.SetLinkedSettlement(owner);
+                }
+            }    
         }
     }
     #endregion
