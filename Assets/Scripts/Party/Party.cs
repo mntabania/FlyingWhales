@@ -705,9 +705,11 @@ public class Party : ILogFiller, ISavable, IJobOwner, IBookmarkable {
             SetCurrentQuest(quest);
             currentQuest.SetAssignedParty(this);
 
-            //Do not start waiting state first, waiting state will start upon the first time a member enters work schedule
-            //SetPartyState(PARTY_STATE.Waiting);
-            SetPartyState(PARTY_STATE.None);
+            if (isPlayerParty) {
+                SetPartyState(PARTY_STATE.Waiting);
+            } else {
+                SetPartyState(PARTY_STATE.None);
+            }
 
 
             //Note: Accepting quest should no longer show notification and log, but for testing we should enable it
@@ -724,8 +726,10 @@ public class Party : ILogFiller, ISavable, IJobOwner, IBookmarkable {
 
             OnAcceptQuest(quest);
             quest.OnAcceptQuest(this);
-            ScheduleToStartWaitingQuest(members[0]);
-            ScheduleToEndQuest(members[0]);
+            if (!isPlayerParty) {
+                ScheduleToStartWaitingQuest(members[0]);
+                ScheduleToEndQuest(members[0]);
+            }
             SetChanceToRetreatUponKnockoutOrDeath(25);
         }
     }
