@@ -68,17 +68,15 @@ public class CraftWeapon : GoapAction {
                 Debug.LogError(targetItem.name + " Crafted as Premium Quality Item");
                 targetItem.MakeQualityPremium();
             } else if (GameUtilities.RollChance(20)) {
-                Debug.LogError(targetItem.name + " Crafted as High Quality Item");
                 targetItem.MakeQualityHigh();
             }
 
         } else if (p_node.actor.talentComponent.GetTalent(CHARACTER_TALENT.Crafting).level >= 3) {
             if (GameUtilities.RollChance(20)) {
-                Debug.LogError(targetItem.name + " Crafted as High Quality Item");
                 targetItem.MakeQualityHigh();
             }
         } else {
-            Debug.LogError(targetItem.name + " Crafted as normal Item");
+            //Debug.LogError(targetItem.name + " Crafted as normal Item");
         }
     }
     #endregion

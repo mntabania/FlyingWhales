@@ -1180,7 +1180,12 @@ public class ConsoleBase : InfoUIBase {
             case "electric":
             character.piercingAndResistancesComponent.AdjustResistance(RESISTANCE.Electric, count);
             break;
+            default:
+            AddErrorMessage($"There is no such element {element}");
+            return;
         }
+
+        AddSuccessMessage($"{character.name}'s {element} Resistance added {count}");
     }
 	#endregion
 

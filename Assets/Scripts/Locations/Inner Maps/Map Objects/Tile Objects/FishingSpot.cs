@@ -54,7 +54,7 @@ public class FishingSpot : TileObject {
         }
         gridTileLocation.area.neighbourComponent.neighbours.ForEach((eachNeighbor) => {
             if (eachNeighbor.settlementOnArea != null) {
-                eachNeighbor.settlementOnArea.SettlementResources?.AddToListBasedOnRequirement(SettlementResources.StructureRequirement.FISHING_SPOT, this);
+                //eachNeighbor.settlementOnArea.SettlementResources?.AddToListBasedOnRequirement(SettlementResources.StructureRequirement.FISHING_SPOT, this);
                 parentSettlement = eachNeighbor.settlementOnArea;
             }
         });
