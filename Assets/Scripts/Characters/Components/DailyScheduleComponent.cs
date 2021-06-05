@@ -14,7 +14,11 @@ public class DailyScheduleComponent : CharacterComponent {
     
     private void UpdateDailySchedule(Character p_character) {
         if (p_character.partyComponent.hasParty) {
-            schedule = CharacterManager.Instance.GetDailySchedule<PartyMemberSchedule>();
+            if (p_character.partyComponent.currentParty.isActive && p_character.partyComponent.currentParty.currentQuest.partyQuestType == PARTY_QUEST_TYPE.Night_Patrol) {
+                schedule = CharacterManager.Instance.GetDailySchedule<NightPartyMemberSchedule>();
+            } else {
+                schedule = CharacterManager.Instance.GetDailySchedule<PartyMemberSchedule>();
+            }
         } else if (p_character.traitContainer.HasTrait("Nocturnal")) {
             schedule = CharacterManager.Instance.GetDailySchedule<NocturnalSchedule>();
         } else {
@@ -41,6 +45,14 @@ public class DailyScheduleComponent : CharacterComponent {
         Assert.IsTrue(p_character == owner);
         UpdateDailySchedule(p_character);
     }
+    public void OnPartyAcceptedQuest(Character p_character, PartyQuest p_quest) {
+        Assert.IsTrue(p_character == owner);
+        UpdateDailySchedule(p_character);
+    }
+    public void OnPartyEndQuest(Character p_character, PartyQuest p_quest) {
+        Assert.IsTrue(p_character == owner);
+        UpdateDailySchedule(p_character);
+    }
     public void OnHourStarted(Character p_character) {
         GameDate previousDate = GameManager.Instance.Today();
         previousDate.ReduceTicks(1);
@@ -54,7 +66,7 @@ public class DailyScheduleComponent : CharacterComponent {
         }
     }
     #endregion
-    
+
 }
 
 #region Save Data

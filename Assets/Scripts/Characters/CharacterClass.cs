@@ -122,5 +122,24 @@ public class CharacterClass {
     public bool IsSpecialClass() {
         return identifier == "Special";
     }
+    public bool IsFoodProducer() {
+        return className == "Farmer" || className == "Butcher" || className == "Fisher";
+    }
+    public bool IsBasicResourceProducer() {
+        return className == "Logger" || className == "Miner";
+    }
+    public bool IsBasicResourceProducer(FACTION_TYPE p_factionType) {
+        switch (p_factionType) {
+            case FACTION_TYPE.Elven_Kingdom:
+                return className == "Logger";
+            case FACTION_TYPE.Human_Empire:
+                return className == "Miner";
+            default:
+                return className == "Logger" || className == "Miner";
+        }
+    }
+    public bool IsSpecialCivilian() {
+        return className == "Skinner" || className == "Craftsman" || className == "Merchant";
+    }
     #endregion
 }

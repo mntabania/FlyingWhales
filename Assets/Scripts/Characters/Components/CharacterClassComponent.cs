@@ -43,7 +43,12 @@ public class CharacterClassComponent : CharacterComponent {
         CharacterClass previousClass = characterClass;
         if (previousClass != null) {
             //owner.homeSettlement?.UnapplyAbleJobsFromSettlement(owner);
-            previousClassName = previousClass.className;
+            if (!isInitial) {
+                //only populate previous class value if class set is not Initial!
+                //this was necessary since a characters class will be changed after it's talents have 
+                //been randomized. Reference: https://trello.com/c/0DSPyf4d/4716-update-starting-village-structures-villager-classes-and-talents
+                previousClassName = previousClass.className;    
+            }
             //This means that the character currently has a class and it will be replaced with a new class
             for (int i = 0; i < previousClass.traitNames.Length; i++) {
                 owner.traitContainer.RemoveTrait(owner, previousClass.traitNames[i]); //Remove traits from class
@@ -140,6 +145,47 @@ public class CharacterClassComponent : CharacterComponent {
             log += ableClasses[i];
         }
         return log;
+    }
+    public void PopulateAbleCombatantClasses(List<string> p_classes) {
+        for (int i = 0; i < ableClasses.Count; i++) {
+            string className = ableClasses[i];
+            CharacterClass cc = CharacterManager.Instance.GetCharacterClass(className);
+            if (cc.IsCombatant()) {
+                p_classes.Add(className);
+            }
+        }
+    }
+    public void PopulateAbleFoodProducerClasses(List<string> p_classes) {
+        for (int i = 0; i < ableClasses.Count; i++) {
+            string className = ableClasses[i];
+            CharacterClass cc = CharacterManager.Instance.GetCharacterClass(className);
+            if (cc.IsFoodProducer()) {
+                p_classes.Add(className);
+            }
+        }
+    }
+    public void PopulateBasicProducerClasses(List<string> p_classes, FACTION_TYPE p_factionType) {
+        for (int i = 0; i < ableClasses.Count; i++) {
+            string className = ableClasses[i];
+            CharacterClass cc = CharacterManager.Instance.GetCharacterClass(className);
+            if (cc.IsBasicResourceProducer(p_factionType)) {
+                p_classes.Add(className);
+            }
+        }
+    }
+    public void PopulateAbleSpecialCivilianClasses(List<string> p_classes) {
+        for (int i = 0; i < ableClasses.Count; i++) {
+            string className = ableClasses[i];
+            CharacterClass cc = CharacterManager.Instance.GetCharacterClass(className);
+            if (cc.IsSpecialCivilian()) {
+                p_classes.Add(className);
+            }
+        }
+    }
+    public void RandomizeCurrentClassBasedOnAbleClasses() {
+        string randomClass = CollectionUtilities.GetRandomElement(ableClasses);
+        AssignClass(randomClass, true);
+        OnUpdateCharacterClass();
     }
     #endregion
 

@@ -41,7 +41,7 @@ public class EquipmentItem : TileObject {
         AddAdvertisedAction(INTERACTION_TYPE.SCRAP);
         AddAdvertisedAction(INTERACTION_TYPE.PICK_UP);
         AddAdvertisedAction(INTERACTION_TYPE.BOOBY_TRAP);
-        AddAdvertisedAction(INTERACTION_TYPE.CRAFT_WEAPON);
+        AddAdvertisedAction(INTERACTION_TYPE.CRAFT_EQUIPMENT);
 
         maxHP = 700;
         currentHP = maxHP;

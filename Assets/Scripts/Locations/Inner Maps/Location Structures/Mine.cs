@@ -164,7 +164,7 @@ namespace Inner_Maps.Location_Structures {
                     }
                 }
             } else {
-                PopulateStoneTypeResourcePiles(piles);
+                PopulateStonesInCave(piles);
                 if (piles.Count > 0) {
                     TileObject chosenPile = piles[GameUtilities.RandomBetweenTwoNumbers(0, piles.Count - 1)];
                     p_worker.jobComponent.TriggerMineStone(chosenPile, out producedJob);
@@ -188,12 +188,13 @@ namespace Inner_Maps.Location_Structures {
             RuinarchListPool<TileObject>.Release(metals);
         }
 
-        public void PopulateStoneTypeResourcePiles(List<TileObject> availStones) {
+        public void PopulateStonesInCave(List<TileObject> availStones) {
             List<TileObject> stones = RuinarchListPool<TileObject>.Claim();
-            connectedCave.PopulateTileObjectsOfType<StonePile>(stones);
+            connectedCave.PopulateTileObjectsOfType<Rock>(stones);
             for (int x = 0; x < stones.Count; ++x) {
-                if (stones[x].mapObjectState == MAP_OBJECT_STATE.BUILT && !stones[x].HasJobTargetingThis(JOB_TYPE.HAUL, JOB_TYPE.COMBINE_STOCKPILE)) {
-                    availStones.Add(stones[x]);
+                TileObject stone = stones[x];
+                if (stone.mapObjectState == MAP_OBJECT_STATE.BUILT && !stone.HasJobTargetingThis(JOB_TYPE.MINE_STONE)) {
+                    availStones.Add(stone);
                 }
             }
             RuinarchListPool<TileObject>.Release(stones);

@@ -12,12 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 49d866ce53a3fb34887a699eb039ad3a, type: 3}
   m_Name: Iron Armor
   m_EditorClassIdentifier: 
-  resourceType: 0
-  specificResource: 0
-  resourceAmount: 100
+  resourceType: 4
+  specificResource: 01000000
+  resourceAmount: 40
   purchaseCost: 50
   tier: 1
-  compatibleClasses: 0000000001000000020000000300000004000000
   description: This is Iron Armor
   imgIcon: {fileID: 21300000, guid: 6ec293672da3f2d49a19f45177155557, type: 3}
   equipmentUpgradeData:

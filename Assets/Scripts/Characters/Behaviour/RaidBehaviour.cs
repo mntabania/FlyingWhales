@@ -47,7 +47,7 @@ public class RaidBehaviour : CharacterBehaviourComponent {
 #if DEBUG_LOG
                     log += $"\n-Roam around";
 #endif
-                    LocationStructure structure = settlement.GetRandomStructure();
+                    LocationStructure structure = settlement.GetRandomDwellingOrResourceProducingStructure();
                     if(structure != null) {
                         LocationGridTile tile = structure.GetRandomPassableTile();
                         if(tile != null) {

@@ -174,6 +174,14 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public bool isNotSummonAndDemon => (this is Summon) == false && minion == null;
     public bool isNotSummonAndDemonAndZombie => (this is Summon) == false && minion == null && characterClass.IsZombie();
     public bool isConsideredRatman => faction?.factionType.type == FACTION_TYPE.Ratmen && race == RACE.RATMAN;
+    public bool isMonsterOrRatmanOrUndead {
+        get {
+            if (faction != null) {
+                return (race == RACE.RATMAN || this is Summon || faction.factionType.type == FACTION_TYPE.Undead) && faction.factionType.type != FACTION_TYPE.Demons && !faction.isMajorFaction;
+            }
+            return false;
+        }
+    }
     public bool canBeTargetedByLandActions => !movementComponent.isFlying && !reactionComponent.isHidden && !traitContainer.HasTrait("Disabler", "DeMooder");
 
     public int maxHP => combatComponent.maxHP;
@@ -464,6 +472,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             //Demons and Summons/Monsters can't have talents
             talentComponent = new CharacterTalentComponent(); talentComponent.SetOwner(this);
             talentComponent.ConstructAllTalents();
+            talentComponent.RandomizeInitialTalents(this);
         }
         if (race.IsSapient()) {
             villagerWantsComponent = new VillagerWantsComponent(); villagerWantsComponent.SetOwner(this);

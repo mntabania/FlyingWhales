@@ -54,7 +54,7 @@ public class CharacterClassData : ScriptableObject {
         craftableArmors.Add(TILE_OBJECT_TYPE.RABBIT_SHIRT);
         craftableArmors.Add(TILE_OBJECT_TYPE.MINK_SHIRT);
         craftableArmors.Add(TILE_OBJECT_TYPE.WOOL_SHIRT);
-        craftableArmors.Add(TILE_OBJECT_TYPE.MOON_WALKER_SHIRT);
+        craftableArmors.Add(TILE_OBJECT_TYPE.MOONWALKER_SHIRT);
         craftableArmors.Add(TILE_OBJECT_TYPE.COPPER_ARMOR);
         craftableArmors.Add(TILE_OBJECT_TYPE.IRON_ARMOR);
         craftableArmors.Add(TILE_OBJECT_TYPE.MITHRIL_ARMOR);
@@ -94,7 +94,7 @@ public class CharacterClassData : ScriptableObject {
         craftableArmors.Add(TILE_OBJECT_TYPE.RABBIT_SHIRT);
         craftableArmors.Add(TILE_OBJECT_TYPE.MINK_SHIRT);
         craftableArmors.Add(TILE_OBJECT_TYPE.WOOL_SHIRT);
-        craftableArmors.Add(TILE_OBJECT_TYPE.MOON_WALKER_SHIRT);
+        craftableArmors.Add(TILE_OBJECT_TYPE.MOONWALKER_SHIRT);
 
         craftableAccessories.Add(TILE_OBJECT_TYPE.NECKLACE);
     }
@@ -115,7 +115,7 @@ public class CharacterClassData : ScriptableObject {
         craftableArmors.Add(TILE_OBJECT_TYPE.RABBIT_SHIRT);
         craftableArmors.Add(TILE_OBJECT_TYPE.MINK_SHIRT);
         craftableArmors.Add(TILE_OBJECT_TYPE.WOOL_SHIRT);
-        craftableArmors.Add(TILE_OBJECT_TYPE.MOON_WALKER_SHIRT);
+        craftableArmors.Add(TILE_OBJECT_TYPE.MOONWALKER_SHIRT);
 
         craftableAccessories.Add(TILE_OBJECT_TYPE.RING);
         craftableAccessories.Add(TILE_OBJECT_TYPE.SCROLL);
@@ -137,7 +137,7 @@ public class CharacterClassData : ScriptableObject {
         craftableArmors.Add(TILE_OBJECT_TYPE.RABBIT_SHIRT);
         craftableArmors.Add(TILE_OBJECT_TYPE.MINK_SHIRT);
         craftableArmors.Add(TILE_OBJECT_TYPE.WOOL_SHIRT);
-        craftableArmors.Add(TILE_OBJECT_TYPE.MOON_WALKER_SHIRT);
+        craftableArmors.Add(TILE_OBJECT_TYPE.MOONWALKER_SHIRT);
         craftableArmors.Add(TILE_OBJECT_TYPE.COPPER_ARMOR);
         craftableArmors.Add(TILE_OBJECT_TYPE.IRON_ARMOR);
         craftableArmors.Add(TILE_OBJECT_TYPE.MITHRIL_ARMOR);
@@ -155,7 +155,7 @@ public class CharacterClassData : ScriptableObject {
         craftableArmors.Add(TILE_OBJECT_TYPE.RABBIT_SHIRT);
         craftableArmors.Add(TILE_OBJECT_TYPE.MINK_SHIRT);
         craftableArmors.Add(TILE_OBJECT_TYPE.WOOL_SHIRT);
-        craftableArmors.Add(TILE_OBJECT_TYPE.MOON_WALKER_SHIRT);
+        craftableArmors.Add(TILE_OBJECT_TYPE.MOONWALKER_SHIRT);
         craftableArmors.Add(TILE_OBJECT_TYPE.BOAR_HIDE_ARMOR);
         craftableArmors.Add(TILE_OBJECT_TYPE.BEAR_HIDE_ARMOR);
         craftableArmors.Add(TILE_OBJECT_TYPE.WOLF_HIDE_ARMOR);

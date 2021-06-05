@@ -10,20 +10,21 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: eb8e6d0a90de4764a5b7b75189e1ffa2, type: 3}
-  m_Name: BASIC_CLOTH
+  m_Name: MOONWALKER_SHIRT
   m_EditorClassIdentifier: 
-  defaultTileMapAsset: {fileID: 11400000, guid: d5cc58a85f959a34f9e183dbca80a697,
+  defaultTileMapAsset: {fileID: 11400000, guid: feaa748b26895cb4082068d95f5c4eba,
     type: 2}
-  defaultSprite: {fileID: 21300000, guid: 5c7297f74a9199b4d94d1e42c2c52643, type: 3}
+  defaultSprite: {fileID: 21300000, guid: 863aa5bcd01f1574181c14d1a1160665, type: 3}
   tileObjectAssets:
     biomeAssets:
       m_keys: 06000000
       m_values:
       - activeTile:
-        - {fileID: 21300000, guid: 5c7297f74a9199b4d94d1e42c2c52643, type: 3}
+        - {fileID: 21300000, guid: 863aa5bcd01f1574181c14d1a1160665, type: 3}
         inactiveTile:
-        - {fileID: 21300000, guid: 5c7297f74a9199b4d94d1e42c2c52643, type: 3}
-        tileBase: []
+        - {fileID: 21300000, guid: 863aa5bcd01f1574181c14d1a1160665, type: 3}
+        tileBase:
+        - {fileID: 11400000, guid: feaa748b26895cb4082068d95f5c4eba, type: 2}
   corruptedTileObjectAssets:
     biomeAssets:
       m_keys: 

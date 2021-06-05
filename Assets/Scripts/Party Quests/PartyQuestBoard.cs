@@ -90,11 +90,13 @@ public class PartyQuestBoard {
             //Cannot post quests on faction that are not major
             return;
         }
-        ExplorationPartyQuest quest = PartyManager.Instance.CreateNewPartyQuest(PARTY_QUEST_TYPE.Exploration) as ExplorationPartyQuest;
-        quest.SetMadeInLocation(madeInLocation);
-        quest.SetRegionRefForGettingNewStructure(region);
-        quest.ProcessSettingTargetStructure();
-        AddPartyQuest(quest, questCreator);
+        LocationStructure targetStructure = region.GetRandomSpecialStructure();
+        if (targetStructure != null) {
+            ExplorationPartyQuest quest = PartyManager.Instance.CreateNewPartyQuest(PARTY_QUEST_TYPE.Exploration) as ExplorationPartyQuest;
+            quest.SetMadeInLocation(madeInLocation);
+            quest.SetTargetStructure(targetStructure);
+            AddPartyQuest(quest, questCreator);
+        }
     }
     public void CreateRescuePartyQuest(Character questCreator, BaseSettlement madeInLocation, Character targetCharacter) {
         if (!owner.isMajorFaction) {
@@ -183,6 +185,34 @@ public class PartyQuestBoard {
         quest.SetMadeInLocation(madeInLocation);
         quest.SetTargetCharacter(targetCharacter);
         quest.SetDropStructure(dropStructure);
+        AddPartyQuest(quest, questCreator);
+    }
+    public void CreateMorningPatrolPartyQuest(Character questCreator, BaseSettlement madeInLocation) {
+        if (!owner.isMajorFaction) {
+            //Cannot post quests on faction that are not major
+            return;
+        }
+        MorningPatrolPartyQuest quest = PartyManager.Instance.CreateNewPartyQuest(PARTY_QUEST_TYPE.Morning_Patrol) as MorningPatrolPartyQuest;
+        quest.SetMadeInLocation(madeInLocation);
+        AddPartyQuest(quest, questCreator);
+    }
+    public void CreateNightPatrolPartyQuest(Character questCreator, BaseSettlement madeInLocation) {
+        if (!owner.isMajorFaction) {
+            //Cannot post quests on faction that are not major
+            return;
+        }
+        NightPatrolPartyQuest quest = PartyManager.Instance.CreateNewPartyQuest(PARTY_QUEST_TYPE.Night_Patrol) as NightPatrolPartyQuest;
+        quest.SetMadeInLocation(madeInLocation);
+        AddPartyQuest(quest, questCreator);
+    }
+    public void CreateHuntBeastPartyQuest(Character questCreator, BaseSettlement madeInLocation, LocationStructure targetStructure) {
+        if (!owner.isMajorFaction) {
+            //Cannot post quests on faction that are not major
+            return;
+        }
+        HuntBeastPartyQuest quest = PartyManager.Instance.CreateNewPartyQuest(PARTY_QUEST_TYPE.Hunt_Beast) as HuntBeastPartyQuest;
+        quest.SetMadeInLocation(madeInLocation);
+        quest.SetTargetStructure(targetStructure);
         AddPartyQuest(quest, questCreator);
     }
     //public void CreateMonsterInvadePartyQuest(BaseSettlement settlement, HexTile hexForJoining, LocationStructure targetStructure) {

@@ -55,6 +55,8 @@ public class TileFeatureGeneration : MapGenerationComponent {
 			succeess = TryAssignSettlementTiles(data);
 			stopwatch.Stop();
 			AddLog($"TryAssignSettlementTiles took {stopwatch.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)} seconds to complete.");
+			
+			AdditionalResourceCreation();
 		}
 	}
 	private void GenerateFeaturesForAllTiles(MapGenerationData data) {
@@ -265,7 +267,7 @@ public class TileFeatureGeneration : MapGenerationComponent {
 					unreservedAreas.ListRemoveRange(connectedPlainAreas);
 					unreservedAreas.ListRemoveRange(waterAreas);
 					unreservedAreas.ListRemoveRange(caveAreas);
-					AdditionalResourceCreationForVillageSpots(villageSpot);
+					// AdditionalResourceCreationForVillageSpots(villageSpot);
 				}
 				RuinarchListPool<Area>.Release(areasToCheck);
 				RuinarchListPool<Area>.Release(checkedAreas);
@@ -318,25 +320,36 @@ public class TileFeatureGeneration : MapGenerationComponent {
 		}
 		return false;
 	}
-	private void AdditionalResourceCreationForVillageSpots(VillageSpot p_villageSpot) {
-		int randomResourceCount = UnityEngine.Random.Range(1, 4);
+	private void AdditionalResourceCreation() {
+		int randomResourceCount = 0;
+		for (int i = 0; i < GridMap.Instance.mainRegion.villageSpots.Count; i++) {
+			randomResourceCount += UnityEngine.Random.Range(1, 4);
+		}
 		List<Area> areaChoices = RuinarchListPool<Area>.Claim();
-		areaChoices.AddRange(p_villageSpot.reservedAreas);
+		for (int i = 0; i < GridMap.Instance.allAreas.Count; i++) {
+			Area area = GridMap.Instance.allAreas[i];
+			if (area.GetOccupyingVillageSpot() == null) {
+				areaChoices.Add(area);
+			}
+		}
 		
-		areaChoices.Remove(p_villageSpot.mainSpot);
-		List<Area> areasAround = RuinarchListPool<Area>.Claim();
-		p_villageSpot.mainSpot.PopulateAreasInRange(areasAround, 2, true);
-		areaChoices.ListRemoveRange(areasAround);
-		RuinarchListPool<Area>.Release(areasAround);
+		//
+		// areaChoices.AddRange(p_villageSpot.reservedAreas);
+		//
+		// areaChoices.Remove(p_villageSpot.mainSpot);
+		// List<Area> areasAround = RuinarchListPool<Area>.Claim();
+		// p_villageSpot.mainSpot.PopulateAreasInRange(areasAround, 2, true);
+		// areaChoices.ListRemoveRange(areasAround);
+		// RuinarchListPool<Area>.Release(areasAround);
 		
 		List<string> randomResourceChoices = RuinarchListPool<string>.Claim();
 		randomResourceChoices.Add("BOAR_DEN");
 		randomResourceChoices.Add("WOLF_DEN");
 		randomResourceChoices.Add("BEAR_DEN");
-		randomResourceChoices.Add("RABBIT_HOLE");
-		randomResourceChoices.Add("Game Feature");
-		randomResourceChoices.Add("MINK_HOLE");
-		randomResourceChoices.Add("MOONCRAWLER_HOLE");
+		//randomResourceChoices.Add("RABBIT_HOLE");
+		//randomResourceChoices.Add("Game Feature");
+		//randomResourceChoices.Add("MINK_HOLE");
+		//randomResourceChoices.Add("MOONCRAWLER_HOLE");
 		
 		if (areaChoices.Count > 0) {
 			for (int i = 0; i < randomResourceCount; i++) {
@@ -482,10 +495,15 @@ public class TileFeatureGeneration : MapGenerationComponent {
 			SaveDataVillageSpot saveDataVillageSpot = scenarioMapData.worldMapSave.villageSpots[i];
 			VillageSpot villageSpot = saveDataVillageSpot.Load();
 			villageSpots.Add(villageSpot);
-			AdditionalResourceCreationForVillageSpots(villageSpot);
 		}
 		GridMap.Instance.mainRegion.SetVillageSpots(villageSpots);
+		//Creation of animal dens is in a separate loop because we now have to link to a village spots
+		//So, the region's list of village spots should be set first before creation of dens
+  //      for (int i = 0; i < villageSpots.Count; i++) {
+		//	AdditionalResourceCreationForVillageSpots(villageSpots[i]);
+		//}
 		RuinarchListPool<VillageSpot>.Release(villageSpots);
+		AdditionalResourceCreation();
 	}
 	private void DetermineSettlementsForTutorial() {
 		List<Area> chosenTiles = new List<Area> {

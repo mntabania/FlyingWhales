@@ -6,7 +6,7 @@ using UtilityScripts;
 
 public class DefaultAtHome : CharacterBehaviourComponent {
     public DefaultAtHome() {
-        priority = 8;
+        priority = 10;
         //attributes = new[] { BEHAVIOUR_COMPONENT_ATTRIBUTE.WITHIN_HOME_SETTLEMENT_ONLY };
     }
     public override bool TryDoBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
@@ -80,153 +80,113 @@ public class DefaultAtHome : CharacterBehaviourComponent {
 #endif
                 TIME_IN_WORDS currentTimeOfDay = GameManager.Instance.GetCurrentTimeInWordsOfTick(character);
                 string strCurrentTimeOfDay = currentTimeOfDay.ToString();
-#if DEBUG_LOG
-                log = $"{log}\n-If it is Morning";
-#endif
-                if (currentTimeOfDay == TIME_IN_WORDS.MORNING || currentTimeOfDay == TIME_IN_WORDS.LUNCH_TIME || currentTimeOfDay == TIME_IN_WORDS.AFTERNOON) {
-#if DEBUG_LOG
-                    log = $"{log}\n-If character is an Archer, Marauder, or Shaman";
-#endif
-                    if (character.characterClass.className == "Archer" || character.characterClass.className == "Marauder" || character.characterClass.className == "Shaman") {
-#if DEBUG_LOG
-                        log = $"{log}\n-15% chance to Create Exploration Party if there are no Exploration Party whose leader lives in the same settlement";
-#endif
-                        if (character.faction != null && !character.faction.partyQuestBoard.HasPartyQuest(PARTY_QUEST_TYPE.Exploration)) {
-                            int chance = WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Icalawa ? 5 : 15;
-                            int roll = Random.Range(0, 100);
-                            log = $"{log}\nRoll: {roll.ToString()}";
-                            if (roll < chance) {
-                                character.faction.partyQuestBoard.CreateExplorationPartyQuest(character, character.homeSettlement, character.currentRegion);
-                                //character.jobComponent.TriggerExploreJob(out producedJob);
-                                return true;
-                            }
-                        } else {
-#if DEBUG_LOG
-                            log = $"{log}\n-Already has an Exploration party whose leader lives in the same settlement";
-#endif
-                        }
-                    }
-#if DEBUG_LOG
-                    log = $"{log}\n-If character has a Close Friend who it considers Missing";
-#endif
-                    Character missingCharacter = character.relationshipContainer.GetRandomMissingCharacterWithOpinion(RelationshipManager.Close_Friend);
-                    if(missingCharacter != null) {
-#if DEBUG_LOG
-                        log = $"{log}\n-Missing close friend: {missingCharacter}";
-#endif
-                        if (character.faction != null && !character.faction.partyQuestBoard.HasPartyQuestWithTarget(PARTY_QUEST_TYPE.Rescue, missingCharacter)
-                            && !character.faction.partyQuestBoard.HasPartyQuestWithTarget(PARTY_QUEST_TYPE.Demon_Rescue, missingCharacter)) {
-                            int chance = Random.Range(0, 100);
-#if DEBUG_LOG
-                            log = $"{log}\nRoll: {chance.ToString()}";
-#endif
-                            if (chance < 20) {
-                                if (missingCharacter.IsConsideredInDangerBy(character)) {
-                                    character.faction.partyQuestBoard.CreateRescuePartyQuest(character, character.homeSettlement, missingCharacter);
-                                    return true;
-                                }
-                            }
-                        }
-                    } else {
-#if DEBUG_LOG
-                        log = $"{log}\n-No missing close friend";
-#endif
-                    }
-#if DEBUG_LOG
-                    log = $"{log}\n-If character has a Friend who it considers Missing";
-#endif
-                    missingCharacter = character.relationshipContainer.GetRandomMissingCharacterWithOpinion(RelationshipManager.Friend);
-                    if (missingCharacter != null) {
-                        log = $"{log}\n-Missing friend: {missingCharacter}";
-                        if (character.faction != null && !character.faction.partyQuestBoard.HasPartyQuestWithTarget(PARTY_QUEST_TYPE.Rescue, missingCharacter)
-                            && !character.faction.partyQuestBoard.HasPartyQuestWithTarget(PARTY_QUEST_TYPE.Demon_Rescue, missingCharacter)) {
-                            int chance = Random.Range(0, 100);
-                            log = $"{log}\nRoll: {chance.ToString()}";
-                            if (chance < 20) {
-                                if (missingCharacter.IsConsideredInDangerBy(character)) {
-                                    character.faction.partyQuestBoard.CreateRescuePartyQuest(character, character.homeSettlement, missingCharacter);
-                                    return true;
-                                }
-                            }
-                        }
-                        //if (character.characterClass.IsCombatant() && character.characterClass.identifier == "Normal") {
-                        //    log += "\n-Character is combatant, 5% chance to Create Rescue Party if there are no Rescue Party whose leader lives in the same settlement";
-                        //    if (!character.homeSettlement.HasPartyQuestWithTarget(PARTY_QUEST_TYPE.Rescue, missingCharacter)) {
-                        //        int chance = Random.Range(0, 100);
-                        //        log += $"\nRoll: {chance}";
-                        //        if (chance < 5) {
-                        //            PartyManager.Instance.CreateRescuePartyQuest(character.homeSettlement, missingCharacter);
-                        //            //character.jobComponent.TriggerRescueJob(missingCharacter, out producedJob);
-                        //            return true;
-                        //        }
-                        //    }
-                        //} else {
-                        //    log += "\n-Character is not combatant, 5% chance to Request Rescue";
-                        //    int chance = Random.Range(0, 100);
-                        //    log += $"\nRoll: {chance}";
-                        //    if (chance < 5) {
-                        //        character.interruptComponent.TriggerInterrupt(INTERRUPT.Cry_Request, missingCharacter, "Missing " + missingCharacter.name);
-                        //        return true;
-                        //    }
-                        //}
-                    } else {
-#if DEBUG_LOG
-                        log = $"{log}\n-No missing friend";
-#endif
-                    }
-#if DEBUG_LOG
-                    log = $"{log}\n-If character has a Lover/Affair/Relative who it considers Missing";
-#endif
-                    missingCharacter = character.relationshipContainer.GetRandomMissingCharacterThatIsFamilyMemberOrLoverAffairOf(character);
-                    if (missingCharacter != null) {
-#if DEBUG_LOG
-                        log = log + ("\n-Missing Lover/Affair/Relative: " + missingCharacter);
-                        log = $"{log}\n-Character is combatant, 15% chance to Create Rescue Party if there are no Rescue Party whose leader lives in the same settlement";
-#endif
-                        if (character.faction != null && !character.faction.partyQuestBoard.HasPartyQuestWithTarget(PARTY_QUEST_TYPE.Rescue, missingCharacter)
-                            && !character.faction.partyQuestBoard.HasPartyQuestWithTarget(PARTY_QUEST_TYPE.Demon_Rescue, missingCharacter)) {
-                            int chance = Random.Range(0, 100);
-#if DEBUG_LOG
-                            log = $"{log}\nRoll: {chance}";
-#endif
-                            if (chance < 40) {
-                                if (missingCharacter.IsConsideredInDangerBy(character)) {
-                                    character.faction.partyQuestBoard.CreateRescuePartyQuest(character, character.homeSettlement, missingCharacter);
-                                    return true;
-                                }
-                            }
-                        }
-                        //if (character.characterClass.IsCombatant() && character.characterClass.identifier == "Normal") {
-                        //    log += "\n-Character is combatant, 15% chance to Create Rescue Party if there are no Rescue Party whose leader lives in the same settlement";
-                        //    if (!character.homeSettlement.HasPartyQuestWithTarget(PARTY_QUEST_TYPE.Rescue, missingCharacter)) {
-                        //        int chance = Random.Range(0, 100);
-                        //        log += $"\nRoll: {chance}";
-                        //        if (chance < 15) {
-                        //            PartyManager.Instance.CreateRescuePartyQuest(character.homeSettlement, missingCharacter);
-                        //            //character.jobComponent.TriggerRescueJob(missingCharacter, out producedJob);
-                        //            return true;
-                        //        }
-                        //    }
-                        //} else {
-                        //    log += "\n-Character is not combatant, 15% chance to Request Rescue";
-                        //    int chance = Random.Range(0, 100);
-                        //    log += $"\nRoll: {chance}";
-                        //    if (chance < 15) {
-                        //        character.interruptComponent.TriggerInterrupt(INTERRUPT.Cry_Request, missingCharacter, "Missing " + missingCharacter.name);
-                        //        return true;
-                        //    }
-                        //}
-                    } else {
-#if DEBUG_LOG
-                        log = $"{log}\n-No missing Lover/Affair/Relative";
-#endif
-                    }
+//#if DEBUG_LOG
+//                log = $"{log}\n-If it is Morning";
+//#endif
+//                if (currentTimeOfDay == TIME_IN_WORDS.MORNING || currentTimeOfDay == TIME_IN_WORDS.LUNCH_TIME || currentTimeOfDay == TIME_IN_WORDS.AFTERNOON) {
+//#if DEBUG_LOG
+//                    log = $"{log}\n-If character is an Archer, Marauder, or Shaman";
+//#endif
+//                    if (character.characterClass.className == "Archer" || character.characterClass.className == "Marauder" || character.characterClass.className == "Shaman") {
+//#if DEBUG_LOG
+//                        log = $"{log}\n-15% chance to Create Exploration Party if there are no Exploration Party whose leader lives in the same settlement";
+//#endif
+//                        if (character.faction != null && !character.faction.partyQuestBoard.HasPartyQuest(PARTY_QUEST_TYPE.Exploration)) {
+//                            int chance = WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Icalawa ? 5 : 15;
+//                            int roll = Random.Range(0, 100);
+//                            log = $"{log}\nRoll: {roll.ToString()}";
+//                            if (roll < chance) {
+//                                character.faction.partyQuestBoard.CreateExplorationPartyQuest(character, character.homeSettlement, character.currentRegion);
+//                                //character.jobComponent.TriggerExploreJob(out producedJob);
+//                                return true;
+//                            }
+//                        } else {
+//#if DEBUG_LOG
+//                            log = $"{log}\n-Already has an Exploration party whose leader lives in the same settlement";
+//#endif
+//                        }
+//                    }
+//#if DEBUG_LOG
+//                    log = $"{log}\n-If character has a Close Friend who it considers Missing";
+//#endif
+//                    Character missingCharacter = character.relationshipContainer.GetRandomMissingCharacterWithOpinion(RelationshipManager.Close_Friend);
+//                    if(missingCharacter != null) {
+//#if DEBUG_LOG
+//                        log = $"{log}\n-Missing close friend: {missingCharacter}";
+//#endif
+//                        if (character.faction != null && !character.faction.partyQuestBoard.HasPartyQuestWithTarget(PARTY_QUEST_TYPE.Rescue, missingCharacter)
+//                            && !character.faction.partyQuestBoard.HasPartyQuestWithTarget(PARTY_QUEST_TYPE.Demon_Rescue, missingCharacter)) {
+//                            int chance = Random.Range(0, 100);
+//#if DEBUG_LOG
+//                            log = $"{log}\nRoll: {chance.ToString()}";
+//#endif
+//                            if (chance < 20) {
+//                                if (missingCharacter.IsConsideredInDangerBy(character)) {
+//                                    character.faction.partyQuestBoard.CreateRescuePartyQuest(character, character.homeSettlement, missingCharacter);
+//                                    return true;
+//                                }
+//                            }
+//                        }
+//                    } else {
+//#if DEBUG_LOG
+//                        log = $"{log}\n-No missing close friend";
+//#endif
+//                    }
+//#if DEBUG_LOG
+//                    log = $"{log}\n-If character has a Friend who it considers Missing";
+//#endif
+//                    missingCharacter = character.relationshipContainer.GetRandomMissingCharacterWithOpinion(RelationshipManager.Friend);
+//                    if (missingCharacter != null) {
+//                        log = $"{log}\n-Missing friend: {missingCharacter}";
+//                        if (character.faction != null && !character.faction.partyQuestBoard.HasPartyQuestWithTarget(PARTY_QUEST_TYPE.Rescue, missingCharacter)
+//                            && !character.faction.partyQuestBoard.HasPartyQuestWithTarget(PARTY_QUEST_TYPE.Demon_Rescue, missingCharacter)) {
+//                            int chance = Random.Range(0, 100);
+//                            log = $"{log}\nRoll: {chance.ToString()}";
+//                            if (chance < 20) {
+//                                if (missingCharacter.IsConsideredInDangerBy(character)) {
+//                                    character.faction.partyQuestBoard.CreateRescuePartyQuest(character, character.homeSettlement, missingCharacter);
+//                                    return true;
+//                                }
+//                            }
+//                        }
+//                    } else {
+//#if DEBUG_LOG
+//                        log = $"{log}\n-No missing friend";
+//#endif
+//                    }
+//#if DEBUG_LOG
+//                    log = $"{log}\n-If character has a Lover/Affair/Relative who it considers Missing";
+//#endif
+//                    missingCharacter = character.relationshipContainer.GetRandomMissingCharacterThatIsFamilyMemberOrLoverAffairOf(character);
+//                    if (missingCharacter != null) {
+//#if DEBUG_LOG
+//                        log = log + ("\n-Missing Lover/Affair/Relative: " + missingCharacter);
+//                        log = $"{log}\n-Character is combatant, 15% chance to Create Rescue Party if there are no Rescue Party whose leader lives in the same settlement";
+//#endif
+//                        if (character.faction != null && !character.faction.partyQuestBoard.HasPartyQuestWithTarget(PARTY_QUEST_TYPE.Rescue, missingCharacter)
+//                            && !character.faction.partyQuestBoard.HasPartyQuestWithTarget(PARTY_QUEST_TYPE.Demon_Rescue, missingCharacter)) {
+//                            int chance = Random.Range(0, 100);
+//#if DEBUG_LOG
+//                            log = $"{log}\nRoll: {chance}";
+//#endif
+//                            if (chance < 40) {
+//                                if (missingCharacter.IsConsideredInDangerBy(character)) {
+//                                    character.faction.partyQuestBoard.CreateRescuePartyQuest(character, character.homeSettlement, missingCharacter);
+//                                    return true;
+//                                }
+//                            }
+//                        }
+//                    } else {
+//#if DEBUG_LOG
+//                        log = $"{log}\n-No missing Lover/Affair/Relative";
+//#endif
+//                    }
 
-                } else {
-#if DEBUG_LOG
-                    log = $"{log}\n  -Time of Day: {strCurrentTimeOfDay}";
-#endif
-                }
+//                } else {
+//#if DEBUG_LOG
+//                    log = $"{log}\n  -Time of Day: {strCurrentTimeOfDay}";
+//#endif
+//                }
 #if DEBUG_LOG
                 log = $"{log}\n-If it is Early Night, 10% chance to Host Social Party at Inn";
 #endif

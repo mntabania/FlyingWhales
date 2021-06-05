@@ -28,7 +28,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
     public bool isUnderSiege { get; private set; }
     public bool isPlagued { get; private set; }
     public bool hasTriedToStealCorpse { get; private set; }
-    public LocationStructure exterminateTargetStructure { get; private set; }
+    //public LocationStructure exterminateTargetStructure { get; private set; }
     public override SettlementResources SettlementResources => m_settlementResources ?? (m_settlementResources = new SettlementResources());
 
     //structures
@@ -53,6 +53,8 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
     public SettlementVillageMigrationComponent migrationComponent { get; private set; }
     public SettlementResourcesComponent resourcesComponent { get; private set; }
     public SettlementClassComponent classComponent { get; private set; }
+    public SettlementPartyComponent partyComponent { get; private set; }
+    public SettlementStructureComponent structureComponent { get; private set; }
 
     private readonly Region _region;
     private readonly WeightedDictionary<Character> newRulerDesignationWeights;
@@ -91,6 +93,9 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         resourcesComponent = new SettlementResourcesComponent(); resourcesComponent.SetOwner(this);
         classComponent = new SettlementClassComponent(); classComponent.SetOwner(this);
         classComponent.InitialScheduleProcessingOfNeededClasses();
+        partyComponent = new SettlementPartyComponent(); partyComponent.SetOwner(this);
+        partyComponent.InitialScheduleProcessingOfPartyQuests();
+        structureComponent = new SettlementStructureComponent(); structureComponent.SetOwner(this);
     }
     public NPCSettlement(SaveDataBaseSettlement saveDataBaseSettlement) : base (saveDataBaseSettlement) {
         SaveDataNPCSettlement saveData = saveDataBaseSettlement as SaveDataNPCSettlement;
@@ -112,6 +117,8 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         migrationComponent = saveData.migrationComponent.Load(); migrationComponent.SetOwner(this);
         resourcesComponent = saveData.resourcesComponent.Load(); resourcesComponent.SetOwner(this);
         classComponent = saveData.classComponent.Load(); classComponent.SetOwner(this);
+        partyComponent = saveData.partyComponent.Load(); partyComponent.SetOwner(this);
+        structureComponent = saveData.structureComponent.Load(); structureComponent.SetOwner(this);
     }
 
     #region Loading
@@ -159,6 +166,8 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
             migrationComponent.LoadReferences(saveDataNpcSettlement);
             resourcesComponent.LoadReferences(saveDataNpcSettlement.resourcesComponent);
             classComponent.LoadReferences(saveDataNpcSettlement.classComponent);
+            partyComponent.LoadReferences(saveDataNpcSettlement.partyComponent);
+            structureComponent.LoadReferences(saveDataNpcSettlement.structureComponent);
 
             if (saveDataNpcSettlement.hasOccupiedVillageSpot) {
                 Area area = GameUtilities.GetHexTileGivenCoordinates(saveDataNpcSettlement.occupiedVillageSpot, GridMap.Instance.map);
@@ -323,16 +332,15 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
             Debug.Log($"{GameManager.Instance.TodayLogString()}{name} Under Siege state changed to {isUnderSiege.ToString()}");
 #endif
             Messenger.Broadcast(SettlementSignals.SETTLEMENT_UNDER_SIEGE_STATE_CHANGED, this, isUnderSiege);
-            if (!isUnderSiege) {
-                if(exterminateTargetStructure != null) {
-                    if(owner != null && !owner.partyQuestBoard.HasPartyQuestWithTarget(PARTY_QUEST_TYPE.Extermination, exterminateTargetStructure)) {
-                        if(exterminateTargetStructure.settlementLocation == null || exterminateTargetStructure.settlementLocation.HasResidentThatIsNotDeadThatIsHostileWithFaction(owner)) {
-                            owner.partyQuestBoard.CreateExterminatePartyQuest(null, this, exterminateTargetStructure, this);
-                        }
-                    }
-                    //settlementJobTriggerComponent.TriggerExterminationJob(exterminateTargetStructure);
-                }
-            }
+            //if (!isUnderSiege) {
+            //    if(exterminateTargetStructure != null) {
+            //        if(owner != null && !owner.partyQuestBoard.HasPartyQuestWithTarget(PARTY_QUEST_TYPE.Extermination, exterminateTargetStructure)) {
+            //            if(exterminateTargetStructure.settlementLocation == null || exterminateTargetStructure.settlementLocation.HasResidentThatIsNotDeadThatIsHostileWithFaction(owner)) {
+            //                owner.partyQuestBoard.CreateExterminatePartyQuest(null, this, exterminateTargetStructure, this);
+            //            }
+            //        }
+            //    }
+            //}
         }
     }
     public void SetIsPlagued(bool state) {
@@ -410,6 +418,9 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         Profiler.EndSample();
 #endif
     }
+    private void OnSettlementAbandoned() {
+        structureComponent.RelinkAllLinkedStructures();
+    }
     #endregion
 
     #region Tiles
@@ -466,6 +477,9 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
             //    jobPriorityComponent.OnRemoveResident(character);
             //}
             UnassignJobsTakenBy(character);
+            if (residents.Count <= 0) {
+                OnSettlementAbandoned();
+            }
             return true;
         }
         return false;
@@ -969,12 +983,12 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
                 if(owner != null && target.gridTileLocation != null && target.gridTileLocation.IsNextToSettlementAreaOrPartOfSettlement(this)) {
                     if (ShouldBeUnderSiegeIfCharacterEntersSettlement(target)) {
                         SetIsUnderSiege(true);
-                        if(target.homeStructure != null 
-                           && target.homeStructure.settlementLocation != null 
-                           && target.homeStructure.settlementLocation.locationType == LOCATION_TYPE.DUNGEON
-                           && exterminateTargetStructure == null) {
-                            exterminateTargetStructure = target.homeStructure;
-                        }
+                        //if(target.homeStructure != null 
+                        //   && target.homeStructure.settlementLocation != null 
+                        //   && target.homeStructure.settlementLocation.locationType == LOCATION_TYPE.DUNGEON
+                        //   && exterminateTargetStructure == null) {
+                        //    exterminateTargetStructure = target.homeStructure;
+                        //}
                     }
                 }
             }	
@@ -1009,9 +1023,9 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
             SetIsUnderSiege(false);
         }
     }
-    public void SetExterminateTarget(LocationStructure target) {
-        exterminateTargetStructure = target;
-    }
+    //public void SetExterminateTarget(LocationStructure target) {
+    //    exterminateTargetStructure = target;
+    //}
     public StructureSetting GetMissingFacilityToBuildBasedOnWeights() {
         WeightedDictionary<StructureSetting> facilityWeights = new WeightedDictionary<StructureSetting>(settlementType.facilityWeights.dictionary);
         foreach (var kvp in settlementType.facilityWeights.dictionary) {

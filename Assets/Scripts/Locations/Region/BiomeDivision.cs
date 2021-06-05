@@ -61,7 +61,7 @@ public class BiomeDivision {
     public void PopulateUnreservedFullyFlatTiles(List<Area> p_listToPopulate, List<Area> p_reservedAreas) {
         for (int i = 0; i < areas.Count; i++) {
             Area area = areas[i];
-            if (area.elevationComponent.IsFully(ELEVATION.PLAIN) && !p_reservedAreas.Contains(area)) {
+            if (area.elevationComponent.IsFully(ELEVATION.PLAIN) && !p_reservedAreas.Contains(area) && area.primaryStructureInArea is Wilderness) {
                 p_listToPopulate.Add(area);
             }
         }
