@@ -6105,7 +6105,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
 
             SetHP(0);
             currentSettlement?.SettlementResources?.RemoveCharacterFromSettlement(this);
-
+            if (structureComponent.HasWorkPlaceStructure() && structureComponent.workPlaceStructure.assignedWorker == this) {
+                structureComponent.workPlaceStructure.SetAssignedWorker(null);
+            }
 
             if (interruptComponent.isInterrupted && interruptComponent.currentInterrupt.interrupt != interrupt) {
                 interruptComponent.ForceEndNonSimultaneousInterrupt();
