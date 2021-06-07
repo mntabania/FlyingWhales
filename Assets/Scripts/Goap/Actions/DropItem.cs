@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Inner_Maps.Location_Structures;
 using Inner_Maps;
+using UtilityScripts;
 
 public class DropItem : GoapAction {
 
@@ -81,12 +82,16 @@ public class DropItem : GoapAction {
     public void AfterDropSuccess(ActualGoapNode goapNode) {
         //if current grid location is occupied and cannot get any unoccupied tile from current location, then just let the object disappear
         LocationGridTile tile = goapNode.actor.gridTileLocation;
+        LocationStructure targetStructure = GetTargetStructure(goapNode);
         if(tile != null && tile.tileObjectComponent.objHere != null) {
             tile = goapNode.actor.gridTileLocation.GetFirstNearestTileFromThisWithNoObject(thisStructureOnly: true);
             if (tile == null) {
                 //in case no tile was found inside structure
                 tile = goapNode.actor.gridTileLocation.GetFirstNearestTileFromThisWithNoObject();    
             }
+        }
+        if(targetStructure != null && tile.structure != targetStructure && targetStructure.passableTiles.Count > 0) {
+            tile = CollectionUtilities.GetRandomElement(targetStructure.passableTiles);        
         }
         bool addToLocation = tile != null;
         goapNode.actor.UncarryPOI(goapNode.poiTarget as TileObject, addToLocation: addToLocation, dropLocation: tile);

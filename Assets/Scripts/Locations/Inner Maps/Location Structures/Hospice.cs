@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Inner_Maps.Location_Structures;
+using Traits;
 namespace Inner_Maps.Location_Structures {
     public class Hospice : ManMadeStructure, TileObjectEventDispatcher.IDestroyedListener {
 
@@ -96,26 +97,35 @@ namespace Inner_Maps.Location_Structures {
                     return;
                 }    
             }
-            
-            targetVillager = GetVillagerToBeDispelled(p_worker);
+
+            targetVillager = GetVillagerToBeDispelledForVampirism(p_worker);
             if (targetVillager != null) {
-                p_worker.jobComponent.TriggerHealerCureCharacter(targetVillager, out producedJob);
+                p_worker.jobComponent.TriggerCureMagicalAffliction(targetVillager, "Vampire", out producedJob);
                 if (producedJob != null) {
                     return;
-                }    
+                }
+            }
+
+            targetVillager = GetVillagerToBeDispelledForLycan(p_worker);
+            if (targetVillager != null) {
+                p_worker.jobComponent.TriggerCureMagicalAffliction(targetVillager, "Lycanthrope", out producedJob);
+                if (producedJob != null) {
+                    return;
+                }
             }
 
             List<TileObject> plants = GetTileObjectsOfType(TILE_OBJECT_TYPE.HERB_PLANT);
+            
             if (plants == null || plants.Count < 3) {
                 HerbPlant plant = p_worker.homeSettlement.SettlementResources.GetAvailableHerbPlant();
                 if (plant != null) {
-                    p_worker.jobComponent.TriggerGatherHerb(plant, out producedJob);
+                    p_worker.jobComponent.TriggerGatherHerb(plant as TileObject, out producedJob);
                     if(producedJob != null) {
                         return;
 					}
                 }
             }
-     
+
             List<TileObject> potions = GetTileObjectsOfType(TILE_OBJECT_TYPE.HEALING_POTION);
             if (potions == null || potions.Count <= 0) {
                 if (plants != null && plants.Count > 1) {
@@ -126,7 +136,7 @@ namespace Inner_Maps.Location_Structures {
                 }
                 
             }
-     
+
             List<TileObject> antidotes = GetTileObjectsOfType(TILE_OBJECT_TYPE.ANTIDOTE);
             if (antidotes == null || antidotes.Count <= 0) {
                 if (plants != null && plants.Count > 1) {
@@ -161,18 +171,56 @@ namespace Inner_Maps.Location_Structures {
 			}
             return null;
         }
-        Character GetVillagerToBeDispelled(Character p_worker) {
-            if (p_worker.talentComponent.GetTalent(CHARACTER_TALENT.Healing_Magic).level <= 1) {
+        Character GetVillagerToBeDispelledForLycan(Character p_worker) {
+            if (p_worker.talentComponent.GetTalent(CHARACTER_TALENT.Healing_Magic).level < 5) {
                 return null;
             }
             for (int x = 0; x < beds.Count; ++x) {
                 if (beds[x].users.Length > 0) {
-                    if (p_worker.talentComponent.GetTalent(CHARACTER_TALENT.Healing_Magic).level >= 5) {
-                        Character villagerToBeDispelled = beds[x].users[0];
-                        if (villagerToBeDispelled != null) {
-                            if (villagerToBeDispelled.traitContainer.HasTrait("Vampirism") || villagerToBeDispelled.isLycanthrope) {
+                    Character villagerToBeDispelled = beds[x].users[0];
+                    if (villagerToBeDispelled != null) {
+                        if (villagerToBeDispelled.isLycanthrope && villagerToBeDispelled.lycanData.dislikesBeingLycan) {
+                            return villagerToBeDispelled;
+                        }
+                    }
+                }
+            }
+            for (int x = 0; x < charactersHere.Count; ++x) {
+                Character villagerToBeDispelled = charactersHere[x];
+                if (villagerToBeDispelled != null) {
+                    if (villagerToBeDispelled.isLycanthrope && villagerToBeDispelled.lycanData.dislikesBeingLycan) {
+                        return villagerToBeDispelled;
+                    }
+                }
+            }
+            return null;
+        }
+
+        Character GetVillagerToBeDispelledForVampirism(Character p_worker) {
+            if (p_worker.talentComponent.GetTalent(CHARACTER_TALENT.Healing_Magic).level < 5) {
+                return null;
+            }
+            for (int x = 0; x < beds.Count; ++x) {
+                if (beds[x].users.Length > 0) {
+                    Character villagerToBeDispelled = beds[x].users[0];
+                    if (villagerToBeDispelled != null) {
+                        if (villagerToBeDispelled.traitContainer.HasTrait("Vampire")) {
+                            Vampire vampire = villagerToBeDispelled.traitContainer.GetTraitOrStatus<Vampire>("Vampire");
+                            if (vampire.dislikedBeingVampire) {
                                 return villagerToBeDispelled;
-                            }    
+                            }
+
+                        }
+                    }
+                }
+            }
+            for (int x = 0; x < charactersHere.Count; ++x) {
+                Character villagerToBeDispelled = charactersHere[x];
+                if (villagerToBeDispelled != null) {
+                    if (villagerToBeDispelled.traitContainer.HasTrait("Vampire")) {
+                        Vampire vampire = villagerToBeDispelled.traitContainer.GetTraitOrStatus<Vampire>("Vampire");
+                        if (vampire.dislikedBeingVampire) {
+                            return villagerToBeDispelled;
                         }
                     }
                 }

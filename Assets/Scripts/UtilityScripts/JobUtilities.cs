@@ -14,11 +14,16 @@ namespace UtilityScripts {
                     job.AddPriorityLocation(INTERACTION_TYPE.NONE, homeStructure);
                     hasPrioLocation = true;
                 }
+                if (actor.structureComponent.workPlaceStructure != null) {
+                    job.AddPriorityLocation(INTERACTION_TYPE.NONE, actor.structureComponent.workPlaceStructure);
+                    hasPrioLocation = true;
+                }
+                /*
                 if (homeSettlement != null) {
                     LocationStructure cityCenter = homeSettlement.GetFirstStructureOfType(STRUCTURE_TYPE.CITY_CENTER);
                     LocationStructure tavern = homeSettlement.GetFirstStructureOfType(STRUCTURE_TYPE.TAVERN);
                     LocationStructure fishery = homeSettlement.GetFirstStructureOfType(STRUCTURE_TYPE.FISHERY);
-                    LocationStructure farm = homeSettlement.GetFirstStructureOfType(STRUCTURE_TYPE.FISHERY);
+                    LocationStructure farm = homeSettlement.GetFirstStructureOfType(STRUCTURE_TYPE.FARM);
                     LocationStructure butcherShop = homeSettlement.GetFirstStructureOfType(STRUCTURE_TYPE.BUTCHERS_SHOP);
 
                     if (cityCenter != null) {
@@ -41,7 +46,7 @@ namespace UtilityScripts {
                         job.AddPriorityLocation(INTERACTION_TYPE.NONE, butcherShop);
                         hasPrioLocation = true;
                     }
-                }
+                }*/
                 if (hasPrioLocation) {
                     LocationStructure currentStructure = actor.currentStructure;
                     ILocation currentLocation = currentStructure;

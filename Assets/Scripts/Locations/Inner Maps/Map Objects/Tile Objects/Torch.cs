@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Inner_Maps;
+using System.Collections.Generic;
 
 public class Torch : TileObject{
 
@@ -28,6 +29,15 @@ public class Torch : TileObject{
     public Torch(SaveDataTileObject data) : base(data) {
         
     }
+
+	protected override void OnPlaceTileObjectAtTile(LocationGridTile tile) {
+		base.OnPlaceTileObjectAtTile(tile);
+        if (tile.structure.structureType == STRUCTURE_TYPE.DWELLING) {
+            DisableInnerMapLight();
+        } else {
+            EnableInnermapLight();
+		}
+	}
 
 	protected override void OnSetObjectAsUnbuilt() {
         base.OnSetObjectAsUnbuilt();

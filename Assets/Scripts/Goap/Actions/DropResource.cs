@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Logs;
 using UnityEngine;  
 using Traits;
+using Inner_Maps.Location_Structures;
 
 public class DropResource : GoapAction {
 
@@ -94,6 +95,20 @@ public class DropResource : GoapAction {
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, OtherData[] otherData, JobQueueItem job) { 
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData, job);
         if (satisfied) {
+            if (job.jobType.IsFullnessRecoveryTypeJob()) {
+                LocationStructure structure = poiTarget.gridTileLocation?.structure;
+                if (structure != null) {
+                    if (structure is Dwelling) {
+                        if (!structure.IsResident(actor)) {
+                            return false;
+                        }
+                    } else if (structure.structureType.IsFoodProducingStructure()) {
+                        if (structure is ManMadeStructure manMadeStructure && manMadeStructure.assignedWorker != actor) {
+                            return false;
+                        }
+                    }
+                }
+            }
             if (poiTarget.gridTileLocation == null) {
                 return false;
             }

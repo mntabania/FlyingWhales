@@ -70,6 +70,12 @@ public class SettlementResources
         characters.Remove(p_character);
     }
 
+    public void RemoveHerbPlant(HerbPlant p_plant) {
+        if (herbPlants.Contains(p_plant)) {
+            herbPlants.Remove(p_plant);
+        }
+	}
+
     public void AddAnimalToSettlement(Summon p_character) {
         if (!animalsThatProducesMats.Contains(p_character)) {
             animalsThatProducesMats.Add(p_character);
@@ -431,7 +437,7 @@ public class SettlementResources
     public HerbPlant GetAvailableHerbPlant() {
         HerbPlant plant = null;
         for (int x = 0; x < herbPlants.Count; ++x) {
-            if (!herbPlants[x].HasJobTargetingThis(JOB_TYPE.GATHER_HERB) || !herbPlants[x].HasJobTargetingThis(JOB_TYPE.HAUL)) {
+            if ((!herbPlants[x].HasJobTargetingThis(JOB_TYPE.GATHER_HERB) || !herbPlants[x].HasJobTargetingThis(JOB_TYPE.HAUL)) && herbPlants[x].currentStructure?.structureType != STRUCTURE_TYPE.HOSPICE) {
                 plant = herbPlants[x];
                 break;
             }
