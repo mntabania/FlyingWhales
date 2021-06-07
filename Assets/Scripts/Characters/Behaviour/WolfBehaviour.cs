@@ -56,12 +56,15 @@ public class WolfBehaviour : BaseMonsterBehaviour {
                 List<LocationStructure> monsterLairs = character.currentRegion.GetStructuresAtLocation(STRUCTURE_TYPE.MONSTER_LAIR);
                 List<LocationStructure> choices = RuinarchListPool<LocationStructure>.Claim();
                 //if there were no settlements found, then check if there are any unoccupied monster lairs
-                for (int i = 0; i < monsterLairs.Count; i++) {
-                    LocationStructure monsterLair = monsterLairs[i];
-                    if (monsterLair.CanBeResidentHere(character)) {
-                        choices.Add(monsterLair);
+                if(monsterLairs != null) {
+                    for (int i = 0; i < monsterLairs.Count; i++) {
+                        LocationStructure monsterLair = monsterLairs[i];
+                        if (monsterLair.CanBeResidentHere(character)) {
+                            choices.Add(monsterLair);
+                        }
                     }
                 }
+                
                 LocationStructure randomStructure = null;
                 if (choices.Count > 0) {
                     randomStructure = CollectionUtilities.GetRandomElement(choices);

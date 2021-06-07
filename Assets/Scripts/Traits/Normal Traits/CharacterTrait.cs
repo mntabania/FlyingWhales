@@ -418,7 +418,7 @@ namespace Traits {
             NPCSettlement homeSettlement = actor.homeSettlement;
             if(homeSettlement != null) {
                 LocationStructure cityCenter = homeSettlement.GetFirstStructureOfType(STRUCTURE_TYPE.CITY_CENTER);
-                if(cityCenter != null && herbPlant.gridTileLocation != null && herbPlant.gridTileLocation.structure.structureType != STRUCTURE_TYPE.CITY_CENTER) {
+                if(cityCenter != null && herbPlant.gridTileLocation != null && herbPlant.gridTileLocation.structure.structureType != STRUCTURE_TYPE.CITY_CENTER && herbPlant.gridTileLocation.structure.structureType != STRUCTURE_TYPE.HOSPICE) {
                     int numOfHerbPlantsInCityCenter = cityCenter.GetNumberOfTileObjects(TILE_OBJECT_TYPE.HERB_PLANT);
                     int numberOfHaulJobs = homeSettlement.GetNumberOfJobsThatTargetsTileObjectOfType(TILE_OBJECT_TYPE.HERB_PLANT);
                     if((numOfHerbPlantsInCityCenter + numberOfHaulJobs) < 4) {

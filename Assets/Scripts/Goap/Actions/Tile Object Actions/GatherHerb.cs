@@ -52,7 +52,7 @@ public class GatherHerb : GoapAction {
 
     #region State Effects
     public void AfterGatherHerbSuccess(ActualGoapNode p_node) {
-        p_node.actor.jobComponent.TryCreateHaulJobItem(ProduceHerbPlant(p_node));
+        p_node.actor.jobComponent.CreateDropItemJob(JOB_TYPE.GATHER_HERB, ProduceHerbPlant(p_node), (p_node.actor).structureComponent.workPlaceStructure);
     }
     #endregion
 
@@ -63,7 +63,7 @@ public class GatherHerb : GoapAction {
             herbPlant.gridTileLocation.structure.RemovePOI(herbPlant);
         }
 
-        p_node.actor.ObtainItem(herbPlant);
+        p_node.actor.PickUpItem(herbPlant);
 
         return herbPlant;
     }
