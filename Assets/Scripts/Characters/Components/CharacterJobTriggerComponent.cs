@@ -1267,6 +1267,24 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
         //producedJob = null;
         //return false;
     }
+    public bool PlanReturnToVillageCenter(JOB_TYPE jobType) {
+	    if (!owner.jobQueue.HasJob(jobType)) {
+	        Assert.IsNotNull(owner.homeSettlement);
+	        LocationStructure chosenStructure = owner.homeSettlement.cityCenter;
+            LocationGridTile chosenTile = chosenStructure.passableTiles.Count > 0 ? 
+	            CollectionUtilities.GetRandomElement(chosenStructure.passableTiles) : 
+	            CollectionUtilities.GetRandomElement(chosenStructure.tiles);
+            ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.GO_TO_TILE], owner, chosenTile.tileObjectComponent.genericTileObject, null, 0);
+            GoapPlan goapPlan = ObjectPoolManager.Instance.CreateNewGoapPlan(node, owner);
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType, INTERACTION_TYPE.GO_TO_TILE, chosenTile.tileObjectComponent.genericTileObject, owner);
+            goapPlan.SetDoNotRecalculate(true);
+            job.SetCannotBePushedBack(true);
+            job.SetAssignedPlan(goapPlan);
+            owner.jobQueue.AddJobInQueue(job);
+            return true;
+        }
+        return false;
+    }
     public bool TriggerReturnPortal() {
         if (!owner.jobQueue.HasJob(JOB_TYPE.RETURN_PORTAL)) {
             Area chosenTerritory = PlayerManager.Instance.player.portalArea;

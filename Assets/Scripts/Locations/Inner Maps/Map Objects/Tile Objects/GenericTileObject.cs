@@ -122,11 +122,11 @@ public class GenericTileObject : TileObject {
         //Set this tile as no longer default since a job might need it when loading
         _owner.SetIsDefault(false);
     }
-    public override void AdjustHP(int amount, ELEMENTAL_TYPE elementalDamageType, bool triggerDeath = false,
+    public override void AdjustHP(int amount, ELEMENTAL_TYPE elementalDamageType, bool triggerDeath = false, 
         object source = null, CombatManager.ElementalTraitProcessor elementalTraitProcessor = null, bool showHPBar = false, float piercingPower = 0f, bool isPlayerSource = false) {
-        if (currentHP == 0 && amount < 0) {
-            return; //hp is already at minimum, do not allow any more negative adjustments
-        }
+        // if (currentHP == 0 && amount < 0) {
+        //     return; //hp is already at minimum, do not allow any more negative adjustments
+        // }
 #if DEBUG_PROFILER
         Profiler.BeginSample($"GTO - Adjust HP - DamageModifierByElementsAndTraits");
 #endif
@@ -152,6 +152,24 @@ public class GenericTileObject : TileObject {
 #endif
         }
         
+        if (amount < 0) {
+#if DEBUG_PROFILER
+            Profiler.BeginSample($"GTO - Adjust HP - OnTileDamaged");
+#endif
+            structureLocation.OnTileDamaged(gridTileLocation, amount, isPlayerSource);
+#if DEBUG_PROFILER
+            Profiler.EndSample();
+#endif
+        } else if (amount > 0) {
+#if DEBUG_PROFILER
+            Profiler.BeginSample($"GTO - Adjust HP - OnTileRepaired");
+#endif
+            structureLocation.OnTileRepaired(gridTileLocation, amount);
+#if DEBUG_PROFILER
+            Profiler.EndSample();
+#endif
+        }
+
         if (currentHP <= 0) {
 #if DEBUG_PROFILER
             Profiler.BeginSample($"GTO - Adjust HP - DetermineNextGroundTypeAfterDestruction");
@@ -167,26 +185,6 @@ public class GenericTileObject : TileObject {
 #if DEBUG_PROFILER
             Profiler.EndSample();
 #endif
-        }
-        if (amount < 0) {
-#if DEBUG_PROFILER
-            Profiler.BeginSample($"GTO - Adjust HP - OnTileDamaged");
-#endif
-            structureLocation.OnTileDamaged(gridTileLocation, amount);
-#if DEBUG_PROFILER
-            Profiler.EndSample();
-#endif
-        } else if (amount > 0) {
-#if DEBUG_PROFILER
-            Profiler.BeginSample($"GTO - Adjust HP - OnTileRepaired");
-#endif
-            structureLocation.OnTileRepaired(gridTileLocation, amount);
-#if DEBUG_PROFILER
-            Profiler.EndSample();
-#endif
-        }
-
-        if (currentHP <= 0) {
             //reset floor hp at end of processing
             currentHP = maxHP;
         }

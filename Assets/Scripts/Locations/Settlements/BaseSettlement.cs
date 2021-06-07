@@ -149,41 +149,45 @@ namespace Locations.Settlements {
             //     character.SetHomeStructure(null);
             //     return;
             // }
-            LocationStructure chosenDwelling = dwellingOverride;
-            if (chosenDwelling == null) {
-                Character lover = CharacterManager.Instance.GetCharacterByID(character.relationshipContainer
-                    .GetFirstRelatableIDWithRelationship(RELATIONSHIP_TYPE.LOVER));
-                if (lover != null && lover.faction.id == character.faction.id && residents.Contains(lover) && lover.homeStructure.tiles.Count > 0) { //check if the character has a lover that lives in the npcSettlement
-                    chosenDwelling = lover.homeStructure;
-                }
-                if (chosenDwelling == null && structures.ContainsKey(STRUCTURE_TYPE.DWELLING) && (character.homeStructure == null || character.homeStructure.region.id != id)) { //else, find an unoccupied dwelling (also check if the character doesn't already live in this npcSettlement)
-                    List<LocationStructure> structureList = structures[STRUCTURE_TYPE.DWELLING];
-                    for (int i = 0; i < structureList.Count; i++) {
-                        LocationStructure currDwelling = structureList[i];
-                        if (currDwelling.CanBeResidentHere(character)) {
-                            chosenDwelling = currDwelling;
-                            break;
-                        }
-                    }
-                }
+            
+            //Removed this because we expect that villagers will need to buy their homes.
+//             LocationStructure chosenDwelling = dwellingOverride;
+//             if (chosenDwelling == null) {
+//                 Character lover = CharacterManager.Instance.GetCharacterByID(character.relationshipContainer.GetFirstRelatableIDWithRelationship(RELATIONSHIP_TYPE.LOVER));
+//                 if (lover != null && lover.faction.id == character.faction.id && residents.Contains(lover) && lover.homeStructure.tiles.Count > 0) { //check if the character has a lover that lives in the npcSettlement
+//                     chosenDwelling = lover.homeStructure;
+//                 }
+//                 if (chosenDwelling == null && structures.ContainsKey(STRUCTURE_TYPE.DWELLING) && (character.homeStructure == null || character.homeStructure.region.id != id)) { //else, find an unoccupied dwelling (also check if the character doesn't already live in this npcSettlement)
+//                     List<LocationStructure> structureList = structures[STRUCTURE_TYPE.DWELLING];
+//                     for (int i = 0; i < structureList.Count; i++) {
+//                         LocationStructure currDwelling = structureList[i];
+//                         if (currDwelling.CanBeResidentHere(character)) {
+//                             chosenDwelling = currDwelling;
+//                             break;
+//                         }
+//                     }
+//                 }
+//             }
+//
+//             if (chosenDwelling == null) {
+//                 //if the code reaches here, it means that the npcSettlement could not find a dwelling for the character
+// #if DEBUG_LOG
+//                 Debug.LogWarning(
+//                     $"{GameManager.Instance.TodayLogString()}Could not find a dwelling for {character.name} at {name}, setting home to Town Center");
+// #endif
+//                 LocationStructure cityCenter = GetRandomStructureOfType(STRUCTURE_TYPE.CITY_CENTER);
+//                 if (cityCenter != null) {
+//                     chosenDwelling = cityCenter;
+//                 } else {
+//                     //If there is not city center, assign random structure as home
+//                     //This is usually for dungeon type settlements like caves and monster lairs
+//                     chosenDwelling = GetRandomStructure();
+//                 }
+//             }
+//             character.ChangeHomeStructure(chosenDwelling);
+            if (dwellingOverride != null) {
+                character.ChangeHomeStructure(dwellingOverride); 
             }
-
-            if (chosenDwelling == null) {
-                //if the code reaches here, it means that the npcSettlement could not find a dwelling for the character
-#if DEBUG_LOG
-                Debug.LogWarning(
-                    $"{GameManager.Instance.TodayLogString()}Could not find a dwelling for {character.name} at {name}, setting home to Town Center");
-#endif
-                LocationStructure cityCenter = GetRandomStructureOfType(STRUCTURE_TYPE.CITY_CENTER);
-                if (cityCenter != null) {
-                    chosenDwelling = cityCenter;
-                } else {
-                    //If there is not city center, assign random structure as home
-                    //This is usually for dungeon type settlements like caves and monster lairs
-                    chosenDwelling = GetRandomStructure();
-                }
-            }
-            character.ChangeHomeStructure(chosenDwelling);
         }
         private bool CanCharacterBeAddedAsResidentBasedOnFaction(Character character) {
             if(character.isVagrantOrFactionless || character.isFactionless || (character.faction != null && !character.faction.isMajorFaction)) {

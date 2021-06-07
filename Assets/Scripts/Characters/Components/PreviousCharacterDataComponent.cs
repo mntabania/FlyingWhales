@@ -1,4 +1,5 @@
 ﻿using Inner_Maps.Location_Structures;
+using UnityEngine;
 
 public class PreviousCharacterDataComponent : CharacterComponent {
 
@@ -29,6 +30,9 @@ public class PreviousCharacterDataComponent : CharacterComponent {
     
     #region Home Structure
     public void SetPreviousHomeStructure(LocationStructure p_structure) {
+#if DEBUG_LOG
+        Debug.Log($"Set Previous Home of {owner.name} to {p_structure?.name}");
+#endif
         _previousHomeStructure = p_structure;
     }
     #endregion
