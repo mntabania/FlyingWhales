@@ -20,7 +20,8 @@ public abstract class FoodPile : ResourcePile {
     }
     public override void OnPlacePOI() {
         base.OnPlacePOI();
-        if (gridTileLocation != null && gridTileLocation.structure.structureType.IsFoodProducingStructure()) {
+        if (gridTileLocation != null && gridTileLocation.structure.structureType != STRUCTURE_TYPE.DWELLING
+                                     && gridTileLocation.structure.structureType != STRUCTURE_TYPE.CITY_CENTER) {
             AddAdvertisedAction(INTERACTION_TYPE.BUY_FOOD);
         } else {
             RemoveAdvertisedAction(INTERACTION_TYPE.BUY_FOOD);

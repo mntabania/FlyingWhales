@@ -48,6 +48,10 @@ public abstract class AnimalBurrow : TileObject {
         RemovePlayerAction(PLAYER_SKILL_TYPE.SEIZE_OBJECT);
         RemovePlayerAction(PLAYER_SKILL_TYPE.POISON);
         RemovePlayerAction(PLAYER_SKILL_TYPE.IGNITE);
+    }
+
+    public override void OnPlacePOI() {
+        base.OnPlacePOI();
         Messenger.AddListener(Signals.GAME_LOADED, OnGameLoaded);
     }
 
@@ -73,6 +77,7 @@ public abstract class AnimalBurrow : TileObject {
         }
     }
     private void OnGameLoaded() {
+        Messenger.RemoveListener(Signals.GAME_LOADED, OnGameLoaded);
         List<LocationGridTile> tiles = RuinarchListPool<LocationGridTile>.Claim();
         Area area = gridTileLocation.area;
         for (int i = 0; i < area.gridTileComponent.passableTiles.Count; i++) {

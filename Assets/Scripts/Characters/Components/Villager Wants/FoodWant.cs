@@ -38,7 +38,8 @@ namespace Characters.Villager_Wants {
                 foundStructure = null;
                 return false;
             }
-            if (p_character.structureComponent.HasWorkPlaceStructure() && p_character.structureComponent.workPlaceStructure.structureType.IsFoodProducingStructure() &&
+            //removed food producing structure checking since we now allow a villager to take food from his/her place of work regardless of structure type
+            if (p_character.structureComponent.HasWorkPlaceStructure() /*&& p_character.structureComponent.workPlaceStructure.structureType.IsFoodProducingStructure()*/ &&
                 p_character.structureComponent.workPlaceStructure.HasTileObjectThatIsBuiltFoodPileThatCharacterDoesntHaveAtHome(p_character)) {
                 //character works at a food producing structure
                 needsToPay = false;
