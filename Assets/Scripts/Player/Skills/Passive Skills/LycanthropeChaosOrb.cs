@@ -1,6 +1,7 @@
 ﻿using Traits;
 using Interrupts;
 using UnityEngine;
+using Inner_Maps;
 
 public class LycanthropeChaosOrb : PassiveSkill {
     public override string name => "Chaos Orbs from Lycanthropes";
@@ -13,14 +14,18 @@ public class LycanthropeChaosOrb : PassiveSkill {
     }
 
     void OnCharacterDied(Character p_character) {
-        if (p_character.race.IsSapient()) {
+        LocationGridTile gridTile = p_character.gridTileLocation;
+        if (gridTile == null) {
+            gridTile = p_character.deathTilePosition;
+        }
+        if (p_character.race.IsSapient() && gridTile != null) {
             Character responsibleCharacter = p_character.traitContainer.GetTraitOrStatus<Trait>("Dead").responsibleCharacter;
             if (responsibleCharacter != null) {
                 if (responsibleCharacter.traitContainer.HasTrait("Lycanthrope")) {
 #if DEBUG_LOG
                     Debug.Log("Chaos Orb Produced - [" + p_character.name + "] - [Kill by lycan] - [2]");
 #endif
-                    Messenger.Broadcast(PlayerSignals.CREATE_CHAOS_ORBS, p_character.gridTileLocation.centeredWorldLocation, 2, p_character.gridTileLocation.parentMap);
+                    Messenger.Broadcast(PlayerSignals.CREATE_CHAOS_ORBS, gridTile.centeredWorldLocation, 2, gridTile.parentMap);
                 }
             }
         }
