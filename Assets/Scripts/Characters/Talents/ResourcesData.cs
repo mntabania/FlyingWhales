@@ -58,5 +58,10 @@ namespace Character_Talents {
             //Character can gather resources up to 3x a day.
         }
         #endregion
+
+        #region Reevaluation
+        public override void OnReevaluateTalent(Character p_character, int level) {
+        }
+        #endregion
     }
 }

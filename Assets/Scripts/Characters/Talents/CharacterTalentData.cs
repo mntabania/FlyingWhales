@@ -26,6 +26,8 @@ namespace Character_Talents {
         }
 
         public abstract void OnLevelUp(Character p_character, int level);
+
+        //This is used when the talent has not leveled up but we need to recheck if the effect still applies or not
         public abstract void OnReevaluateTalent(Character p_character, int level);
     }
 }

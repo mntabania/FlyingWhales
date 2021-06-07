@@ -56,5 +56,10 @@ namespace Character_Talents {
             p_character.classComponent.AddAbleClass("Hunter");
         }
         #endregion
+        
+        #region Reevaluation
+        public override void OnReevaluateTalent(Character p_character, int level) {
+        }
+        #endregion
     }
 }

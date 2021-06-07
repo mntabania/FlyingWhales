@@ -51,5 +51,10 @@ namespace Character_Talents {
             //Allows character to gather Food up to 3x a day.
         }
         #endregion
+
+        #region Reevaluation
+        public override void OnReevaluateTalent(Character p_character, int level) {
+        }
+        #endregion
     }
 }

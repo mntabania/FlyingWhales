@@ -63,5 +63,10 @@ namespace Character_Talents {
             */
         }
         #endregion
+
+        #region Reevaluation
+        public override void OnReevaluateTalent(Character p_character, int level) {
+        }
+        #endregion
     }
 }
