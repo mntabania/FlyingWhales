@@ -55,6 +55,17 @@ public abstract class AnimalBurrow : TileObject {
         Messenger.AddListener(Signals.GAME_LOADED, OnGameLoaded);
     }
 
+    public override void OnDestroyPOI() {
+        base.OnDestroyPOI();
+        Messenger.RemoveListener(Signals.GAME_LOADED, OnGameLoaded);
+    }
+
+    public override void OnRemoveTileObject(Character removedBy, LocationGridTile removedFrom, bool removeTraits = true,
+        bool destroyTileSlots = true) {
+        base.OnRemoveTileObject(removedBy, removedFrom, removeTraits, destroyTileSlots);
+        Messenger.RemoveListener(Signals.GAME_LOADED, OnGameLoaded);
+    }
+
     #region Listeners
     protected override void SubscribeListeners() {
         base.SubscribeListeners();

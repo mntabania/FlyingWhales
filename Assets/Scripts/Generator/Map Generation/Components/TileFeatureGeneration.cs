@@ -56,7 +56,7 @@ public class TileFeatureGeneration : MapGenerationComponent {
 			stopwatch.Stop();
 			AddLog($"TryAssignSettlementTiles took {stopwatch.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)} seconds to complete.");
 			
-			AdditionalResourceCreation();
+			// AdditionalResourceCreation();
 		}
 	}
 	private void GenerateFeaturesForAllTiles(MapGenerationData data) {
@@ -503,7 +503,7 @@ public class TileFeatureGeneration : MapGenerationComponent {
 		//	AdditionalResourceCreationForVillageSpots(villageSpots[i]);
 		//}
 		RuinarchListPool<VillageSpot>.Release(villageSpots);
-		AdditionalResourceCreation();
+		// AdditionalResourceCreation();
 	}
 	private void DetermineSettlementsForTutorial() {
 		List<Area> chosenTiles = new List<Area> {

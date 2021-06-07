@@ -304,9 +304,9 @@ public class SettlementRulerBehaviour : CharacterBehaviourComponent {
             //Animal Killing is considered a crime.
             return false;
         }
-        if (!p_settlement.occupiedVillageSpot.HasAccessToAnimals()) {
-            return false;
-        }
+        // if (!p_settlement.occupiedVillageSpot.HasAccessToAnimals()) {
+        //     return false;
+        // }
         if (!p_settlement.HasResidentThatIsOrCanBecomeClass("Butcher")) {
             return false;
         }
