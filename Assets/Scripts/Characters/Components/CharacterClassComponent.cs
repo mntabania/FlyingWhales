@@ -117,6 +117,15 @@ public class CharacterClassComponent : CharacterComponent {
         if (owner.talentComponent != null) {
             owner.talentComponent.ReevaluateAllTalents();
         }
+
+        if (owner.isNormalCharacter) {
+            if (!characterClass.IsCombatant()) {
+                //Once a character becomes a non-combatant, he must leave party, because only combatant characters can be in a party
+                if (owner.partyComponent.hasParty) {
+                    owner.partyComponent.currentParty.RemoveMember(owner);
+                }
+            }
+        }
     }
     public void OverridePreviousClassName(string p_className) {
         previousClassName = p_className;
