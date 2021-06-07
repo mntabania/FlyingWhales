@@ -64,27 +64,17 @@ public class VillageGeneration : MapGenerationComponent {
 				
 				Assert.IsTrue(structureSettings.First().structureType == STRUCTURE_TYPE.CITY_CENTER);
 				Assert.IsTrue(npcSettlement.areas.Count > 0);
-				yield return MapGenerator.Instance.StartCoroutine(EnsuredStructurePlacement(region, structureSettings, npcSettlement));
+				yield return MapGenerator.Instance.StartCoroutine(EnsuredStructurePlacement(region, structureSettings, npcSettlement, data));
 				RuinarchListPool<StructureSetting>.Release(structureSettings);
 			}
 		}
-		
-		//Generate facilities
-		for (int i = 0; i < createdSettlements.Count; i++) {
-			NPCSettlement npcSettlement = createdSettlements[i];
-			VillageSetting villageSetting = villageSettings[i];
-			var structureSettings = GenerateFacilities(npcSettlement, npcSettlement.owner, villageSetting.GetRandomFacilityCount());
-			Debug.Log($"Will create facilities for {npcSettlement.name}: {structureSettings.ComafyList()}");
-			yield return MapGenerator.Instance.StartCoroutine(EnsuredStructurePlacement(region, structureSettings, npcSettlement));
-			yield return MapGenerator.Instance.StartCoroutine(npcSettlement.PlaceInitialObjectsCoroutine());
-		}
-		
+
 		//Generate Dwellings
 		for (int i = 0; i < createdSettlements.Count; i++) {
 			NPCSettlement npcSettlement = createdSettlements[i];
 			VillageSetting villageSetting = villageSettings[i];
 			var structureSettings = GenerateDwellings(npcSettlement.owner, villageSetting, npcSettlement);
-			yield return MapGenerator.Instance.StartCoroutine(EnsuredStructurePlacement(region, structureSettings, npcSettlement));
+			yield return MapGenerator.Instance.StartCoroutine(EnsuredStructurePlacement(region, structureSettings, npcSettlement, data));
 			RuinarchListPool<StructureSetting>.Release(structureSettings);
 		}
 
@@ -106,6 +96,130 @@ public class VillageGeneration : MapGenerationComponent {
 				CharacterManager.Instance.PlaceInitialCharacters(spawnedCharacters, npcSettlement);
 			}
 		}
+
+		//generate food producers
+		for (int i = 0; i < createdSettlements.Count; i++) {
+			NPCSettlement npcSettlement = createdSettlements[i];
+			VillageSetting villageSetting = villageSettings[i];
+			int neededFoodProducingStructures = villageSetting.GetFoodProducingStructureCount();
+			var missingFoodProducers = 0;
+			for (int j = 0; j < neededFoodProducingStructures; j++) {
+				bool wasStructurePlaced = false;
+				List<StructureSetting> structureSettings = RuinarchListPool<StructureSetting>.Claim();
+				StructureSetting structureToPlace;
+				if (SettlementRulerBehaviour.ShouldBuildFishery(npcSettlement)) {
+					structureToPlace = new StructureSetting(STRUCTURE_TYPE.FISHERY, RESOURCE.WOOD, npcSettlement.owner.factionType.usesCorruptedStructures);
+					structureSettings.Add(structureToPlace);
+					yield return MapGenerator.Instance.StartCoroutine(EnsuredStructurePlacement(region, structureSettings, npcSettlement, data));
+					if (data.unplacedStructuresOnLastEnsuredStructurePlacementCall.Count <= 0) {
+						//fishery was placed successfully
+						Debug.Log($"Fishery was placed successfully for {npcSettlement.name}!");
+						wasStructurePlaced = true;
+					}
+				}
+				if (!wasStructurePlaced) {
+					if (SettlementRulerBehaviour.ShouldBuildButcher(npcSettlement)) {
+						structureSettings.Clear();
+						structureToPlace = new StructureSetting(STRUCTURE_TYPE.BUTCHERS_SHOP, RESOURCE.STONE, npcSettlement.owner.factionType.usesCorruptedStructures);
+						structureSettings.Add(structureToPlace);
+						yield return MapGenerator.Instance.StartCoroutine(EnsuredStructurePlacement(region, structureSettings, npcSettlement, data));
+						if (data.unplacedStructuresOnLastEnsuredStructurePlacementCall.Count <= 0) {
+							//butcher was placed successfully
+							Debug.Log($"Butcher was placed successfully for {npcSettlement.name}!");
+							wasStructurePlaced = true;
+						}
+					}
+				}
+				
+				if(!wasStructurePlaced) {
+					structureSettings.Clear();
+					structureToPlace = new StructureSetting(STRUCTURE_TYPE.FARM, RESOURCE.NONE, npcSettlement.owner.factionType.usesCorruptedStructures);
+					structureSettings.Add(structureToPlace);
+					yield return MapGenerator.Instance.StartCoroutine(EnsuredStructurePlacement(region, structureSettings, npcSettlement, data));
+					if (data.unplacedStructuresOnLastEnsuredStructurePlacementCall.Count <= 0) {
+						//farm was placed successfully
+						Debug.Log($"Farm was placed successfully for {npcSettlement.name}!");
+						wasStructurePlaced = true;
+					}
+				}
+
+				if (!wasStructurePlaced) {
+					//was unable to place any food producing structure
+					missingFoodProducers++;
+					Debug.Log($"Was unable to place a food producing structure. Missing Food Structures are: {missingFoodProducers}");	
+				}
+				RuinarchListPool<StructureSetting>.Release(structureSettings);
+			}
+			data.SetMissingFoodProducers(npcSettlement, missingFoodProducers);
+		}
+
+		//generate basic resource structures
+		for (int i = 0; i < createdSettlements.Count; i++) {
+			NPCSettlement npcSettlement = createdSettlements[i];
+			VillageSetting villageSetting = villageSettings[i];
+			int neededBasicResourceProducingStructures = villageSetting.GetFoodProducingStructureCount();
+			var missingBasicResourceProducers = 0;
+			for (int j = 0; j < neededBasicResourceProducingStructures; j++) {
+				List<StructureSetting> structureSettings = RuinarchListPool<StructureSetting>.Claim();
+				StructureSetting structureToPlace;
+				if (npcSettlement.owner.factionType.type == FACTION_TYPE.Human_Empire) {
+					structureToPlace = new StructureSetting(STRUCTURE_TYPE.MINE, RESOURCE.NONE);
+				} else if (npcSettlement.owner.factionType.type == FACTION_TYPE.Elven_Kingdom) {
+					structureToPlace = new StructureSetting(STRUCTURE_TYPE.LUMBERYARD, RESOURCE.NONE);
+				} else {
+					structureToPlace = GameUtilities.RollChance(50) ? new StructureSetting(STRUCTURE_TYPE.MINE, RESOURCE.NONE) : new StructureSetting(STRUCTURE_TYPE.LUMBERYARD, RESOURCE.NONE);
+				}
+				structureSettings.Add(structureToPlace);
+				yield return MapGenerator.Instance.StartCoroutine(EnsuredStructurePlacement(region, structureSettings, npcSettlement, data));
+				if (data.unplacedStructuresOnLastEnsuredStructurePlacementCall != null && data.unplacedStructuresOnLastEnsuredStructurePlacementCall.Count > 0) {
+					missingBasicResourceProducers += data.unplacedStructuresOnLastEnsuredStructurePlacementCall.Count;
+					Debug.Log($"Was unable to place {data.unplacedStructuresOnLastEnsuredStructurePlacementCall.ComafyList()}. Missing Basic Resource Structures are: {missingBasicResourceProducers}");
+				}
+				RuinarchListPool<StructureSetting>.Release(structureSettings);
+				data.SetMissingBasicResourceProducers(npcSettlement, missingBasicResourceProducers);
+			}
+		}
+		
+		List<STRUCTURE_TYPE> specialStructureTypes = RuinarchListPool<STRUCTURE_TYPE>.Claim();
+		specialStructureTypes.Add(STRUCTURE_TYPE.PRISON);
+		specialStructureTypes.Add(STRUCTURE_TYPE.CEMETERY);
+		specialStructureTypes.Add(STRUCTURE_TYPE.TAVERN);
+		specialStructureTypes.Add(STRUCTURE_TYPE.HOSPICE);
+		
+		//Generate special structures
+		for (int i = 0; i < createdSettlements.Count; i++) {
+			NPCSettlement npcSettlement = createdSettlements[i];
+			VillageSetting villageSetting = villageSettings[i];
+			int neededSpecialStructures = villageSetting.GetSpecialStructureCount();
+			int additionalSpecialStructures = data.GetTotalMissingProductionStructures(npcSettlement);
+			int totalSpecialStructures = neededSpecialStructures + additionalSpecialStructures;
+			Debug.Log($"Will generate {totalSpecialStructures.ToString()} for {npcSettlement.name}");
+			for (int j = 0; j < totalSpecialStructures; j++) {
+				STRUCTURE_TYPE chosenStructureType = CollectionUtilities.GetRandomElement(specialStructureTypes);
+				List<StructureSetting> structureSettings = RuinarchListPool<StructureSetting>.Claim();
+				StructureSetting structureSetting = npcSettlement.owner.factionType.CreateStructureSettingForStructure(chosenStructureType, npcSettlement);
+				structureSettings.Add(structureSetting);
+				yield return MapGenerator.Instance.StartCoroutine(EnsuredStructurePlacement(region, structureSettings, npcSettlement, data));
+				RuinarchListPool<StructureSetting>.Release(structureSettings);
+			}
+		}
+		
+		//Generate Initial Objects
+		for (int i = 0; i < createdSettlements.Count; i++) {
+			NPCSettlement npcSettlement = createdSettlements[i];
+			yield return MapGenerator.Instance.StartCoroutine(npcSettlement.PlaceInitialObjectsCoroutine());
+		}
+		
+		// //Generate facilities
+		// for (int i = 0; i < createdSettlements.Count; i++) {
+		// 	NPCSettlement npcSettlement = createdSettlements[i];
+		// 	VillageSetting villageSetting = villageSettings[i];
+		// 	var structureSettings = GenerateFacilities(npcSettlement, npcSettlement.owner, villageSetting.GetFacilityCount());
+		// 	Debug.Log($"Will create facilities for {npcSettlement.name}: {structureSettings.ComafyList()}");
+		// 	yield return MapGenerator.Instance.StartCoroutine(EnsuredStructurePlacement(region, structureSettings, npcSettlement, data));
+		// 	yield return MapGenerator.Instance.StartCoroutine(npcSettlement.PlaceInitialObjectsCoroutine());
+		// }
+		
 		RuinarchListPool<NPCSettlement>.Release(createdSettlements);
 		RuinarchListPool<VillageSetting>.Release(villageSettings);
 	}
@@ -123,7 +237,7 @@ public class VillageGeneration : MapGenerationComponent {
 		}
 		return structureSettings;
 	}
-	private IEnumerator EnsuredStructurePlacement(Region region, List<StructureSetting> structureSettings, NPCSettlement npcSettlement) {
+	private IEnumerator EnsuredStructurePlacement(Region region, List<StructureSetting> structureSettings, NPCSettlement npcSettlement, MapGenerationData p_data) {
 		List<StructureSetting> unplacedStructures = new List<StructureSetting>();
 		List<StructureSetting> structuresToPlace = new List<StructureSetting>(structureSettings);
 
@@ -134,33 +248,46 @@ public class VillageGeneration : MapGenerationComponent {
 		}
 
 		for (int i = 0; i < 4; i++) {
-			yield return MapGenerator.Instance.StartCoroutine(PlaceStructures(region, structuresToPlace, npcSettlement));
+			yield return MapGenerator.Instance.StartCoroutine(PlaceStructures(region, structuresToPlace, npcSettlement, p_data));
 			//check whole structure list to verify if all needed structures were placed.
 			unplacedStructures.Clear();
-			unplacedStructures.AddRange(structureSettings);
-			for (int j = 0; j < npcSettlement.allStructures.Count; j++) {
-				LocationStructure structure = npcSettlement.allStructures[j];
-				if (structure is ManMadeStructure manMadeStructure) {
-					for (int k = 0; k < unplacedStructures.Count; k++) {
-						StructureSetting structureSetting = unplacedStructures[k];
-						if (manMadeStructure.structureType == structureSetting.structureType) {
-							//&& manMadeStructure.wallsAreMadeOf == structureSetting.resource
-							unplacedStructures.RemoveAt(k);
-							break;
-						}
+			unplacedStructures.AddRange(structuresToPlace);
+			// unplacedStructures.AddRange(structureSettings);
+			// for (int j = 0; j < npcSettlement.allStructures.Count; j++) {
+			// 	LocationStructure structure = npcSettlement.allStructures[j];
+			// 	if (structure is ManMadeStructure manMadeStructure) {
+			// 		for (int k = 0; k < unplacedStructures.Count; k++) {
+			// 			StructureSetting structureSetting = unplacedStructures[k];
+			// 			if (manMadeStructure.structureType == structureSetting.structureType) {
+			// 				//&& manMadeStructure.wallsAreMadeOf == structureSetting.resource
+			// 				unplacedStructures.RemoveAt(k);
+			// 				break;
+			// 			}
+			// 		}
+			// 	}
+			// }
+			
+			//check last placed structures against unplaced structures, if a structure type was placed,
+			//remove an entry from the unplaced structures list, this will ensure that only structure types that weren't placed
+			//are kept in the unplacedStructures list
+			for (int j = 0; j < p_data.LastPlacedStructureTypes.Count; j++) {
+				STRUCTURE_TYPE structureType = p_data.LastPlacedStructureTypes[j];
+				for (int k = 0; k < unplacedStructures.Count; k++) {
+					StructureSetting structureSetting = unplacedStructures[k];
+					if (structureType == structureSetting.structureType) {
+						unplacedStructures.RemoveAt(k);
+						break;
 					}
 				}
 			}
 			if (unplacedStructures.Count == 0) {
 				break; //no more unplaced structures
-			}
-			else {
+			} else {
 				//make structure setting list and unplaced structures list identical so that unplaced structures will try to be placed on next iteration.
 				structuresToPlace.Clear();
 				structuresToPlace.AddRange(unplacedStructures);
-
 #if DEBUG_LOG
-				if (i + 1 == 2) {
+				if (i + 1 == 4) {
 					//last iteration
 					string summary = $"Was unable to place the following structures:";
 					for (int j = 0; j < unplacedStructures.Count; j++) {
@@ -171,19 +298,22 @@ public class VillageGeneration : MapGenerationComponent {
 #endif
 			}
 		}
+		p_data.SetLastUnplacedStructures(unplacedStructures);
 	}
-	private IEnumerator PlaceStructures(Region region, List<StructureSetting> structureSettings, NPCSettlement npcSettlement) {
+	private IEnumerator PlaceStructures(Region region, List<StructureSetting> structureSettings, NPCSettlement npcSettlement, MapGenerationData p_data) {
+		p_data.ClearLastPlacedVillageStructures();
 		for (int i = 0; i < structureSettings.Count; i++) {
 			StructureSetting structureSetting = structureSettings[i];
 			if (structureSetting.structureType == STRUCTURE_TYPE.CITY_CENTER) {
 				// yield return MapGenerator.Instance.StartCoroutine(LandmarkManager.Instance.PlaceIndividualBuiltStructureForSettlementCoroutine(npcSettlement, region.innerMap, structureSetting));
 				continue;
 			}
-			yield return MapGenerator.Instance.StartCoroutine(PlaceStructure(region, structureSetting, npcSettlement));
+			yield return MapGenerator.Instance.StartCoroutine(PlaceStructure(region, structureSetting, npcSettlement, p_data));
 		}
 		yield return null;
 	}
-	public static IEnumerator PlaceStructure(Region region, StructureSetting structureSetting, NPCSettlement npcSettlement) {
+
+	private IEnumerator PlaceStructure(Region region, StructureSetting structureSetting, NPCSettlement npcSettlement, MapGenerationData p_data) {
 		List<StructureConnector> availableStructureConnectors = RuinarchListPool<StructureConnector>.Claim();
 		npcSettlement.PopulateStructureConnectorsForStructureType(availableStructureConnectors, structureSetting.structureType);
 		// availableStructureConnectors = CollectionUtilities.Shuffle(availableStructureConnectors);
@@ -199,6 +329,7 @@ public class VillageGeneration : MapGenerationComponent {
 				if (structure is ManMadeStructure mmStructure) {
 					mmStructure.OnUseStructureConnector(connectorTile);    
 				}
+				p_data.AddLastPlacedStructureTypes(structure.structureType);
 				break; //stop loop since structure was already placed.
 			} else {
 				Debug.LogWarning($"Could not find structure connector for {prefabObject.name}. Choices are:\n{availableStructureConnectors.ComafyList()}");
@@ -240,7 +371,7 @@ public class VillageGeneration : MapGenerationComponent {
 				LandmarkManager.Instance.OwnSettlement(faction, npcSettlement);
 				
 				StructureSetting[] structureSettings = settlementTemplate.structureSettings;
-				yield return MapGenerator.Instance.StartCoroutine(EnsuredStructurePlacement(region, structureSettings.ToList(), npcSettlement));
+				yield return MapGenerator.Instance.StartCoroutine(EnsuredStructurePlacement(region, structureSettings.ToList(), npcSettlement, data));
 				// yield return MapGenerator.Instance.StartCoroutine(LandmarkManager.Instance.PlaceBuiltStructuresForSettlement(npcSettlement, region.innerMap, structureSettings));
 				yield return MapGenerator.Instance.StartCoroutine(npcSettlement.PlaceInitialObjectsCoroutine());
 				

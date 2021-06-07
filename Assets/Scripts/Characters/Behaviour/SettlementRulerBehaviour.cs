@@ -286,7 +286,7 @@ public class SettlementRulerBehaviour : CharacterBehaviourComponent {
         }
         return count;
     }
-    private bool ShouldBuildFishery(NPCSettlement p_settlement) {
+    public static bool ShouldBuildFishery(NPCSettlement p_settlement) {
         if (p_settlement.owner != null && p_settlement.owner.factionType.IsActionConsideredACrime(CRIME_TYPE.Animal_Killing)) {
             //Animal Killing is considered a crime.
             return false;
@@ -299,14 +299,14 @@ public class SettlementRulerBehaviour : CharacterBehaviourComponent {
         }
         return true;
     }
-    private bool ShouldBuildButcher(NPCSettlement p_settlement) {
+    public static bool ShouldBuildButcher(NPCSettlement p_settlement) {
         if (p_settlement.owner != null && p_settlement.owner.factionType.IsActionConsideredACrime(CRIME_TYPE.Animal_Killing)) {
             //Animal Killing is considered a crime.
             return false;
         }
-        if (!p_settlement.occupiedVillageSpot.HasAccessToAnimals()) {
-            return false;
-        }
+        // if (!p_settlement.occupiedVillageSpot.HasAccessToAnimals()) {
+        //     return false;
+        // }
         if (!p_settlement.HasResidentThatIsOrCanBecomeClass("Butcher")) {
             return false;
         }

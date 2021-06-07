@@ -1327,7 +1327,7 @@ namespace Inner_Maps.Location_Structures {
             }
             return null;
         }
-        public virtual void OnTileDamaged(LocationGridTile tile, int amount) { }
+        public virtual void OnTileDamaged(LocationGridTile tile, int amount, bool isPlayerSource) { }
         public virtual void OnTileRepaired(LocationGridTile tile, int amount) { }
         private void AddOccupiedAreaVote(Area p_area) {
             if (!occupiedAreas.ContainsKey(p_area)) {
@@ -1539,6 +1539,7 @@ namespace Inner_Maps.Location_Structures {
             if (hasBeenDestroyed) { return; }
             currentHP += amount;
             currentHP = Mathf.Clamp(currentHP, 0, maxHP);
+            Messenger.Broadcast(StructureSignals.STRUCTURE_HP_CHANGED, this);
             if (currentHP == 0) {
                 DestroyStructure(p_responsibleCharacter, isPlayerSource);
             }

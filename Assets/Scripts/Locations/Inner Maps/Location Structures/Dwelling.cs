@@ -87,8 +87,7 @@ namespace Inner_Maps.Location_Structures {
                         Character resident = residents[i];
                         resident.eventDispatcher.ExecuteObjectPlacedInCharactersDwelling(resident, this, tileObject);
                     }
-                    if(poi is Torch torch) {
-                        torch.DisableInnerMapLight();
+                    if(poi is Torch) {
                         ProcessInnerLight();
                     }
                 }
@@ -106,8 +105,7 @@ namespace Inner_Maps.Location_Structures {
                         Character resident = residents[i];
                         resident.eventDispatcher.ExecuteObjectRemovedFromCharactersDwelling(resident, this, tileObject);
                     }
-                    if (poi is Torch torch) {
-                        torch.EnableInnermapLight();
+                    if (poi is Torch) {
                         ProcessInnerLight();
                     }
                 }
@@ -125,8 +123,7 @@ namespace Inner_Maps.Location_Structures {
                         Character resident = residents[i];
                         resident.eventDispatcher.ExecuteObjectRemovedFromCharactersDwelling(resident, this, tileObject);
                     }
-                    if (poi is Torch torch) {
-                        torch.EnableInnermapLight();
+                    if (poi is Torch) {
                         ProcessInnerLight();
                     }
                 }
@@ -144,8 +141,7 @@ namespace Inner_Maps.Location_Structures {
                         Character resident = residents[i];
                         resident.eventDispatcher.ExecuteObjectRemovedFromCharactersDwelling(resident, this, tileObject);
                     }
-                    if (poi is Torch torch) {
-                        torch.EnableInnermapLight();
+                    if (poi is Torch) {
                         ProcessInnerLight();
                     }
                 }

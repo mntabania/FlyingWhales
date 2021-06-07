@@ -138,6 +138,8 @@ namespace Generator.Map_Generation.Components {
 	        //  }
 	        // }
 	        SpecialStructureSecondPass();
+
+	        AdditionalResourceCreation();
         }
         private void PopulateValidTilesForVents(List<LocationGridTile> p_tiles, Area p_area) {
 	        for (int i = 0; i < p_area.gridTileComponent.passableTiles.Count; i++) {
@@ -222,6 +224,7 @@ namespace Generator.Map_Generation.Components {
 				yield return MapGenerator.Instance.StartCoroutine(CreateSpecialStructure(specialStructureSetting.structureType, area.region, area,settlement));
 			}
 			yield return null;
+			AdditionalResourceCreation();
 		}
 		#endregion
 
@@ -255,7 +258,7 @@ namespace Generator.Map_Generation.Components {
 	        yield return MapGenerator.Instance.StartCoroutine(CreateSpecialStructure(p_structureType, p_area.region, p_area, settlement));
         }
 
-#region Structure Creation
+		#region Structure Creation
 		private IEnumerator CreateSpecialStructure(STRUCTURE_TYPE p_structureType, Region p_region, Area p_area, NPCSettlement p_settlement) {
 			if (p_structureType == STRUCTURE_TYPE.MONSTER_LAIR) {
 				LocationStructure structure = LandmarkManager.Instance.CreateNewStructureAt(p_region, p_structureType, p_settlement);
@@ -271,9 +274,9 @@ namespace Generator.Map_Generation.Components {
 			structure.SetOccupiedArea(hexTile);
 			yield return null;
 		}
-#endregion
+		#endregion
 		
-#region Chances
+		#region Chances
 		private int GetLoopCount(STRUCTURE_TYPE p_structureType, MapGenerationData data) {
 			switch (p_structureType) {
 				case STRUCTURE_TYPE.MONSTER_LAIR:
@@ -441,9 +444,79 @@ namespace Generator.Map_Generation.Components {
 					return 0;
 			}
 		}
-#endregion
+		#endregion
 		
-#region Utilities
+		#region Utilities
+		private void AdditionalResourceCreation() {
+			int randomResourceCount = 0;
+			for (int i = 0; i < GridMap.Instance.mainRegion.villageSpots.Count; i++) {
+				randomResourceCount += UnityEngine.Random.Range(1, 4);
+			}
+			List<Area> areaChoices = RuinarchListPool<Area>.Claim();
+			for (int i = 0; i < GridMap.Instance.allAreas.Count; i++) {
+				Area area = GridMap.Instance.allAreas[i];
+				if (area.GetOccupyingVillageSpot() == null) {
+					areaChoices.Add(area);
+				}
+			}
+			
+			//
+			// areaChoices.AddRange(p_villageSpot.reservedAreas);
+			//
+			// areaChoices.Remove(p_villageSpot.mainSpot);
+			// List<Area> areasAround = RuinarchListPool<Area>.Claim();
+			// p_villageSpot.mainSpot.PopulateAreasInRange(areasAround, 2, true);
+			// areaChoices.ListRemoveRange(areasAround);
+			// RuinarchListPool<Area>.Release(areasAround);
+			
+			List<string> randomResourceChoices = RuinarchListPool<string>.Claim();
+			randomResourceChoices.Add("BOAR_DEN");
+			randomResourceChoices.Add("WOLF_DEN");
+			randomResourceChoices.Add("BEAR_DEN");
+	        randomResourceChoices.Add("RABBIT_HOLE");
+	        randomResourceChoices.Add("Game Feature");
+	        randomResourceChoices.Add("MINK_HOLE");
+	        randomResourceChoices.Add("MOONCRAWLER_HOLE");
+
+	        if (areaChoices.Count > 0) {
+				for (int i = 0; i < randomResourceCount; i++) {
+					if (areaChoices.Count == 0) { break; }
+					string randomType = CollectionUtilities.GetRandomElement(randomResourceChoices);
+					Area randomArea = CollectionUtilities.GetRandomElement(areaChoices);
+
+					if (randomType == "Game Feature") {
+						randomArea.featureComponent.AddFeature(AreaFeatureDB.Game_Feature, randomArea);
+					} else {
+						STRUCTURE_TYPE structureType = (STRUCTURE_TYPE) Enum.Parse(typeof(STRUCTURE_TYPE), randomType);
+						GameObject structurePrefab = InnerMapManager.Instance.GetFirstStructurePrefabForStructure(new StructureSetting(structureType, RESOURCE.NONE));
+						
+						List<LocationGridTile> unoccupiedTiles = RuinarchListPool<LocationGridTile>.Claim();
+						for (int j = 0; j < randomArea.gridTileComponent.gridTiles.Count; j++) {
+							LocationGridTile tile = randomArea.gridTileComponent.gridTiles[j];
+							if (tile.structure is Wilderness && tile.tileObjectComponent.objHere == null && tile.IsPassable()) {
+								List<LocationGridTile> overlappedTiles = RuinarchListPool<LocationGridTile>.Claim();
+								tile.PopulateTilesInRadius(overlappedTiles, 3, includeCenterTile: true, includeTilesInDifferentStructure: true);
+								if (!overlappedTiles.Any(t => t.tileObjectComponent.objHere != null || t.structure.structureType != STRUCTURE_TYPE.WILDERNESS || t.IsAtEdgeOfMap() || !t.IsPassable())) {
+									unoccupiedTiles.Add(tile);	
+								}
+								RuinarchListPool<LocationGridTile>.Release(overlappedTiles);
+							}
+						}
+						if (unoccupiedTiles.Count > 0) {
+							LocationGridTile randomLocation = CollectionUtilities.GetRandomElement(unoccupiedTiles);
+							NPCSettlement settlement = LandmarkManager.Instance.CreateNewSettlement(randomArea.region, LOCATION_TYPE.DUNGEON, randomArea);
+							LocationStructure structure =  LandmarkManager.Instance.PlaceIndividualBuiltStructureForSettlement(settlement, GridMap.Instance.mainRegion.innerMap, structurePrefab, randomLocation);
+							// TileObject tileObject = InnerMapManager.Instance.CreateNewTileObject<TileObject>(structureType);
+							// randomLocation.structure.AddPOI(tileObject, randomLocation);
+							Debug.Log($"Added animal den - {randomType.ToString()} to {randomLocation.ToString()}");
+						}
+						RuinarchListPool<LocationGridTile>.Release(unoccupiedTiles);
+					}
+					areaChoices.Remove(randomArea);
+				}	
+			}
+			RuinarchListPool<string>.Release(randomResourceChoices);
+		}
 		private List<Area> GetLocationChoices(STRUCTURE_TYPE p_structureType) {
 			switch (p_structureType) {
 				case STRUCTURE_TYPE.MONSTER_LAIR:
@@ -547,6 +620,6 @@ namespace Generator.Map_Generation.Components {
 			}
 			return false;
 		}
-#endregion
+		#endregion
     }
 }

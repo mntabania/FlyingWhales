@@ -10,7 +10,9 @@ public class HerbPlant : TileObject{
         AddAdvertisedAction(INTERACTION_TYPE.PICK_UP);
         AddAdvertisedAction(INTERACTION_TYPE.DROP_ITEM);
         AddAdvertisedAction(INTERACTION_TYPE.STEAL_ANYTHING);
-
+        AddAdvertisedAction(INTERACTION_TYPE.GATHER_HERB);
+        AddAdvertisedAction(INTERACTION_TYPE.CREATE_HOSPICE_POTION);
+        AddAdvertisedAction(INTERACTION_TYPE.CREATE_HOSPICE_ANTIDOTE);
         BaseSettlement.onSettlementBuilt += UpdateSettlementResourcesParent;
     }
     public HerbPlant(SaveDataTileObject data) : base(data) { }

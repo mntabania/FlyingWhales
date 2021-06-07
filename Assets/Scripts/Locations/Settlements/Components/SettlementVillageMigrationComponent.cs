@@ -323,13 +323,17 @@ public class SettlementVillageMigrationComponent : NPCSettlementComponent {
             }
             newCharacter.CreateMarker();
             newCharacter.InitialCharacterPlacement(edgeTile);
-            newCharacter.MigrateHomeStructureTo(null, affectSettlement: false);
+            // newCharacter.MigrateHomeStructureTo(null, affectSettlement: false);
+            // //set previous home structure to null since migrants homes are set automatically on character creation,
+            // //and is only set to null above, causing the previous dwelling data to be set, which we don't want since the migrants cannot
+            // //buy that specific home.
+            // newCharacter.previousCharacterDataComponent.SetPreviousHomeStructure(null); 
 #if DEBUG_LOG
             debugLog += $"\nSpawned new character {newCharacter.name} at {edgeTile}";
 #endif
             //removed set home, since new migrants should go through the process of buying a home
             // newCharacter.interruptComponent.TriggerInterrupt(INTERRUPT.Set_Home, null);
-            newCharacter.jobComponent.PlanReturnHome(JOB_TYPE.RETURN_HOME_URGENT); //this will make the villager go to its home settlement
+            newCharacter.jobComponent.PlanReturnToVillageCenter(JOB_TYPE.RETURN_HOME_URGENT); //this will make the villager go to its home settlement
             Messenger.Broadcast(WorldEventSignals.NEW_VILLAGER_ARRIVED, newCharacter);
 
             Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "WorldEvents", "VillagerMigration", "new_villager", providedTags: LOG_TAG.Major);

@@ -73,11 +73,19 @@ public class StructureInfoUI : InfoUIBase {
         Messenger.AddListener<DemonicStructure>(StructureSignals.DEMONIC_STRUCTURE_REPAIRED, OnDemonicStructureRepaired);
         Messenger.AddListener<KeyCode>(ControlsSignals.KEY_DOWN_EMPTY_SPACE, OnReceiveKeyCodeSignal);
         Messenger.AddListener(ControlsSignals.PRESS_PORTAL_SHORTCUT, OnReceivePortalShortCutSignal);
+        Messenger.AddListener<LocationStructure>(StructureSignals.STRUCTURE_HP_CHANGED, OnStructureHPChanged);
         ListenToPlayerActionSignals();
 
         villageEventLbl.SetOnLeftClickAction(OnLeftClickVillage);
         villageEventLbl.SetOnRightClickAction(OnRightClickVillage);
     }
+
+    private void OnStructureHPChanged(LocationStructure p_structure) {
+        if (activeStructure == p_structure) {
+            UpdateInfo();
+        }
+    }
+
     private void OnCharacterDied(Character p_character) {
         if (isShowing && p_character.currentStructure == activeStructure) {
             UpdatePrisonersFromSignal(p_character, p_character.currentStructure);

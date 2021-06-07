@@ -6,7 +6,7 @@ using Inner_Maps;
 public class CreateHospicePotion : GoapAction {
 
     public CreateHospicePotion() : base(INTERACTION_TYPE.CREATE_HOSPICE_POTION) {
-        actionLocationType = ACTION_LOCATION_TYPE.IN_PLACE;
+        actionLocationType = ACTION_LOCATION_TYPE.NEAR_TARGET;
         actionIconString = GoapActionStateDB.Work_Icon;
         //advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.RATMAN };
@@ -38,19 +38,20 @@ public class CreateHospicePotion : GoapAction {
     #region State Effects
     public void AfterCreateHospicePotionSuccess(ActualGoapNode p_node) {
         TileObject potion = InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.HEALING_POTION);
-        (p_node.target as TileObject).DestroyMapVisualGameObject();
-        (p_node.target as TileObject).DestroyPermanently();
-        p_node.actor.jobComponent.TryCreateHaulJobItem(potion);
+        LocationGridTile tileToSpawnPile = p_node.actor.gridTileLocation;
+        if (tileToSpawnPile != null && tileToSpawnPile.tileObjectComponent.objHere != null) {
+            tileToSpawnPile = p_node.actor.gridTileLocation.GetFirstNearestTileFromThisWithNoObject();
+        }
+        tileToSpawnPile.structure.AddPOI(potion, tileToSpawnPile);
+        p_node.actor.structureComponent.workPlaceStructure.RemovePOI(p_node.target);
+        p_node.actor.jobComponent.CreateDropItemJob(JOB_TYPE.CREATE_HOSPICE_POTION, potion, p_node.actor.structureComponent.workPlaceStructure);
     }
     #endregion
 
     #region Requirement
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, OtherData[] otherData, JobQueueItem job) {
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData, job);
-        if (satisfied) {
-            return actor == poiTarget;
-        }
-        return false;
+        return satisfied;
     }
     #endregion
 }

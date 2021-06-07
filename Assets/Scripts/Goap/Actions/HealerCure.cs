@@ -41,6 +41,7 @@ public class HealerCure : GoapAction {
     #region State Effects
     
     public void AfterHealerCureSuccess(ActualGoapNode goapNode) {
+        UnityEngine.Debug.LogError(goapNode.actor.talentComponent.GetTalent(CHARACTER_TALENT.Healing_Magic).level);
         if (goapNode.actor.talentComponent.GetTalent(CHARACTER_TALENT.Healing_Magic).level >= 3) {
             Level3Effect(goapNode);
         } else if (goapNode.actor.talentComponent.GetTalent(CHARACTER_TALENT.Healing_Magic).level >= 2) {
@@ -50,9 +51,10 @@ public class HealerCure : GoapAction {
     #endregion
 
     void Level2Effect(ActualGoapNode node) {
-        if (node.target.traitContainer.HasTrait("Plagued")) {
-            node.target.traitContainer.RemoveStatusAndStacks(node.target, "Plagued");
+        if (node.target.traitContainer.HasTrait("Injured")) {
+            node.target.traitContainer.RemoveStatusAndStacks(node.target, "Injured");
         }
+       
         if (node.target.traitContainer.HasTrait("Poison")) {
             node.target.traitContainer.RemoveStatusAndStacks(node.target, "Poison");
         }
@@ -63,10 +65,10 @@ public class HealerCure : GoapAction {
         if (node.target.traitContainer.HasTrait("Plagued")) {
             node.target.traitContainer.RemoveStatusAndStacks(node.target, "Plagued");
         }
+     
     }
-
     #region Requirements
-    
+
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, OtherData[] otherData, JobQueueItem job) {
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData, job);
         if (satisfied) {

@@ -1267,6 +1267,24 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
         //producedJob = null;
         //return false;
     }
+    public bool PlanReturnToVillageCenter(JOB_TYPE jobType) {
+	    if (!owner.jobQueue.HasJob(jobType)) {
+	        Assert.IsNotNull(owner.homeSettlement);
+	        LocationStructure chosenStructure = owner.homeSettlement.cityCenter;
+            LocationGridTile chosenTile = chosenStructure.passableTiles.Count > 0 ? 
+	            CollectionUtilities.GetRandomElement(chosenStructure.passableTiles) : 
+	            CollectionUtilities.GetRandomElement(chosenStructure.tiles);
+            ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.GO_TO_TILE], owner, chosenTile.tileObjectComponent.genericTileObject, null, 0);
+            GoapPlan goapPlan = ObjectPoolManager.Instance.CreateNewGoapPlan(node, owner);
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType, INTERACTION_TYPE.GO_TO_TILE, chosenTile.tileObjectComponent.genericTileObject, owner);
+            goapPlan.SetDoNotRecalculate(true);
+            job.SetCannotBePushedBack(true);
+            job.SetAssignedPlan(goapPlan);
+            owner.jobQueue.AddJobInQueue(job);
+            return true;
+        }
+        return false;
+    }
     public bool TriggerReturnPortal() {
         if (!owner.jobQueue.HasJob(JOB_TYPE.RETURN_PORTAL)) {
             Area chosenTerritory = PlayerManager.Instance.player.portalArea;
@@ -3427,6 +3445,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
             jobQueueItem = job;
         }
     }
+
     public void TriggerMineOre(TileObject p_tileObject, out JobQueueItem jobQueueItem) {
         jobQueueItem = null;
         if (!owner.jobQueue.HasJob(JOB_TYPE.MINE_ORE)) {
@@ -3532,6 +3551,21 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
             }
             if(job != null) {
                 owner.jobQueue.AddJobInQueue(job);
+            }
+        }
+    }
+
+    public void TryCreateHaulJobItem(TileObject target, out JobQueueItem jobQueueItem) {
+        jobQueueItem = null;
+        if (owner.jobQueue.HasJob(JOB_TYPE.HAUL) == false) {
+            //ResourcePile chosenPileToDepositTo = target;// owner.mainStorage.GetResourcePileObjectWithLowestCount(target.tileObjectType);
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.HAUL,
+                new GoapEffect(GOAP_EFFECT_CONDITION.DEPOSIT_RESOURCE, string.Empty, false, GOAP_EFFECT_TARGET.TARGET), target, owner);
+            if (owner.structureComponent.workPlaceStructure != null) {
+                job.AddOtherData(INTERACTION_TYPE.DEPOSIT_RESOURCE_PILE, new object[] { owner.structureComponent.workPlaceStructure });
+            }
+            if (job != null) {
+                jobQueueItem = job;
             }
         }
     }
