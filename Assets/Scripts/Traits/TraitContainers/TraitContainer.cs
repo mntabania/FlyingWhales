@@ -341,9 +341,19 @@ namespace Traits {
             bool hasAddedRestrained = AddTrait(addTo, "Restrained", characterResponsible);
             bool hasAddedPrisoner = AddTrait(addTo, "Prisoner", characterResponsible);
             Prisoner prisoner = GetTraitOrStatus<Prisoner>("Prisoner");
+            Restrained restrained = GetTraitOrStatus<Restrained>("Restrained");
+
             if (prisoner != null) {
+                if (characterResponsible != null) {
+                    prisoner.AddCharacterResponsibleForTrait(characterResponsible);
+                }
                 prisoner.SetPrisonerOfFaction(factionThatImprisoned);
                 prisoner.SetPrisonerOfCharacter(characterThatImprisoned);
+            }
+            if (restrained != null) {
+                if (characterResponsible != null) {
+                    restrained.AddCharacterResponsibleForTrait(characterResponsible);
+                }
             }
             return hasAddedRestrained && hasAddedPrisoner;
         }

@@ -40,12 +40,13 @@ namespace Character_Talents {
             p_character.classComponent.AddAbleClass("Miner"); // and build a Mine Shack but cannot Mine for metals yet - just dig for Stone.
         }
         private void Level2(Character p_character) {
-            if (p_character.race == RACE.HUMANS) {
-                p_character.classComponent.AddAbleClass("Trapper");
-            }
-            if (p_character.race == RACE.ELVES) {
-                p_character.classComponent.AddAbleClass("Skinner");
-            }
+            p_character.classComponent.AddAbleClass("Skinner");
+            //if (p_character.race == RACE.HUMANS) {
+            //    p_character.classComponent.AddAbleClass("Trapper");
+            //}
+            //if (p_character.race == RACE.ELVES) {
+            //    p_character.classComponent.AddAbleClass("Skinner");
+            //}
         }
         private void Level3(Character p_character) {
             //character can gather resources up to twice a day

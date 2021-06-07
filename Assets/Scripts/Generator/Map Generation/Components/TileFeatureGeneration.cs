@@ -346,12 +346,12 @@ public class TileFeatureGeneration : MapGenerationComponent {
 		randomResourceChoices.Add("BOAR_DEN");
 		randomResourceChoices.Add("WOLF_DEN");
 		randomResourceChoices.Add("BEAR_DEN");
-		//randomResourceChoices.Add("RABBIT_HOLE");
-		//randomResourceChoices.Add("Game Feature");
-		//randomResourceChoices.Add("MINK_HOLE");
-		//randomResourceChoices.Add("MOONCRAWLER_HOLE");
-		
-		if (areaChoices.Count > 0) {
+        randomResourceChoices.Add("RABBIT_HOLE");
+        randomResourceChoices.Add("Game Feature");
+        randomResourceChoices.Add("MINK_HOLE");
+        randomResourceChoices.Add("MOONCRAWLER_HOLE");
+
+        if (areaChoices.Count > 0) {
 			for (int i = 0; i < randomResourceCount; i++) {
 				if (areaChoices.Count == 0) { break; }
 				string randomType = CollectionUtilities.GetRandomElement(randomResourceChoices);

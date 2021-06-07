@@ -172,6 +172,7 @@ public class SettlementClassComponent : NPCSettlementComponent {
             if (noWorkerStructure != null) {
 #if DEBUG_LOG
                 log += "\nUnclaimed Farm: " + noWorkerStructure.name;
+                log += "\nCreate Change Class Job to FARMER";
 #endif
                 //if there is a Farm in the Village that hasn't been claimed yet
                 //Create Change Class Job To Farmer
@@ -187,6 +188,7 @@ public class SettlementClassComponent : NPCSettlementComponent {
                     if (owner.GetFirstResidentThatIsAbleAndCanBecomeClass("Fisher") != null) {
 #if DEBUG_LOG
                         log += "\nHas Villager that can become Fisher";
+                        log += "\nCreate Change Class Job to FISHER";
 #endif
                         owner.settlementJobTriggerComponent.TriggerChangeClassJob("Fisher", noWorkerStructure);
                     }
@@ -201,6 +203,7 @@ public class SettlementClassComponent : NPCSettlementComponent {
                         if (owner.GetFirstResidentThatIsAbleAndCanBecomeClass("Butcher") != null) {
 #if DEBUG_LOG
                             log += "\nHas Villager that can become Butcher";
+                            log += "\nCreate Change Class Job to BUTCHER";
 #endif
                             owner.settlementJobTriggerComponent.TriggerChangeClassJob("Butcher", noWorkerStructure);
                         }
@@ -223,6 +226,7 @@ public class SettlementClassComponent : NPCSettlementComponent {
             if (noWorkerStructure != null) {
 #if DEBUG_LOG
                 log += "\nUnclaimed Lumberyard: " + noWorkerStructure.name;
+                log += "\nCreate Change Class Job to LOGGER";
 #endif
                 //if there is a Lumberyard in the Village that hasn't been claimed yet
                 //Create Change Class Job To Logger
@@ -234,6 +238,7 @@ public class SettlementClassComponent : NPCSettlementComponent {
                 if (noWorkerStructure != null) {
 #if DEBUG_LOG
                     log += "\nUnclaimed Mine: " + noWorkerStructure.name;
+                    log += "\nCreate Change Class Job to MINER";
 #endif
                     owner.settlementJobTriggerComponent.TriggerChangeClassJob("Miner", noWorkerStructure);
                 }
@@ -249,7 +254,7 @@ public class SettlementClassComponent : NPCSettlementComponent {
             string combatantClass = CharacterManager.Instance.GetRandomCombatant();
 #if DEBUG_LOG
             log += "\nCurrent Combatants is less than needed, will create change to combatant class job";
-            log += "\nChosen Combatant: " + combatantClass;
+            log += "\nCreate Change Class Job to " + combatantClass;
 #endif
             owner.settlementJobTriggerComponent.TriggerChangeClassJob(combatantClass, null);
         }
@@ -268,6 +273,7 @@ public class SettlementClassComponent : NPCSettlementComponent {
             if (noWorkerStructure != null) {
 #if DEBUG_LOG
                 log += "\nUnclaimed Skinner's Lodge: " + noWorkerStructure.name;
+                log += "\nCreate Change Class Job to SKINNER";
 #endif
                 //if there is a Skinner's Lodge in the Village that hasn't been claimed yet
                 //Create Change Class Job To Skinner
@@ -279,6 +285,7 @@ public class SettlementClassComponent : NPCSettlementComponent {
                 if (noWorkerStructure != null) {
 #if DEBUG_LOG
                     log += "\nUnclaimed Workshop: " + noWorkerStructure.name;
+                    log += "\nCreate Change Class Job to CRAFTSMAN";
 #endif
                     owner.settlementJobTriggerComponent.TriggerChangeClassJob("Craftsman", noWorkerStructure);
                 } else {
@@ -288,6 +295,7 @@ public class SettlementClassComponent : NPCSettlementComponent {
                     if (noWorkerStructure != null) {
 #if DEBUG_LOG
                         log += "\nUnclaimed Tavern: " + noWorkerStructure.name;
+                        log += "\nCreate Change Class Job to MERCHANT";
 #endif
                         owner.settlementJobTriggerComponent.TriggerChangeClassJob("Merchant", noWorkerStructure);
                     }
