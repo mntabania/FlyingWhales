@@ -338,12 +338,13 @@ namespace Traits {
             return chance;
         }
         public bool RestrainAndImprison(ITraitable addTo, Character characterResponsible = null, Faction factionThatImprisoned = null, Character characterThatImprisoned = null) {
-            bool hasAddedRestrained = AddTrait(addTo, "Restrained", characterResponsible);
-            bool hasAddedPrisoner = AddTrait(addTo, "Prisoner", characterResponsible);
+            AddTrait(addTo, "Restrained", characterResponsible);
+            AddTrait(addTo, "Prisoner", characterResponsible);
             Prisoner prisoner = GetTraitOrStatus<Prisoner>("Prisoner");
             Restrained restrained = GetTraitOrStatus<Restrained>("Restrained");
 
             if (prisoner != null) {
+                prisoner.ClearResponsibleCharacters();
                 if (characterResponsible != null) {
                     prisoner.AddCharacterResponsibleForTrait(characterResponsible);
                 }
@@ -351,11 +352,12 @@ namespace Traits {
                 prisoner.SetPrisonerOfCharacter(characterThatImprisoned);
             }
             if (restrained != null) {
+                restrained.ClearResponsibleCharacters();
                 if (characterResponsible != null) {
                     restrained.AddCharacterResponsibleForTrait(characterResponsible);
                 }
             }
-            return hasAddedRestrained && hasAddedPrisoner;
+            return true; //Always return true because once this is called, even if character is already restrained, it will be overridden by the new restrain
         }
         public bool RemoveRestrainAndImprison(ITraitable removedFrom, Character removedBy = null) {
             bool hasRemovedRestrained = RemoveTrait(removedFrom, "Restrained", removedBy);

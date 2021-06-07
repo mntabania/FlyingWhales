@@ -242,6 +242,11 @@ namespace Traits {
                 }
             }
         }
+        public void ClearResponsibleCharacters() {
+            if (responsibleCharacters != null) {
+                responsibleCharacters.Clear();
+            }
+        }
         public bool IsResponsibleForTrait(Character character) {
             if(character == null) {
                 return false;
