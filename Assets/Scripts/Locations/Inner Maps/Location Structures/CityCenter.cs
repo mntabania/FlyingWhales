@@ -36,6 +36,13 @@ namespace Inner_Maps.Location_Structures {
             Messenger.RemoveListener(Signals.DAY_STARTED, OnDayStarted);
         }
 
+        public override void OnTileDamaged(LocationGridTile tile, int amount, bool isPlayerSource) {
+            //emptied out on tile damaged function since city centers cannot be damaged
+        }
+        public override void OnTileRepaired(LocationGridTile tile, int amount) {
+            //emptied out on tile repaired function since city centers cannot be repaired
+        }
+
         #region IPlayerActionTarget
         public override void ConstructDefaultActions() {
             base.ConstructDefaultActions();

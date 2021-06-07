@@ -40,8 +40,8 @@ namespace Inner_Maps.Location_Structures {
             Messenger.AddListener<ThinWall, int, bool>(StructureSignals.WALL_DAMAGED, OnWallDamaged);
             Messenger.AddListener<ThinWall, int, Character, bool>(StructureSignals.WALL_DAMAGED_BY, OnWallDamagedBy);
             Messenger.AddListener<ThinWall, int>(StructureSignals.WALL_REPAIRED, OnWallRepaired);
-            Messenger.AddListener<TileObject, int, bool>(TileObjectSignals.TILE_OBJECT_DAMAGED, OnObjectDamaged);
-            Messenger.AddListener<TileObject, int, Character, bool>(TileObjectSignals.TILE_OBJECT_DAMAGED_BY, OnObjectDamagedBy);
+            // Messenger.AddListener<TileObject, int, bool>(TileObjectSignals.TILE_OBJECT_DAMAGED, OnObjectDamaged);
+            // Messenger.AddListener<TileObject, int, Character, bool>(TileObjectSignals.TILE_OBJECT_DAMAGED_BY, OnObjectDamagedBy);
             Messenger.AddListener<TileObject, int>(TileObjectSignals.TILE_OBJECT_REPAIRED, OnObjectRepaired);
         }
         protected override void UnsubscribeListeners() {
@@ -49,8 +49,8 @@ namespace Inner_Maps.Location_Structures {
             Messenger.RemoveListener<ThinWall, int, bool>(StructureSignals.WALL_DAMAGED, OnWallDamaged);
             Messenger.RemoveListener<ThinWall, int, Character, bool>(StructureSignals.WALL_DAMAGED_BY, OnWallDamagedBy);
             Messenger.RemoveListener<ThinWall, int>(StructureSignals.WALL_REPAIRED, OnWallRepaired);
-            Messenger.RemoveListener<TileObject, int, bool>(TileObjectSignals.TILE_OBJECT_DAMAGED, OnObjectDamaged);
-            Messenger.RemoveListener<TileObject, int, Character, bool>(TileObjectSignals.TILE_OBJECT_DAMAGED_BY, OnObjectDamagedBy);
+            // Messenger.RemoveListener<TileObject, int, bool>(TileObjectSignals.TILE_OBJECT_DAMAGED, OnObjectDamaged);
+            // Messenger.RemoveListener<TileObject, int, Character, bool>(TileObjectSignals.TILE_OBJECT_DAMAGED_BY, OnObjectDamagedBy);
             Messenger.RemoveListener<TileObject, int>(TileObjectSignals.TILE_OBJECT_REPAIRED, OnObjectRepaired);
         }
         #endregion
@@ -80,42 +80,33 @@ namespace Inner_Maps.Location_Structures {
                 structureObj.RescanPathfindingGridOfStructure(region.innerMap);
                 CheckInteriorState();
             }
-            if (objectsThatContributeToDamage.Contains(structureWall)) {
-                AdjustHP(amount);
-            }
+            // if (objectsThatContributeToDamage.Contains(structureWall)) {
+            //     AdjustHP(amount);
+            // }
         }
         private void OnWallDamaged(ThinWall structureWall, int amount, bool isPlayerSource) {
             if (structureWalls != null && structureWalls.Contains(structureWall)) {
-                //create repair job
                 structureObj.RescanPathfindingGridOfStructure(region.innerMap);
-                OnStructureDamaged();
+                // OnStructureDamaged();
             }
-            if (objectsThatContributeToDamage.Contains(structureWall)) {
-                AdjustHP(amount, isPlayerSource: isPlayerSource);
-            }
+            // if (objectsThatContributeToDamage.Contains(structureWall)) {
+            //     AdjustHP(amount, isPlayerSource: isPlayerSource);
+            // }
         }
         private void OnWallDamagedBy(ThinWall structureWall, int amount, Character p_responsibleCharacter, bool isPlayerSource) {
             if (structureWalls != null && structureWalls.Contains(structureWall)) {
                 //create repair job
                 structureObj.RescanPathfindingGridOfStructure(region.innerMap);
-                OnStructureDamaged();
+                // OnStructureDamaged();
             }
-            if (objectsThatContributeToDamage.Contains(structureWall)) {
-                AdjustHP(amount, p_responsibleCharacter, isPlayerSource: isPlayerSource);
-            }
-        }
-        public override void OnTileRepaired(LocationGridTile tile, int amount) {
-            if (hasBeenDestroyed) { return; }
-            if (tile.tileObjectComponent.genericTileObject.currentHP >= tile.tileObjectComponent.genericTileObject.maxHP) {
-                // ReSharper disable once Unity.NoNullPropagation
-                structureObj?.ApplyGroundTileAssetForTile(tile);    
-                tile.CreateSeamlessEdgesForSelfAndNeighbours();
-            }
+            // if (objectsThatContributeToDamage.Contains(structureWall)) {
+            //     AdjustHP(amount, p_responsibleCharacter, isPlayerSource: isPlayerSource);
+            // }
         }
         #endregion
 
         #region Utilities
-        private void OnStructureDamaged() {
+        protected void OnStructureDamaged() {
             if (structureType.IsOpenSpace() || structureType.IsVillageStructure() == false) {
                 return; //do not check for damage if structure is open space or structure is not a settlement structure
             }
@@ -152,15 +143,7 @@ namespace Inner_Maps.Location_Structures {
         public override void ShowSelectorOnStructure() {
             Selector.Instance.Select(this);
         }
-        public void RepairStructure() {
-            ResetHP();
-            structureObj.OnRepairStructure(region.innerMap, this, out int createdWalls, out int totalWallsInTemplate);
-            if (createdWalls < totalWallsInTemplate) {
-                int missingWalls = totalWallsInTemplate - createdWalls;
-                TileObjectData tileObjectData = TileObjectDB.GetTileObjectData(TILE_OBJECT_TYPE.BLOCK_WALL);
-                AdjustHP(-(missingWalls * tileObjectData.maxHP));
-            }
-        }
+
         #endregion
 
         #region Repair
@@ -258,6 +241,28 @@ namespace Inner_Maps.Location_Structures {
             }
             needsToPay = true;
             return false;
+        }
+        #endregion
+
+        #region Damage
+        public override void OnTileDamaged(LocationGridTile tile, int amount, bool isPlayerSource) {
+            base.OnTileDamaged(tile, amount, isPlayerSource);
+            if (tile.groundType == LocationGridTile.Ground_Type.Structure_Stone || 
+                tile.groundType == LocationGridTile.Ground_Type.Wood || 
+                tile.groundType == LocationGridTile.Ground_Type.Demon_Stone || 
+                tile.groundType == LocationGridTile.Ground_Type.Cobble) {
+                AdjustHP(amount, isPlayerSource: isPlayerSource);
+                OnStructureDamaged();    
+            }
+        }
+        public override void OnTileRepaired(LocationGridTile tile, int amount) {
+            if (hasBeenDestroyed) { return; }
+            AdjustHP(amount);
+            if (tile.tileObjectComponent.genericTileObject.currentHP >= tile.tileObjectComponent.genericTileObject.maxHP) {
+                // ReSharper disable once Unity.NoNullPropagation
+                structureObj?.ApplyGroundTileAssetForTile(tile);    
+                tile.CreateSeamlessEdgesForSelfAndNeighbours();
+            }
         }
         #endregion
 

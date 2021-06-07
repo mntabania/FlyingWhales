@@ -66,7 +66,7 @@ public class HuntBeastPartyQuest : PartyQuest {
     #region Loading
     public override void LoadReferences(SaveDataPartyQuest data) {
         base.LoadReferences(data);
-        if (data is SaveDataExterminationPartyQuest subData) {
+        if (data is SaveDataHuntBeastPartyQuest subData) {
             if (!string.IsNullOrEmpty(subData.targetStructure)) {
                 targetStructure = DatabaseManager.Instance.structureDatabase.GetStructureByPersistentID(subData.targetStructure);
             }
@@ -86,7 +86,6 @@ public class SaveDataHuntBeastPartyQuest : SaveDataPartyQuest {
     public override void Save(PartyQuest data) {
         base.Save(data);
         if (data is HuntBeastPartyQuest subData) {
-
             if (subData.targetStructure != null) {
                 targetStructure = subData.targetStructure.persistentID;
             }

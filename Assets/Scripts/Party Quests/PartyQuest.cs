@@ -75,8 +75,9 @@ public class PartyQuest : ISavable {
             if (assignedParty != null && assignedParty.membersThatJoinedQuest.Contains(p_character)) {
                 if (GameUtilities.RollChance(assignedParty.chanceToRetreatUponKnockoutOrDeath)) {
                     EndQuest(p_character.name + " is dead");
+                } else {
+                    assignedParty.SetChanceToRetreatUponKnockoutOrDeath(100);
                 }
-                assignedParty.SetChanceToRetreatUponKnockoutOrDeath(100);
             }
         }
     }

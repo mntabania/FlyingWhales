@@ -90,6 +90,14 @@ namespace Inner_Maps.Location_Structures {
                 p_worker.jobComponent.TriggerFindFish(fishingSpot as FishingSpot, out producedJob);
             }
         }
+        
+        #region Damage
+        public override void OnTileDamaged(LocationGridTile tile, int amount, bool isPlayerSource) {
+            //fisheries can be damaged  by any tile
+            AdjustHP(amount, isPlayerSource: isPlayerSource);
+            OnStructureDamaged();
+        }
+        #endregion
     }
 }
 

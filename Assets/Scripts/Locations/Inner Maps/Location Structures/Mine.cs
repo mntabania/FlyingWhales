@@ -26,6 +26,14 @@ namespace Inner_Maps.Location_Structures {
         }
         #endregion
         
+        #region Damage
+        public override void OnTileDamaged(LocationGridTile tile, int amount, bool isPlayerSource) {
+            //mines can be damaged  by any tile
+            AdjustHP(amount, isPlayerSource: isPlayerSource);
+            OnStructureDamaged();
+        }
+        #endregion
+        
         public override string GetTestingInfo() {
             return $"{base.GetTestingInfo()}\nConnected Cave {connectedCave?.name}";
         }

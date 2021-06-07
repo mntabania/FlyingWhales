@@ -48,6 +48,10 @@ public class MapGenerationData {
 	public TILE_OBJECT_TYPE[][] generatedMapPerlinDetailsMap { get; private set; }
 	public bool isGeneratingTileObjects { get; private set; }
 	public bool hasFinishedMapGenerationCoroutine { get; private set; }
+	public List<StructureSetting> unplacedStructuresOnLastEnsuredStructurePlacementCall { get; private set; }
+	public List<STRUCTURE_TYPE> LastPlacedStructureTypes { get; private set; }
+	public Dictionary<NPCSettlement, int> missingFoodProducers { get; private set; }
+	public Dictionary<NPCSettlement, int> missingBasicResourceProducers { get; private set; }
 
 	#region getters
 	public int width => chosenWorldMapTemplate.worldMapWidth;
@@ -60,6 +64,9 @@ public class MapGenerationData {
 		determinedVillages = new Dictionary<FactionTemplate, List<VillageSpot>>();
 		oceanBorderTilesCategorizedByArea = new Dictionary<Area, List<LocationGridTile>>();
 		caveBorderTilesCategorizedByArea = new Dictionary<Area, List<LocationGridTile>>();
+		missingFoodProducers = new Dictionary<NPCSettlement, int>();
+		missingBasicResourceProducers = new Dictionary<NPCSettlement, int>();
+		LastPlacedStructureTypes = new List<STRUCTURE_TYPE>();
 	}
 
 	#region General
@@ -179,6 +186,42 @@ public class MapGenerationData {
 	}
 	#endregion
 
+	#region Helpers
+	public void AddLastPlacedStructureTypes(STRUCTURE_TYPE p_types) {
+		LastPlacedStructureTypes.Add(p_types);
+	}
+	public void ClearLastPlacedVillageStructures() {
+		LastPlacedStructureTypes.Clear();
+	}
+	public void SetLastUnplacedStructures(List<StructureSetting> p_settings) {
+		unplacedStructuresOnLastEnsuredStructurePlacementCall = p_settings;
+	}
+
+	public void SetMissingFoodProducers(NPCSettlement p_settlement, int p_count) {
+		if (!missingFoodProducers.ContainsKey(p_settlement)) {
+			missingFoodProducers.Add(p_settlement, 0);
+		}
+		missingFoodProducers[p_settlement] = p_count;
+	}
+	public void SetMissingBasicResourceProducers(NPCSettlement p_settlement, int p_count) {
+		if (!missingBasicResourceProducers.ContainsKey(p_settlement)) {
+			missingBasicResourceProducers.Add(p_settlement, 0);
+		}
+		missingBasicResourceProducers[p_settlement] = p_count;
+	}
+	public int GetTotalMissingProductionStructures(NPCSettlement p_settlement) {
+		int missing = 0;
+		if (missingFoodProducers.ContainsKey(p_settlement)) {
+			missing += missingFoodProducers[p_settlement];
+		}
+		if (missingBasicResourceProducers.ContainsKey(p_settlement)) {
+			missing += missingBasicResourceProducers[p_settlement];
+		}
+
+		return missing;
+	}
+	#endregion
+
 	#region Clean Up
 	public void CleanUpAfterMapGeneration() {
 		foreach (var kvp in oceanBorderTilesCategorizedByArea) {
@@ -192,6 +235,10 @@ public class MapGenerationData {
 		oceanBorderTilesCategorizedByArea = null;
 		caveBorderTilesCategorizedByArea = null;
 		generatedMapPerlinDetailsMap = null;
+		unplacedStructuresOnLastEnsuredStructurePlacementCall = null;
+		LastPlacedStructureTypes = null;
+		missingFoodProducers = null;
+		missingBasicResourceProducers = null;
 	}
-#endregion
+	#endregion
 }

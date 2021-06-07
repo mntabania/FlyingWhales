@@ -129,6 +129,7 @@ public class GameManager : BaseMonoBehaviour {
     }
     
 	public void StartProgression(){
+        WorldConfigManager.Instance.mapGenerationData?.CleanUpAfterMapGeneration();
         _gameHasStarted = true;
         UIManager.Instance.Pause();
         lastProgressionBeforePausing = "paused";

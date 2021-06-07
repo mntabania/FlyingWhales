@@ -62,5 +62,13 @@ namespace Inner_Maps.Location_Structures {
                 p_worker.jobComponent.TriggerChopWood(tree, out producedJob);
             }
         }
+        
+        #region Damage
+        public override void OnTileDamaged(LocationGridTile tile, int amount, bool isPlayerSource) {
+            //lumberyards can be damaged  by any tile
+            AdjustHP(amount, isPlayerSource: isPlayerSource);
+            OnStructureDamaged();
+        }
+        #endregion
     }
 }

@@ -610,9 +610,9 @@ public class LocationStructureObject : PooledObject, ISelectable {
                 tile.tileObjectComponent.AddWallObject(thinWall);
                 createdWalls++;
                 totalWalls++;
-                if (wallsContributeToDamage) {
-                    structure.AddObjectAsDamageContributor(thinWall);    
-                }
+                // if (wallsContributeToDamage) {
+                //     structure.AddObjectAsDamageContributor(thinWall);    
+                // }
                 wallObjects.Add(thinWall);
             }    
             manMadeStructure.SetWallObjects(wallObjects, _thinWallResource);
@@ -686,9 +686,9 @@ public class LocationStructureObject : PooledObject, ISelectable {
                     tile.tileObjectComponent.AddWallObject(thinWall);
                     createdWalls++;
                     totalWalls++;
-                    if (wallsContributeToDamage) {
-                        structure.AddObjectAsDamageContributor(thinWall);
-                    }
+                    // if (wallsContributeToDamage) {
+                    //     structure.AddObjectAsDamageContributor(thinWall);
+                    // }
                     wallObjects.Add(thinWall);
                 }
                 manMadeStructure.SetWallObjects(wallObjects, _thinWallResource);

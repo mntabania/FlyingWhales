@@ -16,7 +16,7 @@ public class MonsterGeneration : MapGenerationComponent {
 		LevelLoaderManager.Instance.UpdateLoadingInfo("Placing Monsters...");
 		// yield return MapGenerator.Instance.StartCoroutine(RegionalMonsterGeneration());
 		yield return MapGenerator.Instance.StartCoroutine(LandmarkMonsterGeneration());
-		yield return MapGenerator.Instance.StartCoroutine(CaveMonsterGeneration());
+		// yield return MapGenerator.Instance.StartCoroutine(CaveMonsterGeneration()); //Disabled for now because of testing since June 7, 2021
 		yield return null;
 	}
 
