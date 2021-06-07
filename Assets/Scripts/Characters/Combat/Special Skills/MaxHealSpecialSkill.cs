@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class FastHealSpecialSkill : CombatSpecialSkill {
-    public FastHealSpecialSkill() : base(COMBAT_SPECIAL_SKILL.Fast_Heal, COMBAT_SPECIAL_SKILL_TARGET.Single, 10) {
+public class MaxHealSpecialSkill : CombatSpecialSkill {
+    public MaxHealSpecialSkill() : base(COMBAT_SPECIAL_SKILL.Max_Heal, COMBAT_SPECIAL_SKILL_TARGET.Single, 20) {
 
     }
 
@@ -11,10 +11,10 @@ public class FastHealSpecialSkill : CombatSpecialSkill {
     public override bool TryActivateSkill(Character p_character) {
         Character validTarget = GetValidTargetFor(p_character);
         if(validTarget != null) {
-            validTarget.AdjustHP(100, ELEMENTAL_TYPE.Normal);
+            validTarget.AdjustHP(200, ELEMENTAL_TYPE.Normal);
             GameManager.Instance.CreateParticleEffectAt(validTarget, PARTICLE_EFFECT.Heal, false);
 #if DEBUG_LOG
-            p_character.logComponent.PrintLogIfActive("FAST HEAL SPECIAL SKILL OF " + p_character.name + " ACTIVATED FOR: " + validTarget.name);
+            p_character.logComponent.PrintLogIfActive("MAX HEAL SPECIAL SKILL OF " + p_character.name + " ACTIVATED FOR: " + validTarget.name);
 #endif
             return true;
         }

@@ -59,6 +59,14 @@ namespace Character_Talents {
                 talentData.OnLevelUp(p_character, i);
             }
         }
+        public void ReevaluateTalent(Character p_character) {
+            CharacterTalentData talentData = CharacterManager.Instance.talentManager.GetOrCreateCharacterTalentData(talentType);
+            if (talentData.hasReevaluation) {
+                for (int i = 1; i <= level; i++) {
+                    talentData.OnReevaluateTalent(p_character, i);
+                }
+            }
+        }
         #endregion
 
         #region Object Pool

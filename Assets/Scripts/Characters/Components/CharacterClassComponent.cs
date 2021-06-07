@@ -113,6 +113,10 @@ public class CharacterClassComponent : CharacterComponent {
         //Whenever character class is updated, update attack and hp also, since it changes upon changing the ATTACK_TYPE of character
         owner.combatComponent.UpdateAttack();
         owner.combatComponent.UpdateMaxHPAndProportionateHP();
+
+        if (owner.talentComponent != null) {
+            owner.talentComponent.ReevaluateAllTalents();
+        }
     }
     public void OverridePreviousClassName(string p_className) {
         previousClassName = p_className;

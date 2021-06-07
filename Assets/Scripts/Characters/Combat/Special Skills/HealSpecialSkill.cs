@@ -24,6 +24,10 @@ public class HealSpecialSkill : CombatSpecialSkill {
         if (p_character.hasMarker) {
             Character lowestHPFriendlyCharacter = null;
             int lowestHP = 0;
+            if (!p_character.isDead && !p_character.IsHealthFull()) {
+                lowestHPFriendlyCharacter = p_character;
+                lowestHP = p_character.currentHP;
+            }
             for (int i = 0; i < p_character.marker.inVisionCharacters.Count; i++) {
                 Character visionCharacter = p_character.marker.inVisionCharacters[i];
                 if(!visionCharacter.isDead && !visionCharacter.IsHealthFull()) {

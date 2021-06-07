@@ -57,6 +57,11 @@ public class CharacterTalentComponent : CharacterComponent {
             _talentDictionary.Add(ct.talentType, ct);
         }
     }
+    public void ReevaluateAllTalents() {
+        for (int i = 0; i < allTalents.Count; i++) {
+            allTalents[i].ReevaluateTalent(owner);
+        }
+    }
     public CharacterTalent GetTalent(CHARACTER_TALENT p_talentType) {
         if (_talentDictionary.ContainsKey(p_talentType)) {
             return _talentDictionary[p_talentType];

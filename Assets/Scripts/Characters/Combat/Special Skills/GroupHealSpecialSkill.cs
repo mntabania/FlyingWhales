@@ -28,6 +28,9 @@ public class GroupHealSpecialSkill : CombatSpecialSkill {
     }
     protected override void PopulateValidTargetsFor(Character p_character, List<Character> p_validTargets) {
         if (p_character.hasMarker) {
+            if (!p_character.isDead && !p_character.IsHealthFull()) {
+                p_validTargets.Add(p_character);
+            }
             for (int i = 0; i < p_character.marker.inVisionCharacters.Count; i++) {
                 Character visionCharacter = p_character.marker.inVisionCharacters[i];
                 if(!visionCharacter.isDead && !visionCharacter.IsHealthFull()) {

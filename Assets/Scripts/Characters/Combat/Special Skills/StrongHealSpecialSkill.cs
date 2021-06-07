@@ -11,7 +11,7 @@ public class StrongHealSpecialSkill : CombatSpecialSkill {
     public override bool TryActivateSkill(Character p_character) {
         Character validTarget = GetValidTargetFor(p_character);
         if(validTarget != null) {
-            validTarget.AdjustHP(500, ELEMENTAL_TYPE.Normal);
+            validTarget.AdjustHP(150, ELEMENTAL_TYPE.Normal);
             GameManager.Instance.CreateParticleEffectAt(validTarget, PARTICLE_EFFECT.Heal, false);
 #if DEBUG_LOG
             p_character.logComponent.PrintLogIfActive("STRONG HEAL SPECIAL SKILL OF " + p_character.name + " ACTIVATED FOR: " + validTarget.name);
@@ -24,6 +24,10 @@ public class StrongHealSpecialSkill : CombatSpecialSkill {
         if (p_character.hasMarker) {
             Character lowestHPFriendlyCharacter = null;
             int lowestHP = 0;
+            if (!p_character.isDead && !p_character.IsHealthFull()) {
+                lowestHPFriendlyCharacter = p_character;
+                lowestHP = p_character.currentHP;
+            }
             for (int i = 0; i < p_character.marker.inVisionCharacters.Count; i++) {
                 Character visionCharacter = p_character.marker.inVisionCharacters[i];
                 if(!visionCharacter.isDead && !visionCharacter.IsHealthFull()) {

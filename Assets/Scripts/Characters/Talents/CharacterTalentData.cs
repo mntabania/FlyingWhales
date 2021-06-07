@@ -11,6 +11,7 @@ namespace Character_Talents {
         public string description { get; protected set; }
 
         public virtual string bonusDescription (int level) => GetBonusDescription(level);
+        public virtual bool hasReevaluation => false;
 
         public string GetBonusDescription(int p_level) {
             if (addOnBonusSetDisplay.Count < p_level) {
@@ -25,5 +26,6 @@ namespace Character_Talents {
         }
 
         public abstract void OnLevelUp(Character p_character, int level);
+        public abstract void OnReevaluateTalent(Character p_character, int level);
     }
 }

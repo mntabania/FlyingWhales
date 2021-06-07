@@ -1374,7 +1374,7 @@ public enum CHARACTER_COMBAT_BEHAVIOUR {
     None, Tower, Attacker, Snatcher, Razer, Healer, Tank, Escort, Glass_Cannon, Defender,
 }
 public enum COMBAT_SPECIAL_SKILL {
-    None, Heal, Taunt, Fast_Heal, Strong_Heal, Group_Heal, Self_Heal, Slow_Taunt,
+    None, Heal, Taunt, Fast_Heal, Strong_Heal, Group_Heal, Self_Heal, Slow_Taunt, Max_Heal,
 }
 public enum COMBAT_SPECIAL_SKILL_TARGET {
     Single, Multiple,
