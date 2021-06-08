@@ -79,3 +79,8 @@ MonoBehaviour:
   craftableWeapons: 06010000c4000000c5000000c6000000c7000000
   craftableArmors: 05010000d0000000bc000000d1000000d3000000d4000000d6000000d5000000d7000000d8000000
   craftableAccessories: de000000
+  droppableItems:
+  - item: 13
+    weight: 10
+  - item: 189
+    weight: 10

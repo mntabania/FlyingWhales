@@ -72,6 +72,11 @@ public class SkinAnimal : GoapAction {
         tileToSpawnItem.structure.AddPOI(matsToHaul, tileToSpawnItem);
         // p_node.actor.homeSettlement.settlementJobTriggerComponent.TryCreateHaulJob(matsToHaul);
 
+        (p_node.target as Character).DestroyMarker();
+        if ((p_node.target as Character).currentRegion != null) {
+            (p_node.target as Character).currentRegion.RemoveCharacterFromLocation((p_node.target as Character));
+        }
+
         return matsToHaul;
     }
 
