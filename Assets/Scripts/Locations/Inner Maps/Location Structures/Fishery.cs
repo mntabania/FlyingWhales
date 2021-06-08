@@ -7,7 +7,7 @@ using UtilityScripts;
 
 namespace Inner_Maps.Location_Structures {
     public class Fishery : ManMadeStructure {
-        public override Vector3 worldPosition => structureObj.transform.position;
+        // public override Vector3 worldPosition => structureObj.transform.position;
         public override Type serializedData => typeof(SaveDataFishery);
         public Ocean connectedOcean { get; private set; }
         
