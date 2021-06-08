@@ -61,6 +61,20 @@ public class PlaceBlueprint : GoapAction {
                         buildJob.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] { genericTileObject.blueprintOnTile.craftCost });
                         buildJob.AddOtherData(INTERACTION_TYPE.BUILD_BLUEPRINT, new object[] { connectorTile });
                         JobUtilities.PopulatePriorityLocationsForTakingNonEdibleResources(settlement, buildJob, INTERACTION_TYPE.TAKE_RESOURCE);
+                        List<LocationStructure> mines = settlement.GetStructuresOfType(STRUCTURE_TYPE.MINE);
+                        if (mines != null) {
+                            for (int i = 0; i < mines.Count; i++) {
+                                LocationStructure mine = mines[i];
+                                buildJob.AddPriorityLocation(INTERACTION_TYPE.TAKE_RESOURCE, mine);
+                            }    
+                        }
+                        List<LocationStructure> lumberyards = settlement.GetStructuresOfType(STRUCTURE_TYPE.LUMBERYARD);
+                        if (lumberyards != null) {
+                            for (int i = 0; i < lumberyards.Count; i++) {
+                                LocationStructure lumberyard = lumberyards[i];
+                                buildJob.AddPriorityLocation(INTERACTION_TYPE.TAKE_RESOURCE, lumberyard);
+                            }    
+                        }
                         // buildJob.SetCanTakeThisJobChecker(InteractionManager.Instance.CanCharacterTakeBuildJob);
                         settlement.AddToAvailableJobs(buildJob);
                     }

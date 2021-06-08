@@ -899,7 +899,8 @@ public class LocationStructureObject : PooledObject, ISelectable {
             tilesToCheck = tile.neighbourList;
         } else {
             tilesInRadius = ObjectPoolManager.Instance.CreateNewGridTileList();
-            tile.PopulateTilesInRadius(tilesInRadius, 2, includeCenterTile: true, includeTilesInDifferentStructure: true);
+            int radiusToCheck = 2;
+            tile.PopulateTilesInRadius(tilesInRadius, radiusToCheck, includeCenterTile: true, includeTilesInDifferentStructure: true);
             tilesToCheck = tilesInRadius;
         }
 
@@ -946,6 +947,27 @@ public class LocationStructureObject : PooledObject, ISelectable {
         if(tilesInRadius != null) {
             ObjectPoolManager.Instance.ReturnGridTileListToPool(tilesInRadius);
         }
+
+        //reserve tiles near oceans and caves
+        if (structureType != STRUCTURE_TYPE.MINE && structureType != STRUCTURE_TYPE.FISHERY && !structureType.IsPlayerStructure()) {
+            tilesInRadius = ObjectPoolManager.Instance.CreateNewGridTileList();
+            int radiusToCheck = 4;
+            tile.PopulateTilesInRadius(tilesInRadius, radiusToCheck, includeCenterTile: true, includeTilesInDifferentStructure: true);
+            tilesToCheck = tilesInRadius;
+            for (int j = 0; j < tilesToCheck.Count; j++) {
+                LocationGridTile neighbour = tilesToCheck[j];
+                if (neighbour.tileObjectComponent.objHere is FishingSpot || 
+                    neighbour.tileObjectComponent.objHere is OreVein || 
+                    neighbour.tileObjectComponent.genericTileObject.structureConnector != null) {
+                    o_cannotPlaceReason = string.Empty;
+                    return false;
+                }
+            }
+            if(tilesInRadius != null) {
+                ObjectPoolManager.Instance.ReturnGridTileListToPool(tilesInRadius);
+            }
+        }
+        
         o_cannotPlaceReason = string.Empty;
         return true;
     }
