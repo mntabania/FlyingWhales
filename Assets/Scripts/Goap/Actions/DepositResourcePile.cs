@@ -116,7 +116,11 @@ public class DepositResourcePile : GoapAction {
             //if the process goes through here, this must mean that the target poi where the actor is supposed to go has no grid tile location or is destroyed or is carried by another character
             //so, just return a random unoccupied tile from the target structure
             List<LocationGridTile> unoccupiedTiles = goapNode.targetStructure.unoccupiedTiles.ToList();
-            return unoccupiedTiles[UnityEngine.Random.Range(0, unoccupiedTiles.Count)];
+            if (unoccupiedTiles.Count > 0) {
+                return unoccupiedTiles[UnityEngine.Random.Range(0, unoccupiedTiles.Count)];    
+            }
+            //assume that target structure has been destroyed or is full 
+            return null;
         }
     }
     public override void OnStopWhileStarted(ActualGoapNode node) {

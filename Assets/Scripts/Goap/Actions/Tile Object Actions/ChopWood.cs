@@ -52,7 +52,7 @@ public class ChopWood : GoapAction {
 
     #region State Effects
     public void AfterChopSuccess(ActualGoapNode p_node) {
-        p_node.actor.jobComponent.TryCreateHaulJob(ProduceMatsPile(p_node));
+        p_node.actor.jobComponent.TryCreateHaulToWorkplaceJob(ProduceMatsPile(p_node));
     }
     #endregion
 

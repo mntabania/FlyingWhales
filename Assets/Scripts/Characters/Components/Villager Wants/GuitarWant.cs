@@ -30,6 +30,7 @@ namespace Characters.Villager_Wants {
         }
         public override bool IsWantValid(Character p_character) {
             if (!CharacterLivesInADwelling(p_character)) return false;
+            if (p_character.traitContainer.HasTrait("Music Hater")) return false;
             return !p_character.homeStructure.HasBuiltTileObjectOfType(TILE_OBJECT_TYPE.GUITAR);
         }
     }

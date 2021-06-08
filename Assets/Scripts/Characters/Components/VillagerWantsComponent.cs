@@ -4,11 +4,13 @@ using System.Linq;
 using Characters.Components;
 using Characters.Villager_Wants;
 using Inner_Maps.Location_Structures;
+using Traits;
 using UnityEngine;
 using UnityEngine.Assertions;
 
 public class VillagerWantsComponent : CharacterComponent, CharacterEventDispatcher.IHomeStructureListener, 
-    CharacterEventDispatcher.IEquipmentListener, CharacterEventDispatcher.IInventoryListener, CharacterEventDispatcher.IFactionListener {
+    CharacterEventDispatcher.IEquipmentListener, CharacterEventDispatcher.IInventoryListener, 
+    CharacterEventDispatcher.IFactionListener, CharacterEventDispatcher.ITraitListener {
 
     private readonly List<VillagerWant> _wantsToProcess;
 
@@ -47,6 +49,8 @@ public class VillagerWantsComponent : CharacterComponent, CharacterEventDispatch
         p_character.eventDispatcher.SubscribeToWeaponEvents(this);
         p_character.eventDispatcher.SubscribeToInventoryEvents(this);
         p_character.eventDispatcher.SubscribeToFactionEvents(this);
+        p_character.eventDispatcher.SubscribeToCharacterGainedTrait(this);
+        p_character.eventDispatcher.SubscribeToCharacterLostTrait(this);
     }
     #endregion
     
@@ -195,7 +199,9 @@ public class VillagerWantsComponent : CharacterComponent, CharacterEventDispatch
             if (!p_homeStructure.HasBuiltTileObjectOfType(TILE_OBJECT_TYPE.GUITAR)) {
                 //Guitar is destroyed or taken from home structure floor and there are no other guitars inside
                 GuitarWant guitarWant = CharacterManager.Instance.GetVillagerWantInstance<GuitarWant>();
-                ToggleWantOn(guitarWant);    
+                if (guitarWant.IsWantValid(p_character)) {
+                    ToggleWantOn(guitarWant);    
+                }
             }
         }
     }
@@ -259,7 +265,26 @@ public class VillagerWantsComponent : CharacterComponent, CharacterEventDispatch
         EvaluateAllWants(p_character);
     }
     #endregion
-    
+
+    #region Traits
+    public void OnCharacterGainedTrait(Character p_character, Trait p_gainedTrait) {
+        Assert.IsTrue(p_character == owner);
+        if (p_gainedTrait is MusicHater) {
+            GuitarWant guitarWant = CharacterManager.Instance.GetVillagerWantInstance<GuitarWant>();
+            ToggleWantOff(guitarWant);
+        }
+    }
+
+    public void OnCharacterLostTrait(Character p_character, Trait p_lostTrait, Character p_removedBy) {
+        Assert.IsTrue(p_character == owner);
+        if (p_lostTrait is MusicHater) {
+            GuitarWant guitarWant = CharacterManager.Instance.GetVillagerWantInstance<GuitarWant>();
+            if (guitarWant.IsWantValid(p_character)) {
+                ToggleWantOn(guitarWant);    
+            }
+        }
+    }
+    #endregion
 }
 
 

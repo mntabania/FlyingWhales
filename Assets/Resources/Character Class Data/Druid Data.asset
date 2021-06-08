@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   combatBehaviourType: 0
   combatSpecialSkillType: 0
-  workStructureType: 21
+  workStructureType: 14
   summonCost: 50
   portraitSprite: {fileID: 0}
   defaultSprites:
@@ -79,3 +79,8 @@ MonoBehaviour:
   craftableWeapons: 04010000c8000000c9000000ca000000cb000000
   craftableArmors: 05010000d0000000bc000000d1000000d3000000
   craftableAccessories: b9000000df000000
+  droppableItems:
+  - item: 13
+    weight: 10
+  - item: 189
+    weight: 10

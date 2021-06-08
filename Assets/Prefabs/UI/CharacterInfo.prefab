@@ -1609,7 +1609,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
-    m_Mode: 3
+    m_Mode: 0
     m_SelectOnUp: {fileID: 0}
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
@@ -1689,6 +1689,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hoverDisplayText: 
+  m_hoverHandler: {fileID: 918496685217743169}
+  m_uiHoverPosition: {fileID: 2918795908492256453}
 --- !u!114 &4862680987271054489
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2195,6 +2197,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hoverDisplayText: 
+  m_hoverHandler: {fileID: 0}
+  m_uiHoverPosition: {fileID: 0}
 --- !u!1 &746041020
 GameObject:
   m_ObjectHideFlags: 0
@@ -2575,6 +2579,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hoverDisplayText: 
+  m_hoverHandler: {fileID: 0}
+  m_uiHoverPosition: {fileID: 0}
 --- !u!1 &884165265
 GameObject:
   m_ObjectHideFlags: 0
@@ -3005,6 +3011,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hoverDisplayText: 
+  m_hoverHandler: {fileID: 0}
+  m_uiHoverPosition: {fileID: 0}
 --- !u!1 &955594016
 GameObject:
   m_ObjectHideFlags: 0
@@ -3193,6 +3201,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hoverDisplayText: 
+  m_hoverHandler: {fileID: 0}
+  m_uiHoverPosition: {fileID: 0}
 --- !u!1 &970744961
 GameObject:
   m_ObjectHideFlags: 0
@@ -3331,7 +3341,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
-    m_Mode: 3
+    m_Mode: 0
     m_SelectOnUp: {fileID: 0}
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
@@ -3411,6 +3421,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hoverDisplayText: 
+  m_hoverHandler: {fileID: 6115299095950001362}
+  m_uiHoverPosition: {fileID: 6115299095950001361}
 --- !u!114 &5315135628937941724
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3745,6 +3757,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hoverDisplayText: 
+  m_hoverHandler: {fileID: 0}
+  m_uiHoverPosition: {fileID: 0}
 --- !u!1 &1017826118
 GameObject:
   m_ObjectHideFlags: 0
@@ -4320,6 +4334,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hoverDisplayText: Poison Resistance
+  m_hoverHandler: {fileID: 0}
+  m_uiHoverPosition: {fileID: 0}
 --- !u!114 &817339632345451207
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4472,7 +4488,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
-    m_Mode: 3
+    m_Mode: 0
     m_SelectOnUp: {fileID: 0}
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
@@ -4552,6 +4568,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hoverDisplayText: 
+  m_hoverHandler: {fileID: 7559285204014585828}
+  m_uiHoverPosition: {fileID: 1597027890275859106}
 --- !u!114 &1949046044609603068
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5867,6 +5885,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hoverDisplayText: 
+  m_hoverHandler: {fileID: 0}
+  m_uiHoverPosition: {fileID: 0}
 --- !u!1 &1765175598
 GameObject:
   m_ObjectHideFlags: 0
@@ -6055,6 +6075,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hoverDisplayText: 
+  m_hoverHandler: {fileID: 0}
+  m_uiHoverPosition: {fileID: 0}
 --- !u!1 &1827746166
 GameObject:
   m_ObjectHideFlags: 0
@@ -13451,6 +13473,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hoverDisplayText: Reveal Character Info
+  m_hoverHandler: {fileID: 0}
+  m_uiHoverPosition: {fileID: 0}
 --- !u!1 &82367540000203283
 GameObject:
   m_ObjectHideFlags: 0
@@ -13877,6 +13901,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hoverDisplayText: Reveal Character Info
+  m_hoverHandler: {fileID: 0}
+  m_uiHoverPosition: {fileID: 0}
 --- !u!1 &224608798374375636
 GameObject:
   m_ObjectHideFlags: 0
@@ -17252,6 +17278,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hoverDisplayText: Physical Resistance
+  m_hoverHandler: {fileID: 0}
+  m_uiHoverPosition: {fileID: 0}
 --- !u!114 &4206704560929559006
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -17535,6 +17563,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hoverDisplayText: Wind Resistance
+  m_hoverHandler: {fileID: 0}
+  m_uiHoverPosition: {fileID: 0}
 --- !u!114 &3203187618992415646
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -17997,6 +18027,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hoverDisplayText: Fire Resistance
+  m_hoverHandler: {fileID: 0}
+  m_uiHoverPosition: {fileID: 0}
 --- !u!114 &8019415555770706219
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -18280,6 +18312,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hoverDisplayText: Electric Resistance
+  m_hoverHandler: {fileID: 0}
+  m_uiHoverPosition: {fileID: 0}
 --- !u!114 &4493439920482778182
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -18429,6 +18463,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hoverDisplayText: Ice Resistance
+  m_hoverHandler: {fileID: 0}
+  m_uiHoverPosition: {fileID: 0}
 --- !u!114 &818862090635011089
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -18980,6 +19016,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hoverDisplayText: Mental Resistance
+  m_hoverHandler: {fileID: 0}
+  m_uiHoverPosition: {fileID: 0}
 --- !u!114 &119325782455247517
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -19397,6 +19435,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hoverDisplayText: Water Resistance
+  m_hoverHandler: {fileID: 0}
+  m_uiHoverPosition: {fileID: 0}
 --- !u!114 &1382713926469532377
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -19546,6 +19586,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hoverDisplayText: Normal Resistance
+  m_hoverHandler: {fileID: 0}
+  m_uiHoverPosition: {fileID: 0}
 --- !u!114 &1910790016073428839
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -19963,6 +20005,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hoverDisplayText: Earth Resistance
+  m_hoverHandler: {fileID: 0}
+  m_uiHoverPosition: {fileID: 0}
 --- !u!114 &5523462901068595339
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -26855,6 +26899,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hoverDisplayText: Reveal Character Info
+  m_hoverHandler: {fileID: 0}
+  m_uiHoverPosition: {fileID: 0}
 --- !u!1 &3653997240989422288
 GameObject:
   m_ObjectHideFlags: 0
@@ -27753,6 +27799,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hoverDisplayText: Reveal Character Info
+  m_hoverHandler: {fileID: 0}
+  m_uiHoverPosition: {fileID: 0}
 --- !u!1 &3653997241672345706
 GameObject:
   m_ObjectHideFlags: 0

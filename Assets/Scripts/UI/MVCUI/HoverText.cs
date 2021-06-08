@@ -8,18 +8,24 @@ public class HoverText : MonoBehaviour
 {
     public string hoverDisplayText;
 
-	private HoverHandler m_hoverHandler;
-	private UIHoverPosition m_uiHoverPosition;
+    [SerializeField] private HoverHandler m_hoverHandler;
+	[SerializeField] private UIHoverPosition m_uiHoverPosition;
 
 	private void Awake() {
-		m_hoverHandler = GetComponent<HoverHandler>();
-		m_uiHoverPosition = GetComponent<UIHoverPosition>();
-		if(m_hoverHandler == null) {
-			m_hoverHandler = gameObject.AddComponent<HoverHandler>();
+		if (m_hoverHandler == null) {
+			m_hoverHandler = GetComponent<HoverHandler>();
+			if(m_hoverHandler == null) {
+				m_hoverHandler = gameObject.AddComponent<HoverHandler>();
+			}
 		}
+
 		if (m_uiHoverPosition == null) {
-			m_uiHoverPosition = gameObject.AddComponent<UIHoverPosition>();
+			m_uiHoverPosition = GetComponent<UIHoverPosition>();
+			if (m_uiHoverPosition == null) {
+				m_uiHoverPosition = gameObject.AddComponent<UIHoverPosition>();
+			}	
 		}
+		
 	}
 
 	private void Start() {
@@ -36,6 +42,15 @@ public class HoverText : MonoBehaviour
 		hoverDisplayText = p_newText;
 	}
 
+	public void Enable() {
+		enabled = true;
+		m_hoverHandler.enabled = true;
+	}
+	public void Disable() {
+		enabled = false;
+		m_hoverHandler.enabled = false;
+	}
+	
 	public void OnHoverOver() {
 		Tooltip.Instance.ShowSmallInfo(hoverDisplayText, autoReplaceText: false);
 	}

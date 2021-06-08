@@ -58,7 +58,7 @@ public class SkinAnimal : GoapAction {
 
     #region State Effects
     public void AfterSkinAnimalSuccess(ActualGoapNode p_node) {
-        p_node.actor.jobComponent.TryCreateHaulJob(ProduceMatsPile(p_node));
+        p_node.actor.jobComponent.TryCreateHaulToWorkplaceJob(ProduceMatsPile(p_node));
     }
     #endregion
 
@@ -71,6 +71,11 @@ public class SkinAnimal : GoapAction {
         matsToHaul.SetResourceInPile(p_node.currentStateDuration * m_amountProducedPerTick);
         tileToSpawnItem.structure.AddPOI(matsToHaul, tileToSpawnItem);
         // p_node.actor.homeSettlement.settlementJobTriggerComponent.TryCreateHaulJob(matsToHaul);
+
+        (p_node.target as Character).DestroyMarker();
+        if ((p_node.target as Character).currentRegion != null) {
+            (p_node.target as Character).currentRegion.RemoveCharacterFromLocation((p_node.target as Character));
+        }
 
         return matsToHaul;
     }

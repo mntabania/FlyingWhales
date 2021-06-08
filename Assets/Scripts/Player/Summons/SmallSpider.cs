@@ -2,6 +2,7 @@
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
 using Traits;
+using UnityEngine;
 
 public class SmallSpider : Summon {
 
@@ -45,9 +46,14 @@ public class SmallSpider : Summon {
         ScheduleGrowUp();    
     }
     private void ScheduleGrowUp() {
-        if (traitContainer.HasTrait("Baby Infestor") == false) {
+        if (!traitContainer.HasTrait("Baby Infestor") && faction != null && faction != null && faction.factionType.type != FACTION_TYPE.Demons) {
             //only grow up if spider is not a baby infestor
             //because growing up is handled by Baby Infestor trait
+            //also don't grow up if small spider is part of the player faction because of this issue:
+            //https://trello.com/c/ArYdxExc/4739-live-v040-the-baby-spiders-you-capture-still-grow-up-into-giant-spiders-snatcher
+#if DEBUG_LOG
+            Debug.Log($"{name} scheduled grow up date on {growUpDate.ToString()}");
+#endif
             SchedulingManager.Instance.AddEntry(growUpDate, GrowUp, this);
         }
     }
@@ -75,6 +81,10 @@ public class SmallSpider : Summon {
     /// </summary>
     private void GrowUp() {
         if (isDead) { return; }
+        if (faction != null && faction.factionType.type == FACTION_TYPE.Demons) {
+            //Reference: https://trello.com/c/ArYdxExc/4739-live-v040-the-baby-spiders-you-capture-still-grow-up-into-giant-spiders-snatcher
+            return;
+        }
         if (isBeingSeized && PlayerManager.Instance.player.seizeComponent.isPreparingToBeUnseized) {
             //if spider is currently seized and is not being unseized when it should grow up,
             //set it to grow up when it is unseized.

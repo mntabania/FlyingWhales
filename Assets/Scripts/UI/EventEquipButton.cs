@@ -17,6 +17,11 @@ public class EventEquipButton : MonoBehaviour, IPointerClickHandler {
         m_targetEquip = p_targetEquip;
     }
 
+    public void ClearData() {
+        m_owner = null;
+        m_targetEquip = null;
+    }
+
     #region Pointer Actions
     public void AddPointerLeftClickAction(System.Action<Character, TileObject> p_action) {
         _onLeftClick += p_action;

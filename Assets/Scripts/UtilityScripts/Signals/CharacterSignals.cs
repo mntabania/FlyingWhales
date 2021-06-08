@@ -168,4 +168,10 @@
     public static string CHARACTER_MEDDLER_SCHEME_SUCCESSFUL = "OnCharacterMedlerSchemeSuccessful";
     public static string LYCANTHROPE_SHED_WOLF_PELT = "OnLycanthropeShedWolfPelt";
     #endregion
+
+    #region Equipment
+    public static string WEAPON_UNEQUIPPED = "OnWeaponUnequipped";
+    public static string ARMOR_UNEQUIPPED = "OnArmorUnequipped";
+    public static string ACCESSORY_UNEQUIPPED = "OnAccessoryUnequipped";
+    #endregion
 }

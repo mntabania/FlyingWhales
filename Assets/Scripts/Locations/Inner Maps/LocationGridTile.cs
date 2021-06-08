@@ -581,7 +581,20 @@ namespace Inner_Maps {
 
             if (!character.movementComponent.cameFromWurmHole) {
                 if (tileObjectComponent.objHere != null && tileObjectComponent.objHere is WurmHole wurmHole) {
-                    if (wurmHole.wurmHoleConnection.gridTileLocation != null) {
+                    bool shouldGoThroughWurmHole = true;
+                    if (character.carryComponent.isBeingCarriedBy != null) {
+                        if (character.carryComponent.isBeingCarriedBy.movementComponent.isFlying) {
+                            //characters being carried by flying characters should not go through wurm hole
+                            shouldGoThroughWurmHole = false;    
+                        }
+                    } else {
+                        if (character.movementComponent.isFlying) {
+                            //flying characters that are not carried should not go through wurm hole
+                            shouldGoThroughWurmHole = false;
+                        }
+                    }
+                    
+                    if (shouldGoThroughWurmHole && wurmHole.wurmHoleConnection.gridTileLocation != null) {
                         wurmHole.TravelThroughWurmHole(character);
                         return;
                     }

@@ -8,7 +8,7 @@ using UnityEngine;
 using Interrupts;
 using Object_Pools;
 using UnityEngine.Profiling;
-
+using UtilityScripts;
 public class Summon : Character {
 
 	public SUMMON_TYPE summonType { get; }
@@ -48,6 +48,34 @@ public class Summon : Character {
         isInfoUnlocked = true;
         isWildMonster = true;
     }
+
+    #region user defined functions
+    void DropItem() {
+        CharacterClassData cData = CharacterManager.Instance.GetOrCreateCharacterClassData(characterClass.className);
+
+        if (cData.droppableItems.Count > 0) {
+            TILE_OBJECT_TYPE itemToDrop = TryGetWeightedSpellChoicesList().PickRandomElementGivenWeights();
+            if (itemToDrop == TILE_OBJECT_TYPE.NONE) {
+                return;
+            }
+            TileObject drop = InnerMapManager.Instance.CreateNewTileObject<TileObject>(itemToDrop);
+            LocationGridTile tileToSpawnPile = gridTileLocation;
+            if (tileToSpawnPile != null && tileToSpawnPile.tileObjectComponent.objHere != null) {
+                tileToSpawnPile = gridTileLocation.GetFirstNeighborThatIsPassableAndNoObject();
+            }
+            tileToSpawnPile.structure.AddPOI(drop, tileToSpawnPile);
+        }
+    }
+
+    private WeightedDictionary<TILE_OBJECT_TYPE> TryGetWeightedSpellChoicesList() {
+        CharacterClassData cData = CharacterManager.Instance.GetOrCreateCharacterClassData(characterClass.className);
+        WeightedDictionary<TILE_OBJECT_TYPE> weights = new WeightedDictionary<TILE_OBJECT_TYPE>();
+        for (int x = 0; x < cData.droppableItems.Count; ++x) {
+            weights.AddElement(cData.droppableItems[x].item, cData.droppableItems[x].weight);
+        }
+        return weights;
+    }
+    #endregion
 
     #region Overrides
     public override void Initialize() {
@@ -93,8 +121,12 @@ public class Summon : Character {
                 _deathLog = humanForm.deathLog;
                 _deathLog.AddInvolvedObjectManual(persistentID);
             }
-            
+
+			if (!isDead) {
+                //DropItem();
+            }
             SetIsDead(true);
+            
             if (isLimboCharacter && isInLimbo) {
                 //If a limbo character dies while in limbo, that character should not process death, instead he/she will be removed from the list
                 CharacterManager.Instance.RemoveLimboCharacter(this);

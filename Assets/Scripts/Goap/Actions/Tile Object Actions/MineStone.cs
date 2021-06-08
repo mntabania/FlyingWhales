@@ -52,7 +52,7 @@ public class MineStone : GoapAction {
 
     #region State Effects
     public void AfterMineSuccess(ActualGoapNode p_node) {
-        p_node.actor.jobComponent.TryCreateHaulJob(ProduceMatsPile(p_node));
+        p_node.actor.jobComponent.TryCreateHaulToWorkplaceJob(ProduceMatsPile(p_node));
     }
     #endregion
 

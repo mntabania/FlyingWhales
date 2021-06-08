@@ -10,7 +10,7 @@ public abstract class AnimalBurrow : TileObject {
     public SUMMON_TYPE monsterToSpawn { get; private set; }
     public List<Summon> spawnedMonsters { get; private set; }
 
-    private const int MaxMonsters = 3;
+    private const int MaxMonsters = 4;
 
     #region getters
     public override Vector2 selectableSize => new Vector2(1.7f, 1.7f);
@@ -78,8 +78,19 @@ public abstract class AnimalBurrow : TileObject {
         Messenger.RemoveListener<Character>(CharacterSignals.CHARACTER_DEATH, OnCharacterDied);
     }
     private void OnDayStarted() {
-        if (spawnedMonsters.Count < MaxMonsters) {
-            CreateNewMonster();
+        if (spawnedMonsters.Count <= 0) {
+            List<LocationGridTile> tiles = RuinarchListPool<LocationGridTile>.Claim();
+            Area area = gridTileLocation.area;
+            for (int i = 0; i < area.gridTileComponent.passableTiles.Count; i++) {
+                LocationGridTile tile = area.gridTileComponent.passableTiles[i];
+                if (tile.structure is Wilderness) {
+                    tiles.Add(tile);
+                }
+            }
+            for (int i = 0; i < MaxMonsters; i++) {
+                CreateNewMonster(tiles);
+            }
+            RuinarchListPool<LocationGridTile>.Release(tiles);
         }
     }
     private void OnCharacterDied(Character p_character) {
