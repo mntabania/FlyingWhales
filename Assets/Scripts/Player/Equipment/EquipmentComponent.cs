@@ -91,6 +91,15 @@ public class EquipmentComponent {
         }
         EquipmentBonusProcessor.RemoveEquipBonusToTarget(p_removedItem, p_targetCharacter);
         allEquipments.Remove(p_removedItem);
+        if (p_removedItem is WeaponItem) {
+            Messenger.Broadcast(CharacterSignals.WEAPON_UNEQUIPPED, p_targetCharacter, p_removedItem);
+        }
+        if (p_removedItem is ArmorItem) {
+            Messenger.Broadcast(CharacterSignals.ARMOR_UNEQUIPPED, p_targetCharacter, p_removedItem);
+        }
+        if (p_removedItem is AccessoryItem) {
+            Messenger.Broadcast(CharacterSignals.ACCESSORY_UNEQUIPPED, p_targetCharacter, p_removedItem);
+        }
     }
 
     public EquipmentItem GetRandomRemainingEquipment(EquipmentItem p_equipToBeremoved) {

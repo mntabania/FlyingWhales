@@ -173,6 +173,9 @@ public class CharacterInfoUI : InfoUIBase {
         Messenger.AddListener<Character, CharacterClass, CharacterClass>(CharacterSignals.CHARACTER_CLASS_CHANGE, OnCharacterChangedClass);
         Messenger.AddListener<Character>(UISignals.UPDATE_CHARACTER_INFO, CharacterRequestedForUpdate);
         Messenger.AddListener<KeyCode>(ControlsSignals.KEY_DOWN_EMPTY_SPACE, OnReceiveKeyCodeSignal);
+        Messenger.AddListener<Character, EquipmentItem>(CharacterSignals.WEAPON_UNEQUIPPED, OnEquipmentUnequipped);
+        Messenger.AddListener<Character, EquipmentItem>(CharacterSignals.ARMOR_UNEQUIPPED, OnEquipmentUnequipped);
+        Messenger.AddListener<Character, EquipmentItem>(CharacterSignals.ACCESSORY_UNEQUIPPED, OnEquipmentUnequipped);
 
         actionEventLabel.SetOnRightClickAction(OnRightClickThoughtBubble);
         relationshipNamesEventLbl.SetOnLeftClickAction(OnLeftClickRelationship);
@@ -189,6 +192,8 @@ public class CharacterInfoUI : InfoUIBase {
         itemsEventLbl.SetOnRightClickAction(OnRightClickItem);
 
         weaponEventButton.AddPointerRightClickAction(OnRightClickEquipment);
+        armorEventButton.AddPointerRightClickAction(OnRightClickEquipment);
+        accessoryEventButton.AddPointerRightClickAction(OnRightClickEquipment);
         //weaponEventButton.AddPointerLeftClickAction(OnLeftClickEquipment);
 
         opinionsEventLabel.SetShouldColorHighlight(false);
@@ -270,7 +275,13 @@ public class CharacterInfoUI : InfoUIBase {
             UpdateCharacterInfo();
         }
     }
-
+    
+    private void OnEquipmentUnequipped(Character p_character, EquipmentItem p_unequipped) {
+        if (isShowing && activeCharacter == p_character) {
+            UpdateEquipmentDisplay();
+        }
+    }
+    
     private void OnReceiveKeyCodeSignal(KeyCode p_key) {
         if (p_key == KeyCode.Mouse1) {
             CloseMenu();
@@ -451,32 +462,35 @@ public class CharacterInfoUI : InfoUIBase {
         if (_activeCharacter.equipmentComponent.currentWeapon != null) {
             weaponImg.enabled = true;
             weaponImg.sprite = _activeCharacter.equipmentComponent.currentWeapon.equipmentData.imgIcon;
-            weaponHoverText.enabled = true;
+            weaponHoverText.Enable();
             weaponHoverText.SetText(_activeCharacter.equipmentComponent.currentWeapon.name + "\n\n" + _activeCharacter.equipmentComponent.currentWeapon.GetBonusDescription());
             weaponEventButton.SetData(_activeCharacter, _activeCharacter.equipmentComponent.currentWeapon);
         } else {
-            weaponHoverText.enabled = false;
+            weaponHoverText.Disable();
             weaponImg.enabled = false;
+            weaponEventButton.ClearData();
         }
         if (_activeCharacter.equipmentComponent.currentArmor != null) {
             armorImg.enabled = true;
             armorImg.sprite = _activeCharacter.equipmentComponent.currentArmor.equipmentData.imgIcon;
-            armorHoverText.enabled = true;
+            armorHoverText.Enable();
             armorHoverText.SetText(_activeCharacter.equipmentComponent.currentArmor.name + "\n\n" + _activeCharacter.equipmentComponent.currentArmor.GetBonusDescription());
             armorEventButton.SetData(_activeCharacter, _activeCharacter.equipmentComponent.currentArmor);
         } else {
-            armorHoverText.enabled = false;
+            armorHoverText.Disable();
             armorImg.enabled = false;
+            armorEventButton.ClearData();
         }
         if (_activeCharacter.equipmentComponent.currentAccessory != null) {
             accessoryImg.enabled = true;
             accessoryImg.sprite = _activeCharacter.equipmentComponent.currentAccessory.equipmentData.imgIcon;
-            accessoryHoverText.enabled = true;
+            accessoryHoverText.Enable();
             accessoryHoverText.SetText(_activeCharacter.equipmentComponent.currentAccessory.name + "\n\n" + _activeCharacter.equipmentComponent.currentAccessory.GetBonusDescription());
             accessoryEventButton.SetData(_activeCharacter, _activeCharacter.equipmentComponent.currentAccessory);
         } else {
-            accessoryHoverText.enabled = false;
+            accessoryHoverText.Disable();
             accessoryImg.enabled = false;
+            accessoryEventButton.ClearData();
         }
     }
 
