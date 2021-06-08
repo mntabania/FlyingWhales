@@ -7,6 +7,7 @@ using Inner_Maps;
 using Inner_Maps.Location_Structures;
 using UtilityScripts;
 using Object_Pools;
+using Character_Talents;
 
 public class CharacterClassComponent : CharacterComponent {
     public CharacterClass characterClass { get; private set; }
@@ -199,6 +200,72 @@ public class CharacterClassComponent : CharacterComponent {
         string randomClass = CollectionUtilities.GetRandomElement(ableClasses);
         AssignClass(randomClass, true);
         OnUpdateCharacterClass();
+    }
+    #endregion
+
+    #region Supply Capacity
+    public int GetFoodSupplyCapacityValue() {
+        int supply = 0;
+        Character c = owner;
+        if (!c.isDead && c.characterClass.className.IsFoodProducerClassName() && c.structureComponent.HasWorkPlaceStructure()) {
+            //If character is paralyzed, restrained or quarantined, he should not be counted
+            bool isAvailable = !c.traitContainer.HasTrait("Paralyzed", "Restrained", "Quarantined");
+            if (isAvailable) {
+                CharacterClassData classData = CharacterManager.Instance.GetOrCreateCharacterClassData(c.characterClass.className);
+                if (c.structureComponent.workPlaceStructure.structureType == classData.workStructureType) {
+                    //Only consider if the claimed work structure type is the appropriate one
+                    CharacterTalent foodTalent = c.talentComponent.GetTalent(CHARACTER_TALENT.Food);
+                    switch (foodTalent.level) {
+                        case 1:
+                        case 2:
+                            supply += 8;
+                            break;
+                        case 3:
+                        case 4:
+                            supply += 16;
+                            break;
+                        case 5:
+                            supply += 24;
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            }
+        }
+        return supply;
+    }
+    public int GetResourceSupplyCapacityValue(string p_className) {
+        int supply = 0;
+        Character c = owner;
+        if (!c.isDead && c.characterClass.className == p_className && c.structureComponent.HasWorkPlaceStructure()) {
+            //If character is paralyzed, restrained or quarantined, he should not be counted
+            bool isAvailable = !c.traitContainer.HasTrait("Paralyzed", "Restrained", "Quarantined");
+            if (isAvailable) {
+                CharacterClassData classData = CharacterManager.Instance.GetOrCreateCharacterClassData(c.characterClass.className);
+                if (c.structureComponent.workPlaceStructure.structureType == classData.workStructureType) {
+                    //Only consider if the claimed work structure type is the appropriate one
+                    supply += 8;
+                }
+                //CharacterTalent foodTalent = c.talentComponent.GetTalent(CHARACTER_TALENT.Food);
+                //switch (foodTalent.level) {
+                //    case 1:
+                //    case 2:
+                //        supply += 8;
+                //        break;
+                //    case 3:
+                //    case 4:
+                //        supply += 16;
+                //        break;
+                //    case 5:
+                //        supply += 24;
+                //        break;
+                //    default:
+                //        break;
+                //}
+            }
+        }
+        return supply;
     }
     #endregion
 

@@ -99,6 +99,7 @@ public class SettlementClassComponent : NPCSettlementComponent {
         string log = string.Empty;
 #if DEBUG_LOG
         log = GameManager.Instance.TodayLogString() + owner.name + " will process needed classes";
+        log += "\nINFO:";
 #endif
         owner.ForceCancelJobTypes(JOB_TYPE.CHANGE_CLASS);
         int numOfActiveResidents = owner.GetNumberOfResidentsThatIsAliveVillager();
@@ -111,6 +112,10 @@ public class SettlementClassComponent : NPCSettlementComponent {
         //Put this here so that looping through all residents is only done once
         int reservedCombatantCount = 0;
         int numberOfAvailableVillagers = 0;
+        List<Character> sortedFoodProducers = RuinarchListPool<Character>.Claim();
+        List<int> sortedFoodProducersSupplyCapacity = RuinarchListPool<int>.Claim();
+        List<Character> sortedResourceProducers = RuinarchListPool<Character>.Claim();
+        List<int> sortedResourceProducersSupplyCapacity = RuinarchListPool<int>.Claim();
         for (int i = 0; i < owner.residents.Count; i++) {
             Character c = owner.residents[i];
             if (!c.isDead) {
@@ -123,25 +128,116 @@ public class SettlementClassComponent : NPCSettlementComponent {
                         numberOfAvailableVillagers++;
                     }
                 } else {
-                    if (c.structureComponent.HasWorkPlaceStructure()) {
-                        if (c.characterClass.className.IsFoodProducerClassName() && numOfActiveResidents > foodSupplyCapacity) {
-                            c.classComponent.SetShouldChangeClass(false);
-                        } else if (c.characterClass.className.IsResourceProducerClassName() && numOfActiveResidents > resourceSupplyCapacity) {
-                            c.classComponent.SetShouldChangeClass(false);
+                    if (c.characterClass.className.IsFoodProducerClassName()) {
+                        //Add all food producer characters in order of their supply value from highest to lowest
+                        int supply = c.classComponent.GetFoodSupplyCapacityValue();
+                        if (supply == 0) {
+                            //If supply is 0, it is automatically added at the bottom of the list
+                            sortedFoodProducers.Add(c);
+                            sortedFoodProducersSupplyCapacity.Add(supply);
                         } else {
-                            c.classComponent.SetShouldChangeClass(true);
-                            numberOfAvailableVillagers++;
+                            bool hasInserted = false;
+                            for (int j = 0; j < sortedFoodProducersSupplyCapacity.Count; j++) {
+                                int fsp = sortedFoodProducersSupplyCapacity[j];
+                                if (supply > fsp) {
+                                    sortedFoodProducers.Insert(j, c);
+                                    sortedFoodProducersSupplyCapacity.Insert(j, supply);
+                                    hasInserted = true;
+                                    break;
+                                }
+                            }
+                            if (!hasInserted) {
+                                sortedFoodProducers.Add(c);
+                                sortedFoodProducersSupplyCapacity.Add(supply);
+                            }
+                        }
+                    } else if (c.characterClass.className.IsResourceProducerClassName()) {
+                        //Add all resource producer characters in order of their supply value from highest to lowest
+                        int supply = c.classComponent.GetResourceSupplyCapacityValue(c.characterClass.className);
+                        if (supply == 0) {
+                            //If supply is 0, it is automatically added at the bottom of the list
+                            sortedResourceProducers.Add(c);
+                            sortedResourceProducersSupplyCapacity.Add(supply);
+                        } else {
+                            bool hasInserted = false;
+                            for (int j = 0; j < sortedResourceProducersSupplyCapacity.Count; j++) {
+                                int rsp = sortedResourceProducersSupplyCapacity[j];
+                                if (supply > rsp) {
+                                    sortedResourceProducers.Insert(j, c);
+                                    sortedResourceProducersSupplyCapacity.Insert(j, supply);
+                                    hasInserted = true;
+                                    break;
+                                }
+                            }
+                            if (!hasInserted) {
+                                sortedResourceProducers.Add(c);
+                                sortedResourceProducersSupplyCapacity.Add(supply);
+                            }
                         }
                     } else {
                         c.classComponent.SetShouldChangeClass(true);
                         numberOfAvailableVillagers++;
                     }
+                    //if (c.structureComponent.HasWorkPlaceStructure()) {
+                    //    if (c.characterClass.className.IsFoodProducerClassName() && numOfActiveResidents > foodSupplyCapacity) {
+                    //        c.classComponent.SetShouldChangeClass(false);
+                    //    } else if (c.characterClass.className.IsResourceProducerClassName() && numOfActiveResidents > resourceSupplyCapacity) {
+                    //        c.classComponent.SetShouldChangeClass(false);
+                    //    } else {
+                    //        c.classComponent.SetShouldChangeClass(true);
+                    //        numberOfAvailableVillagers++;
+                    //    }
+                    //} else {
+                    //    c.classComponent.SetShouldChangeClass(true);
+                    //    numberOfAvailableVillagers++;
+                    //}
                 }
             }
         }
 
+        //Reserve Food/Resource Producers
 #if DEBUG_LOG
-        log += "\nINFO:";
+        log += "\nReserved Food Producers: ";
+#endif
+        int totalFSP = 0;
+        for (int i = 0; i < sortedFoodProducers.Count; i++) {
+            Character fp = sortedFoodProducers[i];
+            if (totalFSP >= numOfActiveResidents) {
+                fp.classComponent.SetShouldChangeClass(true);
+                numberOfAvailableVillagers++;
+            } else {
+                totalFSP += sortedFoodProducersSupplyCapacity[i];
+                fp.classComponent.SetShouldChangeClass(false);
+#if DEBUG_LOG
+                log += $"{fp.name},";
+#endif
+            }
+        }
+
+#if DEBUG_LOG
+        log += "\nReserved Resource Producers: ";
+#endif
+        int totalRSP = 0;
+        for (int i = 0; i < sortedResourceProducers.Count; i++) {
+            Character rp = sortedResourceProducers[i];
+            if (totalRSP >= numOfActiveResidents) {
+                rp.classComponent.SetShouldChangeClass(true);
+                numberOfAvailableVillagers++;
+            } else {
+                totalRSP += sortedResourceProducersSupplyCapacity[i];
+                rp.classComponent.SetShouldChangeClass(false);
+#if DEBUG_LOG
+                log += $"{rp.name},";
+#endif
+            }
+        }
+
+        RuinarchListPool<Character>.Release(sortedFoodProducers);
+        RuinarchListPool<int>.Release(sortedFoodProducersSupplyCapacity);
+        RuinarchListPool<Character>.Release(sortedResourceProducers);
+        RuinarchListPool<int>.Release(sortedResourceProducersSupplyCapacity);
+
+#if DEBUG_LOG
         log += "\nVillagers = " + numOfActiveResidents + ", FSP = " + foodSupplyCapacity + ", RSP = " + resourceSupplyCapacity + ", Combatants = " + numOfCombatants + ", Needed Combatants = " + neededCombatants + ", Non-Reserved = " + numberOfAvailableVillagers;
 #endif
 

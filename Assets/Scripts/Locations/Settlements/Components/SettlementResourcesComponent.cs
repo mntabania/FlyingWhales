@@ -22,55 +22,46 @@ public class SettlementResourcesComponent : NPCSettlementComponent {
         int supply = 0;
         for (int i = 0; i < owner.residents.Count; i++) {
             Character c = owner.residents[i];
-            if (!c.isDead && c.characterClass.className.IsFoodProducerClassName()) {
-                LocationGridTile gridTile = c.gridTileLocation;
-                //If character is paralyzed, restrained or quarantined and is outside his home settlement, he should not be counted
-                bool isAvailable = !(c.traitContainer.HasTrait("Paralyzed", "Restrained", "Quarantined") && gridTile != null && c.hasMarker && !gridTile.IsPartOfSettlement(owner));
-                if (isAvailable) {
-                    CharacterTalent foodTalent = c.talentComponent.GetTalent(CHARACTER_TALENT.Food);
-                    switch (foodTalent.level) {
-                        case 1:
-                        case 2:
-                            supply += 8;
-                            break;
-                        case 3:
-                        case 4:
-                            supply += 16;
-                            break;
-                        case 5:
-                            supply += 24;
-                            break;
-                        default:
-                            break;
-                    }
-                }
-            }
+            supply += c.classComponent.GetFoodSupplyCapacityValue();
         }
         return supply;
     }
     public int GetResourceSupplyCapacity() {
         int supply = 0;
         if (owner.owner?.factionType.type == FACTION_TYPE.Human_Empire) {
-            int numOfMiners = GetNumOfResidentsThatHasClass("Miner");
-            int minerCapacity = owner.occupiedVillageSpot.minerCapacity;
-            int minerMultiplier = Mathf.Min(numOfMiners, minerCapacity);
+            for (int i = 0; i < owner.residents.Count; i++) {
+                Character c = owner.residents[i];
+                supply += c.classComponent.GetResourceSupplyCapacityValue("Miner");
+            }
+            //int numOfMiners = GetNumOfResidentsThatHasClass("Miner");
+            //int minerCapacity = owner.occupiedVillageSpot.minerCapacity;
+            //int minerMultiplier = Mathf.Min(numOfMiners, minerCapacity);
 
-            supply += minerMultiplier * 8;
+            //supply += minerMultiplier * 8;
         } else if (owner.owner?.factionType.type == FACTION_TYPE.Elven_Kingdom) {
-            int numOfLoggers = GetNumOfResidentsThatHasClass("Logger");
-            int loggerCapacity = owner.occupiedVillageSpot.loggerCapacity;
-            int loggerMultiplier = Mathf.Min(numOfLoggers, loggerCapacity);
+            for (int i = 0; i < owner.residents.Count; i++) {
+                Character c = owner.residents[i];
+                supply += c.classComponent.GetResourceSupplyCapacityValue("Logger");
+            }
+            //int numOfLoggers = GetNumOfResidentsThatHasClass("Logger");
+            //int loggerCapacity = owner.occupiedVillageSpot.loggerCapacity;
+            //int loggerMultiplier = Mathf.Min(numOfLoggers, loggerCapacity);
 
-            supply += loggerMultiplier * 8;
+            //supply += loggerMultiplier * 8;
         } else {
-            int numOfMiners = GetNumOfResidentsThatHasClass("Miner");
-            int minerCapacity = owner.occupiedVillageSpot.minerCapacity;
-            int numOfLoggers = GetNumOfResidentsThatHasClass("Logger");
-            int loggerCapacity = owner.occupiedVillageSpot.loggerCapacity;
+            for (int i = 0; i < owner.residents.Count; i++) {
+                Character c = owner.residents[i];
+                supply += c.classComponent.GetResourceSupplyCapacityValue("Miner");
+                supply += c.classComponent.GetResourceSupplyCapacityValue("Logger");
+            }
+            //int numOfMiners = GetNumOfResidentsThatHasClass("Miner");
+            //int minerCapacity = owner.occupiedVillageSpot.minerCapacity;
+            //int numOfLoggers = GetNumOfResidentsThatHasClass("Logger");
+            //int loggerCapacity = owner.occupiedVillageSpot.loggerCapacity;
 
-            int minerMultiplier = Mathf.Min(numOfMiners, minerCapacity);
-            int loggerMultiplier = Mathf.Min(numOfLoggers, loggerCapacity);
-            supply += ((minerMultiplier + loggerMultiplier) * 8);
+            //int minerMultiplier = Mathf.Min(numOfMiners, minerCapacity);
+            //int loggerMultiplier = Mathf.Min(numOfLoggers, loggerCapacity);
+            //supply += ((minerMultiplier + loggerMultiplier) * 8);
         }
         return supply;
     }

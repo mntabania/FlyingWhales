@@ -211,6 +211,9 @@ namespace Inner_Maps.Location_Structures {
                     prevWorker.structureComponent.SetWorkPlaceStructure(null);
                 }
                 if (newWorker != null) {
+                    if (newWorker.structureComponent.workPlaceStructure != null) {
+                        newWorker.structureComponent.workPlaceStructure.SetAssignedWorker(null);
+                    }
                     newWorker.structureComponent.SetWorkPlaceStructure(this);
                 }
             }
