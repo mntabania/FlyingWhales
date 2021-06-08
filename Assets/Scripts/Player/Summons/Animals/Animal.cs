@@ -16,6 +16,9 @@
 	}
 
 	void OnDayStarted() {
-		isShearable = true;
+		if (!isDead) {
+			isShearable = true;
+		}
+		
 	}
 }

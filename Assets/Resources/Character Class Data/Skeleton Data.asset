@@ -50,3 +50,11 @@ MonoBehaviour:
     m_earthResistanceBonus: 0
     m_windResistanceBonus: 0
     m_allElementresistanceBonus: 0
+  craftableWeapons: 
+  craftableArmors: 
+  craftableAccessories: 
+  droppableItems:
+  - item: 13
+    weight: 10
+  - item: 189
+    weight: 10

@@ -73,7 +73,6 @@ namespace Inner_Maps.Location_Structures {
                     return;
 				}
             }
-
             //Combine resource piles
             List<TileObject> builtPilesInSideStructure = RuinarchListPool<TileObject>.Claim();
             SetListToVariable(builtPilesInSideStructure);
@@ -86,22 +85,29 @@ namespace Inner_Maps.Location_Structures {
             }
             RuinarchListPool<TileObject>.Release(builtPilesInSideStructure);
 
-
+            Character randomTarget;
             List<Character> targetAnimals = RuinarchListPool<Character>.Claim();
             if (!p_worker.faction.factionType.IsActionConsideredACrime(CRIME_TYPE.Animal_Killing)) {
                 p_worker.homeSettlement.SettlementResources.PopulateAllAnimalsThatProducesMats(targetAnimals);
-            } else {
-                p_worker.homeSettlement.SettlementResources.PopulateAllAnimalsThatAreShearable(targetAnimals);
+
+                randomTarget = CollectionUtilities.GetRandomElement(targetAnimals);
+                RuinarchListPool<Character>.Release(targetAnimals);
+                if (randomTarget != null) {
+                    p_worker.jobComponent.TriggerSkinAnimal(randomTarget, out producedJob);
+
+                    if (producedJob != null) {
+                        return;
+                    }
+                }
+
             }
-            Character randomTarget = CollectionUtilities.GetRandomElement(targetAnimals);
-            RuinarchListPool<Character>.Release(targetAnimals);
+            
+            RuinarchListPool<Character>.Release(targetAnimals); p_worker.homeSettlement.SettlementResources.PopulateAllAnimalsThatAreShearable(targetAnimals);
+            randomTarget = CollectionUtilities.GetRandomElement(targetAnimals); 
             if (randomTarget != null) {
                 if (randomTarget is Animal) {
                     p_worker.jobComponent.TriggerShearAnimal(randomTarget, out producedJob);
-                } else {
-                    p_worker.jobComponent.TriggerSkinAnimal(randomTarget, out producedJob);
                 }
-                
                 if (producedJob != null) {
                     return;
                 }
