@@ -46,7 +46,7 @@ public class ShearAnimal : GoapAction {
         }
     }
     public void AfterShearAnimalSuccess(ActualGoapNode p_node) {
-        p_node.actor.jobComponent.TryCreateHaulJob(ProduceMatsPile(p_node));
+        p_node.actor.jobComponent.TryCreateHaulToWorkplaceJob(ProduceMatsPile(p_node));
     }
     #endregion
 

@@ -82,7 +82,7 @@ public class FindFish : GoapAction {
 
     #region State Effects
     public void AfterFindFishSuccess(ActualGoapNode p_node) {
-        p_node.actor.jobComponent.TryCreateHaulJob(ProduceMatsPile(p_node));
+        p_node.actor.jobComponent.TryCreateHaulToWorkplaceJob(ProduceMatsPile(p_node));
     }
     #endregion
 
