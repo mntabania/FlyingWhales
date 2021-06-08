@@ -8,6 +8,17 @@ using UtilityScripts;
 
 [CreateAssetMenu(fileName = "New Character Class Data", menuName = "Scriptable Objects/Character Class Data")]
 public class CharacterClassData : ScriptableObject {
+
+    [System.Serializable]
+    public class DroppableItemWithWeights {
+        public TILE_OBJECT_TYPE item;
+        public int weight;
+
+        public DroppableItemWithWeights(TILE_OBJECT_TYPE p_type, int p_weight) {
+            item = p_type;
+            weight = p_weight;
+        }
+    }
     [Header("Combat")]
     public CHARACTER_COMBAT_BEHAVIOUR combatBehaviourType;
     public COMBAT_SPECIAL_SKILL combatSpecialSkillType;
@@ -27,6 +38,8 @@ public class CharacterClassData : ScriptableObject {
     public List<TILE_OBJECT_TYPE> craftableArmors = new List<TILE_OBJECT_TYPE>();
     public List<TILE_OBJECT_TYPE> craftableAccessories = new List<TILE_OBJECT_TYPE>();
 
+    [Header("Droppable Items Equipments")]
+    public List<DroppableItemWithWeights> droppableItems = new List<DroppableItemWithWeights>();
     public int GetSummonCost() {
         return SpellUtilities.GetModifiedSpellCost(summonCost, WorldSettings.Instance.worldSettingsData.playerSkillSettings.GetCostsModification());
     }
@@ -38,6 +51,13 @@ public class CharacterClassData : ScriptableObject {
         return defaultSprites;
     }
 
+    [ContextMenu("Set Monster Drop Items")]
+    public void SetMonsterDrops() {
+        droppableItems.Clear();
+        droppableItems.Add(new DroppableItemWithWeights(TILE_OBJECT_TYPE.NONE, 10));
+        droppableItems.Add(new DroppableItemWithWeights(TILE_OBJECT_TYPE.POWER_CRYSTAL, 10));
+    }
+    
     [ContextMenu("Set Knight Type Items")]
     public void SetKnightTypeItems() {
         craftableWeapons.Clear();
