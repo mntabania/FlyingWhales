@@ -18,6 +18,7 @@ public abstract class ResourcePile : TileObject {
         AddAdvertisedAction(INTERACTION_TYPE.RESOLVE_COMBAT);
         AddAdvertisedAction(INTERACTION_TYPE.BOOBY_TRAP);
         AddAdvertisedAction(INTERACTION_TYPE.DROP_ITEM);
+        AddAdvertisedAction(INTERACTION_TYPE.DROP_RESOURCE_TO_WORK_STRUCTURE);
         this.providedResource = providedResource;
     }
     public ResourcePile(SaveDataTileObject data, RESOURCE providedResource) : base(data) {

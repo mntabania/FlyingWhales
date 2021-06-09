@@ -759,6 +759,9 @@ public static class GoapActionStateDB {
         {INTERACTION_TYPE.CRAFT_EQUIPMENT, new[]{
             new StateNameAndDuration(){ name = "Craft Equipment Success", status = InteractionManager.Goap_State_Success, duration = 30 },
         } },
+        {INTERACTION_TYPE.DROP_RESOURCE_TO_WORK_STRUCTURE, new[]{
+            new StateNameAndDuration(){ name = "Drop Resource To Work Structure Success", status = InteractionManager.Goap_State_Success, duration = 0 },
+        } },
     };
 }
 

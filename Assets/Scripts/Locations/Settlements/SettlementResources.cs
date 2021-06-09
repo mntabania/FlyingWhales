@@ -327,12 +327,13 @@ public class SettlementResources
         List<TileObject> pilePool = RuinarchListPool<TileObject>.Claim();
         for (int x = 0; x < resourcePiles.Count; ++x) {
             ResourcePile pile = resourcePiles[x];
-            if (pile.tileObjectType.IsMetal()) {
+            if (pile.tileObjectType.IsMetal() && pile.resourceInPile >= 40) {
                 if (pile.currentStructure.structureType == STRUCTURE_TYPE.CITY_CENTER && !pile.HasJobTargetingThis(JOB_TYPE.HAUL, JOB_TYPE.COMBINE_STOCKPILE)) {
                     pilePool.Add(pile);
                     //found = true;
-                } else if (pile.currentStructure.structureType == STRUCTURE_TYPE.MINE) {
-                    if (!p_getter.relationshipContainer.IsEnemiesWith((pile.currentStructure as Inner_Maps.Location_Structures.Mine).assignedWorker)) {
+                } else if (pile.currentStructure is Inner_Maps.Location_Structures.Mine mine) {
+                    if (mine.assignedWorker == null || !p_getter.relationshipContainer.IsEnemiesWith(mine.assignedWorker)) {
+
                         pilePool.Add(pile);
                     }
                 }
@@ -351,15 +352,15 @@ public class SettlementResources
         List<TileObject> pilePool = RuinarchListPool<TileObject>.Claim();
         for (int x = 0; x < resourcePiles.Count; ++x) {
             ResourcePile pile = resourcePiles[x];
-            if (pile.tileObjectType == TILE_OBJECT_TYPE.STONE_PILE) {
+            if (pile.tileObjectType == TILE_OBJECT_TYPE.STONE_PILE && pile.resourceInPile >= 40) {
                 if (pile.currentStructure.structureType == STRUCTURE_TYPE.CITY_CENTER && !pile.HasJobTargetingThis(JOB_TYPE.HAUL, JOB_TYPE.COMBINE_STOCKPILE)) {
                     pilePool.Add(pile);
                     //found = true;
-                } else if (pile.currentStructure.structureType == STRUCTURE_TYPE.MINE) {
-                    if (!p_getter.relationshipContainer.IsEnemiesWith((pile.currentStructure as Inner_Maps.Location_Structures.Mine).assignedWorker)) {
+                } else if (pile.currentStructure is Inner_Maps.Location_Structures.Mine mine) {
+                    if (mine.assignedWorker == null || !p_getter.relationshipContainer.IsEnemiesWith(mine.assignedWorker)) {
                         pilePool.Add(pile);
                     }
-                } 
+                }
             }
         }
         ResourcePile chosenPile = null;
@@ -375,12 +376,11 @@ public class SettlementResources
         List<TileObject> pilePool = RuinarchListPool<TileObject>.Claim();
         for (int x = 0; x < resourcePiles.Count; ++x) {
             ResourcePile pile = resourcePiles[x];
-            if (pile.tileObjectType == TILE_OBJECT_TYPE.WOOD_PILE) {
+            if (pile.tileObjectType == TILE_OBJECT_TYPE.WOOD_PILE && pile.resourceInPile >= 40) {
                 if (pile.currentStructure.structureType == STRUCTURE_TYPE.CITY_CENTER && !pile.HasJobTargetingThis(JOB_TYPE.HAUL, JOB_TYPE.COMBINE_STOCKPILE)) {
                     pilePool.Add(pile);
-                    //found = true;
-                } else if (pile.currentStructure.structureType == STRUCTURE_TYPE.LUMBERYARD) {
-                    if (!p_getter.relationshipContainer.IsEnemiesWith((pile.currentStructure as Inner_Maps.Location_Structures.Mine).assignedWorker)) {
+                } else if (pile.currentStructure is Lumberyard lumberyard) {
+                    if (lumberyard.assignedWorker == null || !p_getter.relationshipContainer.IsEnemiesWith(lumberyard.assignedWorker)) {
                         pilePool.Add(pile);
                     }
                 }
@@ -399,12 +399,12 @@ public class SettlementResources
         List<TileObject> pilePool = RuinarchListPool<TileObject>.Claim();
         for (int x = 0; x < resourcePiles.Count; ++x) {
             ResourcePile pile = resourcePiles[x];
-            if (pile.tileObjectType.IsCloth()) {
+            if (pile.tileObjectType.IsCloth() && pile.resourceInPile >= 40) {
                 if (pile.currentStructure.structureType == STRUCTURE_TYPE.CITY_CENTER && !pile.HasJobTargetingThis(JOB_TYPE.HAUL, JOB_TYPE.COMBINE_STOCKPILE)) {
                     pilePool.Add(pile);
                     //found = true;
-                } else if (pile.currentStructure.structureType == STRUCTURE_TYPE.HUNTER_LODGE) {
-                    if (!p_getter.relationshipContainer.IsEnemiesWith((pile.currentStructure as Inner_Maps.Location_Structures.Mine).assignedWorker)) {
+                } else if (pile.currentStructure is HunterLodge hunterLodge) {
+                    if (hunterLodge.assignedWorker == null || !p_getter.relationshipContainer.IsEnemiesWith(hunterLodge.assignedWorker)) {
                         pilePool.Add(pile);
                     }
                 }
@@ -423,12 +423,12 @@ public class SettlementResources
         List<TileObject> pilePool = RuinarchListPool<TileObject>.Claim();
         for (int x = 0; x < resourcePiles.Count; ++x) {
             ResourcePile pile = resourcePiles[x];
-            if (pile.tileObjectType.IsLeather()) {
+            if (pile.tileObjectType.IsLeather() && pile.resourceInPile >= 40) {
                 if (pile.currentStructure.structureType == STRUCTURE_TYPE.CITY_CENTER && !pile.HasJobTargetingThis(JOB_TYPE.HAUL, JOB_TYPE.COMBINE_STOCKPILE)) {
                     pilePool.Add(pile);
                     //found = true;
-                } else if (pile.currentStructure.structureType == STRUCTURE_TYPE.HUNTER_LODGE) {
-                    if (!p_getter.relationshipContainer.IsEnemiesWith((pile.currentStructure as Inner_Maps.Location_Structures.Mine).assignedWorker)) {
+                } else if (pile.currentStructure is HunterLodge hunterLodge) {
+                    if (hunterLodge.assignedWorker == null || !p_getter.relationshipContainer.IsEnemiesWith(hunterLodge.assignedWorker)) {
                         pilePool.Add(pile);
                     }
                 }
