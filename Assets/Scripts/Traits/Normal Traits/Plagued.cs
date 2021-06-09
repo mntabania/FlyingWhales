@@ -251,7 +251,7 @@ namespace Traits {
                     //If character can no longer do happiness recovery and the action that is starting is a happiness recovery type job, character should no longer continue doing the job
                     if (node.associatedJobType.IsHappinessRecoveryTypeJob() && !character.limiterComponent.canDoHappinessRecovery) {
                         if (node.actor.jobQueue.jobsInQueue.Count > 0) {
-                            node.actor.jobQueue.jobsInQueue[0].CancelJob(false);
+                            node.actor.jobQueue.jobsInQueue[0].CancelJob();
                         }
                         willStillContinueAction = false;
                         if (owner.traitContainer.HasTrait("Depressed")) {
@@ -261,7 +261,7 @@ namespace Traits {
                         }
                     } else if (node.associatedJobType.IsTirednessRecoveryTypeJob() && !character.limiterComponent.canDoTirednessRecovery) {
                         if (node.actor.jobQueue.jobsInQueue.Count > 0) {
-                            node.actor.jobQueue.jobsInQueue[0].CancelJob(false);
+                            node.actor.jobQueue.jobsInQueue[0].CancelJob();
                         }
                         willStillContinueAction = false;
                         if (owner.traitContainer.HasTrait("Insomnia")) {

@@ -61,7 +61,7 @@ public class DailyScheduleComponent : CharacterComponent {
         if (previousSchedule == DAILY_SCHEDULE.Sleep && currentSchedule != DAILY_SCHEDULE.Sleep) {
             //wake up character
             if (p_character.currentJob != null && (p_character.currentJob.jobType == JOB_TYPE.ENERGY_RECOVERY_NORMAL || p_character.currentJob.jobType == JOB_TYPE.ENERGY_RECOVERY_URGENT)) {
-                p_character.currentJob.CancelJob(false, "Time to wake up");
+                p_character.currentJob.CancelJob("Time to wake up");
             }
         }
     }

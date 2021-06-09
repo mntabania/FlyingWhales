@@ -128,7 +128,7 @@ public abstract class JobQueueItem : ISavable {
     protected virtual bool CanTakeJob(Character character) {
         return !character.traitContainer.HasTrait("Criminal") && character.limiterComponent.canPerform; //!character.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)
     }
-    public virtual void UnassignJob(bool shouldDoAfterEffect, string reason) { }
+    public virtual void UnassignJob(string reason) { }
     public virtual void OnAddJobToQueue() { }
     public virtual bool OnRemoveJobFromQueue() { return true; }
     public virtual void AddOtherData(INTERACTION_TYPE actionType, object[] data) { }
@@ -169,14 +169,14 @@ public abstract class JobQueueItem : ISavable {
     public virtual bool ProcessJob() { return false; }
     //Returns true or false if job was really removed in queue
     //reason parameter only applies if the job that is being cancelled is the currentActionNode's job
-    public virtual bool CancelJob(bool shouldDoAfterEffect = true, string reason = "") {
+    public virtual bool CancelJob(string reason = "") {
         //When cancelling a job, we must check if it's personal or not because if it is a faction/npcSettlement job it cannot be removed from queue
         //The only way for a faction/npcSettlement job to be removed is if it is forced or it is actually finished
         if(assignedCharacter == null) {
             //Can only cancel jobs that are in character job queue
             return false;
         }
-        return assignedCharacter.jobQueue.RemoveJobInQueue(this, shouldDoAfterEffect, reason);
+        return assignedCharacter.jobQueue.RemoveJobInQueue(this, reason);
         //if (process) {
         //    if (job is GoapPlanJob && cause != "") {
         //        GoapPlanJob planJob = job as GoapPlanJob;
@@ -194,10 +194,10 @@ public abstract class JobQueueItem : ISavable {
         //}
         //return hasBeenRemovedInJobQueue;
     }
-    public virtual bool ForceCancelJob(bool shouldDoAfterEffect = true, string reason = "") {
+    public virtual bool ForceCancelJob(string reason = "") {
         if (assignedCharacter != null) {
             JOB_OWNER ownerType = originalOwner.ownerType;
-            bool hasBeenRemoved = assignedCharacter.jobQueue.RemoveJobInQueue(this, shouldDoAfterEffect, reason);
+            bool hasBeenRemoved = assignedCharacter.jobQueue.RemoveJobInQueue(this, reason);
             if (ownerType == JOB_OWNER.CHARACTER) {
                 return hasBeenRemoved;
             }
@@ -218,18 +218,18 @@ public abstract class JobQueueItem : ISavable {
             // if (jobThatPushedBack.IsAnInterruptionJob()) {
             //     stopText = "Interrupted";
             // }
-            assignedCharacter?.StopCurrentActionNode(false, stopText);
+            assignedCharacter?.StopCurrentActionNode(stopText);
         } else {
             //If job is cannot be pushed back and it is pushed back, cancel it instead
-            CancelJob(false);
+            CancelJob();
         }
     }
     public virtual void StopJobNotDrop() {
         if (cannotBePushedBack) {
             //If job is cannot be pushed back and it is stopped, cancel it
-            CancelJob(false);
+            CancelJob();
         } else {
-            assignedCharacter?.StopCurrentActionNode(false);
+            assignedCharacter?.StopCurrentActionNode();
         }
     }
     public virtual bool CanBeInterruptedBy(JOB_TYPE jobType) { return true; }

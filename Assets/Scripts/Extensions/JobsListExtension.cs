@@ -30,9 +30,9 @@ public static class JobsListExtension {
         }
         return foundJobs;
     }
-    public static void CancelJobs(this List<JobQueueItem> jobs, bool shouldDoAfterEffect = true, string reason = "") {
+    public static void CancelJobs(this List<JobQueueItem> jobs, string reason = "") {
         for (int i = 0; i < jobs.Count; i++) {
-            jobs[i].ForceCancelJob(shouldDoAfterEffect, reason);
+            jobs[i].ForceCancelJob(reason);
         }
     }
 }

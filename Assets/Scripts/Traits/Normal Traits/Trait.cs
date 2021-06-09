@@ -272,7 +272,7 @@ namespace Traits {
                     canBeTransfered = true;
                 }
                 if (canBeTransfered && characterThatWillDoJob.CanCurrentJobBeOverriddenByJob(currentJob)) {
-                    currentJob.CancelJob(shouldDoAfterEffect: false);
+                    currentJob.CancelJob();
                     characterThatWillDoJob.jobQueue.AddJobInQueue(currentJob);
                     return true;
                 }

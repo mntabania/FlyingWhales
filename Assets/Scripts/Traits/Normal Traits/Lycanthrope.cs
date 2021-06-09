@@ -81,7 +81,7 @@ namespace Traits {
                     CRIME_SEVERITY severity = CrimeManager.Instance.GetCrimeSeverity(seenCharacter, owner, owner, CRIME_TYPE.Werewolf);
                     if (severity != CRIME_SEVERITY.None && severity != CRIME_SEVERITY.Unapplicable) {
                         JobQueueItem huntPreyJob = owner.jobQueue.GetJob(JOB_TYPE.LYCAN_HUNT_PREY);
-                        huntPreyJob?.ForceCancelJob(false, "avoiding discovery");
+                        huntPreyJob?.ForceCancelJob("avoiding discovery");
                         owner.crimeComponent.FleeToAllVillagerInRangeThatConsidersCrimeTypeACrime(owner, CRIME_TYPE.Werewolf, "avoiding discovery");
                     }
                 }
@@ -115,7 +115,7 @@ namespace Traits {
         }
         private void ResistHunger() {
             JobQueueItem huntPreyJob = owner.jobQueue.GetJob(JOB_TYPE.LYCAN_HUNT_PREY);
-            huntPreyJob?.ForceCancelJob(false, "Resisted Hunger");
+            huntPreyJob?.ForceCancelJob("Resisted Hunger");
             
             owner.traitContainer.AddTrait(owner, "Ashamed");
             Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Trait", "Lycanthrope", "resist_hunger", null, LOG_TAG.Needs);

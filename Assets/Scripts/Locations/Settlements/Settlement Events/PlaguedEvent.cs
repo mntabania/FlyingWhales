@@ -40,7 +40,7 @@ namespace Locations.Settlements.Settlement_Events {
             List<JobQueueItem> jobs = RuinarchListPool<JobQueueItem>.Claim();
             p_settlement.PopulateJobsOfType(jobs, JOB_TYPE.PLAGUE_CARE, JOB_TYPE.QUARANTINE);
             for (int i = 0; i < jobs.Count; i++) {
-                jobs[i].ForceCancelJob(false, "Settlement no longer in Quarantine");
+                jobs[i].ForceCancelJob("Settlement no longer in Quarantine");
             }
             RuinarchListPool<JobQueueItem>.Release(jobs);
             UnsubscribeListeners(p_settlement);
@@ -151,7 +151,7 @@ namespace Locations.Settlements.Settlement_Events {
                     List<JobQueueItem> jobs = RuinarchListPool<JobQueueItem>.Claim();
                     p_settlement.PopulateJobsOfType(jobs, JOB_TYPE.PLAGUE_CARE, JOB_TYPE.QUARANTINE);
                     for (int i = 0; i < jobs.Count; i++) {
-                        jobs[i].ForceCancelJob(false, "Settlement no longer in Quarantine");
+                        jobs[i].ForceCancelJob("Settlement no longer in Quarantine");
                     }
                     RuinarchListPool<JobQueueItem>.Release(jobs);
                     break;

@@ -153,11 +153,11 @@ public class JobQueue {
         }
         return true;
     }
-    public bool RemoveJobInQueue(JobQueueItem job, bool shouldDoAfterEffect = true, string reason = "") {
+    public bool RemoveJobInQueue(JobQueueItem job, string reason = "") {
         if (jobsInQueue.Remove(job)) {
             Messenger.Broadcast(JobSignals.JOB_REMOVED_FROM_QUEUE, job, owner);
             owner.combatComponent.OnJobRemovedFromQueue(job);
-            job.UnassignJob(shouldDoAfterEffect, reason);
+            job.UnassignJob(reason);
             string ownerName = owner.name;
 #if DEBUG_LOG
             Debug.Log(GameManager.Instance.TodayLogString() + $"{job.name} has been removed from {ownerName} job queue.");
@@ -617,7 +617,7 @@ public class JobQueue {
             for (int j = 0; j < jobTypes.Length; j++) {
                 JobQueueItem job = jobsInQueue[i];
                 if (job.jobType == jobTypes[j]) {
-                    if (job.CancelJob(false)) {
+                    if (job.CancelJob()) {
                         i--;
                     }
                     break;

@@ -427,7 +427,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 	public void TriggerBuryPsychopathVictim(Character target, NPCSettlement settlementOfTarget) {
 		if (settlementOfTarget != null) {
 			JobQueueItem buryJob = settlementOfTarget.GetJob(JOB_TYPE.BURY, target);
-			buryJob?.ForceCancelJob(false);	
+			buryJob?.ForceCancelJob();	
 		}
 
 		GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.BURY_SERIAL_KILLER_VICTIM, INTERACTION_TYPE.BURY_CHARACTER, target, owner);

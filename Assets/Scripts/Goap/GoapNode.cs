@@ -366,7 +366,7 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
                 if (job.originalOwner != null && job.originalOwner.ownerType != JOB_OWNER.CHARACTER) {
                     job.AddBlacklistedCharacter(actor);
                 }
-                job.CancelJob(false);
+                job.CancelJob();
                 actor.NoPathToDoJobOrAction(job, this);
             }
         } else {
@@ -387,7 +387,7 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
         if (targetTile == null) {
             //Here we check if there is a target tile to go to because if there is not, the target might already be destroyed/taken/disabled, if that happens, we must cancel job
             // Debug.LogWarning($"{GameManager.Instance.TodayLogString()}{actor.name} is trying to move to do action {action.goapName} with target {poiTarget.name} but target tile is null, will cancel job {job.name} instead.");
-            job.CancelJob(false);
+            job.CancelJob();
             return false;
         }
         Assert.IsNotNull(actor.currentRegion, $"Current region of {actor.name} is null when trying to perform {action.name} with job {job.jobType.ToString()}");
@@ -486,13 +486,13 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
             JobQueueItem job = associatedJob;
             if (job != null) {
                 if (job.forceCancelOnInvalid || goapActionInvalidity.IsReasonForCancellationShouldDropJob()) {
-                    job.ForceCancelJob(false);
+                    job.ForceCancelJob();
                 } else {
                     if (isInvalidOnVision || isInvalidStealth) { //If action is invalid because of stealth, cancel job immediately, we do not need to recalculate it anymore since there are witnesses around, it will just become invalid again even if we let it recalculate
                         if (job.originalOwner != null && job.originalOwner.ownerType != JOB_OWNER.CHARACTER) {
                             job.AddBlacklistedCharacter(actor);
                         }
-                        job.CancelJob(false);
+                        job.CancelJob();
                     } else {
                         //Special case for Invite action for Make Love
                         //Once the invite action became invalid because the target rejected the invite, it must be cancelled immediately, so that the actor will not try to invite again
@@ -501,13 +501,13 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
                             if (job.originalOwner != null && job.originalOwner.ownerType != JOB_OWNER.CHARACTER) {
                                 job.AddBlacklistedCharacter(actor);
                             }
-                            job.CancelJob(false);
+                            job.CancelJob();
                         } else {
                             if (job.invalidCounter > 0) {
                                 if (job.originalOwner != null && job.originalOwner.ownerType != JOB_OWNER.CHARACTER) {
                                     job.AddBlacklistedCharacter(actor);
                                 }
-                                job.CancelJob(false);
+                                job.CancelJob();
                             } else {
                                 job.IncreaseInvalidCounter();
                             }
@@ -536,7 +536,7 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
                         targetCharacter.stateComponent.currentState.PauseState();
                     }
                     if (targetCharacter.currentActionNode != null) {
-                        targetCharacter.StopCurrentActionNode(false);
+                        targetCharacter.StopCurrentActionNode();
                     }
                     targetCharacter.limiterComponent.DecreaseCanMove();
                     InnerMapManager.Instance.FaceTarget(targetCharacter, actor);
@@ -562,23 +562,25 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
         action.Perform(this);
         Messenger.Broadcast(JobSignals.STARTED_PERFORMING_ACTION, this);
     }
-    public void ActionInterruptedWhilePerforming(bool shouldDoAfterEffect) {
-//#if DEBUG_LOG
-//        string log =
-//            $"{GameManager.Instance.TodayLogString()}{actor.name} is interrupted while doing goap action: {action.goapName}";
-//#endif
-        if (shouldDoAfterEffect) {
-            string result = GoapActionStateDB.GetStateResult(action.goapType, currentState.name);
-            if (result == InteractionManager.Goap_State_Success) {
-                actionStatus = ACTION_STATUS.SUCCESS;
-            } else {
-                actionStatus = ACTION_STATUS.FAIL;
-            }    
-        } else {
-            //consider action as failed since after effect was not executed.
-            actionStatus = ACTION_STATUS.FAIL;
-        }
-        
+    public void ActionInterruptedWhilePerforming() { //bool shouldDoAfterEffect
+    //#if DEBUG_LOG
+    //        string log =
+    //            $"{GameManager.Instance.TodayLogString()}{actor.name} is interrupted while doing goap action: {action.goapName}";
+    //#endif
+        //if (shouldDoAfterEffect) {
+        //    string result = GoapActionStateDB.GetStateResult(action.goapType, currentState.name);
+        //    if (result == InteractionManager.Goap_State_Success) {
+        //        actionStatus = ACTION_STATUS.SUCCESS;
+        //    } else {
+        //        actionStatus = ACTION_STATUS.FAIL;
+        //    }    
+        //} else {
+        //    //consider action as failed since after effect was not executed.
+        //    actionStatus = ACTION_STATUS.FAIL;
+        //}
+        //consider action as failed since after effect was not executed.
+        actionStatus = ACTION_STATUS.FAIL;
+
         StopPerTickEffect();
         if (poiTarget is Character targetCharacter) {
             if (!action.doesNotStopTargetCharacter && actor != poiTarget) {
@@ -599,7 +601,7 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
             actor.SetCurrentActionNode(null, null, null);
         }
         //Assert.IsNotNull(job, $"{actor.name} was interrupted when performing {action.goapName} but, in this process his/her current job is null!");
-        job?.CancelJob(false);
+        job?.CancelJob();
         Messenger.Broadcast(JobSignals.CHARACTER_FINISHED_ACTION, this);
     }
     private void ActionResult(GoapActionState actionState) {
@@ -623,17 +625,18 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
         actor.GoapActionResult(result, this);
         Messenger.Broadcast(JobSignals.CHARACTER_FINISHED_ACTION, this);
     }
-    public void StopActionNode(bool shouldDoAfterEffect) {
+    public void StopActionNode() {
         if (actionStatus == ACTION_STATUS.PERFORMING) {
             action.OnStopWhilePerforming(this);
-            if (currentState.duration == 0) { //If action has no duration then do EndPerTickEffect (this will also call the action result)
-                OnCancelActionTowardsTarget();
-                //ReturnToActorTheActionResult(InteractionManager.Goap_State_Fail);
-                EndPerTickEffect(shouldDoAfterEffect);
-            } else { //If action has duration and interrupted in the middle of the duration then do ActionInterruptedWhilePerforming (this will not call the action result, instead it will call the cancel job so it can be brought back to the npcSettlement list if it is a npcSettlement job)
-                OnCancelActionTowardsTarget();
-                ActionInterruptedWhilePerforming(shouldDoAfterEffect);
-            }
+            OnCancelActionTowardsTarget();
+            ActionInterruptedWhilePerforming();
+
+            //if (currentState.duration == 0) { //If action has no duration then do EndPerTickEffect (this will also call the action result)
+            //    //ReturnToActorTheActionResult(InteractionManager.Goap_State_Fail);
+            //    EndPerTickEffect(false);
+            //} else { //If action has duration and interrupted in the middle of the duration then do ActionInterruptedWhilePerforming (this will not call the action result, instead it will call the cancel job so it can be brought back to the npcSettlement list if it is a npcSettlement job)
+            //    ActionInterruptedWhilePerforming();
+            //}
             ////when the action is ended prematurely, make sure to readjust the target character's do not move values
             //if (poiTarget.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
             //    if (poiTarget != actor) {
@@ -851,7 +854,7 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
         //If there is still job after processing results, we need to cancel it here because if the target is vigilant the actio has failed in reality, so the job must be cancelled
         if(currentJob != null && currentJob.jobType != JOB_TYPE.NONE && !currentJob.hasBeenReset) {
             //Checking if job type must not be none, because if it is none, the job is not used anymore
-            currentJob.CancelJob(false);
+            currentJob.CancelJob();
         }
     }
     private void PerTickEffect() {

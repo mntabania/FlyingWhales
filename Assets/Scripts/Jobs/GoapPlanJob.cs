@@ -156,13 +156,13 @@ public class GoapPlanJob : JobQueueItem {
         }
         return base.ProcessJob();
     }
-    public override bool CancelJob(bool shouldDoAfterEffect = true, string reason = "") {
+    public override bool CancelJob(string reason = "") {
         //if (id == -1) { return false; }
         if (assignedCharacter == null) {
             //Can only cancel jobs that are in character job queue
             return false;
         }
-        return assignedCharacter.jobQueue.RemoveJobInQueue(this, shouldDoAfterEffect, reason);
+        return assignedCharacter.jobQueue.RemoveJobInQueue(this, reason);
         //if (assignedCharacter.jobQueue.RemoveJobInQueue(this, shouldDoAfterEffect, reason)) {
         //    if(reason != "") {
         //        assignedCharacter.RegisterLogAndShowNotifToThisCharacterOnly("Generic", "job_cancelled_cause", null, reason);
@@ -171,12 +171,12 @@ public class GoapPlanJob : JobQueueItem {
         //}
         //return false;
     }
-    public override bool ForceCancelJob(bool shouldDoAfterEffect = true, string reason = "") {
+    public override bool ForceCancelJob(string reason = "") {
         //if (id == -1) { return false; }
         if (assignedCharacter != null) {
             Character assignedCharacter = this.assignedCharacter;
             JOB_OWNER ownerType = originalOwner.ownerType;
-            bool hasBeenRemoved = assignedCharacter.jobQueue.RemoveJobInQueue(this, shouldDoAfterEffect, reason);
+            bool hasBeenRemoved = assignedCharacter.jobQueue.RemoveJobInQueue(this, reason);
             //if (hasBeenRemoved) {
             //    if (cause != "") {
             //        assignedCharacter.RegisterLogAndShowNotifToThisCharacterOnly("Generic", "job_cancelled_cause", null, cause);
@@ -192,9 +192,9 @@ public class GoapPlanJob : JobQueueItem {
             return true;
         }
     }
-    public override void UnassignJob(bool shouldDoAfterEffect, string reason) {
+    public override void UnassignJob(string reason) {
         //if (id == -1) { return; }
-        base.UnassignJob(shouldDoAfterEffect, reason);
+        base.UnassignJob(reason);
         if (assignedCharacter != null) {
             if(assignedPlan != null) {
                 //assignedCharacter.AdjustIsWaitingForInteraction(1);
@@ -207,7 +207,7 @@ public class GoapPlanJob : JobQueueItem {
                     //        assignedCharacter.currentParty.icon.SetOnArriveAction(() => assignedCharacter.OnArriveAtAreaStopMovement());
                     //    }
                     //}
-                    assignedCharacter.StopCurrentActionNode(shouldDoAfterEffect, reason);
+                    assignedCharacter.StopCurrentActionNode(reason);
                     //if (character.currentActionNode != null) {
                     //    character.SetCurrentActionNode(null);
                     //}

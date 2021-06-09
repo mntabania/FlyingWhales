@@ -131,7 +131,7 @@ public class GoapPlanner {
 #if DEBUG_LOG
                     owner.logComponent.PrintLogIfActive($"{owner.name} is scrapping plan since {owner.name} cannot perform. {goapThread.job.name} is the job.");
 #endif
-                    goapThread.job.CancelJob(false);
+                    goapThread.job.CancelJob();
                     ObjectPoolManager.Instance.ReturnGoapThreadToPool(goapThread);
                     return;
                 }
@@ -208,7 +208,7 @@ public class GoapPlanner {
                 string reason = owner.GetCultistUnableToDoJobReason(goapThread.job, failedPrecondition, failedPreconditionActionType);
                 owner.LogUnableToDoJob(reason);
             }
-            goapThread.job.CancelJob(false);
+            goapThread.job.CancelJob();
 
             if(jobType == JOB_TYPE.FULLNESS_RECOVERY_URGENT || jobType == JOB_TYPE.FULLNESS_RECOVERY_NORMAL) {
                 //Do not produce food anymore personally, since it is already handled in character wants
@@ -235,7 +235,7 @@ public class GoapPlanner {
         if(job == null) {
             return;
         }
-        job.ForceCancelJob(false);
+        job.ForceCancelJob();
         if (!string.IsNullOrEmpty(job.persistentID)) {
             JobManager.Instance.OnFinishJob(job);
         }

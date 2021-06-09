@@ -101,7 +101,7 @@ public class SettlementClassComponent : NPCSettlementComponent {
         log = GameManager.Instance.TodayLogString() + owner.name + " will process needed classes";
         log += "\nINFO:";
 #endif
-        owner.ForceCancelJobTypes(JOB_TYPE.CHANGE_CLASS);
+        owner.ForceCancelJobTypesImmediately(JOB_TYPE.CHANGE_CLASS);
         int numOfActiveResidents = owner.GetNumberOfResidentsThatIsAliveVillager();
         int foodSupplyCapacity = owner.resourcesComponent.GetFoodSupplyCapacity();
         int resourceSupplyCapacity = owner.resourcesComponent.GetResourceSupplyCapacity();
@@ -198,6 +198,12 @@ public class SettlementClassComponent : NPCSettlementComponent {
         //Reserve Food/Resource Producers
 #if DEBUG_LOG
         log += "\nReserved Food Producers: ";
+        if (sortedFoodProducers.Count != sortedFoodProducersSupplyCapacity.Count) {
+            Debug.LogError("Food producer list and food supply capacity list not the same length: " + sortedFoodProducers.Count + "," + sortedFoodProducersSupplyCapacity.Count);
+        }
+        if (sortedResourceProducers.Count != sortedResourceProducersSupplyCapacity.Count) {
+            Debug.LogError("Resource producer list and resource supply capacity list not the same length: " + sortedResourceProducers.Count + "," + sortedResourceProducersSupplyCapacity.Count);
+        }
 #endif
         int totalFSP = 0;
         for (int i = 0; i < sortedFoodProducers.Count; i++) {

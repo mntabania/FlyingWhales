@@ -856,7 +856,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public void ForceCancelAllJobsTargetingThisCharacter(bool shouldDoAfterEffect) {
         for (int i = 0; i < allJobsTargetingThis.Count; i++) {
             JobQueueItem job = allJobsTargetingThis[i];
-            if (job.ForceCancelJob(shouldDoAfterEffect)) {
+            if (job.ForceCancelJob()) {
                 i--;
             }
         }
@@ -896,7 +896,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                             continue; //skip
                         }
                     }
-                    if (goapJob.ForceCancelJob(false, reason)) {
+                    if (goapJob.ForceCancelJob(reason)) {
                         i--;
                     }
                 }
@@ -906,7 +906,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     private void ForceCancelAllActionsTargetingPOI(IPointOfInterest target, string reason) {
         if(currentActionNode != null && currentActionNode.associatedJob != null && currentActionNode.poiTarget == target && currentActionNode.associatedJob.poiTarget == target) {
             //if target is main target of the job, stop the whole job
-            currentActionNode.associatedJob.ForceCancelJob(false, reason);
+            currentActionNode.associatedJob.ForceCancelJob(reason);
         }
     }
     private void ForceCancelAllJobsOfTypeTargetingPOI(IPointOfInterest target, string reason, JOB_TYPE jobType) {
@@ -920,7 +920,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                             continue; //skip
                         }
                     }
-                    if (goapJob.ForceCancelJob(false, reason)) {
+                    if (goapJob.ForceCancelJob(reason)) {
                         i--;
                     }
                 }
@@ -937,7 +937,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                         //if target is character and is being carried by this do not cancel the job 
                         continue; //skip
                     }
-                    if (goapJob.ForceCancelJob(false, reason)) {
+                    if (goapJob.ForceCancelJob(reason)) {
                         i--;
                     }
                 }
@@ -1045,7 +1045,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         for (int i = 0; i < allJobsTargetingThis.Count; i++) {
             JobQueueItem job = allJobsTargetingThis[i];
             if (job.jobType == JOB_TYPE.REMOVE_STATUS || job.jobType == JOB_TYPE.REPAIR || job.jobType == JOB_TYPE.FEED) {
-                if (job.CancelJob(false)) {
+                if (job.CancelJob()) {
                     i--;
                 }
             }
@@ -1178,26 +1178,26 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     //        }
     //    }
     //}
-    public void CancelAllJobsExceptForCurrent(bool shouldDoAfterEffect = true) {
+    public void CancelAllJobsExceptForCurrent() {
         if (currentJob != null) {
             for (int i = 0; i < jobQueue.jobsInQueue.Count; i++) {
                 JobQueueItem job = jobQueue.jobsInQueue[i];
                 if (job != currentJob) {
-                    if (job.CancelJob(shouldDoAfterEffect)) {
+                    if (job.CancelJob()) {
                         i--;
                     }
                 }
             }
         }
     }
-    public void CancelAllJobsExceptForCurrent(bool shouldDoAfterEffect = true, params JOB_TYPE[] jobType) {
+    public void CancelAllJobsExceptForCurrent(params JOB_TYPE[] jobType) {
         if (currentJob != null) {
             for (int i = 0; i < jobQueue.jobsInQueue.Count; i++) {
                 JobQueueItem job = jobQueue.jobsInQueue[i];
                 if (job != currentJob) {
                     for (int j = 0; j < jobType.Length; j++) {
                         if (job.jobType == jobType[j]) {
-                            if (job.CancelJob(shouldDoAfterEffect)) {
+                            if (job.CancelJob()) {
                                 i--;
                             }
                             break;
@@ -1808,7 +1808,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             //CheckApprehendRelatedJobsOnLeaveLocatio1n();
             //CancelOrUnassignRemoveTraitRelatedJobs();
             Messenger.Broadcast(CharacterSignals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI_EXCEPT_SELF, this as IPointOfInterest, "");
-            CancelAllJobsExceptForCurrent(false);
+            CancelAllJobsExceptForCurrent();
             //marker.ClearTerrifyingObjects();
             needsComponent.OnCharacterLeftLocation(currentRegion);
         } else {
@@ -4582,7 +4582,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                             reason = GetCultistUnableToDoJobReason(currentTopPrioJob, failedPrecondition, currentNode.goapType);
                         }
                         currentNode.action.OnStopWhileStarted(currentNode);
-                        currentTopPrioJob.CancelJob(false, reason);
+                        currentTopPrioJob.CancelJob(reason);
                     } else {
 #if DEBUG_LOG
                         logComponent.PrintLogIfActive(log);
@@ -4618,7 +4618,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                             logComponent.PrintLogIfActive(log);
 #endif
                             currentNode.action.OnStopWhileStarted(currentNode);
-                            currentTopPrioJob.CancelJob(false);
+                            currentTopPrioJob.CancelJob();
                             return;
                         }
                     }
@@ -4670,7 +4670,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                                     logComponent.PrintLogIfActive(log);
 #endif
                                     currentNode.action.OnStopWhileStarted(currentNode);
-                                    currentTopPrioJob.CancelJob(false);
+                                    currentTopPrioJob.CancelJob();
                                     return;
                                 } else {
 #if DEBUG_LOG
@@ -4724,7 +4724,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                     }
                 }
                 currentNode.action.OnStopWhileStarted(currentNode);
-                currentTopPrioJob.CancelJob(false, reason);
+                currentTopPrioJob.CancelJob(reason);
 #if DEBUG_PROFILER
                 Profiler.EndSample();
 #endif
@@ -4766,7 +4766,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 log = $"{log}\n - Action's plan has doNotRecalculate state set to true, dropping plan...";
                 logComponent.PrintLogIfActive(log);
 #endif
-                currentJob.CancelJob(false);
+                currentJob.CancelJob();
             } else {
 #if DEBUG_LOG
                 logComponent.PrintLogIfActive(log);
@@ -4799,7 +4799,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             log = $"{log}\n{name} is dead or cannot perform! Do not do GoapActionResult, automatically CancelJob";
             logComponent.PrintLogIfActive(log);
 #endif
-            job.CancelJob(false);
+            job.CancelJob();
             return;
         }
 
@@ -4829,7 +4829,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 Messenger.Broadcast(CharacterSignals.CHARACTER_FINISHED_JOB_SUCCESSFULLY, this, job);
                 
                 //this means that this is the end goal so end this plan now
-                job.ForceCancelJob(false);
+                job.ForceCancelJob();
             } else {
                 SetCurrentJob(job);
 #if DEBUG_LOG
@@ -4847,7 +4847,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         //Reason: https://trello.com/c/58aGENsO/1867-attempt-to-find-another-nearby-chair-first-instead-of-dropping-drink-eat-sit-down-actions
         else if (result == InteractionManager.Goap_State_Fail) {
             if (plan.doNotRecalculate) {
-                job.CancelJob(false);
+                job.CancelJob();
             } else {
                 planner.RecalculateJob(job);
             }
@@ -4879,7 +4879,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     }
     //Only stop an action node if it is the current action node
     ///Stopping action node does not mean that the job will be cancelled, if you want to cancel job at the same time call <see cref="StopCurrentActionNodeAndCancelItsJob">
-    public bool StopCurrentActionNode(bool shouldDoAfterEffect = false, string reason = "") {
+    public bool StopCurrentActionNode(string reason = "") {
         if(currentActionNode == null) {
             return false;
         }
@@ -4941,7 +4941,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 marker.SetVisionColliderSize(CharacterManager.VISION_RANGE);
             }
         }
-        currentActionNode.StopActionNode(shouldDoAfterEffect);
+        currentActionNode.StopActionNode();
         SetCurrentActionNode(null, null, null);
         
         //Every time current node is stopped, drop carried poi
@@ -5633,7 +5633,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public void ProcessForcedCancelJobsOnTickEnded() {
         if (forcedCancelJobsOnTickEnded.Count > 0) {
             for (int i = 0; i < forcedCancelJobsOnTickEnded.Count; i++) {
-                forcedCancelJobsOnTickEnded[i].ForceCancelJob(false);
+                forcedCancelJobsOnTickEnded[i].ForceCancelJob();
             }
             forcedCancelJobsOnTickEnded.Clear();
         }

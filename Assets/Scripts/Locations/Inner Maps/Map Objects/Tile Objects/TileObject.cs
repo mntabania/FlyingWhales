@@ -726,7 +726,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         for (int i = 0; i < allJobsTargetingThis.Count; i++) {
             JobQueueItem job = allJobsTargetingThis[i];
             if(job.jobType == JOB_TYPE.REMOVE_STATUS || job.jobType == JOB_TYPE.REPAIR || job.jobType == JOB_TYPE.FEED) {
-                if (job.CancelJob(false)){
+                if (job.CancelJob()){
                     i--;
                 }
             }
@@ -1288,7 +1288,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
             jobs.AddRange(allExistingJobsTargetingThis);
             for (int i = 0; i < jobs.Count; i++) {
                 JobQueueItem jobQueueItem = jobs[i];
-                jobQueueItem.CancelJob(false);
+                jobQueueItem.CancelJob();
             }
             RuinarchListPool<JobQueueItem>.Release(jobs);
             gridTileLocation?.structure.RemovePOI(this);
