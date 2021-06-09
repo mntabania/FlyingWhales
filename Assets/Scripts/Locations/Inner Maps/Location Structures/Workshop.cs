@@ -3,6 +3,7 @@ using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
 using Inner_Maps.Location_Structures;
+using UtilityScripts;
 namespace Inner_Maps.Location_Structures {
     public class Workshop : ManMadeStructure {
 
@@ -181,72 +182,161 @@ namespace Inner_Maps.Location_Structures {
 
         protected override void ProcessWorkStructureJobsByWorker(Character p_worker, out JobQueueItem producedJob) {
             producedJob = null;
-
+            return;
             GetReferenceForAllMetals();
             GetReferenceForStones();
             GetReferenceForWood();
             GetReferenceForCloths();
             GetReferenceForLeathers();
+
+            //try check if there are same metal resourcepiles of same type object(i.e. same copper, same iron etc.), then combine it
+            Debug.LogError("Try Search for metal resourcepile of same type: ");
+            List<TileObject> pilesForCombining = RuinarchListPool<TileObject>.Claim();
+            pilesForCombining = CreateMetalListForHaulCombineCandidate(m_metals);
+            if (pilesForCombining.Count > 1) {
+                p_worker.jobComponent.TryCreateCombineStockpile(pilesForCombining[0] as ResourcePile, pilesForCombining[1] as ResourcePile, out producedJob);
+                if (producedJob != null) {
+                    Debug.LogError("Try Search for metal resourcepile of same type Accepted: " + pilesForCombining[0].tileObjectType);
+                    RuinarchListPool<TileObject>.Release(pilesForCombining);
+                    return;
+                }
+            }
+
+            //try check if there are same stone resourcepiles of same type object(i.e. same copper, same iron etc.), then combine it
+            Debug.LogError("Try Search for m_stones resourcepile of same type: ");
+            pilesForCombining = CreateMetalListForHaulCombineCandidate(m_stones);
+            if (pilesForCombining.Count > 1) {
+                p_worker.jobComponent.TryCreateCombineStockpile(pilesForCombining[0] as ResourcePile, pilesForCombining[1] as ResourcePile, out producedJob);
+                if (producedJob != null) {
+                    Debug.LogError("Try Search for m_stones resourcepile of same type Accepted: " + pilesForCombining[0].tileObjectType);
+                    RuinarchListPool<TileObject>.Release(pilesForCombining);
+                    return;
+                }
+            }
+
+            //try check if there are same metal resourcepiles of same type object(i.e. same copper, same iron etc.), then combine it
+            Debug.LogError("Try Search for m_woods resourcepile of same type: ");
+            pilesForCombining = CreateMetalListForHaulCombineCandidate(m_woods);
+            if (pilesForCombining.Count > 1) {
+                p_worker.jobComponent.TryCreateCombineStockpile(pilesForCombining[0] as ResourcePile, pilesForCombining[1] as ResourcePile, out producedJob);
+                if (producedJob != null) {
+                    Debug.LogError("Try Search for m_woods resourcepile of same type Accepted: " + pilesForCombining[0].tileObjectType);
+                    RuinarchListPool<TileObject>.Release(pilesForCombining);
+                    return;
+                }
+            }
+
+            //try check if there are same metal resourcepiles of same type object(i.e. same copper, same iron etc.), then combine it
+            Debug.LogError("Try Search for m_cloth resourcepile of same type: ");
+            pilesForCombining = CreateMetalListForHaulCombineCandidate(m_cloth);
+            if (pilesForCombining.Count > 1) {
+                p_worker.jobComponent.TryCreateCombineStockpile(pilesForCombining[0] as ResourcePile, pilesForCombining[1] as ResourcePile, out producedJob);
+                if (producedJob != null) {
+                    Debug.LogError("Try Search for m_cloth resourcepile of same type Accepted: " + pilesForCombining[0].tileObjectType);
+                    RuinarchListPool<TileObject>.Release(pilesForCombining);
+                    return;
+                }
+            }
+
+            //try check if there are same m_leather resourcepiles of same type object(i.e. same copper, same iron etc.), then combine it
+            pilesForCombining = CreateMetalListForHaulCombineCandidate(m_leather);
+            if (pilesForCombining.Count > 1) {
+                p_worker.jobComponent.TryCreateCombineStockpile(pilesForCombining[0] as ResourcePile, pilesForCombining[1] as ResourcePile, out producedJob);
+                if (producedJob != null) {
+                    Debug.LogError("Try Search for m_leather resourcepile of same type Accepted: " + pilesForCombining[0].tileObjectType);
+                    RuinarchListPool<TileObject>.Release(pilesForCombining);
+                    return;
+                }
+            }
+            RuinarchListPool<TileObject>.Release(pilesForCombining);
+
             //craft part
+            Debug.LogError("Try Craft: ");
             TILE_OBJECT_TYPE equipToMake = GetEquipmentToMakeFromRequestList();
             if(equipToMake != TILE_OBJECT_TYPE.NONE) {
                 //do craft action/job
                 p_worker.jobComponent.CreateEquipment(equipToMake, this, out producedJob);
                 if (producedJob != null) {
+                    Debug.LogError("Try Craft ACCepted: " + equipToMake + " " + p_worker.name);
                     return;
                 }
             }
 
             //haul part
-            if (m_metals.Sum(p => (p as ResourcePile).resourceInPile) < 40) {
+            bool ignoreHaul = ShouldIgnoreHaul(m_metals);
+
+            Debug.LogError("Try haul m_metals: " + m_metals.Count);
+            if (!ignoreHaul) {
                 ResourcePile metalPile = p_worker.homeSettlement.SettlementResources.GetRandomPileOfMetalForCraftsman(p_worker);
                 if (metalPile != null) {
-                    p_worker.jobComponent.TryCreateHaulJob(metalPile, out producedJob);
+                    p_worker.jobComponent.TryCreateHaulJobForCraftsman(metalPile, out producedJob, 40);
                     if(producedJob != null) {
+                        Debug.LogError("Try haul metal Accepted: " + metalPile + " " + p_worker.name);
                         return;
 					}
                 }
             }
 
-            if (m_stones.Sum(p => (p as ResourcePile).resourceInPile) < 40) {
+            Debug.LogError("Try haul m_stones: " + m_stones.Count);
+            ignoreHaul = ShouldIgnoreHaul(m_stones);
+            if (!ignoreHaul) {
                 ResourcePile stonePile = p_worker.homeSettlement.SettlementResources.GetRandomPileOfStoneForCraftsman(p_worker);
                 if (stonePile != null) {
-                    p_worker.jobComponent.TryCreateHaulJob(stonePile, out producedJob);
+                    p_worker.jobComponent.TryCreateHaulJobForCraftsman(stonePile, out producedJob, 40);
                     if (producedJob != null) {
+                        Debug.LogError("Try haul m_stones Accepted: " + stonePile + " " + p_worker.name);
                         return;
                     }
                 }
             }
 
-            if (m_cloth.Sum(p => (p as ResourcePile).resourceInPile) < 40) {
+            ignoreHaul = ShouldIgnoreHaul(m_cloth);
+            Debug.LogError("Try haul m_cloth: " + m_cloth.Count);
+            if (!ignoreHaul) {
                 ResourcePile clothPile = p_worker.homeSettlement.SettlementResources.GetRandomPileOfClothForCraftsman(p_worker);
                 if (clothPile != null) {
-                    p_worker.jobComponent.TryCreateHaulJob(clothPile, out producedJob);
+                    p_worker.jobComponent.TryCreateHaulJobForCraftsman(clothPile, out producedJob, 40);
                     if (producedJob != null) {
+                        Debug.LogError("Try haul m_cloth Accepted: " + clothPile + " " + p_worker.name);
                         return;
                     }
                 }
             }
 
-            if (m_leather.Sum(p => (p as ResourcePile).resourceInPile) < 40) {
+            Debug.LogError("Try haul m_leather: " + m_leather.Count);
+            ignoreHaul = ShouldIgnoreHaul(m_leather);
+            if (!ignoreHaul) {
                 ResourcePile leatherPile = p_worker.homeSettlement.SettlementResources.GetRandomPileOfLeatherForCraftsman(p_worker);
                 if (leatherPile != null) {
-                    p_worker.jobComponent.TryCreateHaulJob(leatherPile, out producedJob);
+                    p_worker.jobComponent.TryCreateHaulJobForCraftsman(leatherPile, out producedJob, 40);
                     if (producedJob != null) {
+                        Debug.LogError("Try haul m_leather Accepted: " + leatherPile + " " + p_worker.name);
                         return;
                     }
                 }
             }
 
-            if (m_woods.Sum(p => (p as ResourcePile).resourceInPile) < 40) {
+            Debug.LogError("Try haul m_woods: " + m_woods.Count);
+            ignoreHaul = ShouldIgnoreHaul(m_woods);
+            if (!ignoreHaul) {
                 ResourcePile woodPile = p_worker.homeSettlement.SettlementResources.GetRandomPileOfWoodForCraftsman(p_worker);
                 if (woodPile != null) {
-                    p_worker.jobComponent.TryCreateHaulJob(woodPile, out producedJob);
+                    p_worker.jobComponent.TryCreateHaulJobForCraftsman(woodPile, out producedJob, 40);
                     if (producedJob != null) {
+                        Debug.LogError("Try haul m_woods Accepted: " + woodPile + " " + p_worker.name);
                         return;
                     }
                 }
             }
+        }
+
+        public bool ShouldIgnoreHaul(List<TileObject> p_list) {
+            for (int x = 0; x < p_list.Count; ++x) {
+                if ((p_list[x] as ResourcePile).resourceInPile > 40) {
+                    return true;
+                }
+            }
+            return false;
         }
 
         //this one is used for specific resource
@@ -321,6 +411,27 @@ namespace Inner_Maps.Location_Structures {
         void GetReferenceForAllMetals() {
             m_metals.Clear();
             PopulateTileObjectsOfType<MetalPile>(m_metals);
+        }
+
+        List<TileObject> CreateMetalListForHaulCombineCandidate(List<TileObject> p_list) {
+            List<TileObject> candidates = new List<TileObject>();
+            for (int x = 0; x < p_list.Count; ++x) { 
+                for(int y = 0; y < p_list.Count; ++y) {
+                    if (x == y) {
+                        continue;
+                    }
+                    if (p_list[x].tileObjectType == p_list[y].tileObjectType) {
+                        if (!candidates.Contains(p_list[x])) {
+                            candidates.Add(p_list[x]);
+                        }
+                        if (!candidates.Contains(p_list[y])) {
+                            candidates.Add(p_list[y]);
+                        }
+                        return candidates;
+                    }
+				}
+            }
+            return candidates;
         }
 
 
