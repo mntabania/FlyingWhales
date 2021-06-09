@@ -1280,7 +1280,7 @@ public class Party : ILogFiller, ISavable, IJobOwner, IBookmarkable {
     public void ProcessForcedCancelJobsOnTickEnded() {
         if (forcedCancelJobsOnTickEnded.Count > 0) {
             for (int i = 0; i < forcedCancelJobsOnTickEnded.Count; i++) {
-                forcedCancelJobsOnTickEnded[i].ForceCancelJob(false);
+                forcedCancelJobsOnTickEnded[i].ForceCancelJob();
             }
             forcedCancelJobsOnTickEnded.Clear();
         }
@@ -1325,12 +1325,12 @@ public class Party : ILogFiller, ISavable, IJobOwner, IBookmarkable {
     }
     public void ForceCancelAllJobsImmediately() {
         for (int i = 0; i < jobBoard.availableJobs.Count; i++) {
-            if (jobBoard.availableJobs[i].ForceCancelJob(false)) {
+            if (jobBoard.availableJobs[i].ForceCancelJob()) {
                 i--;
             }
         }
         for (int i = 0; i < forcedCancelJobsOnTickEnded.Count; i++) {
-            forcedCancelJobsOnTickEnded[i].ForceCancelJob(false);
+            forcedCancelJobsOnTickEnded[i].ForceCancelJob();
         }
         forcedCancelJobsOnTickEnded.Clear();
     }

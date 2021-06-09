@@ -23,11 +23,11 @@ namespace Interrupts {
             if (node != null) {
                 node.action.OnStoppedInterrupt(node);
                 if(node.associatedJob != null && !node.associatedJob.hasBeenReset && node.associatedJob.originalOwner != null) {
-                    node.associatedJob.CancelJob(false);
+                    node.associatedJob.CancelJob();
                 }
                 executed = true;
             }
-            targetCharacter.currentJob?.CancelJob(false);
+            targetCharacter.currentJob?.CancelJob();
             targetCharacter.currentJob?.StopJobNotDrop();
             if(interruptHolder.actor != targetCharacter && node != null) {
                 //if (overrideEffectLog != null) { LogPool.Release(overrideEffectLog); }

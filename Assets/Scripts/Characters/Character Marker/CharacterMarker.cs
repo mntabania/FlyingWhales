@@ -1423,7 +1423,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
                 GoapActionInvalidity goapActionInvalidity = new GoapActionInvalidity(true, "Target Missing", reason);
                 character.currentActionNode.action.LogActionInvalid(goapActionInvalidity, character.currentActionNode, false);
             }
-            character.currentActionNode.associatedJob?.CancelJob(false);
+            character.currentActionNode.associatedJob?.CancelJob();
         }
         if (character.currentActionNode != null && character.currentActionNode.action.actionLocationType == ACTION_LOCATION_TYPE.TARGET_IN_VISION && character.currentActionNode.poiTarget == poi) {
             pathfindingAI.ClearAllCurrentPathData();

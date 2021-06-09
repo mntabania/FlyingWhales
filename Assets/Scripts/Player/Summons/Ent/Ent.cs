@@ -39,7 +39,7 @@ public abstract class Ent : Summon {
                 }
                 JobQueueItem job = jobQueue.GetJob(JOB_TYPE.STAND_STILL);
                 if (job != null) {
-                    job.ForceCancelJob(false);
+                    job.ForceCancelJob();
                 }   
             }
             if (isTree) {

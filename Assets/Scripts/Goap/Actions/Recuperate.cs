@@ -58,7 +58,7 @@ public class Recuperate : GoapAction {
 
     public void PerTickRecuperateSuccess(ActualGoapNode p_node) {
         if (!IsSubjectForRecuperate(p_node)) {
-            p_node.associatedJob.CancelJob(false);
+            p_node.associatedJob.CancelJob();
         }
     }
     #endregion

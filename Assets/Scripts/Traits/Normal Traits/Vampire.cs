@@ -212,7 +212,7 @@ namespace Traits {
         }
         public override bool PerTickWhileStationaryOrUnoccupied(Character p_character) {
             if (dislikedBeingVampire && GameUtilities.RollChance(1) && _owner.currentJob != null && _owner.currentJob.jobType.IsFullnessRecoveryTypeJob()) { //1
-                _owner.currentJob.ForceCancelJob(false, "Resisted Hunger");
+                _owner.currentJob.ForceCancelJob("Resisted Hunger");
                 _owner.traitContainer.AddTrait(_owner, "Ashamed");
                 _owner.traitContainer.AddTrait(_owner, "Abstain Fullness");
                 Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Trait", "Vampire", "resist_hunger", null, LOG_TAG.Needs);

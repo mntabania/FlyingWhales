@@ -1037,7 +1037,7 @@ public class ConsoleBase : InfoUIBase {
         //if (AttributeManager.Instance.allTraits.ContainsKey(traitParameterString)) {
         JobQueueItem job = character.jobQueue.GetJobByName(jobParameterString);
         if(job != null) {
-            job.CancelJob(false);
+            job.CancelJob();
             AddSuccessMessage($"Cancelled job {jobParameterString} of {character.name}");
         }
     }
