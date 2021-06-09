@@ -10,6 +10,7 @@ namespace Inner_Maps.Location_Structures {
         // public override Vector3 worldPosition => structureObj.transform.position;
         public override Type serializedData => typeof(SaveDataFishery);
         public Ocean connectedOcean { get; private set; }
+        public FishingSpot connectedFishingSpot { get; private set; }
         
         public Fishery(Region location) : base(STRUCTURE_TYPE.FISHERY, location) {
             SetMaxHPAndReset(4000);
@@ -25,6 +26,9 @@ namespace Inner_Maps.Location_Structures {
             if (!string.IsNullOrEmpty(saveDataFishingShack.connectedFishingShackID)) {
                 connectedOcean = DatabaseManager.Instance.structureDatabase.GetStructureByPersistentID(saveDataFishingShack.connectedFishingShackID) as Ocean;
             }
+            if (!string.IsNullOrEmpty(saveDataFishingShack.connectedFishingSpotID)) {
+                connectedFishingSpot = DatabaseManager.Instance.tileObjectDatabase.GetTileObjectByPersistentID(saveDataFishingShack.connectedFishingSpotID) as FishingSpot;
+            }
         }
         #endregion
         
@@ -35,12 +39,15 @@ namespace Inner_Maps.Location_Structures {
             base.OnUseStructureConnector(p_usedConnector);
             Assert.IsTrue(p_usedConnector.structure is Ocean, $"{name} did not connect to a tile inside an Ocean!");
             connectedOcean = p_usedConnector.structure as Ocean;
-            Assert.IsTrue(p_usedConnector.tileObjectComponent.objHere is FishingSpot, $"{name} did not connect to a tile with a Fishing Spot!");
-            (p_usedConnector.tileObjectComponent.objHere as FishingSpot).SetConnectedFishingShack(this);
+            var fishingSpot = p_usedConnector.tileObjectComponent.objHere as FishingSpot;
+            Assert.IsNotNull(fishingSpot, $"{name} did not connect to a tile with a Fishing Spot!");
+            connectedFishingSpot = fishingSpot;
+            fishingSpot.SetConnectedFishingShack(this);
         }
         protected override void AfterStructureDestruction(Character p_responsibleCharacter = null) {
             base.AfterStructureDestruction(p_responsibleCharacter);
             connectedOcean = null;
+            connectedFishingSpot = null;
         }
         private void PopulateFishPileListInsideStructure(List<TileObject> builtPilesInSideStructure) {
             List<TileObject> pilePool = GetTileObjectsOfType(TILE_OBJECT_TYPE.FISH_PILE);
@@ -53,13 +60,13 @@ namespace Inner_Maps.Location_Structures {
                 }
             }
         }
-        private TileObject GetRandomFishingSpot() {
-            List<TileObject> fishingSpots = connectedOcean.GetTileObjectsOfType(TILE_OBJECT_TYPE.FISHING_SPOT);
-            if (fishingSpots != null && fishingSpots.Count > 0) {
-                return fishingSpots[GameUtilities.RandomBetweenTwoNumbers(0, fishingSpots.Count - 1)];
-            }
-            return null;
-        }
+        // private TileObject GetRandomFishingSpot() {
+        //     List<TileObject> fishingSpots = connectedOcean.GetTileObjectsOfType(TILE_OBJECT_TYPE.FISHING_SPOT);
+        //     if (fishingSpots != null && fishingSpots.Count > 0) {
+        //         return fishingSpots[GameUtilities.RandomBetweenTwoNumbers(0, fishingSpots.Count - 1)];
+        //     }
+        //     return null;
+        // }
         protected override void ProcessWorkStructureJobsByWorker(Character p_worker, out JobQueueItem producedJob) {
             producedJob = null;
             ResourcePile pileToHaul = p_worker.homeSettlement.SettlementResources.GetRandomPileOfFishes();
@@ -84,7 +91,7 @@ namespace Inner_Maps.Location_Structures {
             RuinarchListPool<TileObject>.Release(builtPilesInSideStructure);
 
             //Find Fish
-            TileObject fishingSpot = GetRandomFishingSpot();
+            TileObject fishingSpot = connectedFishingSpot;
             if (fishingSpot != null) {
                 //do harvest crops
                 p_worker.jobComponent.TriggerFindFish(fishingSpot as FishingSpot, out producedJob);
@@ -105,12 +112,16 @@ namespace Inner_Maps.Location_Structures {
 public class SaveDataFishery : SaveDataManMadeStructure {
 
     public string connectedFishingShackID;
+    public string connectedFishingSpotID;
     
     public override void Save(LocationStructure locationStructure) {
         base.Save(locationStructure);
         Fishery fishingShack = locationStructure as Fishery;
         if (fishingShack.connectedOcean != null) {
             connectedFishingShackID = fishingShack.connectedOcean.persistentID;
+        }
+        if (fishingShack.connectedFishingSpot != null) {
+            connectedFishingSpotID = fishingShack.connectedFishingSpot.persistentID;
         }
     }
 }

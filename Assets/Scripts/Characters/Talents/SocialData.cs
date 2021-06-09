@@ -6,6 +6,13 @@ namespace Character_Talents {
     public class SocialData : CharacterTalentData {
         public SocialData() : base(CHARACTER_TALENT.Social) {
             description = $"Aptitude in trading, leadership and scheming.";
+            addOnBonusSetDisplay = new List<string>(new string[] {
+                "",
+                "Unlocks the Merchant class.",
+                "Unlocks the Merchant class.",
+                "Unlocks the Merchant class.",
+                "Unlocks the Merchant class.",
+            });
         }
 
         #region Levels
@@ -33,6 +40,7 @@ namespace Character_Talents {
         }
         private void Level2(Character p_character) {
             //+50 Weight in Popularity Succession
+            p_character.classComponent.AddAbleClass("Merchant");
             p_character.faction?.successionComponent.UpdateSuccessors();
         }
         private void Level3(Character p_character) {
