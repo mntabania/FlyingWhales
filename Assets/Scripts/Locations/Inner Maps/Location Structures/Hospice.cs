@@ -230,7 +230,7 @@ namespace Inner_Maps.Location_Structures {
         public BedClinic GetFirstUnoccupiedBed() {
             for (int i = 0; i < beds.Count; i++) {
                 BedClinic bedClinic = beds[i];
-                if (bedClinic.IsAvailable()) {
+                if (bedClinic.GetUserCount() <= 0) {
                     return bedClinic;
                 }
             }

@@ -52,16 +52,21 @@ public class ChopWood : GoapAction {
 
     #region State Effects
     public void AfterChopSuccess(ActualGoapNode p_node) {
-        p_node.actor.jobComponent.TryCreateHaulToWorkplaceJob(ProduceMatsPile(p_node));
-    }
-    #endregion
-
-    ResourcePile ProduceMatsPile(ActualGoapNode p_node) {
         TileObject targetTree = p_node.target as TileObject;
         Assert.IsNotNull(targetTree);
         if (targetTree.gridTileLocation != null) {
             targetTree.gridTileLocation.structure.RemovePOI(targetTree);    
         }
+        p_node.actor.jobComponent.TryCreateHaulToWorkplaceJob(ProduceMatsPile(p_node));
+    }
+    #endregion
+
+    ResourcePile ProduceMatsPile(ActualGoapNode p_node) {
+        // TileObject targetTree = p_node.target as TileObject;
+        // Assert.IsNotNull(targetTree);
+        // if (targetTree.gridTileLocation != null) {
+        //     targetTree.gridTileLocation.structure.RemovePOI(targetTree);    
+        // }
 
         LocationGridTile tileToSpawnPile = p_node.actor.gridTileLocation;
         if (tileToSpawnPile != null && tileToSpawnPile.tileObjectComponent.objHere != null) {
@@ -79,7 +84,7 @@ public class ChopWood : GoapAction {
     public void ProduceLogs(ActualGoapNode p_node) {
         string addOnText = (p_node.currentStateDuration * m_amountProducedPerTick).ToString();
         Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "GoapAction", name, "produced_resources", p_node, LOG_TAG.Work);
-        log.AddToFillers(p_node.actor, p_node.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+        log.AddToFillers(p_node.actor, p_node.actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         log.AddToFillers(null, addOnText, LOG_IDENTIFIER.STRING_1);
         p_node.LogAction(log);
     }

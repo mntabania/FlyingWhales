@@ -52,6 +52,11 @@ public class MineOre : GoapAction {
 
 	#region State Effects
     public void AfterMineOreSuccess(ActualGoapNode p_node) {
+        Ore targetOre = p_node.target as Ore;
+        Assert.IsNotNull(targetOre);
+        if (targetOre.gridTileLocation != null) {
+            targetOre.gridTileLocation.structure.RemovePOI(targetOre);    
+        }
         p_node.actor.jobComponent.TryCreateHaulToWorkplaceJob(ProduceMatsPile(p_node));
     }
     #endregion
@@ -59,11 +64,6 @@ public class MineOre : GoapAction {
     ResourcePile ProduceMatsPile(ActualGoapNode p_node) {
         Ore targetOre = p_node.target as Ore;
         Assert.IsNotNull(targetOre);
-        if (targetOre.gridTileLocation != null) {
-            targetOre.gridTileLocation.structure.RemovePOI(targetOre);    
-        }
-
-        
         LocationGridTile tileToSpawnPile = p_node.actor.gridTileLocation;
         if (tileToSpawnPile != null && tileToSpawnPile.tileObjectComponent.objHere != null) {
             tileToSpawnPile = p_node.actor.gridTileLocation.GetFirstNearestTileFromThisWithNoObject();

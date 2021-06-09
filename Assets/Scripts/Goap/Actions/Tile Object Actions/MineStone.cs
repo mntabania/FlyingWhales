@@ -52,17 +52,16 @@ public class MineStone : GoapAction {
 
     #region State Effects
     public void AfterMineSuccess(ActualGoapNode p_node) {
-        p_node.actor.jobComponent.TryCreateHaulToWorkplaceJob(ProduceMatsPile(p_node));
-    }
-    #endregion
-
-    ResourcePile ProduceMatsPile(ActualGoapNode p_node) {
         TileObject targetStone = p_node.target as TileObject;
         Assert.IsNotNull(targetStone);
         if (targetStone.gridTileLocation != null) {
             targetStone.gridTileLocation.structure.RemovePOI(targetStone);    
         }
-        
+        p_node.actor.jobComponent.TryCreateHaulToWorkplaceJob(ProduceMatsPile(p_node));
+    }
+    #endregion
+
+    ResourcePile ProduceMatsPile(ActualGoapNode p_node) {
         LocationGridTile tileToSpawnPile = p_node.actor.gridTileLocation;
         if (tileToSpawnPile != null && tileToSpawnPile.tileObjectComponent.objHere != null) {
             tileToSpawnPile = p_node.actor.gridTileLocation.GetFirstNearestTileFromThisWithNoObject();
@@ -78,7 +77,7 @@ public class MineStone : GoapAction {
     public void ProduceLogs(ActualGoapNode p_node) {
         string addOnText = (p_node.currentStateDuration * m_amountProducedPerTick).ToString();
         Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "GoapAction", name, "produced_resources", p_node, LOG_TAG.Work);
-        log.AddToFillers(p_node.actor, p_node.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+        log.AddToFillers(p_node.actor, p_node.actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         log.AddToFillers(null, addOnText, LOG_IDENTIFIER.STRING_1);
         p_node.LogAction(log);
     }

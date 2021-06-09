@@ -727,12 +727,14 @@ namespace Locations.Settlements {
         }
         public bool HasUnclaimedDwellingThatIsNotPreviousHome(Character p_character, out LocationStructure foundStructure) {
             List<LocationStructure> dwellings = GetStructuresOfType(STRUCTURE_TYPE.DWELLING);
-            for (int i = 0; i < dwellings.Count; i++) {
-                LocationStructure dwelling = dwellings[i];
-                if (dwelling != p_character.previousCharacterDataComponent.previousHomeStructure && dwelling.residents.Count <= 0) {
-                    foundStructure = dwelling;
-                    return true;
-                }
+            if (dwellings != null) {
+                for (int i = 0; i < dwellings.Count; i++) {
+                    LocationStructure dwelling = dwellings[i];
+                    if (dwelling != p_character.previousCharacterDataComponent.previousHomeStructure && dwelling.residents.Count <= 0) {
+                        foundStructure = dwelling;
+                        return true;
+                    }
+                }    
             }
             foundStructure = null;
             return false;

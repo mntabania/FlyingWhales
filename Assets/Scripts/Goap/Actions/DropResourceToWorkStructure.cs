@@ -127,8 +127,10 @@ public class DropResourceToWorkStructure : GoapAction {
     }
     public override void AddFillersToLog(Log log, ActualGoapNode goapNode) {
         base.AddFillersToLog(log, goapNode);
-        ResourcePile pile = goapNode.poiTarget as ResourcePile;
-        log.AddToFillers(null, UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(pile.providedResource.ToString()), LOG_IDENTIFIER.STRING_1);
+        if (goapNode.actor.carryComponent.carriedPOI is ResourcePile pile) {
+            log.AddToFillers(null, pile.resourceInPile.ToString(), LOG_IDENTIFIER.STRING_1);
+            log.AddToFillers(null, UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(pile.providedResource.ToString()), LOG_IDENTIFIER.STRING_2);    
+        }
     }
     public override void OnActionStarted(ActualGoapNode node) {
         node.actor.ShowItemVisualCarryingPOI(node.poiTarget as TileObject);
@@ -165,9 +167,10 @@ public class DropResourceToWorkStructure : GoapAction {
 
     #region State Effects
     public void PreDropResourceToWorkStructureSuccess(ActualGoapNode goapNode) {
-        ResourcePile pile = goapNode.poiTarget as ResourcePile;
-        //goapNode.descriptionLog.AddToFillers(null, "TEST", LOG_IDENTIFIER.STRING_1);
-        //goapNode.descriptionLog.AddToFillers(null, UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(pile.providedResource.ToString()), LOG_IDENTIFIER.STRING_2);
+        // if (goapNode.actor.carryComponent.carriedPOI is ResourcePile pile) {
+        //     goapNode.descriptionLog.AddToFillers(null, pile.resourceInPile.ToString(), LOG_IDENTIFIER.STRING_1);
+        //     goapNode.descriptionLog.AddToFillers(null, UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(pile.providedResource.ToString()), LOG_IDENTIFIER.STRING_2);    
+        // }
     }
     public void AfterDropResourceToWorkStructureSuccess(ActualGoapNode goapNode) {
         Character actor = goapNode.actor;
@@ -181,8 +184,8 @@ public class DropResourceToWorkStructure : GoapAction {
             if (pileToBeDepositedTo.mapObjectState == MAP_OBJECT_STATE.UNBUILT) {
                 //remove unbuilt pile, since it is no longer needed, then place carried pile in its place
                 pileToBeDepositedTo.gridTileLocation.structure.RemovePOI(pileToBeDepositedTo);
-                if (actor.carryComponent.IsPOICarried(poiTarget)) {
-                    actor.UncarryPOI(poiTarget, dropLocation: goapNode.targetTile);
+                if (actor.carryComponent.isCarryingAnyPOI) {
+                    actor.UncarryPOI(actor.carryComponent.carriedPOI, dropLocation: goapNode.targetTile);
                 } else {
                     actor.UnobtainItem(poiTarget);
                 }
@@ -194,14 +197,14 @@ public class DropResourceToWorkStructure : GoapAction {
                     }
                     pileToBeDepositedTo.AdjustResourceInPile(poiTarget.resourceInPile);
                     TraitManager.Instance.CopyStatuses(poiTarget, pileToBeDepositedTo);
-                    if (actor.carryComponent.IsPOICarried(poiTarget)) {
-                        actor.UncarryPOI(poiTarget, dropLocation: goapNode.targetTile);
+                    if (actor.carryComponent.isCarryingAnyPOI) {
+                        actor.UncarryPOI(actor.carryComponent.carriedPOI, dropLocation: goapNode.targetTile);
                     } else {
                         actor.UnobtainItem(poiTarget);
                     }
                 } else {
-                    if (actor.carryComponent.IsPOICarried(poiTarget)) {
-                        actor.UncarryPOI(poiTarget, dropLocation: goapNode.targetTile);
+                    if (actor.carryComponent.isCarryingAnyPOI) {
+                        actor.UncarryPOI(actor.carryComponent.carriedPOI, dropLocation: goapNode.targetTile);
                     } else {
                         actor.UnobtainItem(poiTarget);
                     }
