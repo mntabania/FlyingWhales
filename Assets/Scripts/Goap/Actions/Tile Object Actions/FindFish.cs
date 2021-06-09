@@ -7,7 +7,7 @@ using Inner_Maps;
 
 public class FindFish : GoapAction {
 
-    public int m_amountProducedPerTick = 1;
+    public int m_amountProducedPerTick = 10;
 
     public FindFish() : base(INTERACTION_TYPE.FIND_FISH) {
         actionIconString = GoapActionStateDB.Fish_Icon;

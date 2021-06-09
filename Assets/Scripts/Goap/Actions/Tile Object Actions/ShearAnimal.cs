@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Traits;
 using Inner_Maps;
+using UtilityScripts;
 
 public class ShearAnimal : GoapAction {
 
@@ -66,7 +67,7 @@ public class ShearAnimal : GoapAction {
     }
 
     public void ProduceLogs(ActualGoapNode p_node) {
-        string addOnText = (p_node.currentStateDuration * m_amountProducedPerTick).ToString() + " " + (p_node.target as Animal).produceableMaterial;
+        string addOnText = (p_node.currentStateDuration * m_amountProducedPerTick).ToString() + " " + UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters((p_node.target as Animal).produceableMaterial.ToString());
         Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "GoapAction", name, "produced_resources", p_node, LOG_TAG.Work);
         log.AddToFillers(p_node.actor, p_node.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         log.AddToFillers(null, addOnText, LOG_IDENTIFIER.STRING_1);
