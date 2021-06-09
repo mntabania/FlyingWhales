@@ -90,7 +90,7 @@ public class SettlementRulerBehaviour : CharacterBehaviourComponent {
                             if (ShouldBuildFishery(characterHomeSettlement)) {
                                 determinedStructureToUse = STRUCTURE_TYPE.FISHERY;
                             } else if (ShouldBuildButcher(characterHomeSettlement)) {
-                                determinedStructureToUse = STRUCTURE_TYPE.FISHERY;  
+                                determinedStructureToUse = STRUCTURE_TYPE.BUTCHERS_SHOP;  
                             } else {
                                 determinedStructureToUse = STRUCTURE_TYPE.FARM;
                             }
