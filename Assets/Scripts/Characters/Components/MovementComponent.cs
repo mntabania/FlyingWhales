@@ -631,7 +631,7 @@ public class MovementComponent : CharacterComponent {
                     if(owner.currentActionNode.associatedJobType == JOB_TYPE.RITUAL_KILLING
                         || owner.currentActionNode.goapType == INTERACTION_TYPE.SHARE_INFORMATION
                         || owner.currentActionNode.goapType == INTERACTION_TYPE.REPORT_CRIME) {
-                        owner.currentActionNode.associatedJob?.ForceCancelJob(false);
+                        owner.currentActionNode.associatedJob?.ForceCancelJob();
                     }
                 }
             }

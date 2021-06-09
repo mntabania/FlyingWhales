@@ -53,7 +53,7 @@ namespace Traits {
             //Will drop current action and will perform Happiness Recovery.
             if (!character.jobQueue.HasJob(JOB_TYPE.TRIGGER_FLAW)) {
                 if (character.currentActionNode != null) {
-                    character.StopCurrentActionNode(false);
+                    character.StopCurrentActionNode();
                 }
                 if (character.stateComponent.currentState != null) {
                     character.stateComponent.ExitCurrentState();

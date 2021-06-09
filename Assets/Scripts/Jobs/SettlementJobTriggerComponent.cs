@@ -791,7 +791,7 @@ public class SettlementJobTriggerComponent : JobTriggerComponent/*, SettlementCl
 			for (int i = 0; i < jobs.Count; i++) {
 				JobQueueItem jqi = jobs[i];
 				if (jqi.assignedCharacter == null) {
-					jqi.ForceCancelJob(false, "no more fires");	
+					jqi.ForceCancelJob("no more fires");	
 				}
 			}
 			RuinarchListPool<JobQueueItem>.Release(jobs);
@@ -863,7 +863,7 @@ public class SettlementJobTriggerComponent : JobTriggerComponent/*, SettlementCl
 			for (int i = 0; i < jobs.Count; i++) {
 				JobQueueItem jqi = jobs[i];
 				if (jqi.assignedCharacter == null) {
-					jqi.ForceCancelJob(false, "no more wet floors");	
+					jqi.ForceCancelJob("no more wet floors");
 				}
 			}
 			RuinarchListPool<JobQueueItem>.Release(jobs);
@@ -912,7 +912,7 @@ public class SettlementJobTriggerComponent : JobTriggerComponent/*, SettlementCl
 			for (int i = 0; i < jobs.Count; i++) {
 				JobQueueItem jqi = jobs[i];
 				if (jqi.assignedCharacter == null) {
-					jqi.ForceCancelJob(false, "no more poisoned floors");	
+					jqi.ForceCancelJob("no more poisoned floors");	
 				}
 			}
 			RuinarchListPool<JobQueueItem>.Release(jobs);
@@ -992,7 +992,7 @@ public class SettlementJobTriggerComponent : JobTriggerComponent/*, SettlementCl
 		_owner.PopulateJobsOfType(jobs, JOB_TYPE.TEND_FARM);
 		for (int i = 0; i < jobs.Count; i++) {
 			JobQueueItem job = jobs[i];
-			job.ForceCancelJob(false);
+			job.ForceCancelJob();
 		}
 		RuinarchListPool<JobQueueItem>.Release(jobs);
 	}

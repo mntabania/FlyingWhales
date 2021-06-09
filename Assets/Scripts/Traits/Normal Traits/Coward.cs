@@ -43,7 +43,7 @@ namespace Traits {
             if (character.homeStructure != null && !character.homeStructure.hasBeenDestroyed && character.homeStructure.tiles.Count > 0) {
                 if (character.currentStructure != character.homeStructure) {
                     if (character.currentActionNode != null) {
-                        character.StopCurrentActionNode(false);
+                        character.StopCurrentActionNode();
                     }
                     if (character.stateComponent.currentState != null) {
                         character.stateComponent.ExitCurrentState();

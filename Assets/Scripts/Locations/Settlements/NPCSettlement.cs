@@ -180,7 +180,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
     private void LoadJobs(SaveDataNPCSettlement data) {
         for (int i = 0; i < availableJobs.Count; i++) {
             JobQueueItem job = availableJobs[i];
-            job.ForceCancelJob(false);
+            job.ForceCancelJob();
             i--;
         }
         for (int i = 0; i < data.jobIDs.Count; i++) {
@@ -927,7 +927,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
                 for (int i = 0; i < jobs.Count; i++) {
                     JobQueueItem jqi = jobs[i];
                     if (jqi is GoapPlanJob goapPlanJob && goapPlanJob.targetPOI is TileObject tileObject && tileObject.tileObjectType == item.tileObjectType) {
-                        jqi.ForceCancelJob(false, "Settlement has enough");    
+                        jqi.ForceCancelJob("Settlement has enough");    
                     }
                 }
                 RuinarchListPool<JobQueueItem>.Release(jobs);
@@ -1699,7 +1699,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
             if (job is GoapPlanJob) {
                 GoapPlanJob goapJob = job as GoapPlanJob;
                 if (goapJob.targetPOI == target) {
-                    if (goapJob.ForceCancelJob(false, reason)) {
+                    if (goapJob.ForceCancelJob(reason)) {
                         i--;
                     }
                 }
@@ -1711,7 +1711,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
             JobQueueItem job = availableJobs[i];
             if (!job.hasBeenReset && job.jobType == jobType && job is GoapPlanJob goapJob) {
                 if (goapJob.targetPOI == target) {
-                    if (goapJob.ForceCancelJob(false, reason)) {
+                    if (goapJob.ForceCancelJob(reason)) {
                         i--;
                     }
                 }
@@ -1738,6 +1738,17 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
             }
         }
     }
+    public void ForceCancelJobTypesImmediately(JOB_TYPE jobType) {
+        for (int i = 0; i < availableJobs.Count; i++) {
+            JobQueueItem job = availableJobs[i];
+            if (job.jobType == jobType && job is GoapPlanJob) {
+                GoapPlanJob goapJob = job as GoapPlanJob;
+                if (goapJob.ForceCancelJob()) {
+                    i--;
+                }
+            }
+        }
+    }
     private void ClearAllBlacklistToAllExistingJobs() {
         for (int i = 0; i < availableJobs.Count; i++) {
             availableJobs[i].ClearBlacklist();
@@ -1747,7 +1758,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         for (int i = 0; i < availableJobs.Count; i++) {
             JobQueueItem job = availableJobs[i];
             if (job.assignedCharacter == character && job is GoapPlanJob goapJob) {
-                goapJob.CancelJob(false, string.Empty);
+                goapJob.CancelJob(string.Empty);
             }
         }
     }
@@ -1902,7 +1913,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
     public void ProcessForcedCancelJobsOnTickEnded() {
         if (forcedCancelJobsOnTickEnded.Count > 0) {
             for (int i = 0; i < forcedCancelJobsOnTickEnded.Count; i++) {
-                forcedCancelJobsOnTickEnded[i].ForceCancelJob(false);
+                forcedCancelJobsOnTickEnded[i].ForceCancelJob();
             }
             forcedCancelJobsOnTickEnded.Clear();
         }

@@ -89,7 +89,7 @@ public class DemonSnatchPartyQuest : PartyQuest {
                 Character member = assignedParty.membersThatJoinedQuest[i];
                 if (member.currentJob != null && member.currentJob.isThisAPartyJob
                     && (member.currentJob.jobType == JOB_TYPE.PARTY_GO_TO || member.currentJob.jobType == JOB_TYPE.GO_TO)) {
-                    member.currentJob.CancelJob(false);
+                    member.currentJob.CancelJob();
                 }
             }
         }
@@ -104,7 +104,7 @@ public class DemonSnatchPartyQuest : PartyQuest {
                     Character member = assignedParty.membersThatJoinedQuest[i];
                     if (member.currentJob != null && member.currentJob.isThisAPartyJob
                         && (member.currentJob.jobType == JOB_TYPE.SNATCH_RESTRAIN || member.currentJob.jobType == JOB_TYPE.GO_TO || member.currentJob.jobType == JOB_TYPE.PARTY_GO_TO)) {
-                        member.currentJob.CancelJob(false);
+                        member.currentJob.CancelJob();
                     }
                 }
             }
@@ -116,7 +116,7 @@ public class DemonSnatchPartyQuest : PartyQuest {
                 Character member = assignedParty.membersThatJoinedQuest[i];
                 if (member.currentJob != null && member.currentJob.isThisAPartyJob
                     && (member.currentJob.jobType == JOB_TYPE.GO_TO || member.currentJob.jobType == JOB_TYPE.PARTY_GO_TO)) {
-                    member.currentJob.CancelJob(false);
+                    member.currentJob.CancelJob();
                 }
             }
         }

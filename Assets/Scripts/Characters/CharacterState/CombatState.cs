@@ -93,7 +93,7 @@ public class CombatState : CharacterState {
     //    }
     //}
     protected override void StartState() {
-        stateComponent.owner.isBeingCarriedBy?.StopCurrentActionNode(false);
+        stateComponent.owner.isBeingCarriedBy?.StopCurrentActionNode();
 #if DEBUG_LOG
         stateComponent.owner.logComponent.PrintLogIfActive($"Starting combat state for {stateComponent.owner.name}");
 #endif

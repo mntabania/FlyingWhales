@@ -70,7 +70,7 @@ public class InterruptComponent : CharacterComponent {
                 owner.marker.SetHasFleePath(false);
             }
             if (currentInterrupt.interrupt.doesDropCurrentJob) {
-                owner.currentJob?.CancelJob(false);
+                owner.currentJob?.CancelJob();
             }
             if (currentInterrupt.interrupt.doesStopCurrentAction) {
                 owner.currentJob?.StopJobNotDrop();

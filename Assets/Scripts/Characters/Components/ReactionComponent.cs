@@ -535,7 +535,7 @@ public class ReactionComponent : CharacterComponent {
 #if DEBUG_LOG
                 debugLog = $"{debugLog}\n-Actor encountered a hostile";
 #endif
-                actor.currentJob.CancelJob(false);
+                actor.currentJob.CancelJob();
                 actor.combatComponent.Flight(targetCharacter, CombatManager.Encountered_Hostile);
                 return;
             }
