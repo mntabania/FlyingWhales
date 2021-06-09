@@ -39,6 +39,25 @@ public class WorkBehaviour : CharacterBehaviourComponent {
 #if DEBUG_LOG
                 log = $"{log}\n-Character lives in a village";
 #endif
+                if (character.structureComponent.workPlaceStructure == null) {
+#if DEBUG_LOG
+                    log = $"{log}\n-Character has no work place yet";
+#endif
+                    STRUCTURE_TYPE workStructureType = CharacterManager.Instance.GetOrCreateCharacterClassData(character.characterClass.className).workStructureType;
+#if DEBUG_LOG
+                    log = $"{log}\n-Character will find unclaimed work structure type of " + workStructureType.ToString();
+#endif
+                    if (workStructureType != STRUCTURE_TYPE.NONE) {
+                        ManMadeStructure noWorkerStructure = homeSettlement.GetFirstStructureOfTypeThatHasNoWorkerAndIsNotReserved(workStructureType) as ManMadeStructure;
+                        if (noWorkerStructure != null) {
+#if DEBUG_LOG
+                            log = $"{log}\n-Found unclaimed work structure: " + noWorkerStructure.name;
+#endif
+                            noWorkerStructure.SetAssignedWorker(character);
+                            character.interruptComponent.TriggerInterrupt(INTERRUPT.Claim_Work_Structure, character);
+                        }
+                    }
+                }
                 //visit hospice
                 if (character.currentSettlement != null && character.currentSettlement.HasStructureClaimedByNonEnemyOrSelf(STRUCTURE_TYPE.HOSPICE, character, out LocationStructure foundStructure)) {
 #if DEBUG_LOG
@@ -92,25 +111,7 @@ public class WorkBehaviour : CharacterBehaviourComponent {
 #if DEBUG_LOG
                     log = $"{log}\n-Character is not in critical mood";
 #endif
-                    if (character.structureComponent.workPlaceStructure == null) {
-#if DEBUG_LOG
-                        log = $"{log}\n-Character has no work place yet";
-#endif
-                        STRUCTURE_TYPE workStructureType = CharacterManager.Instance.GetOrCreateCharacterClassData(character.characterClass.className).workStructureType;
-#if DEBUG_LOG
-                        log = $"{log}\n-Character will find unclaimed work structure type of " + workStructureType.ToString();
-#endif
-                        if (workStructureType != STRUCTURE_TYPE.NONE) {
-                            ManMadeStructure noWorkerStructure = homeSettlement.GetFirstStructureOfTypeThatHasNoWorkerAndIsNotReserved(workStructureType) as ManMadeStructure;
-                            if (noWorkerStructure != null) {
-#if DEBUG_LOG
-                                log = $"{log}\n-Found unclaimed work structure: " + noWorkerStructure.name;
-#endif
-                                noWorkerStructure.SetAssignedWorker(character);
-                                character.interruptComponent.TriggerInterrupt(INTERRUPT.Claim_Work_Structure, character);
-                            }
-                        }
-                    }
+
                     if (character.structureComponent.workPlaceStructure != null) {
 #if DEBUG_LOG
                         log = $"{log}\n-Character has work structure: " + character.structureComponent.workPlaceStructure.name + ", 50% to add Job provided by structure";

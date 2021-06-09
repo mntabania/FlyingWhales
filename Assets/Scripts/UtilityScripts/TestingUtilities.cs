@@ -26,7 +26,6 @@ namespace UtilityScripts {
                 summary += $"\nMax Facilities: {npcSettlement.settlementType?.maxFacilities}";
                 summary += $"\nMax Dwellings: {npcSettlement.settlementType?.maxDwellings}";
                 summary += $"\nNeeded Class Processing: {npcSettlement.classComponent.scheduleDateForProcessingOfNeededClasses.ToString()}";
-                summary += $"\nNeeded Class Processing: {npcSettlement.classComponent.scheduleDateForProcessingOfNeededClasses.ToString()}";
                 summary += $"\nParty Quests Processing: {npcSettlement.partyComponent.scheduleDateForProcessingOfPartyQuests.ToString()}";
                 summary += $"\nLinked Beast Dens: {npcSettlement.occupiedVillageSpot?.GetLinkedBeastDensSummary()}";
                 summary += $"\nLinked Structures: {npcSettlement.structureComponent.GetLinkedStructuresSummary()}";
