@@ -296,7 +296,7 @@ public static class GoapActionStateDB {
         //    new StateNameAndDuration(){ name = "Stumble Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnMinutes(10), animationName = "Sleep Ground" },
         //} },
         {INTERACTION_TYPE.BUTCHER, new[]{
-            new StateNameAndDuration(){ name = "Transform Success", status = InteractionManager.Goap_State_Success, duration = 10 },
+            new StateNameAndDuration(){ name = "Transform Success", status = InteractionManager.Goap_State_Success, duration = 20 },
         } },
         {INTERACTION_TYPE.ASK_TO_STOP_JOB, new[]{
             new StateNameAndDuration(){ name = "Ask Success", status = InteractionManager.Goap_State_Success, duration = 0 },

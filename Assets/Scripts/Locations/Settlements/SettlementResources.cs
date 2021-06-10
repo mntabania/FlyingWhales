@@ -81,13 +81,7 @@ public class SettlementResources
             animalsThatProducesMats.Add(p_character);
             if (p_character.race.IsButcherableWhenDead() || p_character.race.IsButcherableWhenDeadOrAlive()) {
                 if (!butcherables.Contains(p_character)) {
-                    if (p_character.race.IsButcherableWhenDead()) {
-                        if (p_character.isDead) {
-                            butcherables.Add(p_character);
-                        }
-                    } else {
-                        butcherables.Add(p_character);
-                    }
+                    butcherables.Add(p_character);
                 }
             }
             if (p_character.race.IsShearable()) {
@@ -181,7 +175,7 @@ public class SettlementResources
             if (pile.tileObjectType == TILE_OBJECT_TYPE.ANIMAL_MEAT ||
                pile.tileObjectType == TILE_OBJECT_TYPE.ELF_MEAT ||
                pile.tileObjectType == TILE_OBJECT_TYPE.HUMAN_MEAT) {
-                if (currentStructure.structureType != STRUCTURE_TYPE.CITY_CENTER && currentStructure.structureType != STRUCTURE_TYPE.BUTCHERS_SHOP && !pile.HasJobTargetingThis(JOB_TYPE.HAUL, JOB_TYPE.COMBINE_STOCKPILE)) {
+                if (currentStructure.structureType != STRUCTURE_TYPE.CITY_CENTER && currentStructure.structureType != STRUCTURE_TYPE.BUTCHERS_SHOP && currentStructure.structureType != STRUCTURE_TYPE.FARM && currentStructure.structureType != STRUCTURE_TYPE.DWELLING && !pile.HasJobTargetingThis(JOB_TYPE.HAUL, JOB_TYPE.COMBINE_STOCKPILE)) {
                     pilePool.Add(pile);
                     //found = true;
                 }
@@ -292,9 +286,14 @@ public class SettlementResources
         for (int x = 0; x < butcherables.Count; ++x) {
             Summon monster = butcherables[x];
             LocationStructure currentStructure = butcherables[x].currentStructure;
-            if (currentStructure != null && currentStructure.structureType != STRUCTURE_TYPE.CITY_CENTER && currentStructure.structureType != STRUCTURE_TYPE.FARM
-                && !monster.HasJobTargetingThis(JOB_TYPE.MONSTER_BUTCHER, JOB_TYPE.SHEAR_ANIMAL, JOB_TYPE.SKIN_ANIMAL)) {
-                return monster;
+            if (currentStructure != null && !monster.HasJobTargetingThis(JOB_TYPE.MONSTER_BUTCHER, JOB_TYPE.SHEAR_ANIMAL, JOB_TYPE.SKIN_ANIMAL)) {
+                if (monster.race.IsButcherableWhenDead()) {
+                    if (monster.isDead) {
+                        return monster;
+                    }
+                } else if (monster.race.IsButcherableWhenDeadOrAlive()) {
+                    return monster;
+                }
             }
         }
         return null;

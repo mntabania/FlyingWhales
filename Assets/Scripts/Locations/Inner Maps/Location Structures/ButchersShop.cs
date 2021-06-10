@@ -91,6 +91,7 @@ namespace Inner_Maps.Location_Structures {
 
         protected override void ProcessWorkStructureJobsByWorker(Character p_worker, out JobQueueItem producedJob) {
             producedJob = null;
+
             ResourcePile foodPile = p_worker.homeSettlement.SettlementResources.GetRandomPileOfMeats();
             if (foodPile != null) {
                 p_worker.jobComponent.TryCreateHaulJob(foodPile, out producedJob);
@@ -98,6 +99,7 @@ namespace Inner_Maps.Location_Structures {
                     return;
                 }
             }
+
             List<TileObject> builtPilesInSideStructure = RuinarchListPool<TileObject>.Claim();
             SetListToVariable(builtPilesInSideStructure);
             //List<ResourcePile> multiplePiles = CheckForMultipleSameResourcePileInsideStructure();
