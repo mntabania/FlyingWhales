@@ -69,7 +69,7 @@ public class StructureInfoUI : InfoUIBase {
         Messenger.AddListener<Character, LocationStructure>(CharacterSignals.CHARACTER_ARRIVED_AT_STRUCTURE, UpdatePrisonersFromSignal);
         Messenger.AddListener<Character, LocationStructure>(CharacterSignals.CHARACTER_LEFT_STRUCTURE, UpdatePrisonersFromSignal);
         Messenger.AddListener<Character>(CharacterSignals.CHARACTER_DEATH, OnCharacterDied);
-        Messenger.AddListener<Snooper>(StructureSignals.UPDATE_EYE_WARDS, UpdateEyeWardsFromSignal);
+		Messenger.AddListener<Inner_Maps.Location_Structures.Watcher>(StructureSignals.UPDATE_EYE_WARDS, this.UpdateEyeWardsFromSignal);
         Messenger.AddListener<DemonicStructure>(StructureSignals.DEMONIC_STRUCTURE_REPAIRED, OnDemonicStructureRepaired);
         Messenger.AddListener<KeyCode>(ControlsSignals.KEY_DOWN_EMPTY_SPACE, OnReceiveKeyCodeSignal);
         Messenger.AddListener(ControlsSignals.PRESS_PORTAL_SHORTCUT, OnReceivePortalShortCutSignal);
@@ -161,7 +161,7 @@ public class StructureInfoUI : InfoUIBase {
         }
     }
     private bool UsesEyesTab() {
-        if (activeStructure is Snooper) {
+        if (activeStructure is Inner_Maps.Location_Structures.Watcher) {
             return true;
         } else {
             return false;
@@ -297,7 +297,7 @@ public class StructureInfoUI : InfoUIBase {
     }
     private void UpdateEyes() {
         UtilityScripts.Utilities.DestroyChildren(eyesParentTransform);
-        Snooper beholder = activeStructure as Snooper;
+		Inner_Maps.Location_Structures.Watcher beholder = activeStructure as Inner_Maps.Location_Structures.Watcher;
         for (int i = 0; i < beholder.eyeWards.Count; i++) {
             DemonEye eyeWard = beholder.eyeWards[i];
             GameObject go = UIManager.Instance.InstantiateUIObject(tileObjectNameplatePrefab.name, eyesParentTransform);
@@ -337,7 +337,7 @@ public class StructureInfoUI : InfoUIBase {
             UpdatePrisoners();
         }
     }
-    private void UpdateEyeWardsFromSignal(Snooper structure) {
+    private void UpdateEyeWardsFromSignal(Inner_Maps.Location_Structures.Watcher structure) {
         if (isShowing && activeStructure == structure && UsesEyesTab()) {
             UpdateEyes();
         }

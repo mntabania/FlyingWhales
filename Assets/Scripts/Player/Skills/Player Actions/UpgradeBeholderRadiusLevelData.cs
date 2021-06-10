@@ -9,20 +9,20 @@ public class UpgradeBeholderRadiusLevelData : PlayerAction {
     public override string name => "Increase Radius";
     public override string description => GetDescription();
 
-    private Snooper m_targetBeholder;
+    private Inner_Maps.Location_Structures.Watcher m_targetBeholder;
     public string GetDescription() {
         if (m_targetBeholder != null) {
             if (m_targetBeholder.GetRadiusLevel() >= 3) {
-                return "Increase the radius of each Demon Eye of this Snooper";
+                return "Increase the radius of each Demon Eye of this Watcher";
             }
             return $"Spend {EditableValuesManager.Instance.GetBeholderRadiusUpgradeCostPerLevel(m_targetBeholder.GetRadiusLevel()).GetCostStringWithIcon()} to increase radius by 1.";
         } else {
-            return "Increase the radius of each Demon Eye of this Snooper";
+            return "Increase the radius of each Demon Eye of this Watcher";
         }
     }
     public override bool CanPerformAbilityTowards(LocationStructure target) {
         bool canPerform = false;
-        m_targetBeholder = target as Snooper;
+		m_targetBeholder = target as Inner_Maps.Location_Structures.Watcher;
         if (m_targetBeholder.GetRadiusLevel() < 3) {
             canPerform = true;
         } else {
@@ -38,16 +38,16 @@ public class UpgradeBeholderRadiusLevelData : PlayerAction {
         return base.CanPerformAbilityTowards(target) && canPerform;
     }
     public override bool IsValid(IPlayerActionTarget target) {
-        if (target is Snooper) {
+        if (target is Inner_Maps.Location_Structures.Watcher) {
             return true;
         }
         return false;
     }
     public override string GetReasonsWhyCannotPerformAbilityTowards(LocationStructure structure) {
         string reasons = base.GetReasonsWhyCannotPerformAbilityTowards(structure);
-        m_targetBeholder = structure as Snooper;
+		m_targetBeholder = structure as Inner_Maps.Location_Structures.Watcher;
         if (m_targetBeholder.GetRadiusLevel() >= 3) {
-            reasons += $"Snooper Radius already max level\n";
+            reasons += $"Watcher Radius already max level\n";
             return reasons;
         }
         if (PlayerManager.Instance.player.chaoticEnergy < EditableValuesManager.Instance.GetBeholderRadiusUpgradeCostPerLevel(m_targetBeholder.GetRadiusLevel()).processedAmount) {
@@ -64,7 +64,7 @@ public class UpgradeBeholderRadiusLevelData : PlayerAction {
 
     #region Overrides
     public override void ActivateAbility(LocationStructure structure) {
-        (structure as Snooper).LevelUpRadius();
+        (structure as Inner_Maps.Location_Structures.Watcher).LevelUpRadius();
         base.ActivateAbility(structure);
     }
     #endregion

@@ -9,22 +9,22 @@ public class UpgradeBeholderEyeLevelData : PlayerAction {
     public override string name => "Increase Eyes";
     public override string description => GetDescription();
 
-    private Snooper m_targetBeholder;
+    private Inner_Maps.Location_Structures.Watcher m_targetBeholder;
 
     public string GetDescription() {
         if (m_targetBeholder != null) {
             if (m_targetBeholder.GetEyeLevel() >= 3) {
-                return "Increase the number of Demon Eye capacity of this Snooper";
+                return "Increase the number of Demon Eye capacity of this Watcher";
             }
             return $"Spend {EditableValuesManager.Instance.GetBeholderEyeUpgradeCostPerLevel(m_targetBeholder.GetEyeLevel()).GetCostStringWithIcon()} to increase maximum Demon Eye count by 1.";
         } else {
-            return "Increase the number of Demon Eye capacity of this Snooper";
+            return "Increase the number of Demon Eye capacity of this Watcher";
         }
     }
 
     public override bool CanPerformAbilityTowards(LocationStructure target) {
         bool canPerform = false;
-        m_targetBeholder = target as Snooper;
+		m_targetBeholder = target as Inner_Maps.Location_Structures.Watcher;
         if (m_targetBeholder.GetEyeLevel() < 3) {
             canPerform = true;
         } else {
@@ -40,14 +40,14 @@ public class UpgradeBeholderEyeLevelData : PlayerAction {
         return base.CanPerformAbilityTowards(target) && canPerform;
     }
     public override bool IsValid(IPlayerActionTarget target) {
-        if (target is Snooper) {
+        if (target is Inner_Maps.Location_Structures.Watcher) {
             return true;
         }
         return false;
     }
     public override string GetReasonsWhyCannotPerformAbilityTowards(LocationStructure structure) {
         string reasons = base.GetReasonsWhyCannotPerformAbilityTowards(structure);
-        m_targetBeholder = structure as Snooper;
+		m_targetBeholder = structure as Inner_Maps.Location_Structures.Watcher;
         if (m_targetBeholder.GetEyeLevel() >= 3) {
             reasons += $"Demon Eye already max level\n";
             return reasons;
@@ -65,7 +65,7 @@ public class UpgradeBeholderEyeLevelData : PlayerAction {
 
     #region Overrides
     public override void ActivateAbility(LocationStructure structure) {
-        (structure as Snooper).LevelUpEyes();
+        (structure as Inner_Maps.Location_Structures.Watcher).LevelUpEyes();
         base.ActivateAbility(structure);
     }
     #endregion
