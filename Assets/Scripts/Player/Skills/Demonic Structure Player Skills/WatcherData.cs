@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using Inner_Maps;
 using UnityEngine;
 
-public class SnooperData : DemonicStructurePlayerSkill {
-    public override string name => "Snooper";
-    public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.SNOOPER;
+public class WatcherData : DemonicStructurePlayerSkill {
+    public override string name => "Watcher";
+    public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.WATCHER;
     public override string description => "This Structure produces Eyes. The Player may place Eyes all over the world to obtain information and store them as Intel.";
-    public SnooperData() {
-        structureType = STRUCTURE_TYPE.SNOOPER;
+    public WatcherData() {
+        structureType = STRUCTURE_TYPE.WATCHER;
     }
     //protected override string InvalidMessage(LocationGridTile tile) {
     //    if (tile.parentMap.region.HasStructure(STRUCTURE_TYPE.BEHOLDER)) {

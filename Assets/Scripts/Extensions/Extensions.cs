@@ -42,7 +42,7 @@ public static class Extensions {
             case STRUCTURE_TYPE.CEMETERY:
             case STRUCTURE_TYPE.CITY_CENTER:
             case STRUCTURE_TYPE.THE_PORTAL:
-            case STRUCTURE_TYPE.SNOOPER:
+            case STRUCTURE_TYPE.WATCHER:
             case STRUCTURE_TYPE.SPIRE:
             case STRUCTURE_TYPE.MARAUD:
             case STRUCTURE_TYPE.DEFENSE_POINT:
@@ -144,7 +144,7 @@ public static class Extensions {
             case STRUCTURE_TYPE.KENNEL:
             case STRUCTURE_TYPE.THE_ANVIL:
             case STRUCTURE_TYPE.MEDDLER:
-            case STRUCTURE_TYPE.SNOOPER:
+            case STRUCTURE_TYPE.WATCHER:
             case STRUCTURE_TYPE.SPIRE:
             case STRUCTURE_TYPE.MARAUD:
             case STRUCTURE_TYPE.DEFENSE_POINT:
@@ -568,7 +568,7 @@ public static class Extensions {
             case TILE_OBJECT_TYPE.PORTAL_TILE_OBJECT:
             case TILE_OBJECT_TYPE.SPIRE_TILE_OBJECT:
             case TILE_OBJECT_TYPE.TORTURE_CHAMBERS_TILE_OBJECT:
-            case TILE_OBJECT_TYPE.SNOOPER_TILE_OBJECT:
+            case TILE_OBJECT_TYPE.WATCHER_TILE_OBJECT:
             case TILE_OBJECT_TYPE.BIOLAB_TILE_OBJECT:
             case TILE_OBJECT_TYPE.CRYPT_TILE_OBJECT:
             case TILE_OBJECT_TYPE.DEFENSE_POINT_TILE_OBJECT:
@@ -590,7 +590,7 @@ public static class Extensions {
             case TILE_OBJECT_TYPE.PORTAL_TILE_OBJECT:
             case TILE_OBJECT_TYPE.SPIRE_TILE_OBJECT:
             case TILE_OBJECT_TYPE.TORTURE_CHAMBERS_TILE_OBJECT:
-            case TILE_OBJECT_TYPE.SNOOPER_TILE_OBJECT:
+            case TILE_OBJECT_TYPE.WATCHER_TILE_OBJECT:
             case TILE_OBJECT_TYPE.BIOLAB_TILE_OBJECT:
             case TILE_OBJECT_TYPE.CRYPT_TILE_OBJECT:
             case TILE_OBJECT_TYPE.DEFENSE_POINT_TILE_OBJECT:

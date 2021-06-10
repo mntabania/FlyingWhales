@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Inner_Maps.Location_Structures;
 
 namespace Inner_Maps.Location_Structures {
-    public class Snooper : DemonicStructure {
+    public class Watcher : DemonicStructure {
         public List<DemonEye> eyeWards { get; private set; }
         public int m_defaultEyeCount = 3;
 		#region upgradeable data
@@ -12,19 +12,19 @@ namespace Inner_Maps.Location_Structures {
         private int m_eyeWardMaxCount = 3;
         private int m_eyeWardRadius = 7;
 		#endregion
-		public override string scenarioDescription => "The Snooper allows you to place Eyes on unoccupied tiles in the map. The Eye logs most events and actions that occur around it, allowing the player to store some of them as Intel. Intel can then be used for various purposes. You can share it with other Villagers and watch them react or you may even use one as Blackmail material if you have the Meddler.";
+		public override string scenarioDescription => "The Watcher allows you to place Eyes on unoccupied tiles in the map. The Eye logs most events and actions that occur around it, allowing the player to store some of them as Intel. Intel can then be used for various purposes. You can share it with other Villagers and watch them react or you may even use one as Blackmail material if you have the Meddler.";
         public override string extraInfo1Header => $"Eyes: Lv{m_eyesLevel+1}";
         public override string extraInfo1Description => $"{eyeWards.Count}/{m_eyeWardMaxCount}";
         public override string extraInfo2Header => $"Radius: Lv{m_radiusLevel+1}";
         public override string extraInfo2Description => $"{m_eyeWardRadius*2}x{m_eyeWardRadius*2}";
         #region getters
-        public override System.Type serializedData => typeof(SaveDataSnooper);
+        public override System.Type serializedData => typeof(SaveDataWatcher);
         #endregion
-        public Snooper(Region location) : base(STRUCTURE_TYPE.SNOOPER, location){
+        public Watcher(Region location) : base(STRUCTURE_TYPE.WATCHER, location){
             SetMaxHPAndReset(2500);
             eyeWards = new List<DemonEye>();
         }
-        public Snooper(Region location, SaveDataSnooper data) : base(location, data) {
+        public Watcher(Region location, SaveDataWatcher data) : base(location, data) {
             eyeWards = new List<DemonEye>();
         }
 
@@ -138,7 +138,7 @@ namespace Inner_Maps.Location_Structures {
         #region Loading
         public override void LoadReferences(SaveDataLocationStructure saveDataLocationStructure) {
             base.LoadReferences(saveDataLocationStructure);
-            SaveDataSnooper data = saveDataLocationStructure as SaveDataSnooper;
+            SaveDataWatcher data = saveDataLocationStructure as SaveDataWatcher;
             if(data.eyeWards != null) {
                 for (int i = 0; i < data.eyeWards.Count; i++) {
                     if (!string.IsNullOrEmpty(data.eyeWards[i])) {
@@ -174,7 +174,7 @@ namespace Inner_Maps.Location_Structures {
     }
 }
 
-public class SaveDataSnooper : SaveDataDemonicStructure {
+public class SaveDataWatcher : SaveDataDemonicStructure {
     public List<string> eyeWards;
     public int eyesLevel;
     public int radiusLevel;
@@ -183,7 +183,7 @@ public class SaveDataSnooper : SaveDataDemonicStructure {
 
     public override void Save(LocationStructure structure) {
         base.Save(structure);
-        Snooper data = structure as Snooper;
+		Inner_Maps.Location_Structures.Watcher data = structure as Inner_Maps.Location_Structures.Watcher;
         if(data.eyeWards.Count > 0) {
             eyeWards = new List<string>();
             for (int i = 0; i < data.eyeWards.Count; i++) {

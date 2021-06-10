@@ -8,7 +8,7 @@ public class DemonEye : TileObject {
     private List<LocationGridTile> tilesInRadius;
 
     private EyeWardHighlight _eyeWardHighlight;
-    private Snooper m_owner;
+    private Inner_Maps.Location_Structures.Watcher m_owner;
     public DemonEye() {
         tilesInRadius = new List<LocationGridTile>();
         Initialize(TILE_OBJECT_TYPE.DEMON_EYE, false);
@@ -102,7 +102,7 @@ public class DemonEye : TileObject {
             }
         }
     }
-    public void SetBeholderOwner(Snooper p_beholder) {
+    public void SetBeholderOwner(Inner_Maps.Location_Structures.Watcher p_beholder) {
         m_owner = p_beholder;
     }
     public void ShowEyeWardHighlight() {
