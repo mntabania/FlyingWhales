@@ -27,6 +27,7 @@ public class Revenant : Summon {
     public override void Initialize() {
         base.Initialize();
         behaviourComponent.ChangeDefaultBehaviourSet(CharacterManager.Revenant_Behaviour);
+        isWildMonster = false;
     }
     public override void LoadReferences(SaveDataCharacter data) {
         if (data is SaveDataRevenant savedData) {

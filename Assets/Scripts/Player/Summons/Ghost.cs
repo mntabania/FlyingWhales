@@ -27,6 +27,7 @@ public class Ghost : Summon {
         base.Initialize();
         movementComponent.SetToFlying();
         RemoveAdvertisedAction(INTERACTION_TYPE.BURY_CHARACTER);
+        isWildMonster = false;
     }
 
     public override void SubscribeToSignals() {

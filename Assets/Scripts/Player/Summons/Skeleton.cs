@@ -21,16 +21,20 @@ public class Skeleton : Summon {
         visuals.SetHasBlood(false);
     }
 
-    //#region Overrides
-    //public override bool SetFaction(Faction newFaction) {
-    //    if (base.SetFaction(newFaction)) {
-    //        if (newFaction.isPlayerFaction) {
-    //            //if skeleton became part of player faction, add bre 
-    //        }
-    //        return true;
-    //    }
-    //    return false;
-    //}
-    //#endregion
+	public override void Initialize() {
+		base.Initialize();
+		isWildMonster = false;
+	}
+	//#region Overrides
+	//public override bool SetFaction(Faction newFaction) {
+	//    if (base.SetFaction(newFaction)) {
+	//        if (newFaction.isPlayerFaction) {
+	//            //if skeleton became part of player faction, add bre 
+	//        }
+	//        return true;
+	//    }
+	//    return false;
+	//}
+	//#endregion
 }
 
