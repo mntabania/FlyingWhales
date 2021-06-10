@@ -318,23 +318,32 @@ public class GoapPlanJob : JobQueueItem {
         }
         return base.CanBeInterruptedBy(jobType);
     }
-    protected override void CheckJobApplicability(JOB_TYPE jobType, IPointOfInterest targetPOI) {
-        if (this.jobType == jobType && this.targetPOI == targetPOI) {
+    protected override void CheckJobApplicability(JOB_TYPE p_jobType, IPointOfInterest p_targetPOI) {
+        if (this.jobType == p_jobType && targetPOI == p_targetPOI) {
             if (!IsJobStillApplicable()) {
                 // ForceCancelJob(false);
                 originalOwner.AddForcedCancelJobsOnTickEnded(this);
             }
         }
     }
-    protected override void CheckJobApplicability(IPointOfInterest targetPOI) {
-        if (this.targetPOI == targetPOI) {
+    protected override void CheckJobApplicability(IPointOfInterest p_targetPOI) {
+        if (targetPOI == p_targetPOI) {
             if (!IsJobStillApplicable()) {
                 originalOwner.AddForcedCancelJobsOnTickEnded(this);
                 // ForceCancelJob(false);
             }
         }
     }
-#endregion
+
+    protected override void CheckJobApplicability(JOB_TYPE p_jobType) {
+        if (jobType == p_jobType) {
+            if (!IsJobStillApplicable()) {
+                // ForceCancelJob(false);
+                originalOwner.AddForcedCancelJobsOnTickEnded(this);
+            }
+        }
+    }
+    #endregion
 
 #region Misc
     public void SetAssignedPlan(GoapPlan plan) {

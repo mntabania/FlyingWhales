@@ -161,6 +161,7 @@
     public static string ON_CHARACTER_RAISE_DEAD_BY_NECRO = "OnCharacterRaiseDeadByNecro";
 
     public static string ON_ELF_ABSORB_CRYSTAL = "OnElfAbsorbCrystal";
+    public static string TRY_CREATE_BURY_JOBS = "CheckBuryJob";
 
     #region used for chaotic energy generation
     public static string CHARACTER_PRAY_SUCCESS = "OnCharacterPraySuccess";

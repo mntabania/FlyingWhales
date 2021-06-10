@@ -2042,39 +2042,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
     }
 #endregion
 
-    //#region Visit Different Region
-    //public bool TriggerVisitDifferentRegion() {
-    //    if (!owner.jobQueue.HasJob(JOB_TYPE.VISIT_DIFFERENT_REGION)) {
-    //        Region chosenRegion = null;
-    //        List<Region> adjacentRegions = owner.currentRegion.neighbours;
-    //        if(adjacentRegions != null && adjacentRegions.Count > 0) {
-    //            chosenRegion = adjacentRegions[UnityEngine.Random.Range(0, adjacentRegions.Count)];
-    //        }
-    //        if(chosenRegion != null) {
-    //            Area area = chosenRegion.GetRandomHexThatMeetCriteria(a => a.elevationType != ELEVATION.WATER && a.elevationType != ELEVATION.MOUNTAIN);
-    //            if(area != null) {
-    //                LocationGridTile chosenTile = CollectionUtilities.GetRandomElement(area.gridTileComponent.gridTiles);
-    //                if (owner.gridTileLocation != null && owner.movementComponent.HasPathToEvenIfDiffRegion(chosenTile)) {
-    //                    ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.ROAM], owner, owner, new OtherData[] { new LocationGridTileOtherData(chosenTile) }, 0);
-    //                    GoapPlan goapPlan = ObjectPoolManager.Instance.CreateNewGoapPlan(node, owner);
-    //                    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.VISIT_DIFFERENT_REGION, INTERACTION_TYPE.ROAM, owner, owner);
-    //                    goapPlan.SetDoNotRecalculate(true);
-    //                    job.SetCannotBePushedBack(true);
-    //                    job.SetAssignedPlan(goapPlan);
-    //                    owner.jobQueue.AddJobInQueue(job);
-    //                    return true;
-    //                }
-    //            }
-    //        }
-    //    } else {
-    //        //If already has a Visit Different Region Job in queue, return true so that the character will not Roam Around Tile
-    //        return true;
-    //    }
-    //    return false;
-    //}
-    //#endregion
-
-#region Bury
+	#region Bury
     bool IsCharacterGhost(Character p_character) {
         if (p_character is Summon summon) {
             if (summon.summonType == SUMMON_TYPE.Ghost || summon.summonType == SUMMON_TYPE.Vengeful_Ghost) {
@@ -2084,11 +2052,25 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
         return false;
     }
     public void TriggerBuryMe() {
-	    if (owner.minion == null && !(owner is Animal) && owner.gridTileLocation != null && owner.gridTileLocation.IsNextToOrPartOfSettlement(out var settlement)
-	        && settlement is NPCSettlement npcSettlement) {
-            if (IsCharacterGhost(owner)) {
-                return;
+	    if (owner.minion == null && !(owner is Animal) && owner.gridTileLocation != null && 
+	        owner.gridTileLocation.IsNextToOrPartOfSettlement(out var settlement) && 
+	        settlement is NPCSettlement npcSettlement && !npcSettlement.HasJob(JOB_TYPE.BURY, owner)) {
+            if (IsCharacterGhost(owner)) { return; }
+
+            if (owner.race.IsSkinnable() ) {
+	            //if race is skinnable and settlement has an assigned skinners lodge, do not bury this character
+	            //Reference: https://trello.com/c/VEBnv6Aw/4771-bury-updates
+	            if (npcSettlement.HasStructureOfTypeThatIsAssigned(STRUCTURE_TYPE.HUNTER_LODGE)) {
+		            return;
+	            }
             }
+            
+            if (!npcSettlement.HasStructure(STRUCTURE_TYPE.CEMETERY) && owner.previousCharacterDataComponent.homeSettlementOnDeath != npcSettlement) {
+	            //if settlement doesn't have a cemetery and character to be buried was not a resident of the settlement, do not bury it.
+	            //Reference: https://trello.com/c/VEBnv6Aw/4771-bury-updates
+	            return;
+            }
+            
 		    LocationStructure targetStructure = npcSettlement.GetRandomStructureOfType(STRUCTURE_TYPE.CULT_TEMPLE) ??
                                                 npcSettlement.GetRandomStructureOfType(STRUCTURE_TYPE.CEMETERY) ?? 
 		                                        npcSettlement.region.wilderness;
@@ -2099,7 +2081,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 		    npcSettlement.AddToAvailableJobs(buryJob);
 	    }
     }
-    public void TriggerPersonalBuryJob(Character targetCharacter) {
+    public void TriggerPersonalOutsideVillageBuryJob(Character targetCharacter) {
         if (owner.gridTileLocation != null && !owner.jobQueue.HasJob(JOB_TYPE.BURY, targetCharacter)) {
             LocationStructure targetStructure = null;
             if (IsCharacterGhost(owner)) {
@@ -2130,7 +2112,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
             owner.jobQueue.AddJobInQueue(buryJob);
         }
     }
-#endregion
+	#endregion
 
 #region Go To
     public bool CreateGoToJob(IPointOfInterest target) {

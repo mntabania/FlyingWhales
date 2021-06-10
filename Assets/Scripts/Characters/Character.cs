@@ -6060,6 +6060,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                     currentRegion.RemoveCharacterFromLocation(this);
                 }
             }
+            previousCharacterDataComponent.SetHomeSettlementOnDeath(homeSettlement);
             if (homeRegion != null) {
                 Region home = homeRegion;
                 LocationStructure homeStructure = this.homeStructure;

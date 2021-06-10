@@ -8,6 +8,7 @@
     public static string AFTER_ACTION_STATE_SET = "OnAfterActionStateSet"; //Parameters (Character, GoapAction, GoapActionState)
     public static string CHECK_JOB_APPLICABILITY = "OnCheckJobApplicability"; //Parameters (JOB_TYPE, IPointOfInterest)
     public static string CHECK_APPLICABILITY_OF_ALL_JOBS_TARGETING = "OnCheckAllJobsTargetingApplicability"; //Parameters (IPointOfInterest)
+    public static string CHECK_JOB_APPLICABILITY_OF_ALL_JOBS_OF_TYPE = "OnCheckJobApplicabilityOfAllJobsOfType"; //Parameters (JOB_TYPE)
     /// <summary>
     /// Parameters (JobQueueItem, Character)
     /// </summary>

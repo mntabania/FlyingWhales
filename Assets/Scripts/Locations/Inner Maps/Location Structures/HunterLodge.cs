@@ -5,10 +5,10 @@ namespace Inner_Maps.Location_Structures {
         public HunterLodge(Region location) : base(STRUCTURE_TYPE.HUNTER_LODGE, location) {
             nameWithoutID = "Skinner's Lodge";
             name = $"{nameWithoutID} {id.ToString()}";
-            SetMaxHPAndReset(8000);
+            SetMaxHPAndReset(3000);
         }
         public HunterLodge(Region location, SaveDataManMadeStructure data) : base(location, data) {
-            SetMaxHP(8000);
+            SetMaxHP(3000);
         }
 
         private void PopulateClothAndLeatherList(List<TileObject> p_list, TILE_OBJECT_TYPE p_type) {
@@ -113,5 +113,22 @@ namespace Inner_Maps.Location_Structures {
                 }
             }
         }
+        
+        #region Destruction
+        protected override void AfterStructureDestruction(Character p_responsibleCharacter = null) {
+            base.AfterStructureDestruction(p_responsibleCharacter);
+            //try to create bury jobs if hunter lodge has been destroyed, this is because skinnable animals might
+            //be bury-able now since it is possible that there are no more skinners lodges
+            Messenger.Broadcast(CharacterSignals.TRY_CREATE_BURY_JOBS, settlementLocation);
+        }
+        #endregion
+        
+        #region Building
+        public override void OnBuiltNewStructure() {
+            //When a skinners lodge is built, check if some bury jobs are no longer applicable, since we no longer want to bury
+            //characters that are skinnable.
+            Messenger.Broadcast(JobSignals.CHECK_JOB_APPLICABILITY_OF_ALL_JOBS_OF_TYPE, JOB_TYPE.BURY);
+        }
+        #endregion
     }
 }

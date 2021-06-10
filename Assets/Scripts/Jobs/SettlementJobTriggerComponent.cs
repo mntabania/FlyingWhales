@@ -76,6 +76,8 @@ public class SettlementJobTriggerComponent : JobTriggerComponent/*, SettlementCl
 		// Messenger.AddListener<NPCSettlement>(SettlementSignals.SETTLEMENT_CHANGE_STORAGE, OnSettlementChangedStorage);
 		Messenger.AddListener<BurningSource>(InnerMapSignals.BURNING_SOURCE_INACTIVE, OnBurningSourceInactive);
 		Messenger.AddListener(Signals.GAME_LOADED, OnGameLoadedVillage);
+		Messenger.AddListener<BaseSettlement>(CharacterSignals.TRY_CREATE_BURY_JOBS, TryCreateBuryJobs);
+
 		_owner.npcSettlementEventDispatcher.SubscribeToTileRemovedEvent(this);
 	}
 	public void UnsubscribeFromVillageListeners() {
@@ -94,9 +96,25 @@ public class SettlementJobTriggerComponent : JobTriggerComponent/*, SettlementCl
 		// Messenger.RemoveListener<NPCSettlement>(SettlementSignals.SETTLEMENT_CHANGE_STORAGE, OnSettlementChangedStorage);
 		Messenger.RemoveListener<BurningSource>(InnerMapSignals.BURNING_SOURCE_INACTIVE, OnBurningSourceInactive);
         Messenger.RemoveListener(Signals.GAME_LOADED, OnGameLoadedVillage);
+        Messenger.RemoveListener<BaseSettlement>(CharacterSignals.TRY_CREATE_BURY_JOBS, TryCreateBuryJobs);
         _owner.npcSettlementEventDispatcher.UnsubscribeToTileRemovedEvent(this);
     }
-    public void SubscribeToDungeonListeners() {
+
+	private void TryCreateBuryJobs(BaseSettlement p_settlement) {
+		if (p_settlement == _owner) {
+			for (int i = 0; i < _owner.areas.Count; i++) {
+				Area area = _owner.areas[i];
+				for (int j = 0; j < area.locationCharacterTracker.charactersAtLocation.Count; j++) {
+					Character character = area.locationCharacterTracker.charactersAtLocation[j];
+					if (character.isDead) {
+						character.jobComponent.TriggerBuryMe();
+					}
+				}
+			}
+		}
+	}
+
+	public void SubscribeToDungeonListeners() {
         // Messenger.AddListener<ResourcePile>(TileObjectSignals.RESOURCE_IN_PILE_CHANGED, OnResourceInPileChangedDungeon);
         Messenger.AddListener(Signals.GAME_LOADED, OnGameLoadedDungeon);
     }

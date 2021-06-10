@@ -6,10 +6,16 @@ public class PreviousCharacterDataComponent : CharacterComponent {
     private LocationStructure _previousHomeStructure;
     private NPCSettlement _previousHomeSettlement;
     private Faction _previousFaction;
+    private NPCSettlement _homeSettlementOnDeath;
     
     public LocationStructure previousHomeStructure => _previousHomeStructure;
     public NPCSettlement previousHomeSettlement => _previousHomeSettlement;
     public Faction previousFaction => _previousFaction;
+    /// <summary>
+    /// The settlement that this character was part of when it died.
+    /// Can be null.
+    /// </summary>
+    public NPCSettlement homeSettlementOnDeath => _homeSettlementOnDeath;
 
     public PreviousCharacterDataComponent() { }
     public PreviousCharacterDataComponent(SaveDataPreviousCharacterDataComponent data) { }
@@ -24,6 +30,9 @@ public class PreviousCharacterDataComponent : CharacterComponent {
         }
         if (!string.IsNullOrEmpty(data.previousFactionID)) {
             _previousFaction = DatabaseManager.Instance.factionDatabase.GetFactionBasedOnPersistentID(data.previousFactionID);
+        }
+        if (!string.IsNullOrEmpty(data.homeSettlementOnDeathID)) {
+            _homeSettlementOnDeath = DatabaseManager.Instance.settlementDatabase.GetSettlementByPersistentID(data.homeSettlementOnDeathID) as NPCSettlement;
         }
     }
     #endregion
@@ -41,6 +50,9 @@ public class PreviousCharacterDataComponent : CharacterComponent {
     public void SetPreviousHomeSettlement(NPCSettlement p_settlement) {
         _previousHomeSettlement = p_settlement;
     }
+    public void SetHomeSettlementOnDeath(NPCSettlement p_settlement) {
+        _homeSettlementOnDeath = p_settlement;
+    }
     #endregion
 
     #region Faction
@@ -54,12 +66,14 @@ public class SaveDataPreviousCharacterDataComponent : SaveData<PreviousCharacter
     public string previousHomeStructureID;
     public string previousHomeSettlementID;
     public string previousFactionID;
+    public string homeSettlementOnDeathID;
 
     #region Overrides
     public override void Save(PreviousCharacterDataComponent data) {
         previousHomeStructureID = data.previousHomeStructure?.persistentID ?? string.Empty;
         previousHomeSettlementID = data.previousHomeSettlement?.persistentID ?? string.Empty;
         previousFactionID = data.previousFaction?.persistentID ?? string.Empty;
+        homeSettlementOnDeathID = data.homeSettlementOnDeath?.persistentID ?? string.Empty;
     }
 
     public override PreviousCharacterDataComponent Load() {

@@ -342,10 +342,10 @@ namespace Traits {
                             } else {
                                 if (owner.traitContainer.HasTrait("Necromancer")) {
                                     if (owner.faction.factionType.type != FACTION_TYPE.Undead) {
-                                        owner.jobComponent.TriggerPersonalBuryJob(targetCharacter);
+                                        owner.jobComponent.TriggerPersonalOutsideVillageBuryJob(targetCharacter);
                                     }
                                 } else {
-                                    owner.jobComponent.TriggerPersonalBuryJob(targetCharacter);
+                                    owner.jobComponent.TriggerPersonalOutsideVillageBuryJob(targetCharacter);
                                 }
                             }
                         }

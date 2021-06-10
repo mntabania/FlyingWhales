@@ -61,6 +61,7 @@ public abstract class JobQueueItem : ISavable {
         SetInitialPriority();
         Messenger.AddListener<JOB_TYPE, IPointOfInterest>(JobSignals.CHECK_JOB_APPLICABILITY, CheckJobApplicability);
         Messenger.AddListener<IPointOfInterest>(JobSignals.CHECK_APPLICABILITY_OF_ALL_JOBS_TARGETING, CheckJobApplicability);
+        Messenger.AddListener<JOB_TYPE>(JobSignals.CHECK_JOB_APPLICABILITY_OF_ALL_JOBS_OF_TYPE, CheckJobApplicability);
         DatabaseManager.Instance.jobDatabase.Register(this);
     }
     protected void Initialize(SaveDataJobQueueItem data) {
@@ -87,6 +88,7 @@ public abstract class JobQueueItem : ISavable {
         SetInitialPriority();
         Messenger.AddListener<JOB_TYPE, IPointOfInterest>(JobSignals.CHECK_JOB_APPLICABILITY, CheckJobApplicability);
         Messenger.AddListener<IPointOfInterest>(JobSignals.CHECK_APPLICABILITY_OF_ALL_JOBS_TARGETING, CheckJobApplicability);
+        Messenger.AddListener<JOB_TYPE>(JobSignals.CHECK_JOB_APPLICABILITY_OF_ALL_JOBS_OF_TYPE, CheckJobApplicability);
         DatabaseManager.Instance.jobDatabase.Register(this);
     }
 
@@ -233,8 +235,9 @@ public abstract class JobQueueItem : ISavable {
         }
     }
     public virtual bool CanBeInterruptedBy(JOB_TYPE jobType) { return true; }
-    protected virtual void CheckJobApplicability(JOB_TYPE jobType, IPointOfInterest targetPOI) { }
-    protected virtual void CheckJobApplicability(IPointOfInterest targetPOI) { }
+    protected virtual void CheckJobApplicability(JOB_TYPE p_jobType, IPointOfInterest p_targetPOI) { }
+    protected virtual void CheckJobApplicability(JOB_TYPE p_jobType) { }
+    protected virtual void CheckJobApplicability(IPointOfInterest p_targetPOI) { }
     #endregion
 
     public void SetAssignedCharacter(Character character) {
@@ -388,6 +391,7 @@ public abstract class JobQueueItem : ISavable {
         ResetInvalidCounter();
         Messenger.RemoveListener<JOB_TYPE, IPointOfInterest>(JobSignals.CHECK_JOB_APPLICABILITY, CheckJobApplicability);
         Messenger.RemoveListener<IPointOfInterest>(JobSignals.CHECK_APPLICABILITY_OF_ALL_JOBS_TARGETING, CheckJobApplicability);
+        Messenger.RemoveListener<JOB_TYPE>(JobSignals.CHECK_JOB_APPLICABILITY_OF_ALL_JOBS_OF_TYPE, CheckJobApplicability);
     }
 #endregion
 }
