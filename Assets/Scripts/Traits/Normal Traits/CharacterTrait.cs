@@ -167,13 +167,14 @@ namespace Traits {
                             }
                             return true;
                         }
-                        if (item.tileObjectType == TILE_OBJECT_TYPE.HERB_PLANT) {
-                            HerbPlantProcessing(characterThatWillDoJob, item);
-                        }
+                        // if (item.tileObjectType == TILE_OBJECT_TYPE.HERB_PLANT) {
+                        //     HerbPlantProcessing(characterThatWillDoJob, item);
+                        // }
                     }
-                } else if (item.tileObjectType == TILE_OBJECT_TYPE.HERB_PLANT) {
-                    HerbPlantProcessing(characterThatWillDoJob, item);
-                } 
+                }
+                // else if (item.tileObjectType == TILE_OBJECT_TYPE.HERB_PLANT) {
+                //     HerbPlantProcessing(characterThatWillDoJob, item);
+                // } 
                 //else if (characterThatWillDoJob.partyComponent.hasParty) {
                 //    if (characterThatWillDoJob.partyComponent.currentParty.isActive && characterThatWillDoJob.partyComponent.currentParty.currentQuest is HeirloomHuntPartyQuest quest) {
                 //        if (quest.targetHeirloom == item) {

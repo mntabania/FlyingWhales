@@ -88,18 +88,20 @@ public class GoapPlanner {
             return;
         }
         if (goapThread.recalculationPlan != null) {
+            // owner.logComponent.PrintLogIfActive(goapThread.log);
             if (goapThread.recalculationPlan.isEnd) {
                 ForceCancelJobAndReturnToObjectPool(goapThread.job);
                 if (goapThread.recalculationPlan.resetPlanOnFinishRecalculation) {
                     ObjectPoolManager.Instance.ReturnGoapPlanToPool(goapThread.recalculationPlan);
                 }
-                ObjectPoolManager.Instance.ReturnGoapThreadToPool(goapThread);    
+                ObjectPoolManager.Instance.ReturnGoapThreadToPool(goapThread);
+                return;
             } else {
                 if (goapThread.recalculationPlan.resetPlanOnFinishRecalculation) {
                     ObjectPoolManager.Instance.ReturnGoapPlanToPool(goapThread.recalculationPlan);
+                    return;
                 }    
             }
-            return;
         }
 #if DEBUG_LOG
         string additionalLog = string.Empty;

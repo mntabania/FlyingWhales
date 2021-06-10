@@ -39,13 +39,16 @@ public class BuyFood : GoapAction {
     public override GoapActionInvalidity IsInvalid(ActualGoapNode node) {
         GoapActionInvalidity invalidity = base.IsInvalid(node);
         if (!invalidity.isInvalid) {
-            if (node.poiTarget is FoodPile && node.poiTarget.gridTileLocation != null && node.poiTarget.gridTileLocation.structure is ManMadeStructure manMadeStructure) {
+            if (node.poiTarget is FoodPile foodPile && node.poiTarget.gridTileLocation != null && node.poiTarget.gridTileLocation.structure is ManMadeStructure manMadeStructure) {
                 if (manMadeStructure.CanPurchaseFromHereBasedOnAssignedWorker(node.actor, out bool needsToPay)) {
                     var canAfford = !needsToPay || node.actor.moneyComponent.CanAfford(FoodCost);
                     if (!canAfford) {
                         invalidity.isInvalid = true;
                         invalidity.reason = "not_enough_money";    
                     }
+                } else {
+                    invalidity.isInvalid = true;
+                    invalidity.reason = "cannot_buy";
                 }
             }
         }

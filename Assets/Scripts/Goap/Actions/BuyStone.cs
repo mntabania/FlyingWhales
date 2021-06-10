@@ -38,13 +38,21 @@ public class BuyStone : GoapAction {
     public override GoapActionInvalidity IsInvalid(ActualGoapNode node) {
         GoapActionInvalidity invalidity = base.IsInvalid(node);
         if (!invalidity.isInvalid) {
-            if (node.poiTarget is StonePile && node.poiTarget.gridTileLocation != null && node.poiTarget.gridTileLocation.structure is ManMadeStructure manMadeStructure) {
+            if (node.poiTarget is StonePile stonePile && node.poiTarget.gridTileLocation != null && node.poiTarget.gridTileLocation.structure is ManMadeStructure manMadeStructure) {
                 if (manMadeStructure.CanPurchaseFromHereBasedOnAssignedWorker(node.actor, out bool needsToPay)) {
                     var canAfford = !needsToPay || node.actor.moneyComponent.CanAfford(GetBuyCost(node));
                     if (!canAfford) {
                         invalidity.isInvalid = true;
                         invalidity.reason = "not_enough_money";    
+                    } else {
+                        if (stonePile.resourceInPile < GetResourceAmount(node)) {
+                            invalidity.isInvalid = true;
+                            invalidity.reason = "not_enough_resources";
+                        }
                     }
+                } else {
+                    invalidity.isInvalid = true;
+                    invalidity.reason = "cannot_buy";
                 }
             }
         }
@@ -78,8 +86,11 @@ public class BuyStone : GoapAction {
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, OtherData[] otherData, JobQueueItem job) {
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData, job);
         if (satisfied) {
-            if (poiTarget is StonePile && poiTarget.gridTileLocation != null && poiTarget.gridTileLocation.structure is ManMadeStructure manMadeStructure) {
+            if (poiTarget is StonePile stonePile && poiTarget.gridTileLocation != null && poiTarget.gridTileLocation.structure is ManMadeStructure manMadeStructure) {
                 if (manMadeStructure.CanPurchaseFromHereBasedOnAssignedWorker(actor, out bool needsToPay)) {
+                    if (stonePile.resourceInPile < GetResourceAmount(otherData)) {
+                        return false;
+                    }
                     return true;
                 }
             }
@@ -123,8 +134,11 @@ public class BuyStone : GoapAction {
         return 10;
     }
     private int GetResourceAmount(ActualGoapNode goapNode) {
-        if (goapNode.otherData.Length >= 2) {
-            return ((IntOtherData) goapNode.otherData[1]).integer;
+        return GetResourceAmount(goapNode.otherData);
+    }
+    private int GetResourceAmount(OtherData[] otherData) {
+        if (otherData != null && otherData.Length >= 2) {
+            return ((IntOtherData) otherData[1]).integer;
         }
         return 10;
     }

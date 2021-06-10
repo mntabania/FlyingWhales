@@ -57,6 +57,9 @@ public class BuyItem : GoapAction {
                         invalidity.isInvalid = true;
                         invalidity.reason = "not_enough_money";    
                     }
+                } else {
+                    invalidity.isInvalid = true;
+                    invalidity.reason = "cannot_buy";
                 }
             }
         }

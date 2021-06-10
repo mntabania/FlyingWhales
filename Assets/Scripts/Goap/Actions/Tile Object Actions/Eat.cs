@@ -359,7 +359,8 @@ public class Eat : GoapAction {
                 goapActionInvalidity.isInvalid = true;
                 goapActionInvalidity.stateName = "Eat Fail";
             } else {
-                if (poiTarget is FoodPile foodPile && foodPile.structureLocation != null && foodPile.structureLocation is ManMadeStructure manMadeStructure) {
+                if (poiTarget is FoodPile foodPile && foodPile.structureLocation != null && foodPile.structureLocation is ManMadeStructure manMadeStructure && 
+                    manMadeStructure.structureType.IsFoodProducingStructure()) {
                     if (manMadeStructure.CanPurchaseFromHereBasedOnAssignedWorker(node.actor, out var needsToPay)) {
                         if (needsToPay) {
                             if (!node.actor.moneyComponent.CanAfford(BuyFood.FoodCost)) {
@@ -369,7 +370,7 @@ public class Eat : GoapAction {
                         }
                     } else {
                         goapActionInvalidity.isInvalid = true;
-                        goapActionInvalidity.stateName = "not_enough_money";
+                        goapActionInvalidity.stateName = "cannot_buy";
                     }
                 }  
             }
@@ -443,7 +444,8 @@ public class Eat : GoapAction {
         // goapNode.actor.needsComponent.AdjustDoNotGetHungry(1);
         // //actor.traitContainer.AddTrait(actor,"Eating");
         IPointOfInterest poiTarget = goapNode.poiTarget;
-        if (poiTarget is FoodPile foodPile && foodPile.structureLocation != null && foodPile.structureLocation is ManMadeStructure manMadeStructure) {
+        if (poiTarget is FoodPile foodPile && foodPile.structureLocation != null && foodPile.structureLocation is ManMadeStructure manMadeStructure && 
+            manMadeStructure.structureType.IsFoodProducingStructure()) {
             if (manMadeStructure.CanPurchaseFromHereBasedOnAssignedWorker(goapNode.actor, out var needsToPay)) {
                 if (needsToPay) {
                     goapNode.actor.moneyComponent.AdjustCoins(-BuyFood.FoodCost);
@@ -458,7 +460,7 @@ public class Eat : GoapAction {
     public void AfterEatSuccess(ActualGoapNode goapNode) {
         //goapNode.actor.needsComponent.AdjustDoNotGetHungry(-1);
         //goapNode.poiTarget.SetPOIState(POI_STATE.ACTIVE);
-        if (goapNode.actor.traitContainer.HasTrait("Cannibal") == false && 
+        if (!goapNode.actor.traitContainer.HasTrait("Cannibal") && 
             (goapNode.poiTarget is ElfMeat || goapNode.poiTarget is HumanMeat) && goapNode.actor.isNotSummonAndDemon) {
             goapNode.actor.traitContainer.AddTrait(goapNode.actor, "Cannibal");
             Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "NonIntel", "became_cannibal", goapNode, LogUtilities.Become_Cannibal_Tags);
@@ -469,6 +471,10 @@ public class Eat : GoapAction {
         if (goapNode.actor.race == RACE.ELVES && goapNode.poiTarget is RatMeat) {
             goapNode.actor.traitContainer.AddTrait(goapNode.actor, "Poor Meal");
         }
+
+        // if (goapNode.poiTarget is Table table) {
+        //     table.ApplyFoodEffectsToConsumer(goapNode.actor);
+        // }
     }
     //public void PreEatFail(ActualGoapNode goapNode) {
     //    GoapActionState currentState = goapNode.action.states[goapNode.currentStateName];
