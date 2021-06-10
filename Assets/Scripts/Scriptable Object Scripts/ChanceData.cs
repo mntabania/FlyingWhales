@@ -30,6 +30,7 @@ public static class ChanceData {
         {CHANCE_TYPE.Visit_Friend, 25},
         {CHANCE_TYPE.Ent_Spawn, 3},
         {CHANCE_TYPE.Mimic_Spawn, 5},
+        {CHANCE_TYPE.Vampire_Lycan_Visit_Hospice, 5},
     };
     public static bool RollChance(CHANCE_TYPE p_chanceType) {
         if (integerChances.ContainsKey(p_chanceType)) {
