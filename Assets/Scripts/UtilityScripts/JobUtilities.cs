@@ -59,6 +59,12 @@ namespace UtilityScripts {
                         job.AddPriorityLocation(INTERACTION_TYPE.NONE, currentLocation);
                     }
                 }
+                
+                if (actor.homeStructure == null && actor.homeSettlement != null && actor.homeSettlement == actor.currentSettlement) {
+                    //add settlement to fullness priority locations if character is homeless. This is so that homeless villagers can still find
+                    //something to eat at the settlement.
+                    job.AddPriorityLocation(INTERACTION_TYPE.NONE, actor.homeSettlement);
+                }
             }
         }
         public static void PopulatePriorityLocationsForHappinessRecovery(Character actor, GoapPlanJob job) {

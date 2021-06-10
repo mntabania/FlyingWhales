@@ -5,7 +5,7 @@ using UnityEngine.Assertions;
 
 public class BuyFood : GoapAction {
 
-    private const int FoodCost = 10;
+    public const int FoodCost = 10;
     
     public BuyFood() : base(INTERACTION_TYPE.BUY_FOOD) {
         actionIconString = GoapActionStateDB.Steal_Icon;

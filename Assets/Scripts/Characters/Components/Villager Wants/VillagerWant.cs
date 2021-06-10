@@ -53,7 +53,6 @@ namespace Characters.Villager_Wants {
         protected bool HasBasicResourceProducingStructureInSameVillageOwnedByValidCharacter(Character p_character, out bool needsToPay, out LocationStructure foundStructure) {
             Assert.IsNotNull(p_character.homeSettlement);
             Assert.IsTrue(p_character.faction.isMajorFaction);
-            Assert.IsTrue(p_character.faction == p_character.homeSettlement.owner);
             if (!p_character.homeSettlement.HasBasicResourceProducingStructure()) {
                 needsToPay = true;
                 foundStructure = null;
@@ -127,7 +126,6 @@ namespace Characters.Villager_Wants {
         protected bool HasWorkshopInSameVillageOwnedByValidCharacter(Character p_character, out bool needsToPay, out LocationStructure foundStructure) {
             Assert.IsNotNull(p_character.homeSettlement);
             Assert.IsTrue(p_character.faction.isMajorFaction);
-            Assert.IsTrue(p_character.faction == p_character.homeSettlement.owner);
             foundStructure = null;
             if (!p_character.homeSettlement.HasStructure(STRUCTURE_TYPE.WORKSHOP)) {
                 needsToPay = true;
@@ -168,7 +166,6 @@ namespace Characters.Villager_Wants {
         protected bool HasHospiceInSameVillageOwnedByValidCharacter(Character p_character, out bool needsToPay, out LocationStructure foundStructure) {
             Assert.IsNotNull(p_character.homeSettlement);
             Assert.IsTrue(p_character.faction.isMajorFaction);
-            Assert.IsTrue(p_character.faction == p_character.homeSettlement.owner);
             if (!p_character.homeSettlement.HasStructure(STRUCTURE_TYPE.HOSPICE)) {
                 needsToPay = true;
                 foundStructure = null;

@@ -55,6 +55,7 @@ public class Eat : GoapAction {
         base.Perform(goapNode);
         SetState("Eat Success", goapNode);
     }
+    
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
 #if DEBUG_LOG
         string costLog = $"\n{name} {target.nameWithID}:";
@@ -247,6 +248,7 @@ public class Eat : GoapAction {
                     }
                 }
             } else {
+                //target is not a table
                 if (target is ElfMeat || target is HumanMeat) {
                     if (actor.traitContainer.HasTrait("Cannibal")) {
                         cost = UtilityScripts.Utilities.Rng.Next(450, 551);
@@ -266,8 +268,44 @@ public class Eat : GoapAction {
 #endif
                         }
                     }
-                } else if (target.gridTileLocation != null && target.gridTileLocation.IsPartOfSettlement(out var settlement) && settlement.owner != null && actor.faction != null){
-                    if (!actor.faction.IsHostileWith(settlement.owner)) {
+                } else if (target.gridTileLocation != null && target.gridTileLocation.IsPartOfSettlement(out var settlement) && settlement.owner != null && actor.faction != null) {
+                    if (actor.homeSettlement == settlement) {
+                        //target is at home settlement of actor
+                        if (target is FoodPile foodPile) {
+                            if (foodPile.structureLocation != null && foodPile.structureLocation is ManMadeStructure manMadeStructure) {
+                                if (manMadeStructure == actor.homeStructure) {
+                                    cost = UtilityScripts.Utilities.Rng.Next(100, 151);
+#if DEBUG_LOG
+                                    costLog += $" +{cost}(Target is food pile inside actors home)";
+#endif
+                                } else if (manMadeStructure.CanPurchaseFromHereBasedOnAssignedWorker(actor, out var needsToPay)) {
+                                    if (needsToPay) {
+                                        if (actor.moneyComponent.CanAfford(BuyFood.FoodCost)) {
+                                            cost = UtilityScripts.Utilities.Rng.Next(600, 651);
+#if DEBUG_LOG
+                                            costLog += $" +{cost}(Target is a food pile inside food producing structure and actor NEEDS TO PAY and CAN AFFORD it)";
+#endif                                        
+                                        } else {
+                                            cost = 2000;
+#if DEBUG_LOG
+                                            costLog += $" +{cost}(Target is a food pile inside food producing structure and actor NEEDS TO PAY and CANNOT AFFORD it)";
+#endif                    
+                                        }
+                                    } else {
+                                        cost = UtilityScripts.Utilities.Rng.Next(100, 151);
+#if DEBUG_LOG
+                                        costLog += $" +{cost}(Target is a food pile inside food producing structure and actor DOES NOT NEED TO PAY)";
+#endif                                    
+                                    }
+                                } else {
+                                    cost = 2000;
+#if DEBUG_LOG
+                                    costLog += $" +{cost}(Target is a food pile inside food producing structure but actor cannot buy from there)";
+#endif                    
+                                }
+                            }
+                        }
+                    } else if (!actor.faction.IsHostileWith(settlement.owner)) {
                         if (target.gridTileLocation.structure.structureType == STRUCTURE_TYPE.TAVERN) {
                             cost = UtilityScripts.Utilities.Rng.Next(600, 651);
 #if DEBUG_LOG
@@ -320,6 +358,20 @@ public class Eat : GoapAction {
             if (poiTarget.IsAvailable() == false) {
                 goapActionInvalidity.isInvalid = true;
                 goapActionInvalidity.stateName = "Eat Fail";
+            } else {
+                if (poiTarget is FoodPile foodPile && foodPile.structureLocation != null && foodPile.structureLocation is ManMadeStructure manMadeStructure) {
+                    if (manMadeStructure.CanPurchaseFromHereBasedOnAssignedWorker(node.actor, out var needsToPay)) {
+                        if (needsToPay) {
+                            if (!node.actor.moneyComponent.CanAfford(BuyFood.FoodCost)) {
+                                goapActionInvalidity.isInvalid = true;
+                                goapActionInvalidity.stateName = "not_enough_money";                
+                            }
+                        }
+                    } else {
+                        goapActionInvalidity.isInvalid = true;
+                        goapActionInvalidity.stateName = "not_enough_money";
+                    }
+                }  
             }
         }
         return goapActionInvalidity;
@@ -385,12 +437,21 @@ public class Eat : GoapAction {
 #endregion
 
     #region Effects
-    //public void PreEatSuccess(ActualGoapNode goapNode) {
-    //    //goapNode.descriptionLog.AddToFillers(goapNode.targetStructure.location, goapNode.targetStructure.GetNameRelativeTo(goapNode.actor), LOG_IDENTIFIER.LANDMARK_1);
-    //    //goapNode.poiTarget.SetPOIState(POI_STATE.INACTIVE);
-    //    goapNode.actor.needsComponent.AdjustDoNotGetHungry(1);
-    //    //actor.traitContainer.AddTrait(actor,"Eating");
-    //}
+    public void PreEatSuccess(ActualGoapNode goapNode) {
+        // //goapNode.descriptionLog.AddToFillers(goapNode.targetStructure.location, goapNode.targetStructure.GetNameRelativeTo(goapNode.actor), LOG_IDENTIFIER.LANDMARK_1);
+        // //goapNode.poiTarget.SetPOIState(POI_STATE.INACTIVE);
+        // goapNode.actor.needsComponent.AdjustDoNotGetHungry(1);
+        // //actor.traitContainer.AddTrait(actor,"Eating");
+        IPointOfInterest poiTarget = goapNode.poiTarget;
+        if (poiTarget is FoodPile foodPile && foodPile.structureLocation != null && foodPile.structureLocation is ManMadeStructure manMadeStructure) {
+            if (manMadeStructure.CanPurchaseFromHereBasedOnAssignedWorker(goapNode.actor, out var needsToPay)) {
+                if (needsToPay) {
+                    goapNode.actor.moneyComponent.AdjustCoins(-BuyFood.FoodCost);
+                }
+            }
+        }  
+        
+    }
     //public void PerTickEatSuccess(ActualGoapNode goapNode) {
     //    //goapNode.actor.AdjustFullness(520);
     //}
@@ -424,17 +485,32 @@ public class Eat : GoapAction {
         if (satisfied) {
             if (job.jobType.IsFullnessRecoveryTypeJob()) {
                 LocationStructure structure = poiTarget.gridTileLocation?.structure;
-                if (structure != null) {
-                    if (structure is Dwelling) {
-                        if (!structure.IsResident(actor)) {
-                            return false;
-                        }
-                    } else if (structure.structureType.IsFoodProducingStructure()) {
-                        if (structure is ManMadeStructure manMadeStructure && manMadeStructure.assignedWorker != actor) {
-                            return false;
-                        }
+                if (structure == null) { return false; }
+                if (structure is Dwelling) {
+                    if (!structure.IsResident(actor)) {
+                        return false;
+                    }
+                } else if (structure.structureType.IsFoodProducingStructure() && structure is ManMadeStructure manMadeStructure) {
+                    if (actor.homeStructure != null && manMadeStructure.assignedWorker != actor) {
+                        //only limit eating from food producing structure if actor has a home.
+                        //If the actor is homeless allow them to eat there.
+                        return false;
                     }
                 }
+                // if (structure != null && actor.homeStructure != null) {
+                //     //only perform this checking if the actor is NOT homeless,
+                //     //because we want homeless villagers to be able to eat at other structures if they can pay for it.
+                //     //Reference: https://trello.com/c/ZITxj5nD/4765-homeless-villagers-belonging-to-a-village-should-be-able-to-purchase-and-eat-food-owned-by-others
+                //     if (structure is Dwelling) {
+                //         if (!structure.IsResident(actor)) {
+                //             return false;
+                //         }
+                //     } else if (structure.structureType.IsFoodProducingStructure()) {
+                //         if (structure is ManMadeStructure manMadeStructure && manMadeStructure.assignedWorker != actor) {
+                //             return false;
+                //         }
+                //     }
+                // }
             }
             if (!poiTarget.IsAvailable()) {
                 return false;
