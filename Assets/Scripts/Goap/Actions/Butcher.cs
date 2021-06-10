@@ -7,6 +7,8 @@ using Traits;
 
 public class Butcher : GoapAction {
 
+    public int m_amountProducedPerTick = 1;
+
     public Butcher() : base(INTERACTION_TYPE.BUTCHER) {
         actionIconString = GoapActionStateDB.Butcher_Icon;
         canBeAdvertisedEvenIfTargetIsUnavailable = true;
@@ -386,9 +388,15 @@ public class Butcher : GoapAction {
         }
         return base.GetCrimeType(actor, target, crime);
     }
-#endregion
+    #endregion
 
-#region Requirements
+    #region Requirements
+    public override void OnStopWhilePerforming(ActualGoapNode node) {
+        base.OnStopWhilePerforming(node);
+        if (node.currentStateDuration > 0) {
+            ProduceMats(node);
+        }
+    }
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, OtherData[] otherData, JobQueueItem job) {
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData, job);
         if (satisfied) {
@@ -448,6 +456,10 @@ public class Butcher : GoapAction {
         goapNode.descriptionLog.AddToFillers(null, transformedFood.ToString(), LOG_IDENTIFIER.STRING_1);
     }
     public void AfterTransformSuccess(ActualGoapNode goapNode) {
+        ProduceMats(goapNode);
+    }
+
+    public void ProduceMats(ActualGoapNode goapNode) {
         IPointOfInterest poiTarget = goapNode.poiTarget;
         LocationGridTile tileLocation = poiTarget.gridTileLocation;
 
@@ -466,6 +478,7 @@ public class Butcher : GoapAction {
         }
 
         FoodPile foodPile = CharacterManager.Instance.CreateFoodPileForPOI(poiTarget, tileLocation, false);
+        foodPile.SetResourceInPile(goapNode.currentStateDuration * m_amountProducedPerTick);
         if (goapNode.associatedJobType == JOB_TYPE.PRODUCE_FOOD_FOR_CAMP) {
             if (goapNode.actor.partyComponent.hasParty && goapNode.actor.partyComponent.currentParty.targetCamp != null) {
                 goapNode.actor.partyComponent.currentParty.jobComponent.CreateHaulForCampJob(foodPile, goapNode.actor.partyComponent.currentParty.targetCamp);
@@ -483,7 +496,7 @@ public class Butcher : GoapAction {
         if (foodPile != null) {
             goapNode.descriptionLog.AddInvolvedObjectManual(foodPile.persistentID);
             //if produced human/elf meat and the actor is not a cannibal, make him/her traumatized
-            if((foodPile.tileObjectType == TILE_OBJECT_TYPE.HUMAN_MEAT || foodPile.tileObjectType == TILE_OBJECT_TYPE.ELF_MEAT) 
+            if ((foodPile.tileObjectType == TILE_OBJECT_TYPE.HUMAN_MEAT || foodPile.tileObjectType == TILE_OBJECT_TYPE.ELF_MEAT)
                && !goapNode.actor.traitContainer.HasTrait("Cannibal") && goapNode.actor.isNormalCharacter && poiTarget is Character targetCharacter) {
                 goapNode.actor.traitContainer.AddTrait(goapNode.actor, "Traumatized", targetCharacter);
             }
