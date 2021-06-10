@@ -41,7 +41,7 @@ public class HealerCure : GoapAction {
     #region State Effects
     
     public void AfterHealerCureSuccess(ActualGoapNode goapNode) {
-        UnityEngine.Debug.LogError(goapNode.actor.talentComponent.GetTalent(CHARACTER_TALENT.Healing_Magic).level);
+        // UnityEngine.Debug.LogError(goapNode.actor.talentComponent.GetTalent(CHARACTER_TALENT.Healing_Magic).level);
         if (goapNode.actor.talentComponent.GetTalent(CHARACTER_TALENT.Healing_Magic).level >= 3) {
             Level3Effect(goapNode);
         } else if (goapNode.actor.talentComponent.GetTalent(CHARACTER_TALENT.Healing_Magic).level >= 2) {
