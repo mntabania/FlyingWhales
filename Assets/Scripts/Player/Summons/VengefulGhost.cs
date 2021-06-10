@@ -23,6 +23,7 @@ public class VengefulGhost : Summon {
         movementComponent.SetToFlying();
         RemoveAdvertisedAction(INTERACTION_TYPE.BURY_CHARACTER);
         behaviourComponent.ChangeDefaultBehaviourSet(CharacterManager.Vengeful_Ghost_Behaviour);
+        isWildMonster = false;
     }
     protected override void OnChangeFaction(Faction prevFaction, Faction newFaction) {
         base.OnChangeFaction(prevFaction, newFaction);
