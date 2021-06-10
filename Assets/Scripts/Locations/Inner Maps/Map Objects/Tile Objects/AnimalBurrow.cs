@@ -55,6 +55,10 @@ public abstract class AnimalBurrow : TileObject {
         Messenger.AddListener(Signals.GAME_LOADED, OnGameLoaded);
     }
 
+    public override void OnLoadPlacePOI() {
+        DefaultProcessOnPlacePOI();
+    }
+
     public override void OnDestroyPOI() {
         base.OnDestroyPOI();
         Messenger.RemoveListener(Signals.GAME_LOADED, OnGameLoaded);

@@ -83,9 +83,9 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         npcSettlementEventDispatcher = new NPCSettlementEventDispatcher();
         _plaguedExpiryKey = string.Empty;
         _neededObjects = new List<TILE_OBJECT_TYPE>() {
-            TILE_OBJECT_TYPE.HEALING_POTION,
-            TILE_OBJECT_TYPE.TOOL,
-            TILE_OBJECT_TYPE.ANTIDOTE
+            // TILE_OBJECT_TYPE.HEALING_POTION,
+            // TILE_OBJECT_TYPE.TOOL,
+            // TILE_OBJECT_TYPE.ANTIDOTE
         };
 
         migrationComponent = new SettlementVillageMigrationComponent(); migrationComponent.SetOwner(this);
@@ -1194,7 +1194,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
 
     #region Inner Map
     public IEnumerator PlaceInitialObjectsCoroutine() {
-        PlaceResourcePiles();
+        // PlaceResourcePiles();
         yield return null;
     }
     public void PlaceInitialObjects() {
