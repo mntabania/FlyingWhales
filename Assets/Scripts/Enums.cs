@@ -1431,7 +1431,8 @@ public enum CHANCE_TYPE {
     Lycanthrope_Transform_Chance,
     Visit_Friend,
     Ent_Spawn,
-    Mimic_Spawn
+    Mimic_Spawn,
+    Vampire_Lycan_Visit_Hospice
 }
 public enum Gradient_Direction {
     Top, Bottom, Left, Right
