@@ -135,7 +135,7 @@ public class SaveManager : MonoBehaviour {
 #region Tile Features
     public static SaveDataAreaFeature ConvertAreaFeatureToSaveData(AreaFeature p_areaFeature) {
         SaveDataAreaFeature saveDataTrait = null;
-        System.Type type = System.Type.GetType($"Locations.Tile_Features.SaveData{p_areaFeature.GetType().Name}, Assembly-CSharp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null");
+        System.Type type = p_areaFeature.serializedData; //System.Type.GetType($"Locations.Tile_Features.SaveData{p_areaFeature.GetType().Name}, Assembly-CSharp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null");
         if (type != null) {
             saveDataTrait = System.Activator.CreateInstance(type) as SaveDataAreaFeature;
         } else {

@@ -1,4 +1,5 @@
-﻿using Inner_Maps;
+﻿using System;
+using Inner_Maps;
 using UnityEngine.Assertions;
 using UnityEngine.Profiling;
 namespace Locations.Area_Features {
@@ -10,6 +11,7 @@ namespace Locations.Area_Features {
         public int expiryInTicks { get; private set; }
         public GameDate expiryDate { get; private set; }
         public bool isPlayerSource { get; private set; }
+        public override Type serializedData => typeof(SaveDataPoisonBloomFeature);
     
         public PoisonBloomFeature() {
             name = "Poison Emitting";

@@ -1,8 +1,11 @@
-﻿namespace Locations.Area_Features {
+﻿using System;
+
+namespace Locations.Area_Features {
 	public class AreaFeature  {
 
 		public string name { get; protected set; }
 		public string description { get; protected set; }
+		public virtual Type serializedData => typeof(SaveDataAreaFeature);
 
 		#region Virtuals
 		public virtual void OnAddFeature(Area p_area) { }
@@ -20,6 +23,12 @@
 		public override string ToString() {
 			return name;
 		}
+
+		#region For Testing
+		public virtual string GetTestingData() {
+			return string.Empty;
+		}
+		#endregion
 	}
 	
 	public class SaveDataAreaFeature {

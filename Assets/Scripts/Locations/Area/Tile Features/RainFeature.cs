@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
 using UnityEngine;
@@ -17,6 +18,7 @@ namespace Locations.Area_Features {
         public int expiryInTicks { get; private set; }
         public GameDate expiryDate { get; private set; }
         public bool isPlayerSource { get; private set; }
+        public override Type serializedData => typeof(SaveDataRainFeature);
 
         public RainFeature() {
             name = "Rain";

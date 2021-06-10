@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Inner_Maps;
 using UnityEngine;
@@ -12,11 +13,11 @@ namespace Locations.Area_Features {
         private const int MaxAnimals = 6;
 
         private Area owner;
-        private bool isGeneratingPerHour;
-    
+        public bool isGeneratingPerHour { get; private set; }
         public SUMMON_TYPE animalTypeBeingSpawned { get; private set; }
         public List<Animal> ownedAnimals { get; private set; } //list of animals that have been spawned by this feature
-
+        public override Type serializedData => typeof(SaveDataGameFeature);
+        
         public static readonly SUMMON_TYPE[] spawnChoices = new[] {
             SUMMON_TYPE.Pig,
             SUMMON_TYPE.Sheep,
@@ -29,7 +30,7 @@ namespace Locations.Area_Features {
             ownedAnimals = new List<Animal>();
             SetSpawnType(CollectionUtilities.GetRandomElement(spawnChoices));
         }
-    
+
         #region Overrides
         public override void GameStartActions(Area p_area) {
             owner = p_area;
@@ -55,6 +56,7 @@ namespace Locations.Area_Features {
         }
         public override void LoadedGameStartActions(Area p_area) {
             //Do not do anything when loading a saved game. Since animals are saved and loaded elsewhere.
+            owner = p_area;
         }
         public override void OnRemoveFeature(Area p_area) {
             base.OnRemoveFeature(p_area);
@@ -136,24 +138,53 @@ namespace Locations.Area_Features {
             }
 
         }
+
+        #region Loading
+        public void LoadAnimals(List<string> p_ids) {
+            for (int i = 0; i < p_ids.Count; i++) {
+                string id = p_ids[i];
+                Animal animal = DatabaseManager.Instance.characterDatabase.GetCharacterByPersistentID(id) as Animal;
+                if (animal != null) {
+                    AddOwnedAnimal(animal);
+                }
+            }
+        }
+
+        public void LoadGeneration(bool p_isGeneratingPerHour) {
+            isGeneratingPerHour = p_isGeneratingPerHour;
+            if (isGeneratingPerHour) {
+                Messenger.AddListener(Signals.HOUR_STARTED, OnHourStarted);
+            }
+        }
+        #endregion
+
+        #region For Testing
+        public override string GetTestingData() {
+            return $"Game feature spawned animals: {ownedAnimals.ComafyList()}";
+        }
+        #endregion
     }
     
     [System.Serializable]
     public class SaveDataGameFeature : SaveDataAreaFeature {
 
         public SUMMON_TYPE summon;
-        private List<string> ownedAnimals;
+        public List<string> ownedAnimals;
+        public bool isGeneratingPerHour;
         public override void Save(AreaFeature tileFeature) {
             base.Save(tileFeature);
             GameFeature gameFeature = tileFeature as GameFeature;
             Assert.IsNotNull(gameFeature);
             summon = gameFeature.animalTypeBeingSpawned;
             ownedAnimals = SaveUtilities.ConvertSavableListToIDs(gameFeature.ownedAnimals);
+            isGeneratingPerHour = gameFeature.isGeneratingPerHour;
         }
         public override AreaFeature Load() {
             GameFeature gameFeature = base.Load() as GameFeature;
             Assert.IsNotNull(gameFeature);
             gameFeature.SetSpawnType(summon);
+            gameFeature.LoadAnimals(ownedAnimals);
+            gameFeature.LoadGeneration(isGeneratingPerHour);
             return gameFeature;
         }
     } 

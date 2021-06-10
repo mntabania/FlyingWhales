@@ -5,6 +5,7 @@ using Cellular_Automata;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
 using JetBrains.Annotations;
+using Locations.Area_Features;
 using Pathfinding;
 using Ruinarch;
 using UnityEngine;
@@ -408,6 +409,15 @@ namespace Inner_Maps {
             summary = $"{summary}<b>Settlement on Area:</b>{(area.settlementOnArea?.name ?? "None")}";
             summary = $"{summary}<b>Structure Connectors on Area:</b>{area.structureComponent.structureConnectors.Count.ToString()}";
             summary = $"{summary}\n<b>Area Features:</b>{area.featureComponent.features.ComafyList()}";
+            summary = $"{summary}\n<b>Feature Details:</b>";
+            for (int i = 0; i < area.featureComponent.features.Count; i++) {
+                AreaFeature areaFeature = area.featureComponent.features[i];
+                string testingData = areaFeature.GetTestingData();
+                if (!string.IsNullOrEmpty(testingData)) {
+                    summary = $"{summary}\n{testingData}";        
+                }
+            }
+            
             summary = $"{summary}\n<b>Tile Biome:</b>{tile.mainBiomeType.ToString()}";
             summary = $"{summary}<b>Tile Elevation:</b>{tile.elevationType.ToString()}";
             summary = $"{summary}<b>Ground Type:</b>{tile.groundType.ToString()}";
