@@ -11,6 +11,13 @@ using System;
 public class TileObjectGameObject : MapObjectVisual<TileObject> {
 
     public Action<TileObjectGameObject> onObjectClicked;
+
+    private void Awake() {
+        if (clickCollider == null) {
+            clickCollider = gameObject.GetComponent<Collider2D>();
+        }
+    }
+
     public override void Initialize(TileObject tileObject) {
         base.Initialize(tileObject);
         this.name = tileObject.ToString();

@@ -96,6 +96,7 @@ namespace Inner_Maps {
             go.transform.SetParent(owner.parentMap.structureTilemap.transform);
             // go.transform.SetAsFirstSibling();
             go.transform.position = owner.centeredWorldLocation;
+            // Debug.Log($"Mouse events of {owner}");
         }
         private void DestroyMouseEventsGO() {
             ObjectPoolManager.Instance.DestroyObject(_mouseEvents.gameObject);
@@ -214,6 +215,7 @@ namespace Inner_Maps {
         public void LoadSecondWave() {
             if (hasMouseEvents) {
                 InitiateMouseEventsGO();
+                SubscribeToShiftKeyListeners();
             }
         }
         #endregion
