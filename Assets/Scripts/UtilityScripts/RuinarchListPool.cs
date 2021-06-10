@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 using Pathfinding.Util;
+using UnityEngine;
+
 namespace UtilityScripts {
     public static class RuinarchListPool<T> {
         private static readonly List<List<T>> pool = new List<List<T>>();
@@ -18,8 +20,12 @@ namespace UtilityScripts {
         
         public static void Release (List<T> list) {
             lock (pool) {
-                list.Clear();
-                pool.Add(list);
+                if (!pool.Contains(list)) {
+                    list.Clear();
+                    pool.Add(list);
+                } else {
+                    Debug.LogError("Adding a list to pool but is already in list");
+                }
             }
         }
     }

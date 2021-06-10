@@ -157,7 +157,7 @@ public class VillageGeneration : MapGenerationComponent {
 		for (int i = 0; i < createdSettlements.Count; i++) {
 			NPCSettlement npcSettlement = createdSettlements[i];
 			VillageSetting villageSetting = villageSettings[i];
-			int neededBasicResourceProducingStructures = villageSetting.GetFoodProducingStructureCount();
+			int neededBasicResourceProducingStructures = villageSetting.GetBasicResourceProducingStructureCount();
 			var missingBasicResourceProducers = 0;
 			for (int j = 0; j < neededBasicResourceProducingStructures; j++) {
 				List<StructureSetting> structureSettings = RuinarchListPool<StructureSetting>.Claim();

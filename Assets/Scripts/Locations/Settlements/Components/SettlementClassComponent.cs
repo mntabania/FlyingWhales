@@ -200,9 +200,21 @@ public class SettlementClassComponent : NPCSettlementComponent {
         log += "\nReserved Food Producers: ";
         if (sortedFoodProducers.Count != sortedFoodProducersSupplyCapacity.Count) {
             Debug.LogError("Food producer list and food supply capacity list not the same length: " + sortedFoodProducers.Count + "," + sortedFoodProducersSupplyCapacity.Count);
+            string moreLog = "Food Producers";
+            for (int i = 0; i < sortedFoodProducers.Count; i++) {
+                Character c = sortedFoodProducers[i];
+                moreLog += "\n" + c.name;
+            }
+            Debug.LogError(moreLog);
         }
         if (sortedResourceProducers.Count != sortedResourceProducersSupplyCapacity.Count) {
             Debug.LogError("Resource producer list and resource supply capacity list not the same length: " + sortedResourceProducers.Count + "," + sortedResourceProducersSupplyCapacity.Count);
+            string moreLog = "Resource Producers";
+            for (int i = 0; i < sortedResourceProducers.Count; i++) {
+                Character c = sortedResourceProducers[i];
+                moreLog += "\n" + c.name;
+            }
+            Debug.LogError(moreLog);
         }
 #endif
         int totalFSP = 0;
