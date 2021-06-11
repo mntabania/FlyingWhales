@@ -74,7 +74,10 @@ public class BuyFood : GoapAction {
     }
     public override void AddFillersToLog(Log log, ActualGoapNode node) {
         base.AddFillersToLog(log, node);
-        log.AddToFillers(null, FoodCost.ToString(), LOG_IDENTIFIER.STRING_1);
+        if (node.poiTarget.gridTileLocation != null &&
+            node.poiTarget.gridTileLocation.structure is ManMadeStructure manMadeStructure && manMadeStructure.assignedWorker != null) {
+            log.AddToFillers(manMadeStructure.assignedWorker, manMadeStructure.assignedWorker.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        }
     }
     #endregion
     

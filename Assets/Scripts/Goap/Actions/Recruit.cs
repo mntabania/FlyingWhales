@@ -70,7 +70,7 @@ public class Recruit : GoapAction {
     }
 #endregion
 
-#region Effects
+    #region Effects
     public void AfterRecruitSuccess(ActualGoapNode goapNode) {
         Character actor = goapNode.actor;
         Character targetCharacter = goapNode.poiTarget as Character;
@@ -89,8 +89,12 @@ public class Recruit : GoapAction {
         }
         targetCharacter.traitContainer.RemoveRestrainAndImprison(targetCharacter, goapNode.actor);
         targetCharacter.traitContainer.RemoveTrait(targetCharacter, "Criminal");
+        if (targetCharacter is Summon) {
+            //Reference: https://trello.com/c/T2CnOQWD/4674-heal-newly-recruited-monsters-with-low-hp
+            targetCharacter.AdjustHP(targetCharacter.maxHP, ELEMENTAL_TYPE.Normal, showHPBar: true);
+        }
     }
-#endregion
+    #endregion
 
 #region Requirements
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, OtherData[] otherData, JobQueueItem job) {
