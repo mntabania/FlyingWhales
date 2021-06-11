@@ -128,7 +128,7 @@ public class BuyStone : GoapAction {
 
     #region Utilities
     private int GetBuyCost(ActualGoapNode goapNode) {
-        if (goapNode.otherData.Length == 1) {
+        if (goapNode.otherData.Length >= 1) {
             return ((IntOtherData) goapNode.otherData[0]).integer;
         }
         return 10;
