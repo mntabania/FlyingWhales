@@ -147,12 +147,30 @@ public class MapGenerationData {
 			List<LocationGridTile> tiles = caveBorderTilesCategorizedByArea[p_area];
 			for (int i = 0; i < tiles.Count; i++) {
 				LocationGridTile tile = tiles[i];
-				if ((tile.tileObjectComponent.objHere is BlockWall || p_data.GetGeneratedObjectOnTile(tile) == TILE_OBJECT_TYPE.BLOCK_WALL) && !tile.IsAtEdgeOfMap()) {
+				if (IsTileValidOreVeinTarget(tile, p_data)) {
 					return tile;
 				}
 			}
 		}
 		return null;
+	}
+
+	private bool IsTileValidOreVeinTarget(LocationGridTile p_tile, MapGenerationData p_data) {
+		if ((p_tile.tileObjectComponent.objHere is BlockWall || p_data.GetGeneratedObjectOnTile(p_tile) == TILE_OBJECT_TYPE.BLOCK_WALL) && !p_tile.IsAtEdgeOfMap()) {
+			List<LocationGridTile> fourNeighbours = p_tile.FourNeighbours();
+			int wildernessNeighboursInCardinal = fourNeighbours.Count(t => t.structure is Wilderness);
+			if (wildernessNeighboursInCardinal == 1) {
+				List<LocationGridTile> allNeighbours = p_tile.neighbourList;
+				int wildernessNeighboursInOrdinal = allNeighbours.Count(t => t.structure is Wilderness);
+				if (wildernessNeighboursInOrdinal == 3) {
+					return true;
+				}
+			}
+			
+			
+		}
+
+		return false;
 	}
 	#endregion
 
