@@ -10,8 +10,8 @@ namespace Character_Talents {
                 "Unlocks the Druid Class.",
                 "Unlocks the Druid Class.\nInt: +15%\nCrit: +5%",
                 "Unlocks the Druid and Shaman Classes.\nInt: +15%\nCrit: +5%",
-                "Unlocks the Druid and Shaman Classes.\nInt: +30\nCrit: +10%",
-                "Unlocks the Druid, Shaman and Mage Classes.\nInt: +30\nCrit: +10%",
+                "Unlocks the Druid and Shaman Classes.\nInt: +30%\nCrit: +10%",
+                "Unlocks the Druid, Shaman and Mage Classes.\nInt: +30%\nCrit: +10%",
             });
         }
 

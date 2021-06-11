@@ -149,7 +149,7 @@ public static class GoapActionStateDB {
             new StateNameAndDuration(){ name = "Pray Success", status = InteractionManager.Goap_State_Success, duration = 5 },
         } },
         {INTERACTION_TYPE.CHOP_WOOD, new[]{
-            new StateNameAndDuration(){ name = "Chop Success", status = InteractionManager.Goap_State_Success, duration = 10 },
+            new StateNameAndDuration(){ name = "Chop Success", status = InteractionManager.Goap_State_Success, duration = 20 },
         } },
         {INTERACTION_TYPE.STEAL, new[]{
             new StateNameAndDuration(){ name = "Steal Success", status = InteractionManager.Goap_State_Success, duration = 0 },
