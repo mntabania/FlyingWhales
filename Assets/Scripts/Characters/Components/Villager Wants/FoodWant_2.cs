@@ -33,5 +33,14 @@ namespace Characters.Villager_Wants {
             if (!CharacterLivesInADwelling(p_character)) return false;
             return p_character.homeStructure is Dwelling dwelling && dwelling.differentFoodPileKindsInDwelling < 2;
         }
+
+        public override void OnWantToggledOn(Character p_character) {
+            //character no longer has at least 2 types of food at home
+            p_character.traitContainer.RemoveTrait(p_character, "Stocked Up");
+        }
+        public override void OnWantToggledOff(Character p_character) {
+            //character has at least 2 types of food at home
+            p_character.traitContainer.AddTrait(p_character, "Stocked Up");
+        }
     }
 }

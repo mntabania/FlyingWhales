@@ -221,7 +221,7 @@ namespace Inner_Maps.Location_Structures {
         public bool HasAssignedWorker() {
             return assignedWorker != null;
         }
-        public bool CanPurchaseFromHereBasedOnAssignedWorker(Character p_buyer, out bool needsToPay) {
+        public bool CanPurchaseFromHereBasedOnOpinionOfCharacterToAssignedWorker(Character p_buyer, out bool needsToPay) {
             if (assignedWorker != null) {
                 if (assignedWorker == p_buyer) {
                     //structure is owned by self
@@ -234,7 +234,8 @@ namespace Inner_Maps.Location_Structures {
                 } else if (p_buyer.relationshipContainer.IsFamilyMember(assignedWorker) && 
                            p_buyer.relationshipContainer.GetOpinionLabel(assignedWorker) == RelationshipManager.Close_Friend) {
                     //structure is owned by a close friend family member
-                    needsToPay = false;
+                    //needs to pay if worker does not consider buyer a close friend
+                    needsToPay = assignedWorker.relationshipContainer.GetOpinionLabel(p_buyer) != RelationshipManager.Close_Friend;
                     return true;
                 } else if (!p_buyer.relationshipContainer.IsEnemiesWith(assignedWorker)) {
                     //structure is owned by a non-enemy villager

@@ -61,7 +61,7 @@ namespace Characters.Villager_Wants {
                 LocationStructure structure = foodProducingStructures[i];
                 ManMadeStructure manMadeStructure = structure as ManMadeStructure;
                 Assert.IsNotNull(manMadeStructure, $"Food producing structure is not Man made! {structure?.name}");
-                if (manMadeStructure.HasTileObjectThatIsBuiltFoodPileThatCharacterDoesntHaveAtHome(p_character) && manMadeStructure.CanPurchaseFromHereBasedOnAssignedWorker(p_character, out needsToPay)) {
+                if (manMadeStructure.HasTileObjectThatIsBuiltFoodPileThatCharacterDoesntHaveAtHome(p_character) && manMadeStructure.CanPurchaseFromHereBasedOnOpinionOfCharacterToAssignedWorker(p_character, out needsToPay)) {
                     foundStructure = manMadeStructure;
                     if (!needsToPay) {
                         //if character found a structure that he/she doesn't need to pay at, break this loop,

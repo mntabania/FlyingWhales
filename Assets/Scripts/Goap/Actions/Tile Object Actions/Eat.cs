@@ -278,7 +278,7 @@ public class Eat : GoapAction {
 #if DEBUG_LOG
                                     costLog += $" +{cost}(Target is food pile inside actors home)";
 #endif
-                                } else if (manMadeStructure.CanPurchaseFromHereBasedOnAssignedWorker(actor, out var needsToPay)) {
+                                } else if (manMadeStructure.CanPurchaseFromHereBasedOnOpinionOfCharacterToAssignedWorker(actor, out var needsToPay)) {
                                     if (needsToPay) {
                                         if (actor.moneyComponent.CanAfford(BuyFood.FoodCost)) {
                                             cost = UtilityScripts.Utilities.Rng.Next(600, 651);
@@ -361,7 +361,7 @@ public class Eat : GoapAction {
             } else {
                 if (poiTarget is FoodPile foodPile && foodPile.structureLocation != null && foodPile.structureLocation is ManMadeStructure manMadeStructure && 
                     manMadeStructure.structureType.IsFoodProducingStructure()) {
-                    if (manMadeStructure.CanPurchaseFromHereBasedOnAssignedWorker(node.actor, out var needsToPay)) {
+                    if (manMadeStructure.CanPurchaseFromHereBasedOnOpinionOfCharacterToAssignedWorker(node.actor, out var needsToPay)) {
                         if (needsToPay) {
                             if (!node.actor.moneyComponent.CanAfford(BuyFood.FoodCost)) {
                                 goapActionInvalidity.isInvalid = true;
@@ -446,7 +446,7 @@ public class Eat : GoapAction {
         IPointOfInterest poiTarget = goapNode.poiTarget;
         if (poiTarget is FoodPile foodPile && foodPile.structureLocation != null && foodPile.structureLocation is ManMadeStructure manMadeStructure && 
             manMadeStructure.structureType.IsFoodProducingStructure()) {
-            if (manMadeStructure.CanPurchaseFromHereBasedOnAssignedWorker(goapNode.actor, out var needsToPay)) {
+            if (manMadeStructure.CanPurchaseFromHereBasedOnOpinionOfCharacterToAssignedWorker(goapNode.actor, out var needsToPay)) {
                 if (needsToPay) {
                     goapNode.actor.moneyComponent.AdjustCoins(-BuyFood.FoodCost);
                 }
@@ -472,9 +472,11 @@ public class Eat : GoapAction {
             goapNode.actor.traitContainer.AddTrait(goapNode.actor, "Poor Meal");
         }
 
-        // if (goapNode.poiTarget is Table table) {
-        //     table.ApplyFoodEffectsToConsumer(goapNode.actor);
-        // }
+        if (goapNode.poiTarget is Table table) {
+            table.ApplyFoodEffectsToConsumer(goapNode.actor);
+        } else if (goapNode.poiTarget is FoodPile foodPile) {
+            foodPile.ApplyFoodEffectsToConsumer(goapNode.actor);
+        }
     }
     //public void PreEatFail(ActualGoapNode goapNode) {
     //    GoapActionState currentState = goapNode.action.states[goapNode.currentStateName];

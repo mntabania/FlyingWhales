@@ -72,6 +72,7 @@ public class VillagerWantsComponent : CharacterComponent, CharacterEventDispatch
             if (!hasBeenInserted) {
                 wantsToProcess.Add(p_want);
             }
+            p_want.OnWantToggledOn(owner);
 #if DEBUG_LOG
             Debug.Log($"{GameManager.Instance.TodayLogString()}{owner.name} Added want: {p_want.GetType()}");
 #endif
@@ -79,6 +80,7 @@ public class VillagerWantsComponent : CharacterComponent, CharacterEventDispatch
     }
     private bool ToggleWantOff(VillagerWant p_want) {
         if (wantsToProcess.Remove(p_want)) {
+            p_want.OnWantToggledOff(owner);
 #if DEBUG_LOG
             Debug.Log($"{GameManager.Instance.TodayLogString()}{owner.name} Removed want: {p_want.GetType()}");
 #endif

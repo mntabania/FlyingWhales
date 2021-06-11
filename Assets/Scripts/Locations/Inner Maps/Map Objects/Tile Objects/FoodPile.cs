@@ -32,4 +32,8 @@ public abstract class FoodPile : ResourcePile {
         RemoveAdvertisedAction(INTERACTION_TYPE.BUY_FOOD);
     }
     #endregion
+    
+    #region Eating
+    public virtual void ApplyFoodEffectsToConsumer(Character p_consumer) { }
+    #endregion
 }

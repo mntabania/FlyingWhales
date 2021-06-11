@@ -518,7 +518,9 @@ public class GoapAction {
                             //TODO: There might be a better way to do this?
                             return effect.conditionKey == "Animal Meat" || effect.conditionKey == "Human Meat" ||
                                    effect.conditionKey == "Elf Meat" || effect.conditionKey == "Vegetables" ||
-                                   effect.conditionKey == "Fish Pile" || effect.conditionKey == "Food Pile";
+                                   effect.conditionKey == "Fish Pile" || effect.conditionKey == "Food Pile" || 
+                                   effect.conditionKey == "Potato" || effect.conditionKey == "Corn" ||
+                                   effect.conditionKey == "Pineapple" || effect.conditionKey == "Iceberry";
                         }
                     }
                 }

@@ -10,4 +10,10 @@
         return $"Potato {id.ToString()}";
     }
     #endregion
+    
+    #region Eating
+    public override void ApplyFoodEffectsToConsumer(Character p_consumer) {
+        p_consumer.traitContainer.AddTrait(p_consumer, "Potato Fed");
+    }
+    #endregion
 }

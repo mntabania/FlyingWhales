@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Inner_Maps;
@@ -9,6 +10,10 @@ using UtilityScripts;
 
 public class Table : TileObject {
     public int food => resourceStorageComponent.storedResources[RESOURCE.FOOD];
+    public CONCRETE_RESOURCES lastAddedFoodType { get; private set; }
+
+    public override Type serializedData => typeof(SaveDataTable);
+
     public Table() {
         Initialize(TILE_OBJECT_TYPE.TABLE);
         AddAdvertisedAction(INTERACTION_TYPE.DRINK);
@@ -22,7 +27,10 @@ public class Table : TileObject {
         traitContainer.AddTrait(this, "Edible");
     }
 
-    public Table(SaveDataTileObject data) : base(data) { }
+    public Table(SaveDataTileObject data) : base(data) {
+        SaveDataTable saveDataTable = data as SaveDataTable;
+        lastAddedFoodType = saveDataTable.lastAddedFoodType;
+    }
 
     #region Overrides
     public override void SetPOIState(POI_STATE state) {
@@ -99,6 +107,7 @@ public class Table : TileObject {
     public override string GetAdditionalTestingData() {
         string data = base.GetAdditionalTestingData();
         data = $"{data}\n\tFood in Table: {food.ToString()}";
+        data = $"{data}\n\tLast Added Food Type: {lastAddedFoodType.ToString()}";
         return data;
     }
     protected override void OnSetObjectAsUnbuilt() {
@@ -289,6 +298,7 @@ public class Table : TileObject {
     #region Food
     public void AdjustFood(CONCRETE_RESOURCES p_foodType, int p_amount) {
         Assert.IsTrue(p_foodType.GetResourceCategory() == RESOURCE.FOOD, $"A non-food resource is being used to increase food resource of {nameWithID}");
+        lastAddedFoodType = p_foodType;
         resourceStorageComponent.AdjustResource(p_foodType, p_amount);
         if (gridTileLocation != null && structureLocation is Dwelling) {
             Messenger.Broadcast(StructureSignals.FOOD_IN_DWELLING_CHANGED, this);   
@@ -296,26 +306,40 @@ public class Table : TileObject {
     }
     private void SetFood(CONCRETE_RESOURCES p_foodType, int p_amount) {
         Assert.IsTrue(p_foodType.GetResourceCategory() == RESOURCE.FOOD, $"A non-food resource is being used to increase food resource of {nameWithID}");
+        lastAddedFoodType = p_foodType;
         resourceStorageComponent.SetResource(p_foodType, p_amount);
         if (gridTileLocation != null && structureLocation is Dwelling) {
             Messenger.Broadcast(StructureSignals.FOOD_IN_DWELLING_CHANGED, this);   
         }
     }
     #endregion
+
+    #region Eating
+    public void ApplyFoodEffectsToConsumer(Character p_consumer) {
+        switch (lastAddedFoodType) {
+            case CONCRETE_RESOURCES.Corn:
+                p_consumer.traitContainer.AddTrait(p_consumer, "Corn Fed");
+                break;
+            case CONCRETE_RESOURCES.Potato:
+                p_consumer.traitContainer.AddTrait(p_consumer, "Potato Fed");
+                break;
+            case CONCRETE_RESOURCES.Pineapple:
+                p_consumer.traitContainer.AddTrait(p_consumer, "Pineapple Fed");
+                break;
+            case CONCRETE_RESOURCES.Iceberry:
+                p_consumer.traitContainer.AddTrait(p_consumer, "Iceberry Fed");
+                break;
+        }
+    }
+    #endregion
 }
 
-//public class SaveDataTable : SaveDataTileObject {
-//    public int food;
+public class SaveDataTable : SaveDataTileObject {
+    public CONCRETE_RESOURCES lastAddedFoodType;
 
-//    public override void Save(TileObject tileObject) {
-//        base.Save(tileObject);
-//        Table obj = tileObject as Table;
-//        food = obj.food;
-//    }
-
-//    public override TileObject Load() {
-//        Table obj = base.Load() as Table;
-//        obj.SetFood(food);
-//        return obj;
-//    }
-//}
+    public override void Save(TileObject tileObject) {
+        base.Save(tileObject);
+        Table obj = tileObject as Table;
+        lastAddedFoodType = obj.lastAddedFoodType;
+    }
+}

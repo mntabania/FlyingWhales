@@ -22,7 +22,7 @@ public class BuyFood : GoapAction {
     public override void Perform(ActualGoapNode goapNode) {
         base.Perform(goapNode);
         if (goapNode.poiTarget is FoodPile && goapNode.poiTarget.gridTileLocation != null && goapNode.poiTarget.gridTileLocation.structure is ManMadeStructure manMadeStructure) {
-            if (manMadeStructure.CanPurchaseFromHereBasedOnAssignedWorker(goapNode.actor, out bool needsToPay)) {
+            if (manMadeStructure.CanPurchaseFromHereBasedOnOpinionOfCharacterToAssignedWorker(goapNode.actor, out bool needsToPay)) {
                 SetState(needsToPay ? "Buy Success" : "Take Success", goapNode);
             } else {
 #if DEBUG_LOG
@@ -40,7 +40,7 @@ public class BuyFood : GoapAction {
         GoapActionInvalidity invalidity = base.IsInvalid(node);
         if (!invalidity.isInvalid) {
             if (node.poiTarget is FoodPile foodPile && node.poiTarget.gridTileLocation != null && node.poiTarget.gridTileLocation.structure is ManMadeStructure manMadeStructure) {
-                if (manMadeStructure.CanPurchaseFromHereBasedOnAssignedWorker(node.actor, out bool needsToPay)) {
+                if (manMadeStructure.CanPurchaseFromHereBasedOnOpinionOfCharacterToAssignedWorker(node.actor, out bool needsToPay)) {
                     var canAfford = !needsToPay || node.actor.moneyComponent.CanAfford(FoodCost);
                     if (!canAfford) {
                         invalidity.isInvalid = true;
@@ -83,7 +83,7 @@ public class BuyFood : GoapAction {
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData, job);
         if (satisfied) {
             if (poiTarget is FoodPile foodPile && poiTarget.gridTileLocation != null && poiTarget.gridTileLocation.structure is ManMadeStructure manMadeStructure) {
-                if (manMadeStructure.CanPurchaseFromHereBasedOnAssignedWorker(actor, out bool needsToPay)) {
+                if (manMadeStructure.CanPurchaseFromHereBasedOnOpinionOfCharacterToAssignedWorker(actor, out bool needsToPay)) {
                     // if (needsToPay) {
                     //     return actor.moneyComponent.CanAfford(FoodCost);
                     // } else {

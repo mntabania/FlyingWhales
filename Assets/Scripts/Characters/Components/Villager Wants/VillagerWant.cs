@@ -13,6 +13,9 @@ namespace Characters.Villager_Wants {
         public abstract string name { get; }
         public abstract bool CanVillagerObtainWant(Character p_character, out LocationStructure p_preferredStructure);
 
+        public virtual void OnWantToggledOn(Character p_character) { }
+        public virtual void OnWantToggledOff(Character p_character) { }
+        
         #region Validity
         /// <summary>
         /// This function is used to determine if the character should still process this want or not.
@@ -105,7 +108,7 @@ namespace Characters.Villager_Wants {
                            p_character.faction.factionType.type == FACTION_TYPE.Lycan_Clan || p_character.faction.factionType.type == FACTION_TYPE.Vampire_Clan) {
                     hasNeededResource = manMadeStructure.HasBuiltTileObjectOfType(TILE_OBJECT_TYPE.STONE_PILE) || manMadeStructure.HasBuiltTileObjectOfType(TILE_OBJECT_TYPE.WOOD_PILE);
                 }
-                if (hasNeededResource && manMadeStructure.CanPurchaseFromHereBasedOnAssignedWorker(p_character, out needsToPay)) {
+                if (hasNeededResource && manMadeStructure.CanPurchaseFromHereBasedOnOpinionOfCharacterToAssignedWorker(p_character, out needsToPay)) {
                     foundStructure = manMadeStructure;
                     if (!needsToPay) {
                         //if character found a structure that he/she doesn't need to pay at, break this loop,
@@ -146,7 +149,7 @@ namespace Characters.Villager_Wants {
                 LocationStructure structure = workshops[i];
                 ManMadeStructure manMadeStructure = structure as ManMadeStructure;
                 Assert.IsNotNull(manMadeStructure, $"Workshop is not Man made! {structure?.name}");
-                if (manMadeStructure.CanPurchaseFromHereBasedOnAssignedWorker(p_character, out needsToPay)) {
+                if (manMadeStructure.CanPurchaseFromHereBasedOnOpinionOfCharacterToAssignedWorker(p_character, out needsToPay)) {
                     foundStructure = manMadeStructure;
                     if (!needsToPay) {
                         //if character found a structure that he/she doesn't need to pay at, break this loop,
@@ -188,7 +191,7 @@ namespace Characters.Villager_Wants {
                 LocationStructure structure = hospice[i];
                 ManMadeStructure manMadeStructure = structure as ManMadeStructure;
                 Assert.IsNotNull(manMadeStructure, $"Workshop is not Man made! {structure?.name}");
-                if (manMadeStructure.HasBuiltTileObjectOfType(TILE_OBJECT_TYPE.HEALING_POTION) && manMadeStructure.CanPurchaseFromHereBasedOnAssignedWorker(p_character, out needsToPay)) {
+                if (manMadeStructure.HasBuiltTileObjectOfType(TILE_OBJECT_TYPE.HEALING_POTION) && manMadeStructure.CanPurchaseFromHereBasedOnOpinionOfCharacterToAssignedWorker(p_character, out needsToPay)) {
                     foundStructure = manMadeStructure;
                     if (!needsToPay) {
                         //if character found a structure that he/she doesn't need to pay at, break this loop,
