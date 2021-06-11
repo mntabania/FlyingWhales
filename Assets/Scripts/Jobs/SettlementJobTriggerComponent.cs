@@ -361,14 +361,17 @@ public class SettlementJobTriggerComponent : JobTriggerComponent/*, SettlementCl
 	//#endregion
 
 	#region Resources
-	public int GetTotalResource(RESOURCE resourceType) {
+	public bool HasTotalResource(RESOURCE resourceType, int neededResource) {
 		int resource = 0;
 		List<TileObject> piles = RuinarchListPool<TileObject>.Claim();
 		_owner.mainStorage.PopulateTileObjectsOfType<ResourcePile>(piles);
 		for (int i = 0; i < piles.Count; i++) {
 			ResourcePile resourcePile = piles[i] as ResourcePile;
 			if (resourcePile.providedResource == resourceType) {
-				resource += resourcePile.resourceInPile;	
+				if (resourcePile.resourceInPile >= neededResource) {
+					RuinarchListPool<TileObject>.Release(piles);
+					return true;
+				}
 			}
 		}
 		RuinarchListPool<TileObject>.Release(piles);
@@ -381,8 +384,9 @@ public class SettlementJobTriggerComponent : JobTriggerComponent/*, SettlementCl
 				lumberyard.PopulateTileObjectsOfType<ResourcePile>(piles);
 				for (int j = 0; j < piles.Count; j++) {
 					ResourcePile resourcePile = piles[j] as ResourcePile;
-					if (resourcePile.providedResource == resourceType) {
-						resource += resourcePile.resourceInPile;	
+					if (resourcePile.resourceInPile >= neededResource) {
+						RuinarchListPool<TileObject>.Release(piles);
+						return true;
 					}
 				}
 				RuinarchListPool<TileObject>.Release(piles);
@@ -397,14 +401,15 @@ public class SettlementJobTriggerComponent : JobTriggerComponent/*, SettlementCl
 				mine.PopulateTileObjectsOfType<ResourcePile>(piles);
 				for (int j = 0; j < piles.Count; j++) {
 					ResourcePile resourcePile = piles[j] as ResourcePile;
-					if (resourcePile.providedResource == resourceType) {
-						resource += resourcePile.resourceInPile;	
+					if (resourcePile.resourceInPile >= neededResource) {
+						RuinarchListPool<TileObject>.Release(piles);
+						return true;
 					}
 				}
 				RuinarchListPool<TileObject>.Release(piles);
 			}	
 		}
-		return resource;
+		return false;
 	}
 	// private int GetMinimumResource(RESOURCE resource) {
 	// 	switch (resource) {
