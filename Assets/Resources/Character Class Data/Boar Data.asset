@@ -16,7 +16,7 @@ MonoBehaviour:
   combatSpecialSkillType: 0
   workStructureType: 21
   summonCost: 50
-  portraitSprite: {fileID: 21300000, guid: f179fb37e98fd2b4da205be9dd85ba06, type: 3}
+  portraitSprite: {fileID: 21300000, guid: 35cd2a1d9093070468fd6c527cb0cbd7, type: 3}
   defaultSprites:
     stillSprite: {fileID: 21300000, guid: 56b691475e73cae4aa7da68d9fecb0a4, type: 3}
     animationSprites:
