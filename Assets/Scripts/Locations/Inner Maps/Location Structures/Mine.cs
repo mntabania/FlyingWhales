@@ -91,7 +91,8 @@ namespace Inner_Maps.Location_Structures {
             connectedCave = null;
         }
 
-        private void PopulateMetalList(List<TileObject> p_list, TILE_OBJECT_TYPE p_type) {
+        private void PopulateList(List<TileObject> p_list, TILE_OBJECT_TYPE p_type) {
+            p_list.Clear();
             List<TileObject> unsortedList = GetTileObjectsOfType(p_type);
             if (unsortedList != null) {
                 for (int x = 0; x < unsortedList.Count; ++x) {
@@ -103,23 +104,23 @@ namespace Inner_Maps.Location_Structures {
         }
 
         void SetListToVariable(List<TileObject> builtPilesInSideStructure) {
-            PopulateMetalList(builtPilesInSideStructure, TILE_OBJECT_TYPE.COPPER);
+            PopulateList(builtPilesInSideStructure, TILE_OBJECT_TYPE.COPPER);
             if (builtPilesInSideStructure.Count > 1) {
                 return;
             }
-            PopulateMetalList(builtPilesInSideStructure, TILE_OBJECT_TYPE.IRON);
+            PopulateList(builtPilesInSideStructure, TILE_OBJECT_TYPE.IRON);
             if (builtPilesInSideStructure.Count > 1) {
                 return;
             }
-            PopulateMetalList(builtPilesInSideStructure, TILE_OBJECT_TYPE.ORICHALCUM);
+            PopulateList(builtPilesInSideStructure, TILE_OBJECT_TYPE.ORICHALCUM);
             if (builtPilesInSideStructure.Count > 1) {
                 return;
             }
-            PopulateMetalList(builtPilesInSideStructure, TILE_OBJECT_TYPE.MITHRIL);
+            PopulateList(builtPilesInSideStructure, TILE_OBJECT_TYPE.MITHRIL);
             if (builtPilesInSideStructure.Count > 1) {
                 return;
             }
-            PopulateMetalList(builtPilesInSideStructure, TILE_OBJECT_TYPE.STONE_PILE);
+            PopulateList(builtPilesInSideStructure, TILE_OBJECT_TYPE.STONE_PILE);
             if (builtPilesInSideStructure.Count > 1) {
                 return;
             }
