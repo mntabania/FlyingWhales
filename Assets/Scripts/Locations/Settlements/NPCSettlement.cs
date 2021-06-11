@@ -1198,7 +1198,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         yield return null;
     }
     public void PlaceInitialObjects() {
-        // PlaceResourcePiles();
+        PlaceResourcePiles();
     }
     private void PlaceResourcePiles() {
         WoodPile woodPile = InnerMapManager.Instance.CreateNewTileObject<WoodPile>(TILE_OBJECT_TYPE.WOOD_PILE);

@@ -1432,7 +1432,8 @@ public enum CHANCE_TYPE {
     Visit_Friend,
     Ent_Spawn,
     Mimic_Spawn,
-    Vampire_Lycan_Visit_Hospice
+    Vampire_Lycan_Visit_Hospice,
+    Settlement_Ruler_Default_Facility_Chance
 }
 public enum Gradient_Direction {
     Top, Bottom, Left, Right

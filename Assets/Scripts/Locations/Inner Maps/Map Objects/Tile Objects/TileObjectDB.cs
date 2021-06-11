@@ -214,7 +214,7 @@ public static class TileObjectDB {
             maxHP = 100,
         } },
         { TILE_OBJECT_TYPE.GENERIC_TILE_OBJECT, new TileObjectData() {
-            maxHP = 500,
+            maxHP = 1000,
         } },
         { TILE_OBJECT_TYPE.TOOL, new TileObjectData() {
             maxHP = 150,

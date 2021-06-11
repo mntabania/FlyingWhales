@@ -113,8 +113,12 @@ public class TakeResource : GoapAction {
             if (job.jobType == JOB_TYPE.BUILD_BLUEPRINT && target is ResourcePile resourcePile) {
                 int neededResource = GetNeededResource(job, otherData, resourcePile);
                 if (actor.homeSettlement != null) {
-                    int availableResources = actor.homeSettlement.settlementJobTriggerComponent.GetTotalResource(resourcePile.providedResource);
-                    if (availableResources < neededResource) {
+                    if (resourcePile.resourceInPile < neededResource) {
+                        cost = 2000;
+#if DEBUG_LOG
+                        costLog += $" +{cost}(Resource Pile does not have enough resources for building)";
+#endif
+                    } else if (!actor.homeSettlement.settlementJobTriggerComponent.HasTotalResource(resourcePile.providedResource, neededResource)) {
                         cost = 2000;
 #if DEBUG_LOG
                         costLog += $" +{cost}(Settlement does not have enough resources for building)";

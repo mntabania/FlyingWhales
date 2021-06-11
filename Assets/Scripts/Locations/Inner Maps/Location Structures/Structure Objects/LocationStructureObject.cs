@@ -158,7 +158,7 @@ public class LocationStructureObject : PooledObject, ISelectable {
     #endregion
 
     #region Tile Objects
-    private void RegisterPreplacedObjects(LocationStructure structure, InnerTileMap innerMap) {
+    private void RegisterPreplacedObjects(LocationStructure structure, InnerTileMap innerMap, TILE_OBJECT_TYPE[] typesToIgnore = null) {
         StructureTemplateObjectData[] preplacedObjs = GetPreplacedObjects();
         for (int i = 0; i < preplacedObjs.Length; i++) {
             StructureTemplateObjectData preplacedObj = preplacedObjs[i];
@@ -172,10 +172,14 @@ public class LocationStructureObject : PooledObject, ISelectable {
                     tile.structure.RemovePOI(tile.tileObjectComponent.objHere);    
                 }
             }
-            TileObject newTileObject = InstantiatePreplacedObject(preplacedObj.tileObjectType, tile);
-            newTileObject.SetIsPreplaced(true);
+
+            bool buildPreplacedObject = !(typesToIgnore != null && typesToIgnore.Contains(preplacedObj.tileObjectType));
+            if (buildPreplacedObject) {
+                TileObject newTileObject = InstantiatePreplacedObject(preplacedObj.tileObjectType, tile);
+                newTileObject.SetIsPreplaced(true);
             
-            PreplacedObjectProcessing(preplacedObj, tile, structure, newTileObject);
+                PreplacedObjectProcessing(preplacedObj, tile, structure, newTileObject);    
+            }
         }
         SetPreplacedObjectsState(false);
     }
@@ -188,7 +192,7 @@ public class LocationStructureObject : PooledObject, ISelectable {
         newTileObject.mapVisual.SetRotation(preplacedObj.transform.localEulerAngles.z);
         newTileObject.RevalidateTileObjectSlots();
     }
-    public void PlacePreplacedObjectsAsBlueprints(LocationStructure structure, InnerTileMap areaMap, NPCSettlement npcSettlement) {
+    public void BuildSpecificObjects(LocationStructure structure, InnerTileMap areaMap, NPCSettlement npcSettlement) {
         StructureTemplateObjectData[] preplacedObjs = GetPreplacedObjects();
         for (int i = 0; i < preplacedObjs.Length; i++) {
             StructureTemplateObjectData preplacedObj = preplacedObjs[i];
@@ -348,7 +352,7 @@ public class LocationStructureObject : PooledObject, ISelectable {
     /// <param name="innerMap">The map where the structure was placed.</param>
     /// <param name="structure">The structure that was placed.</param>
     /// <param name="buildAllTileObjects">Should all preplaced objects be built</param>
-    public void OnBuiltStructureObjectPlaced(InnerTileMap innerMap, LocationStructure structure, out int createdWalls, out int totalWalls, bool buildAllTileObjects = true) {
+    public void OnBuiltStructureObjectPlaced(InnerTileMap innerMap, LocationStructure structure, out int createdWalls, out int totalWalls, TILE_OBJECT_TYPE[] objectTypesToNotBuild = null) {
         // bool isDemonicStructure = structure is DemonicStructure;
         for (int i = 0; i < tiles.Length; i++) {
             LocationGridTile tile = tiles[i];
@@ -360,13 +364,15 @@ public class LocationStructureObject : PooledObject, ISelectable {
         ProcessConnectors(structure);
         RegisterWalls(innerMap, structure, out createdWalls, out totalWalls);
         _groundTileMap.gameObject.SetActive(false);
-        if (buildAllTileObjects) {
-            RegisterPreplacedObjects(structure, innerMap);    
-        } else {
-            if (structure.settlementLocation is NPCSettlement npcSettlement) {
-                PlacePreplacedObjectsAsBlueprints(structure, innerMap, npcSettlement);    
-            }
-        }
+        RegisterPreplacedObjects(structure, innerMap, objectTypesToNotBuild);
+        // if (objectTypesToNotBuild == null) {
+        //     RegisterPreplacedObjects(structure, innerMap);    
+        // } 
+        // else {
+        //     if (structure.settlementLocation is NPCSettlement npcSettlement) {
+        //         BuildSpecificObjects(structure, innerMap, npcSettlement);    
+        //     }
+        // }
         
         RescanPathfindingGridOfStructure(innerMap);
         UpdateSortingOrders();

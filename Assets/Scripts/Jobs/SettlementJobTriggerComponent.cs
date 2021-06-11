@@ -361,18 +361,55 @@ public class SettlementJobTriggerComponent : JobTriggerComponent/*, SettlementCl
 	//#endregion
 
 	#region Resources
-	public int GetTotalResource(RESOURCE resourceType) {
+	public bool HasTotalResource(RESOURCE resourceType, int neededResource) {
 		int resource = 0;
 		List<TileObject> piles = RuinarchListPool<TileObject>.Claim();
 		_owner.mainStorage.PopulateTileObjectsOfType<ResourcePile>(piles);
 		for (int i = 0; i < piles.Count; i++) {
 			ResourcePile resourcePile = piles[i] as ResourcePile;
 			if (resourcePile.providedResource == resourceType) {
-				resource += resourcePile.resourceInPile;	
+				if (resourcePile.resourceInPile >= neededResource) {
+					RuinarchListPool<TileObject>.Release(piles);
+					return true;
+				}
 			}
 		}
 		RuinarchListPool<TileObject>.Release(piles);
-		return resource;
+
+		List<LocationStructure> lumberyards = _owner.GetStructuresOfType(STRUCTURE_TYPE.LUMBERYARD);
+		if (lumberyards != null) {
+			for (int i = 0; i < lumberyards.Count; i++) {
+				LocationStructure lumberyard = lumberyards[i];
+				piles = RuinarchListPool<TileObject>.Claim();
+				lumberyard.PopulateTileObjectsOfType<ResourcePile>(piles);
+				for (int j = 0; j < piles.Count; j++) {
+					ResourcePile resourcePile = piles[j] as ResourcePile;
+					if (resourcePile.resourceInPile >= neededResource) {
+						RuinarchListPool<TileObject>.Release(piles);
+						return true;
+					}
+				}
+				RuinarchListPool<TileObject>.Release(piles);
+			}	
+		}
+		
+		List<LocationStructure> mines = _owner.GetStructuresOfType(STRUCTURE_TYPE.MINE);
+		if (mines != null) {
+			for (int i = 0; i < mines.Count; i++) {
+				LocationStructure mine = mines[i];
+				piles = RuinarchListPool<TileObject>.Claim();
+				mine.PopulateTileObjectsOfType<ResourcePile>(piles);
+				for (int j = 0; j < piles.Count; j++) {
+					ResourcePile resourcePile = piles[j] as ResourcePile;
+					if (resourcePile.resourceInPile >= neededResource) {
+						RuinarchListPool<TileObject>.Release(piles);
+						return true;
+					}
+				}
+				RuinarchListPool<TileObject>.Release(piles);
+			}	
+		}
+		return false;
 	}
 	// private int GetMinimumResource(RESOURCE resource) {
 	// 	switch (resource) {

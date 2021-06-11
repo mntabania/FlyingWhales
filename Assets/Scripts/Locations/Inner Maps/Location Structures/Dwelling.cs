@@ -8,6 +8,9 @@ using UtilityScripts;
 namespace Inner_Maps.Location_Structures {
     public class Dwelling : ManMadeStructure {
 
+        private static readonly TILE_OBJECT_TYPE[] _preplacedObjectsToIgnoreWhenBuilding = new[] {
+            TILE_OBJECT_TYPE.BED, TILE_OBJECT_TYPE.TABLE, TILE_OBJECT_TYPE.GUITAR, TILE_OBJECT_TYPE.TORCH
+        };
         private InnerMapLight m_innerMapLight;
         public InnerMapLight InnerMap {
             get {
@@ -22,6 +25,7 @@ namespace Inner_Maps.Location_Structures {
         #region getters
         public override bool isDwelling => true;
         public override Type serializedData => typeof(SaveDataDwelling);
+        public override TILE_OBJECT_TYPE[] preplacedObjectsToIgnoreWhenBuilding => _preplacedObjectsToIgnoreWhenBuilding;
         #endregion
 
         public Dwelling(Region location) : base(STRUCTURE_TYPE.DWELLING, location) {

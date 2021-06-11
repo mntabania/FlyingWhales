@@ -292,11 +292,14 @@ public class TileFeatureGeneration : MapGenerationComponent {
 		if (!currentAreaBeingChecked.featureComponent.HasFeature(AreaFeatureDB.Metal_Source_Feature)) {
 			currentAreaBeingChecked.featureComponent.AddFeature(AreaFeatureDB.Metal_Source_Feature, currentAreaBeingChecked);
 			if (!currentAreaBeingChecked.tileObjectComponent.HasTileObjectOfTypeInHexTile(TILE_OBJECT_TYPE.ORE_VEIN)) {
-				//add a Ore Vein to a random cave tile inside area.
-				LocationGridTile oreVeinLocation = p_data.GetFirstUnoccupiedNonEdgeCaveTile(currentAreaBeingChecked, p_data);
-				if (oreVeinLocation != null) {
-					p_data.SetGeneratedMapPerlinDetails(oreVeinLocation, TILE_OBJECT_TYPE.NONE);	
-					currentAreaBeingChecked.region.innerMap.CreateOreVein(oreVeinLocation);
+				int oreVeinAmount = UnityEngine.Random.Range(4, 7);
+				for (int i = 0; i < oreVeinAmount; i++) {
+					//add a Ore Vein to a random cave tile inside area.
+					LocationGridTile oreVeinLocation = p_data.GetFirstUnoccupiedNonEdgeCaveTile(currentAreaBeingChecked, p_data);
+					if (oreVeinLocation != null) {
+						p_data.SetGeneratedMapPerlinDetails(oreVeinLocation, TILE_OBJECT_TYPE.NONE);	
+						currentAreaBeingChecked.region.innerMap.CreateOreVein(oreVeinLocation);
+					}	
 				}
 			}
 		}
