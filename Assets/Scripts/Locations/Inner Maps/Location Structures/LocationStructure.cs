@@ -81,6 +81,7 @@ namespace Inner_Maps.Location_Structures {
 
         public string iconRichText => UtilityScripts.Utilities.StructureIcon();
         public PARTY_TARGET_DESTINATION_TYPE partyTargetDestinationType => PARTY_TARGET_DESTINATION_TYPE.Structure;
+        public virtual TILE_OBJECT_TYPE[] preplacedObjectsToIgnoreWhenBuilding => null;
         #endregion
 
         protected LocationStructure(STRUCTURE_TYPE structureType, Region location) {

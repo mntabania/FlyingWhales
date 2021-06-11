@@ -388,7 +388,7 @@ public class GenericTileObject : TileObject {
         
         structure.SetOccupiedArea(hexTile);
         
-        p_blueprint.OnBuiltStructureObjectPlaced(gridTileLocation.parentMap, structure, out int createdWalls, out int totalWalls);
+        p_blueprint.OnBuiltStructureObjectPlaced(gridTileLocation.parentMap, structure, out int createdWalls, out int totalWalls, structure.preplacedObjectsToIgnoreWhenBuilding);
         structure.CreateRoomsBasedOnStructureObject(p_blueprint);
         structure.OnBuiltNewStructure();
         structure.OnBuiltNewStructureFromBlueprint();

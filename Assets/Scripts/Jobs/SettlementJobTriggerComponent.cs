@@ -372,6 +372,38 @@ public class SettlementJobTriggerComponent : JobTriggerComponent/*, SettlementCl
 			}
 		}
 		RuinarchListPool<TileObject>.Release(piles);
+
+		List<LocationStructure> lumberyards = _owner.GetStructuresOfType(STRUCTURE_TYPE.LUMBERYARD);
+		if (lumberyards != null) {
+			for (int i = 0; i < lumberyards.Count; i++) {
+				LocationStructure lumberyard = lumberyards[i];
+				piles = RuinarchListPool<TileObject>.Claim();
+				lumberyard.PopulateTileObjectsOfType<ResourcePile>(piles);
+				for (int j = 0; j < piles.Count; j++) {
+					ResourcePile resourcePile = piles[j] as ResourcePile;
+					if (resourcePile.providedResource == resourceType) {
+						resource += resourcePile.resourceInPile;	
+					}
+				}
+				RuinarchListPool<TileObject>.Release(piles);
+			}	
+		}
+		
+		List<LocationStructure> mines = _owner.GetStructuresOfType(STRUCTURE_TYPE.MINE);
+		if (mines != null) {
+			for (int i = 0; i < mines.Count; i++) {
+				LocationStructure mine = mines[i];
+				piles = RuinarchListPool<TileObject>.Claim();
+				mine.PopulateTileObjectsOfType<ResourcePile>(piles);
+				for (int j = 0; j < piles.Count; j++) {
+					ResourcePile resourcePile = piles[j] as ResourcePile;
+					if (resourcePile.providedResource == resourceType) {
+						resource += resourcePile.resourceInPile;	
+					}
+				}
+				RuinarchListPool<TileObject>.Release(piles);
+			}	
+		}
 		return resource;
 	}
 	// private int GetMinimumResource(RESOURCE resource) {
