@@ -54,6 +54,8 @@ public class SettlementRulerBehaviour : CharacterBehaviourComponent {
                         if (characterHomeSettlement.HasHomelessResident()) {
                             chance = 7;
                         }
+
+                        // chance = 100;
                         if (GameUtilities.RollChance(chance, ref log)) {
 #if DEBUG_LOG
                             log += $"\n-Chance met and dwellings not yet at maximum.";
@@ -79,7 +81,7 @@ public class SettlementRulerBehaviour : CharacterBehaviourComponent {
                     int totalFacilityCount = facilityCount + GetJobsThatWillBuildFacility(buildJobs);
                     if (totalFacilityCount < characterHomeSettlement.settlementType.maxFacilities) {
                         STRUCTURE_TYPE determinedStructureToUse = STRUCTURE_TYPE.NONE;
-                        int chance = 2;
+                        int chance = ChanceData.GetChance(CHANCE_TYPE.Settlement_Ruler_Default_Facility_Chance);
                         if (!characterHomeSettlement.HasStructure(STRUCTURE_TYPE.FISHERY) &&
                              !characterHomeSettlement.HasStructure(STRUCTURE_TYPE.FARM) &&
                              !characterHomeSettlement.HasStructure(STRUCTURE_TYPE.BUTCHERS_SHOP)) {
