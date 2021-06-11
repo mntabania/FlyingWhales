@@ -94,6 +94,7 @@ namespace Generator.Map_Generation.Components {
             for (int i = 0; i < FactionManager.Instance.allFactions.Count; i++) {
                 Faction faction = FactionManager.Instance.allFactions[i];
                 if (faction.isMajorNonPlayer) {
+                    faction.successionComponent.UpdateSuccessors();
                     faction.DesignateNewLeader(false);
                     if (faction.leader is Character leader) {
                         FactionManager.Instance.RerollFactionLeaderTraitIdeology(faction, leader);
