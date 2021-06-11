@@ -574,7 +574,7 @@ public class Region : ISavable, ILogFiller {
         LocationStructure chosenStructure = null;
         for (int i = 0; i < allStructures.Count; i++) {
             LocationStructure currStructure = allStructures[i];
-            if (currStructure.settlementLocation != null && currStructure.settlementLocation.locationType == LOCATION_TYPE.DUNGEON && currStructure.passableTiles.Count > 0) {
+            if (currStructure.settlementLocation != null && currStructure.settlementLocation.locationType == LOCATION_TYPE.DUNGEON && currStructure.passableTiles.Count > 0 && currStructure.structureType.IsSpecialStructure()) {
                 specialStructures.Add(currStructure);
             }
         }

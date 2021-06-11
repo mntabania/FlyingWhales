@@ -229,12 +229,12 @@ public static class Extensions {
             case STRUCTURE_TYPE.CAVE:
             case STRUCTURE_TYPE.TEMPLE:
             case STRUCTURE_TYPE.RUINED_ZOO:
-            case STRUCTURE_TYPE.BOAR_DEN:
-            case STRUCTURE_TYPE.WOLF_DEN:
-            case STRUCTURE_TYPE.BEAR_DEN:
-            case STRUCTURE_TYPE.RABBIT_HOLE:
-            case STRUCTURE_TYPE.MINK_HOLE:
-            case STRUCTURE_TYPE.MOONCRAWLER_HOLE:
+            // case STRUCTURE_TYPE.BOAR_DEN:
+            // case STRUCTURE_TYPE.WOLF_DEN:
+            // case STRUCTURE_TYPE.BEAR_DEN:
+            // case STRUCTURE_TYPE.RABBIT_HOLE:
+            // case STRUCTURE_TYPE.MINK_HOLE:
+            // case STRUCTURE_TYPE.MOONCRAWLER_HOLE:
                 return true;
             default:
                 return false;

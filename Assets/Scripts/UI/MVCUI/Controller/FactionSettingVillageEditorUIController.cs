@@ -77,15 +77,21 @@ public class FactionSettingVillageEditorUIController : MVCUIController, FactionS
         UpdateAddVillageBtn();
     }
     private void UpdateAddVillageBtn() {
-        bool areAllItemsActive = true;
+        int activeCount = 0;
+        // bool areAllItemsActive = true;
         for (int i = 0; i < m_factionSettingVillageEditorUIView.UIModel.villageSettingUIItems.Length; i++) {
             VillageSettingUIItem item = m_factionSettingVillageEditorUIView.UIModel.villageSettingUIItems[i];
-            if (!item.gameObject.activeSelf) {
-                areAllItemsActive = false;
-                break;
+            if (item.gameObject.activeSelf) {
+                activeCount++;
             }
+            // if (!item.gameObject.activeSelf) {
+            //     areAllItemsActive = false;
+            //     break;
+            // }
         }
-        m_factionSettingVillageEditorUIView.SetAddVillageBtnState(!areAllItemsActive);
+
+        bool isAtMax = activeCount >= WorldSettings.Instance.worldSettingsData.mapSettings.GetMaxStartingVillages();
+        m_factionSettingVillageEditorUIView.SetAddVillageBtnState(!isAtMax);
     }
 
     #region FactionSettingVillageEditorUIView.IListener
