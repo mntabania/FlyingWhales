@@ -91,27 +91,30 @@ namespace Inner_Maps.Location_Structures {
                 p_worker.homeSettlement.SettlementResources.PopulateAllAnimalsThatProducesMats(targetAnimals);
 
                 randomTarget = CollectionUtilities.GetRandomElement(targetAnimals);
-                RuinarchListPool<Character>.Release(targetAnimals);
                 if (randomTarget != null) {
                     p_worker.jobComponent.TriggerSkinAnimal(randomTarget, out producedJob);
 
                     if (producedJob != null) {
+                        RuinarchListPool<Character>.Release(targetAnimals);
                         return;
                     }
                 }
-
             }
+            RuinarchListPool<Character>.Release(targetAnimals); 
             
-            RuinarchListPool<Character>.Release(targetAnimals); p_worker.homeSettlement.SettlementResources.PopulateAllAnimalsThatAreShearable(targetAnimals);
+            targetAnimals = RuinarchListPool<Character>.Claim();
+            p_worker.homeSettlement.SettlementResources.PopulateAllAnimalsThatAreShearable(targetAnimals);
             randomTarget = CollectionUtilities.GetRandomElement(targetAnimals); 
             if (randomTarget != null) {
                 if (randomTarget is Animal) {
                     p_worker.jobComponent.TriggerShearAnimal(randomTarget, out producedJob);
                 }
                 if (producedJob != null) {
+                    RuinarchListPool<Character>.Release(targetAnimals); 
                     return;
                 }
             }
+            RuinarchListPool<Character>.Release(targetAnimals); 
         }
         
         #region Destruction
