@@ -43,7 +43,7 @@ SpriteAtlas:
     variantMultiplier: 1
     packables:
     - {fileID: 102900000, guid: 129c2b5e0c8f0e14d9fb8b1c30296b6d, type: 3}
-    totalSpriteSurfaceArea: 5448410
+    totalSpriteSurfaceArea: 5493466
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
@@ -364,6 +364,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 0c044ed5203f5ff41842c30196f47bbe, type: 3}
   - {fileID: 21300000, guid: d1e20ae58b832e7478ae889735dce36b, type: 3}
   - {fileID: 21300000, guid: 8e227ae5fa8a8144192f9f73c2c8369d, type: 3}
+  - {fileID: 21300000, guid: 00dd2ce5bb2582d41998c0b27df984cc, type: 3}
   - {fileID: 21300000, guid: 65e674f5f7a74b640a41dcfdc536bef0, type: 3}
   - {fileID: 21300000, guid: 0e3f45f53cdc30d4fbd3a5b8e15afe96, type: 3}
   - {fileID: 21300000, guid: c541c30666224e84a9d4b2b36290ee4a, type: 3}
@@ -497,6 +498,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: d580ae4810022bf4fa2d9a66ebd14398, type: 3}
   - {fileID: 21300000, guid: 387ce558ae03c4741bca823a64e5cd21, type: 3}
   - {fileID: 21300000, guid: 7b4b0b58f4040704f9dffa3a4b1cdaf2, type: 3}
+  - {fileID: 21300000, guid: 9456ab58d9d01c542aac1db10815a79d, type: 3}
   - {fileID: 21300000, guid: 04c8d368446fcc5488c558bb851fec06, type: 3}
   - {fileID: 21300000, guid: a0b4886870ab5af4cbf76fcf07c3b2f3, type: 3}
   - {fileID: 21300000, guid: 16b98b687d822e1498696d2e2dd1ec68, type: 3}
@@ -587,6 +589,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 556f49e9a96e81d489e091b17c46d44e, type: 3}
   - {fileID: 21300000, guid: fb1a6ce9958395a44a4b2d8c350575b9, type: 3}
   - {fileID: 21300000, guid: a63bc3f9fd136184d922c092e9efd475, type: 3}
+  - {fileID: 21300000, guid: d6a9fef98db9ca147962de6a236327a1, type: 3}
   - {fileID: 21300000, guid: f263560a2270c7d40a8c775ad3f0de55, type: 3}
   - {fileID: 21300000, guid: 6469a60aa6e6dd34a94b5d4c64601f34, type: 3}
   - {fileID: 21300000, guid: 85af7c0a765fd4449bdf4cffdaa2a650, type: 3}
@@ -603,6 +606,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 5919023a18ebb4e4db7162001670497b, type: 3}
   - {fileID: 21300000, guid: e6ef733ac5500434f94bfb1bfd7039fc, type: 3}
   - {fileID: 21300000, guid: b160c63a5b96b784d9b06fd201747971, type: 3}
+  - {fileID: 21300000, guid: 94608b3af7a0328488a2b6cf5d135370, type: 3}
   - {fileID: 21300000, guid: 458f3f3a5e9ecfc48b31b2dd7ffd3b91, type: 3}
   - {fileID: 21300000, guid: 0e8de24ad45572548955d6596e10ac0e, type: 3}
   - {fileID: 21300000, guid: 8d5be34aa581ef048a849d0f85afe42c, type: 3}
@@ -623,6 +627,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 3025749afa669fa439125e1681fddbad, type: 3}
   - {fileID: 21300000, guid: f329759a7e93a7247959541f6daf1a7c, type: 3}
   - {fileID: 21300000, guid: bff0089a70000954d89e4d8ec08a0d3b, type: 3}
+  - {fileID: 21300000, guid: 1d3186aa06568784b86915fab73e8929, type: 3}
   - {fileID: 21300000, guid: 878fc8aad8d40994c947e4920b3d6d73, type: 3}
   - {fileID: 21300000, guid: a068d9aa2379f654db5448dbf5559f3d, type: 3}
   - {fileID: 21300000, guid: 912ee9aad9236ca46acef8ade43cf63e, type: 3}
@@ -669,6 +674,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: f5a8ce8b30f0ba94ca2042b1ddc4fc23, type: 3}
   - {fileID: 21300000, guid: 88f4e59ba2136724e9180f0e3c9d8b37, type: 3}
   - {fileID: 21300000, guid: fe76e59b74a25944e98f807310fa74f6, type: 3}
+  - {fileID: 21300000, guid: 1446199b623f8bf499dc19ba90a053c4, type: 3}
   - {fileID: 21300000, guid: b9674e9bcfc40664cac03fab7a0d1b9f, type: 3}
   - {fileID: 21300000, guid: 0b37a0ab5895f0c4fa3ffd7208d01f32, type: 3}
   - {fileID: 21300000, guid: 08510eabe628a0f44b0629ebbf080bbf, type: 3}
@@ -781,6 +787,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 035e86ad9670ae745bf621ec29f85985, type: 3}
   - {fileID: 21300000, guid: 717a9fad2a5ce934ba239bd7ce93b66c, type: 3}
   - {fileID: 21300000, guid: 951592bdbcede15409a8f4ecf6e51fe6, type: 3}
+  - {fileID: 21300000, guid: f71534cda053ff642848bc54da2f2d1a, type: 3}
   - {fileID: 21300000, guid: a94216cda3d61f241a8b05360dea7195, type: 3}
   - {fileID: 21300000, guid: 7813cdcde555a1547be16a665f0ec8aa, type: 3}
   - {fileID: 21300000, guid: dde653dd3a4ac7a48aa7b3441394b642, type: 3}
@@ -885,6 +892,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 5b1fc77fdf8c4a141b8c234ee6272a37, type: 3}
   - {fileID: 21300000, guid: c4e35b7f84eb0894cb62a9d729cd744d, type: 3}
   - {fileID: 21300000, guid: 5e821d7f01ac17e4f9a55417b3b1d612, type: 3}
+  - {fileID: 21300000, guid: e95ef58f68025e2419423963be8e847b, type: 3}
   - {fileID: 21300000, guid: 1a0fda8f4326f1b40a59b10fe8d7593e, type: 3}
   - {fileID: 21300000, guid: 291bfa9fd8074fd4ab175e761de3b55d, type: 3}
   - {fileID: 21300000, guid: e3ad20afa5bf05848803ead03a2ae6bc, type: 3}
@@ -1223,6 +1231,7 @@ SpriteAtlas:
   - fish_low
   - FLOWER#3
   - demonWallA-00100010-00
+  - pelt_moonwalker
   - shore00011100-00
   - boneGround03
   - demonPewLongMiddle00
@@ -1356,6 +1365,7 @@ SpriteAtlas:
   - skullsDisplay00
   - lairWallA00100010-00
   - cloth_spidersilk
+  - hide_wolf
   - corruptedGround_v00
   - caveWallA-0100-00
   - oreWall12
@@ -1396,7 +1406,7 @@ SpriteAtlas:
   - demonCryptChest01
   - demonWallA-10000011-00
   - laidWallA00101010-00
-  - cloth_mink
+  - mink_shirt
   - snow03
   - rack_staves
   - caveWallA-1101-00
@@ -1446,6 +1456,7 @@ SpriteAtlas:
   - cobble00
   - guitar
   - shore11110111-00
+  - hide_bear
   - CORN_CROP#2 Ripe
   - portalBase
   - crops_pineapple_growing
@@ -1462,6 +1473,7 @@ SpriteAtlas:
   - corruptedGround03
   - TRASH#6
   - shore11000111-00
+  - pelt_mink
   - cloth_wool
   - demonWallA-00111110-00
   - demonWallA-00000000-00
@@ -1482,6 +1494,7 @@ SpriteAtlas:
   - demonWallA-11111011-00
   - dagger_mithril
   - TREE_OBJECT#4
+  - pelt_rabbit
   - caveWallA-00111010-00
   - bartop_left_empty
   - floorRuins03
@@ -1528,6 +1541,7 @@ SpriteAtlas:
   - SARCOPHAGUS#2
   - laidWallA10001110-00
   - laidWallA11111011-00
+  - boar_hide
   - staff_gold
   - demonTorch01on
   - well07
@@ -1640,6 +1654,7 @@ SpriteAtlas:
   - laidWallA10100010-00
   - demonStoneAltar00
   - table_medicine
+  - pelt_wool
   - bow_iron
   - poison11010001-00
   - demonManaRunes00
@@ -1744,6 +1759,7 @@ SpriteAtlas:
   - cobble01
   - portalGlow01
   - laidWallA00101000-00
+  - den
   - demonWallA-10001000-01
   - TRASH#14
   - wallA-1010-wall0100

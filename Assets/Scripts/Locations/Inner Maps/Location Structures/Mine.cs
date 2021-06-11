@@ -162,7 +162,7 @@ namespace Inner_Maps.Location_Structures {
 
             List<TileObject> piles = RuinarchListPool<TileObject>.Claim();
             if (p_worker.talentComponent.GetTalent(CHARACTER_TALENT.Resources).level >= 4) {
-                PopulateMetalTypeResourcePiles(piles);
+                PopulateMetalsIncave(piles);
                 if (piles.Count > 0) {
                     TileObject chosenPile = piles[GameUtilities.RandomBetweenTwoNumbers(0, piles.Count - 1)];
                     p_worker.jobComponent.TriggerMineOre(chosenPile, out producedJob);
@@ -171,25 +171,26 @@ namespace Inner_Maps.Location_Structures {
                         return;
                     }
                 }
-            } else {
-                PopulateStonesInCave(piles);
-                if (piles.Count > 0) {
-                    TileObject chosenPile = piles[GameUtilities.RandomBetweenTwoNumbers(0, piles.Count - 1)];
-                    p_worker.jobComponent.TriggerMineStone(chosenPile, out producedJob);
-                    if (producedJob != null) {
-                        RuinarchListPool<TileObject>.Release(piles);
-                        return;
-                    }
+            } 
+            
+            PopulateStonesInCave(piles);
+            if (piles.Count > 0) {
+                TileObject chosenPile = piles[GameUtilities.RandomBetweenTwoNumbers(0, piles.Count - 1)];
+                p_worker.jobComponent.TriggerMineStone(chosenPile, out producedJob);
+                if (producedJob != null) {
+                    RuinarchListPool<TileObject>.Release(piles);
+                    return;
                 }
             }
+            
             RuinarchListPool<TileObject>.Release(piles);
         }
 
-        public void PopulateMetalTypeResourcePiles(List<TileObject> availMetals) {
+        public void PopulateMetalsIncave(List<TileObject> availMetals) {
             List<TileObject> metals = RuinarchListPool<TileObject>.Claim();
-            connectedCave.PopulateTileObjectsOfType<MetalPile>(metals);
+            connectedCave.PopulateTileObjectsOfType<Ore>(metals);
             for (int x = 0; x < metals.Count; ++x) {
-                if (metals[x].mapObjectState == MAP_OBJECT_STATE.BUILT && !metals[x].HasJobTargetingThis(JOB_TYPE.HAUL, JOB_TYPE.COMBINE_STOCKPILE)) {
+                if (metals[x].mapObjectState == MAP_OBJECT_STATE.BUILT && !metals[x].HasJobTargetingThis(JOB_TYPE.MINE_ORE)) {
                     availMetals.Add(metals[x]);
                 }
             }

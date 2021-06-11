@@ -12,19 +12,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eb8e6d0a90de4764a5b7b75189e1ffa2, type: 3}
   m_Name: BOAR_HIDE
   m_EditorClassIdentifier: 
-  defaultTileMapAsset: {fileID: 11400000, guid: 6e5078971af20384eb41cb666096203a,
+  defaultTileMapAsset: {fileID: 11400000, guid: c2fd62a3cac9e4a459fa58466aee01cb,
     type: 2}
-  defaultSprite: {fileID: 21300000, guid: e85247b9c5ad0ba48b54c98a216a9cff, type: 3}
+  defaultSprite: {fileID: 21300000, guid: 1446199b623f8bf499dc19ba90a053c4, type: 3}
   tileObjectAssets:
     biomeAssets:
       m_keys: 06000000
       m_values:
       - activeTile:
-        - {fileID: 21300000, guid: e85247b9c5ad0ba48b54c98a216a9cff, type: 3}
+        - {fileID: 21300000, guid: 1446199b623f8bf499dc19ba90a053c4, type: 3}
         inactiveTile:
-        - {fileID: 21300000, guid: e85247b9c5ad0ba48b54c98a216a9cff, type: 3}
+        - {fileID: 21300000, guid: 1446199b623f8bf499dc19ba90a053c4, type: 3}
         tileBase:
-        - {fileID: 11400000, guid: 6e5078971af20384eb41cb666096203a, type: 2}
+        - {fileID: 11400000, guid: c2fd62a3cac9e4a459fa58466aee01cb, type: 2}
   corruptedTileObjectAssets:
     biomeAssets:
       m_keys: 
