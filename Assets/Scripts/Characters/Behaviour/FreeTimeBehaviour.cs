@@ -186,7 +186,7 @@ public class FreeTimeBehaviour : CharacterBehaviourComponent {
         }
     }
     private bool AtHomeBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
-        if (character.previousCurrentActionNode != null && character.previousCurrentActionNode.IsReturnHome()) {
+        if (character.previousCharacterDataComponent.IsPreviousJobOrActionReturnHome()) {
 #if DEBUG_LOG
             log = $"{log}\n-{character.name} is in home structure and just returned home";
 #endif

@@ -5,7 +5,7 @@ using System.Linq;
 using UnityEngine;
 
 public class LogComponent {
-    public IPointOfInterest owner { get; private set; }
+    //public IPointOfInterest owner { get; private set; }
     // public List<Log> history { get; }
     // /// <summary>
     // /// History categorized by files
@@ -26,9 +26,9 @@ public class LogComponent {
         ClearCostLog();
     }
 
-    public void SetOwner(IPointOfInterest owner) {
-        this.owner = owner;
-    }
+    //public void SetOwner(IPointOfInterest owner) {
+    //    this.owner = owner;
+    //}
 
     // #region History
     // public bool AddHistory(Log log) {

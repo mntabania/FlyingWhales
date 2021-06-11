@@ -114,7 +114,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         allJobsTargetingThis = new List<JobQueueItem>();
         allExistingJobsTargetingThis = new List<JobQueueItem>();
         charactersThatAlreadyAssumed = new List<Character>();
-        logComponent = new LogComponent(); logComponent.SetOwner(this);
+        logComponent = new LogComponent(); //logComponent.SetOwner(this);
         hiddenComponent = new TileObjectHiddenComponent(); hiddenComponent.SetOwner(this);
         eventDispatcher = new TileObjectEventDispatcher();
         bookmarkEventDispatcher = new BookmarkableEventDispatcher();
@@ -162,7 +162,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         SetPOIState(data.poiState);
         CreateTraitContainer();
         ConstructDefaultActions();
-        logComponent = data.logComponent.Load(); logComponent.SetOwner(this);
+        logComponent = data.logComponent.Load(); //logComponent.SetOwner(this);
         hiddenComponent = data.hiddenComponent.Load(); hiddenComponent.SetOwner(this);
         DatabaseManager.Instance.tileObjectDatabase.RegisterTileObject(this);
         SubscribeListeners();

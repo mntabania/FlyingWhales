@@ -9,4 +9,7 @@ public class CharacterComponent {
     public virtual void SetOwner(Character owner) {
         this.owner = owner;
     }
+    public virtual void CleanUp() {
+        SetOwner(null);
+    }
 }

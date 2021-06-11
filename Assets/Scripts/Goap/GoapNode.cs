@@ -1023,12 +1023,6 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
     public override string ToString() {
         return $"Action: {action?.name ?? "Null"}. Actor: {actor.name} . Target: {poiTarget?.name ?? "Null"}";
     }
-    public bool IsReturnHome() {
-        return action.goapType == INTERACTION_TYPE.RETURN_HOME
-                || associatedJobType == JOB_TYPE.IDLE_RETURN_HOME
-                || associatedJobType == JOB_TYPE.RETURN_HOME_URGENT
-                || associatedJobType == JOB_TYPE.FLEE_TO_HOME;
-    }
 #endregion
 
 #region IRumorable

@@ -10,13 +10,14 @@ public class SuccubusBehaviour : BaseMonsterBehaviour {
         log += $"\n-{character.name} is a succubus";
 #endif
         if (character.reactionComponent.disguisedCharacter != null) {
+            JOB_TYPE previousJobType = character.previousCharacterDataComponent.previousJobType;
             if (character.isAtHomeStructure || character.IsInTerritory() || character.IsInHomeSettlement()) {
-                if (character.previousCurrentActionNode != null && (character.previousCurrentActionNode.associatedJobType == JOB_TYPE.IDLE_RETURN_HOME || character.previousCurrentActionNode.associatedJobType == JOB_TYPE.RETURN_TERRITORY)) {
+                if (previousJobType == JOB_TYPE.IDLE_RETURN_HOME || previousJobType == JOB_TYPE.RETURN_TERRITORY) {
                     character.reactionComponent.SetDisguisedCharacter(null);
                     return true;
                 }
             }
-            if (character.previousCurrentActionNode != null && character.previousCurrentActionNode.action.goapType == INTERACTION_TYPE.MAKE_LOVE) {
+            if (character.previousCharacterDataComponent.previousActionNodeType == INTERACTION_TYPE.MAKE_LOVE) {
                 if (character.currentStructure != character.homeStructure && !character.IsInTerritory()) {
                     if (character.jobComponent.PlanReturnHome(JOB_TYPE.IDLE_RETURN_HOME, out producedJob)) {
                         return true;
@@ -119,12 +120,13 @@ public class SuccubusBehaviour : BaseMonsterBehaviour {
         producedJob = null;
         if (character.reactionComponent.disguisedCharacter != null) {
             if (character.isAtHomeStructure || character.IsInTerritory() || character.IsInHomeSettlement()) {
-                if (character.previousCurrentActionNode != null && (character.previousCurrentActionNode.associatedJobType == JOB_TYPE.IDLE_RETURN_HOME || character.previousCurrentActionNode.associatedJobType == JOB_TYPE.RETURN_TERRITORY)) {
+                JOB_TYPE previousJobType = character.previousCharacterDataComponent.previousJobType;
+                if (previousJobType == JOB_TYPE.IDLE_RETURN_HOME || previousJobType == JOB_TYPE.RETURN_TERRITORY) {
                     character.reactionComponent.SetDisguisedCharacter(null);
                     return true;
                 }
             }
-            if (character.previousCurrentActionNode != null && character.previousCurrentActionNode.action.goapType == INTERACTION_TYPE.MAKE_LOVE) {
+            if (character.previousCharacterDataComponent.previousActionNodeType == INTERACTION_TYPE.MAKE_LOVE) {
                 if (character.currentStructure != character.homeStructure && !character.IsInTerritory()) {
                     if (character.jobComponent.PlanReturnHome(JOB_TYPE.IDLE_RETURN_HOME, out producedJob)) {
                         return true;

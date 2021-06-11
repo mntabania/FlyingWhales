@@ -67,7 +67,6 @@ public class SaveDataCharacter : SaveData<Character>, ISavableCounterpart {
 
     public string currentJob;
     public string currentActionNode;
-    public string previousCurrentActionNode;
 
     public string territory;
     public List<string> items;
@@ -214,11 +213,6 @@ public class SaveDataCharacter : SaveData<Character>, ISavableCounterpart {
         if (data.currentActionNode != null) {
             currentActionNode = data.currentActionNode.persistentID;
             SaveManager.Instance.saveCurrentProgressManager.AddToSaveHub(data.currentActionNode);
-        }
-
-        if (data.previousCurrentActionNode != null) {
-            previousCurrentActionNode = data.previousCurrentActionNode.persistentID;
-            SaveManager.Instance.saveCurrentProgressManager.AddToSaveHub(data.previousCurrentActionNode);
         }
 
         if (data.minion != null) {

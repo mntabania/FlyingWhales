@@ -40,7 +40,7 @@ public class DefaultWanderer : CharacterBehaviourComponent {
 #if DEBUG_LOG
                     log += "\n-Is in home structure or territory";
 #endif
-                    if (character.previousCurrentActionNode != null && character.previousCurrentActionNode.IsReturnHome()) {
+                    if (character.previousCharacterDataComponent.IsPreviousJobOrActionReturnHome()) {
 #if DEBUG_LOG
                         log += $"\n-Just returned home";
 #endif
