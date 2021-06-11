@@ -167,7 +167,7 @@ namespace Inner_Maps.Location_Structures {
                 PopulateStonesInCave(piles);
                 if (piles.Count > 0) {
                     TileObject chosenPile = piles[GameUtilities.RandomBetweenTwoNumbers(0, piles.Count - 1)];
-                    if (chosenPile.tileObjectType.IsMetal()) {
+                    if (chosenPile.tileObjectType == TILE_OBJECT_TYPE.ORE) {
                         p_worker.jobComponent.TriggerMineOre(chosenPile, out producedJob);
                     } else {
                         p_worker.jobComponent.TriggerMineStone(chosenPile, out producedJob);
