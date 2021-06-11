@@ -163,16 +163,23 @@ namespace Inner_Maps.Location_Structures {
             List<TileObject> piles = RuinarchListPool<TileObject>.Claim();
             if (p_worker.talentComponent.GetTalent(CHARACTER_TALENT.Resources).level >= 4) {
                 PopulateMetalsIncave(piles);
+                PopulateStonesInCave(piles);
                 if (piles.Count > 0) {
                     TileObject chosenPile = piles[GameUtilities.RandomBetweenTwoNumbers(0, piles.Count - 1)];
-                    p_worker.jobComponent.TriggerMineOre(chosenPile, out producedJob);
+                    if (chosenPile.tileObjectType.IsMetal()) {
+                        p_worker.jobComponent.TriggerMineOre(chosenPile, out producedJob);
+                    } else {
+                        p_worker.jobComponent.TriggerMineStone(chosenPile, out producedJob);
+                    }
+                    
                     if (producedJob != null) {
                         RuinarchListPool<TileObject>.Release(piles);
                         return;
                     }
                 }
-            } 
-            
+            }
+
+            piles.Clear();
             PopulateStonesInCave(piles);
             if (piles.Count > 0) {
                 TileObject chosenPile = piles[GameUtilities.RandomBetweenTwoNumbers(0, piles.Count - 1)];
