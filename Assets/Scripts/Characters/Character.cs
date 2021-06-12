@@ -69,6 +69,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public bool shouldDoActionOnFirstTickUponLoadGame { get; private set; } //This should not be saved. Upon loading the game, this is always set to true so that if the character has a saved current action, it should resume on first tick
     public bool isPreplaced { get; private set; }
     public bool isStoredAsTarget { get; private set; }
+    public bool isDeadReference { get; private set; }
 
     public bool isWildMonster { get; protected set; }
     public Log deathLog { get; private set; }
@@ -394,6 +395,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         //previousClassName = data.classComponent.previousClassName; //Moved to CharacterClassComponent
         isPreplaced = data.isPreplaced;
         isStoredAsTarget = data.isStoredAsTarget;
+        isDeadReference = data.isDeadReference;
 
         if (data.afflictionsSkillsInflictedByPlayer != null) {
             afflictionsSkillsInflictedByPlayer = data.afflictionsSkillsInflictedByPlayer;
@@ -6513,12 +6515,26 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     #endregion
 
     #region Operators
-    public static bool operator ==(Character character1, IPointOfInterest character2) {
-        return character1?.persistentID == character2?.persistentID;
+    public static bool operator ==(Character left, IPointOfInterest right) {
+        return left?.persistentID == right?.persistentID;
     }
-    public static bool operator !=(Character character1, IPointOfInterest character2) {
-        return character1?.persistentID != character2?.persistentID;
+    public static bool operator !=(Character left, IPointOfInterest right) {
+        return left?.persistentID != right?.persistentID;
+    }
+    public override bool Equals(object obj) {
+        if (obj is Character c) {
+            return persistentID.Equals(c.persistentID);
+        }
+        return false;
+    }
+    public override int GetHashCode() {
+        return base.GetHashCode();
+    }
+    #endregion
 
+    #region IGCollectable
+    public void SetIsDeadReference(bool p_state) {
+        isDeadReference = p_state;
     }
     #endregion
 

@@ -77,9 +77,18 @@ namespace Locations.Area_Features {
             }
         }
         private bool CreateNewRock() {
-            List<LocationGridTile> choices = owner.gridTileComponent.gridTiles.Where(x => x.tileObjectComponent.objHere == null && x.structure.structureType.IsOpenSpace() && x.IsPassable()).ToList();
+            List<LocationGridTile> choices = RuinarchListPool<LocationGridTile>.Claim();
+            for (int i = 0; i < owner.gridTileComponent.gridTiles.Count; i++) {
+                LocationGridTile x = owner.gridTileComponent.gridTiles[i];
+                if (x.tileObjectComponent.objHere == null && x.structure.structureType.IsOpenSpace() && x.IsPassable()) {
+                    choices.Add(x);
+                }
+            }
+            LocationGridTile chosenTile = null;
             if (choices.Count > 0) {
-                LocationGridTile chosenTile = CollectionUtilities.GetRandomElement(choices);
+                chosenTile = CollectionUtilities.GetRandomElement(choices);
+            }
+            if (chosenTile != null) {
                 chosenTile.structure.AddPOI(InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.ROCK), chosenTile);
                 return true;
             }

@@ -26,6 +26,8 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     public LocationStructure structureLocation => gridTileLocation?.structure;
     public bool isPreplaced { get; private set; }
     public bool isStoredAsTarget { get; private set; }
+    public bool isDeadReference { get; private set; }
+
     /// <summary>
     /// All currently in progress jobs targeting this.
     /// </summary>
@@ -115,7 +117,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         allExistingJobsTargetingThis = new List<JobQueueItem>();
         charactersThatAlreadyAssumed = new List<Character>();
         logComponent = new LogComponent(); //logComponent.SetOwner(this);
-        hiddenComponent = new TileObjectHiddenComponent(); hiddenComponent.SetOwner(this);
+        hiddenComponent = new TileObjectHiddenComponent(); //hiddenComponent.SetOwner(this);
         eventDispatcher = new TileObjectEventDispatcher();
         bookmarkEventDispatcher = new BookmarkableEventDispatcher();
         resourceStorageComponent = new ResourceStorageComponent();
@@ -159,11 +161,12 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         isPreplaced = data.isPreplaced;
         isDamageContributorToStructure = data.isDamageContributorToStructure;
         isStoredAsTarget = data.isStoredAsTarget;
+        isDeadReference = data.isDeadReference;
         SetPOIState(data.poiState);
         CreateTraitContainer();
         ConstructDefaultActions();
         logComponent = data.logComponent.Load(); //logComponent.SetOwner(this);
-        hiddenComponent = data.hiddenComponent.Load(); hiddenComponent.SetOwner(this);
+        hiddenComponent = data.hiddenComponent.Load(); //hiddenComponent.SetOwner(this);
         DatabaseManager.Instance.tileObjectDatabase.RegisterTileObject(this);
         SubscribeListeners();
     }
@@ -198,7 +201,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         if (!string.IsNullOrEmpty(data.isBeingCarriedByID)) {
             isBeingCarriedBy = DatabaseManager.Instance.characterDatabase.GetCharacterByPersistentID(data.isBeingCarriedByID);
         }
-        hiddenComponent.LoadSecondWave();
+        hiddenComponent.LoadSecondWave(this);
     }
     /// <summary>
     /// Load more info, this is called after character markers have been created.
@@ -1263,7 +1266,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     protected virtual void OnSetObjectAsBuilt(){
         Messenger.RemoveListener(TileObjectSignals.CHECK_UNBUILT_OBJECT_VALIDITY, CheckUnbuiltObjectValidity);
         //mapVisual.SetVisualAlpha(1f);
-        hiddenComponent.OnSetHiddenState();
+        hiddenComponent.OnSetHiddenState(this);
         mapVisual.SetVisualAlpha(255f / 255f);
         SetSlotAlpha(255f / 255f);
         SetPOIState(POI_STATE.ACTIVE);
@@ -1374,12 +1377,36 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     }
 #endregion
 
-#region Utilities
+    #region Utilities
     public void DestroyPermanently() {
         //Removed this temporarily because there are many loose ends and reference errors in saving/loading with a null tile object
-        //DatabaseManager.Instance.tileObjectDatabase.UnRegisterTileObject(this);
+        DatabaseManager.Instance.tileObjectDatabase.UnRegisterTileObject(this);
     }
-#endregion
+    #endregion
+
+    #region IGCollectable
+    public void SetIsDeadReference(bool p_state) {
+        isDeadReference = p_state;
+    }
+    #endregion
+
+    #region Operators
+    public static bool operator ==(TileObject left, IPointOfInterest right) {
+        return left?.persistentID == right?.persistentID;
+    }
+    public static bool operator !=(TileObject left, IPointOfInterest right) {
+        return left?.persistentID != right?.persistentID;
+    }
+    public override bool Equals(object obj) {
+        if (obj is TileObject to) {
+            return persistentID.Equals(to.persistentID);
+        }
+        return false;
+    }
+    public override int GetHashCode() {
+        return base.GetHashCode();
+    }
+    #endregion
 }
 
 [System.Serializable]

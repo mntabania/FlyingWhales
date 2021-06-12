@@ -7,7 +7,7 @@ using UnityEngine;
 using UnityEngine.Profiling;
 using Random = UnityEngine.Random;
 
-public class BallLightningMapObjectVisual : MovingMapObjectVisual<TileObject> {
+public class BallLightningMapObjectVisual : MovingMapObjectVisual {
     
     [SerializeField] private ParticleSystem _ballLightningEffect;
     
@@ -146,8 +146,8 @@ public class BallLightningMapObjectVisual : MovingMapObjectVisual<TileObject> {
     public void OnTriggerExit2D(Collider2D collision) {
         if (isSpawned == false) { return; }
         BaseVisionTrigger collidedWith = collision.gameObject.GetComponent<BaseVisionTrigger>();
-        if (collidedWith != null && collidedWith.damageable is ITraitable traitable) { 
-            RemoveObject(traitable);   
+        if (collidedWith != null && collidedWith.damageable is ITraitable traitable) {
+            RemoveObject(traitable);
         }
     }
 #endregion

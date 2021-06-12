@@ -7,7 +7,7 @@ using UnityEngine;
 using UnityEngine.Profiling;
 using Random = UnityEngine.Random;
 
-public class FireBallMapObjectVisual : MovingMapObjectVisual<TileObject> {
+public class FireBallMapObjectVisual : MovingMapObjectVisual {
     
     [SerializeField] private ParticleSystem _coreEffect;
     [SerializeField] private ParticleSystem _flareEffect;

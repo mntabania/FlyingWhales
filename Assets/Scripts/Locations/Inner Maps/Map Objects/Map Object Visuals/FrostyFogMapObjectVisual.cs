@@ -7,7 +7,7 @@ using UnityEngine;
 using UnityEngine.Profiling;
 using Random = UnityEngine.Random;
 
-public class FrostyFogMapObjectVisual : MovingMapObjectVisual<TileObject> {
+public class FrostyFogMapObjectVisual : MovingMapObjectVisual {
     
     [SerializeField] private ParticleSystem _frostyFogEffect;
     [SerializeField] private ParticleSystem _snowFlakesEffect;

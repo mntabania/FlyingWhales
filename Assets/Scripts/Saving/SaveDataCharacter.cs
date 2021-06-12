@@ -44,6 +44,7 @@ public class SaveDataCharacter : SaveData<Character>, ISavableCounterpart {
     public bool hasBeenRaisedFromDead;
     public bool isPreplaced;
     public bool isStoredAsTarget;
+    public bool isDeadReference;
     public List<string> interestedItemNames;
 
     public bool isRaisedByNecro;
@@ -149,6 +150,7 @@ public class SaveDataCharacter : SaveData<Character>, ISavableCounterpart {
         isPreplaced = data.isPreplaced;
         afflictionsSkillsInflictedByPlayer = data.afflictionsSkillsInflictedByPlayer;
         isStoredAsTarget = data.isStoredAsTarget;
+        isDeadReference = data.isDeadReference;
 
         if (data.marker) {
             hasMarker = true;

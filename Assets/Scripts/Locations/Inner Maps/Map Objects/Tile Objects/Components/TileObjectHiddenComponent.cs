@@ -14,7 +14,7 @@ public class TileObjectHiddenComponent : TileObjectComponent {
     }
 
     #region Utilities
-    public void SetIsHidden(bool state, bool affectAlpha = true) {
+    public void SetIsHidden(TileObject owner, bool state, bool affectAlpha = true) {
         this.affectAlpha = affectAlpha;
         if (isHidden != state) {
             isHidden = state;
@@ -23,10 +23,10 @@ public class TileObjectHiddenComponent : TileObjectComponent {
                 gridTile.structure.RemovePOI(owner);
                 gridTile.structure.AddPOI(owner, gridTile);
             }
-            OnSetHiddenState();
+            OnSetHiddenState(owner);
         }
     }
-    public void OnSetHiddenState() {
+    public void OnSetHiddenState(TileObject owner) {
         if (!affectAlpha) { return; }
         BaseMapObjectVisual visual = owner.mapObjectVisual;
         if (visual) {
@@ -40,8 +40,8 @@ public class TileObjectHiddenComponent : TileObjectComponent {
     #endregion
 
     #region Loading
-    public void LoadSecondWave() {
-        OnSetHiddenState();
+    public void LoadSecondWave(TileObject owner) {
+        OnSetHiddenState(owner);
     }
     #endregion
 }

@@ -8,7 +8,7 @@ using UtilityScripts;
 public abstract class MovingTileObject : TileObject {
     public sealed override LocationGridTile gridTileLocation => TryGetGridTileLocation(out var tile) ? tile : base.gridTileLocation;
     public override MapObjectVisual<TileObject> mapVisual => _mapVisual;
-    private MovingMapObjectVisual<TileObject> _mapVisual;
+    private MovingMapObjectVisual _mapVisual;
     public bool hasExpired { get; protected set; }
     protected virtual int affectedRange => 1;
 
@@ -35,7 +35,7 @@ public abstract class MovingTileObject : TileObject {
     #region Override Methods
     protected override void CreateMapObjectVisual() {
         GameObject obj = InnerMapManager.Instance.mapObjectFactory.CreateNewTileObjectMapVisual(this.tileObjectType);
-        _mapVisual = obj.GetComponent<MovingMapObjectVisual<TileObject>>();
+        _mapVisual = obj.GetComponent<MovingMapObjectVisual>();
     }
     public override void OnPlacePOI() {
         base.OnPlacePOI();
@@ -44,7 +44,7 @@ public abstract class MovingTileObject : TileObject {
     public virtual void Expire() {
         hasExpired = true;
         Messenger.RemoveListener<LocationGridTile, TraitableCallback>(GridTileSignals.ACTION_PERFORMED_ON_TILE_TRAITABLES, OnActionPerformedOnTile);
-        // DatabaseManager.Instance.tileObjectDatabase.UnRegisterTileObject(this);
+        DatabaseManager.Instance.tileObjectDatabase.UnRegisterTileObject(this);
     } 
     #endregion
 

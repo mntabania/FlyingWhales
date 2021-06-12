@@ -6,7 +6,7 @@ using UnityEngine;
 using Random = UnityEngine.Random;
 using System.Collections;
 
-public class LocustSwarmMapObjectVisual : MovingMapObjectVisual<TileObject> {
+public class LocustSwarmMapObjectVisual : MovingMapObjectVisual {
 
     private string _expiryKey;
     private string _movementKey;

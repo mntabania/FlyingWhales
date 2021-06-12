@@ -66,7 +66,7 @@ public class TileObjectGameObject : MapObjectVisual<TileObject> {
             tileObject.state,
             tileObject.gridTileLocation.mainBiomeType,
             tileObject.gridTileLocation?.corruptionComponent.isCorrupted ?? false));
-        tileObject.hiddenComponent.OnSetHiddenState();
+        tileObject.hiddenComponent.OnSetHiddenState(tileObject);
     }
 
     #region Pointer Events
@@ -143,6 +143,7 @@ public class TileObjectGameObject : MapObjectVisual<TileObject> {
             PooledObject pooledObject = pooledObjects[i];
             ObjectPoolManager.Instance.DestroyObject(pooledObject);
         }
+        obj = null;
     }
     #endregion
 }

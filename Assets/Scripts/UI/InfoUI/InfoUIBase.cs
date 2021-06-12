@@ -76,6 +76,7 @@ public abstract class InfoUIBase : MonoBehaviour {
         isShowing = false;
         this.gameObject.SetActive(false);
         _closeMenuAction?.Invoke();
+        SetData(null);
         Messenger.Broadcast(UISignals.MENU_CLOSED, this);
     }
     public virtual void SetData(object data) {

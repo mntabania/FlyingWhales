@@ -45,12 +45,13 @@ public abstract class BaseVisionTrigger : MonoBehaviour{
     public void SetVisionTriggerCollidersState(bool state) {
         _mainCollider.enabled = state;
     }
-    public void Reset() {
+    public virtual void Reset() {
         _filterVotes = 0;
         if (_mainCollider != null) {
             _mainCollider.enabled = true;    
         }
         TransferToNonFilteredLayer();
+        damageable = null;
     }
 
     #region Layers

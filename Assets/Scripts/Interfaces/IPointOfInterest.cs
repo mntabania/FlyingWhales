@@ -6,7 +6,7 @@ using UnityEngine;
 using Traits;
 using Locations;
 
-public interface IPointOfInterest : ITraitable, ISelectable, ILogFiller {
+public interface IPointOfInterest : ITraitable, ISelectable, ILogFiller, IGCollectable {
     string persistentID { get; }
     OBJECT_TYPE objectType { get; }
     new string name { get; }
