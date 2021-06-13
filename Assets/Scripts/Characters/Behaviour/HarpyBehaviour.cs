@@ -71,7 +71,7 @@ public class HarpyBehaviour : BaseMonsterBehaviour {
             Character chosenTargetCharacter = GetTargetForCapture(actor, region);
             if(chosenTargetCharacter != null) {
                 LocationStructure chosenTargetStructure = GetDestinationToDropCapturedCharacter(actor, region);
-                if(chosenTargetCharacter != null) {
+                if(chosenTargetStructure != null) {
                     return actor.jobComponent.TryTriggerCaptureCharacter(chosenTargetCharacter, chosenTargetStructure, out producedJob, true);
                 }
             }

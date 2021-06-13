@@ -452,12 +452,18 @@ namespace Generator.Map_Generation.Components {
 			for (int i = 0; i < GridMap.Instance.mainRegion.villageSpots.Count; i++) {
 				randomResourceCount += UnityEngine.Random.Range(1, 4);
 			}
-			List<Area> areasNotInVillageSpot = RuinarchListPool<Area>.Claim();
+			List<Area> validAreasNotInVillageSpot = RuinarchListPool<Area>.Claim();
 			List<Area> areasInVillageSpot = RuinarchListPool<Area>.Claim();
 			for (int i = 0; i < GridMap.Instance.allAreas.Count; i++) {
 				Area area = GridMap.Instance.allAreas[i];
 				if (area.GetOccupyingVillageSpot() == null) {
-					areasNotInVillageSpot.Add(area);
+					//make sure that area is not next to a spot that is reserved by a village
+					List<Area> areasInRange = RuinarchListPool<Area>.Claim();
+					area.PopulateAreasInRange(areasInRange, 1);
+					if (areasInRange.All(a => a.GetOccupyingVillageSpot() == null)) {
+						validAreasNotInVillageSpot.Add(area);	
+					}
+					RuinarchListPool<Area>.Release(areasInRange);
 				} else {
 					areasInVillageSpot.Add(area);
 				}
@@ -487,16 +493,16 @@ namespace Generator.Map_Generation.Components {
 				        }
 			        }
 		        } else {
-			        if (areasNotInVillageSpot.Count > 0) {
-				        Area randomArea = CollectionUtilities.GetRandomElement(areasNotInVillageSpot);
-						areasNotInVillageSpot.Remove(randomArea);
+			        if (validAreasNotInVillageSpot.Count > 0) {
+				        Area randomArea = CollectionUtilities.GetRandomElement(validAreasNotInVillageSpot);
+						validAreasNotInVillageSpot.Remove(randomArea);
 						CreateMonsterDen(randomType, randomArea);
 			        }
 		        }
 	        }
 	        RuinarchListPool<string>.Release(randomResourceChoices);
 	        RuinarchListPool<Area>.Release(areasInVillageSpot);
-	        RuinarchListPool<Area>.Release(areasNotInVillageSpot);
+	        RuinarchListPool<Area>.Release(validAreasNotInVillageSpot);
 		}
 
 		private void CreateMonsterDen(string randomType, Area randomArea) {

@@ -2238,6 +2238,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         float startSize = 1.5f;
         if(p_combatComponent == null) {
             color = damage > 0 ? Color.green : Color.red;
+            textRendererParticleSystem.SpawnParticle(transform.position, damage, color, startSize);
         } else {
             switch (p_combatComponent.damageDone.damageType) {
                 case CombatComponent.DamageDoneType.DamageType.Normal:
