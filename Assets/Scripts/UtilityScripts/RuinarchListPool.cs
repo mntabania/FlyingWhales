@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System;
 using Pathfinding.Util;
 using UnityEngine;
 
@@ -26,6 +27,29 @@ namespace UtilityScripts {
                 } else {
                     Debug.LogError("Adding a list to pool but is already in list");
                 }
+            }
+        }
+    }
+
+    public static class RuinarchCleanUpDictionaryPool {
+        private static readonly List<Dictionary<string, WeakReference>> pool = new List<Dictionary<string, WeakReference>>();
+
+        public static Dictionary<string, WeakReference> Claim() {
+            lock (pool) {
+                if (pool.Count > 0) {
+                    Dictionary<string, WeakReference> ls = pool[0];
+                    pool.RemoveAt(0);
+                    return ls;
+                }
+
+                return new Dictionary<string, WeakReference>();
+            }
+        }
+
+        public static void Release(Dictionary<string, WeakReference> dict) {
+            lock (pool) {
+                dict.Clear();
+                pool.Add(dict);
             }
         }
     }

@@ -1037,6 +1037,9 @@ namespace Inner_Maps.Location_Structures {
             LocationGridTile tileLocation = poi.gridTileLocation;
             TileObject tileObj = poi as TileObject;
             if (tileObj != null && tileObj.isHidden) {
+                if (pointsOfInterest.Remove(poi)) {
+                    groupedTileObjects[tileObj.tileObjectType].Remove(tileObj);
+                }
                 if (tileLocation != null && tileLocation.tileObjectComponent.hiddenObjHere == tileObj) {
                     tileLocation.tileObjectComponent.RemoveHiddenObjectHere(removedBy);
                     return true;

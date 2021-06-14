@@ -44,6 +44,7 @@ public class SaveDataCharacter : SaveData<Character>, ISavableCounterpart {
     public bool hasBeenRaisedFromDead;
     public bool isPreplaced;
     public bool isStoredAsTarget;
+    public bool isDeadReference;
     public List<string> interestedItemNames;
 
     public bool isRaisedByNecro;
@@ -67,7 +68,6 @@ public class SaveDataCharacter : SaveData<Character>, ISavableCounterpart {
 
     public string currentJob;
     public string currentActionNode;
-    public string previousCurrentActionNode;
 
     public string territory;
     public List<string> items;
@@ -150,6 +150,7 @@ public class SaveDataCharacter : SaveData<Character>, ISavableCounterpart {
         isPreplaced = data.isPreplaced;
         afflictionsSkillsInflictedByPlayer = data.afflictionsSkillsInflictedByPlayer;
         isStoredAsTarget = data.isStoredAsTarget;
+        isDeadReference = data.isDeadReference;
 
         if (data.marker) {
             hasMarker = true;
@@ -214,11 +215,6 @@ public class SaveDataCharacter : SaveData<Character>, ISavableCounterpart {
         if (data.currentActionNode != null) {
             currentActionNode = data.currentActionNode.persistentID;
             SaveManager.Instance.saveCurrentProgressManager.AddToSaveHub(data.currentActionNode);
-        }
-
-        if (data.previousCurrentActionNode != null) {
-            previousCurrentActionNode = data.previousCurrentActionNode.persistentID;
-            SaveManager.Instance.saveCurrentProgressManager.AddToSaveHub(data.previousCurrentActionNode);
         }
 
         if (data.minion != null) {

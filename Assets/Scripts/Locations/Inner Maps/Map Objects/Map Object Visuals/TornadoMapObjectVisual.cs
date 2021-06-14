@@ -8,7 +8,7 @@ using UnityEngine.Profiling;
 using UtilityScripts;
 using Random = UnityEngine.Random;
 
-public sealed class TornadoMapObjectVisual : MovingMapObjectVisual<TileObject> {
+public sealed class TornadoMapObjectVisual : MovingMapObjectVisual {
 
     [Header("Particles")]
     [SerializeField] private ParticleSystem[] particles;

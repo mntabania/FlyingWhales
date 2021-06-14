@@ -6,7 +6,7 @@ using Traits;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-public class VaporMapObjectVisual : MovingMapObjectVisual<TileObject> {
+public class VaporMapObjectVisual : MovingMapObjectVisual {
     
     [SerializeField] private ParticleSystem _vaporEffect;
     

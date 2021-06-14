@@ -21,4 +21,9 @@ public abstract class POIVisionTrigger : BaseVisionTrigger {
     /// </summary>
     /// <returns>True or false</returns>
     public abstract bool IgnoresRoomDifference();
+
+    public override void Reset() {
+        base.Reset();
+        poi = null;
+    }
 }

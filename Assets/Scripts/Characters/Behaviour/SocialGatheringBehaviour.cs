@@ -20,7 +20,7 @@ public class SocialGatheringBehaviour : CharacterBehaviourComponent {
 #if DEBUG_LOG
                 log += $"\n-Character is already in target structure, will do party jobs";
 #endif
-                if (character.previousCurrentActionNode != null && character.previousCurrentActionNode.associatedJobType == JOB_TYPE.PARTY_GO_TO) {
+                if (character.previousCharacterDataComponent.previousJobType == JOB_TYPE.PARTY_GO_TO) {
                     hasJob = character.jobComponent.TriggerRoamAroundStructure(out producedJob);
                 } else {
                     int roll = UnityEngine.Random.Range(0, 100);

@@ -334,7 +334,7 @@ public class Minion {
     }
 #endregion
 
-#region Listeners
+    #region Listeners
     private void SubscribeListeners() {
         Messenger.AddListener(Signals.TICK_ENDED, OnTickEnded);
         Messenger.AddListener(Signals.TICK_STARTED, OnTickStarted);
@@ -380,7 +380,13 @@ public class Minion {
     //        }
     //    }
     //}
-#endregion
+    #endregion
+
+    #region Clean Up
+    public void CleanUp() {
+        character = null;
+    }
+    #endregion
 }
 
 [System.Serializable]

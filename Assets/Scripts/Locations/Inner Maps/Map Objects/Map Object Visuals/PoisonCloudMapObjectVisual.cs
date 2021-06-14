@@ -9,7 +9,7 @@ using UnityEngine.Profiling;
 using UtilityScripts;
 using Random = UnityEngine.Random;
 
-public class PoisonCloudMapObjectVisual : MovingMapObjectVisual<TileObject> {
+public class PoisonCloudMapObjectVisual : MovingMapObjectVisual {
     
     [SerializeField] private ParticleSystem _cloudEffect;
     [SerializeField] private ParticleSystem _explosionEffect;

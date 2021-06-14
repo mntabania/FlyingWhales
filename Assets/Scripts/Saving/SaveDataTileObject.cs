@@ -22,7 +22,8 @@ public class SaveDataTileObject : SaveData<TileObject>, ISavableCounterpart {
     public MAP_OBJECT_STATE mapObjectState;
     public bool isDamageContributorToStructure;
     public bool isStoredAsTarget;
-    
+    public bool isDeadReference;
+
     //resources
     public SaveDataResourceStorageComponent resourceStorageComponent;
 
@@ -61,6 +62,7 @@ public class SaveDataTileObject : SaveData<TileObject>, ISavableCounterpart {
         poiState = data.state;
         isDamageContributorToStructure = data.isDamageContributorToStructure;
         isStoredAsTarget = data.isStoredAsTarget;
+        isDeadReference = data.isDeadReference;
 
         advertisedActions = data.advertisedActions != null ? new List<INTERACTION_TYPE>(data.advertisedActions) : new List<INTERACTION_TYPE>();
 

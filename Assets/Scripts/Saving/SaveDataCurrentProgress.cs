@@ -214,21 +214,11 @@ public class SaveDataCurrentProgress {
         UIManager.Instance.optionsMenu.UpdateSaveMessage("Saving Objects...");
         int batchCount = 0;
 
-        TileObject[] allTileObjects = DatabaseManager.Instance.tileObjectDatabase.allTileObjectsList.ToArray();
-        for (int i = 0; i < allTileObjects.Length; i++) {
-            TileObject tileObject = allTileObjects[i];
-            if (tileObject is GenericTileObject genericTileObject && genericTileObject.gridTileLocation.isDefault) {
-                //if tile object is a Generic Tile Object and its parent tile is set as default then do not save it.
+        HashSet<TileObject> allTileObjects = DatabaseManager.Instance.tileObjectDatabase.allTileObjectsList;
+        for (int i = 0; i < allTileObjects.Count; i++) {
+            TileObject tileObject = allTileObjects.ElementAt(i);
+            if (!SaveTileObject(tileObject)) {
                 continue;
-            }
-            SaveDataTileObject saveDataTileObject = CreateNewSaveDataForTileObject(tileObject);
-            saveDataTileObject.Save(tileObject);
-            AddToSaveHub(saveDataTileObject, saveDataTileObject.objectType);
-            if (tileObject is WurmHole wurmHole) {
-                //special case for wurm hole because connected wurm hole cannot be saved inside other wurm hole because it will produce a stack overflow exception
-                SaveDataTileObject otherWurmHoleSaveData = CreateNewSaveDataForTileObject(wurmHole.wurmHoleConnection);
-                otherWurmHoleSaveData.Save(wurmHole.wurmHoleConnection);
-                SaveManager.Instance.saveCurrentProgressManager.currentSaveDataProgress.AddToSaveHub(otherWurmHoleSaveData, otherWurmHoleSaveData.objectType);
             }
             batchCount++;
             if (batchCount >= SaveManager.TileObject_Save_Batches) {
@@ -236,6 +226,42 @@ public class SaveDataCurrentProgress {
                 yield return null;    
             }
         }
+
+        //We copy the destroyedTileObjects in a separate list so that we wont have race conditions if it is still processing in the multithread
+        List<WeakReference> copyOfDestroyedTileObjects = RuinarchListPool<WeakReference>.Claim();
+        copyOfDestroyedTileObjects.AddRange(DatabaseManager.Instance.tileObjectDatabase.destroyedTileObjects);
+        for (int i = 0; i < copyOfDestroyedTileObjects.Count; i++) {
+            WeakReference wr = copyOfDestroyedTileObjects[i];
+            if (!wr.IsAlive) {
+                continue;
+            }
+            TileObject t = wr.Target as TileObject;
+            if (t != null) {
+                if (!SaveTileObject(t)) {
+                    continue;
+                }
+            }
+            yield return null;
+        }
+        RuinarchListPool<WeakReference>.Release(copyOfDestroyedTileObjects);
+
+
+    }
+    private bool SaveTileObject(TileObject tileObject) {
+        if (tileObject is GenericTileObject genericTileObject && genericTileObject.gridTileLocation.isDefault) {
+            //if tile object is a Generic Tile Object and its parent tile is set as default then do not save it.
+            return false;
+        }
+        SaveDataTileObject saveDataTileObject = CreateNewSaveDataForTileObject(tileObject);
+        saveDataTileObject.Save(tileObject);
+        AddToSaveHub(saveDataTileObject, saveDataTileObject.objectType);
+        if (tileObject is WurmHole wurmHole) {
+            //special case for wurm hole because connected wurm hole cannot be saved inside other wurm hole because it will produce a stack overflow exception
+            SaveDataTileObject otherWurmHoleSaveData = CreateNewSaveDataForTileObject(wurmHole.wurmHoleConnection);
+            otherWurmHoleSaveData.Save(wurmHole.wurmHoleConnection);
+            SaveManager.Instance.saveCurrentProgressManager.currentSaveDataProgress.AddToSaveHub(otherWurmHoleSaveData, otherWurmHoleSaveData.objectType);
+        }
+        return true;
     }
     private static SaveDataTileObject CreateNewSaveDataForTileObject(TileObject tileObject) {
         SaveDataTileObject obj = System.Activator.CreateInstance(tileObject.serializedData) as SaveDataTileObject;
@@ -272,7 +298,7 @@ public class SaveDataCurrentProgress {
                 foreach (SaveDataTileObject data in saveDataTileObjects.Values) {
                     //Special Case: Do not load generic tile objects here, since they were already loaded during region inner map generation.
                     if (data.tileObjectType != TILE_OBJECT_TYPE.GENERIC_TILE_OBJECT) {
-                        data.Load();    
+                        data.Load();
                     }
                 }
             }

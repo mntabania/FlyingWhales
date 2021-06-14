@@ -46,7 +46,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public JobQueueItem currentJob { get; private set; }
     public GoapPlan currentPlan { get; private set; }
     public ActualGoapNode currentActionNode { get; private set; }
-    public ActualGoapNode previousCurrentActionNode { get; private set; }
     public JobQueue jobQueue { get; private set; }
     public TileObject tileObjectLocation { get; private set; }
     public CharacterTrait defaultCharacterTrait { get; private set; }
@@ -70,6 +69,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public bool shouldDoActionOnFirstTickUponLoadGame { get; private set; } //This should not be saved. Upon loading the game, this is always set to true so that if the character has a saved current action, it should resume on first tick
     public bool isPreplaced { get; private set; }
     public bool isStoredAsTarget { get; private set; }
+    public bool isDeadReference { get; private set; }
 
     public bool isWildMonster { get; protected set; }
     public Log deathLog { get; private set; }
@@ -117,10 +117,10 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public ReligionComponent religionComponent { get; private set; }
     public LimiterComponent limiterComponent { get; private set; }
     public PiercingAndResistancesComponent piercingAndResistancesComponent { get; private set; }
-    public CharacterEventDispatcher eventDispatcher { get; }
-    public PreviousCharacterDataComponent previousCharacterDataComponent { get; }
+    public CharacterEventDispatcher eventDispatcher { get; private set; }
+    public PreviousCharacterDataComponent previousCharacterDataComponent { get; private set; }
     public CharacterTraitComponent traitComponent { get; private set; }
-    public BookmarkableEventDispatcher bookmarkEventDispatcher { get; }
+    public BookmarkableEventDispatcher bookmarkEventDispatcher { get; private set; }
     //public BuffStatsBonus buffStatsBonus { get; private set; }
     public EquipmentComponent equipmentComponent { get; private set; }
     public CharacterMoneyComponent moneyComponent { get; private set; }
@@ -131,7 +131,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public CharacterTalentComponent talentComponent { get; private set; }
     //IMPORTANT: This component is not applicable to all characters, only VILLAGERS! So, this can be null if the character is NOT A VILLAGER.
     public VillagerWantsComponent villagerWantsComponent { get; private set; }
-    
 
     #region getters / setters
     public string bookmarkName => lycanData != null ? lycanData.activeForm.visuals.GetCharacterNameWithIconAndColor() : visuals.GetCharacterNameWithIconAndColor();
@@ -318,7 +317,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         trapStructure = new TrapStructure();
         planner = new GoapPlanner(this);
         jobComponent = new CharacterJobTriggerComponent(); jobComponent.SetOwner(this);
-        logComponent = new LogComponent(); logComponent.SetOwner(this);
+        logComponent = new LogComponent(); //logComponent.SetOwner(this);
 
         //Components
         classComponent = new CharacterClassComponent(); classComponent.SetOwner(this);
@@ -364,7 +363,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         traitsNeededToBeRemoved = new List<Trait>();
         forcedCancelJobsOnTickEnded = new List<JobQueueItem>();
         interestedItemNames = new List<string>();
-        
+
         jobQueue = new JobQueue(this);
         planner = new GoapPlanner(this);
         visuals = new CharacterVisuals(this, data);
@@ -396,9 +395,10 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         //previousClassName = data.classComponent.previousClassName; //Moved to CharacterClassComponent
         isPreplaced = data.isPreplaced;
         isStoredAsTarget = data.isStoredAsTarget;
+        isDeadReference = data.isDeadReference;
 
         if (data.afflictionsSkillsInflictedByPlayer != null) {
-            afflictionsSkillsInflictedByPlayer = data.afflictionsSkillsInflictedByPlayer;    
+            afflictionsSkillsInflictedByPlayer = data.afflictionsSkillsInflictedByPlayer;
         } else {
             afflictionsSkillsInflictedByPlayer = new List<PLAYER_SKILL_TYPE>();
         }
@@ -413,7 +413,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         moodComponent = data.moodComponent.Load(); moodComponent.SetOwner(this);
         jobComponent = data.jobComponent.Load(); jobComponent.SetOwner(this);
         reactionComponent = data.reactionComponent.Load(); reactionComponent.SetOwner(this);
-        logComponent = data.logComponent.Load(); logComponent.SetOwner(this);
+        logComponent = data.logComponent.Load(); //logComponent.SetOwner(this);
         combatComponent = data.combatComponent.Load(); combatComponent.SetOwner(this);
         rumorComponent = data.rumorComponent.Load(); rumorComponent.SetOwner(this);
         assumptionComponent = data.assumptionComponent.Load(); assumptionComponent.SetOwner(this);
@@ -465,7 +465,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         classComponent.OnUpdateCharacterClass();
         moodComponent.SetMoodValue(50);
         if (needsComponent.HasNeeds()) {
-            needsComponent.Initialize();    
+            needsComponent.Initialize();
         }
         religionComponent.Initialize();
         if (race != RACE.DEMON) {
@@ -481,9 +481,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     }
     public void InitialCharacterPlacement(LocationGridTile tile) {
         if (needsComponent.HasNeeds()) {
-            needsComponent.InitialCharacterPlacement();    
+            needsComponent.InitialCharacterPlacement();
         }
-        
+
         ConstructInitialGoapAdvertisementActions();
         marker.InitialPlaceMarkerAt(tile); //since normal characters are already placed in their areas.
         //AddInitialAwareness();
@@ -583,15 +583,15 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         religionComponent.UnsubscribeListeners();
         movementComponent.UnsubscribeFromSignals();
     }
-#endregion
+    #endregion
 
-#region Virtuals
+    #region Virtuals
     public virtual void OnSetIsHidden() { }
-#endregion
+    #endregion
 
-#region Listeners
+    #region Listeners
     private void OnStopCurrentActionTargetingPOI(TileObject poi) {
-        if(currentActionNode != null && currentActionNode.poiTarget == poi) {
+        if (currentActionNode != null && currentActionNode.poiTarget == poi) {
             StopCurrentActionNode();
         }
     }
@@ -614,9 +614,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
     }
     private void ProcessBeforeDeath(string cause, Character responsibleCharacter) {
-        if(cause == "attacked" && responsibleCharacter != null) {
+        if (cause == "attacked" && responsibleCharacter != null) {
             //Death by attacked
-            if(responsibleCharacter.isNormalCharacter && responsibleCharacter.faction != null && responsibleCharacter.faction.isMajorNonPlayer && responsibleCharacter.faction != faction
+            if (responsibleCharacter.isNormalCharacter && responsibleCharacter.faction != null && responsibleCharacter.faction.isMajorNonPlayer && responsibleCharacter.faction != faction
                 && faction != null && faction.isMajorNonPlayer && (faction.factionType.type == FACTION_TYPE.Human_Empire || faction.factionType.type == FACTION_TYPE.Elven_Kingdom)) {
                 //Killed by a character from another villager faction
                 if (IsInHomeSettlement() && !homeSettlement.HasAliveResident()) {
@@ -633,7 +633,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         deathTile.IsPartOfSettlement(out homeSettlement);
         Region homeRegion = deathTile.structure.region;
 
-        if(homeSettlement == null) {
+        if (homeSettlement == null) {
             //Will not spawn revenant if death tile has no settlement
             return;
         }
@@ -656,7 +656,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             Summon ghost = CharacterManager.Instance.CreateNewSummon(SUMMON_TYPE.Ghost, FactionManager.Instance.undeadFaction, homeLocation: homeSettlement, homeRegion: homeRegion, homeStructure: currentStructure);
             (ghost as Ghost).SetBetrayedBy(betrayer);
             Area randomArea = homeSettlement.GetRandomArea();
-            if(randomArea != null) {
+            if (randomArea != null) {
                 CharacterManager.Instance.PlaceSummonInitially(ghost, randomArea.gridTileComponent.GetRandomTile());
             }
         }
@@ -671,7 +671,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     }
     private void OnTraitableGainedTrait(ITraitable p_traitable, Trait p_trait) {
         if (p_trait is Burning burning) {
-            if (currentActionNode != null && currentActionNode.actionStatus == ACTION_STATUS.PERFORMING && 
+            if (currentActionNode != null && currentActionNode.actionStatus == ACTION_STATUS.PERFORMING &&
                 currentActionNode.poiTarget == p_traitable && currentActionNode.action.actionCategory == ACTION_CATEGORY.CONSUME) {
                 //Stop eating object that has been set on fire. And gain burning too.
                 //https://trello.com/c/xDiItiDG/2026-ignite-food-vegetable-while-being-eaten-didnt-ignite
@@ -705,9 +705,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
         stateComponent.currentState?.thoughtBubbleLog?.TryUpdateLogAfterRename(p_character, true);
     }
-#endregion
+    #endregion
 
-#region Sexuality
+    #region Sexuality
     private void GenerateSexuality() {
         if (GameUtilities.IsRaceBeast(race)) {
             //For beasts:
@@ -731,9 +731,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public void SetSexuality(SEXUALITY sexuality) {
         this.sexuality = sexuality;
     }
-#endregion
+    #endregion
 
-#region Marker
+    #region Marker
     public void SetGridTilePosition(Vector2 p_anchoredPos) {
 #if DEBUG_PROFILER
         Profiler.BeginSample($"{name} - SetGridTilePosition - Floor to Int");
@@ -757,7 +757,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         CharacterMarker _marker = portraitGO.GetComponent<CharacterMarker>();
         SetCharacterMarker(_marker);
         _marker.SetCharacter(this);
-        
+
         //List<Trait> traitOverrideFunctions = traitContainer.GetTraitOverrideFunctions(TraitManager.Initiate_Map_Visual_Trait);
         //if (traitOverrideFunctions != null) {
         //    for (int i = 0; i < traitOverrideFunctions.Count; i++) {
@@ -828,9 +828,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         //NOTE: Moved All Per Tick Movement effects to TryProcessTraitsOnTickEndedWhileStationaryOrUnoccupied because of task
         //https://trello.com/c/DqNguu3v/2941-symptoms-triggered-while-moving-should-also-be-triggered-when-character-is-stationary-and-not-doing-anything-and-not-sleeping
     }
-#endregion
+    #endregion
 
-#region Jobs
+    #region Jobs
     public void SetCurrentJob(JobQueueItem job) {
         currentJob = job;
     }
@@ -904,7 +904,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
     }
     private void ForceCancelAllActionsTargetingPOI(IPointOfInterest target, string reason) {
-        if(currentActionNode != null && currentActionNode.associatedJob != null && currentActionNode.poiTarget == target && currentActionNode.associatedJob.poiTarget == target) {
+        if (currentActionNode != null && currentActionNode.associatedJob != null && currentActionNode.poiTarget == target && currentActionNode.associatedJob.poiTarget == target) {
             //if target is main target of the job, stop the whole job
             currentActionNode.associatedJob.ForceCancelJob(reason);
         }
@@ -1327,7 +1327,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         //    //If a party has no path to do action and the job that has no path is a party job, leave party
         //    partyComponent.currentParty.RemoveMember(this);
         //}
-        if(gridTileLocation != null && limiterComponent.canMove) {
+        if (gridTileLocation != null && limiterComponent.canMove) {
             //If this character cannot do job or action because he has no path but the reason why he has no path is beacuse he has no grid location, do not trigger fall back jobs
             if (job.jobType == JOB_TYPE.RETURN_PORTAL || job.jobType == JOB_TYPE.RETURN_TERRITORY) {
                 //interruptComponent.TriggerInterrupt(INTERRUPT.Set_Home, null);
@@ -1344,16 +1344,16 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             }
         }
     }
-#endregion
+    #endregion
 
-#region Faction
+    #region Faction
     public virtual bool SetFaction(Faction newFaction) {
         if (_faction == newFaction) {
             //ignore change, because character is already part of that faction
             return false;
         }
         if (_faction != null) {
-            previousCharacterDataComponent.SetPreviousFaction(_faction);    
+            previousCharacterDataComponent.SetPreviousFaction(_faction);
         }
         _faction = newFaction;
         OnChangeFaction(prevFaction, newFaction);
@@ -1372,7 +1372,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         return newFaction.JoinFaction(this, bypassIdeologyChecking: bypassIdeologyChecking);
     }
     protected virtual void OnChangeFaction(Faction prevFaction, Faction newFaction) {
-        if(prevFaction != null) {
+        if (prevFaction != null) {
             if (prevFaction.factionType.type == FACTION_TYPE.Undead) {
                 behaviourComponent.RemoveBehaviourComponent(typeof(UndeadBehaviour));
             }
@@ -1392,7 +1392,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         if (newFaction != null) {
             if (newFaction.factionType.type == FACTION_TYPE.Undead) {
                 behaviourComponent.AddBehaviourComponent(typeof(UndeadBehaviour));
-            } 
+            }
             //else if (newFaction.factionType.type == FACTION_TYPE.Demons) {
             //    //This is only temporary
             //    //Right now combat behaviours are only applicable on characters in the Demon faction
@@ -1442,7 +1442,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             viableFactions.Clear();
             for (int i = 0; i < FactionManager.Instance.allFactions.Count; i++) {
                 Faction faction = FactionManager.Instance.allFactions[i];
-                if (faction.factionType.type == FACTION_TYPE.Demon_Cult 
+                if (faction.factionType.type == FACTION_TYPE.Demon_Cult
                     && faction != prevFaction
                     && !faction.isDisbanded
                     && !faction.IsCharacterBannedFromJoining(this)
@@ -1456,11 +1456,11 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                     }
                 }
             }
-            if(chosenFaction == null && viableFactions.Count > 0) {
+            if (chosenFaction == null && viableFactions.Count > 0) {
                 chosenFaction = CollectionUtilities.GetRandomElement(viableFactions);
             }
         }
-        if(chosenFaction == null) {
+        if (chosenFaction == null) {
             viableFactions.Clear();
             if (currentRegion != null) {
                 for (int i = 0; i < currentRegion.factionsHere.Count; i++) {
@@ -1513,8 +1513,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         return null;
     }
     private void OnFactionCreated(Faction newFaction, Character creator) {
-        if(this != creator) {
-            if(faction == null || faction.isMajorNonPlayerOrVagrant) {
+        if (this != creator) {
+            if (faction == null || faction.isMajorNonPlayerOrVagrant) {
                 JoinFactionProcessingSpecific(newFaction, creator);
             }
         }
@@ -1545,7 +1545,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             return;
         }
         Faction currentFaction = this.faction;
-        if(currentFaction == faction) {
+        if (currentFaction == faction) {
 #if DEBUG_LOG
             debugLog += "\nCharacter's current faction is the newly created faction, WILL NOT JOIN";
             logComponent.PrintLogIfActive(debugLog);
@@ -1557,7 +1557,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         bool isFactionLeaderFriendOrCloseFriend = relationshipContainer.IsFriendsWith(factionLeader);
 
         int chance = 0;
-        if(lover == factionLeader && isFactionLeaderFriendOrCloseFriend) {
+        if (lover == factionLeader && isFactionLeaderFriendOrCloseFriend) {
 #if DEBUG_LOG
             debugLog += "\nFaction Leader is Lover and Faction Leader is Friend/Close Friend, 90%";
 #endif
@@ -1589,7 +1589,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             chance = 15;
         }
 
-        if(currentFaction != null && currentFaction.HasRelationshipStatusWith(FACTION_RELATIONSHIP_STATUS.Hostile, faction)) {
+        if (currentFaction != null && currentFaction.HasRelationshipStatusWith(FACTION_RELATIONSHIP_STATUS.Hostile, faction)) {
             chance = Mathf.RoundToInt(chance * 0.5f);
 #if DEBUG_LOG
             debugLog += "\nCharacter's current faction is hostile with the new faction, half the chance";
@@ -1622,9 +1622,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             ChangeFactionTo(FactionManager.Instance.neutralFaction, true);
         }
     }
-#endregion
+    #endregion
 
-#region Carry Component
+    #region Carry Component
     /*
         Create a new Party with this character as the leader.
             */
@@ -1710,7 +1710,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
     }
     public void UncarryPOI(bool bringBackToInventory = false, bool addToLocation = true, LocationGridTile dropLocation = null) {
-        if(carryComponent.isCarryingAnyPOI) {
+        if (carryComponent.isCarryingAnyPOI) {
             IPointOfInterest poi = carryComponent.carriedPOI;
             UncarryPOI(poi, bringBackToInventory, addToLocation, dropLocation);
         }
@@ -1723,9 +1723,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     //public bool HasOtherCharacterInParty() {
     //    return ownParty.characters.Count > 1;
     //}
-#endregion
+    #endregion
 
-#region Location
+    #region Location
     public void SetCurrentStructureLocation(LocationStructure newStructure, bool broadcast = true) {
         if (newStructure == _currentStructure) {
             return; //ignore change;
@@ -1741,7 +1741,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             if (previousStructure != null) {
                 eventDispatcher.ExecuteCharacterLeftStructure(this, previousStructure);
                 Messenger.Broadcast(CharacterSignals.CHARACTER_LEFT_STRUCTURE, this, previousStructure);
-                if(newStructure == null && currentLocationAwareness == previousStructure.locationAwareness) {
+                if (newStructure == null && currentLocationAwareness == previousStructure.locationAwareness) {
                     LocationAwarenessUtility.RemoveFromAwarenessList(this);
                 }
             }
@@ -1845,7 +1845,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             return currentSettlement == homeSettlement;
         }
         return false;
-    } 
+    }
     public bool HasHome() {
         return homeSettlement != null || (homeStructure != null && !homeStructure.hasBeenDestroyed) || HasTerritory();
     }
@@ -1870,19 +1870,19 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
         return residentCount;
     }
-#endregion
+    #endregion
 
-#region Utilities
+    #region Utilities
     public bool IsUndead() {
-        if (characterClass.IsZombie() || (this is Summon summon && 
-            (summon.summonType == SUMMON_TYPE.Ghost || summon.summonType == SUMMON_TYPE.Skeleton || 
+        if (characterClass.IsZombie() || (this is Summon summon &&
+            (summon.summonType == SUMMON_TYPE.Ghost || summon.summonType == SUMMON_TYPE.Skeleton ||
              summon.summonType == SUMMON_TYPE.Vengeful_Ghost || summon.summonType == SUMMON_TYPE.Revenant))) {
             return true;
         }
         return false;
     }
     private bool AssignRace(RACE race, bool isInitial = false) {
-        if(_raceSetting == null || _raceSetting.race != race) {
+        if (_raceSetting == null || _raceSetting.race != race) {
             if (_raceSetting != null) {
                 if (_raceSetting.race == race) {
                     return false; //current race is already the new race, no change
@@ -1926,11 +1926,11 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     }
     public void SetRandomName() {
         string newName = RandomNameGenerator.GenerateRandomName(race, gender);
-        string[] split = newName.Split(' '); 
+        string[] split = newName.Split(' ');
         string firstName = split[0];
         string surName = string.Empty;
         if (split.Length > 1) {
-            surName = split[1];    
+            surName = split[1];
         }
         SetFirstAndLastName(firstName, surName);
     }
@@ -1945,12 +1945,12 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         bookmarkEventDispatcher.ExecuteBookmarkChangedNameOrElementsEvent(this);
         if (lycanData?.limboForm != null) {
             lycanData.limboForm.SetFirstAndLastName(firstName, surName);
-            lycanData.limboForm.bookmarkEventDispatcher.ExecuteBookmarkChangedNameOrElementsEvent(lycanData.limboForm);    
+            lycanData.limboForm.bookmarkEventDispatcher.ExecuteBookmarkChangedNameOrElementsEvent(lycanData.limboForm);
         }
         Messenger.Broadcast(CharacterSignals.CHARACTER_CHANGED_NAME, this);
     }
     private string GetDefaultRaceClassName() {
-        if(race == RACE.DEMON) {
+        if (race == RACE.DEMON) {
             return $"{characterClass.className} {GameUtilities.GetNormalizedRaceAdjective(race)}";
         } else if (race == RACE.RATMAN) {
             return $"{characterClass.className}";
@@ -1966,7 +1966,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         if (isInLimbo) {
             if (isLycanthrope && lycanData.activeForm != this) {
                 lycanData.activeForm.CenterOnCharacter();
-            }  
+            }
         } else {
             if (marker) {
                 if (carryComponent.masterCharacter.gridTileLocation != null) {
@@ -1980,14 +1980,14 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 Region region = null;
                 if (grave.isBeingCarriedBy != null) {
                     region = grave.isBeingCarriedBy.currentRegion;
-                } else if (grave.gridTileLocation != null){
+                } else if (grave.gridTileLocation != null) {
                     region = grave.gridTileLocation.parentMap.region;
                 }
                 if (region != null) {
                     if (!InnerMapManager.Instance.IsShowingInnerMap(region)) {
                         InnerMapManager.Instance.ShowInnerMap(region, false);
                     }
-                    InnerMapCameraMove.Instance.CenterCameraOn(grave.mapObjectVisual.gameObject);    
+                    InnerMapCameraMove.Instance.CenterCameraOn(grave.mapObjectVisual.gameObject);
                 }
             }
             //Removed connectedFoodPile because the character reference will be removed from the master list once the body is destroyed
@@ -2006,7 +2006,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             //    }
             //}
         }
-        
+
         // else {
         //     if (InnerMapManager.Instance.isAnInnerMapShowing) {
         //         InnerMapManager.Instance.HideAreaMap();
@@ -2076,7 +2076,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
     }
     private void OnBeforeSeizingCharacter(Character character) {
-        if(this == character) {
+        if (this == character) {
             marker.OnBeforeSeizingThisCharacter();
         }
         //if (character.id != id) {
@@ -2103,7 +2103,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         //}
     }
     private void OnSeizeTileObject(TileObject tileObject) {
-        if(currentActionNode != null && currentActionNode.poiTarget == tileObject) {
+        if (currentActionNode != null && currentActionNode.poiTarget == tileObject) {
             StopCurrentActionNode();
         }
         Character[] currentUsers = tileObject.users;
@@ -2127,13 +2127,13 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         return name;
     }
     private LocationGridTile GetLocationGridTileByXY(int x, int y, bool throwOnException = true) {
-        if(currentRegion != null) {
+        if (currentRegion != null) {
             if (UtilityScripts.Utilities.IsInRange(x, 0, currentRegion.innerMap.width)
                 && UtilityScripts.Utilities.IsInRange(y, 0, currentRegion.innerMap.height)) {
                 return currentRegion.innerMap.map[x, y];
             }
             int xCoordinate = Mathf.Clamp(x, 0, currentRegion.innerMap.width - 1);
-            int yCoordinate = Mathf.Clamp(y, 0, currentRegion.innerMap.height -1);
+            int yCoordinate = Mathf.Clamp(y, 0, currentRegion.innerMap.height - 1);
             return currentRegion.innerMap.map[xCoordinate, yCoordinate];
         }
         return null;
@@ -2207,7 +2207,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
     }
     public virtual bool IsValidCombatTargetFor(IPointOfInterest source) {
-        return isDead == false /*&& (limiterComponent.canPerform || canMove)*/ && hasMarker 
+        return isDead == false /*&& (limiterComponent.canPerform || canMove)*/ && hasMarker
                 && gridTileLocation != null && source.gridTileLocation != null && (source is Character character && character.movementComponent.HasPathToEvenIfDiffRegion(gridTileLocation)); //traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE) == false
     }
     public void SetHasUnresolvedCrime(bool state) {
@@ -2232,7 +2232,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         destroyMarkerOnDeath = state;
     }
     public void SetIsWanderer(bool state) {
-        if(isWanderer != state) {
+        if (isWanderer != state) {
             isWanderer = state;
             if (isWanderer) {
                 //Note: I put this in the DefaultWanderer behaviour instead because there will be issues if we add territory here immediately
@@ -2262,11 +2262,11 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         if (traitContainer.HasTrait("Enslaved") && faction != character.faction) {
             return true;
         }
-        if(traitContainer.HasTrait("Restrained", "Ensnared", "Frozen")) {
+        if (traitContainer.HasTrait("Restrained", "Ensnared", "Frozen")) {
             return !IsAtHome();
         }
         if (HasHome()) {
-            if(!IsAtHome()) {
+            if (!IsAtHome()) {
                 //If cannot return home, consider in danger
                 return !movementComponent.CanReturnHome();
             }
@@ -2277,7 +2277,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         isPreplaced = state;
     }
     private string GetFirstNameWithColor() {
-        if(CharacterManager.Instance != null) {
+        if (CharacterManager.Instance != null) {
             string color = CharacterManager.Instance.GetCharacterNameColorHex(this);
             return $"<color=#{color}>{_firstName}</color>";
         }
@@ -2297,14 +2297,14 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "NonIntel", "cancel_job_no_plan", providedTags: LOG_TAG.Work);
         log.AddToFillers(this, name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         log.AddToFillers(null, reason, LOG_IDENTIFIER.STRING_1);
-        logComponent.RegisterLog(log, true);    
+        logComponent.RegisterLog(log, true);
     }
     public void SetDeployedAtStructure(LocationStructure p_structure) {
         deployedAtStructure = p_structure;
     }
-#endregion
+    #endregion
 
-#region History/Logs
+    #region History/Logs
     public virtual void OnActionPerformed(ActualGoapNode node) {
         ///Moved all needed checking <see cref="CharacterManager.OnActionStateSet(GoapAction, GoapActionState)"/>
         if (isDead || !limiterComponent.canWitness) {
@@ -2349,7 +2349,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             if (marker.IsPOIInVision(interruptHolder.actor)) {
                 //This is done so that the character will react again
                 marker.AddUnprocessedPOI(interruptHolder.actor, true);
-            } 
+            }
             //else if (marker.IsPOIInVision(target)) {
             //    //This is done so that the character will react again
             //    marker.unprocessedVisionPOIs.Add(target);
@@ -2372,12 +2372,12 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         Character targetCharacter = null;
         if (target is Character targetChar) {
             targetCharacter = targetChar;
-            if(targetCharacter.reactionComponent.disguisedCharacter != null) {
+            if (targetCharacter.reactionComponent.disguisedCharacter != null) {
                 //Whenever a disguised character is being processed, process the original instead
                 copiedTarget = targetCharacter.reactionComponent.disguisedCharacter;
             }
         }
-        if(copiedTarget != null) {
+        if (copiedTarget != null) {
             poiTarget = copiedTarget;
         }
 
@@ -2432,10 +2432,10 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             } else {
                 //targetCharacter.OnSeenBy(this); //trigger that the target character was seen by this character.
                 targetCharacterCurrentActionNode = targetCharacter.currentActionNode;
-                if (targetCharacterCurrentActionNode != null /*&& node.action.shouldAddLogs*/ && targetCharacterCurrentActionNode.actionStatus != ACTION_STATUS.STARTED && 
+                if (targetCharacterCurrentActionNode != null /*&& node.action.shouldAddLogs*/ && targetCharacterCurrentActionNode.actionStatus != ACTION_STATUS.STARTED &&
                     targetCharacterCurrentActionNode.actionStatus != ACTION_STATUS.NONE && targetCharacterCurrentActionNode.actor != this) {
                     reactionComponent.ReactTo(targetCharacterCurrentActionNode, REACTION_STATUS.WITNESSED);
-                } 
+                }
                 //else if (targetCharacter.combatComponent.isInCombat) {
                 //    if (targetCharacter.stateComponent.currentState is CombatState combatState) {
                 //        targetCharacterCurrentActionNode = combatState.actionThatTriggeredThisState;
@@ -2452,7 +2452,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 if (target.allJobsTargetingThis[i] is GoapPlanJob) {
                     GoapPlanJob job = target.allJobsTargetingThis[i] as GoapPlanJob;
                     GoapPlan plan = job.assignedPlan;
-                    if (plan != null /*&& plan.currentActualNode.action.shouldAddLogs*/ 
+                    if (plan != null /*&& plan.currentActualNode.action.shouldAddLogs*/
                         && plan.currentActualNode.actionStatus != ACTION_STATUS.STARTED && plan.currentActualNode.actionStatus != ACTION_STATUS.NONE
                         && plan.currentActualNode != targetCharacterCurrentActionNode && plan.currentActualNode.actor != this) {
                         reactionComponent.ReactTo(plan.currentActualNode, REACTION_STATUS.WITNESSED);
@@ -2463,7 +2463,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         if (!reactToActionOnly) {
             //React To Character, Object, and Item
             string debugLog = string.Empty;
-            if(copiedTarget != null) {
+            if (copiedTarget != null) {
                 reactionComponent.ReactToDisguised(target as Character, copiedTarget, ref debugLog);
             } else {
                 reactionComponent.ReactTo(target, ref debugLog);
@@ -2597,9 +2597,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     //    //    }
     //    //}
     //}
-#endregion
+    #endregion
 
-#region Combat Handlers
+    #region Combat Handlers
     /// <summary>
     /// This character was hit by an attack.
     /// </summary>
@@ -2608,7 +2608,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     /// <param name="attackSummary">reference log of what happened.</param>
     public void OnHitByAttackFrom(Character characterThatAttacked, CombatState combatStateOfAttacker, ref string attackSummary) {
         // CombatManager.Instance.CreateHitEffectAt(this, elementalType);
-        if(characterThatAttacked == null) {
+        if (characterThatAttacked == null) {
             return;
         }
         if (!HasHealth()) {
@@ -2666,7 +2666,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         } else {
             //Each non lethal attack has a 15% chance of unconscious
             //https://trello.com/c/qxXVulZl/1126-each-non-lethal-attack-has-a-15-chance-of-making-target-unconscious
-            if(GameUtilities.RollChance(chanceToKnockout)) {
+            if (GameUtilities.RollChance(chanceToKnockout)) {
                 if (!characterThatAttacked.combatComponent.IsLethalCombatForTarget(this) && !traitContainer.HasTrait("Sturdy")) {
                     traitContainer.AddTrait(this, "Unconscious", GetCharacterResponsibleForUnconsciousness(characterThatAttacked, combatStateOfAttacker));
                 }
@@ -2699,7 +2699,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             rawChance += 10f;
         }
 
-        if(rawChance > 0f) {
+        if (rawChance > 0f) {
             finalChance = Mathf.RoundToInt(rawChance);
         }
         p_attackSummary += $"\nKnockout Chance: {finalChance}%";
@@ -2716,9 +2716,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
         return responsibleCharacter;
     }
-#endregion
+    #endregion
 
-#region RPG
+    #region RPG
     public void ResetToFullHP() {
         SetHP(maxHP);
     }
@@ -2741,8 +2741,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         float increaseDamage = EquipmentBonusProcessor.GetSlayerBonusDamage(responsibleCharacter, this, amount);
         float reducedDamage = EquipmentBonusProcessor.GetWardBonusDamage(responsibleCharacter, this, amount);
         int processedAmount = amount;
-        processedAmount += (int)increaseDamage;
-        processedAmount -= (int)reducedDamage;
+        processedAmount += (int) increaseDamage;
+        processedAmount -= (int) reducedDamage;
         if (responsibleCharacter != null) {
             Debug.Log("Damage Receiver: " + this.name + " !Raw Damage: " + amount + " !Damage Reduction(Ward Bonus): " + reducedDamage + " !Damage Increase(Slayer Bonus): " + increaseDamage + " Attacker: " + responsibleCharacter + " !After Process Damage: " + processedAmount);
         }
@@ -2774,7 +2774,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             }
             if (source is Character character) {
                 if (character.partyComponent.hasParty && character.partyComponent.currentParty.isPlayerParty) {
-                    if (character.partyComponent.currentParty.currentQuest.partyQuestType == PARTY_QUEST_TYPE.Demon_Raid){
+                    if (character.partyComponent.currentParty.currentQuest.partyQuestType == PARTY_QUEST_TYPE.Demon_Raid) {
                         int damageDone = amount;
                         if (currentHP == 0) {
                             damageDone = prevHP;
@@ -2783,15 +2783,15 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                     }
                 }
             }
-            if(amount < 0 && isPlayerSource) {
+            if (amount < 0 && isPlayerSource) {
                 int accumulatedDamage = amount;
-                if(currentHP == 0) {
+                if (currentHP == 0) {
                     accumulatedDamage = prevHP;
                 }
                 PlayerManager.Instance.player.damageAccumulator.AccumulateDamage(accumulatedDamage, gridTileLocation, this);
             }
         }
-        
+
         if (amount < 0) {
             //hp was reduced
             jobComponent.OnHPReduced();
@@ -2829,7 +2829,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         } else if (amount < 0) {
             if (IsHealthCriticallyLow()) {
                 Messenger.Broadcast(CharacterSignals.HEALTH_CRITICALLY_LOW, this);
-                if(traitContainer.HasTrait("Coward", "Vampire") && traitContainer.HasTrait("Berserked") == false && !characterClass.IsZombie()) {  //do not make berserked characters trigger flight
+                if (traitContainer.HasTrait("Coward", "Vampire") && traitContainer.HasTrait("Berserked") == false && !characterClass.IsZombie()) {  //do not make berserked characters trigger flight
                     bool willflight = true;
                     if (traitContainer.HasTrait("Vampire") && crimeComponent.HasNonHostileVillagerInRangeThatConsidersCrimeTypeACrime(CRIME_TYPE.Vampire)) {
                         willflight = false;
@@ -2861,9 +2861,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         //chance based dependent on the character
         return currentHP < (maxHP * 0.2f);
     }
-#endregion
+    #endregion
 
-#region Home
+    #region Home
     /// <summary>
     /// Set this character's home npcSettlement data.(Does nothing else)
     /// </summary>
@@ -2900,9 +2900,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             previousCharacterDataComponent.SetPreviousHomeStructure(homeStructure);
         }
         homeStructure = p_homeStructure;
-        if(p_homeStructure != null) {
-            if(tileObjectComponent.primaryBed != null) {
-                if(tileObjectComponent.primaryBed.gridTileLocation == null || tileObjectComponent.primaryBed.gridTileLocation.structure != p_homeStructure) {
+        if (p_homeStructure != null) {
+            if (tileObjectComponent.primaryBed != null) {
+                if (tileObjectComponent.primaryBed.gridTileLocation == null || tileObjectComponent.primaryBed.gridTileLocation.structure != p_homeStructure) {
                     tileObjectComponent.SetPrimaryBed(p_homeStructure.GetRandomTileObjectOfTypeThatHasTileLocationAndIsBuilt<Bed>());
                 }
             } else {
@@ -2916,7 +2916,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         bool sameRegionLocationAlready = false;
         if (homeSettlement != null) {
             previousHome = homeSettlement;
-            if(previousHome != newHomeSettlement) {
+            if (previousHome != newHomeSettlement) {
                 if (previousHome.RemoveResident(this)) {
                     //If previous home and new home is just the same, do not remove as settlement ruler, but if it is, then remove the character as settlement ruler
                     if (previousHome is NPCSettlement previousHomeSettlement && previousHomeSettlement.ruler == this) {
@@ -2936,7 +2936,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 sameRegionLocationAlready = true;
             } else {
                 //Only remove from previous home region if character has a new home settlement, if it doesn't, for example, if the character only left the settlement but did not have a new home settlement assigned, he should not be removed from his home region because he only left the settlement
-                if(newHomeSettlement != null) {
+                if (newHomeSettlement != null) {
                     homeRegion.RemoveResident(this);
                 }
             }
@@ -2963,9 +2963,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         ClearTerritory();
     }
     public void MigrateHomeStructureTo(LocationStructure dwelling, bool broadcast = true, bool addToRegionResidents = true, bool affectSettlement = true) {
-        if(dwelling == null) {
+        if (dwelling == null) {
             if (affectSettlement) {
-                if(homeSettlement != null) {
+                if (homeSettlement != null) {
                     MigrateHomeTo(null);
                 } else {
                     ChangeHomeStructure(dwelling);
@@ -3005,7 +3005,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             homeStructure.RemoveResident(this);
         }
         //Added checking, because character can sometimes change home from dwelling to nothing.
-        if(dwelling != null && dwelling.AddResident(this) && GameManager.Instance.gameHasStarted) {
+        if (dwelling != null && dwelling.AddResident(this) && GameManager.Instance.gameHasStarted) {
             if (isNormalCharacter) {
                 jobComponent.PlanReturnHome(JOB_TYPE.RETURN_HOME_URGENT);
             }
@@ -3014,8 +3014,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         return false;
     }
     public void SetHomeSettlement(NPCSettlement settlement) {
-        if(homeSettlement != settlement) {
-            if(settlement == null) {
+        if (homeSettlement != settlement) {
+            if (settlement == null) {
                 if (partyComponent.hasParty && !isDead) {
                     interruptComponent.TriggerInterrupt(INTERRUPT.Leave_Party, this, "Left home settlement");
                 }
@@ -3023,9 +3023,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             if (homeSettlement != null) {
                 //make sure that previous data only stores non null values, this is so that when a character leaves a settlement,
                 //then becomes homeless, the stored value is still the first actual settlement that it left.
-                previousCharacterDataComponent.SetPreviousHomeSettlement(homeSettlement);    
+                previousCharacterDataComponent.SetPreviousHomeSettlement(homeSettlement);
             }
-            
+
             homeSettlement = settlement;
 #if DEBUG_LOG
             logComponent.PrintLogIfActive($"Set home settlement of {name} to {homeSettlement?.name}");
@@ -3033,14 +3033,14 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             if (isNormalCharacter) {
                 behaviourComponent.UpdateDefaultBehaviourSet();
             }
-            if(homeSettlement != null && gridTileLocation != null && areaLocation?.settlementOnArea == homeSettlement) {
+            if (homeSettlement != null && gridTileLocation != null && areaLocation?.settlementOnArea == homeSettlement) {
                 stateAwarenessComponent.StopMissingTimer();
-            } else if(homeSettlement == null) {
+            } else if (homeSettlement == null) {
                 stateAwarenessComponent.StartMissingTimer();
-            } else if(homeSettlement != null && gridTileLocation != null && areaLocation?.settlementOnArea != homeSettlement){
+            } else if (homeSettlement != null && gridTileLocation != null && areaLocation?.settlementOnArea != homeSettlement) {
                 stateAwarenessComponent.StartMissingTimer();
             }
-            if(faction != null) {
+            if (faction != null) {
                 faction.ProcessFactionLeaderAsSettlementRuler();
             }
         }
@@ -3073,9 +3073,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
         return false;
     }
-#endregion
+    #endregion
 
-#region Traits
+    #region Traits
     public ITraitContainer traitContainer { get; private set; }
     public TraitProcessor traitProcessor => TraitManager.characterTraitProcessor;
     public void CreateTraitContainer() {
@@ -3130,8 +3130,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                     CollectionUtilities.RemoveElements(flawTraits, trait.mutuallyExclusive); //update flaw traits pool to accomodate new trait
                 }
             }
-            
-            
+
+
             //Up to three traits
             //100% Trait 1: Buff List
             string chosenBuffTraitName;
@@ -3155,15 +3155,15 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 choices.AddRange(buffTraits);
                 choices.AddRange(neutralTraits);
                 string chosenBuffOrNeutralTraitName;
-                
+
                 if (choices.Count > 0) {
-                    chosenBuffOrNeutralTraitName = CollectionUtilities.GetRandomElement(choices); 
+                    chosenBuffOrNeutralTraitName = CollectionUtilities.GetRandomElement(choices);
                     buffTraits.Remove(chosenBuffOrNeutralTraitName);
                     neutralTraits.Remove(chosenBuffOrNeutralTraitName);
                 } else {
                     throw new Exception("No more buff or neutral traits!");
                 }
-                
+
                 traitContainer.AddTrait(this, chosenBuffOrNeutralTraitName);
                 Trait buffOrNeutralTrait = traitContainer.GetTraitOrStatus<Trait>(chosenBuffOrNeutralTraitName);
                 if (buffOrNeutralTrait.mutuallyExclusive != null) {
@@ -3172,8 +3172,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                     CollectionUtilities.RemoveElements(flawTraits, buffOrNeutralTrait.mutuallyExclusive); //update flaw traits pool to accomodate new trait
                 }
             }
-            
-            
+
+
             //40% Trait 3: Buff + Neutral + Flaw List
             if (GameUtilities.RollChance(40)) {
                 choices.Clear();
@@ -3222,7 +3222,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
     }
     public void TryProcessTraitsOnTickEndedWhileStationaryOrUnoccupied() {
-        if (!interruptComponent.isInterrupted && (currentActionNode == null || currentActionNode.actionStatus != ACTION_STATUS.PERFORMING) && 
+        if (!interruptComponent.isInterrupted && (currentActionNode == null || currentActionNode.actionStatus != ACTION_STATUS.PERFORMING) &&
             !traitContainer.HasTrait("Unconscious") && !traitContainer.HasTrait("Resting") && !traitContainer.HasTrait("Frozen")) {
             List<Trait> traitOverrideFunctions = traitContainer.GetTraitOverrideFunctions(TraitManager.Per_Tick_While_Stationary_Unoccupied);
             if (traitOverrideFunctions != null) {
@@ -3235,9 +3235,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             }
         }
     }
-#endregion
+    #endregion
 
-#region Minion
+    #region Minion
     public void SetMinion(Minion minion) {
         if (_minion != null && minion == null) {
             Messenger.Broadcast(CharacterSignals.CHARACTER_BECOMES_NON_MINION_OR_SUMMON, this);
@@ -3251,9 +3251,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         _minion = minion;
         visuals.CreateWholeImageMaterial(visuals.portraitSettings);
     }
-#endregion
+    #endregion
 
-#region Interaction
+    #region Interaction
     //public void AddInteractionType(INTERACTION_TYPE type) {
     //    if (!currentInteractionTypes.Contains(type)) {
     //        currentInteractionTypes.Add(type);
@@ -3262,9 +3262,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     //public void RemoveInteractionType(INTERACTION_TYPE type) {
     //    currentInteractionTypes.Remove(type);
     //}
-#endregion
+    #endregion
 
-#region Action Planning and Job Processing
+    #region Action Planning and Job Processing
     private void DailyGoapProcesses() {
         needsComponent.DailyGoapProcesses();
     }
@@ -3281,9 +3281,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
 #if DEBUG_PROFILER
         Profiler.BeginSample($"{name} OnTickStarted");
 #endif
-//What happens every start of tick
+        //What happens every start of tick
 
-//Check Trap Structure
+        //Check Trap Structure
 #if DEBUG_PROFILER
         Profiler.BeginSample($"{name} OnTickStarted - Increment Trap Structure");
 #endif
@@ -3292,10 +3292,10 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         Profiler.EndSample();
 #endif
 
-//Out of combat hp recovery
-//if (!isDead && !isInCombat) {
-//    HPRecovery(0.0025f);
-//}
+        //Out of combat hp recovery
+        //if (!isDead && !isInCombat) {
+        //    HPRecovery(0.0025f);
+        //}
 #if DEBUG_PROFILER
         Profiler.BeginSample($"{name} OnTickStarted - State Component Awareness");
 #endif
@@ -3380,9 +3380,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         ProcessTraitsOnHourStarted();
         dailyScheduleComponent.OnHourStarted(this);
         // if (needsComponent.HasNeeds()) {
-            // needsComponent.PlanScheduledFullnessRecovery();
-            // needsComponent.PlanScheduledTirednessRecovery();
-            // needsComponent.PlanScheduledSecondHappinessRecovery();
+        // needsComponent.PlanScheduledFullnessRecovery();
+        // needsComponent.PlanScheduledTirednessRecovery();
+        // needsComponent.PlanScheduledSecondHappinessRecovery();
         // }
 #if DEBUG_PROFILER
         Profiler.EndSample();
@@ -3409,7 +3409,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
 #if DEBUG_LOG
                 debugLog = $"{debugLog}\nJob to assign is:{jobToAssign?.ToString() ?? "None"}";
 #endif
-                if (jobToAssign != null && ((jobQueue.jobsInQueue.Count <= 0 && behaviourComponent.GetHighestBehaviourPriority() < jobToAssign.priority) || 
+                if (jobToAssign != null && ((jobQueue.jobsInQueue.Count <= 0 && behaviourComponent.GetHighestBehaviourPriority() < jobToAssign.priority) ||
                     (jobQueue.jobsInQueue.Count > 0 && jobToAssign.priority > jobQueue.jobsInQueue[0].priority))) {
                     jobQueue.AddJobInQueue(jobToAssign);
 #if DEBUG_LOG
@@ -3420,7 +3420,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 // else {
                 //     debugLog = $"{debugLog}\nCouldn't assign job!";
                 // }    
-            } 
+            }
             // else {
             //     debugLog = $"{debugLog}\n{name} Cannot take settlement job in vision because \n{invalidReason}";
             // }
@@ -3500,7 +3500,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public void EndTickPerformJobs() {
         if (shouldDoActionOnFirstTickUponLoadGame) {
             shouldDoActionOnFirstTickUponLoadGame = false;
-            if(currentActionNode != null) {
+            if (currentActionNode != null) {
                 currentActionNode.DoActionUponLoadingSavedGame();
             }
         } else {
@@ -3538,8 +3538,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     }
     public bool CanPerformEndTickJobs() {
         bool canPerformEndTickJobs = !isDead && numOfActionsBeingPerformedOnThis <= 0 /*&& limiterComponent.canWitness*/
-         && currentActionNode == null && planner.status == GOAP_PLANNING_STATUS.NONE && jobQueue.jobsInQueue.Count > 0 
-         && carryComponent.masterCharacter.movementComponent.isTravellingInWorld == false && (marker && !marker.hasFleePath) 
+         && currentActionNode == null && planner.status == GOAP_PLANNING_STATUS.NONE && jobQueue.jobsInQueue.Count > 0
+         && carryComponent.masterCharacter.movementComponent.isTravellingInWorld == false && (marker && !marker.hasFleePath)
          && stateComponent.currentState == null && carryComponent.IsNotBeingCarried() && !interruptComponent.isInterrupted
          && !partyComponent.isFollowingBeacon; //minion == null && doNotDisturb <= 0 
         return canPerformEndTickJobs;
@@ -3712,7 +3712,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             List<Character> positiveCharacters = RuinarchListPool<Character>.Claim();
             for (int i = 0; i < charactersWithRel.Count; i++) {
                 Character character = charactersWithRel[i];
-                if(character.isDead /*|| character.isMissing*/ || homeStructure == character.homeStructure) {
+                if (character.isDead /*|| character.isMissing*/ || homeStructure == character.homeStructure) {
                     continue;
                 }
                 if ((homeSettlement != null && character.currentSettlement != null &&
@@ -3720,7 +3720,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                     //character is invalid, because of given 
                     continue;
                 }
-                if (relationshipContainer.HasOpinionLabelWithCharacter(character, RelationshipManager.Acquaintance, 
+                if (relationshipContainer.HasOpinionLabelWithCharacter(character, RelationshipManager.Acquaintance,
                     RelationshipManager.Friend, RelationshipManager.Close_Friend)) {
                     if (character.traitContainer.HasTrait("Paralyzed", "Catatonic")) {
                         positiveCharacters.Add(character);
@@ -3749,7 +3749,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     //}
     public void SetIsConversing(bool state) {
         isConversing = state;
-        if(marker) {
+        if (marker) {
             marker.UpdateActionIcon();
         }
         if (isConversing == false) {
@@ -3772,9 +3772,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             LocationAwarenessUtility.RemoveFromAwarenessList(type, this);
         }
     }
-#endregion
+    #endregion
 
-#region Inventory
+    #region Inventory
     //public bool ObtainTokenFrom(Character target, SpecialToken token, bool changeCharacterOwnership = true) {
     //    if (target.UnobtainToken(token)) {
     //        ObtainToken(token, changeCharacterOwnership);
@@ -3795,14 +3795,14 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public bool HasOwnedItemThatIsOnGroundInSameRegion() {
         for (int i = 0; i < ownedItems.Count; i++) {
             TileObject item = ownedItems[i];
-            if(item.gridTileLocation != null && item.gridTileLocation.structure.region == currentRegion) {
+            if (item.gridTileLocation != null && item.gridTileLocation.structure.region == currentRegion) {
                 return true;
             }
         }
         return false;
     }
     public bool HasOwnedItemInHomeStructure(string itemName) {
-        if(homeStructure == null) {
+        if (homeStructure == null) {
             return false;
         }
         for (int i = 0; i < ownedItems.Count; i++) {
@@ -3928,7 +3928,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 return true;
             }
         }
-        
+
         return false;
     }
     private bool RemoveItem(TileObject item) {
@@ -3945,7 +3945,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 return true;
             }
         }
-        
+
         return false;
     }
     private TileObject RemoveItem(TILE_OBJECT_TYPE itemType) {
@@ -3954,7 +3954,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             if (items[i].tileObjectType == itemType) {
                 removedItem = items[i];
                 if (RemoveItem(i)) {
-                    break;    
+                    break;
                 }
             }
         }
@@ -3989,7 +3989,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             //    //location.AddSpecialTokenToLocation(token, structure, gridTile);
             //}
             LocationGridTile targetTile = gridTile;
-            if(targetTile == null) {
+            if (targetTile == null) {
                 targetTile = gridTileLocation;
             }
             if (targetTile == null) {
@@ -4022,17 +4022,17 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         //If it is in home structure transfer it to another random resident, otherwise, unown only
 
         List<Character> potentialOwners = RuinarchListPool<Character>.Claim();
-        if(homeStructure != null) {
+        if (homeStructure != null) {
             for (int i = 0; i < homeStructure.residents.Count; i++) {
                 Character resident = homeStructure.residents[i];
-                if(resident != this && resident.faction != null && resident.faction.isMajorFaction) {
+                if (resident != this && resident.faction != null && resident.faction.isMajorFaction) {
                     potentialOwners.Add(resident);
                 }
             }
         }
         for (int i = 0; i < ownedItems.Count; i++) {
             TileObject item = ownedItems[i];
-            if(item.gridTileLocation == null || item.gridTileLocation.structure != homeStructure) {
+            if (item.gridTileLocation == null || item.gridTileLocation.structure != homeStructure) {
                 item.SetCharacterOwner(null);
             } else {
                 if (potentialOwners != null && potentialOwners.Count > 0) {
@@ -4132,7 +4132,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
     }
     public TileObject GetRandomItem() {
-        if(items.Count > 0) {
+        if (items.Count > 0) {
             return items[UnityEngine.Random.Range(0, items.Count)];
         }
         return null;
@@ -4161,7 +4161,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public bool HasItem(string itemName) {
         return GetItem(itemName) != null;
     }
-    public bool HasItem<T>() where T: TileObject{
+    public bool HasItem<T>() where T : TileObject {
         return GetItem<T>() != null;
     }
     public bool HasItem() {
@@ -4192,7 +4192,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     }
     public void AddItemAsInteresting(string itemName) {
         if (interestedItemNames.Contains(itemName) == false) {
-            interestedItemNames.Add(itemName);    
+            interestedItemNames.Add(itemName);
         }
     }
     public void AddItemAsInteresting(params string[] itemNames) {
@@ -4208,9 +4208,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public void RemoveItemAsInteresting(string itemName) {
         interestedItemNames.Remove(itemName);
     }
-#endregion
+    #endregion
 
-#region Awareness
+    #region Awareness
     public void LogAwarenessList() {
         if (currentLocationAwareness != null) {
             string log = $"--------------AWARENESS LIST OF {name}-----------------";
@@ -4226,9 +4226,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             logComponent.PrintLogIfActive(log);
         }
     }
-#endregion
+    #endregion
 
-#region Point Of Interest
+    #region Point Of Interest
     //Returns the chosen action for the plan
     public GoapAction AdvertiseActionsToActor(Character actor, GoapEffect precondition, GoapPlanJob job, ref int cost, ref string log) {
         GoapAction chosenAction = null;
@@ -4288,7 +4288,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public void OnLoadPlacePOI() { /*FOR INTERFACE ONLY*/ }
     public void OnDestroyPOI() { /*FOR INTERFACE ONLY*/ }
     public virtual bool IsStillConsideredPartOfAwarenessByCharacter(Character character) {
-        if(character.currentRegion == currentRegion && !isBeingSeized/* && !isMissing*/) {
+        if (character.currentRegion == currentRegion && !isBeingSeized/* && !isMissing*/) {
             if (!isDead && carryComponent.masterCharacter.movementComponent.isTravellingInWorld) {
                 return false;
             }
@@ -4325,9 +4325,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public bool Advertises(INTERACTION_TYPE type) {
         return advertisedActions != null && advertisedActions.Contains(type);
     }
-#endregion
+    #endregion
 
-#region Goap
+    #region Goap
     //public void SetNumWaitingForGoapThread(int amount) {
     //    _numOfWaitingForGoapThread = amount;
     //}
@@ -4376,18 +4376,18 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         AddAdvertisedAction(INTERACTION_TYPE.COOK);
         AddAdvertisedAction(INTERACTION_TYPE.MAKE_LOVE);
         AddAdvertisedAction(INTERACTION_TYPE.INVITE);
-        
+
         if (this is Summon) {
             AddAdvertisedAction(INTERACTION_TYPE.PLAY);
             if (this is GiantSpider) {
                 AddAdvertisedAction(INTERACTION_TYPE.LAY_EGG);
                 AddAdvertisedAction(INTERACTION_TYPE.BUTCHER);
             } else if (this is Wolf) {
-                AddAdvertisedAction(INTERACTION_TYPE.BUTCHER);    
+                AddAdvertisedAction(INTERACTION_TYPE.BUTCHER);
             } else if (this is SmallSpider) {
-                AddAdvertisedAction(INTERACTION_TYPE.BUTCHER);    
+                AddAdvertisedAction(INTERACTION_TYPE.BUTCHER);
             } else if (this is Wurm) {
-                AddAdvertisedAction(INTERACTION_TYPE.BURROW);    
+                AddAdvertisedAction(INTERACTION_TYPE.BURROW);
             }
         }
         if (this is Animal) {
@@ -4528,9 +4528,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
 #endif
             return;
         }
-        
+
         GoapPlanJob currentTopPrioJob = job as GoapPlanJob;
-        if(currentTopPrioJob?.assignedPlan != null) {
+        if (currentTopPrioJob?.assignedPlan != null) {
             GoapPlan plan = currentTopPrioJob.assignedPlan;
 #if DEBUG_LOG
             if (plan.startingNode != null && plan.startingNode.singleNode != null && plan.startingNode.singleNode.actor != this) {
@@ -4599,11 +4599,11 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
 #endif
                     if (this is Troll && currentTopPrioJob.jobType == JOB_TYPE.CAPTURE_CHARACTER) {
                         bool shouldCancelJob = false;
-                        if(!marker || (!marker.IsPOIInVision(currentTopPrioJob.targetPOI as Character) && !carryComponent.IsPOICarried(currentTopPrioJob.targetPOI) && !isAtHomeStructure && !IsInHomeSettlement())) {
+                        if (!marker || (!marker.IsPOIInVision(currentTopPrioJob.targetPOI as Character) && !carryComponent.IsPOICarried(currentTopPrioJob.targetPOI) && !isAtHomeStructure && !IsInHomeSettlement())) {
                             shouldCancelJob = true;
                         }
                         if (!shouldCancelJob) {
-                            if(currentTopPrioJob.targetPOI.gridTileLocation == null) {
+                            if (currentTopPrioJob.targetPOI.gridTileLocation == null) {
                                 shouldCancelJob = true;
                             } else {
                                 TIME_IN_WORDS timeInWords = GameManager.Instance.GetCurrentTimeInWordsOfTick(null);
@@ -4720,7 +4720,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 if (currentNode.associatedJob != null && currentNode.associatedJob.jobType.IsCultistJob()) {
                     Precondition failedPrecondition = currentNode.action.GetPrecondition(this, currentNode.poiTarget, currentNode.otherData, currentTopPrioJob.jobType, out bool isOverridden);
                     if (failedPrecondition != null) {
-                        reason = GetCultistUnableToDoJobReason(currentTopPrioJob, failedPrecondition, currentNode.action.goapType);    
+                        reason = GetCultistUnableToDoJobReason(currentTopPrioJob, failedPrecondition, currentNode.action.goapType);
                     }
                 }
                 currentNode.action.OnStopWhileStarted(currentNode);
@@ -4752,7 +4752,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         if (InteractionManager.Instance.CanSatisfyGoapActionRequirements(currentActionNode.action.goapType, currentActionNode.actor, currentActionNode.poiTarget, currentActionNode.otherData, currentActionNode.associatedJob)
             && currentActionNode.action.CanSatisfyAllPreconditions(currentActionNode.actor, currentActionNode.poiTarget, currentActionNode.otherData, currentActionNode.associatedJobType)) {
 #if DEBUG_LOG
-            log =  $"{log}\nAction satisfies all requirements and preconditions, proceeding to perform actual action: {currentActionNode.action.goapName} to {currentActionNode.poiTarget.name} at {currentActionNode.poiTarget.gridTileLocation}";
+            log = $"{log}\nAction satisfies all requirements and preconditions, proceeding to perform actual action: {currentActionNode.action.goapName} to {currentActionNode.poiTarget.name} at {currentActionNode.poiTarget.gridTileLocation}";
             logComponent.PrintLogIfActive(log);
 #endif
             currentActionNode.PerformAction();
@@ -4789,7 +4789,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         GoapPlan plan = currentPlan;
         GoapPlanJob job = currentJob as GoapPlanJob;
         Assert.IsNotNull(job, $"Current job of {name} is null or not GoapPlanJob {currentJob?.ToString() ?? "Null"}");
-        
+
         if (actionNode == currentActionNode) {
             SetCurrentActionNode(null, null, null);
         }
@@ -4803,7 +4803,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             return;
         }
 
-        if(result == InteractionManager.Goap_State_Success) {
+        if (result == InteractionManager.Goap_State_Success) {
 #if DEBUG_LOG
             log = log + "\nPlan is setting next action to be done...";
 #endif
@@ -4827,7 +4827,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 job.SetFinishedSuccessfully(true);
                 OnCharacterFinishedJobSuccessfully(job);
                 Messenger.Broadcast(CharacterSignals.CHARACTER_FINISHED_JOB_SUCCESSFULLY, this, job);
-                
                 //this means that this is the end goal so end this plan now
                 job.ForceCancelJob();
             } else {
@@ -4858,7 +4857,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         Debug.Log($"Set current node of {name} to - Action: {actionNode?.name ?? "Null"}.\nJob: {job?.ToString() ?? "Null"}.\nPlan: {plan?.LogPlan() ?? "Null"}");
 #endif
         if (currentActionNode != null) {
-            previousCurrentActionNode = currentActionNode;
+            previousCharacterDataComponent.SetPreviousActionType(currentActionNode.goapType);
+            previousCharacterDataComponent.SetPreviousJobType(currentActionNode.associatedJobType);
         }
         currentActionNode = actionNode;
 #if DEBUG_LOG
@@ -4880,7 +4880,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     //Only stop an action node if it is the current action node
     ///Stopping action node does not mean that the job will be cancelled, if you want to cancel job at the same time call <see cref="StopCurrentActionNodeAndCancelItsJob">
     public bool StopCurrentActionNode(string reason = "") {
-        if(currentActionNode == null) {
+        if (currentActionNode == null) {
             return false;
         }
         bool shouldLogReason = true;
@@ -4941,9 +4941,12 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 marker.SetVisionColliderSize(CharacterManager.VISION_RANGE);
             }
         }
+#if DEBUG_LOG
+        logComponent.PrintLogIfActive($"Stopped action of {name} which is {currentActionNode.action.goapName} targetting {currentActionNode.poiTarget.name}!");
+#endif
         currentActionNode.StopActionNode();
         SetCurrentActionNode(null, null, null);
-        
+
         //Every time current node is stopped, drop carried poi
         if (carryComponent.IsNotBeingCarried()) {
             if (carryComponent.isCarryingAnyPOI) {
@@ -4972,9 +4975,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             UIManager.Instance.characterInfoUI.UpdateBasicInfo();
         }
         //Messenger.Broadcast<GoapAction>(Signals.STOP_ACTION, this);
-#if DEBUG_LOG
-        logComponent.PrintLogIfActive($"Stopped action of {name} which is {previousCurrentActionNode.action.goapName} targetting {previousCurrentActionNode.poiTarget.name}!");
-#endif
         return true;
     }
     //public void SetHasAlreadyAskedForPlan(bool state) {
@@ -5050,14 +5050,14 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     }
 
     private void HeardAScream(Character characterThatScreamed) {
-        if(!limiterComponent.canPerform || !limiterComponent.canWitness) {
+        if (!limiterComponent.canPerform || !limiterComponent.canWitness) {
             //Do not react to scream if character has disabler trait
             return;
         }
-        if(currentRegion != characterThatScreamed.currentRegion) {
+        if (currentRegion != characterThatScreamed.currentRegion) {
             return;
         }
-        if(gridTileLocation != null && characterThatScreamed.gridTileLocation != null) {
+        if (gridTileLocation != null && characterThatScreamed.gridTileLocation != null) {
             float dist = gridTileLocation.GetDistanceTo(characterThatScreamed.gridTileLocation);
 #if DEBUG_LOG
             logComponent.PrintLogIfActive($"{name} distance to {characterThatScreamed.name} is {dist}");
@@ -5071,7 +5071,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 return;
             }
         }
-        if(jobQueue.HasJob(JOB_TYPE.GO_TO, characterThatScreamed)) {
+        if (jobQueue.HasJob(JOB_TYPE.GO_TO, characterThatScreamed)) {
             //Do not react if character will already react to a scream;
             return;
         }
@@ -5094,7 +5094,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         int reactJobPriority = JOB_TYPE.GO_TO.GetJobTypePriority();
         if (stateComponent.currentState != null && stateComponent.currentState.job != null && stateComponent.currentState.job.priority >= reactJobPriority) {
             canReact = false;
-        } 
+        }
         //else if (stateComponent.stateToDo != null && stateComponent.stateToDo.job != null && stateComponent.stateToDo.job.priority <= reactJobPriority) {
         //    canReact = false;
         //} 
@@ -5199,7 +5199,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         EnableMarker();
         marker.OnUnseize();
         minion?.OnUnseize();
-        if(tileLocation.structure.region != currentRegion) {
+        if (tileLocation.structure.region != currentRegion) {
             currentRegion.RemoveCharacterFromLocation(this);
         }
         marker.InitialPlaceMarkerAt(tileLocation);
@@ -5207,7 +5207,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         needsComponent.CheckExtremeNeeds();
         if (isDead) {
             Messenger.Broadcast(JobSignals.CHECK_JOB_APPLICABILITY, JOB_TYPE.BURY, this as IPointOfInterest);
-            jobComponent.TriggerBuryMe();    
+            jobComponent.TriggerBuryMe();
         }
 
         if (traitContainer.HasTrait("Berserked")) {
@@ -5284,7 +5284,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             //This should almost never happen since we expect that all characters should have a faction.
             return false;
         }
-        if(((race == RACE.RATMAN || faction.factionType.type == FACTION_TYPE.Ratmen) && otherCharacter.race == RACE.RAT)
+        if (((race == RACE.RATMAN || faction.factionType.type == FACTION_TYPE.Ratmen) && otherCharacter.race == RACE.RAT)
             || (race == RACE.RAT && (otherCharacter.race == RACE.RATMAN || otherCharacter.faction.factionType.type == FACTION_TYPE.Ratmen))) {
             //Ratmen does not consider rats as hostile and vice versa
             return false;
@@ -5313,7 +5313,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             }
         }
 
-        if(faction != otherCharacter.faction){
+        if (faction != otherCharacter.faction) {
             if (faction != null && faction.isMajorOrVagrant && otherCharacter.traitContainer.HasTrait("Transitioning") && otherCharacter.faction?.factionType.type != FACTION_TYPE.Wild_Monsters) {
                 //Non transitioning characters will not attack transitioning characters as long as the transitioning character is not from monster faction, if they are, non transitioning characters will still attack
                 return false;
@@ -5325,7 +5325,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
 
         return faction.IsHostileWith(otherCharacter.faction);
-        
+
         // if (isFactionless || otherCharacter.isFactionless) {
         //     //this character is unaligned
         //     //if unaligned, hostile to all other characters, except those of same race
@@ -5335,7 +5335,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         // }
     }
     public bool IsLycanHostileWith(Character targetCharacter) {
-        if((isLycanthrope && targetCharacter.race == RACE.WOLF) || (targetCharacter.isLycanthrope && race == RACE.WOLF)) {
+        if ((isLycanthrope && targetCharacter.race == RACE.WOLF) || (targetCharacter.isLycanthrope && race == RACE.WOLF)) {
             return false;
         }
         if (this.race == RACE.WOLF && targetCharacter.faction != null && targetCharacter.faction.factionType.HasIdeology(FACTION_IDEOLOGY.Reveres_Werewolves)) {
@@ -5344,7 +5344,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             return false;
         }
         if (targetCharacter.race == RACE.WOLF || (targetCharacter.isLycanthrope && targetCharacter.lycanData.isInWerewolfForm)) {
-            if(faction != null && faction.factionType.HasIdeology(FACTION_IDEOLOGY.Reveres_Werewolves)) {
+            if (faction != null && faction.factionType.HasIdeology(FACTION_IDEOLOGY.Reveres_Werewolves)) {
                 //Reveres Werewolf factions will not initiate combat with Wolves and Werewolves
                 return false;
             }
@@ -5355,7 +5355,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
 
     #region Pathfinding
     public void PopulateTilesInRadius(List<LocationGridTile> tiles, int radius, int radiusLimit = 0, bool includeCenterTile = false, bool includeTilesInDifferentStructure = false) {
-        if(currentRegion == null) { return; }
+        if (currentRegion == null) { return; }
         int mapSizeX = currentRegion.innerMap.map.GetUpperBound(0);
         int mapSizeY = currentRegion.innerMap.map.GetUpperBound(1);
         int x = gridTileLocation.localPlace.x;
@@ -5387,168 +5387,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     }
     #endregion
 
-    //#region States
-    //private void OnCharacterStartedState(Character characterThatStartedState, CharacterState state) {
-    //    if (characterThatStartedState == this) {
-    //        //marker.UpdateActionIcon();
-    //        if (state.characterState.IsCombatState()) {
-    //            marker.visionCollider.TransferAllDifferentStructureCharacters();
-    //        }
-    //    } else {
-    //        //if (state.characterState == CHARACTER_STATE.COMBAT && traitContainer.GetNormalTrait<Trait>("Unconscious", "Resting") == null && isAtHomeRegion && !ownParty.icon.isTravellingOutside) {
-    //        //    //Reference: https://trello.com/c/2ZppIBiI/2428-combat-available-npcs-should-be-able-to-be-aware-of-hostiles-quickly
-    //        //    CombatState combatState = state as CombatState;
-    //        //    float distance = Vector2.Distance(this.marker.transform.position, characterThatStartedState.marker.transform.position);
-    //        //    Character targetCharacter = null;
-    //        //    if (combatState.isAttacking && combatState.currentClosestHostile is Character) {
-    //        //        targetCharacter = combatState.currentClosestHostile as Character;
-    //        //    }
-    //        //    //Debug.Log(this.name + " distance with " + characterThatStartedState.name + " is " + distance.ToString());
-    //        //    if (targetCharacter != null && this.isPartOfHomeFaction && characterThatStartedState.isAtHomeRegion && characterThatStartedState.isPartOfHomeFaction && this.IsCombatReady()
-    //        //        && this.IsHostileOutsider(targetCharacter) && (RelationshipManager.GetRelationshipEffectWith(characterThatStartedState) == RELATIONSHIP_EFFECT.POSITIVE || characterThatStartedState.role.roleType == CHARACTER_ROLE.SOLDIER)
-    //        //        && distance <= Combat_Signalled_Distance) {
-    //        //        if (combatComponent.AddHostileInRange(targetCharacter, false)) {
-    //        //            if (!combatComponent.IsAvoidInRange(targetCharacter)) {
-    //        //                Log joinLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "NonIntel", "join_combat_signaled");
-    //        //                joinLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-    //        //                joinLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-    //        //                joinLog.AddToFillers(characterThatStartedState, characterThatStartedState.name, LOG_IDENTIFIER.CHARACTER_3);
-    //        //                joinLog.AddLogToSpecificObjects(LOG_IDENTIFIER.ACTIVE_CHARACTER, LOG_IDENTIFIER.TARGET_CHARACTER);
-    //        //                PlayerManager.Instance.player.ShowNotificationFrom(this, joinLog);
-    //        //            }
-    //        //            //combatComponent.ProcessCombatBehavior();
-    //        //            return; //do not do watch.
-    //        //        }
-    //        //    }
-    //        //    if (marker.IsPOIInVision(characterThatStartedState)) {
-    //        //        ThisCharacterWatchEvent(characterThatStartedState, null, null);
-    //        //    }
-    //        //}
-    //    }
-    //}
-    //private void OnCharacterEndedState(Character character, CharacterState state) {
-    //    if (character == this) {
-    //        if (state is CombatState && marker) {
-    //            //combatComponent.OnThisCharacterEndedCombatState();
-    //            marker.visionCollider.ReCategorizeVision();
-    //        }
-    //    }
-    //}
-    //#endregion
-
-#region Alter Egos
-    //private void InitializeAlterEgos() {
-    //    alterEgos = new Dictionary<string, AlterEgoData> {
-    //        {CharacterManager.Original_Alter_Ego, new AlterEgoData(this, CharacterManager.Original_Alter_Ego)}
-    //    };
-    //    currentAlterEgoName = CharacterManager.Original_Alter_Ego;
-    //    currentAlterEgo.SetFaction(faction);
-    //    currentAlterEgo.SetCharacterClass(characterClass);
-    //    currentAlterEgo.SetRace(race);
-    //    currentAlterEgo.SetRole(role);
-    //    currentAlterEgo.SetHomeStructure(homeStructure);
-    //}
-    //public AlterEgoData CreateNewAlterEgo(string alterEgoName) {
-    //    if (alterEgos.ContainsKey(alterEgoName)) {
-    //        throw new Exception(this.name + " already has an alter ego named " + alterEgoName + " but something is trying to create a new one!");
-    //    }
-    //    AlterEgoData newData = new AlterEgoData(this, alterEgoName);
-    //    AddAlterEgo(newData);
-    //    return newData;
-    //}
-    //private void AddAlterEgo(AlterEgoData data) {
-    //    if (!alterEgos.ContainsKey(data.name)) {
-    //        alterEgos.Add(data.name, data);
-    //    }
-    //}
-    //public void RemoveAlterEgo(string alterEgoName) {
-    //    if (alterEgoName == CharacterManager.Original_Alter_Ego) {
-    //        throw new Exception("Something is trying to remove " + this.name + "'s original alter ego! This should not happen!");
-    //    }
-    //    if (currentAlterEgoName == alterEgoName) {
-    //        //switch to the original alter ego
-    //        SwitchAlterEgo(CharacterManager.Original_Alter_Ego);
-    //    }
-    //    if (alterEgos.ContainsKey(alterEgoName)) {
-    //        alterEgos.Remove(alterEgoName);
-    //    }
-    //}
-    //public bool isSwitchingAlterEgo { get; private set; } //is this character in the process of switching alter egos?
-    //public void SwitchAlterEgo(string alterEgoName) {
-    //    if (currentAlterEgoName == alterEgoName) {
-    //        return; //ignore change
-    //    }
-    //    if (alterEgos.ContainsKey(alterEgoName)) {
-    //        isSwitchingAlterEgo = true;
-    //        //for (int i = 0; i < traitContainer.allTraits.Count; i++) {
-    //        //    Trait currTrait = traitContainer.allTraits[i];
-    //        //    if (currTrait.isRemovedOnSwitchAlterEgo) {
-    //        //        if (traitContainer.RemoveTrait(this, currTrait)) {
-    //        //            i--;
-    //        //        }
-    //        //    }
-    //        //}
-    //        //apply all alter ego changes here
-    //        AlterEgoData alterEgoData = alterEgos[alterEgoName];
-    //        //currentAlterEgo.CopySpecialTraits();
-
-    //        //Drop all plans except for the current action
-    //        Messenger.Broadcast(Signals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, this as IPointOfInterest, "target is not found");
-    //        if (currentActionNode != null) {
-    //            CancelAllJobsExceptForCurrent();
-    //        } else {
-    //            CancelAllJobs();
-    //        }
-
-    //        if(alterEgoName == "Lycanthrope") {
-    //            needsComponent.hasForcedTiredness = true;
-    //        }
-    //        needsComponent.SetHasCancelledSleepSchedule(false);
-    //        needsComponent.ResetSleepTicks();
-    //        needsComponent.ResetFullnessMeter();
-    //        needsComponent.ResetHappinessMeter();
-    //        needsComponent.ResetTirednessMeter();
-
-    //        SetHomeStructure(alterEgoData.homeStructure);
-    //        ChangeFactionTo(alterEgoData.faction);
-    //        AssignRole(alterEgoData.role);
-    //        AssignClass(alterEgoData.characterClass);
-    //        ChangeRace(alterEgoData.race);
-    //        SetLevel(alterEgoData.level);
-    //        SetMaxHPMod(alterEgoData.maxHPMod);
-    //        SetMaxHPPercentMod(alterEgoData.maxHPPercentMod);
-    //        SetAttackMod(alterEgoData.attackPowerMod);
-    //        SetAttackPercentMod(alterEgoData.attackPowerPercentMod);
-    //        SetSpeedMod(alterEgoData.speedMod);
-    //        SetSpeedPercentMod(alterEgoData.speedPercentMod);
-    //        traitContainer.RemoveAllNonPersistentTraits(this); //remove all non persistent traits (include alter ego: false)
-
-    //        //ForceCancelAllJobsTargettingCharacter(false, "target is not found");
-
-    //        for (int i = 0; i < alterEgoData.traits.Count; i++) {
-    //            traitContainer.AddTrait(this, alterEgoData.traits[i]);
-    //        }
-    //        currentAlterEgoName = alterEgoName;
-    //        isSwitchingAlterEgo = false;
-    //        visuals.UpdateAllVisuals(this);
-    //        Messenger.Broadcast(Signals.CHARACTER_SWITCHED_ALTER_EGO, this);
-    //    } else {
-    //        throw new Exception(this.name + " is trying to switch to alter ego " + alterEgoName + " but doesn't have an alter ego of that name!");
-    //    }
-    //}
-    //public AlterEgoData GetAlterEgoData(string alterEgoName) {
-    //    if (alterEgos.ContainsKey(alterEgoName)) {
-    //        return alterEgos[alterEgoName];
-    //    }
-    //    return null;
-    //}
-#endregion
-
-#region Converters
-    //public static implicit operator Relatable(Character d) => d.currentAlterEgo;
-#endregion
-
-#region Player Alliance
+    #region Player Alliance
     /// <summary>
     /// Get whether this character is allied with the player outside the faction system.
     /// i.e. when we want that character to be considered as an ally to the player, but don't want to
@@ -5559,7 +5398,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         if (traitContainer.HasTrait("Cultist")) {
             return true;
         }
-        if(faction != null) {
+        if (faction != null) {
             if (faction.isPlayerFaction) {
                 return true;
             }
@@ -5567,7 +5406,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             if (PlayerManager.Instance != null && PlayerManager.Instance.player != null) {
                 playerFaction = PlayerManager.Instance.player.playerFaction;
             }
-            if(playerFaction != null) {
+            if (playerFaction != null) {
                 if (faction.IsFriendlyWith(playerFaction)) {
                     return true;
                 }
@@ -5595,18 +5434,18 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
         return false;
     }
-#endregion
+    #endregion
 
-#region IJobOwner
+    #region IJobOwner
     public virtual void OnJobAddedToCharacterJobQueue(JobQueueItem job, Character character) { }
     public virtual void OnJobRemovedFromCharacterJobQueue(JobQueueItem job, Character character) {
         //if(this == character && job == jobComponent.finalJobAssignment) {
         //    jobComponent.SetFinalJobAssignment(null);
         //    Messenger.AddListener(Signals.TICK_STARTED, DissipateAfterFinalJobAssignment);
         //}
-        
+
         //Only return to job pool if the job is personal, because if not, the control should be in the owner
-        if(job.originalOwner == this) {
+        if (job.originalOwner == this) {
             JobManager.Instance.OnFinishJob(job);
         }
     }
@@ -5641,15 +5480,15 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public void ForceCancelJobTypesTargetingPOI(JOB_TYPE jobType, IPointOfInterest target) {
         //NA
     }
-#endregion
+    #endregion
 
-#region IDamageable
+    #region IDamageable
     public bool CanBeDamaged() {
         return traitContainer.HasTrait("Indestructible") == false;
     }
-#endregion
+    #endregion
 
-#region Lycanthropy
+    #region Lycanthropy
     //NOTE: This might a bad practice since we have a special case here for lycanthrope, but I see no other way to easily know if the character is a lycan or not
     //This way we can easily know and access the lycan data
     public void SetLycanthropeData(LycanthropeData data) {
@@ -5672,7 +5511,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public void RevertFromWerewolfForm() {
         if (isLycanthrope && lycanData.isInWerewolfForm) {
             lycanData.SetIsInWerewolfForm(false);
-            if(classComponent.previousClassName != "Werewolf") {
+            if (classComponent.previousClassName != "Werewolf") {
                 //Reverting back from werewolf form should mean that the class to be assigned must not be werewolf
                 classComponent.AssignClass(classComponent.previousClassName);
             }
@@ -5681,9 +5520,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             }
         }
     }
-#endregion
+    #endregion
 
-#region Player Action Target
+    #region Player Action Target
     public List<PLAYER_SKILL_TYPE> actions { get; protected set; }
     //public List<string> overrideThoughts {
     //    get { return _overrideThoughts; }
@@ -5725,7 +5564,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public void AddPlayerAction(PLAYER_SKILL_TYPE action) {
         if (actions.Contains(action) == false) {
             actions.Add(action);
-            Messenger.Broadcast(PlayerSkillSignals.PLAYER_ACTION_ADDED_TO_TARGET, action, this as IPlayerActionTarget);    
+            Messenger.Broadcast(PlayerSkillSignals.PLAYER_ACTION_ADDED_TO_TARGET, action, this as IPlayerActionTarget);
         }
     }
     public void RemovePlayerAction(PLAYER_SKILL_TYPE action) {
@@ -5736,28 +5575,28 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public void ClearPlayerActions() {
         actions.Clear();
     }
-#endregion
-    
-#region Selectable
+    #endregion
+
+    #region Selectable
     public virtual bool IsCurrentlySelected() {
         Character characterToSelect = this;
-        if(isLycanthrope) {
+        if (isLycanthrope) {
             characterToSelect = lycanData.activeForm;
         }
         if (characterToSelect.isNormalCharacter) {
             return UIManager.Instance.characterInfoUI.isShowing &&
-                   UIManager.Instance.characterInfoUI.activeCharacter == characterToSelect;    
+                   UIManager.Instance.characterInfoUI.activeCharacter == characterToSelect;
         } else {
             return UIManager.Instance.monsterInfoUI.isShowing &&
                    UIManager.Instance.monsterInfoUI.activeMonster == characterToSelect;
         }
-        
+
     }
     public void LeftSelectAction() {
         if (mapObjectVisual != null) {
-            mapObjectVisual.ExecuteClickAction(PointerEventData.InputButton.Left);    
+            mapObjectVisual.ExecuteClickAction(PointerEventData.InputButton.Left);
         } else {
-            UIManager.Instance.ShowCharacterInfo(this, true); 
+            UIManager.Instance.ShowCharacterInfo(this, true);
         }
     }
     public void RightSelectAction() {
@@ -5772,14 +5611,14 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
         return true;
     }
-#endregion
-    
-#region Territorries
-    public void SetTerritory([NotNull]Area p_area, bool returnHome = true) {
+    #endregion
+
+    #region Territorries
+    public void SetTerritory([NotNull] Area p_area, bool returnHome = true) {
         if (territory != p_area) {
             territory = p_area;
-            if(territory.region != homeRegion) {
-                if(homeRegion != null) {
+            if (territory.region != homeRegion) {
+                if (homeRegion != null) {
                     homeRegion.RemoveResident(this);
                 }
                 territory.region.AddResident(this);
@@ -5788,7 +5627,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 MigrateHomeStructureTo(null, affectSettlement: false);
             }
             if (returnHome) {
-                jobComponent.PlanReturnHome(JOB_TYPE.RETURN_HOME_URGENT);    
+                jobComponent.PlanReturnHome(JOB_TYPE.RETURN_HOME_URGENT);
             }
         }
     }
@@ -5800,7 +5639,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         return territory != null;
     }
     public bool IsTerritory(Area p_area) {
-        if(HasTerritory()) {
+        if (HasTerritory()) {
             return territory == p_area;
         }
         return false;
@@ -5825,9 +5664,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
         return chosenTile;
     }
-#endregion
+    #endregion
 
-#region Death
+    #region Death
     //Changes character's side
     //public void SetSide(SIDES side) {
     //    this._currentSide = side;
@@ -5914,7 +5753,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 PlayerManager.Instance.player.seizeComponent.UnseizePOIOnDeath();
             }
             SetDeathLocation(gridTileLocation);
-            
+
             SetIsConversing(false);
             //SetIsFlirting(false);
             Region deathLocation = currentRegion;
@@ -5979,7 +5818,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             //}
             Messenger.Broadcast(CharacterSignals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, this as IPointOfInterest, GoapPlanJob.Target_Already_Dead_Reason);
             Messenger.Broadcast(CharacterSignals.FORCE_CANCEL_ALL_ACTIONS_TARGETING_POI, this as IPointOfInterest, GoapPlanJob.Target_Already_Dead_Reason);
-  
+
             behaviourComponent.OnDeath();
             jobQueue.CancelAllJobs();
 
@@ -6056,11 +5895,10 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
 
             if (destroyMarkerOnDeath) {
                 //If death is destroy marker, this will leave no corpse, so remove it from the list of characters at location in region
-                if(currentRegion != null) {
+                if (currentRegion != null) {
                     currentRegion.RemoveCharacterFromLocation(this);
                 }
             }
-            previousCharacterDataComponent.SetHomeSettlementOnDeath(homeSettlement);
             if (homeRegion != null) {
                 Region home = homeRegion;
                 LocationStructure homeStructure = this.homeStructure;
@@ -6115,7 +5953,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             }
             traitContainer.AddTrait(this, "Dead", responsibleCharacter, gainedFromDoing: deathFromAction);
 
-            if(cause == "attacked" && responsibleCharacter != null) {
+            if (cause == "attacked" && responsibleCharacter != null) {
                 if (responsibleCharacter.isInWerewolfForm) {
                     traitContainer.AddTrait(this, "Mangled", responsibleCharacter, gainedFromDoing: deathFromAction);
                 }
@@ -6167,12 +6005,12 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 }
             }
 
-   //         if(responsibleCharacter != null) {
-   //             if (responsibleCharacter.faction.factionType.type == FACTION_TYPE.Demons && faction.factionType.type != FACTION_TYPE.Demons) {
-   //                 //Messenger.Broadcast(PlayerSignals.CREATE_SPIRIT_ENERGY, deathTile.worldLocation, 1, deathTile.parentMap);
-   //                 Messenger.Broadcast(PlayerSignals.CREATE_CHAOS_ORBS, deathTilePosition.worldLocation, 1, deathTilePosition.parentMap);
-   //             }
-			//}
+            //         if(responsibleCharacter != null) {
+            //             if (responsibleCharacter.faction.factionType.type == FACTION_TYPE.Demons && faction.factionType.type != FACTION_TYPE.Demons) {
+            //                 //Messenger.Broadcast(PlayerSignals.CREATE_SPIRIT_ENERGY, deathTile.worldLocation, 1, deathTile.parentMap);
+            //                 Messenger.Broadcast(PlayerSignals.CREATE_CHAOS_ORBS, deathTilePosition.worldLocation, 1, deathTilePosition.parentMap);
+            //             }
+            //}
 
             Messenger.Broadcast(PlayerSkillSignals.RELOAD_PLAYER_ACTIONS, this as IPlayerActionTarget);
         }
@@ -6188,15 +6026,15 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public void SetGrave(Tombstone grave) {
         this.grave = grave;
     }
-#endregion
+    #endregion
 
-#region Necromancer
+    #region Necromancer
     public void SetNecromancerTrait(Necromancer necromancer) {
         necromancerTrait = necromancer;
     }
-#endregion
+    #endregion
 
-#region Emotions
+    #region Emotions
     public bool CanFeelEmotion(EMOTION emotion) {
         switch (emotion) {
             case EMOTION.Anger:
@@ -6206,9 +6044,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 return true;
         }
     }
-#endregion
+    #endregion
 
-#region Prison
+    #region Prison
     public bool IsInPrison() {
         BaseSettlement currSettlement = currentSettlement;
         return currSettlement != null && currSettlement is NPCSettlement settlement && currentStructure == settlement.prison;
@@ -6218,7 +6056,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         return currSettlement != null && currSettlement == settlement && currentStructure == settlement.prison;
     }
     public bool IsInPrisonOf(BaseSettlement settlement) {
-        if(settlement is NPCSettlement npcSettlement) {
+        if (settlement is NPCSettlement npcSettlement) {
             return IsInPrisonOf(npcSettlement);
         }
         return false;
@@ -6246,9 +6084,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
         return null;
     }
-#endregion
+    #endregion
 
-#region Vampire
+    #region Vampire
     private bool IsInVampireBatForm() {
         Vampire vampireTrait = traitContainer.GetTraitOrStatus<Vampire>("Vampire");
         return vampireTrait != null && vampireTrait.isInVampireBatForm;
@@ -6275,9 +6113,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             }
         }
     }
-#endregion
+    #endregion
 
-#region Cultist
+    #region Cultist
     public void PopulateListOfCultistTargets(List<Character> choices, Func<Character, bool> criteria) {
         for (int i = 0; i < relationshipContainer.charactersWithOpinion.Count; i++) {
             Character target = relationshipContainer.charactersWithOpinion[i];
@@ -6286,9 +6124,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             }
         }
     }
-#endregion
+    #endregion
 
-#region IPointOfInterest
+    #region IPointOfInterest
     public bool IsPOICurrentlyTargetedByAPerformingAction() {
         for (int i = 0; i < allJobsTargetingThis.Count; i++) {
             if (allJobsTargetingThis[i] is GoapPlanJob) {
@@ -6330,18 +6168,18 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
         return false;
     }
-#endregion
+    #endregion
 
-#region IStoredTarget
+    #region IStoredTarget
     public bool CanBeStoredAsTarget() {
         return !isDead && PlayerManager.Instance.player != null && faction != PlayerManager.Instance.player.playerFaction;
     }
     public void SetAsStoredTarget(bool p_state) {
         isStoredAsTarget = p_state;
     }
-#endregion
+    #endregion
 
-#region Afflictions By Player
+    #region Afflictions By Player
     public bool HasAfflictedByPlayerWith(PLAYER_SKILL_TYPE p_afflictionType) {
         return afflictionsSkillsInflictedByPlayer.Contains(p_afflictionType);
     }
@@ -6360,9 +6198,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             }
         }
     }
-#endregion
+    #endregion
 
-#region Loading
+    #region Loading
     public virtual void LoadReferences(SaveDataCharacter data) {
         isInfoUnlocked = data.isInfoUnlocked;
         ConstructDefaultActions();
@@ -6403,9 +6241,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         if (!string.IsNullOrEmpty(data.currentActionNode)) {
             currentActionNode = DatabaseManager.Instance.actionDatabase.GetActionByPersistentID(data.currentActionNode);
         }
-        if (!string.IsNullOrEmpty(data.previousCurrentActionNode)) {
-            previousCurrentActionNode = DatabaseManager.Instance.actionDatabase.GetActionByPersistentID(data.previousCurrentActionNode);
-        }
         if (!string.IsNullOrEmpty(data.territory)) {
             territory = DatabaseManager.Instance.areaDatabase.GetAreaByPersistentID(data.territory);
         }
@@ -6418,7 +6253,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 items.Add(obj);
             }
         }
-        
+
         for (int i = 0; i < data.ownedItems.Count; i++) {
             TileObject obj = DatabaseManager.Instance.tileObjectDatabase.GetTileObjectByPersistentID(data.ownedItems[i]);
             if (obj != null) {
@@ -6505,7 +6340,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             SubscribeToSignals();
         }
         if (minion == null) {
-            SubscribeToPermanentSignals();    
+            SubscribeToPermanentSignals();
         }
     }
     public void LoadCurrentlyDoingAction() {
@@ -6520,7 +6355,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             } else if (currentActionNode.actionStatus == ACTION_STATUS.STARTED) {
                 SetCurrentActionNode(null, null, null);
             } else if (currentActionNode.actionStatus == ACTION_STATUS.PERFORMING) {
-                if(currentActionNode.poiTarget is TileObject target) {
+                if (currentActionNode.poiTarget is TileObject target) {
                     target.OnDoActionToObject(currentActionNode);
                 }
                 if (currentActionNode.goapType == INTERACTION_TYPE.MAKE_LOVE) {
@@ -6538,7 +6373,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                             bed = targetCharacter.tileObjectComponent.primaryBed;
                         }
                     }
-                    if(bed != null) {
+                    if (bed != null) {
                         bed.OnDoActionToObject(currentActionNode);
                     } else {
                         //If there is no bed to make love, just remove the action itself so that there will be no errors
@@ -6555,7 +6390,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             if (job != null && job.ProcessJob() == false) {
                 PerformJob(job);
             }
-        }    
+        }
     }
     protected void LoadCharacterTraitsFromSave(SaveDataCharacter data) {
         traitContainer.Load(this, data.saveDataTraitContainer);
@@ -6574,16 +6409,16 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             necromancerTrait = traitContainer.GetTraitOrStatus<Necromancer>("Necromancer");
         }
     }
-#endregion
+    #endregion
 
-#region apply equipment effects upon load
-void ApplyStackCountForTraits() {
-    equipmentInventory.ForEach((eachEquip) => {
-        (eachEquip as EquipmentItem).AssignData();
-        equipmentComponent.SetEquipment(eachEquip as EquipmentItem, this, true);
-    });
-}
-#endregion
+    #region apply equipment effects upon load
+    void ApplyStackCountForTraits() {
+        equipmentInventory.ForEach((eachEquip) => {
+            (eachEquip as EquipmentItem).AssignData();
+            equipmentComponent.SetEquipment(eachEquip as EquipmentItem, this, true);
+        });
+    }
+    #endregion
 
     #region IBookmarkable
     public void OnSelectBookmark() {
@@ -6598,26 +6433,26 @@ void ApplyStackCountForTraits() {
     public void OnHoverOutBookmarkItem() {
         UIManager.Instance.HideCharacterNameplateTooltip();
     }
-#endregion
+    #endregion
 
     #region Death Tile
     public void SetDeathLocation(LocationGridTile p_tile) {
         deathTilePosition = p_tile;
     }
-	#endregion
+    #endregion
 
-	#region villager progression HUMANS = skill levelup, Elven = Power Crystal absorbed
+    #region villager progression HUMANS = skill levelup, Elven = Power Crystal absorbed
     //function to be attached on skill levelup NOTE!! - only humans should gain from this call
     void OnSkillLevelUp() {
         CharacterClassData classData = CharacterManager.Instance.GetOrCreateCharacterClassData(classComponent.characterClass.className);
         piercingAndResistancesComponent.AdjustPiercing(classData.characterSkillUpdateData.GetPiercingBonus());
         if (classData.characterSkillUpdateData.GetAllElementResistanceBonus() > 0) {
-            for (int x = 1; x < (int)RESISTANCE.Physical; ++x) {
-                piercingAndResistancesComponent.AdjustResistance((RESISTANCE)x, classData.characterSkillUpdateData.GetAllElementResistanceBonus());
+            for (int x = 1; x < (int) RESISTANCE.Physical; ++x) {
+                piercingAndResistancesComponent.AdjustResistance((RESISTANCE) x, classData.characterSkillUpdateData.GetAllElementResistanceBonus());
             }
         } else {
-            for (int x = 1; x < (int)RESISTANCE.Physical; ++x) {
-                piercingAndResistancesComponent.AdjustResistance((RESISTANCE)x, classData.characterSkillUpdateData.GetBonusBaseOnElement((RESISTANCE)x));
+            for (int x = 1; x < (int) RESISTANCE.Physical; ++x) {
+                piercingAndResistancesComponent.AdjustResistance((RESISTANCE) x, classData.characterSkillUpdateData.GetBonusBaseOnElement((RESISTANCE) x));
             }
         }
     }
@@ -6626,7 +6461,7 @@ void ApplyStackCountForTraits() {
     //check if they are on the same village
     //NOTE!! - only elves should gain from this call
     void OnPowerCrystalAbsorbedByAnElf(Character p_powerCrystalAbsorber, PowerCrystal p_crystal) {
-        if(this != p_powerCrystalAbsorber && race == RACE.ELVES && homeSettlement == p_powerCrystalAbsorber.homeSettlement) {
+        if (this != p_powerCrystalAbsorber && race == RACE.ELVES && homeSettlement == p_powerCrystalAbsorber.homeSettlement) {
             ApplyCrystalBonus(p_crystal);
         }
     }
@@ -6635,7 +6470,7 @@ void ApplyStackCountForTraits() {
     //NOTE!! - only elves should gain from this call
     public void AbsorbCrystal(PowerCrystal p_crystal) {
         ApplyCrystalBonus(p_crystal);
-        
+
         Log log;
         string crystalBonus = string.Empty;
         if (currentSettlement == null || currentSettlement?.locationType != LOCATION_TYPE.VILLAGE) {
@@ -6679,8 +6514,103 @@ void ApplyStackCountForTraits() {
     }
     #endregion
 
+    #region Operators
+    public static bool operator ==(Character left, IPointOfInterest right) {
+        return left?.persistentID == right?.persistentID;
+    }
+    public static bool operator !=(Character left, IPointOfInterest right) {
+        return left?.persistentID != right?.persistentID;
+    }
+    public override bool Equals(object obj) {
+        if (obj is Character c) {
+            return persistentID.Equals(c.persistentID);
+        }
+        return false;
+    }
+    public override int GetHashCode() {
+        return base.GetHashCode();
+    }
+    #endregion
+
+    #region IGCollectable
+    public void SetIsDeadReference(bool p_state) {
+        isDeadReference = p_state;
+    }
+    #endregion
+
     public void CleanUp() {
+        _minion?.CleanUp();
+        _raceSetting = null;
+        _faction = null;
+        _minion = null;
+        _currentStructure = null;
+        _currentRegion = null;
+
         visuals?.CleanUp();
         traitContainer?.CleanUp();
+        trapStructure = null;
+        planner = null;
+        jobComponent = null;
+        logComponent = null;
+        eventDispatcher = null;
+        bookmarkEventDispatcher = null;
+        equipmentComponent = null;
+        resourceStorageComponent = null;
+
+        classComponent.CleanUp();
+        needsComponent.CleanUp();
+        structureComponent.CleanUp();
+        stateComponent.CleanUp();
+        nonActionEventsComponent.CleanUp();
+        interruptComponent.CleanUp();
+        behaviourComponent.CleanUp();
+        moodComponent.CleanUp();
+        reactionComponent.CleanUp();
+        combatComponent.CleanUp();
+        assumptionComponent.CleanUp();
+        movementComponent.CleanUp();
+        stateAwarenessComponent.CleanUp();
+        carryComponent.CleanUp();
+        partyComponent.CleanUp();
+        gatheringComponent.CleanUp();
+        tileObjectComponent.CleanUp();
+        crimeComponent.CleanUp();
+        religionComponent.CleanUp();
+        limiterComponent.CleanUp();
+        piercingAndResistancesComponent.CleanUp();
+        previousCharacterDataComponent.CleanUp();
+        traitComponent.CleanUp();
+        moneyComponent.CleanUp();
+        dailyScheduleComponent.CleanUp();
+        talentComponent?.CleanUp();
+        villagerWantsComponent?.CleanUp();
+
+        classComponent = null;
+        needsComponent = null;
+        structureComponent = null;
+        stateComponent = null;
+        nonActionEventsComponent = null;
+        interruptComponent = null;
+        behaviourComponent = null;
+        moodComponent = null;
+        reactionComponent = null;
+        combatComponent = null;
+        assumptionComponent = null;
+        movementComponent = null;
+        stateAwarenessComponent = null;
+        carryComponent = null;
+        partyComponent = null;
+        gatheringComponent = null;
+        tileObjectComponent = null;
+        crimeComponent = null;
+        religionComponent = null;
+        limiterComponent = null;
+        piercingAndResistancesComponent = null;
+        previousCharacterDataComponent = null;
+        traitComponent = null;
+        moneyComponent = null;
+        dailyScheduleComponent = null;
+        talentComponent = null;
+        villagerWantsComponent = null;
     }
 }

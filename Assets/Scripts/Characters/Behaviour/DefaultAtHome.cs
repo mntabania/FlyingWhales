@@ -35,7 +35,7 @@ public class DefaultAtHome : CharacterBehaviourComponent {
             //}
             return true;
         } else if (character.isAtHomeStructure || character.IsInTerritory()) {
-            if (character.previousCurrentActionNode != null && character.previousCurrentActionNode.IsReturnHome()) {
+            if (character.previousCharacterDataComponent.IsPreviousJobOrActionReturnHome()) {
 #if DEBUG_LOG
                 log = $"{log}\n-{character.name} is in home structure and just returned home";
 #endif

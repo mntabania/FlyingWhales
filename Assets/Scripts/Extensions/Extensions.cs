@@ -386,6 +386,9 @@ public static class Extensions {
                 return false;
         }
     }
+    public static bool IsReturnHome(this INTERACTION_TYPE p_type) {
+        return p_type == INTERACTION_TYPE.RETURN_HOME;
+    }
     #endregion
 
     #region State
@@ -1271,6 +1274,11 @@ public static class Extensions {
             default:
                 return false;
         }
+    }
+    public static bool IsReturnHome(this JOB_TYPE p_type) {
+        return p_type == JOB_TYPE.IDLE_RETURN_HOME
+                || p_type == JOB_TYPE.RETURN_HOME_URGENT
+                || p_type == JOB_TYPE.FLEE_TO_HOME;
     }
     #endregion
 

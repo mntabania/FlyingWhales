@@ -15,7 +15,7 @@ public class DemonEye : TileObject {
         AddPlayerAction(PLAYER_SKILL_TYPE.DESTROY_EYE_WARD);
         traitContainer.RemoveTrait(this, "Flammable");
         traitContainer.AddTrait(this, "Indestructible");
-        hiddenComponent.SetIsHidden(true, false);
+        hiddenComponent.SetIsHidden(this, true, false);
         PlayerManager.Instance.player.tileObjectComponent.AddEyeWard(this);
     }
     public DemonEye(SaveDataTileObject data) : base(data) {

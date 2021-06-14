@@ -11,6 +11,10 @@ public class PreviousCharacterDataComponent : CharacterComponent {
     public LocationStructure previousHomeStructure => _previousHomeStructure;
     public NPCSettlement previousHomeSettlement => _previousHomeSettlement;
     public Faction previousFaction => _previousFaction;
+
+    public /*ActualGoapNode*/ INTERACTION_TYPE previousActionNodeType { get; private set; } //Changed the previousCurrentActionNode to only the enum type so that the ActualGoapNode will be garbage collected since it no reference no longer holds it
+    public JOB_TYPE previousJobType { get; private set; }
+
     /// <summary>
     /// The settlement that this character was part of when it died.
     /// Can be null.
@@ -18,7 +22,10 @@ public class PreviousCharacterDataComponent : CharacterComponent {
     public NPCSettlement homeSettlementOnDeath => _homeSettlementOnDeath;
 
     public PreviousCharacterDataComponent() { }
-    public PreviousCharacterDataComponent(SaveDataPreviousCharacterDataComponent data) { }
+    public PreviousCharacterDataComponent(SaveDataPreviousCharacterDataComponent data) {
+        previousActionNodeType = data.previousActionNodeType;
+        previousJobType = data.previousJobType;
+    }
 
     #region Loading
     public void LoadReferences(SaveDataPreviousCharacterDataComponent data) {
@@ -60,6 +67,18 @@ public class PreviousCharacterDataComponent : CharacterComponent {
         _previousFaction = p_faction;
     }
     #endregion
+
+    #region Actions
+    public void SetPreviousActionType(INTERACTION_TYPE p_type) {
+        previousActionNodeType = p_type;
+    }
+    public void SetPreviousJobType(JOB_TYPE p_type) {
+        previousJobType = p_type;
+    }
+    public bool IsPreviousJobOrActionReturnHome() {
+        return previousActionNodeType.IsReturnHome() || previousJobType.IsReturnHome();
+    }
+    #endregion
 }
 
 public class SaveDataPreviousCharacterDataComponent : SaveData<PreviousCharacterDataComponent> {
@@ -67,6 +86,8 @@ public class SaveDataPreviousCharacterDataComponent : SaveData<PreviousCharacter
     public string previousHomeSettlementID;
     public string previousFactionID;
     public string homeSettlementOnDeathID;
+    public INTERACTION_TYPE previousActionNodeType;
+    public JOB_TYPE previousJobType;
 
     #region Overrides
     public override void Save(PreviousCharacterDataComponent data) {
@@ -74,6 +95,8 @@ public class SaveDataPreviousCharacterDataComponent : SaveData<PreviousCharacter
         previousHomeSettlementID = data.previousHomeSettlement?.persistentID ?? string.Empty;
         previousFactionID = data.previousFaction?.persistentID ?? string.Empty;
         homeSettlementOnDeathID = data.homeSettlementOnDeath?.persistentID ?? string.Empty;
+        previousActionNodeType = data.previousActionNodeType;
+        previousJobType = data.previousJobType;
     }
 
     public override PreviousCharacterDataComponent Load() {
