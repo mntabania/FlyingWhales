@@ -47,6 +47,7 @@ public class HealerCure : GoapAction {
         } else if (goapNode.actor.talentComponent.GetTalent(CHARACTER_TALENT.Healing_Magic).level >= 2) {
             Level2Effect(goapNode);
         }
+        goapNode.actor.talentComponent.GetTalent(CHARACTER_TALENT.Healing_Magic).AdjustExperience(10, goapNode.actor);
     }
     #endregion
 

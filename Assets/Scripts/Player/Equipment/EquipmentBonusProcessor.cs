@@ -68,7 +68,7 @@ public static class EquipmentBonusProcessor
                 return;
             }
             //float computedAttack = p_targetCharacter.combatComponent.unModifiedAttack * (p_equipItem.equipmentData.equipmentUpgradeData.AdditionalAttackPercentage / 100f);
-            p_targetCharacter.combatComponent.AdjustIntelligencePercentModifier(p_equipItem.equipmentData.equipmentUpgradeData.AdditionalIntPercentage);
+            p_targetCharacter.combatComponent.AdjustIntelligencePercentModifier(p_equipItem.equipmentData.equipmentUpgradeData.GetProcessedAdditionalIntPercentage(p_equipItem.quality));
             break;
             case EQUIPMENT_BONUS.Crit_Rate_Actual:
             if (p_initializedStackCountOnly) {
@@ -161,7 +161,7 @@ public static class EquipmentBonusProcessor
             break;
             case EQUIPMENT_BONUS.Int_Percentage:
             //float computedAttack = p_targetCharacter.combatComponent.unModifiedAttack * (p_equipItem.equipmentData.equipmentUpgradeData.AdditionalAttackPercentage / 100f);
-            p_targetCharacter.combatComponent.AdjustIntelligencePercentModifier(-p_equipItem.equipmentData.equipmentUpgradeData.AdditionalIntPercentage);
+            p_targetCharacter.combatComponent.AdjustIntelligencePercentModifier(-p_equipItem.equipmentData.equipmentUpgradeData.GetProcessedAdditionalIntPercentage(p_equipItem.quality));
             break;
             case EQUIPMENT_BONUS.Crit_Rate_Actual:
             //float computedAttack = p_targetCharacter.combatComponent.unModifiedAttack * (p_equipItem.equipmentData.equipmentUpgradeData.AdditionalAttackPercentage / 100f);

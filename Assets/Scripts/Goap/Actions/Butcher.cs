@@ -459,8 +459,8 @@ public class Butcher : GoapAction {
         ProduceMats(goapNode);
     }
 
-    public void ProduceMats(ActualGoapNode goapNode) {
-        IPointOfInterest poiTarget = goapNode.poiTarget;
+    public void ProduceMats(ActualGoapNode p_node) {
+        IPointOfInterest poiTarget = p_node.poiTarget;
         LocationGridTile tileLocation = poiTarget.gridTileLocation;
 
         tileLocation.structure.RemoveCharacterAtLocation(poiTarget as Character);
@@ -478,29 +478,31 @@ public class Butcher : GoapAction {
         }
 
         FoodPile foodPile = CharacterManager.Instance.CreateFoodPileForPOI(poiTarget, tileLocation, false);
-        foodPile.SetResourceInPile(goapNode.currentStateDuration * m_amountProducedPerTick);
-        if (goapNode.associatedJobType == JOB_TYPE.PRODUCE_FOOD_FOR_CAMP) {
-            if (goapNode.actor.partyComponent.hasParty && goapNode.actor.partyComponent.currentParty.targetCamp != null) {
-                goapNode.actor.partyComponent.currentParty.jobComponent.CreateHaulForCampJob(foodPile, goapNode.actor.partyComponent.currentParty.targetCamp);
-                goapNode.actor.marker.AddPOIAsInVisionRange(foodPile); //automatically add pile to character's vision so he/she can take haul job immediately after
+        foodPile.SetResourceInPile(p_node.currentStateDuration * m_amountProducedPerTick);
+        if (p_node.associatedJobType == JOB_TYPE.PRODUCE_FOOD_FOR_CAMP) {
+            if (p_node.actor.partyComponent.hasParty && p_node.actor.partyComponent.currentParty.targetCamp != null) {
+                p_node.actor.partyComponent.currentParty.jobComponent.CreateHaulForCampJob(foodPile, p_node.actor.partyComponent.currentParty.targetCamp);
+                p_node.actor.marker.AddPOIAsInVisionRange(foodPile); //automatically add pile to character's vision so he/she can take haul job immediately after
             }
         } else {
-            if (foodPile != null && goapNode.actor.homeSettlement != null) { //&& !(foodPile is HumanMeat) && !(foodPile is ElfMeat)
-                bool cannotCreateHaulJob = (foodPile.tileObjectType == TILE_OBJECT_TYPE.ELF_MEAT || foodPile.tileObjectType == TILE_OBJECT_TYPE.HUMAN_MEAT) && goapNode.actor.faction != null && goapNode.actor.faction.isMajorNonPlayer;
+            if (foodPile != null && p_node.actor.homeSettlement != null) { //&& !(foodPile is HumanMeat) && !(foodPile is ElfMeat)
+                bool cannotCreateHaulJob = (foodPile.tileObjectType == TILE_OBJECT_TYPE.ELF_MEAT || foodPile.tileObjectType == TILE_OBJECT_TYPE.HUMAN_MEAT) && p_node.actor.faction != null && p_node.actor.faction.isMajorNonPlayer;
                 if (!cannotCreateHaulJob) {
-                    goapNode.actor.jobComponent.TryCreateHaulToWorkplaceJob(foodPile);
-                    goapNode.actor.marker.AddPOIAsInVisionRange(foodPile); //automatically add pile to character's vision so he/she can take haul job immediately after
+                    p_node.actor.jobComponent.TryCreateHaulToWorkplaceJob(foodPile);
+                    p_node.actor.marker.AddPOIAsInVisionRange(foodPile); //automatically add pile to character's vision so he/she can take haul job immediately after
                 }
             }
         }
         if (foodPile != null) {
-            goapNode.descriptionLog.AddInvolvedObjectManual(foodPile.persistentID);
+            p_node.descriptionLog.AddInvolvedObjectManual(foodPile.persistentID);
             //if produced human/elf meat and the actor is not a cannibal, make him/her traumatized
             if ((foodPile.tileObjectType == TILE_OBJECT_TYPE.HUMAN_MEAT || foodPile.tileObjectType == TILE_OBJECT_TYPE.ELF_MEAT)
-               && !goapNode.actor.traitContainer.HasTrait("Cannibal") && goapNode.actor.isNormalCharacter && poiTarget is Character targetCharacter) {
-                goapNode.actor.traitContainer.AddTrait(goapNode.actor, "Traumatized", targetCharacter);
+               && !p_node.actor.traitContainer.HasTrait("Cannibal") && p_node.actor.isNormalCharacter && poiTarget is Character targetCharacter) {
+                p_node.actor.traitContainer.AddTrait(p_node.actor, "Traumatized", targetCharacter);
             }
         }
+
+        p_node.actor.talentComponent.GetTalent(CHARACTER_TALENT.Food).AdjustExperience(4, p_node.actor);
     }
 #endregion
 }

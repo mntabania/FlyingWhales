@@ -72,7 +72,7 @@ public class MineOre : GoapAction {
         matsToHaul.SetResourceInPile(p_node.currentStateDuration * m_amountProducedPerTick);
         tileToSpawnPile.structure.AddPOI(matsToHaul, tileToSpawnPile);
         ProduceLogs(p_node);
-
+        p_node.actor.talentComponent.GetTalent(CHARACTER_TALENT.Resources).AdjustExperience(4, p_node.actor);
         return matsToHaul;
     }
 
