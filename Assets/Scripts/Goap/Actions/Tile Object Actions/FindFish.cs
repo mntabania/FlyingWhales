@@ -103,7 +103,7 @@ public class FindFish : GoapAction {
         m_matsToHaul = null;
         m_count = 0;
         int pileCount = p_node.actor.gridTileLocation.GetCountOfNeighboursThatHasTileObjectOfType(TILE_OBJECT_TYPE.FISH_PILE);
-        if (UtilityScripts.GameUtilities.RandomBetweenTwoNumbers(0, 100) < 85) {
+        if (UtilityScripts.GameUtilities.RandomBetweenTwoNumbers(0, 100) < 5) {
             if (pileCount > 0 || p_node.actor.gridTileLocation.GetFirstNeighborThatIsPassableAndNoObject() != null) {
                 m_count += 10;
                 ProduceMatsPile(p_node);
