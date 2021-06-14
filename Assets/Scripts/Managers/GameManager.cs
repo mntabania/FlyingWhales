@@ -254,15 +254,15 @@ public class GameManager : BaseMonoBehaviour {
         Profiler.BeginSample("Tick Started Signal");
 #endif
 
-        if (DatabaseManager.Instance.tileObjectDatabase.destroyedTileObjects.Count > 0) {
-            string test = "Destroyed Tile Objects: " + DatabaseManager.Instance.tileObjectDatabase.destroyedTileObjects.Count;
-            for (int i = 0; i < DatabaseManager.Instance.tileObjectDatabase.destroyedTileObjects.Count; i++) {
-                WeakReference wr = DatabaseManager.Instance.tileObjectDatabase.destroyedTileObjects[i];
-                test += "\n" + wr.IsAlive;
-            }
-            Debug.Log(test);
-            GC.Collect();
-        }
+        //if (DatabaseManager.Instance.tileObjectDatabase.destroyedTileObjects.Count > 0) {
+        //    string test = "Destroyed Tile Objects: " + DatabaseManager.Instance.tileObjectDatabase.destroyedTileObjects.Count;
+        //    for (int i = 0; i < DatabaseManager.Instance.tileObjectDatabase.destroyedTileObjects.Count; i++) {
+        //        WeakReference wr = DatabaseManager.Instance.tileObjectDatabase.destroyedTileObjects[i];
+        //        test += "\n" + wr.IsAlive;
+        //    }
+        //    Debug.Log(test);
+        //    GC.Collect();
+        //}
 
         Messenger.Broadcast(Signals.TICK_STARTED);
 #if DEBUG_PROFILER
