@@ -3,11 +3,11 @@ namespace Locations.Settlements.Settlement_Types {
     public class ElvenHamlet : SettlementType {
         public ElvenHamlet() : base(SETTLEMENT_TYPE.Elven_Hamlet) {
             maxDwellings = 16;
-            maxFacilities = 6;
+            maxFacilities = 16; //6;
         }
         public ElvenHamlet(SaveDataSettlementType saveData) : base(saveData) { 
             maxDwellings = 16;
-            maxFacilities = 6;
+            maxFacilities = 16; //6;
         }
         public override void ApplyDefaultSettings() {
             SetInitialFacilityWeightAndCap(new StructureSetting(STRUCTURE_TYPE.LUMBERYARD, RESOURCE.NONE), 300, 1);

@@ -3,11 +3,11 @@ namespace Locations.Settlements.Settlement_Types {
     public class HumanVillage : SettlementType {
         public HumanVillage() : base(SETTLEMENT_TYPE.Human_Village) {
             maxDwellings = 16;
-            maxFacilities = 6;
+            maxFacilities = 16; //6
         }
         public HumanVillage(SaveDataSettlementType saveData) : base(saveData) {
             maxDwellings = 16;
-            maxFacilities = 6;
+            maxFacilities = 16; //6
         }
         public override void ApplyDefaultSettings() {
             SetInitialFacilityWeightAndCap(new StructureSetting(STRUCTURE_TYPE.MINE, RESOURCE.NONE), 300, 1);
