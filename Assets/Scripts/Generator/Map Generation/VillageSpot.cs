@@ -120,11 +120,20 @@ public class VillageSpot {
         }
         return false;
     }
-    public bool HasAccessToAnimals() {
+    public bool HasAccessToSkinnerAnimals() {
+        for (int i = 0; i < reservedAreas.Count; i++) {
+            Area area = reservedAreas[i];
+            if (area.structureComponent.HasStructureInArea(GameUtilities.skinnerStructures)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    public bool HasAccessToButcherAnimals() {
         for (int i = 0; i < reservedAreas.Count; i++) {
             Area area = reservedAreas[i];
             if (area.featureComponent.HasFeature(AreaFeatureDB.Game_Feature) || 
-                area.structureComponent.HasStructureInArea(GameUtilities.animalStructures)) {
+                area.structureComponent.HasStructureInArea(STRUCTURE_TYPE.RABBIT_HOLE)) {
                 return true;
             }
         }

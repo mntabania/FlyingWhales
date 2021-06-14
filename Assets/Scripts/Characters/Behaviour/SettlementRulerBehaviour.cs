@@ -306,7 +306,7 @@ public class SettlementRulerBehaviour : CharacterBehaviourComponent {
             //Animal Killing is considered a crime.
             return false;
         }
-        if (!p_settlement.occupiedVillageSpot.HasAccessToAnimals()) {
+        if (!p_settlement.occupiedVillageSpot.HasAccessToButcherAnimals()) {
             return false;
         }
         if (!p_settlement.HasResidentThatIsOrCanBecomeClass("Butcher")) {
@@ -318,7 +318,7 @@ public class SettlementRulerBehaviour : CharacterBehaviourComponent {
         if (p_settlement.HasStructure(STRUCTURE_TYPE.HUNTER_LODGE)) {
             return false;
         }
-        if (!p_settlement.occupiedVillageSpot.HasAccessToAnimals()) {
+        if (!p_settlement.occupiedVillageSpot.HasAccessToSkinnerAnimals()) {
             return false;
         }
         if (!p_settlement.HasResidentThatIsOrCanBecomeClass("Skinner")) {

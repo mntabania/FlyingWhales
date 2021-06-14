@@ -38,10 +38,10 @@ namespace UtilityScripts {
         public static FACTION_TYPE[] customWorldFactionTypeChoices = new[] {FACTION_TYPE.Human_Empire, FACTION_TYPE.Elven_Kingdom, FACTION_TYPE.Demon_Cult, FACTION_TYPE.Vampire_Clan, FACTION_TYPE.Lycan_Clan};
         public static TILE_OBJECT_TYPE[] corruptionTileObjectChoices = new[]
             {TILE_OBJECT_TYPE.CORRUPTED_TENDRIL, TILE_OBJECT_TYPE.CORRUPTED_SPIKE, TILE_OBJECT_TYPE.DEMON_CIRCLE, TILE_OBJECT_TYPE.SPAWNING_PIT, TILE_OBJECT_TYPE.SIGIL, TILE_OBJECT_TYPE.TREE_OBJECT};
-        public static List<STRUCTURE_TYPE> animalStructures = new List<STRUCTURE_TYPE>() {
+        public static List<STRUCTURE_TYPE> skinnerStructures = new List<STRUCTURE_TYPE>() {
             STRUCTURE_TYPE.BOAR_DEN,
-            STRUCTURE_TYPE.BEAR_DEN,
             STRUCTURE_TYPE.WOLF_DEN,
+            STRUCTURE_TYPE.BEAR_DEN,
             STRUCTURE_TYPE.RABBIT_HOLE,
             STRUCTURE_TYPE.MINK_HOLE,
             STRUCTURE_TYPE.MOONCRAWLER_HOLE,
