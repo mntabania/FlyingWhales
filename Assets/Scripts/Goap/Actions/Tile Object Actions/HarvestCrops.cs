@@ -64,7 +64,7 @@ public class HarvestCrops : GoapAction {
         matsToHaul.SetResourceInPile(p_node.currentStateDuration * m_amountProducedPerTick);
         tileToSpawnItem.structure.AddPOI(matsToHaul, tileToSpawnItem);
         // p_node.actor.homeSettlement.settlementJobTriggerComponent.TryCreateHaulJob(matsToHaul);
-        p_node.actor.talentComponent.GetTalent(CHARACTER_TALENT.Food).AdjustExperience(4, p_node.actor);
+        p_node.actor.talentComponent?.GetTalent(CHARACTER_TALENT.Food).AdjustExperience(4, p_node.actor);
         return matsToHaul;
     }
 
