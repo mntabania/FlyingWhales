@@ -179,6 +179,7 @@ public abstract class BaseMapObjectVisual : PooledObject, IPointerEnterHandler, 
         if (clickCollider != null) {
             clickCollider.enabled = true;
         }
+        selectable = null;
         DestroyAllStatusIcons();
         DestroyAllParticleEffects();
         SetMaterial(InnerMapManager.Instance.assetManager.defaultObjectMaterial);

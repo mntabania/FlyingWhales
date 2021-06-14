@@ -25,5 +25,8 @@ public abstract class POIVisionTrigger : BaseVisionTrigger {
     public override void Reset() {
         base.Reset();
         poi = null;
+        if (projectileReceiver != null) {
+            projectileReceiver.Reset();    
+        }
     }
 }

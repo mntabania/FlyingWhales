@@ -87,6 +87,7 @@ public class TileObjectInfoUI : InfoUIBase {
             }
         }
         activeTileObject = null;
+        btnStoreTarget.SetTarget(null);
     }
     public override void OpenMenu() {
         TileObject previousTileObject = activeTileObject;
