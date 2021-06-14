@@ -113,6 +113,7 @@ public class Dispel : GoapAction {
                 }
             }    
         }
+        goapNode.actor.talentComponent.GetTalent(CHARACTER_TALENT.Healing_Magic).AdjustExperience(10, goapNode.actor);
     }
 #endregion
 

@@ -22,6 +22,7 @@ public class GroupHealSpecialSkill : CombatSpecialSkill {
                 p_character.logComponent.PrintLogIfActive("GROUP HEAL SPECIAL SKILL OF " + p_character.name + " ACTIVATED FOR: " + target.name);
 #endif
             }
+            p_character.talentComponent.GetTalent(CHARACTER_TALENT.Healing_Magic).AdjustExperience(3, p_character);
         }
         ObjectPoolManager.Instance.ReturnCharactersListToPool(healedCharacters);
         return hasActivated;

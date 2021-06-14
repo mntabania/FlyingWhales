@@ -38,12 +38,14 @@ public class CreateHospicePotion : GoapAction {
     #region State Effects
     public void AfterCreateHospicePotionSuccess(ActualGoapNode p_node) {
         TileObject potion = InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.HEALING_POTION);
-        LocationGridTile tileToSpawnPile = p_node.actor.gridTileLocation;
-        if (tileToSpawnPile != null && tileToSpawnPile.tileObjectComponent.objHere != null) {
-            tileToSpawnPile = p_node.actor.gridTileLocation.GetFirstNearestTileFromThisWithNoObject();
-        }
-        tileToSpawnPile.structure.AddPOI(potion, tileToSpawnPile);
+        //LocationGridTile tileToSpawnPile = p_node.actor.gridTileLocation;
+        //if (tileToSpawnPile != null && tileToSpawnPile.tileObjectComponent.objHere != null) {
+        //    tileToSpawnPile = p_node.actor.gridTileLocation.GetFirstNearestTileFromThisWithNoObject();
+        //}
+        LocationGridTile targetGridTile = p_node.target.gridTileLocation;
         p_node.actor.structureComponent.workPlaceStructure.RemovePOI(p_node.target);
+        targetGridTile.structure.AddPOI(potion, targetGridTile);
+        
         p_node.actor.jobComponent.CreateDropItemJob(JOB_TYPE.CREATE_HOSPICE_POTION, potion, p_node.actor.structureComponent.workPlaceStructure);
     }
     #endregion

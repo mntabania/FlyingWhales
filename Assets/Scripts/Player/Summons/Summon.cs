@@ -123,7 +123,7 @@ public class Summon : Character {
             }
 
 			if (!isDead) {
-                //DropItem();
+                DropItem();
             }
             SetIsDead(true);
             

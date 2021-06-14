@@ -163,10 +163,18 @@ public class CarryComponent : CharacterComponent {
                 character.marker.PlaceMarkerAt(dropLocation);
             }
             character.marker.transform.eulerAngles = Vector3.zero;
+            character.carryComponent.OnCharacterUncarried();
         }
         // character.marker.SetNameState(true);
         // Messenger.Broadcast(Signals.CHARACTER_LEFT_PARTY, character, this);
     }
+
+    private void OnCharacterUncarried() {
+        if (owner is Dragon dragon) {
+            dragon.Awaken();
+        }
+    }
+
     public bool IsPOICarried(IPointOfInterest poi) {
         return carriedPOI != null && carriedPOI == poi;
     }

@@ -16,6 +16,7 @@ public class MaxHealSpecialSkill : CombatSpecialSkill {
 #if DEBUG_LOG
             p_character.logComponent.PrintLogIfActive("MAX HEAL SPECIAL SKILL OF " + p_character.name + " ACTIVATED FOR: " + validTarget.name);
 #endif
+            p_character.talentComponent.GetTalent(CHARACTER_TALENT.Healing_Magic).AdjustExperience(3, p_character);
             return true;
         }
         return base.TryActivateSkill(p_character);
