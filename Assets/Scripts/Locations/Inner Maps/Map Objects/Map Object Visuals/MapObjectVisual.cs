@@ -45,4 +45,16 @@ public abstract class MapObjectVisual<T> : BaseMapObjectVisual where T : IDamage
         return Vector3.Distance(transform.position, pos) <= 0.75f;
     }
     #endregion
+
+    #region Object Pools
+    public override void Reset() {
+        base.Reset();
+        obj = default;
+        onHoverOverAction = null;
+        onHoverExitAction = null;
+        onLeftClickAction = null;
+        onRightClickAction = null;
+        onMiddleClickAction = null;
+    }
+    #endregion
 }
