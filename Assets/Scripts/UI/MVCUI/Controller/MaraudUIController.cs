@@ -308,13 +308,14 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 	void InitializeTargets() {
 		int ctr = 0;
 		m_targetPartyStructure.allPossibleTargets.ForEach((EachTarget) => {
+			bool isValidTarget = IsValidTargetForStructure(m_targetPartyStructure, EachTarget);
 			if (ctr < m_targetList.Count) {
 				m_targetList[ctr].gameObject.SetActive(true);
-				m_targetList[ctr].InitializeItem(EachTarget);
+				m_targetList[ctr].InitializeItem(EachTarget, !isValidTarget);
 				SetTargetHoverText(m_targetList[ctr++]);
 			} else {
 				AvailableTargetItemUI availableTargetItemUI = Instantiate(m_availableTargetItemUI);
-				availableTargetItemUI.InitializeItem(EachTarget);
+				availableTargetItemUI.InitializeItem(EachTarget, !isValidTarget);
 				availableTargetItemUI.transform.SetParent(m_maraudUIView.GetAvailableTargetParent());
 				availableTargetItemUI.transform.localScale = Vector3.one;
 				m_targetList.Add(availableTargetItemUI);
@@ -325,6 +326,22 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 				targetItemUI.onHoverOut += OnHoverOutAvailableTargetItem;
 			}
 		});
+	}
+
+	private bool IsValidTargetForStructure(PartyStructure p_structure, IStoredTarget p_target) {
+		if (p_target is Character targetCharacter) {
+			if (p_target.isTargetted || (targetCharacter.currentStructure.structureType == STRUCTURE_TYPE.KENNEL || targetCharacter.currentStructure.structureType == STRUCTURE_TYPE.TORTURE_CHAMBERS)) {
+				return false;
+			} else if (p_structure.structureType == STRUCTURE_TYPE.KENNEL && targetCharacter.traitContainer.HasTrait("Sturdy")) {
+				//Sturdy characters cannot be targeted by snatch
+				//Reference: https://trello.com/c/PpwfezCb/4679-live-v040-harpy-trying-to-abduct-a-dragon
+				return false;
+			} else {
+				return true;
+			}
+		} else {
+			return true;
+		}
 	}
 	void UpdateNoTargetsUI() {
 		bool hasAvailableTargets = m_targetPartyStructure.allPossibleTargets.Count > 0;
@@ -346,10 +363,12 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 
 	void SetTargetHoverText(AvailableTargetItemUI p_item) {
 		if (!m_targetPartyStructure.IsAvailableForTargeting()) {
-			p_item.SetHoverText("You cant add a team member bacause the structure is occupied");
+			p_item.SetHoverText("You cant add a team member because the structure is occupied");
 		} else if (p_item.target is Character character) {
-			if(character.currentStructure.structureType == STRUCTURE_TYPE.KENNEL ||
-			character.currentStructure.structureType == STRUCTURE_TYPE.TORTURE_CHAMBERS) {
+			if (character.traitContainer.HasTrait("Sturdy") && m_targetPartyStructure.structureType == STRUCTURE_TYPE.KENNEL) {
+				p_item.SetHoverText("Cannot target Sturdy characters");
+			} else if(character.currentStructure.structureType == STRUCTURE_TYPE.KENNEL ||
+			     character.currentStructure.structureType == STRUCTURE_TYPE.TORTURE_CHAMBERS) {
 				p_item.SetHoverText("Target already imprisoned");
 			}
 		} else {

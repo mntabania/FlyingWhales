@@ -5,18 +5,29 @@ using UnityEngine;
 using Traits;
 
 public class CarryRestrained : GoapAction {
-
+    
+    private readonly Precondition _carryPrecondition;
+    
     public CarryRestrained() : base(INTERACTION_TYPE.CARRY_RESTRAINED) {
         actionIconString = GoapActionStateDB.Work_Icon;
         canBeAdvertisedEvenIfTargetIsUnavailable = true;
         //advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
         logTags = new[] {LOG_TAG.Work};
+        _carryPrecondition = new Precondition(new GoapEffect(GOAP_EFFECT_CONDITION.HAS_TRAIT, "Restrained", false, GOAP_EFFECT_TARGET.TARGET), TargetIsRestrainedOrDead);
     }
 
     #region Overrides
     protected override void ConstructBasePreconditionsAndEffects() {
-        SetPrecondition(new GoapEffect(GOAP_EFFECT_CONDITION.HAS_TRAIT, "Restrained", false, GOAP_EFFECT_TARGET.TARGET), TargetIsRestrainedOrDead);
+        // SetPrecondition(new GoapEffect(GOAP_EFFECT_CONDITION.HAS_TRAIT, "Restrained", false, GOAP_EFFECT_TARGET.TARGET), TargetIsRestrainedOrDead);
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_POI, conditionKey = "Carry Restrained", isKeyANumber = false, target = GOAP_EFFECT_TARGET.TARGET });
+    }
+    public override Precondition GetPrecondition(Character actor, IPointOfInterest target, OtherData[] otherData, JOB_TYPE jobType, out bool isOverridden) {
+        if (!target.traitContainer.HasTrait("Hibernating")) {
+            Precondition p = _carryPrecondition;
+            isOverridden = true;
+            return p;
+        }
+        return base.GetPrecondition(actor, target, otherData, jobType, out isOverridden);
     }
     public override void Perform(ActualGoapNode goapNode) {
         base.Perform(goapNode);

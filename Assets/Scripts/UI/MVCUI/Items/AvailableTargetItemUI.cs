@@ -21,21 +21,34 @@ public class AvailableTargetItemUI : MonoBehaviour {
         hoverText = goCover.GetComponent<HoverText>();
 
     }
-	public void InitializeItem(IStoredTarget p_target, string p_hoverText = "") {
+	public void InitializeItem(IStoredTarget p_target, bool showCover, string p_hoverText = "") {
         if (p_hoverText != string.Empty) {
             hoverText.hoverDisplayText = p_hoverText;
         }
         target = p_target;
-        bool isCharacter = target is Character;
-        Character targetCharacter = null;
-        if (isCharacter) {
-            targetCharacter = target as Character;
-        }
-        if (isCharacter && (target.isTargetted || (targetCharacter.currentStructure.structureType == STRUCTURE_TYPE.KENNEL || targetCharacter.currentStructure.structureType == STRUCTURE_TYPE.TORTURE_CHAMBERS))) {
+        if (showCover) {
             ShowCover();
         } else {
             HideCover();
         }
+        // bool isCharacter = target is Character;
+        // Character targetCharacter = null;
+        // if (isCharacter) {
+        //     targetCharacter = target as Character;
+        // }
+        // if (isCharacter) {
+        //     if ((target.isTargetted || (targetCharacter.currentStructure.structureType == STRUCTURE_TYPE.KENNEL || targetCharacter.currentStructure.structureType == STRUCTURE_TYPE.TORTURE_CHAMBERS))) {
+        //         ShowCover();    
+        //     } else if (targetCharacter.traitContainer.HasTrait("Sturdy")) {
+        //         //Sturdy characters cannot be targeted by snatch
+        //         //Reference: https://trello.com/c/PpwfezCb/4679-live-v040-harpy-trying-to-abduct-a-dragon
+        //         ShowCover();
+        //     } else {
+        //         HideCover();
+        //     }
+        // } else {
+        //     HideCover();
+        // }
         txtName.text = $"{p_target.iconRichText} {p_target.name}";
     }
 
