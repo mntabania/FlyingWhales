@@ -2796,15 +2796,34 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             //hp was reduced
             jobComponent.OnHPReduced();
             CombatManager.Instance.ApplyElementalDamage(amount, elementalDamageType, this, responsibleCharacter, elementalTraitProcessor, setAsPlayerSource: isPlayerSource);
+            if (responsibleCharacter is Character attackerCharacter) {
+                if (attackerCharacter.race.IsSapient()) {
+                    if (attackerCharacter.characterClass.attackType == ATTACK_TYPE.PHYSICAL) {
+                        responsibleCharacter.talentComponent.GetTalent(CHARACTER_TALENT.Martial_Arts).AdjustExperience(2, responsibleCharacter);
+                    } else {
+                        responsibleCharacter.talentComponent.GetTalent(CHARACTER_TALENT.Combat_Magic).AdjustExperience(2, responsibleCharacter);
+                    }
+                }
+            }
         } else {
             //hp was increased
             Messenger.Broadcast(JobSignals.CHECK_JOB_APPLICABILITY, JOB_TYPE.RECOVER_HP, this as IPointOfInterest);
+        }
+        if (!HasHealth()) {
+            if (responsibleCharacter.race.IsSapient()) {
+                if (responsibleCharacter.characterClass.attackType == ATTACK_TYPE.PHYSICAL) {
+                    responsibleCharacter.talentComponent.GetTalent(CHARACTER_TALENT.Martial_Arts).AdjustExperience(8, responsibleCharacter);
+                } else {
+                    responsibleCharacter.talentComponent.GetTalent(CHARACTER_TALENT.Combat_Magic).AdjustExperience(8, responsibleCharacter);
+                }
+            }
         }
         if (!HasHealth()) { //triggerDeath && 
             if (triggerDeath) {
                 if (source != null && source != this) {
                     if (responsibleCharacter != null) {
                         Death("attacked", responsibleCharacter: responsibleCharacter, isPlayerSource: isPlayerSource);
+                        
                     } else {
                         string cause = "attacked";
                         if (source is SkillData skillData) {

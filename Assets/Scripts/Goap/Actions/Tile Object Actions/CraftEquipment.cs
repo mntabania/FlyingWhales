@@ -173,6 +173,8 @@ public class CraftEquipment : GoapAction {
         if (p_node.actor.structureComponent.workPlaceStructure is Workshop workshop) {
             workshop.RemoveFirstRequestThatIsFulfilledBy(target);
         }
+        p_node.actor.talentComponent.GetTalent(CHARACTER_TALENT.Crafting).AdjustExperience(15, p_node.actor);
+       
     }
     #endregion
 

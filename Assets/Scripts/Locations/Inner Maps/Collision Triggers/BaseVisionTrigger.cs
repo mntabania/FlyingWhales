@@ -34,7 +34,7 @@ public abstract class BaseVisionTrigger : MonoBehaviour{
     /// receiver that is attached to this.
     /// </summary>
     /// <param name="state">The active state to put the colliders in.</param>
-    public void SetAllCollidersState(bool state) {
+    public virtual void SetAllCollidersState(bool state) {
         _mainCollider.enabled = state;
         _projectileReceiver.SetColliderState(state);
     }
@@ -42,7 +42,7 @@ public abstract class BaseVisionTrigger : MonoBehaviour{
     /// Set if this vision trigger should be active.
     /// </summary>
     /// <param name="state">The state to set the collider in.</param>
-    public void SetVisionTriggerCollidersState(bool state) {
+    public virtual void SetVisionTriggerCollidersState(bool state) {
         _mainCollider.enabled = state;
     }
     public virtual void Reset() {
@@ -55,7 +55,7 @@ public abstract class BaseVisionTrigger : MonoBehaviour{
     }
 
     #region Layers
-    public void SetFilterVotes(int votes) {
+    public virtual void SetFilterVotes(int votes) {
         _filterVotes = votes;
         DetermineLayerBasedOnVotes();
     }
@@ -65,7 +65,7 @@ public abstract class BaseVisionTrigger : MonoBehaviour{
     /// Whenever votes are submitted, a function (<see cref="DetermineLayerBasedOnVotes"/>)
     /// determines whether or not this object should be part of the filtered layer or not.
     /// </summary>
-    public void VoteToMakeVisibleToCharacters() {
+    public virtual void VoteToMakeVisibleToCharacters() {
         _filterVotes = filterVotes + 1;
         DetermineLayerBasedOnVotes();
     }
@@ -75,7 +75,7 @@ public abstract class BaseVisionTrigger : MonoBehaviour{
     /// Whenever votes are submitted, a function (<see cref="DetermineLayerBasedOnVotes"/>)
     /// determines whether or not this object should be part of the filtered layer or not.
     /// </summary>
-    public void VoteToMakeInvisibleToCharacters() {
+    public virtual void VoteToMakeInvisibleToCharacters() {
         _filterVotes = filterVotes - 1;
         DetermineLayerBasedOnVotes();
     }
