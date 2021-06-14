@@ -751,8 +751,12 @@ public class Player : ILeader, IObjectManipulator {
         }
         LocationGridTile hoveredTile = InnerMapManager.Instance.GetTileFromMousePosition();
         if (hoveredTile != null && hoveredTile.tileObjectComponent.objHere == null) {
+            //DatabaseManager.Instance.tileObjectDatabase.destroyedTileObjects.Clear();
+            //TileObject ex = new FireCrystal();
+            //DatabaseManager.Instance.tileObjectDatabase.UnRegisterTileObject(ex);
             TileObject item = InnerMapManager.Instance.CreateNewTileObject<TileObject>(currentActiveItem);
             hoveredTile.structure.AddPOI(item, hoveredTile);
+            //hoveredTile.structure.RemovePOI(item);
         }
     }
     #endregion
@@ -863,7 +867,6 @@ public class Player : ILeader, IObjectManipulator {
                 return plagueComponent.plaguePoints >= p_amount;
             case CURRENCY.Spirit_Energy:
                 return spiritEnergy >= p_amount;
-                break;
             default:
                 throw new ArgumentOutOfRangeException(nameof(p_currency), p_currency, null);
         }

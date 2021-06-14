@@ -76,7 +76,7 @@ public class DatabaseManager : MonoBehaviour {
         if (type == typeof(Character) || type.IsSubclassOf(typeof(Character))) {
             return characterDatabase.GetCharacterByPersistentID(persistentID);
         } else if (type == typeof(TileObject) || type.IsSubclassOf(typeof(TileObject))) {
-            return tileObjectDatabase.GetTileObjectByPersistentID(persistentID);
+            return tileObjectDatabase.GetTileObjectByPersistentIDSafe(persistentID);
         } else if (type == typeof(LocationStructure) || type.IsSubclassOf(typeof(LocationStructure))) {
             return structureDatabase.GetStructureByPersistentID(persistentID);
         } else if (type == typeof(Region)) {

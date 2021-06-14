@@ -112,12 +112,12 @@ public class TileObjectDatabase {
         destroyedTileObjects.Add(wr);
     }
     private void ProcessCleanUpDestroyedTileObjects() {
-        if (!cleanUpThread.isProcessing) {
-            cleanUpThread.SetIsProcessing(true);
-            cleanUpThread.SetListToBeCleanedUp(destroyedTileObjects);
-            cleanUpThread.SetDictionaryToBeCleanedUp(destroyedTileObjectsDictionary);
-            MultiThreadPool.Instance.AddToThreadPool(cleanUpThread);
-        }
+        //if (!cleanUpThread.isProcessing) {
+        //    cleanUpThread.SetIsProcessing(true);
+        //    cleanUpThread.SetListToBeCleanedUp(destroyedTileObjects);
+        //    cleanUpThread.SetDictionaryToBeCleanedUp(destroyedTileObjectsDictionary);
+        //    MultiThreadPool.Instance.AddToThreadPool(cleanUpThread);
+        //}
     }
     public void DoneProcessCleanUpDestroyedTileObjects(Dictionary<string, WeakReference> cleanDictionary) {
         //Switch the destroyedTileObjectsDictionary with the clean dictionary and put the old one in the object pool

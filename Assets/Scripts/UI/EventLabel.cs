@@ -27,13 +27,10 @@ public class EventLabel : MonoBehaviour, IPointerClickHandler, IPointerEnterHand
     [SerializeField] protected bool isHovering;
     [SerializeField] private bool wasHoveringPreviousFrame = false;
 
-    protected Dictionary<string, object> objectDictionary;
-
     //cached this so as not to create a new array everytime this is hovered/clicked. This is used for splitting words in linkText
     private static char[] linkTextSeparators = new[] {'|'}; 
     
     private void Awake() {
-        objectDictionary = new Dictionary<string, object>();
         if (text == null) {
             text = gameObject.GetComponent<TextMeshProUGUI>();
         }
@@ -123,7 +120,6 @@ public class EventLabel : MonoBehaviour, IPointerClickHandler, IPointerEnterHand
         if (!allowClickAction) {
             return;
         }
-        objectDictionary.Clear();
         isHovering = false;
         HoverOutAction();
     }

@@ -1380,6 +1380,9 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     #region Utilities
     public void DestroyPermanently() {
         //Removed this temporarily because there are many loose ends and reference errors in saving/loading with a null tile object
+#if DEBUG_LOG
+        Debug.Log(name + " is permanently destroyed");
+#endif
         DatabaseManager.Instance.tileObjectDatabase.UnRegisterTileObject(this);
     }
     #endregion
