@@ -85,6 +85,8 @@ public class FindFish : GoapAction {
         }
         if (m_count <= 0) {
             ProduceNoneLogs(p_node);
+        } else {
+            ProduceLogsPerTick(p_node);
         }
     }
     #endregion
@@ -103,7 +105,7 @@ public class FindFish : GoapAction {
         m_matsToHaul = null;
         m_count = 0;
         int pileCount = p_node.actor.gridTileLocation.GetCountOfNeighboursThatHasTileObjectOfType(TILE_OBJECT_TYPE.FISH_PILE);
-        if (UtilityScripts.GameUtilities.RandomBetweenTwoNumbers(0, 100) < 5) {
+        if (UtilityScripts.GameUtilities.RandomBetweenTwoNumbers(0, 100) < 85) {
             if (pileCount > 0 || p_node.actor.gridTileLocation.GetFirstNeighborThatIsPassableAndNoObject() != null) {
                 m_count += 10;
                 ProduceMatsPile(p_node);
@@ -135,15 +137,10 @@ public class FindFish : GoapAction {
                 }
                 m_matsToHaul = InnerMapManager.Instance.CreateNewTileObject<FishPile>(TILE_OBJECT_TYPE.FISH_PILE);
                 tileToSpawnPile.structure.AddPOI(m_matsToHaul, tileToSpawnPile);
-                p_node.actor.talentComponent.GetTalent(CHARACTER_TALENT.Food).AdjustExperience(4, p_node.actor);
+                p_node.actor.talentComponent?.GetTalent(CHARACTER_TALENT.Food).AdjustExperience(20, p_node.actor);
                 m_matsToHaul.SetResourceInPile(m_count);
             }
-            
         }
-
-
-        
-        
         return m_matsToHaul;
     }
 

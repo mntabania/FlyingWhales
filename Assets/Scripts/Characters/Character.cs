@@ -2799,9 +2799,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             if (responsibleCharacter is Character attackerCharacter) {
                 if (attackerCharacter.race.IsSapient()) {
                     if (attackerCharacter.characterClass.attackType == ATTACK_TYPE.PHYSICAL) {
-                        responsibleCharacter.talentComponent.GetTalent(CHARACTER_TALENT.Martial_Arts).AdjustExperience(2, responsibleCharacter);
+                        responsibleCharacter?.talentComponent.GetTalent(CHARACTER_TALENT.Martial_Arts).AdjustExperience(2, responsibleCharacter);
                     } else {
-                        responsibleCharacter.talentComponent.GetTalent(CHARACTER_TALENT.Combat_Magic).AdjustExperience(2, responsibleCharacter);
+                        responsibleCharacter?.talentComponent.GetTalent(CHARACTER_TALENT.Combat_Magic).AdjustExperience(2, responsibleCharacter);
                     }
                 }
             }
@@ -2810,11 +2810,11 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             Messenger.Broadcast(JobSignals.CHECK_JOB_APPLICABILITY, JOB_TYPE.RECOVER_HP, this as IPointOfInterest);
         }
         if (!HasHealth()) {
-            if (responsibleCharacter.race.IsSapient()) {
+            if (responsibleCharacter != null && responsibleCharacter is Character && responsibleCharacter.race.IsSapient()) {
                 if (responsibleCharacter.characterClass.attackType == ATTACK_TYPE.PHYSICAL) {
-                    responsibleCharacter.talentComponent.GetTalent(CHARACTER_TALENT.Martial_Arts).AdjustExperience(8, responsibleCharacter);
+                    responsibleCharacter?.talentComponent.GetTalent(CHARACTER_TALENT.Martial_Arts).AdjustExperience(8, responsibleCharacter);
                 } else {
-                    responsibleCharacter.talentComponent.GetTalent(CHARACTER_TALENT.Combat_Magic).AdjustExperience(8, responsibleCharacter);
+                    responsibleCharacter?.talentComponent.GetTalent(CHARACTER_TALENT.Combat_Magic).AdjustExperience(8, responsibleCharacter);
                 }
             }
         }
@@ -6462,7 +6462,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
 
     #region villager progression HUMANS = skill levelup, Elven = Power Crystal absorbed
     //function to be attached on skill levelup NOTE!! - only humans should gain from this call
-    void OnSkillLevelUp() {
+    public void OnSkillLevelUp() {
         CharacterClassData classData = CharacterManager.Instance.GetOrCreateCharacterClassData(classComponent.characterClass.className);
         piercingAndResistancesComponent.AdjustPiercing(classData.characterSkillUpdateData.GetPiercingBonus());
         if (classData.characterSkillUpdateData.GetAllElementResistanceBonus() > 0) {

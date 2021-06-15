@@ -76,7 +76,7 @@ public class SkinAnimal : GoapAction {
         if ((p_node.target as Character).currentRegion != null) {
             (p_node.target as Character).currentRegion.RemoveCharacterFromLocation((p_node.target as Character));
         }
-        p_node.actor.talentComponent.GetTalent(CHARACTER_TALENT.Resources).AdjustExperience(4, p_node.actor);
+        p_node.actor.talentComponent?.GetTalent(CHARACTER_TALENT.Resources).AdjustExperience(4, p_node.actor);
         return matsToHaul;
     }
 

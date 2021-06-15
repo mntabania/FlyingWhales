@@ -52,6 +52,9 @@ namespace Character_Talents {
             SetLevel(level + 1);
             CharacterTalentData talentData = CharacterManager.Instance.talentManager.GetOrCreateCharacterTalentData(talentType);
             talentData.OnLevelUp(p_character, level);
+            if (p_character.race == RACE.HUMANS) {
+                p_character.OnSkillLevelUp();
+            }
         }
         public void ApplyEffectsBasedOnLevel(Character p_character) {
             CharacterTalentData talentData = CharacterManager.Instance.talentManager.GetOrCreateCharacterTalentData(talentType);

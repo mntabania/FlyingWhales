@@ -501,8 +501,7 @@ public class Butcher : GoapAction {
                 p_node.actor.traitContainer.AddTrait(p_node.actor, "Traumatized", targetCharacter);
             }
         }
-
-        p_node.actor.talentComponent.GetTalent(CHARACTER_TALENT.Food).AdjustExperience(4, p_node.actor);
+        p_node.actor.talentComponent?.GetTalent(CHARACTER_TALENT.Food).AdjustExperience(4, p_node.actor);
     }
 #endregion
 }

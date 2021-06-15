@@ -59,10 +59,6 @@ public class GatherHerb : GoapAction {
     HerbPlant ProduceHerbPlant(ActualGoapNode p_node) {
         HerbPlant herbPlant = p_node.target as HerbPlant;
         Assert.IsNotNull(herbPlant);
-        if (herbPlant.gridTileLocation != null) {
-            herbPlant.gridTileLocation.structure.RemovePOI(herbPlant);
-        }
-
         p_node.actor.PickUpItem(herbPlant);
 
         return herbPlant;
