@@ -1438,6 +1438,7 @@ public enum CHANCE_TYPE {
     Raid_Kidnap_Chance,
     Raid_Chance,
     Rescue_Chance,
+    Find_Fish,
 }
 public enum Gradient_Direction {
     Top, Bottom, Left, Right

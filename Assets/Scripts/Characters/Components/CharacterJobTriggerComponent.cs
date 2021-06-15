@@ -25,6 +25,9 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
     public bool canReportDemonicStructure { get; private set; }
     //public List<JOB_TYPE> additionalPriorityJobs { get; }
 
+    public int producedFish { get; set; }
+    public FishPile fishPile { get; set; }
+
     public CharacterJobTriggerComponent() {
         canReportDemonicStructure = true;
         numOfTimesActionDone = new Dictionary<INTERACTION_TYPE, int>();
@@ -42,6 +45,8 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
         hasStartedScreamCheck = data.hasStartedScreamCheck;
         doNotDoRecoverHPJob = data.doNotDoRecoverHPJob;
         canReportDemonicStructure = data.canReportDemonicStructure;
+        producedFish = data.producedFish;
+		
         //additionalPriorityJobs = data.additionalPriorityJobs;
         if (!canReportDemonicStructure) {
 	        //make character listen to this so that he/she can report again after reaching home
@@ -3701,6 +3706,9 @@ public class SaveDataCharacterJobTriggerComponent : SaveData<CharacterJobTrigger
     public bool doNotDoRecoverHPJob;
     public bool canReportDemonicStructure;
 
+    public int producedFish;
+    //public string fishPileID;
+
 	#region Overrides
     public override void Save(CharacterJobTriggerComponent data) {
         //primaryJob = data.primaryJob;
@@ -3711,6 +3719,8 @@ public class SaveDataCharacterJobTriggerComponent : SaveData<CharacterJobTrigger
         hasStartedScreamCheck = data.hasStartedScreamCheck;
         doNotDoRecoverHPJob = data.doNotDoRecoverHPJob;
         canReportDemonicStructure = data.canReportDemonicStructure;
+        producedFish = data.producedFish;
+        //fishPileID = data.fishPile.persistentID;
         //additionalPriorityJobs = data.additionalPriorityJobs;
     }
 
