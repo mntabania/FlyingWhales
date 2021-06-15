@@ -32,7 +32,7 @@ namespace UtilityScripts {
                 summary += $"\nPoisoned Tiles: {npcSettlement.settlementJobTriggerComponent.poisonedTiles.Count.ToString()}";
                 summary += $"\nHas Peasants: {npcSettlement.hasPeasants.ToString()}, Has Workers: {npcSettlement.hasWorkers.ToString()}";
                 summary += $"\nStorage: {npcSettlement.mainStorage?.name ?? "None"}. Prison: {npcSettlement.prison?.name ?? "None"}";
-                summary += $"\nRocks Count: {npcSettlement.SettlementResources.rocks.Count}";
+                //summary += $"\nRocks Count: {npcSettlement.SettlementResources.rocks.Count}";
                 summary += $"\nTrees Count: {npcSettlement.SettlementResources.trees.Count}";
                 summary += $"\nFishing Spots Count: {npcSettlement.SettlementResources.fishingSpots.Count}";
                 summary += $"\nCharacters inside: {npcSettlement.SettlementResources.characters.Count}";

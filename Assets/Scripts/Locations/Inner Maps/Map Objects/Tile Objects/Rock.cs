@@ -16,7 +16,7 @@ public class Rock : TileObject{
             return null;
         }
     }
-    public BaseSettlement parentSettlement { get; private set; }
+    //public BaseSettlement parentSettlement { get; private set; }
     
     private RockGameObject _rockGameObject;
     public Rock() {
@@ -26,7 +26,7 @@ public class Rock : TileObject{
         AddAdvertisedAction(INTERACTION_TYPE.MINE_STONE);
 
         SetYield(50);
-        BaseSettlement.onSettlementBuilt += UpdateSettlementResourcesParent;
+        //BaseSettlement.onSettlementBuilt += UpdateSettlementResourcesParent;
     }
     public Rock(SaveDataTileObject data) : base(data) { }
     protected override void CreateMapObjectVisual() {
@@ -49,26 +49,26 @@ public class Rock : TileObject{
     public void SetYield(int amount) {
         yield = amount;
     }
-    protected override void UpdateSettlementResourcesParent() {
-        if (gridTileLocation != null) {
-            if (gridTileLocation.area.settlementOnArea != null) {
-                gridTileLocation.area.settlementOnArea.SettlementResources?.AddToListBasedOnRequirement(SettlementResources.StructureRequirement.ROCK, this);
-            }
-            gridTileLocation.area.neighbourComponent.neighbours.ForEach((eachNeighbor) => {
-                if (eachNeighbor.settlementOnArea != null) {
-                    //eachNeighbor.settlementOnArea.SettlementResources?.AddToListBasedOnRequirement(SettlementResources.StructureRequirement.ROCK, this);
-                    parentSettlement = eachNeighbor.settlementOnArea;
-                }
-            });
-        }
-    }
-    protected override void RemoveFromSettlementResourcesParent() {
-        if (parentSettlement != null && parentSettlement.SettlementResources != null) {
-            if (parentSettlement.SettlementResources.rocks.Remove(this)) {
-                parentSettlement = null;
-            }
-        }
-    }
+    //protected override void UpdateSettlementResourcesParent() {
+    //    if (gridTileLocation != null) {
+    //        if (gridTileLocation.area.settlementOnArea != null) {
+    //            gridTileLocation.area.settlementOnArea.SettlementResources?.AddToListBasedOnRequirement(SettlementResources.StructureRequirement.ROCK, this);
+    //        }
+    //        gridTileLocation.area.neighbourComponent.neighbours.ForEach((eachNeighbor) => {
+    //            if (eachNeighbor.settlementOnArea != null) {
+    //                //eachNeighbor.settlementOnArea.SettlementResources?.AddToListBasedOnRequirement(SettlementResources.StructureRequirement.ROCK, this);
+    //                parentSettlement = eachNeighbor.settlementOnArea;
+    //            }
+    //        });
+    //    }
+    //}
+    //protected override void RemoveFromSettlementResourcesParent() {
+    //    if (parentSettlement != null && parentSettlement.SettlementResources != null) {
+    //        if (parentSettlement.SettlementResources.rocks.Remove(this)) {
+    //            parentSettlement = null;
+    //        }
+    //    }
+    //}
 
     public override void OnPlacePOI() {
         base.OnPlacePOI();
@@ -77,10 +77,10 @@ public class Rock : TileObject{
         }
         UpdateSettlementResourcesParent();
     }
-    public override void OnDestroyPOI() {
-        base.OnDestroyPOI();
-        BaseSettlement.onSettlementBuilt -= UpdateSettlementResourcesParent;
-    }
+    //public override void OnDestroyPOI() {
+    //    base.OnDestroyPOI();
+    //    BaseSettlement.onSettlementBuilt -= UpdateSettlementResourcesParent;
+    //}
 }
 #region Save Data
 public class SaveDataRock : SaveDataTileObject {

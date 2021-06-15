@@ -290,8 +290,8 @@ public class Party : ILogFiller, ISavable, IJobOwner, IBookmarkable {
             if (isPlayerParty) {
                 acceptQuest = true;
             } else {
-                TIME_IN_WORDS currentTimeInWords = GameManager.Instance.GetCurrentTimeInWordsOfTick();
-                acceptQuest = canAcceptQuests && (currentTimeInWords == TIME_IN_WORDS.MORNING || currentTimeInWords == TIME_IN_WORDS.LUNCH_TIME || currentTimeInWords == TIME_IN_WORDS.AFTERNOON);
+                //TIME_IN_WORDS currentTimeInWords = GameManager.Instance.GetCurrentTimeInWordsOfTick();
+                acceptQuest = canAcceptQuests; //&& (currentTimeInWords == TIME_IN_WORDS.MORNING || currentTimeInWords == TIME_IN_WORDS.LUNCH_TIME || currentTimeInWords == TIME_IN_WORDS.AFTERNOON);
             }
             if (acceptQuest) {
                 PartyQuest quest = partyFaction.partyQuestBoard.GetFirstUnassignedPartyQuestFor(this);
@@ -506,7 +506,7 @@ public class Party : ILogFiller, ISavable, IJobOwner, IBookmarkable {
                         member.movementComponent.SetEnableDigging(true);
                         member.traitContainer.AddTrait(member, "Travelling");
                     }
-                    member.interruptComponent.TriggerInterrupt(INTERRUPT.Morale_Boost, member);
+                    //member.interruptComponent.TriggerInterrupt(INTERRUPT.Morale_Boost, member);
                 }
                 if (currentQuest.waitingToWorkingStateImmediately) {
                     SetPartyState(PARTY_STATE.Working);
