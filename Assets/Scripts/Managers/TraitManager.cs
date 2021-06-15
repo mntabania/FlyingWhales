@@ -34,6 +34,8 @@ public class TraitManager : BaseMonoBehaviour {
     public const string After_Exiting_Combat = "After_Exiting_Combat";
     public const string Per_Tick_While_Stationary_Unoccupied = "Per_Tick_While_Stationary_Unoccupied";
     public const string After_Death = "After_Death";
+    public const string Villager_Reaction = "Villager_Reaction";
+
 
     public static string[] instancedTraitsAndStatuses = new string[] {
         "Restrained", "Injured", "Kleptomaniac", "Lycanthrope", "Vampire",

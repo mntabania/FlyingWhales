@@ -408,7 +408,11 @@ namespace Traits {
                 Messenger.Broadcast(PlayerSignals.CREATE_CHAOS_ORBS, gridTile.centeredWorldLocation, amount, gridTile.parentMap);
             }
         }
-#endregion
+        #endregion
+
+        #region Reactions
+        public virtual void VillagerReactionToTileObjectTrait(TileObject owner, Character actor, ref string debugLog) { }
+        #endregion
     }
 }
 

@@ -76,7 +76,7 @@ public class BallLightning : MovingTileObject {
 #endif
     }
 
-#region Moving Tile Object
+    #region Moving Tile Object
     protected override bool TryGetGridTileLocation(out LocationGridTile tile) {
         if (_ballLightningMapVisual != null) {
             if (_ballLightningMapVisual.isSpawned) {
@@ -87,7 +87,18 @@ public class BallLightning : MovingTileObject {
         tile = null;
         return false;
     }
-#endregion
+    #endregion
+
+    #region Reactions
+    public override void GeneralReactionToTileObject(Character actor, ref string debugLog) {
+        base.GeneralReactionToTileObject(actor, ref debugLog);
+        if (actor is Troll) {
+            if (traitContainer.HasTrait("Lightning Remnant")) {
+                actor.combatComponent.Flight(this, "saw something frightening");
+            }
+        }
+    }
+    #endregion
 }
 
 #region Save Data

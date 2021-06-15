@@ -2,6 +2,7 @@
 using Inner_Maps.Location_Structures;
 using Inner_Maps.Map_Objects.Map_Object_Visuals;
 using Locations.Settlements;
+using UtilityScripts;
 
 public class FishingSpot : TileObject {
     public StructureConnector structureConnector {
@@ -127,6 +128,26 @@ public class FishingSpot : TileObject {
     private void OnStructureDestroyed(LocationStructure p_structure) {
         if (p_structure == connectedFishingShack) {
             SetConnectedFishingShack(null);
+        }
+    }
+    #endregion
+
+    #region Reactions
+    public override void GeneralReactionToTileObject(Character actor, ref string debugLog) {
+        base.GeneralReactionToTileObject(actor, ref debugLog);
+        if (gridTileLocation != null) {
+            if (actor.race != RACE.TRITON) {
+                if (GameUtilities.RollChance(0.05f)) {
+                    if (actor.canBeTargetedByLandActions) {
+                        if (!actor.traitContainer.HasTrait("Sturdy", "Hibernating") && !actor.HasJobTargetingThis(JOB_TYPE.TRITON_KIDNAP)) {
+                            Summon summon = CharacterManager.Instance.CreateNewSummon(SUMMON_TYPE.Triton, FactionManager.Instance.neutralFaction, homeRegion: currentRegion, bypassIdeologyChecking: true);
+                            summon.SetIsVolatile(true);
+                            CharacterManager.Instance.PlaceSummonInitially(summon, gridTileLocation);
+                            (summon as Triton).TriggerTritonKidnap(actor);
+                        }
+                    }
+                }
+            }
         }
     }
     #endregion

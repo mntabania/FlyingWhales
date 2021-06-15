@@ -40,6 +40,7 @@ namespace Traits {
             AddTraitOverrideFunctionIdentifier(TraitManager.Execute_Pre_Effect_Trait);
             AddTraitOverrideFunctionIdentifier(TraitManager.Execute_Per_Tick_Effect_Trait);
             AddTraitOverrideFunctionIdentifier(TraitManager.Death_Trait);
+            AddTraitOverrideFunctionIdentifier(TraitManager.Villager_Reaction);
         }
 
         #region Loading
@@ -326,7 +327,7 @@ namespace Traits {
         }
 #endregion
 
-#region IElementalTrait
+        #region IElementalTrait
         public void SetIsPlayerSource(bool p_state) {
             if (isPlayerSource != p_state) {
                 isPlayerSource = p_state;
@@ -339,7 +340,46 @@ namespace Traits {
                 }
             }
         }
-#endregion
+        #endregion
+
+        #region Reactions
+        public override void VillagerReactionToTileObjectTrait(TileObject owner, Character actor, ref string debugLog) {
+            base.VillagerReactionToTileObjectTrait(owner, actor, ref debugLog);
+            Lazy lazy = actor.traitContainer.GetTraitOrStatus<Lazy>("Lazy");
+            if (!actor.combatComponent.isInActualCombat && !actor.hasSeenFire) {
+                bool hasHigherPrioJob = actor.jobQueue.jobsInQueue.Count > 0 && actor.jobQueue.jobsInQueue[0].priority > JOB_TYPE.DOUSE_FIRE.GetJobTypePriority();
+                if (!hasHigherPrioJob
+                    && owner.gridTileLocation != null
+                    && actor.homeSettlement != null
+                    && owner.gridTileLocation.IsPartOfSettlement(actor.homeSettlement)
+                    && !actor.traitContainer.HasTrait("Pyrophobic")
+                    && !actor.traitContainer.HasTrait("Dousing")
+                    && !actor.jobQueue.HasJob(JOB_TYPE.DOUSE_FIRE)) {
+#if DEBUG_LOG
+                    debugLog = $"{debugLog}\n-Target is Burning and Character is not Pyrophobic";
+#endif
+                    actor.SetHasSeenFire(true);
+                    if (lazy == null || !lazy.TryIgnoreUrgentTask(JOB_TYPE.DOUSE_FIRE)) {
+                        actor.homeSettlement.settlementJobTriggerComponent.TriggerDouseFire();
+                        if (!actor.homeSettlement.HasJob(JOB_TYPE.DOUSE_FIRE)) {
+#if DEBUG_LOG
+                            Debug.LogWarning($"{actor.name} saw a fire in a settlement but no douse fire jobs were created.");
+#endif
+                        }
+
+                        JobQueueItem douseJob = actor.homeSettlement.GetFirstJobOfTypeThatCanBeAssignedTo(JOB_TYPE.DOUSE_FIRE, actor);
+                        if (douseJob != null) {
+                            actor.jobQueue.AddJobInQueue(douseJob);
+                        } else {
+                            if (actor.combatComponent.combatMode == COMBAT_MODE.Aggressive) {
+                                actor.combatComponent.Flight(owner, "saw fire");
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        #endregion
 
     }
 }

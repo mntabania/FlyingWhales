@@ -17,7 +17,7 @@ using Prison = Inner_Maps.Location_Structures.Prison;
 using Random = System.Random;
 
 public class ReactionComponent : CharacterComponent {
-    private List<Character> _assumptionSuspects;
+    public List<Character> assumptionSuspects { get; private set; }
     public List<Character> charactersThatSawThisDead { get; private set; }
     public bool isHidden { get; private set; }
     public Character disguisedCharacter { get; private set; }
@@ -27,11 +27,11 @@ public class ReactionComponent : CharacterComponent {
     #endregion
     
     public ReactionComponent() {
-        _assumptionSuspects = new List<Character>();
+        assumptionSuspects = new List<Character>();
         charactersThatSawThisDead = new List<Character>();
     }
     public ReactionComponent(SaveDataReactionComponent data) {
-        _assumptionSuspects = new List<Character>();
+        assumptionSuspects = new List<Character>();
         charactersThatSawThisDead = new List<Character>();
         isHidden = data.isHidden;
     }
@@ -1484,7 +1484,7 @@ public class ReactionComponent : CharacterComponent {
 #if DEBUG_LOG
                                 debugLog = $"{debugLog}\n-Owner is Suspicious or Critical Mood or Low Mood";
 #endif
-                                _assumptionSuspects.Clear();
+                                assumptionSuspects.Clear();
                                 for (int i = 0; i < actor.marker.inVisionCharacters.Count; i++) {
                                     Character inVision = actor.marker.inVisionCharacters[i];
                                     if (inVision != targetCharacter && !inVision.isDead && inVision.relationshipContainer.IsEnemiesWith(disguisedTarget)) {
@@ -1492,11 +1492,11 @@ public class ReactionComponent : CharacterComponent {
                                             //If the in vision character is going to bury the dead, do not assume
                                             continue;
                                         }
-                                        _assumptionSuspects.Add(inVision);
+                                        assumptionSuspects.Add(inVision);
                                     }
                                 }
-                                if(_assumptionSuspects.Count > 0) {
-                                    Character chosenSuspect = _assumptionSuspects[UnityEngine.Random.Range(0, _assumptionSuspects.Count)];
+                                if(assumptionSuspects.Count > 0) {
+                                    Character chosenSuspect = assumptionSuspects[UnityEngine.Random.Range(0, assumptionSuspects.Count)];
 #if DEBUG_LOG
                                     debugLog = $"{debugLog}\n-There are in vision characters that considers target character as Enemy/Rival";
                                     debugLog = debugLog + ("\n-Will create Murder assumption on " + chosenSuspect.name);
@@ -1588,76 +1588,78 @@ public class ReactionComponent : CharacterComponent {
     }
     private void ReactTo(Character actor, TileObject targetTileObject, ref string debugLog) {
         //TODO: USE DISGUISED ACTOR AND TARGET FOR CHECKING
-        if(actor is Troll) {
-            if(targetTileObject is BallLightning || targetTileObject.traitContainer.HasTrait("Lightning Remnant")) {
-                actor.combatComponent.Flight(targetTileObject, "saw something frightening");
-            } else if(targetTileObject is WoodPile || targetTileObject is StonePile || targetTileObject is MetalPile || targetTileObject is Gold || targetTileObject is Diamond) {
-                if (actor.homeStructure != null && targetTileObject.gridTileLocation.structure != actor.homeStructure && !actor.jobQueue.HasJob(JOB_TYPE.DROP_ITEM)) {
-                    actor.jobComponent.CreateHoardItemJob(targetTileObject, actor.homeStructure, true);
-                }
-            }
-        }
-        
-        
-        if (targetTileObject is PowerCrystal && actor.race == RACE.ELVES) {
-            if (!targetTileObject.HasJobTargetingThis(JOB_TYPE.ABSORB_CRYSTAL)) {
-				if (!actor.jobComponent.HasHigherPriorityJobThan(JOB_TYPE.ABSORB_CRYSTAL)) {
-                    actor.jobComponent.TriggerAbsorbPowerCrystal(targetTileObject);
-                }
-            }
-        }
-        
-        if (targetTileObject is ResourcePile resourcePile && actor.homeSettlement != null) {
-            //if character sees a resource pile that is outside his/her home settlement or
-            //is not at his/her settlement's main storage
-            //Do not haul to city center anymore because hauling is now a personal job and resource piles will be hauled to respective structures
-            //if (resourcePile.gridTileLocation.IsPartOfSettlement(actor.homeSettlement) == false ||
-            //    resourcePile.gridTileLocation.structure != actor.homeSettlement.mainStorage) {
-            //    //do not create haul job for human and elven meat if actor is part of major faction
-            //    if(actor.faction?.factionType.type == FACTION_TYPE.Ratmen) {
-            //        if(resourcePile is FoodPile) {
-            //            actor.homeSettlement.settlementJobTriggerComponent.TryCreateHaulJob(resourcePile);
-            //        }
-            //    } else {
-            //        bool cannotCreateHaulJob = (resourcePile.tileObjectType == TILE_OBJECT_TYPE.ELF_MEAT || resourcePile.tileObjectType == TILE_OBJECT_TYPE.HUMAN_MEAT) && actor.faction != null && actor.faction.isMajorNonPlayer;
-            //        if (!cannotCreateHaulJob) {
-            //            actor.homeSettlement.settlementJobTriggerComponent.TryCreateHaulJob(resourcePile);
-            //        }
-            //    }
-            //}
-            if (actor.race.IsSapient() && (resourcePile.tileObjectType == TILE_OBJECT_TYPE.ELF_MEAT || resourcePile.tileObjectType == TILE_OBJECT_TYPE.HUMAN_MEAT) && resourcePile is FoodPile foodPile && 
-                !actor.traitContainer.HasTrait("Cannibal") && !actor.traitContainer.HasTrait("Malnourished")) {
-                if (!actor.defaultCharacterTrait.HasAlreadyReactedToFoodPile(foodPile)) {
-                    actor.defaultCharacterTrait.AddFoodPileAsReactedTo(foodPile);
-                    actor.interruptComponent.TriggerInterrupt(INTERRUPT.Puke, foodPile, $"saw {foodPile.name}");    
-                }
-                actor.jobComponent.TryCreateDisposeFoodPileJob(foodPile);
-            }
-        }
-        if(targetTileObject is FishingSpot && targetTileObject.gridTileLocation != null) {
-            if(actor.race != RACE.TRITON) {
-                if (GameUtilities.RollChance(0.05f)) {
-                    if (actor.canBeTargetedByLandActions) {
-                        if (!actor.traitContainer.HasTrait("Sturdy", "Hibernating") && !actor.HasJobTargetingThis(JOB_TYPE.TRITON_KIDNAP)) {
-                            Summon summon = CharacterManager.Instance.CreateNewSummon(SUMMON_TYPE.Triton, FactionManager.Instance.neutralFaction, homeRegion: targetTileObject.currentRegion, bypassIdeologyChecking: true);
-                            summon.SetIsVolatile(true);
-                            CharacterManager.Instance.PlaceSummonInitially(summon, targetTileObject.gridTileLocation);
-                            (summon as Triton).TriggerTritonKidnap(actor);
-                        }
-                    }
-                }
-            }
-        }
-        if (targetTileObject.isDamageContributorToStructure) {
-            LocationStructure structure = targetTileObject.currentStructure;
-            if (structure != null && structure.structureType.IsPlayerStructure()) {
-                if (actor.partyComponent.isMemberThatJoinedQuest && actor.partyComponent.currentParty.currentQuest.partyQuestType == PARTY_QUEST_TYPE.Counterattack) {
-                    actor.combatComponent.Fight(targetTileObject, CombatManager.Clear_Demonic_Intrusion);
-                } else if (actor.behaviourComponent.isAttackingDemonicStructure && actor.race == RACE.ANGEL) {
-                    actor.combatComponent.Fight(targetTileObject, CombatManager.Clear_Demonic_Intrusion);
-                }
-            }
-        }
+        //    if(actor is Troll) {
+        //        if(targetTileObject is BallLightning || targetTileObject.traitContainer.HasTrait("Lightning Remnant")) {
+        //            actor.combatComponent.Flight(targetTileObject, "saw something frightening");
+        //        } else if(targetTileObject is WoodPile || targetTileObject is StonePile || targetTileObject is MetalPile || targetTileObject is Gold || targetTileObject is Diamond) {
+        //            if (actor.homeStructure != null && targetTileObject.gridTileLocation.structure != actor.homeStructure && !actor.jobQueue.HasJob(JOB_TYPE.DROP_ITEM)) {
+        //                actor.jobComponent.CreateHoardItemJob(targetTileObject, actor.homeStructure, true);
+        //            }
+        //        }
+        //    }
+
+
+        //    if (targetTileObject is PowerCrystal && actor.race == RACE.ELVES) {
+        //        if (!targetTileObject.HasJobTargetingThis(JOB_TYPE.ABSORB_CRYSTAL)) {
+        //if (!actor.jobComponent.HasHigherPriorityJobThan(JOB_TYPE.ABSORB_CRYSTAL)) {
+        //                actor.jobComponent.TriggerAbsorbPowerCrystal(targetTileObject);
+        //            }
+        //        }
+        //    }
+
+        //    if (targetTileObject is ResourcePile resourcePile && actor.homeSettlement != null) {
+        //        //if character sees a resource pile that is outside his/her home settlement or
+        //        //is not at his/her settlement's main storage
+        //        //Do not haul to city center anymore because hauling is now a personal job and resource piles will be hauled to respective structures
+        //        //if (resourcePile.gridTileLocation.IsPartOfSettlement(actor.homeSettlement) == false ||
+        //        //    resourcePile.gridTileLocation.structure != actor.homeSettlement.mainStorage) {
+        //        //    //do not create haul job for human and elven meat if actor is part of major faction
+        //        //    if(actor.faction?.factionType.type == FACTION_TYPE.Ratmen) {
+        //        //        if(resourcePile is FoodPile) {
+        //        //            actor.homeSettlement.settlementJobTriggerComponent.TryCreateHaulJob(resourcePile);
+        //        //        }
+        //        //    } else {
+        //        //        bool cannotCreateHaulJob = (resourcePile.tileObjectType == TILE_OBJECT_TYPE.ELF_MEAT || resourcePile.tileObjectType == TILE_OBJECT_TYPE.HUMAN_MEAT) && actor.faction != null && actor.faction.isMajorNonPlayer;
+        //        //        if (!cannotCreateHaulJob) {
+        //        //            actor.homeSettlement.settlementJobTriggerComponent.TryCreateHaulJob(resourcePile);
+        //        //        }
+        //        //    }
+        //        //}
+        //        if (actor.race.IsSapient() && (resourcePile.tileObjectType == TILE_OBJECT_TYPE.ELF_MEAT || resourcePile.tileObjectType == TILE_OBJECT_TYPE.HUMAN_MEAT) && resourcePile is FoodPile foodPile && 
+        //            !actor.traitContainer.HasTrait("Cannibal") && !actor.traitContainer.HasTrait("Malnourished")) {
+        //            if (!actor.defaultCharacterTrait.HasAlreadyReactedToFoodPile(foodPile)) {
+        //                actor.defaultCharacterTrait.AddFoodPileAsReactedTo(foodPile);
+        //                actor.interruptComponent.TriggerInterrupt(INTERRUPT.Puke, foodPile, $"saw {foodPile.name}");    
+        //            }
+        //            actor.jobComponent.TryCreateDisposeFoodPileJob(foodPile);
+        //        }
+        //    }
+        //    if(targetTileObject is FishingSpot && targetTileObject.gridTileLocation != null) {
+        //        if(actor.race != RACE.TRITON) {
+        //            if (GameUtilities.RollChance(0.05f)) {
+        //                if (actor.canBeTargetedByLandActions) {
+        //                    if (!actor.traitContainer.HasTrait("Sturdy", "Hibernating") && !actor.HasJobTargetingThis(JOB_TYPE.TRITON_KIDNAP)) {
+        //                        Summon summon = CharacterManager.Instance.CreateNewSummon(SUMMON_TYPE.Triton, FactionManager.Instance.neutralFaction, homeRegion: targetTileObject.currentRegion, bypassIdeologyChecking: true);
+        //                        summon.SetIsVolatile(true);
+        //                        CharacterManager.Instance.PlaceSummonInitially(summon, targetTileObject.gridTileLocation);
+        //                        (summon as Triton).TriggerTritonKidnap(actor);
+        //                    }
+        //                }
+        //            }
+        //        }
+        //    }
+        //    if (targetTileObject.isDamageContributorToStructure) {
+        //        LocationStructure structure = targetTileObject.currentStructure;
+        //        if (structure != null && structure.structureType.IsPlayerStructure()) {
+        //            if (actor.partyComponent.isMemberThatJoinedQuest && actor.partyComponent.currentParty.currentQuest.partyQuestType == PARTY_QUEST_TYPE.Counterattack) {
+        //                actor.combatComponent.Fight(targetTileObject, CombatManager.Clear_Demonic_Intrusion);
+        //            } else if (actor.behaviourComponent.isAttackingDemonicStructure && actor.race == RACE.ANGEL) {
+        //                actor.combatComponent.Fight(targetTileObject, CombatManager.Clear_Demonic_Intrusion);
+        //            }
+        //        }
+        //    }
+
+        targetTileObject.GeneralReactionToTileObject(actor, ref debugLog);
 
         if (!actor.isNormalCharacter /*|| owner.race == RACE.SKELETON*/) {
             //Minions or Summons cannot react to objects
@@ -1666,392 +1668,395 @@ public class ReactionComponent : CharacterComponent {
 #if DEBUG_LOG
         debugLog = $"{debugLog}{actor.name} is reacting to {targetTileObject.nameWithID}";
 #endif
-        Lazy lazy = actor.traitContainer.GetTraitOrStatus<Lazy>("Lazy");
-        if (!actor.combatComponent.isInActualCombat && !actor.hasSeenFire) {
-            bool hasHigherPrioJob = actor.jobQueue.jobsInQueue.Count > 0 && actor.jobQueue.jobsInQueue[0].priority > JOB_TYPE.DOUSE_FIRE.GetJobTypePriority();
-            if (!hasHigherPrioJob 
-                && targetTileObject.traitContainer.HasTrait("Burning")
-                && targetTileObject.gridTileLocation != null
-                && actor.homeSettlement != null
-                && targetTileObject.gridTileLocation.IsPartOfSettlement(actor.homeSettlement)
-                && !actor.traitContainer.HasTrait("Pyrophobic")
-                && !actor.traitContainer.HasTrait("Dousing")
-                && !actor.jobQueue.HasJob(JOB_TYPE.DOUSE_FIRE)) {
-#if DEBUG_LOG
-                debugLog = $"{debugLog}\n-Target is Burning and Character is not Pyrophobic";
-#endif
-                actor.SetHasSeenFire(true);
-                if (lazy == null || !lazy.TryIgnoreUrgentTask(JOB_TYPE.DOUSE_FIRE)) {
-                    actor.homeSettlement.settlementJobTriggerComponent.TriggerDouseFire();
-                    if (!actor.homeSettlement.HasJob(JOB_TYPE.DOUSE_FIRE)) {
-#if DEBUG_LOG
-                        Debug.LogWarning($"{actor.name} saw a fire in a settlement but no douse fire jobs were created.");
-#endif
-                    }
 
-                    JobQueueItem douseJob = actor.homeSettlement.GetFirstJobOfTypeThatCanBeAssignedTo(JOB_TYPE.DOUSE_FIRE, actor);
-                    if (douseJob != null) {
-                        actor.jobQueue.AddJobInQueue(douseJob);
-                    } else {
-                        if (actor.combatComponent.combatMode == COMBAT_MODE.Aggressive) {
-                            actor.combatComponent.Flight(targetTileObject, "saw fire");
-                        }
-                    }    
-                }
-            }
-        }
-        if (!actor.combatComponent.isInActualCombat && !actor.hasSeenWet) {
-            if (targetTileObject.traitContainer.HasTrait("Wet")
-                && targetTileObject.gridTileLocation != null
-                && actor.homeSettlement != null
-                && targetTileObject.gridTileLocation.IsPartOfSettlement(actor.homeSettlement)
-                && !actor.jobQueue.HasJob(JOB_TYPE.DRY_TILES)) {
-#if DEBUG_LOG
-                debugLog = $"{debugLog}\n-Target is Wet";
-#endif
-                actor.SetHasSeenWet(true);
-                actor.homeSettlement.settlementJobTriggerComponent.TriggerDryTiles();
-                for (int i = 0; i < actor.homeSettlement.availableJobs.Count; i++) {
-                    JobQueueItem job = actor.homeSettlement.availableJobs[i];
-                    if (job.jobType == JOB_TYPE.DRY_TILES) {
-                        if (job.assignedCharacter == null && actor.jobQueue.CanJobBeAddedToQueue(job)) {
-                            actor.jobQueue.AddJobInQueue(job);
-                        }
-                    }
-                }
-            }
-        }
-        if (!actor.combatComponent.isInActualCombat && !actor.hasSeenPoisoned) {
-            if (targetTileObject.traitContainer.HasTrait("Poisoned")
-                && (lazy == null || !lazy.TryIgnoreUrgentTask(JOB_TYPE.CLEANSE_TILES))
-                && targetTileObject.gridTileLocation != null
-                && actor.homeSettlement != null
-                && targetTileObject.gridTileLocation.IsPartOfSettlement(actor.homeSettlement)
-                && !actor.jobQueue.HasJob(JOB_TYPE.CLEANSE_TILES)) {
-#if DEBUG_LOG
-                debugLog = $"{debugLog}\n-Target is Poisoned";
-#endif
-                actor.SetHasSeenPoisoned(true);
-                actor.homeSettlement.settlementJobTriggerComponent.TriggerCleanseTiles();
-                for (int i = 0; i < actor.homeSettlement.availableJobs.Count; i++) {
-                    JobQueueItem job = actor.homeSettlement.availableJobs[i];
-                    if (job.jobType == JOB_TYPE.CLEANSE_TILES) {
-                        if (job.assignedCharacter == null && actor.jobQueue.CanJobBeAddedToQueue(job)) {
-                            actor.jobQueue.AddJobInQueue(job);
-                        }
-                    }
-                }
-            }
-        }
-        if (targetTileObject.traitContainer.HasTrait("Dangerous") && targetTileObject.gridTileLocation != null) {
-            if (targetTileObject is Tornado || actor.currentStructure == targetTileObject.gridTileLocation.structure || (!actor.currentStructure.isInterior && !targetTileObject.gridTileLocation.structure.isInterior)) {
-                if (actor.traitContainer.HasTrait("Berserked")) {
-                    actor.combatComponent.FightOrFlight(targetTileObject, CombatManager.Berserked);
-                } else if (actor.stateComponent.currentState == null || actor.stateComponent.currentState.characterState != CHARACTER_STATE.FOLLOW) {
-                    if (actor.traitContainer.HasTrait("Suicidal")) {
-                        if (!actor.jobQueue.HasJob(JOB_TYPE.SUICIDE_FOLLOW)) {
-                            CharacterStateJob job = JobManager.Instance.CreateNewCharacterStateJob(JOB_TYPE.SUICIDE_FOLLOW, CHARACTER_STATE.FOLLOW, targetTileObject, actor);
-                            actor.jobQueue.AddJobInQueue(job);
-                        }
-                    } else if (actor.moodComponent.moodState == MOOD_STATE.Normal) {
-                        string neutralizingTraitName = TraitManager.Instance.GetNeutralizingTraitFor(targetTileObject);
-                        if (neutralizingTraitName != string.Empty) {
-                            if (actor.traitContainer.HasTrait(neutralizingTraitName)) {
-                                if (!actor.jobQueue.HasJob(JOB_TYPE.NEUTRALIZE_DANGER, targetTileObject)) {
-                                    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.NEUTRALIZE_DANGER,
-                                        INTERACTION_TYPE.NEUTRALIZE, targetTileObject, actor);
-                                    actor.jobQueue.AddJobInQueue(job);
-                                }
-                            } else {
-                                actor.combatComponent.Flight(targetTileObject, $"saw a {targetTileObject.name}");
-                            }
-                        } else {
-                            throw new Exception($"Trying to neutralize {targetTileObject.nameWithID} but it does not have a neutralizing trait!");
-                        }
-                    } else {
-                        actor.combatComponent.Flight(targetTileObject, $"saw a {targetTileObject.name}");
-                    }
-                }
-            }
-        }
-        //if (targetTileObject.tileObjectType.IsTileObjectAnItem()) {
-        //    if (targetTileObject.gridTileLocation != null && owner.homeSettlement != null
-        //        && targetTileObject.gridTileLocation.structure != owner.homeSettlement.mainStorage
-        //        && !(targetTileObject.gridTileLocation.structure is Dwelling) 
-        //        && !owner.IsInventoryAtFullCapacity()
-        //        && (owner.jobQueue.jobsInQueue.Count == 0 || owner.jobQueue.jobsInQueue[0].priority < JOB_TYPE.TAKE_ITEM.GetJobTypePriority())) {
-        //        owner.jobComponent.CreateTakeItemJob(targetTileObject);
-        //    }
-        //}
-        if (targetTileObject.traitContainer.HasTrait("Danger Remnant", "Lightning Remnant")) {
-            if (!actor.traitContainer.HasTrait("Berserked")) {
-                if (targetTileObject.gridTileLocation != null && targetTileObject.gridTileLocation.corruptionComponent.isCorrupted) {
-                    CharacterManager.Instance.TriggerEmotion(EMOTION.Fear, actor, targetTileObject, REACTION_STATUS.WITNESSED);
-                } else {
-                    if (actor.traitContainer.HasTrait("Coward")) {
-                        CharacterManager.Instance.TriggerEmotion(EMOTION.Fear, actor, targetTileObject, REACTION_STATUS.WITNESSED);
-                    } else {
-                        int shockChance = 30;
-                        if (actor.traitContainer.HasTrait("Combatant")) {
-                            shockChance = 70;
-                        }
-                        if (UnityEngine.Random.Range(0, 100) < shockChance) {
-                            CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, actor, targetTileObject, REACTION_STATUS.WITNESSED);
-                        } else {
-                            CharacterManager.Instance.TriggerEmotion(EMOTION.Fear, actor, targetTileObject, REACTION_STATUS.WITNESSED);
-                        }
-                    }
-                }
-                
-            }
-        }
-        if (targetTileObject.traitContainer.HasTrait("Surprised Remnant")) {
-            if (!actor.traitContainer.HasTrait("Berserked")) {
-                if (targetTileObject.gridTileLocation != null && targetTileObject.gridTileLocation.corruptionComponent.isCorrupted) {
-                    CharacterManager.Instance.TriggerEmotion(EMOTION.Fear, actor, targetTileObject, REACTION_STATUS.WITNESSED);
-                } else {
-                    if (actor.traitContainer.HasTrait("Coward")) {
-                        CharacterManager.Instance.TriggerEmotion(EMOTION.Fear, actor, targetTileObject, REACTION_STATUS.WITNESSED);
-                    } else {
-                        if (UnityEngine.Random.Range(0, 100) < 95) {
-                            CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, actor, targetTileObject, REACTION_STATUS.WITNESSED);
-                        } else {
-                            CharacterManager.Instance.TriggerEmotion(EMOTION.Fear, actor, targetTileObject, REACTION_STATUS.WITNESSED);
-                        }
-                    }
-                }
-            }
-        }
+        targetTileObject.VillagerReactionToTileObject(actor, ref debugLog);
+
+        //        Lazy lazy = actor.traitContainer.GetTraitOrStatus<Lazy>("Lazy");
+        //        if (!actor.combatComponent.isInActualCombat && !actor.hasSeenFire) {
+        //            bool hasHigherPrioJob = actor.jobQueue.jobsInQueue.Count > 0 && actor.jobQueue.jobsInQueue[0].priority > JOB_TYPE.DOUSE_FIRE.GetJobTypePriority();
+        //            if (!hasHigherPrioJob 
+        //                && targetTileObject.traitContainer.HasTrait("Burning")
+        //                && targetTileObject.gridTileLocation != null
+        //                && actor.homeSettlement != null
+        //                && targetTileObject.gridTileLocation.IsPartOfSettlement(actor.homeSettlement)
+        //                && !actor.traitContainer.HasTrait("Pyrophobic")
+        //                && !actor.traitContainer.HasTrait("Dousing")
+        //                && !actor.jobQueue.HasJob(JOB_TYPE.DOUSE_FIRE)) {
+        //#if DEBUG_LOG
+        //                debugLog = $"{debugLog}\n-Target is Burning and Character is not Pyrophobic";
+        //#endif
+        //                actor.SetHasSeenFire(true);
+        //                if (lazy == null || !lazy.TryIgnoreUrgentTask(JOB_TYPE.DOUSE_FIRE)) {
+        //                    actor.homeSettlement.settlementJobTriggerComponent.TriggerDouseFire();
+        //                    if (!actor.homeSettlement.HasJob(JOB_TYPE.DOUSE_FIRE)) {
+        //#if DEBUG_LOG
+        //                        Debug.LogWarning($"{actor.name} saw a fire in a settlement but no douse fire jobs were created.");
+        //#endif
+        //                    }
+
+        //                    JobQueueItem douseJob = actor.homeSettlement.GetFirstJobOfTypeThatCanBeAssignedTo(JOB_TYPE.DOUSE_FIRE, actor);
+        //                    if (douseJob != null) {
+        //                        actor.jobQueue.AddJobInQueue(douseJob);
+        //                    } else {
+        //                        if (actor.combatComponent.combatMode == COMBAT_MODE.Aggressive) {
+        //                            actor.combatComponent.Flight(targetTileObject, "saw fire");
+        //                        }
+        //                    }    
+        //                }
+        //            }
+        //        }
+        //        if (!actor.combatComponent.isInActualCombat && !actor.hasSeenWet) {
+        //            if (targetTileObject.traitContainer.HasTrait("Wet")
+        //                && targetTileObject.gridTileLocation != null
+        //                && actor.homeSettlement != null
+        //                && targetTileObject.gridTileLocation.IsPartOfSettlement(actor.homeSettlement)
+        //                && !actor.jobQueue.HasJob(JOB_TYPE.DRY_TILES)) {
+        //#if DEBUG_LOG
+        //                debugLog = $"{debugLog}\n-Target is Wet";
+        //#endif
+        //                actor.SetHasSeenWet(true);
+        //                actor.homeSettlement.settlementJobTriggerComponent.TriggerDryTiles();
+        //                for (int i = 0; i < actor.homeSettlement.availableJobs.Count; i++) {
+        //                    JobQueueItem job = actor.homeSettlement.availableJobs[i];
+        //                    if (job.jobType == JOB_TYPE.DRY_TILES) {
+        //                        if (job.assignedCharacter == null && actor.jobQueue.CanJobBeAddedToQueue(job)) {
+        //                            actor.jobQueue.AddJobInQueue(job);
+        //                        }
+        //                    }
+        //                }
+        //            }
+        //        }
+        //        if (!actor.combatComponent.isInActualCombat && !actor.hasSeenPoisoned) {
+        //            if (targetTileObject.traitContainer.HasTrait("Poisoned")
+        //                && (lazy == null || !lazy.TryIgnoreUrgentTask(JOB_TYPE.CLEANSE_TILES))
+        //                && targetTileObject.gridTileLocation != null
+        //                && actor.homeSettlement != null
+        //                && targetTileObject.gridTileLocation.IsPartOfSettlement(actor.homeSettlement)
+        //                && !actor.jobQueue.HasJob(JOB_TYPE.CLEANSE_TILES)) {
+        //#if DEBUG_LOG
+        //                debugLog = $"{debugLog}\n-Target is Poisoned";
+        //#endif
+        //                actor.SetHasSeenPoisoned(true);
+        //                actor.homeSettlement.settlementJobTriggerComponent.TriggerCleanseTiles();
+        //                for (int i = 0; i < actor.homeSettlement.availableJobs.Count; i++) {
+        //                    JobQueueItem job = actor.homeSettlement.availableJobs[i];
+        //                    if (job.jobType == JOB_TYPE.CLEANSE_TILES) {
+        //                        if (job.assignedCharacter == null && actor.jobQueue.CanJobBeAddedToQueue(job)) {
+        //                            actor.jobQueue.AddJobInQueue(job);
+        //                        }
+        //                    }
+        //                }
+        //            }
+        //        }
+        //        if (targetTileObject.traitContainer.HasTrait("Dangerous") && targetTileObject.gridTileLocation != null) {
+        //            if (targetTileObject is Tornado || actor.currentStructure == targetTileObject.gridTileLocation.structure || (!actor.currentStructure.isInterior && !targetTileObject.gridTileLocation.structure.isInterior)) {
+        //                if (actor.traitContainer.HasTrait("Berserked")) {
+        //                    actor.combatComponent.FightOrFlight(targetTileObject, CombatManager.Berserked);
+        //                } else if (actor.stateComponent.currentState == null || actor.stateComponent.currentState.characterState != CHARACTER_STATE.FOLLOW) {
+        //                    if (actor.traitContainer.HasTrait("Suicidal")) {
+        //                        if (!actor.jobQueue.HasJob(JOB_TYPE.SUICIDE_FOLLOW)) {
+        //                            CharacterStateJob job = JobManager.Instance.CreateNewCharacterStateJob(JOB_TYPE.SUICIDE_FOLLOW, CHARACTER_STATE.FOLLOW, targetTileObject, actor);
+        //                            actor.jobQueue.AddJobInQueue(job);
+        //                        }
+        //                    } else if (actor.moodComponent.moodState == MOOD_STATE.Normal) {
+        //                        string neutralizingTraitName = TraitManager.Instance.GetNeutralizingTraitFor(targetTileObject);
+        //                        if (neutralizingTraitName != string.Empty) {
+        //                            if (actor.traitContainer.HasTrait(neutralizingTraitName)) {
+        //                                if (!actor.jobQueue.HasJob(JOB_TYPE.NEUTRALIZE_DANGER, targetTileObject)) {
+        //                                    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.NEUTRALIZE_DANGER,
+        //                                        INTERACTION_TYPE.NEUTRALIZE, targetTileObject, actor);
+        //                                    actor.jobQueue.AddJobInQueue(job);
+        //                                }
+        //                            } else {
+        //                                actor.combatComponent.Flight(targetTileObject, $"saw a {targetTileObject.name}");
+        //                            }
+        //                        } else {
+        //                            throw new Exception($"Trying to neutralize {targetTileObject.nameWithID} but it does not have a neutralizing trait!");
+        //                        }
+        //                    } else {
+        //                        actor.combatComponent.Flight(targetTileObject, $"saw a {targetTileObject.name}");
+        //                    }
+        //                }
+        //            }
+        //        }
+        //        //if (targetTileObject.tileObjectType.IsTileObjectAnItem()) {
+        //        //    if (targetTileObject.gridTileLocation != null && owner.homeSettlement != null
+        //        //        && targetTileObject.gridTileLocation.structure != owner.homeSettlement.mainStorage
+        //        //        && !(targetTileObject.gridTileLocation.structure is Dwelling) 
+        //        //        && !owner.IsInventoryAtFullCapacity()
+        //        //        && (owner.jobQueue.jobsInQueue.Count == 0 || owner.jobQueue.jobsInQueue[0].priority < JOB_TYPE.TAKE_ITEM.GetJobTypePriority())) {
+        //        //        owner.jobComponent.CreateTakeItemJob(targetTileObject);
+        //        //    }
+        //        //}
+        //        if (targetTileObject.traitContainer.HasTrait("Danger Remnant", "Lightning Remnant")) {
+        //            if (!actor.traitContainer.HasTrait("Berserked")) {
+        //                if (targetTileObject.gridTileLocation != null && targetTileObject.gridTileLocation.corruptionComponent.isCorrupted) {
+        //                    CharacterManager.Instance.TriggerEmotion(EMOTION.Fear, actor, targetTileObject, REACTION_STATUS.WITNESSED);
+        //                } else {
+        //                    if (actor.traitContainer.HasTrait("Coward")) {
+        //                        CharacterManager.Instance.TriggerEmotion(EMOTION.Fear, actor, targetTileObject, REACTION_STATUS.WITNESSED);
+        //                    } else {
+        //                        int shockChance = 30;
+        //                        if (actor.traitContainer.HasTrait("Combatant")) {
+        //                            shockChance = 70;
+        //                        }
+        //                        if (UnityEngine.Random.Range(0, 100) < shockChance) {
+        //                            CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, actor, targetTileObject, REACTION_STATUS.WITNESSED);
+        //                        } else {
+        //                            CharacterManager.Instance.TriggerEmotion(EMOTION.Fear, actor, targetTileObject, REACTION_STATUS.WITNESSED);
+        //                        }
+        //                    }
+        //                }
+
+        //            }
+        //        }
+        //        if (targetTileObject.traitContainer.HasTrait("Surprised Remnant")) {
+        //            if (!actor.traitContainer.HasTrait("Berserked")) {
+        //                if (targetTileObject.gridTileLocation != null && targetTileObject.gridTileLocation.corruptionComponent.isCorrupted) {
+        //                    CharacterManager.Instance.TriggerEmotion(EMOTION.Fear, actor, targetTileObject, REACTION_STATUS.WITNESSED);
+        //                } else {
+        //                    if (actor.traitContainer.HasTrait("Coward")) {
+        //                        CharacterManager.Instance.TriggerEmotion(EMOTION.Fear, actor, targetTileObject, REACTION_STATUS.WITNESSED);
+        //                    } else {
+        //                        if (UnityEngine.Random.Range(0, 100) < 95) {
+        //                            CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, actor, targetTileObject, REACTION_STATUS.WITNESSED);
+        //                        } else {
+        //                            CharacterManager.Instance.TriggerEmotion(EMOTION.Fear, actor, targetTileObject, REACTION_STATUS.WITNESSED);
+        //                        }
+        //                    }
+        //                }
+        //            }
+        //        }
 
 
-        if (targetTileObject is Tombstone tombstone) {
-            Character targetCharacter = tombstone.character;
-            //Dead targetDeadTrait = targetCharacter.traitContainer.GetNormalTrait<Dead>("Dead");
-            if (!targetCharacter.reactionComponent.charactersThatSawThisDead.Contains(actor)) { //targetDeadTrait != null && !targetDeadTrait.charactersThatSawThisDead.Contains(owner)
-                targetCharacter.reactionComponent.AddCharacterThatSawThisDead(actor);
-#if DEBUG_LOG
-                debugLog = $"{debugLog}\n-Target saw dead for the first time";
-#endif
-                if (actor.traitContainer.HasTrait("Psychopath")) {
-#if DEBUG_LOG
-                    debugLog = $"{debugLog}\n-Actor is Psychopath";
-#endif
-                    if (targetCharacter.isNormalCharacter) {
-#if DEBUG_LOG
-                        debugLog = $"{debugLog}\n-Target is a normal character";
-#endif
-                        if (UnityEngine.Random.Range(0, 2) == 0) {
-#if DEBUG_LOG
-                            debugLog = $"{debugLog}\n-Target will Mock";
-#endif
-                            actor.interruptComponent.TriggerInterrupt(INTERRUPT.Mock, targetCharacter);
-                        } else {
-#if DEBUG_LOG
-                            debugLog = $"{debugLog}\n-Target will Laugh At";
-#endif
-                            actor.interruptComponent.TriggerInterrupt(INTERRUPT.Laugh_At, targetCharacter);
-                        }
-                    }
-                } else {
-#if DEBUG_LOG
-                    debugLog = $"{debugLog}\n-Actor is not Psychopath";
-#endif
-                    string opinionLabel = actor.relationshipContainer.GetOpinionLabel(targetCharacter);
-                    if (opinionLabel == RelationshipManager.Friend || opinionLabel == RelationshipManager.Close_Friend) {
-#if DEBUG_LOG
-                        debugLog = $"{debugLog}\n-Target is Friend/Close Friend";
-#endif
-                        if (UnityEngine.Random.Range(0, 2) == 0) {
-#if DEBUG_LOG
-                            debugLog = $"{debugLog}\n-Target will Cry";
-#endif
-                            actor.interruptComponent.TriggerInterrupt(INTERRUPT.Cry, targetCharacter, $"saw dead {targetCharacter.name}");
-                        } else {
-#if DEBUG_LOG
-                            debugLog = $"{debugLog}\n-Target will Puke";
-#endif
-                            actor.interruptComponent.TriggerInterrupt(INTERRUPT.Puke, targetCharacter, $"saw dead {targetCharacter.name}");
-                        }
-                    } else if ((actor.relationshipContainer.IsFamilyMember(targetCharacter) || actor.relationshipContainer.HasRelationshipWith(targetCharacter, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.AFFAIR))
-                                    && opinionLabel != RelationshipManager.Rival) {
-#if DEBUG_LOG
-                        debugLog = $"{debugLog}\n-Target is Relative/Lover/Affair and not Rival";
-#endif
-                        if (UnityEngine.Random.Range(0, 2) == 0) {
-#if DEBUG_LOG
-                            debugLog = $"{debugLog}\n-Target will Cry";
-#endif
-                            actor.interruptComponent.TriggerInterrupt(INTERRUPT.Cry, targetCharacter, $"saw dead {targetCharacter.name}");
-                        } else {
-#if DEBUG_LOG
-                            debugLog = $"{debugLog}\n-Target will Puke";
-#endif
-                            actor.interruptComponent.TriggerInterrupt(INTERRUPT.Puke, targetCharacter, $"saw dead {targetCharacter.name}");
-                        }
-                    } else if (opinionLabel == RelationshipManager.Enemy) {
-#if DEBUG_LOG
-                        debugLog = $"{debugLog}\n-Target is Enemy";
-#endif
-                        if (UnityEngine.Random.Range(0, 100) < 25) {
-                            if (UnityEngine.Random.Range(0, 2) == 0) {
-#if DEBUG_LOG
-                                debugLog = $"{debugLog}\n-Target will Mock";
-#endif
-                                actor.interruptComponent.TriggerInterrupt(INTERRUPT.Mock, targetCharacter);
-                            } else {
-#if DEBUG_LOG
-                                debugLog = $"{debugLog}\n-Target will Laugh At";
-#endif
-                                actor.interruptComponent.TriggerInterrupt(INTERRUPT.Laugh_At, targetCharacter);
-                            }
-                        } else {
-#if DEBUG_LOG
-                            debugLog = $"{debugLog}\n-Shock";
-#endif
-                            actor.interruptComponent.TriggerInterrupt(INTERRUPT.Shocked, targetCharacter);
-                        }
-                    } else if (opinionLabel == RelationshipManager.Rival) {
-#if DEBUG_LOG
-                        debugLog = $"{debugLog}\n-Target is Rival";
-#endif
-                        if (UnityEngine.Random.Range(0, 2) == 0) {
-#if DEBUG_LOG
-                            debugLog = $"{debugLog}\n-Target will Mock";
-#endif
-                            actor.interruptComponent.TriggerInterrupt(INTERRUPT.Mock, targetCharacter);
-                        } else {
-#if DEBUG_LOG
-                            debugLog = $"{debugLog}\n-Target will Laugh At";
-#endif
-                            actor.interruptComponent.TriggerInterrupt(INTERRUPT.Laugh_At, targetCharacter);
-                        }
-                    } else if (targetCharacter.isNormalCharacter && actor.relationshipContainer.HasRelationshipWith(targetCharacter)) {
-#if DEBUG_LOG
-                        debugLog = $"{debugLog}\n-Otherwise, Shock";
-#endif
-                        actor.interruptComponent.TriggerInterrupt(INTERRUPT.Shocked, targetCharacter);
-                    }
-                }
-            }
-        }
+        //        if (targetTileObject is Tombstone tombstone) {
+        //            Character targetCharacter = tombstone.character;
+        //            //Dead targetDeadTrait = targetCharacter.traitContainer.GetNormalTrait<Dead>("Dead");
+        //            if (!targetCharacter.reactionComponent.charactersThatSawThisDead.Contains(actor)) { //targetDeadTrait != null && !targetDeadTrait.charactersThatSawThisDead.Contains(owner)
+        //                targetCharacter.reactionComponent.AddCharacterThatSawThisDead(actor);
+        //#if DEBUG_LOG
+        //                debugLog = $"{debugLog}\n-Target saw dead for the first time";
+        //#endif
+        //                if (actor.traitContainer.HasTrait("Psychopath")) {
+        //#if DEBUG_LOG
+        //                    debugLog = $"{debugLog}\n-Actor is Psychopath";
+        //#endif
+        //                    if (targetCharacter.isNormalCharacter) {
+        //#if DEBUG_LOG
+        //                        debugLog = $"{debugLog}\n-Target is a normal character";
+        //#endif
+        //                        if (UnityEngine.Random.Range(0, 2) == 0) {
+        //#if DEBUG_LOG
+        //                            debugLog = $"{debugLog}\n-Target will Mock";
+        //#endif
+        //                            actor.interruptComponent.TriggerInterrupt(INTERRUPT.Mock, targetCharacter);
+        //                        } else {
+        //#if DEBUG_LOG
+        //                            debugLog = $"{debugLog}\n-Target will Laugh At";
+        //#endif
+        //                            actor.interruptComponent.TriggerInterrupt(INTERRUPT.Laugh_At, targetCharacter);
+        //                        }
+        //                    }
+        //                } else {
+        //#if DEBUG_LOG
+        //                    debugLog = $"{debugLog}\n-Actor is not Psychopath";
+        //#endif
+        //                    string opinionLabel = actor.relationshipContainer.GetOpinionLabel(targetCharacter);
+        //                    if (opinionLabel == RelationshipManager.Friend || opinionLabel == RelationshipManager.Close_Friend) {
+        //#if DEBUG_LOG
+        //                        debugLog = $"{debugLog}\n-Target is Friend/Close Friend";
+        //#endif
+        //                        if (UnityEngine.Random.Range(0, 2) == 0) {
+        //#if DEBUG_LOG
+        //                            debugLog = $"{debugLog}\n-Target will Cry";
+        //#endif
+        //                            actor.interruptComponent.TriggerInterrupt(INTERRUPT.Cry, targetCharacter, $"saw dead {targetCharacter.name}");
+        //                        } else {
+        //#if DEBUG_LOG
+        //                            debugLog = $"{debugLog}\n-Target will Puke";
+        //#endif
+        //                            actor.interruptComponent.TriggerInterrupt(INTERRUPT.Puke, targetCharacter, $"saw dead {targetCharacter.name}");
+        //                        }
+        //                    } else if ((actor.relationshipContainer.IsFamilyMember(targetCharacter) || actor.relationshipContainer.HasRelationshipWith(targetCharacter, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.AFFAIR))
+        //                                    && opinionLabel != RelationshipManager.Rival) {
+        //#if DEBUG_LOG
+        //                        debugLog = $"{debugLog}\n-Target is Relative/Lover/Affair and not Rival";
+        //#endif
+        //                        if (UnityEngine.Random.Range(0, 2) == 0) {
+        //#if DEBUG_LOG
+        //                            debugLog = $"{debugLog}\n-Target will Cry";
+        //#endif
+        //                            actor.interruptComponent.TriggerInterrupt(INTERRUPT.Cry, targetCharacter, $"saw dead {targetCharacter.name}");
+        //                        } else {
+        //#if DEBUG_LOG
+        //                            debugLog = $"{debugLog}\n-Target will Puke";
+        //#endif
+        //                            actor.interruptComponent.TriggerInterrupt(INTERRUPT.Puke, targetCharacter, $"saw dead {targetCharacter.name}");
+        //                        }
+        //                    } else if (opinionLabel == RelationshipManager.Enemy) {
+        //#if DEBUG_LOG
+        //                        debugLog = $"{debugLog}\n-Target is Enemy";
+        //#endif
+        //                        if (UnityEngine.Random.Range(0, 100) < 25) {
+        //                            if (UnityEngine.Random.Range(0, 2) == 0) {
+        //#if DEBUG_LOG
+        //                                debugLog = $"{debugLog}\n-Target will Mock";
+        //#endif
+        //                                actor.interruptComponent.TriggerInterrupt(INTERRUPT.Mock, targetCharacter);
+        //                            } else {
+        //#if DEBUG_LOG
+        //                                debugLog = $"{debugLog}\n-Target will Laugh At";
+        //#endif
+        //                                actor.interruptComponent.TriggerInterrupt(INTERRUPT.Laugh_At, targetCharacter);
+        //                            }
+        //                        } else {
+        //#if DEBUG_LOG
+        //                            debugLog = $"{debugLog}\n-Shock";
+        //#endif
+        //                            actor.interruptComponent.TriggerInterrupt(INTERRUPT.Shocked, targetCharacter);
+        //                        }
+        //                    } else if (opinionLabel == RelationshipManager.Rival) {
+        //#if DEBUG_LOG
+        //                        debugLog = $"{debugLog}\n-Target is Rival";
+        //#endif
+        //                        if (UnityEngine.Random.Range(0, 2) == 0) {
+        //#if DEBUG_LOG
+        //                            debugLog = $"{debugLog}\n-Target will Mock";
+        //#endif
+        //                            actor.interruptComponent.TriggerInterrupt(INTERRUPT.Mock, targetCharacter);
+        //                        } else {
+        //#if DEBUG_LOG
+        //                            debugLog = $"{debugLog}\n-Target will Laugh At";
+        //#endif
+        //                            actor.interruptComponent.TriggerInterrupt(INTERRUPT.Laugh_At, targetCharacter);
+        //                        }
+        //                    } else if (targetCharacter.isNormalCharacter && actor.relationshipContainer.HasRelationshipWith(targetCharacter)) {
+        //#if DEBUG_LOG
+        //                        debugLog = $"{debugLog}\n-Otherwise, Shock";
+        //#endif
+        //                        actor.interruptComponent.TriggerInterrupt(INTERRUPT.Shocked, targetCharacter);
+        //                    }
+        //                }
+        //            }
+        //        }
 
-        if (targetTileObject.IsOwnedBy(actor)
-            && targetTileObject.gridTileLocation != null 
-            && targetTileObject.gridTileLocation.structure != null
-            && targetTileObject.gridTileLocation.structure is Dwelling
-            && targetTileObject.gridTileLocation.structure != actor.homeStructure) {
+        //        if (targetTileObject.IsOwnedBy(actor)
+        //            && targetTileObject.gridTileLocation != null 
+        //            && targetTileObject.gridTileLocation.structure != null
+        //            && targetTileObject.gridTileLocation.structure is Dwelling
+        //            && targetTileObject.gridTileLocation.structure != actor.homeStructure) {
 
-            if (targetTileObject.gridTileLocation.structure.residents.Count > 0 && !targetTileObject.HasCharacterAlreadyAssumed(actor)) {
-                if (actor.traitContainer.HasTrait("Suspicious")
-                || actor.moodComponent.moodState == MOOD_STATE.Critical
-                || (actor.moodComponent.moodState == MOOD_STATE.Bad && UnityEngine.Random.Range(0, 2) == 0)
-                || UnityEngine.Random.Range(0, 100) < 15
-                || TutorialManager.Instance.IsTutorialCurrentlyActive(TutorialManager.Tutorial.Frame_Up)) {
-#if DEBUG_LOG
-                    debugLog = $"{debugLog}\n-Owner is Suspicious or Critical Mood or Low Mood";
-                    debugLog = $"{debugLog}\n-There is at least 1 resident of the structure";
-#endif
-                    _assumptionSuspects.Clear();
-                    for (int i = 0; i < targetTileObject.gridTileLocation.structure.residents.Count; i++) {
-                        Character resident = targetTileObject.gridTileLocation.structure.residents[i];
-                        AWARENESS_STATE awarenessState = actor.relationshipContainer.GetAwarenessState(resident);
-                        if (awarenessState == AWARENESS_STATE.Available) {
-                            _assumptionSuspects.Add(resident);
-                        } else if (awarenessState == AWARENESS_STATE.None) {
-                            if (!resident.isDead) {
-                                _assumptionSuspects.Add(resident);
-                            }
-                        }
-                    }
-                    if(_assumptionSuspects.Count > 0) {
-                        Character chosenSuspect = _assumptionSuspects[UnityEngine.Random.Range(0, _assumptionSuspects.Count)];
-#if DEBUG_LOG
-                        debugLog = debugLog + ("\n-Will create Steal assumption on " + chosenSuspect.name);
-#endif
-                        actor.assumptionComponent.CreateAndReactToNewAssumption(chosenSuspect, targetTileObject, INTERACTION_TYPE.STEAL, REACTION_STATUS.WITNESSED);
-                        actor.jobComponent.CreateDropItemJob(JOB_TYPE.RETURN_STOLEN_THING, targetTileObject, actor.homeStructure);
-                    }
-                } else {
-                    Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "NonIntel", "no_steal_assumption", providedTags: LOG_TAG.Crimes);
-                    log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                    log.AddToFillers(targetTileObject, targetTileObject.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-                    log.AddToFillers(targetTileObject.gridTileLocation.structure,  targetTileObject.gridTileLocation.structure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
-                    log.AddLogToDatabase(true);
-                }
-            }
-            if(targetTileObject.tileObjectType.IsTileObjectAnItem() && !actor.jobQueue.HasJob(JOB_TYPE.TAKE_ITEM, targetTileObject) && targetTileObject.Advertises(INTERACTION_TYPE.PICK_UP) && actor.limiterComponent.canMove) {
-                //NOTE: Added checker if character can move, so that Paralyzed characters will not try to pick up items
-                actor.jobComponent.CreateTakeItemJob(JOB_TYPE.TAKE_ITEM, targetTileObject);
-            }
-        }
+        //            if (targetTileObject.gridTileLocation.structure.residents.Count > 0 && !targetTileObject.HasCharacterAlreadyAssumed(actor)) {
+        //                if (actor.traitContainer.HasTrait("Suspicious")
+        //                || actor.moodComponent.moodState == MOOD_STATE.Critical
+        //                || (actor.moodComponent.moodState == MOOD_STATE.Bad && UnityEngine.Random.Range(0, 2) == 0)
+        //                || UnityEngine.Random.Range(0, 100) < 15
+        //                || TutorialManager.Instance.IsTutorialCurrentlyActive(TutorialManager.Tutorial.Frame_Up)) {
+        //#if DEBUG_LOG
+        //                    debugLog = $"{debugLog}\n-Owner is Suspicious or Critical Mood or Low Mood";
+        //                    debugLog = $"{debugLog}\n-There is at least 1 resident of the structure";
+        //#endif
+        //                    assumptionSuspects.Clear();
+        //                    for (int i = 0; i < targetTileObject.gridTileLocation.structure.residents.Count; i++) {
+        //                        Character resident = targetTileObject.gridTileLocation.structure.residents[i];
+        //                        AWARENESS_STATE awarenessState = actor.relationshipContainer.GetAwarenessState(resident);
+        //                        if (awarenessState == AWARENESS_STATE.Available) {
+        //                            assumptionSuspects.Add(resident);
+        //                        } else if (awarenessState == AWARENESS_STATE.None) {
+        //                            if (!resident.isDead) {
+        //                                assumptionSuspects.Add(resident);
+        //                            }
+        //                        }
+        //                    }
+        //                    if(assumptionSuspects.Count > 0) {
+        //                        Character chosenSuspect = assumptionSuspects[UnityEngine.Random.Range(0, assumptionSuspects.Count)];
+        //#if DEBUG_LOG
+        //                        debugLog = debugLog + ("\n-Will create Steal assumption on " + chosenSuspect.name);
+        //#endif
+        //                        actor.assumptionComponent.CreateAndReactToNewAssumption(chosenSuspect, targetTileObject, INTERACTION_TYPE.STEAL, REACTION_STATUS.WITNESSED);
+        //                        actor.jobComponent.CreateDropItemJob(JOB_TYPE.RETURN_STOLEN_THING, targetTileObject, actor.homeStructure);
+        //                    }
+        //                } else {
+        //                    Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "NonIntel", "no_steal_assumption", providedTags: LOG_TAG.Crimes);
+        //                    log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+        //                    log.AddToFillers(targetTileObject, targetTileObject.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        //                    log.AddToFillers(targetTileObject.gridTileLocation.structure,  targetTileObject.gridTileLocation.structure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
+        //                    log.AddLogToDatabase(true);
+        //                }
+        //            }
+        //            if(targetTileObject.tileObjectType.IsTileObjectAnItem() && !actor.jobQueue.HasJob(JOB_TYPE.TAKE_ITEM, targetTileObject) && targetTileObject.Advertises(INTERACTION_TYPE.PICK_UP) && actor.limiterComponent.canMove) {
+        //                //NOTE: Added checker if character can move, so that Paralyzed characters will not try to pick up items
+        //                actor.jobComponent.CreateTakeItemJob(JOB_TYPE.TAKE_ITEM, targetTileObject);
+        //            }
+        //        }
 
-        if (targetTileObject is CultistKit && !targetTileObject.IsOwnedBy(actor)) {
-#if DEBUG_LOG
-            debugLog = $"{debugLog}\n-Object is a cultist kit";
-#endif
-            if (targetTileObject.gridTileLocation != null) {
-                List<Character> validResidents = RuinarchListPool<Character>.Claim();
-                if (targetTileObject.structureLocation is ManMadeStructure && 
-                    targetTileObject.structureLocation.GetNumberOfResidentsAndPopulateListExcluding(validResidents, actor) > 0) {
-#if DEBUG_LOG
-                    debugLog = $"{debugLog}\n-Cultist kit is at structure with residents excluding the witness";
-#endif
-                    int chanceToCreateAssumption = 0;
-                    if (actor.traitContainer.HasTrait("Suspicious") || actor.moodComponent.moodState == MOOD_STATE.Critical) {
-                        chanceToCreateAssumption = 100;
-                    } else if (actor.moodComponent.moodState == MOOD_STATE.Bad) {
-                        chanceToCreateAssumption = 50;
-                    } else {
-                        chanceToCreateAssumption = 15;
-                    }
-#if DEBUG_LOG
-                    debugLog = $"{debugLog}\n-Rolling for chance to create assumption";
-#endif
-                    if (GameUtilities.RollChance(chanceToCreateAssumption, ref debugLog)) {
-                        _assumptionSuspects.Clear();
-                        if(validResidents != null) {
-                            for (int i = 0; i < validResidents.Count; i++) {
-                                Character resident = validResidents[i];
-                                AWARENESS_STATE awarenessState = actor.relationshipContainer.GetAwarenessState(resident);
-                                if (awarenessState == AWARENESS_STATE.Available) {
-                                    _assumptionSuspects.Add(resident);
-                                } else if (awarenessState == AWARENESS_STATE.None) {
-                                    if (!resident.isDead) {
-                                        _assumptionSuspects.Add(resident);
-                                    }
-                                }
-                            }
-                        }
-                        Character chosenTarget = CollectionUtilities.GetRandomElement(_assumptionSuspects);
-                        if(chosenTarget != null && CrimeManager.Instance.IsConsideredACrimeByCharacter(actor, chosenTarget, targetTileObject, CRIME_TYPE.Demon_Worship)) {
-                            actor.assumptionComponent.CreateAndReactToNewAssumption(chosenTarget, targetTileObject, INTERACTION_TYPE.IS_CULTIST, REACTION_STATUS.WITNESSED);
-                        }
-                    }
-                }
-                RuinarchListPool<Character>.Release(validResidents);
-            } 
-        }
+        //        if (targetTileObject is CultistKit && !targetTileObject.IsOwnedBy(actor)) {
+        //#if DEBUG_LOG
+        //            debugLog = $"{debugLog}\n-Object is a cultist kit";
+        //#endif
+        //            if (targetTileObject.gridTileLocation != null) {
+        //                List<Character> validResidents = RuinarchListPool<Character>.Claim();
+        //                if (targetTileObject.structureLocation is ManMadeStructure && 
+        //                    targetTileObject.structureLocation.GetNumberOfResidentsAndPopulateListExcluding(validResidents, actor) > 0) {
+        //#if DEBUG_LOG
+        //                    debugLog = $"{debugLog}\n-Cultist kit is at structure with residents excluding the witness";
+        //#endif
+        //                    int chanceToCreateAssumption = 0;
+        //                    if (actor.traitContainer.HasTrait("Suspicious") || actor.moodComponent.moodState == MOOD_STATE.Critical) {
+        //                        chanceToCreateAssumption = 100;
+        //                    } else if (actor.moodComponent.moodState == MOOD_STATE.Bad) {
+        //                        chanceToCreateAssumption = 50;
+        //                    } else {
+        //                        chanceToCreateAssumption = 15;
+        //                    }
+        //#if DEBUG_LOG
+        //                    debugLog = $"{debugLog}\n-Rolling for chance to create assumption";
+        //#endif
+        //                    if (GameUtilities.RollChance(chanceToCreateAssumption, ref debugLog)) {
+        //                        assumptionSuspects.Clear();
+        //                        if(validResidents != null) {
+        //                            for (int i = 0; i < validResidents.Count; i++) {
+        //                                Character resident = validResidents[i];
+        //                                AWARENESS_STATE awarenessState = actor.relationshipContainer.GetAwarenessState(resident);
+        //                                if (awarenessState == AWARENESS_STATE.Available) {
+        //                                    assumptionSuspects.Add(resident);
+        //                                } else if (awarenessState == AWARENESS_STATE.None) {
+        //                                    if (!resident.isDead) {
+        //                                        assumptionSuspects.Add(resident);
+        //                                    }
+        //                                }
+        //                            }
+        //                        }
+        //                        Character chosenTarget = CollectionUtilities.GetRandomElement(assumptionSuspects);
+        //                        if(chosenTarget != null && CrimeManager.Instance.IsConsideredACrimeByCharacter(actor, chosenTarget, targetTileObject, CRIME_TYPE.Demon_Worship)) {
+        //                            actor.assumptionComponent.CreateAndReactToNewAssumption(chosenTarget, targetTileObject, INTERACTION_TYPE.IS_CULTIST, REACTION_STATUS.WITNESSED);
+        //                        }
+        //                    }
+        //                }
+        //                RuinarchListPool<Character>.Release(validResidents);
+        //            } 
+        //        }
 
-        if (targetTileObject.traitContainer.HasTrait("Interesting")) {
-            Interesting interestingTrait = targetTileObject.traitContainer.GetTraitOrStatus<Interesting>("Interesting");
-            if (!interestingTrait.HasAlreadyBeenSeenByCharacter(actor)) {
-                interestingTrait.AddCharacterThatSaw(actor);
+        //        if (targetTileObject.traitContainer.HasTrait("Interesting")) {
+        //            Interesting interestingTrait = targetTileObject.traitContainer.GetTraitOrStatus<Interesting>("Interesting");
+        //            if (!interestingTrait.HasAlreadyBeenSeenByCharacter(actor)) {
+        //                interestingTrait.AddCharacterThatSaw(actor);
 
-                if (actor.traitContainer.HasTrait("Suspicious")) {
-                    if (GameUtilities.RollChance(50)) {
-                        actor.jobComponent.TriggerDestroy(targetTileObject);
-                    } else {
-                        actor.interruptComponent.TriggerInterrupt(INTERRUPT.Wary, targetTileObject);
-                    }
-                } else {
-                    if (GameUtilities.RollChance(50) && !actor.jobQueue.HasJob(JOB_TYPE.INSPECT, targetTileObject) && !actor.defaultCharacterTrait.HasAlreadyInspectedObject(targetTileObject)) {
-                        actor.jobComponent.TriggerInspect(targetTileObject);
-                    } else if (!actor.IsInventoryAtFullCapacity() && !actor.HasItem(targetTileObject.name) && !actor.HasOwnedItemInHomeStructure(targetTileObject.name)) {
-                        actor.jobComponent.CreateTakeItemJob(JOB_TYPE.TAKE_ITEM, targetTileObject);
-                    }
-                }
-            }
-        }
+        //                if (actor.traitContainer.HasTrait("Suspicious")) {
+        //                    if (GameUtilities.RollChance(50)) {
+        //                        actor.jobComponent.TriggerDestroy(targetTileObject);
+        //                    } else {
+        //                        actor.interruptComponent.TriggerInterrupt(INTERRUPT.Wary, targetTileObject);
+        //                    }
+        //                } else {
+        //                    if (GameUtilities.RollChance(50) && !actor.jobQueue.HasJob(JOB_TYPE.INSPECT, targetTileObject) && !actor.defaultCharacterTrait.HasAlreadyInspectedObject(targetTileObject)) {
+        //                        actor.jobComponent.TriggerInspect(targetTileObject);
+        //                    } else if (!actor.IsInventoryAtFullCapacity() && !actor.HasItem(targetTileObject.name) && !actor.HasOwnedItemInHomeStructure(targetTileObject.name)) {
+        //                        actor.jobComponent.CreateTakeItemJob(JOB_TYPE.TAKE_ITEM, targetTileObject);
+        //                    }
+        //                }
+        //            }
+        //        }
     }
     private void ReactToCarriedObject(Character actor, TileObject targetTileObject, Character carrier, ref string debugLog) {
 #if DEBUG_LOG

@@ -32,6 +32,7 @@ namespace Traits {
             stackLimit = 10;
             stackModifier = 0f;
             advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.EXTRACT_ITEM };
+            AddTraitOverrideFunctionIdentifier(TraitManager.Villager_Reaction);
         }
 
         #region Loading
@@ -166,6 +167,32 @@ namespace Traits {
         #region IElementalTrait
         public void SetIsPlayerSource(bool p_state) {
             isPlayerSource = p_state;
+        }
+        #endregion
+
+        #region Reactions
+        public override void VillagerReactionToTileObjectTrait(TileObject owner, Character actor, ref string debugLog) {
+            base.VillagerReactionToTileObjectTrait(owner, actor, ref debugLog);
+            if (!actor.combatComponent.isInActualCombat && !actor.hasSeenWet) {
+                if (owner.gridTileLocation != null
+                    && actor.homeSettlement != null
+                    && owner.gridTileLocation.IsPartOfSettlement(actor.homeSettlement)
+                    && !actor.jobQueue.HasJob(JOB_TYPE.DRY_TILES)) {
+#if DEBUG_LOG
+                    debugLog = $"{debugLog}\n-Target is Wet";
+#endif
+                    actor.SetHasSeenWet(true);
+                    actor.homeSettlement.settlementJobTriggerComponent.TriggerDryTiles();
+                    for (int i = 0; i < actor.homeSettlement.availableJobs.Count; i++) {
+                        JobQueueItem job = actor.homeSettlement.availableJobs[i];
+                        if (job.jobType == JOB_TYPE.DRY_TILES) {
+                            if (job.assignedCharacter == null && actor.jobQueue.CanJobBeAddedToQueue(job)) {
+                                actor.jobQueue.AddJobInQueue(job);
+                            }
+                        }
+                    }
+                }
+            }
         }
         #endregion
     }

@@ -33,7 +33,18 @@ public class PowerCrystal : TileObject {
         }
     }
 
-    
+    #region Reactions
+    public override void GeneralReactionToTileObject(Character actor, ref string debugLog) {
+        base.GeneralReactionToTileObject(actor, ref debugLog);
+        if (actor.race == RACE.ELVES) {
+            if (!HasJobTargetingThis(JOB_TYPE.ABSORB_CRYSTAL)) {
+                if (!actor.jobComponent.HasHigherPriorityJobThan(JOB_TYPE.ABSORB_CRYSTAL)) {
+                    actor.jobComponent.TriggerAbsorbPowerCrystal(this);
+                }
+            }
+        }
+    }
+    #endregion
 }
 
 #region Save Data

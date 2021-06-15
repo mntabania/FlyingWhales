@@ -12,6 +12,7 @@ using UnityEngine.EventSystems;
 using Locations.Settlements;
 using Locations;
 using Logs;
+using Tutorial;
 using Object = UnityEngine.Object;
 using Random = UnityEngine.Random;
 
@@ -1408,6 +1409,153 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     }
     public override int GetHashCode() {
         return base.GetHashCode();
+    }
+    #endregion
+
+    #region Reactions
+    public virtual void GeneralReactionToTileObject(Character actor, ref string debugLog) {
+        if (isDamageContributorToStructure) {
+            LocationStructure structure = currentStructure;
+            if (structure != null && structure.structureType.IsPlayerStructure()) {
+                if (actor.partyComponent.isMemberThatJoinedQuest && actor.partyComponent.currentParty.currentQuest.partyQuestType == PARTY_QUEST_TYPE.Counterattack) {
+                    actor.combatComponent.Fight(this, CombatManager.Clear_Demonic_Intrusion);
+                } else if (actor.behaviourComponent.isAttackingDemonicStructure && actor.race == RACE.ANGEL) {
+                    actor.combatComponent.Fight(this, CombatManager.Clear_Demonic_Intrusion);
+                }
+            }
+        }
+    }
+    public virtual void VillagerReactionToTileObject(Character actor, ref string debugLog) {
+        if (traitContainer.HasTrait("Dangerous") && gridTileLocation != null) {
+            if (this is Tornado || actor.currentStructure == gridTileLocation.structure || (!actor.currentStructure.isInterior && !gridTileLocation.structure.isInterior)) {
+                if (actor.traitContainer.HasTrait("Berserked")) {
+                    actor.combatComponent.FightOrFlight(this, CombatManager.Berserked);
+                } else if (actor.stateComponent.currentState == null || actor.stateComponent.currentState.characterState != CHARACTER_STATE.FOLLOW) {
+                    if (actor.traitContainer.HasTrait("Suicidal")) {
+                        if (!actor.jobQueue.HasJob(JOB_TYPE.SUICIDE_FOLLOW)) {
+                            CharacterStateJob job = JobManager.Instance.CreateNewCharacterStateJob(JOB_TYPE.SUICIDE_FOLLOW, CHARACTER_STATE.FOLLOW, this, actor);
+                            actor.jobQueue.AddJobInQueue(job);
+                        }
+                    } else if (actor.moodComponent.moodState == MOOD_STATE.Normal) {
+                        string neutralizingTraitName = TraitManager.Instance.GetNeutralizingTraitFor(this);
+                        if (neutralizingTraitName != string.Empty) {
+                            if (actor.traitContainer.HasTrait(neutralizingTraitName)) {
+                                if (!actor.jobQueue.HasJob(JOB_TYPE.NEUTRALIZE_DANGER, this)) {
+                                    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.NEUTRALIZE_DANGER,
+                                        INTERACTION_TYPE.NEUTRALIZE, this, actor);
+                                    actor.jobQueue.AddJobInQueue(job);
+                                }
+                            } else {
+                                actor.combatComponent.Flight(this, $"saw a {name}");
+                            }
+                        } else {
+                            throw new Exception($"Trying to neutralize {nameWithID} but it does not have a neutralizing trait!");
+                        }
+                    } else {
+                        actor.combatComponent.Flight(this, $"saw a {name}");
+                    }
+                }
+            }
+        }
+
+        if (traitContainer.HasTrait("Danger Remnant", "Lightning Remnant")) {
+            if (!actor.traitContainer.HasTrait("Berserked")) {
+                if (gridTileLocation != null && gridTileLocation.corruptionComponent.isCorrupted) {
+                    CharacterManager.Instance.TriggerEmotion(EMOTION.Fear, actor, this, REACTION_STATUS.WITNESSED);
+                } else {
+                    if (actor.traitContainer.HasTrait("Coward")) {
+                        CharacterManager.Instance.TriggerEmotion(EMOTION.Fear, actor, this, REACTION_STATUS.WITNESSED);
+                    } else {
+                        int shockChance = 30;
+                        if (actor.traitContainer.HasTrait("Combatant")) {
+                            shockChance = 70;
+                        }
+                        if (UnityEngine.Random.Range(0, 100) < shockChance) {
+                            CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, actor, this, REACTION_STATUS.WITNESSED);
+                        } else {
+                            CharacterManager.Instance.TriggerEmotion(EMOTION.Fear, actor, this, REACTION_STATUS.WITNESSED);
+                        }
+                    }
+                }
+
+            }
+        }
+
+        if (traitContainer.HasTrait("Surprised Remnant")) {
+            if (!actor.traitContainer.HasTrait("Berserked")) {
+                if (gridTileLocation != null && gridTileLocation.corruptionComponent.isCorrupted) {
+                    CharacterManager.Instance.TriggerEmotion(EMOTION.Fear, actor, this, REACTION_STATUS.WITNESSED);
+                } else {
+                    if (actor.traitContainer.HasTrait("Coward")) {
+                        CharacterManager.Instance.TriggerEmotion(EMOTION.Fear, actor, this, REACTION_STATUS.WITNESSED);
+                    } else {
+                        if (UnityEngine.Random.Range(0, 100) < 95) {
+                            CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, actor, this, REACTION_STATUS.WITNESSED);
+                        } else {
+                            CharacterManager.Instance.TriggerEmotion(EMOTION.Fear, actor, this, REACTION_STATUS.WITNESSED);
+                        }
+                    }
+                }
+            }
+        }
+
+        if (IsOwnedBy(actor)
+            && gridTileLocation != null
+            && gridTileLocation.structure != null
+            && gridTileLocation.structure is Dwelling
+            && gridTileLocation.structure != actor.homeStructure) {
+
+            if (gridTileLocation.structure.residents.Count > 0 && !HasCharacterAlreadyAssumed(actor)) {
+                if (actor.traitContainer.HasTrait("Suspicious")
+                || actor.moodComponent.moodState == MOOD_STATE.Critical
+                || (actor.moodComponent.moodState == MOOD_STATE.Bad && UnityEngine.Random.Range(0, 2) == 0)
+                || UnityEngine.Random.Range(0, 100) < 15
+                || TutorialManager.Instance.IsTutorialCurrentlyActive(TutorialManager.Tutorial.Frame_Up)) {
+#if DEBUG_LOG
+                    debugLog = $"{debugLog}\n-Owner is Suspicious or Critical Mood or Low Mood";
+                    debugLog = $"{debugLog}\n-There is at least 1 resident of the structure";
+#endif
+                    actor.reactionComponent.assumptionSuspects.Clear();
+                    for (int i = 0; i < gridTileLocation.structure.residents.Count; i++) {
+                        Character resident = gridTileLocation.structure.residents[i];
+                        AWARENESS_STATE awarenessState = actor.relationshipContainer.GetAwarenessState(resident);
+                        if (awarenessState == AWARENESS_STATE.Available) {
+                            actor.reactionComponent.assumptionSuspects.Add(resident);
+                        } else if (awarenessState == AWARENESS_STATE.None) {
+                            if (!resident.isDead) {
+                                actor.reactionComponent.assumptionSuspects.Add(resident);
+                            }
+                        }
+                    }
+                    if (actor.reactionComponent.assumptionSuspects.Count > 0) {
+                        Character chosenSuspect = actor.reactionComponent.assumptionSuspects[UnityEngine.Random.Range(0, actor.reactionComponent.assumptionSuspects.Count)];
+#if DEBUG_LOG
+                        debugLog = debugLog + ("\n-Will create Steal assumption on " + chosenSuspect.name);
+#endif
+                        actor.assumptionComponent.CreateAndReactToNewAssumption(chosenSuspect, this, INTERACTION_TYPE.STEAL, REACTION_STATUS.WITNESSED);
+                        actor.jobComponent.CreateDropItemJob(JOB_TYPE.RETURN_STOLEN_THING, this, actor.homeStructure);
+                    }
+                } else {
+                    Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "NonIntel", "no_steal_assumption", providedTags: LOG_TAG.Crimes);
+                    log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                    log.AddToFillers(this, name, LOG_IDENTIFIER.TARGET_CHARACTER);
+                    log.AddToFillers(gridTileLocation.structure, gridTileLocation.structure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
+                    log.AddLogToDatabase(true);
+                }
+            }
+            if (tileObjectType.IsTileObjectAnItem() && !actor.jobQueue.HasJob(JOB_TYPE.TAKE_ITEM, this) && Advertises(INTERACTION_TYPE.PICK_UP) && actor.limiterComponent.canMove) {
+                //NOTE: Added checker if character can move, so that Paralyzed characters will not try to pick up items
+                actor.jobComponent.CreateTakeItemJob(JOB_TYPE.TAKE_ITEM, this);
+            }
+        }
+
+        List<Trait> traitOverrideFunctions = traitContainer.GetTraitOverrideFunctions(TraitManager.Villager_Reaction);
+        if (traitOverrideFunctions != null) {
+            for (int i = 0; i < traitOverrideFunctions.Count; i++) {
+                Trait trait = traitOverrideFunctions[i];
+                trait.VillagerReactionToTileObjectTrait(this, actor, ref debugLog);
+            }
+        }
     }
     #endregion
 }
