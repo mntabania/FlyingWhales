@@ -15,6 +15,7 @@ public class Butcher : GoapAction {
         //advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER, POINT_OF_INTEREST_TYPE.TILE_OBJECT };
         //racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.KOBOLD, RACE.TROLL, RACE.RATMAN };
         logTags = new[] {LOG_TAG.Work, LOG_TAG.Needs};
+        shouldAddLogs = false;
     }
 
     #region Overrides
@@ -501,8 +502,16 @@ public class Butcher : GoapAction {
                 p_node.actor.traitContainer.AddTrait(p_node.actor, "Traumatized", targetCharacter);
             }
         }
-
-        p_node.actor.talentComponent.GetTalent(CHARACTER_TALENT.Food).AdjustExperience(4, p_node.actor);
+        p_node.actor.talentComponent?.GetTalent(CHARACTER_TALENT.Food).AdjustExperience(4, p_node.actor);
+        ProduceLogs(p_node, foodPile);
     }
-#endregion
+
+    public void ProduceLogs(ActualGoapNode p_node, FoodPile foodPile) {
+        string addOnText = (p_node.currentStateDuration * m_amountProducedPerTick).ToString() + " " + UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(foodPile.tileObjectType.ToString());
+        Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "GoapAction", name, "produced_resources", p_node, LOG_TAG.Work);
+        log.AddToFillers(p_node.actor, p_node.actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+        log.AddToFillers(null, addOnText, LOG_IDENTIFIER.STRING_1);
+        p_node.LogAction(log, true);
+    }
+    #endregion
 }

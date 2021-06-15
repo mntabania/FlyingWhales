@@ -973,7 +973,7 @@ namespace Inner_Maps {
                             throw new ArgumentOutOfRangeException();
                     }
                 case Tile_Tag.Tree:
-                    if (BigTreeObject.CanBePlacedOnTileInRandomGeneration(p_tile, p_data)) {
+                    if (InnerMapManager.Instance.CanBigTreeBePlacedOnTileInRandomGeneration(p_tile, p_data)) {
                         return GameUtilities.RollChance(25) ? TILE_OBJECT_TYPE.BIG_TREE_OBJECT : TILE_OBJECT_TYPE.TREE_OBJECT;    
                     } else {
                         return TILE_OBJECT_TYPE.TREE_OBJECT;

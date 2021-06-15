@@ -302,7 +302,7 @@ namespace Traits {
                                     if (owner.faction != null && owner.faction != targetCharacter.faction && owner.partyComponent.currentParty.partyState == PARTY_STATE.Working) {
                                         if (owner.partyComponent.currentParty.currentQuest is ExplorationPartyQuest || owner.partyComponent.currentParty.currentQuest is ExterminationPartyQuest) {
                                             if (owner.faction.factionType.HasIdeology(FACTION_IDEOLOGY.Warmonger)) {
-                                                if (UnityEngine.Random.Range(0, 100) < 25) {
+                                                if (GameUtilities.RollChance(ChanceData.GetChance(CHANCE_TYPE.Explore_Kidnap_Chance))) {
                                                     if (owner.jobComponent.TriggerKidnapJob(targetCharacter)) {
                                                         owner.partyComponent.currentParty.RemoveMemberThatJoinedQuest(owner);
                                                     }
@@ -318,7 +318,7 @@ namespace Traits {
                                 if (owner.partyComponent.currentParty.currentQuest is RaidPartyQuest raidParty
                                     && targetCharacter.homeSettlement == raidParty.targetSettlement
                                     && (targetCharacter.faction == null || owner.faction == null || owner.faction.IsHostileWith(targetCharacter.faction))) {
-                                    if (GameUtilities.RollChance(50)) {
+                                    if (GameUtilities.RollChance(ChanceData.GetChance(CHANCE_TYPE.Raid_Kidnap_Chance))) {
                                         if (!owner.jobQueue.HasJob(JOB_TYPE.STEAL_RAID)) {
                                             if (owner.jobComponent.TriggerKidnapRaidJob(targetCharacter)) {
                                                 raidParty.SetIsSuccessful(true);

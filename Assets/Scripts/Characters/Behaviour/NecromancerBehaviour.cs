@@ -368,9 +368,9 @@ public class NecromancerBehaviour : CharacterBehaviourComponent {
     private LocationStructure GetStructureForNecromancerLair(Character p_necromancer) {
         Region region = p_necromancer.currentRegion;
         if (region != null) {
-            for (int i = 0; i < region.allStructures.Count; i++) {
-                LocationStructure structure = region.allStructures[i];
-                if (!structure.hasBeenDestroyed && structure.structureType.IsSpecialStructure()) {
+            for (int i = 0; i < region.allSpecialStructures.Count; i++) {
+                LocationStructure structure = region.allSpecialStructures[i];
+                if (!structure.hasBeenDestroyed) {
                     if (!structure.IsOccupied() || IsStructureOccupiedByUndead(structure)) {
                         return structure;
                     }

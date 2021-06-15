@@ -36,7 +36,11 @@ public class TreeObject : TileObject {
     private TreeGameObject _treeGameObject;
 
     public TreeObject() {
-        Initialize(TILE_OBJECT_TYPE.TREE_OBJECT, false);
+        TILE_OBJECT_TYPE type = TILE_OBJECT_TYPE.TREE_OBJECT;
+        if (this is BigTreeObject) {
+            type = TILE_OBJECT_TYPE.BIG_TREE_OBJECT;
+        }
+        Initialize(type, false);
         AddAdvertisedAction(INTERACTION_TYPE.CHOP_WOOD);
         AddAdvertisedAction(INTERACTION_TYPE.ASSAULT);
         AddAdvertisedAction(INTERACTION_TYPE.RESOLVE_COMBAT);
@@ -49,6 +53,17 @@ public class TreeObject : TileObject {
         yield = data.yield;
         _occupiedState = data.occupiedState;
     }
+    //protected override void Initialize(TILE_OBJECT_TYPE tileObjectType, bool shouldAddCommonAdvertisements = true) {
+    //    if (tileObjectType == TILE_OBJECT_TYPE.BIG_TREE_OBJECT) {
+    //        this.tileObjectType = tileObjectType;
+    //        name = GenerateName();
+    //        maxHP = TileObjectDB.GetTileObjectData(tileObjectType).maxHP;
+    //        currentHP = maxHP;
+    //        DatabaseManager.Instance.tileObjectDatabase.RegisterTileObject(this);
+    //    } else {
+    //        base.Initialize(tileObjectType, shouldAddCommonAdvertisements);
+    //    }
+    //}
     protected override void UpdateSettlementResourcesParent() {
         if (gridTileLocation.area.settlementOnArea != null) {
             gridTileLocation.area.settlementOnArea.SettlementResources?.AddToListBasedOnRequirement(SettlementResources.StructureRequirement.TREE, this);

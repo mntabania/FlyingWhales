@@ -32,6 +32,11 @@ public static class ChanceData {
         {CHANCE_TYPE.Mimic_Spawn, 5},
         {CHANCE_TYPE.Vampire_Lycan_Visit_Hospice, 5},
         {CHANCE_TYPE.Settlement_Ruler_Default_Facility_Chance, 2},
+        {CHANCE_TYPE.Explore_Kidnap_Chance, 25},
+        {CHANCE_TYPE.Raid_Kidnap_Chance, 50},
+        {CHANCE_TYPE.Raid_Chance, 25},
+        {CHANCE_TYPE.Rescue_Chance, 50},
+        {CHANCE_TYPE.Find_Fish, 5}
     };
     public static bool RollChance(CHANCE_TYPE p_chanceType) {
         if (integerChances.ContainsKey(p_chanceType)) {

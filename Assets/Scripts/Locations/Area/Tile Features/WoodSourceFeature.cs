@@ -96,12 +96,20 @@ namespace Locations.Area_Features {
             }
         }
         private bool CreateNewBigTree() {
-            List<LocationGridTile> choices = owner.gridTileComponent.gridTiles.Where(x => x.isOccupied == false 
-                                                                                && x.structure.structureType.IsOpenSpace() && BigTreeObject.CanBePlacedOnTile(x)).ToList();
+            LocationGridTile chosenTile = null;
+            List<LocationGridTile> choices = RuinarchListPool<LocationGridTile>.Claim();
+            for (int i = 0; i < owner.gridTileComponent.gridTiles.Count; i++) {
+                LocationGridTile x = owner.gridTileComponent.gridTiles[i];
+                if (x.isOccupied == false && x.structure.structureType.IsOpenSpace() && InnerMapManager.Instance.CanBigTreeBePlacedOnTile(x)) {
+                    choices.Add(x);
+                }
+            }
             if (choices.Count > 0) {
-                LocationGridTile chosenTile = CollectionUtilities.GetRandomElement(choices);
-                chosenTile.structure.AddPOI(InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.BIG_TREE_OBJECT),
-                    chosenTile);
+                chosenTile = CollectionUtilities.GetRandomElement(choices);
+            }
+            RuinarchListPool<LocationGridTile>.Release(choices);
+            if (chosenTile != null) {
+                chosenTile.structure.AddPOI(InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.BIG_TREE_OBJECT), chosenTile);
                 return true;
             }
             return false;

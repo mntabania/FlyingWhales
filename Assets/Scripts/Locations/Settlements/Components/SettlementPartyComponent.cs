@@ -42,10 +42,12 @@ public class SettlementPartyComponent : NPCSettlementComponent {
 #if DEBUG_LOG
         log = GameManager.Instance.TodayLogString() + owner.name + " will process party quests";
 #endif
-
         Faction factionOwner = owner.owner;
         if (factionOwner != null) {
             //Exploration
+#if DEBUG_LOG
+            log += "\nWill try Explore";
+#endif
             if (GameUtilities.RollChance(50, ref log)) { //50
                 if (!factionOwner.partyQuestBoard.HasPartyQuest(PARTY_QUEST_TYPE.Exploration)) {
                     factionOwner.partyQuestBoard.CreateExplorationPartyQuest(null, owner, owner.region);
@@ -56,7 +58,7 @@ public class SettlementPartyComponent : NPCSettlementComponent {
 #if DEBUG_LOG
             log += "\nWill try Morning Patrol";
 #endif
-            if (GameUtilities.RollChance(50, ref log)) { //25
+            if (GameUtilities.RollChance(25, ref log)) { //25
                 if (!factionOwner.partyQuestBoard.HasPartyQuest(PARTY_QUEST_TYPE.Morning_Patrol)) {
                     factionOwner.partyQuestBoard.CreateMorningPatrolPartyQuest(null, owner);
                 }
@@ -76,8 +78,9 @@ public class SettlementPartyComponent : NPCSettlementComponent {
 #if DEBUG_LOG
             log += "\nWill try Raid";
 #endif
-            if (GameUtilities.RollChance(25, ref log)) { //25
-                if (factionOwner.IsAtWar()) {
+            if (GameUtilities.RollChance(ChanceData.GetChance(CHANCE_TYPE.Raid_Chance), ref log)) { //25
+                //Only warmonger factions should raid
+                if (factionOwner.factionType.HasIdeology(FACTION_IDEOLOGY.Warmonger) && factionOwner.IsAtWar()) {
 #if DEBUG_LOG
                     log += "\nFaction owner is at war";
 #endif
@@ -103,7 +106,7 @@ public class SettlementPartyComponent : NPCSettlementComponent {
 #if DEBUG_LOG
             log += "\nWill try Rescue";
 #endif
-            if (GameUtilities.RollChance(50, ref log)) { //50
+            if (GameUtilities.RollChance(ChanceData.GetChance(CHANCE_TYPE.Rescue_Chance), ref log)) { //50
                 if (!factionOwner.partyQuestBoard.HasPartyQuest(PARTY_QUEST_TYPE.Rescue) && !factionOwner.partyQuestBoard.HasPartyQuest(PARTY_QUEST_TYPE.Demon_Rescue)) {
                     Character characterToRescue = owner.GetRandomResidentForRescue();
                     if (characterToRescue != null) {

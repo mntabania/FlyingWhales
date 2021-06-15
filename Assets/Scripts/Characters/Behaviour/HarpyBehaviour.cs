@@ -94,10 +94,10 @@ public class HarpyBehaviour : BaseMonsterBehaviour {
         return chosenCharacter;
     }
     private LocationStructure GetDestinationToDropCapturedCharacter(Character actor, Region region) {
-        List<LocationStructure> structures = ObjectPoolManager.Instance.CreateNewStructuresList();
-        for (int i = 0; i < region.allStructures.Count; i++) {
-            LocationStructure structure = region.allStructures[i];
-            if (structure != actor.homeStructure && structure.structureType.IsSpecialStructure() && structure.passableTiles.Count > 0) {
+        List<LocationStructure> structures = RuinarchListPool<LocationStructure>.Claim();
+        for (int i = 0; i < region.allSpecialStructures.Count; i++) {
+            LocationStructure structure = region.allSpecialStructures[i];
+            if (structure != actor.homeStructure && structure.passableTiles.Count > 0) {
                 structures.Add(structure);
             }
         }
@@ -105,7 +105,7 @@ public class HarpyBehaviour : BaseMonsterBehaviour {
         if (structures.Count > 0) {
             chosenStructure = structures[GameUtilities.RandomBetweenTwoNumbers(0, structures.Count - 1)];
         }
-        ObjectPoolManager.Instance.ReturnStructuresListToPool(structures);
+        RuinarchListPool<LocationStructure>.Release(structures);
         return chosenStructure;
     }
 }

@@ -60,8 +60,7 @@ public class AbsorbPowerCrystal : GoapAction {
         Character targetCharacter = goapNode.actor as Character;
         TileObject p_crystal = goapNode.target as TileObject;
         targetCharacter.AbsorbCrystal(p_crystal as PowerCrystal);
-        p_crystal.DestroyMapVisualGameObject();
-        p_crystal.DestroyPermanently();
+        p_crystal.currentStructure?.RemovePOI(p_crystal);
     }
     #endregion
 }
