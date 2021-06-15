@@ -49,7 +49,7 @@ namespace Factions.Faction_Types {
             AddCrime(CRIME_TYPE.Arson, CRIME_SEVERITY.Misdemeanor);
             AddCrime(CRIME_TYPE.Trespassing, CRIME_SEVERITY.Misdemeanor);
             AddCrime(CRIME_TYPE.Murder, CRIME_SEVERITY.Serious);
-            AddCrime(CRIME_TYPE.Animal_Killing, CRIME_SEVERITY.Serious);
+            //AddCrime(CRIME_TYPE.Animal_Killing, CRIME_SEVERITY.Serious);
             AddCrime(CRIME_TYPE.Cannibalism, CRIME_SEVERITY.Serious);
             AddCrime(CRIME_TYPE.Vampire, CRIME_SEVERITY.Heinous);
             AddCrime(CRIME_TYPE.Demon_Worship, CRIME_SEVERITY.Heinous);
