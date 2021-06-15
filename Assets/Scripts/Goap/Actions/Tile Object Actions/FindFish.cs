@@ -16,6 +16,7 @@ public class FindFish : GoapAction {
         //advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
         racesThatCanDoAction = new RACE[] { RACE.ELVES, RACE.HUMANS, RACE.RATMAN, };
         logTags = new[] { LOG_TAG.Work };
+        shouldAddLogs = false;
     }
 
     #region Overrides
@@ -147,12 +148,12 @@ public class FindFish : GoapAction {
     public void ProduceNoneLogs(ActualGoapNode p_node) {
         Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "GoapAction", name, "none_produced", p_node, LOG_TAG.Work);
         log.AddToFillers(p_node.actor, p_node.actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-        p_node.LogAction(log);
+        p_node.LogAction(log, true);
     }
 
     public void ProduceLogsPerTick(ActualGoapNode p_node) {
         Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "GoapAction", name, "produced_resources_per_tick", p_node, LOG_TAG.Work);
         log.AddToFillers(p_node.actor, p_node.actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-        p_node.LogAction(log);
+        p_node.LogAction(log, true);
     }
 }

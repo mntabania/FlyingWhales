@@ -789,8 +789,8 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
         }
     }
 
-    public void LogAction(Log p_log) {
-        if (p_log != null && action.shouldAddLogs && CharacterManager.Instance.CanAddCharacterLogOrShowNotif(action.goapType)) { //only add logs if both the parent action and this state should add logs
+    public void LogAction(Log p_log, bool ignoreShouldAddLog = false) {
+        if (p_log != null && (action.shouldAddLogs || ignoreShouldAddLog) && CharacterManager.Instance.CanAddCharacterLogOrShowNotif(action.goapType)) { //only add logs if both the parent action and this state should add logs
             p_log.AddLogToDatabase();
             //Only show notif if an action can be stored as an intel to reduce notifications and info overload to the player
             if (action.ShouldActionBeAnIntel(this)) {

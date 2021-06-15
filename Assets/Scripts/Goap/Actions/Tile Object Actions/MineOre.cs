@@ -15,6 +15,7 @@ public class MineOre : GoapAction {
         //advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
         racesThatCanDoAction = new RACE[] { RACE.ELVES, RACE.HUMANS, RACE.RATMAN, };
         logTags = new[] { LOG_TAG.Work };
+        shouldAddLogs = false;
     }
 
     #region Overrides
@@ -77,10 +78,11 @@ public class MineOre : GoapAction {
     }
 
     public void ProduceLogs(ActualGoapNode p_node) {
-        string addOnText = (p_node.currentStateDuration * m_amountProducedPerTick).ToString();
+        Ore targetOre = p_node.target as Ore;
+        string addOnText = (p_node.currentStateDuration * m_amountProducedPerTick).ToString() + UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(targetOre.providedMetal.ConvertResourcesToTileObjectType().ToString());
         Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "GoapAction", name, "produced_resources", p_node, LOG_TAG.Work);
         log.AddToFillers(p_node.actor, p_node.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         log.AddToFillers(null, addOnText, LOG_IDENTIFIER.STRING_1);
-        p_node.LogAction(log);
+        p_node.LogAction(log, true);
     }
 }
