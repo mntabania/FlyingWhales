@@ -254,19 +254,21 @@ public class GameManager : BaseMonoBehaviour {
         Profiler.BeginSample("Tick Started Signal");
 #endif
 
-        if (DatabaseManager.Instance.tileObjectDatabase.destroyedTileObjects.Count > 0) {
-            GC.Collect();
-            string test = "Destroyed Tile Objects: " + DatabaseManager.Instance.tileObjectDatabase.destroyedTileObjects.Count;
-            for (int i = 0; i < DatabaseManager.Instance.tileObjectDatabase.destroyedTileObjects.Count; i++) {
-                WeakReference wr = DatabaseManager.Instance.tileObjectDatabase.destroyedTileObjects[i];
-                if (wr.IsAlive) {
-                    test += "\n" + wr.Target.ToString() + " -> " + wr.IsAlive;
-                } else {
-                    test += "\n" + wr.IsAlive;
-                }
-            }
-            Debug.Log(test);
-        }
+        ////Note: When the GC.Collect command is after the Debug.Log, the wr.Target does not get collected by garbage if we do the "wr.Target.ToString()"
+        ////The reason is because, when the supposed dead object (which is the Target) is accessed on the same scope the GC.Collect is called, the GC will skip the collection of it because it knows that it was just accessed
+        //if (DatabaseManager.Instance.tileObjectDatabase.destroyedTileObjects.Count > 0) {
+        //    GC.Collect();
+        //    string test = "Destroyed Tile Objects: " + DatabaseManager.Instance.tileObjectDatabase.destroyedTileObjects.Count;
+        //    for (int i = 0; i < DatabaseManager.Instance.tileObjectDatabase.destroyedTileObjects.Count; i++) {
+        //        WeakReference wr = DatabaseManager.Instance.tileObjectDatabase.destroyedTileObjects[i];
+        //        if (wr.IsAlive) {
+        //            test += "\n" + wr.Target.ToString() + " -> " + wr.IsAlive;
+        //        } else {
+        //            test += "\n" + wr.IsAlive;
+        //        }
+        //    }
+        //    Debug.Log(test);
+        //}
 
         Messenger.Broadcast(Signals.TICK_STARTED);
 #if DEBUG_PROFILER

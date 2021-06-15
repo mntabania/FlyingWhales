@@ -506,7 +506,7 @@ public class Party : ILogFiller, ISavable, IJobOwner, IBookmarkable {
                         member.movementComponent.SetEnableDigging(true);
                         member.traitContainer.AddTrait(member, "Travelling");
                     }
-                    member.interruptComponent.TriggerInterrupt(INTERRUPT.Morale_Boost, member);
+                    //member.interruptComponent.TriggerInterrupt(INTERRUPT.Morale_Boost, member);
                 }
                 if (currentQuest.waitingToWorkingStateImmediately) {
                     SetPartyState(PARTY_STATE.Working);

@@ -77,7 +77,8 @@ public class SettlementPartyComponent : NPCSettlementComponent {
             log += "\nWill try Raid";
 #endif
             if (GameUtilities.RollChance(25, ref log)) { //25
-                if (factionOwner.IsAtWar()) {
+                //Only warmonger factions should raid
+                if (factionOwner.factionType.HasIdeology(FACTION_IDEOLOGY.Warmonger) && factionOwner.IsAtWar()) {
 #if DEBUG_LOG
                     log += "\nFaction owner is at war";
 #endif
