@@ -2335,7 +2335,9 @@ public class ReactionComponent : CharacterComponent {
                 if (owner.marker) {
                     for (int i = 0; i < owner.marker.inVisionCharacters.Count; i++) {
                         Character inVision = owner.marker.inVisionCharacters[i];
-                        inVision.marker.AddUnprocessedPOI(owner);
+                        if (inVision.hasMarker) {
+                            inVision.marker.AddUnprocessedPOI(owner);
+                        }
                     }
                 }
             }

@@ -419,7 +419,16 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
 #endif
     }
     private void OnSettlementAbandoned() {
+        if (!GameManager.Instance.gameHasStarted) {
+            return;
+        }
         structureComponent.RelinkAllLinkedStructures();
+    }
+    private void OnSettlementUnabandoned() {
+        if (!GameManager.Instance.gameHasStarted) {
+            return;
+        }
+        region.LinkAllUnlinkedSpecialStructures();
     }
     #endregion
 
@@ -460,7 +469,10 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
             //region.AddResident(character);
             OnAddResident(character);
             character.SetHomeSettlement(this);
-            if (character.race == RACE.DEMON || character is Summon) { return true; }
+            if (residents.Count == 1) {
+                OnSettlementUnabandoned();
+            }
+            //if (character.race == RACE.DEMON || character is Summon) { return true; }
             //if (character.isNormalCharacter && locationType == LOCATION_TYPE.VILLAGE) {
             //    jobPriorityComponent.OnAddResident(character);    
             //}

@@ -174,6 +174,9 @@ public class Party : ILogFiller, ISavable, IJobOwner, IBookmarkable {
         hasSetNextSwitchToWaitingStateTrigger = data.hasSetNextSwitchToWaitingStateTrigger;
         nextWaitingCheckDate = data.nextWaitingCheckDate;
 
+        hasSetEndQuestDate = data.hasSetEndQuestDate;
+        endQuestDate = data.endQuestDate;
+
         prevQuestType = data.prevQuestType;
         plannedPartyType = data.plannedPartyType;
 
@@ -1466,6 +1469,8 @@ public class SaveDataParty : SaveData<Party>, ISavableCounterpart {
     public GameDate canAcceptQuestsAgainDate;
     public GameDate nextWaitingCheckDate;
     public bool hasSetNextSwitchToWaitingStateTrigger;
+    public GameDate endQuestDate;
+    public bool hasSetEndQuestDate;
     public int chanceToRetreatUponKnockoutOrDeath;
 
     public string campSetter;
@@ -1536,6 +1541,9 @@ public class SaveDataParty : SaveData<Party>, ISavableCounterpart {
 
         hasSetNextSwitchToWaitingStateTrigger = data.hasSetNextSwitchToWaitingStateTrigger;
         nextWaitingCheckDate = data.nextWaitingCheckDate;
+
+        hasSetEndQuestDate = data.hasSetEndQuestDate;
+        endQuestDate = data.endQuestDate;
 
         waitingEndDate = data.waitingEndDate;
 

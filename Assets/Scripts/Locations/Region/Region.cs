@@ -454,6 +454,9 @@ public class Region : ISavable, ILogFiller {
         if (!structures[structure.structureType].Contains(structure)) {
             structures[structure.structureType].Add(structure);
             allStructures.Add(structure);
+            if (structure.structureType.IsSpecialStructure()) {
+                allSpecialStructures.Add(structure);
+            }
             // Debug.Log($"New structure {structure.name} was added to region {name}" );
         }
     }
@@ -463,6 +466,9 @@ public class Region : ISavable, ILogFiller {
                 allStructures.Remove(structure);
                 if (structures[structure.structureType].Count == 0) { //this is only for optimization
                     structures.Remove(structure.structureType);
+                }
+                if (structure.structureType.IsSpecialStructure()) {
+                    allSpecialStructures.Remove(structure);
                 }
             }
         }
@@ -572,9 +578,9 @@ public class Region : ISavable, ILogFiller {
     public LocationStructure GetRandomSpecialStructure() {
         List<LocationStructure> specialStructures = RuinarchListPool<LocationStructure>.Claim();
         LocationStructure chosenStructure = null;
-        for (int i = 0; i < allStructures.Count; i++) {
-            LocationStructure currStructure = allStructures[i];
-            if (currStructure.structureType.IsSpecialStructure() && currStructure.passableTiles.Count > 0) {
+        for (int i = 0; i < allSpecialStructures.Count; i++) {
+            LocationStructure currStructure = allSpecialStructures[i];
+            if (currStructure.passableTiles.Count > 0) {
                 specialStructures.Add(currStructure);
             }
         }
@@ -670,6 +676,14 @@ public class Region : ISavable, ILogFiller {
     public void PopulateTileObjectsOfType<T>(List<TileObject> objs) where T : TileObject{
         for (int i = 0; i < allStructures.Count; i++) {
             allStructures[i].PopulateTileObjectsOfType<T>(objs);
+        }
+    }
+    public void LinkAllUnlinkedSpecialStructures() {
+        for (int i = 0; i < allSpecialStructures.Count; i++) {
+            LocationStructure s = allSpecialStructures[i];
+            if (s.linkedSettlement == null) {
+                s.LinkThisStructureToAVillage();
+            }
         }
     }
 #endregion
@@ -927,7 +941,7 @@ public class Region : ISavable, ILogFiller {
         }
         return null;
     }
-#endregion
+    #endregion
 
     public void CleanUp() {
         areas?.Clear();
