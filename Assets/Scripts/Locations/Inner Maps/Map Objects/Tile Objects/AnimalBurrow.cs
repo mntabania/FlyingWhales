@@ -10,7 +10,7 @@ public abstract class AnimalBurrow : TileObject {
     public SUMMON_TYPE monsterToSpawn { get; private set; }
     public List<Summon> spawnedMonsters { get; private set; }
 
-    private const int MaxMonsters = 4;
+    // private const int MaxMonsters = 4;
 
     #region getters
     public override Vector2 selectableSize => new Vector2(1.7f, 1.7f);
@@ -73,53 +73,23 @@ public abstract class AnimalBurrow : TileObject {
     #region Listeners
     protected override void SubscribeListeners() {
         base.SubscribeListeners();
-        Messenger.AddListener(Signals.DAY_STARTED, OnDayStarted);
         Messenger.AddListener<Character>(CharacterSignals.CHARACTER_DEATH, OnCharacterDied);
     }
     protected override void UnsubscribeListeners() {
         base.UnsubscribeListeners();
-        Messenger.RemoveListener(Signals.DAY_STARTED, OnDayStarted);
         Messenger.RemoveListener<Character>(CharacterSignals.CHARACTER_DEATH, OnCharacterDied);
-    }
-    private void OnDayStarted() {
-        if (spawnedMonsters.Count <= 0) {
-            List<LocationGridTile> tiles = RuinarchListPool<LocationGridTile>.Claim();
-            Area area = gridTileLocation.area;
-            for (int i = 0; i < area.gridTileComponent.passableTiles.Count; i++) {
-                LocationGridTile tile = area.gridTileComponent.passableTiles[i];
-                if (tile.structure is Wilderness) {
-                    tiles.Add(tile);
-                }
-            }
-            for (int i = 0; i < MaxMonsters; i++) {
-                CreateNewMonster(tiles);
-            }
-            RuinarchListPool<LocationGridTile>.Release(tiles);
-        }
     }
     private void OnCharacterDied(Character p_character) {
         if (p_character is Summon summon && spawnedMonsters.Contains(summon)) {
             spawnedMonsters.Remove(summon);
         }
     }
-    private void OnGameLoaded() {
+    protected virtual void OnGameLoaded() {
         Messenger.RemoveListener(Signals.GAME_LOADED, OnGameLoaded);
-        List<LocationGridTile> tiles = RuinarchListPool<LocationGridTile>.Claim();
-        Area area = gridTileLocation.area;
-        for (int i = 0; i < area.gridTileComponent.passableTiles.Count; i++) {
-            LocationGridTile tile = area.gridTileComponent.passableTiles[i];
-            if (tile.structure is Wilderness) {
-                tiles.Add(tile);
-            }
-        }
-        for (int i = 0; i < MaxMonsters; i++) {
-            CreateNewMonster(tiles);
-        }
-        RuinarchListPool<LocationGridTile>.Release(tiles);
     }
     #endregion
 
-    private void CreateNewMonster(List<LocationGridTile> p_locationChoices = null) {
+    protected void CreateNewMonster(List<LocationGridTile> p_locationChoices = null) {
         Summon summon = CharacterManager.Instance.CreateNewSummon(monsterToSpawn, FactionManager.Instance.GetDefaultFactionForMonster(monsterToSpawn), null, gridTileLocation.parentMap.region);
         Area area = gridTileLocation.area;
         List<LocationGridTile> tiles = RuinarchListPool<LocationGridTile>.Claim();

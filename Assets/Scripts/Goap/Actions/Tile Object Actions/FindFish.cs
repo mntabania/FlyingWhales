@@ -8,9 +8,7 @@ using Inner_Maps;
 public class FindFish : GoapAction {
 
     public int m_amountProducedPerTick = 10;
-    public FishPile m_matsToHaul;
-    public int m_count = 0;
-
+    
     public FindFish() : base(INTERACTION_TYPE.FIND_FISH) {
         actionIconString = GoapActionStateDB.Fish_Icon;
         //advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
@@ -22,8 +20,8 @@ public class FindFish : GoapAction {
     #region Overrides
     public override void Perform(ActualGoapNode goapNode) {
         base.Perform(goapNode);
-        m_matsToHaul = null;
-        m_count = 0;
+        goapNode.actor.jobComponent.fishPile = null;
+        goapNode.actor.jobComponent.producedFish = 0;
         SetState("Find Fish Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
@@ -80,69 +78,69 @@ public class FindFish : GoapAction {
     public override void OnStopWhilePerforming(ActualGoapNode p_node) {
         base.OnStopWhilePerforming(p_node);
         if (p_node.currentStateDuration > 0) {
-            if (m_matsToHaul != null) {
-                p_node.actor.jobComponent.TryCreateHaulToWorkplaceJob(m_matsToHaul);
+            if (p_node.actor.jobComponent.fishPile != null) {
+                p_node.actor.jobComponent.TryCreateHaulToWorkplaceJob(p_node.actor.jobComponent.fishPile);
             }
         }
-        if (m_count <= 0) {
+        if (p_node.actor.jobComponent.producedFish <= 0) {
             ProduceNoneLogs(p_node);
         } else {
             ProduceLogsPerTick(p_node);
         }
+        p_node.actor.jobComponent.producedFish = 0;
+        p_node.actor.jobComponent.fishPile = null;
     }
     #endregion
 
     #region State Effects
     public void AfterFindFishSuccess(ActualGoapNode p_node) {
-        if (m_matsToHaul != null) {
-            p_node.actor.jobComponent.TryCreateHaulToWorkplaceJob(m_matsToHaul);
+        if (p_node.actor.jobComponent.fishPile != null) {
+            p_node.actor.jobComponent.TryCreateHaulToWorkplaceJob(p_node.actor.jobComponent.fishPile);
         }
-        if (m_count <= 0) {
+        if (p_node.actor.jobComponent.producedFish <= 0) {
             ProduceNoneLogs(p_node);
         }
+        p_node.actor.jobComponent.producedFish = 0;
+        p_node.actor.jobComponent.fishPile = null;
     }
 
     public void PerTickFindFishSuccess(ActualGoapNode p_node) {
-        m_matsToHaul = null;
-        m_count = 0;
+        p_node.actor.jobComponent.fishPile = null;
         int pileCount = p_node.actor.gridTileLocation.GetCountOfNeighboursThatHasTileObjectOfType(TILE_OBJECT_TYPE.FISH_PILE);
-        if (UtilityScripts.GameUtilities.RandomBetweenTwoNumbers(0, 100) < 85) {
+        if (ChanceData.RollChance(CHANCE_TYPE.Find_Fish)) {
             if (pileCount > 0 || p_node.actor.gridTileLocation.GetFirstNeighborThatIsPassableAndNoObject() != null) {
-                m_count += 10;
+                p_node.actor.jobComponent.producedFish += m_amountProducedPerTick;
                 ProduceMatsPile(p_node);
                 ProduceLogsPerTick(p_node);
-            } else { 
-                
             }
-            
         }
         //p_node.actor.jobComponent.TryCreateHaulToWorkplaceJob(ProduceMatsPile(p_node));
     }
     #endregion
 
-    ResourcePile ProduceMatsPile(ActualGoapNode p_node) {
-        if (m_matsToHaul == null) {
-            int pileCount = p_node.actor.gridTileLocation.GetCountOfNeighboursThatHasTileObjectOfType(TILE_OBJECT_TYPE.FISH_PILE);
+    ResourcePile ProduceMatsPile(ActualGoapNode goapNode) {
+        if (goapNode.actor.jobComponent.fishPile == null) {
+            int pileCount = goapNode.actor.gridTileLocation.GetCountOfNeighboursThatHasTileObjectOfType(TILE_OBJECT_TYPE.FISH_PILE);
             if (pileCount > 0) {
-                for (int x = 0; x < p_node.actor.gridTileLocation.neighbourList.Count; ++x) {
-                    if (p_node.actor.gridTileLocation.neighbourList[x].tileObjectComponent.objHere?.tileObjectType == TILE_OBJECT_TYPE.FISH_PILE) {
-                        m_matsToHaul = p_node.actor.gridTileLocation.neighbourList[x].tileObjectComponent.objHere as FishPile;
+                for (int x = 0; x < goapNode.actor.gridTileLocation.neighbourList.Count; ++x) {
+                    if (goapNode.actor.gridTileLocation.neighbourList[x].tileObjectComponent.objHere?.tileObjectType == TILE_OBJECT_TYPE.FISH_PILE) {
+                        goapNode.actor.jobComponent.fishPile = goapNode.actor.gridTileLocation.neighbourList[x].tileObjectComponent.objHere as FishPile;
                         break;
                     }
                 }
-                m_matsToHaul.AdjustResourceInPile(m_count);
+                goapNode.actor.jobComponent.fishPile.AdjustResourceInPile(m_amountProducedPerTick);
             } else {
-                LocationGridTile tileToSpawnPile = p_node.actor.gridTileLocation.GetFirstNeighborThatIsPassableAndNoObject();
+                LocationGridTile tileToSpawnPile = goapNode.actor.gridTileLocation.GetFirstNeighborThatIsPassableAndNoObject();
                 if (tileToSpawnPile != null && tileToSpawnPile.tileObjectComponent.objHere != null) {
-                    tileToSpawnPile = p_node.actor.gridTileLocation.GetFirstNeighborThatIsPassableAndNoObject();
+                    tileToSpawnPile = goapNode.actor.gridTileLocation.GetFirstNeighborThatIsPassableAndNoObject();
                 }
-                m_matsToHaul = InnerMapManager.Instance.CreateNewTileObject<FishPile>(TILE_OBJECT_TYPE.FISH_PILE);
-                tileToSpawnPile.structure.AddPOI(m_matsToHaul, tileToSpawnPile);
-                p_node.actor.talentComponent?.GetTalent(CHARACTER_TALENT.Food).AdjustExperience(20, p_node.actor);
-                m_matsToHaul.SetResourceInPile(m_count);
+                goapNode.actor.jobComponent.fishPile = InnerMapManager.Instance.CreateNewTileObject<FishPile>(TILE_OBJECT_TYPE.FISH_PILE);
+                tileToSpawnPile.structure.AddPOI(goapNode.actor.jobComponent.fishPile, tileToSpawnPile);
+                goapNode.actor.talentComponent?.GetTalent(CHARACTER_TALENT.Food).AdjustExperience(4, goapNode.actor);
+                goapNode.actor.jobComponent.fishPile.SetResourceInPile(m_amountProducedPerTick);
             }
         }
-        return m_matsToHaul;
+        return goapNode.actor.jobComponent.fishPile;
     }
 
     public void ProduceNoneLogs(ActualGoapNode p_node) {

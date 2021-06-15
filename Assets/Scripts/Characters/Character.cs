@@ -6492,7 +6492,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
 
         Log log;
         string crystalBonus = string.Empty;
-        if (currentSettlement == null || currentSettlement?.locationType != LOCATION_TYPE.VILLAGE) {
+        if (homeSettlement == null || homeSettlement.locationType != LOCATION_TYPE.VILLAGE) {
             if (p_crystal.amountBonusPiercing > 0) {
                 crystalBonus = name + " gained " + p_crystal.amountBonusPiercing + " Piercing";
             } else {

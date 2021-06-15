@@ -1,8 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 public class PowerCrystal : TileObject {
 
-    public List<RESISTANCE> resistanceBonuses = new List<RESISTANCE>();
+    public override Type serializedData => typeof(SaveDataPowerCrystal);
+
+	public List<RESISTANCE> resistanceBonuses = new List<RESISTANCE>();
     public float amountBonusResistance;
     public float amountBonusPiercing;
     public PowerCrystal() {
@@ -12,10 +15,9 @@ public class PowerCrystal : TileObject {
         currentHP = maxHP;
 
         AddAdvertisedAction(INTERACTION_TYPE.ABSORB_POWER_CRYSTAL);
-        if(UtilityScripts.GameUtilities.RandomBetweenTwoNumbers(0, 100) > 50) {
+        if(UtilityScripts.GameUtilities.RandomBetweenTwoNumbers(1, 100) > 50) {
             amountBonusPiercing = 5;
         } else {
-            amountBonusResistance = 10;
             EquipmentBonusProcessor.SetBonusResistanceOnPowerCrystal(this, 1);
         }
     }
@@ -23,7 +25,7 @@ public class PowerCrystal : TileObject {
 
     public override void LoadSecondWave(SaveDataTileObject data) {
         base.LoadSecondWave(data);
-        SaveDatapowerCrystalItem powerCrystalSave = data as SaveDatapowerCrystalItem;
+        SaveDataPowerCrystal powerCrystalSave = data as SaveDataPowerCrystal;
         if (powerCrystalSave != null) {
             powerCrystalSave.resistanceBonuses.ForEach(eachResistance => {
                 resistanceBonuses.Add(eachResistance);
@@ -48,7 +50,7 @@ public class PowerCrystal : TileObject {
 }
 
 #region Save Data
-public class SaveDatapowerCrystalItem : SaveDataTileObject {
+public class SaveDataPowerCrystal : SaveDataTileObject {
 
     public List<RESISTANCE> resistanceBonuses = new List<RESISTANCE>();
     public float bonusResistance;
