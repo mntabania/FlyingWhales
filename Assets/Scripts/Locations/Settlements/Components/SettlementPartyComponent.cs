@@ -42,10 +42,12 @@ public class SettlementPartyComponent : NPCSettlementComponent {
 #if DEBUG_LOG
         log = GameManager.Instance.TodayLogString() + owner.name + " will process party quests";
 #endif
-
         Faction factionOwner = owner.owner;
         if (factionOwner != null) {
             //Exploration
+#if DEBUG_LOG
+            log += "\nWill try Explore";
+#endif
             if (GameUtilities.RollChance(50, ref log)) { //50
                 if (!factionOwner.partyQuestBoard.HasPartyQuest(PARTY_QUEST_TYPE.Exploration)) {
                     factionOwner.partyQuestBoard.CreateExplorationPartyQuest(null, owner, owner.region);
@@ -56,7 +58,7 @@ public class SettlementPartyComponent : NPCSettlementComponent {
 #if DEBUG_LOG
             log += "\nWill try Morning Patrol";
 #endif
-            if (GameUtilities.RollChance(50, ref log)) { //25
+            if (GameUtilities.RollChance(25, ref log)) { //25
                 if (!factionOwner.partyQuestBoard.HasPartyQuest(PARTY_QUEST_TYPE.Morning_Patrol)) {
                     factionOwner.partyQuestBoard.CreateMorningPatrolPartyQuest(null, owner);
                 }
