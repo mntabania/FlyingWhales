@@ -12,9 +12,11 @@ public class WallProjectileReceiver : ProjectileReceiver {
         }
     }
     public override void OnTriggerEnter2D(Collider2D collision) {
-        Projectile projectileThatHit = collision.gameObject.GetComponent<Projectile>();
-        if (projectileThatHit != null) { //allow all projectiles to hit walls
-            projectileThatHit.OnProjectileHit(owner);
+        if (owner != null) {
+            Projectile projectileThatHit = collision.gameObject.GetComponent<Projectile>();
+            if (projectileThatHit != null) { //allow all projectiles to hit walls
+                projectileThatHit.OnProjectileHit(owner);
+            }    
         }
     }
 }
