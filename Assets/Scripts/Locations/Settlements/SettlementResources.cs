@@ -8,7 +8,7 @@ using Inner_Maps.Location_Structures;
 public class SettlementResources
 {
     public enum StructureRequirement { NONE = 0, ROCK, TREE, FISHING_SPOT, FEATURE_GAME, MINE_SHACK_SPOT, CHARACTER, HERB_PLANT, }
-    public List<Rock> rocks = new List<Rock>();
+    //public List<Rock> rocks = new List<Rock>();
     public List<TreeObject> trees = new List<TreeObject>();
     public List<FishingSpot> fishingSpots = new List<FishingSpot>();
     public List<HerbPlant> herbPlants = new List<HerbPlant>();
@@ -22,7 +22,7 @@ public class SettlementResources
 
     public bool IsRequirementAvailable(StructureRequirement p_structureRequirement) {
         switch (p_structureRequirement) {
-            case StructureRequirement.ROCK: if (rocks.Count > 0) return true; else return false;
+            //case StructureRequirement.ROCK: if (rocks.Count > 0) return true; else return false;
             case StructureRequirement.TREE: if (trees.Count > 0) return true; else return false;
             case StructureRequirement.FISHING_SPOT: if (fishingSpots.Count > 0) return true; else return false;
             case StructureRequirement.MINE_SHACK_SPOT: if (mineShackSpots.Count > 0) return true; else return false;
@@ -32,11 +32,11 @@ public class SettlementResources
 
     public void AddToListBasedOnRequirement(StructureRequirement p_structureRequirement, TileObject p_tileObject) {
         switch (p_structureRequirement) {
-            case StructureRequirement.ROCK:
-            if (!rocks.Contains(p_tileObject as Rock)) {
-                rocks.Add(p_tileObject as Rock);
-            }
-            break;
+            //case StructureRequirement.ROCK:
+            //if (!rocks.Contains(p_tileObject as Rock)) {
+            //    rocks.Add(p_tileObject as Rock);
+            //}
+            //break;
             case StructureRequirement.TREE:
             if (!trees.Contains(p_tileObject as TreeObject)) {
                 trees.Add(p_tileObject as TreeObject);
