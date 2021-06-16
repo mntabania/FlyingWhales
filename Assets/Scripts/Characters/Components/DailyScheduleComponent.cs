@@ -15,14 +15,26 @@ public class DailyScheduleComponent : CharacterComponent {
     private void UpdateDailySchedule(Character p_character) {
         if (p_character.partyComponent.hasParty) {
             if (p_character.partyComponent.currentParty.isActive && p_character.partyComponent.currentParty.currentQuest.partyQuestType == PARTY_QUEST_TYPE.Night_Patrol) {
-                schedule = CharacterManager.Instance.GetDailySchedule<NightPartyMemberSchedule>();
+                SetSchedule(CharacterManager.Instance.GetDailySchedule<NightPartyMemberSchedule>());
             } else {
-                schedule = CharacterManager.Instance.GetDailySchedule<PartyMemberSchedule>();
+                SetSchedule(CharacterManager.Instance.GetDailySchedule<PartyMemberSchedule>());
             }
         } else if (p_character.traitContainer.HasTrait("Nocturnal")) {
-            schedule = CharacterManager.Instance.GetDailySchedule<NocturnalSchedule>();
+            SetSchedule(CharacterManager.Instance.GetDailySchedule<NocturnalSchedule>());
         } else {
-            schedule = CharacterManager.Instance.GetDailySchedule<NonPartyMemberSchedule>();    
+            SetSchedule(CharacterManager.Instance.GetDailySchedule<NonPartyMemberSchedule>());    
+        }
+    }
+    private void SetSchedule(DailySchedule p_schedule) {
+        if (schedule != p_schedule) {
+            DAILY_SCHEDULE scheduleTypeBeforeChangingSchedule = schedule.GetScheduleType(GameManager.Instance.currentTick);
+            DAILY_SCHEDULE scheduleTypeAfterChangingSchedule = p_schedule.GetScheduleType(GameManager.Instance.currentTick);
+            schedule = p_schedule;
+            if (scheduleTypeBeforeChangingSchedule == DAILY_SCHEDULE.Sleep && scheduleTypeAfterChangingSchedule != DAILY_SCHEDULE.Sleep) {
+                if (owner.currentJob != null && (owner.currentJob.jobType == JOB_TYPE.ENERGY_RECOVERY_NORMAL || owner.currentJob.jobType == JOB_TYPE.ENERGY_RECOVERY_URGENT)) {
+                    owner.currentJob.CancelJob("Time to wake up");
+                }
+            }
         }
     }
 
