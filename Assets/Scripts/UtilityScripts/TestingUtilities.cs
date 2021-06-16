@@ -197,7 +197,8 @@ namespace UtilityScripts {
         } else {
             summary += "None";
         }
-        summary += $"\nCurrent Schedule Type: {activeCharacter.dailyScheduleComponent.schedule.GetScheduleType(GameManager.Instance.Today().tick).ToString()}";
+        summary += $"\nCurrent Schedule Type: {activeCharacter.dailyScheduleComponent.schedule.GetScheduleType(GameManager.Instance.currentTick).ToString()}";
+        summary += $"\nIs in first hour of Current Schedule section: {activeCharacter.dailyScheduleComponent.schedule.IsInFirstHourOfCurrentScheduleType(GameManager.Instance.currentTick).ToString()}";
         summary += $"\nDaily Schedule: {activeCharacter.dailyScheduleComponent.schedule.GetScheduleSummary()}";
         summary += $"\nToggled Wants: {activeCharacter.villagerWantsComponent?.wantsToProcess.ComafyList()}";
         UIManager.Instance.ShowSmallInfo(summary);

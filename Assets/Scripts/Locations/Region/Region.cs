@@ -858,6 +858,16 @@ public class Region : ISavable, ILogFiller {
             }
         }
     }
+    public void PopulateVillagesInRegionThatAreOwnedByFactionOrNotHostileToIt(List<NPCSettlement> settlements, Faction p_faction) {
+        for (int i = 0; i < settlementsInRegion.Count; i++) {
+            BaseSettlement settlement = settlementsInRegion[i];
+            if (settlement.owner != null && settlement.locationType == LOCATION_TYPE.VILLAGE && settlement is NPCSettlement npcSettlement) {
+                if (settlement.owner == p_faction || !settlement.owner.IsHostileWith(p_faction)) {
+                    settlements.Add(npcSettlement);
+                }    
+            }
+        }
+    }
     public BaseSettlement GetFirstSettlementInRegionThatIsAUnoccupiedOrFactionlessResidentVillageThatIsNotHomeOf(Character p_character) {
         for (int i = 0; i < settlementsInRegion.Count; i++) {
             BaseSettlement s = settlementsInRegion[i];

@@ -899,7 +899,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         }
         return nearestSlot;
     }
-    private bool HasUnoccupiedSlot() {
+    protected bool HasUnoccupiedSlot() {
         for (int i = 0; i < slots.Length; i++) {
             TileObjectSlotItem slot = slots[i];
             if (slot.user == null) {

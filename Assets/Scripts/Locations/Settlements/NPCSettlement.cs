@@ -920,6 +920,15 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         }
         return false;
     }
+
+    public void PopulateResidentsCurrentlyInsideVillage(List<Character> p_characters) {
+        for (int i = 0; i < residents.Count; i++) {
+            Character resident = residents[i];
+            if (resident.currentSettlement == this) {
+                p_characters.Add(resident);
+            }
+        }
+    }
     #endregion
 
     #region Tile Objects

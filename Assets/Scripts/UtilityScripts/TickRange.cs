@@ -16,6 +16,15 @@ public struct TickRange {
         m_endTick = p_endTick;
     }
 
+    public void IncreaseEndTick(int p_amount) {
+        for (int i = 0; i < p_amount; i++) {
+            m_endTick++;
+            if (m_endTick > GameManager.ticksPerDay) {
+                m_endTick = 0;
+            }
+        }
+    }
+    
     /// <summary>
     /// Is the provided tick within this range?
     /// This handles if a time range is between 2 dates.

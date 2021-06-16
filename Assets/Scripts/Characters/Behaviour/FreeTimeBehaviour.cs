@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using Characters.Villager_Wants;
 using Inner_Maps.Location_Structures;
@@ -62,7 +64,12 @@ public class FreeTimeBehaviour : CharacterBehaviourComponent {
         //obtain want
         //only villagers part of major faction can process wants since all of it requires a character that is part of a faction that lives in a village with the needed facilities.
         if (GameUtilities.RollChance(20, ref log) && character.faction != null && character.faction.isMajorFaction) { //20 
+            GameManager.stopwatch.Stop();
+            GameManager.stopwatch.Reset();
+            GameManager.stopwatch.Start();
             VillagerWant want = character.villagerWantsComponent.GetTopPriorityWant(character, out LocationStructure foundStructure);
+            GameManager.stopwatch.Stop();
+            UnityEngine.Debug.Log($"{character.name} wants processing took {GameManager.stopwatch.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)} seconds to complete.");
 #if DEBUG_LOG
             log = $"{log}\n-Top priority want is {want?.name}.";
 #endif
@@ -227,11 +234,37 @@ public class FreeTimeBehaviour : CharacterBehaviourComponent {
                 character.PlanFixedJob(JOB_TYPE.IDLE_STAND, INTERACTION_TYPE.STAND, character, out producedJob);
             }
             return true;
-        }
-        else {
+        } else {
 #if DEBUG_LOG
             log = $"{log}\n-{character.name} is in home structure and previous action is not returned home";
 #endif
+            // if (character.name == "1" && character.dailyScheduleComponent.schedule.GetScheduleType(GameManager.Instance.currentTick) == DAILY_SCHEDULE.Free_Time &&
+            //     character.dailyScheduleComponent.schedule.IsInFirstHourOfCurrentScheduleType(GameManager.Instance.currentTick) && 
+            //     !character.behaviourComponent.HasBehaviour(typeof(VisitVillageBehaviour))) {
+            //     List<NPCSettlement> villageChoices = RuinarchListPool<NPCSettlement>.Claim();
+            //     character.currentRegion.PopulateVillagesInRegionThatAreOwnedByFactionOrNotHostileToIt(villageChoices, character.faction);
+            //     if (character.homeSettlement != null) {
+            //         villageChoices.Remove(character.homeSettlement);    
+            //     }
+            //     if (villageChoices.Count > 0) {
+            //         NPCSettlement targetVillage = CollectionUtilities.GetRandomElement(villageChoices);
+            //         character.behaviourComponent.VisitVillage(character, targetVillage);
+            //         RuinarchListPool<NPCSettlement>.Release(villageChoices);
+            //         producedJob = null;
+            //         return true;    
+            //     }
+            //     RuinarchListPool<NPCSettlement>.Release(villageChoices);
+            //
+            //     // LocationStructure targetStructure;
+            //     // if (character.currentSettlement.HasStructure(STRUCTURE_TYPE.TAVERN)) {
+            //     //     targetStructure = character.currentSettlement.GetRandomStructureOfType(STRUCTURE_TYPE.TAVERN);
+            //     // } else {
+            //     //     targetStructure = character.homeSettlement.cityCenter;
+            //     // }
+            //     // character.behaviourComponent.GoSocializing(character, targetStructure);
+            //     // producedJob = null;
+            //     // return true;
+            // }
             TIME_IN_WORDS currentTimeOfDay = GameManager.Instance.GetCurrentTimeInWordsOfTick(character);
             string strCurrentTimeOfDay = currentTimeOfDay.ToString();
 

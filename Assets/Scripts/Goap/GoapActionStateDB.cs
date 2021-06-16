@@ -762,6 +762,9 @@ public static class GoapActionStateDB {
         {INTERACTION_TYPE.DROP_RESOURCE_TO_WORK_STRUCTURE, new[]{
             new StateNameAndDuration(){ name = "Drop Resource To Work Structure Success", status = InteractionManager.Goap_State_Success, duration = 0 },
         } },
+        {INTERACTION_TYPE.DRINK_WATER, new[]{
+            new StateNameAndDuration(){ name = "Drink Success", status = InteractionManager.Goap_State_Success, duration = 5 },
+        } }
     };
 }
 

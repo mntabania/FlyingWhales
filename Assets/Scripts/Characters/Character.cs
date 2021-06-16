@@ -1735,6 +1735,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         if (broadcast) {
             if (newStructure != null) {
                 Messenger.Broadcast(CharacterSignals.CHARACTER_ARRIVED_AT_STRUCTURE, this, newStructure);
+                eventDispatcher.ExecuteCharacterArrivedAtStructure(this, newStructure);
                 LocationAwarenessUtility.RemoveFromAwarenessList(this);
                 LocationAwarenessUtility.AddToAwarenessList(this, gridTileLocation);
             }
@@ -2810,7 +2811,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             Messenger.Broadcast(JobSignals.CHECK_JOB_APPLICABILITY, JOB_TYPE.RECOVER_HP, this as IPointOfInterest);
         }
         if (!HasHealth()) {
-            if (responsibleCharacter != null && responsibleCharacter is Character && responsibleCharacter.race.IsSapient()) {
+            if (responsibleCharacter != null && responsibleCharacter.race.IsSapient()) {
                 if (responsibleCharacter.characterClass.attackType == ATTACK_TYPE.PHYSICAL) {
                     responsibleCharacter?.talentComponent.GetTalent(CHARACTER_TALENT.Martial_Arts).AdjustExperience(8, responsibleCharacter);
                 } else {
