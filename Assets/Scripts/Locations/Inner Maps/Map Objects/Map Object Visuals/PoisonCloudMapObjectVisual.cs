@@ -179,11 +179,11 @@ public class PoisonCloudMapObjectVisual : MovingMapObjectVisual {
     }
     private void ApplyExplosionEffect(ITraitable traitable) {
         traitable.AdjustHP(-350, ELEMENTAL_TYPE.Fire, true, showHPBar: true, isPlayerSource : _poisonCloud.isPlayerSource);
-        if (traitable.currentHP > 0 || traitable is GenericTileObject) {
-            traitable.traitContainer.AddTrait(traitable, "Poisoned");
-            Poisoned poisoned = traitable.traitContainer.GetTraitOrStatus<Poisoned>("Poisoned");
-            poisoned?.SetIsPlayerSource(_poisonCloud.isPlayerSource);
-        }
+        //if (traitable.currentHP > 0 || traitable is GenericTileObject) {
+        //    traitable.traitContainer.AddTrait(traitable, "Poisoned");
+        //    Poisoned poisoned = traitable.traitContainer.GetTraitOrStatus<Poisoned>("Poisoned");
+        //    poisoned?.SetIsPlayerSource(_poisonCloud.isPlayerSource);
+        //}
     }
     private void OnTraitableGainedTrait(ITraitable traitable, Trait trait) {
         if (trait is Burning && _objsInRange.Contains(traitable)) {
@@ -256,6 +256,10 @@ public class PoisonCloudMapObjectVisual : MovingMapObjectVisual {
     
 #region Expiration
     public void Expire() {
+        if (!isSpawned) {
+            //If already despawned, do not expire anymore
+            return;
+        }
 #if DEBUG_LOG
         Debug.Log($"{this.name} expired!");
 #endif
