@@ -125,6 +125,10 @@ namespace Locations.Settlements {
                 if (character.homeStructure != null && character.homeSettlement == this) {
                     character.ChangeHomeStructure(null);
                 }
+                //Once a character leaves a village, he should unclaim work structure also
+                if (character.structureComponent.workPlaceStructure != null) {
+                    character.structureComponent.workPlaceStructure.SetAssignedWorker(null);
+                }
                 if(residents.Count <= 0 && owner != null) {
                     //if all residents of a settlement is removed, then remove faction owner
                     LandmarkManager.Instance.UnownSettlement(this);
