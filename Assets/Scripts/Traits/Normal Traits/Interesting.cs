@@ -6,6 +6,7 @@ using Inner_Maps;
 using Traits;
 using UnityEngine;
 using UnityEngine.Assertions;
+using UtilityScripts;
 using Random = UnityEngine.Random;
 namespace Traits {
     public class Interesting : Trait {
@@ -25,6 +26,7 @@ namespace Traits {
             isHidden = true;
             advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.INSPECT, INTERACTION_TYPE.ASSAULT };
             charactersThatSaw = new List<Character>();
+            AddTraitOverrideFunctionIdentifier(TraitManager.Villager_Reaction);
         }
 
         #region Loading
@@ -42,6 +44,29 @@ namespace Traits {
         public bool HasAlreadyBeenSeenByCharacter(Character character) {
             return charactersThatSaw.Contains(character);
         }
+
+        #region Reactions
+        public override void VillagerReactionToTileObjectTrait(TileObject owner, Character actor, ref string debugLog) {
+            base.VillagerReactionToTileObjectTrait(owner, actor, ref debugLog);
+            if (!HasAlreadyBeenSeenByCharacter(actor)) {
+                AddCharacterThatSaw(actor);
+
+                if (actor.traitContainer.HasTrait("Suspicious")) {
+                    if (GameUtilities.RollChance(50)) {
+                        actor.jobComponent.TriggerDestroy(owner);
+                    } else {
+                        actor.interruptComponent.TriggerInterrupt(INTERRUPT.Wary, owner);
+                    }
+                } else {
+                    if (GameUtilities.RollChance(50) && !actor.jobQueue.HasJob(JOB_TYPE.INSPECT, owner) && !actor.defaultCharacterTrait.HasAlreadyInspectedObject(owner)) {
+                        actor.jobComponent.TriggerInspect(owner);
+                    } else if (!actor.IsInventoryAtFullCapacity() && !actor.HasItem(owner.name) && !actor.HasOwnedItemInHomeStructure(owner.name)) {
+                        actor.jobComponent.CreateTakeItemJob(JOB_TYPE.TAKE_ITEM, owner);
+                    }
+                }
+            }
+        }
+        #endregion
     }
 }
 

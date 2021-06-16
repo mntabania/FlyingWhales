@@ -41,6 +41,7 @@ namespace Traits {
             AddTraitOverrideFunctionIdentifier(TraitManager.Destroy_Map_Visual_Trait);
             AddTraitOverrideFunctionIdentifier(TraitManager.Execute_After_Effect_Trait);
             AddTraitOverrideFunctionIdentifier(TraitManager.Tick_Started_Trait);
+            AddTraitOverrideFunctionIdentifier(TraitManager.Villager_Reaction);
         }
 
         #region Loading
@@ -259,6 +260,33 @@ namespace Traits {
         }
         #endregion
 
+        #region Reactions
+        public override void VillagerReactionToTileObjectTrait(TileObject owner, Character actor, ref string debugLog) {
+            base.VillagerReactionToTileObjectTrait(owner, actor, ref debugLog);
+            Lazy lazy = actor.traitContainer.GetTraitOrStatus<Lazy>("Lazy");
+            if (!actor.combatComponent.isInActualCombat && !actor.hasSeenPoisoned) {
+                if ((lazy == null || !lazy.TryIgnoreUrgentTask(JOB_TYPE.CLEANSE_TILES))
+                    && owner.gridTileLocation != null
+                    && actor.homeSettlement != null
+                    && owner.gridTileLocation.IsPartOfSettlement(actor.homeSettlement)
+                    && !actor.jobQueue.HasJob(JOB_TYPE.CLEANSE_TILES)) {
+#if DEBUG_LOG
+                    debugLog = $"{debugLog}\n-Target is Poisoned";
+#endif
+                    actor.SetHasSeenPoisoned(true);
+                    actor.homeSettlement.settlementJobTriggerComponent.TriggerCleanseTiles();
+                    for (int i = 0; i < actor.homeSettlement.availableJobs.Count; i++) {
+                        JobQueueItem job = actor.homeSettlement.availableJobs[i];
+                        if (job.jobType == JOB_TYPE.CLEANSE_TILES) {
+                            if (job.assignedCharacter == null && actor.jobQueue.CanJobBeAddedToQueue(job)) {
+                                actor.jobQueue.AddJobInQueue(job);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        #endregion
     }
 }
 

@@ -89,6 +89,19 @@ public class PowerCrystal : TileObject {
 
         gridTileLocation.structure.RemovePOI(this);
     }
+	#endregion expiry
+	#region Reactions
+	public override void GeneralReactionToTileObject(Character actor, ref string debugLog) {
+        base.GeneralReactionToTileObject(actor, ref debugLog);
+        if (actor.race == RACE.ELVES) {
+            if (!HasJobTargetingThis(JOB_TYPE.ABSORB_CRYSTAL)) {
+                if (!actor.jobComponent.HasHigherPriorityJobThan(JOB_TYPE.ABSORB_CRYSTAL)) {
+                    actor.jobComponent.TriggerAbsorbPowerCrystal(this);
+                }
+            }
+        }
+    }
+
     #endregion
 }
 
