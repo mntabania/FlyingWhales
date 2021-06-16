@@ -195,7 +195,7 @@ public class POITestingUI : MonoBehaviour {
     }
 #endregion
 
-#region Tile Object Testing
+    #region Tile Object Testing
     public void PoisonTable() {
         if (poi is Table) {
             GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.UNDERMINE, INTERACTION_TYPE.POISON, poi, activeCharacter);
@@ -274,9 +274,22 @@ public class POITestingUI : MonoBehaviour {
         poi.traitContainer.RestrainAndImprison(poi, activeCharacter, activeCharacter.faction, null);
         HideUI();
     }
-#endregion
+    public void MakeDirty() {
+        poi.traitContainer.AddTrait(poi, "Dirty");
+        HideUI();
+    }
+    public void CleanUpDirt() {
+        if (poi is TileObject tileObject && (tileObject.traitContainer.HasTrait("Dirty") || tileObject.traitContainer.HasTrait("Wet"))) {
+            activeCharacter.jobComponent.TryCreateCleanItemJob(tileObject, out var jobQueueItem);
+            activeCharacter.jobQueue.AddJobInQueue(jobQueueItem);
+        } else {
+            Debug.LogWarning($"{poi.name} is not a tile object that is dirty or wet!");
+        }
+        HideUI();
+    }
+    #endregion
 
-#region Grid Tile Testing
+    #region Grid Tile Testing
     public void GoHere() {
         if (poi is Character) {
             GoToCharacter();
@@ -303,5 +316,5 @@ public class POITestingUI : MonoBehaviour {
         }
         HideUI();
     }
-#endregion
+    #endregion
 }
