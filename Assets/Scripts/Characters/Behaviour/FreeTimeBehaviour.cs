@@ -359,7 +359,7 @@ public class FreeTimeBehaviour : CharacterBehaviourComponent {
 #if DEBUG_LOG
                 log = $"{log}\n  -There is a Hospice in the Village claimed by a non-Enemy or by self: ";
 #endif
-                if (character.traitContainer.HasTrait("Injured") || character.traitContainer.HasTrait("Plagued")) {
+                if ((character.traitContainer.HasTrait("Injured") || character.traitContainer.HasTrait("Plagued")) && ChanceData.RollChance(CHANCE_TYPE.Plauged_Injured_Visit_Hospice)) {
                     //recuperate
 #if DEBUG_LOG
                     log = $"{log}\n  -Actor has Injured or Plagued and there is still an available Bed in the Hospice: Create Recuperate Job";
@@ -412,6 +412,32 @@ public class FreeTimeBehaviour : CharacterBehaviourComponent {
                 }
             }
             else {
+#if DEBUG_LOG
+                log = $"{log}\n  -Has no non-healing potion item in inventory";
+#endif
+            }
+
+#if DEBUG_LOG
+            log = $"{log}\n-Otherwise, if character is Lazy";
+#endif
+            if (character.traitContainer.HasTrait("Lazy") && GameUtilities.RollChance(4)) {
+                CreateCleanJob(character, ref log, out producedJob);
+            } else {
+                CreateCleanJob(character, ref log, out producedJob);
+            }
+            if(producedJob != null) {
+                return true;
+			}
+            if (character.HasItemOtherThan(TILE_OBJECT_TYPE.HEALING_POTION) && character.homeStructure != null) {
+                if (GameUtilities.RollChance(10)) {
+#if DEBUG_LOG
+                    log = $"{log}\n  -Will create Drop Item job";
+#endif
+                    if (character.jobComponent.CreateDropItemJob(JOB_TYPE.DROP_ITEM, character.GetRandomItemThatIsNotOfType(TILE_OBJECT_TYPE.HEALING_POTION), character.homeStructure, out producedJob)) {
+                        return true;
+                    }
+                }
+            } else {
 #if DEBUG_LOG
                 log = $"{log}\n  -Has no non-healing potion item in inventory";
 #endif
@@ -521,4 +547,26 @@ public class FreeTimeBehaviour : CharacterBehaviourComponent {
         return true;
     }
     #endregion
+
+    private void CreateCleanJob(Character character, ref string log, out JobQueueItem producedJob) {
+        producedJob = null;
+#if DEBUG_LOG
+        log = $"{log}\n-Otherwise, Not Lazy look for items to clean(wet and Dry)";
+#endif
+        List<TileObject> allObjectsInsideCurrentStructure = RuinarchListPool<TileObject>.Claim();
+        character.currentStructure.PopulateTileObjectsListWithAllTileObjects(allObjectsInsideCurrentStructure);
+        for (int x = 0; x < allObjectsInsideCurrentStructure.Count; ++x) {
+            if (allObjectsInsideCurrentStructure[x].traitContainer.HasTrait("Dirty") || allObjectsInsideCurrentStructure[x].traitContainer.HasTrait("Wet")) {
+                if (!allObjectsInsideCurrentStructure[x].HasJobTargetingThis(JOB_TYPE.IDLE_CLEAN)) {
+                    character.jobComponent.TryCreateCleanItemJob(allObjectsInsideCurrentStructure[x], out producedJob);
+                    if(producedJob != null) {
+#if DEBUG_LOG
+                        log = $"{log}\n  -Will create cClean Up Item";
+#endif
+                        break;
+                    }
+                }
+            }
+        }
+    }
 }

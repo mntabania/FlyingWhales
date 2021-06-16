@@ -1446,7 +1446,8 @@ public enum CHANCE_TYPE {
     Change_Intent,
     Change_Intent_Kleptomania,
     Change_Intent_Vampire,
-    Change_Intent_Cultist
+    Change_Intent_Cultist,
+    Plauged_Injured_Visit_Hospice,
 }
 public enum Gradient_Direction {
     Top, Bottom, Left, Right
