@@ -3786,6 +3786,28 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 	    return true;
     }
     #endregion
+
+    #region Clean Up
+    public bool TryCreateCleanItemJob(TileObject p_tileObject, out JobQueueItem p_producedJob) {
+	    ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.CLEAN_UP], owner, p_tileObject, null, 0);
+	    GoapPlan goapPlan = ObjectPoolManager.Instance.CreateNewGoapPlan(node, owner);
+	    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.IDLE_CLEAN, INTERACTION_TYPE.CLEAN_UP, p_tileObject, owner);
+	    job.SetAssignedPlan(goapPlan);
+	    p_producedJob = job;
+	    return true;
+    }
+    public bool TryCreateCleanItemJob(LocationStructure p_structure, out JobQueueItem p_producedJob) {
+	    for (int i = 0; i < p_structure.pointsOfInterest.Count; i++) {
+		    IPointOfInterest poi = p_structure.pointsOfInterest.ElementAt(i);
+		    if (poi is TileObject tileObject && tileObject.mapObjectState == MAP_OBJECT_STATE.BUILT && 
+		        (tileObject.traitContainer.HasTrait("Wet") || tileObject.traitContainer.HasTrait("Dirty"))) {
+			    return TryCreateCleanItemJob(tileObject, out p_producedJob);
+		    }
+	    }
+	    p_producedJob = null;
+	    return false;
+    }
+    #endregion
 }
 
 [System.Serializable]

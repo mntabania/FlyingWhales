@@ -56,7 +56,7 @@ namespace Traits {
             addedTo.traitContainer.RemoveTrait(addedTo, "Burning");
             addedTo.traitContainer.RemoveStatusAndStacks(addedTo, "Overheating");
             if (addedTo is GenericTileObject genericTileObject) {
-                genericTileObject.AddAdvertisedAction(INTERACTION_TYPE.DRY_TILE);
+                genericTileObject.AddAdvertisedAction(INTERACTION_TYPE.CLEAN_UP);
                 if (genericTileObject.gridTileLocation.groundType == LocationGridTile.Ground_Type.Desert_Grass || 
                     genericTileObject.gridTileLocation.groundType == LocationGridTile.Ground_Type.Desert_Stone || 
                     genericTileObject.gridTileLocation.groundType == LocationGridTile.Ground_Type.Sand) {
@@ -82,7 +82,7 @@ namespace Traits {
             base.OnRemoveTrait(removedFrom, removedBy);
             _owner = null;
             if (removedFrom is GenericTileObject genericTileObject) {
-                genericTileObject.RemoveAdvertisedAction(INTERACTION_TYPE.DRY_TILE);
+                genericTileObject.RemoveAdvertisedAction(INTERACTION_TYPE.CLEAN_UP);
                 Messenger.Broadcast(CharacterSignals.STOP_CURRENT_ACTION_TARGETING_POI_EXCEPT_ACTOR, genericTileObject as TileObject, removedBy);
             }
             StopListenForBiomeEffect();
