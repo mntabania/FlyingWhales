@@ -47,6 +47,7 @@ public class RescueBehaviour : CharacterBehaviourComponent {
                     }
                 } else {
                     quest.EndQuest("Target is nowhere to be found");
+                    return true;
                 }
 
                 Character memberInCombat = party.GetMemberInCombatExcept(character);
