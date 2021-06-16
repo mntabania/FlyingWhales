@@ -1812,7 +1812,9 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
     public void OnHPReduced() {
         if (!doNotDoRecoverHPJob) {
             if (owner.jobQueue.HasJob(JOB_TYPE.RECOVER_HP) == false && owner.isNormalCharacter && owner.HasHealth() && owner.currentHP < Mathf.FloorToInt(owner.maxHP * 0.5f)) {
-                CreateHealSelfJob();
+                if (!owner.partyComponent.isMemberThatJoinedQuest) {
+                    CreateHealSelfJob();
+                }
             }
         }
     }
