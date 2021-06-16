@@ -181,11 +181,7 @@ public class VillageGeneration : MapGenerationComponent {
 		}
 		
 		List<STRUCTURE_TYPE> specialStructureTypes = RuinarchListPool<STRUCTURE_TYPE>.Claim();
-		specialStructureTypes.Add(STRUCTURE_TYPE.PRISON);
-		specialStructureTypes.Add(STRUCTURE_TYPE.CEMETERY);
-		specialStructureTypes.Add(STRUCTURE_TYPE.TAVERN);
-		specialStructureTypes.Add(STRUCTURE_TYPE.HOSPICE);
-		
+
 		//Generate special structures
 		for (int i = 0; i < createdSettlements.Count; i++) {
 			NPCSettlement npcSettlement = createdSettlements[i];
@@ -193,9 +189,18 @@ public class VillageGeneration : MapGenerationComponent {
 			int neededSpecialStructures = villageSetting.GetSpecialStructureCount();
 			int additionalSpecialStructures = data.GetTotalMissingProductionStructures(npcSettlement);
 			int totalSpecialStructures = neededSpecialStructures + additionalSpecialStructures;
+			
+			specialStructureTypes.Clear();
+			specialStructureTypes.Add(STRUCTURE_TYPE.PRISON);
+			specialStructureTypes.Add(STRUCTURE_TYPE.CEMETERY);
+			specialStructureTypes.Add(STRUCTURE_TYPE.TAVERN);
+			specialStructureTypes.Add(STRUCTURE_TYPE.HOSPICE);
+			
 			Debug.Log($"Will generate {totalSpecialStructures.ToString()} for {npcSettlement.name}");
 			for (int j = 0; j < totalSpecialStructures; j++) {
+				if (specialStructureTypes.Count <= 0) { break; }
 				STRUCTURE_TYPE chosenStructureType = CollectionUtilities.GetRandomElement(specialStructureTypes);
+				specialStructureTypes.Remove(chosenStructureType);
 				List<StructureSetting> structureSettings = RuinarchListPool<StructureSetting>.Claim();
 				StructureSetting structureSetting = npcSettlement.owner.factionType.CreateStructureSettingForStructure(chosenStructureType, npcSettlement);
 				structureSettings.Add(structureSetting);

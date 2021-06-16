@@ -42,6 +42,7 @@ namespace Inner_Maps.Location_Structures {
             Assert.IsTrue(p_usedConnector.structure is Cave, $"{name} did not connect to a tile inside a cave!");
             connectedCave = p_usedConnector.structure as Cave;
             Assert.IsNotNull(connectedCave);
+            connectedCave.ConnectMine(this);
             //Create a path inside
             Area area = p_usedConnector.area;
             List<LocationGridTile> choices = RuinarchListPool<LocationGridTile>.Claim();
@@ -88,6 +89,7 @@ namespace Inner_Maps.Location_Structures {
         }
         protected override void DestroyStructure(Character p_responsibleCharacter = null, bool isPlayerSource = false) {
             base.DestroyStructure(p_responsibleCharacter, isPlayerSource);
+            connectedCave.DisconnectMine(this);
             connectedCave = null;
         }
 
