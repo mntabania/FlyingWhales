@@ -51,9 +51,9 @@ public class Recuperate : GoapAction {
 
     #region State Effects
     public void AfterRecuperateSuccess(ActualGoapNode goapNode) {
-        goapNode.poiTarget.traitContainer.RemoveStatusAndStacks(goapNode.poiTarget, "Poisoned", goapNode.actor);
-        goapNode.poiTarget.traitContainer.RemoveStatusAndStacks(goapNode.poiTarget, "Plagued", goapNode.actor);
-        goapNode.poiTarget.traitContainer.RemoveStatusAndStacks(goapNode.poiTarget, "Injured", goapNode.actor);
+        goapNode.actor.traitContainer.RemoveStatusAndStacks(goapNode.actor, "Poisoned");
+        goapNode.actor.traitContainer.RemoveStatusAndStacks(goapNode.actor, "Plagued");
+        goapNode.actor.traitContainer.RemoveStatusAndStacks(goapNode.actor, "Injured");
     }
 
     public void PerTickRecuperateSuccess(ActualGoapNode p_node) {
