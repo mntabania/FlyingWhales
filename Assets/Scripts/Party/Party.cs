@@ -589,7 +589,7 @@ public class Party : ILogFiller, ISavable, IJobOwner, IBookmarkable {
     private void OnSwitchFromMovingState(PARTY_STATE prevState) {
     }
     private void PerHourInMovingState() {
-        if (partyState == PARTY_STATE.Moving) {
+        if (partyState == PARTY_STATE.Moving && !isPlayerParty) {
             if (HasActiveMemberThatMustDoCriticalNeedsRecovery()) {
                 SetPartyState(PARTY_STATE.Resting);
             }
