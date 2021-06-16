@@ -182,9 +182,9 @@ public class VisitVillageBehaviour : CharacterBehaviourComponent {
 #if DEBUG_LOG
                         log = $"{log}\n\t- Will create drink blood job targeting {chosenTarget.name}.";
 #endif
-                        RuinarchListPool<Character>.Release(drinkBloodTargets);
-                        if (character.jobComponent.CreateDrinkBloodJob(JOB_TYPE.FULLNESS_RECOVERY_NORMAL, chosenTarget,
+                        if (character.jobComponent.CreateDrinkBloodJob(JOB_TYPE.FULLNESS_RECOVERY_URGENT, chosenTarget,
                             out producedJob)) {
+                            RuinarchListPool<Character>.Release(drinkBloodTargets);
                             return true;
                         }
                     }
@@ -211,6 +211,12 @@ public class VisitVillageBehaviour : CharacterBehaviourComponent {
                     CollectionUtilities.GetRandomElement(targetVillage.cityCenter.tiles);
                 return character.jobComponent.CreateGoToJob(JOB_TYPE.VISIT_DIFFERENT_VILLAGE, targetTile, out producedJob);  
             }
+        }
+#if DEBUG_LOG
+        log = $"{log}\n\t- Will roam around current structure.";
+#endif
+        if (character.jobComponent.TriggerRoamAroundStructure(JOB_TYPE.VISIT_DIFFERENT_VILLAGE, out producedJob)) {
+            return true;
         }
         
 #if DEBUG_LOG
