@@ -432,7 +432,7 @@ public class FreeTimeBehaviour : CharacterBehaviourComponent {
 #endif
         if (character.traitContainer.HasTrait("Injured") || character.traitContainer.HasTrait("Poisoned") || character.traitContainer.HasTrait("Plagued")) {
             Hospice hospice = character.currentStructure as Hospice;
-            BedClinic bedClinic = hospice.GetFirstUnoccupiedBed();
+            BedClinic bedClinic = hospice.GetFirstBedToRecuperate();
             if (bedClinic != null) {
                 if (character.jobComponent.TryRecuperate(bedClinic, out producedJob)) {
                     return true;

@@ -236,6 +236,15 @@ namespace Inner_Maps.Location_Structures {
             }
             return null;
         }
+        public BedClinic GetFirstBedToRecuperate() {
+            for (int i = 0; i < beds.Count; i++) {
+                BedClinic bedClinic = beds[i];
+                if (bedClinic.GetUserCount() <= 0 && !bedClinic.HasJobTargetingThis(JOB_TYPE.RECUPERATE)) {
+                    return bedClinic;
+                }
+            }
+            return null;
+        }
     }
 }
 
