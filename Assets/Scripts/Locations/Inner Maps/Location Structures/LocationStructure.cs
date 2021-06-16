@@ -418,6 +418,27 @@ namespace Inner_Maps.Location_Structures {
             RuinarchListPool<Character>.Release(characters);
             return chosen;
         }
+        public Character GetRandomResidentForInvasionTargetThatIsInsideStructureAndHostileWithFaction(Faction p_faction, Character p_exception = null) {
+            Character chosenCharacter = null;
+            List<Character> choices = RuinarchListPool<Character>.Claim();
+            for (int i = 0; i < residents.Count; i++) {
+                Character resident = residents[i];
+                if ((p_exception == null || p_exception != resident)
+                    && !resident.isBeingSeized
+                    && !resident.isDead
+                    && resident.gridTileLocation != null
+                    && resident.gridTileLocation.structure == this
+                    && (resident.faction == null || p_faction == null || p_faction.IsHostileWith(resident.faction))
+                    && !resident.traitContainer.HasTrait("Hibernating", "Indestructible")) {
+                    choices.Add(resident);
+                }
+            }
+            if (choices != null && choices.Count > 0) {
+                chosenCharacter = CollectionUtilities.GetRandomElement(choices);
+            }
+            RuinarchListPool<Character>.Release(choices);
+            return chosenCharacter;
+        }
         #endregion
 
         #region Tile Objects
