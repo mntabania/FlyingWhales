@@ -16,7 +16,7 @@ public class MonsterGeneration : MapGenerationComponent {
 		LevelLoaderManager.Instance.UpdateLoadingInfo("Placing Monsters...");
 		// yield return MapGenerator.Instance.StartCoroutine(RegionalMonsterGeneration());
 		yield return MapGenerator.Instance.StartCoroutine(LandmarkMonsterGeneration());
-		// yield return MapGenerator.Instance.StartCoroutine(CaveMonsterGeneration()); //Disabled for now because of testing since June 7, 2021
+		yield return MapGenerator.Instance.StartCoroutine(CaveMonsterGeneration());
 		yield return null;
 	}
 
@@ -154,10 +154,17 @@ public class MonsterGeneration : MapGenerationComponent {
 					// WeightedDictionary<MonsterSetting> monsterChoices = caveData.monsterGenerationSetting.GetMonsterChoicesForBiome(region.coreTile.biomeType);
 					List<LocationGridTile> locationChoices = RuinarchListPool<LocationGridTile>.Claim();
 					for (int j = 0; j < orderedStructures.Count; j++) {
-						LocationStructure cave = orderedStructures[j];
+						LocationStructure structure = orderedStructures[j];
+						Cave cave = structure as Cave;
+						Assert.IsNotNull(cave);
 						if (cave.residents.Count > 0 || cave.passableTiles.Count == 0) {
 							//if cave already has occupants, then do not generate monsters for that cave
 							continue;
+						}
+						if (cave.hasConnectedMine) {
+							//do not spawn monsters on caves with currently connected mines.
+							//Reference: https://trello.com/c/oFzZ2tV7/4811-monsters-should-no-longer-spawn-in-caves-connected-to-a-claimed-mine
+							continue; 
 						}
 						if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Custom && CharacterManager.Instance.GenerateRatmen(cave, GameUtilities.RandomBetweenTwoNumbers(1, 3), 8)) {
 							//Ratmen has bee generated
@@ -166,10 +173,10 @@ public class MonsterGeneration : MapGenerationComponent {
 							locationChoices.Clear();
 							locationChoices.AddRange(cave.passableTiles);
 
-							MonsterMigrationBiomeAtomizedData chosenMMonster = biomeDivision.GetRandomMonsterFromFaunaList();
-							int randomAmount = GameUtilities.RandomBetweenTwoNumbers(chosenMMonster.minRange, chosenMMonster.maxRange); ;
+							MonsterMigrationBiomeAtomizedData chosenMonster = biomeDivision.GetRandomMonsterFromFaunaList();
+							int randomAmount = GameUtilities.RandomBetweenTwoNumbers(chosenMonster.minRange, chosenMonster.maxRange); ;
 							for (int k = 0; k < randomAmount; k++) {
-								Summon summon = CreateMonster(chosenMMonster.monsterType, locationChoices, cave, faction: FactionManager.Instance.GetDefaultFactionForMonster(chosenMMonster.monsterType));
+								Summon summon = CreateMonster(chosenMonster.monsterType, locationChoices, cave, faction: FactionManager.Instance.GetDefaultFactionForMonster(chosenMonster.monsterType));
 								if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Pitto) {
 									summon.traitContainer.AddTrait(summon, "Mighty");
 								}

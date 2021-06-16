@@ -115,7 +115,11 @@ public class BiomeDivision {
             for (int i = 0; i < region.allStructures.Count; i++) {
                 LocationStructure structure = region.allStructures[i];
                 if (structure.structureType == STRUCTURE_TYPE.MONSTER_LAIR || structure.structureType == STRUCTURE_TYPE.CAVE) {
-                    if (HasTilePartOfThisBiomeDivision(structure)) {
+                    bool shouldSpawnMonsterAtStructure = true;
+                    if (structure is Cave cave) {
+                        shouldSpawnMonsterAtStructure = !cave.hasConnectedMine;
+                    }
+                    if (shouldSpawnMonsterAtStructure && HasTilePartOfThisBiomeDivision(structure)) {
                         if (!structure.IsOccupied()) {
                             homeStructureOfNewMonsters = structure;
                             break;
