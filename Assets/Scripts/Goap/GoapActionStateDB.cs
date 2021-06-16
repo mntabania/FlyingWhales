@@ -104,7 +104,7 @@ public static class GoapActionStateDB {
             new StateNameAndDuration(){ name = "Mine Success", status = InteractionManager.Goap_State_Success, duration = 4 },
         } },
         {INTERACTION_TYPE.SLEEP, new[]{
-            new StateNameAndDuration(){ name = "Rest Success", status = InteractionManager.Goap_State_Success, duration = 120 },
+            new StateNameAndDuration(){ name = "Rest Success", status = InteractionManager.Goap_State_Success, duration = 480 },
         } },
         {INTERACTION_TYPE.SLEEP_OUTSIDE, new[]{
             new StateNameAndDuration(){ name = "Rest Success", status = InteractionManager.Goap_State_Success, duration = 120, animationName = "Sleep Ground" },

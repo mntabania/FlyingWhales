@@ -87,6 +87,9 @@ public class MonsterGeneration : MapGenerationComponent {
 					locationChoices.AddRange(structure.passableTiles);
 					
                     MonsterMigrationBiomeAtomizedData chosenMMonster = biomeDivision.GetRandomMonsterFromFaunaList();
+                    if (chosenMMonster.monsterType == SUMMON_TYPE.Fire_Elemental) {
+	                    continue; //temporarily disabled fire elemental spawning outside caves. Reference: https://trello.com/c/WfB4VaU8/4831-fire-elementals-usually-destroy-the-special-structure-that-they-live-at
+                    }
                     int randomAmount = GameUtilities.RandomBetweenTwoNumbers(chosenMMonster.minRange, chosenMMonster.maxRange);;
                     for (int k = 0; k < randomAmount; k++) {
 	                    Summon summon = CreateMonster(chosenMMonster.monsterType, locationChoices, structure, faction: FactionManager.Instance.GetDefaultFactionForMonster(chosenMMonster.monsterType));

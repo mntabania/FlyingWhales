@@ -161,6 +161,9 @@ public class BiomeDivision {
         WeightedDictionary<MonsterMigrationBiomeAtomizedData> faunaWeights = TryGetFaunaListWeights();
         if (faunaWeights.Count > 0) {
             MonsterMigrationBiomeAtomizedData chosenData = faunaWeights.PickRandomElementGivenWeights();
+            if (p_structure.structureType != STRUCTURE_TYPE.CAVE && chosenData.monsterType == SUMMON_TYPE.Fire_Elemental) {
+                return; //temporarily disabled fire elemental spawning outside caves. Reference: https://trello.com/c/WfB4VaU8/4831-fire-elementals-usually-destroy-the-special-structure-that-they-live-at
+            }
             int numOfSpawns = GameUtilities.RandomBetweenTwoNumbers(chosenData.minRange, chosenData.maxRange);
             for (int i = 0; i < numOfSpawns; i++) {
                 LocationGridTile spawnLocationGridTile = p_structure.GetRandomPassableTile();
