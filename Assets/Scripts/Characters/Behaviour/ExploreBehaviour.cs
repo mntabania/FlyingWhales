@@ -21,7 +21,16 @@ public class ExploreBehaviour : CharacterBehaviourComponent {
             if (party.targetDestination.IsAtTargetDestination(character)) {
 #if DEBUG_LOG
                 log += $"\n-Character is at target destination, do work";
+                log += $"\n-Character is at target destination, will try to combat residents";
 #endif
+                LocationStructure targetStructure = (party.currentQuest as ExplorationPartyQuest).targetStructure;
+                Character target = targetStructure.GetRandomResidentForInvasionTargetThatIsInsideStructureAndHostileWithFaction(character.faction, character);
+                if (target != null) {
+                    character.combatComponent.Fight(target, CombatManager.Hostility);
+                    producedJob = null;
+                    return true;
+                }
+
                 Character memberInCombat = party.GetMemberInCombatExcept(character);
                 if (memberInCombat != null && party.targetDestination.IsAtTargetDestination(memberInCombat)) {
 #if DEBUG_LOG

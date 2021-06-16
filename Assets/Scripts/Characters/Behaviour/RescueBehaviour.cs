@@ -26,6 +26,7 @@ public class RescueBehaviour : CharacterBehaviourComponent {
                 if (character.hasMarker && party.targetDestination.IsAtTargetDestination(quest.targetCharacter)) {
                     if (quest.targetCharacter.isDead) {
                         quest.EndQuest("Target is dead");
+                        return true;
                     } else {
                         if (quest.targetCharacter.traitContainer.HasTrait("Restrained", "Unconscious", "Frozen", "Ensnared", "Enslaved")) {
                             hasJob = character.jobComponent.TriggerReleaseJob(quest.targetCharacter, out producedJob);
