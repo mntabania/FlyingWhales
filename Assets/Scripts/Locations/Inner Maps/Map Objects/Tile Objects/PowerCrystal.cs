@@ -3,8 +3,8 @@ using System.Collections.Generic;
 
 public class PowerCrystal : TileObject {
 
-    private string _destroySchedule;
-    private GameDate _destroyDate;
+    public bool hasScheduleDestruction { get; private set; }
+    public GameDate destroyDate { get; private set; }
 
     public override Type serializedData => typeof(SaveDataPowerCrystal);
 
@@ -24,51 +24,45 @@ public class PowerCrystal : TileObject {
             EquipmentBonusProcessor.SetBonusResistanceOnPowerCrystal(this, 1);
         }
 
-        ScheduleExpiry();
     }
-    public PowerCrystal(SaveDataTileObject data) : base(data) { }
+    public PowerCrystal(SaveDataPowerCrystal data) : base(data) {
+        hasScheduleDestruction = data.hasScheduleDestruction;
+        destroyDate = data.destroyDate;
+        data.resistanceBonuses.ForEach(eachResistance => {
+            resistanceBonuses.Add(eachResistance);
+        });
+        amountBonusPiercing = data.bonusPiercing;
+        amountBonusResistance = data.bonusResistance;
 
-	public override void LoadSecondWave(SaveDataTileObject data) {
-        base.LoadSecondWave(data);
-        SaveDataPowerCrystal powerCrystalSave = data as SaveDataPowerCrystal;
-        if (powerCrystalSave != null) {
-            powerCrystalSave.resistanceBonuses.ForEach(eachResistance => {
-                resistanceBonuses.Add(eachResistance);
-            });
-            amountBonusPiercing = powerCrystalSave.bonusPiercing;
-            amountBonusResistance = powerCrystalSave.bonusResistance;
+        if (hasScheduleDestruction) {
+            SchedulingManager.Instance.AddEntry(destroyDate, TryExpire, null);
         }
+    }
+
+    public override void OnPlacePOI() {
+        base.OnPlacePOI();
+        ScheduleExpiry();
     }
 
     #region Expiry
-    public void TryCancelExpiry() {
-        if (String.IsNullOrEmpty(_destroySchedule) == false) {
-            SchedulingManager.Instance.RemoveSpecificEntry(_destroySchedule);
-            _destroySchedule = string.Empty;
-        }
-    }
     public void ScheduleExpiry() {
-        if (String.IsNullOrEmpty(_destroySchedule)) {
-            _destroyDate = GameManager.Instance.Today();
-            _destroyDate.AddTicks(20);
-            // _destroyDate.AddTicks(3);
+        if (!hasScheduleDestruction) {
+            hasScheduleDestruction = true;
+            destroyDate = GameManager.Instance.Today().AddTicks(GameManager.Instance.GetTicksBasedOnHour(2));
 #if DEBUG_LOG
-            UnityEngine.Debug.Log($"{nameWithID}'s marker will expire at {_destroyDate.ConvertToContinuousDaysWithTime()}");
+            UnityEngine.Debug.Log($"{nameWithID} will expire at {destroyDate.ConvertToContinuousDaysWithTime()}");
 #endif
-            _destroySchedule = SchedulingManager.Instance.AddEntry(_destroyDate, TryExpire, null);
+            SchedulingManager.Instance.AddEntry(destroyDate, TryExpire, null);
         }
     }
-    private void ScheduleExpiry(GameDate gameDate) {
-        if (String.IsNullOrEmpty(_destroySchedule)) {
-            _destroyDate = gameDate;
-            _destroySchedule = SchedulingManager.Instance.AddEntry(_destroyDate, TryExpire, null);
-        }
-    }
+    //private void ScheduleExpiry(GameDate gameDate) {
+    //    if (String.IsNullOrEmpty(_destroySchedule)) {
+    //        _destroyDate = gameDate;
+    //        _destroySchedule = SchedulingManager.Instance.AddEntry(_destroyDate, TryExpire, null);
+    //    }
+    //}
     private void TryExpire() {
         bool canExpire = true;
-        if (isBeingCarriedBy != null) {
-            canExpire = false;
-        }
         if (isBeingSeized) {
             canExpire = false;
         }
@@ -76,9 +70,8 @@ public class PowerCrystal : TileObject {
             Expire();
         } else {
             //reschedule expiry to next hour.
-            _destroyDate = GameManager.Instance.Today();
-            _destroyDate.AddTicks(20);
-            _destroySchedule = SchedulingManager.Instance.AddEntry(_destroyDate, TryExpire, null);
+            hasScheduleDestruction = false;
+            ScheduleExpiry();
         }
 
     }
@@ -86,12 +79,17 @@ public class PowerCrystal : TileObject {
 #if DEBUG_LOG
         UnityEngine.Debug.Log($"{nameWithID}'s marker has expired.");
 #endif
-
-        gridTileLocation.structure.RemovePOI(this);
+        if (isBeingCarriedBy != null) {
+            isBeingCarriedBy.DropItem(this);
+        }
+        if (gridTileLocation != null) {
+            gridTileLocation.structure.RemovePOI(this);
+        }
+        hasScheduleDestruction = false;
     }
-	#endregion expiry
-	#region Reactions
-	public override void GeneralReactionToTileObject(Character actor, ref string debugLog) {
+    #endregion expiry
+    #region Reactions
+    public override void GeneralReactionToTileObject(Character actor, ref string debugLog) {
         base.GeneralReactionToTileObject(actor, ref debugLog);
         if (actor.race == RACE.ELVES) {
             if (!HasJobTargetingThis(JOB_TYPE.ABSORB_CRYSTAL)) {
@@ -111,6 +109,8 @@ public class SaveDataPowerCrystal : SaveDataTileObject {
     public List<RESISTANCE> resistanceBonuses = new List<RESISTANCE>();
     public float bonusResistance;
     public float bonusPiercing;
+    public bool hasScheduleDestruction;
+    public GameDate destroyDate;
     public override void Save(TileObject tileObject) {
         base.Save(tileObject);
         PowerCrystal powerCrystal = tileObject as PowerCrystal;
@@ -120,6 +120,8 @@ public class SaveDataPowerCrystal : SaveDataTileObject {
         powerCrystal.resistanceBonuses.ForEach((eachRes) => {
             resistanceBonuses.Add(eachRes);
         });
+        hasScheduleDestruction = powerCrystal.hasScheduleDestruction;
+        destroyDate = powerCrystal.destroyDate;
     }
 }
 #endregion
