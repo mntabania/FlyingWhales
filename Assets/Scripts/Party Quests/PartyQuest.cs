@@ -112,6 +112,17 @@ public class PartyQuest : ISavable {
             }
         }
     }
+    public bool TryTriggerRetreat(string endQuestReason) {
+        if (assignedParty != null) {
+            if (GameUtilities.RollChance(assignedParty.chanceToRetreatUponKnockoutOrDeath)) {
+                EndQuest(endQuestReason);
+                return true;
+            } else {
+                assignedParty.SetChanceToRetreatUponKnockoutOrDeath(100);
+            }
+        }
+        return false;
+    }
     #endregion
 
     #region Loading

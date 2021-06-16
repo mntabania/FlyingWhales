@@ -303,9 +303,7 @@ namespace Traits {
                                         if (owner.partyComponent.currentParty.currentQuest is ExplorationPartyQuest || owner.partyComponent.currentParty.currentQuest is ExterminationPartyQuest) {
                                             if (owner.faction.factionType.HasIdeology(FACTION_IDEOLOGY.Warmonger)) {
                                                 if (GameUtilities.RollChance(ChanceData.GetChance(CHANCE_TYPE.Explore_Kidnap_Chance))) {
-                                                    if (owner.jobComponent.TriggerKidnapJob(targetCharacter)) {
-                                                        owner.partyComponent.currentParty.RemoveMemberThatJoinedQuest(owner);
-                                                    }
+                                                    owner.jobComponent.TriggerKidnapJob(targetCharacter);
                                                 }
                                             } else if (owner.faction.factionType.HasIdeology(FACTION_IDEOLOGY.Peaceful) && !owner.faction.IsHostileWith(targetCharacter.faction)) {
                                                 owner.jobComponent.TriggerReleaseJob(targetCharacter);

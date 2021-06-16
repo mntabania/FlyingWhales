@@ -735,7 +735,7 @@ public class Party : ILogFiller, ISavable, IJobOwner, IBookmarkable {
                 ScheduleToStartWaitingQuest(members[0]);
                 ScheduleToEndQuest(members[0]);
             }
-            SetChanceToRetreatUponKnockoutOrDeath(25);
+            SetChanceToRetreatUponKnockoutOrDeath(ChanceData.GetChance(CHANCE_TYPE.Party_Quest_First_Knockout)); //25
         }
     }
     //private void DistributeQuestToMembersThatJoinedParty() {
@@ -1412,7 +1412,7 @@ public class Party : ILogFiller, ISavable, IJobOwner, IBookmarkable {
         onQuestSucceed = null;
         hasSetNextSwitchToWaitingStateTrigger = false;
         hasSetEndQuestDate = false;
-        chanceToRetreatUponKnockoutOrDeath = 25;
+        chanceToRetreatUponKnockoutOrDeath = ChanceData.GetChance(CHANCE_TYPE.Party_Quest_First_Knockout); //25
         ClearMembersThatJoinedQuest(shouldDropQuest: false);
         _activeMembers.Clear();
         ForceCancelAllJobsImmediately();
