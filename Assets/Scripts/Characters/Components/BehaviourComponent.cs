@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Characters.Components;
 using Inner_Maps;
 using UnityEngine;
 using Inner_Maps.Location_Structures;
@@ -9,7 +10,9 @@ using Pathfinding;
 using UnityEngine.Profiling;
 using UtilityScripts;
 using Traits;
-public class BehaviourComponent : CharacterComponent {
+using UnityEngine.Assertions;
+
+public class BehaviourComponent : CharacterComponent, CharacterEventDispatcher.ILocationListener {
     public List<CharacterBehaviourComponent> currentBehaviourComponents { get; private set; }
     public NPCSettlement attackVillageTarget { get; private set; }
     public Area attackAreaTarget { get; private set; }
@@ -72,6 +75,16 @@ public class BehaviourComponent : CharacterComponent {
 
     //private COMBAT_MODE combatModeBeforeHarassRaidInvade;
     public COMBAT_MODE combatModeBeforeAttackingDemonicStructure { get; private set; }
+    
+    //socializing
+    public LocationStructure targetSocializeStructure { get; private set; }
+    public GameDate socializingEndTime { get; private set; }
+    
+    //visit village
+    public NPCSettlement targetVisitVillage { get; private set; }
+    public LocationStructure targetVisitVillageStructure { get; private set; }
+    public GameDate visitVillageEndTime { get; private set; }
+    public VISIT_VILLAGE_INTENT visitVillageIntent { get; private set; }
 
     public BehaviourComponent () {
         deMoodVillageTarget = new List<Area>();
@@ -260,9 +273,9 @@ public class BehaviourComponent : CharacterComponent {
         //update following invader count. NOTE: Note this is for disablers only
         invaderToFollow?.behaviourComponent.RemoveFollower();
     }
-#endregion
+    #endregion
 
-#region Utilities
+    #region Utilities
     public void PopulateVillageTargetsByPriority(List<Area> areas) {
         //get settlements in region that have normal characters living there.
         List<BaseSettlement> settlementsInRegion = RuinarchListPool<BaseSettlement>.Claim();
@@ -301,16 +314,24 @@ public class BehaviourComponent : CharacterComponent {
             RuinarchListPool<Area>.Release(occupiedAreas);
         }
     }
-#endregion
+    #endregion
 
-#region Processes
+    #region Processes
     public string RunBehaviour() {
         string log = string.Empty;
 #if DEBUG_LOG
         log = $"{GameManager.Instance.TodayLogString()}{owner.name} Idle Plan Decision Making:";
 #endif
-        for (int i = 0; i < currentBehaviourComponents.Count; i++) {
-            CharacterBehaviourComponent component = currentBehaviourComponents[i];
+        List<CharacterBehaviourComponent> behavioursToProcess = RuinarchListPool<CharacterBehaviourComponent>.Claim();
+        behavioursToProcess.AddRange(currentBehaviourComponents); //cached list so that removing a behaviour while in a behaviour will not cause problems
+        for (int i = 0; i < behavioursToProcess.Count; i++) {
+            CharacterBehaviourComponent component = behavioursToProcess[i];
+            if (!currentBehaviourComponents.Contains(component)) {
+#if DEBUG_LOG
+                log += $"\nBehaviour Component: {component.ToString()} has been removed from {owner.name}'s list of behaviours, skipping it...";
+#endif
+                continue; //skip component
+            }
             if (component.IsDisabledFor(owner)) {
 #if DEBUG_LOG
                 log += $"\nBehaviour Component: {component.ToString()} is disabled for {owner.name} skipping it...";
@@ -354,6 +375,7 @@ public class BehaviourComponent : CharacterComponent {
 
             }
         }
+        RuinarchListPool<CharacterBehaviourComponent>.Release(behavioursToProcess);
         return log;
     }
     private bool IsProducedJobValid(JobQueueItem job, Character character) {
@@ -458,7 +480,7 @@ public class BehaviourComponent : CharacterComponent {
     }
 #endregion
 
-#region Attack Demonic Structure
+    #region Attack Demonic Structure
     public void SetIsAttackingDemonicStructure(bool state, DemonicStructure target) {
         if (isAttackingDemonicStructure != state) {
             isAttackingDemonicStructure = state;
@@ -522,18 +544,18 @@ public class BehaviourComponent : CharacterComponent {
             //}    
         }
     }
-#endregion
+    #endregion
 
-#region Priority
+    #region Priority
     public int GetHighestBehaviourPriority() {
         if (currentBehaviourComponents.Count > 0) {
             return currentBehaviourComponents[0].priority;
         }
         return -1;
     }
-#endregion
+    #endregion
 
-#region Douse Fire
+    #region Douse Fire
     public void SetDouseFireSettlement(NPCSettlement settlement) {
         if (settlement == null) {
             //remove douser from previous settlements list, if any.
@@ -543,9 +565,9 @@ public class BehaviourComponent : CharacterComponent {
         }
         dousingFireForSettlement = settlement;
     }
-#endregion
+    #endregion
 
-#region Cleanse Tiles
+    #region Cleanse Tiles
     public void SetCleansingTilesForSettlement(NPCSettlement settlement) {
         if (settlement == null) {
             //remove poison cleanser from previous settlements list, if any.
@@ -556,9 +578,9 @@ public class BehaviourComponent : CharacterComponent {
         cleansingTilesForSettlement = settlement;
         
     }
-#endregion
+    #endregion
     
-#region Dry Tiles
+    #region Dry Tiles
     public void SetDryingTilesForSettlement(NPCSettlement settlement) {
         if (settlement == null) {
             //remove tile dryer from previous settlements list, if any.
@@ -569,7 +591,7 @@ public class BehaviourComponent : CharacterComponent {
         dryingTilesForSettlement = settlement;
         
     }
-#endregion
+    #endregion
 
     //#region Mining
     //public void SetTargetMiningTile(LocationGridTile tile) {
@@ -577,7 +599,7 @@ public class BehaviourComponent : CharacterComponent {
     //}
     //#endregion
 
-#region Attack Village
+    #region Attack Village
     public void SetAttackVillageTarget(NPCSettlement npcSettlement) {
         attackVillageTarget = npcSettlement;
     }
@@ -591,27 +613,27 @@ public class BehaviourComponent : CharacterComponent {
             RemoveBehaviourComponent(typeof(AttackVillageBehaviour));
         }
     }
-#endregion
+    #endregion
 
-#region Abduction
+    #region Abduction
     //public void SetDigForAbductionPath(ABPath path) {
     //    currentAbductDigPath = path;
     //}
     public void SetAbductionTarget(Character character) {
         currentAbductTarget = character;
     }
-#endregion
+    #endregion
 
-#region Summon Specific
+    #region Summon Specific
     public void OnSummon(LocationGridTile tile) {
         if (HasBehaviour(typeof(AbductorBehaviour))) {
             //if character is an abductor, set its nest to where it was summoned
             SetNest(tile);
         }
     }
-#endregion
+    #endregion
     
-#region De-Mood
+    #region De-Mood
     private void StartDeMoodCooldown() {
         currentDeMoodCooldown = 0;
         Messenger.AddListener(Signals.TICK_ENDED, PerTickDeMoodCooldown);
@@ -625,9 +647,9 @@ public class BehaviourComponent : CharacterComponent {
     public void ResetDeMoodVillageTarget() {
         deMoodVillageTarget.Clear();
     }
-#endregion
+    #endregion
 
-#region Invade
+    #region Invade
     public void ResetInvadeVillageTarget() {
         invadeVillageTarget.Clear();
     }
@@ -637,9 +659,9 @@ public class BehaviourComponent : CharacterComponent {
     public void RemoveFollower() {
         followerCount--;
     }
-#endregion
+    #endregion
 
-#region Disabler
+    #region Disabler
     private void StartDisablerCooldown() {
         currentDisableCooldown = 0;
         Messenger.AddListener(Signals.TICK_ENDED, PerTickDisablerCooldown);
@@ -674,9 +696,9 @@ public class BehaviourComponent : CharacterComponent {
             SetInvaderToFollow(null);
         }
     }
-#endregion
+    #endregion
 
-#region Infestor
+    #region Infestor
     public void SetHasLayedAnEgg(bool state) {
         if(hasLayedAnEgg != state) {
             hasLayedAnEgg = state;
@@ -687,9 +709,9 @@ public class BehaviourComponent : CharacterComponent {
             }
         }
     }
-#endregion
+    #endregion
 
-#region Abductor
+    #region Abductor
     private void SetNest(LocationGridTile tile) {
         nest = tile;
     }
@@ -755,9 +777,9 @@ public class BehaviourComponent : CharacterComponent {
             SchedulingManager.Instance.AddEntry(resetDate, () => SetHasEatenInTheNight(false), owner);
         }
     }
-#endregion
+    #endregion
 
-#region Arsonist
+    #region Arsonist
     public void ResetArsonistVillageTarget() {
         arsonVillageTarget.Clear();
     }
@@ -784,9 +806,9 @@ public class BehaviourComponent : CharacterComponent {
             StartArsonistCooldown();
         }
     }
-#endregion
+    #endregion
 
-#region Abomination
+    #region Abomination
     public void SetAbominationTarget(Area p_area) {
         abominationTarget = p_area;
         if (abominationTarget != null) {
@@ -796,9 +818,9 @@ public class BehaviourComponent : CharacterComponent {
             SchedulingManager.Instance.AddEntry(dueDate, () => SetAbominationTarget(null), owner);
         }
     }
-#endregion
+    #endregion
 
-#region Agitate
+    #region Agitate
     public void SetIsAgitated(bool state) {
         if(isAgitated != state) {
             isAgitated = state;
@@ -809,15 +831,15 @@ public class BehaviourComponent : CharacterComponent {
             }
         }
     }
-#endregion
+    #endregion
 
-#region Subterranean
+    #region Subterranean
     public void SetSubterraneanJustExitedCombat(bool state) {
         subterraneanJustExitedCombat = state;
     }
-#endregion
+    #endregion
 
-#region Snatcher
+    #region Snatcher
     public void SetIsSnatching(bool state) {
         isCurrentlySnatching = state;
     }
@@ -844,9 +866,9 @@ public class BehaviourComponent : CharacterComponent {
             }
         }
     }
-#endregion
+    #endregion
 
-#region Cultist
+    #region Cultist
     public void OnBecomeCultist() {
         Messenger.AddListener<JobQueueItem, Character>(JobSignals.JOB_ADDED_TO_QUEUE, OnCultistSnatchAddedJobToQueue);
         Messenger.AddListener<JobQueueItem, Character>(JobSignals.JOB_REMOVED_FROM_QUEUE, OnCultistSnatchJobRemoved);   
@@ -867,12 +889,12 @@ public class BehaviourComponent : CharacterComponent {
             character.combatComponent.SetCombatMode(COMBAT_MODE.Aggressive);
         }
     }
-#endregion
+    #endregion
 
-#region Dazed
+    #region Dazed
     public void OnBecomeDazed() {
         Messenger.AddListener<Character, Area>(CharacterSignals.CHARACTER_ENTERED_AREA, OnCharacterEnteredArea);
-        Messenger.AddListener<Character, LocationStructure>(CharacterSignals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
+        Messenger.AddListener<Character, LocationStructure>(CharacterSignals.CHARACTER_ARRIVED_AT_STRUCTURE, OnDazedCharacterArrivedAtStructure);
         Messenger.AddListener<Character>(CharacterSignals.CHARACTER_CAN_NO_LONGER_PERFORM, OnDazedCharacterCanNoLongerPerform);
         Messenger.AddListener<Character, CharacterState>(CharacterSignals.CHARACTER_STARTED_STATE, OnDazedCharacterStartedState);
     }
@@ -885,7 +907,8 @@ public class BehaviourComponent : CharacterComponent {
             }
         }
     }
-    private void OnCharacterArrivedAtStructure(Character character, LocationStructure structure) {
+
+    private void OnDazedCharacterArrivedAtStructure(Character character, LocationStructure structure) {
         if (character == owner && character.homeStructure != null && character.homeStructure == structure) {
             character.traitContainer.RemoveTrait(character, "Dazed");
         }
@@ -902,22 +925,22 @@ public class BehaviourComponent : CharacterComponent {
     }
     public void OnNoLongerDazed() {
         Messenger.RemoveListener<Character, Area>(CharacterSignals.CHARACTER_ENTERED_AREA, OnCharacterEnteredArea);
-        Messenger.RemoveListener<Character, LocationStructure>(CharacterSignals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
+        Messenger.RemoveListener<Character, LocationStructure>(CharacterSignals.CHARACTER_ARRIVED_AT_STRUCTURE, OnDazedCharacterArrivedAtStructure);
         Messenger.RemoveListener<Character>(CharacterSignals.CHARACTER_CAN_NO_LONGER_PERFORM, OnDazedCharacterCanNoLongerPerform);
         Messenger.RemoveListener<Character, CharacterState>(CharacterSignals.CHARACTER_STARTED_STATE, OnDazedCharacterStartedState);
     }
-#endregion
+    #endregion
 
-#region Pest
+    #region Pest
     public void SetPestSettlementTarget(BaseSettlement p_settlement) {
         pestSettlementTarget = p_settlement;
     }
     public void SetPestHasFailedEat(bool p_state) {
         pestHasFailedEat = p_state;
     }
-#endregion
+    #endregion
 
-#region Work
+    #region Work
     public bool PlanWorkActions(out JobQueueItem producedJob) {
         //Stationary characters like Wurm cannot take work jobs
         if (owner.limiterComponent.canTakeJobs && !owner.movementComponent.isStationary) {
@@ -961,9 +984,9 @@ public class BehaviourComponent : CharacterComponent {
         producedJob = null;
         return false;
     }
-#endregion
+    #endregion
 
-#region Recruit
+    #region Recruit
     public bool CanCharacterBeRecruitedBy(Character recruiter) {
         if (recruiter.faction == null || owner.faction == recruiter.faction
             || owner.race == RACE.TRITON) {
@@ -995,9 +1018,9 @@ public class BehaviourComponent : CharacterComponent {
         }
         return true;
     }
-#endregion
+    #endregion
 
-#region Loading
+    #region Loading
     public void LoadReferences(SaveDataBehaviourComponent data) {
         if (!string.IsNullOrEmpty(data.attackVillageTarget)) {
             attackVillageTarget = DatabaseManager.Instance.settlementDatabase.GetSettlementByPersistentID(data.attackVillageTarget) as NPCSettlement;
@@ -1060,6 +1083,28 @@ public class BehaviourComponent : CharacterComponent {
             //    pestSettlementTarget.Add(hex);
             //}
         }
+        if (!string.IsNullOrEmpty(data.targetSocializeStructure)) {
+            targetSocializeStructure = DatabaseManager.Instance.structureDatabase.GetStructureByPersistentID(data.targetSocializeStructure);
+            owner.eventDispatcher.SubscribeToCharacterArrivedAtStructure(this);
+        }
+        if (data.socializingEndTime.hasValue) {
+            ScheduleSocializeEnd(data.socializingEndTime);
+            owner.eventDispatcher.UnsubscribeToCharacterArrivedAtStructure(this);
+        }
+        if (!string.IsNullOrEmpty(data.targetVisitVillage)) {
+            targetVisitVillage = DatabaseManager.Instance.settlementDatabase.GetSettlementByPersistentID(data.targetVisitVillage) as NPCSettlement;
+            owner.eventDispatcher.SubscribeToCharacterArrivedAtSettlement(this);
+        }
+        if (!string.IsNullOrEmpty(data.targetVisitVillageStructure)) {
+            targetVisitVillageStructure = DatabaseManager.Instance.structureDatabase.GetStructureByPersistentID(data.targetVisitVillageStructure);
+            //unsubscribe from this signal, since we expect that if the character has a
+            //target village structure, that he/she is already at his/her target village
+            owner.eventDispatcher.UnsubscribeToCharacterArrivedAtSettlement(this); 
+        }
+        if (data.visitVillageEndTime.hasValue) {
+            ScheduleVisitVillageEnd(data.visitVillageEndTime);
+        }
+        visitVillageIntent = data.visitVillageIntent;
         if (data.currentBehaviourComponents != null) {
             for (int i = 0; i < data.currentBehaviourComponents.Count; i++) {
                 string behaviourStr = data.currentBehaviourComponents[i];
@@ -1068,9 +1113,9 @@ public class BehaviourComponent : CharacterComponent {
             }    
         }
     }
-#endregion
+    #endregion
 
-#region Demonic Defender
+    #region Demonic Defender
     public void OnBecomeDemonicDefender() {
         Messenger.AddListener<Character, DemonicStructure>(CharacterSignals.CHARACTER_HIT_DEMONIC_STRUCTURE, OnCharacterHitDemonicStructure);
         Messenger.AddListener<Character, Character>(CharacterSignals.CHARACTER_WAS_HIT, OnCharacterAttacked);
@@ -1096,7 +1141,101 @@ public class BehaviourComponent : CharacterComponent {
             owner.combatComponent.Fight(p_attacker, CombatManager.Defending_Home, null, true);
         }
     }
-#endregion
+    #endregion
+
+    #region Socializing
+    public void GoSocializing(Character p_character, LocationStructure p_targetStructure) {
+        targetSocializeStructure = p_targetStructure;
+        Assert.IsNotNull(targetSocializeStructure);
+        p_character.behaviourComponent.AddBehaviourComponent(typeof(SocializingBehaviour));
+        //listen for when the character arrives at the target structure.
+        p_character.eventDispatcher.SubscribeToCharacterArrivedAtStructure(this);
+        Debug.Log($"{p_character.name} will socialize at {targetSocializeStructure.name}");
+    }
+    public void OnCharacterLeftStructure(Character p_character, LocationStructure p_leftStructure) { }
+    public void OnCharacterArrivedAtStructure(Character p_character, LocationStructure p_arrivedStructure) {
+        if (p_arrivedStructure == targetSocializeStructure) {
+            OnCharacterArrivedAtTargetSocializingStructure(p_character, p_arrivedStructure);
+        }
+    }
+    private void OnCharacterArrivedAtTargetSocializingStructure(Character p_character, LocationStructure p_structure) {
+        Assert.IsTrue(p_structure == targetSocializeStructure);
+        p_character.eventDispatcher.UnsubscribeToCharacterArrivedAtStructure(this);
+        GameDate dueDate = GameManager.Instance.Today();
+        dueDate.AddTicks(GameManager.Instance.GetTicksBasedOnHour(2));
+        ScheduleSocializeEnd(dueDate);
+    }
+    private void ScheduleSocializeEnd(GameDate p_date) {
+        socializingEndTime = p_date;
+        SchedulingManager.Instance.AddEntry(p_date, EndSocializeOnSchedule, this);
+        Debug.Log($"{GameManager.Instance.TodayLogString()}Scheduled socialize end of {owner.name} to {socializingEndTime.ToString()}");
+    }
+    private void EndSocializeOnSchedule() {
+        ClearOutSocializingBehaviour();
+    }
+    public void ClearOutSocializingBehaviour() {
+        owner.behaviourComponent.RemoveBehaviourComponent(typeof(SocializingBehaviour));
+        socializingEndTime = default;
+        targetSocializeStructure = null;
+    }
+    #endregion
+
+    #region Visit Village
+    public void VisitVillage(Character p_character, NPCSettlement p_settlement) {
+        targetVisitVillage = p_settlement;
+        Assert.IsNotNull(targetVisitVillage);
+        p_character.behaviourComponent.AddBehaviourComponent(typeof(VisitVillageBehaviour));
+        //listen for when the character arrives at the target structure.
+        p_character.eventDispatcher.SubscribeToCharacterArrivedAtSettlement(this);
+        Debug.Log($"{GameManager.Instance.TodayLogString()}{p_character.name} will visit village at {targetVisitVillage.name}");
+    }
+    public void OnCharacterArrivedAtSettlement(Character p_character, NPCSettlement p_settlement) {
+        if (p_settlement == targetVisitVillage) {
+            OnCharacterArrivedAtTargetVillageSettlement(p_character, p_settlement);
+        }
+    }
+    private void OnCharacterArrivedAtTargetVillageSettlement(Character p_character, NPCSettlement p_settlement) {
+        Assert.IsTrue(p_settlement == targetVisitVillage);
+        p_character.eventDispatcher.UnsubscribeToCharacterArrivedAtSettlement(this);
+        GameDate dueDate = GameManager.Instance.Today();
+        dueDate.AddTicks(GameManager.Instance.GetTicksBasedOnHour(3));
+        ScheduleVisitVillageEnd(dueDate);
+        SetVisitVillageIntent(VISIT_VILLAGE_INTENT.Socialize);
+        if (p_settlement.HasStructure(STRUCTURE_TYPE.TAVERN)) {
+            SetTargetVisitVillageStructure(GameUtilities.RollChance(50) ? p_settlement.GetRandomStructureOfType(STRUCTURE_TYPE.TAVERN) : p_settlement.cityCenter);
+        } else {
+            SetTargetVisitVillageStructure(p_settlement.cityCenter);
+        }
+#if DEBUG_LOG
+        Debug.Log($"{GameManager.Instance.TodayLogString()}Set target visit village structure to {targetVisitVillageStructure.name}");
+#endif        
+    }
+    public void SetVisitVillageIntent(VISIT_VILLAGE_INTENT p_intent) {
+        visitVillageIntent = p_intent;
+#if DEBUG_LOG
+        Debug.Log($"{GameManager.Instance.TodayLogString()}Set visit village intent of {owner.name} to {visitVillageIntent}");
+#endif
+    }
+
+    public void SetTargetVisitVillageStructure(LocationStructure p_structure) {
+        targetVisitVillageStructure = p_structure;
+    }
+    private void ScheduleVisitVillageEnd(GameDate p_date) {
+        visitVillageEndTime = p_date;
+        SchedulingManager.Instance.AddEntry(p_date, EndVisitVillageOnSchedule, this);
+        Debug.Log($"{GameManager.Instance.TodayLogString()}Scheduled visit village end of {owner.name} to {visitVillageEndTime.ToString()}");
+    }
+    private void EndVisitVillageOnSchedule() {
+        ClearOutVisitVillageBehaviour();
+    }
+    public void ClearOutVisitVillageBehaviour() {
+        owner.behaviourComponent.RemoveBehaviourComponent(typeof(VisitVillageBehaviour));
+        visitVillageEndTime = default;
+        targetVisitVillage = null;
+        targetVisitVillageStructure = null;
+        visitVillageIntent = VISIT_VILLAGE_INTENT.Socialize;
+    }
+    #endregion
 }
 
 [System.Serializable]
@@ -1155,8 +1294,18 @@ public class SaveDataBehaviourComponent : SaveData<BehaviourComponent> {
     public bool pestHasFailedEat;
 
     public COMBAT_MODE combatModeBeforeAttackingDemonicStructure;
+    
+    //socializing
+    public string targetSocializeStructure;
+    public GameDate socializingEndTime;
+    
+    //visit village
+    public string targetVisitVillage;
+    public string targetVisitVillageStructure;
+    public GameDate visitVillageEndTime;
+    public VISIT_VILLAGE_INTENT visitVillageIntent;
 
-#region Overrides
+    #region Overrides
     public override void Save(BehaviourComponent data) {
         currentBehaviourComponents = new List<string>();
         for (int i = 0; i < data.currentBehaviourComponents.Count; i++) {
@@ -1235,11 +1384,27 @@ public class SaveDataBehaviourComponent : SaveData<BehaviourComponent> {
             //    pestSettlementTarget.Add(data.pestSettlementTarget[i].persistentID);
             //}
         }
+        if (data.targetSocializeStructure != null) {
+            targetSocializeStructure = data.targetSocializeStructure.persistentID;
+        }
+        if (data.socializingEndTime.hasValue) {
+            socializingEndTime = data.socializingEndTime;
+        }
+        if (data.targetVisitVillage != null) {
+            targetVisitVillage = data.targetVisitVillage.persistentID;
+        }
+        if (data.targetVisitVillageStructure != null) {
+            targetVisitVillageStructure = data.targetVisitVillageStructure.persistentID;
+        }
+        if (data.visitVillageEndTime.hasValue) {
+            visitVillageEndTime = data.visitVillageEndTime;
+        }
+        visitVillageIntent = data.visitVillageIntent;
     }
 
     public override BehaviourComponent Load() {
         BehaviourComponent component = new BehaviourComponent(this);
         return component;
     }
-#endregion
+    #endregion
 }

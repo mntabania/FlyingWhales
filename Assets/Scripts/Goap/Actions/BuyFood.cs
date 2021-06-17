@@ -112,7 +112,7 @@ public class BuyFood : GoapAction {
         TakeFood(goapNode);
     }
     private void TakeFood(ActualGoapNode goapNode) {
-        int amount = 20;
+        int amount = 30;
         FoodPile targetFoodPile = goapNode.target as FoodPile;
         Assert.IsNotNull(targetFoodPile);
         if (targetFoodPile.resourceInPile <= amount) {

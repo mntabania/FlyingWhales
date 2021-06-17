@@ -1735,6 +1735,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         if (broadcast) {
             if (newStructure != null) {
                 Messenger.Broadcast(CharacterSignals.CHARACTER_ARRIVED_AT_STRUCTURE, this, newStructure);
+                eventDispatcher.ExecuteCharacterArrivedAtStructure(this, newStructure);
                 LocationAwarenessUtility.RemoveFromAwarenessList(this);
                 LocationAwarenessUtility.AddToAwarenessList(this, gridTileLocation);
             }
@@ -2811,7 +2812,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             Messenger.Broadcast(JobSignals.CHECK_JOB_APPLICABILITY, JOB_TYPE.RECOVER_HP, this as IPointOfInterest);
         }
         if (!HasHealth()) {
-            if (responsibleCharacter != null && responsibleCharacter is Character && responsibleCharacter.race.IsSapient()) {
+            if (responsibleCharacter != null && responsibleCharacter.race.IsSapient()) {
                 if (responsibleCharacter.characterClass.attackType == ATTACK_TYPE.PHYSICAL) {
                     responsibleCharacter?.talentComponent.GetTalent(CHARACTER_TALENT.Martial_Arts).AdjustExperience(8, responsibleCharacter);
                 } else {
@@ -6466,14 +6467,16 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public void OnSkillLevelUp() {
         CharacterClassData classData = CharacterManager.Instance.GetOrCreateCharacterClassData(classComponent.characterClass.className);
         piercingAndResistancesComponent.AdjustPiercing(classData.characterSkillUpdateData.GetPiercingBonus());
-        if (classData.characterSkillUpdateData.GetAllElementResistanceBonus() > 0) {
-            for (int x = 1; x < (int) RESISTANCE.Physical; ++x) {
-                piercingAndResistancesComponent.AdjustResistance((RESISTANCE) x, classData.characterSkillUpdateData.GetAllElementResistanceBonus());
+
+        for (int x = 1; x < (int)RESISTANCE.Physical; ++x) {
+            if (((RESISTANCE)x).IsElemental()) {
+                piercingAndResistancesComponent.AdjustResistance((RESISTANCE)x, classData.characterSkillUpdateData.GetAllElementalResistanceBonus());
+            } else if (((RESISTANCE)x).IsSecondary()) {
+                piercingAndResistancesComponent.AdjustResistance((RESISTANCE)x, classData.characterSkillUpdateData.GetAllSecondaryResistanceBonus());
             }
-        } else {
-            for (int x = 1; x < (int) RESISTANCE.Physical; ++x) {
-                piercingAndResistancesComponent.AdjustResistance((RESISTANCE) x, classData.characterSkillUpdateData.GetBonusBaseOnElement((RESISTANCE) x));
-            }
+        }
+        for (int x = 1; x < (int)RESISTANCE.Physical; ++x) {
+            piercingAndResistancesComponent.AdjustResistance((RESISTANCE)x, classData.characterSkillUpdateData.GetBonusBaseOnElement((RESISTANCE)x));
         }
     }
 
@@ -6495,9 +6498,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         string crystalBonus = string.Empty;
         if (homeSettlement == null || homeSettlement.locationType != LOCATION_TYPE.VILLAGE) {
             if (p_crystal.amountBonusPiercing > 0) {
-                crystalBonus = name + " gained " + p_crystal.amountBonusPiercing + " Piercing";
+                crystalBonus = name + " gained " + p_crystal.amountBonusPiercing + "% Piercing";
             } else {
-                crystalBonus = name + " gained " + p_crystal.amountBonusResistance + " " + p_crystal.resistanceBonuses[0] + " Resistance";
+                crystalBonus = name + " gained " + p_crystal.amountBonusResistance + "% " + p_crystal.resistanceBonuses[0] + " Resistance";
             }
             log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "Power Crystal", "absorb_crystal_homeless", null, LOG_TAG.Major);
             log.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
@@ -6506,9 +6509,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
         } else {
             if (p_crystal.amountBonusPiercing > 0) {
-                crystalBonus = " gained " + p_crystal.amountBonusPiercing + " Piercing";
+                crystalBonus = " gained " + p_crystal.amountBonusPiercing + "% Piercing";
             } else {
-                crystalBonus = " gained " + p_crystal.amountBonusResistance + " " + p_crystal.resistanceBonuses[0] + " Resistance";
+                crystalBonus = " gained " + p_crystal.amountBonusResistance + "% " + p_crystal.resistanceBonuses[0] + " Resistance";
             }
             Messenger.Broadcast(CharacterSignals.ON_ELF_ABSORB_CRYSTAL, this, p_crystal);
             log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "Power Crystal", "absorb_crystal_villager", null, LOG_TAG.Major);

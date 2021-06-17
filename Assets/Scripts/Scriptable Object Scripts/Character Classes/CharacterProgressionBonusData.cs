@@ -6,18 +6,30 @@ using UnityEngine;
 [System.Serializable]
 public class CharacterProgressionBonusData
 {
+    [Space]
+    [Header("Elemental Resistance")]
+    [Space]
+    [SerializeField] private float m_fireResistanceBonus;
+    [SerializeField] private float m_earthResistanceBonus;
+    [SerializeField] private float m_windResistanceBonus;
+    [SerializeField] private float m_waterResistanceBonus;
+    [Space]
+    [SerializeField] private float m_allElementalresistanceBonus;
+    [Space]
+    [Header("Secondary Resistance")]
+    [Space]
+    [SerializeField] private float m_poisonResistanceBonus;
+    [SerializeField] private float m_iceResistanceBonus;
+    [SerializeField] private float m_electricResistanceBonus;
+    [Space]
+    [SerializeField] private float m_allSecondaryresistanceBonus;
+    [Space]
+    [Space]
+    [Header("Other")]
+    [SerializeField] private float m_normalResistanceBonus;
     [SerializeField] private float m_piercingBonus;
     [SerializeField] private float m_mentalResistanceBonus;
     [SerializeField] private float m_physicalResistanceBonus;
-    [SerializeField] private float m_normalResistanceBonus;
-    [SerializeField] private float m_fireResistanceBonus;
-    [SerializeField] private float m_poisonResistanceBonus;
-    [SerializeField] private float m_waterResistanceBonus;
-    [SerializeField] private float m_iceResistanceBonus;
-    [SerializeField] private float m_electricResistanceBonus;
-    [SerializeField] private float m_earthResistanceBonus;
-    [SerializeField] private float m_windResistanceBonus;
-    [SerializeField] private float m_allElementresistanceBonus;
 
     public float GetBonusBaseOnElement(RESISTANCE p_bonusForThisElement) {
 		switch (p_bonusForThisElement) {
@@ -45,7 +57,11 @@ public class CharacterProgressionBonusData
         return m_mentalResistanceBonus;
     }
 
-    public float GetAllElementResistanceBonus() {
-        return m_allElementresistanceBonus;
+    public float GetAllElementalResistanceBonus() {
+        return m_allElementalresistanceBonus;
+    }
+
+    public float GetAllSecondaryResistanceBonus() {
+        return m_allSecondaryresistanceBonus;
     }
 }   

@@ -17,7 +17,9 @@ public class Evangelize : GoapAction {
         return true;
     }
     protected override void ConstructBasePreconditionsAndEffects() {
-        SetPrecondition(new GoapEffect(GOAP_EFFECT_CONDITION.HAS_POI, "Cultist Kit", false, GOAP_EFFECT_TARGET.ACTOR), HasCultistKit);
+        //removed cultist kit precondition because of this card:
+        //https://trello.com/c/5Hj0peji/4769-additional-behavior-while-not-working
+        // SetPrecondition(new GoapEffect(GOAP_EFFECT_CONDITION.HAS_POI, "Cultist Kit", false, GOAP_EFFECT_TARGET.ACTOR), HasCultistKit);
     }
     public override void Perform(ActualGoapNode goapNode) {
         base.Perform(goapNode);

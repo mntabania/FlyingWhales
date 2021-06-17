@@ -63,7 +63,7 @@ public class WorkBehaviour : CharacterBehaviourComponent {
 #if DEBUG_LOG
                     log = $"{log}\n  -There is a Hospice in the Village claimed by a non-Enemy or by self: ";
 #endif
-                    if (character.traitContainer.HasTrait("Injured") || character.traitContainer.HasTrait("Plagued")) {
+                    if ((character.traitContainer.HasTrait("Injured") || character.traitContainer.HasTrait("Plagued")) && ChanceData.RollChance(CHANCE_TYPE.Plauged_Injured_Visit_Hospice)) {
                         //recuperate
 #if DEBUG_LOG
                         log = $"{log}\n  -Actor has Injured or Plagued and there is still an available Bed in the Hospice: Create Recuperate Job";

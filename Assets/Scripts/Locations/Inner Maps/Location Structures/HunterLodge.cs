@@ -67,7 +67,7 @@ namespace Inner_Maps.Location_Structures {
         protected override void ProcessWorkStructureJobsByWorker(Character p_worker, out JobQueueItem producedJob) {
             producedJob = null;
             ResourcePile pile = p_worker.homeSettlement.SettlementResources.GetRandomPileOfClothOrLeather();
-            if (pile != null) {
+            if (pile != null && p_worker.structureComponent.workPlaceStructure.unoccupiedTiles.Count > 0) {
                 p_worker.jobComponent.TryCreateHaulJob(pile, out producedJob);
                 if (producedJob != null) {
                     return;

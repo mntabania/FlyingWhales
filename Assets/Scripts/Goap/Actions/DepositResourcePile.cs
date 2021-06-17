@@ -6,6 +6,7 @@ using Inner_Maps.Location_Structures;
 using Logs;
 using UnityEngine;  
 using Traits;
+using UtilityScripts;
 
 public class DepositResourcePile : GoapAction {
     public DepositResourcePile() : base(INTERACTION_TYPE.DEPOSIT_RESOURCE_PILE) {
@@ -238,14 +239,14 @@ public class DepositResourcePile : GoapAction {
         if (otherData != null && otherData.Length == 1 && otherData[0].obj is ResourcePile) {
             pileToBeDepositedTo = otherData[0].obj as ResourcePile;
         }
-        if(pileToBeDepositedTo != null && pileToBeDepositedTo.gridTileLocation == goapNode.targetTile) {
+        if (pileToBeDepositedTo != null && pileToBeDepositedTo.gridTileLocation == goapNode.targetTile) {
             if (pileToBeDepositedTo.mapObjectState == MAP_OBJECT_STATE.UNBUILT) {
                 //remove unbuilt pile, since it is no longer needed, then place carried pile in its place
                 pileToBeDepositedTo.gridTileLocation.structure.RemovePOI(pileToBeDepositedTo);
                 actor.UncarryPOI(poiTarget, dropLocation: goapNode.targetTile);
             } else {
                 //Deposit resource pile
-                if(pileToBeDepositedTo.resourceStorageComponent.IsAtMaxResource(poiTarget.providedResource) == false) {
+                if (pileToBeDepositedTo.resourceStorageComponent.IsAtMaxResource(poiTarget.providedResource) == false) {
                     if (pileToBeDepositedTo.mapObjectState == MAP_OBJECT_STATE.UNBUILT) {
                         pileToBeDepositedTo.SetMapObjectState(MAP_OBJECT_STATE.BUILT);
                     }
@@ -256,7 +257,17 @@ public class DepositResourcePile : GoapAction {
                     actor.UncarryPOI(poiTarget);
                 }
             }
-            
+        } else if (otherData != null && otherData.Length == 1 && otherData[0] is LocationStructureOtherData structureOtherData) {
+            LocationStructure structure = structureOtherData.locationStructure;
+            LocationGridTile targetTile = null;
+            if (structure.unoccupiedTiles.Count > 0) {
+                targetTile = CollectionUtilities.GetRandomElement(structure.unoccupiedTiles);
+            }
+            if (targetTile != null) {
+                actor.UncarryPOI(poiTarget, dropLocation: targetTile);
+            } else {
+                actor.UncarryPOI(poiTarget, addToLocation: false);
+            }
         } else {
             actor.UncarryPOI(poiTarget);
         }

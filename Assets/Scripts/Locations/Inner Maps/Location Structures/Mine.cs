@@ -138,9 +138,11 @@ namespace Inner_Maps.Location_Structures {
                 }
             }
             if (pile != null) {
-                p_worker.jobComponent.TryCreateHaulJob(pile, out producedJob);
-                if (producedJob != null) {
-                    return;
+                if (p_worker.structureComponent.workPlaceStructure.unoccupiedTiles.Count > 0) {
+                    p_worker.jobComponent.TryCreateHaulJob(pile, out producedJob);
+                    if (producedJob != null) {
+                        return;
+                    }
                 }
             }
             //else {

@@ -56,7 +56,7 @@ public class DryTilesBehaviour : CharacterBehaviourComponent {
             Wet wet = nearestTile.tileObjectComponent.genericTileObject.traitContainer.GetTraitOrStatus<Wet>("Wet"); 
             Assert.IsNotNull(wet, $"Wet of {nearestTile} is null.");
             wet.SetDryer(character);
-            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.DRY_TILES, INTERACTION_TYPE.DRY_TILE,
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.DRY_TILES, INTERACTION_TYPE.CLEAN_UP,
                 nearestTile.tileObjectComponent.genericTileObject, character);
             producedJob = job;
             return true;

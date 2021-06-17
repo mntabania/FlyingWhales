@@ -39,7 +39,7 @@ namespace Inner_Maps.Location_Structures {
             producedJob = null;
             //check if there are woodpiles that can be hauled inside settlement
             ResourcePile woodPile = p_worker.homeSettlement.SettlementResources.GetRandomPileOfWoodsForHaul();
-            if (woodPile != null) {
+            if (woodPile != null && p_worker.structureComponent.workPlaceStructure.unoccupiedTiles.Count > 0) {
                 p_worker.jobComponent.TryCreateHaulJob(woodPile, out producedJob);
                 if(producedJob != null) {
                     return;

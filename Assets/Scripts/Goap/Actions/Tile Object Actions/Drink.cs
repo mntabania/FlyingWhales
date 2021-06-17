@@ -120,7 +120,7 @@ public class Drink : GoapAction {
     }
 #endregion
 
-#region State Effects
+    #region State Effects
     public void PreDrinkSuccess(ActualGoapNode goapNode) {
         //goapNode.actor.needsComponent.AdjustDoNotGetBored(1);
         goapNode.actor.jobComponent.IncreaseNumOfTimesActionDone(this);
@@ -184,9 +184,9 @@ public class Drink : GoapAction {
     //public void PreTargetMissing() {
     //    actor.RemoveAwareness(poiTarget);
     //}
-#endregion
+    #endregion
 
-#region Requirements
+    #region Requirements
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, OtherData[] otherData, JobQueueItem job) { 
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData, job);
         if (satisfied) {
@@ -200,5 +200,5 @@ public class Drink : GoapAction {
         }
         return false;
     }
-#endregion
+    #endregion
 }
