@@ -1664,6 +1664,26 @@ public static class Extensions {
                 return RESISTANCE.Normal;
         }
     }
+    public static bool IsElemental(this RESISTANCE p_resistance) {
+		switch (p_resistance) {
+            case RESISTANCE.Earth:
+            case RESISTANCE.Water:
+            case RESISTANCE.Wind:
+            case RESISTANCE.Fire:
+            return true;
+		}
+        return false;
+    }
+
+    public static bool IsSecondary(this RESISTANCE p_resistance) {
+        switch (p_resistance) {
+            case RESISTANCE.Poison:
+            case RESISTANCE.Electric:
+            case RESISTANCE.Ice:
+            return true;
+        }
+        return false;
+    }
     #endregion
 
     #region Elevation

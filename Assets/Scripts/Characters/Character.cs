@@ -6466,14 +6466,16 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public void OnSkillLevelUp() {
         CharacterClassData classData = CharacterManager.Instance.GetOrCreateCharacterClassData(classComponent.characterClass.className);
         piercingAndResistancesComponent.AdjustPiercing(classData.characterSkillUpdateData.GetPiercingBonus());
-        if (classData.characterSkillUpdateData.GetAllElementResistanceBonus() > 0) {
-            for (int x = 1; x < (int) RESISTANCE.Physical; ++x) {
-                piercingAndResistancesComponent.AdjustResistance((RESISTANCE) x, classData.characterSkillUpdateData.GetAllElementResistanceBonus());
+
+        for (int x = 1; x < (int)RESISTANCE.Physical; ++x) {
+            if (((RESISTANCE)x).IsElemental()) {
+                piercingAndResistancesComponent.AdjustResistance((RESISTANCE)x, classData.characterSkillUpdateData.GetAllElementalResistanceBonus());
+            } else if (((RESISTANCE)x).IsSecondary()) {
+                piercingAndResistancesComponent.AdjustResistance((RESISTANCE)x, classData.characterSkillUpdateData.GetAllSecondaryResistanceBonus());
             }
-        } else {
-            for (int x = 1; x < (int) RESISTANCE.Physical; ++x) {
-                piercingAndResistancesComponent.AdjustResistance((RESISTANCE) x, classData.characterSkillUpdateData.GetBonusBaseOnElement((RESISTANCE) x));
-            }
+        }
+        for (int x = 1; x < (int)RESISTANCE.Physical; ++x) {
+            piercingAndResistancesComponent.AdjustResistance((RESISTANCE)x, classData.characterSkillUpdateData.GetBonusBaseOnElement((RESISTANCE)x));
         }
     }
 
