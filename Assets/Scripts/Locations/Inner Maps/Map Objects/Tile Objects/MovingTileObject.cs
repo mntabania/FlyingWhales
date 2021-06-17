@@ -42,9 +42,11 @@ public abstract class MovingTileObject : TileObject {
         Messenger.AddListener<LocationGridTile, TraitableCallback>(GridTileSignals.ACTION_PERFORMED_ON_TILE_TRAITABLES, OnActionPerformedOnTile);
     }
     public virtual void Expire() {
-        hasExpired = true;
-        Messenger.RemoveListener<LocationGridTile, TraitableCallback>(GridTileSignals.ACTION_PERFORMED_ON_TILE_TRAITABLES, OnActionPerformedOnTile);
-        DatabaseManager.Instance.tileObjectDatabase.UnRegisterTileObject(this);
+        if (!hasExpired) {
+            hasExpired = true;
+            Messenger.RemoveListener<LocationGridTile, TraitableCallback>(GridTileSignals.ACTION_PERFORMED_ON_TILE_TRAITABLES, OnActionPerformedOnTile);
+            DatabaseManager.Instance.tileObjectDatabase.UnRegisterTileObject(this);
+        }
     } 
     #endregion
 
