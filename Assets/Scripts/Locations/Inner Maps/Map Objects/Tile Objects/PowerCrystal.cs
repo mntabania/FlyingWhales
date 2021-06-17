@@ -21,6 +21,7 @@ public class PowerCrystal : TileObject {
         if(UtilityScripts.GameUtilities.RandomBetweenTwoNumbers(1, 100) > 50) {
             amountBonusPiercing = 5;
         } else {
+            amountBonusResistance = 10;
             EquipmentBonusProcessor.SetBonusResistanceOnPowerCrystal(this, 1);
         }
 

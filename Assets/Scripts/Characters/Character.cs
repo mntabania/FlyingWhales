@@ -6495,9 +6495,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         string crystalBonus = string.Empty;
         if (homeSettlement == null || homeSettlement.locationType != LOCATION_TYPE.VILLAGE) {
             if (p_crystal.amountBonusPiercing > 0) {
-                crystalBonus = name + " gained " + p_crystal.amountBonusPiercing + " Piercing";
+                crystalBonus = name + " gained " + p_crystal.amountBonusPiercing + "% Piercing";
             } else {
-                crystalBonus = name + " gained " + p_crystal.amountBonusResistance + " " + p_crystal.resistanceBonuses[0] + " Resistance";
+                crystalBonus = name + " gained " + p_crystal.amountBonusResistance + "% " + p_crystal.resistanceBonuses[0] + " Resistance";
             }
             log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "Power Crystal", "absorb_crystal_homeless", null, LOG_TAG.Major);
             log.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
@@ -6506,9 +6506,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
         } else {
             if (p_crystal.amountBonusPiercing > 0) {
-                crystalBonus = " gained " + p_crystal.amountBonusPiercing + " Piercing";
+                crystalBonus = " gained " + p_crystal.amountBonusPiercing + "% Piercing";
             } else {
-                crystalBonus = " gained " + p_crystal.amountBonusResistance + " " + p_crystal.resistanceBonuses[0] + " Resistance";
+                crystalBonus = " gained " + p_crystal.amountBonusResistance + "% " + p_crystal.resistanceBonuses[0] + " Resistance";
             }
             Messenger.Broadcast(CharacterSignals.ON_ELF_ABSORB_CRYSTAL, this, p_crystal);
             log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "Power Crystal", "absorb_crystal_villager", null, LOG_TAG.Major);
