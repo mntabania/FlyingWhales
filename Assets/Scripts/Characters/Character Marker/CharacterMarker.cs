@@ -594,7 +594,6 @@ public class CharacterMarker : MapObjectVisual<Character> {
 
 #region Object Pool
     public override void Reset() {
-        base.Reset(); 
         TryCancelExpiry();
         destinationTile = null;
         SetVisionColliderSize(CharacterManager.VISION_RANGE);
@@ -626,6 +625,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         if (animationListener != null) {
             animationListener.Reset();
         }
+        base.Reset();
     }
     protected override void OnDestroy() {
         pathfindingAI = null;    
@@ -1677,10 +1677,6 @@ public class CharacterMarker : MapObjectVisual<Character> {
             ClearArrivalAction();
             action?.Invoke();
         }
-    }
-    public void OnSeizeOtherCharacter(Character otherCharacter) {
-        character.combatComponent.RemoveHostileInRange(otherCharacter);
-        character.combatComponent.RemoveAvoidInRange(otherCharacter);
     }
     public void OnBeforeSeizingOtherCharacter(Character otherCharacter) {
         //if (character.faction != null && character.faction.isMajorNonPlayerFriendlyNeutral) {

@@ -38,6 +38,9 @@ public class PlaceBlueprint : GoapAction {
             if (poiTarget.gridTileLocation == null) {
                 return false;
             }
+            if (!actor.isSettlementRuler) {
+                return false;
+            }
             return true;
         }
         return false;

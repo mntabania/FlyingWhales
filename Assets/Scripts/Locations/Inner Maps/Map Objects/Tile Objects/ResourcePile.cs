@@ -78,5 +78,19 @@ public abstract class ResourcePile : TileObject {
         }
         */
     }
+    public override void VillagerReactionToTileObject(Character actor, ref string debugLog) {
+        base.VillagerReactionToTileObject(actor, ref debugLog);
+        if (actor.partyComponent.hasParty && actor.partyComponent.currentParty.isActive
+            && actor.partyComponent.currentParty.partyState == PARTY_STATE.Working) {
+            if (actor.partyComponent.currentParty.currentQuest is RaidPartyQuest raidParty
+                && gridTileLocation != null && gridTileLocation.IsPartOfSettlement(raidParty.targetSettlement)) {
+                if (GameUtilities.RollChance(35)) {
+                    if (actor.jobComponent.TriggerStealRaidJob(this)) {
+                        raidParty.SetIsSuccessful(true);
+                    }
+                }
+            }
+        }
+    }
     #endregion
 }
