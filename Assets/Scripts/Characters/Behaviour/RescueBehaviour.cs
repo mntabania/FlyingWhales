@@ -26,10 +26,16 @@ public class RescueBehaviour : CharacterBehaviourComponent {
                 if (character.hasMarker) {
                     if (party.targetDestination.IsAtTargetDestination(quest.targetCharacter)) {
                         if (quest.targetCharacter.isDead) {
+#if DEBUG_LOG
+                            log += $"\n-Target is dead";
+#endif
                             quest.EndQuest("Target is dead");
                             return true;
                         } else {
                             if (quest.targetCharacter.traitContainer.HasTrait("Restrained", "Unconscious", "Frozen", "Ensnared", "Enslaved")) {
+#if DEBUG_LOG
+                                log += $"\n-Target is incapacitated, release";
+#endif
                                 hasJob = character.jobComponent.TriggerReleaseJob(quest.targetCharacter, out producedJob);
                                 if (hasJob) {
                                     quest.SetIsReleasing(true);
@@ -37,6 +43,9 @@ public class RescueBehaviour : CharacterBehaviourComponent {
                                 }
                                 //return hasJob;
                             } else {
+#if DEBUG_LOG
+                                log += $"\n-Target is not incapacitated";
+#endif
                                 quest.EndQuest("Target is safe");
                                 //if target is paralyzed carry back home
                                 if (quest.targetCharacter.traitContainer.HasTrait("Paralyzed")) {
@@ -50,6 +59,9 @@ public class RescueBehaviour : CharacterBehaviourComponent {
                         }
                     } else {
                         if (quest.targetCharacter.gridTileLocation != null && !quest.targetCharacter.isBeingSeized) {
+#if DEBUG_LOG
+                            log += $"\n-Target is in a different location";
+#endif
                             //Target is still in the world, change destination
                             party.SetTargetDestination(quest.GetTargetDestination());
                             return true;

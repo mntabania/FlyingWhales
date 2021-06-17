@@ -1071,14 +1071,17 @@ public static class Extensions {
             case JOB_TYPE.DROP_ITEM:
             case JOB_TYPE.CRAFT_MISSING_FURNITURE:
             case JOB_TYPE.WARM_UP:
+            case JOB_TYPE.BURY_IN_ACTIVE_PARTY:
             case JOB_TYPE.IDLE_CLEAN:
                 priority = 250;
+                break;
+            case JOB_TYPE.HAUL_ANIMAL_CORPSE:
+                priority = 230;
                 break;
             case JOB_TYPE.COMBINE_STOCKPILE:
                 priority = 200;
                 break;
             case JOB_TYPE.COMMIT_SUICIDE:
-            case JOB_TYPE.BURY_IN_ACTIVE_PARTY:
                 priority = 150;
                 break;
             case JOB_TYPE.STROLL:

@@ -226,19 +226,17 @@ namespace Traits {
                         }
                     }
                 }
-                if (characterThatWillDoJob.partyComponent.hasParty && characterThatWillDoJob.partyComponent.currentParty.isActive
-                    && owner.partyComponent.currentParty.partyState == PARTY_STATE.Working) {
-                    if (characterThatWillDoJob.partyComponent.currentParty.currentQuest is RaidPartyQuest raidParty && item is ResourcePile resourcePile 
-                        && resourcePile.gridTileLocation != null && resourcePile.gridTileLocation.IsPartOfSettlement(raidParty.targetSettlement)) {
-                        if (UnityEngine.Random.Range(0, 100) < 35) {
-                            if (!owner.jobQueue.HasJob(JOB_TYPE.KIDNAP_RAID)) {
-                                if (owner.jobComponent.TriggerStealRaidJob(resourcePile)) {
-                                    raidParty.SetIsSuccessful(true);
-                                }
-                            }
-                        }
-                    }
-                }
+                //if (characterThatWillDoJob.partyComponent.hasParty && characterThatWillDoJob.partyComponent.currentParty.isActive
+                //    && owner.partyComponent.currentParty.partyState == PARTY_STATE.Working) {
+                //    if (characterThatWillDoJob.partyComponent.currentParty.currentQuest is RaidPartyQuest raidParty && item is ResourcePile resourcePile 
+                //        && resourcePile.gridTileLocation != null && resourcePile.gridTileLocation.IsPartOfSettlement(raidParty.targetSettlement)) {
+                //        if (UnityEngine.Random.Range(0, 100) < 35) {
+                //            if (owner.jobComponent.TriggerStealRaidJob(resourcePile)) {
+                //                raidParty.SetIsSuccessful(true);
+                //            }
+                //        }
+                //    }
+                //}
             }
             if(targetPOI is Character targetCharacter) {
                 if (characterThatWillDoJob.limiterComponent.canMove && characterThatWillDoJob.limiterComponent.canPerform) {
@@ -337,7 +335,7 @@ namespace Traits {
                             && (!targetCharacter.gridTileLocation.IsPartOfSettlement() || (targetCharacter.gridTileLocation.IsPartOfSettlement(out BaseSettlement settlement) && settlement.locationType != LOCATION_TYPE.VILLAGE))
                             && owner.relationshipContainer.GetOpinionLabel(targetCharacter) != RelationshipManager.Rival) {
                             //If a villager is dead and is seen outside the village, bury it
-                            if (owner.partyComponent.isActiveMember) {
+                            if (owner.partyComponent.isMemberThatJoinedQuest) {
                                 owner.jobComponent.TriggerPersonalBuryInActivePartyJob(targetCharacter);
                             } else {
                                 if (owner.traitContainer.HasTrait("Necromancer")) {

@@ -45,22 +45,27 @@ public class HuntBeastBehaviour : CharacterBehaviourComponent {
 #if DEBUG_LOG
                     log += $"\n-No longer alive monster, will try haul corpses";
 #endif
-                    Area targetArea = character.gridTileLocation.area;
+                    Area targetArea = targetStructure.occupiedArea;
                     Summon targetDeadBeast = GetRandomDeadBeastToHaul(targetArea);
                     if (targetDeadBeast != null) {
 #if DEBUG_LOG
                         log += $"\n-Will haul {targetDeadBeast.nameWithID}";
 #endif
-                        character.jobComponent.TryTriggerMoveCharacter(targetDeadBeast, out producedJob);
+                        character.jobComponent.TryTriggerHaulAnimalCorpse(targetDeadBeast, out producedJob);
                         if (producedJob != null) {
                             producedJob.SetIsThisAPartyJob(true);
                             return true;
                         }
                     }
-                    if(character.jobComponent.TriggerRoamAroundTile(out producedJob)) {
-                        producedJob.SetIsThisAPartyJob(true);
-                        return true;
-                    }
+                    //if(character.jobComponent.TriggerRoamAroundTile(out producedJob)) {
+                    //    producedJob.SetIsThisAPartyJob(true);
+                    //    return true;
+                    //}
+#if DEBUG_LOG
+                    log += $"\n-Do not have animal corpse, End Hunt";
+#endif
+                    party.currentQuest.EndQuest("Finished quest");
+                    return true;
                 } else {
 #if DEBUG_LOG
                     log += $"\n-Structure is destroyed, End Hunt";
@@ -68,7 +73,14 @@ public class HuntBeastBehaviour : CharacterBehaviourComponent {
                     party.currentQuest.EndQuest("Structure is destroyed");
                     return true;
                 }
-            } 
+            } else {
+                LocationGridTile tile = party.targetDestination.GetRandomPassableTile();
+                character.jobComponent.CreatePartyGoToJob(tile, out producedJob);
+                if (producedJob != null) {
+                    producedJob.SetIsThisAPartyJob(true);
+                    return true;
+                }
+            }
         }
         if (producedJob != null) {
             producedJob.SetIsThisAPartyJob(true);
