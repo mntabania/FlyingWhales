@@ -191,6 +191,8 @@ namespace Inner_Maps.Location_Structures {
                 //do harvest crops
                 p_worker.jobComponent.TriggerHarvestCrops(crop, out producedJob);
             }
+            
+            if(TryCreateCleanJob(p_worker, out producedJob)) { return; }
         }
 
         #region Damage

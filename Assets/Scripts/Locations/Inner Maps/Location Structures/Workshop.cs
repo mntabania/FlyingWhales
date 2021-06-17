@@ -330,6 +330,8 @@ namespace Inner_Maps.Location_Structures {
                     }
                 }
             }
+            
+            if(TryCreateCleanJob(p_worker, out producedJob)) { return; }
         }
 
         public bool ShouldIgnoreHaul(List<TileObject> p_list) {
