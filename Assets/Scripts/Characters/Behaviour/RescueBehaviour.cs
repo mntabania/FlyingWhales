@@ -23,26 +23,38 @@ public class RescueBehaviour : CharacterBehaviourComponent {
                 log += $"\n-Character is at target destination, do work";
 #endif
                 RescuePartyQuest quest = party.currentQuest as RescuePartyQuest;
-                if (character.hasMarker && party.targetDestination.IsAtTargetDestination(quest.targetCharacter)) {
-                    if (quest.targetCharacter.isDead) {
-                        quest.EndQuest("Target is dead");
-                        return true;
-                    } else {
-                        if (quest.targetCharacter.traitContainer.HasTrait("Restrained", "Unconscious", "Frozen", "Ensnared", "Enslaved")) {
-                            hasJob = character.jobComponent.TriggerReleaseJob(quest.targetCharacter, out producedJob);
-                            if (hasJob) {
-                                quest.SetIsReleasing(true);
-                            }
-                            return hasJob;
+                if (character.hasMarker) {
+                    if (party.targetDestination.IsAtTargetDestination(quest.targetCharacter)) {
+                        if (quest.targetCharacter.isDead) {
+                            quest.EndQuest("Target is dead");
+                            return true;
                         } else {
-                            quest.EndQuest("Target is safe");
-                            //if target is paralyzed carry back home
-                            if (quest.targetCharacter.traitContainer.HasTrait("Paralyzed")) {
-                                if (!quest.targetCharacter.IsPOICurrentlyTargetedByAPerformingAction(JOB_TYPE.MOVE_CHARACTER)) {
-                                    //Do not set this as a party job
-                                    character.jobComponent.TryTriggerMoveCharacter(quest.targetCharacter, out producedJob, false);
+                            if (quest.targetCharacter.traitContainer.HasTrait("Restrained", "Unconscious", "Frozen", "Ensnared", "Enslaved")) {
+                                hasJob = character.jobComponent.TriggerReleaseJob(quest.targetCharacter, out producedJob);
+                                if (hasJob) {
+                                    quest.SetIsReleasing(true);
+                                    return true;
                                 }
+                                //return hasJob;
+                            } else {
+                                quest.EndQuest("Target is safe");
+                                //if target is paralyzed carry back home
+                                if (quest.targetCharacter.traitContainer.HasTrait("Paralyzed")) {
+                                    if (!quest.targetCharacter.IsPOICurrentlyTargetedByAPerformingAction(JOB_TYPE.MOVE_CHARACTER)) {
+                                        //Do not set this as a party job
+                                        character.jobComponent.TryTriggerMoveCharacter(quest.targetCharacter, out producedJob, false);
+                                    }
+                                }
+                                return true;
                             }
+                        }
+                    } else {
+                        if (quest.targetCharacter.gridTileLocation != null && !quest.targetCharacter.isBeingSeized) {
+                            //Target is still in the world, change destination
+                            party.SetTargetDestination(quest.GetTargetDestination());
+                            return true;
+                        } else {
+                            quest.EndQuest("Target is nowhere to be found");
                             return true;
                         }
                     }
@@ -50,6 +62,7 @@ public class RescueBehaviour : CharacterBehaviourComponent {
                     quest.EndQuest("Target is nowhere to be found");
                     return true;
                 }
+
 
                 Character memberInCombat = party.GetMemberInCombatExcept(character);
                 if (memberInCombat != null && party.targetDestination.IsAtTargetDestination(memberInCombat)) {
@@ -79,11 +92,10 @@ public class RescueBehaviour : CharacterBehaviourComponent {
                     //character.jobComponent.TriggerRoamAroundStructure(out producedJob);
                     hasJob = RoamAroundStructureOrHex(character, party.currentQuest.target, out producedJob);
                 }
+            } else {
+                LocationGridTile tile = party.targetDestination.GetRandomPassableTile();
+                hasJob = character.jobComponent.CreatePartyGoToJob(tile, out producedJob);
             }
-            //else {
-            //    LocationGridTile tile = party.targetDestination.GetRandomPassableTile();
-            //    hasJob = character.jobComponent.CreatePartyGoToJob(tile, out producedJob);
-            //}
         }
         //if (!party.isWaitTimeOver) {
         //    log += $"\n-Party is waiting";
