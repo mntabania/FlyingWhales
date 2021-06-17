@@ -47,6 +47,7 @@ public class WaterWell : TileObject {
         } else {
             AddAdvertisedAction(INTERACTION_TYPE.WELL_JUMP);
             AddAdvertisedAction(INTERACTION_TYPE.REPAIR);
+            AddAdvertisedAction(INTERACTION_TYPE.DRINK_WATER);
         }
         Messenger.AddListener(Signals.HOUR_STARTED, HourStarted);
         UpdateSettlementResourcesParent();

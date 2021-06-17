@@ -1,16 +1,16 @@
-﻿public class DryTile : GoapAction {
-    public DryTile() : base(INTERACTION_TYPE.DRY_TILE) {
+﻿public class CleanUp : GoapAction {
+    public CleanUp() : base(INTERACTION_TYPE.CLEAN_UP) {
         actionIconString = GoapActionStateDB.Clean_Icon;
         //advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.RATMAN };
-        shouldAddLogs = false;
+        // shouldAddLogs = false;
         logTags = new[] {LOG_TAG.Work};
     }
     
     #region Overrides
     public override void Perform(ActualGoapNode goapNode) {
         base.Perform(goapNode);
-        SetState("Dry Success", goapNode);
+        SetState("Clean Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
 #if DEBUG_LOG
@@ -19,11 +19,12 @@
 #endif
         return 10;
     }
-#endregion
+    #endregion
     
-#region State Effects
-    public void AfterDrySuccess(ActualGoapNode goapNode) {
+    #region State Effects
+    public void AfterCleanSuccess(ActualGoapNode goapNode) {
         goapNode.target.traitContainer.RemoveStatusAndStacks(goapNode.target, "Wet", goapNode.actor);
+        goapNode.target.traitContainer.RemoveStatusAndStacks(goapNode.target, "Dirty", goapNode.actor);
     }
-#endregion
+    #endregion
 }

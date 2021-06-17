@@ -863,6 +863,9 @@ public static class Extensions {
             case JOB_TYPE.ENERGY_RECOVERY_URGENT:
             case JOB_TYPE.FULLNESS_RECOVERY_URGENT:
             case JOB_TYPE.HUNT_PREY:
+            case JOB_TYPE.VISIT_STRUCTURE:
+            case JOB_TYPE.SOCIALIZE:
+            case JOB_TYPE.VISIT_DIFFERENT_VILLAGE:
                 priority = 1000;
                 break;
             case JOB_TYPE.KNOCKOUT:
@@ -1038,7 +1041,6 @@ public static class Extensions {
             //    priority = 300;
             //    break;
             case JOB_TYPE.VISIT_FRIEND:
-            case JOB_TYPE.VISIT_DIFFERENT_REGION:
                 priority = 280;
                 break;
             case JOB_TYPE.OBTAIN_PERSONAL_ITEM:
@@ -1069,6 +1071,7 @@ public static class Extensions {
             case JOB_TYPE.DROP_ITEM:
             case JOB_TYPE.CRAFT_MISSING_FURNITURE:
             case JOB_TYPE.WARM_UP:
+            case JOB_TYPE.IDLE_CLEAN:
                 priority = 250;
                 break;
             case JOB_TYPE.COMBINE_STOCKPILE:

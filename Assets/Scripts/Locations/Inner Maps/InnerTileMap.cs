@@ -510,6 +510,12 @@ namespace Inner_Maps {
                 if (from.area != to.area) {
                     from.area.OnRemovePOIInHex(character);
                     to.area.OnPlacePOIInHex(character);
+                    if ((!from.IsPartOfSettlement() && to.IsPartOfSettlement(out BaseSettlement settlement) && settlement is NPCSettlement npcSettlement)) {
+                        character.eventDispatcher.ExecuteCharacterArrivedAtSettlement(character, npcSettlement);
+                    } else if (from.IsPartOfSettlement(out BaseSettlement settlement1) && to.IsPartOfSettlement(out BaseSettlement settlement2) && 
+                              settlement1 != settlement2 && settlement2 is NPCSettlement npcSettlement2) {
+                        character.eventDispatcher.ExecuteCharacterArrivedAtSettlement(character, npcSettlement2);
+                    }
                 }
                 from.RemoveCharacterHere(character);
                 to.AddCharacterHere(character);

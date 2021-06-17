@@ -1080,6 +1080,33 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
         producedJob = null;
         return false;
     }
+    public bool TriggerRoamAroundStructure(JOB_TYPE jobType, out JobQueueItem producedJob, LocationGridTile tile = null) {
+        if (!owner.jobQueue.HasJob(jobType)) {
+            LocationGridTile chosenTile = tile;
+            if (chosenTile == null) {
+                if (owner.currentStructure != null) {
+                    if(owner.currentStructure.structureType == STRUCTURE_TYPE.WILDERNESS) {
+                        Area nearest = owner.gridTileLocation.GetNearestHexTileWithinRegion();
+                        if(nearest != null) {
+                            chosenTile = nearest.gridTileComponent.GetRandomTile();
+                        }
+                    } else {
+                        chosenTile = CollectionUtilities.GetRandomElement(owner.currentStructure.passableTiles);
+                    }
+                }
+            }
+            ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.ROAM], owner, owner, new OtherData[] { new LocationGridTileOtherData(chosenTile) }, 0);
+            GoapPlan goapPlan = ObjectPoolManager.Instance.CreateNewGoapPlan(node, owner);
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType, INTERACTION_TYPE.ROAM, owner, owner);
+            goapPlan.SetDoNotRecalculate(true);
+            job.SetCannotBePushedBack(true);
+            job.SetAssignedPlan(goapPlan);
+            producedJob = job;
+            return true;
+        }
+        producedJob = null;
+        return false;
+    }
     public bool TriggerAttackDemonicStructure(out JobQueueItem producedJob, LocationGridTile tile = null) {
 	    if (!owner.jobQueue.HasJob(JOB_TYPE.COUNTERATTACK)) {
 		    LocationGridTile chosenTile = tile;
@@ -1498,6 +1525,24 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
             return true;
         }
         return false;
+    }
+    public bool CreateDrinkBloodJob(JOB_TYPE jobType, IPointOfInterest target, out JobQueueItem producedJob) {
+	    if (!owner.jobQueue.HasJob(jobType)) {
+		    if (owner.partyComponent.isActiveMember) {
+			    producedJob = null;
+			    return false;
+		    }
+		    if (!owner.limiterComponent.canDoFullnessRecovery) {
+			    producedJob = null;
+			    return false;
+		    }
+		    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType, INTERACTION_TYPE.DRINK_BLOOD, target, owner);
+		    owner.jobQueue.CancelAllJobs(JOB_TYPE.FULLNESS_RECOVERY_NORMAL, JOB_TYPE.FULLNESS_RECOVERY_URGENT);
+		    producedJob = job;
+		    return true;
+	    }
+	    producedJob = null;
+	    return false;
     }
     public bool CreateVampiricEmbraceJob(JOB_TYPE jobType, IPointOfInterest target) {
         if (!owner.jobQueue.HasJob(jobType)) {
@@ -2134,6 +2179,16 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 	    if(!owner.jobQueue.HasJob(JOB_TYPE.GO_TO)) {
 		    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.GO_TO, INTERACTION_TYPE.GO_TO_TILE, tile.tileObjectComponent.genericTileObject, owner);
             job.SetCannotBePushedBack(true);
+		    producedJob = job;
+		    return true;
+	    }
+	    producedJob = null;
+	    return false;
+    }
+    public bool CreateGoToJob(JOB_TYPE jobType, LocationGridTile tile, out JobQueueItem producedJob) {
+	    if(!owner.jobQueue.HasJob(jobType)) {
+		    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType, INTERACTION_TYPE.GO_TO_TILE, tile.tileObjectComponent.genericTileObject, owner);
+		    job.SetCannotBePushedBack(true);
 		    producedJob = job;
 		    return true;
 	    }
@@ -2972,7 +3027,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
     }
 #endregion
 
-#region Outside Home Region
+	#region Outside Home Region
     public bool TriggerDrinkJob(JOB_TYPE jobType, Table table, out JobQueueItem producedJob) { //bool forceDoAction = false
         if (!owner.jobQueue.HasJob(jobType)) {
             ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.DRINK], owner, table, null, 0);
@@ -3014,13 +3069,24 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
         producedJob = null;
         return false;
     }
-#endregion
+	#endregion
 
-#region Evangelize
-    public bool IsValidEvangelizeTarget(Character character) {
+	#region Evangelize
+	private bool IsValidEvangelizeTarget(Character character) {
 	    AWARENESS_STATE awarenessState = owner.relationshipContainer.GetAwarenessState(character);
 	    return character.isNormalCharacter && !character.traitContainer.HasTrait("Travelling") && 
-	           character.traitContainer.HasTrait("Cultist") == false && owner.HasSameHomeAs(character) &&
+	           !character.traitContainer.HasTrait("Cultist") && owner.HasSameHomeAs(character) &&
+	           awarenessState != AWARENESS_STATE.Missing && awarenessState != AWARENESS_STATE.Presumed_Dead;
+    }
+    /// <summary>
+    /// Used for preaching in a different village
+    /// <see cref="VisitVillageBehaviour"/>
+    /// </summary>
+    /// <param name="character">The character that is preaching.</param>
+    private bool IsValidEvangelizeTargetAtDifferentVillage(Character character) {
+	    AWARENESS_STATE awarenessState = owner.relationshipContainer.GetAwarenessState(character);
+	    return character.isNormalCharacter && !character.traitContainer.HasTrait("Travelling") && 
+	           !character.traitContainer.HasTrait("Cultist") &&
 	           awarenessState != AWARENESS_STATE.Missing && awarenessState != AWARENESS_STATE.Presumed_Dead;
     }
     public bool TryGetValidEvangelizeTarget(out Character targetCharacter) {
@@ -3057,6 +3123,23 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 	    targetCharacter = null;
 	    return false;
     }
+    public bool TryGetValidEvangelizeTargetInsideVillage(out Character targetCharacter, NPCSettlement p_village) {
+	    List<Character> choices = RuinarchListPool<Character>.Claim();
+	    for (int i = 0; i < p_village.residents.Count; i++) {
+		    Character character = p_village.residents[i];
+		    if (character.currentSettlement == p_village && IsValidEvangelizeTargetAtDifferentVillage(character)) {
+			    choices.Add(character);
+		    }
+	    }
+	    if (choices.Count > 0) {
+		    targetCharacter = CollectionUtilities.GetRandomElement(choices);
+		    RuinarchListPool<Character>.Release(choices);
+		    return true;
+	    }
+	    RuinarchListPool<Character>.Release(choices);
+	    targetCharacter = null;
+	    return false;
+    }
     public bool TryCreateEvangelizeJob(Character target, out JobQueueItem producedJob) {
 	    //create predetermined plan and job
 	    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.PREACH, INTERACTION_TYPE.EVANGELIZE, target, owner);
@@ -3090,7 +3173,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
         }
         return false;
     }
-#endregion
+	#endregion
 
 #region Snatch
     public bool CreateSnatchJob(Character targetCharacter, LocationGridTile targetLocation, LocationStructure structure) {
@@ -3689,6 +3772,41 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 		    return true;
 	    }
 	    producedJob = null;
+	    return false;
+    }
+    #endregion
+
+    #region Drink Water
+    public bool TriggerDrinkWaterJob(WaterWell p_waterWell, out JobQueueItem producedJob) {
+	    ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.DRINK_WATER], owner, p_waterWell, null, 0);
+	    GoapPlan goapPlan = ObjectPoolManager.Instance.CreateNewGoapPlan(node, owner);
+	    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.SOCIALIZE, INTERACTION_TYPE.DRINK_WATER, p_waterWell, owner);
+	    // goapPlan.SetDoNotRecalculate(true);
+	    // job.SetCannotBePushedBack(true);
+	    job.SetAssignedPlan(goapPlan);
+	    producedJob = job;
+	    return true;
+    }
+    #endregion
+
+    #region Clean Up
+    public bool TryCreateCleanItemJob(TileObject p_tileObject, out JobQueueItem p_producedJob) {
+	    ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.CLEAN_UP], owner, p_tileObject, null, 0);
+	    GoapPlan goapPlan = ObjectPoolManager.Instance.CreateNewGoapPlan(node, owner);
+	    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.IDLE_CLEAN, INTERACTION_TYPE.CLEAN_UP, p_tileObject, owner);
+	    job.SetAssignedPlan(goapPlan);
+	    p_producedJob = job;
+	    return true;
+    }
+    public bool TryCreateCleanItemJob(LocationStructure p_structure, out JobQueueItem p_producedJob) {
+	    for (int i = 0; i < p_structure.pointsOfInterest.Count; i++) {
+		    IPointOfInterest poi = p_structure.pointsOfInterest.ElementAt(i);
+		    if (poi is TileObject tileObject && tileObject.mapObjectState == MAP_OBJECT_STATE.BUILT && 
+		        (tileObject.traitContainer.HasTrait("Wet") || tileObject.traitContainer.HasTrait("Dirty"))) {
+			    return TryCreateCleanItemJob(tileObject, out p_producedJob);
+		    }
+	    }
+	    p_producedJob = null;
 	    return false;
     }
     #endregion
