@@ -1434,7 +1434,7 @@ public enum CHANCE_TYPE {
     Mimic_Spawn,
     Vampire_Lycan_Visit_Hospice,
     Settlement_Ruler_Default_Facility_Chance,
-    Explore_Kidnap_Chance,
+    Kidnap_Chance,
     Raid_Kidnap_Chance,
     Raid_Chance,
     Rescue_Chance,
