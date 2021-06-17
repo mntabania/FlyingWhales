@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Inner_Maps.Location_Structures;
+using UnityEngine;
 namespace Factions.Faction_Types {
     public class ElvenKingdom : FactionType {
         
@@ -123,6 +124,12 @@ namespace Factions.Faction_Types {
         public override int GetAdditionalMigrationMeterGain(NPCSettlement p_settlement) {
             int nobleAmount = p_settlement.classComponent.GetCurrentResidentClassAmount("Noble");
             return Mathf.Min(nobleAmount, 3);
+        }
+        public override StructureSetting CreateStructureSettingForStructure(STRUCTURE_TYPE structureType, NPCSettlement p_settlement) {
+            RESOURCE resource = structureType.RequiresResourceToBuild() ? RESOURCE.WOOD : RESOURCE.NONE;
+            if (structureType == STRUCTURE_TYPE.FISHERY) { resource = RESOURCE.WOOD; }
+            if (structureType == STRUCTURE_TYPE.BUTCHERS_SHOP) { resource = RESOURCE.STONE; }
+            return new StructureSetting(structureType, resource, false);
         }
     }
 }

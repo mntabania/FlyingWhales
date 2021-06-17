@@ -437,6 +437,11 @@ public class MovementComponent : CharacterComponent {
 
 #region Dig
     public bool CanDig() {
+        //Allowed characters restraining for village to dig
+        //Reference: https://trello.com/c/hT6r95jb/4845-villagers-restraining-harpy-inside-cave-issue
+        if (owner.currentJob != null && owner.currentJob.jobType == JOB_TYPE.RESTRAIN && owner.currentJob.originalOwner is NPCSettlement) {
+            return true;
+        }
         //Must not dig out of Kennel
         //https://trello.com/c/Yyj9DFry/1582-some-monsters-can-dig-out-of-kennel
         if (enableDigging && owner.currentStructure != null && owner.currentStructure.structureType != STRUCTURE_TYPE.KENNEL) {
