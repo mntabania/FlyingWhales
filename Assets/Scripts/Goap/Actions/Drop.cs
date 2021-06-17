@@ -213,7 +213,7 @@ public class Drop : GoapAction {
                 }
             }
         } else if (goapNode.associatedJobType == JOB_TYPE.HAUL_ANIMAL_CORPSE) {
-            if (goapNode.actor.partyComponent.hasParty && goapNode.actor.partyComponent.currentParty.isActive) {
+            if (goapNode.actor.partyComponent.hasParty && goapNode.actor.partyComponent.currentParty.isActive && goapNode.actor.partyComponent.currentParty.currentQuest is HuntBeastPartyQuest) {
                 goapNode.actor.partyComponent.currentParty.RemoveMemberThatJoinedQuest(goapNode.actor);
             }
         }
