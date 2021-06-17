@@ -93,7 +93,7 @@ namespace Inner_Maps.Location_Structures {
             producedJob = null;
 
             ResourcePile foodPile = p_worker.homeSettlement.SettlementResources.GetRandomPileOfMeats();
-            if (foodPile != null) {
+            if (foodPile != null && p_worker.structureComponent.workPlaceStructure.unoccupiedTiles.Count > 0) {
                 p_worker.jobComponent.TryCreateHaulJob(foodPile, out producedJob);
                 if (producedJob != null) {
                     return;
