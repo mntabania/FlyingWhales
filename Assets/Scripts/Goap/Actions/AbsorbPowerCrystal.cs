@@ -11,6 +11,7 @@ public class AbsorbPowerCrystal : GoapAction {
         //advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
         racesThatCanDoAction = new RACE[] { RACE.ELVES, };
         logTags = new[] { LOG_TAG.Work };
+        shouldAddLogs = false;
     }
 
     #region Overrides
