@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using Inner_Maps;
 using Object_Pools;
 using Ruinarch;
@@ -9,6 +10,7 @@ using UnityEngine;
 using UnityEngine.Profiling;
 using UnityEngine.Serialization;
 using UtilityScripts;
+using Debug = UnityEngine.Debug;
 using Random = UnityEngine.Random;
 
 public class GameManager : BaseMonoBehaviour {
@@ -50,7 +52,9 @@ public class GameManager : BaseMonoBehaviour {
     private static GameDate today;
 
     private List<BaseParticleEffect> _activeEffects;
-
+    public static Stopwatch stopwatch;
+    
+    
     #region getters/setters
     public bool gameHasStarted => _gameHasStarted;
     public int currentTick => today.tick;
@@ -63,6 +67,7 @@ public class GameManager : BaseMonoBehaviour {
         _gameHasStarted = false;
         InputManager.Instance.SetCursorTo(InputManager.Cursor_Type.Default);
         _activeEffects = new List<BaseParticleEffect>();
+        stopwatch = new Stopwatch();
     }
     protected override void OnDestroy() {
         base.OnDestroy();

@@ -13,6 +13,8 @@ namespace Characters.Components {
         }
         public interface ILocationListener {
             void OnCharacterLeftStructure(Character p_character, LocationStructure p_leftStructure);
+            void OnCharacterArrivedAtStructure(Character p_character, LocationStructure p_leftStructure);
+            void OnCharacterArrivedAtSettlement(Character p_character, NPCSettlement p_settlement);
         }
         public interface IDeathListener {
             void OnCharacterSubscribedToDied(Character p_character);
@@ -42,6 +44,7 @@ namespace Characters.Components {
         private System.Action<Character, Trait, Character> _characterLostTrait;
         private System.Action<Character, Character> _characterCarried;
         private System.Action<Character, LocationStructure> _characterLeftStructure;
+        private System.Action<Character, LocationStructure> _characterArrivedAtStructure;
         private System.Action<Character> _characterDied;
         private System.Action<Character, LocationStructure> _characterSetHomeStructure;
         private System.Action<Character, LocationStructure, TileObject> _objectPlacedInCharacterDwelling;
@@ -55,6 +58,7 @@ namespace Characters.Components {
         private System.Action<Character, TileObject> _itemObtained;
         private System.Action<Character, TileObject> _itemLost;
         private System.Action<Character, Faction> _joinedFaction;
+        private System.Action<Character, NPCSettlement> _characterArrivedAtSettlement;
 
         #region Gained Trait
         public void SubscribeToCharacterGainedTrait(ITraitListener p_traitListener) {
@@ -101,6 +105,15 @@ namespace Characters.Components {
         }
         public void ExecuteCharacterLeftStructure(Character p_character, LocationStructure p_leftStructure) {
             _characterLeftStructure?.Invoke(p_character, p_leftStructure);
+        }
+        public void SubscribeToCharacterArrivedAtStructure(ILocationListener p_listener) {
+            _characterArrivedAtStructure += p_listener.OnCharacterArrivedAtStructure;
+        }
+        public void UnsubscribeToCharacterArrivedAtStructure(ILocationListener p_listener) {
+            _characterArrivedAtStructure -= p_listener.OnCharacterLeftStructure;
+        }
+        public void ExecuteCharacterArrivedAtStructure(Character p_character, LocationStructure p_arrivedStructure) {
+            _characterArrivedAtStructure?.Invoke(p_character, p_arrivedStructure);
         }
         #endregion
 
@@ -214,6 +227,18 @@ namespace Characters.Components {
         }
         public void ExecuteJoinedFaction(Character p_character, Faction p_faction) {
             _joinedFaction?.Invoke(p_character, p_faction);
+        }
+        #endregion
+
+        #region Settlement
+        public void SubscribeToCharacterArrivedAtSettlement(ILocationListener p_listener) {
+            _characterArrivedAtSettlement += p_listener.OnCharacterArrivedAtSettlement;
+        }
+        public void UnsubscribeToCharacterArrivedAtSettlement(ILocationListener p_listener) {
+            _characterArrivedAtSettlement -= p_listener.OnCharacterArrivedAtSettlement;
+        }
+        public void ExecuteCharacterArrivedAtSettlement(Character p_character, NPCSettlement p_settlement) {
+            _characterArrivedAtSettlement?.Invoke(p_character, p_settlement);
         }
         #endregion
     }

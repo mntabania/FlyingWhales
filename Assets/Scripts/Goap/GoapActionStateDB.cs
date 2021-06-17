@@ -473,8 +473,8 @@ public static class GoapActionStateDB {
             new StateNameAndDuration(){ name = "Cleanse Success", status = InteractionManager.Goap_State_Success, duration = 2 },
             new StateNameAndDuration(){ name = "Ice Cleanse Success", status = InteractionManager.Goap_State_Success, duration = 0 },
         } },
-        {INTERACTION_TYPE.DRY_TILE, new[]{
-            new StateNameAndDuration(){ name = "Dry Success", status = InteractionManager.Goap_State_Success, duration = 0 },
+        {INTERACTION_TYPE.CLEAN_UP, new[]{
+            new StateNameAndDuration(){ name = "Clean Success", status = InteractionManager.Goap_State_Success, duration = 0 },
         } },
         {INTERACTION_TYPE.PATROL, new[]{
             new StateNameAndDuration(){ name = "Patrol Success", status = InteractionManager.Goap_State_Success, duration = 0 },
@@ -762,6 +762,9 @@ public static class GoapActionStateDB {
         {INTERACTION_TYPE.DROP_RESOURCE_TO_WORK_STRUCTURE, new[]{
             new StateNameAndDuration(){ name = "Drop Resource To Work Structure Success", status = InteractionManager.Goap_State_Success, duration = 0 },
         } },
+        {INTERACTION_TYPE.DRINK_WATER, new[]{
+            new StateNameAndDuration(){ name = "Drink Success", status = InteractionManager.Goap_State_Success, duration = 5 },
+        } }
     };
 }
 

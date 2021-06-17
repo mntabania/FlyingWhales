@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Inner_Maps.Location_Structures;
 using UnityEngine.Assertions;
+using UtilityScripts;
 
 public class DefaultWanderer : CharacterBehaviourComponent {
 	public DefaultWanderer() {
@@ -14,6 +15,47 @@ public class DefaultWanderer : CharacterBehaviourComponent {
 #if DEBUG_LOG
         log += $"\n-{character.name} is wanderer";
 #endif
+        //needs recovery
+        if (character.needsComponent.isStarving) {
+#if DEBUG_LOG
+
+            log = $"{log}\n-{character.name} is starving will try to do fullness recovery.";
+#endif
+            //add fullness recovery
+            if (character.needsComponent.PlanFullnessRecoveryActionsForFreeTime(out producedJob)) {
+                return true;
+            }
+        } else if (character.needsComponent.isHungry) {
+#if DEBUG_LOG
+            log = $"{log}\n-{character.name} is hungry 20% chance to do fullness recovery.";
+#endif
+            if (GameUtilities.RollChance(20, ref log)) {
+                //add fullness recovery
+                if (character.needsComponent.PlanFullnessRecoveryActionsForFreeTime(out producedJob)) {
+                    return true;
+                }
+            }
+        }
+        if (character.needsComponent.isSulking) {
+#if DEBUG_LOG
+            log = $"{log}\n-{character.name} is sulking will try to do happiness recovery.";
+#endif
+            //add happiness recovery
+            if (CreateHappinessRecoveryJob(character, out producedJob)) {
+                return true;
+            }
+        } else if (character.needsComponent.isBored) {
+#if DEBUG_LOG
+            log = $"{log}\n-{character.name} is bored 20% chance do happiness recovery.";
+#endif
+            if (GameUtilities.RollChance(20, ref log)) {
+                //add happiness recovery
+                if (CreateHappinessRecoveryJob(character, out producedJob)) {
+                    return true;
+                }
+            }
+        }
+
         if (!character.HasTerritory() && character.currentRegion != null) {
             Area initialTerritory = character.currentRegion.GetRandomAreaThatIsNotMountainWaterAndNoStructureAndNoCorruption();
             if (initialTerritory != null) {
@@ -276,5 +318,14 @@ public class DefaultWanderer : CharacterBehaviourComponent {
             }
         }
         return false;
+    }
+
+    private bool CreateHappinessRecoveryJob(Character p_character, out JobQueueItem producedJob) {
+        GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.HAPPINESS_RECOVERY,
+            new GoapEffect(GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, string.Empty, false, GOAP_EFFECT_TARGET.ACTOR), p_character, p_character);
+        JobUtilities.PopulatePriorityLocationsForHappinessRecovery(p_character, job);
+        job.SetDoNotRecalculate(true);
+        producedJob = job;
+        return true;
     }
 }

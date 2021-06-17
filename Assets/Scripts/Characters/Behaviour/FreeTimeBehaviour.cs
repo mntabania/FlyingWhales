@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using Characters.Villager_Wants;
 using Inner_Maps.Location_Structures;
@@ -62,7 +64,12 @@ public class FreeTimeBehaviour : CharacterBehaviourComponent {
         //obtain want
         //only villagers part of major faction can process wants since all of it requires a character that is part of a faction that lives in a village with the needed facilities.
         if (GameUtilities.RollChance(20, ref log) && character.faction != null && character.faction.isMajorFaction) { //20 
+            GameManager.stopwatch.Stop();
+            GameManager.stopwatch.Reset();
+            GameManager.stopwatch.Start();
             VillagerWant want = character.villagerWantsComponent.GetTopPriorityWant(character, out LocationStructure foundStructure);
+            GameManager.stopwatch.Stop();
+            UnityEngine.Debug.Log($"{character.name} wants processing took {GameManager.stopwatch.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)} seconds to complete.");
 #if DEBUG_LOG
             log = $"{log}\n-Top priority want is {want?.name}.";
 #endif
@@ -227,106 +234,127 @@ public class FreeTimeBehaviour : CharacterBehaviourComponent {
                 character.PlanFixedJob(JOB_TYPE.IDLE_STAND, INTERACTION_TYPE.STAND, character, out producedJob);
             }
             return true;
-        }
-        else {
+        } else {
+            
 #if DEBUG_LOG
             log = $"{log}\n-{character.name} is in home structure and previous action is not returned home";
 #endif
+            if (character.dailyScheduleComponent.schedule.GetScheduleType(GameManager.Instance.currentTick) == DAILY_SCHEDULE.Free_Time &&
+                character.dailyScheduleComponent.schedule.IsInFirstHourOfCurrentScheduleType(GameManager.Instance.currentTick) && !character.traitContainer.HasTrait("Agoraphobic")) {
+            
+                if (GameUtilities.RollChance(20, ref log) && !character.behaviourComponent.HasBehaviour(typeof(SocializingBehaviour))) {
+                    LocationStructure targetStructure;
+                    if (character.homeSettlement.HasStructure(STRUCTURE_TYPE.TAVERN)) {
+                        targetStructure = GameUtilities.RollChance(50) ? character.currentSettlement.GetRandomStructureOfType(STRUCTURE_TYPE.TAVERN) : character.homeSettlement.cityCenter;
+                    } else {
+                        targetStructure = character.homeSettlement.cityCenter;
+                    }
+                    character.behaviourComponent.GoSocializing(character, targetStructure);
+                    producedJob = null;
+                    return true;
+                }
+                
+                if (GameUtilities.RollChance(10, ref log) && !character.behaviourComponent.HasBehaviour(typeof(VisitVillageBehaviour))) {
+                    List<NPCSettlement> villageChoices = RuinarchListPool<NPCSettlement>.Claim();
+                    character.currentRegion.PopulateVillagesInRegionThatAreOwnedByFactionOrNotHostileToIt(villageChoices, character.faction);
+                    if (character.homeSettlement != null) {
+                        villageChoices.Remove(character.homeSettlement);    
+                    }
+                    if (villageChoices.Count > 0) {
+                        NPCSettlement targetVillage = CollectionUtilities.GetRandomElement(villageChoices);
+                        character.behaviourComponent.VisitVillage(character, targetVillage);
+                        RuinarchListPool<NPCSettlement>.Release(villageChoices);
+                        producedJob = null;
+                        return true;    
+                    }
+                    RuinarchListPool<NPCSettlement>.Release(villageChoices);
+                }
+            }
+            
             TIME_IN_WORDS currentTimeOfDay = GameManager.Instance.GetCurrentTimeInWordsOfTick(character);
             string strCurrentTimeOfDay = currentTimeOfDay.ToString();
 
-#if DEBUG_LOG
-            log = $"{log}\n-If it is Early Night, 5% chance to Host Social Party at Inn";
-#endif
-            if (currentTimeOfDay == TIME_IN_WORDS.EARLY_NIGHT && !character.trapStructure.IsTrapped() && !character.trapStructure.IsTrappedInArea() &&
-                character.currentSettlement != null && character.currentSettlement.HasStructure(STRUCTURE_TYPE.TAVERN) && !character.traitContainer.HasTrait("Agoraphobic")) {
-#if DEBUG_LOG
-                log = $"{log}\n  -Time of Day: {strCurrentTimeOfDay}";
-#endif
-                if (ChanceData.RollChance(CHANCE_TYPE.Host_Social_Party, ref log)) {
-                    LocationStructure structure = character.homeSettlement.GetFirstStructureOfTypeWithNoActiveSocialParty(STRUCTURE_TYPE.TAVERN);
-                    if (structure != null) {
-#if DEBUG_LOG
-                        log = $"{log}\n  -Early Night: {character.name} host a social party at Inn";
-#endif
-                        if (character.jobComponent.TriggerHostSocialPartyJob(out producedJob)) {
-                            return true;
-                        }
-                    }
-#if DEBUG_LOG
-                    log = $"{log}\n  -No Inn Structure in the npcSettlement";
-#endif
-                }
-#if DEBUG_LOG
-                log = $"{log}\n  -Did not host social party. Will roll to go to tavern";
-#endif
-                if (GameUtilities.RollChance(10, ref log)) {
-                    LocationStructure tavern = character.currentSettlement.GetRandomStructureOfType(STRUCTURE_TYPE.TAVERN);
-                    //Go to tavern
-                    character.PlanFixedJob(JOB_TYPE.IDLE_GO_TO_INN, INTERACTION_TYPE.VISIT, character, out producedJob,
-                        new OtherData[] {new LocationStructureOtherData(tavern)});
-                    return true;
-                }
-            }
+// #if DEBUG_LOG
+//             log = $"{log}\n-If it is Early Night, 5% chance to Host Social Party at Inn";
+// #endif
+//             if (currentTimeOfDay == TIME_IN_WORDS.EARLY_NIGHT && !character.trapStructure.IsTrapped() && !character.trapStructure.IsTrappedInArea() &&
+//                 character.currentSettlement != null && character.currentSettlement.HasStructure(STRUCTURE_TYPE.TAVERN) && !character.traitContainer.HasTrait("Agoraphobic")) {
+// #if DEBUG_LOG
+//                 log = $"{log}\n  -Time of Day: {strCurrentTimeOfDay}";
+// #endif
+//                 if (ChanceData.RollChance(CHANCE_TYPE.Host_Social_Party, ref log)) {
+//                     LocationStructure structure = character.homeSettlement.GetFirstStructureOfTypeWithNoActiveSocialParty(STRUCTURE_TYPE.TAVERN);
+//                     if (structure != null) {
+// #if DEBUG_LOG
+//                         log = $"{log}\n  -Early Night: {character.name} host a social party at Inn";
+// #endif
+//                         if (character.jobComponent.TriggerHostSocialPartyJob(out producedJob)) {
+//                             return true;
+//                         }
+//                     }
+// #if DEBUG_LOG
+//                     log = $"{log}\n  -No Inn Structure in the npcSettlement";
+// #endif
+//                 }
+// #if DEBUG_LOG
+//                 log = $"{log}\n  -Did not host social party. Will roll to go to tavern";
+// #endif
+//                 if (GameUtilities.RollChance(10, ref log)) {
+//                     LocationStructure tavern = character.currentSettlement.GetRandomStructureOfType(STRUCTURE_TYPE.TAVERN);
+//                     //Go to tavern
+//                     character.PlanFixedJob(JOB_TYPE.IDLE_GO_TO_INN, INTERACTION_TYPE.VISIT, character, out producedJob,
+//                         new OtherData[] {new LocationStructureOtherData(tavern)});
+//                     return true;
+//                 }
+//             }
 
+            
+            if (GameUtilities.RollChance(10, ref log)) {
+                TileObject bed = character.currentStructure.GetUnoccupiedTileObject(TILE_OBJECT_TYPE.BED);
+                if (bed != null) {
+                    if (character.traitContainer.HasTrait("Vampire")) {
 #if DEBUG_LOG
-            log = $"{log}\n-Otherwise, if it is Lunch Time or Afternoon, 25% chance to nap if there is still an unoccupied Bed in the house";
+                        log = $"{log}\n  -Character is vampiric, cannot do nap action";
 #endif
-            if (currentTimeOfDay == TIME_IN_WORDS.LUNCH_TIME || currentTimeOfDay == TIME_IN_WORDS.AFTERNOON) {
-#if DEBUG_LOG
-                log = $"{log}\n  -Time of Day: {strCurrentTimeOfDay}";
-#endif
-                if (GameUtilities.RollChance(25, ref log)) {
-                    TileObject bed = character.currentStructure.GetUnoccupiedTileObject(TILE_OBJECT_TYPE.BED);
-                    if (bed != null) {
-                        if (character.traitContainer.HasTrait("Vampire")) {
-#if DEBUG_LOG
-                            log = $"{log}\n  -Character is vampiric, cannot do nap action";
-#endif
-                        }
-                        else {
-#if DEBUG_LOG
-                            log = $"{log}\n  -Afternoon: {character.name} will do action Nap on {bed}";
-#endif
-                            character.PlanFixedJob(JOB_TYPE.IDLE_NAP, INTERACTION_TYPE.NAP, bed, out producedJob);
-                            return true;
-                        }
                     }
                     else {
 #if DEBUG_LOG
-                        log = $"{log}\n  -No unoccupied bed in the current structure";
+                        log = $"{log}\n  -Afternoon: {character.name} will do action Nap on {bed}";
 #endif
+                        character.PlanFixedJob(JOB_TYPE.IDLE_NAP, INTERACTION_TYPE.NAP, bed, out producedJob);
+                        return true;
                     }
+                }
+                else {
+#if DEBUG_LOG
+                    log = $"{log}\n  -No unoccupied bed in the current structure";
+#endif
                 }
             }
 
+
+            if (GameUtilities.RollChance(30, ref log) && !character.trapStructure.IsTrapped() && !character.trapStructure.IsTrappedInArea()) {
+                Character chosenCharacter = GetDisabledCharacterToVisit(character);
+                if (chosenCharacter != null) {
+                    if (chosenCharacter.homeStructure != null) {
 #if DEBUG_LOG
-            log = $"{log}\n-Otherwise, if it is  Morning, or Afternoon, or Early Night. 30% chance to create Visit Job targeting random Paralyzed/Catatonic Friend";
+                        log = $"{log}\n  -Will visit house of Disabled Character {chosenCharacter.name}";
 #endif
-            if (currentTimeOfDay == TIME_IN_WORDS.MORNING || currentTimeOfDay == TIME_IN_WORDS.AFTERNOON || currentTimeOfDay == TIME_IN_WORDS.EARLY_NIGHT) {
-                if (GameUtilities.RollChance(30, ref log) && !character.trapStructure.IsTrapped() && !character.trapStructure.IsTrappedInArea()) {
-                    Character chosenCharacter = GetDisabledCharacterToVisit(character);
-                    if (chosenCharacter != null) {
-                        if (chosenCharacter.homeStructure != null) {
-#if DEBUG_LOG
-                            log = $"{log}\n  -Will visit house of Disabled Character {chosenCharacter.name}";
-#endif
-                            character.PlanFixedJob(JOB_TYPE.CHECK_PARALYZED_FRIEND, INTERACTION_TYPE.VISIT, character, out producedJob,
-                                new OtherData[] {new LocationStructureOtherData(chosenCharacter.homeStructure), new CharacterOtherData(chosenCharacter),});
-                            return true;
-                        }
+                        character.PlanFixedJob(JOB_TYPE.CHECK_PARALYZED_FRIEND, INTERACTION_TYPE.VISIT, character, out producedJob,
+                            new OtherData[] {new LocationStructureOtherData(chosenCharacter.homeStructure), new CharacterOtherData(chosenCharacter),});
+                        return true;
                     }
-#if DEBUG_LOG
-                    log = $"{log}\n  -No available character to visit ";
-#endif
                 }
+#if DEBUG_LOG
+                log = $"{log}\n  -No available character to visit ";
+#endif
             }
 
             if (character.currentSettlement != null && character.currentSettlement.HasStructureClaimedByNonEnemyOrSelf(STRUCTURE_TYPE.HOSPICE, character, out LocationStructure foundStructure)) {
 #if DEBUG_LOG
                 log = $"{log}\n  -There is a Hospice in the Village claimed by a non-Enemy or by self: ";
 #endif
-                if (character.traitContainer.HasTrait("Injured") || character.traitContainer.HasTrait("Plagued")) {
+                if ((character.traitContainer.HasTrait("Injured") || character.traitContainer.HasTrait("Plagued")) && ChanceData.RollChance(CHANCE_TYPE.Plauged_Injured_Visit_Hospice)) {
                     //recuperate
 #if DEBUG_LOG
                     log = $"{log}\n  -Actor has Injured or Plagued and there is still an available Bed in the Hospice: Create Recuperate Job";
@@ -379,6 +407,32 @@ public class FreeTimeBehaviour : CharacterBehaviourComponent {
                 }
             }
             else {
+#if DEBUG_LOG
+                log = $"{log}\n  -Has no non-healing potion item in inventory";
+#endif
+            }
+
+#if DEBUG_LOG
+            log = $"{log}\n-Otherwise, if character is Lazy";
+#endif
+            if (character.traitContainer.HasTrait("Lazy") && GameUtilities.RollChance(4)) {
+                CreateCleanJob(character, ref log, out producedJob);
+            } else {
+                CreateCleanJob(character, ref log, out producedJob);
+            }
+            if(producedJob != null) {
+                return true;
+			}
+            if (character.HasItemOtherThan(TILE_OBJECT_TYPE.HEALING_POTION) && character.homeStructure != null) {
+                if (GameUtilities.RollChance(10)) {
+#if DEBUG_LOG
+                    log = $"{log}\n  -Will create Drop Item job";
+#endif
+                    if (character.jobComponent.CreateDropItemJob(JOB_TYPE.DROP_ITEM, character.GetRandomItemThatIsNotOfType(TILE_OBJECT_TYPE.HEALING_POTION), character.homeStructure, out producedJob)) {
+                        return true;
+                    }
+                }
+            } else {
 #if DEBUG_LOG
                 log = $"{log}\n  -Has no non-healing potion item in inventory";
 #endif
@@ -488,4 +542,26 @@ public class FreeTimeBehaviour : CharacterBehaviourComponent {
         return true;
     }
     #endregion
+
+    private void CreateCleanJob(Character character, ref string log, out JobQueueItem producedJob) {
+        producedJob = null;
+#if DEBUG_LOG
+        log = $"{log}\n-Otherwise, Not Lazy look for items to clean(wet and Dry)";
+#endif
+        List<TileObject> allObjectsInsideCurrentStructure = RuinarchListPool<TileObject>.Claim();
+        character.currentStructure.PopulateTileObjectsListWithAllTileObjects(allObjectsInsideCurrentStructure);
+        for (int x = 0; x < allObjectsInsideCurrentStructure.Count; ++x) {
+            if (allObjectsInsideCurrentStructure[x].traitContainer.HasTrait("Dirty") || allObjectsInsideCurrentStructure[x].traitContainer.HasTrait("Wet")) {
+                if (!allObjectsInsideCurrentStructure[x].HasJobTargetingThis(JOB_TYPE.IDLE_CLEAN)) {
+                    character.jobComponent.TryCreateCleanItemJob(allObjectsInsideCurrentStructure[x], out producedJob);
+                    if(producedJob != null) {
+#if DEBUG_LOG
+                        log = $"{log}\n  -Will create cClean Up Item";
+#endif
+                        break;
+                    }
+                }
+            }
+        }
+    }
 }

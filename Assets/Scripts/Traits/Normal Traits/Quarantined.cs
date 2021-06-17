@@ -4,7 +4,8 @@ using Characters.Components;
 using Inner_Maps.Location_Structures;
 using UnityEngine;
 namespace Traits {
-    public class Quarantined : Status, CharacterEventDispatcher.ITraitListener, CharacterEventDispatcher.ICarryListener, CharacterEventDispatcher.ILocationListener {
+    public class Quarantined : Status, CharacterEventDispatcher.ITraitListener, CharacterEventDispatcher.ICarryListener, 
+        CharacterEventDispatcher.ILocationListener {
         public override bool isSingleton => true;
         
         public Quarantined() {
@@ -193,7 +194,9 @@ namespace Traits {
                 p_character.traitContainer.RemoveTrait(p_character, this);
             }
         }
-#endregion
+        public void OnCharacterArrivedAtStructure(Character p_character, LocationStructure p_leftStructure) { }
+        public void OnCharacterArrivedAtSettlement(Character p_character, NPCSettlement p_settlement) { }
+        #endregion
     }
 }
 

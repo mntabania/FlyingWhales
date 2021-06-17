@@ -35,6 +35,22 @@ public abstract class DailySchedule {
         }
         return -1;
     }
+    public DailyScheduleSection GetScheduleSection(int p_tick) {
+        for (int i = 0; i < schedule.Length; i++) {
+            DailyScheduleSection section = schedule[i];
+            if (section.time.IsInRange(p_tick)) {
+                return section;
+            }
+        }
+        throw new Exception($"Could not find schedule type for tick {p_tick.ToString()} on schedule {this.GetType()}");
+    }
+    public bool IsInFirstHourOfCurrentScheduleType(int p_tick) {
+        DailyScheduleSection currentSection = GetScheduleSection(p_tick);
+        int startTick = currentSection.time.GetStartTick();
+        TickRange tickRange = new TickRange(startTick, startTick);
+        tickRange.IncreaseEndTick(GameManager.ticksPerHour);
+        return tickRange.IsInRange(p_tick);
+    }
 
     public string GetScheduleSummary() {
         string summary = GetType().ToString();
