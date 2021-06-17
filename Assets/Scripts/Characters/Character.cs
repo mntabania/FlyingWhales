@@ -2085,9 +2085,10 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         //}
     }
     private void OnSeizeCharacter(Character character) {
-        if (character.id != id) {
+        if (character != this) {
             //RemoveRelationship(characterThatDied); //do not remove relationships when dying
-            marker.OnSeizeOtherCharacter(character);
+            combatComponent.RemoveHostileInRange(character);
+            combatComponent.RemoveAvoidInRange(character);
             if (character is Summon) {
                 currentSettlement?.SettlementResources?.RemoveAnimalFromSettlement(character as Summon);
             } else {

@@ -547,13 +547,6 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
             owner.jobQueue.AddJobInQueue(job);
         }
     }
-    private void TriggerFeed(Character target) {
-		GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, target = GOAP_EFFECT_TARGET.TARGET };
-		GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.FEED, goapEffect, target, owner);
-        JobUtilities.PopulatePriorityLocationsForTakingEdibleResources(owner, job, INTERACTION_TYPE.TAKE_RESOURCE);
-        job.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] { 12 });
-		owner.jobQueue.AddJobInQueue(job);
-	}
     //private bool TriggerMoveCharacterToBed(Character target) {
 	//	if (target.homeStructure != null && target.HasJobTargetingThis(JOB_TYPE.MOVE_CHARACTER) == false) {
 	//		Bed bed = target.homeStructure.GetTileObjectOfType<Bed>(TILE_OBJECT_TYPE.BED);
@@ -697,7 +690,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 			GoapEffect goapEffect = new GoapEffect(GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, string.Empty, false, GOAP_EFFECT_TARGET.TARGET);
 			GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.FEED, goapEffect, targetCharacter, owner);
             JobUtilities.PopulatePriorityLocationsForTakingEdibleResources(owner, job, INTERACTION_TYPE.TAKE_RESOURCE);
-            job.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] { 12 });
+            job.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] { 10 });
 			return owner.jobQueue.AddJobInQueue(job);
 		}
 		return false;
@@ -707,7 +700,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 			GoapEffect goapEffect = new GoapEffect(GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, string.Empty, false, GOAP_EFFECT_TARGET.TARGET);
 			GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.FEED, goapEffect, targetCharacter, owner);
             JobUtilities.PopulatePriorityLocationsForTakingEdibleResources(owner, job, INTERACTION_TYPE.TAKE_RESOURCE);
-            job.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] { 12 });
+            job.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] { 10 });
 			producedJob = job;
 			return true;
 		}
@@ -1490,7 +1483,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
             GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.FULLNESS_RECOVERY_ON_SIGHT, INTERACTION_TYPE.EAT, target, owner);
             JobUtilities.PopulatePriorityLocationsForFullnessRecovery(owner, job);
             if (target is Table) {
-                job.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] { 12 });
+                job.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] { 10 });
             }
             producedJob = job;
             if (cancelOtherFullnessRecoveryJobs) {

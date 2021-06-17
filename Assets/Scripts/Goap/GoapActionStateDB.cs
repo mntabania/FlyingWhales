@@ -86,7 +86,7 @@ public static class GoapActionStateDB {
 
     public static readonly Dictionary<INTERACTION_TYPE, StateNameAndDuration[]> goapActionStates = new Dictionary<INTERACTION_TYPE, StateNameAndDuration[]>() {
         {INTERACTION_TYPE.EAT, new[]{
-            new StateNameAndDuration(){ name = "Eat Success", status = InteractionManager.Goap_State_Success, duration = 12 },
+            new StateNameAndDuration(){ name = "Eat Success", status = InteractionManager.Goap_State_Success, duration = 10 },
         } },
         {INTERACTION_TYPE.RELEASE_CHARACTER, new[]{
             new StateNameAndDuration(){ name = "Release Success", status = InteractionManager.Goap_State_Success, duration = 0 },
@@ -194,7 +194,7 @@ public static class GoapActionStateDB {
             new StateNameAndDuration(){ name = "Judge Success", status = InteractionManager.Goap_State_Success, duration = 0 },
         } },
         {INTERACTION_TYPE.FEED, new[]{
-            new StateNameAndDuration(){ name = "Feed Success", status = InteractionManager.Goap_State_Success, duration = 12 },
+            new StateNameAndDuration(){ name = "Feed Success", status = InteractionManager.Goap_State_Success, duration = 10 },
         } },
         // {INTERACTION_TYPE.DROP_ITEM, new[]{
         //     new StateNameAndDuration(){ name = "Drop Success", status = InteractionManager.Goap_State_Success, duration = 1 },
@@ -519,7 +519,7 @@ public static class GoapActionStateDB {
             new StateNameAndDuration(){ name = "Murder Success", status = InteractionManager.Goap_State_Success, duration = 3 },
         } },
         {INTERACTION_TYPE.EAT_ALIVE, new[]{
-            new StateNameAndDuration(){ name = "Eat Alive Success", status = InteractionManager.Goap_State_Success, duration = 6 },
+            new StateNameAndDuration(){ name = "Eat Alive Success", status = InteractionManager.Goap_State_Success, duration = 5 },
         } },
         {INTERACTION_TYPE.REMOVE_BUFF, new[]{
             new StateNameAndDuration(){ name = "Remove Buff Success", status = InteractionManager.Goap_State_Success, duration = 3 },
