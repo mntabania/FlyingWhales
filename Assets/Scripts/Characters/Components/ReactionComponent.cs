@@ -1315,6 +1315,7 @@ public class ReactionComponent : CharacterComponent {
 
         bool shouldNotAttackSkeletons = disguisedActor.traitContainer.HasTrait("Necromancer") && targetCharacter.race == RACE.SKELETON && targetCharacter.faction == disguisedActor.prevFaction && disguisedActor.prevFaction != null;
         bool shouldSwitchFaction = actor.race == RACE.SKELETON && disguisedTarget.traitContainer.HasTrait("Necromancer") && actor.faction == disguisedTarget.prevFaction && disguisedTarget.prevFaction != null;
+        bool isInActiveRaid = actor.partyComponent.hasParty && actor.partyComponent.currentParty.isActive && actor.partyComponent.currentParty.currentQuest is RaidPartyQuest;
 
         if (shouldNotAttackSkeletons) {
 #if DEBUG_LOG
@@ -1331,11 +1332,8 @@ public class ReactionComponent : CharacterComponent {
             TrollHostileReactionToCharacter(actor, targetCharacter, disguisedActor, disguisedTarget, ref debugLog);
         } else if (disguisedActor.traitContainer.HasTrait("Cultist") && (disguisedTarget.faction.isPlayerFaction || disguisedTarget.traitContainer.HasTrait("Cultist"))) {
             CultistHostileReactionToCharacter(actor, targetCharacter, disguisedActor, disguisedTarget, ref debugLog);
-        } else if (targetCharacter.traitContainer.HasTrait("Restrained", "Unconscious", "Frozen", "Ensnared")) {
-            bool isInActiveRaid = actor.partyComponent.hasParty && actor.partyComponent.currentParty.isActive && actor.partyComponent.currentParty.currentQuest is RaidPartyQuest;
-            if (actor.faction.factionType.HasIdeology(FACTION_IDEOLOGY.Warmonger) || isInActiveRaid) {
-                WarmongerKidnapCharacter(actor, targetCharacter);
-            }
+        } else if (targetCharacter.traitContainer.HasTrait("Restrained", "Unconscious", "Frozen", "Ensnared") && (actor.faction.factionType.HasIdeology(FACTION_IDEOLOGY.Warmonger) || isInActiveRaid)) {
+            WarmongerKidnapCharacter(actor, targetCharacter);
         } else if (!targetCharacter.isDead && (disguisedTarget.combatComponent.combatMode != COMBAT_MODE.Passive || targetCharacter.race == RACE.HARPY) && !targetCharacter.traitContainer.HasTrait("Hibernating")) {
             CombatHostileReactionToCharacter(actor, targetCharacter, disguisedActor, disguisedTarget, ref debugLog);
         } else {
