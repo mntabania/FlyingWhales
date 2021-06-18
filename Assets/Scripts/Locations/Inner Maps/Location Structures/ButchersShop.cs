@@ -115,6 +115,9 @@ namespace Inner_Maps.Location_Structures {
             Summon targetForButchering = p_worker.homeSettlement.SettlementResources.GetFirstButcherableAnimal();
             if (targetForButchering != null){
                 p_worker.jobComponent.CreateButcherJob(targetForButchering, JOB_TYPE.MONSTER_BUTCHER, out producedJob);
+                if (producedJob != null) {
+                    return;
+                }
             }
             
             if(TryCreateCleanJob(p_worker, out producedJob)) { return; }

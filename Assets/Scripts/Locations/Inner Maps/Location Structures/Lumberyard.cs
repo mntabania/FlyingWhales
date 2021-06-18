@@ -60,6 +60,9 @@ namespace Inner_Maps.Location_Structures {
             TileObject tree = GetFirstTree();
             if (tree != null){
                 p_worker.jobComponent.TriggerChopWood(tree, out producedJob);
+                if (producedJob != null) {
+                    return;
+                }
             }
             
             if(TryCreateCleanJob(p_worker, out producedJob)) { return; }
