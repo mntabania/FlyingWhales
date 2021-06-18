@@ -24,10 +24,6 @@ public class EquipmentItem : TileObject {
         }
     }
     //this is for testing purpose only OnPlacePOI()
-    public override void OnPlacePOI() {
-        base.OnPlacePOI();
-        traitContainer.AddTrait(this, "Treasure");
-    }
     public void MakeQualityHigh() {
         quality = EQUIPMENT_QUALITY.High;
         maxHP += (int)(maxHP * 0.5f);
@@ -60,6 +56,15 @@ public class EquipmentItem : TileObject {
         resistanceBonuses.ForEach((eachBonus) => description += ("\n" + eachBonus.ToString()));
         return description;
     }
+
+    #region Reactions
+    public override void GeneralReactionToTileObject(Character actor, ref string debugLog) {
+        base.GeneralReactionToTileObject(actor, ref debugLog);
+        if (this.currentStructure.structureType != STRUCTURE_TYPE.WORKSHOP && this.characterOwner == null && actor.equipmentComponent.EvaluateNewEquipment(this, actor)) {
+            actor.jobComponent.CreateTakeItemJob(JOB_TYPE.TAKE_ITEM, this);
+        }
+    }
+    #endregion
 
     #region Save Data
     public class SaveDataEquipmentItem : SaveDataTileObject {

@@ -273,8 +273,11 @@ public class CharacterMarker : MapObjectVisual<Character> {
         if (!(tile.tileObjectComponent.objHere is WurmHole)) {
             //NOTE: SPECIAL CASE only set structure if character the target tile does not have a wurm hole. Because this will cause conflicts in structure location when the character is teleported
             //but this will set the structure location of the character to th target tile instead
-            character.currentStructure?.RemoveCharacterAtLocation(character);
-            tile.structure.AddCharacterAtLocation(character);    
+            //added checker to prevent duplicate calls to structure add and remove, since we expect that normally UpdatePosition will handle any changes in structure location
+            if (character.currentStructure != tile.structure) {
+                character.currentStructure?.RemoveCharacterAtLocation(character);
+                tile.structure.AddCharacterAtLocation(character);    
+            }
         }
 //#if UNITY_EDITOR || DEVELOPMENT_BUILD
 //        Assert.IsTrue(character.currentStructure == tile.structure,

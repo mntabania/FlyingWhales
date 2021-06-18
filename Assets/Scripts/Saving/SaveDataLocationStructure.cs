@@ -126,6 +126,9 @@ public class SaveDataManMadeStructure : SaveDataLocationStructure {
     public SaveDataStructureConnector[] structureConnectors;
     public string assignedWorkerID;
 
+    public string[] dirtyObjects;
+    public GameDate scheduledDirtProduction;
+
     public override void Save(LocationStructure locationStructure) {
         base.Save(locationStructure);
         ManMadeStructure manMadeStructure = locationStructure as ManMadeStructure;
@@ -160,6 +163,17 @@ public class SaveDataManMadeStructure : SaveDataLocationStructure {
                 structureWallObjects[i] = saveDataStructureWallObject;
             }
             wallsMadeOf = manMadeStructure.wallsAreMadeOf;
+        }
+
+        if (manMadeStructure.dirtyObjects.Count > 0) {
+            dirtyObjects = new string[manMadeStructure.dirtyObjects.Count];
+            for (int i = 0; i < manMadeStructure.dirtyObjects.Count; i++) {
+                TileObject dirtyObject = manMadeStructure.dirtyObjects[i];
+                dirtyObjects[i] = dirtyObject.persistentID;
+            }
+        }
+        if (manMadeStructure.scheduledDirtProduction.hasValue) {
+            scheduledDirtProduction = manMadeStructure.scheduledDirtProduction;
         }
     }
 }
