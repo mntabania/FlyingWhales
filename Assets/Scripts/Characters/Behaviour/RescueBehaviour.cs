@@ -42,7 +42,29 @@ public class RescueBehaviour : CharacterBehaviourComponent {
                     }
                 }
 
-                if (character.hasMarker && quest.targetCharacter.hasMarker && character.gridTileLocation != null && quest.targetCharacter.gridTileLocation != null && !quest.targetCharacter.isBeingSeized) {
+                if (quest.targetCharacter.isBeingSeized) {
+#if DEBUG_LOG
+                    log += $"\n-Target is being seized";
+#endif
+                    LocationGridTile prevTile = quest.targetCharacter.marker.previousGridTile;
+                    if (character.gridTileLocation != prevTile) {
+#if DEBUG_LOG
+                        log += $"\n-Character is not in previous grid tile of target, will go to it";
+#endif
+                        hasJob = character.jobComponent.CreateGoToSpecificTileJob(prevTile, out producedJob);
+                        if (hasJob) {
+                            return true;
+                        }
+                    } else {
+#if DEBUG_LOG
+                        log += $"\n-Character is already in previous grid tile of target, will end quest";
+#endif
+                        quest.EndQuest("Target is nowhere to be found");
+                        return true;
+                    }
+                }
+
+                if (character.hasMarker && quest.targetCharacter.hasMarker && character.gridTileLocation != null && quest.targetCharacter.gridTileLocation != null) {
                     if (character.marker.IsPOIInVision(quest.targetCharacter)) {
                         if (quest.targetCharacter.isDead) {
 #if DEBUG_LOG
