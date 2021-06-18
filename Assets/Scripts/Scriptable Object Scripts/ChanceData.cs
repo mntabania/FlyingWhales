@@ -42,6 +42,7 @@ public static class ChanceData {
         {CHANCE_TYPE.Change_Intent_Vampire, 25},
         {CHANCE_TYPE.Change_Intent_Cultist, 25},
         {CHANCE_TYPE.Plauged_Injured_Visit_Hospice, 15},
+        {CHANCE_TYPE.Hunt_Chance, 50},
     };
     public static bool RollChance(CHANCE_TYPE p_chanceType) {
         if (integerChances.ContainsKey(p_chanceType)) {
