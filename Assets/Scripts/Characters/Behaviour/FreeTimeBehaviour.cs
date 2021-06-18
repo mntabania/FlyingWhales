@@ -242,7 +242,8 @@ public class FreeTimeBehaviour : CharacterBehaviourComponent {
             if (character.dailyScheduleComponent.schedule.GetScheduleType(GameManager.Instance.currentTick) == DAILY_SCHEDULE.Free_Time &&
                 character.dailyScheduleComponent.schedule.IsInFirstHourOfCurrentScheduleType(GameManager.Instance.currentTick) && !character.traitContainer.HasTrait("Agoraphobic")) {
             
-                if (GameUtilities.RollChance(20, ref log) && !character.behaviourComponent.HasBehaviour(typeof(SocializingBehaviour)) && character.homeSettlement != null) {
+                if (GameUtilities.RollChance(20, ref log) && !character.behaviourComponent.HasBehaviour(typeof(SocializingBehaviour)) && 
+                    character.homeSettlement != null && character.homeSettlement.locationType == LOCATION_TYPE.VILLAGE) {
                     LocationStructure targetStructure;
                     if (character.homeSettlement.HasStructure(STRUCTURE_TYPE.TAVERN)) {
                         targetStructure = GameUtilities.RollChance(50) ? character.homeSettlement.GetRandomStructureOfType(STRUCTURE_TYPE.TAVERN) : character.homeSettlement.cityCenter;
