@@ -26,7 +26,6 @@ namespace Inner_Maps {
         public const int GroundTilemapSortingOrder = 10;
         public const int DetailsTilemapSortingOrder = 40;
         public const int SelectedSortingOrder = 900;
-        public const int Big_Tree_Yield = 300;
 
         /// <summary>
         /// At what tag index should randomly generated stuff start. i.e. tags per faction.

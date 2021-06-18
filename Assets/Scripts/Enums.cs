@@ -765,7 +765,7 @@ public enum TILE_OBJECT_TYPE {
     TABLE = 6,
     BED = 7,
     ORE = 8,
-    TREE_OBJECT = 9,
+    SMALL_TREE_OBJECT = 9,
     DESK = 11,
     TOMBSTONE = 12,
     NONE = 13,

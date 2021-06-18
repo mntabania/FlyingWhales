@@ -9,18 +9,19 @@ using UnityEngine.Assertions;
 using UtilityScripts;
 using Locations.Settlements;
 
-public class TreeObject : TileObject {
-    public int yield { get; private set; }
-    public BaseSettlement parentSettlement { get; private set; }
-    public override Character[] users => _users;
-    
+public abstract class TreeObject : TileObject {
     public enum Occupied_State { Undecided, Occupied, Unoccupied }
+    
     /// <summary>
     /// If this has value, then an ent is occupying this tree, and should be awakened when this tree is damaged.
     /// </summary>
     private Ent _ent;
     private Character[] _users;
     private Occupied_State _occupiedState;
+    private TreeGameObject _treeGameObject;
+    private BaseSettlement _parentSettlement;
+
+    #region getters
     public override System.Type serializedData => typeof(SaveDataTreeObject);
     public StructureConnector structureConnector {
         get {
@@ -32,38 +33,20 @@ public class TreeObject : TileObject {
     }
     public Occupied_State occupiedState => _occupiedState;
     public Ent ent => _ent;
-
-    private TreeGameObject _treeGameObject;
-
-    public TreeObject() {
-        TILE_OBJECT_TYPE type = TILE_OBJECT_TYPE.TREE_OBJECT;
-        if (this is BigTreeObject) {
-            type = TILE_OBJECT_TYPE.BIG_TREE_OBJECT;
-        }
-        Initialize(type, false);
+    public override Character[] users => _users;
+    #endregion
+    
+    protected TreeObject(TILE_OBJECT_TYPE p_treeType) {
+        Initialize(p_treeType, false);
         AddAdvertisedAction(INTERACTION_TYPE.CHOP_WOOD);
         AddAdvertisedAction(INTERACTION_TYPE.ASSAULT);
         AddAdvertisedAction(INTERACTION_TYPE.RESOLVE_COMBAT);
-        SetYield(100);
         _occupiedState = Occupied_State.Undecided;
     }
-    public TreeObject(SaveDataTreeObject data) : base(data) {
-        //SaveDataTreeObject saveDataTreeObject = data as SaveDataTreeObject;
+    protected TreeObject(SaveDataTreeObject data) : base(data) {
         Assert.IsNotNull(data);
-        yield = data.yield;
         _occupiedState = data.occupiedState;
     }
-    //protected override void Initialize(TILE_OBJECT_TYPE tileObjectType, bool shouldAddCommonAdvertisements = true) {
-    //    if (tileObjectType == TILE_OBJECT_TYPE.BIG_TREE_OBJECT) {
-    //        this.tileObjectType = tileObjectType;
-    //        name = GenerateName();
-    //        maxHP = TileObjectDB.GetTileObjectData(tileObjectType).maxHP;
-    //        currentHP = maxHP;
-    //        DatabaseManager.Instance.tileObjectDatabase.RegisterTileObject(this);
-    //    } else {
-    //        base.Initialize(tileObjectType, shouldAddCommonAdvertisements);
-    //    }
-    //}
     protected override void UpdateSettlementResourcesParent() {
         if (gridTileLocation.area.settlementOnArea != null) {
             gridTileLocation.area.settlementOnArea.SettlementResources?.AddToListBasedOnRequirement(SettlementResources.StructureRequirement.TREE, this);
@@ -71,14 +54,14 @@ public class TreeObject : TileObject {
         gridTileLocation.area.neighbourComponent.neighbours.ForEach((eachNeighbor) => {
             if (eachNeighbor.settlementOnArea != null) {
                 //eachNeighbor.settlementOnArea.SettlementResources?.AddToListBasedOnRequirement(SettlementResources.StructureRequirement.TREE, this);
-               parentSettlement = eachNeighbor.settlementOnArea;
+               _parentSettlement = eachNeighbor.settlementOnArea;
             }
         });
     }
     protected override void RemoveFromSettlementResourcesParent() {
-        if (parentSettlement != null && parentSettlement.SettlementResources != null) {
-            if (parentSettlement.SettlementResources.trees.Remove(this)) {
-                parentSettlement = null;
+        if (_parentSettlement != null && _parentSettlement.SettlementResources != null) {
+            if (_parentSettlement.SettlementResources.trees.Remove(this)) {
+                _parentSettlement = null;
             }    
         }
         
@@ -109,15 +92,6 @@ public class TreeObject : TileObject {
     #endregion
 
     #region Overrides
-    public override string ToString() {
-        return $"Tree {id.ToString()}";
-    }
-    protected override string GenerateName() { return "Tree"; }
-    public override string GetAdditionalTestingData() {
-        string data = base.GetAdditionalTestingData();
-        data = $"{data}\n\tYield: {yield.ToString()}";
-        return data;
-    }
     public override void AdjustHP(int amount, ELEMENTAL_TYPE elementalDamageType, bool triggerDeath = false, object source = null,
         CombatManager.ElementalTraitProcessor elementalTraitProcessor = null, bool showHPBar = false, float piercingPower = 0f, bool isPlayerSource = false) {
         LocationGridTile location = gridTileLocation;
@@ -168,19 +142,6 @@ public class TreeObject : TileObject {
     public override void DestroyMapVisualGameObject() {
         base.DestroyMapVisualGameObject();
         _treeGameObject = null;
-    }
-    #endregion
-
-    #region Yield
-    public void AdjustYield(int amount) {
-        yield += amount;
-        yield = Mathf.Max(0, yield);
-        if (yield == 0 && gridTileLocation != null) {
-            structureLocation.RemovePOI(this);
-        }
-    }
-    public void SetYield(int amount) {
-        yield = amount;
     }
     #endregion
 
@@ -275,7 +236,6 @@ public class SaveDataTreeObject : SaveDataTileObject {
         base.Save(tileObject);
         TreeObject treeObject = tileObject as TreeObject;
         Assert.IsNotNull(treeObject);
-        yield = treeObject.yield;
         occupiedState = treeObject.occupiedState;
         if (treeObject.ent != null) {
             occupyingEntID = treeObject.ent.persistentID;

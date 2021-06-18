@@ -49,7 +49,7 @@ public class TileObjectGameObject : MapObjectVisual<TileObject> {
             SetSortingOrder(InnerMapManager.SelectedSortingOrder);
         } else if (obj.isBeingCarriedBy != null) {
             SetSortingOrder(obj.isBeingCarriedBy.marker.sortingOrder);
-        } else if (obj.tileObjectType == TILE_OBJECT_TYPE.TREE_OBJECT) {
+        } else if (obj.tileObjectType == TILE_OBJECT_TYPE.SMALL_TREE_OBJECT) {
             SetSortingOrder(InnerMapManager.DetailsTilemapSortingOrder + 5);
         } else if (obj.tileObjectType == TILE_OBJECT_TYPE.BIG_TREE_OBJECT) {
             SetSortingOrder(InnerMapManager.DetailsTilemapSortingOrder + 10);

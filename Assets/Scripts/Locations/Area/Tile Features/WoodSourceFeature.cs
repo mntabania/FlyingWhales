@@ -36,7 +36,7 @@ namespace Locations.Area_Features {
             //     }
             // }
             //
-            int smallTreesCount = p_area.tileObjectComponent.GetNumberOfTileObjectsInHexTile(TILE_OBJECT_TYPE.TREE_OBJECT);
+            int smallTreesCount = p_area.tileObjectComponent.GetNumberOfTileObjectsInHexTile(TILE_OBJECT_TYPE.SMALL_TREE_OBJECT);
             currentSmallTreeCount = smallTreesCount;
             // if (smallTreesCount < MaxSmallTrees) {
             //     int missingTrees = MaxSmallTrees - smallTreesCount;
@@ -58,7 +58,7 @@ namespace Locations.Area_Features {
             if (tile.area == owner) {
                 if (tileObject.tileObjectType == TILE_OBJECT_TYPE.BIG_TREE_OBJECT) {
                     AdjustBigTreeCount(1);    
-                } else if (tileObject.tileObjectType == TILE_OBJECT_TYPE.TREE_OBJECT) {
+                } else if (tileObject.tileObjectType == TILE_OBJECT_TYPE.SMALL_TREE_OBJECT) {
                     AdjustSmallTreeCount(1);
                 }
             
@@ -68,7 +68,7 @@ namespace Locations.Area_Features {
             if (tile.area == owner) {
                 if (tileObject.tileObjectType == TILE_OBJECT_TYPE.BIG_TREE_OBJECT) {
                     AdjustBigTreeCount(-1);    
-                } else if (tileObject.tileObjectType == TILE_OBJECT_TYPE.TREE_OBJECT) {
+                } else if (tileObject.tileObjectType == TILE_OBJECT_TYPE.SMALL_TREE_OBJECT) {
                     AdjustSmallTreeCount(-1);
                 }
             }
@@ -143,7 +143,7 @@ namespace Locations.Area_Features {
                                                                                 && x.groundType != LocationGridTile.Ground_Type.Bone).ToList();
             if (choices.Count > 0) {
                 LocationGridTile chosenTile = CollectionUtilities.GetRandomElement(choices);
-                chosenTile.structure.AddPOI(InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.TREE_OBJECT),
+                chosenTile.structure.AddPOI(InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.SMALL_TREE_OBJECT),
                     chosenTile);
                 return true;
             }

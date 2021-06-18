@@ -40,7 +40,7 @@ namespace Inner_Maps.Grid_Tile_Features {
         
         #region Listeners
         private void OnTileObjectRemoved(TileObject p_tileObject, Character p_removedBy, LocationGridTile p_removedFrom) {
-            if (p_tileObject.tileObjectType == TILE_OBJECT_TYPE.TREE_OBJECT && tilesWithFeature.Contains(p_removedFrom) &&
+            if (p_tileObject.tileObjectType == TILE_OBJECT_TYPE.SMALL_TREE_OBJECT && tilesWithFeature.Contains(p_removedFrom) &&
                 !unoccupiedSpots.Contains(p_removedFrom)) {
                 unoccupiedSpots.Add(p_removedFrom);
             }
@@ -63,7 +63,7 @@ namespace Inner_Maps.Grid_Tile_Features {
                 if (tile.tileObjectComponent.objHere == null && tile.structure is Wilderness) {
                     if (GameUtilities.RollChance(30)) {
                         //Spawn tree.
-                        TileObject tileObject = InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.TREE_OBJECT);
+                        TileObject tileObject = InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.SMALL_TREE_OBJECT);
                         tile.structure.AddPOI(tileObject, tile);
                     }        
                 }

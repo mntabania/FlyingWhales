@@ -806,7 +806,7 @@ namespace Inner_Maps {
                             //add tree spots to region grid tile features so that they can be replenished
                             //https://trello.com/c/qBvoisWj/4699-world-gen-updates
                             switch (tileObjectType) {
-                                case TILE_OBJECT_TYPE.TREE_OBJECT:
+                                case TILE_OBJECT_TYPE.SMALL_TREE_OBJECT:
                                     GridMap.Instance.mainRegion.gridTileFeatureComponent.AddFeatureToTile<SmallTreeSpotFeature>(tile);
                                     break;
                                 case TILE_OBJECT_TYPE.BIG_TREE_OBJECT:
@@ -980,9 +980,9 @@ namespace Inner_Maps {
                     }
                 case Tile_Tag.Tree:
                     if (InnerMapManager.Instance.CanBigTreeBePlacedOnTileInRandomGeneration(p_tile, p_data)) {
-                        return GameUtilities.RollChance(25) ? TILE_OBJECT_TYPE.BIG_TREE_OBJECT : TILE_OBJECT_TYPE.TREE_OBJECT;    
+                        return GameUtilities.RollChance(25) ? TILE_OBJECT_TYPE.BIG_TREE_OBJECT : TILE_OBJECT_TYPE.SMALL_TREE_OBJECT;    
                     } else {
-                        return TILE_OBJECT_TYPE.TREE_OBJECT;
+                        return TILE_OBJECT_TYPE.SMALL_TREE_OBJECT;
                     }
                 case Tile_Tag.Berry_Shrub:
                     return TILE_OBJECT_TYPE.BERRY_SHRUB;

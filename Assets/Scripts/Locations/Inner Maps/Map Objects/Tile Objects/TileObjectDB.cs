@@ -85,7 +85,7 @@ public static class TileObjectDB {
                 ),
             }
         } },
-        { TILE_OBJECT_TYPE.TREE_OBJECT, new TileObjectData() {
+        { TILE_OBJECT_TYPE.SMALL_TREE_OBJECT, new TileObjectData() {
             maxHP = 600,
             neededCharacterClass =  new string[] { "Craftsman" },
         } },

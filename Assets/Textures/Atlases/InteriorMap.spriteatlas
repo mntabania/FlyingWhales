@@ -1043,7 +1043,7 @@ SpriteAtlas:
   - caveWallA-0010-00
   - PLANT#8
   - grass_v00
-  - TREE_OBJECT#2
+  - SMALL_TREE_OBJECT#2
   - demonCircle00
   - shore11111111-00
   - ice_crystal
@@ -1158,7 +1158,7 @@ SpriteAtlas:
   - poison01000000-00
   - grass02
   - shore00000101-00
-  - TREE_OBJECT#7
+  - SMALL_TREE_OBJECT#7
   - desertRock_h00
   - accessory_necklace
   - demonWallA-11100000-00
@@ -1223,7 +1223,7 @@ SpriteAtlas:
   - crops_iceberry_grown
   - GRAVE#2
   - laidWallA10111010-00
-  - TREE_OBJECT#5
+  - SMALL_TREE_OBJECT#5
   - demonStone_v01
   - demonWallA-10001111-00
   - FLOWER#5
@@ -1301,7 +1301,7 @@ SpriteAtlas:
   - wood_floorA00
   - tundraDirt_h01
   - BARREL#3
-  - TREE_OBJECT#8
+  - SMALL_TREE_OBJECT#8
   - crops_iceberry_growing
   - poison00010100-00
   - spirit_energy_icon
@@ -1342,7 +1342,7 @@ SpriteAtlas:
   - demonBarsHorz00
   - vertical
   - shelfDecor01
-  - TREE_OBJECT#6
+  - SMALL_TREE_OBJECT#6
   - oreWall3
   - oreWall8
   - cloth_basic
@@ -1397,7 +1397,7 @@ SpriteAtlas:
   - BotLeft
   - boneBarrier00
   - oreWall7
-  - TREE_OBJECT#3
+  - SMALL_TREE_OBJECT#3
   - lairWallA00100010-01
   - table_metalworking_tools
   - CULT_CIRCLE#1
@@ -1493,7 +1493,7 @@ SpriteAtlas:
   - spirits_red_KO
   - demonWallA-11111011-00
   - dagger_mithril
-  - TREE_OBJECT#4
+  - SMALL_TREE_OBJECT#4
   - pelt_rabbit
   - caveWallA-00111010-00
   - bartop_left_empty
@@ -1643,7 +1643,7 @@ SpriteAtlas:
   - demonWallA-00100010-01
   - demonPlinthOrb
   - fleshGround02
-  - TREE_OBJECT#1
+  - SMALL_TREE_OBJECT#1
   - resource_copper
   - shore01000001-00
   - demonCryptChest00

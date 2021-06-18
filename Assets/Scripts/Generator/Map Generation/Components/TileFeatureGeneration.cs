@@ -191,7 +191,7 @@ public class TileFeatureGeneration : MapGenerationComponent {
 					if (!alreadyReservedAreas.Contains(currentAreaBeingChecked)) {
 						if (currentAreaBeingChecked.elevationComponent.elevationType == ELEVATION.PLAIN) {
 							//if the tile has at least 8 Tree Spots, tag it as Wood Source
-							if (currentAreaBeingChecked.tileObjectComponent.GetNumberOfTileObjectsInHexTile(TILE_OBJECT_TYPE.TREE_OBJECT, TILE_OBJECT_TYPE.BIG_TREE_OBJECT, p_data) >= 8) {
+							if (currentAreaBeingChecked.tileObjectComponent.GetNumberOfTileObjectsInHexTile(TILE_OBJECT_TYPE.SMALL_TREE_OBJECT, TILE_OBJECT_TYPE.BIG_TREE_OBJECT, p_data) >= 8) {
 								currentAreaBeingChecked.featureComponent.AddFeature(AreaFeatureDB.Wood_Source_Feature, currentAreaBeingChecked);
 								lumberyardSpots++;
 							}

@@ -7,6 +7,7 @@ using UnityEngine.UI;
 using System.Linq;
 using BayatGames.SaveGameFree;
 using Object_Pools;
+using Ruinarch;
 using Settings;
 using TMPro;
 
@@ -43,6 +44,7 @@ public class MainMenuManager : MonoBehaviour {
         MainMenuUI.Instance.ShowMenuButtons();
         MainMenuUI.Instance.ShowEarlyAccessAnnouncement();
         LevelLoaderManager.Instance.SetLoadingState(false);
+        InputManager.Instance.SetCursorTo(InputManager.Cursor_Type.Default);
     }
     #endregion
 

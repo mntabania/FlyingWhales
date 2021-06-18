@@ -53,7 +53,7 @@ public abstract class Ent : Summon {
         if (deathTileLocation.tileObjectComponent.objHere != null) {
             placeForWoodPile = deathTileLocation.GetFirstNearestTileFromThisWithNoObject();
         }
-        int wood = InnerMapManager.Big_Tree_Yield;
+        int wood = 300;
         WoodPile woodPile = InnerMapManager.Instance.CreateNewTileObject<WoodPile>(TILE_OBJECT_TYPE.WOOD_PILE);
         woodPile.SetResourceInPile(wood);
         placeForWoodPile.structure.AddPOI(woodPile, placeForWoodPile);

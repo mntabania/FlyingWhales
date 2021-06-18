@@ -85,7 +85,7 @@ public class MapVisualFactory {
             case TILE_OBJECT_TYPE.ROCK:
                 obj = ObjectPoolManager.Instance.InstantiateObjectFromPool("RockGameObject", Vector3.zero, Quaternion.identity);
                 break;
-            case TILE_OBJECT_TYPE.TREE_OBJECT:
+            case TILE_OBJECT_TYPE.SMALL_TREE_OBJECT:
             case TILE_OBJECT_TYPE.BIG_TREE_OBJECT:
                 obj = ObjectPoolManager.Instance.InstantiateObjectFromPool("TreeGameObject", Vector3.zero, Quaternion.identity);
                 break;
