@@ -695,7 +695,16 @@ public class CharacterMarker : MapObjectVisual<Character> {
             case POINT_OF_INTEREST_TYPE.CHARACTER:
                 Character targetCharacter = targetPOI as Character;
                 if (targetCharacter.marker && !targetCharacter.carryComponent.masterCharacter.movementComponent.isTravellingInWorld) {
-                    SetTargetTransform(targetCharacter.marker.transform);
+                    LocationGridTile characterTileLocation = targetCharacter.gridTileLocation;
+                    if (characterTileLocation != null) {
+                        if (characterTileLocation.HasUnwalkableNodes()) {
+                            SetDestination(characterTileLocation.GetPositionWithinTileThatIsOnAWalkableNode(), characterTileLocation);
+                        } else {
+                            SetTargetTransform(targetCharacter.marker.transform);    
+                        }
+                    } else {
+                        SetTargetTransform(targetCharacter.marker.transform);    
+                    }
                 }
                 break;
             default:

@@ -1957,6 +1957,16 @@ namespace Inner_Maps {
             }
             return centeredWorldLocation;
         }
+        public bool HasUnwalkableNodes() {
+            for (int i = 0; i < nodePoints.Length; i++) {
+                Vector3 pos = GetNodePointWorldLocation(nodePoints[i]);
+                GridNodeBase gridNode = GetGridNodeByNodePointIndex(i);
+                if (!gridNode.WalkableErosion) {
+                    return true;
+                }
+            }
+            return false;
+        }
         public Vector3 GetUnoccupiedWalkablePositionInTileWithDistanceLimitOf(float p_distanceLimit, Vector3 p_otherPos) {
             for (int i = 0; i < nodePoints.Length; i++) {
                 Vector3 pos = GetNodePointWorldLocation(nodePoints[i]);

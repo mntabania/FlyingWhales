@@ -63,7 +63,7 @@ public class FreeTimeBehaviour : CharacterBehaviourComponent {
 #endif
         //obtain want
         //only villagers part of major faction can process wants since all of it requires a character that is part of a faction that lives in a village with the needed facilities.
-        if (GameUtilities.RollChance(20, ref log) && character.faction != null && character.faction.isMajorFaction) { //20
+        if (ChanceData.RollChance(CHANCE_TYPE.Free_Time_Obtain_Want, ref log) && character.faction != null && character.faction.isMajorFaction) { //20
 #if DEBUG_LOG
             GameManager.stopwatch.Stop();
             GameManager.stopwatch.Reset();
