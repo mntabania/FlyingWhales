@@ -7,7 +7,7 @@
             type = TRAIT_TYPE.STATUS;
             effect = TRAIT_EFFECT.NEGATIVE;
             isStacking = true;
-            stackLimit = 5;
+            stackLimit = 1;
             stackModifier = 0.5f;
             moodEffect = -8;
             ticksDuration = GameManager.Instance.GetTicksBasedOnHour(12);
