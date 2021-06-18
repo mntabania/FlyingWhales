@@ -30,6 +30,10 @@ public class ShearAnimal : GoapAction {
 #endif
         return 10;
     }
+    public override void AddFillersToLog(Log log, ActualGoapNode node) {
+        base.AddFillersToLog(log, node);
+        log.AddToFillers(node.target, node.target.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+    }
     #endregion
 
     #region Requirements

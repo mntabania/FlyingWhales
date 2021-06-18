@@ -580,18 +580,18 @@ public class BehaviourComponent : CharacterComponent, CharacterEventDispatcher.I
     }
     #endregion
     
-    #region Dry Tiles
-    public void SetDryingTilesForSettlement(NPCSettlement settlement) {
-        if (settlement == null) {
-            //remove tile dryer from previous settlements list, if any.
-            dryingTilesForSettlement?.settlementJobTriggerComponent.RemoveTileDryer(owner);
-        } else {
-            settlement.settlementJobTriggerComponent.AddTileDryer(owner);
-        }
-        dryingTilesForSettlement = settlement;
-        
-    }
-    #endregion
+    // #region Dry Tiles
+    // public void SetDryingTilesForSettlement(NPCSettlement settlement) {
+    //     if (settlement == null) {
+    //         //remove tile dryer from previous settlements list, if any.
+    //         dryingTilesForSettlement?.settlementJobTriggerComponent.RemoveTileDryer(owner);
+    //     } else {
+    //         settlement.settlementJobTriggerComponent.AddTileDryer(owner);
+    //     }
+    //     dryingTilesForSettlement = settlement;
+    //     
+    // }
+    // #endregion
 
     //#region Mining
     //public void SetTargetMiningTile(LocationGridTile tile) {
@@ -1037,9 +1037,9 @@ public class BehaviourComponent : CharacterComponent, CharacterEventDispatcher.I
         if (!string.IsNullOrEmpty(data.cleansingTilesForSettlement)) {
             cleansingTilesForSettlement = DatabaseManager.Instance.settlementDatabase.GetSettlementByPersistentID(data.cleansingTilesForSettlement) as NPCSettlement;
         }
-        if (!string.IsNullOrEmpty(data.dryingTilesForSettlement)) {
-            dryingTilesForSettlement = DatabaseManager.Instance.settlementDatabase.GetSettlementByPersistentID(data.dryingTilesForSettlement) as NPCSettlement;
-        }
+        // if (!string.IsNullOrEmpty(data.dryingTilesForSettlement)) {
+        //     dryingTilesForSettlement = DatabaseManager.Instance.settlementDatabase.GetSettlementByPersistentID(data.dryingTilesForSettlement) as NPCSettlement;
+        // }
         //if (data.targetMiningTile.hasValue) {
         //    targetMiningTile = DatabaseManager.Instance.locationGridTileDatabase.GetTileBySavedData(data.targetMiningTile);
         //}
@@ -1255,7 +1255,7 @@ public class SaveDataBehaviourComponent : SaveData<BehaviourComponent> {
     //cleanse tiles
     public string cleansingTilesForSettlement;
     //cleanse tiles
-    public string dryingTilesForSettlement;
+    // public string dryingTilesForSettlement;
     ////mining
     //public TileLocationSave targetMiningTile;
 
@@ -1341,9 +1341,9 @@ public class SaveDataBehaviourComponent : SaveData<BehaviourComponent> {
         if (data.cleansingTilesForSettlement != null) {
             cleansingTilesForSettlement = data.cleansingTilesForSettlement.persistentID;
         }
-        if (data.dryingTilesForSettlement != null) {
-            dryingTilesForSettlement = data.dryingTilesForSettlement.persistentID;
-        }
+        // if (data.dryingTilesForSettlement != null) {
+        //     dryingTilesForSettlement = data.dryingTilesForSettlement.persistentID;
+        // }
         //if (data.targetMiningTile != null) {
         //    targetMiningTile = new TileLocationSave(data.targetMiningTile);
         //}

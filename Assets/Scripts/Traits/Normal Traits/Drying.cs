@@ -43,7 +43,7 @@ namespace Traits {
                 endLog.AddLogToDatabase(true);    
                 
                 character.behaviourComponent.RemoveBehaviourComponent(typeof(DryTilesBehaviour));
-                character.behaviourComponent.SetDryingTilesForSettlement(null);
+                // character.behaviourComponent.SetDryingTilesForSettlement(null);
                 Messenger.RemoveListener<Character>(CharacterSignals.CHARACTER_CAN_NO_LONGER_PERFORM, OnCharacterCanNoLongerPerform);
                 Messenger.RemoveListener<JobQueueItem, Character>(JobSignals.JOB_ADDED_TO_QUEUE, OnJobAddedToQueue);
             }

@@ -26,10 +26,10 @@ public class StartDry : GoapAction {
 #region State Effects
     [UsedImplicitly]
     public void PreStartDrySuccess(ActualGoapNode goapNode) {
-        if (goapNode.associatedJob.originalOwner is NPCSettlement settlement) {
-            goapNode.actor.traitContainer.AddTrait(goapNode.actor, "Drying");
-            settlement.settlementJobTriggerComponent.OnTakeDryTileJob(goapNode.actor);
-        }
+        // if (goapNode.associatedJob.originalOwner is NPCSettlement settlement) {
+        //     goapNode.actor.traitContainer.AddTrait(goapNode.actor, "Drying");
+        //     settlement.settlementJobTriggerComponent.OnTakeDryTileJob(goapNode.actor);
+        // }
     }
 #endregion
 }

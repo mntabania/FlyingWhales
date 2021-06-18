@@ -25,6 +25,11 @@ namespace Traits {
         public override void OnAddTrait(ITraitable addedTo) {
             base.OnAddTrait(addedTo);
             if (addedTo is Character character) {
+                if (character is Ent ent) {
+                    ent.EntAgitatedHandling();
+                } else if (character is Mimic mimic) {
+                    mimic.MimicAgitatedHandling();
+                }
                 if (character.marker) {
                     character.marker.BerserkedMarker();
                 }

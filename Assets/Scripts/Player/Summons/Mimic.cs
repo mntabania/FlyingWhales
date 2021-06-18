@@ -54,6 +54,11 @@ public class Mimic : Summon {
     }
 
     #region General
+    public void MimicAgitatedHandling() {
+        if (isTreasureChest) {
+            ExecuteAwakenMimicEvent();
+        }
+    }
     public void SetIsTreasureChest(bool state) {
         isTreasureChest = state;
         //if mimic is a treasure chest, set its combat mode to defend so that characters that see it as a treasure chest will not attack it immediately.

@@ -71,7 +71,13 @@ public abstract class Ent : Summon {
         }
         base.OnTickStarted();
     }
+    
     #region General
+    public void EntAgitatedHandling() {
+        if (isTree) {
+            ExecuteAwakenEntEvent();    
+        }
+    }
     public void SetIsTree(bool state) {
         isTree = state;
     }
@@ -90,7 +96,7 @@ public abstract class Ent : Summon {
     private void ExecuteAwakenEntEvent() {
         _awakenEntEvent?.Invoke(this);
     }
-#endregion
+    #endregion
 }
 
 [System.Serializable]

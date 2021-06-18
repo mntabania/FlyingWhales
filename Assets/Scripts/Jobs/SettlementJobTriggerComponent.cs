@@ -17,7 +17,7 @@ public class SettlementJobTriggerComponent : JobTriggerComponent/*, SettlementCl
 
 	private readonly NPCSettlement _owner;
 
-	public List<LocationGridTile> wetTiles { get; }
+	// public List<LocationGridTile> wetTiles { get; }
 	public List<LocationGridTile> poisonedTiles { get; }
 	public List<Character> poisonCleansers { get; }
 	public List<Character> tileDryers { get; set; }
@@ -27,7 +27,7 @@ public class SettlementJobTriggerComponent : JobTriggerComponent/*, SettlementCl
 	
 	public SettlementJobTriggerComponent(NPCSettlement owner) {
 		_owner = owner;
-		wetTiles = new List<LocationGridTile>();
+		// wetTiles = new List<LocationGridTile>();
 		poisonedTiles = new List<LocationGridTile>();
 		poisonCleansers = new List<Character>();
 		tileDryers = new List<Character>();
@@ -233,9 +233,10 @@ public class SettlementJobTriggerComponent : JobTriggerComponent/*, SettlementCl
 			//}
 		} else if (traitable is TileObject) {
 			if (traitable is GenericTileObject && traitable.gridTileLocation.IsPartOfSettlement(_owner)) {
-				if (trait is Wet) {
-					AddWetTile(traitable.gridTileLocation);
-				} else if (trait is Poisoned) {
+				// if (trait is Wet) {
+				// 	AddWetTile(traitable.gridTileLocation);
+				// } else 
+				if (trait is Poisoned) {
 					AddPoisonedTile(traitable.gridTileLocation);
 				}	
 			}
@@ -244,9 +245,10 @@ public class SettlementJobTriggerComponent : JobTriggerComponent/*, SettlementCl
 	private void OnTraitableLostTrait(ITraitable traitable, Trait trait, Character character) {
 		if (traitable is TileObject) {
 			if (traitable is GenericTileObject && traitable.gridTileLocation.IsPartOfSettlement(_owner)) {
-				if (trait is Wet) {
-					RemoveWetTile(traitable.gridTileLocation);
-				} else if (trait is Poisoned) {
+				// if (trait is Wet) {
+				// 	RemoveWetTile(traitable.gridTileLocation);
+				// } else 
+				if (trait is Poisoned) {
 					RemovePoisonedTile(traitable.gridTileLocation);
 				}	
 			}
@@ -333,13 +335,13 @@ public class SettlementJobTriggerComponent : JobTriggerComponent/*, SettlementCl
 				i--;
 			}
 		}
-		for (int i = 0; i < wetTiles.Count; i++) {
-			LocationGridTile tile = wetTiles[i];
-			if (p_area.gridTileComponent.gridTiles.Contains(tile)) {
-				RemoveWetTile(tile);
-				i--;
-			}
-		}
+		// for (int i = 0; i < wetTiles.Count; i++) {
+		// 	LocationGridTile tile = wetTiles[i];
+		// 	if (p_area.gridTileComponent.gridTiles.Contains(tile)) {
+		// 		RemoveWetTile(tile);
+		// 		i--;
+		// 	}
+		// }
 	}
 #endregion
 
@@ -883,54 +885,54 @@ public class SettlementJobTriggerComponent : JobTriggerComponent/*, SettlementCl
 	}
 #endregion
 
-#region Dry Tiles
-	private void AddWetTile(LocationGridTile tile) {
-		if (!wetTiles.Contains(tile)) {
-			wetTiles.Add(tile);
-		}	
-	}
-	private void RemoveWetTile(LocationGridTile tile) {
-		if (wetTiles.Remove(tile)) {
-			CheckDryTilesValidity();
-		}	
-	}
-	public void TriggerDryTiles() {
-		if (wetTiles.Count > 0) {
-			int dryerCount = tileDryers.Count + _owner.GetNumberOfJobsWith(JOB_TYPE.DRY_TILES);
-			int maxDryers = 1;
-			if (dryerCount < maxDryers) {
-				int missing = maxDryers - dryerCount;
-				for (int i = 0; i < missing; i++) {
-					GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.DRY_TILES, INTERACTION_TYPE.START_DRY, null, _owner);
-					_owner.AddToAvailableJobs(job);
-				}	
-			}	
-		}
-	}
-	public void OnTakeDryTileJob(Character character) {
-		character.behaviourComponent.SetDryingTilesForSettlement(_owner);
-	}
-	private void CheckDryTilesValidity() {
-		if (wetTiles.Count == 0) {
-			//cancel all dry tiles jobs
-			List<JobQueueItem> jobs = RuinarchListPool<JobQueueItem>.Claim();
-			_owner.PopulateJobsOfType(jobs, JOB_TYPE.DRY_TILES);
-			for (int i = 0; i < jobs.Count; i++) {
-				JobQueueItem jqi = jobs[i];
-				if (jqi.assignedCharacter == null) {
-					jqi.ForceCancelJob("no more wet floors");
-				}
-			}
-			RuinarchListPool<JobQueueItem>.Release(jobs);
-		}
-	}
-	public void AddTileDryer(Character character) {
-		tileDryers.Add(character);
-	}
-	public void RemoveTileDryer(Character character) {
-		tileDryers.Remove(character);
-	}
-#endregion
+// #region Dry Tiles
+	// private void AddWetTile(LocationGridTile tile) {
+	// 	if (!wetTiles.Contains(tile)) {
+	// 		wetTiles.Add(tile);
+	// 	}	
+	// }
+	// private void RemoveWetTile(LocationGridTile tile) {
+	// 	if (wetTiles.Remove(tile)) {
+	// 		CheckDryTilesValidity();
+	// 	}	
+	// }
+	// public void TriggerDryTiles() {
+	// 	if (wetTiles.Count > 0) {
+	// 		int dryerCount = tileDryers.Count + _owner.GetNumberOfJobsWith(JOB_TYPE.DRY_TILES);
+	// 		int maxDryers = 1;
+	// 		if (dryerCount < maxDryers) {
+	// 			int missing = maxDryers - dryerCount;
+	// 			for (int i = 0; i < missing; i++) {
+	// 				GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.DRY_TILES, INTERACTION_TYPE.START_DRY, null, _owner);
+	// 				_owner.AddToAvailableJobs(job);
+	// 			}	
+	// 		}	
+	// 	}
+	// }
+	// public void OnTakeDryTileJob(Character character) {
+	// 	character.behaviourComponent.SetDryingTilesForSettlement(_owner);
+	// }
+	// private void CheckDryTilesValidity() {
+	// 	if (wetTiles.Count == 0) {
+	// 		//cancel all dry tiles jobs
+	// 		List<JobQueueItem> jobs = RuinarchListPool<JobQueueItem>.Claim();
+	// 		_owner.PopulateJobsOfType(jobs, JOB_TYPE.DRY_TILES);
+	// 		for (int i = 0; i < jobs.Count; i++) {
+	// 			JobQueueItem jqi = jobs[i];
+	// 			if (jqi.assignedCharacter == null) {
+	// 				jqi.ForceCancelJob("no more wet floors");
+	// 			}
+	// 		}
+	// 		RuinarchListPool<JobQueueItem>.Release(jobs);
+	// 	}
+	// }
+	// public void AddTileDryer(Character character) {
+	// 	tileDryers.Add(character);
+	// }
+	// public void RemoveTileDryer(Character character) {
+	// 	tileDryers.Remove(character);
+	// }
+// #endregion
 	
 #region Cleanse Tiles
 	private void AddPoisonedTile(LocationGridTile tile) {
