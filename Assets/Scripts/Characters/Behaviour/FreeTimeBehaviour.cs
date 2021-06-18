@@ -63,14 +63,16 @@ public class FreeTimeBehaviour : CharacterBehaviourComponent {
 #endif
         //obtain want
         //only villagers part of major faction can process wants since all of it requires a character that is part of a faction that lives in a village with the needed facilities.
-        if (GameUtilities.RollChance(20, ref log) && character.faction != null && character.faction.isMajorFaction) { //20 
+        if (GameUtilities.RollChance(20, ref log) && character.faction != null && character.faction.isMajorFaction) { //20
+#if DEBUG_LOG
             GameManager.stopwatch.Stop();
             GameManager.stopwatch.Reset();
             GameManager.stopwatch.Start();
+#endif
             VillagerWant want = character.villagerWantsComponent.GetTopPriorityWant(character, out LocationStructure foundStructure);
+#if DEBUG_LOG
             GameManager.stopwatch.Stop();
             UnityEngine.Debug.Log($"{character.name} wants processing took {GameManager.stopwatch.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)} seconds to complete.");
-#if DEBUG_LOG
             log = $"{log}\n-Top priority want is {want?.name}.";
 #endif
             if (want is DwellingWant) {
@@ -171,7 +173,7 @@ public class FreeTimeBehaviour : CharacterBehaviourComponent {
                 } else {
 #if DEBUG_LOG
                     log = $"{log}\n-Could not find valid healing potion at {foundStructure.name}.";
-#endif  
+#endif
                 }
             }
         }
@@ -502,7 +504,7 @@ public class FreeTimeBehaviour : CharacterBehaviourComponent {
         }
     }
 
-    #region Utilities
+#region Utilities
     private Character GetDisabledCharacterToVisit(Character p_character) {
         //List<Character> charactersWithRel = relationshipContainer.relationships.Keys.Where(x => x is AlterEgoData).Select(x => (x as AlterEgoData).owner).ToList();
         Character chosenCharacter = null;
@@ -542,7 +544,7 @@ public class FreeTimeBehaviour : CharacterBehaviourComponent {
         producedJob = job;
         return true;
     }
-    #endregion
+#endregion
 
     private void CreateCleanJob(Character character, ref string log, out JobQueueItem producedJob) {
         producedJob = null;
