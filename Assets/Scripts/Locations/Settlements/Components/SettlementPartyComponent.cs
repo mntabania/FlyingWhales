@@ -140,7 +140,7 @@ public class SettlementPartyComponent : NPCSettlementComponent {
 #if DEBUG_LOG
             log += "\nWill try Hunt Beast";
 #endif
-            if (GameUtilities.RollChance(50, ref log)) { //50
+            if (GameUtilities.RollChance(ChanceData.GetChance(CHANCE_TYPE.Hunt_Chance), ref log)) { //50
                 if (owner.occupiedVillageSpot != null) {
                     if (!factionOwner.partyQuestBoard.HasPartyQuest(PARTY_QUEST_TYPE.Hunt_Beast)) {
                         LocationStructure targetStructure = owner.occupiedVillageSpot.GetRandomLinkedAliveBeastDen();

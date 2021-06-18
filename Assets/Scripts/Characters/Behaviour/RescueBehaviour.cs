@@ -42,7 +42,29 @@ public class RescueBehaviour : CharacterBehaviourComponent {
                     }
                 }
 
-                if (character.hasMarker && quest.targetCharacter.hasMarker && character.gridTileLocation != null && quest.targetCharacter.gridTileLocation != null && !quest.targetCharacter.isBeingSeized) {
+                if (quest.targetCharacter.isBeingSeized) {
+#if DEBUG_LOG
+                    log += $"\n-Target is being seized";
+#endif
+                    LocationGridTile prevTile = quest.targetCharacter.marker.previousGridTile;
+                    if (character.gridTileLocation != prevTile) {
+#if DEBUG_LOG
+                        log += $"\n-Character is not in previous grid tile of target, will go to it";
+#endif
+                        hasJob = character.jobComponent.CreateGoToSpecificTileJob(prevTile, out producedJob);
+                        if (hasJob) {
+                            return true;
+                        }
+                    } else {
+#if DEBUG_LOG
+                        log += $"\n-Character is already in previous grid tile of target, will end quest";
+#endif
+                        quest.EndQuest("Target is nowhere to be found");
+                        return true;
+                    }
+                }
+
+                if (character.hasMarker && quest.targetCharacter.hasMarker && character.gridTileLocation != null && quest.targetCharacter.gridTileLocation != null) {
                     if (character.marker.IsPOIInVision(quest.targetCharacter)) {
                         if (quest.targetCharacter.isDead) {
 #if DEBUG_LOG
@@ -68,9 +90,9 @@ public class RescueBehaviour : CharacterBehaviourComponent {
                                 quest.EndQuest("Target is safe");
                                 //if target is paralyzed carry back home
                                 if (quest.targetCharacter.traitContainer.HasTrait("Paralyzed")) {
-                                    if (!quest.targetCharacter.IsPOICurrentlyTargetedByAPerformingAction(JOB_TYPE.MOVE_CHARACTER)) {
+                                    if (!quest.targetCharacter.IsPOICurrentlyTargetedByAPerformingAction(JOB_TYPE.RESCUE_MOVE_CHARACTER)) {
                                         //Do not set this as a party job
-                                        character.jobComponent.TryTriggerMoveCharacter(quest.targetCharacter, out producedJob, false);
+                                        character.jobComponent.TryTriggerRescueMoveCharacter(quest.targetCharacter, out producedJob, false);
                                     }
                                 }
                                 return true;
