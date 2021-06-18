@@ -2181,11 +2181,21 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 
 #region Go To
     public bool CreateGoToJob(IPointOfInterest target) {
-        if(!owner.jobQueue.HasJob(JOB_TYPE.GO_TO, target)) {
+        JobQueueItem producedJob;
+        CreateGoToJob(target, out producedJob);
+        if (producedJob != null) {
+            return owner.jobQueue.AddJobInQueue(producedJob);
+        }
+        return false;
+    }
+    public bool CreateGoToJob(IPointOfInterest target, out JobQueueItem producedJob) {
+        if (!owner.jobQueue.HasJob(JOB_TYPE.GO_TO, target)) {
             GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.GO_TO, INTERACTION_TYPE.GO_TO, target, owner);
             job.SetCannotBePushedBack(true);
-            return owner.jobQueue.AddJobInQueue(job);
+            producedJob = job;
+            return true;
         }
+        producedJob = null;
         return false;
     }
     public bool CreateGoToJob(LocationGridTile tile, out JobQueueItem producedJob) {

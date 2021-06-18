@@ -241,7 +241,11 @@ public class SaveDataCurrentProgress {
                     continue;
                 }
             }
-            yield return null;
+            batchCount++;
+            if (batchCount >= SaveManager.TileObject_Save_Batches) {
+                batchCount = 0;
+                yield return null;
+            }
         }
         RuinarchListPool<WeakReference>.Release(copyOfDestroyedTileObjects);
 
