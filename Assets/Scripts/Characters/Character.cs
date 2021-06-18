@@ -2745,9 +2745,11 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         int processedAmount = amount;
         processedAmount += (int) increaseDamage;
         processedAmount -= (int) reducedDamage;
+#if DEBUG_LOG
         if (responsibleCharacter != null) {
             Debug.Log("Damage Receiver: " + this.name + " !Raw Damage: " + amount + " !Damage Reduction(Ward Bonus): " + reducedDamage + " !Damage Increase(Slayer Bonus): " + increaseDamage + " Attacker: " + responsibleCharacter + " !After Process Damage: " + processedAmount);
         }
+#endif
         //weapon ward and slayer bonus calculator
         amount = processedAmount;
         if ((amount < 0 && (ignoreIndestructibleTrait || CanBeDamaged())) || amount > 0) {
@@ -2882,9 +2884,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         //chance based dependent on the character
         return currentHP < (maxHP * 0.2f);
     }
-    #endregion
+#endregion
 
-    #region Home
+#region Home
     /// <summary>
     /// Set this character's home npcSettlement data.(Does nothing else)
     /// </summary>
@@ -3094,9 +3096,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
         return false;
     }
-    #endregion
+#endregion
 
-    #region Traits
+#region Traits
     public ITraitContainer traitContainer { get; private set; }
     public TraitProcessor traitProcessor => TraitManager.characterTraitProcessor;
     public void CreateTraitContainer() {
@@ -3256,9 +3258,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             }
         }
     }
-    #endregion
+#endregion
 
-    #region Minion
+#region Minion
     public void SetMinion(Minion minion) {
         if (_minion != null && minion == null) {
             Messenger.Broadcast(CharacterSignals.CHARACTER_BECOMES_NON_MINION_OR_SUMMON, this);
@@ -3272,9 +3274,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         _minion = minion;
         visuals.CreateWholeImageMaterial(visuals.portraitSettings);
     }
-    #endregion
+#endregion
 
-    #region Interaction
+#region Interaction
     //public void AddInteractionType(INTERACTION_TYPE type) {
     //    if (!currentInteractionTypes.Contains(type)) {
     //        currentInteractionTypes.Add(type);
@@ -3283,9 +3285,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     //public void RemoveInteractionType(INTERACTION_TYPE type) {
     //    currentInteractionTypes.Remove(type);
     //}
-    #endregion
+#endregion
 
-    #region Action Planning and Job Processing
+#region Action Planning and Job Processing
     private void DailyGoapProcesses() {
         needsComponent.DailyGoapProcesses();
     }
@@ -3793,9 +3795,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             LocationAwarenessUtility.RemoveFromAwarenessList(type, this);
         }
     }
-    #endregion
+#endregion
 
-    #region Inventory
+#region Inventory
     //public bool ObtainTokenFrom(Character target, SpecialToken token, bool changeCharacterOwnership = true) {
     //    if (target.UnobtainToken(token)) {
     //        ObtainToken(token, changeCharacterOwnership);
@@ -4229,9 +4231,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public void RemoveItemAsInteresting(string itemName) {
         interestedItemNames.Remove(itemName);
     }
-    #endregion
+#endregion
 
-    #region Awareness
+#region Awareness
     public void LogAwarenessList() {
         if (currentLocationAwareness != null) {
             string log = $"--------------AWARENESS LIST OF {name}-----------------";
@@ -4247,9 +4249,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             logComponent.PrintLogIfActive(log);
         }
     }
-    #endregion
+#endregion
 
-    #region Point Of Interest
+#region Point Of Interest
     //Returns the chosen action for the plan
     public GoapAction AdvertiseActionsToActor(Character actor, GoapEffect precondition, GoapPlanJob job, ref int cost, ref string log) {
         GoapAction chosenAction = null;
@@ -4346,9 +4348,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public bool Advertises(INTERACTION_TYPE type) {
         return advertisedActions != null && advertisedActions.Contains(type);
     }
-    #endregion
+#endregion
 
-    #region Goap
+#region Goap
     //public void SetNumWaitingForGoapThread(int amount) {
     //    _numOfWaitingForGoapThread = amount;
     //}
@@ -5267,9 +5269,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         //}
         //Messenger.Broadcast(Signals.ON_UNSEIZE_CHARACTER, this);
     }
-    #endregion
+#endregion
 
-    #region Hostility
+#region Hostility
     /// <summary>
     /// Function to encapsulate, whether or not this character treats another character as hostile.
     /// </summary>
@@ -5372,9 +5374,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
         return true;
     }
-    #endregion
+#endregion
 
-    #region Pathfinding
+#region Pathfinding
     public void PopulateTilesInRadius(List<LocationGridTile> tiles, int radius, int radiusLimit = 0, bool includeCenterTile = false, bool includeTilesInDifferentStructure = false) {
         if (currentRegion == null) { return; }
         int mapSizeX = currentRegion.innerMap.map.GetUpperBound(0);
@@ -5406,9 +5408,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             }
         }
     }
-    #endregion
+#endregion
 
-    #region Player Alliance
+#region Player Alliance
     /// <summary>
     /// Get whether this character is allied with the player outside the faction system.
     /// i.e. when we want that character to be considered as an ally to the player, but don't want to
@@ -5455,9 +5457,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
         return false;
     }
-    #endregion
+#endregion
 
-    #region IJobOwner
+#region IJobOwner
     public virtual void OnJobAddedToCharacterJobQueue(JobQueueItem job, Character character) { }
     public virtual void OnJobRemovedFromCharacterJobQueue(JobQueueItem job, Character character) {
         //if(this == character && job == jobComponent.finalJobAssignment) {
@@ -5501,15 +5503,15 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public void ForceCancelJobTypesTargetingPOI(JOB_TYPE jobType, IPointOfInterest target) {
         //NA
     }
-    #endregion
+#endregion
 
-    #region IDamageable
+#region IDamageable
     public bool CanBeDamaged() {
         return traitContainer.HasTrait("Indestructible") == false;
     }
-    #endregion
+#endregion
 
-    #region Lycanthropy
+#region Lycanthropy
     //NOTE: This might a bad practice since we have a special case here for lycanthrope, but I see no other way to easily know if the character is a lycan or not
     //This way we can easily know and access the lycan data
     public void SetLycanthropeData(LycanthropeData data) {
@@ -5541,9 +5543,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             }
         }
     }
-    #endregion
+#endregion
 
-    #region Player Action Target
+#region Player Action Target
     public List<PLAYER_SKILL_TYPE> actions { get; protected set; }
     //public List<string> overrideThoughts {
     //    get { return _overrideThoughts; }
@@ -5596,9 +5598,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public void ClearPlayerActions() {
         actions.Clear();
     }
-    #endregion
+#endregion
 
-    #region Selectable
+#region Selectable
     public virtual bool IsCurrentlySelected() {
         Character characterToSelect = this;
         if (isLycanthrope) {
@@ -5632,9 +5634,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
         return true;
     }
-    #endregion
+#endregion
 
-    #region Territorries
+#region Territorries
     public void SetTerritory([NotNull] Area p_area, bool returnHome = true) {
         if (territory != p_area) {
             territory = p_area;
@@ -5685,9 +5687,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
         return chosenTile;
     }
-    #endregion
+#endregion
 
-    #region Death
+#region Death
     //Changes character's side
     //public void SetSide(SIDES side) {
     //    this._currentSide = side;
@@ -6047,15 +6049,15 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public void SetGrave(Tombstone grave) {
         this.grave = grave;
     }
-    #endregion
+#endregion
 
-    #region Necromancer
+#region Necromancer
     public void SetNecromancerTrait(Necromancer necromancer) {
         necromancerTrait = necromancer;
     }
-    #endregion
+#endregion
 
-    #region Emotions
+#region Emotions
     public bool CanFeelEmotion(EMOTION emotion) {
         switch (emotion) {
             case EMOTION.Anger:
@@ -6065,9 +6067,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 return true;
         }
     }
-    #endregion
+#endregion
 
-    #region Prison
+#region Prison
     public bool IsInPrison() {
         BaseSettlement currSettlement = currentSettlement;
         return currSettlement != null && currSettlement is NPCSettlement settlement && currentStructure == settlement.prison;
@@ -6105,9 +6107,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
         return null;
     }
-    #endregion
+#endregion
 
-    #region Vampire
+#region Vampire
     private bool IsInVampireBatForm() {
         Vampire vampireTrait = traitContainer.GetTraitOrStatus<Vampire>("Vampire");
         return vampireTrait != null && vampireTrait.isInVampireBatForm;
@@ -6134,9 +6136,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             }
         }
     }
-    #endregion
+#endregion
 
-    #region Cultist
+#region Cultist
     public void PopulateListOfCultistTargets(List<Character> choices, Func<Character, bool> criteria) {
         for (int i = 0; i < relationshipContainer.charactersWithOpinion.Count; i++) {
             Character target = relationshipContainer.charactersWithOpinion[i];
@@ -6145,9 +6147,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             }
         }
     }
-    #endregion
+#endregion
 
-    #region IPointOfInterest
+#region IPointOfInterest
     public bool IsPOICurrentlyTargetedByAPerformingAction() {
         for (int i = 0; i < allJobsTargetingThis.Count; i++) {
             if (allJobsTargetingThis[i] is GoapPlanJob) {
@@ -6189,18 +6191,18 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
         return false;
     }
-    #endregion
+#endregion
 
-    #region IStoredTarget
+#region IStoredTarget
     public bool CanBeStoredAsTarget() {
         return !isDead && PlayerManager.Instance.player != null && faction != PlayerManager.Instance.player.playerFaction;
     }
     public void SetAsStoredTarget(bool p_state) {
         isStoredAsTarget = p_state;
     }
-    #endregion
+#endregion
 
-    #region Afflictions By Player
+#region Afflictions By Player
     public bool HasAfflictedByPlayerWith(PLAYER_SKILL_TYPE p_afflictionType) {
         return afflictionsSkillsInflictedByPlayer.Contains(p_afflictionType);
     }
@@ -6219,9 +6221,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             }
         }
     }
-    #endregion
+#endregion
 
-    #region Loading
+#region Loading
     public virtual void LoadReferences(SaveDataCharacter data) {
         isInfoUnlocked = data.isInfoUnlocked;
         ConstructDefaultActions();
@@ -6430,18 +6432,18 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             necromancerTrait = traitContainer.GetTraitOrStatus<Necromancer>("Necromancer");
         }
     }
-    #endregion
+#endregion
 
-    #region apply equipment effects upon load
+#region apply equipment effects upon load
     void ApplyStackCountForTraits() {
         equipmentInventory.ForEach((eachEquip) => {
             (eachEquip as EquipmentItem).AssignData();
             equipmentComponent.SetEquipment(eachEquip as EquipmentItem, this, true);
         });
     }
-    #endregion
+#endregion
 
-    #region IBookmarkable
+#region IBookmarkable
     public void OnSelectBookmark() {
         LeftSelectAction();
     }
@@ -6454,15 +6456,15 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public void OnHoverOutBookmarkItem() {
         UIManager.Instance.HideCharacterNameplateTooltip();
     }
-    #endregion
+#endregion
 
-    #region Death Tile
+#region Death Tile
     public void SetDeathLocation(LocationGridTile p_tile) {
         deathTilePosition = p_tile;
     }
-    #endregion
+#endregion
 
-    #region villager progression HUMANS = skill levelup, Elven = Power Crystal absorbed
+#region villager progression HUMANS = skill levelup, Elven = Power Crystal absorbed
     //function to be attached on skill levelup NOTE!! - only humans should gain from this call
     public void OnSkillLevelUp() {
         CharacterClassData classData = CharacterManager.Instance.GetOrCreateCharacterClassData(classComponent.characterClass.className);
@@ -6529,15 +6531,15 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         });
         piercingAndResistancesComponent.AdjustPiercing(p_crystal.amountBonusPiercing);
     }
-    #endregion
+#endregion
 
-    #region Talents
+#region Talents
     public bool HasTalents() {
         return talentComponent != null;
     }
-    #endregion
+#endregion
 
-    #region Operators
+#region Operators
     public static bool operator ==(Character left, IPointOfInterest right) {
         return left?.persistentID == right?.persistentID;
     }
@@ -6553,13 +6555,13 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public override int GetHashCode() {
         return base.GetHashCode();
     }
-    #endregion
+#endregion
 
-    #region IGCollectable
+#region IGCollectable
     public void SetIsDeadReference(bool p_state) {
         isDeadReference = p_state;
     }
-    #endregion
+#endregion
 
     public void CleanUp() {
         _minion?.CleanUp();
