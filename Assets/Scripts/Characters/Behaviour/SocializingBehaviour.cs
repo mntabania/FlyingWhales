@@ -65,7 +65,7 @@ public class SocializingBehaviour : CharacterBehaviourComponent {
 #if DEBUG_LOG
                 log = $"{log}\n\t- Target structure is City Center.";
 #endif
-                if (GameUtilities.RollChance(15, ref log)) {
+                if (GameUtilities.RollChance(10, ref log)) {
                     List<TileObject> waterWells = targetStructure.GetTileObjectsOfType(TILE_OBJECT_TYPE.WATER_WELL);
 #if DEBUG_LOG
                     log = $"{log}\n\t- Checking for available wells. Total wells are {waterWells?.Count}.";

@@ -145,8 +145,9 @@ namespace Inner_Maps.Location_Structures {
                         return;
                     }
                 }
-     
             }
+            
+            if(TryCreateCleanJob(p_worker, out producedJob)) { return; }
         }
 
         Character GetVillagerToBeCured(Character p_worker) {

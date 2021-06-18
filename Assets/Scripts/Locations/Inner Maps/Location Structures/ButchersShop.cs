@@ -116,6 +116,8 @@ namespace Inner_Maps.Location_Structures {
             if (targetForButchering != null){
                 p_worker.jobComponent.CreateButcherJob(targetForButchering, JOB_TYPE.MONSTER_BUTCHER, out producedJob);
             }
+            
+            if(TryCreateCleanJob(p_worker, out producedJob)) { return; }
         }
     }
 }

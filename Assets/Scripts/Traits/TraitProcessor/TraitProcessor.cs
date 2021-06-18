@@ -43,6 +43,8 @@ namespace Traits {
             //}
             if (traitable is Character character) {
                 character.eventDispatcher.ExecuteCharacterGainedTrait(character, trait);
+            } else if (traitable is TileObject tileObject) {
+                tileObject.eventDispatcher.ExecuteTileObjectGainedTrait(tileObject, trait);
             }
             Messenger.Broadcast(TraitSignals.TRAITABLE_GAINED_TRAIT, traitable, trait);
         }
@@ -68,6 +70,8 @@ namespace Traits {
             //}
             if (traitable is Character character) {
                 character.eventDispatcher.ExecuteCharacterLostTrait(character, trait, removedBy);
+            } else if (traitable is TileObject tileObject) {
+                tileObject.eventDispatcher.ExecuteTileObjectLostTrait(tileObject, trait);
             }
             Messenger.Broadcast(TraitSignals.TRAITABLE_LOST_TRAIT, traitable, trait, removedBy);
         }

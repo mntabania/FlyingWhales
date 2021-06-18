@@ -1,26 +1,36 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Traits;
 using UnityEngine;
 using UnityEngine.Assertions;
+using UtilityScripts;
 namespace Inner_Maps.Location_Structures {
-    public abstract class ManMadeStructure : LocationStructure {
+    public abstract class ManMadeStructure : LocationStructure, TileObjectEventDispatcher.ITraitListener {
 
         private StructureTileObject _structureTileObject;
         public List<ThinWall> structureWalls { get; private set; }
-
         public RESOURCE wallsAreMadeOf { get; protected set; }
         public LocationStructureObject structureObj {get; private set;}
         public string assignedWorkerID { get; private set; }
+        
+        private GameDate m_scheduledDirtProduction;
+        private readonly List<TileObject> m_dirtyObjects;
+        private const int UncomfortableNeededDirtyObjects = 2;
 
         #region Getters
         public override Vector2 selectableSize => structureObj.size;
         public override System.Type serializedData => typeof(SaveDataManMadeStructure);
         public Character assignedWorker => string.IsNullOrEmpty(assignedWorkerID) ? null : CharacterManager.Instance.GetCharacterByPersistentID(assignedWorkerID);
+        public List<TileObject> dirtyObjects => m_dirtyObjects;
+        public GameDate scheduledDirtProduction => m_scheduledDirtProduction;
         #endregion
 
-        protected ManMadeStructure(STRUCTURE_TYPE structureType, Region location) : base(structureType, location) { }
+        protected ManMadeStructure(STRUCTURE_TYPE structureType, Region location) : base(structureType, location) {
+            m_dirtyObjects = new List<TileObject>();
+        }
         protected ManMadeStructure(Region location, SaveDataManMadeStructure data) : base(location, data) {
             assignedWorkerID = data.assignedWorkerID;
+            m_dirtyObjects = new List<TileObject>();
         }
 
         #region Behaviours
@@ -60,6 +70,62 @@ namespace Inner_Maps.Location_Structures {
             if (base.AddPOI(poi, tileLocation)) {
                 if (poi is StructureTileObject structureTileObject) {
                     SetStructureTileObject(structureTileObject);
+                }
+                if (poi is TileObject tileObject) {
+                    if (tileObject.traitContainer.HasTrait("Dirty")) {
+                        AddDirtyObject(tileObject);    
+                    }
+                    tileObject.eventDispatcher.SubscribeToTileObjectGainedTrait(this);
+                    tileObject.eventDispatcher.SubscribeToTileObjectLostTrait(this);
+                }
+                return true;
+            }
+            return false;
+        }
+        public override bool RemovePOI(IPointOfInterest poi, Character removedBy = null, bool isPlayerSource = false) {
+            if (base.RemovePOI(poi, removedBy, isPlayerSource)) {
+                if (poi is TileObject tileObject) {
+                    if (tileObject.traitContainer.HasTrait("Dirty")) {
+                        RemoveDirtyObject(tileObject);    
+                    }
+                    tileObject.eventDispatcher.UnsubscribeToTileObjectGainedTrait(this);
+                    tileObject.eventDispatcher.UnsubscribeToTileObjectLostTrait(this);
+                }
+                return true;
+            }
+            return false;
+        }
+        public override bool RemovePOIWithoutDestroying(IPointOfInterest poi) {
+            if (base.RemovePOIWithoutDestroying(poi)) {
+                if (poi is TileObject tileObject) {
+                    if (tileObject.traitContainer.HasTrait("Dirty")) {
+                        RemoveDirtyObject(tileObject);    
+                    }
+                    tileObject.eventDispatcher.UnsubscribeToTileObjectGainedTrait(this);
+                    tileObject.eventDispatcher.UnsubscribeToTileObjectLostTrait(this);
+                }
+                return true;
+            }
+            return false;
+        }
+        public override bool RemovePOIDestroyVisualOnly(IPointOfInterest poi, Character remover = null) {
+            if (base.RemovePOIDestroyVisualOnly(poi, remover)) {
+                if (poi is TileObject tileObject) {
+                    if (tileObject.traitContainer.HasTrait("Dirty")) {
+                        RemoveDirtyObject(tileObject);    
+                    }
+                    tileObject.eventDispatcher.UnsubscribeToTileObjectGainedTrait(this);
+                    tileObject.eventDispatcher.UnsubscribeToTileObjectLostTrait(this);
+                }
+                return true;
+            }
+            return false;
+        }
+        public override bool LoadPOI(TileObject poi, LocationGridTile tileLocation) {
+            if (base.LoadPOI(poi, tileLocation)) {
+                if (poi is TileObject tileObject) {
+                    tileObject.eventDispatcher.SubscribeToTileObjectGainedTrait(this);
+                    tileObject.eventDispatcher.SubscribeToTileObjectLostTrait(this);
                 }
                 return true;
             }
@@ -199,6 +265,10 @@ namespace Inner_Maps.Location_Structures {
             position.y -= 0.5f;
             worldPosition = position;
         }
+        public override void OnBuiltNewStructure() {
+            base.OnBuiltNewStructure();
+            if (ProducesDirt()) { ScheduleDirtProduction(); }
+        }
         #endregion
 
         #region Worker
@@ -270,9 +340,91 @@ namespace Inner_Maps.Location_Structures {
         }
         #endregion
 
+        #region Characters
+        protected override void AfterCharacterAddedToLocation(Character p_character) {
+            base.AfterCharacterAddedToLocation(p_character);
+            if (p_character.isNormalCharacter) {
+                if (dirtyObjects.Count >= UncomfortableNeededDirtyObjects) {
+                    p_character.traitContainer.AddTrait(p_character, "Uncomfortable");
+                }    
+            }
+        }
+        #endregion
+
+        #region Dirt
+        private void AddDirtyObject(TileObject p_object) {
+            if (!m_dirtyObjects.Contains(p_object)) {
+                m_dirtyObjects.Add(p_object);
+                
+                //add uncomfortable to all characters currently inside structure if dirty objects reach exactly the needed amount
+                //added checking to be exactly the needed amount since we do not want the effect to stack per object that becomes dirty
+                if (m_dirtyObjects.Count == UncomfortableNeededDirtyObjects) {
+                    for (int i = 0; i < charactersHere.Count; i++) {
+                        Character character = charactersHere[i];
+                        if (character.isNormalCharacter) {
+                            character.traitContainer.AddTrait(character, "Uncomfortable");
+                        }
+                    }
+                }
+            }
+        }
+        private void RemoveDirtyObject(TileObject p_object) {
+            m_dirtyObjects.Remove(p_object);
+        }
+        private bool ProducesDirt() {
+            return structureType.IsVillageStructure() && structureType != STRUCTURE_TYPE.CITY_CENTER && structureType != STRUCTURE_TYPE.CEMETERY && structureType != STRUCTURE_TYPE.PRISON;
+        }
+        private void ScheduleDirtProduction() {
+            GameDate dueDate = GameManager.Instance.Today();
+            dueDate.AddTicks(GameManager.Instance.GetTicksBasedOnHour(6));
+            m_scheduledDirtProduction = dueDate;
+            SchedulingManager.Instance.AddEntry(dueDate, ProduceDirtOnSchedule, null);
+        }
+        private void LoadDirtProduction(GameDate p_date) {
+            m_scheduledDirtProduction = p_date;
+            SchedulingManager.Instance.AddEntry(p_date, ProduceDirtOnSchedule, null);
+        }
+        private void ProduceDirtOnSchedule() {
+            if (hasBeenDestroyed) { return; }
+            List<TileObject> builtTileObjects = RuinarchListPool<TileObject>.Claim();
+            PopulateBuiltTileObjects(builtTileObjects);
+            if (builtTileObjects.Count > 0) {
+                TileObject targetObject = CollectionUtilities.GetRandomElement(builtTileObjects);
+                targetObject.traitContainer.AddTrait(targetObject, "Dirty");
+            }
+            ScheduleDirtProduction();
+        }
+        #endregion
+
+        #region Clean Up Job
+        protected bool TryCreateCleanJob(Character p_worker, out JobQueueItem producedJob) {
+            List<TileObject> wetObjects = RuinarchListPool<TileObject>.Claim();
+            PopulateBuiltTileObjectsThatHaveTrait(wetObjects, "Wet");
+            if (dirtyObjects.Count > 0 || wetObjects.Count > 0) {
+                int chance = 100;
+                if (p_worker.traitContainer.HasTrait("Lazy")) { chance = 6; }
+                if (GameUtilities.RollChance(chance)) {
+                    List<TileObject> cleanChoices = RuinarchListPool<TileObject>.Claim();
+                    cleanChoices.AddRange(dirtyObjects);
+                    cleanChoices.AddRange(wetObjects);
+                    TileObject cleanTarget = CollectionUtilities.GetRandomElement(cleanChoices);
+                    RuinarchListPool<TileObject>.Release(cleanChoices);
+                    if (p_worker.jobComponent.TryCreateCleanItemJob(cleanTarget, out producedJob)) {
+                        RuinarchListPool<TileObject>.Release(wetObjects);
+                        return true;
+                    }
+                }
+            }
+            RuinarchListPool<TileObject>.Release(wetObjects);
+            producedJob = null;
+            return false;
+        }
+        #endregion
+
         public override string GetTestingInfo() {
             string info = base.GetTestingInfo();
             info = $"{info}\n Assigned Worker: {assignedWorker?.name}";
+            info = $"{info}\n Dirty Objects: {m_dirtyObjects?.ComafyList()}";
             return info;
         }
 
@@ -283,7 +435,32 @@ namespace Inner_Maps.Location_Structures {
             if (worker != null) {
                 worker.structureComponent.SetWorkPlaceStructure(this);
             }
+            SaveDataManMadeStructure saveDataManMadeStructure = saveDataLocationStructure as SaveDataManMadeStructure;
+            if (saveDataManMadeStructure.dirtyObjects != null) {
+                for (int i = 0; i < saveDataManMadeStructure.dirtyObjects.Length; i++) {
+                    string dirtyObjectID = saveDataManMadeStructure.dirtyObjects[i];
+                    TileObject tileObject = DatabaseManager.Instance.tileObjectDatabase.GetTileObjectByPersistentID(dirtyObjectID);
+                    dirtyObjects.Add(tileObject);
+                }
+            }
+            if (saveDataManMadeStructure.scheduledDirtProduction.hasValue) {
+                LoadDirtProduction(saveDataManMadeStructure.scheduledDirtProduction);
+            }
         }
         #endregion
+
+        #region TileObjectEventDispatcher.ITraitListener Implementation
+        public void OnTileObjectGainedTrait(TileObject p_tileObject, Trait p_trait) {
+            if (p_trait is Dirty) {
+                AddDirtyObject(p_tileObject);
+            }
+        }
+        public void OnTileObjectLostTrait(TileObject p_tileObject, Trait p_trait) {
+            if (p_trait is Dirty && !p_tileObject.traitContainer.HasTrait("Dirty")) {
+                RemoveDirtyObject(p_tileObject);
+            }
+        }
+        #endregion
+        
     }
 }

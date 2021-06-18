@@ -61,6 +61,8 @@ namespace Inner_Maps.Location_Structures {
             if (tree != null){
                 p_worker.jobComponent.TriggerChopWood(tree, out producedJob);
             }
+            
+            if(TryCreateCleanJob(p_worker, out producedJob)) { return; }
         }
         
         #region Damage

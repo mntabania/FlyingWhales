@@ -114,7 +114,9 @@ namespace Inner_Maps.Location_Structures {
                     return;
                 }
             }
-            RuinarchListPool<Character>.Release(targetAnimals); 
+            RuinarchListPool<Character>.Release(targetAnimals);
+
+            if(TryCreateCleanJob(p_worker, out producedJob)) { return; }
         }
         
         #region Destruction

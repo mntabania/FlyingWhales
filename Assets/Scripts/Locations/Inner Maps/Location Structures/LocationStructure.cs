@@ -681,6 +681,22 @@ namespace Inner_Maps.Location_Structures {
                 }
             }
         }
+        public void PopulateBuiltTileObjects(List<TileObject> p_tileObjects) {
+            for (int i = 0; i < pointsOfInterest.Count; i++) {
+                IPointOfInterest poi = pointsOfInterest.ElementAt(i);
+                if (poi is TileObject tileObject && tileObject.mapObjectState == MAP_OBJECT_STATE.BUILT && tileObject.OccupiesTile()) {
+                    p_tileObjects.Add(tileObject);
+                }
+            }
+        }
+        public void PopulateBuiltTileObjectsThatHaveTrait(List<TileObject> p_tileObjects, string p_trait) {
+            for (int i = 0; i < pointsOfInterest.Count; i++) {
+                IPointOfInterest poi = pointsOfInterest.ElementAt(i);
+                if (poi is TileObject tileObject && tileObject.mapObjectState == MAP_OBJECT_STATE.BUILT && tileObject.OccupiesTile() && tileObject.traitContainer.HasTrait(p_trait)) {
+                    p_tileObjects.Add(tileObject);
+                }
+            }
+        }
         // public void PopulateTileObjectsOfTypeThatIsBlockWallValidForOreVein2(List<LocationGridTile> p_tiles, MapGenerationData p_data) {
         //     for (int i = 0; i < tiles.Count; i++) {
         //         LocationGridTile tile = tiles.ElementAt(i);

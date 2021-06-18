@@ -196,6 +196,8 @@ namespace Inner_Maps.Location_Structures {
             }
             
             RuinarchListPool<TileObject>.Release(piles);
+            
+            if(TryCreateCleanJob(p_worker, out producedJob)) { return; }
         }
 
         public void PopulateMetalsIncave(List<TileObject> availMetals) {

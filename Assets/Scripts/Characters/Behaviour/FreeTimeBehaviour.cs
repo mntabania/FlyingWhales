@@ -245,7 +245,7 @@ public class FreeTimeBehaviour : CharacterBehaviourComponent {
                 if (GameUtilities.RollChance(20, ref log) && !character.behaviourComponent.HasBehaviour(typeof(SocializingBehaviour))) {
                     LocationStructure targetStructure;
                     if (character.homeSettlement.HasStructure(STRUCTURE_TYPE.TAVERN)) {
-                        targetStructure = GameUtilities.RollChance(50) ? character.currentSettlement.GetRandomStructureOfType(STRUCTURE_TYPE.TAVERN) : character.homeSettlement.cityCenter;
+                        targetStructure = GameUtilities.RollChance(50) ? character.homeSettlement.GetRandomStructureOfType(STRUCTURE_TYPE.TAVERN) : character.homeSettlement.cityCenter;
                     } else {
                         targetStructure = character.homeSettlement.cityCenter;
                     }
