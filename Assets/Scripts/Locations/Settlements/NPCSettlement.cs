@@ -1211,6 +1211,22 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
 
         return false;
     }
+    public LocationStructure GetFirstStructureOfTypeThatHasNoWorkerAndIsNotReserved(STRUCTURE_TYPE type) {
+        if (HasStructure(type)) {
+            List<LocationStructure> structuresOfType = structures[type];
+            if (structuresOfType != null && structuresOfType.Count > 0) {
+                for (int i = 0; i < structuresOfType.Count; i++) {
+                    ManMadeStructure s = structuresOfType[i] as ManMadeStructure;
+                    if (!s.HasAssignedWorker()) {
+                        if (!availableJobs.HasJobWithOtherData(JOB_TYPE.CHANGE_CLASS, INTERACTION_TYPE.CHANGE_CLASS, s)) {
+                            return s;
+                        }
+                    }
+                }
+            }
+        }
+        return null;
+    }
     #endregion
 
     #region Inner Map
