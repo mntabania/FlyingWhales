@@ -25,7 +25,9 @@ namespace UtilityScripts {
                     list.Clear();
                     pool.Add(list);
                 } else {
+#if DEBUG_LOG
                     Debug.LogError("Adding a list to pool but is already in list");
+#endif
                 }
             }
         }

@@ -299,6 +299,9 @@ public class SettlementRulerBehaviour : CharacterBehaviourComponent {
         if (!p_settlement.HasResidentThatIsOrCanBecomeClass("Fisher")) {
             return false;
         }
+        if (!p_settlement.settlementJobTriggerComponent.HasTotalResource(RESOURCE.WOOD, STRUCTURE_TYPE.FISHERY.GetResourceBuildCost())) {
+            return false;
+        }
         return true;
     }
     public static bool ShouldBuildButcher(NPCSettlement p_settlement) {
@@ -310,6 +313,9 @@ public class SettlementRulerBehaviour : CharacterBehaviourComponent {
             return false;
         }
         if (!p_settlement.HasResidentThatIsOrCanBecomeClass("Butcher")) {
+            return false;
+        }
+        if (!p_settlement.settlementJobTriggerComponent.HasTotalResource(RESOURCE.STONE, STRUCTURE_TYPE.BUTCHERS_SHOP.GetResourceBuildCost())) {
             return false;
         }
         return true;

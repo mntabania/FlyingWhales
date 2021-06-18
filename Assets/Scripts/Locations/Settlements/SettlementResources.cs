@@ -101,6 +101,20 @@ public class SettlementResources
     public bool HasResourceAmount(NPCSettlement p_settlement, RESOURCE p_resource, int p_amount) {
         if (p_resource == RESOURCE.NONE) { return true; }
         int totalResource = p_settlement.mainStorage.GetTotalResourceInStructure(p_resource);
+        List<LocationStructure> mines = p_settlement.GetStructuresOfType(STRUCTURE_TYPE.MINE);
+        if (mines != null) {
+            for (int i = 0; i < mines.Count; i++) {
+                LocationStructure mine = mines[i];
+                totalResource += mine.GetTotalResourceInStructure(p_resource);
+            }
+        }
+        List<LocationStructure> lumberyards = p_settlement.GetStructuresOfType(STRUCTURE_TYPE.LUMBERYARD);
+        if (lumberyards != null) {
+            for (int i = 0; i < lumberyards.Count; i++) {
+                LocationStructure lumberyard = lumberyards[i];
+                totalResource += lumberyard.GetTotalResourceInStructure(p_resource);
+            }
+        }
         return totalResource >= p_amount;
     }
 

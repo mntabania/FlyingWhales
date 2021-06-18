@@ -216,6 +216,7 @@ public class SettlementVillageMigrationComponent : NPCSettlementComponent {
     #region Migration
     public bool IsMigrationEventAllowed() {
         return WorldSettings.Instance.worldSettingsData.villageSettings.migrationSpeed != MIGRATION_SPEED.None && 
+               owner.locationType == LOCATION_TYPE.VILLAGE &&
                owner.owner != null && owner.residents.Count > 0 && owner.owner.isMajorNonPlayer &&
                WorldSettings.Instance.worldSettingsData.villageSettings.IsMigrationAllowedForFaction(owner.owner.factionType.type) &&  
                (owner.owner.factionType.type == FACTION_TYPE.Human_Empire || owner.owner.factionType.type == FACTION_TYPE.Elven_Kingdom);

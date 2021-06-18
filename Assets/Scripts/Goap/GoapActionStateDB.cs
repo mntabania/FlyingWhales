@@ -474,7 +474,7 @@ public static class GoapActionStateDB {
             new StateNameAndDuration(){ name = "Ice Cleanse Success", status = InteractionManager.Goap_State_Success, duration = 0 },
         } },
         {INTERACTION_TYPE.CLEAN_UP, new[]{
-            new StateNameAndDuration(){ name = "Clean Success", status = InteractionManager.Goap_State_Success, duration = 0 },
+            new StateNameAndDuration(){ name = "Clean Success", status = InteractionManager.Goap_State_Success, duration = 2 },
         } },
         {INTERACTION_TYPE.PATROL, new[]{
             new StateNameAndDuration(){ name = "Patrol Success", status = InteractionManager.Goap_State_Success, duration = 0 },

@@ -190,6 +190,9 @@ namespace Inner_Maps.Location_Structures {
             if (crop != null) {
                 //do harvest crops
                 p_worker.jobComponent.TriggerHarvestCrops(crop, out producedJob);
+                if (producedJob != null) {
+                    return;
+                }
             }
             
             if(TryCreateCleanJob(p_worker, out producedJob)) { return; }
