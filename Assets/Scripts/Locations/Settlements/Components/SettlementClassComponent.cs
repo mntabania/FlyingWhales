@@ -15,6 +15,7 @@ public class SettlementClassComponent : NPCSettlementComponent {
     private readonly List<string> _currentResidentClasses;
 
     private int _currentClassOrderIndex;
+    private bool m_bypass;
 
     public GameDate scheduleDateForProcessingOfNeededClasses { get; private set; }
 
@@ -97,6 +98,7 @@ public class SettlementClassComponent : NPCSettlementComponent {
     }
     private void ProcessNeededClasses() {
         string log = string.Empty;
+        m_bypass = false;
 #if DEBUG_LOG
         log = GameManager.Instance.TodayLogString() + owner.name + " will process needed classes";
         log += "\nINFO:";
@@ -116,12 +118,14 @@ public class SettlementClassComponent : NPCSettlementComponent {
         List<int> sortedFoodProducersSupplyCapacity = RuinarchListPool<int>.Claim();
         List<Character> sortedResourceProducers = RuinarchListPool<Character>.Claim();
         List<int> sortedResourceProducersSupplyCapacity = RuinarchListPool<int>.Claim();
+        List<Character> reservedCombatantCharacters = RuinarchListPool<Character>.Claim();
         for (int i = 0; i < owner.residents.Count; i++) {
             Character c = owner.residents[i];
             if (!c.isDead) {
                 if (c.characterClass.IsCombatant()) {
                     if (reservedCombatantCount < neededCombatants) {
                         c.classComponent.SetShouldChangeClass(false);
+                        reservedCombatantCharacters.Add(c);
                         reservedCombatantCount++;
                     } else {
                         c.classComponent.SetShouldChangeClass(true);
@@ -261,8 +265,27 @@ public class SettlementClassComponent : NPCSettlementComponent {
 
         ProcessNeededFoodProducerClasses(numOfActiveResidents, foodSupplyCapacity, ref log);
         ProcessNeededResourceClasses(numOfActiveResidents, resourceSupplyCapacity, ref log);
-        ProcessNeededCombatantClasses(numOfCombatants, neededCombatants, ref log);
-        ProcessNeededSpecialClasses(numberOfAvailableVillagers, ref log);
+        if (m_bypass) {
+#if DEBUG_LOG
+            log += "\nBypass:";
+            log = GameManager.Instance.TodayLogString() + owner.name + " will NOT process Combatants and special classes because food and resource producers are already available";
+#endif
+            for (int x = 0; x < reservedCombatantCharacters.Count; ++x) {
+                reservedCombatantCharacters[x].classComponent.SetShouldChangeClass(true);
+                reservedCombatantCount--;
+            }
+        } else {
+#if DEBUG_LOG
+            log += "\nNo Bypass:";
+            log = GameManager.Instance.TodayLogString() + owner.name + " will process Combatants and special classes because of bypass";
+#endif
+            ProcessNeededCombatantClasses(numOfCombatants, neededCombatants, ref log);
+            ProcessNeededSpecialClasses(numberOfAvailableVillagers, ref log);
+
+        }
+        RuinarchListPool<Character>.Release(reservedCombatantCharacters);
+        
+
 
 #if DEBUG_LOG
         Debug.Log(log);
@@ -288,6 +311,7 @@ public class SettlementClassComponent : NPCSettlementComponent {
                 log += "\nUnclaimed Farm: " + noWorkerStructure.name;
                 log += "\nCreate Change Class Job to FARMER";
 #endif
+                m_bypass = true;
                 //if there is a Farm in the Village that hasn't been claimed yet
                 //Create Change Class Job To Farmer
                 owner.settlementJobTriggerComponent.TriggerChangeClassJob("Farmer", noWorkerStructure);
@@ -304,6 +328,7 @@ public class SettlementClassComponent : NPCSettlementComponent {
                         log += "\nHas Villager that can become Fisher";
                         log += "\nCreate Change Class Job to FISHER";
 #endif
+                        m_bypass = true;
                         owner.settlementJobTriggerComponent.TriggerChangeClassJob("Fisher", noWorkerStructure);
                     }
                 } else {
@@ -319,6 +344,7 @@ public class SettlementClassComponent : NPCSettlementComponent {
                             log += "\nHas Villager that can become Butcher";
                             log += "\nCreate Change Class Job to BUTCHER";
 #endif
+                            m_bypass = true;
                             owner.settlementJobTriggerComponent.TriggerChangeClassJob("Butcher", noWorkerStructure);
                         }
                     }
@@ -344,6 +370,7 @@ public class SettlementClassComponent : NPCSettlementComponent {
 #endif
                 //if there is a Lumberyard in the Village that hasn't been claimed yet
                 //Create Change Class Job To Logger
+                m_bypass = true;
                 owner.settlementJobTriggerComponent.TriggerChangeClassJob("Logger", noWorkerStructure);
             } else {
                 //if there is a Mine in the Village that hasn't been claimed yet and there is a resident that can become a Miner
@@ -354,6 +381,7 @@ public class SettlementClassComponent : NPCSettlementComponent {
                     log += "\nUnclaimed Mine: " + noWorkerStructure.name;
                     log += "\nCreate Change Class Job to MINER";
 #endif
+                    m_bypass = true;
                     owner.settlementJobTriggerComponent.TriggerChangeClassJob("Miner", noWorkerStructure);
                 }
             }
