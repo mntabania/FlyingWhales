@@ -150,21 +150,31 @@ public class GoapPlanner {
             }
         } else {
             JOB_TYPE jobType = goapThread.job.jobType;
-            if (jobType.IsNeedsTypeJob()) {
-                //If unable to do a Need while in a Trapped Structure, remove Trap Structure.
+            //If unable to do a Need while in a Trapped Structure, remove Trap Structure.
+            if (jobType.IsFullnessRecoveryTypeJob()) {
                 owner.trapStructure.ResetAllTrappedValues();
-                if (owner.partyComponent.isActiveMember) {
-                    if (owner.partyComponent.currentParty.startedTrueRestingState) {
-                        if (jobType.IsFullnessRecoveryTypeJob()) {
-                            owner.traitContainer.AddTrait(owner, "Abstain Fullness");
-                        } else if (jobType.IsTirednessRecoveryTypeJob()) {
-                            owner.traitContainer.AddTrait(owner, "Abstain Tiredness");
-                        } else if (jobType.IsHappinessRecoveryTypeJob()) {
-                            owner.traitContainer.AddTrait(owner, "Abstain Happiness");
-                        }
-                    }
-                }
+                owner.traitContainer.AddTrait(owner, "Abstain Fullness");
+            } else if (jobType.IsTirednessRecoveryTypeJob()) {
+                owner.trapStructure.ResetAllTrappedValues();
+                owner.traitContainer.AddTrait(owner, "Abstain Tiredness");
+            } else if (jobType.IsHappinessRecoveryTypeJob()) {
+                owner.trapStructure.ResetAllTrappedValues();
+                owner.traitContainer.AddTrait(owner, "Abstain Happiness");
             }
+            //if (jobType.IsNeedsTypeJob()) {
+            //If unable to do a Need while in a Trapped Structure, remove Trap Structure.
+            //if (owner.partyComponent.isActiveMember) {
+            //    if (owner.partyComponent.currentParty.startedTrueRestingState) {
+            //        if (jobType.IsFullnessRecoveryTypeJob()) {
+            //            owner.traitContainer.AddTrait(owner, "Abstain Fullness");
+            //        } else if (jobType.IsTirednessRecoveryTypeJob()) {
+            //            owner.traitContainer.AddTrait(owner, "Abstain Tiredness");
+            //        } else if (jobType.IsHappinessRecoveryTypeJob()) {
+            //            owner.traitContainer.AddTrait(owner, "Abstain Happiness");
+            //        }
+            //    }
+            //}
+            //}
             if (goapThread.recalculationPlan == null) {
                 //This means that the planner cannot create a new plan
                 if (goapThread.job.targetPOI != null) {
