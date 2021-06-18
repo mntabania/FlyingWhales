@@ -15,6 +15,7 @@ public class SettlementPartyComponent : NPCSettlementComponent {
     public SettlementPartyComponent() {
     }
     public SettlementPartyComponent(SaveDataSettlementPartyComponent data) {
+        scheduleDateForProcessingOfPartyQuests = data.scheduleDateForProcessingOfPartyQuests;
     }
 
     #region Party Quests
@@ -155,11 +156,8 @@ public class SettlementPartyComponent : NPCSettlementComponent {
                     log += "\nNo occupied village spot, will not hunt";
 #endif
                 }
-
             }
-
         }
-
 #if DEBUG_LOG
         Debug.Log(log);
 #endif
