@@ -273,9 +273,13 @@ public class DepositResourcePile : GoapAction {
         }
 
         if (goapNode.associatedJobType == JOB_TYPE.STEAL_RAID) {
-            if (goapNode.actor.partyComponent.hasParty && goapNode.actor.partyComponent.currentParty.isActive && goapNode.actor.partyComponent.currentParty.currentQuest is RaidPartyQuest quest) {
-                quest.SetIsSuccessful(true);
-                if(!quest.TryTriggerRetreat("Raid is successful")) {
+            if (goapNode.actor.partyComponent.hasParty && goapNode.actor.partyComponent.currentParty.isActive) {
+                if (goapNode.actor.partyComponent.currentParty.currentQuest is RaidPartyQuest quest) {
+                    quest.SetIsSuccessful(true);
+                    if (!quest.TryTriggerRetreat("Raid is successful")) {
+                        goapNode.actor.partyComponent.currentParty.RemoveMemberThatJoinedQuest(goapNode.actor);
+                    }
+                } else {
                     goapNode.actor.partyComponent.currentParty.RemoveMemberThatJoinedQuest(goapNode.actor);
                 }
             }
