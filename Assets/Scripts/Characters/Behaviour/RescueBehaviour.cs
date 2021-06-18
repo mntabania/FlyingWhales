@@ -68,9 +68,9 @@ public class RescueBehaviour : CharacterBehaviourComponent {
                                 quest.EndQuest("Target is safe");
                                 //if target is paralyzed carry back home
                                 if (quest.targetCharacter.traitContainer.HasTrait("Paralyzed")) {
-                                    if (!quest.targetCharacter.IsPOICurrentlyTargetedByAPerformingAction(JOB_TYPE.MOVE_CHARACTER)) {
+                                    if (!quest.targetCharacter.IsPOICurrentlyTargetedByAPerformingAction(JOB_TYPE.RESCUE_MOVE_CHARACTER)) {
                                         //Do not set this as a party job
-                                        character.jobComponent.TryTriggerMoveCharacter(quest.targetCharacter, out producedJob, false);
+                                        character.jobComponent.TryTriggerRescueMoveCharacter(quest.targetCharacter, out producedJob, false);
                                     }
                                 }
                                 return true;

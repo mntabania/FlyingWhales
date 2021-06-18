@@ -887,6 +887,7 @@ public static class Extensions {
             case JOB_TYPE.MOVE_CHARACTER:
             case JOB_TYPE.CAPTURE_CHARACTER:
             case JOB_TYPE.TRITON_KIDNAP:
+            case JOB_TYPE.RESCUE_MOVE_CHARACTER:
                 priority = 926;
                 break;
             case JOB_TYPE.GO_TO:
@@ -1266,6 +1267,7 @@ public static class Extensions {
             case JOB_TYPE.SNATCH:
             case JOB_TYPE.MONSTER_ABDUCT:
             case JOB_TYPE.SNATCH_RESTRAIN:
+            case JOB_TYPE.RESCUE_MOVE_CHARACTER:
                 return false;
             default:
                 return true;

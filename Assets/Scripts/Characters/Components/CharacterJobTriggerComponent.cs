@@ -747,6 +747,26 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
         }
         return false;
     }
+    public bool TryTriggerRescueMoveCharacter(Character targetCharacter, out JobQueueItem producedJob, bool doNotRecalculate = false) {
+        producedJob = null;
+        if (!targetCharacter.HasJobTargetingThis(JOB_TYPE.RESCUE_MOVE_CHARACTER)) {
+            LocationStructure dropLocationStructure = owner.homeSettlement?.GetFirstStructureOfType(STRUCTURE_TYPE.CITY_CENTER);
+            if (dropLocationStructure == null) {
+                dropLocationStructure = owner.homeSettlement?.GetRandomStructure();
+            }
+            if (dropLocationStructure == null) {
+                dropLocationStructure = owner.homeStructure;
+            }
+            if (dropLocationStructure != null) {
+                GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.RESCUE_MOVE_CHARACTER, INTERACTION_TYPE.DROP, targetCharacter, owner);
+                job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { dropLocationStructure });
+                job.SetDoNotRecalculate(doNotRecalculate);
+                producedJob = job;
+                return true;
+            }
+        }
+        return false;
+    }
     public bool TryTriggerHaulAnimalCorpse(Character targetCharacter, out JobQueueItem producedJob, bool doNotRecalculate = false) {
         producedJob = null;
         if (!targetCharacter.HasJobTargetingThis(JOB_TYPE.HAUL_ANIMAL_CORPSE)) {
