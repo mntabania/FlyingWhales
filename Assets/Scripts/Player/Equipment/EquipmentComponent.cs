@@ -77,6 +77,11 @@ public class EquipmentComponent {
         if (p_newItem is AccessoryItem) {
             SetAccessory(p_newItem, p_targetCharacter, p_initializedStackCountOnly);
         }
+
+        Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "Equip Item", "equipped_item", null, LOG_TAG.Major);
+        log.AddToFillers(p_targetCharacter, p_targetCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+        log.AddToFillers(p_newItem, p_newItem.name, LOG_IDENTIFIER.ITEM_1);
+        log.AddLogToDatabase();
     }
 
     public void RemoveEquipment(EquipmentItem p_removedItem, Character p_targetCharacter) {
@@ -128,6 +133,43 @@ public class EquipmentComponent {
 
     public bool HasEquips() {
         return (currentWeapon != null || currentArmor != null || currentAccessory != null);
+    }
+
+    public bool EvaluateNewEquipment(EquipmentItem p_newEquipment, Character p_character) {
+        CharacterClassData characterClassData = CharacterManager.Instance.GetOrCreateCharacterClassData(p_character.characterClass.className);
+        if (!characterClassData.craftableAccessories.Contains(p_newEquipment.tileObjectType) &&
+            !characterClassData.craftableArmors.Contains(p_newEquipment.tileObjectType) &&
+            !characterClassData.craftableWeapons.Contains(p_newEquipment.tileObjectType)) {
+            return false;
+        } 
+        if (p_newEquipment is WeaponItem) {
+            if (currentWeapon != null) {
+                if (currentWeapon.equipmentData.tier < p_newEquipment.equipmentData.tier) {
+                    return true;
+                }
+            } else {
+                return true;
+            }  
+        }
+        if (p_newEquipment is ArmorItem) {
+            if (currentArmor != null) {
+                if (currentArmor.equipmentData.tier < p_newEquipment.equipmentData.tier) {
+                    return true;
+                }
+            } else {
+                return true;
+            }
+        }
+        if (p_newEquipment is AccessoryItem) {
+            if (currentAccessory != null) {
+                if (currentAccessory.equipmentData.tier < p_newEquipment.equipmentData.tier) {
+                    return true;
+                }
+            } else {
+                return true;
+            }
+        }
+        return false;
     }
 }
 
