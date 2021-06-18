@@ -290,9 +290,9 @@ namespace Ruinarch {
             }
             currentCursorType = type;
             Cursor.SetCursor(cursors[type], hotSpot, cursorMode);
-// #if DEBUG_LOG
-//             Debug.Log($"Set cursor to {currentCursorType.ToString()}");
-// #endif
+#if DEBUG_LOG
+            Debug.Log($"Set cursor to {currentCursorType.ToString()}");
+#endif
         }
         public void RevertToPreviousCursor() {
             SetCursorTo(previousCursorType);

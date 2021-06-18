@@ -85,13 +85,13 @@ namespace Factions.Faction_Types {
             return CRIME_SEVERITY.None;
         }
         public override StructureSetting ProcessStructureSetting(StructureSetting p_setting, NPCSettlement p_settlement) {
-            if (p_settlement.SettlementResources.HasResourceAmount(p_settlement, p_setting.resource, p_setting.structureType.GetResourceBuildCost())) {
+            if (p_settlement.settlementJobTriggerComponent.HasTotalResource(p_setting.resource, p_setting.structureType.GetResourceBuildCost())) {
                 //if settlement has that resource amount then use default setting
                 return p_setting;
             } else {
                 //if settlement doesn't have that resource amount then check if other resource is available.
                 RESOURCE otherResource = p_setting.resource == RESOURCE.WOOD ? RESOURCE.STONE : RESOURCE.WOOD;
-                if (p_settlement.SettlementResources.HasResourceAmount(p_settlement, otherResource, p_setting.structureType.GetResourceBuildCost())) {
+                if (p_settlement.settlementJobTriggerComponent.HasTotalResource(otherResource, p_setting.structureType.GetResourceBuildCost())) {
                     return new StructureSetting(p_setting.structureType, otherResource, p_setting.isCorrupted);
                 } else {
                     return p_setting;    
@@ -102,7 +102,7 @@ namespace Factions.Faction_Types {
             if (!structureType.RequiresResourceToBuild()) { return new StructureSetting(structureType, RESOURCE.NONE); }
             if (structureType == STRUCTURE_TYPE.FISHERY) { return new StructureSetting(structureType, RESOURCE.WOOD); }
             if (structureType == STRUCTURE_TYPE.BUTCHERS_SHOP) { return new StructureSetting(structureType, RESOURCE.STONE); }
-            if (p_settlement.SettlementResources.HasResourceAmount(p_settlement, RESOURCE.WOOD, structureType.GetResourceBuildCost())) {
+            if (p_settlement.settlementJobTriggerComponent.HasTotalResource(RESOURCE.WOOD, structureType.GetResourceBuildCost())) {
                 return new StructureSetting(structureType, RESOURCE.WOOD);
             } else {
                 return new StructureSetting(structureType, RESOURCE.STONE);
