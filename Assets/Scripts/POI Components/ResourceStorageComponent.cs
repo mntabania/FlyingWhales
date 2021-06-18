@@ -43,6 +43,7 @@ public class ResourceStorageComponent {
         //maxResourceValues = p_data.maxResources;
         specificStoredResources = p_data.specificStoredResources;
         _specificStoredResourcesCopy = new Dictionary<CONCRETE_RESOURCES, int>();
+        _storedResourcesCopy = new Dictionary<RESOURCE, int>();
     }
 
     #region Resource Management

@@ -256,21 +256,22 @@ public class DropRestrained : GoapAction {
             }
         }
 
-        if (goapNode.associatedJobType == JOB_TYPE.KIDNAP_RAID) {
+        if (goapNode.associatedJobType == JOB_TYPE.KIDNAP_RAID || goapNode.associatedJobType == JOB_TYPE.KIDNAP) {
             if (goapNode.actor.partyComponent.hasParty && goapNode.actor.partyComponent.currentParty.isActive && goapNode.actor.partyComponent.currentParty.currentQuest is RaidPartyQuest quest) {
                 quest.SetIsSuccessful(true);
                 if (!quest.TryTriggerRetreat("Raid is successful")) {
                     goapNode.actor.partyComponent.currentParty.RemoveMemberThatJoinedQuest(goapNode.actor);
                 }
             }
-        } else if (goapNode.associatedJobType == JOB_TYPE.KIDNAP) {
-            if (goapNode.actor.partyComponent.hasParty && goapNode.actor.partyComponent.currentParty.isActive
-                && (goapNode.actor.partyComponent.currentParty.currentQuest is ExterminationPartyQuest || goapNode.actor.partyComponent.currentParty.currentQuest is ExplorationPartyQuest)) {
-                if (!goapNode.actor.partyComponent.currentParty.currentQuest.TryTriggerRetreat("Quest is successful")) {
-                    goapNode.actor.partyComponent.currentParty.RemoveMemberThatJoinedQuest(goapNode.actor);
-                }
-            }
         }
+        //else if (goapNode.associatedJobType == JOB_TYPE.KIDNAP) {
+        //    if (goapNode.actor.partyComponent.hasParty && goapNode.actor.partyComponent.currentParty.isActive
+        //        && (goapNode.actor.partyComponent.currentParty.currentQuest is ExterminationPartyQuest || goapNode.actor.partyComponent.currentParty.currentQuest is ExplorationPartyQuest)) {
+        //        if (!goapNode.actor.partyComponent.currentParty.currentQuest.TryTriggerRetreat("Quest is successful")) {
+        //            goapNode.actor.partyComponent.currentParty.RemoveMemberThatJoinedQuest(goapNode.actor);
+        //        }
+        //    }
+        //}
     }
 #endregion
 }

@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: eb8e6d0a90de4764a5b7b75189e1ffa2, type: 3}
-  m_Name: TREE_OBJECT
+  m_Name: SMALL_TREE_OBJECT
   m_EditorClassIdentifier: 
   defaultTileMapAsset: {fileID: 11400000, guid: 2e58fd5b2fae6c04d9113fc8182a44ae,
     type: 2}
