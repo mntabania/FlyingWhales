@@ -1466,10 +1466,13 @@ public class CharacterMarker : MapObjectVisual<Character> {
     public void AddUnprocessedAction(ActualGoapNode action) {
         if (!unprocessedActionsOnly.Contains(action)) {
             unprocessedActionsOnly.Add(action);
+            action.IncreaseReactionCounter();
         }
     }
     public void RemoveUnprocessedAction(ActualGoapNode action) {
-        unprocessedActionsOnly.Remove(action);
+        if (unprocessedActionsOnly.Remove(action)) {
+            action.DecreaseReactionCounter();
+        }
     }
     public void RemoveUnprocessedPOI(IPointOfInterest poi) {
         unprocessedVisionPOIs.Remove(poi);
@@ -1480,6 +1483,9 @@ public class CharacterMarker : MapObjectVisual<Character> {
         unprocessedVisionPOIInterruptsOnly.Clear();
     }
     public void ClearUnprocessedActions() {
+        for (int i = 0; i < unprocessedActionsOnly.Count; i++) {
+            unprocessedActionsOnly[i].DecreaseReactionCounter();
+        }
         unprocessedActionsOnly.Clear();
     }
     public bool HasUnprocessedPOI(IPointOfInterest poi) {

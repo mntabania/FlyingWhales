@@ -49,7 +49,7 @@ namespace Traits {
                         character.stateComponent.ExitCurrentState();
                     } 
 
-                    ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.RETURN_HOME], character, character, null, 0);
+                    ActualGoapNode node = ObjectPoolManager.Instance.CreateNewAction(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.RETURN_HOME], character, character, null, 0);
                     GoapPlan goapPlan = ObjectPoolManager.Instance.CreateNewGoapPlan(node, character);
                     GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.TRIGGER_FLAW, INTERACTION_TYPE.RETURN_HOME, character, character);
                     goapPlan.SetDoNotRecalculate(true);

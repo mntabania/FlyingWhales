@@ -20,6 +20,7 @@ public class ActionIntel : IIntel, IDisposable {
         this.node = node;
         DatabaseManager.Instance.mainSQLDatabase.SetLogIntelState(log.persistentID, true);
         Messenger.AddListener<Character>(CharacterSignals.CHARACTER_CHANGED_NAME, OnCharacterChangedName);
+        node.SetIsIntel(true);
     }
     public ActionIntel(SaveDataActionIntel data) {
         node = DatabaseManager.Instance.actionDatabase.GetActionByPersistentID(data.node);

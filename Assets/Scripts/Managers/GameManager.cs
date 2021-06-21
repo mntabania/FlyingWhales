@@ -784,6 +784,18 @@ public class GameManager : BaseMonoBehaviour {
         log.DetermineInitialLogText();
         return log;
     }
+    public static Log CreateNewLog(GameDate date, string category, string file, string key, List<LOG_TAG> providedTags, ActualGoapNode node = null) {
+        Log log = CreateNewLog();
+        log.SetPersistentID(UtilityScripts.Utilities.GetNewUniqueID());
+        log.SetDate(date);
+        log.SetCategory(category);
+        log.SetFile(file);
+        log.SetKey(key);
+        log.SetConnectedAction(node);
+        log.AddTag(providedTags);
+        log.DetermineInitialLogText();
+        return log;
+    }
     public static Log CreateNewLog(GameDate date, string category, string file, string key, ActualGoapNode node = null, LOG_TAG providedTags = LOG_TAG.Work) {
         Log log = CreateNewLog();
         log.SetPersistentID(UtilityScripts.Utilities.GetNewUniqueID());

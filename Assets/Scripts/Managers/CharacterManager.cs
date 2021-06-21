@@ -459,7 +459,7 @@ public class CharacterManager : BaseMonoBehaviour {
         ConstructCharacterBehaviours();
         ConstructDailySchedules();
         CreateVillagerWantInstances();
-        Messenger.AddListener<ActualGoapNode>(JobSignals.CHARACTER_FINISHED_ACTION, OnCharacterFinishedAction);
+        Messenger.AddListener<Character, IPointOfInterest, INTERACTION_TYPE, ACTION_STATUS>(JobSignals.CHARACTER_FINISHED_ACTION, OnCharacterFinishedAction);
         Messenger.AddListener<string, string>(CharacterSignals.RENAME_CHARACTER, OnRenameCharacter);
     }
 
@@ -1423,10 +1423,10 @@ public class CharacterManager : BaseMonoBehaviour {
     #endregion
 
     #region Listeners
-    private void OnCharacterFinishedAction(ActualGoapNode node) {
-        if (node.actor.marker) {
+    private void OnCharacterFinishedAction(Character p_actor, IPointOfInterest p_target, INTERACTION_TYPE p_type, ACTION_STATUS p_status) {
+        if (p_actor.marker) {
             //node.actor.marker.UpdateActionIcon();
-            node.actor.marker.UpdateAnimation();
+            p_actor.marker.UpdateAnimation();
         }
         //for (int i = 0; i < actor.marker.inVisionCharacters.Count; i++) {
         //    Character otherCharacter = actor.marker.inVisionCharacters[i];

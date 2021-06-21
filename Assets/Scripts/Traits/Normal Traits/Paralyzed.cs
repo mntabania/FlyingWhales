@@ -24,7 +24,7 @@ namespace Traits {
             base.LoadTraitOnLoadTraitContainer(addTo);
             if (addTo is Character) {
                 owner = addTo as Character;
-                Messenger.AddListener<ActualGoapNode>(JobSignals.CHARACTER_FINISHED_ACTION, OnCharacterFinishedAction);
+                Messenger.AddListener<Character, IPointOfInterest, INTERACTION_TYPE, ACTION_STATUS>(JobSignals.CHARACTER_FINISHED_ACTION, OnCharacterFinishedAction);
             }
         }
         #endregion
@@ -34,7 +34,7 @@ namespace Traits {
             base.OnAddTrait(addedTo);
             if (addedTo is Character character) {
                 owner = character;
-                Messenger.AddListener<ActualGoapNode>(JobSignals.CHARACTER_FINISHED_ACTION, OnCharacterFinishedAction);
+                Messenger.AddListener<Character, IPointOfInterest, INTERACTION_TYPE, ACTION_STATUS>(JobSignals.CHARACTER_FINISHED_ACTION, OnCharacterFinishedAction);
                 if (GameUtilities.RollChance(15) && character.homeSettlement != null && //15 
                     Locations.Settlements.Settlement_Events.PlaguedEvent.HasMinimumAmountOfPlaguedVillagersForEvent(character.homeSettlement) && 
                     !character.homeSettlement.eventManager.HasActiveEvent(SETTLEMENT_EVENT.Plagued_Event) && character.homeSettlement.eventManager.CanHaveEvents()) {
@@ -44,7 +44,7 @@ namespace Traits {
         }
         public override void OnRemoveTrait(ITraitable sourceCharacter, Character removedBy) {
             if (owner != null) {
-                Messenger.RemoveListener<ActualGoapNode>(JobSignals.CHARACTER_FINISHED_ACTION, OnCharacterFinishedAction);
+                Messenger.RemoveListener<Character, IPointOfInterest, INTERACTION_TYPE, ACTION_STATUS>(JobSignals.CHARACTER_FINISHED_ACTION, OnCharacterFinishedAction);
             }
             base.OnRemoveTrait(sourceCharacter, removedBy);
         }
@@ -77,8 +77,8 @@ namespace Traits {
         }
 
         #region Carry/Drop
-        private void OnCharacterFinishedAction(ActualGoapNode node) {
-            if (node.action.goapType == INTERACTION_TYPE.DROP && node.poiTarget == this.owner) {
+        private void OnCharacterFinishedAction(Character p_actor, IPointOfInterest p_target, INTERACTION_TYPE p_type, ACTION_STATUS p_status) {
+            if (p_type == INTERACTION_TYPE.DROP && p_target == this.owner) {
                 if (this.owner.gridTileLocation.tileObjectComponent.objHere != null && this.owner.gridTileLocation.tileObjectComponent.objHere is Bed) {
                     CreateActualSleepJob(this.owner.gridTileLocation.tileObjectComponent.objHere as Bed);
                 } else if (this.owner.gridTileLocation.structure == this.owner.homeStructure) {

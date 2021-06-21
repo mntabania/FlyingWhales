@@ -14,7 +14,7 @@ public interface IReactable {
     bool isStealth { get; }
     CRIME_TYPE crimeType { get; }
     List<Character> awareCharacters { get; }
-    LOG_TAG[] logTags { get; }
+    List<LOG_TAG> logTags { get; }
     string ReactionToActor(Character actor, IPointOfInterest target, Character witness, REACTION_STATUS status);
     string ReactionToTarget(Character actor, IPointOfInterest target, Character witness, REACTION_STATUS status);
     string ReactionOfTarget(Character actor, IPointOfInterest target, REACTION_STATUS status);
@@ -38,7 +38,7 @@ public interface IRumorable {
     bool isStealth { get; }
     CRIME_TYPE crimeType { get; }
     List<Character> awareCharacters { get; }
-    LOG_TAG[] logTags { get; }
+    List<LOG_TAG> logTags { get; }
     void SetAsRumor(Rumor rumor);
     void AddAwareCharacter(Character character);
     string ReactionToActor(Character actor, IPointOfInterest target, Character witness, REACTION_STATUS status);

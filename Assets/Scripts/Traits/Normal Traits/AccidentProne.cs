@@ -67,7 +67,7 @@ namespace Traits {
         #endregion
 
         //private void DoStumble() {
-        //    ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.STUMBLE], owner, owner, null, 0);
+        //    ActualGoapNode node = ObjectPoolManager.Instance.CreateNewAction(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.STUMBLE], owner, owner, null, 0);
         //    GoapPlan goapPlan = ObjectPoolManager.Instance.CreateNewGoapPlan(node, owner);
         //    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.INTERRUPTION, INTERACTION_TYPE.STUMBLE, owner, owner);
         //    goapPlan.SetDoNotRecalculate(true);
@@ -80,7 +80,7 @@ namespace Traits {
         //}
 
         //private void DoAccident(GoapAction action) {
-        //    ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.ACCIDENT], owner, owner, new object[] { action }, 0);
+        //    ActualGoapNode node = ObjectPoolManager.Instance.CreateNewAction(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.ACCIDENT], owner, owner, new object[] { action }, 0);
         //    GoapPlan goapPlan = ObjectPoolManager.Instance.CreateNewGoapPlan(node, owner);
         //    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.INTERRUPTION, INTERACTION_TYPE.ACCIDENT, owner, owner);
         //    goapPlan.SetDoNotRecalculate(true);

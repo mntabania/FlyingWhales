@@ -678,7 +678,7 @@ public class GoapPlanner {
                 int nodeIndex = tempNodeIndexHolder[0];
                 GoapNode rawNode = rawPlan[nodeIndex];
                 OtherData[] data = job.GetOtherDataFor(rawNode.action.goapType);
-                ActualGoapNode actualNode = new ActualGoapNode(rawNode.action, owner, rawNode.target, data, rawNode.cost);
+                ActualGoapNode actualNode = ObjectPoolManager.Instance.CreateNewAction(rawNode.action, owner, rawNode.target, data, rawNode.cost);
                 //SingleJobNode singleJobNode = new SingleJobNode(actualNode);
                 SingleJobNode singleJobNode = ObjectPoolManager.Instance.CreateNewSingleJobNode();
                 singleJobNode.SetActionNode(actualNode);

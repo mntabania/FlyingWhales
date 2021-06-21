@@ -17,7 +17,7 @@ public class TendFarmBehaviour : CharacterBehaviourComponent {
             CornCrop crop = character.homeSettlement.GetFirstTileObjectFromStructuresThatIsUntended<CornCrop>(STRUCTURE_TYPE.FARM);
             if (crop != null) {
                 CornCrop chosenCrop = crop;
-                ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.TEND], character, chosenCrop, null, 0);
+                ActualGoapNode node = ObjectPoolManager.Instance.CreateNewAction(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.TEND], character, chosenCrop, null, 0);
                 GoapPlan goapPlan = ObjectPoolManager.Instance.CreateNewGoapPlan(node, chosenCrop);
                 GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.TEND_FARM, INTERACTION_TYPE.TEND, chosenCrop, character);
                 goapPlan.SetDoNotRecalculate(true);

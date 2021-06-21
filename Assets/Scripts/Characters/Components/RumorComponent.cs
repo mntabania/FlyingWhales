@@ -233,7 +233,7 @@ public class RumorComponent : CharacterComponent {
             } else if (identifier == CharacterManager.Drink_Blood) {
                 actionType = INTERACTION_TYPE.DRINK_BLOOD;
             }
-            ActualGoapNode action = new ActualGoapNode(InteractionManager.Instance.goapActionData[actionType], rumoredCharacter, targetOfRumoredCharacter, null, 0);
+            ActualGoapNode action = ObjectPoolManager.Instance.CreateNewAction(InteractionManager.Instance.goapActionData[actionType], rumoredCharacter, targetOfRumoredCharacter, null, 0);
             if (identifier == CharacterManager.Poison_Food) {
                 if(targetOfRumoredCharacter.gridTileLocation != null) {
                     action.SetTargetStructure(targetOfRumoredCharacter.gridTileLocation.structure);
@@ -251,7 +251,7 @@ public class RumorComponent : CharacterComponent {
     }
     public Rumor CreateNewRumor(Character rumoredCharacter, IPointOfInterest targetOfRumoredCharacter, INTERACTION_TYPE actionType) {
         if (rumoredCharacter != null && targetOfRumoredCharacter != null) {
-            ActualGoapNode action = new ActualGoapNode(InteractionManager.Instance.goapActionData[actionType], rumoredCharacter, targetOfRumoredCharacter, null, 0);
+            ActualGoapNode action = ObjectPoolManager.Instance.CreateNewAction(InteractionManager.Instance.goapActionData[actionType], rumoredCharacter, targetOfRumoredCharacter, null, 0);
             if (actionType == INTERACTION_TYPE.POISON) {
                 if (targetOfRumoredCharacter.gridTileLocation != null) {
                     action.SetTargetStructure(targetOfRumoredCharacter.gridTileLocation.structure);

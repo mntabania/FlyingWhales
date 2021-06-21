@@ -64,13 +64,13 @@ public class AssumptionComponent : CharacterComponent {
         Messenger.Broadcast(JobSignals.CHARACTER_ASSUMED, owner, assumedCharacter, targetOfAssumedCharacter);
     }
     private Assumption CreateNewAssumption(Character assumedCharacter, IPointOfInterest targetOfAssumedCharacter, INTERACTION_TYPE assumedActionType) {
-        ActualGoapNode assumedAction = new ActualGoapNode(InteractionManager.Instance.goapActionData[assumedActionType], assumedCharacter, targetOfAssumedCharacter, null, 0);
+        ActualGoapNode assumedAction = ObjectPoolManager.Instance.CreateNewAction(InteractionManager.Instance.goapActionData[assumedActionType], assumedCharacter, targetOfAssumedCharacter, null, 0);
         Assumption assumption = new Assumption(owner, assumedCharacter);
         assumedAction.SetAsAssumption(assumption);
         return assumption;
     }
     public ActualGoapNode CreateNewActionToReactTo(Character actor, IPointOfInterest target, INTERACTION_TYPE actionType) {
-        ActualGoapNode assumedAction = new ActualGoapNode(InteractionManager.Instance.goapActionData[actionType], actor, target, null, 0);
+        ActualGoapNode assumedAction = ObjectPoolManager.Instance.CreateNewAction(InteractionManager.Instance.goapActionData[actionType], actor, target, null, 0);
         assumedAction.SetAsIllusion();
         assumedAction.SetCrimeType();
         return assumedAction;

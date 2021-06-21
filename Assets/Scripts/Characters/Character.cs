@@ -3694,7 +3694,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         //}
     }
     public void PlanIdle(JOB_TYPE jobType, INTERACTION_TYPE type, IPointOfInterest target, OtherData[] otherData = null) {
-        ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[type], this, target, otherData, 0);
+        ActualGoapNode node = ObjectPoolManager.Instance.CreateNewAction(InteractionManager.Instance.goapActionData[type], this, target, otherData, 0);
         GoapPlan goapPlan = ObjectPoolManager.Instance.CreateNewGoapPlan(node, target);
         GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType, type, target, this);
         goapPlan.SetDoNotRecalculate(true);
@@ -3710,7 +3710,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         //PlanGoapActions(goapAction);
     }
     public void PlanFixedJob(JOB_TYPE jobType, INTERACTION_TYPE type, IPointOfInterest target, out JobQueueItem producedJob, OtherData[] otherData = null) {
-        ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[type], this, target, otherData, 0);
+        ActualGoapNode node = ObjectPoolManager.Instance.CreateNewAction(InteractionManager.Instance.goapActionData[type], this, target, otherData, 0);
         GoapPlan goapPlan = ObjectPoolManager.Instance.CreateNewGoapPlan(node, target);
         GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType, type, target, this);
         goapPlan.SetDoNotRecalculate(true);
@@ -3719,7 +3719,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         producedJob = job;
     }
     public void PlanFixedJob(JOB_TYPE jobType, INTERACTION_TYPE type, IPointOfInterest target, OtherData[] otherData = null) {
-        ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[type], this, target, otherData, 0);
+        ActualGoapNode node = ObjectPoolManager.Instance.CreateNewAction(InteractionManager.Instance.goapActionData[type], this, target, otherData, 0);
         GoapPlan goapPlan = ObjectPoolManager.Instance.CreateNewGoapPlan(node, target);
         GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType, type, target, this);
         goapPlan.SetDoNotRecalculate(true);

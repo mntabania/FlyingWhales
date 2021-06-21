@@ -39,6 +39,7 @@ public class ObjectPoolManager : MonoBehaviour {
     private List<SingleJobNode> _jobNodePool;
     private List<GoapPlan> _goapPlanPool;
     private List<CharacterTalent> _characterTalentPool;
+    private List<ActualGoapNode> _actionPool;
 
     private List<List<GoapEffect>> _expectedEffectsListPool;
     private List<List<Precondition>> _preconditionsListPool;
@@ -114,6 +115,7 @@ public class ObjectPoolManager : MonoBehaviour {
         ConstructSingleJobNodePool();
         ConstructGoapPlanPool();
         ConstructCharacterTalentPool();
+        ConstructActionPool();
         
         InitialPoolObjectCreation("TILEOBJECTGAMEOBJECT", 10000);
     }
@@ -819,6 +821,58 @@ public class ObjectPoolManager : MonoBehaviour {
     public void ReturnCharacterTalentToPool(CharacterTalent data) {
         data.Reset();
         _characterTalentPool.Add(data);
+    }
+    #endregion
+
+    #region Actions
+    private void ConstructActionPool() {
+        _actionPool = new List<ActualGoapNode>();
+    }
+    public ActualGoapNode CreateNewAction(GoapAction action, Character actor, IPointOfInterest poiTarget, OtherData[] otherData, int cost) {
+        ActualGoapNode actionNode = CreateNewAction();
+        if (actionNode.isAssigned) {
+            Debug.LogError("Action is still assigned to: " + actionNode.actor.name + ", " + actionNode.action.name + ", " + actionNode.poiTarget.name);
+        } else {
+            actionNode.isAssigned = true;
+            actionNode.SetActionData(action, actor, poiTarget, otherData, cost);
+        }
+        return actionNode;
+    }
+    private ActualGoapNode CreateNewAction() {
+        if (_actionPool.Count > 0) {
+            ActualGoapNode data = _actionPool[0];
+#if DEBUG_LOG
+            if (data == null) {
+                Debug.LogError($"Action is null!");
+            }
+#endif
+            _actionPool.RemoveAt(0);
+            // #if DEBUG_LOG
+            //             Debug.Log($"Took new job from plan object pool with id {data.id}");
+            // #endif
+            return data;
+        }
+        return new ActualGoapNode();
+    }
+    public void ReturnActionToPool(ActualGoapNode data) {
+        if (data != null) {
+
+            if (!_actionPool.Contains(data)) {
+#if DEBUG_LOG
+                Debug.Log($"Returned action to pool:\n {data}");
+#endif
+                _actionPool.Add(data);
+            } else {
+#if DEBUG_LOG
+                Debug.LogError($"{data} has duplicate in pool");
+#endif
+            }
+            data.Reset();
+        } else {
+#if DEBUG_LOG
+            Debug.LogError($"Action is null, will not return to pool!");
+#endif
+        }
     }
     #endregion
 

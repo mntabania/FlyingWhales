@@ -16,7 +16,7 @@ public class CreateBlackmailData : PlayerAction {
     public override void ActivateAbility(IPointOfInterest targetPOI) {
         if (targetPOI is Character targetCharacter) {
             Assert.IsTrue(targetCharacter.currentStructure is DemonicStructure);
-            ActualGoapNode action = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.IS_IMPRISONED], targetCharacter, targetCharacter, new OtherData[] {
+            ActualGoapNode action = ObjectPoolManager.Instance.CreateNewAction(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.IS_IMPRISONED], targetCharacter, targetCharacter, new OtherData[] {
                 new LocationStructureOtherData(targetCharacter.currentStructure)
             }, 0);
             action.SetAsIllusion();

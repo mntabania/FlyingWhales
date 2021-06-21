@@ -138,6 +138,7 @@ namespace Interrupts {
         public string reason { get; private set; }
         public CRIME_TYPE crimeType { get; private set; }
         public bool shouldNotBeObjectPooled { get; private set; }
+        public List<LOG_TAG> logTags { get; private set; }
 
         #region getters
         public string name => interrupt.name;
@@ -149,13 +150,13 @@ namespace Interrupts {
         public CRIMABLE_TYPE crimableType => CRIMABLE_TYPE.Interrupt;
         public OBJECT_TYPE objectType => OBJECT_TYPE.Interrupt;
         public System.Type serializedData => typeof(SaveDataInterruptHolder);
-        public LOG_TAG[] logTags => interrupt.logTags;
         #endregion
 
         public InterruptHolder() {
             persistentID = UtilityScripts.Utilities.GetNewUniqueID();
             identifier = string.Empty;
             awareCharacters = new List<Character>();
+            logTags = new List<LOG_TAG>();
         }
         public InterruptHolder(SaveDataInterruptHolder data) {
             awareCharacters = new List<Character>();
@@ -258,6 +259,7 @@ namespace Interrupts {
 
             SetIdentifier(identifier);
             SetReason(reason);
+            SetDefaultLogTags();
         }
         public void Reset() {
             interrupt = null;
@@ -273,6 +275,7 @@ namespace Interrupts {
             identifier = string.Empty;
             crimeType = CRIME_TYPE.Unset;
             awareCharacters.Clear();
+            logTags.Clear();
         }
         public void SetShouldNotBeObjectPooled(bool state) {
             shouldNotBeObjectPooled = state;
@@ -282,6 +285,17 @@ namespace Interrupts {
         #region Testing
         public override string ToString() {
             return $"Interrupt: {interrupt?.type.ToString() ?? "None"}. Actor: {actor?.name ?? "None"}";
+        }
+        #endregion
+
+        #region Log Tags
+        private void SetDefaultLogTags() {
+            logTags.Clear();
+            if (interrupt.logTags != null) {
+                for (int i = 0; i < interrupt.logTags.Length; i++) {
+                    logTags.Add(interrupt.logTags[i]);
+                }
+            }
         }
         #endregion
 

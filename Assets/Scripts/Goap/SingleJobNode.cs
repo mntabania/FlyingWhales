@@ -1,4 +1,5 @@
 ﻿using UnityEngine.Assertions;
+using UnityEngine;
 
 public class SingleJobNode : JobNode {
     public override ActualGoapNode singleNode { get { return node; } }
@@ -27,6 +28,11 @@ public class SingleJobNode : JobNode {
         return this.node == node;
     }
     public override void Reset() {
+        if (node != null) {
+            if (!node.ProcessReturnToPool()) {
+                node.isSupposedToBeInPool = true;
+            }
+        }
         node = null;
     }
     #endregion

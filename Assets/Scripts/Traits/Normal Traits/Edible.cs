@@ -79,8 +79,8 @@ namespace Traits {
                 }
             }
         }
-        public override void ExecuteActionAfterEffects(INTERACTION_TYPE action, ActualGoapNode goapNode, ref bool isRemoved) {
-            base.ExecuteActionAfterEffects(action, goapNode, ref isRemoved);
+        public override void ExecuteActionAfterEffects(INTERACTION_TYPE action, Character actor, IPointOfInterest target, ACTION_CATEGORY category, ref bool isRemoved) {
+            base.ExecuteActionAfterEffects(action, actor, target, category, ref isRemoved);
             if (action == INTERACTION_TYPE.EAT) {
                 if (owner is Crops crops) {
                     crops.SetGrowthState(Crops.Growth_State.Growing);

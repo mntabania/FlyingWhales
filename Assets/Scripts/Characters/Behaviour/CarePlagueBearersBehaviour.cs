@@ -32,7 +32,7 @@ public class CarePlagueBearersBehaviour : CharacterBehaviourComponent {
                         }    
                     }
                 } 
-                ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.CARE], character, target, null, 0);
+                ActualGoapNode node = ObjectPoolManager.Instance.CreateNewAction(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.CARE], character, target, null, 0);
                 GoapPlan goapPlan = ObjectPoolManager.Instance.CreateNewGoapPlan(node, target);
                 GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.PLAGUE_CARE, INTERACTION_TYPE.CARE, target, character);
                 goapPlan.SetDoNotRecalculate(true);

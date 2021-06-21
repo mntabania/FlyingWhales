@@ -1233,7 +1233,7 @@ public class ReactionComponent : CharacterComponent {
                         }
                     } else {
                         //create assault action so that witness can react to it as a crime.
-                        ActualGoapNode action = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.ASSAULT], attacker, characterHit, null, 0);
+                        ActualGoapNode action = ObjectPoolManager.Instance.CreateNewAction(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.ASSAULT], attacker, characterHit, null, 0);
                         action.SetAsIllusion();
                         action.SetCrimeType();
                         CrimeManager.Instance.ReactToCrime(reactor, attacker, characterHit, characterHit.faction, action.crimeType, action, REACTION_STATUS.WITNESSED);

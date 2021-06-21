@@ -114,14 +114,14 @@ namespace Traits {
             awareCharacters.Clear();
             responsibleCharacters?.Clear(); //Cleared list, for garbage collection
         }
-        public override void ExecuteActionAfterEffects(INTERACTION_TYPE action, ActualGoapNode goapNode, ref bool isRemoved) {
-            base.ExecuteActionAfterEffects(action, goapNode, ref isRemoved);
-            if (goapNode.action.actionCategory == ACTION_CATEGORY.CONSUME) {
-                if(traitable is IPointOfInterest poi && goapNode.poiTarget == poi) {
-                    Assert.IsFalse(goapNode.actor == poi, $"Consume action ({goapNode.action.name}) " +
-                        $"performed on {goapNode.poiTarget.name} by {goapNode.actor.name} is trying to remove poisoned " +
+        public override void ExecuteActionAfterEffects(INTERACTION_TYPE action, Character actor, IPointOfInterest target, ACTION_CATEGORY category, ref bool isRemoved) {
+            base.ExecuteActionAfterEffects(action, actor, target, category, ref isRemoved);
+            if (category == ACTION_CATEGORY.CONSUME) {
+                if(traitable is IPointOfInterest poi && target == poi) {
+                    Assert.IsFalse(actor == poi, $"Consume action ({action}) " +
+                        $"performed on {target.name} by {actor.name} is trying to remove poisoned " +
                         $"stacks from the actor rather than the target!");
-                    goapNode.actor.interruptComponent.TriggerInterrupt(INTERRUPT.Ingested_Poison, poi);
+                    actor.interruptComponent.TriggerInterrupt(INTERRUPT.Ingested_Poison, poi);
                     poi.traitContainer.RemoveStatusAndStacks(poi, this.name);
                     isRemoved = true;
                 }
