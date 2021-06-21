@@ -205,6 +205,14 @@ namespace Inner_Maps.Location_Structures {
             OnStructureDamaged();
         }
         #endregion
+
+        #region Testing
+        public override string GetTestingInfo() {
+            string info = base.GetTestingInfo();
+            info = $"{info}\nFarm Tiles: {farmTiles.ComafyList()}";
+            return info;
+        }
+        #endregion
     }
 }
 

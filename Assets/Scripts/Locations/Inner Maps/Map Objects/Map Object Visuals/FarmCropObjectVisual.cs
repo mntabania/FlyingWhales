@@ -19,16 +19,17 @@ public class FarmCropObjectVisual : TileObjectGameObject {
         Assert.IsNotNull(crops, $"Given tile object for {gameObject.name} is not a crop! {tileObject}");
         int totalRipeningTicks = crops.GetRipeningTicks();
         if (crops.currentGrowthState == Crops.Growth_State.Growing) {
-            if (crops.remainingRipeningTicks == -1) {
-                SetVisual(_isHorizontal ? horizontalEmpty : verticalEmpty);
-            } else {
-                int ticksGrowing = totalRipeningTicks - crops.remainingRipeningTicks; 
-                if (ticksGrowing < Mathf.FloorToInt(totalRipeningTicks * 0.4f)) {
-                    SetVisual(_isHorizontal ? horizontalEmpty : verticalEmpty);
-                } else {
-                    SetVisual(_isHorizontal ? horizontalGrowing : verticalGrowing);    
-                }       
-            }
+            // if (crops.remainingRipeningTicks == -1) {
+            //     SetVisual(_isHorizontal ? horizontalEmpty : verticalEmpty);
+            // } else {
+            //     int ticksGrowing = totalRipeningTicks - crops.remainingRipeningTicks; 
+            //     if (ticksGrowing < Mathf.FloorToInt(totalRipeningTicks * 0.4f)) {
+            //         SetVisual(_isHorizontal ? horizontalEmpty : verticalEmpty);
+            //     } else {
+            //         SetVisual(_isHorizontal ? horizontalGrowing : verticalGrowing);    
+            //     }       
+            // }
+            SetVisual(_isHorizontal ? horizontalGrowing : verticalGrowing);
         } else {
             SetVisual(_isHorizontal ? horizontalHarvestable : verticalHarvestable);
         }
