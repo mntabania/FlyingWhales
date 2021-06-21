@@ -135,7 +135,9 @@ namespace Traits {
         }
         public override void OnRemoveStatusBySchedule(ITraitable removedFrom) {
             base.OnRemoveStatusBySchedule(removedFrom);
-            removedFrom.traitContainer.AddTrait(removedFrom, "Burnt");
+            if (removedFrom is TileObject) {
+                removedFrom.traitContainer.AddTrait(removedFrom, "Burnt");    
+            }
         }
         public override bool OnDeath(Character character) {
             return character.traitContainer.RemoveTrait(character, this);

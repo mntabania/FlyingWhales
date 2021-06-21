@@ -62,14 +62,14 @@ public class Open  : GoapAction {
                 mimic.marker.SetVisualState(true);
                 TraitManager.Instance.CopyStatuses(treasureChest, mimic);
             }
-            goapNode.actor.currentStructure.RemovePOI(goapNode.poiTarget);
+            structure.RemovePOI(goapNode.poiTarget);
             mimic.UnsubscribeToAwakenMimicEvent(treasureChest);
             if (mimic.hasMarker) {
                 //this is so that mimic will react to actor again, since it probably already saw him/her before it was opened
                 mimic.marker.AddUnprocessedPOI(goapNode.actor);    
             }
         } else {
-            goapNode.actor.currentStructure.RemovePOI(goapNode.poiTarget);
+            structure.RemovePOI(goapNode.poiTarget);
             if (treasureChest.objectInside is ResourcePile resourcePile) {
                 resourcePile.SetResourceInPile(50);
             }
