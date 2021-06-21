@@ -45,6 +45,7 @@ public class RemoveRestrained : GoapAction {
 
 #region State Effects
     public void AfterRemoveSuccess(ActualGoapNode goapNode) {
+        goapNode.actor.moneyComponent.AdjustCoins(10);
         goapNode.poiTarget.traitContainer.RemoveRestrainAndImprison(goapNode.poiTarget, goapNode.actor);
     }
 #endregion

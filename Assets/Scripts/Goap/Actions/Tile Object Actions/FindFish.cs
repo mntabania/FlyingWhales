@@ -8,7 +8,8 @@ using Inner_Maps;
 public class FindFish : GoapAction {
 
     public int m_amountProducedPerTick = 10;
-    
+    private const int _coinGainMultiplier = 1;
+
     public FindFish() : base(INTERACTION_TYPE.FIND_FISH) {
         actionIconString = GoapActionStateDB.Fish_Icon;
         //advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
@@ -129,6 +130,7 @@ public class FindFish : GoapAction {
                     }
                 }
                 goapNode.actor.jobComponent.fishPile.AdjustResourceInPile(m_amountProducedPerTick);
+                goapNode.actor.moneyComponent.AdjustCoins(m_amountProducedPerTick * _coinGainMultiplier);
             } else {
                 LocationGridTile tileToSpawnPile = goapNode.actor.gridTileLocation.GetFirstNeighborThatIsPassableAndNoObject();
                 if (tileToSpawnPile != null && tileToSpawnPile.tileObjectComponent.objHere != null) {
@@ -138,6 +140,7 @@ public class FindFish : GoapAction {
                 tileToSpawnPile.structure.AddPOI(goapNode.actor.jobComponent.fishPile, tileToSpawnPile);
                 goapNode.actor.talentComponent?.GetTalent(CHARACTER_TALENT.Food).AdjustExperience(4, goapNode.actor);
                 goapNode.actor.jobComponent.fishPile.SetResourceInPile(m_amountProducedPerTick);
+                goapNode.actor.moneyComponent.AdjustCoins(m_amountProducedPerTick * _coinGainMultiplier);
             }
         }
         return goapNode.actor.jobComponent.fishPile;

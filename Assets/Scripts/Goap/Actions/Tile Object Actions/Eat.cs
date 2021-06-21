@@ -477,6 +477,15 @@ public class Eat : GoapAction {
         } else if (goapNode.poiTarget is FoodPile foodPile) {
             foodPile.ApplyFoodEffectsToConsumer(goapNode.actor);
         }
+        LocationStructure targetStructure = goapNode.poiTarget.gridTileLocation?.structure;
+        if(targetStructure != null && targetStructure.structureType == STRUCTURE_TYPE.TAVERN) {
+            if (targetStructure is ManMadeStructure mmStructure) {
+                Character assignedWorker = mmStructure.assignedWorker;
+                if (assignedWorker != null) {
+                    assignedWorker.moneyComponent.AdjustCoins(10);
+                }
+            }
+        }
     }
     //public void PreEatFail(ActualGoapNode goapNode) {
     //    GoapActionState currentState = goapNode.action.states[goapNode.currentStateName];

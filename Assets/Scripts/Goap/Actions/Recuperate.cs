@@ -1,10 +1,9 @@
-﻿
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Traits;
 using Inner_Maps;
-
+using Inner_Maps.Location_Structures;
 public class Recuperate : GoapAction {
 
     public Recuperate() : base(INTERACTION_TYPE.RECUPERATE) {
@@ -54,6 +53,16 @@ public class Recuperate : GoapAction {
         goapNode.actor.traitContainer.RemoveStatusAndStacks(goapNode.actor, "Poisoned");
         goapNode.actor.traitContainer.RemoveStatusAndStacks(goapNode.actor, "Plagued");
         goapNode.actor.traitContainer.RemoveStatusAndStacks(goapNode.actor, "Injured");
+
+        LocationStructure targetStructure = goapNode.poiTarget.gridTileLocation?.structure;
+        if (targetStructure != null && targetStructure.structureType == STRUCTURE_TYPE.HOSPICE) {
+            if (targetStructure is ManMadeStructure mmStructure) {
+                Character assignedWorker = mmStructure.assignedWorker;
+                if (assignedWorker != null) {
+                    assignedWorker.moneyComponent.AdjustCoins(10);
+                }
+            }
+        }
     }
 
     public void PerTickRecuperateSuccess(ActualGoapNode p_node) {

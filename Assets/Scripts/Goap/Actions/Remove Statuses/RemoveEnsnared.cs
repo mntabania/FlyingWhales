@@ -45,6 +45,7 @@ public class RemoveEnsnared : GoapAction {
 
 #region State Effects
     public void AfterRemoveSuccess(ActualGoapNode goapNode) {
+        goapNode.actor.moneyComponent.AdjustCoins(10);
         goapNode.poiTarget.traitContainer.RemoveStatusAndStacks(goapNode.poiTarget, "Ensnared");
     }
 #endregion

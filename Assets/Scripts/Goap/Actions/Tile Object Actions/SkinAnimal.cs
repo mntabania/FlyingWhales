@@ -8,6 +8,7 @@ using Inner_Maps;
 public class SkinAnimal : GoapAction {
 
     public int m_amountProducedPerTick = 1;
+    private const int _coinGainMultiplier = 1;
     public SkinAnimal() : base(INTERACTION_TYPE.SKIN_ANIMAL) {
         actionIconString = GoapActionStateDB.Work_Icon;
         //advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
@@ -74,7 +75,9 @@ public class SkinAnimal : GoapAction {
             tileToSpawnItem = p_node.actor.gridTileLocation.GetFirstNearestTileFromThisWithNoObject();
         }
         ResourcePile matsToHaul = InnerMapManager.Instance.CreateNewTileObject<ResourcePile>((p_node.target as Summon).produceableMaterial);
-        matsToHaul.SetResourceInPile(p_node.currentStateDuration * m_amountProducedPerTick);
+        int amount = p_node.currentStateDuration * m_amountProducedPerTick;
+        p_node.actor.moneyComponent.AdjustCoins(amount * _coinGainMultiplier);
+        matsToHaul.SetResourceInPile(amount);
         tileToSpawnItem.structure.AddPOI(matsToHaul, tileToSpawnItem);
         // p_node.actor.homeSettlement.settlementJobTriggerComponent.TryCreateHaulJob(matsToHaul);
 
