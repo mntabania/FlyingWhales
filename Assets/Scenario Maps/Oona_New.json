@@ -2326,7 +2326,7 @@
         },
         {
           "resource": "STONE",
-          "structureType": "HUNTER_LODGE",
+          "structureType": "WORKSHOP",
           "hasValue": true,
           "isCorrupted": false
         },
@@ -2383,7 +2383,7 @@
           "structureType": "DWELLING",
           "hasValue": true,
           "isCorrupted": false
-        },
+        }
       ],
       "minimumVillagerCount": 12,
       "factionRace": "HUMANS",
