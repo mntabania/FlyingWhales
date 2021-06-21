@@ -14,8 +14,9 @@ namespace Inner_Maps.Location_Structures {
                 Assert.IsNotNull(farm);
                 farm.AddFarmTile(tile);
                 // structure.AddObjectAsDamageContributor(newTileObject);
-                Sprite originalSprite = InnerMapManager.Instance.GetTileObjectScriptableObject(newTileObject.tileObjectType).defaultSprite;
-                if (originalSprite != null) { newTileObject.mapVisual.SetVisual(originalSprite); }
+                // Sprite originalSprite = InnerMapManager.Instance.GetTileObjectScriptableObject(newTileObject.tileObjectType).defaultSprite;
+                // if (originalSprite != null) { newTileObject.mapVisual.SetVisual(originalSprite); }
+                newTileObject.mapVisual.UpdateTileObjectVisual(newTileObject);
             }
         }
         protected override TileObject InstantiatePreplacedObject(TILE_OBJECT_TYPE p_type, LocationGridTile p_tile) {
