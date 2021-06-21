@@ -9,7 +9,7 @@ using UnityEngine.Assertions;
 public class MineOre : GoapAction {
 
     public int m_amountProducedPerTick = 1;
-
+    private const int _coinGainMultiplier = 1;
     public MineOre() : base(INTERACTION_TYPE.MINE_ORE) {
         actionIconString = GoapActionStateDB.Mine_Icon;
         //advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
@@ -70,7 +70,9 @@ public class MineOre : GoapAction {
             tileToSpawnPile = p_node.actor.gridTileLocation.GetFirstNearestTileFromThisWithNoObject();
         }
         MetalPile matsToHaul = InnerMapManager.Instance.CreateNewTileObject<MetalPile>(targetOre.providedMetal.ConvertResourcesToTileObjectType());
-        matsToHaul.SetResourceInPile(p_node.currentStateDuration * m_amountProducedPerTick);
+        int amount = p_node.currentStateDuration * m_amountProducedPerTick;
+        p_node.actor.moneyComponent.AdjustCoins(amount * _coinGainMultiplier);
+        matsToHaul.SetResourceInPile(amount);
         tileToSpawnPile.structure.AddPOI(matsToHaul, tileToSpawnPile);
         ProduceLogs(p_node);
         p_node.actor.talentComponent?.GetTalent(CHARACTER_TALENT.Resources).AdjustExperience(4, p_node.actor);

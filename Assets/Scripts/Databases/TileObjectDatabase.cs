@@ -108,8 +108,17 @@ public class TileObjectDatabase {
         }
     }
     private void AddDestroyedTileObject(string id, WeakReference wr) {
-        destroyedTileObjectsDictionary.Add(id, wr);
-        destroyedTileObjects.Add(wr);
+        if (destroyedTileObjectsDictionary.ContainsKey(id)) {
+#if DEBUG_LOG
+            Debug.LogError($"Tile Object {wr.Target.ToString()} has already been added to destroyed tile object list");
+#endif
+        } else {
+#if DEBUG_LOG
+            Debug.Log($"Tile Object {wr.Target.ToString()} added to destroyed tile object list");
+#endif
+            destroyedTileObjectsDictionary.Add(id, wr);
+            destroyedTileObjects.Add(wr);    
+        }
     }
     private void ProcessCleanUpDestroyedTileObjects() {
         //if (!cleanUpThread.isProcessing) {

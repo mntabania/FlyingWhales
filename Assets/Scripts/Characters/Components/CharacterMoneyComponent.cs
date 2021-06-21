@@ -42,17 +42,17 @@ public class CharacterMoneyComponent : CharacterComponent {
 
     #region Gain Coins
     public void GainCoinsAfterDoingAction(ActualGoapNode p_action) {
-        if (p_action.goapType == INTERACTION_TYPE.HARVEST_PLANT || p_action.goapType == INTERACTION_TYPE.CRAFT_TILE_OBJECT 
-            || p_action.goapType == INTERACTION_TYPE.REPAIR || p_action.goapType == INTERACTION_TYPE.REPAIR_STRUCTURE || p_action.goapType == INTERACTION_TYPE.PATROL
-            || p_action.goapType == INTERACTION_TYPE.BUTCHER || p_action.goapType == INTERACTION_TYPE.BURY_CHARACTER || p_action.goapType == INTERACTION_TYPE.CHOP_WOOD
-            || p_action.goapType == INTERACTION_TYPE.MINE_METAL || p_action.goapType == INTERACTION_TYPE.MINE_STONE) {
-            AdjustCoins(GameUtilities.RandomBetweenTwoNumbers(3, 6));
-        }
+        //if (p_action.goapType == INTERACTION_TYPE.HARVEST_PLANT || p_action.goapType == INTERACTION_TYPE.CRAFT_TILE_OBJECT 
+        //    || p_action.goapType == INTERACTION_TYPE.REPAIR || p_action.goapType == INTERACTION_TYPE.REPAIR_STRUCTURE || p_action.goapType == INTERACTION_TYPE.PATROL
+        //    || p_action.goapType == INTERACTION_TYPE.BUTCHER || p_action.goapType == INTERACTION_TYPE.BURY_CHARACTER || p_action.goapType == INTERACTION_TYPE.CHOP_WOOD
+        //    || p_action.goapType == INTERACTION_TYPE.MINE_METAL || p_action.goapType == INTERACTION_TYPE.MINE_STONE) {
+        //    AdjustCoins(GameUtilities.RandomBetweenTwoNumbers(3, 6));
+        //}
     }
     public void GainCoinsAfterDoingJob(JobQueueItem p_job) {
-        if (p_job.jobType == JOB_TYPE.HAUL) {
-            AdjustCoins(GameUtilities.RandomBetweenTwoNumbers(3, 6));
-        }
+        //if (p_job.jobType == JOB_TYPE.HAUL) {
+        //    AdjustCoins(GameUtilities.RandomBetweenTwoNumbers(3, 6));
+        //}
     }
     #endregion
 

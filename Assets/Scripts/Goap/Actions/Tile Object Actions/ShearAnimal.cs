@@ -9,6 +9,7 @@ using UtilityScripts;
 public class ShearAnimal : GoapAction {
 
     public int m_amountProducedPerTick = 1;
+    private const int _coinGainMultiplier = 1;
     public ShearAnimal() : base(INTERACTION_TYPE.SHEAR_ANIMAL) {
         actionIconString = GoapActionStateDB.Work_Icon;
         //advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
@@ -63,7 +64,9 @@ public class ShearAnimal : GoapAction {
         }
         Animal targetAnimal = (p_node.target as Animal);
         ResourcePile matsToHaul = InnerMapManager.Instance.CreateNewTileObject<ResourcePile>(targetAnimal.produceableMaterial);
-        matsToHaul.SetResourceInPile(p_node.currentStateDuration * m_amountProducedPerTick);
+        int amount = p_node.currentStateDuration * m_amountProducedPerTick;
+        p_node.actor.moneyComponent.AdjustCoins(amount * _coinGainMultiplier);
+        matsToHaul.SetResourceInPile(amount);
         targetAnimal.isShearable = false;
         tileToSpawnPile.structure.AddPOI(matsToHaul, tileToSpawnPile);
         ProduceLogs(p_node);

@@ -270,6 +270,15 @@ public class Sleep : GoapAction {
     }
     public void AfterRestSuccess(ActualGoapNode goapNode) {
         goapNode.actor.traitContainer.RemoveTrait(goapNode.actor, "Resting");
+        LocationStructure targetStructure = goapNode.poiTarget.gridTileLocation?.structure;
+        if (targetStructure != null && targetStructure.structureType == STRUCTURE_TYPE.TAVERN) {
+            if (targetStructure is ManMadeStructure mmStructure) {
+                Character assignedWorker = mmStructure.assignedWorker;
+                if (assignedWorker != null) {
+                    assignedWorker.moneyComponent.AdjustCoins(10);
+                }
+            }
+        }
     }
     //public void PreRestFail(ActualGoapNode goapNode) {
     //    if (parentPlan != null && parentPlan.job != null && parentPlan.job.id == actor.sleepScheduleJobID) {

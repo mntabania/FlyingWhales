@@ -9,6 +9,7 @@ using UnityEngine.Assertions;
 public class ChopWood : GoapAction {
 
     public int m_amountProducedPerTick = 1;
+    private const int _coinGainMultiplier = 1;
 
     public ChopWood() : base(INTERACTION_TYPE.CHOP_WOOD) {
         actionIconString = GoapActionStateDB.Chop_Icon;
@@ -75,7 +76,9 @@ public class ChopWood : GoapAction {
         }
         
         WoodPile matsToHaul = InnerMapManager.Instance.CreateNewTileObject<WoodPile>(TILE_OBJECT_TYPE.WOOD_PILE);
-        matsToHaul.SetResourceInPile(p_node.currentStateDuration * m_amountProducedPerTick);
+        int amount = p_node.currentStateDuration * m_amountProducedPerTick;
+        p_node.actor.moneyComponent.AdjustCoins(amount * _coinGainMultiplier);
+        matsToHaul.SetResourceInPile(amount);
         tileToSpawnPile.structure.AddPOI(matsToHaul, tileToSpawnPile);
         ProduceLogs(p_node);
         p_node.actor.talentComponent?.GetTalent(CHARACTER_TALENT.Resources).AdjustExperience(2, p_node.actor);

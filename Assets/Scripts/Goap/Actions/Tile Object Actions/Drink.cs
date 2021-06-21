@@ -5,7 +5,7 @@ using Traits;
 using Inner_Maps;
 using UtilityScripts;
 using Locations.Settlements;
-
+using Inner_Maps.Location_Structures;
 public class Drink : GoapAction {
 
     public override ACTION_CATEGORY actionCategory => ACTION_CATEGORY.CONSUME;
@@ -140,7 +140,16 @@ public class Drink : GoapAction {
             goapNode.actor.traitContainer.AddTrait(goapNode.actor, "Alcoholic");
         }
         goapNode.actor.traitContainer.RemoveStatusAndStacks(goapNode.actor, "Withdrawal");
-        
+        LocationStructure targetStructure = goapNode.poiTarget.gridTileLocation?.structure;
+        if (targetStructure != null && targetStructure.structureType == STRUCTURE_TYPE.TAVERN) {
+            if (targetStructure is ManMadeStructure mmStructure) {
+                Character assignedWorker = mmStructure.assignedWorker;
+                if (assignedWorker != null) {
+                    assignedWorker.moneyComponent.AdjustCoins(10);
+                }
+            }
+        }
+
     }
     //public void PreDrinkPoisoned() {
     //    actor.AdjustDoNotGetBored(1);
