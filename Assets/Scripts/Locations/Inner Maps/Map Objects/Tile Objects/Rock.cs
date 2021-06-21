@@ -26,7 +26,7 @@ public class Rock : TileObject{
         AddAdvertisedAction(INTERACTION_TYPE.ASSAULT);
         AddAdvertisedAction(INTERACTION_TYPE.RESOLVE_COMBAT);
         AddAdvertisedAction(INTERACTION_TYPE.MINE_STONE);
-        count = 20;
+        count = 1000;
         SetYield(50);
         //BaseSettlement.onSettlementBuilt += UpdateSettlementResourcesParent;
     }
@@ -74,7 +74,7 @@ public class Rock : TileObject{
 
     public override string GetAdditionalTestingData() {
         string data = base.GetAdditionalTestingData();
-        return data += $"<b>Count:</b> {count.ToString()}";
+        return data += $" <b>Count:</b> {count.ToString()}";
     }
 
     public override void OnPlacePOI() {

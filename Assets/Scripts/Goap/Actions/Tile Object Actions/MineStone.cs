@@ -59,7 +59,6 @@ public class MineStone : GoapAction {
     #endregion
 
     ResourcePile ProduceMatsPile(ActualGoapNode p_node) {
-        int count = p_node.currentStateDuration * m_amountProducedPerTick;
         TileObject targetStone = p_node.target as TileObject;
         Rock rock = targetStone as Rock;
         LocationGridTile tileToSpawnPile = p_node.actor.gridTileLocation;
@@ -68,7 +67,7 @@ public class MineStone : GoapAction {
         }
         StonePile matsToHaul = InnerMapManager.Instance.CreateNewTileObject<StonePile>(TILE_OBJECT_TYPE.STONE_PILE);
         int amount = p_node.currentStateDuration * m_amountProducedPerTick;
-        if (rock.count - count < 0) {
+        if (rock.count - amount < 0) {
             amount = rock.count;
         }
         rock.count = (int)Mathf.Clamp(rock.count - amount, 0f, 1000f);
