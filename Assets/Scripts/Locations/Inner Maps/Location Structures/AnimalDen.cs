@@ -7,6 +7,7 @@ namespace Inner_Maps.Location_Structures {
 
         #region getters
         public override System.Type serializedData => typeof(SaveDataAnimalDen);
+        public override Vector2 selectableSize => structureObj.size;
         #endregion
         
         public AnimalDen(STRUCTURE_TYPE structureType, Region location) : base(structureType, location) { }

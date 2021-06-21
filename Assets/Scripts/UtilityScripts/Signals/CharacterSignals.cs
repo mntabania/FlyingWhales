@@ -174,5 +174,6 @@
     public static string WEAPON_UNEQUIPPED = "OnWeaponUnequipped";
     public static string ARMOR_UNEQUIPPED = "OnArmorUnequipped";
     public static string ACCESSORY_UNEQUIPPED = "OnAccessoryUnequipped";
+    public static string CHARACTER_EQUIPPED_ITEM = "OnCharacterEquippedItem";
     #endregion
 }

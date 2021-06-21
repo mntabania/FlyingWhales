@@ -150,6 +150,21 @@ public abstract class AnimalBurrow : TileObject {
         return data;
     }
     #endregion
+
+    #region Selectable
+    public override void RightSelectAction() { }
+    public override void MiddleSelectAction() { }
+    public override void ConstructDefaultActions() {
+        actions = new List<PLAYER_SKILL_TYPE>();
+        //portal has no actions by default
+    }
+    public override void LeftSelectAction() {
+        UIManager.Instance.ShowStructureInfo(gridTileLocation.structure);
+    }
+    public override bool CanBeSelected() {
+        return true;
+    }
+    #endregion
 }
 
 #region Save Data

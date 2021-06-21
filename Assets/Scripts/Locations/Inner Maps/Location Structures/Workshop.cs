@@ -57,13 +57,27 @@ namespace Inner_Maps.Location_Structures {
         protected override void SubscribeListeners() {
             base.SubscribeListeners();
             Messenger.AddListener<Character>(CharacterSignals.CHARACTER_DEATH, OnCharacterDied);
+            Messenger.AddListener<Character, EquipmentItem>(CharacterSignals.CHARACTER_EQUIPPED_ITEM, OnCharacterEquippedItem);
         }
         protected override void UnsubscribeListeners() {
             base.UnsubscribeListeners();
             Messenger.RemoveListener<Character>(CharacterSignals.CHARACTER_DEATH, OnCharacterDied);
+            Messenger.RemoveListener<Character, EquipmentItem>(CharacterSignals.CHARACTER_EQUIPPED_ITEM, OnCharacterEquippedItem);
         }
-
-        public void OnCharacterDied(Character p_Character) {
+        private void OnCharacterEquippedItem(Character p_character, EquipmentItem p_equipment) {
+            if (IsCharacterAlreadyHasRequest(p_character)) {
+                EQUIPMENT_TYPE equipmentType = EQUIPMENT_TYPE.WEAPON;
+                if (p_equipment is WeaponItem) {
+                    equipmentType = EQUIPMENT_TYPE.WEAPON;
+                } else if (p_equipment is ArmorItem) {
+                    equipmentType = EQUIPMENT_TYPE.ARMOR;
+                } else if (p_equipment is AccessoryItem) {
+                    equipmentType = EQUIPMENT_TYPE.ACCESSORY;
+                }
+                RemoveAllRequestFromCharacter(p_character, equipmentType);
+            }
+        }
+        private void OnCharacterDied(Character p_Character) {
             RemoveAllRequestFromCharacter(p_Character);
         }
 
@@ -82,6 +96,18 @@ namespace Inner_Maps.Location_Structures {
 
         public void RemoveAllRequestFromCharacter(Character p_character) {
             requests.RemoveAll(item => item.requestingCharacter == p_character);
+        }
+        private void RemoveAllRequestFromCharacter(Character p_character, EQUIPMENT_TYPE equipmentType) {
+            List<WorkShopRequestForm> allCurrentRequests = RuinarchListPool<WorkShopRequestForm>.Claim();
+            allCurrentRequests.AddRange(requests);
+            
+            for (int i = 0; i < allCurrentRequests.Count; i++) {
+                WorkShopRequestForm requestForm = allCurrentRequests[i];
+                if (requestForm.requestingCharacter == p_character && requestForm.equipmentType == equipmentType) {
+                    requests.Remove(requestForm);
+                }
+            }
+            RuinarchListPool<WorkShopRequestForm>.Release(allCurrentRequests);
         }
 
         void EvaluateRequests() {

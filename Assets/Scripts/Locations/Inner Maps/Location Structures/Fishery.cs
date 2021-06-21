@@ -74,13 +74,27 @@ namespace Inner_Maps.Location_Structures {
                 }
             }
         }
-        // private TileObject GetRandomFishingSpot() {
-        //     List<TileObject> fishingSpots = connectedOcean.GetTileObjectsOfType(TILE_OBJECT_TYPE.FISHING_SPOT);
-        //     if (fishingSpots != null && fishingSpots.Count > 0) {
-        //         return fishingSpots[GameUtilities.RandomBetweenTwoNumbers(0, fishingSpots.Count - 1)];
-        //     }
-        //     return null;
-        // }
+        private TileObject GetRandomFishingSpot() {
+            List<TileObject> fishingSpots = connectedOcean.GetTileObjectsOfType(TILE_OBJECT_TYPE.FISHING_SPOT);
+            if (fishingSpots != null && fishingSpots.Count > 0) {
+                List<TileObject> fishingSpotChoices = RuinarchListPool<TileObject>.Claim();
+                // return fishingSpots[GameUtilities.RandomBetweenTwoNumbers(0, fishingSpots.Count - 1)];
+                for (int i = 0; i < fishingSpots.Count; i++) {
+                    TileObject fishingSpot = fishingSpots[i];
+                    if (fishingSpot.gridTileLocation != null && fishingSpot.gridTileLocation.area.settlementOnArea == settlementLocation) {
+                        //only pick fishing spots that are part of the settlement
+                        fishingSpotChoices.Add(fishingSpot);
+                    }
+                }
+                if (fishingSpotChoices.Count > 0) {
+                    TileObject randomFishingSpot = CollectionUtilities.GetRandomElement(fishingSpotChoices);
+                    RuinarchListPool<TileObject>.Release(fishingSpotChoices);
+                    return randomFishingSpot;
+                }
+                RuinarchListPool<TileObject>.Release(fishingSpotChoices);
+            }
+            return null;
+        }
         protected override void ProcessWorkStructureJobsByWorker(Character p_worker, out JobQueueItem producedJob) {
             producedJob = null;
             ResourcePile pileToHaul = p_worker.homeSettlement.SettlementResources.GetRandomPileOfFishes();
@@ -107,7 +121,8 @@ namespace Inner_Maps.Location_Structures {
             RuinarchListPool<TileObject>.Release(builtPilesInSideStructure);
 
             //Find Fish
-            TileObject fishingSpot = connectedFishingSpot;
+            TileObject fishingSpot = GetRandomFishingSpot();
+            if (fishingSpot == null) { fishingSpot = connectedFishingSpot; }
             if (fishingSpot != null) {
                 //do harvest crops
                 p_worker.jobComponent.TriggerFindFish(fishingSpot as FishingSpot, out producedJob);
