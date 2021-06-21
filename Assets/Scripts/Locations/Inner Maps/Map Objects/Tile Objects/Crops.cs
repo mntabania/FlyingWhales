@@ -8,6 +8,7 @@ public abstract class Crops : TileObject {
     public enum Growth_State { Growing, Ripe }
     public Growth_State currentGrowthState { get; private set; }
     
+    public int count { set; get; }
     private int _remainingRipeningTicks;
     private int _growthRate; //how fast does this crop grow? (aka how many ticks are subtracted from the remaining ripening ticks per tick)
     private bool hasStartedGrowth;
@@ -20,7 +21,7 @@ public abstract class Crops : TileObject {
     public abstract TILE_OBJECT_TYPE producedObjectOnHarvest { get; }
     #endregion
     
-    protected Crops() { }
+    protected Crops() { count = 1000; }
     protected Crops(SaveDataCrops data) : base(data) { }
 
     #region Initialization
@@ -153,6 +154,7 @@ public abstract class Crops : TileObject {
 #region Testing
     public override string GetAdditionalTestingData() {
         string data = base.GetAdditionalTestingData();
+        data += $" <b>Count:</b> {count.ToString()}";
         data += $"\n\tGrowth State {currentGrowthState.ToString()}";
         data += $"\n\tGrowth Rate {growthRate.ToString()}";
         data += $"\n\tRipening ticks: {GetRipeningTicks().ToString()}";
@@ -168,7 +170,8 @@ public class SaveDataCrops : SaveDataTileObject {
     public Crops.Growth_State growthState;
     public int remainingRipeningTicks;
     public int growthRate;
-    
+    public int count;
+
     public override void Save(TileObject tileObject) {
         base.Save(tileObject);
         Crops crop = tileObject as Crops;
@@ -176,9 +179,11 @@ public class SaveDataCrops : SaveDataTileObject {
         growthState = crop.currentGrowthState;
         remainingRipeningTicks = crop.remainingRipeningTicks;
         growthRate = crop.growthRate;
+        count = crop.count;
     }
     public override TileObject Load() {
         TileObject tileObject = base.Load();
+        (tileObject as Crops).count = count;
         return tileObject;
     }
 } 

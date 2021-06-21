@@ -54,21 +54,29 @@ public class HarvestCrops : GoapAction {
     #endregion
 
     ResourcePile ProduceMatsPile(ActualGoapNode p_node) {
-        LocationGridTile tileToSpawnItem = p_node.actor.gridTileLocation;
-        if (tileToSpawnItem != null && tileToSpawnItem.tileObjectComponent.objHere != null) {
-            tileToSpawnItem = p_node.actor.gridTileLocation.GetFirstNearestTileFromThisWithNoObject();
+        TileObject targetCrop = p_node.target as TileObject;
+        Crops crop = targetCrop as Crops;
+        LocationGridTile tileToSpawnPile = p_node.actor.gridTileLocation;
+        if (tileToSpawnPile != null && tileToSpawnPile.tileObjectComponent.objHere != null) {
+            tileToSpawnPile = p_node.actor.gridTileLocation.GetFirstNearestTileFromThisWithNoObject();
         }
-        Crops crop = p_node.target as Crops;
-        Assert.IsNotNull(crop);
-        crop.SetGrowthState(Crops.Growth_State.Growing);
         FoodPile matsToHaul = InnerMapManager.Instance.CreateNewTileObject<FoodPile>(crop.producedObjectOnHarvest);
         int amount = p_node.currentStateDuration * m_amountProducedPerTick;
+        if (crop.count - amount < 0) {
+            amount = crop.count;
+        }
+        crop.count = (int)Mathf.Clamp(crop.count - amount, 0f, 1000f);
+        if (targetCrop.gridTileLocation != null) {
+            if (crop.count <= 0) {
+                targetCrop.gridTileLocation.structure.RemovePOI(targetCrop);
+            }
+        }
+
         p_node.actor.moneyComponent.AdjustCoins(amount * _coinGainMultiplier);
         matsToHaul.SetResourceInPile(amount);
-        tileToSpawnItem.structure.AddPOI(matsToHaul, tileToSpawnItem);
-        // p_node.actor.homeSettlement.settlementJobTriggerComponent.TryCreateHaulJob(matsToHaul);
-        p_node.actor.talentComponent?.GetTalent(CHARACTER_TALENT.Food).AdjustExperience(4, p_node.actor);
+        tileToSpawnPile.structure.AddPOI(matsToHaul, tileToSpawnPile);
         ProduceLogs(p_node, crop);
+        p_node.actor.talentComponent?.GetTalent(CHARACTER_TALENT.Resources).AdjustExperience(2, p_node.actor);
         return matsToHaul;
     }
 

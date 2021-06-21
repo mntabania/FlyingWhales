@@ -119,7 +119,7 @@ namespace Inner_Maps.Location_Structures {
             if (plants == null || plants.Count < 3) {
                 HerbPlant plant = p_worker.homeSettlement.SettlementResources.GetAvailableHerbPlant();
                 if (plant != null) {
-                    p_worker.jobComponent.TriggerGatherHerb(plant as TileObject, out producedJob);
+                    p_worker.jobComponent.TriggerGatherHerb(plant, out producedJob);
                     if(producedJob != null) {
                         return;
 					}
