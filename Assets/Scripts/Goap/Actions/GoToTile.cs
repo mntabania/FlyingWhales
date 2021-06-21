@@ -31,5 +31,11 @@
             node.actor.partyComponent.currentParty.AddMemberThatJoinedQuest(node.actor);
         }
     }
-#endregion
+    #endregion
+
+    public void AfterGoSuccess(ActualGoapNode goapNode) {
+        if (goapNode.associatedJobType == JOB_TYPE.GO_TO_WAITING && goapNode.actor.partyComponent.hasParty) {
+            goapNode.actor.partyComponent.currentParty.AddMemberThatJoinedQuest(goapNode.actor);
+        }
+    }
 }

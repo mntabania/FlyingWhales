@@ -25,7 +25,7 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
     public OtherData[] otherData { get; private set; }
     public int cost { get; private set; }
     public bool isIntel { get; private set; }
-    public bool isAssigned; //For testing only
+    public bool hasBeenReset { get; private set; }
     public bool isSupposedToBeInPool { get; private set; }
     public int stillProcessingCounter { get; private set; }
 
@@ -104,7 +104,7 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
         isIntel = data.isIntel;
         isSupposedToBeInPool = data.isSupposedToBeInPool;
         stillProcessingCounter = data.stillProcessingCounter;
-        isAssigned = data.isAssigned;
+        hasBeenReset = data.hasBeenReset;
     }
 
     public void SetActionData(GoapAction action, Character actor, IPointOfInterest poiTarget, OtherData[] otherData, int cost) {
@@ -123,6 +123,7 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
         }
         SetDefaultLogTags();
         SetAdditionalLogTags();
+        SetHasBeenReset(false);
         //Messenger.AddListener<string, ActualGoapNode>(Signals.ACTION_STATE_SET, OnActionStateSet);
     }
 
@@ -366,16 +367,21 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
                 job.CancelJob();
             }
         } else {
-            if (avoidCombat) {
-                if (actor.marker) {
-                    actor.marker.SetVisionColliderSize(CharacterManager.AVOID_COMBAT_VISION_RANGE);
+            //Note: Added checking if the action has already been reset and added to pool
+            //Because there is a chance that by calling the MoveToDoAction, if the actor is already in the destination tile, the PerformGoapAction will be called
+            //So once, the MoveToDoAction is done processing, the actor is already done performing the said action, if that happens, then there is a chance that the job is already done also, so the action will be pooled already
+            if (!hasBeenReset) {
+                if (avoidCombat) {
+                    if (actor.hasMarker) {
+                        actor.marker.SetVisionColliderSize(CharacterManager.AVOID_COMBAT_VISION_RANGE);
+                    }
+                } else {
+                    if (actor.hasMarker) {
+                        actor.marker.SetVisionColliderSize(CharacterManager.VISION_RANGE);
+                    }
                 }
-            } else {
-                if (actor.marker) {
-                    actor.marker.SetVisionColliderSize(CharacterManager.VISION_RANGE);
-                }
+                action.OnMoveToDoAction(this);
             }
-            action.OnMoveToDoAction(this);
         }
     }
     //We only pass the job because we need to cancel it if the target tile is null
@@ -1348,6 +1354,9 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
     public void SetIsSupposedToBeInPool(bool p_state) {
         isSupposedToBeInPool = p_state;
     }
+    public void SetHasBeenReset(bool p_state) {
+        hasBeenReset = p_state;
+    }
     public void IncreaseReactionCounter() {
         reactionProcessCounter++;
     }
@@ -1398,9 +1407,9 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
         crimeType = CRIME_TYPE.None;
         uniqueActionData = null;
         actionStatus = ACTION_STATUS.NONE;
-        isAssigned = false;
         isSupposedToBeInPool = false;
         stillProcessingCounter = 0;
+        SetHasBeenReset(true);
     }
     #endregion
 }
@@ -1420,7 +1429,7 @@ public class SaveDataActualGoapNode : SaveData<ActualGoapNode>, ISavableCounterp
     public bool isIntel;
     public bool isSupposedToBeInPool;
     public int stillProcessingCounter;
-    public bool isAssigned; //For testing only
+    public bool hasBeenReset; //For testing only
 
     public INTERACTION_TYPE action;
     public ACTION_STATUS actionStatus;
@@ -1473,7 +1482,7 @@ public class SaveDataActualGoapNode : SaveData<ActualGoapNode>, ISavableCounterp
         isIntel = data.isIntel;
         isSupposedToBeInPool = data.isSupposedToBeInPool;
         stillProcessingCounter = data.stillProcessingCounter;
-        isAssigned = data.isAssigned;
+        hasBeenReset = data.hasBeenReset;
         logTags = data.logTags;
 
         disguisedActor = string.Empty;

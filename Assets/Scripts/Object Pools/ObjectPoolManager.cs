@@ -830,10 +830,9 @@ public class ObjectPoolManager : MonoBehaviour {
     }
     public ActualGoapNode CreateNewAction(GoapAction action, Character actor, IPointOfInterest poiTarget, OtherData[] otherData, int cost) {
         ActualGoapNode actionNode = CreateNewAction();
-        if (actionNode.isAssigned) {
+        if (!actionNode.hasBeenReset) {
             Debug.LogError("Action is still assigned to: " + actionNode.actor.name + ", " + actionNode.action.name + ", " + actionNode.poiTarget.name);
         } else {
-            actionNode.isAssigned = true;
             actionNode.SetActionData(action, actor, poiTarget, otherData, cost);
         }
         return actionNode;
@@ -852,7 +851,9 @@ public class ObjectPoolManager : MonoBehaviour {
             // #endif
             return data;
         }
-        return new ActualGoapNode();
+        ActualGoapNode action = new ActualGoapNode();
+        action.SetHasBeenReset(true);
+        return action;
     }
     public void ReturnActionToPool(ActualGoapNode data) {
         if (data != null) {
