@@ -6,6 +6,7 @@ using UnityEngine;
 
 public class Ore : TileObject {
     public int yield { get; private set; }
+    public int count { get; set; }
     public override System.Type serializedData => typeof(SaveDataOre);
     
     public CONCRETE_RESOURCES providedMetal { get; private set; }
@@ -15,7 +16,7 @@ public class Ore : TileObject {
         AddAdvertisedAction(INTERACTION_TYPE.ASSAULT);
         AddAdvertisedAction(INTERACTION_TYPE.RESOLVE_COMBAT);
         AddAdvertisedAction(INTERACTION_TYPE.MINE_METAL);
-
+        count = 1000;
         SetYield(50);
     }
     public Ore(SaveDataOre data) : base(data) {
@@ -54,6 +55,7 @@ public class Ore : TileObject {
     }
     public override string GetAdditionalTestingData() {
         string data = base.GetAdditionalTestingData();
+        data += $" <b>Count:</b> {count.ToString()}";
         data = $"{data}\n\tYield: {yield.ToString()}";
         return data;
     }
@@ -62,17 +64,20 @@ public class Ore : TileObject {
 #region Save Data
 public class SaveDataOre : SaveDataTileObject {
     public int yield;
+    public int count;
     public CONCRETE_RESOURCES providedMetal;
 
     public override void Save(TileObject tileObject) {
         base.Save(tileObject);
         Ore obj = tileObject as Ore;
         yield = obj.yield;
+        count = obj.count;
         providedMetal = obj.providedMetal;
     }
 
     public override TileObject Load() {
         Ore obj = base.Load() as Ore;
+        obj.count = count;
         return obj;
     }
 }

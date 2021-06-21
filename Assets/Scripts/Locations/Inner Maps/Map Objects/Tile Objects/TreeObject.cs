@@ -21,6 +21,8 @@ public abstract class TreeObject : TileObject {
     private TreeGameObject _treeGameObject;
     private BaseSettlement _parentSettlement;
 
+    public int count { set; get; }
+
     #region getters
     public override System.Type serializedData => typeof(SaveDataTreeObject);
     public StructureConnector structureConnector {
@@ -42,6 +44,7 @@ public abstract class TreeObject : TileObject {
         AddAdvertisedAction(INTERACTION_TYPE.ASSAULT);
         AddAdvertisedAction(INTERACTION_TYPE.RESOLVE_COMBAT);
         _occupiedState = Occupied_State.Undecided;
+        count = 1000;
     }
     protected TreeObject(SaveDataTreeObject data) : base(data) {
         Assert.IsNotNull(data);
@@ -143,6 +146,12 @@ public abstract class TreeObject : TileObject {
         base.DestroyMapVisualGameObject();
         _treeGameObject = null;
     }
+
+    public override string GetAdditionalTestingData() {
+        string data = base.GetAdditionalTestingData();
+        data += $" <b>Count:</b> {count.ToString()}";
+        return data;
+    }
     #endregion
 
     #region Occupant
@@ -231,18 +240,20 @@ public class SaveDataTreeObject : SaveDataTileObject {
     public TreeObject.Occupied_State occupiedState;
     public string occupyingEntID;
     public int yield;
-    
+    public int count;
     public override void Save(TileObject tileObject) {
         base.Save(tileObject);
         TreeObject treeObject = tileObject as TreeObject;
         Assert.IsNotNull(treeObject);
         occupiedState = treeObject.occupiedState;
+        count = treeObject.count;
         if (treeObject.ent != null) {
             occupyingEntID = treeObject.ent.persistentID;
         }
     }
     public override TileObject Load() {
         TileObject tileObject = base.Load();
+        (tileObject as TreeObject).count = count;
         return tileObject;
     }
 }

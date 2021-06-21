@@ -54,29 +54,29 @@ public class ChopWood : GoapAction {
 
     #region State Effects
     public void AfterChopSuccess(ActualGoapNode p_node) {
-        TileObject targetTree = p_node.target as TileObject;
-        Assert.IsNotNull(targetTree);
-        if (targetTree.gridTileLocation != null) {
-            targetTree.gridTileLocation.structure.RemovePOI(targetTree);    
-        }
         p_node.actor.jobComponent.TryCreateHaulToWorkplaceJob(ProduceMatsPile(p_node));
     }
     #endregion
 
     ResourcePile ProduceMatsPile(ActualGoapNode p_node) {
-        // TileObject targetTree = p_node.target as TileObject;
-        // Assert.IsNotNull(targetTree);
-        // if (targetTree.gridTileLocation != null) {
-        //     targetTree.gridTileLocation.structure.RemovePOI(targetTree);    
-        // }
-
+        TileObject targetTree = p_node.target as TileObject;
+        TreeObject tree = targetTree as TreeObject;
         LocationGridTile tileToSpawnPile = p_node.actor.gridTileLocation;
         if (tileToSpawnPile != null && tileToSpawnPile.tileObjectComponent.objHere != null) {
             tileToSpawnPile = p_node.actor.gridTileLocation.GetFirstNearestTileFromThisWithNoObject();
         }
-        
         WoodPile matsToHaul = InnerMapManager.Instance.CreateNewTileObject<WoodPile>(TILE_OBJECT_TYPE.WOOD_PILE);
         int amount = p_node.currentStateDuration * m_amountProducedPerTick;
+        if (tree.count - amount < 0) {
+            amount = tree.count;
+        }
+        tree.count = (int)Mathf.Clamp(tree.count - amount, 0f, 1000f);
+        if (targetTree.gridTileLocation != null) {
+            if (tree.count <= 0) {
+                targetTree.gridTileLocation.structure.RemovePOI(targetTree);
+            }
+        }
+
         p_node.actor.moneyComponent.AdjustCoins(amount * _coinGainMultiplier);
         matsToHaul.SetResourceInPile(amount);
         tileToSpawnPile.structure.AddPOI(matsToHaul, tileToSpawnPile);
