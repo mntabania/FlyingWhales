@@ -7,6 +7,8 @@ using Inner_Maps.Map_Objects.Map_Object_Visuals;
 
 public class Rock : TileObject{
     public int yield { get; private set; }
+
+    public int count { get; set; }
     public override Type serializedData => typeof(SaveDataRock);
     public StructureConnector structureConnector {
         get {
@@ -24,7 +26,7 @@ public class Rock : TileObject{
         AddAdvertisedAction(INTERACTION_TYPE.ASSAULT);
         AddAdvertisedAction(INTERACTION_TYPE.RESOLVE_COMBAT);
         AddAdvertisedAction(INTERACTION_TYPE.MINE_STONE);
-
+        count = 20;
         SetYield(50);
         //BaseSettlement.onSettlementBuilt += UpdateSettlementResourcesParent;
     }
@@ -70,6 +72,11 @@ public class Rock : TileObject{
     //    }
     //}
 
+    public override string GetAdditionalTestingData() {
+        string data = base.GetAdditionalTestingData();
+        return data += $"<b>Count:</b> {count.ToString()}";
+    }
+
     public override void OnPlacePOI() {
         base.OnPlacePOI();
         if (structureConnector != null && gridTileLocation != null) {
@@ -85,16 +92,18 @@ public class Rock : TileObject{
 #region Save Data
 public class SaveDataRock : SaveDataTileObject {
     public int yield;
-
+    public int count;
     public override void Save(TileObject tileObject) {
         base.Save(tileObject);
         Rock obj = tileObject as Rock;
         yield = obj.yield;
+        count = obj.count;
     }
 
     public override TileObject Load() {
         Rock obj = base.Load() as Rock;
         obj.SetYield(yield);
+        obj.count = count;
         return obj;
     }
 }

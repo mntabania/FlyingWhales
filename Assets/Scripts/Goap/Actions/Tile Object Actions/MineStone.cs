@@ -54,23 +54,31 @@ public class MineStone : GoapAction {
 
     #region State Effects
     public void AfterMineSuccess(ActualGoapNode p_node) {
-        TileObject targetStone = p_node.target as TileObject;
-        Assert.IsNotNull(targetStone);
-        if (targetStone.gridTileLocation != null) {
-            targetStone.gridTileLocation.structure.RemovePOI(targetStone);    
-        }
         p_node.actor.jobComponent.TryCreateHaulToWorkplaceJob(ProduceMatsPile(p_node));
     }
     #endregion
 
     ResourcePile ProduceMatsPile(ActualGoapNode p_node) {
+        int count = p_node.currentStateDuration * m_amountProducedPerTick;
+        TileObject targetStone = p_node.target as TileObject;
+        Rock rock = targetStone as Rock;
         LocationGridTile tileToSpawnPile = p_node.actor.gridTileLocation;
         if (tileToSpawnPile != null && tileToSpawnPile.tileObjectComponent.objHere != null) {
             tileToSpawnPile = p_node.actor.gridTileLocation.GetFirstNearestTileFromThisWithNoObject();
         }
         StonePile matsToHaul = InnerMapManager.Instance.CreateNewTileObject<StonePile>(TILE_OBJECT_TYPE.STONE_PILE);
         int amount = p_node.currentStateDuration * m_amountProducedPerTick;
-        p_node.actor.moneyComponent.AdjustCoins(amount * _coinGainMultiplier);
+        if (rock.count - count < 0) {
+            amount = rock.count;
+        }
+        rock.count = (int)Mathf.Clamp(rock.count - amount, 0f, 1000f);
+        if (targetStone.gridTileLocation != null) {
+            if (rock.count <= 0) {
+                targetStone.gridTileLocation.structure.RemovePOI(targetStone);
+            }
+        }
+
+         p_node.actor.moneyComponent.AdjustCoins(amount * _coinGainMultiplier);
         matsToHaul.SetResourceInPile(amount);
         tileToSpawnPile.structure.AddPOI(matsToHaul, tileToSpawnPile);
         ProduceLogs(p_node);
