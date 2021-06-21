@@ -56,6 +56,19 @@ public class HuntBeastBehaviour : CharacterBehaviourComponent {
                             producedJob.SetIsThisAPartyJob(true);
                             return true;
                         }
+                    } else {
+                        targetArea = character.areaLocation;
+                        targetDeadBeast = GetRandomDeadBeastToHaul(targetArea);
+                        if (targetDeadBeast != null) {
+#if DEBUG_LOG
+                        log += $"\n-Will haul {targetDeadBeast.nameWithID}";
+#endif
+                            character.jobComponent.TryTriggerHaulAnimalCorpse(targetDeadBeast, out producedJob);
+                            if (producedJob != null) {
+                                producedJob.SetIsThisAPartyJob(true);
+                                return true;
+                            }
+                        }
                     }
                     //if(character.jobComponent.TriggerRoamAroundTile(out producedJob)) {
                     //    producedJob.SetIsThisAPartyJob(true);
