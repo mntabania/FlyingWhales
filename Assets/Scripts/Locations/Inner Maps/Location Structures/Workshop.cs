@@ -1,11 +1,10 @@
-﻿using System;
-using UnityEngine;
+﻿using Inner_Maps.Location_Structures;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using Inner_Maps.Location_Structures;
+using UnityEngine;
 using UtilityScripts;
 namespace Inner_Maps.Location_Structures {
-    public class Workshop : ManMadeStructure {
+	public class Workshop : ManMadeStructure {
 
         public List<WorkShopRequestForm> requests = new List<WorkShopRequestForm>();
         
@@ -336,7 +335,7 @@ namespace Inner_Maps.Location_Structures {
 
         public bool ShouldIgnoreHaul(List<TileObject> p_list) {
             for (int x = 0; x < p_list.Count; ++x) {
-                if ((p_list[x] as ResourcePile).resourceInPile > 40) {
+                if ((p_list[x] as ResourcePile).resourceInPile >= 40) {
                     return true;
                 }
             }
