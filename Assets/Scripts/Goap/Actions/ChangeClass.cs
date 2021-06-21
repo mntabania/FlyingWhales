@@ -56,7 +56,7 @@ public class ChangeClass : GoapAction {
                 ManMadeStructure workStructure = structureOtherData.obj as ManMadeStructure;
                 if (workStructure != null && !workStructure.hasBeenDestroyed) {
                     //Upon changing class assign worker immediately to the attached structure
-                    workStructure.SetAssignedWorker(goapNode.actor);
+                    workStructure.AddAssignedWorker(goapNode.actor);
                     goapNode.actor.interruptComponent.TriggerInterrupt(INTERRUPT.Claim_Work_Structure, goapNode.actor);
                 }
             }

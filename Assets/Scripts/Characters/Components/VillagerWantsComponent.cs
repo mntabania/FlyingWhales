@@ -274,6 +274,13 @@ public class VillagerWantsComponent : CharacterComponent, CharacterEventDispatch
         if (p_gainedTrait is MusicHater) {
             GuitarWant guitarWant = CharacterManager.Instance.GetVillagerWantInstance<GuitarWant>();
             ToggleWantOff(guitarWant);
+        } else if (p_gainedTrait is Vampire) {
+            FoodWant_1 foodWant1 = CharacterManager.Instance.GetVillagerWantInstance<FoodWant_1>();
+            ToggleWantOff(foodWant1);
+            FoodWant_2 foodWant2 = CharacterManager.Instance.GetVillagerWantInstance<FoodWant_2>();
+            ToggleWantOff(foodWant2);
+            FoodWant_3 foodWant3 = CharacterManager.Instance.GetVillagerWantInstance<FoodWant_3>();
+            ToggleWantOff(foodWant3);
         }
     }
 
@@ -283,6 +290,19 @@ public class VillagerWantsComponent : CharacterComponent, CharacterEventDispatch
             GuitarWant guitarWant = CharacterManager.Instance.GetVillagerWantInstance<GuitarWant>();
             if (guitarWant.IsWantValid(p_character)) {
                 ToggleWantOn(guitarWant);    
+            }
+        } else if (p_lostTrait is Vampire) {
+            FoodWant_1 foodWant1 = CharacterManager.Instance.GetVillagerWantInstance<FoodWant_1>();
+            if (foodWant1.IsWantValid(p_character)) {
+                ToggleWantOn(foodWant1);    
+            }
+            FoodWant_2 foodWant2 = CharacterManager.Instance.GetVillagerWantInstance<FoodWant_2>();
+            if (foodWant2.IsWantValid(p_character)) {
+                ToggleWantOn(foodWant2);    
+            }
+            FoodWant_3 foodWant3 = CharacterManager.Instance.GetVillagerWantInstance<FoodWant_3>();
+            if (foodWant3.IsWantValid(p_character)) {
+                ToggleWantOn(foodWant3);    
             }
         }
     }

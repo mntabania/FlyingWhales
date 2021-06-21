@@ -48,12 +48,11 @@ public class WorkBehaviour : CharacterBehaviourComponent {
                     log = $"{log}\n-Character will find unclaimed work structure type of " + workStructureType.ToString();
 #endif
                     if (workStructureType != STRUCTURE_TYPE.NONE) {
-                        ManMadeStructure noWorkerStructure = homeSettlement.GetFirstStructureOfTypeThatHasNoWorkerAndIsNotReserved(workStructureType) as ManMadeStructure;
-                        if (noWorkerStructure != null) {
+                        if (homeSettlement.GetRandomStructureOfTypeThatCanAcceptWorkerAndIsNotReserved(workStructureType) is ManMadeStructure workerStructure) {
 #if DEBUG_LOG
-                            log = $"{log}\n-Found unclaimed work structure: " + noWorkerStructure.name;
+                            log = $"{log}\n-Found valid work structure: " + workerStructure.name;
 #endif
-                            noWorkerStructure.SetAssignedWorker(character);
+                            workerStructure.AddAssignedWorker(character);
                             character.interruptComponent.TriggerInterrupt(INTERRUPT.Claim_Work_Structure, character);
                         }
                     }
@@ -63,12 +62,13 @@ public class WorkBehaviour : CharacterBehaviourComponent {
 #if DEBUG_LOG
                     log = $"{log}\n  -There is a Hospice in the Village claimed by a non-Enemy or by self: ";
 #endif
+                    Hospice hospice = foundStructure as Hospice;
+                    Assert.IsNotNull(hospice);
                     if ((character.traitContainer.HasTrait("Injured") || character.traitContainer.HasTrait("Plagued")) && ChanceData.RollChance(CHANCE_TYPE.Plauged_Injured_Visit_Hospice)) {
                         //recuperate
 #if DEBUG_LOG
                         log = $"{log}\n  -Actor has Injured or Plagued and there is still an available Bed in the Hospice: Create Recuperate Job";
 #endif
-                        Hospice hospice = foundStructure as Hospice;
                         BedClinic bedClinic = hospice.GetFirstUnoccupiedBed();
                         if (bedClinic != null) {
                             if (character.jobComponent.TryRecuperate(bedClinic, out producedJob)) {
@@ -76,7 +76,7 @@ public class WorkBehaviour : CharacterBehaviourComponent {
                             }
                         }
                     }
-                    if (ChanceData.RollChance(CHANCE_TYPE.Vampire_Lycan_Visit_Hospice, ref log) && character.currentStructure != foundStructure && foundStructure is ManMadeStructure manMadeStructure && manMadeStructure.assignedWorker.talentComponent.GetTalent(CHARACTER_TALENT.Healing_Magic).level >= 5) {
+                    if (ChanceData.RollChance(CHANCE_TYPE.Vampire_Lycan_Visit_Hospice, ref log) && character.currentStructure != foundStructure && hospice.HasWorkerWithLevel5HealingMagic()) {
 #if DEBUG_LOG
                         log = $"{log}\n  -Hospice is claimed by a Villager with Level 5 Healing Magic:";
 #endif
@@ -86,7 +86,7 @@ public class WorkBehaviour : CharacterBehaviourComponent {
 #if DEBUG_LOG
                             log = $"{log}\n  -Actor has Vampirism and disliked being a Vampire";
                             character.PlanFixedJob(JOB_TYPE.VISIT_HOSPICE, INTERACTION_TYPE.VISIT, character, out producedJob,
-                                new OtherData[] {new LocationStructureOtherData(manMadeStructure)});
+                                new OtherData[] {new LocationStructureOtherData(hospice)});
                             return true;
 #endif
                         }
@@ -95,7 +95,7 @@ public class WorkBehaviour : CharacterBehaviourComponent {
 #if DEBUG_LOG
                             log = $"{log}\n  -If Actor has Lycanthropy and disliked being a Werewolf";
                             character.PlanFixedJob(JOB_TYPE.VISIT_HOSPICE, INTERACTION_TYPE.VISIT, character, out producedJob,
-                                new OtherData[] {new LocationStructureOtherData(manMadeStructure)});
+                                new OtherData[] {new LocationStructureOtherData(hospice)});
                             return true;
 #endif
                         }
@@ -120,7 +120,7 @@ public class WorkBehaviour : CharacterBehaviourComponent {
 #if DEBUG_LOG
                             log = $"{log}\n-Character will try to do work structure job";
 #endif
-                            character.structureComponent.workPlaceStructure.ProcessWorkerBehaviour(out producedJob);
+                            character.structureComponent.workPlaceStructure.ProcessWorkerBehaviour(character, out producedJob);
                             if (producedJob != null) {
                                 Assert.IsNotNull(producedJob.poiTarget, $"Produced job of {character.name} is {producedJob}. But its target is null!");
 #if DEBUG_LOG

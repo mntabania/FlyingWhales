@@ -107,7 +107,7 @@ public class VillageGeneration : MapGenerationComponent {
 				bool wasStructurePlaced = false;
 				List<StructureSetting> structureSettings = RuinarchListPool<StructureSetting>.Claim();
 				StructureSetting structureToPlace;
-				if (SettlementRulerBehaviour.ShouldBuildFishery(npcSettlement)) {
+				if (ShouldBuildFishery(npcSettlement)) {
 					structureToPlace = new StructureSetting(STRUCTURE_TYPE.FISHERY, RESOURCE.WOOD, npcSettlement.owner.factionType.usesCorruptedStructures);
 					structureSettings.Add(structureToPlace);
 					yield return MapGenerator.Instance.StartCoroutine(EnsuredStructurePlacement(region, structureSettings, npcSettlement, data));
@@ -118,7 +118,7 @@ public class VillageGeneration : MapGenerationComponent {
 					}
 				}
 				if (!wasStructurePlaced) {
-					if (SettlementRulerBehaviour.ShouldBuildButcher(npcSettlement)) {
+					if (ShouldBuildButcher(npcSettlement)) {
 						structureSettings.Clear();
 						structureToPlace = new StructureSetting(STRUCTURE_TYPE.BUTCHERS_SHOP, RESOURCE.STONE, npcSettlement.owner.factionType.usesCorruptedStructures);
 						structureSettings.Add(structureToPlace);
@@ -227,6 +227,32 @@ public class VillageGeneration : MapGenerationComponent {
 		
 		RuinarchListPool<NPCSettlement>.Release(createdSettlements);
 		RuinarchListPool<VillageSetting>.Release(villageSettings);
+	}
+	private bool ShouldBuildFishery(NPCSettlement p_settlement) {
+		if (p_settlement.owner != null && p_settlement.owner.factionType.IsActionConsideredACrime(CRIME_TYPE.Animal_Killing)) {
+			//Animal Killing is considered a crime.
+			return false;
+		}
+		if (!p_settlement.occupiedVillageSpot.HasUnusedFishingSpot()) {
+			return false;
+		}
+		if (!p_settlement.HasResidentThatIsOrCanBecomeClass("Fisher")) {
+			return false;
+		}
+		return true;
+	}
+	private bool ShouldBuildButcher(NPCSettlement p_settlement) {
+		if (p_settlement.owner != null && p_settlement.owner.factionType.IsActionConsideredACrime(CRIME_TYPE.Animal_Killing)) {
+			//Animal Killing is considered a crime.
+			return false;
+		}
+		if (!p_settlement.occupiedVillageSpot.HasAccessToButcherAnimals()) {
+			return false;
+		}
+		if (!p_settlement.HasResidentThatIsOrCanBecomeClass("Butcher")) {
+			return false;
+		}
+		return true;
 	}
 	private List<StructureSetting> GenerateCityCenter(Faction p_faction, VillageSetting p_villageSetting, NPCSettlement p_settlement) {
 		List<StructureSetting> structureSettings = RuinarchListPool<StructureSetting>.Claim();

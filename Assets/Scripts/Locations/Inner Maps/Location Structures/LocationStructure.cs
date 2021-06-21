@@ -552,11 +552,19 @@ namespace Inner_Maps.Location_Structures {
             }
             return false;
         }
-        public bool HasTileObjectThatIsBuiltFoodPileThatCharacterDoesntHaveAtHome(Character p_character) {
+        public bool HasTileObjectThatIsBuiltFoodPileThatCharacterCanEatAndDoesntHaveAtHome(Character p_character) {
             for (int i = 0; i < pointsOfInterest.Count; i++) {
                 IPointOfInterest poi = pointsOfInterest.ElementAt(i);
                 if (poi is FoodPile t && t.mapObjectState == MAP_OBJECT_STATE.BUILT && !p_character.homeStructure.HasBuiltTileObjectOfType(t.tileObjectType)) {
-                    return true;
+                    if (p_character.traitContainer.HasTrait("Cannibal")) {
+                        //cannibals will eat anything
+                        return true;    
+                    } else {
+                        if (t.tileObjectType != TILE_OBJECT_TYPE.HUMAN_MEAT && t.tileObjectType != TILE_OBJECT_TYPE.ELF_MEAT) {
+                            //non cannibals will not eat human or elf meat!
+                            return true;    
+                        }
+                    }
                 }
             }
             return false;

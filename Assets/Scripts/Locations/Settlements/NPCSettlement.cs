@@ -1203,13 +1203,29 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         if (s != null) {
             for (int i = 0; i < s.Count; i++) {
                 LocationStructure structure = s[i];
-                if (structure is ManMadeStructure manMadeStructure && manMadeStructure.assignedWorker != null) {
+                if (structure is ManMadeStructure manMadeStructure && manMadeStructure.HasAssignedWorker()) {
                     return true;
                 }
             }
         }
 
         return false;
+    }
+    public LocationStructure GetFirstStructureOfTypeThatCanAcceptWorkerAndIsNotReserved(STRUCTURE_TYPE type) {
+        if (HasStructure(type)) {
+            List<LocationStructure> structuresOfType = structures[type];
+            if (structuresOfType != null && structuresOfType.Count > 0) {
+                for (int i = 0; i < structuresOfType.Count; i++) {
+                    ManMadeStructure s = structuresOfType[i] as ManMadeStructure;
+                    if (s.CanHireAWorker()) {
+                        if (!availableJobs.HasJobWithOtherData(JOB_TYPE.CHANGE_CLASS, INTERACTION_TYPE.CHANGE_CLASS, s)) {
+                            return s;
+                        }
+                    }
+                }
+            }
+        }
+        return null;
     }
     public LocationStructure GetFirstStructureOfTypeThatHasNoWorkerAndIsNotReserved(STRUCTURE_TYPE type) {
         if (HasStructure(type)) {
@@ -1224,6 +1240,30 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
                     }
                 }
             }
+        }
+        return null;
+    }
+    public LocationStructure GetRandomStructureOfTypeThatCanAcceptWorkerAndIsNotReserved(STRUCTURE_TYPE type) {
+        if (HasStructure(type)) {
+            List<LocationStructure> structuresOfType = structures[type];
+            if (structuresOfType != null && structuresOfType.Count > 0) {
+                List<LocationStructure> structureChoices = RuinarchListPool<LocationStructure>.Claim();
+                for (int i = 0; i < structuresOfType.Count; i++) {
+                    ManMadeStructure s = structuresOfType[i] as ManMadeStructure;
+                    if (s.CanHireAWorker()) {
+                        if (!availableJobs.HasJobWithOtherData(JOB_TYPE.CHANGE_CLASS, INTERACTION_TYPE.CHANGE_CLASS, s)) {
+                            structureChoices.Add(s);
+                        }
+                    }
+                }
+                if (structureChoices.Count > 0) {
+                    LocationStructure chosenStructure = CollectionUtilities.GetRandomElement(structureChoices);
+                    RuinarchListPool<LocationStructure>.Release(structureChoices);
+                    return chosenStructure;
+                }
+                RuinarchListPool<LocationStructure>.Release(structureChoices);
+            }
+            
         }
         return null;
     }

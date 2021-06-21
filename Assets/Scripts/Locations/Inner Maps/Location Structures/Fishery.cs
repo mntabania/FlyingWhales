@@ -32,6 +32,20 @@ namespace Inner_Maps.Location_Structures {
         }
         #endregion
         
+        #region Worker
+        public override bool CanHireAWorker() {
+            return true;
+        }
+        #endregion
+        
+        #region Purchasing
+        public override bool CanPurchaseFromHere(Character p_buyer, out bool needsToPay, out int buyerOpinionOfWorker) {
+            needsToPay = true;
+            buyerOpinionOfWorker = 0;
+            return true; //anyone can buy from food producing structures, but everyone also needs to pay. NOTE: It is intended that villagers can buy from unassigned structures
+        }
+        #endregion
+        
         public override string GetTestingInfo() {
             return $"{base.GetTestingInfo()}\nConnected Ocean {connectedOcean?.name}";
         }
@@ -82,7 +96,9 @@ namespace Inner_Maps.Location_Structures {
             List<TileObject> builtPilesInSideStructure = RuinarchListPool<TileObject>.Claim();
             PopulateFishPileListInsideStructure(builtPilesInSideStructure);
             if (builtPilesInSideStructure.Count > 1) {
-                p_worker.jobComponent.TryCreateCombineStockpile(builtPilesInSideStructure[0] as ResourcePile, builtPilesInSideStructure[1] as ResourcePile, out producedJob);
+                //always ensure that the first pile is the pile that all other piles will be dropped to, this is to prevent complications
+                //when multiple workers are combining piles, causing targets of other jobs to mess up since their target pile was carried.
+                p_worker.jobComponent.TryCreateCombineStockpile(builtPilesInSideStructure[1] as ResourcePile, builtPilesInSideStructure[0] as ResourcePile, out producedJob);
                 if (producedJob != null) {
                     RuinarchListPool<TileObject>.Release(builtPilesInSideStructure);
                     return;

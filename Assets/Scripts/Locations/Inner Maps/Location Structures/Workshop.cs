@@ -470,6 +470,18 @@ namespace Inner_Maps.Location_Structures {
             return info;
         }
         #endregion
+        
+        #region Worker
+        public override bool CanHireAWorker() {
+            return !HasAssignedWorker();
+        }
+        #endregion
+        
+        #region Purchasing
+        public override bool CanPurchaseFromHere(Character p_buyer, out bool needsToPay, out int buyerOpinionOfWorker) {
+            return DefaultCanPurchaseFromHereForSingleWorkerStructures(p_buyer, out needsToPay, out buyerOpinionOfWorker);
+        }
+        #endregion
     }
 }
 

@@ -60,7 +60,7 @@ namespace Inner_Maps {
         [SerializeField] private float _xSeed;
         [SerializeField] private float _ySeed;
         [NonSerialized] public PerlinNoiseSettings elevationPerlinSettings = new PerlinNoiseSettings() {
-            noiseScale = 34.15f,
+            noiseScale = 33.15f,
             octaves = 3,
             persistance = 0.2f,
             lacunarity = 2,
@@ -74,7 +74,7 @@ namespace Inner_Maps {
                 new PerlinNoiseRegion() {
                     name = "Plain",
                     color = Color.green,
-                    height = 0.7f,
+                    height = 0.75f,
                 },
                 new PerlinNoiseRegion() {
                     name = "Cave",

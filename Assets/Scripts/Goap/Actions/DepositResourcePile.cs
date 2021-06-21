@@ -142,6 +142,13 @@ public class DepositResourcePile : GoapAction {
             actor.UncarryPOI(resourcePile, dropLocation: actor.gridTileLocation);
         }
     }
+    public override void OnInvalidAction(ActualGoapNode node) {
+        base.OnInvalidAction(node);
+        Character actor = node.actor;
+        if (actor.carryComponent.carriedPOI is ResourcePile resourcePile) {
+            actor.UncarryPOI(resourcePile, dropLocation: actor.gridTileLocation);
+        }
+    }
     public override GoapActionInvalidity IsInvalid(ActualGoapNode node) {
         Character actor = node.actor;
         IPointOfInterest poiTarget = node.poiTarget;
@@ -192,6 +199,14 @@ public class DepositResourcePile : GoapAction {
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, OtherData[] otherData, JobQueueItem job) { 
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData, job);
         if (satisfied) {
+            if (otherData != null && otherData.Length == 1) {
+                if(otherData[0].obj is IPointOfInterest poiToBeDeposited) {
+                    if (poiToBeDeposited.gridTileLocation == null) {
+                        //target pile to deposit to has been destroyed.
+                        return false;
+                    }
+                }
+            }
             if (actor.IsPOICarriedOrInInventory(poiTarget)) {
                 return true;
             }
@@ -296,6 +311,15 @@ public class DepositResourcePile : GoapAction {
         }
         if (poiTarget.IsAvailable() == false || poiTarget.gridTileLocation == null || actor.currentRegion != poiTarget.currentRegion) {
             return true;
+        }
+        OtherData[] otherData = node.otherData;
+        if (otherData != null && otherData.Length == 1) {
+            if(otherData[0].obj is IPointOfInterest poiToBeDeposited) {
+                if (poiToBeDeposited.gridTileLocation == null) {
+                    //target pile to deposit to has been destroyed.
+                    return true;
+                }
+            }
         }
         if (actionLocationType == ACTION_LOCATION_TYPE.NEAR_TARGET) {
             //if the action type is NEAR_TARGET, then check if the actor is near the target, if not, this action is invalid.

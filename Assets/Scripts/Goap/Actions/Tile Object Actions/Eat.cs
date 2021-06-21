@@ -278,7 +278,7 @@ public class Eat : GoapAction {
 #if DEBUG_LOG
                                     costLog += $" +{cost}(Target is food pile inside actors home)";
 #endif
-                                } else if (manMadeStructure.CanPurchaseFromHereBasedOnOpinionOfCharacterToAssignedWorker(actor, out var needsToPay)) {
+                                } else if (manMadeStructure.CanPurchaseFromHere(actor, out var needsToPay, out _)) {
                                     if (needsToPay) {
                                         if (actor.moneyComponent.CanAfford(BuyFood.FoodCost)) {
                                             cost = UtilityScripts.Utilities.Rng.Next(600, 651);
@@ -361,7 +361,7 @@ public class Eat : GoapAction {
             } else {
                 if (poiTarget is FoodPile foodPile && foodPile.structureLocation != null && foodPile.structureLocation is ManMadeStructure manMadeStructure && 
                     manMadeStructure.structureType.IsFoodProducingStructure()) {
-                    if (manMadeStructure.CanPurchaseFromHereBasedOnOpinionOfCharacterToAssignedWorker(node.actor, out var needsToPay)) {
+                    if (manMadeStructure.CanPurchaseFromHere(node.actor, out var needsToPay, out _)) {
                         if (needsToPay) {
                             if (!node.actor.moneyComponent.CanAfford(BuyFood.FoodCost)) {
                                 goapActionInvalidity.isInvalid = true;
@@ -446,7 +446,7 @@ public class Eat : GoapAction {
         IPointOfInterest poiTarget = goapNode.poiTarget;
         if (poiTarget is FoodPile foodPile && foodPile.structureLocation != null && foodPile.structureLocation is ManMadeStructure manMadeStructure && 
             manMadeStructure.structureType.IsFoodProducingStructure()) {
-            if (manMadeStructure.CanPurchaseFromHereBasedOnOpinionOfCharacterToAssignedWorker(goapNode.actor, out var needsToPay)) {
+            if (manMadeStructure.CanPurchaseFromHere(goapNode.actor, out var needsToPay, out _)) {
                 if (needsToPay) {
                     goapNode.actor.moneyComponent.AdjustCoins(-BuyFood.FoodCost);
                 }
@@ -480,10 +480,17 @@ public class Eat : GoapAction {
         LocationStructure targetStructure = goapNode.poiTarget.gridTileLocation?.structure;
         if(targetStructure != null && targetStructure.structureType == STRUCTURE_TYPE.TAVERN) {
             if (targetStructure is ManMadeStructure mmStructure) {
-                Character assignedWorker = mmStructure.assignedWorker;
-                if (assignedWorker != null) {
+                if (mmStructure.HasAssignedWorker()) {
+                    //only added coins to first worker since we expect that the tavern only has 1 worker.
+                    //if that changes, this needs to be changed as well.
+                    string assignedWorkerID = mmStructure.assignedWorkerIDs[0];
+                    Character assignedWorker = DatabaseManager.Instance.characterDatabase.GetCharacterByPersistentID(assignedWorkerID);
                     assignedWorker.moneyComponent.AdjustCoins(10);
                 }
+                // Character assignedWorker = mmStructure.assignedWorker;
+                // if (assignedWorker != null) {
+                //     assignedWorker.moneyComponent.AdjustCoins(10);
+                // }
             }
         }
     }
@@ -508,7 +515,7 @@ public class Eat : GoapAction {
                         return false;
                     }
                 } else if (structure.structureType.IsFoodProducingStructure() && structure is ManMadeStructure manMadeStructure) {
-                    if (actor.homeStructure != null && manMadeStructure.assignedWorker != actor) {
+                    if (actor.homeStructure != null && !manMadeStructure.DoesCharacterWorkHere(actor)) {
                         //only limit eating from food producing structure if actor has a home.
                         //If the actor is homeless allow them to eat there.
                         return false;

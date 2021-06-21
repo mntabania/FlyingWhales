@@ -11,7 +11,7 @@ namespace Inner_Maps.Location_Structures {
         public List<ThinWall> structureWalls { get; private set; }
         public RESOURCE wallsAreMadeOf { get; protected set; }
         public LocationStructureObject structureObj {get; private set;}
-        public string assignedWorkerID { get; private set; }
+        public List<string> assignedWorkerIDs { get; private set; }
         
         private GameDate m_scheduledDirtProduction;
         private readonly List<TileObject> m_dirtyObjects;
@@ -20,26 +20,24 @@ namespace Inner_Maps.Location_Structures {
         #region Getters
         public override Vector2 selectableSize => structureObj.size;
         public override System.Type serializedData => typeof(SaveDataManMadeStructure);
-        public Character assignedWorker => string.IsNullOrEmpty(assignedWorkerID) ? null : CharacterManager.Instance.GetCharacterByPersistentID(assignedWorkerID);
+        // public Character assignedWorker => string.IsNullOrEmpty(assignedWorkerID) ? null : CharacterManager.Instance.GetCharacterByPersistentID(assignedWorkerID);
         public List<TileObject> dirtyObjects => m_dirtyObjects;
         public GameDate scheduledDirtProduction => m_scheduledDirtProduction;
         #endregion
 
         protected ManMadeStructure(STRUCTURE_TYPE structureType, Region location) : base(structureType, location) {
             m_dirtyObjects = new List<TileObject>();
+            assignedWorkerIDs = new List<string>();
         }
         protected ManMadeStructure(Region location, SaveDataManMadeStructure data) : base(location, data) {
-            assignedWorkerID = data.assignedWorkerID;
+            assignedWorkerIDs = new List<string>(data.assignedWorkerIDs);
             m_dirtyObjects = new List<TileObject>();
         }
 
         #region Behaviours
-        public void ProcessWorkerBehaviour(out JobQueueItem producedJob) {
-            //We wrapped the actual process of getting worker jobs by structure in here so that the assignedWorker is only called once 
-            //and be passed down as a parameter since assignedWorker is a getter
-            //It would be waste of processing to call it every time
-            Character worker = assignedWorker;
-            ProcessWorkStructureJobsByWorker(worker, out producedJob);
+        public void ProcessWorkerBehaviour(Character p_worker, out JobQueueItem producedJob) {
+            Assert.IsTrue(assignedWorkerIDs.Contains(p_worker.persistentID));
+            ProcessWorkStructureJobsByWorker(p_worker, out producedJob);
         }
         protected virtual void ProcessWorkStructureJobsByWorker(Character p_worker, out JobQueueItem producedJob) { producedJob = null; }
         #endregion
@@ -246,7 +244,7 @@ namespace Inner_Maps.Location_Structures {
             if (hexTile != null) {
                 hexTile.CheckIfSettlementIsStillOnArea();
             }
-            SetAssignedWorker(null);
+            RemoveAllAssignedWorkers();
         }
         #endregion
 
@@ -272,48 +270,125 @@ namespace Inner_Maps.Location_Structures {
         #endregion
 
         #region Worker
-        public void SetAssignedWorker(Character p_assignedWorker) {
-            Character prevWorker = assignedWorker;
-            if (p_assignedWorker != prevWorker) {
-                assignedWorkerID = p_assignedWorker != null ? p_assignedWorker.persistentID : string.Empty;
-                Character newWorker = assignedWorker;
-                if (prevWorker != null) {
-                    prevWorker.structureComponent.SetWorkPlaceStructure(null);
-                }
-                if (newWorker != null) {
-                    if (newWorker.structureComponent.workPlaceStructure != null) {
-                        newWorker.structureComponent.workPlaceStructure.SetAssignedWorker(null);
-                    }
-                    newWorker.structureComponent.SetWorkPlaceStructure(this);
-                }
+        // public void SetAssignedWorker(Character p_assignedWorker) {
+        //     Character prevWorker = assignedWorker;
+        //     if (p_assignedWorker != prevWorker) {
+        //         assignedWorkerIDs = p_assignedWorker != null ? p_assignedWorker.persistentID : string.Empty;
+        //         Character newWorker = assignedWorker;
+        //         if (prevWorker != null) {
+        //             prevWorker.structureComponent.SetWorkPlaceStructure(null);
+        //         }
+        //         if (newWorker != null) {
+        //             if (newWorker.structureComponent.workPlaceStructure != null) {
+        //                 newWorker.structureComponent.workPlaceStructure.SetAssignedWorker(null);
+        //             }
+        //             newWorker.structureComponent.SetWorkPlaceStructure(this);
+        //         }
+        //     }
+        // }
+        public bool DoesCharacterWorkHere(Character p_character) {
+            return assignedWorkerIDs.Contains(p_character.persistentID);
+        }
+        public void AddAssignedWorker(Character p_worker) {
+            if (!assignedWorkerIDs.Contains(p_worker.persistentID)) {
+                assignedWorkerIDs.Add(p_worker.persistentID);
+                p_worker.structureComponent.SetWorkPlaceStructure(this);
             }
         }
-        public bool HasAssignedWorker() {
-            return assignedWorker != null;
+        public bool RemoveAssignedWorker(Character p_worker) {
+            if (assignedWorkerIDs.Remove(p_worker.persistentID)) {
+                p_worker.structureComponent.SetWorkPlaceStructure(null);
+                return true;
+            }
+            return false;
         }
-        public bool CanPurchaseFromHereBasedOnOpinionOfCharacterToAssignedWorker(Character p_buyer, out bool needsToPay) {
-            if (assignedWorker != null) {
+        private void RemoveAllAssignedWorkers() {
+            List<string> ids = RuinarchListPool<string>.Claim();
+            ids.AddRange(assignedWorkerIDs);
+            for (int i = 0; i < ids.Count; i++) {
+                string assignedWorkerID = ids[i];
+                Character assignedWorker = DatabaseManager.Instance.characterDatabase.GetCharacterByPersistentID(assignedWorkerID);
+                RemoveAssignedWorker(assignedWorker);
+            }
+            RuinarchListPool<string>.Release(ids);
+        }
+        public bool HasAssignedWorker() {
+            return assignedWorkerIDs.Count > 0;
+        }
+        public virtual bool CanHireAWorker() {
+            return false;
+        }
+        public bool HasWorkerThatIsNotAnEnemyOfCharacter(Character p_character) {
+            for (int i = 0; i < assignedWorkerIDs.Count; i++) {
+                string assignedWorkerID = assignedWorkerIDs[i];
+                Character assignedWorker = DatabaseManager.Instance.characterDatabase.GetCharacterByPersistentID(assignedWorkerID);
+                if (!p_character.relationshipContainer.IsEnemiesWith(assignedWorker)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+        public virtual bool CanPurchaseFromHere(Character p_buyer, out bool needsToPay, out int buyerOpinionOfWorker) {
+            needsToPay = true;
+            buyerOpinionOfWorker = -100;
+            return false;
+            // if (assignedWorker != null) {
+            //     if (assignedWorker == p_buyer) {
+            //         //structure is owned by self
+            //         needsToPay = false;
+            //         return true;
+            //     } else if (p_buyer.relationshipContainer.HasRelationshipWith(assignedWorker, RELATIONSHIP_TYPE.LOVER)) {
+            //         //structure is owned by a lover
+            //         needsToPay = false;
+            //         return true;
+            //     } else if (p_buyer.relationshipContainer.IsFamilyMember(assignedWorker) && 
+            //                p_buyer.relationshipContainer.GetOpinionLabel(assignedWorker) == RelationshipManager.Close_Friend) {
+            //         //structure is owned by a close friend family member
+            //         //needs to pay if worker does not consider buyer a close friend
+            //         needsToPay = assignedWorker.relationshipContainer.GetOpinionLabel(p_buyer) != RelationshipManager.Close_Friend;
+            //         return true;
+            //     } else if (!p_buyer.relationshipContainer.IsEnemiesWith(assignedWorker)) {
+            //         //structure is owned by a non-enemy villager
+            //         needsToPay = true;
+            //         return true;
+            //     }
+            // }
+            // needsToPay = true;
+            // return false;
+        }
+        protected bool DefaultCanPurchaseFromHereForSingleWorkerStructures(Character p_buyer, out bool needsToPay, out int buyerOpinionOfWorker) {
+            if (HasAssignedWorker()) {
+                string assignedWorkerID = assignedWorkerIDs[0];
+                Character assignedWorker = DatabaseManager.Instance.characterDatabase.GetCharacterByPersistentID(assignedWorkerID);
                 if (assignedWorker == p_buyer) {
                     //structure is owned by self
                     needsToPay = false;
+                    buyerOpinionOfWorker = 100;
                     return true;
                 } else if (p_buyer.relationshipContainer.HasRelationshipWith(assignedWorker, RELATIONSHIP_TYPE.LOVER)) {
                     //structure is owned by a lover
                     needsToPay = false;
+                    buyerOpinionOfWorker = p_buyer.relationshipContainer.GetTotalOpinion(assignedWorker);
                     return true;
                 } else if (p_buyer.relationshipContainer.IsFamilyMember(assignedWorker) && 
                            p_buyer.relationshipContainer.GetOpinionLabel(assignedWorker) == RelationshipManager.Close_Friend) {
                     //structure is owned by a close friend family member
                     //needs to pay if worker does not consider buyer a close friend
                     needsToPay = assignedWorker.relationshipContainer.GetOpinionLabel(p_buyer) != RelationshipManager.Close_Friend;
+                    buyerOpinionOfWorker = p_buyer.relationshipContainer.GetTotalOpinion(assignedWorker);
                     return true;
                 } else if (!p_buyer.relationshipContainer.IsEnemiesWith(assignedWorker)) {
                     //structure is owned by a non-enemy villager
                     needsToPay = true;
+                    buyerOpinionOfWorker = p_buyer.relationshipContainer.GetTotalOpinion(assignedWorker);
                     return true;
                 }
+                needsToPay = true;
+                buyerOpinionOfWorker = -100;
+                return false;    
             }
             needsToPay = true;
+            buyerOpinionOfWorker = -100;
             return false;
         }
         #endregion
@@ -423,7 +498,14 @@ namespace Inner_Maps.Location_Structures {
 
         public override string GetTestingInfo() {
             string info = base.GetTestingInfo();
-            info = $"{info}\n Assigned Worker: {assignedWorker?.name}";
+            List<Character> assignedWorkers = RuinarchListPool<Character>.Claim();
+            for (int i = 0; i < assignedWorkerIDs.Count; i++) {
+                string assignedWorkerID = assignedWorkerIDs[i];
+                Character character = DatabaseManager.Instance.characterDatabase.GetCharacterByPersistentID(assignedWorkerID);
+                assignedWorkers.Add(character);
+            }
+            info = $"{info}\n Assigned Workers: {assignedWorkers?.ComafyList()}";
+            RuinarchListPool<Character>.Release(assignedWorkers);
             info = $"{info}\n Dirty Objects: {m_dirtyObjects?.ComafyList()}";
             return info;
         }
@@ -431,9 +513,12 @@ namespace Inner_Maps.Location_Structures {
         #region Loading
         public override void LoadReferences(SaveDataLocationStructure saveDataLocationStructure) {
             base.LoadReferences(saveDataLocationStructure);
-            Character worker = assignedWorker;
-            if (worker != null) {
-                worker.structureComponent.SetWorkPlaceStructure(this);
+            for (int i = 0; i < assignedWorkerIDs.Count; i++) {
+                string workerID = assignedWorkerIDs[i];
+                Character worker = DatabaseManager.Instance.characterDatabase.GetCharacterByPersistentID(workerID);
+                if (worker != null) {
+                    worker.structureComponent.SetWorkPlaceStructure(this);
+                }
             }
             SaveDataManMadeStructure saveDataManMadeStructure = saveDataLocationStructure as SaveDataManMadeStructure;
             if (saveDataManMadeStructure.dirtyObjects != null) {
