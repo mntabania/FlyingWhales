@@ -449,6 +449,12 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
         return true;
     }
     private void OnArriveAtTargetLocation() {
+        if (hasBeenReset) {
+            //Note: Added checking here that if the action is already in object pool, this should not be triggered anymore
+            //This is triggered even if it is in object pool usually in CharacterMarker - OnOtherCharacterDied
+            //Because when the target of an action died, the job will be cancelled before the OnOtherCharacterDied is called so when it is finally called, the action is already in object pool
+            return;
+        }
 #if DEBUG_PROFILER
         Profiler.BeginSample($"{actor.name} - {action.name} - OnArriveAtTargetLocation");
 #endif
