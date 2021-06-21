@@ -267,17 +267,16 @@ public class SettlementClassComponent : NPCSettlementComponent {
         ProcessNeededResourceClasses(numOfActiveResidents, resourceSupplyCapacity, ref log);
         if (m_bypass) {
 #if DEBUG_LOG
-            log += "\nBypass:";
-            log = GameManager.Instance.TodayLogString() + owner.name + " will NOT process Combatants and special classes because food and resource producers are already available";
+            log += "\nBypass: Will NOT process Combatants and special classes because food and resource producers are already available";
 #endif
             for (int x = 0; x < reservedCombatantCharacters.Count; ++x) {
                 reservedCombatantCharacters[x].classComponent.SetShouldChangeClass(true);
+                numberOfAvailableVillagers++;
                 reservedCombatantCount--;
             }
         } else {
 #if DEBUG_LOG
-            log += "\nNo Bypass:";
-            log = GameManager.Instance.TodayLogString() + owner.name + " will process Combatants and special classes because of bypass";
+            log += "\nNot Bypass: Will process Combatants and special classes because food and resource producers are already available";
 #endif
             ProcessNeededCombatantClasses(numOfCombatants, neededCombatants, ref log);
             ProcessNeededSpecialClasses(numberOfAvailableVillagers, ref log);
