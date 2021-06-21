@@ -48,7 +48,11 @@ public class Accident : GoapAction {
         // goapNode.descriptionLog.AddToFillers(actionToDo, actionToDo.goapName, LOG_IDENTIFIER.STRING_1);
     }
     public void AfterAccidentSuccess(ActualGoapNode goapNode) {
-        goapNode.actor.traitContainer.AddTrait(goapNode.actor, "Injured", gainedFromDoing: goapNode);
+        goapNode.actor.traitContainer.AddTrait(goapNode.actor, "Injured");
+        Trait trait = goapNode.actor.traitContainer.GetTraitOrStatus<Trait>("Injured");
+        if (trait != null) {
+            trait.SetGainedFromDoingAction(goapNode.action.goapType, goapNode.isStealth);
+        }
 
         int randomHpToLose = UnityEngine.Random.Range(5, 26);
         float percentMaxHPToLose = randomHpToLose / 100f;

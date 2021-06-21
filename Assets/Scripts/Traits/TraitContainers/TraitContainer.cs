@@ -40,40 +40,35 @@ namespace Traits {
         /// The main AddTrait function. All other AddTrait functions will eventually call this.
         /// </summary>
         /// <returns>If the trait was added or not.</returns>
-        public bool AddTrait(ITraitable addTo, Trait trait, Character characterResponsible = null, 
-            ActualGoapNode gainedFromDoing = null, bool bypassElementalChance = false, int overrideDuration = -1) {
+        public bool AddTrait(ITraitable addTo, Trait trait, Character characterResponsible = null, bool bypassElementalChance = false, int overrideDuration = -1) {
             if (TraitValidator.CanAddTraitGeneric(addTo, trait.name, this) == false) {
                 return false;
             }
             if (TraitManager.Instance.IsTraitElemental(trait.name)) {
-                return TryAddElementalStatus(addTo, trait, characterResponsible, gainedFromDoing, bypassElementalChance, overrideDuration);
+                return TryAddElementalStatus(addTo, trait, characterResponsible, bypassElementalChance, overrideDuration);
             }
-            return TraitAddition(addTo, trait, characterResponsible, gainedFromDoing, overrideDuration);
+            return TraitAddition(addTo, trait, characterResponsible, overrideDuration);
         }
-        public bool AddTrait(ITraitable addTo, string traitName, out Trait trait, Character characterResponsible = null, 
-            ActualGoapNode gainedFromDoing = null, bool bypassElementalChance = false, int overrideDuration = -1) {
+        public bool AddTrait(ITraitable addTo, string traitName, out Trait trait, Character characterResponsible = null, bool bypassElementalChance = false, int overrideDuration = -1) {
             if (TraitValidator.CanAddTraitGeneric(addTo, traitName, this) == false) {
                 trait = null;
                 return false;
             }
             if (TraitManager.Instance.IsTraitElemental(traitName)) {
-                return TryAddElementalStatus(addTo, traitName, out trait, characterResponsible, 
-                    gainedFromDoing, bypassElementalChance, overrideDuration);
+                return TryAddElementalStatus(addTo, traitName, out trait, characterResponsible, bypassElementalChance, overrideDuration);
             }
-            return TraitAddition(addTo, traitName, out trait, characterResponsible, gainedFromDoing, overrideDuration);
+            return TraitAddition(addTo, traitName, out trait, characterResponsible, overrideDuration);
         }
-        public bool AddTrait(ITraitable addTo, string traitName, Character characterResponsible = null, 
-            ActualGoapNode gainedFromDoing = null, bool bypassElementalChance = false, int overrideDuration = -1) {
+        public bool AddTrait(ITraitable addTo, string traitName, Character characterResponsible = null, bool bypassElementalChance = false, int overrideDuration = -1) {
             if (TraitValidator.CanAddTraitGeneric(addTo, traitName, this) == false) {
                 return false;
             }
             if (TraitManager.Instance.IsTraitElemental(traitName)) {
-                return TryAddElementalStatus(addTo, traitName, characterResponsible, gainedFromDoing, bypassElementalChance, overrideDuration);
+                return TryAddElementalStatus(addTo, traitName, characterResponsible, bypassElementalChance, overrideDuration);
             }
-            return TraitAddition(addTo, traitName, characterResponsible, gainedFromDoing, overrideDuration);
+            return TraitAddition(addTo, traitName, characterResponsible, overrideDuration);
         }
-        private bool TryAddElementalStatus(ITraitable addTo, string traitName, Character characterResponsible, 
-            ActualGoapNode gainedFromDoing, bool bypassElementalChance, int overrideDuration) {
+        private bool TryAddElementalStatus(ITraitable addTo, string traitName, Character characterResponsible, bool bypassElementalChance, int overrideDuration) {
             if (addTo is MovingTileObject || addTo is Quicksand) {
                 return false;
             }
@@ -82,7 +77,7 @@ namespace Traits {
                 shouldAddTrait = ProcessBeforeSuccessfullyAddingElementalStatus(addTo, traitName, ref overrideDuration);
                 if (shouldAddTrait) {
                     Trait trait = null;
-                    shouldAddTrait = TraitAddition(addTo, traitName, out trait, characterResponsible, gainedFromDoing, overrideDuration);
+                    shouldAddTrait = TraitAddition(addTo, traitName, out trait, characterResponsible, overrideDuration);
                     if (shouldAddTrait) {
                         ProcessAfterSuccessfulAddingElementalTrait(addTo, trait as Status);
                     }
@@ -90,8 +85,7 @@ namespace Traits {
             }
             return shouldAddTrait;
         }
-        private bool TryAddElementalStatus(ITraitable addTo, string traitName, out Trait trait, Character characterResponsible, 
-            ActualGoapNode gainedFromDoing, bool bypassElementalChance, int overrideDuration) {
+        private bool TryAddElementalStatus(ITraitable addTo, string traitName, out Trait trait, Character characterResponsible, bool bypassElementalChance, int overrideDuration) {
             trait = null;
             if(addTo is MovingTileObject || addTo is Quicksand) {
                 return false;
@@ -100,7 +94,7 @@ namespace Traits {
             if (shouldAddTrait) {
                 shouldAddTrait = ProcessBeforeSuccessfullyAddingElementalStatus(addTo, traitName, ref overrideDuration);
                 if (shouldAddTrait) {
-                    shouldAddTrait = TraitAddition(addTo, traitName, out trait, characterResponsible, gainedFromDoing, overrideDuration);
+                    shouldAddTrait = TraitAddition(addTo, traitName, out trait, characterResponsible, overrideDuration);
                     if (shouldAddTrait) {
                         ProcessAfterSuccessfulAddingElementalTrait(addTo, trait as Status);
                     }
@@ -108,13 +102,12 @@ namespace Traits {
             }
             return shouldAddTrait;
         }
-        private bool TryAddElementalStatus(ITraitable addTo, Trait trait, Character characterResponsible, 
-            ActualGoapNode gainedFromDoing, bool bypassElementalChance, int overrideDuration) {
+        private bool TryAddElementalStatus(ITraitable addTo, Trait trait, Character characterResponsible, bool bypassElementalChance, int overrideDuration) {
             bool shouldAddTrait = ProcessBeforeAddingElementalStatus(addTo, trait.name, bypassElementalChance, characterResponsible);
             if (shouldAddTrait) {
                 shouldAddTrait = ProcessBeforeSuccessfullyAddingElementalStatus(addTo, trait.name, ref overrideDuration);
                 if (shouldAddTrait) {
-                    shouldAddTrait = TraitAddition(addTo, trait, characterResponsible, gainedFromDoing, overrideDuration);
+                    shouldAddTrait = TraitAddition(addTo, trait, characterResponsible, overrideDuration);
                     if (shouldAddTrait) {
                         ProcessAfterSuccessfulAddingElementalTrait(addTo, trait as Status);
                     }
@@ -241,29 +234,29 @@ namespace Traits {
                 RemoveStatusAndStacks(traitable, "Wet");
             }
         }
-        private bool TraitAddition(ITraitable addTo, string traitName, Character characterResponsible, ActualGoapNode gainedFromDoing, int overrideDuration) {
+        private bool TraitAddition(ITraitable addTo, string traitName, Character characterResponsible, int overrideDuration) {
             if (TraitManager.Instance.IsInstancedTrait(traitName)) {
-                return AddTraitRoot(addTo, TraitManager.Instance.CreateNewInstancedTraitClass<Trait>(traitName), characterResponsible, gainedFromDoing, overrideDuration);
+                return AddTraitRoot(addTo, TraitManager.Instance.CreateNewInstancedTraitClass<Trait>(traitName), characterResponsible, overrideDuration);
             } else {
                 Assert.IsTrue(TraitManager.Instance.allTraits.ContainsKey(traitName), $"No trait named {traitName} in all traits");
-                return AddTraitRoot(addTo, TraitManager.Instance.allTraits[traitName], characterResponsible, gainedFromDoing, overrideDuration);
+                return AddTraitRoot(addTo, TraitManager.Instance.allTraits[traitName], characterResponsible, overrideDuration);
             }
         }
-        private bool TraitAddition(ITraitable addTo, string traitName, out Trait trait, Character characterResponsible, ActualGoapNode gainedFromDoing, int overrideDuration) {
+        private bool TraitAddition(ITraitable addTo, string traitName, out Trait trait, Character characterResponsible, int overrideDuration) {
             if (TraitManager.Instance.IsInstancedTrait(traitName)) {
                 //Highly non performant, because it always creates new instance even though the trait is just being stacked
                 trait = TraitManager.Instance.CreateNewInstancedTraitClass<Trait>(traitName);
-                return AddTraitRoot(addTo, trait, characterResponsible, gainedFromDoing, overrideDuration);
+                return AddTraitRoot(addTo, trait, characterResponsible, overrideDuration);
             } else {
                 Assert.IsTrue(TraitManager.Instance.allTraits.ContainsKey(traitName), $"No trait named {traitName} in all traits");
                 trait = TraitManager.Instance.allTraits[traitName];
-                return AddTraitRoot(addTo, trait, characterResponsible, gainedFromDoing, overrideDuration);
+                return AddTraitRoot(addTo, trait, characterResponsible, overrideDuration);
             }
         }
-        private bool TraitAddition(ITraitable addTo, Trait trait, Character characterResponsible, ActualGoapNode gainedFromDoing, int overrideDuration) {
-            return AddTraitRoot(addTo, trait, characterResponsible, gainedFromDoing, overrideDuration);
+        private bool TraitAddition(ITraitable addTo, Trait trait, Character characterResponsible, int overrideDuration) {
+            return AddTraitRoot(addTo, trait, characterResponsible, overrideDuration);
         }
-        private bool AddTraitRoot(ITraitable addTo, Trait trait, Character characterResponsible, ActualGoapNode gainedFromDoing, int overrideDuration) {
+        private bool AddTraitRoot(ITraitable addTo, Trait trait, Character characterResponsible, int overrideDuration) {
             if (TraitValidator.CanAddTrait(addTo, trait, this) == false) {
                 return false;
             }
@@ -274,25 +267,25 @@ namespace Traits {
                         stacks[statusName]++;
                         if (TraitManager.Instance.IsInstancedTrait(statusName)) {
                             Status existingStatus = GetTraitOrStatus<Status>(statusName);
-                            addTo.traitProcessor.OnStatusStacked(addTo, existingStatus, characterResponsible, gainedFromDoing, overrideDuration);
+                            addTo.traitProcessor.OnStatusStacked(addTo, existingStatus, characterResponsible, overrideDuration);
                         } else {
-                            addTo.traitProcessor.OnStatusStacked(addTo, status, characterResponsible, gainedFromDoing, overrideDuration);
+                            addTo.traitProcessor.OnStatusStacked(addTo, status, characterResponsible, overrideDuration);
                         }
                     } else {
                         stacks.Add(statusName, 1);
                         statuses.Add(status);
                         allTraitsAndStatuses.Add(statusName, status);
-                        addTo.traitProcessor.OnTraitAdded(addTo, status, characterResponsible, gainedFromDoing, overrideDuration);
+                        addTo.traitProcessor.OnTraitAdded(addTo, status, characterResponsible, overrideDuration);
                     }
                 } else {
                     statuses.Add(status);
                     allTraitsAndStatuses.Add(statusName, status);
-                    addTo.traitProcessor.OnTraitAdded(addTo, status, characterResponsible, gainedFromDoing, overrideDuration);
+                    addTo.traitProcessor.OnTraitAdded(addTo, status, characterResponsible, overrideDuration);
                 }
             } else {
                 traits.Add(trait);
                 allTraitsAndStatuses.Add(trait.name, trait);
-                addTo.traitProcessor.OnTraitAdded(addTo, trait, characterResponsible, gainedFromDoing, overrideDuration);
+                addTo.traitProcessor.OnTraitAdded(addTo, trait, characterResponsible, overrideDuration);
             }
             return true;
         }

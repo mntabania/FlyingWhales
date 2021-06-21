@@ -5974,11 +5974,17 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             if (interruptComponent.isInterrupted && interruptComponent.currentInterrupt.interrupt != interrupt) {
                 interruptComponent.ForceEndNonSimultaneousInterrupt();
             }
-            traitContainer.AddTrait(this, "Dead", responsibleCharacter, gainedFromDoing: deathFromAction);
+            traitContainer.AddTrait(this, "Dead", responsibleCharacter);
+            if (deathFromAction != null) {
+                traitContainer.GetTraitOrStatus<Trait>("Dead")?.SetGainedFromDoingAction(deathFromAction.action.goapType, deathFromAction.isStealth);
+            }
 
             if (cause == "attacked" && responsibleCharacter != null) {
                 if (responsibleCharacter.isInWerewolfForm) {
-                    traitContainer.AddTrait(this, "Mangled", responsibleCharacter, gainedFromDoing: deathFromAction);
+                    traitContainer.AddTrait(this, "Mangled", responsibleCharacter);
+                    if (deathFromAction != null) {
+                        traitContainer.GetTraitOrStatus<Trait>("Mangled")?.SetGainedFromDoingAction(deathFromAction.action.goapType, deathFromAction.isStealth);
+                    }
                 }
                 FactionType ft = faction?.factionType;
                 if (ft != null && ft.type == FACTION_TYPE.Undead || ft.type == FACTION_TYPE.Wild_Monsters) {

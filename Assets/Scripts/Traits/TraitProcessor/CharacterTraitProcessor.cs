@@ -7,7 +7,7 @@ namespace Traits {
     /// Functions to be used to determine what happens when a trait is added/removed to a character
     /// </summary>
     public class CharacterTraitProcessor : TraitProcessor {
-        public override void OnTraitAdded(ITraitable traitable, Trait trait, Character characterResponsible, ActualGoapNode gainedFromDoing, int overrideDuration) {
+        public override void OnTraitAdded(ITraitable traitable, Trait trait, Character characterResponsible, int overrideDuration) {
             Character character = traitable as Character;
             Assert.IsNotNull(character);
             if(trait is Status status) {
@@ -27,7 +27,7 @@ namespace Traits {
                     character.needsComponent.PlanTirednessRecoveryActions();
                 }
             }
-            DefaultProcessOnAddTrait(traitable, trait, characterResponsible, gainedFromDoing, overrideDuration);
+            DefaultProcessOnAddTrait(traitable, trait, characterResponsible, overrideDuration);
             if (trait.affectsNameIcon) {
                 character.bookmarkEventDispatcher.ExecuteBookmarkChangedNameOrElementsEvent(character);
                 if (character.hasMarker) {
@@ -49,9 +49,9 @@ namespace Traits {
             DefaultProcessOnRemoveTrait(traitable, trait, removedBy);
             Messenger.Broadcast(CharacterSignals.CHARACTER_TRAIT_REMOVED, character, trait);
         }
-        public override void OnStatusStacked(ITraitable traitable, Status status, Character characterResponsible, ActualGoapNode gainedFromDoing, int overrideDuration) {
+        public override void OnStatusStacked(ITraitable traitable, Status status, Character characterResponsible, int overrideDuration) {
             Character character = traitable as Character;
-            if(DefaultProcessOnStackStatus(traitable, status, characterResponsible, gainedFromDoing, overrideDuration)) {
+            if(DefaultProcessOnStackStatus(traitable, status, characterResponsible, overrideDuration)) {
                 Messenger.Broadcast(CharacterSignals.CHARACTER_TRAIT_STACKED, character, status.GetBase());
             }
         }

@@ -1,4 +1,5 @@
-﻿public class StartTend : GoapAction {
+﻿using Traits;
+public class StartTend : GoapAction {
     public StartTend() : base(INTERACTION_TYPE.START_TEND) {
         actionIconString = GoapActionStateDB.Work_Icon;
         //advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
@@ -23,8 +24,8 @@
     
 #region State Effects
     public void AfterStartTendSuccess(ActualGoapNode goapNode) {
-        goapNode.actor.traitContainer.AddTrait(goapNode.actor, "Tending", goapNode.actor, goapNode);
-
+        goapNode.actor.traitContainer.AddTrait(goapNode.actor, "Tending", goapNode.actor);
+        goapNode.actor.traitContainer.GetTraitOrStatus<Trait>("Tending")?.SetGainedFromDoingAction(goapNode.action.goapType, goapNode.isStealth);
     }
-#endregion
+    #endregion
 }

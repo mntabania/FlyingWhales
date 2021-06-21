@@ -35,8 +35,8 @@ namespace Traits {
                 character.movementComponent.AdjustSpeedModifier(-0.15f);
                 character.AddTraitNeededToBeRemoved(this);
 
-                if (gainedFromDoing == null || gainedFromDoing.goapType != INTERACTION_TYPE.ASSAULT) {
-                    Log addLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "NonIntel", "add_trait", gainedFromDoing, LOG_TAG.Life_Changes);
+                if (gainedFromDoingType != INTERACTION_TYPE.ASSAULT) {
+                    Log addLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "NonIntel", "add_trait", null, LOG_TAG.Life_Changes);
                     addLog.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                     addLog.AddToFillers(null, this.name, LOG_IDENTIFIER.TARGET_CHARACTER);
                     addLog.AddLogToDatabase(true);

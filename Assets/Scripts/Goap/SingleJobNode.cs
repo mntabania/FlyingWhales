@@ -30,7 +30,7 @@ public class SingleJobNode : JobNode {
     public override void Reset() {
         if (node != null) {
             if (!node.ProcessReturnToPool()) {
-                node.isSupposedToBeInPool = true;
+                node.SetIsSupposedToBeInPool(true);
             }
         }
         node = null;

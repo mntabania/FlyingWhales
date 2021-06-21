@@ -510,8 +510,8 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 	}
 	private void TriggerSettlementRemoveStatusJob(Trait trait) {
 		if (owner.isDead) { return; }
-		if (trait.gainedFromDoing == null || trait.gainedFromDoing.isStealth == false) { //only create remove status job if trait was not gained from a stealth action
-			GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = trait.name, target = GOAP_EFFECT_TARGET.TARGET };
+		if (!trait.isGainedFromDoingStealth) { //trait.gainedFromDoing == null || trait.gainedFromDoing.isStealth == false //only create remove status job if trait was not gained from a stealth action
+            GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = trait.name, target = GOAP_EFFECT_TARGET.TARGET };
 			if (owner.homeSettlement.HasJob(goapEffect, owner) == false) {
 				GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.REMOVE_STATUS, goapEffect, owner, owner.homeSettlement);
                 JobUtilities.PopulatePriorityLocationsForTakingNonEdibleResources(owner, job, INTERACTION_TYPE.NONE);
@@ -525,8 +525,8 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 		if (owner is Summon) {
 			return; //Reference: https://trello.com/c/LkTisHji/3023-live-03356-spider-in-villager-faction-able-to-remove-poison
 		}
-		if (trait.gainedFromDoing == null || trait.gainedFromDoing.isStealth == false) { //only create remove status job if trait was not gained from a stealth action
-			GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = trait.name, target = GOAP_EFFECT_TARGET.TARGET };
+		if (!trait.isGainedFromDoingStealth) { //trait.gainedFromDoing == null || trait.gainedFromDoing.isStealth == false //only create remove status job if trait was not gained from a stealth action
+            GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = trait.name, target = GOAP_EFFECT_TARGET.TARGET };
 			if (owner.jobQueue.HasJob(goapEffect, owner) == false) {
 				GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.REMOVE_STATUS, goapEffect, owner, owner);
                 JobUtilities.PopulatePriorityLocationsForTakingNonEdibleResources(owner, job, INTERACTION_TYPE.NONE);

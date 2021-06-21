@@ -433,7 +433,8 @@ public class DrinkBlood : GoapAction {
                 if(!actor.HasHealth()) {
                     actor.Death(deathFromAction: goapNode, responsibleCharacter: targetCharacter, _deathLog: log);
                 } else {
-                    actor.traitContainer.AddTrait(actor, "Unconscious", targetCharacter, goapNode);
+                    actor.traitContainer.AddTrait(actor, "Unconscious", targetCharacter);
+                    actor.traitContainer.GetTraitOrStatus<Trait>("Unconscious")?.SetGainedFromDoingAction(goapNode.action.goapType, goapNode.isStealth);
                 }
                 LogPool.Release(log);
             } else {
@@ -451,7 +452,8 @@ public class DrinkBlood : GoapAction {
                 }
                 if (GameUtilities.RollChance(98)) {
                     //Lethargic lethargic = TraitManager.Instance.CreateNewInstancedTraitClass<Lethargic>("Lethargic");
-                    targetCharacter.traitContainer.AddTrait(targetCharacter, "Lethargic", actor, goapNode);
+                    targetCharacter.traitContainer.AddTrait(targetCharacter, "Lethargic", actor);
+                    targetCharacter.traitContainer.GetTraitOrStatus<Trait>("Lethargic")?.SetGainedFromDoingAction(goapNode.action.goapType, goapNode.isStealth);
                 } else {
                     //Vampire vampire = TraitManager.Instance.CreateNewInstancedTraitClass<Vampire>("Vampire");
                     if(targetCharacter.traitContainer.AddTrait(targetCharacter, "Vampire", actor)) {

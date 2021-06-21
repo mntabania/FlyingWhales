@@ -1,4 +1,5 @@
-﻿public class StartPlagueCare : GoapAction {
+﻿using Traits;
+public class StartPlagueCare : GoapAction {
     public StartPlagueCare() : base(INTERACTION_TYPE.START_PLAGUE_CARE) {
         actionIconString = GoapActionStateDB.Work_Icon;
         //advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
@@ -23,8 +24,8 @@
     
 #region State Effects
     public void AfterCareSuccess(ActualGoapNode goapNode) {
-        goapNode.actor.traitContainer.AddTrait(goapNode.actor, "Plague Caring", goapNode.actor, goapNode);
-
+        goapNode.actor.traitContainer.AddTrait(goapNode.actor, "Plague Caring", goapNode.actor);
+        goapNode.actor.traitContainer.GetTraitOrStatus<Trait>("Plague Caring")?.SetGainedFromDoingAction(goapNode.action.goapType, goapNode.isStealth);
     }
 #endregion
 }

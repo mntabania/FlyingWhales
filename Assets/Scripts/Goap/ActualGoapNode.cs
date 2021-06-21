@@ -25,8 +25,9 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
     public OtherData[] otherData { get; private set; }
     public int cost { get; private set; }
     public bool isIntel { get; private set; }
-    public bool isAssigned;
-    public bool isSupposedToBeInPool;
+    public bool isAssigned; //For testing only
+    public bool isSupposedToBeInPool { get; private set; }
+    public int stillProcessingCounter { get; private set; }
 
     public GoapAction action { get; private set; }
     public ACTION_STATUS actionStatus { get; private set; }
@@ -75,6 +76,7 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
     public CRIMABLE_TYPE crimableType => CRIMABLE_TYPE.Action;
     public OBJECT_TYPE objectType => OBJECT_TYPE.Action;
     public System.Type serializedData => typeof(SaveDataActualGoapNode);
+    public bool isStillProcessing => stillProcessingCounter > 0;
     //public LOG_TAG[] logTags => GetLogTags().ToArray();
     #endregion
 
@@ -84,7 +86,10 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
     }
 
     public ActualGoapNode(SaveDataActualGoapNode data) {
-        logTags = new List<LOG_TAG>();
+        logTags = data.logTags;
+        if (logTags == null) {
+            logTags = new List<LOG_TAG>();
+        }
         awareCharacters = new List<Character>();
         persistentID = data.persistentID;
         isStealth = data.isStealth;
@@ -97,6 +102,9 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
         currentStateDuration = data.currentStateDuration;
         crimeType = data.crimeType;
         isIntel = data.isIntel;
+        isSupposedToBeInPool = data.isSupposedToBeInPool;
+        stillProcessingCounter = data.stillProcessingCounter;
+        isAssigned = data.isAssigned;
     }
 
     public void SetActionData(GoapAction action, Character actor, IPointOfInterest poiTarget, OtherData[] otherData, int cost) {
@@ -469,6 +477,7 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
                 goapActionInvalidity.reason = invalidVisionReason;
             }
             action.LogActionInvalid(goapActionInvalidity, this, isInvalidStealth);
+            SetIsStillProcessing(true);
             actor.GoapActionResult(InteractionManager.Goap_State_Fail, this);
             action.OnInvalidAction(this);
             JobQueueItem job = associatedJob;
@@ -502,6 +511,10 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
                         }
                     }
                 }
+            }
+            SetIsStillProcessing(false);
+            if (isSupposedToBeInPool) {
+                ProcessReturnToPool();
             }
             return;
         }
@@ -547,8 +560,15 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
         if ((action.actionCategory == ACTION_CATEGORY.DIRECT || action.actionCategory == ACTION_CATEGORY.CONSUME) && poiTarget is BaseMapObject baseMapObject) {
             baseMapObject.OnManipulatedBy(actor);
         }
+        //Note: Put a still processing here because if the action has no duration and it is the last action of the job the "action.Perform" will automatically cancel the job and return the ActualGoapNode to pool
+        //When that happens, the STARTED_PERFORMING_ACTION will be broadcasting an ActualGoapNode that is already in the object pool
+        SetIsStillProcessing(true);
         action.Perform(this);
         Messenger.Broadcast(JobSignals.STARTED_PERFORMING_ACTION, this);
+        SetIsStillProcessing(false);
+        if (isSupposedToBeInPool) {
+            ProcessReturnToPool();
+        }
     }
     public void ActionInterruptedWhilePerforming() { //bool shouldDoAfterEffect
                                                      //#if DEBUG_LOG
@@ -814,6 +834,8 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
         GoapActionState currentState = action.states[currentStateName];
         Character p_actor = actor;
         IPointOfInterest p_target = poiTarget;
+        GoapAction p_action = action;
+        SetIsStillProcessing(true);
 
         ActionResult(currentState);
 
@@ -827,7 +849,7 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
                 for (int i = 0; i < actorTraitOverrideFunctions.Count; i++) {
                     Trait trait = actorTraitOverrideFunctions[i];
                     isRemoved = false;
-                    trait.ExecuteActionAfterEffects(action.goapType, this, ref isRemoved);
+                    trait.ExecuteActionAfterEffects(p_action.goapType, p_actor, p_target, p_action.actionCategory, ref isRemoved);
                     if (isRemoved) { i--; }
                 }
             }
@@ -835,10 +857,14 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
                 for (int i = 0; i < targetTraitOverrideFunctions.Count; i++) {
                     Trait trait = targetTraitOverrideFunctions[i];
                     isRemoved = false;
-                    trait.ExecuteActionAfterEffects(action.goapType, this, ref isRemoved);
+                    trait.ExecuteActionAfterEffects(p_action.goapType, p_actor, p_target, p_action.actionCategory, ref isRemoved);
                     if (isRemoved) { i--; }
                 }
             }
+        }
+        SetIsStillProcessing(false);
+        if (isSupposedToBeInPool) {
+            ProcessReturnToPool();
         }
     }
     private void EndEffectVigilant() {
@@ -1312,6 +1338,16 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
     #endregion
 
     #region Object Pool
+    public void SetIsStillProcessing(bool p_state) {
+        if (p_state) {
+            stillProcessingCounter++;
+        } else {
+            stillProcessingCounter--;
+        }
+    }
+    public void SetIsSupposedToBeInPool(bool p_state) {
+        isSupposedToBeInPool = p_state;
+    }
     public void IncreaseReactionCounter() {
         reactionProcessCounter++;
     }
@@ -1323,7 +1359,7 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
     }
     public bool ProcessReturnToPool() {
         if (reactionProcessCounter <= 0) {
-            if (!isRumor && !isIntel && !isAssumption) {
+            if (!isRumor && !isIntel && !isAssumption && !isStillProcessing) {
                 ObjectPoolManager.Instance.ReturnActionToPool(this);
                 return true;
             }
@@ -1364,6 +1400,7 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
         actionStatus = ACTION_STATUS.NONE;
         isAssigned = false;
         isSupposedToBeInPool = false;
+        stillProcessingCounter = 0;
     }
     #endregion
 }
@@ -1381,6 +1418,9 @@ public class SaveDataActualGoapNode : SaveData<ActualGoapNode>, ISavableCounterp
     public SaveDataOtherData[] otherData;
     public int cost;
     public bool isIntel;
+    public bool isSupposedToBeInPool;
+    public int stillProcessingCounter;
+    public bool isAssigned; //For testing only
 
     public INTERACTION_TYPE action;
     public ACTION_STATUS actionStatus;
@@ -1403,6 +1443,7 @@ public class SaveDataActualGoapNode : SaveData<ActualGoapNode>, ISavableCounterp
     public bool hasAssumption;
 
     public List<string> awareCharacters;
+    public List<LOG_TAG> logTags;
 
     //Crime
     public CRIME_TYPE crimeType;
@@ -1430,6 +1471,10 @@ public class SaveDataActualGoapNode : SaveData<ActualGoapNode>, ISavableCounterp
         poiTarget = data.poiTarget.persistentID;
         poiTargetType = data.poiTarget.poiType;
         isIntel = data.isIntel;
+        isSupposedToBeInPool = data.isSupposedToBeInPool;
+        stillProcessingCounter = data.stillProcessingCounter;
+        isAssigned = data.isAssigned;
+        logTags = data.logTags;
 
         disguisedActor = string.Empty;
         disguisedTarget = string.Empty;

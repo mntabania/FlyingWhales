@@ -147,7 +147,8 @@ public class FeedSelf : GoapAction {
                     targetCharacter.traitContainer.AddTrait(targetCharacter, "Poor Meal", actor);
                 }
                 if (GameUtilities.RollChance(98)) {
-                    actor.traitContainer.AddTrait(actor, "Lethargic", targetCharacter, goapNode);
+                    actor.traitContainer.AddTrait(actor, "Lethargic", targetCharacter);
+                    actor.traitContainer.GetTraitOrStatus<Trait>("Lethargic")?.SetGainedFromDoingAction(goapNode.action.goapType, goapNode.isStealth);
                 } else {
                     if (actor.traitContainer.AddTrait(actor, "Vampire", targetCharacter)) {
                         Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "GoapAction", goapName, "contracted", goapNode, LOG_TAG.Life_Changes);

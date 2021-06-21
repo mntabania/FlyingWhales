@@ -265,9 +265,10 @@ public class TraitManager : BaseMonoBehaviour {
             //In the loop, override duration to zero so that it will not reset the trait's timer
             Trait duplicateTrait = null;
             for (int i = 0; i < numOfStacks; i++) {
-                to.traitContainer.AddTrait(to, trait.name, out duplicateTrait, characterResponsible: trait.responsibleCharacter, gainedFromDoing: trait.gainedFromDoing, overrideDuration: 0, bypassElementalChance: true);
+                to.traitContainer.AddTrait(to, trait.name, out duplicateTrait, characterResponsible: trait.responsibleCharacter, overrideDuration: 0, bypassElementalChance: true);
+                to.traitContainer.GetTraitOrStatus<Trait>(trait.name)?.SetGainedFromDoingAction(trait.gainedFromDoingType, trait.isGainedFromDoingStealth);
             }
-            if(duplicateTrait != null) {
+            if (duplicateTrait != null) {
                 if(duplicateTrait is Status statusCopy && trait is Status statusToCopy) {
                     statusCopy.OnCopyStatus(statusToCopy, from, to);
                 }

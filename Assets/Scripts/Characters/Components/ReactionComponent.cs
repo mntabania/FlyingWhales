@@ -1714,7 +1714,7 @@ public class ReactionComponent : CharacterComponent {
                         }
                     }
 
-                    if (actor.marker && disguisedTarget.isNormalCharacter && deadTrait != null && (deadTrait.gainedFromDoing == null || deadTrait.gainedFromDoing.goapType != INTERACTION_TYPE.EXECUTE)) {
+                    if (actor.marker && disguisedTarget.isNormalCharacter && deadTrait != null && deadTrait.gainedFromDoingType != INTERACTION_TYPE.EXECUTE) {
                         if (disguisedActor.traitContainer.HasTrait("Suspicious") || actor.moodComponent.moodState == MOOD_STATE.Critical ||
                            (actor.moodComponent.moodState == MOOD_STATE.Bad && UnityEngine.Random.Range(0, 2) == 0) || UnityEngine.Random.Range(0, 100) < 15) {
 #if DEBUG_LOG

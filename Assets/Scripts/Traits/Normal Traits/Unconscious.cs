@@ -42,7 +42,7 @@ namespace Traits {
                 //CheckToApplyRestrainJob();
                 //_sourceCharacter.CreateRemoveTraitJob(name);
                 character.AddTraitNeededToBeRemoved(this);
-                if (gainedFromDoing == null) {
+                if (gainedFromDoingType == INTERACTION_TYPE.NONE) {
                     Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "NonIntel", "add_trait", null, LOG_TAG.Needs);
                     log.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                     log.AddToFillers(null, this.name, LOG_IDENTIFIER.TARGET_CHARACTER);

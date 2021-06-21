@@ -33,7 +33,9 @@ namespace Traits {
         public string persistentID { get; private set; }
         public OBJECT_TYPE objectType => OBJECT_TYPE.Trait;
         public List<Character> responsibleCharacters { get; protected set; }
-        public ActualGoapNode gainedFromDoing { get; protected set; } //what action was this poi involved in that gave it this trait.
+        //public ActualGoapNode gainedFromDoing { get; protected set; } //what action was this poi involved in that gave it this trait.
+        public INTERACTION_TYPE gainedFromDoingType { get; protected set; }
+        public bool isGainedFromDoingStealth { get; protected set; }
         //public PlayerDamageAccumulator playerDamageAccumulator { get; private set; }
 
         #region Getters
@@ -63,13 +65,15 @@ namespace Traits {
         }
         public virtual void LoadFirstWaveInstancedTrait(SaveDataTrait saveDataTrait) {
             persistentID = saveDataTrait.persistentID;
+            gainedFromDoingType = saveDataTrait.gainedFromDoingType;
+            isGainedFromDoingStealth = saveDataTrait.isGainedFromDoingStealth;
             Assert.IsFalse(string.IsNullOrEmpty(persistentID), $"Trait {saveDataTrait.name} does not have a persistent ID!");
             DatabaseManager.Instance.traitDatabase.RegisterTrait(this);
         }
         public virtual void LoadSecondWaveInstancedTrait(SaveDataTrait p_saveDataTrait) {
-            if (!string.IsNullOrEmpty(p_saveDataTrait.gainedFromDoing)) {
-                gainedFromDoing = DatabaseManager.Instance.actionDatabase.GetActionByPersistentID(p_saveDataTrait.gainedFromDoing);    
-            }
+            //if (!string.IsNullOrEmpty(p_saveDataTrait.gainedFromDoing)) {
+            //    gainedFromDoing = DatabaseManager.Instance.actionDatabase.GetActionByPersistentID(p_saveDataTrait.gainedFromDoing);    
+            //}
             if (p_saveDataTrait.responsibleCharacters != null) {
                 responsibleCharacters = SaveUtilities.ConvertIDListToCharacters(p_saveDataTrait.responsibleCharacters);    
             }
@@ -229,8 +233,9 @@ namespace Traits {
             }
             return string.Empty;
         }
-        public void SetGainedFromDoing(ActualGoapNode action) {
-            gainedFromDoing = action;
+        public void SetGainedFromDoingAction(INTERACTION_TYPE p_actionType, bool p_actionStealth) {
+            gainedFromDoingType = p_actionType;
+            isGainedFromDoingStealth = p_actionStealth;
         }
         public virtual void AddCharacterResponsibleForTrait(Character character) {
             if (character != null) {

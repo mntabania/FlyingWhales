@@ -201,7 +201,8 @@ public class KnockoutCharacter : GoapAction {
 
 #region State Effects
     public void AfterKnockoutSuccess(ActualGoapNode goapNode) {
-        goapNode.poiTarget.traitContainer.AddTrait(goapNode.poiTarget, "Unconscious", goapNode.actor, gainedFromDoing: goapNode);
+        goapNode.poiTarget.traitContainer.AddTrait(goapNode.poiTarget, "Unconscious", goapNode.actor);
+        goapNode.poiTarget.traitContainer.GetTraitOrStatus<Trait>("Unconscious")?.SetGainedFromDoingAction(goapNode.action.goapType, goapNode.isStealth);
     }
     //public void PreKnockoutFail() {
     //    SetCommittedCrime(CRIME.ASSAULT, new Character[] { actor });
@@ -217,7 +218,7 @@ public class KnockoutCharacter : GoapAction {
     //        }
     //    }
     //}
-#endregion
+    #endregion
 
     //#region Intel Reactions
     //private List<string> KnockoutSuccessIntelReaction(Character recipient, Intel sharedIntel, SHARE_INTEL_STATUS status) {

@@ -4,13 +4,12 @@ using UnityEngine;
 
 namespace Traits {
     public abstract class TraitProcessor {
-        public abstract void OnTraitAdded(ITraitable traitable, Trait trait, Character characterResponsible, ActualGoapNode gainedFromDoing, int overrideDuration);
+        public abstract void OnTraitAdded(ITraitable traitable, Trait trait, Character characterResponsible, int overrideDuration);
         public abstract void OnTraitRemoved(ITraitable traitable, Trait trait, Character removedBy = null);
-        public abstract void OnStatusStacked(ITraitable traitable, Status status, Character characterResponsible, ActualGoapNode gainedFromDoing, int overrideDuration);
+        public abstract void OnStatusStacked(ITraitable traitable, Status status, Character characterResponsible, int overrideDuration);
         public abstract void OnStatusUnstack(ITraitable traitable, Status status, Character removedBy = null);
 
-        protected void DefaultProcessOnAddTrait(ITraitable traitable, Trait trait, Character characterResponsible, ActualGoapNode gainedFromDoing, int overrideDuration) {
-            trait.SetGainedFromDoing(gainedFromDoing);
+        protected void DefaultProcessOnAddTrait(ITraitable traitable, Trait trait, Character characterResponsible, int overrideDuration) {
             //trait.SetOnRemoveAction(onRemoveAction);
             trait.AddCharacterResponsibleForTrait(characterResponsible);
             ApplyPOITraitInteractions(traitable, trait);
@@ -75,7 +74,7 @@ namespace Traits {
             }
             Messenger.Broadcast(TraitSignals.TRAITABLE_LOST_TRAIT, traitable, trait, removedBy);
         }
-        protected bool DefaultProcessOnStackStatus(ITraitable traitable, Status status, Character characterResponsible, ActualGoapNode gainedFromDoing, int overrideDuration) {
+        protected bool DefaultProcessOnStackStatus(ITraitable traitable, Status status, Character characterResponsible, int overrideDuration) {
             int duration = overrideDuration;
             if(duration == -1) { duration = status.ticksDuration; }
             GameDate removeDate = default;
@@ -88,7 +87,6 @@ namespace Traits {
                 //trait.SetExpiryTicket(traitable, ticket);
             }
             if(traitable.traitContainer.stacks[status.name] <= status.stackLimit) {
-                status.SetGainedFromDoing(gainedFromDoing);
                 status.AddCharacterResponsibleForTrait(characterResponsible);
                 status.OnStackStatus(traitable);
                 status.ApplyStackedMoodEffect(traitable, removeDate, characterResponsible);

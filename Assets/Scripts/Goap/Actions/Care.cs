@@ -48,7 +48,11 @@ public class Care : GoapAction {
         }
     }
     public void AfterCareSuccess(ActualGoapNode goapNode) {
-        goapNode.target.traitContainer.AddTrait(goapNode.target, "Plague Cared", goapNode.actor, goapNode);
+        goapNode.target.traitContainer.AddTrait(goapNode.target, "Plague Cared", goapNode.actor);
+        Trait trait = goapNode.actor.traitContainer.GetTraitOrStatus<Trait>("Plague Cared");
+        if (trait != null) {
+            trait.SetGainedFromDoingAction(goapNode.action.goapType, goapNode.isStealth);
+        }
     }
 #endregion
 }

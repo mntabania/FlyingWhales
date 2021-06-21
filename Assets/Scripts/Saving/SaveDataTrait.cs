@@ -8,7 +8,8 @@ public class SaveDataTrait : SaveData<Trait>, ISavableCounterpart {
     public OBJECT_TYPE _objectType;
     public string name;
     public List<string> responsibleCharacters;
-    public string gainedFromDoing;
+    public INTERACTION_TYPE gainedFromDoingType;
+    public bool isGainedFromDoingStealth;
 
     #region getters
     public string persistentID => _persistentID;
@@ -26,10 +27,12 @@ public class SaveDataTrait : SaveData<Trait>, ISavableCounterpart {
                 responsibleCharacters.Add(character.persistentID);
             }    
         }
-        if (trait.gainedFromDoing != null) {
-            gainedFromDoing = trait.gainedFromDoing.persistentID;
-            SaveManager.Instance.saveCurrentProgressManager.AddToSaveHub(trait.gainedFromDoing);
-        }
+        gainedFromDoingType = trait.gainedFromDoingType;
+        isGainedFromDoingStealth = trait.isGainedFromDoingStealth;
+        //if (trait.gainedFromDoing != null) {
+        //    gainedFromDoing = trait.gainedFromDoing.persistentID;
+        //    SaveManager.Instance.saveCurrentProgressManager.AddToSaveHub(trait.gainedFromDoing);
+        //}
         
     }
     public override Trait Load() {

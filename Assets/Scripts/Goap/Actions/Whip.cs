@@ -90,7 +90,8 @@ public class Whip : GoapAction {
         target.crimeComponent.RemoveAllCrimesWantedBy(goapNode.actor.faction);
         //target.traitContainer.RemoveTrait(target, "Criminal", goapNode.actor);
         target.traitContainer.RemoveRestrainAndImprison(target, goapNode.actor);
-        target.traitContainer.AddTrait(target, "Injured", goapNode.actor, goapNode);
+        target.traitContainer.AddTrait(target, "Injured", goapNode.actor);
+        target.traitContainer.GetTraitOrStatus<Trait>("Injured")?.SetGainedFromDoingAction(goapNode.action.goapType, goapNode.isStealth);
     }
-#endregion
+    #endregion
 }

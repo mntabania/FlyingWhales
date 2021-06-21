@@ -154,7 +154,8 @@ public class VampiricEmbrace : GoapAction {
                 if(!actor.HasHealth()) {
                     actor.Death(deathFromAction: goapNode, responsibleCharacter: targetCharacter, _deathLog: log);
                 } else {
-                    actor.traitContainer.AddTrait(actor, "Unconscious", targetCharacter, goapNode);
+                    actor.traitContainer.AddTrait(actor, "Unconscious", targetCharacter);
+                    actor.traitContainer.GetTraitOrStatus<Trait>("Unconscious")?.SetGainedFromDoingAction(goapNode.action.goapType, goapNode.isStealth);
                 }
                 LogPool.Release(log);
             } else {

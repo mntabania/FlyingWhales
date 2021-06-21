@@ -188,9 +188,16 @@ public class Summon : Character {
             if (interruptComponent.isInterrupted && interruptComponent.currentInterrupt.interrupt != interrupt) {
                 interruptComponent.ForceEndNonSimultaneousInterrupt();
             }
-            traitContainer.AddTrait(this, "Dead", responsibleCharacter, gainedFromDoing: deathFromAction);
+            traitContainer.AddTrait(this, "Dead", responsibleCharacter);
+            if (deathFromAction != null) {
+                traitContainer.GetTraitOrStatus<Trait>("Dead")?.SetGainedFromDoingAction(deathFromAction.action.goapType, deathFromAction.isStealth);
+            }
+
             if (cause == "attacked" && responsibleCharacter != null && responsibleCharacter.isInWerewolfForm) {
-                traitContainer.AddTrait(this, "Mangled", responsibleCharacter, gainedFromDoing: deathFromAction);
+                traitContainer.AddTrait(this, "Mangled", responsibleCharacter);
+                if (deathFromAction != null) {
+                    traitContainer.GetTraitOrStatus<Trait>("Mangled")?.SetGainedFromDoingAction(deathFromAction.action.goapType, deathFromAction.isStealth);
+                }
             }
             Messenger.Broadcast(CharacterSignals.CHARACTER_DEATH, this as Character);
             eventDispatcher.ExecuteCharacterDied(this);
