@@ -116,7 +116,7 @@ public class WorkBehaviour : CharacterBehaviourComponent {
 #if DEBUG_LOG
                         log = $"{log}\n-Character has work structure: " + character.structureComponent.workPlaceStructure.name + ", 85% to add Job provided by structure";
 #endif
-                        if (GameUtilities.RollChance(85, ref log)) {
+                        if (GameUtilities.RollChance(ChanceData.GetChance(CHANCE_TYPE.Do_Work_Chance), ref log)) {
 #if DEBUG_LOG
                             log = $"{log}\n-Character will try to do work structure job";
 #endif

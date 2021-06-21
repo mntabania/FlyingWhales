@@ -1445,7 +1445,8 @@ public enum CHANCE_TYPE {
     Change_Intent_Cultist,
     Plauged_Injured_Visit_Hospice,
     Hunt_Chance,
-    Free_Time_Obtain_Want
+    Free_Time_Obtain_Want,
+    Do_Work_Chance,
 }
 public enum Gradient_Direction {
     Top, Bottom, Left, Right
