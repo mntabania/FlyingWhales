@@ -792,9 +792,15 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
 
     }
     private void StartPerTickEffect() {
+//#if DEBUG_LOG
+//        Debug.Log("Started per tick effect: " + ToString());
+//#endif
         Messenger.AddListener(Signals.TICK_STARTED, PerTickEffect);
     }
     public void StopPerTickEffect() {
+//#if DEBUG_LOG
+//        Debug.Log("Stopped per tick effect: " + ToString());
+//#endif
         Messenger.RemoveListener(Signals.TICK_STARTED, PerTickEffect);
     }
     public void EndPerTickEffect(bool shouldDoAfterEffect = true) {
@@ -892,6 +898,13 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
         }
     }
     private void PerTickEffect() {
+#if DEBUG_LOG
+        if (hasBeenReset) {
+            Debug.Log("Per Tick Effect called but already in pool");
+            return;
+        }
+#endif
+
 #if DEBUG_PROFILER
         Profiler.BeginSample($"{actor.name} - {action.name} - Per Tick Effect");
 #endif
@@ -1410,6 +1423,9 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
         isSupposedToBeInPool = false;
         stillProcessingCounter = 0;
         SetHasBeenReset(true);
+        if (Messenger.eventTable.ContainsKey(Signals.TICK_STARTED)) {
+            Messenger.RemoveListener(Signals.TICK_STARTED, PerTickEffect);
+        }
     }
     #endregion
 }
