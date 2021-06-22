@@ -201,9 +201,17 @@ namespace UtilityScripts {
         summary += $"\nIs in first hour of Current Schedule section: {activeCharacter.dailyScheduleComponent.schedule.IsInFirstHourOfCurrentScheduleType(GameManager.Instance.currentTick).ToString()}";
         summary += $"\nDaily Schedule: {activeCharacter.dailyScheduleComponent.schedule.GetScheduleSummary()}";
         summary += $"\nToggled Wants: {activeCharacter.villagerWantsComponent?.wantsToProcess.ComafyList()}";
-        UIManager.Instance.ShowSmallInfo(summary);
+            if (activeCharacter is ShearableAnimal shearableAnimal) {
+                summary += $"\nShearable Resource Count: {shearableAnimal.count}";
+                summary += $"\nIs Shearable: {shearableAnimal.isAvailableForShearing}";
+            }
+            if (activeCharacter is SkinnableAnimal skinnable) {
+                summary += $"\nSkinnable Resource Count: {skinnable.count}";
+            }
+
+            UIManager.Instance.ShowSmallInfo(summary);
 #endif
-    }
+        }
     public static void HideCharacterTestingInfo() {
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
         UIManager.Instance.HideSmallInfo();
