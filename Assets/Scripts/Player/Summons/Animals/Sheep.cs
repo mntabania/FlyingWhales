@@ -1,7 +1,7 @@
 ﻿using Inner_Maps;
 using UtilityScripts;
 
-public class Sheep : Animal {
+public class Sheep : ShearableAnimal {
     public override string raceClassName => "Sheep";
     public override COMBAT_MODE defaultCombatMode => COMBAT_MODE.Passive;
     public Sheep() : base(SUMMON_TYPE.Sheep, "Sheep", RACE.SHEEP) {
@@ -10,7 +10,7 @@ public class Sheep : Animal {
     public Sheep(string className) : base(SUMMON_TYPE.Sheep, className, RACE.SHEEP) {
         //combatComponent.SetCombatMode(COMBAT_MODE.Passive);
     }
-    public Sheep(SaveDataSummon data) : base(data) {
+    public Sheep(SaveDataShearableAnimal data) : base(data) {
         //combatComponent.SetCombatMode(COMBAT_MODE.Passive);
     }
 
