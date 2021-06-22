@@ -26,14 +26,18 @@ public class Recuperate : GoapAction {
         return 10;
     }
 
-    public override void OnActionStarted(ActualGoapNode p_node) {
-        base.OnActionStarted(p_node);
-    }
+    //public override void OnActionStarted(ActualGoapNode p_node) {
+    //    base.OnActionStarted(p_node);
+    //}
 
     public override void OnStopWhilePerforming(ActualGoapNode p_node) {
         base.OnStopWhilePerforming(p_node);
+        p_node.actor.traitContainer.RemoveTrait(p_node.actor, "Recuperating");
     }
-
+    public override void OnStopWhileStarted(ActualGoapNode node) {
+        base.OnStopWhileStarted(node);
+        node.actor.traitContainer.RemoveTrait(node.actor, "Recuperating");
+    }
     #endregion
 
     bool IsSubjectForRecuperate(ActualGoapNode p_node) {
@@ -49,7 +53,11 @@ public class Recuperate : GoapAction {
     #endregion
 
     #region State Effects
+    public void PreRecuperateSuccess(ActualGoapNode goapNode) {
+        goapNode.actor.traitContainer.AddTrait(goapNode.actor, "Recuperating");
+    }
     public void AfterRecuperateSuccess(ActualGoapNode goapNode) {
+        goapNode.actor.traitContainer.RemoveTrait(goapNode.actor, "Recuperating");
         goapNode.actor.traitContainer.RemoveStatusAndStacks(goapNode.actor, "Poisoned");
         goapNode.actor.traitContainer.RemoveStatusAndStacks(goapNode.actor, "Plagued");
         goapNode.actor.traitContainer.RemoveStatusAndStacks(goapNode.actor, "Injured");

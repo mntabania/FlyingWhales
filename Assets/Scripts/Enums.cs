@@ -1447,6 +1447,7 @@ public enum CHANCE_TYPE {
     Hunt_Chance,
     Free_Time_Obtain_Want,
     Do_Work_Chance,
+    Monster_Migration,
 }
 public enum Gradient_Direction {
     Top, Bottom, Left, Right
