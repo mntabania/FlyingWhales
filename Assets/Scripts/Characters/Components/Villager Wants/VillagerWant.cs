@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Inner_Maps.Location_Structures;
 using UnityEngine.Assertions;
 using UtilityScripts;
@@ -95,28 +96,56 @@ namespace Characters.Villager_Wants {
 
             foundStructure = null;
             needsToPay = true;
-            for (int i = 0; i < basicResourceProducingStructures.Count; i++) {
-                LocationStructure structure = basicResourceProducingStructures[i];
-                ManMadeStructure manMadeStructure = structure as ManMadeStructure;
-                Assert.IsNotNull(manMadeStructure, $"Basic Resource producing structure is not Man made! {structure?.name}");
-                bool hasNeededResource = false;
-                if (p_character.faction.factionType.type == FACTION_TYPE.Human_Empire) {
-                    hasNeededResource = manMadeStructure.HasBuiltTileObjectOfType(TILE_OBJECT_TYPE.STONE_PILE);
-                } else if (p_character.faction.factionType.type == FACTION_TYPE.Elven_Kingdom) {
-                    hasNeededResource = manMadeStructure.HasBuiltTileObjectOfType(TILE_OBJECT_TYPE.WOOD_PILE);
-                } else if (p_character.faction.factionType.type == FACTION_TYPE.Demon_Cult ||
-                           p_character.faction.factionType.type == FACTION_TYPE.Lycan_Clan || p_character.faction.factionType.type == FACTION_TYPE.Vampire_Clan) {
-                    hasNeededResource = manMadeStructure.HasBuiltTileObjectOfType(TILE_OBJECT_TYPE.STONE_PILE) || manMadeStructure.HasBuiltTileObjectOfType(TILE_OBJECT_TYPE.WOOD_PILE);
-                }
-                if (hasNeededResource && manMadeStructure.CanPurchaseFromHereBasedOnOpinionOfCharacterToAssignedWorker(p_character, out needsToPay)) {
-                    foundStructure = manMadeStructure;
-                    if (!needsToPay) {
-                        //if character found a structure that he/she doesn't need to pay at, break this loop,
-                        //otherwise continue loop in case this character can find a structure where it doesn't have to pay
+            // int highestOpinion = Int32.MinValue;
+            // for (int i = 0; i < basicResourceProducingStructures.Count; i++) {
+            //     LocationStructure structure = basicResourceProducingStructures[i];
+            //     ManMadeStructure manMadeStructure = structure as ManMadeStructure;
+            //     Assert.IsNotNull(manMadeStructure, $"Basic Resource producing structure is not Man made! {structure?.name}");
+            //     bool hasNeededResource = false;
+            //     if (p_character.faction.factionType.type == FACTION_TYPE.Human_Empire) {
+            //         hasNeededResource = manMadeStructure.HasBuiltTileObjectOfType(TILE_OBJECT_TYPE.STONE_PILE);
+            //     } else if (p_character.faction.factionType.type == FACTION_TYPE.Elven_Kingdom) {
+            //         hasNeededResource = manMadeStructure.HasBuiltTileObjectOfType(TILE_OBJECT_TYPE.WOOD_PILE);
+            //     } else if (p_character.faction.factionType.type == FACTION_TYPE.Demon_Cult ||
+            //                p_character.faction.factionType.type == FACTION_TYPE.Lycan_Clan || p_character.faction.factionType.type == FACTION_TYPE.Vampire_Clan) {
+            //         hasNeededResource = manMadeStructure.HasBuiltTileObjectOfType(TILE_OBJECT_TYPE.STONE_PILE) || manMadeStructure.HasBuiltTileObjectOfType(TILE_OBJECT_TYPE.WOOD_PILE);
+            //     }
+            //     if (hasNeededResource && manMadeStructure.CanPurchaseFromHere(p_character, out bool needsToPayAtCurrentStructure, out int buyerOpinionOfWorker)) {
+            //         if (buyerOpinionOfWorker > highestOpinion) {
+            //             preferredStructure = manMadeStructure;    
+            //             needsToPay = needsToPayAtCurrentStructure;
+            //         }
+            //         // foundStructure = manMadeStructure;
+            //         // if (!needsToPay) {
+            //         //     //if character found a structure that he/she doesn't need to pay at, break this loop,
+            //         //     //otherwise continue loop in case this character can find a structure where it doesn't have to pay
+            //         //     break;
+            //         // }
+            //     }
+            // }
+            if (basicResourceProducingStructures.Count > 0) {
+                //villagers can now buy from any basic resource producing structure and are required to pay regardless of situation.
+                basicResourceProducingStructures.Shuffle();
+                for (int i = 0; i < basicResourceProducingStructures.Count; i++) {
+                    LocationStructure structure = basicResourceProducingStructures[i];
+                    ManMadeStructure manMadeStructure = structure as ManMadeStructure;
+                    Assert.IsNotNull(manMadeStructure, $"Food producing structure is not Man made! {structure?.name}");
+                    bool hasNeededResource = false;
+                    if (p_character.faction.factionType.type == FACTION_TYPE.Human_Empire) {
+                        hasNeededResource = manMadeStructure.HasBuiltTileObjectOfType(TILE_OBJECT_TYPE.STONE_PILE);
+                    } else if (p_character.faction.factionType.type == FACTION_TYPE.Elven_Kingdom) {
+                        hasNeededResource = manMadeStructure.HasBuiltTileObjectOfType(TILE_OBJECT_TYPE.WOOD_PILE);
+                    } else if (p_character.faction.factionType.type == FACTION_TYPE.Demon_Cult ||
+                               p_character.faction.factionType.type == FACTION_TYPE.Lycan_Clan || p_character.faction.factionType.type == FACTION_TYPE.Vampire_Clan) {
+                        hasNeededResource = manMadeStructure.HasBuiltTileObjectOfType(TILE_OBJECT_TYPE.STONE_PILE) || manMadeStructure.HasBuiltTileObjectOfType(TILE_OBJECT_TYPE.WOOD_PILE);
+                    }
+                    if (hasNeededResource) {
+                        foundStructure = manMadeStructure;
                         break;
                     }
                 }
             }
+            
             RuinarchListPool<LocationStructure>.Release(basicResourceProducingStructures);
             return foundStructure != null;
         }
@@ -125,11 +154,11 @@ namespace Characters.Villager_Wants {
         /// </summary>
         /// <param name="p_character">The character to check.</param>
         /// <param name="needsToPay">Does this character need to pay for the goods.</param>
-        /// <param name="foundStructure">The Found Workshop</param>
-        protected bool HasWorkshopInSameVillageOwnedByValidCharacter(Character p_character, out bool needsToPay, out LocationStructure foundStructure) {
+        /// <param name="preferredStructure">The Found Workshop</param>
+        protected bool HasWorkshopInSameVillageOwnedByValidCharacter(Character p_character, out bool needsToPay, out LocationStructure preferredStructure) {
             Assert.IsNotNull(p_character.homeSettlement);
             Assert.IsTrue(p_character.faction.isMajorFaction);
-            foundStructure = null;
+            preferredStructure = null;
             if (!p_character.homeSettlement.HasStructure(STRUCTURE_TYPE.WORKSHOP)) {
                 needsToPay = true;
                 return false;
@@ -138,40 +167,46 @@ namespace Characters.Villager_Wants {
                 p_character.structureComponent.workPlaceStructure.structureType == STRUCTURE_TYPE.WORKSHOP) {
                 //character works at a workshop
                 needsToPay = false;
-                foundStructure = p_character.structureComponent.workPlaceStructure;
+                preferredStructure = p_character.structureComponent.workPlaceStructure;
                 return true;
             }
             
             List<LocationStructure> workshops = p_character.homeSettlement.GetStructuresOfType(STRUCTURE_TYPE.WORKSHOP);
             
             needsToPay = true;
+            int highestOpinion = Int32.MinValue;
             for (int i = 0; i < workshops.Count; i++) {
                 LocationStructure structure = workshops[i];
                 ManMadeStructure manMadeStructure = structure as ManMadeStructure;
                 Assert.IsNotNull(manMadeStructure, $"Workshop is not Man made! {structure?.name}");
-                if (manMadeStructure.CanPurchaseFromHereBasedOnOpinionOfCharacterToAssignedWorker(p_character, out needsToPay)) {
-                    foundStructure = manMadeStructure;
-                    if (!needsToPay) {
-                        //if character found a structure that he/she doesn't need to pay at, break this loop,
-                        //otherwise continue loop in case this character can find a structure where it doesn't have to pay
-                        break;
+                if (manMadeStructure.CanPurchaseFromHere(p_character, out bool needsToPayAtCurrentStructure, out int buyerOpinionOfWorker)) {
+                    if (buyerOpinionOfWorker > highestOpinion) {
+                        highestOpinion = buyerOpinionOfWorker;
+                        preferredStructure = manMadeStructure;
+                        needsToPay = needsToPayAtCurrentStructure;
                     }
+                    // foundStructure = manMadeStructure;
+                    // if (!needsToPay) {
+                    //     //if character found a structure that he/she doesn't need to pay at, break this loop,
+                    //     //otherwise continue loop in case this character can find a structure where it doesn't have to pay
+                    //     break;
+                    // }
                 }
             }
-            return foundStructure != null;
+            return preferredStructure != null;
         }
         /// <summary>
         /// Is the provided character part of a village that has a workshop that it can purchase from?
         /// </summary>
         /// <param name="p_character">The character to check.</param>
         /// <param name="needsToPay">Does this character need to pay for the goods.</param>
-        /// <param name="foundStructure">The Found Hospice</param>
-        protected bool HasHospiceInSameVillageOwnedByValidCharacter(Character p_character, out bool needsToPay, out LocationStructure foundStructure) {
+        /// <param name="preferredStructure">The Found Hospice</param>
+        protected bool HasHospiceInSameVillageOwnedByValidCharacter(Character p_character, out bool needsToPay, out LocationStructure preferredStructure) {
             Assert.IsNotNull(p_character.homeSettlement);
             Assert.IsTrue(p_character.faction.isMajorFaction);
             if (!p_character.homeSettlement.HasStructure(STRUCTURE_TYPE.HOSPICE)) {
                 needsToPay = true;
-                foundStructure = null;
+                preferredStructure = null;
                 return false;
             }
             if (p_character.structureComponent.HasWorkPlaceStructure() && 
@@ -179,28 +214,35 @@ namespace Characters.Villager_Wants {
                 p_character.structureComponent.workPlaceStructure.HasBuiltTileObjectOfType(TILE_OBJECT_TYPE.HEALING_POTION)) {
                 //character works at a hospice
                 needsToPay = false;
-                foundStructure = p_character.structureComponent.workPlaceStructure;
+                preferredStructure = p_character.structureComponent.workPlaceStructure;
                 return true;
             }
             
             List<LocationStructure> hospice = p_character.homeSettlement.GetStructuresOfType(STRUCTURE_TYPE.HOSPICE);
 
-            foundStructure = null;
+            preferredStructure = null;
             needsToPay = true;
+            int highestOpinion = Int32.MinValue;
             for (int i = 0; i < hospice.Count; i++) {
                 LocationStructure structure = hospice[i];
                 ManMadeStructure manMadeStructure = structure as ManMadeStructure;
                 Assert.IsNotNull(manMadeStructure, $"Workshop is not Man made! {structure?.name}");
-                if (manMadeStructure.HasBuiltTileObjectOfType(TILE_OBJECT_TYPE.HEALING_POTION) && manMadeStructure.CanPurchaseFromHereBasedOnOpinionOfCharacterToAssignedWorker(p_character, out needsToPay)) {
-                    foundStructure = manMadeStructure;
-                    if (!needsToPay) {
-                        //if character found a structure that he/she doesn't need to pay at, break this loop,
-                        //otherwise continue loop in case this character can find a structure where it doesn't have to pay
-                        break;
+                if (manMadeStructure.HasBuiltTileObjectOfType(TILE_OBJECT_TYPE.HEALING_POTION) && 
+                    manMadeStructure.CanPurchaseFromHere(p_character, out bool needsToPayAtCurrentStructure, out int buyerOpinionOfWorker)) {
+                    if (buyerOpinionOfWorker > highestOpinion) {
+                        highestOpinion = buyerOpinionOfWorker;
+                        preferredStructure = manMadeStructure;
+                        needsToPay = needsToPayAtCurrentStructure;
                     }
+                    // foundStructure = manMadeStructure;
+                    // if (!needsToPay) {
+                    //     //if character found a structure that he/she doesn't need to pay at, break this loop,
+                    //     //otherwise continue loop in case this character can find a structure where it doesn't have to pay
+                    //     break;
+                    // }
                 }
             }
-            return foundStructure != null;
+            return preferredStructure != null;
         }
         #endregion
 

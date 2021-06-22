@@ -103,7 +103,7 @@ public class DropResource : GoapAction {
                             return false;
                         }
                     } else if (structure.structureType.IsFoodProducingStructure()) {
-                        if (structure is ManMadeStructure manMadeStructure && manMadeStructure.assignedWorker != actor) {
+                        if (structure is ManMadeStructure manMadeStructure && !manMadeStructure.DoesCharacterWorkHere(actor)) {
                             return false;
                         }
                     }

@@ -77,7 +77,9 @@ namespace Inner_Maps.Location_Structures {
             List<TileObject> builtPilesInSideStructure = RuinarchListPool<TileObject>.Claim();
             SetListToVariable(builtPilesInSideStructure);
             if (builtPilesInSideStructure.Count > 1) {
-                p_worker.jobComponent.TryCreateCombineStockpile(builtPilesInSideStructure[0] as ResourcePile, builtPilesInSideStructure[1] as ResourcePile, out producedJob);
+                //always ensure that the first pile is the pile that all other piles will be dropped to, this is to prevent complications
+                //when multiple workers are combining piles, causing targets of other jobs to mess up since their target pile was carried.
+                p_worker.jobComponent.TryCreateCombineStockpile(builtPilesInSideStructure[1] as ResourcePile, builtPilesInSideStructure[0] as ResourcePile, out producedJob);
                 if (producedJob != null) {
                     RuinarchListPool<TileObject>.Release(builtPilesInSideStructure);
                     return;
@@ -133,6 +135,18 @@ namespace Inner_Maps.Location_Structures {
             //When a skinners lodge is built, check if some bury jobs are no longer applicable, since we no longer want to bury
             //characters that are skinnable.
             Messenger.Broadcast(JobSignals.CHECK_JOB_APPLICABILITY_OF_ALL_JOBS_OF_TYPE, JOB_TYPE.BURY);
+        }
+        #endregion
+        
+        #region Worker
+        public override bool CanHireAWorker() {
+            return !HasAssignedWorker();
+        }
+        #endregion
+        
+        #region Purchasing
+        public override bool CanPurchaseFromHere(Character p_buyer, out bool needsToPay, out int buyerOpinionOfWorker) {
+            return DefaultCanPurchaseFromHereForSingleWorkerStructures(p_buyer, out needsToPay, out buyerOpinionOfWorker);
         }
         #endregion
     }

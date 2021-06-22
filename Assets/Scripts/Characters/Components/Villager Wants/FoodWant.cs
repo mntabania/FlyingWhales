@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Inner_Maps.Location_Structures;
+using UnityEngine;
 using UnityEngine.Assertions;
 using UtilityScripts;
 namespace Characters.Villager_Wants {
@@ -40,7 +42,7 @@ namespace Characters.Villager_Wants {
             }
             //removed food producing structure checking since we now allow a villager to take food from his/her place of work regardless of structure type
             if (p_character.structureComponent.HasWorkPlaceStructure() /*&& p_character.structureComponent.workPlaceStructure.structureType.IsFoodProducingStructure()*/ &&
-                p_character.structureComponent.workPlaceStructure.HasTileObjectThatIsBuiltFoodPileThatCharacterDoesntHaveAtHome(p_character)) {
+                p_character.structureComponent.workPlaceStructure.HasTileObjectThatIsBuiltFoodPileThatCharacterCanEatAndDoesntHaveAtHome(p_character)) {
                 //character works at a food producing structure
                 needsToPay = false;
                 foundStructure = p_character.structureComponent.workPlaceStructure;
@@ -57,19 +59,34 @@ namespace Characters.Villager_Wants {
 
             foundStructure = null;
             needsToPay = true;
-            for (int i = 0; i < foodProducingStructures.Count; i++) {
-                LocationStructure structure = foodProducingStructures[i];
-                ManMadeStructure manMadeStructure = structure as ManMadeStructure;
-                Assert.IsNotNull(manMadeStructure, $"Food producing structure is not Man made! {structure?.name}");
-                if (manMadeStructure.HasTileObjectThatIsBuiltFoodPileThatCharacterDoesntHaveAtHome(p_character) && manMadeStructure.CanPurchaseFromHereBasedOnOpinionOfCharacterToAssignedWorker(p_character, out needsToPay)) {
-                    foundStructure = manMadeStructure;
-                    if (!needsToPay) {
-                        //if character found a structure that he/she doesn't need to pay at, break this loop,
-                        //otherwise continue loop in case this character can find a structure where it doesn't have to pay
+            // for (int i = 0; i < foodProducingStructures.Count; i++) {
+            //     LocationStructure structure = foodProducingStructures[i];
+            //     ManMadeStructure manMadeStructure = structure as ManMadeStructure;
+            //     Assert.IsNotNull(manMadeStructure, $"Food producing structure is not Man made! {structure?.name}");
+            //     if (manMadeStructure.HasTileObjectThatIsBuiltFoodPileThatCharacterDoesntHaveAtHome(p_character) && 
+            //         manMadeStructure.CanPurchaseFromHere(p_character, out bool needsToPayAtCurrentStructure, out int buyerOpinionOfWorker)) {
+            //         // foundStructure = manMadeStructure;
+            //         // if (!needsToPay) {
+            //         //     //if character found a structure that he/she doesn't need to pay at, break this loop,
+            //         //     //otherwise continue loop in case this character can find a structure where it doesn't have to pay
+            //         //     break;
+            //         // }
+            //     }
+            // }
+            if (foodProducingStructures.Count > 0) {
+                //villagers can now buy from any food producing structure and are required to pay regardless of situation.
+                foodProducingStructures.Shuffle();
+                for (int i = 0; i < foodProducingStructures.Count; i++) {
+                    LocationStructure structure = foodProducingStructures[i];
+                    ManMadeStructure manMadeStructure = structure as ManMadeStructure;
+                    Assert.IsNotNull(manMadeStructure, $"Food producing structure is not Man made! {structure?.name}");
+                    if (manMadeStructure.HasTileObjectThatIsBuiltFoodPileThatCharacterCanEatAndDoesntHaveAtHome(p_character)) {
+                        foundStructure = manMadeStructure;
                         break;
                     }
                 }
             }
+             
             RuinarchListPool<LocationStructure>.Release(foodProducingStructures);
             return foundStructure != null;
         }

@@ -39,6 +39,7 @@ public class EquipmentComponent {
         //apply new weapon stats again
         EquipmentBonusProcessor.ApplyEquipBonusToTarget(currentWeapon, p_targetCharacter, p_initializedStackCountOnly);
         p_targetCharacter.eventDispatcher.ExecuteWeaponEquipped(p_targetCharacter, p_newWeapon);
+        Messenger.Broadcast(CharacterSignals.CHARACTER_EQUIPPED_ITEM, p_targetCharacter, p_newWeapon);
     }
 
     private void SetArmor(EquipmentItem p_newArmor, Character p_targetCharacter, bool p_initializedStackCountOnly = false) {
@@ -52,6 +53,7 @@ public class EquipmentComponent {
         //apply new Armor stats again
         EquipmentBonusProcessor.ApplyEquipBonusToTarget(currentArmor, p_targetCharacter, p_initializedStackCountOnly);
         p_targetCharacter.eventDispatcher.ExecuteArmorEquipped(p_targetCharacter, p_newArmor);
+        Messenger.Broadcast(CharacterSignals.CHARACTER_EQUIPPED_ITEM, p_targetCharacter, p_newArmor);
     }
 
     private void SetAccessory(EquipmentItem p_newAccessory, Character p_targetCharacter, bool p_initializedStackCountOnly = false) {
@@ -65,6 +67,7 @@ public class EquipmentComponent {
         //apply new Accessory stats again
         EquipmentBonusProcessor.ApplyEquipBonusToTarget(currentAccessory, p_targetCharacter, p_initializedStackCountOnly);
         p_targetCharacter.eventDispatcher.ExecuteAccessoryEquipped(p_targetCharacter, p_newAccessory);
+        Messenger.Broadcast(CharacterSignals.CHARACTER_EQUIPPED_ITEM, p_targetCharacter, p_newAccessory);
     }
 
     public void SetEquipment(EquipmentItem p_newItem, Character p_targetCharacter, bool p_initializedStackCountOnly = false) {

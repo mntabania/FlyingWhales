@@ -124,7 +124,7 @@ public class SaveDataManMadeStructure : SaveDataLocationStructure {
     public RESOURCE wallsMadeOf;
     public Vector3Save structureObjectWorldPosition;
     public SaveDataStructureConnector[] structureConnectors;
-    public string assignedWorkerID;
+    public string[] assignedWorkerIDs;
 
     public string[] dirtyObjects;
     public GameDate scheduledDirtProduction;
@@ -134,7 +134,7 @@ public class SaveDataManMadeStructure : SaveDataLocationStructure {
         ManMadeStructure manMadeStructure = locationStructure as ManMadeStructure;
         Assert.IsNotNull(manMadeStructure);
 
-        assignedWorkerID = manMadeStructure.assignedWorkerID;
+        assignedWorkerIDs = manMadeStructure.assignedWorkerIDs.ToArray();
         if (manMadeStructure.hasBeenDestroyed) {
             structureTemplateName = string.Empty;
             structureObjectWorldPosition = Vector3.zero;
