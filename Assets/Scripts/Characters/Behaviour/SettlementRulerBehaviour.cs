@@ -9,10 +9,14 @@ using Traits;
 public class SettlementRulerBehaviour : CharacterBehaviourComponent {
     public SettlementRulerBehaviour() {
         priority = 22;
-        attributes = new BEHAVIOUR_COMPONENT_ATTRIBUTE[] { BEHAVIOUR_COMPONENT_ATTRIBUTE.WITHIN_HOME_SETTLEMENT_ONLY, BEHAVIOUR_COMPONENT_ATTRIBUTE.ONCE_PER_DAY };
+        // attributes = new BEHAVIOUR_COMPONENT_ATTRIBUTE[] { BEHAVIOUR_COMPONENT_ATTRIBUTE.WITHIN_HOME_SETTLEMENT_ONLY, BEHAVIOUR_COMPONENT_ATTRIBUTE.ONCE_PER_DAY };
     }
 
     public override bool TryDoBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
+        if (character.partyComponent.isActiveMember) {
+            producedJob = null;
+            return false;
+        }
 #if DEBUG_LOG
         log += $"\n-{character.name} is a settlement ruler";
 #endif
