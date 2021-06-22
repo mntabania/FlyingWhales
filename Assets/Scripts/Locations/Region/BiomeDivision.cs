@@ -145,7 +145,7 @@ public class BiomeDivision {
         }
         //We did this so that on the first DAY_STARTED broadcast, there will be no spawning of monsters from the fauna list
         if (monsterMigrationChance == 0) {
-            monsterMigrationChance = 15;
+            monsterMigrationChance = ChanceData.GetChance(CHANCE_TYPE.Monster_Migration);
         }
     }
     private bool HasTilePartOfThisBiomeDivision(LocationStructure p_structure) {

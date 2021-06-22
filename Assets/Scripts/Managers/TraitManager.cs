@@ -55,7 +55,7 @@ public class TraitManager : BaseMonoBehaviour {
         "Plague Caring", "Plague Cared", "Enslaved", "Travelling", "Walker Zombie", "Boomer Zombie", "Protection", "Being Drained", "Empowered",
         "Monster Slayer", "Monster Ward", "Elf Slayer", "Elf Ward", "Human Slayer", "Human Ward", "Undead Slayer", "Undead Ward",
         "Demon Slayer", "Demon Ward", "Flying", "Enhanced Power", "Corn Fed", "Potato Fed", "Pineapple Fed", "Iceberry Fed", "Stocked Up", "Dirty",
-        "Uncomfortable"
+        "Uncomfortable", "Recuperating"
     };
 
     //public static string[] unhiddenInstancedTraits = new string[] {
