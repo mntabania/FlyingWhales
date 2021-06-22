@@ -57,10 +57,17 @@ public class Recuperate : GoapAction {
         LocationStructure targetStructure = goapNode.poiTarget.gridTileLocation?.structure;
         if (targetStructure != null && targetStructure.structureType == STRUCTURE_TYPE.HOSPICE) {
             if (targetStructure is ManMadeStructure mmStructure) {
-                Character assignedWorker = mmStructure.assignedWorker;
-                if (assignedWorker != null) {
+                if (mmStructure.HasAssignedWorker()) {
+                    //only added coins to first worker since we expect that the hospice only has 1 worker.
+                    //if that changes, this needs to be changed as well.
+                    string assignedWorkerID = mmStructure.assignedWorkerIDs[0];
+                    Character assignedWorker = DatabaseManager.Instance.characterDatabase.GetCharacterByPersistentID(assignedWorkerID);
                     assignedWorker.moneyComponent.AdjustCoins(10);
                 }
+                // Character assignedWorker = mmStructure.assignedWorker;
+                // if (assignedWorker != null) {
+                //     assignedWorker.moneyComponent.AdjustCoins(10);
+                // }
             }
         }
     }

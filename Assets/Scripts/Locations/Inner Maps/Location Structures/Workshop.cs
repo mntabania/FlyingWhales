@@ -1,11 +1,10 @@
-﻿using System;
-using UnityEngine;
+﻿using Inner_Maps.Location_Structures;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using Inner_Maps.Location_Structures;
+using UnityEngine;
 using UtilityScripts;
 namespace Inner_Maps.Location_Structures {
-    public class Workshop : ManMadeStructure {
+	public class Workshop : ManMadeStructure {
 
         public List<WorkShopRequestForm> requests = new List<WorkShopRequestForm>();
         
@@ -58,13 +57,27 @@ namespace Inner_Maps.Location_Structures {
         protected override void SubscribeListeners() {
             base.SubscribeListeners();
             Messenger.AddListener<Character>(CharacterSignals.CHARACTER_DEATH, OnCharacterDied);
+            Messenger.AddListener<Character, EquipmentItem>(CharacterSignals.CHARACTER_EQUIPPED_ITEM, OnCharacterEquippedItem);
         }
         protected override void UnsubscribeListeners() {
             base.UnsubscribeListeners();
             Messenger.RemoveListener<Character>(CharacterSignals.CHARACTER_DEATH, OnCharacterDied);
+            Messenger.RemoveListener<Character, EquipmentItem>(CharacterSignals.CHARACTER_EQUIPPED_ITEM, OnCharacterEquippedItem);
         }
-
-        public void OnCharacterDied(Character p_Character) {
+        private void OnCharacterEquippedItem(Character p_character, EquipmentItem p_equipment) {
+            if (IsCharacterAlreadyHasRequest(p_character)) {
+                EQUIPMENT_TYPE equipmentType = EQUIPMENT_TYPE.WEAPON;
+                if (p_equipment is WeaponItem) {
+                    equipmentType = EQUIPMENT_TYPE.WEAPON;
+                } else if (p_equipment is ArmorItem) {
+                    equipmentType = EQUIPMENT_TYPE.ARMOR;
+                } else if (p_equipment is AccessoryItem) {
+                    equipmentType = EQUIPMENT_TYPE.ACCESSORY;
+                }
+                RemoveAllRequestFromCharacter(p_character, equipmentType);
+            }
+        }
+        private void OnCharacterDied(Character p_Character) {
             RemoveAllRequestFromCharacter(p_Character);
         }
 
@@ -83,6 +96,18 @@ namespace Inner_Maps.Location_Structures {
 
         public void RemoveAllRequestFromCharacter(Character p_character) {
             requests.RemoveAll(item => item.requestingCharacter == p_character);
+        }
+        private void RemoveAllRequestFromCharacter(Character p_character, EQUIPMENT_TYPE equipmentType) {
+            List<WorkShopRequestForm> allCurrentRequests = RuinarchListPool<WorkShopRequestForm>.Claim();
+            allCurrentRequests.AddRange(requests);
+            
+            for (int i = 0; i < allCurrentRequests.Count; i++) {
+                WorkShopRequestForm requestForm = allCurrentRequests[i];
+                if (requestForm.requestingCharacter == p_character && requestForm.equipmentType == equipmentType) {
+                    requests.Remove(requestForm);
+                }
+            }
+            RuinarchListPool<WorkShopRequestForm>.Release(allCurrentRequests);
         }
 
         void EvaluateRequests() {
@@ -336,7 +361,7 @@ namespace Inner_Maps.Location_Structures {
 
         public bool ShouldIgnoreHaul(List<TileObject> p_list) {
             for (int x = 0; x < p_list.Count; ++x) {
-                if ((p_list[x] as ResourcePile).resourceInPile > 40) {
+                if ((p_list[x] as ResourcePile).resourceInPile >= 40) {
                     return true;
                 }
             }
@@ -468,6 +493,18 @@ namespace Inner_Maps.Location_Structures {
                 info = $"{info}\n{requestForm.ToString()}";
             }
             return info;
+        }
+        #endregion
+        
+        #region Worker
+        public override bool CanHireAWorker() {
+            return !HasAssignedWorker();
+        }
+        #endregion
+        
+        #region Purchasing
+        public override bool CanPurchaseFromHere(Character p_buyer, out bool needsToPay, out int buyerOpinionOfWorker) {
+            return DefaultCanPurchaseFromHereForSingleWorkerStructures(p_buyer, out needsToPay, out buyerOpinionOfWorker);
         }
         #endregion
     }

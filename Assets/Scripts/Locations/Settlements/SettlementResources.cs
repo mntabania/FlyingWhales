@@ -276,7 +276,7 @@ public class SettlementResources
 
     public void PopulateAllAnimalsThatAreShearable(List<Character> ableToShearTodayList) {
         for(int x = 0; x < animalsThatProducesMats.Count; ++x) {
-            if (animalsThatProducesMats[x] is Animal target && target.isShearable && !target.HasJobTargetingThis(JOB_TYPE.MONSTER_BUTCHER, JOB_TYPE.SHEAR_ANIMAL, JOB_TYPE.SKIN_ANIMAL)) {
+            if (animalsThatProducesMats[x] is ShearableAnimal target && target.isAvailableForShearing && !target.HasJobTargetingThis(JOB_TYPE.MONSTER_BUTCHER, JOB_TYPE.SHEAR_ANIMAL, JOB_TYPE.SKIN_ANIMAL)) {
                 if (animalsThatProducesMats[x].isDead) {
                     ableToShearTodayList.Add(animalsThatProducesMats[x]);
                 } else if (animalsThatProducesMats[x].combatComponent.combatMode == COMBAT_MODE.Passive) {
@@ -345,10 +345,7 @@ public class SettlementResources
                     pilePool.Add(pile);
                     //found = true;
                 } else if (pile.currentStructure is Inner_Maps.Location_Structures.Mine mine) {
-                    if (mine.assignedWorker == null || !p_getter.relationshipContainer.IsEnemiesWith(mine.assignedWorker)) {
-
-                        pilePool.Add(pile);
-                    }
+                    pilePool.Add(pile);
                 }
             }
         }
@@ -370,9 +367,7 @@ public class SettlementResources
                     pilePool.Add(pile);
                     //found = true;
                 } else if (pile.currentStructure is Inner_Maps.Location_Structures.Mine mine) {
-                    if (mine.assignedWorker == null || !p_getter.relationshipContainer.IsEnemiesWith(mine.assignedWorker)) {
-                        pilePool.Add(pile);
-                    }
+                    pilePool.Add(pile);
                 }
             }
         }
@@ -393,9 +388,7 @@ public class SettlementResources
                 if (pile.currentStructure.structureType == STRUCTURE_TYPE.CITY_CENTER && !pile.HasJobTargetingThis(JOB_TYPE.HAUL, JOB_TYPE.COMBINE_STOCKPILE)) {
                     pilePool.Add(pile);
                 } else if (pile.currentStructure is Lumberyard lumberyard) {
-                    if (lumberyard.assignedWorker == null || !p_getter.relationshipContainer.IsEnemiesWith(lumberyard.assignedWorker)) {
-                        pilePool.Add(pile);
-                    }
+                    pilePool.Add(pile);
                 }
             }
         }
@@ -417,9 +410,7 @@ public class SettlementResources
                     pilePool.Add(pile);
                     //found = true;
                 } else if (pile.currentStructure is HunterLodge hunterLodge) {
-                    if (hunterLodge.assignedWorker == null || !p_getter.relationshipContainer.IsEnemiesWith(hunterLodge.assignedWorker)) {
-                        pilePool.Add(pile);
-                    }
+                    pilePool.Add(pile);
                 }
             }
         }
@@ -441,9 +432,7 @@ public class SettlementResources
                     pilePool.Add(pile);
                     //found = true;
                 } else if (pile.currentStructure is HunterLodge hunterLodge) {
-                    if (hunterLodge.assignedWorker == null || !p_getter.relationshipContainer.IsEnemiesWith(hunterLodge.assignedWorker)) {
-                        pilePool.Add(pile);
-                    }
+                    pilePool.Add(pile);
                 }
             }
         }

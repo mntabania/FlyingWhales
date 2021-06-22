@@ -21,7 +21,7 @@ public class BuyWood : GoapAction {
     public override void Perform(ActualGoapNode goapNode) {
         base.Perform(goapNode);
         if (goapNode.poiTarget is WoodPile && goapNode.poiTarget.gridTileLocation != null && goapNode.poiTarget.gridTileLocation.structure is ManMadeStructure manMadeStructure) {
-            if (manMadeStructure.CanPurchaseFromHereBasedOnOpinionOfCharacterToAssignedWorker(goapNode.actor, out bool needsToPay)) {
+            if (manMadeStructure.CanPurchaseFromHere(goapNode.actor, out bool needsToPay, out _)) {
                 SetState(needsToPay ? "Buy Success" : "Take Success", goapNode);
             } else {
 #if DEBUG_LOG
@@ -39,7 +39,7 @@ public class BuyWood : GoapAction {
         GoapActionInvalidity invalidity = base.IsInvalid(node);
         if (!invalidity.isInvalid) {
             if (node.poiTarget is WoodPile woodPile && node.poiTarget.gridTileLocation != null && node.poiTarget.gridTileLocation.structure is ManMadeStructure manMadeStructure) {
-                if (manMadeStructure.CanPurchaseFromHereBasedOnOpinionOfCharacterToAssignedWorker(node.actor, out bool needsToPay)) {
+                if (manMadeStructure.CanPurchaseFromHere(node.actor, out bool needsToPay, out _)) {
                     var canAfford = !needsToPay || node.actor.moneyComponent.CanAfford(GetBuyCost(node));
                     if (!canAfford) {
                         invalidity.isInvalid = true;
@@ -87,7 +87,7 @@ public class BuyWood : GoapAction {
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData, job);
         if (satisfied) {
             if (poiTarget is WoodPile woodPile && poiTarget.gridTileLocation != null && poiTarget.gridTileLocation.structure is ManMadeStructure manMadeStructure) {
-                if (manMadeStructure.CanPurchaseFromHereBasedOnOpinionOfCharacterToAssignedWorker(actor, out bool needsToPay)) {
+                if (manMadeStructure.CanPurchaseFromHere(actor, out bool needsToPay, out _)) {
                     if (woodPile.resourceInPile < GetResourceAmount(otherData)) {
                         return false;
                     }

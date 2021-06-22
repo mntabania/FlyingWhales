@@ -127,7 +127,7 @@ namespace Locations.Settlements {
                 }
                 //Once a character leaves a village, he should unclaim work structure also
                 if (character.structureComponent.workPlaceStructure != null) {
-                    character.structureComponent.workPlaceStructure.SetAssignedWorker(null);
+                    character.structureComponent.workPlaceStructure.RemoveAssignedWorker(character);
                 }
                 if(residents.Count <= 0 && owner != null) {
                     //if all residents of a settlement is removed, then remove faction owner
@@ -625,9 +625,7 @@ namespace Locations.Settlements {
                 for (int i = 0; i < structuresOfType.Count; i++) {
                     LocationStructure structure = structuresOfType[i];
                     if (structure is ManMadeStructure manMadeStructure) {
-                        Character assignedWorker = manMadeStructure.assignedWorker;
-                        if (assignedWorker != null && (assignedWorker == p_character || !p_character.relationshipContainer.IsEnemiesWith(assignedWorker))) {
-                            //TODO: Check for available beds
+                        if (manMadeStructure.HasAssignedWorker() && (manMadeStructure.DoesCharacterWorkHere(p_character) ||  manMadeStructure.HasWorkerThatIsNotAnEnemyOfCharacter(p_character))) {
                             foundStructure = structure;
                             return true;
                         }

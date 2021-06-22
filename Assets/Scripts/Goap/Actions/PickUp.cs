@@ -218,7 +218,17 @@ public class PickUp : GoapAction {
         }
         return base.GetCrimeType(actor, target, crime);
     }
-#endregion
+    public override void OnStopWhileStarted(ActualGoapNode node) {
+        base.OnStopWhileStarted(node);
+        if (node.associatedJobType == JOB_TYPE.COMBINE_STOCKPILE) {
+            //if this action was stopped and the associated job was combine stockpile, make sure to drop the resource pile that the character just picked up
+            Character actor = node.actor;
+            if (actor.carryComponent.carriedPOI is ResourcePile resourcePile) {
+                actor.UncarryPOI(resourcePile, dropLocation: actor.gridTileLocation);
+            }
+        }
+    }
+    #endregion
 
 #region Requirements
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, OtherData[] otherData, JobQueueItem job) { 

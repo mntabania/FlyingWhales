@@ -121,7 +121,7 @@ public class MapGenerationData {
 			List<LocationGridTile> tiles = oceanBorderTilesCategorizedByArea[p_area];
 			for (int i = 0; i < tiles.Count; i++) {
 				LocationGridTile tile = tiles[i];
-				if (tile.tileObjectComponent.objHere == null && !tile.IsAtEdgeOfMap()) {
+				if (tile.tileObjectComponent.objHere == null && !tile.IsAtEdgeOfMap() && tile.HasDifferentStructureNeighbour(true)) {
 					return tile;
 				}
 			}

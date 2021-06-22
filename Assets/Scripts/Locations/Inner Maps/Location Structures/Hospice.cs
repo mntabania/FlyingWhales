@@ -87,6 +87,28 @@ namespace Inner_Maps.Location_Structures {
             return info;
         }
         #endregion
+        
+        #region Worker
+        public override bool CanHireAWorker() {
+            return !HasAssignedWorker();
+        }
+        public bool HasWorkerWithLevel5HealingMagic() {
+            for (int i = 0; i < assignedWorkerIDs.Count; i++) {
+                string assignedWorkerID = assignedWorkerIDs[i];
+                Character assignedWorker = DatabaseManager.Instance.characterDatabase.GetCharacterByPersistentID(assignedWorkerID);
+                if (assignedWorker.talentComponent.GetTalent(CHARACTER_TALENT.Healing_Magic).level >= 5) {
+                    return true;
+                }
+            }
+            return false;
+        }
+        #endregion
+        
+        #region Purchasing
+        public override bool CanPurchaseFromHere(Character p_buyer, out bool needsToPay, out int buyerOpinionOfWorker) {
+            return DefaultCanPurchaseFromHereForSingleWorkerStructures(p_buyer, out needsToPay, out buyerOpinionOfWorker);
+        }
+        #endregion
 
         protected override void ProcessWorkStructureJobsByWorker(Character p_worker, out JobQueueItem producedJob) {
             producedJob = null;

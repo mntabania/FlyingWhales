@@ -46190,6 +46190,10 @@ MonoBehaviour:
     - skulls_line00
     - skulls_line01
     - skulls_line_dense00
+    - SMALL_TREE_OBJECT#1
+    - SMALL_TREE_OBJECT#3
+    - SMALL_TREE_OBJECT#6
+    - SMALL_TREE_OBJECT#7
     - smithing_forge
     - snow_mound
     - spider_eggs
@@ -46246,10 +46250,6 @@ MonoBehaviour:
     - TRASH#8
     - TRASH#9
     - treasureChest00
-    - TREE_OBJECT#1
-    - TREE_OBJECT#3
-    - TREE_OBJECT#6
-    - TREE_OBJECT#7
     - vegetables
     - vent_poison
     - vent_vapor
@@ -46319,6 +46319,10 @@ MonoBehaviour:
     - PLINTH
     - SARCOPHAGUS#1
     - SARCOPHAGUS#2
+    - SMALL_TREE_OBJECT#2
+    - SMALL_TREE_OBJECT#4
+    - SMALL_TREE_OBJECT#5
+    - SMALL_TREE_OBJECT#8
     - snow00
     - snow01
     - snow02
@@ -46334,10 +46338,6 @@ MonoBehaviour:
     - TRASH#2
     - TRASH#4
     - TRASH#5
-    - TREE_OBJECT#2
-    - TREE_OBJECT#4
-    - TREE_OBJECT#5
-    - TREE_OBJECT#8
     - tundraDirt00
     - tundraDirt01
     - tundraDirt02
@@ -46827,6 +46827,10 @@ MonoBehaviour:
     - {fileID: 21300000, guid: e60d5e840ff971e49aa792f5be2553cb, type: 3}
     - {fileID: 21300000, guid: d8986e0a4d78a964a87fac56a7509e5b, type: 3}
     - {fileID: 21300000, guid: 585fba9cce0c78544b9f9bb5a37b8e8d, type: 3}
+    - {fileID: 21300000, guid: e298e16d6e4a4a345816aff73283be2a, type: 3}
+    - {fileID: 21300000, guid: c46a7ee8f72f96a45930bbce3dfb5d2e, type: 3}
+    - {fileID: 21300000, guid: 5d9748d7deff06443b2a493abd02760d, type: 3}
+    - {fileID: 21300000, guid: 47ee64a4edc293946bf7be6de8a89fac, type: 3}
     - {fileID: 21300000, guid: a445911a1c105fa449abf39b4d0fdec8, type: 3}
     - {fileID: 21300000, guid: e91e34ce88ea6564ab37d7287548712d, type: 3}
     - {fileID: 21300000, guid: 50629881a5fbaa842a1aa6aa26ccc1ec, type: 3}
@@ -46883,10 +46887,6 @@ MonoBehaviour:
     - {fileID: 21300000, guid: e89f5cff1455e174abd5eb390f279111, type: 3}
     - {fileID: 21300000, guid: ddec1b0559332aa49a8cfc9108737868, type: 3}
     - {fileID: 21300000, guid: b6829437c52ca3f4c8b8bfcf5f89dcef, type: 3}
-    - {fileID: 21300000, guid: e298e16d6e4a4a345816aff73283be2a, type: 3}
-    - {fileID: 21300000, guid: c46a7ee8f72f96a45930bbce3dfb5d2e, type: 3}
-    - {fileID: 21300000, guid: 5d9748d7deff06443b2a493abd02760d, type: 3}
-    - {fileID: 21300000, guid: 47ee64a4edc293946bf7be6de8a89fac, type: 3}
     - {fileID: 21300000, guid: 7ec6145f41bb96b448873e8a4040baa5, type: 3}
     - {fileID: 21300000, guid: ea5715e1a0a6ca44bb8c1ad27a529ccc, type: 3}
     - {fileID: 21300000, guid: fc2db867a23918f4fbb4670f577c5b01, type: 3}
@@ -46956,6 +46956,10 @@ MonoBehaviour:
     - {fileID: 21300000, guid: 67c96845fbff7444cb7c6a6dea928d9e, type: 3}
     - {fileID: 21300000, guid: 742979c8d3bd82b4e88481b7a9075f7f, type: 3}
     - {fileID: 21300000, guid: f5a8ce8b30f0ba94ca2042b1ddc4fc23, type: 3}
+    - {fileID: 21300000, guid: 3df2cb8251a3bf34086a03df1ee59150, type: 3}
+    - {fileID: 21300000, guid: bff0089a70000954d89e4d8ec08a0d3b, type: 3}
+    - {fileID: 21300000, guid: f7c768c5d5971b245bf59d7a3e1d15b7, type: 3}
+    - {fileID: 21300000, guid: 215b5e17bbab80a459e75c53fa62b100, type: 3}
     - {fileID: 21300000, guid: b140e176bd7a372479810d3d871206b5, type: 3}
     - {fileID: 21300000, guid: 59587af055f0b7944ae33d95adc83957, type: 3}
     - {fileID: 21300000, guid: 1b0dffed5494af446aeeb0f20cf67247, type: 3}
@@ -46971,10 +46975,6 @@ MonoBehaviour:
     - {fileID: 21300000, guid: 3e450938b85ae154ba26d1d712a0de2d, type: 3}
     - {fileID: 21300000, guid: d97edaaaf3eb825479c110e7070a9696, type: 3}
     - {fileID: 21300000, guid: ffd7ab79c60f4bd48a80b50626c56326, type: 3}
-    - {fileID: 21300000, guid: 3df2cb8251a3bf34086a03df1ee59150, type: 3}
-    - {fileID: 21300000, guid: bff0089a70000954d89e4d8ec08a0d3b, type: 3}
-    - {fileID: 21300000, guid: f7c768c5d5971b245bf59d7a3e1d15b7, type: 3}
-    - {fileID: 21300000, guid: 215b5e17bbab80a459e75c53fa62b100, type: 3}
     - {fileID: 21300000, guid: 405c671361b9fbf488f2263c1aa41203, type: 3}
     - {fileID: 21300000, guid: 9e9f9d219129d1f408f722139d2d2e06, type: 3}
     - {fileID: 21300000, guid: 33750a67a94ff56448262d2d58e2fa0f, type: 3}

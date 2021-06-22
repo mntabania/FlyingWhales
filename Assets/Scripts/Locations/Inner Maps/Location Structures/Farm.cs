@@ -98,10 +98,10 @@ namespace Inner_Maps.Location_Structures {
 
         #region tilling section
         private GenericTileObject GetUntilledFarmTile() {
-            List<LocationGridTile> farmTiles = this.farmTiles;
             for (int x = 0; x < farmTiles.Count; ++x) {
-                if (!CheckIfTileIsTilled(farmTiles[x])) {
-                    return farmTiles[x].tileObjectComponent.genericTileObject;
+                LocationGridTile farmTile = farmTiles[x];
+                if (!CheckIfTileIsTilled(farmTile) && !farmTile.tileObjectComponent.genericTileObject.HasJobTargetingThis(JOB_TYPE.TILL_TILE)) {
+                    return farmTile.tileObjectComponent.genericTileObject;
                 }
             }
             return null;
@@ -121,12 +121,19 @@ namespace Inner_Maps.Location_Structures {
 
         #region harvesting section
         private TileObject GetHarvestableCrop() {
-            List<LocationGridTile> farmTiles = this.farmTiles;
+            List<TileObject> choices = RuinarchListPool<TileObject>.Claim();
             for (int x = 0; x < farmTiles.Count; ++x) {
-                if (CheckIfTileHasHarvestableCrop(farmTiles[x])) {
-                    return farmTiles[x].tileObjectComponent.objHere;
+                LocationGridTile farmTile = farmTiles[x];
+                if (CheckIfTileHasHarvestableCrop(farmTile)) {
+                    choices.Add(farmTile.tileObjectComponent.objHere);
                 }
             }
+            if (choices.Count > 0) {
+                TileObject target = CollectionUtilities.GetRandomElement(choices);
+                RuinarchListPool<TileObject>.Release(choices);
+                return target;
+            }
+            RuinarchListPool<TileObject>.Release(choices);
             return null;
         }
         private bool CheckIfTileHasHarvestableCrop(LocationGridTile p_targetTile) {
@@ -154,6 +161,20 @@ namespace Inner_Maps.Location_Structures {
             farmTiles.Add(p_tile);
         }
         #endregion
+
+        #region Worker
+        public override bool CanHireAWorker() {
+            return true;
+        }
+        #endregion
+
+        #region Purchasing
+        public override bool CanPurchaseFromHere(Character p_buyer, out bool needsToPay, out int buyerOpinionOfWorker) {
+            needsToPay = true;
+            buyerOpinionOfWorker = 0;
+            return true; //anyone can buy from food producing structures, but everyone also needs to pay. NOTE: It is intended that villagers can buy from unassigned structures
+        }
+        #endregion
         
 		protected override void ProcessWorkStructureJobsByWorker(Character p_worker, out JobQueueItem producedJob) {
             producedJob = null;
@@ -178,7 +199,7 @@ namespace Inner_Maps.Location_Structures {
             List<TileObject> builtPilesInSideStructure = RuinarchListPool<TileObject>.Claim();
             PopulateListOfFoodPilesOfSameType(builtPilesInSideStructure);
             if (builtPilesInSideStructure.Count > 1) {
-                p_worker.jobComponent.TryCreateCombineStockpile(builtPilesInSideStructure[0] as ResourcePile, builtPilesInSideStructure[1] as ResourcePile, out producedJob);
+                p_worker.jobComponent.TryCreateCombineStockpile(builtPilesInSideStructure[1] as ResourcePile, builtPilesInSideStructure[0] as ResourcePile, out producedJob);
                 if (producedJob != null) {
                     RuinarchListPool<TileObject>.Release(builtPilesInSideStructure);
                     return;

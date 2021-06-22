@@ -32,6 +32,20 @@ namespace Inner_Maps.Location_Structures {
         }
         #endregion
         
+        #region Worker
+        public override bool CanHireAWorker() {
+            return true;
+        }
+        #endregion
+        
+        #region Purchasing
+        public override bool CanPurchaseFromHere(Character p_buyer, out bool needsToPay, out int buyerOpinionOfWorker) {
+            needsToPay = true;
+            buyerOpinionOfWorker = 0;
+            return true; //anyone can buy from food producing structures, but everyone also needs to pay. NOTE: It is intended that villagers can buy from unassigned structures
+        }
+        #endregion
+        
         public override string GetTestingInfo() {
             return $"{base.GetTestingInfo()}\nConnected Ocean {connectedOcean?.name}";
         }
@@ -60,13 +74,27 @@ namespace Inner_Maps.Location_Structures {
                 }
             }
         }
-        // private TileObject GetRandomFishingSpot() {
-        //     List<TileObject> fishingSpots = connectedOcean.GetTileObjectsOfType(TILE_OBJECT_TYPE.FISHING_SPOT);
-        //     if (fishingSpots != null && fishingSpots.Count > 0) {
-        //         return fishingSpots[GameUtilities.RandomBetweenTwoNumbers(0, fishingSpots.Count - 1)];
-        //     }
-        //     return null;
-        // }
+        private TileObject GetRandomFishingSpot() {
+            List<TileObject> fishingSpots = connectedOcean.GetTileObjectsOfType(TILE_OBJECT_TYPE.FISHING_SPOT);
+            if (fishingSpots != null && fishingSpots.Count > 0) {
+                List<TileObject> fishingSpotChoices = RuinarchListPool<TileObject>.Claim();
+                // return fishingSpots[GameUtilities.RandomBetweenTwoNumbers(0, fishingSpots.Count - 1)];
+                for (int i = 0; i < fishingSpots.Count; i++) {
+                    TileObject fishingSpot = fishingSpots[i];
+                    if (fishingSpot.gridTileLocation != null && fishingSpot.gridTileLocation.area.settlementOnArea == settlementLocation) {
+                        //only pick fishing spots that are part of the settlement
+                        fishingSpotChoices.Add(fishingSpot);
+                    }
+                }
+                if (fishingSpotChoices.Count > 0) {
+                    TileObject randomFishingSpot = CollectionUtilities.GetRandomElement(fishingSpotChoices);
+                    RuinarchListPool<TileObject>.Release(fishingSpotChoices);
+                    return randomFishingSpot;
+                }
+                RuinarchListPool<TileObject>.Release(fishingSpotChoices);
+            }
+            return null;
+        }
         protected override void ProcessWorkStructureJobsByWorker(Character p_worker, out JobQueueItem producedJob) {
             producedJob = null;
             ResourcePile pileToHaul = p_worker.homeSettlement.SettlementResources.GetRandomPileOfFishes();
@@ -82,7 +110,9 @@ namespace Inner_Maps.Location_Structures {
             List<TileObject> builtPilesInSideStructure = RuinarchListPool<TileObject>.Claim();
             PopulateFishPileListInsideStructure(builtPilesInSideStructure);
             if (builtPilesInSideStructure.Count > 1) {
-                p_worker.jobComponent.TryCreateCombineStockpile(builtPilesInSideStructure[0] as ResourcePile, builtPilesInSideStructure[1] as ResourcePile, out producedJob);
+                //always ensure that the first pile is the pile that all other piles will be dropped to, this is to prevent complications
+                //when multiple workers are combining piles, causing targets of other jobs to mess up since their target pile was carried.
+                p_worker.jobComponent.TryCreateCombineStockpile(builtPilesInSideStructure[1] as ResourcePile, builtPilesInSideStructure[0] as ResourcePile, out producedJob);
                 if (producedJob != null) {
                     RuinarchListPool<TileObject>.Release(builtPilesInSideStructure);
                     return;
@@ -91,7 +121,8 @@ namespace Inner_Maps.Location_Structures {
             RuinarchListPool<TileObject>.Release(builtPilesInSideStructure);
 
             //Find Fish
-            TileObject fishingSpot = connectedFishingSpot;
+            TileObject fishingSpot = GetRandomFishingSpot();
+            if (fishingSpot == null) { fishingSpot = connectedFishingSpot; }
             if (fishingSpot != null) {
                 //do harvest crops
                 p_worker.jobComponent.TriggerFindFish(fishingSpot as FishingSpot, out producedJob);

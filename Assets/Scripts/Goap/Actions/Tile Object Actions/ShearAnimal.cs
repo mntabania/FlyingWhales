@@ -58,19 +58,30 @@ public class ShearAnimal : GoapAction {
     #endregion
 
     ResourcePile ProduceMatsPile(ActualGoapNode p_node) {
+        Summon targetAnimal = p_node.target as Summon;
+        ShearableAnimal animal = targetAnimal as ShearableAnimal;
         LocationGridTile tileToSpawnPile = p_node.actor.gridTileLocation;
         if (tileToSpawnPile != null && tileToSpawnPile.tileObjectComponent.objHere != null) {
             tileToSpawnPile = p_node.actor.gridTileLocation.GetFirstNearestTileFromThisWithNoObject();
         }
-        Animal targetAnimal = (p_node.target as Animal);
-        ResourcePile matsToHaul = InnerMapManager.Instance.CreateNewTileObject<ResourcePile>(targetAnimal.produceableMaterial);
+        ResourcePile matsToHaul = InnerMapManager.Instance.CreateNewTileObject<ResourcePile>(animal.produceableMaterial);
         int amount = p_node.currentStateDuration * m_amountProducedPerTick;
+
+        if (animal.count - amount < 0) {
+            amount = animal.count;
+        }
+        animal.count = (int)Mathf.Clamp(animal.count - amount, 0f, 1000f);
+        if (targetAnimal.gridTileLocation != null) {
+            if (animal.count <= 0) {
+                animal.isAvailableForShearing = false;
+            }
+        }
+
         p_node.actor.moneyComponent.AdjustCoins(amount * _coinGainMultiplier);
         matsToHaul.SetResourceInPile(amount);
-        targetAnimal.isShearable = false;
         tileToSpawnPile.structure.AddPOI(matsToHaul, tileToSpawnPile);
         ProduceLogs(p_node);
-        p_node.actor.talentComponent?.GetTalent(CHARACTER_TALENT.Resources).AdjustExperience(4, p_node.actor);
+        p_node.actor.talentComponent?.GetTalent(CHARACTER_TALENT.Resources).AdjustExperience(2, p_node.actor);
         return matsToHaul;
     }
 

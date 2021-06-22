@@ -37,6 +37,7 @@ namespace Characters.Villager_Wants {
         }
         
         public override bool IsWantValid(Character p_character) {
+            if (p_character.traitContainer.HasTrait("Vampire")) return false;
             if (!CharacterLivesInADwelling(p_character)) return false;
             return !p_character.homeStructure.HasTileObjectThatIsBuiltFoodPile();
         }

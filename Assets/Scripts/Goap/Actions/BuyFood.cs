@@ -23,7 +23,7 @@ public class BuyFood : GoapAction {
     public override void Perform(ActualGoapNode goapNode) {
         base.Perform(goapNode);
         if (goapNode.poiTarget is FoodPile && goapNode.poiTarget.gridTileLocation != null && goapNode.poiTarget.gridTileLocation.structure is ManMadeStructure manMadeStructure) {
-            if (manMadeStructure.CanPurchaseFromHereBasedOnOpinionOfCharacterToAssignedWorker(goapNode.actor, out bool needsToPay)) {
+            if (manMadeStructure.CanPurchaseFromHere(goapNode.actor, out bool needsToPay, out _)) {
                 SetState(needsToPay ? "Buy Success" : "Take Success", goapNode);
             } else {
 #if DEBUG_LOG
@@ -41,7 +41,7 @@ public class BuyFood : GoapAction {
         GoapActionInvalidity invalidity = base.IsInvalid(node);
         if (!invalidity.isInvalid) {
             if (node.poiTarget is FoodPile foodPile && node.poiTarget.gridTileLocation != null && node.poiTarget.gridTileLocation.structure is ManMadeStructure manMadeStructure) {
-                if (manMadeStructure.CanPurchaseFromHereBasedOnOpinionOfCharacterToAssignedWorker(node.actor, out bool needsToPay)) {
+                if (manMadeStructure.CanPurchaseFromHere(node.actor, out bool needsToPay, out _)) {
                     var canAfford = !needsToPay || node.actor.moneyComponent.CanAfford(FoodCost);
                     if (!canAfford) {
                         invalidity.isInvalid = true;
@@ -73,13 +73,6 @@ public class BuyFood : GoapAction {
 #endif
         return 10;
     }
-    public override void AddFillersToLog(Log log, ActualGoapNode node) {
-        base.AddFillersToLog(log, node);
-        if (node.poiTarget.gridTileLocation != null &&
-            node.poiTarget.gridTileLocation.structure is ManMadeStructure manMadeStructure && manMadeStructure.assignedWorker != null) {
-            log.AddToFillers(manMadeStructure.assignedWorker, manMadeStructure.assignedWorker.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-        }
-    }
     #endregion
     
     #region Requirements
@@ -87,20 +80,24 @@ public class BuyFood : GoapAction {
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData, job);
         if (satisfied) {
             if (poiTarget is FoodPile foodPile && poiTarget.gridTileLocation != null && poiTarget.gridTileLocation.structure is ManMadeStructure manMadeStructure) {
-                //if (manMadeStructure.CanPurchaseFromHereBasedOnOpinionOfCharacterToAssignedWorker(actor, out bool needsToPay)) {
-                //    // if (needsToPay) {
-                //    //     return actor.moneyComponent.CanAfford(FoodCost);
-                //    // } else {
-                //    //     //actor doesn't need to pay.
-                //    //     return true;
-                //    // }
-                //    //make sure that character doesn't have that type of food yet.
-                //    return actor.homeStructure != null && !actor.homeStructure.HasBuiltTileObjectOfType(foodPile.tileObjectType);
-                //}
-                if (actor.homeStructure == null) {
-                    return true;
-                } else {
-                    return !actor.homeStructure.HasBuiltTileObjectOfType(foodPile.tileObjectType);
+                if (!actor.traitContainer.HasTrait("Cannibal") && (foodPile.tileObjectType == TILE_OBJECT_TYPE.HUMAN_MEAT || foodPile.tileObjectType == TILE_OBJECT_TYPE.ELF_MEAT)) {
+                    //non cannibals should only buy non human and elf meat
+                    return false;
+                }
+                if (manMadeStructure.CanPurchaseFromHere(actor, out bool needsToPay, out _)) {
+                    // if (needsToPay) {
+                    //     return actor.moneyComponent.CanAfford(FoodCost);
+                    // } else {
+                    //     //actor doesn't need to pay.
+                    //     return true;
+                    // }
+                    //make sure that character doesn't have that type of food yet.
+                    if (actor.homeStructure == null) {
+                        return true;
+                    } else {
+                        return !actor.homeStructure.HasBuiltTileObjectOfType(foodPile.tileObjectType);
+                    }
+                    //return actor.homeStructure != null && !actor.homeStructure.HasBuiltTileObjectOfType(foodPile.tileObjectType);
                 }
             }
             return false;
