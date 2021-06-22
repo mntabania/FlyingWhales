@@ -21,7 +21,7 @@ public class RatmanBehaviour : CharacterBehaviourComponent {
         character.combatComponent.SetCombatMode(COMBAT_MODE.Aggressive);
         bool isInHome = character.IsAtHome();
         if (isInHome) {
-            if (character.behaviourComponent.PlanWorkActions(out producedJob)) {
+            if (character.behaviourComponent.PlanSettlementOrFactionWorkActions(out producedJob)) {
                 //Ratmen can do work actions
                 return true;
             }

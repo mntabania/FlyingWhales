@@ -46,6 +46,7 @@ public abstract class MovingTileObject : TileObject {
             hasExpired = true;
             Messenger.RemoveListener<LocationGridTile, TraitableCallback>(GridTileSignals.ACTION_PERFORMED_ON_TILE_TRAITABLES, OnActionPerformedOnTile);
             DatabaseManager.Instance.tileObjectDatabase.UnRegisterTileObject(this);
+            Messenger.Broadcast(TileObjectSignals.MOVING_TILE_OBJECT_EXPIRED, this);
         }
     } 
     #endregion

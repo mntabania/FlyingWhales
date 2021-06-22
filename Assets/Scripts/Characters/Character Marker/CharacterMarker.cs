@@ -413,6 +413,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         Messenger.AddListener<bool>(CharacterSignals.TOGGLE_CHARACTER_MARKER_NAMEPLATE, OnToggleCharacterMarkerNameplate);
         Messenger.AddListener<Character>(PlayerSignals.PLAYER_STORED_CHARACTER, OnPlayerStoredCharacterAsTarget);
         Messenger.AddListener<Character>(PlayerSignals.PLAYER_REMOVED_STORED_CHARACTER, OnPlayerRemoveStoredCharacterAsTarget);
+        Messenger.AddListener<MovingTileObject>(TileObjectSignals.MOVING_TILE_OBJECT_EXPIRED, OnMovingTileObjectExpired);
     }
     private void RemoveListeners() {
         Messenger.RemoveListener<PROGRESSION_SPEED>(UISignals.PROGRESSION_SPEED_CHANGED, OnProgressionSpeedChanged);
@@ -429,6 +430,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         Messenger.RemoveListener<bool>(CharacterSignals.TOGGLE_CHARACTER_MARKER_NAMEPLATE, OnToggleCharacterMarkerNameplate);
         Messenger.RemoveListener<Character>(PlayerSignals.PLAYER_STORED_CHARACTER, OnPlayerStoredCharacterAsTarget);
         Messenger.RemoveListener<Character>(PlayerSignals.PLAYER_REMOVED_STORED_CHARACTER, OnPlayerRemoveStoredCharacterAsTarget);
+        Messenger.RemoveListener<MovingTileObject>(TileObjectSignals.MOVING_TILE_OBJECT_EXPIRED, OnMovingTileObjectExpired);
     }
 
     private void OnCharacterChangedName(Character p_character) {
@@ -556,6 +558,11 @@ public class CharacterMarker : MapObjectVisual<Character> {
     private void OnPlayerRemoveStoredCharacterAsTarget(Character p_character) {
         if (character != null && _nameplate) {
             _nameplate.UpdateNameActiveState();
+        }
+    }
+    private void OnMovingTileObjectExpired(MovingTileObject p_tileObject) {
+        if (inVisionPOIs.Contains(p_tileObject)) {
+            RemovePOIFromInVisionRange(p_tileObject);
         }
     }
 #endregion

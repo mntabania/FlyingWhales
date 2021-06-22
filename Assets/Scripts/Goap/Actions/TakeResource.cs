@@ -215,22 +215,29 @@ public class TakeResource : GoapAction {
 
     private void CarryResourcePile(Character carrier, ResourcePile pile, int amount, bool setOwnership) {
         if (pile.isBeingCarriedBy == null || pile.isBeingCarriedBy != carrier) {
-            ResourcePile newPile = InnerMapManager.Instance.CreateNewTileObject<ResourcePile>(pile.tileObjectType);
-            newPile.SetResourceInPile(amount);
+            if (pile.resourceInPile > amount) {
+                //create new pile and transfer amount to that pile
+                ResourcePile newPile = InnerMapManager.Instance.CreateNewTileObject<ResourcePile>(pile.tileObjectType);
+                newPile.SetResourceInPile(amount);
 
-            //This can be made into a function in the IPointOfInterest interface
-            newPile.SetGridTileLocation(pile.gridTileLocation);
-            newPile.InitializeMapObject(newPile);
-            newPile.SetPOIState(POI_STATE.ACTIVE);
-            UtilityScripts.LocationAwarenessUtility.AddToAwarenessList(newPile, newPile.gridTileLocation);
-            //removed by aaron for awareness update newPile.gridTileLocation.structure.region.AddPendingAwareness(newPile);
-            newPile.SetGridTileLocation(null);
+                //This can be made into a function in the IPointOfInterest interface
+                newPile.SetGridTileLocation(pile.gridTileLocation);
+                newPile.InitializeMapObject(newPile);
+                newPile.SetPOIState(POI_STATE.ACTIVE);
+                UtilityScripts.LocationAwarenessUtility.AddToAwarenessList(newPile, newPile.gridTileLocation);
+                //removed by aaron for awareness update newPile.gridTileLocation.structure.region.AddPendingAwareness(newPile);
+                newPile.SetGridTileLocation(null);
 
-            // carrier.ownParty.AddPOI(newPile);
-            carrier.CarryPOI(newPile, setOwnership: setOwnership);
-            carrier.ShowItemVisualCarryingPOI(newPile);
-            TraitManager.Instance.CopyStatuses(pile, newPile);
-            pile.AdjustResourceInPile(-amount);
+                // carrier.ownParty.AddPOI(newPile);
+                carrier.CarryPOI(newPile, setOwnership: setOwnership);
+                carrier.ShowItemVisualCarryingPOI(newPile);
+                TraitManager.Instance.CopyStatuses(pile, newPile);
+                pile.AdjustResourceInPile(-amount);
+            } else {
+                //just carry the target pile.
+                carrier.CarryPOI(pile, setOwnership: setOwnership);
+                carrier.ShowItemVisualCarryingPOI(pile);
+            }
         } else {
             carrier.ShowItemVisualCarryingPOI(pile);
         }
