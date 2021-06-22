@@ -55,5 +55,4 @@ public class SaveDataShearableAnimal : SaveDataSummon {
         return obj as Character;
     }
 }
-
 #endregion

@@ -5,7 +5,7 @@ using Traits;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
 
-public class Dragon : Summon {
+public class Dragon : SkinnableAnimal {
     public override string raceClassName => "Dragon";
     public override System.Type serializedData => typeof(SaveDataDragon);
 
@@ -193,7 +193,7 @@ public class Dragon : Summon {
 }
 
 [System.Serializable]
-public class SaveDataDragon : SaveDataSummon {
+public class SaveDataDragon : SaveDataSkinnableAnimal {
     public bool isAwakened;
     public bool isAttackingPlayer;
     public bool willLeaveWorld;
