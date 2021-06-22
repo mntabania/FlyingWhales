@@ -233,6 +233,9 @@ namespace Inner_Maps {
                     SetIsDefault(false);
                 }    
             }
+            if (area != null) {
+                area.gridTileComponent.EvaluatePassabilityOfTile(this);
+            }
         }
         private void RevertBackToSnow() {
             SetGroundTilemapVisual(InnerMapManager.Instance.assetManager.snowTile, true);
