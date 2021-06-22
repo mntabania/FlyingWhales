@@ -21,7 +21,8 @@ public class Feed : GoapAction {
         return true;
     }
     protected override void ConstructBasePreconditionsAndEffects() {
-        SetPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.TAKE_POI, conditionKey = "Food Pile", isKeyANumber = false, target = GOAP_EFFECT_TARGET.ACTOR }, ActorHasFood);
+        SetPrecondition(new GoapEffect(GOAP_EFFECT_CONDITION.FEED, "Food Pile", false, GOAP_EFFECT_TARGET.ACTOR), ActorHasFood);
+        //SetPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.TAKE_POI, conditionKey = "Food Pile", isKeyANumber = false, target = GOAP_EFFECT_TARGET.ACTOR }, ActorHasFood);
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = string.Empty, isKeyANumber = false, target = GOAP_EFFECT_TARGET.TARGET });
     }
     public override void Perform(ActualGoapNode goapNode) {
@@ -38,7 +39,9 @@ public class Feed : GoapAction {
     public override void OnStopWhileStarted(ActualGoapNode node) {
         base.OnStopWhileStarted(node);
         Character actor = node.actor;
+        IPointOfInterest poiTarget = node.poiTarget;
         actor.UncarryPOI();
+        poiTarget.traitContainer.RemoveTrait(poiTarget, "Eating");
     }
     public override void OnStopWhilePerforming(ActualGoapNode node) {
         base.OnStopWhilePerforming(node);
@@ -106,7 +109,7 @@ public class Feed : GoapAction {
         base.OnActionStarted(node);
         for (int i = 0; i < node.actor.items.Count; i++) {
             TileObject tileObject = node.actor.items[i];
-            if(tileObject.resourceStorageComponent.HasResourceAmount(RESOURCE.FOOD, 12)) {
+            if(tileObject.resourceStorageComponent.HasResourceAmount(RESOURCE.FOOD, 10)) {
                 node.actor.ShowItemVisualCarryingPOI(tileObject);
                 break;
             }
@@ -134,7 +137,7 @@ public class Feed : GoapAction {
                     log.AddToFillers(goapNode.poiTarget, goapNode.poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
                     goapNode.OverrideDescriptionLog(log);
                 }
-                carriedPile.AdjustResourceInPile(-12);
+                carriedPile.AdjustResourceInPile(-10);
                 // targetCharacter.resourceStorageComponent.AdjustResource(RESOURCE.FOOD, 12);
             }    
         }
@@ -166,10 +169,11 @@ public class Feed : GoapAction {
                 targetCharacter.traitContainer.AddTrait(targetCharacter, "Poisoned", goapNode.actor, bypassElementalChance: true);
             }
         }
+        goapNode.actor.UncarryPOI();
     }
-#endregion
+    #endregion
 
-#region Requirements
+    #region Requirements
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, OtherData[] otherData, JobQueueItem job) { 
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData, job);
         if (satisfied) {
@@ -183,12 +187,12 @@ public class Feed : GoapAction {
 
 #region Preconditions
     private bool ActorHasFood(Character actor, IPointOfInterest poiTarget, object[] otherData, JOB_TYPE jobType) {
-        if (poiTarget.resourceStorageComponent.HasResourceAmount(RESOURCE.FOOD, 12)) {
+        if (poiTarget.resourceStorageComponent.HasResourceAmount(RESOURCE.FOOD, 10)) {
             return true;
         }
         if(actor.items.Count > 0) {
             for (int i = 0; i < actor.items.Count; i++) {
-                if(actor.items[i].resourceStorageComponent.HasResourceAmount(RESOURCE.FOOD, 12)) {
+                if(actor.items[i].resourceStorageComponent.HasResourceAmount(RESOURCE.FOOD, 10)) {
                     return true;
                 }
             }

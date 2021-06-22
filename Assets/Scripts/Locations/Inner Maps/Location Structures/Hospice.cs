@@ -98,6 +98,14 @@ namespace Inner_Maps.Location_Structures {
                 }    
             }
 
+            targetVillager = GetVillagerToBeFed(p_worker);
+            if (targetVillager != null) {
+                p_worker.jobComponent.TryTriggerFeed(targetVillager, out producedJob);
+                if (producedJob != null) {
+                    return;
+                }
+            }
+
             targetVillager = GetVillagerToBeDispelledForVampirism(p_worker);
             if (targetVillager != null) {
                 p_worker.jobComponent.TriggerCureMagicalAffliction(targetVillager, "Vampire", out producedJob);
@@ -170,6 +178,19 @@ namespace Inner_Maps.Location_Structures {
                     }
                 }
 			}
+            return null;
+        }
+        Character GetVillagerToBeFed(Character p_worker) {
+            for (int x = 0; x < beds.Count; ++x) {
+                if (beds[x].users.Length > 0) {
+                    var villagerToBeCured = beds[x].users[0];
+                    if (villagerToBeCured != null && villagerToBeCured.needsComponent.isStarving) {
+                        if (!villagerToBeCured.HasJobTargetingThis(JOB_TYPE.FEED)) {
+                            return villagerToBeCured;
+                        }
+                    }
+                }
+            }
             return null;
         }
         Character GetVillagerToBeDispelledForLycan(Character p_worker) {

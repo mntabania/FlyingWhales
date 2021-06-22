@@ -27,7 +27,7 @@ public class CarePlagueBearersBehaviour : CharacterBehaviourComponent {
                     FoodPile foodPileInMainStorage = character.homeSettlement.mainStorage.GetResourcePileObjectWithLowestCount<FoodPile>();
                     if (foodPileInMainStorage != null && foodPileInMainStorage.resourceInPile >= 12) {
                         //only allow feed job if main storage has enough food for it, this is to prevent characters from being stuck in this behaviour if there are no more food piles.
-                        if (character.jobComponent.TriggerFeed(target, out producedJob)) {
+                        if (character.jobComponent.TryTriggerFeed(target, out producedJob)) {
                             return true;
                         }    
                     }

@@ -18,6 +18,7 @@ public class BuyFood : GoapAction {
     protected override void ConstructBasePreconditionsAndEffects() {
         AddExpectedEffect(new GoapEffect(GOAP_EFFECT_CONDITION.HAS_POI, "Food Pile", false, GOAP_EFFECT_TARGET.ACTOR));
         AddExpectedEffect(new GoapEffect(GOAP_EFFECT_CONDITION.BUY_OBJECT, "Food Pile", false, GOAP_EFFECT_TARGET.ACTOR));
+        AddExpectedEffect(new GoapEffect(GOAP_EFFECT_CONDITION.FEED, "Food Pile", false, GOAP_EFFECT_TARGET.ACTOR));
     }
     public override void Perform(ActualGoapNode goapNode) {
         base.Perform(goapNode);
@@ -86,15 +87,20 @@ public class BuyFood : GoapAction {
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData, job);
         if (satisfied) {
             if (poiTarget is FoodPile foodPile && poiTarget.gridTileLocation != null && poiTarget.gridTileLocation.structure is ManMadeStructure manMadeStructure) {
-                if (manMadeStructure.CanPurchaseFromHereBasedOnOpinionOfCharacterToAssignedWorker(actor, out bool needsToPay)) {
-                    // if (needsToPay) {
-                    //     return actor.moneyComponent.CanAfford(FoodCost);
-                    // } else {
-                    //     //actor doesn't need to pay.
-                    //     return true;
-                    // }
-                    //make sure that character doesn't have that type of food yet.
-                    return actor.homeStructure != null && !actor.homeStructure.HasBuiltTileObjectOfType(foodPile.tileObjectType);
+                //if (manMadeStructure.CanPurchaseFromHereBasedOnOpinionOfCharacterToAssignedWorker(actor, out bool needsToPay)) {
+                //    // if (needsToPay) {
+                //    //     return actor.moneyComponent.CanAfford(FoodCost);
+                //    // } else {
+                //    //     //actor doesn't need to pay.
+                //    //     return true;
+                //    // }
+                //    //make sure that character doesn't have that type of food yet.
+                //    return actor.homeStructure != null && !actor.homeStructure.HasBuiltTileObjectOfType(foodPile.tileObjectType);
+                //}
+                if (actor.homeStructure == null) {
+                    return true;
+                } else {
+                    return !actor.homeStructure.HasBuiltTileObjectOfType(foodPile.tileObjectType);
                 }
             }
             return false;
@@ -113,6 +119,9 @@ public class BuyFood : GoapAction {
     }
     private void TakeFood(ActualGoapNode goapNode) {
         int amount = 30;
+        if (goapNode.otherData != null && goapNode.otherData.Length > 0 && goapNode.otherData[0] is IntOtherData intData) {
+            amount = intData.integer;
+        }
         FoodPile targetFoodPile = goapNode.target as FoodPile;
         Assert.IsNotNull(targetFoodPile);
         if (targetFoodPile.resourceInPile <= amount) {

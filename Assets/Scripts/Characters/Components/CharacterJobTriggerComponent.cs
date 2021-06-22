@@ -686,27 +686,47 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 
 #region Feed
 	public bool TryTriggerFeed(Character targetCharacter) {
-		if (!targetCharacter.HasJobTargetingThis(JOB_TYPE.FEED)) {
-			GoapEffect goapEffect = new GoapEffect(GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, string.Empty, false, GOAP_EFFECT_TARGET.TARGET);
-			GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.FEED, goapEffect, targetCharacter, owner);
-            JobUtilities.PopulatePriorityLocationsForTakingEdibleResources(owner, job, INTERACTION_TYPE.TAKE_RESOURCE);
-            job.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] { 10 });
-			return owner.jobQueue.AddJobInQueue(job);
-		}
-		return false;
+        JobQueueItem job;
+        TryTriggerFeed(targetCharacter, out job);
+        if (job != null) {
+            return owner.jobQueue.AddJobInQueue(job);
+        }
+        return false;
 	}
-	public bool TriggerFeed(Character targetCharacter, out JobQueueItem producedJob) {
-		if (!targetCharacter.HasJobTargetingThis(JOB_TYPE.FEED)) {
-			GoapEffect goapEffect = new GoapEffect(GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, string.Empty, false, GOAP_EFFECT_TARGET.TARGET);
-			GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.FEED, goapEffect, targetCharacter, owner);
-            JobUtilities.PopulatePriorityLocationsForTakingEdibleResources(owner, job, INTERACTION_TYPE.TAKE_RESOURCE);
-            job.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] { 10 });
-			producedJob = job;
-			return true;
-		}
-		producedJob = null;
-		return false;
-	}
+	public bool TryTriggerFeed(Character targetCharacter, out JobQueueItem producedJob) {
+        if (!targetCharacter.HasJobTargetingThis(JOB_TYPE.FEED)) {
+            GoapEffect goapEffect = new GoapEffect(GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, string.Empty, false, GOAP_EFFECT_TARGET.TARGET);
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.FEED, goapEffect, targetCharacter, owner);
+            if (owner.homeStructure != null) {
+                job.AddPriorityLocation(INTERACTION_TYPE.TAKE_RESOURCE, owner.homeStructure);
+                job.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] { 10 });
+            }
+            if (owner.homeSettlement != null) {
+                for (int i = 0; i < owner.homeSettlement.allStructures.Count; i++) {
+                    LocationStructure s = owner.homeSettlement.allStructures[i];
+                    if (s.structureType.IsFoodProducingStructure()) {
+                        job.AddPriorityLocation(INTERACTION_TYPE.BUY_FOOD, s);
+                    }
+                }
+                job.AddOtherData(INTERACTION_TYPE.BUY_FOOD, new object[] { 10 });
+            }
+            producedJob = job;
+            return true;
+        }
+        producedJob = null;
+        return false;
+
+        //if (!targetCharacter.HasJobTargetingThis(JOB_TYPE.FEED)) {
+        //	GoapEffect goapEffect = new GoapEffect(GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, string.Empty, false, GOAP_EFFECT_TARGET.TARGET);
+        //	GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.FEED, goapEffect, targetCharacter, owner);
+        //          JobUtilities.PopulatePriorityLocationsForTakingEdibleResources(owner, job, INTERACTION_TYPE.TAKE_RESOURCE);
+        //          job.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] { 10 });
+        //	producedJob = job;
+        //	return true;
+        //}
+        //producedJob = null;
+        //return false;
+    }
 #endregion
 
 #region Move Character

@@ -548,7 +548,7 @@ public class Eat : GoapAction {
                 }
             }
             if (poiTarget is Table) {
-                if (poiTarget.resourceStorageComponent.GetResourceValue(RESOURCE.FOOD) < 12 && job.jobType == JOB_TYPE.FULLNESS_RECOVERY_ON_SIGHT) {
+                if (poiTarget.resourceStorageComponent.GetResourceValue(RESOURCE.FOOD) < 10 && job.jobType == JOB_TYPE.FULLNESS_RECOVERY_ON_SIGHT) {
                     return false;
                 }
                 //Allow rats to eat at table
@@ -559,7 +559,7 @@ public class Eat : GoapAction {
                     }
                 }
             } else if (poiTarget is FoodPile) {
-                if (poiTarget.resourceStorageComponent.GetResourceValue(RESOURCE.FOOD) < 12 && job.jobType == JOB_TYPE.FULLNESS_RECOVERY_ON_SIGHT) {
+                if (poiTarget.resourceStorageComponent.GetResourceValue(RESOURCE.FOOD) < 10 && job.jobType == JOB_TYPE.FULLNESS_RECOVERY_ON_SIGHT) {
                     return false;
                 }
             }
@@ -573,7 +573,7 @@ public class Eat : GoapAction {
     
     #region Preconditions
     private bool HasFood(Character actor, IPointOfInterest poiTarget, OtherData[] otherData, JOB_TYPE jobType) {
-        return poiTarget.resourceStorageComponent.HasResourceAmount(RESOURCE.FOOD, 12);
+        return poiTarget.resourceStorageComponent.HasResourceAmount(RESOURCE.FOOD, 10);
     }
     #endregion
 }

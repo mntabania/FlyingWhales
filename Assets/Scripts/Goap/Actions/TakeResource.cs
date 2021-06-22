@@ -18,6 +18,7 @@ public class TakeResource : GoapAction {
     #region Overrides
     protected override void ConstructBasePreconditionsAndEffects() {
         AddPossibleExpectedEffectForTypeAndTargetMatching(new GoapEffectConditionTypeAndTargetType(GOAP_EFFECT_CONDITION.TAKE_POI, GOAP_EFFECT_TARGET.ACTOR));
+        AddExpectedEffect(new GoapEffect(GOAP_EFFECT_CONDITION.FEED, "Food Pile", false, GOAP_EFFECT_TARGET.ACTOR));
     }
     protected override List<GoapEffect> GetExpectedEffects(Character actor, IPointOfInterest target, OtherData[] otherData, out bool isOverridden) {
         if (target is ResourcePile) {
@@ -155,6 +156,12 @@ public class TakeResource : GoapAction {
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, OtherData[] otherData, JobQueueItem job) { 
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData, job);
         if (satisfied) {
+            if (job.jobType == JOB_TYPE.FEED) {
+                //If feed, only take food pile from the home of the actor, if food pile is not in the home of actor, return false so that it will not be targeted
+                if (!(poiTarget.gridTileLocation != null && poiTarget.gridTileLocation.structure == actor.homeStructure)) {
+                    return false;
+                }
+            }
             if (poiTarget.gridTileLocation == null && poiTarget.isBeingCarriedBy != actor) {
                 return false;
             }
