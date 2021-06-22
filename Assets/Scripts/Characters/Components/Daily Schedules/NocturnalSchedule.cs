@@ -6,16 +6,6 @@
     public NocturnalSchedule() {
         m_schedule = new[] {
             new DailyScheduleSection(new TickRange(
-                    GameManager.Instance.GetTicksBasedOnHour(2), 
-                    GameManager.Instance.GetTicksBasedOnHour(5)), 
-                DAILY_SCHEDULE.Free_Time
-            ),
-            new DailyScheduleSection(new TickRange(
-                    GameManager.Instance.GetTicksBasedOnHour(5), 
-                    GameManager.Instance.GetTicksBasedOnHour(9)), 
-                DAILY_SCHEDULE.Work
-            ),
-            new DailyScheduleSection(new TickRange(
                     GameManager.Instance.GetTicksBasedOnHour(9), 
                     GameManager.Instance.GetTicksBasedOnHour(12)), 
                 DAILY_SCHEDULE.Free_Time
@@ -32,7 +22,7 @@
             ),
             new DailyScheduleSection(new TickRange(
                     GameManager.Instance.GetTicksBasedOnHour(22), 
-                    GameManager.Instance.GetTicksBasedOnHour(2)), 
+                    GameManager.Instance.GetTicksBasedOnHour(9)), 
                 DAILY_SCHEDULE.Work
             ),
         };
