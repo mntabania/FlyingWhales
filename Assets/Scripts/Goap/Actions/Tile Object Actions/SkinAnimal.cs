@@ -70,23 +70,30 @@ public class SkinAnimal : GoapAction {
     #endregion
 
     ResourcePile ProduceMatsPile(ActualGoapNode p_node) {
-        LocationGridTile tileToSpawnItem = p_node.actor.gridTileLocation;
-        if (tileToSpawnItem != null && tileToSpawnItem.tileObjectComponent.objHere != null) {
-            tileToSpawnItem = p_node.actor.gridTileLocation.GetFirstNearestTileFromThisWithNoObject();
+        Summon targetAnimal = p_node.target as Summon;
+        SkinnableAnimal animal = targetAnimal as SkinnableAnimal;
+        LocationGridTile tileToSpawnPile = p_node.actor.gridTileLocation;
+        if (tileToSpawnPile != null && tileToSpawnPile.tileObjectComponent.objHere != null) {
+            tileToSpawnPile = p_node.actor.gridTileLocation.GetFirstNearestTileFromThisWithNoObject();
         }
-        ResourcePile matsToHaul = InnerMapManager.Instance.CreateNewTileObject<ResourcePile>((p_node.target as Summon).produceableMaterial);
+        ResourcePile matsToHaul = InnerMapManager.Instance.CreateNewTileObject<ResourcePile>(animal.produceableMaterial);
         int amount = p_node.currentStateDuration * m_amountProducedPerTick;
+
+        if (animal.count - amount < 0) {
+            amount = animal.count;
+        }
+        animal.count = (int)Mathf.Clamp(animal.count - amount, 0f, 1000f);
+        if (targetAnimal.gridTileLocation != null) {
+            if (animal.count <= 0) {
+                targetAnimal.gridTileLocation.structure.RemovePOI(targetAnimal);
+            }
+        }
+
         p_node.actor.moneyComponent.AdjustCoins(amount * _coinGainMultiplier);
         matsToHaul.SetResourceInPile(amount);
-        tileToSpawnItem.structure.AddPOI(matsToHaul, tileToSpawnItem);
-        // p_node.actor.homeSettlement.settlementJobTriggerComponent.TryCreateHaulJob(matsToHaul);
-
-        (p_node.target as Character).DestroyMarker();
-        if ((p_node.target as Character).currentRegion != null) {
-            (p_node.target as Character).currentRegion.RemoveCharacterFromLocation((p_node.target as Character));
-        }
-        p_node.actor.talentComponent?.GetTalent(CHARACTER_TALENT.Resources).AdjustExperience(4, p_node.actor);
+        tileToSpawnPile.structure.AddPOI(matsToHaul, tileToSpawnPile);
         ProduceLogs(p_node);
+        p_node.actor.talentComponent?.GetTalent(CHARACTER_TALENT.Resources).AdjustExperience(4, p_node.actor);
         return matsToHaul;
     }
 

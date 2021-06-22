@@ -12,16 +12,6 @@
             ),
             new DailyScheduleSection(new TickRange(
                     GameManager.Instance.GetTicksBasedOnHour(8), 
-                    GameManager.Instance.GetTicksBasedOnHour(12)), 
-                DAILY_SCHEDULE.Work
-            ),
-            new DailyScheduleSection(new TickRange(
-                    GameManager.Instance.GetTicksBasedOnHour(12), 
-                    GameManager.Instance.GetTicksBasedOnHour(15)), 
-                DAILY_SCHEDULE.Free_Time
-            ),
-            new DailyScheduleSection(new TickRange(
-                    GameManager.Instance.GetTicksBasedOnHour(15), 
                     GameManager.Instance.GetTicksBasedOnHour(19)), 
                 DAILY_SCHEDULE.Work
             ),

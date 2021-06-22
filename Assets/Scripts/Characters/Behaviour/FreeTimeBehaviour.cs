@@ -312,7 +312,7 @@ public class FreeTimeBehaviour : CharacterBehaviourComponent {
 //             }
 
             
-            if (GameUtilities.RollChance(10, ref log)) {
+            if (GameUtilities.RollChance(4, ref log)) {
                 TileObject bed = character.currentStructure.GetUnoccupiedTileObject(TILE_OBJECT_TYPE.BED);
                 if (bed != null) {
                     if (character.traitContainer.HasTrait("Vampire")) {

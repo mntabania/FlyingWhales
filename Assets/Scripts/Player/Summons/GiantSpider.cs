@@ -3,7 +3,7 @@ using Inner_Maps;
 using Traits;
 using UnityEngine;
 
-public class GiantSpider : Summon {
+public class GiantSpider : SkinnableAnimal {
 
     public const string ClassName = "Giant Spider";
     
@@ -18,7 +18,7 @@ public class GiantSpider : Summon {
     public GiantSpider(string className) : base(SUMMON_TYPE.Giant_Spider, className, RACE.SPIDER, UtilityScripts.Utilities.GetRandomGender()) {
         //combatComponent.SetCombatMode(COMBAT_MODE.Aggressive);
     }
-    public GiantSpider(SaveDataSummon data) : base(data) {
+    public GiantSpider(SaveDataSkinnableAnimal data) : base(data) {
         //combatComponent.SetCombatMode(COMBAT_MODE.Aggressive);
     }
 

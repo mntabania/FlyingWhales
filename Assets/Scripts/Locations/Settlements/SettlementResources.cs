@@ -248,16 +248,14 @@ public class SettlementResources
 
     public TreeObject GetAvailableTree() { 
         for(int x = 0; x < trees.Count; ++x) {
-            if (!trees[x].HasJobTargetingThis(JOB_TYPE.PRODUCE_WOOD)) {
-                return trees[x];
-            }
-		}
+            return trees[x];
+        }
         return null;
     }
 
     public Summon GetAvailableSherable() {
         for (int x = 0; x < animalsThatProducesMats.Count; ++x) {
-            if (animalsThatProducesMats[x] is Animal && animalsThatProducesMats[x].race.IsShearable() && !animalsThatProducesMats[x].HasJobTargetingThis(JOB_TYPE.SHEAR_ANIMAL)) {
+            if (animalsThatProducesMats[x] is Animal && animalsThatProducesMats[x].race.IsShearable()) {
                 return animalsThatProducesMats[x];
             }
         }
@@ -266,7 +264,7 @@ public class SettlementResources
 
     public void PopulateAllAnimalsThatProducesMats(List<Character> allAvailableAnimals) {
         for (int x = 0; x < animalsThatProducesMats.Count; ++x) {
-            if (!animalsThatProducesMats[x].HasJobTargetingThis(JOB_TYPE.MONSTER_BUTCHER, JOB_TYPE.SHEAR_ANIMAL, JOB_TYPE.SKIN_ANIMAL) && animalsThatProducesMats[x]?.currentStructure?.structureType == STRUCTURE_TYPE.CITY_CENTER) {
+            if (!animalsThatProducesMats[x].HasJobTargetingThis(JOB_TYPE.MONSTER_BUTCHER) && animalsThatProducesMats[x]?.currentStructure?.structureType == STRUCTURE_TYPE.CITY_CENTER) {
                 if (animalsThatProducesMats[x].isDead && animalsThatProducesMats[x].race.IsSkinnable()) {
                     allAvailableAnimals.Add(animalsThatProducesMats[x]);
                 }
@@ -276,7 +274,7 @@ public class SettlementResources
 
     public void PopulateAllAnimalsThatAreShearable(List<Character> ableToShearTodayList) {
         for(int x = 0; x < animalsThatProducesMats.Count; ++x) {
-            if (animalsThatProducesMats[x] is ShearableAnimal target && target.isAvailableForShearing && !target.HasJobTargetingThis(JOB_TYPE.MONSTER_BUTCHER, JOB_TYPE.SHEAR_ANIMAL, JOB_TYPE.SKIN_ANIMAL)) {
+            if (animalsThatProducesMats[x] is ShearableAnimal target && target.isAvailableForShearing && !target.HasJobTargetingThis(JOB_TYPE.MONSTER_BUTCHER)) {
                 if (animalsThatProducesMats[x].isDead) {
                     ableToShearTodayList.Add(animalsThatProducesMats[x]);
                 } else if (animalsThatProducesMats[x].combatComponent.combatMode == COMBAT_MODE.Passive) {
@@ -300,7 +298,7 @@ public class SettlementResources
         for (int x = 0; x < butcherables.Count; ++x) {
             Summon monster = butcherables[x];
             LocationStructure currentStructure = butcherables[x].currentStructure;
-            if (currentStructure != null && !monster.HasJobTargetingThis(JOB_TYPE.MONSTER_BUTCHER, JOB_TYPE.SHEAR_ANIMAL, JOB_TYPE.SKIN_ANIMAL)) {
+            if (currentStructure != null && !monster.HasJobTargetingThis(JOB_TYPE.MONSTER_BUTCHER)) {
                 if (monster.race.IsButcherableWhenDead()) {
                     if (monster.isDead) {
                         return monster;
