@@ -32,8 +32,8 @@ public class CraftFurnitureStone : GoapAction {
     public override void AddFillersToLog(Log log, ActualGoapNode node) {
         base.AddFillersToLog(log, node);
         TileObject obj = node.poiTarget as TileObject;
-        log.AddToFillers(null, UtilityScripts.Utilities.GetArticleForWord(obj.tileObjectType.ToString()), LOG_IDENTIFIER.STRING_1);
-        log.AddToFillers(null, UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(obj.tileObjectType.ToString()), LOG_IDENTIFIER.ITEM_1);
+        log.AddToFillers(null, UtilityScripts.Utilities.GetArticleForWord(obj.name), LOG_IDENTIFIER.STRING_1);
+        log.AddToFillers(null, obj.name, LOG_IDENTIFIER.ITEM_1);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
         int cost = 10;
@@ -77,11 +77,11 @@ public class CraftFurnitureStone : GoapAction {
         }
        
         obj.SetMapObjectState(MAP_OBJECT_STATE.BUILDING);
-        goapNode.descriptionLog.AddToFillers(null, UtilityScripts.Utilities.GetArticleForWord(obj.tileObjectType.ToString()), LOG_IDENTIFIER.STRING_1);
-        goapNode.descriptionLog.AddToFillers(null, UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(obj.tileObjectType.ToString()), LOG_IDENTIFIER.ITEM_1);
+        goapNode.descriptionLog.AddToFillers(null, UtilityScripts.Utilities.GetArticleForWord(obj.name), LOG_IDENTIFIER.STRING_1);
+        goapNode.descriptionLog.AddToFillers(null, obj.name, LOG_IDENTIFIER.ITEM_1);
         if (goapNode.thoughtBubbleLog != null) {
-            goapNode.thoughtBubbleLog.AddToFillers(null, UtilityScripts.Utilities.GetArticleForWord(obj.tileObjectType.ToString()), LOG_IDENTIFIER.STRING_1);
-            goapNode.thoughtBubbleLog.AddToFillers(null, UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(obj.tileObjectType.ToString()), LOG_IDENTIFIER.ITEM_1);
+            goapNode.thoughtBubbleLog.AddToFillers(null, UtilityScripts.Utilities.GetArticleForWord(obj.name), LOG_IDENTIFIER.STRING_1);
+            goapNode.thoughtBubbleLog.AddToFillers(null, obj.name, LOG_IDENTIFIER.ITEM_1);
         }
     }
     public void AfterCraftSuccess(ActualGoapNode goapNode) {
