@@ -206,7 +206,7 @@ namespace Inner_Maps.Location_Structures {
             List<TileObject> metals = RuinarchListPool<TileObject>.Claim();
             connectedCave.PopulateTileObjectsOfType<Ore>(metals);
             for (int x = 0; x < metals.Count; ++x) {
-                if (metals[x].mapObjectState == MAP_OBJECT_STATE.BUILT && !metals[x].HasJobTargetingThis(JOB_TYPE.MINE_ORE)) {
+                if (metals[x].mapObjectState == MAP_OBJECT_STATE.BUILT) {
                     availMetals.Add(metals[x]);
                 }
             }
@@ -218,7 +218,7 @@ namespace Inner_Maps.Location_Structures {
             connectedCave.PopulateTileObjectsOfType<Rock>(stones);
             for (int x = 0; x < stones.Count; ++x) {
                 TileObject stone = stones[x];
-                if (stone.mapObjectState == MAP_OBJECT_STATE.BUILT && !stone.HasJobTargetingThis(JOB_TYPE.MINE_STONE)) {
+                if (stone.mapObjectState == MAP_OBJECT_STATE.BUILT) {
                     availStones.Add(stone);
                 }
             }

@@ -4,7 +4,7 @@ using Inner_Maps.Location_Structures;
 using Traits;
 using UnityEngine;
 
-public class SmallSpider : Summon {
+public class SmallSpider : SkinnableAnimal {
 
     public const string ClassName = "Small Spider";
     public override string raceClassName => $"Small Spider";
@@ -135,7 +135,7 @@ public class SmallSpider : Summon {
 }
 
 [System.Serializable]
-public class SaveDataSmallSpider : SaveDataSummon {
+public class SaveDataSmallSpider : SaveDataSkinnableAnimal {
     public GameDate growUpDate;
     public bool shouldGrowUpOnUnSeize;
 
