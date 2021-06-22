@@ -62,8 +62,16 @@ public class RumorComponent : CharacterComponent {
     public void AddAssumedWitnessedOrInformedNegativeInfo(ActualGoapNode node) {
         if (!_negativeInfoPool.Contains(node)) {
             _negativeInfoPool.Add(node);
+            node.SetIsNegativeInfo(true);
             if (_negativeInfoPool.Count > Max_Negative_Info) {
+                ActualGoapNode previousNode = _negativeInfoPool[0];
                 _negativeInfoPool.RemoveAt(0);
+                if (previousNode != null) {
+                    previousNode.SetIsNegativeInfo(false);
+                    if (previousNode.isSupposedToBeInPool) {
+                        previousNode.ProcessReturnToPool();
+                    }
+                }
             }
         }
     }

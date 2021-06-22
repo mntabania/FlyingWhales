@@ -159,6 +159,10 @@ namespace Interrupts {
             logTags = new List<LOG_TAG>();
         }
         public InterruptHolder(SaveDataInterruptHolder data) {
+            logTags = data.logTags;
+            if (logTags == null) {
+                logTags = new List<LOG_TAG>();
+            }
             awareCharacters = new List<Character>();
             persistentID = data.persistentID;
             interrupt = InteractionManager.Instance.GetInterruptData(data.interruptType);
@@ -369,6 +373,7 @@ public class SaveDataInterruptHolder : SaveData<InterruptHolder>, ISavableCounte
     public string reason;
     public CRIME_TYPE crimeType;
     public bool shouldNotBeObjectPooled;
+    public List<LOG_TAG> logTags;
 
     #region getters
     public OBJECT_TYPE objectType => OBJECT_TYPE.Interrupt;
@@ -425,6 +430,7 @@ public class SaveDataInterruptHolder : SaveData<InterruptHolder>, ISavableCounte
                 awareCharacterIDs.Add(character.persistentID);
             }
         }
+        logTags = data.logTags;
     }
 
     public override InterruptHolder Load() {

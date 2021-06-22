@@ -25,6 +25,7 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
     public OtherData[] otherData { get; private set; }
     public int cost { get; private set; }
     public bool isIntel { get; private set; }
+    public bool isNegativeInfo { get; private set; }
     public bool hasBeenReset { get; private set; }
     public bool isSupposedToBeInPool { get; private set; }
     public int stillProcessingCounter { get; private set; }
@@ -102,6 +103,7 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
         currentStateDuration = data.currentStateDuration;
         crimeType = data.crimeType;
         isIntel = data.isIntel;
+        isNegativeInfo = data.isNegativeInfo;
         isSupposedToBeInPool = data.isSupposedToBeInPool;
         stillProcessingCounter = data.stillProcessingCounter;
         hasBeenReset = data.hasBeenReset;
@@ -1115,6 +1117,9 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
     public void SetIsIntel(bool p_state) {
         isIntel = p_state;
     }
+    public void SetIsNegativeInfo(bool p_state) {
+        isNegativeInfo = p_state;
+    }
     #endregion
 
     #region Illusion
@@ -1387,7 +1392,7 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
     }
     public bool ProcessReturnToPool() {
         if (reactionProcessCounter <= 0) {
-            if (!isRumor && !isIntel && !isAssumption && !isStillProcessing) {
+            if (!isRumor && !isIntel && !isAssumption && !isStillProcessing && !isNegativeInfo) {
                 ObjectPoolManager.Instance.ReturnActionToPool(this);
                 return true;
             }
@@ -1427,6 +1432,8 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
         uniqueActionData = null;
         actionStatus = ACTION_STATUS.NONE;
         isSupposedToBeInPool = false;
+        isIntel = false;
+        isNegativeInfo = false;
         stillProcessingCounter = 0;
         SetHasBeenReset(true);
         if (Messenger.eventTable.ContainsKey(Signals.TICK_STARTED)) {
@@ -1449,6 +1456,7 @@ public class SaveDataActualGoapNode : SaveData<ActualGoapNode>, ISavableCounterp
     public SaveDataOtherData[] otherData;
     public int cost;
     public bool isIntel;
+    public bool isNegativeInfo;
     public bool isSupposedToBeInPool;
     public int stillProcessingCounter;
     public bool hasBeenReset; //For testing only
@@ -1502,6 +1510,7 @@ public class SaveDataActualGoapNode : SaveData<ActualGoapNode>, ISavableCounterp
         poiTarget = data.poiTarget.persistentID;
         poiTargetType = data.poiTarget.poiType;
         isIntel = data.isIntel;
+        isNegativeInfo = data.isNegativeInfo;
         isSupposedToBeInPool = data.isSupposedToBeInPool;
         stillProcessingCounter = data.stillProcessingCounter;
         hasBeenReset = data.hasBeenReset;
