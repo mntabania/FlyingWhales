@@ -205,10 +205,13 @@ namespace UtilityScripts {
                 summary += $"\nShearable Resource Count: {shearableAnimal.count}";
                 summary += $"\nIs Shearable: {shearableAnimal.isAvailableForShearing}";
             }
-        
-        UIManager.Instance.ShowSmallInfo(summary);
+            if (activeCharacter is SkinnableAnimal skinnable) {
+                summary += $"\nSkinnable Resource Count: {skinnable.count}";
+            }
+
+            UIManager.Instance.ShowSmallInfo(summary);
 #endif
-    }
+        }
     public static void HideCharacterTestingInfo() {
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
         UIManager.Instance.HideSmallInfo();
