@@ -556,7 +556,7 @@ Tilemap:
     second:
       serializedVersion: 2
       m_TileIndex: 5
-      m_TileSpriteIndex: 11
+      m_TileSpriteIndex: 13
       m_TileMatrixIndex: 0
       m_TileColorIndex: 0
       m_TileObjectToInstantiateIndex: 65535
@@ -574,7 +574,7 @@ Tilemap:
     second:
       serializedVersion: 2
       m_TileIndex: 5
-      m_TileSpriteIndex: 11
+      m_TileSpriteIndex: 13
       m_TileMatrixIndex: 0
       m_TileColorIndex: 0
       m_TileObjectToInstantiateIndex: 65535
@@ -583,7 +583,7 @@ Tilemap:
     second:
       serializedVersion: 2
       m_TileIndex: 5
-      m_TileSpriteIndex: 13
+      m_TileSpriteIndex: 11
       m_TileMatrixIndex: 0
       m_TileColorIndex: 0
       m_TileObjectToInstantiateIndex: 65535
@@ -601,7 +601,7 @@ Tilemap:
     second:
       serializedVersion: 2
       m_TileIndex: 5
-      m_TileSpriteIndex: 13
+      m_TileSpriteIndex: 11
       m_TileMatrixIndex: 0
       m_TileColorIndex: 0
       m_TileObjectToInstantiateIndex: 65535
@@ -2858,6 +2858,21 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7001846463038610360, guid: 551abd56996a3a749b77d74c5832fe15,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7001846463038610360, guid: 551abd56996a3a749b77d74c5832fe15,
+        type: 3}
+      propertyPath: m_Offset.x
+      value: 0.05
+      objectReference: {fileID: 0}
+    - target: {fileID: 7001846463038610360, guid: 551abd56996a3a749b77d74c5832fe15,
+        type: 3}
+      propertyPath: m_Offset.y
+      value: -0.05
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 551abd56996a3a749b77d74c5832fe15, type: 3}
 --- !u!1001 &2452214097318918137
@@ -3071,6 +3086,26 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7001846463038610360, guid: 551abd56996a3a749b77d74c5832fe15,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7001846463038610360, guid: 551abd56996a3a749b77d74c5832fe15,
+        type: 3}
+      propertyPath: m_AutoTiling
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7001846463038610360, guid: 551abd56996a3a749b77d74c5832fe15,
+        type: 3}
+      propertyPath: m_Offset.x
+      value: 0.05
+      objectReference: {fileID: 0}
+    - target: {fileID: 7001846463038610360, guid: 551abd56996a3a749b77d74c5832fe15,
+        type: 3}
+      propertyPath: m_Offset.y
+      value: 0.05
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 551abd56996a3a749b77d74c5832fe15, type: 3}
 --- !u!1001 &2826155848156240676
@@ -3184,6 +3219,21 @@ PrefabInstance:
     - target: {fileID: 4670203230688718, guid: 551abd56996a3a749b77d74c5832fe15, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7001846463038610360, guid: 551abd56996a3a749b77d74c5832fe15,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7001846463038610360, guid: 551abd56996a3a749b77d74c5832fe15,
+        type: 3}
+      propertyPath: m_Offset.x
+      value: -0.05
+      objectReference: {fileID: 0}
+    - target: {fileID: 7001846463038610360, guid: 551abd56996a3a749b77d74c5832fe15,
+        type: 3}
+      propertyPath: m_Offset.y
+      value: -0.05
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 551abd56996a3a749b77d74c5832fe15, type: 3}
@@ -3811,6 +3861,21 @@ PrefabInstance:
     - target: {fileID: 4670203230688718, guid: 551abd56996a3a749b77d74c5832fe15, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7001846463038610360, guid: 551abd56996a3a749b77d74c5832fe15,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7001846463038610360, guid: 551abd56996a3a749b77d74c5832fe15,
+        type: 3}
+      propertyPath: m_Offset.x
+      value: -0.05
+      objectReference: {fileID: 0}
+    - target: {fileID: 7001846463038610360, guid: 551abd56996a3a749b77d74c5832fe15,
+        type: 3}
+      propertyPath: m_Offset.y
+      value: 0.05
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 551abd56996a3a749b77d74c5832fe15, type: 3}
