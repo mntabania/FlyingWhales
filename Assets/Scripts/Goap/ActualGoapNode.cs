@@ -916,7 +916,7 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
 #if DEBUG_PROFILER
         Profiler.BeginSample($"{actor.name} - {action.name} - Per Tick Effect");
 #endif
-            GoapActionState currentState = action.states[currentStateName];
+        GoapActionState currentState = action.states[currentStateName];
         currentStateDuration++;
 
         IPointOfInterest target = poiTarget;
