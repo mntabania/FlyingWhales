@@ -9,7 +9,7 @@ using UtilityScripts;
 public abstract class AnimalBurrow : TileObject {
     public SUMMON_TYPE monsterToSpawn { get; private set; }
     public List<Summon> spawnedMonsters { get; private set; }
-
+    public List<Summon> deadSpawnedMonsters { get; private set; }
     // private const int MaxMonsters = 4;
 
     #region getters
@@ -28,6 +28,7 @@ public abstract class AnimalBurrow : TileObject {
     public AnimalBurrow(SUMMON_TYPE p_summonType) {
         monsterToSpawn = p_summonType;
         spawnedMonsters = new List<Summon>();
+        deadSpawnedMonsters = new List<Summon>();
     }
     public AnimalBurrow(SaveDataTileObject data, SUMMON_TYPE p_summonType) : base(data) {
         monsterToSpawn = p_summonType;
@@ -38,9 +39,10 @@ public abstract class AnimalBurrow : TileObject {
         base.LoadSecondWave(data);
         SaveDataAnimalBurrow saveDataAnimalBurrow = data as SaveDataAnimalBurrow;
         spawnedMonsters = SaveUtilities.ConvertIDListToMonsters(saveDataAnimalBurrow.spawnedMonsters);
+        deadSpawnedMonsters = SaveUtilities.ConvertIDListToMonsters(saveDataAnimalBurrow.deadSpawnedMonsters);
     }
     #endregion
-    
+
     protected override void Initialize(TILE_OBJECT_TYPE tileObjectType, bool shouldAddCommonAdvertisements = true) {
         base.Initialize(tileObjectType, shouldAddCommonAdvertisements);
         traitContainer.AddTrait(this, "Indestructible");
@@ -74,14 +76,25 @@ public abstract class AnimalBurrow : TileObject {
     protected override void SubscribeListeners() {
         base.SubscribeListeners();
         Messenger.AddListener<Character>(CharacterSignals.CHARACTER_DEATH, OnCharacterDied);
+        Messenger.AddListener<Character>(CharacterSignals.CHARACTER_MARKER_DESTROYED, OnCharacterMarkerDestroyed);
     }
     protected override void UnsubscribeListeners() {
         base.UnsubscribeListeners();
         Messenger.RemoveListener<Character>(CharacterSignals.CHARACTER_DEATH, OnCharacterDied);
+        Messenger.RemoveListener<Character>(CharacterSignals.CHARACTER_MARKER_DESTROYED, OnCharacterMarkerDestroyed);
     }
     private void OnCharacterDied(Character p_character) {
-        if (p_character is Summon summon && spawnedMonsters.Contains(summon)) {
-            spawnedMonsters.Remove(summon);
+        if (p_character is Summon summon) {
+            if (spawnedMonsters.Remove(summon)) {
+                if (summon.hasMarker) {
+                    deadSpawnedMonsters.Add(summon);
+                }
+            }
+        }
+    }
+    private void OnCharacterMarkerDestroyed(Character p_character) {
+        if (p_character is Summon summon && summon.isDead) {
+            deadSpawnedMonsters.Remove(summon);
         }
     }
     protected virtual void OnGameLoaded() {
@@ -131,6 +144,22 @@ public abstract class AnimalBurrow : TileObject {
         RuinarchListPool<Character>.Release(pool);
         return chosenMonster;
     }
+    public Summon GetRandomDeadSpawnedMonster() {
+        Summon chosenMonster = null;
+        List<Character> pool = RuinarchListPool<Character>.Claim();
+        for (int i = 0; i < deadSpawnedMonsters.Count; i++) {
+            Summon s = deadSpawnedMonsters[i];
+            LocationGridTile gridTile = s.gridTileLocation;
+            if (!s.isDead && gridTile != null && s.hasMarker) {
+                pool.Add(s);
+            }
+        }
+        if (pool.Count > 0) {
+            chosenMonster = pool[GameUtilities.RandomBetweenTwoNumbers(0, pool.Count - 1)] as Summon;
+        }
+        RuinarchListPool<Character>.Release(pool);
+        return chosenMonster;
+    }
     public bool HasAliveSpawnedMonster() {
         for (int i = 0; i < spawnedMonsters.Count; i++) {
             Summon s = spawnedMonsters[i];
@@ -170,10 +199,12 @@ public abstract class AnimalBurrow : TileObject {
 #region Save Data
 public class SaveDataAnimalBurrow : SaveDataTileObject {
     public List<string> spawnedMonsters;
+    public List<string> deadSpawnedMonsters;
     public override void Save(TileObject data) {
         base.Save(data);
         AnimalBurrow animalBurrow = data as AnimalBurrow;
         spawnedMonsters = SaveUtilities.ConvertSavableListToIDs(animalBurrow.spawnedMonsters);
+        deadSpawnedMonsters = SaveUtilities.ConvertSavableListToIDs(animalBurrow.deadSpawnedMonsters);
     }
 }
 #endregion
