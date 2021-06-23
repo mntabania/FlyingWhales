@@ -7,6 +7,7 @@ public class VisitVillageBehaviour : CharacterBehaviourComponent {
     
     public VisitVillageBehaviour() {
         priority = 1000;
+        attributes = new BEHAVIOUR_COMPONENT_ATTRIBUTE[] { BEHAVIOUR_COMPONENT_ATTRIBUTE.STOPS_BEHAVIOUR_LOOP };
     }
     
     public override bool TryDoBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
@@ -209,7 +210,9 @@ public class VisitVillageBehaviour : CharacterBehaviourComponent {
                 var targetTile = targetVillage.cityCenter.passableTiles.Count > 0 ? 
                     CollectionUtilities.GetRandomElement(targetVillage.cityCenter.passableTiles) : 
                     CollectionUtilities.GetRandomElement(targetVillage.cityCenter.tiles);
-                return character.jobComponent.CreateGoToJob(JOB_TYPE.VISIT_DIFFERENT_VILLAGE, targetTile, out producedJob);  
+                if (character.movementComponent.HasPathToEvenIfDiffRegion(targetTile)) {
+                    return character.jobComponent.CreateGoToJob(JOB_TYPE.VISIT_DIFFERENT_VILLAGE, targetTile, out producedJob);     
+                }
             }
         }
 #if DEBUG_LOG

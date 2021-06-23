@@ -21,6 +21,11 @@ public class EquipmentData : ScriptableObject {
     public Sprite imgIcon;
 
     public EquipmentUpgradeData equipmentUpgradeData;
+
+    [ContextMenu("Set 20 Cost resources")]
+    public void SetResourceCostTo20() {
+        resourceAmount = 20;
+    }
 }
 
 //[System.Serializable]

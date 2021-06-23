@@ -248,8 +248,26 @@ public class LocationStructureObject : PooledObject, ISelectable {
         }
         return false;
     }
-    internal void ReceiveMapObject<T>(MapObjectVisual<T> mapGameObject) where T : IDamageable {
-        mapGameObject.transform.SetParent(objectsParent);
+    public void PopulateMissingPreplacedObjectsOfType(List<StructureTemplateObjectData> p_objects, TILE_OBJECT_TYPE p_tileObjectType, InnerTileMap innerMap) {
+        StructureTemplateObjectData[] prePlacedObjects = GetPreplacedObjects();
+        if (prePlacedObjects != null) {
+            for (int i = 0; i < prePlacedObjects.Length; i++) {
+                StructureTemplateObjectData preplacedObj = prePlacedObjects[i];
+                if (preplacedObj.tileObjectType == p_tileObjectType) {
+                    Vector3Int tileCoords = innerMap.groundTilemap.WorldToCell(preplacedObj.transform.position);
+                    LocationGridTile tile = innerMap.map[tileCoords.x, tileCoords.y];
+                    if (tile.tileObjectComponent.objHere == null) {
+                        //tile location of preplaced object is unoccupied.
+                        p_objects.Add(preplacedObj);
+                    }
+                }
+            }
+        }
+    }
+    public LocationGridTile GetTileLocationOfPreplacedObject(StructureTemplateObjectData p_templateObject, InnerTileMap innerTileMap) {
+        Vector3Int tileCoords = innerTileMap.groundTilemap.WorldToCell(p_templateObject.transform.position);
+        LocationGridTile tile = innerTileMap.map[tileCoords.x, tileCoords.y];
+        return tile;
     }
     private void SetPreplacedObjectsState(bool state) {
         StructureTemplateObjectData[] preplacedObjs = GetPreplacedObjects();

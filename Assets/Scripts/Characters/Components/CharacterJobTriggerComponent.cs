@@ -3793,6 +3793,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 				    coinCost = 10;
 				    break;
 			    case TILE_OBJECT_TYPE.BED:
+			    case TILE_OBJECT_TYPE.BED_CLINIC:
 				    coinCost = 20;
 				    break;
 			    case TILE_OBJECT_TYPE.TORCH:
@@ -3817,6 +3818,44 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 			    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.CRAFT_MISSING_FURNITURE, INTERACTION_TYPE.CRAFT_FURNITURE_STONE, unbuiltFurniture, owner);
 			    job.AddPriorityLocation(INTERACTION_TYPE.BUY_STONE, p_preferredStore);
 			    TileObjectData tileObjectData = TileObjectDB.GetTileObjectData(tileObjectType);
+			    job.AddOtherData(INTERACTION_TYPE.BUY_STONE, new object[] { coinCost, tileObjectData.craftResourceCost });
+			    producedJob = job;
+			    return true;
+		    }
+	    }
+	    producedJob = null;
+	    return false;
+    }
+    #endregion
+    
+     #region Hospice
+    public bool CreateCraftHospiceBed(Hospice hospice, LocationStructure p_preferredStore, out JobQueueItem producedJob) {
+	    TileObject unbuiltBed = InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.BED_CLINIC);
+	    LocationGridTile targetPosition = null;
+	    StructureTemplateObjectData missingTemplate = null;
+	    if (hospice.TryGetMissingDefaultBedPosition(out missingTemplate)) {
+		    targetPosition = hospice.structureObj.GetTileLocationOfPreplacedObject(missingTemplate, hospice.region.innerMap);
+	    }
+	    if (hospice.AddPOI(unbuiltBed, targetPosition)) {
+		    if (missingTemplate != null) {
+			    unbuiltBed.mapVisual.SetVisual(missingTemplate.spriteRenderer.sprite);
+			    unbuiltBed.mapVisual.SetRotation(missingTemplate.transform.localEulerAngles.z);
+			    unbuiltBed.RevalidateTileObjectSlots();
+		    }
+		    unbuiltBed.SetMapObjectState(MAP_OBJECT_STATE.UNBUILT);
+		    int coinCost = 20;
+
+		    if (p_preferredStore is Lumberyard) {
+			    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.CRAFT_MISSING_FURNITURE, INTERACTION_TYPE.CRAFT_FURNITURE_WOOD, unbuiltBed, owner);
+			    job.AddPriorityLocation(INTERACTION_TYPE.BUY_WOOD, p_preferredStore);
+			    TileObjectData tileObjectData = TileObjectDB.GetTileObjectData(TILE_OBJECT_TYPE.BED_CLINIC);
+			    job.AddOtherData(INTERACTION_TYPE.BUY_WOOD, new object[] { coinCost, tileObjectData.craftResourceCost });
+			    producedJob = job;
+			    return true;
+		    } else if (p_preferredStore is Inner_Maps.Location_Structures.Mine) {
+			    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.CRAFT_MISSING_FURNITURE, INTERACTION_TYPE.CRAFT_FURNITURE_STONE, unbuiltBed, owner);
+			    job.AddPriorityLocation(INTERACTION_TYPE.BUY_STONE, p_preferredStore);
+			    TileObjectData tileObjectData = TileObjectDB.GetTileObjectData(TILE_OBJECT_TYPE.BED_CLINIC);
 			    job.AddOtherData(INTERACTION_TYPE.BUY_STONE, new object[] { coinCost, tileObjectData.craftResourceCost });
 			    producedJob = job;
 			    return true;

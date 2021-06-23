@@ -362,11 +362,11 @@ public class BehaviourComponent : CharacterComponent, CharacterEventDispatcher.I
                         //if a job was produced, always stop behaviour loop, regardless if behaviour says it should not skip processing
                         break;
                     } else {
+                        //no job was produced, check if current behaviour stops processing
                         if (!component.WillContinueProcess()) { break; }    
                     }
-                        
                 }
-                if (isProducedJobValid == false && producedJob != null) { //if produced valid is not valid and produced job is not null
+                if (!isProducedJobValid && producedJob != null) { //if produced valid is not valid and produced job is not null
                     //add character to blacklist if job is owned by a settlement
                     if (producedJob.originalOwner != null && producedJob.originalOwner.ownerType != JOB_OWNER.CHARACTER) {
                         producedJob.AddBlacklistedCharacter(owner);
@@ -374,6 +374,7 @@ public class BehaviourComponent : CharacterComponent, CharacterEventDispatcher.I
                 }
 
             }
+            if (component.StopsBehaviourLoop()) { break; }
         }
         RuinarchListPool<CharacterBehaviourComponent>.Release(behavioursToProcess);
         return log;
@@ -941,7 +942,7 @@ public class BehaviourComponent : CharacterComponent, CharacterEventDispatcher.I
     #endregion
 
     #region Work
-    public bool PlanWorkActions(out JobQueueItem producedJob) {
+    public bool PlanSettlementOrFactionWorkActions(out JobQueueItem producedJob) {
         //Stationary characters like Wurm cannot take work jobs
         if (owner.limiterComponent.canTakeJobs && !owner.movementComponent.isStationary) {
             //NOTE: ONLY ADDED FACTION CHECKING BECAUSE OF BUG THAT VAGRANTS ARE STILL PART OF A VILLAGE

@@ -7,7 +7,7 @@ using Traits;
 
 public class Butcher : GoapAction {
 
-    public int m_amountProducedPerTick = 1;
+    public int m_amountProducedPerTick = 8;
     private const int _coinGainMultiplier = 1;
     public Butcher() : base(INTERACTION_TYPE.BUTCHER) {
         actionIconString = GoapActionStateDB.Butcher_Icon;

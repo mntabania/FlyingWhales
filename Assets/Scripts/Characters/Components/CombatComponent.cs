@@ -88,9 +88,11 @@ public class CombatComponent : CharacterComponent {
     #region Signals
     public void SubscribeToSignals() {
         Messenger.AddListener<Prisoner>(TraitSignals.HAS_BECOME_PRISONER, OnHasBecomePrisoner);
+        Messenger.AddListener<MovingTileObject>(TileObjectSignals.MOVING_TILE_OBJECT_EXPIRED, OnMovingTileObjectExpired);
     }
     public void UnsubscribeToSignals() {
         Messenger.RemoveListener<Prisoner>(TraitSignals.HAS_BECOME_PRISONER, OnHasBecomePrisoner);
+        Messenger.RemoveListener<MovingTileObject>(TileObjectSignals.MOVING_TILE_OBJECT_EXPIRED, OnMovingTileObjectExpired);
     }
     #endregion
 
@@ -98,6 +100,11 @@ public class CombatComponent : CharacterComponent {
     #region Listeners
     private void OnHasBecomePrisoner(Prisoner prisoner) {
         OnCharacterBecomePrisoner(prisoner);
+    }
+    private void OnMovingTileObjectExpired(MovingTileObject p_tileObject) {
+        if (IsAvoidInRange(p_tileObject)) {
+            RemoveAvoidInRange(p_tileObject);    
+        }
     }
     #endregion
 

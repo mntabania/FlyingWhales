@@ -46,6 +46,8 @@ public static class ChanceData {
         {CHANCE_TYPE.Free_Time_Obtain_Want, 20},
         {CHANCE_TYPE.Do_Work_Chance, 85},
         {CHANCE_TYPE.Monster_Migration, 15},
+        {CHANCE_TYPE.Socialize_Chance, 20},
+        {CHANCE_TYPE.Visit_Village_Chance, 10},
     };
     public static bool RollChance(CHANCE_TYPE p_chanceType) {
         if (integerChances.ContainsKey(p_chanceType)) {

@@ -77,11 +77,12 @@ namespace Locations {
                 }
             }
         }
-        public void PopulateAnimalsListInsideHexThatIsNotTheSameRaceAs(List<Character> p_characterList, RACE p_race) {
+        public void PopulateAnimalsListThatCharacterCanReachInsideHexThatIsNotTheSameRaceAs(Character p_character, List<Character> p_characterList, RACE p_race) {
             for (int i = 0; i < charactersAtLocation.Count; i++) {
                 Character c = charactersAtLocation[i];
                 if (c.gridTileLocation == null) { continue; }
                 if (c.isBeingSeized) { continue; }
+                if (!p_character.movementComponent.HasPathToEvenIfDiffRegion(c.gridTileLocation)) { continue; }
                 if (c is Animal && c.race != p_race) {
                     p_characterList.Add(c);
                 }

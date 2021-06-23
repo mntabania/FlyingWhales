@@ -33,7 +33,7 @@ public abstract class BaseMonsterBehaviour : CharacterBehaviourComponent {
 #if DEBUG_LOG
         p_log = $"{p_log}\n-{p_character.name} will try to take a settlement job";
 #endif
-        if (p_character.behaviourComponent.PlanWorkActions(out p_producedJob)) {
+        if (p_character.behaviourComponent.PlanSettlementOrFactionWorkActions(out p_producedJob)) {
 #if DEBUG_LOG
             p_log = $"{p_log}\n-{p_character.name} found a valid settlement job: {p_producedJob}.";
 #endif
