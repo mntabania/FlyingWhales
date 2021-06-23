@@ -41,44 +41,37 @@ public class HuntBeastBehaviour : CharacterBehaviourComponent {
                             character.combatComponent.Fight(targetMonster, CombatManager.Hostility);
                             return true;
                         }
-                    }
 #if DEBUG_LOG
-                    log += $"\n-No longer alive monster, will try haul corpses";
+                        log += $"\n-No longer alive monster, will try haul corpses";
 #endif
-                    Area targetArea = targetStructure.occupiedArea;
-                    Summon targetDeadBeast = GetRandomDeadBeastToHaul(targetArea);
-                    if (targetDeadBeast != null) {
+                        targetMonster = burrow.GetRandomDeadSpawnedMonster();
+                        if (targetMonster != null) {
 #if DEBUG_LOG
-                        log += $"\n-Will haul {targetDeadBeast.nameWithID}";
+                            log += $"\n-Will haul {targetMonster.nameWithID}";
 #endif
-                        character.jobComponent.TryTriggerHaulAnimalCorpse(targetDeadBeast, out producedJob);
-                        if (producedJob != null) {
-                            producedJob.SetIsThisAPartyJob(true);
-                            return true;
-                        }
-                    } else {
-                        targetArea = character.areaLocation;
-                        targetDeadBeast = GetRandomDeadBeastToHaul(targetArea);
-                        if (targetDeadBeast != null) {
-#if DEBUG_LOG
-                        log += $"\n-Will haul {targetDeadBeast.nameWithID}";
-#endif
-                            character.jobComponent.TryTriggerHaulAnimalCorpse(targetDeadBeast, out producedJob);
+                            character.jobComponent.TryTriggerHaulAnimalCorpse(targetMonster, out producedJob);
                             if (producedJob != null) {
                                 producedJob.SetIsThisAPartyJob(true);
                                 return true;
                             }
                         }
+#if DEBUG_LOG
+                        log += $"\n-No alive or dead spawned monster, End Hunt";
+#endif
+                        party.currentQuest.EndQuest("Finished quest");
+                        return true;
                     }
+
                     //if(character.jobComponent.TriggerRoamAroundTile(out producedJob)) {
                     //    producedJob.SetIsThisAPartyJob(true);
                     //    return true;
                     //}
 #if DEBUG_LOG
-                    log += $"\n-Do not have animal corpse, End Hunt";
+                    log += $"\n-No burrow, End Hunt";
 #endif
-                    party.currentQuest.EndQuest("Finished quest");
+                    party.currentQuest.EndQuest("Structure is destroyed");
                     return true;
+
                 } else {
 #if DEBUG_LOG
                     log += $"\n-Structure is destroyed, End Hunt";

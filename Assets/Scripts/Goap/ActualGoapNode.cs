@@ -934,6 +934,12 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
         //if (!(isStealth && target.traitContainer.HasTrait("Vigilant"))) {
         currentState.perTickEffect?.Invoke(this);
 
+        //Once per tick effect is called, check again if the action has already been reset to pool, because there are actions that cancels job in per tick effect
+        //So, if that happens, the part below should no longer trigger
+        if (hasBeenReset) {
+            return;
+        }
+
         List<Trait> actorTraitOverrideFunctions = actor.traitContainer.GetTraitOverrideFunctions(TraitManager.Execute_Per_Tick_Effect_Trait);
         List<Trait> targetTraitOverrideFunctions = poiTarget.traitContainer.GetTraitOverrideFunctions(TraitManager.Execute_Per_Tick_Effect_Trait);
         if (actorTraitOverrideFunctions != null) {

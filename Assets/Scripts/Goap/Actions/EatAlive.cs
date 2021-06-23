@@ -61,11 +61,11 @@ public class EatAlive : GoapAction {
     
 #region State Effects
     public void PerTickEatAliveSuccess(ActualGoapNode goapNode) {
-        goapNode.poiTarget.AdjustHP(-10, ELEMENTAL_TYPE.Normal, true, goapNode.actor, showHPBar: true);
-
         if (goapNode.actor.race == RACE.ELVES && goapNode.poiTarget is RatMeat) {
             goapNode.actor.traitContainer.AddTrait(goapNode.actor, "Poor Meal");
         }
+        //Moved adjust hp here because when the target dies, the cancel jobs targeting the target of this action will trigger and it will force this action to be object pooled, resetting all values
+        goapNode.poiTarget.AdjustHP(-10, ELEMENTAL_TYPE.Normal, true, goapNode.actor, showHPBar: true);
     }
     public void AfterEatAliveSuccess(ActualGoapNode goapNode) {
         if (goapNode.actor.race == RACE.ELVES && goapNode.poiTarget is Character targetCharacter && (targetCharacter.race == RACE.RAT || targetCharacter.race == RACE.RATMAN)) {
