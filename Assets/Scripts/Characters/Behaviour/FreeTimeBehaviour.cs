@@ -244,7 +244,7 @@ public class FreeTimeBehaviour : CharacterBehaviourComponent {
             if (character.dailyScheduleComponent.schedule.GetScheduleType(GameManager.Instance.currentTick) == DAILY_SCHEDULE.Free_Time &&
                 character.dailyScheduleComponent.schedule.IsInFirstHourOfCurrentScheduleType(GameManager.Instance.currentTick) && !character.traitContainer.HasTrait("Agoraphobic")) {
             
-                if (GameUtilities.RollChance(20, ref log) && !character.behaviourComponent.HasBehaviour(typeof(SocializingBehaviour)) && 
+                if (ChanceData.RollChance(CHANCE_TYPE.Socialize_Chance, ref log) && !character.behaviourComponent.HasBehaviour(typeof(SocializingBehaviour)) && 
                     character.homeSettlement != null && character.homeSettlement.locationType == LOCATION_TYPE.VILLAGE) {
                     LocationStructure targetStructure;
                     if (character.homeSettlement.HasStructure(STRUCTURE_TYPE.TAVERN)) {
@@ -257,7 +257,7 @@ public class FreeTimeBehaviour : CharacterBehaviourComponent {
                     return true;
                 }
                 
-                if (GameUtilities.RollChance(10, ref log) && !character.behaviourComponent.HasBehaviour(typeof(VisitVillageBehaviour))) {
+                if (ChanceData.RollChance(CHANCE_TYPE.Visit_Village_Chance, ref log) && !character.behaviourComponent.HasBehaviour(typeof(VisitVillageBehaviour))) {
                     List<NPCSettlement> villageChoices = RuinarchListPool<NPCSettlement>.Claim();
                     character.currentRegion.PopulateVillagesInRegionThatAreOwnedByFactionOrNotHostileToIt(villageChoices, character.faction);
                     if (character.homeSettlement != null) {

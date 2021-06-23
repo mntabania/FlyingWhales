@@ -14,12 +14,12 @@ public class HuntPreyBehaviour : CharacterBehaviourComponent {
         Hunting hunting = character.traitContainer.GetTraitOrStatus<Hunting>("Hunting");
         if (hunting != null) {
             List<Character> animals = RuinarchListPool<Character>.Claim();
-            hunting.targetArea.locationCharacterTracker.PopulateAnimalsListInsideHexThatIsNotTheSameRaceAs(animals, character.race);
+            hunting.targetArea.locationCharacterTracker.PopulateAnimalsListThatCharacterCanReachInsideHexThatIsNotTheSameRaceAs(character, animals, character.race);
             if (animals.Count > 0) {
                 List<Character> deadAnimals = RuinarchListPool<Character>.Claim();
                 for (int i = 0; i < animals.Count; i++) {
                     Character c = animals[i];
-                    if (c.isDead && c.hasMarker) {
+                    if (c.isDead && c.hasMarker && c.gridTileLocation != null) {
                         deadAnimals.Add(c);
                     }
                 }

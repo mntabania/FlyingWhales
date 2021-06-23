@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;  
 using Traits;
+using UtilityScripts;
 
 public class PickUp : GoapAction {
 
@@ -223,8 +224,14 @@ public class PickUp : GoapAction {
         if (node.associatedJobType == JOB_TYPE.COMBINE_STOCKPILE) {
             //if this action was stopped and the associated job was combine stockpile, make sure to drop the resource pile that the character just picked up
             Character actor = node.actor;
-            if (actor.carryComponent.carriedPOI is ResourcePile resourcePile) {
-                actor.UncarryPOI(resourcePile, dropLocation: actor.gridTileLocation);
+            if (actor.HasItem<ResourcePile>()) {
+                List<ResourcePile> resourcePiles = RuinarchListPool<ResourcePile>.Claim();
+                actor.PopulateItemsOfType<ResourcePile>(resourcePiles);
+                for (int i = 0; i < resourcePiles.Count; i++) {
+                    ResourcePile resourcePile = resourcePiles[i];
+                    actor.DropItem(resourcePile);
+                }
+                RuinarchListPool<ResourcePile>.Release(resourcePiles);
             }
         }
     }

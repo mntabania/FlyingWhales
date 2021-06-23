@@ -41,6 +41,7 @@ public static class TileObjectDB {
         } },
         { TILE_OBJECT_TYPE.BED_CLINIC, new TileObjectData() {
             maxHP = 400,
+            craftResourceCost = 5,
         } },
         { TILE_OBJECT_TYPE.BED, new TileObjectData() {
             maxHP = 400,

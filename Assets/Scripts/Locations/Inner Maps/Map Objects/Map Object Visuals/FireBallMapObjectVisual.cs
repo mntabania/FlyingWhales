@@ -153,14 +153,14 @@ public class FireBallMapObjectVisual : MovingMapObjectVisual {
     public void OnTriggerEnter2D(Collider2D collision) {
         if (isSpawned == false) { return; }
         BaseVisionTrigger collidedWith = collision.gameObject.GetComponent<BaseVisionTrigger>();
-        if (collidedWith != null && collidedWith.damageable is ITraitable traitable) { 
+        if (collidedWith != null && collidedWith.damageable is ITraitable traitable && !(traitable is FireBall)) { 
             AddObject(traitable);   
         }
     }
     public void OnTriggerExit2D(Collider2D collision) {
         if (isSpawned == false) { return; }
         BaseVisionTrigger collidedWith = collision.gameObject.GetComponent<BaseVisionTrigger>();
-        if (collidedWith != null && collidedWith.damageable is ITraitable traitable) { 
+        if (collidedWith != null && collidedWith.damageable is ITraitable traitable && !(traitable is FireBall)) { 
             RemoveObject(traitable);   
         }
     }

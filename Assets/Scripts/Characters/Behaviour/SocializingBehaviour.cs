@@ -8,6 +8,7 @@ public class SocializingBehaviour : CharacterBehaviourComponent {
 
     public SocializingBehaviour() {
         priority = 1000;
+        attributes = new BEHAVIOUR_COMPONENT_ATTRIBUTE[] { BEHAVIOUR_COMPONENT_ATTRIBUTE.STOPS_BEHAVIOUR_LOOP };
     }
     
     public override bool TryDoBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
@@ -109,7 +110,16 @@ public class SocializingBehaviour : CharacterBehaviourComponent {
             log = $"{log}\n\t- {character.name} is not at target structure, create job to go to target structure.";
 #endif
             var targetTile = targetStructure.passableTiles.Count > 0 ? CollectionUtilities.GetRandomElement(targetStructure.passableTiles) : CollectionUtilities.GetRandomElement(targetStructure.tiles);
-            return character.jobComponent.CreateGoToJob(JOB_TYPE.VISIT_STRUCTURE, targetTile, out producedJob);
+            if (character.movementComponent.HasPathToEvenIfDiffRegion(targetTile)) {
+                return character.jobComponent.CreateGoToJob(JOB_TYPE.VISIT_STRUCTURE, targetTile, out producedJob);    
+            }
+            
+#if DEBUG_LOG
+            log = $"{log}\n\t- Removed socializing behaviour since character cannot reach {targetStructure.name}.";
+#endif
+            character.behaviourComponent.ClearOutSocializingBehaviour();
+            producedJob = null;
+            return false;
         }
         //returned true because we expect that if a character is socializing, this behaviour should always return a job.
         //This is just to enforce that rule in case there are loop holes

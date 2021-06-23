@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using Inner_Maps.Location_Structures;
 using Traits;
+using UtilityScripts;
 namespace Inner_Maps.Location_Structures {
     public class Hospice : ManMadeStructure, TileObjectEventDispatcher.IDestroyedListener {
 
         public List<BedClinic> beds { get; private set; }
+        private const int DefaultBedCount = 5;
 
         #region getters
         public override Type serializedData => typeof(SaveDataHospice);
@@ -46,6 +48,16 @@ namespace Inner_Maps.Location_Structures {
             if (beds.Remove(p_bed)) {
                 p_bed.eventDispatcher.UnsubscribeToTileObjectDestroyed(this);
             }
+        }
+        public bool TryGetMissingDefaultBedPosition(out StructureTemplateObjectData p_objectTemplate) {
+            List<StructureTemplateObjectData> defaultMissingBeds = RuinarchListPool<StructureTemplateObjectData>.Claim();
+            structureObj.PopulateMissingPreplacedObjectsOfType(defaultMissingBeds, TILE_OBJECT_TYPE.BED_CLINIC, region.innerMap);
+            if (defaultMissingBeds.Count > 0) {
+                p_objectTemplate = CollectionUtilities.GetRandomElement(defaultMissingBeds);
+                return true;
+            }
+            p_objectTemplate = null;
+            return false;
         }
         #endregion
 
@@ -176,7 +188,18 @@ namespace Inner_Maps.Location_Structures {
                     }
                 }
             }
-            
+
+            //included unbuilt tile objects to count so that if there is an active job to craft a bed,
+            //it will be accounted for before creating another craft job
+            int builtBeds = GetNumberOfTileObjects(TILE_OBJECT_TYPE.BED_CLINIC); 
+            if (builtBeds < DefaultBedCount) {
+                LocationStructure preferredStructureForMaterials = p_worker.structureComponent.GetPreferredBasicResourceStructure(p_worker);
+                if (preferredStructureForMaterials != null) {
+                    if (p_worker.jobComponent.CreateCraftHospiceBed(this, preferredStructureForMaterials, out producedJob)) {
+                        return;
+                    }    
+                }
+            }
             if(TryCreateCleanJob(p_worker, out producedJob)) { return; }
         }
 

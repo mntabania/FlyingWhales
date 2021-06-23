@@ -57,6 +57,7 @@ namespace Necromancy.UI
         public void Stop() {
             if (particleSystem != null) {
                 particleSystem.Stop(true);    
+                particleSystem.Clear();
             }
         }
 

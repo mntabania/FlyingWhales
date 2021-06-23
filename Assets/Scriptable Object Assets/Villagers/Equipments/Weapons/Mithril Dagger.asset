@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   resourceType: 4
   specificResource: 02000000
-  resourceAmount: 40
+  resourceAmount: 20
   purchaseCost: 50
   tier: 1
   description: This is Mithril Dagger

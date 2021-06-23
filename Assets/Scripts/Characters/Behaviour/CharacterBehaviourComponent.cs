@@ -63,6 +63,9 @@ public abstract class CharacterBehaviourComponent {
     public bool WillContinueProcess() {
         return HasAttribute(BEHAVIOUR_COMPONENT_ATTRIBUTE.DO_NOT_SKIP_PROCESSING);
     }
+    public bool StopsBehaviourLoop() {
+        return HasAttribute(BEHAVIOUR_COMPONENT_ATTRIBUTE.STOPS_BEHAVIOUR_LOOP);
+    }
     public void PostProcessAfterSuccessfulDoBehaviour(Character character) {
         if (HasAttribute(BEHAVIOUR_COMPONENT_ATTRIBUTE.ONCE_PER_DAY)) {
             DisableFor(character);

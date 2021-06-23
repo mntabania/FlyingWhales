@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   resourceType: 4
   specificResource: 170000000c000000
-  resourceAmount: 40
+  resourceAmount: 20
   purchaseCost: 0
   tier: 0
   description: 
