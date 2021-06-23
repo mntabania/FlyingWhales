@@ -7,7 +7,7 @@ using Inner_Maps;
 
 public class FindFish : GoapAction {
 
-    public int m_amountProducedPerTick = 10;
+    public int m_amountProducedPerTick = 36;
     private const int _coinGainMultiplier = 1;
 
     public FindFish() : base(INTERACTION_TYPE.FIND_FISH) {

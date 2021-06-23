@@ -8,7 +8,7 @@ using UtilityScripts;
 
 public class ShearAnimal : GoapAction {
 
-    public int m_amountProducedPerTick = 1;
+    public int m_amountProducedPerTick = 4;
     private const int _coinGainMultiplier = 1;
     public ShearAnimal() : base(INTERACTION_TYPE.SHEAR_ANIMAL) {
         actionIconString = GoapActionStateDB.Work_Icon;
