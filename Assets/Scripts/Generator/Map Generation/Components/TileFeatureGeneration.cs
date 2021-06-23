@@ -204,22 +204,38 @@ public class TileFeatureGeneration : MapGenerationComponent {
 								}
 							}
 						} else {
-							if (currentAreaBeingChecked.elevationComponent.elevationType == ELEVATION.WATER) {
-								if (!waterAreas.Contains(currentAreaBeingChecked) && waterAreas.Count < 2) {
-									//add fishing spot to area and tag as Fish Source
-									ReservedWaterAreaFishSourceHandling(p_data, currentAreaBeingChecked);
-									waterAreas.Add(currentAreaBeingChecked);
-								}
-							} else if (currentAreaBeingChecked.elevationComponent.elevationType == ELEVATION.MOUNTAIN) {
-								if (!caveAreas.Contains(currentAreaBeingChecked) && caveAreas.Count < 2) {
-									//add ore vein to area and tag as Metal Source
-									ReservedCaveAreaMetalSourceProcessing(p_data, currentAreaBeingChecked);
-									caveAreas.Add(currentAreaBeingChecked);
-									miningSpots++;
-								}
-							}
+							// if (currentAreaBeingChecked.elevationComponent.elevationType == ELEVATION.WATER) {
+							// 	if (!waterAreas.Contains(currentAreaBeingChecked) && waterAreas.Count < 2) {
+							// 		//add fishing spot to area and tag as Fish Source
+							// 		ReservedWaterAreaFishSourceHandling(p_data, currentAreaBeingChecked);
+							// 		waterAreas.Add(currentAreaBeingChecked);
+							// 	}
+							// } else if (currentAreaBeingChecked.elevationComponent.elevationType == ELEVATION.MOUNTAIN) {
+							// 	if (!caveAreas.Contains(currentAreaBeingChecked) && caveAreas.Count < 2) {
+							// 		//add ore vein to area and tag as Metal Source
+							// 		ReservedCaveAreaMetalSourceProcessing(p_data, currentAreaBeingChecked);
+							// 		caveAreas.Add(currentAreaBeingChecked);
+							// 		miningSpots++;
+							// 	}
+							// }
 							villageSpotChoices.Remove(currentAreaBeingChecked);
 						}	
+						
+						if (currentAreaBeingChecked.elevationComponent.HasElevation(ELEVATION.WATER)) {
+							if (!waterAreas.Contains(currentAreaBeingChecked) && waterAreas.Count < 2) {
+								//add fishing spot to area and tag as Fish Source
+								ReservedWaterAreaFishSourceHandling(p_data, currentAreaBeingChecked);
+								waterAreas.Add(currentAreaBeingChecked);
+							}
+						} 
+						if (currentAreaBeingChecked.elevationComponent.HasElevation(ELEVATION.MOUNTAIN)) {
+							if (!caveAreas.Contains(currentAreaBeingChecked) && caveAreas.Count < 2) {
+								//add ore vein to area and tag as Metal Source
+								ReservedCaveAreaMetalSourceProcessing(p_data, currentAreaBeingChecked);
+								caveAreas.Add(currentAreaBeingChecked);
+								miningSpots++;
+							}
+						}
 					}
 					areasToCheck.Remove(currentAreaBeingChecked);
 					checkedAreas.Add(currentAreaBeingChecked);
