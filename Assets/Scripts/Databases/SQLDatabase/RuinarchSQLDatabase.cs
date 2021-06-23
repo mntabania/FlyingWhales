@@ -155,7 +155,7 @@ namespace Databases.SQLDatabase {
         public void InsertLogUsingMultiThread(Log log) {
             SQLLogInsertThread thread = ObjectPoolManager.Instance.CreateNewSQLInsertThread();
             thread.Initialize(log);
-            DatabaseThreadPool.Instance.AddToThreadPool(thread);
+            MultiThreadPool.Instance.AddToThreadPool(thread);
         }
         public void InsertLog(Log log, out Log deletedLog) {
              log.FinalizeText();
@@ -417,7 +417,7 @@ namespace Databases.SQLDatabase {
         private void OnCharacterNameUpdated(Character character) {
             UpdateCharacterNameThread databaseThread = ObjectPoolManager.Instance.CreateNewLogDatabaseThread();
             databaseThread.Initialize(character);
-            DatabaseThreadPool.Instance.AddToThreadPool(databaseThread);
+            MultiThreadPool.Instance.AddToThreadPool(databaseThread);
         }
 #endregion
 

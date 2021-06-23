@@ -25,8 +25,8 @@ public class DatabaseThreadPool : BaseMonoBehaviour {
         functionsToBeRunInThread = new Queue<SQLWorkerItem>();
         functionsToBeResolved = new Queue<SQLWorkerItem>();
 
-        newThread = new Thread(RunThread) { IsBackground = true };
-        newThread.Start();
+        //newThread = new Thread(RunThread) { IsBackground = true };
+        //newThread.Start();
     }
     protected override void OnDestroy() {
         isRunning = false;

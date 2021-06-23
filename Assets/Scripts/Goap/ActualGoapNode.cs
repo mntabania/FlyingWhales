@@ -906,17 +906,17 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
         }
     }
     private void PerTickEffect() {
-#if DEBUG_LOG
         if (hasBeenReset) {
+#if DEBUG_LOG
             Debug.Log("Per Tick Effect called but already in pool");
+#endif
             return;
         }
-#endif
 
 #if DEBUG_PROFILER
         Profiler.BeginSample($"{actor.name} - {action.name} - Per Tick Effect");
 #endif
-        GoapActionState currentState = action.states[currentStateName];
+            GoapActionState currentState = action.states[currentStateName];
         currentStateDuration++;
 
         IPointOfInterest target = poiTarget;
