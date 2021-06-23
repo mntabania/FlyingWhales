@@ -26,6 +26,7 @@ public class Player : ILeader, IObjectManipulator {
     public TILE_OBJECT_TYPE currentActiveItem { get; private set; }
     public bool isCurrentlyBuildingDemonicStructure { get; private set; }
     public IPlayerActionTarget currentlySelectedPlayerActionTarget { get; private set; }
+    public List<string> charactersThatHaveReportedDemonicStructure { get; private set; }
 
     //Components
     public SeizeComponent seizeComponent { get; }
@@ -58,6 +59,7 @@ public class Player : ILeader, IObjectManipulator {
 
     public Player() {
         allIntel = new List<IIntel>();
+        charactersThatHaveReportedDemonicStructure = new List<string>();
         mana = EditableValuesManager.Instance.startingMana;
         currentActiveItem = TILE_OBJECT_TYPE.NONE;
 
@@ -109,6 +111,8 @@ public class Player : ILeader, IObjectManipulator {
             bookmarkComponent.AddBookmark(retaliationComponent.retaliationProgress, BOOKMARK_CATEGORY.Major_Events);
         }
         hasAlreadyWon = data.hasAlreadyWon;
+        
+        charactersThatHaveReportedDemonicStructure = new List<string>(data.charactersThatHaveReportedDemonicStructure);
         SubscribeListeners();
     }
 
@@ -884,6 +888,20 @@ public class Player : ILeader, IObjectManipulator {
             }
         }
         return canAfford;
+    }
+    #endregion
+
+    #region Reporting
+    public void AddCharacterThatHasReported(Character p_character) {
+        if (!charactersThatHaveReportedDemonicStructure.Contains(p_character.persistentID)) {
+            charactersThatHaveReportedDemonicStructure.Add(p_character.persistentID);
+        }
+    }
+    public void ClearCharactersThatHaveReported() {
+        charactersThatHaveReportedDemonicStructure.Clear();
+    }
+    public bool HasAlreadyReportedADemonicStructure(Character p_character) {
+        return charactersThatHaveReportedDemonicStructure.Contains(p_character.persistentID);
     }
     #endregion
 }

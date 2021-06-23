@@ -186,6 +186,7 @@ namespace Traits {
                 else if (item.tileObjectType.IsDemonicStructureTileObject() && item.gridTileLocation?.structure is DemonicStructure demonicStructure) {
                     bool wasReportJobCreated = false;
                     if (!PlayerManager.Instance.player.retaliationComponent.isRetaliating &&
+                        !PlayerManager.Instance.player.HasAlreadyReportedADemonicStructure(characterThatWillDoJob) &&
                         characterThatWillDoJob.limiterComponent.canWitness && !characterThatWillDoJob.behaviourComponent.isAttackingDemonicStructure && 
                         characterThatWillDoJob.homeSettlement != null && characterThatWillDoJob.necromancerTrait == null && characterThatWillDoJob.race.IsSapient() && 
                         characterThatWillDoJob.hasMarker && characterThatWillDoJob.carryComponent.IsNotBeingCarried() && !characterThatWillDoJob.isAlliedWithPlayer && 
@@ -207,7 +208,8 @@ namespace Traits {
                         }
                     }
                     
-                    if (!wasReportJobCreated && characterThatWillDoJob.limiterComponent.canWitness && !characterThatWillDoJob.behaviourComponent.isAttackingDemonicStructure && 
+                    if (!wasReportJobCreated && characterThatWillDoJob.limiterComponent.canWitness && !characterThatWillDoJob.behaviourComponent.isAttackingDemonicStructure &&
+                        !PlayerManager.Instance.player.HasAlreadyReportedADemonicStructure(characterThatWillDoJob) &&
                         (!characterThatWillDoJob.partyComponent.hasParty || !characterThatWillDoJob.partyComponent.currentParty.isActive || 
                          (characterThatWillDoJob.partyComponent.currentParty.currentQuest.partyQuestType != PARTY_QUEST_TYPE.Counterattack && 
                           !(characterThatWillDoJob.partyComponent.currentParty.currentQuest is IRescuePartyQuest) && 

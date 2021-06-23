@@ -19,6 +19,7 @@ public class VillageSpot {
     public int lumberyardSpots { get; }
     public int miningSpots { get; }
     public List<string> linkedBeastDens { get; private set; }
+    public Area migrationSpawningArea { get; private set; }
 
     #region getters
     public int loggerCapacity => lumberyardSpots;
@@ -51,6 +52,7 @@ public class VillageSpot {
         if (!reservedAreas.Contains(mainSpot)) {
             reservedAreas.Add(mainSpot);
         }
+        migrationSpawningArea = GameUtilities.GetHexTileGivenCoordinates(p_data.migrationSpawningArea, GridMap.Instance.map);
     }
     public override string ToString() {
         return mainSpot.ToString();
@@ -64,6 +66,9 @@ public class VillageSpot {
         Color color = Color.black;
         color.a = 0.8f;
         ColorArea(mainSpot, color);
+
+        // p_color.a = 0.5f;
+        // ColorArea(migrationSpawningArea, p_color);
     }
     public void ColorArea(Area p_area, Color p_color) {
         for (int i = 0; i < p_area.gridTileComponent.gridTiles.Count; i++) {
@@ -227,6 +232,28 @@ public class VillageSpot {
         return log;
     }
     #endregion
+
+    #region Migration
+    public void DetermineMigrationSpawningArea() {
+        Area closestValidArea = null;
+        float nearestArea = float.MaxValue;
+        for (int i = 0; i < GridMap.Instance.edgeAreas.Count; i++) {
+            Area edgeArea = GridMap.Instance.edgeAreas[i];
+            if (edgeArea.elevationComponent.HasElevation(ELEVATION.PLAIN) && PathfindingManager.Instance.HasPath(edgeArea.gridTileComponent.centerGridTile, mainSpot.gridTileComponent.centerGridTile)) {
+                float distance = Vector2.Distance(edgeArea.gridTileComponent.centerGridTile.centeredLocalLocation, mainSpot.gridTileComponent.centerGridTile.centeredLocalLocation);
+                if (distance < nearestArea) {
+                    closestValidArea = edgeArea;
+                    nearestArea = distance;
+                }
+            }
+        }
+        if (closestValidArea != null) {
+            migrationSpawningArea = closestValidArea;
+        } else {
+            migrationSpawningArea = mainSpot;
+        }
+    }
+    #endregion
 }
 
 public class SaveDataVillageSpot : SaveData<VillageSpot> {
@@ -235,6 +262,7 @@ public class SaveDataVillageSpot : SaveData<VillageSpot> {
     public int lumberyardSpots;
     public int miningSpots;
     public List<string> linkedBeastDens;
+    public Point migrationSpawningArea;
 
     public override void Save(VillageSpot data) {
         base.Save(data);
@@ -245,6 +273,9 @@ public class SaveDataVillageSpot : SaveData<VillageSpot> {
             reservedAreas[i] = new Point(area.areaData.xCoordinate, area.areaData.yCoordinate);
         }
         linkedBeastDens = data.linkedBeastDens;
+        lumberyardSpots = data.lumberyardSpots;
+        miningSpots = data.miningSpots;
+        migrationSpawningArea = new Point(data.migrationSpawningArea.areaData.xCoordinate, data.migrationSpawningArea.areaData.yCoordinate);
     }
     public override VillageSpot Load() {
         return new VillageSpot(this);

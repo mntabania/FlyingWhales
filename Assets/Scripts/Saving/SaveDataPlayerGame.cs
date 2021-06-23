@@ -24,6 +24,7 @@ public class SaveDataPlayerGame : SaveData<Player> {
     public List<SaveDataNotification> allNotifs;
     public List<SaveDataChaosOrb> allChaosOrbs;
     public Dictionary<SUMMON_TYPE, MonsterCapacity> monsterCharges;
+    public List<string> charactersThatHaveReportedDemonicStructure;
     
     //Components
     public SaveDataSeizeComponent seizeComponent;
@@ -78,6 +79,8 @@ public class SaveDataPlayerGame : SaveData<Player> {
                 interruptIntels.Add(saveIntel);
             }
         }
+
+        charactersThatHaveReportedDemonicStructure = player.charactersThatHaveReportedDemonicStructure;
 
         allNotifs = new List<SaveDataNotification>();
         for (int i = 0; i < UIManager.Instance.activeNotifications.Count; i++) {

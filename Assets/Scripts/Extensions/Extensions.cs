@@ -1050,7 +1050,8 @@ public static class Extensions {
             case JOB_TYPE.TAKE_ARTIFACT:
             case JOB_TYPE.GATHER_HERB:
             case JOB_TYPE.BUY_ITEM:
-            priority = 260;
+            case JOB_TYPE.OBTAIN_WANTED_ITEM:
+                priority = 260;
                 break;
             // case JOB_TYPE.MONSTER_EAT_CORPSE:
             //     priority = 255;

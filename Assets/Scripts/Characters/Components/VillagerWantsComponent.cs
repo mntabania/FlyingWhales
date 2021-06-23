@@ -112,6 +112,15 @@ public class VillagerWantsComponent : CharacterComponent, CharacterEventDispatch
         p_chosenStructure = null;
         return null;
     }
+    public bool IsWantToggledOn<T>() where T : VillagerWant {
+        for (int i = 0; i < _wantsToProcess.Count; i++) {
+            VillagerWant want = _wantsToProcess[i];
+            if (want is T) {
+                return true;
+            }
+        }
+        return false;
+    }
     #endregion
 
     #region Dwelling

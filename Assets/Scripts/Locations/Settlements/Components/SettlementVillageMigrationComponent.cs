@@ -279,20 +279,39 @@ public class SettlementVillageMigrationComponent : NPCSettlementComponent {
     private void Migrate(List<PreCharacterData> unspawnedCharacters, Faction faction, ref string debugLog) {
         AdjustLongTermModifier(-1);
         int randomAmount = UnityEngine.Random.Range(3, 6);
-        List<LocationGridTile> edgeTileChoices = null;
-        for (int i = 0; i < owner.region.innerMap.allEdgeTiles.Count; i++) {
-            LocationGridTile tile = owner.region.innerMap.allEdgeTiles[i];
-            //Area connectedAreaOrNearestArea = tile.area;
-            if (!tile.corruptionComponent.isCorrupted && tile.IsPassable()) { //&& !connectedAreaOrNearestArea.isCorrupted
-                if (edgeTileChoices == null) { edgeTileChoices = new List<LocationGridTile>(); }
+        // List<LocationGridTile> edgeTileChoices = null;
+        // for (int i = 0; i < owner.region.innerMap.allEdgeTiles.Count; i++) {
+        //     LocationGridTile tile = owner.region.innerMap.allEdgeTiles[i];
+        //     //Area connectedAreaOrNearestArea = tile.area;
+        //     if (!tile.corruptionComponent.isCorrupted && tile.IsPassable()) { //&& !connectedAreaOrNearestArea.isCorrupted
+        //         if (edgeTileChoices == null) { edgeTileChoices = new List<LocationGridTile>(); }
+        //         edgeTileChoices.Add(tile);
+        //     }
+        // }
+        // if (edgeTileChoices == null) {
+        //     edgeTileChoices = owner.region.innerMap.allEdgeTiles;
+        // }
+        //
+        // LocationGridTile edgeTile = CollectionUtilities.GetRandomElement(edgeTileChoices);
+        
+        List<LocationGridTile> edgeTileChoices = RuinarchListPool<LocationGridTile>.Claim();
+        for (int i = 0; i < owner.occupiedVillageSpot.migrationSpawningArea.gridTileComponent.borderTiles.Count; i++) {
+            LocationGridTile tile = owner.occupiedVillageSpot.migrationSpawningArea.gridTileComponent.borderTiles[i];
+            if (tile.IsAtEdgeOfMap() && !tile.corruptionComponent.isCorrupted && tile.IsPassable()) { //&& !connectedAreaOrNearestArea.isCorrupted
                 edgeTileChoices.Add(tile);
             }
         }
-        if (edgeTileChoices == null) {
-            edgeTileChoices = owner.region.innerMap.allEdgeTiles;
+        if (edgeTileChoices.Count <= 0) {
+            if (owner.occupiedVillageSpot.migrationSpawningArea.gridTileComponent.passableTiles.Count > 0) {
+                edgeTileChoices.AddRange(owner.occupiedVillageSpot.migrationSpawningArea.gridTileComponent.passableTiles);    
+            } else {
+                edgeTileChoices.AddRange(owner.occupiedVillageSpot.migrationSpawningArea.gridTileComponent.gridTiles);
+            }
         }
 
         LocationGridTile edgeTile = CollectionUtilities.GetRandomElement(edgeTileChoices);
+        RuinarchListPool<LocationGridTile>.Release(edgeTileChoices);
+        
 #if DEBUG_LOG
         debugLog += $"\nWill spawn {randomAmount} characters at {edgeTile}";
 #endif

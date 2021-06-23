@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Characters.Villager_Wants;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
 using UnityEngine;
@@ -163,6 +164,13 @@ public class Table : TileObject {
                 p_consumer.traitContainer.AddTrait(p_consumer, "Iceberry Fed");
                 break;
         }
+    }
+    #endregion
+
+    #region Reactions
+    public override void VillagerReactionToTileObject(Character actor, ref string debugLog) {
+        base.VillagerReactionToTileObject(actor, ref debugLog);
+        TryCreateObtainFurnitureWantOnReactionJob<TableWant>(actor);
     }
     #endregion
 }
