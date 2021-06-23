@@ -16,6 +16,7 @@ namespace Locations.Region_Features {
                 for (int i = 0; i < region.areas.Count; i++) {
                     Area currArea = region.areas[i];
                     if (currArea.elevationComponent.IsFully(ELEVATION.PLAIN) &&
+                        currArea.GetOccupyingVillageSpot() == null &&
                         currArea.structureComponent.HasStructureInArea() == false && //with no Features yet
                         !currArea.neighbourComponent.neighbours.Any( //and not adjacent to player Portal, Settlement or other non-cave landmarks
                             n => n.structureComponent.HasStructureInArea() && n.primaryStructureInArea.structureType.IsVillageStructure())) {

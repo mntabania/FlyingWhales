@@ -133,6 +133,10 @@ public class MapGenerationFinalization : MapGenerationComponent {
 			// PathfindingManager.Instance.RescanGrid(map.unwalkableGraph);
 			yield return null;
 		}
+		for (int i = 0; i < GridMap.Instance.mainRegion.villageSpots.Count; i++) {
+			VillageSpot villageSpot = GridMap.Instance.mainRegion.villageSpots[i];
+			villageSpot.DetermineMigrationSpawningArea();
+		}
 	}
 
 	#region Item Generation

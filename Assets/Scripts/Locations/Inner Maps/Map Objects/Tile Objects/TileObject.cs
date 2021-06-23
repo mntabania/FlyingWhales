@@ -1558,6 +1558,23 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         }
     }
     #endregion
+
+    #region Wants
+    protected void TryCreateObtainFurnitureWantOnReactionJob<T>(Character actor) where T : VillagerWant {
+        if (actor.villagerWantsComponent != null && actor.villagerWantsComponent.IsWantToggledOn<T>() && !actor.jobQueue.HasJob(JOB_TYPE.OBTAIN_WANTED_ITEM)) {
+            bool shouldPickUp = false;
+            if (structureLocation.structureType.IsVillageStructure() && 
+                structureLocation.structureType != STRUCTURE_TYPE.CITY_CENTER && structureLocation.structureType != STRUCTURE_TYPE.CEMETERY) {
+                shouldPickUp = IsOwnedBy(actor) && structureLocation != actor.homeStructure;
+            } else {
+                shouldPickUp = characterOwner == null || IsOwnedBy(actor);
+            }
+            if (shouldPickUp) {
+                actor.jobComponent.CreateDropItemJob(JOB_TYPE.OBTAIN_WANTED_ITEM, this, actor.homeStructure);
+            }
+        }
+    }
+    #endregion
 }
 
 [System.Serializable]

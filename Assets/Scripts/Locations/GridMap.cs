@@ -16,6 +16,7 @@ public class GridMap : BaseMonoBehaviour {
     
     [Space(10)]
     public Area[,] map;
+    public List<Area> edgeAreas;
 
     #region getters
     public List<Area> allAreas => DatabaseManager.Instance.areaDatabase.allAreas;
@@ -38,6 +39,15 @@ public class GridMap : BaseMonoBehaviour {
         for (int i = 0; i < p_areas.Count; i++) {
             Area hexTile = p_areas[i];
             DatabaseManager.Instance.areaDatabase.RegisterArea(hexTile);
+        }
+        edgeAreas = new List<Area>();
+        for (int x = 0; x < width; x++) {
+            for (int y = 0; y < height; y++) {
+                Area area = map[x, y];
+                if (x == 0 || x == width - 1 || y == 0 || y == height - 1) {
+                    edgeAreas.Add(area);
+                }
+            }    
         }
     }
     public Area GetTileFromCoordinates(int x, int y) {

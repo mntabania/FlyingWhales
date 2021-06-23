@@ -1,5 +1,6 @@
 ﻿using Inner_Maps;
 using System.Collections.Generic;
+using Characters.Villager_Wants;
 
 public class Torch : TileObject{
 
@@ -49,4 +50,11 @@ public class Torch : TileObject{
         RemoveAdvertisedAction(INTERACTION_TYPE.CRAFT_FURNITURE_STONE);
         RemoveAdvertisedAction(INTERACTION_TYPE.CRAFT_FURNITURE_WOOD);
     }
+    
+    #region Reactions
+    public override void VillagerReactionToTileObject(Character actor, ref string debugLog) {
+        base.VillagerReactionToTileObject(actor, ref debugLog);
+        TryCreateObtainFurnitureWantOnReactionJob<HomeTorchWant>(actor);
+    }
+    #endregion
 }
