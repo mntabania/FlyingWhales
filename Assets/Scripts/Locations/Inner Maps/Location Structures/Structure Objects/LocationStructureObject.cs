@@ -7,9 +7,11 @@ using System.Runtime.Remoting.Contexts;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
 using Locations.Settlements;
+#if UNITY_EDITOR
 using UnityEditor;
 using UnityEditor.Experimental.SceneManagement;
 using UnityEditor.SceneManagement;
+#endif
 using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.EventSystems;
