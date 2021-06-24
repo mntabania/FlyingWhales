@@ -73,7 +73,9 @@ public class SaveManager : MonoBehaviour {
     }
     private void OnSceneUnloaded(Scene unloaded) {
         if (unloaded.name == "Game") {
-            SetDoNotContinueSaving(true);
+            if (saveCurrentProgressManager.isSaving || saveCurrentProgressManager.isWritingToDisk) {
+                SetDoNotContinueSaving(true);
+            }
         }
     }
     public void SetDoNotContinueSaving(bool p_state) {
