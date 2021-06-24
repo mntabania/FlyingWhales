@@ -6480,16 +6480,28 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         CharacterClassData classData = CharacterManager.Instance.GetOrCreateCharacterClassData(classComponent.characterClass.className);
         piercingAndResistancesComponent.AdjustPiercing(classData.characterSkillUpdateData.GetPiercingBonus());
 
-        for (int x = 1; x < (int)RESISTANCE.Physical; ++x) {
-            if (((RESISTANCE)x).IsElemental()) {
-                piercingAndResistancesComponent.AdjustResistance((RESISTANCE)x, classData.characterSkillUpdateData.GetAllElementalResistanceBonus());
-            } else if (((RESISTANCE)x).IsSecondary()) {
-                piercingAndResistancesComponent.AdjustResistance((RESISTANCE)x, classData.characterSkillUpdateData.GetAllSecondaryResistanceBonus());
+        RESISTANCE[] resistances = CollectionUtilities.GetEnumValues<RESISTANCE>();
+        for (int i = 0; i < resistances.Length; i++) {
+            RESISTANCE res = resistances[i];
+            if (res != RESISTANCE.None) {
+                if (res.IsElemental()) {
+                    piercingAndResistancesComponent.AdjustResistance(res, classData.characterSkillUpdateData.GetAllElementalResistanceBonus());
+                } else if (res.IsSecondary()) {
+                    piercingAndResistancesComponent.AdjustResistance(res, classData.characterSkillUpdateData.GetAllSecondaryResistanceBonus());
+                }
+                piercingAndResistancesComponent.AdjustResistance(res, classData.characterSkillUpdateData.GetBonusBaseOnElement(res));
             }
         }
-        for (int x = 1; x < (int)RESISTANCE.Physical; ++x) {
-            piercingAndResistancesComponent.AdjustResistance((RESISTANCE)x, classData.characterSkillUpdateData.GetBonusBaseOnElement((RESISTANCE)x));
-        }
+        //for (int x = 1; x < (int)RESISTANCE.Physical; ++x) {
+        //    if (((RESISTANCE)x).IsElemental()) {
+        //        piercingAndResistancesComponent.AdjustResistance((RESISTANCE)x, classData.characterSkillUpdateData.GetAllElementalResistanceBonus());
+        //    } else if (((RESISTANCE)x).IsSecondary()) {
+        //        piercingAndResistancesComponent.AdjustResistance((RESISTANCE)x, classData.characterSkillUpdateData.GetAllSecondaryResistanceBonus());
+        //    }
+        //}
+        //for (int x = 1; x < (int)RESISTANCE.Physical; ++x) {
+        //    piercingAndResistancesComponent.AdjustResistance((RESISTANCE)x, classData.characterSkillUpdateData.GetBonusBaseOnElement((RESISTANCE)x));
+        //}
     }
 
     //function to be attached on signal that 1 elven got a power crystal

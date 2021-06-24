@@ -1162,9 +1162,9 @@ public class ConsoleBase : InfoUIBase {
         }
 
 		switch (element) {
-            case "normal":
-            character.piercingAndResistancesComponent.AdjustResistance(RESISTANCE.Normal, count);
-            break;
+            //case "normal":
+            //character.piercingAndResistancesComponent.AdjustResistance(RESISTANCE.Normal, count);
+            //break;
             case "fire":
             character.piercingAndResistancesComponent.AdjustResistance(RESISTANCE.Fire, count);
             break;

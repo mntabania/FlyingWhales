@@ -153,7 +153,9 @@ public class GoapPlanner {
             //If unable to do a Need while in a Trapped Structure, remove Trap Structure.
             if (jobType.IsFullnessRecoveryTypeJob()) {
                 owner.trapStructure.ResetAllTrappedValues();
-                owner.traitContainer.AddTrait(owner, "Abstain Fullness");
+                if (jobType != JOB_TYPE.FULLNESS_RECOVERY_ON_SIGHT) {
+                    owner.traitContainer.AddTrait(owner, "Abstain Fullness");
+                }
             } else if (jobType.IsTirednessRecoveryTypeJob()) {
                 owner.trapStructure.ResetAllTrappedValues();
                 owner.traitContainer.AddTrait(owner, "Abstain Tiredness");

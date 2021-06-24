@@ -7,8 +7,8 @@ using UnityEngine.Assertions;
 using UtilityScripts;
 public abstract class MovingTileObject : TileObject {
     public sealed override LocationGridTile gridTileLocation => TryGetGridTileLocation(out var tile) ? tile : base.gridTileLocation;
-    public override MapObjectVisual<TileObject> mapVisual => _mapVisual;
-    private MovingMapObjectVisual _mapVisual;
+    public override MapObjectVisual<TileObject> mapVisual => movingMapVisual;
+    public MovingMapObjectVisual movingMapVisual { get; private set; }
     public bool hasExpired { get; protected set; }
     protected virtual int affectedRange => 1;
 
@@ -22,9 +22,9 @@ public abstract class MovingTileObject : TileObject {
     }
     
     protected virtual bool TryGetGridTileLocation(out LocationGridTile tile) {
-        if (_mapVisual != null) {
-            if (_mapVisual.isSpawned) {
-                tile = _mapVisual.gridTileLocation;
+        if (movingMapVisual != null) {
+            if (movingMapVisual.isSpawned) {
+                tile = movingMapVisual.gridTileLocation;
                 return true;
             }
         }
@@ -35,7 +35,7 @@ public abstract class MovingTileObject : TileObject {
     #region Override Methods
     protected override void CreateMapObjectVisual() {
         GameObject obj = InnerMapManager.Instance.mapObjectFactory.CreateNewTileObjectMapVisual(this.tileObjectType);
-        _mapVisual = obj.GetComponent<MovingMapObjectVisual>();
+        movingMapVisual = obj.GetComponent<MovingMapObjectVisual>();
     }
     public override void OnPlacePOI() {
         base.OnPlacePOI();
@@ -84,8 +84,8 @@ public class SaveDataMovingTileObject : SaveDataTileObject {
         base.Save(tileObject);
         MovingTileObject movingTileObject = tileObject as MovingTileObject;
         Assert.IsNotNull(movingTileObject);
-        if (tileObject.mapObjectVisual != null) {
-            mapVisualWorldPosition = tileObject.mapObjectVisual.transform.position;
+        if (movingTileObject.movingMapVisual != null) {
+            mapVisualWorldPosition = movingTileObject.movingMapVisual.worldPos;
         }
         hasExpired = movingTileObject.hasExpired;
         isPlayerSource = movingTileObject.isPlayerSource;

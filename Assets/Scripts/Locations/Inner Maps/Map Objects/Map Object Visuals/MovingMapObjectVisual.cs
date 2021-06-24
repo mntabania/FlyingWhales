@@ -8,17 +8,19 @@ using UnityEngine;
 public abstract class MovingMapObjectVisual : MapObjectVisual<TileObject>{
     
     public bool isSpawned { get; protected set; }
-    public LocationGridTile gridTileLocation => GetLocationGridTileByXy(Mathf.FloorToInt(_pos.x), Mathf.FloorToInt(_pos.y));
-    private Vector3 _pos;
+    public LocationGridTile gridTileLocation => GetLocationGridTileByXy(Mathf.FloorToInt(localPos.x), Mathf.FloorToInt(localPos.y));
     protected Region _mapLocation;
-    
+    public Vector3 worldPos { get; private set; }
+    public Vector3 localPos { get; private set; }
+
     public override void Initialize(TileObject obj) {
         base.Initialize(obj);
         _mapLocation = obj.gridTileLocation.parentMap.region;
     }
     public override void PlaceObjectAt(LocationGridTile tile) {
         base.PlaceObjectAt(tile);
-        _pos = transform.localPosition;
+        localPos = transform.localPosition;
+        worldPos = transform.position;
     }
     public override void Reset() {
         base.Reset();
@@ -33,7 +35,8 @@ public abstract class MovingMapObjectVisual : MapObjectVisual<TileObject>{
         return null;
     }
     protected virtual void Update() {
-        _pos = transform.localPosition;
+        localPos = transform.localPosition;
+        worldPos = transform.position;
     }
     
 }

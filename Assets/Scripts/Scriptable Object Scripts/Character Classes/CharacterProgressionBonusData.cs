@@ -26,14 +26,14 @@ public class CharacterProgressionBonusData
     [Space]
     [Space]
     [Header("Other")]
-    [SerializeField] private float m_normalResistanceBonus;
+    //[SerializeField] private float m_normalResistanceBonus;
     [SerializeField] private float m_piercingBonus;
     [SerializeField] private float m_mentalResistanceBonus;
     [SerializeField] private float m_physicalResistanceBonus;
 
     public float GetBonusBaseOnElement(RESISTANCE p_bonusForThisElement) {
 		switch (p_bonusForThisElement) {
-            case RESISTANCE.Normal:   return m_normalResistanceBonus;
+            //case RESISTANCE.Normal: return m_normalResistanceBonus;
             case RESISTANCE.Fire: return m_fireResistanceBonus;
             case RESISTANCE.Poison: return m_poisonResistanceBonus;
             case RESISTANCE.Water: return m_waterResistanceBonus;

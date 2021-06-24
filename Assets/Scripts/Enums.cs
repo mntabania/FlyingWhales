@@ -1321,7 +1321,7 @@ public enum VICTORY_CONDITION {
     Eliminate_All = 0, Wipe_Out_Village_On_Day = 2, Wipe_Elven_Kingdom_Survive_Humans = 3, Kill_By_Plague = 5, Create_Demon_Cult = 6, Summon_Ruinarch = 7, Sandbox = 8, 
 }
 public enum RESISTANCE {
-    None, Normal, Fire, Poison, Water, Ice, Electric, Earth, Wind, Mental, Physical,
+    None = 0/*, Normal = 1*/, Fire = 2, Poison = 3, Water = 4, Ice = 5, Electric = 6, Earth = 7, Wind = 8, Mental = 9, Physical = 10,
 }
 
 public enum UPGRADE_BONUS {
