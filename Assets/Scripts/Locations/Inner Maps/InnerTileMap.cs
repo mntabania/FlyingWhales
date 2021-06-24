@@ -69,7 +69,7 @@ namespace Inner_Maps {
                 new PerlinNoiseRegion() {
                     name = "Water",
                     color = Color.blue,
-                    height = 0.20f,
+                    height = 0.23f,
                 },
                 new PerlinNoiseRegion() {
                     name = "Plain",

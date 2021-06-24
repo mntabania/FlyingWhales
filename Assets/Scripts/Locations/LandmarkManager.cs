@@ -320,7 +320,8 @@ public partial class LandmarkManager : BaseMonoBehaviour {
         for (int j = 0; j < prefabChoices.Count; j++) {
             GameObject prefabGO = prefabChoices[j];
             LocationStructureObject prefabObject = prefabGO.GetComponent<LocationStructureObject>();
-            StructureConnector validConnector = prefabObject.GetFirstValidConnector(availableStructureConnectors, npcSettlement.region.innerMap, npcSettlement, out var connectorIndex, out LocationGridTile tileToPlaceStructure, out connectorTile, structureToPlace);
+            StructureConnector validConnector = prefabObject.GetFirstValidConnector(availableStructureConnectors, npcSettlement.region.innerMap, npcSettlement, 
+                out var connectorIndex, out LocationGridTile tileToPlaceStructure, out connectorTile, structureToPlace, out _);
             if (validConnector != null) {
                 targetTile = tileToPlaceStructure;
                 structurePrefabName = prefabGO.name;

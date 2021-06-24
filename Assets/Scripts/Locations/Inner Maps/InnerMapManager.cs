@@ -84,6 +84,8 @@ namespace Inner_Maps {
         public bool isAnInnerMapShowing => currentlyShowingMap != null;
         private LocationGridTile lastClickedTile;
         private Dictionary<TILE_OBJECT_TYPE, TileObjectScriptableObject> _tileObjectScriptableObjects;
+
+        private float[] monsterLairSeeds = new[] {4f, 22f, 69f, 96f };
         
         #region Monobehaviours
         private void Awake() {
@@ -406,7 +408,7 @@ namespace Inner_Maps {
             summary = $"{summary}<b>Area Elevation:</b>{(area.elevationType.ToString() ?? "None")}";
             summary = $"{summary}<b>Area Passable Tiles:</b>{area.gridTileComponent.passableTiles.Count.ToString()}";
             summary = $"{summary}<b>Settlement on Area:</b>{(area.settlementOnArea?.name ?? "None")}";
-            summary = $"{summary}<b>Structure Connectors on Area:</b>{area.structureComponent.structureConnectors.Count.ToString()}";
+            summary = $"{summary}<b>Structure Connectors on Area</b>({area.structureComponent.structureConnectors.Count.ToString()}): {area.structureComponent.structureConnectors.ComafyList()}";
             summary = $"{summary}\n<b>Area Features:</b>{area.featureComponent.features.ComafyList()}";
             summary = $"{summary}\n<b>Feature Details:</b>";
             for (int i = 0; i < area.featureComponent.features.Count; i++) {
@@ -418,11 +420,13 @@ namespace Inner_Maps {
             }
             
             summary = $"{summary}\n<b>Tile Biome:</b>{tile.mainBiomeType.ToString()}";
+            summary = $"{summary}<b>Ground Map Asset Name:</b>{tile.groundTileMapAssetName}";
             summary = $"{summary}<b>Tile Elevation:</b>{tile.elevationType.ToString()}";
             summary = $"{summary}<b>Ground Type:</b>{tile.groundType.ToString()}";
             summary = $"{summary}<b>Is Occupied:</b>{tile.isOccupied.ToString()}";
             summary = $"{summary}<b>Tile Type:</b>{tile.tileType.ToString()}";
             summary = $"{summary}<b>Tile State:</b>{tile.tileState.ToString()}";
+            summary = $"{summary}<b>Connectors on Tile:</b>{tile.connectorsOnTile.ToString()}";
             summary = $"{summary}<b>Current Tile Asset:</b>{(tile.parentTileMap.GetSprite(tile.localPlace)?.name ?? "Null")}";
             summary = $"{summary}<b>Has Mouse Events:</b>{tile.mouseEventsComponent.hasMouseEvents.ToString()}";
 
@@ -800,16 +804,25 @@ namespace Inner_Maps {
 
         #region Monster Lair
         public void MonsterLairCellAutomata(List<LocationGridTile> locationGridTiles, LocationStructure structure, Region region, LocationStructure wilderness) {
-            List<LocationGridTile> refinedTiles = ObjectPoolManager.Instance.CreateNewGridTileList();
+            // List<LocationGridTile> refinedTiles = ObjectPoolManager.Instance.CreateNewGridTileList();
+            // for (int i = 0; i < locationGridTiles.Count; i++) {
+            //     LocationGridTile gridTile = locationGridTiles[i];
+            //     if (!gridTile.IsAtEdgeOfMap()) {
+            //         refinedTiles.Add(gridTile);
+            //     }
+            // }
+            List<LocationGridTile> tilesToAutomata = RuinarchListPool<LocationGridTile>.Claim();
             for (int i = 0; i < locationGridTiles.Count; i++) {
                 LocationGridTile gridTile = locationGridTiles[i];
-                if (!gridTile.IsAtEdgeOfMap()) {
-                    refinedTiles.Add(gridTile);
+                if (!gridTile.area.gridTileComponent.borderTiles.Contains(gridTile)) {
+                    tilesToAutomata.Add(gridTile);
                 }
             }
-            //locationGridTiles.Where(t => !t.IsAtEdgeOfMap()).ToList();
-		    LocationGridTile[,] tileMap = CellularAutomataGenerator.ConvertListToGridMap(refinedTiles);
-		    int[,] cellMap = CellularAutomataGenerator.GenerateMap(tileMap, refinedTiles, 2, 15);
+            // tilesToAutomata.AddRange(locationGridTiles);
+            
+		    LocationGridTile[,] tileMap = CellularAutomataGenerator.ConvertListToGridMap(tilesToAutomata);
+            float seed = CollectionUtilities.GetRandomElement(monsterLairSeeds);
+		    int[,] cellMap = CellularAutomataGenerator.GenerateMap(tileMap, tilesToAutomata, 2, 10, seed: seed.ToString());
             
 		    Assert.IsNotNull(cellMap, $"There was no cellmap generated for monster lair structure {structure.ToString()}");
 		    
@@ -819,57 +832,56 @@ namespace Inner_Maps {
 			    (locationGridTile) => SetAsGround(locationGridTile, structure));
 
             List<LocationGridTile> tilesToRefine = ObjectPoolManager.Instance.CreateNewGridTileList(); //new List<LocationGridTile>(refinedTiles);
-            tilesToRefine.AddRange(refinedTiles);
+            tilesToRefine.AddRange(tilesToAutomata);
             //refine further
             for (int i = 0; i < tilesToRefine.Count; i++) {
 			    LocationGridTile tile = tilesToRefine[i];
-			    if (tile.HasNeighbourOfType(LocationGridTile.Ground_Type.Flesh) == false) {
+			    if (!tile.HasNeighbourOfType(LocationGridTile.Ground_Type.Flesh)) {
 				    tile.SetStructureTilemapVisual(null);
 				    tile.SetTileType(LocationGridTile.Tile_Type.Empty);
 				    tile.SetTileState(LocationGridTile.Tile_State.Empty);
 				    tile.RevertTileToOriginalPerlin();
 				    tile.SetStructure(wilderness);
-                    refinedTiles.Remove(tile);
+                    tilesToAutomata.Remove(tile);
 			    }
 		    }
             ObjectPoolManager.Instance.ReturnGridTileListToPool(tilesToRefine);
-		    MonsterLairPerlin(refinedTiles, structure);
-		    //create entrances
+            
+            MonsterLairPerlin(tilesToAutomata, structure, seed, seed);
+
+            //create entrances
 		    //get tiles that are at the edge of the given tiles, but are not at the edge of its map.
+            List<LocationGridTile> targetChoices = tilesToAutomata
+                .Where(t => t.tileType == LocationGridTile.Tile_Type.Wall 
+                            && t.IsAtEdgeOfMap() == false
+                            && t.HasDifferentStructureNeighbour(true)
+                            && t.GetCountNeighboursOfType(LocationGridTile.Tile_Type.Wall, true) == 2 
+                            && t.GetCountNeighboursOfType(LocationGridTile.Tile_Type.Empty, true) == 2).ToList();
 		    for (int i = 0; i < 5; i++) {
-			    List<LocationGridTile> targetChoices = refinedTiles
-				    .Where(t => t.tileType == LocationGridTile.Tile_Type.Wall 
-				                && t.IsAtEdgeOfMap() == false
-				                && t.HasDifferentStructureNeighbour(true)
-				                && t.GetCountNeighboursOfType(LocationGridTile.Tile_Type.Wall, true) == 2 
-				                && t.GetCountNeighboursOfType(LocationGridTile.Tile_Type.Empty, true) == 2).ToList();
-			    if (targetChoices.Count > 0) {
+                if (targetChoices.Count > 0) {
 				    LocationGridTile target = CollectionUtilities.GetRandomElement(targetChoices);
-				    // Debug.Log($"Chosen target tile to clear is {target.ToString()} for monster lair at {region.name}");
 				    target.SetStructureTilemapVisual(null);
 				    target.SetTileType(LocationGridTile.Tile_Type.Empty);
 				    target.SetStructure(wilderness);
 				    target.RevertTileToOriginalPerlin();
-                    refinedTiles.Remove(target);
-			    }
-			    else {
+                    targetChoices.Remove(target);
+			    } else {
 				    Debug.LogWarning($"Could not find entrance for {structure}");
 				    break;
 			    }
 		    }
 		    
-		    
-
-		    for (int i = 0; i < refinedTiles.Count; i++) {
-			    LocationGridTile tile = refinedTiles[i];
-			    if (tile.tileType == LocationGridTile.Tile_Type.Wall) {
+            
+		    for (int i = 0; i < tilesToAutomata.Count; i++) {
+			    LocationGridTile tile = tilesToAutomata[i];
+			    if (tile.tileObjectComponent.objHere == null && tile.tileType == LocationGridTile.Tile_Type.Wall) {
 				    //create wall tile object for all walls
 				    BlockWall blockWall = CreateNewTileObject<BlockWall>(TILE_OBJECT_TYPE.BLOCK_WALL);
 				    blockWall.SetWallType(WALL_TYPE.Flesh);
 				    structure.AddPOI(blockWall, tile);
 			    }
 		    }
-            ObjectPoolManager.Instance.ReturnGridTileListToPool(refinedTiles);
+            // ObjectPoolManager.Instance.ReturnGridTileListToPool(refinedTiles);
 	    }
 	    private void SetAsWall(LocationGridTile tile, LocationStructure structure) {
             // if (GameManager.Instance.gameHasStarted) {
@@ -896,10 +908,14 @@ namespace Inner_Maps {
 		    tile.SetGroundTilemapVisual(assetManager.monsterLairGroundTile);
 		    // tile.SetStructure(structure);
 	    }
-	    private void MonsterLairPerlin(List<LocationGridTile> tiles, LocationStructure structure) {
-		    float offsetX = UnityEngine.Random.Range(0f, 99999f);
-		    float offsetY = UnityEngine.Random.Range(0f, 99999f);
-		    int minX = tiles.Min(t => t.localPlace.x);
+	    private void MonsterLairPerlin(List<LocationGridTile> tiles, LocationStructure structure, float seedX = -1f, float seedY = -1f) {
+            float offsetX = seedX;
+            float offsetY = seedY;
+            
+            if (offsetX <= 0f) { offsetX = UnityEngine.Random.Range(0f, 99999f); }
+            if (offsetY <= 0f) { offsetY = UnityEngine.Random.Range(0f, 99999f); }
+
+            int minX = tiles.Min(t => t.localPlace.x);
 		    int maxX = tiles.Max(t => t.localPlace.x);
 		    int minY = tiles.Min(t => t.localPlace.y);
 		    int maxY = tiles.Max(t => t.localPlace.y);
@@ -907,11 +923,11 @@ namespace Inner_Maps {
 		    int ySize = maxY - minY;
 		    for (int i = 0; i < tiles.Count; i++) {
 			    LocationGridTile currTile = tiles[i];
-			    float xCoord = (float) currTile.localPlace.x / xSize * 11f + offsetX;
-			    float yCoord = (float) currTile.localPlace.y / ySize * 11f + offsetY;
+			    float xCoord = (float) (currTile.localPlace.x - minX) / xSize * 5f + offsetX;
+			    float yCoord = (float) (currTile.localPlace.y - minY) / ySize * 5f + offsetY;
 
 			    float floorSample = Mathf.PerlinNoise(xCoord, yCoord);
-			    if (floorSample <= 0.45f) {
+			    if (floorSample <= 0.4f) {
 				    SetAsWall(currTile, structure);
 			    }
 		    }

@@ -93,7 +93,7 @@ public class PowerCrystal : TileObject {
     }
     private void Expire() {
 #if DEBUG_LOG
-        UnityEngine.Debug.Log($"{nameWithID}'s marker has expired.");
+        UnityEngine.Debug.Log($"{nameWithID} has expired.");
 #endif
         if (isBeingCarriedBy != null) {
             isBeingCarriedBy.DropItem(this);
@@ -104,6 +104,7 @@ public class PowerCrystal : TileObject {
         hasScheduleDestruction = false;
     }
     #endregion expiry
+    
     #region Reactions
     public override void GeneralReactionToTileObject(Character actor, ref string debugLog) {
         base.GeneralReactionToTileObject(actor, ref debugLog);

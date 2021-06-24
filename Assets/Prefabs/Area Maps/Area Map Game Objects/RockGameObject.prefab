@@ -1,17 +1,5 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!114 &3628109292062188597
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6924851506302730446}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f62d3d928b2f4526930058bbe6df9cce, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &584758335881044523
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -33,7 +21,7 @@ MonoBehaviour:
   aspeedFill: {fileID: 3673610337430471973}
   particleEffectParent: {fileID: 54138402746341594}
   statusIconsParent: {fileID: 2494281929207620664}
-  _structureConnector: {fileID: 3628109292062188597}
+  _structureConnector: {fileID: 0}
 --- !u!1001 &6926185187889300218
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -104,24 +92,6 @@ BoxCollider2D:
     type: 3}
   m_PrefabInstance: {fileID: 6926185187889300218}
   m_PrefabAsset: {fileID: 0}
---- !u!212 &7128117387951830136 stripped
-SpriteRenderer:
-  m_CorrespondingSourceObject: {fileID: 212487511842338434, guid: d9d549510a4f590468f27e4140b34e5e,
-    type: 3}
-  m_PrefabInstance: {fileID: 6926185187889300218}
-  m_PrefabAsset: {fileID: 0}
---- !u!4 &2494281929207620664 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 4792877324128118466, guid: d9d549510a4f590468f27e4140b34e5e,
-    type: 3}
-  m_PrefabInstance: {fileID: 6926185187889300218}
-  m_PrefabAsset: {fileID: 0}
---- !u!212 &7128119324579825334 stripped
-SpriteRenderer:
-  m_CorrespondingSourceObject: {fileID: 212489938902139980, guid: d9d549510a4f590468f27e4140b34e5e,
-    type: 3}
-  m_PrefabInstance: {fileID: 6926185187889300218}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &8958391139052677661 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 2039103671744800999, guid: d9d549510a4f590468f27e4140b34e5e,
@@ -152,6 +122,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!212 &7128117387951830136 stripped
+SpriteRenderer:
+  m_CorrespondingSourceObject: {fileID: 212487511842338434, guid: d9d549510a4f590468f27e4140b34e5e,
+    type: 3}
+  m_PrefabInstance: {fileID: 6926185187889300218}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &2494281929207620664 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4792877324128118466, guid: d9d549510a4f590468f27e4140b34e5e,
+    type: 3}
+  m_PrefabInstance: {fileID: 6926185187889300218}
+  m_PrefabAsset: {fileID: 0}
+--- !u!212 &7128119324579825334 stripped
+SpriteRenderer:
+  m_CorrespondingSourceObject: {fileID: 212489938902139980, guid: d9d549510a4f590468f27e4140b34e5e,
+    type: 3}
+  m_PrefabInstance: {fileID: 6926185187889300218}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &54138402746341594 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6980181590153484832, guid: d9d549510a4f590468f27e4140b34e5e,

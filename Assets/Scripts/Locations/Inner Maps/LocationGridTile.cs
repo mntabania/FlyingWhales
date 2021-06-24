@@ -377,6 +377,12 @@ namespace Inner_Maps {
             parentMap.structureTilemap.SetTile(localPlace, tileBase);
             UpdateWallTileMapAssetName();
         }
+        public void UpdateGroundTileMapAssetNameForBatchedTileSetting() {
+            UpdateGroundTileMapAssetName();
+        }
+        public void UpdateWallTileMapAssetNameForBatchedTileSetting() {
+            UpdateWallTileMapAssetName();
+        }
         private void UpdateGroundTileMapAssetName() {
             groundTileMapAssetName = parentMap.groundTilemap.GetTile(localPlace)?.name ?? string.Empty;
         }
@@ -1833,6 +1839,9 @@ namespace Inner_Maps {
 #region Connectors
         public void AddConnector(StructureConnector p_connector) {
             connectorsOnTile++;
+#if DEBUG_LOG
+            Debug.Log($"Added connector on {this}. Connectors on tile are {connectorsOnTile.ToString()}");
+#endif
             area.structureComponent.AddStructureConnector(p_connector);
         }
         public void RemoveConnector(StructureConnector p_connector) {
