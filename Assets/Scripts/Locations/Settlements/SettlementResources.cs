@@ -166,7 +166,7 @@ public class SettlementResources
                pile.tileObjectType == TILE_OBJECT_TYPE.DRAGON_HIDE ||
                pile.tileObjectType == TILE_OBJECT_TYPE.SCALE_HIDE ||
                pile.tileObjectType == TILE_OBJECT_TYPE.WOLF_HIDE) {
-                if (currentStructure.structureType != STRUCTURE_TYPE.CITY_CENTER && currentStructure.structureType != STRUCTURE_TYPE.HUNTER_LODGE && !pile.HasJobTargetingThis(JOB_TYPE.HAUL, JOB_TYPE.COMBINE_STOCKPILE)) {
+                if (currentStructure.structureType != STRUCTURE_TYPE.WORKSHOP && currentStructure.structureType != STRUCTURE_TYPE.CITY_CENTER && currentStructure.structureType != STRUCTURE_TYPE.HUNTER_LODGE && !pile.HasJobTargetingThis(JOB_TYPE.HAUL, JOB_TYPE.COMBINE_STOCKPILE)) {
                     pilePool.Add(pile);
                     //found = true;
                 }
