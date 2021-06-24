@@ -316,6 +316,10 @@ public class SettlementResources
         List<TileObject> pilePool = RuinarchListPool<TileObject>.Claim();
         for (int x = 0; x < resourcePiles.Count; ++x) {
             ResourcePile pile = resourcePiles[x];
+            if (pile.gridTileLocation == null) {
+                //TODO: Check why there is a pile that has no grid tile location in this list
+                continue; //skip
+            }
             if (pile.tileObjectType.IsMetal() || pile.tileObjectType == TILE_OBJECT_TYPE.STONE_PILE) {
                 if (pile.mapObjectState == MAP_OBJECT_STATE.BUILT && pile.currentStructure.structureType != STRUCTURE_TYPE.CITY_CENTER && 
                     pile.currentStructure.structureType != STRUCTURE_TYPE.MINE && pile.currentStructure.structureType != STRUCTURE_TYPE.WORKSHOP && 
