@@ -27,7 +27,7 @@ public class OptionsMenu : PopupMenuBase {
         SettingsManager.Instance.OpenSettings();
     }
     public void SaveGame() {
-        if (SaveManager.Instance.saveCurrentProgressManager.isSaving) {
+        if (SaveManager.Instance.saveCurrentProgressManager.isSaving || SaveManager.Instance.saveCurrentProgressManager.isWritingToDisk) {
             //prevent saving if player is already saving
             return;
         }
@@ -35,7 +35,7 @@ public class OptionsMenu : PopupMenuBase {
         SaveCurrentProgress();
     }
     public void QuickSave() {
-        if (SaveManager.Instance.saveCurrentProgressManager.isSaving) {
+        if (SaveManager.Instance.saveCurrentProgressManager.isSaving || SaveManager.Instance.saveCurrentProgressManager.isWritingToDisk) {
             //prevent saving if player is already saving
             return;
         }
@@ -99,8 +99,8 @@ public class OptionsMenu : PopupMenuBase {
     public void UpdateSaveMessage(string message) {
         saveLbl.text = message;
     }
-    private void UpdateSaveBtnState() {
-        saveBtn.interactable = SaveManager.Instance.saveCurrentProgressManager.CanSaveCurrentProgress();
+    public void UpdateSaveBtnState() {
+        saveBtn.interactable = SaveManager.Instance.saveCurrentProgressManager.CanSaveCurrentProgress() && !SaveManager.Instance.saveCurrentProgressManager.isSaving && !SaveManager.Instance.saveCurrentProgressManager.isWritingToDisk;
     }
     private void SaveCurrentProgress(string fileName = "", System.Action saveCallback = null) {
         if (SaveManager.Instance.saveCurrentProgressManager.CanSaveCurrentProgress()) {

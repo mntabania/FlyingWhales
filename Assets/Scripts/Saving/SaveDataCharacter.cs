@@ -154,8 +154,8 @@ public class SaveDataCharacter : SaveData<Character>, ISavableCounterpart {
 
         if (data.marker) {
             hasMarker = true;
-            worldPos = data.marker.transform.position;
-            rotation = data.marker.visualsParent.transform.localRotation;
+            worldPos = data.gridTileWorldPosition;
+            //rotation = data.marker.visualsParent.transform.localRotation;
 
             if (data.marker.hasExpiry) {
                 hasExpiry = true;

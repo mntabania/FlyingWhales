@@ -19,6 +19,8 @@ public class GenericTileObject : TileObject {
     /// NOTE: Only the center tile of the structure will have value.
     /// </summary>
     public LocationStructureObject blueprintOnTile { get; private set; }
+    public string blueprintTemplateName { get; private set; } //Do not save this since this will be filled up automatically upon loading in SetStructureObject
+
     /// <summary>
     /// If blueprint that was placed here can expire,
     /// this is the date that it will expire.
@@ -287,6 +289,7 @@ public class GenericTileObject : TileObject {
             structureObject.SetVisualMode(structureVisualMode, gridTileLocation.parentMap);
             structureObject.SetTilesInStructure(occupiedTiles.ToArray());
             blueprintOnTile = structureObject;
+            blueprintTemplateName = structureObject.name;
             gridTileLocation.SetIsDefault(false);
             o_placedBlueprint = structureObject;
             return true;
@@ -317,6 +320,7 @@ public class GenericTileObject : TileObject {
             Messenger.Broadcast(CharacterSignals.FORCE_CANCEL_ALL_JOB_TYPES_TARGETING_POI, this as IPointOfInterest, "", JOB_TYPE.BUILD_BLUEPRINT);
             ObjectPoolManager.Instance.DestroyObject(blueprintOnTile);
             blueprintOnTile = null;
+            blueprintTemplateName = string.Empty;
             _expiryKey = string.Empty;    
         }
     }
@@ -399,6 +403,7 @@ public class GenericTileObject : TileObject {
             }    
         }
         blueprintOnTile = null;
+        blueprintTemplateName = string.Empty;
     }
     private BuildStructureParticleEffect _buildStructureParticles;
     public void PlaceSelfBuildingStructure(string p_structurePrefabName, BaseSettlement p_settlement, int p_buildingTimeInTicks) {
@@ -474,6 +479,7 @@ public class GenericTileObject : TileObject {
         structureObject.SetVisualMode(structureVisualMode, gridTileLocation.parentMap);
         structureObject.SetTilesInStructure(occupiedTiles.ToArray());
         blueprintOnTile = structureObject;
+        blueprintTemplateName = structureObject.name;
     }
     #endregion
 
@@ -529,8 +535,8 @@ public class SaveDataGenericTileObject : SaveDataTileObject {
         base.Save(data);
         GenericTileObject genericTileObject = data as GenericTileObject;
         Debug.Assert(genericTileObject != null, nameof(genericTileObject) + " != null");
-        if (genericTileObject.blueprintOnTile != null) {
-            blueprintOnTileName = genericTileObject.blueprintOnTile.name.Replace("(Clone)", "");
+        if (!string.IsNullOrEmpty(genericTileObject.blueprintTemplateName)) {
+            blueprintOnTileName = genericTileObject.blueprintTemplateName.Replace("(Clone)", "");
             blueprintExpiryDate = genericTileObject.blueprintExpiryDate;
             isCurrentlyBuilding = genericTileObject.isCurrentlyBuilding;
             blueprintAutoBuildDate = genericTileObject.selfBuildingStructureDueDate;

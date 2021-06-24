@@ -93,6 +93,8 @@ namespace Inner_Maps {
         /// </summary>
         public Ground_Type initialGroundType { get; private set; }
         public Biome_Tile_Type specificBiomeTileType { get; private set; }
+        public string groundTileMapAssetName { get; private set; }
+        public string wallTileMapAssetName { get; private set; }
 
         private Dictionary<GridNeighbourDirection, LocationGridTile> _neighbours;
         private Dictionary<GridNeighbourDirection, LocationGridTile> _fourNeighbours;
@@ -157,6 +159,8 @@ namespace Inner_Maps {
             parentMap = p_parentMap;
             parentTileMap = tilemap;
             area = p_area;
+            groundTileMapAssetName = data.groundTileMapAssetName;
+            wallTileMapAssetName = data.wallTileMapAssetName;
             localPlace = new Vector3Int((int)data.localPlace.x, (int)data.localPlace.y, 0);
             worldLocation = data.worldLocation;
             localLocation = data.localLocation;
@@ -292,17 +296,20 @@ namespace Inner_Maps {
                             return Ground_Type.Snow;
                         } else {
                             //override tile to use tundra soil
-                            parentMap.groundTilemap.SetTile(localPlace, InnerMapManager.Instance.assetManager.tundraTile);
+                            //parentMap.groundTilemap.SetTile(localPlace, InnerMapManager.Instance.assetManager.tundraTile);
+                            SetGroundTilemapTileAsset(InnerMapManager.Instance.assetManager.tundraTile);
                             return Ground_Type.Tundra;
                         }
                     } else if (mainBiomeType == BIOMES.DESERT) {
                         if (structure != null && (structure.structureType == STRUCTURE_TYPE.CAVE || structure.structureType == STRUCTURE_TYPE.MONSTER_LAIR)) {
                             //override tile to use stone
-                            parentMap.groundTilemap.SetTile(localPlace, InnerMapManager.Instance.assetManager.stoneTile);
+                            //parentMap.groundTilemap.SetTile(localPlace, InnerMapManager.Instance.assetManager.stoneTile);
+                            SetGroundTilemapTileAsset(InnerMapManager.Instance.assetManager.stoneTile);
                             return Ground_Type.Stone;
                         } else {
                             //override tile to use sand
-                            parentMap.groundTilemap.SetTile(localPlace, InnerMapManager.Instance.assetManager.desertSandTile);
+                            //parentMap.groundTilemap.SetTile(localPlace, InnerMapManager.Instance.assetManager.desertSandTile);
+                            SetGroundTilemapTileAsset(InnerMapManager.Instance.assetManager.desertSandTile);
                             return Ground_Type.Sand;
                         }
                         
@@ -323,7 +330,8 @@ namespace Inner_Maps {
                     return Ground_Type.Grass;
                 } else if (assetName.Contains("tundra")) {
                     //override tile to use tundra soil
-                    parentMap.groundTilemap.SetTile(localPlace, InnerMapManager.Instance.assetManager.tundraTile);
+                    //parentMap.groundTilemap.SetTile(localPlace, InnerMapManager.Instance.assetManager.tundraTile);
+                    SetGroundTilemapTileAsset(InnerMapManager.Instance.assetManager.tundraTile);
                     return Ground_Type.Tundra;
                 } else if (assetName.Contains("flesh")) {
                     return Ground_Type.Flesh;
@@ -346,7 +354,7 @@ namespace Inner_Maps {
             SetInitialGroundType(determinedGroundType);
         }
         public void SetGroundTilemapVisual(TileBase tileBase, bool updateEdges = false) {
-            parentMap.groundTilemap.SetTile(localPlace, tileBase);
+            SetGroundTilemapTileAsset(tileBase);
             // parentMap.groundTilemap.RefreshTile(localPlace);
             if (tileObjectComponent.genericTileObject.mapObjectVisual != null && tileObjectComponent.genericTileObject.mapObjectVisual.usedSprite != null) {
                 //if this tile's map object is shown and is showing a visual, update it's sprite to use the updated sprite.
@@ -358,8 +366,22 @@ namespace Inner_Maps {
             }
         }
         public void SetStructureTilemapVisual(TileBase tileBase) {
-            parentMap.structureTilemap.SetTile(localPlace, tileBase);
+            SetWallTilemapTileAsset(tileBase);
             UpdateGroundTypeBasedOnAsset();
+        }
+        public void SetGroundTilemapTileAsset(TileBase tileBase) {
+            parentMap.groundTilemap.SetTile(localPlace, tileBase);
+            UpdateGroundTileMapAssetName();
+        }
+        public void SetWallTilemapTileAsset(TileBase tileBase) {
+            parentMap.structureTilemap.SetTile(localPlace, tileBase);
+            UpdateWallTileMapAssetName();
+        }
+        private void UpdateGroundTileMapAssetName() {
+            groundTileMapAssetName = parentMap.groundTilemap.GetTile(localPlace)?.name ?? string.Empty;
+        }
+        private void UpdateWallTileMapAssetName() {
+            wallTileMapAssetName = parentMap.structureTilemap.GetTile(localPlace)?.name ?? string.Empty;
         }
         public void CreateSeamlessEdgesForSelfAndNeighbours() {
             CreateSeamlessEdgesForTile(parentMap);

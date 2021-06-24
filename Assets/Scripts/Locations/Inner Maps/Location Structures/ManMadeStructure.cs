@@ -12,7 +12,9 @@ namespace Inner_Maps.Location_Structures {
         public RESOURCE wallsAreMadeOf { get; protected set; }
         public LocationStructureObject structureObj {get; private set;}
         public List<string> assignedWorkerIDs { get; private set; }
-        
+        public string templateName { get; private set; } //Do not save this since this will be filled up automatically upon loading in SetStructureObject
+        public Vector3 structureObjectWorldPos { get; private set; } //Do not save this since this will be filled up automatically upon loading in SetStructureObject
+
         private GameDate m_scheduledDirtProduction;
         private readonly List<TileObject> m_dirtyObjects;
         private const int UncomfortableNeededDirtyObjects = 2;
@@ -258,6 +260,8 @@ namespace Inner_Maps.Location_Structures {
         #region Structure Object
         public virtual void SetStructureObject(LocationStructureObject structureObj) {
             this.structureObj = structureObj;
+            templateName = structureObj.name;
+            structureObjectWorldPos = structureObj.transform.position;
             Vector3 position = structureObj.transform.position;
             position.x -= 0.5f;
             position.y -= 0.5f;

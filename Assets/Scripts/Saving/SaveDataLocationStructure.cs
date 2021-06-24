@@ -110,10 +110,10 @@ public class SaveDataAnimalDen : SaveDataNaturalStructure {
         base.Save(structure);
         AnimalDen animalDen = structure as AnimalDen;
         Assert.IsNotNull(animalDen);
-        string templateName = animalDen.structureObj.name;
+        string templateName = animalDen.templateName;
         templateName = templateName.Replace("(Clone)", "");
         structureTemplateName = templateName;
-        structureObjectWorldPosition = animalDen.structureObj.transform.position; 
+        structureObjectWorldPosition = animalDen.structureObjectWorldPos;
     }
 }
 
@@ -140,10 +140,10 @@ public class SaveDataManMadeStructure : SaveDataLocationStructure {
             structureObjectWorldPosition = Vector3.zero;
         } else {
             //structure object
-            string templateName = manMadeStructure.structureObj.name;
+            string templateName = manMadeStructure.templateName;
             templateName = templateName.Replace("(Clone)", "");
             structureTemplateName = templateName;
-            structureObjectWorldPosition = manMadeStructure.structureObj.transform.position;    
+            structureObjectWorldPosition = manMadeStructure.structureObjectWorldPos;    
             structureConnectors = new SaveDataStructureConnector[manMadeStructure.structureObj.connectors.Length];
             for (int i = 0; i < structureConnectors.Length; i++) {
                 StructureConnector connector = manMadeStructure.structureObj.connectors[i];
