@@ -9,6 +9,7 @@ using Locations.Area_Features;
 using Scenario_Maps;
 using Traits;
 using UtilityScripts;
+using UnityEngine.SceneManagement;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -19,6 +20,7 @@ public class SaveManager : MonoBehaviour {
     public SaveCurrentProgressManager saveCurrentProgressManager;
 
     public bool useSaveData { get; private set; }
+    public bool doNotContinueSaving { get; private set; }
 
     [Header("For Testing")] 
     [SerializeField] private bool alwaysResetSpecialPopupsOnStartup;
@@ -54,6 +56,7 @@ public class SaveManager : MonoBehaviour {
 #if UNITY_EDITOR
             EditorApplication.quitting += OnEditorQuit;
 #endif
+            SceneManager.sceneUnloaded += OnSceneUnloaded;
             //Should create folder of save path if no folder exists
             if (!Directory.Exists(UtilityScripts.Utilities.gameSavePath)) {
                 Directory.CreateDirectory(UtilityScripts.Utilities.gameSavePath);
@@ -68,12 +71,23 @@ public class SaveManager : MonoBehaviour {
     private void OnEditorQuit() {
         savePlayerManager.SavePlayerData();
     }
+    private void OnSceneUnloaded(Scene unloaded) {
+        if (unloaded.name == "Game") {
+            SetDoNotContinueSaving(true);
+        }
+    }
+    public void SetDoNotContinueSaving(bool p_state) {
+        doNotContinueSaving = p_state;
+    }
     #endregion
 
     #region Initialization
     public void PrepareTempDirectory() {
+        if (saveCurrentProgressManager.isSaving || saveCurrentProgressManager.isWritingToDisk) {
+            return;
+        }
         if (Directory.Exists(UtilityScripts.Utilities.tempPath)) {
-            Directory.Delete(UtilityScripts.Utilities.tempPath, true);    
+            Directory.Delete(UtilityScripts.Utilities.tempPath, true);
         }
         Directory.CreateDirectory(UtilityScripts.Utilities.tempPath);
         Directory.CreateDirectory(UtilityScripts.Utilities.tempZipPath);

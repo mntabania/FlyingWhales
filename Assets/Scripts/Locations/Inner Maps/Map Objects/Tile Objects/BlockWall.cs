@@ -44,7 +44,8 @@ public class BlockWall : TileObject {
         return false;
     }
     public override void OnRemoveTileObject(Character removedBy, LocationGridTile removedFrom, bool removeTraits = true, bool destroyTileSlots = true) {
-        removedFrom.parentMap.structureTilemap.SetTile(removedFrom.localPlace, null);
+        removedFrom.SetWallTilemapTileAsset(null);
+        //removedFrom.parentMap.structureTilemap.SetTile(removedFrom.localPlace, null);
         removedFrom.SetTileType(LocationGridTile.Tile_Type.Empty);
         mapVisual.DestroyExistingGUS();
         if (!string.IsNullOrEmpty(_expiryScheduleKey)) {
@@ -54,7 +55,8 @@ public class BlockWall : TileObject {
         EvaluateAllBlockWallNeighboursForDiagonalImpassables(removedFrom, false);
     }
     protected override void OnPlaceTileObjectAtTile(LocationGridTile tile) {
-        tile.parentMap.structureTilemap.SetTile(tile.localPlace, InnerMapManager.Instance.assetManager.GetWallAssetBasedOnWallType(wallType));
+        tile.SetWallTilemapTileAsset(InnerMapManager.Instance.assetManager.GetWallAssetBasedOnWallType(wallType));
+        //tile.parentMap.structureTilemap.SetTile(tile.localPlace, InnerMapManager.Instance.assetManager.GetWallAssetBasedOnWallType(wallType));
         tile.SetTileType(LocationGridTile.Tile_Type.Wall);
         //Vector2 size = new Vector2(1f, 1f);
         //if (wallType == WALL_TYPE.Flesh) {
@@ -106,7 +108,8 @@ public class BlockWall : TileObject {
     #endregion
     
     public void UpdateVisual(LocationGridTile tile) {
-        tile.parentMap.structureTilemap.SetTile(tile.localPlace, InnerMapManager.Instance.assetManager.GetWallAssetBasedOnWallType(wallType));
+        tile.SetWallTilemapTileAsset(InnerMapManager.Instance.assetManager.GetWallAssetBasedOnWallType(wallType));
+        //tile.parentMap.structureTilemap.SetTile(tile.localPlace, InnerMapManager.Instance.assetManager.GetWallAssetBasedOnWallType(wallType));
     }
     private void EvaluateAllBlockWallNeighboursForDiagonalImpassables(LocationGridTile p_centerTile, bool p_includeCenterTile) {
         if (!GameManager.Instance.gameHasStarted) {

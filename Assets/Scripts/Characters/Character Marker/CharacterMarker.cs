@@ -1188,6 +1188,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         Profiler.BeginSample($"{character.name} Set Grid Tile Position");
 #endif
         character.SetGridTilePosition(transform.localPosition);
+        character.SetGridTileWorldPosition(transform.position);
 #if DEBUG_PROFILER
         Profiler.EndSample();
 #endif

@@ -80,7 +80,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public Necromancer necromancerTrait { get; protected set; }
     public POI_STATE state { get; private set; }
     public ILocationAwareness currentLocationAwareness { get; private set; }
-    public Vector2Int gridTilePosition { get; private set; }
+    public Vector2Int gridTileLocalPosition { get; private set; }
+    public Vector3 gridTileWorldPosition { get; private set; }
     public bool hasMarker { get; private set; }
     public List<PLAYER_SKILL_TYPE> afflictionsSkillsInflictedByPlayer { get; set; }
     public LocationStructure deployedAtStructure { get; private set; }
@@ -244,7 +245,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             if (carrier != null) {
                 return carrier.gridTileLocation;
             }
-            return GetLocationGridTileByXY(gridTilePosition.x, gridTilePosition.y);
+            return GetLocationGridTileByXY(gridTileLocalPosition.x, gridTileLocalPosition.y);
         }
     }
     public Area areaLocation => gridTileLocation?.area;
@@ -747,10 +748,13 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
 #if DEBUG_PROFILER
         Profiler.BeginSample($"{name} - SetGridTilePosition");
 #endif
-        gridTilePosition = new Vector2Int(xFloorToInt, yFloorToInt);
+        gridTileLocalPosition = new Vector2Int(xFloorToInt, yFloorToInt);
 #if DEBUG_PROFILER
         Profiler.EndSample();
 #endif
+    }
+    public void SetGridTileWorldPosition(Vector3 p_pos) {
+        gridTileWorldPosition = p_pos;
     }
     public void CreateMarker() {
         GameObject portraitGO = ObjectPoolManager.Instance.InstantiateObjectFromPool("CharacterMarker", Vector3.zero, Quaternion.identity, InnerMapManager.Instance.transform);

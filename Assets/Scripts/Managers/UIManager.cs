@@ -408,6 +408,17 @@ public class UIManager : BaseMonoBehaviour {
     }
     #endregion
 
+    #region Save Game
+    [Header("Save Game")]
+    [SerializeField] private GameObject _saveWritingToDiskGO;
+    public void ShowSaveWritingToDisk() {
+        _saveWritingToDiskGO.SetActive(true);
+    }
+    public void HideSaveWritingToDisk() {
+        _saveWritingToDiskGO.SetActive(false);
+    }
+    #endregion
+
     #region Tooltips
     public void ShowSmallInfo(string info, string header = "", bool autoReplaceText = true) {
         smallInfoGO.transform.SetAsLastSibling();

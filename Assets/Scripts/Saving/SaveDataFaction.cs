@@ -50,7 +50,7 @@ public class SaveDataFaction : SaveData<Faction>, ISavableCounterpart {
         name = data.name;
         description = data.description;
         isMajorFaction = data.isMajorFaction;
-        emblemName = data.emblem.name;
+        emblemName = data.emblemName;
         factionColor = data.factionColor;
         isActive = data.isActive;
         race = data.race;

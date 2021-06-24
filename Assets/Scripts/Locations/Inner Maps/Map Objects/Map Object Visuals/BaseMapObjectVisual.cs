@@ -34,7 +34,7 @@ public abstract class BaseMapObjectVisual : PooledObject, IPointerEnterHandler, 
     protected System.Action onMiddleClickAction;
     public GameObject gameObjectVisual => this.gameObject;
     public Sprite usedSprite => objectVisual.sprite;
-    public Quaternion rotation => objectVisual.transform.localRotation;
+    //public Quaternion rotation => objectVisual.transform.localRotation;
     public ISelectable selectable { get; protected set; }
     public SpriteRenderer objectSpriteRenderer => objectVisual;
     public BaseVisionTrigger visionTrigger { get; protected set; }
@@ -43,14 +43,15 @@ public abstract class BaseMapObjectVisual : PooledObject, IPointerEnterHandler, 
     /// <see cref="LocationGridTileGUS.Initialize"/>,
     /// this should also destroyed when the object is removed. <see cref="LocationGridTileGUS.Destroy"/>
     private LocationGridTileGUS graphUpdateScene { get; set; } 
-    
+    public string usedSpriteName { get; private set; }
+    public Quaternion rotation { get; private set; }
+
     #region Initialization
     protected void Initialize(ISelectable selectable) {
         this.selectable = selectable;
-        UpdateClickableColliderState();
-    }
+        UpdateClickableColliderState();    }
     #endregion
-    
+
     #region Visuals
     public virtual Sprite GetSeizeSprite(IPointOfInterest poi) {
         return objectVisual.sprite;
@@ -61,16 +62,23 @@ public abstract class BaseMapObjectVisual : PooledObject, IPointerEnterHandler, 
         if (hoverObject != null) {
             hoverObject.transform.localRotation = quaternion;    
         }
+        this.rotation = quaternion;
     }
     public void SetRotation(Quaternion rotation) {
         objectVisual.transform.localRotation = rotation;
         if (hoverObject != null) {
             hoverObject.transform.localRotation = rotation;    
         }
+        this.rotation = rotation;
     }
     public virtual void SetVisual(Sprite sprite) {
         objectVisual.sprite = sprite;
         hoverObject.sprite = sprite;
+        if (sprite != null) {
+            usedSpriteName = sprite.name;
+        } else {
+            usedSpriteName = string.Empty;
+        }
     }
     private void SetColor(Color color) {
         objectVisual.color = color;
@@ -249,6 +257,7 @@ public abstract class BaseMapObjectVisual : PooledObject, IPointerEnterHandler, 
         thisTransform.SetParent(tile.parentMap.structureParent);
         Vector3 worldPos = tile.centeredWorldLocation;
         thisTransform.position = worldPos;
+        this.rotation = objectVisual.transform.localRotation;
     }
     public virtual void SetWorldPosition(Vector3 worldPosition) {
         transform.position = worldPosition;

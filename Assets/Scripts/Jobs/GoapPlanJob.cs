@@ -9,7 +9,7 @@ using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.Profiling;
 
-public class GoapPlanJob : JobQueueItem {
+public class GoapPlanJob : JobQueueItem, IObjectPoolTester {
 
     public static string Target_Already_Dead_Reason = "target is already dead";
     
@@ -21,6 +21,7 @@ public class GoapPlanJob : JobQueueItem {
     public Dictionary<INTERACTION_TYPE, OtherData[]> otherData { get; protected set; } //TODO: Further optimize this by moving this dictionary to the actor itself
     public bool shouldBeCancelledOnDeath { get; private set; } //should this job be cancelled when the target dies?
     public Dictionary<INTERACTION_TYPE, List<ILocation>> priorityLocations { get; private set; }
+    public bool isAssigned { get; set; }
 
     #region getters
     public override IPointOfInterest poiTarget => targetPOI;
@@ -56,6 +57,7 @@ public class GoapPlanJob : JobQueueItem {
         goal = data.goal;
         targetInteractionType = data.targetInteractionType;
         shouldBeCancelledOnDeath = data.shouldBeCancelledOnDeath;
+        isAssigned = data.isAssigned;
     }
 
     #region Loading

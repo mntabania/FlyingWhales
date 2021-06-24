@@ -26,12 +26,16 @@ public class EquipmentItem : TileObject {
     //this is for testing purpose only OnPlacePOI()
     public void MakeQualityHigh() {
         quality = EQUIPMENT_QUALITY.High;
+        traitContainer.AddTrait(this, "High Quality");
         maxHP += (int)(maxHP * 0.5f);
+        currentHP = (int)Mathf.Clamp(currentHP + (maxHP * 0.5f), 0, maxHP);
     }
 
     public void MakeQualityPremium() {
         quality = EQUIPMENT_QUALITY.Premium;
         maxHP += (int)(maxHP * 2f);
+        traitContainer.AddTrait(this, "Premium");
+        currentHP = (int)Mathf.Clamp(currentHP + (maxHP * 2f), 0, maxHP);
     }
 
     public EquipmentItem() {
@@ -42,12 +46,18 @@ public class EquipmentItem : TileObject {
         AddAdvertisedAction(INTERACTION_TYPE.PICK_UP);
         AddAdvertisedAction(INTERACTION_TYPE.BOOBY_TRAP);
         AddAdvertisedAction(INTERACTION_TYPE.CRAFT_EQUIPMENT);
-
-        maxHP = 700;
-        currentHP = maxHP;
     }
 
-    public string GetBonusDescription() {
+	public override void OnPlacePOI() {
+		base.OnPlacePOI();
+        if (UnityEngine.Random.Range(0, 100) > 50) {
+            MakeQualityHigh();
+        } else {
+            MakeQualityPremium();
+        }
+    }
+
+	public string GetBonusDescription() {
         if(equipmentData == null) {
             AssignData();
         }

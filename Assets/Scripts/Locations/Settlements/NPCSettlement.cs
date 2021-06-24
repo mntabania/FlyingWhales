@@ -1267,6 +1267,31 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         }
         return null;
     }
+    public bool HasBlueprintOnTileForStructure(STRUCTURE_TYPE p_type) {
+        for (int i = 0; i < availableJobs.Count; i++) {
+            GoapPlanJob job = availableJobs[i] as GoapPlanJob;
+            if (job != null && job.jobType == JOB_TYPE.BUILD_BLUEPRINT) {
+                GenericTileObject jobTarget = job.poiTarget as GenericTileObject;
+                if (jobTarget != null && jobTarget.blueprintOnTile != null && jobTarget.blueprintOnTile.structureType == p_type) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    public int GetNumberOfBlueprintOnTileForStructure(STRUCTURE_TYPE p_type) {
+        int count = 0;
+        for (int i = 0; i < availableJobs.Count; i++) {
+            GoapPlanJob job = availableJobs[i] as GoapPlanJob;
+            if (job != null && job.jobType == JOB_TYPE.BUILD_BLUEPRINT) {
+                GenericTileObject jobTarget = job.poiTarget as GenericTileObject;
+                if (jobTarget != null && jobTarget.blueprintOnTile != null && jobTarget.blueprintOnTile.structureType == p_type) {
+                    count++;
+                }
+            }
+        }
+        return count;
+    }
     #endregion
 
     #region Inner Map

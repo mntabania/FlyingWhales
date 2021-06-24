@@ -24,6 +24,7 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
     public bool isMajorFaction { get; private set; }
     public ILeader leader { get; private set; }
     public Sprite emblem { get; private set; }
+    public string emblemName { get; private set; }
     public Color factionColor { get; private set; }
     public List<JobQueueItem> forcedCancelJobsOnTickEnded { get; }
     public List<Character> characters { get; }//List of characters that are part of the faction
@@ -107,6 +108,7 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
         name = data.name;
         description = data.description;
         emblem = FactionManager.Instance.GetFactionEmblem(data);
+        emblemName = emblem.name;
         FactionManager.Instance.SetEmblemAsUsed(emblem);
         factionColor = data.factionColor;
         race = data.race;
@@ -944,10 +946,15 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
     #region Emblems
     public void SetEmblem(Sprite sprite) {
         emblem = sprite;
+        if (emblem != null) {
+            emblemName = emblem.name;
+        } else {
+            emblemName = string.Empty;
+        }
     }
-#endregion
+    #endregion
 
-#region Jobs
+    #region Jobs
     public void AddToAvailableJobs(JobQueueItem job, int position = -1) {
         if (position == -1) {
             availableJobs.Add(job);    

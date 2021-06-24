@@ -15,6 +15,8 @@ namespace Inner_Maps.Location_Structures {
         public LocationStructureObject structureObj {get; private set;}
         public HashSet<Character> currentAttackers { get; }
         public Character preOccupiedBy { get; private set; }
+        public string templateName { get; private set; } //Do not save this since this will be filled up automatically upon loading in SetStructureObject
+        public Vector3 structureObjectWorldPos { get; private set; } //Do not save this since this will be filled up automatically upon loading in SetStructureObject
 
         #region Getters
         public override Vector2 selectableSize => structureObj.size;
@@ -178,6 +180,8 @@ namespace Inner_Maps.Location_Structures {
         #region Structure Object
         public virtual void SetStructureObject(LocationStructureObject structureObj) {
             this.structureObj = structureObj;
+            templateName = structureObj.name;
+            structureObjectWorldPos = structureObj.transform.position;
             Vector3 position = structureObj.transform.position;
             position.x -= 0.5f;
             position.y -= 0.5f;
@@ -267,10 +271,10 @@ public class SaveDataDemonicStructure : SaveDataLocationStructure
             structureObjectWorldPosition = Vector3.zero;
         } else {
             //structure object
-            string templateName = demonicStructure.structureObj.name;
+            string templateName = demonicStructure.templateName;
             templateName = templateName.Replace("(Clone)", "");
             structureTemplateName = templateName;
-            structureObjectWorldPosition = demonicStructure.structureObj.transform.position;
+            structureObjectWorldPosition = demonicStructure.structureObjectWorldPos;
         }
 
         // activeSnatchJobs = demonicStructure.activeSnatchJobs;

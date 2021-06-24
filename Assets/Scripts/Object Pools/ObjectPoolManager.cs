@@ -564,12 +564,22 @@ public class ObjectPoolManager : MonoBehaviour {
         _stateJobPool = new List<CharacterStateJob>();
     }
     public GoapPlanJob CreateNewGoapPlanJob() {
-        if (_goapJobPool.Count > 0) {
-            GoapPlanJob job = _goapJobPool[0];
-            _goapJobPool.RemoveAt(0);
-            return job;
+        lock (MultiThreadPool.THREAD_LOCKER) {
+            if (_goapJobPool.Count > 0) {
+                GoapPlanJob job = _goapJobPool[0];
+                if (job.isAssigned) {
+#if DEBUG_LOG
+                    throw new Exception(job.ToString() + " is already assigned");
+#endif
+                } else {
+                    job.isAssigned = true;
+                }
+                _goapJobPool.RemoveAt(0);
+                return job;
+            }
+            return new GoapPlanJob();
         }
-        return new GoapPlanJob();
+
     }
     public void ReturnGoapPlanJobToPool(GoapPlanJob job) {
 #if DEBUG_LOG
@@ -577,7 +587,8 @@ public class ObjectPoolManager : MonoBehaviour {
 #endif
         job.Reset();
         if (!_goapJobPool.Contains(job)) {
-            _goapJobPool.Add(job);    
+            _goapJobPool.Add(job);
+            job.isAssigned = false;
         } else {
 #if DEBUG_LOG
             Debug.LogError("Job instance is already in pool but is added again!");
@@ -743,6 +754,13 @@ public class ObjectPoolManager : MonoBehaviour {
                 Debug.LogError($"Goap Plan is null!");
             }
 #endif
+            if (data.isAssigned) {
+#if DEBUG_LOG
+                throw new Exception(data.ToString() + " is already assigned");
+#endif
+            } else {
+                data.isAssigned = true;
+            }
             _goapPlanPool.RemoveAt(0);
 // #if DEBUG_LOG
 //             Debug.Log($"Took new job from plan object pool with id {data.id}");
@@ -759,6 +777,7 @@ public class ObjectPoolManager : MonoBehaviour {
             data.Reset();
             if (!_goapPlanPool.Contains(data)) {
                 _goapPlanPool.Add(data);
+                data.isAssigned = false;
             } else {
 #if DEBUG_LOG
                 Debug.LogError($"Goap Plan has duplicate in pool: {data.LogPlan()}");
@@ -838,22 +857,31 @@ public class ObjectPoolManager : MonoBehaviour {
         return actionNode;
     }
     private ActualGoapNode CreateNewAction() {
-        if (_actionPool.Count > 0) {
-            ActualGoapNode data = _actionPool[0];
+        lock (MultiThreadPool.THREAD_LOCKER) {
+            if (_actionPool.Count > 0) {
+                ActualGoapNode data = _actionPool[0];
 #if DEBUG_LOG
-            if (data == null) {
-                Debug.LogError($"Action is null!");
-            }
+                if (data == null) {
+                    Debug.LogError($"Action is null!");
+                }
 #endif
-            _actionPool.RemoveAt(0);
-            // #if DEBUG_LOG
-            //             Debug.Log($"Took new job from plan object pool with id {data.id}");
-            // #endif
-            return data;
+                if (data.isAssigned) {
+#if DEBUG_LOG
+                    throw new Exception(data.ToString() + " is already assigned");
+#endif
+                } else {
+                    data.isAssigned = true;
+                }
+                _actionPool.RemoveAt(0);
+                // #if DEBUG_LOG
+                //             Debug.Log($"Took new job from plan object pool with id {data.id}");
+                // #endif
+                return data;
+            }
+            ActualGoapNode action = new ActualGoapNode();
+            action.SetHasBeenReset(true);
+            return action;
         }
-        ActualGoapNode action = new ActualGoapNode();
-        action.SetHasBeenReset(true);
-        return action;
     }
     public void ReturnActionToPool(ActualGoapNode data) {
         if (data != null) {
@@ -863,6 +891,7 @@ public class ObjectPoolManager : MonoBehaviour {
                 Debug.Log($"Returned action to pool:\n {data}");
 #endif
                 _actionPool.Add(data);
+                data.isAssigned = false;
             } else {
 #if DEBUG_LOG
                 Debug.LogError($"{data} has duplicate in pool");

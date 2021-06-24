@@ -47,8 +47,8 @@ public class SaveDataLocationGridTile : SaveData<LocationGridTile> {
         elevation = gridTile.elevationType;
 
         //tilemap assets
-        groundTileMapAssetName = gridTile.parentMap.groundTilemap.GetTile(gridTile.localPlace)?.name ?? string.Empty;
-        wallTileMapAssetName = gridTile.parentMap.structureTilemap.GetTile(gridTile.localPlace)?.name ?? string.Empty;
+        groundTileMapAssetName = gridTile.groundTileMapAssetName; //gridTile.parentMap.groundTilemap.GetTile(gridTile.localPlace)?.name ?? string.Empty;
+        wallTileMapAssetName = gridTile.wallTileMapAssetName; //gridTile.parentMap.structureTilemap.GetTile(gridTile.localPlace)?.name ?? string.Empty;
 
         floorSample = gridTile.floorSample;
 
