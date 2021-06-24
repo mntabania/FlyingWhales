@@ -456,7 +456,7 @@ namespace Inner_Maps.Location_Structures {
         }
         private void ScheduleDirtProduction() {
             GameDate dueDate = GameManager.Instance.Today();
-            dueDate.AddTicks(GameManager.Instance.GetTicksBasedOnHour(6));
+            dueDate.AddTicks(GameManager.Instance.GetTicksBasedOnHour(12));
             m_scheduledDirtProduction = dueDate;
             SchedulingManager.Instance.AddEntry(dueDate, ProduceDirtOnSchedule, null);
         }

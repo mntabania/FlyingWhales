@@ -64,18 +64,19 @@ MonoBehaviour:
       - {fileID: 21300000, guid: fd21286882ae66d41b200d14642c15a3, type: 3}
       - {fileID: 21300000, guid: df32bff98d127ee44b9d7e84521a10ff, type: 3}
   characterSkillUpdateData:
-    m_piercingBonus: 0
-    m_mentalResistanceBonus: 0
-    m_physicalResistanceBonus: 0
-    m_normalResistanceBonus: 0
     m_fireResistanceBonus: 0
-    m_poisonResistanceBonus: 0
-    m_waterResistanceBonus: 0
-    m_iceResistanceBonus: 0
-    m_electricResistanceBonus: 0
     m_earthResistanceBonus: 0
     m_windResistanceBonus: 0
-    m_allElementresistanceBonus: 0
+    m_waterResistanceBonus: 0
+    m_allElementalresistanceBonus: 3
+    m_poisonResistanceBonus: 0
+    m_iceResistanceBonus: 0
+    m_electricResistanceBonus: 0
+    m_allSecondaryresistanceBonus: 12
+    m_normalResistanceBonus: 0
+    m_piercingBonus: 12
+    m_mentalResistanceBonus: 5
+    m_physicalResistanceBonus: 12
   craftableWeapons: 03010000cc000000cd000000ce000000cf000000
   craftableArmors: 05010000d0000000bc000000d1000000d3000000
   craftableAccessories: dd000000

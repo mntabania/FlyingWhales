@@ -41,6 +41,8 @@ public class CharacterProgressionBonusData
             case RESISTANCE.Electric: return m_electricResistanceBonus;
             case RESISTANCE.Earth: return m_earthResistanceBonus;
             case RESISTANCE.Wind: return m_windResistanceBonus;
+            case RESISTANCE.Physical: return m_physicalResistanceBonus;
+            case RESISTANCE.Mental: return m_mentalResistanceBonus;
         }
         return 0;
 	}

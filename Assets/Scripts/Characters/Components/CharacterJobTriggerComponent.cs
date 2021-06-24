@@ -221,7 +221,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 		}
 	}
 	private void OnJobRemovedFromQueue(JobQueueItem jobQueueItem, Character character) {
-		if (character == owner && jobQueueItem.jobType == JOB_TYPE.CRAFT_MISSING_FURNITURE) {
+		if (character == owner && (jobQueueItem.jobType == JOB_TYPE.CRAFT_MISSING_FURNITURE || jobQueueItem.jobType != JOB_TYPE.HAUL)) {
 			Messenger.Broadcast(TileObjectSignals.CHECK_UNBUILT_OBJECT_VALIDITY);
 		}
 	}

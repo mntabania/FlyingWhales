@@ -347,15 +347,15 @@ public class StructureInfoUI : InfoUIBase {
         }
     }
 
-    private void OnReceivePortalShortCutSignal(string p_braodcastKey) {
-        if (!GameManager.Instance.gameHasStarted) {
-            return;
-        }
-        ThePortal portal = PlayerManager.Instance.player.playerSettlement.GetRandomStructureOfType(STRUCTURE_TYPE.THE_PORTAL) as ThePortal;
-        if(portal != null) {
-            SetData(portal);
-            OpenMenu();
-            activeStructure.CenterOnStructure();
+    private void OnReceivePortalShortCutSignal(string p_broadcastKey) {
+        if (!GameManager.Instance.gameHasStarted) { return; }
+        if (p_broadcastKey == "portal shortcut") {
+            ThePortal portal = PlayerManager.Instance.player.playerSettlement.GetRandomStructureOfType(STRUCTURE_TYPE.THE_PORTAL) as ThePortal;
+            if(portal != null) {
+                SetData(portal);
+                OpenMenu();
+                activeStructure.CenterOnStructure();
+            }    
         }
     }
 
