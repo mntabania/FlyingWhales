@@ -6,6 +6,8 @@ public class PowerCrystal : TileObject {
     public bool hasScheduleDestruction { get; private set; }
     public GameDate destroyDate { get; private set; }
 
+    public override string description => GetDescription();
+
     public override Type serializedData => typeof(SaveDataPowerCrystal);
 
 	public List<RESISTANCE> resistanceBonuses = new List<RESISTANCE>();
@@ -38,6 +40,19 @@ public class PowerCrystal : TileObject {
         if (hasScheduleDestruction) {
             SchedulingManager.Instance.AddEntry(destroyDate, TryExpire, null);
         }
+    }
+
+    string GetDescription() {
+        //elementLbl.text = UtilityScripts.Utilities.GetRichTextIconForElement(_activeCharacter.combatComponent.elementalDamage.type) + $"{_activeCharacter.combatComponent.elementalDamage.type}";
+        float count = amountBonusPiercing;
+        string element = string.Empty;
+        element = UtilityScripts.Utilities.PiercingIcon();
+        if (amountBonusPiercing <= 0f) {
+            element = UtilityScripts.Utilities.GetRichTextIconForElement(resistanceBonuses[0].GetElement());
+            count = amountBonusResistance;
+        }
+        
+        return $"When absorbed by an Elf, provides +{count}%{element}to all Elves in their Village.";
     }
 
     public override void OnPlacePOI() {

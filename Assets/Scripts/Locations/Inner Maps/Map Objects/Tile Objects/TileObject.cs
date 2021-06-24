@@ -29,6 +29,8 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     public bool isStoredAsTarget { get; private set; }
     public bool isDeadReference { get; private set; }
 
+    public virtual string description => string.Empty;
+
     /// <summary>
     /// All currently in progress jobs targeting this.
     /// </summary>

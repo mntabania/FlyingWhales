@@ -18,6 +18,7 @@ public class TileObjectInfoUI : InfoUIBase {
     [Header("Info")]
     [SerializeField] private TextMeshProUGUI hpLbl;
     [SerializeField] private TextMeshProUGUI quantityLbl;
+    [SerializeField] private TextMeshProUGUI generalDescription;
     [SerializeField] private TextMeshProUGUI ownerLbl;
     [SerializeField] private EventLabel ownerEventLbl;
     [SerializeField] private TextMeshProUGUI carriedByLbl;
@@ -189,7 +190,7 @@ public class TileObjectInfoUI : InfoUIBase {
             quantity = activeTileObject.resourceStorageComponent.GetResourceValue(RESOURCE.FOOD);
         }
         quantityLbl.text = $"{quantity}";
-
+        generalDescription.text = activeTileObject.description;
         ownerLbl.text = activeTileObject.characterOwner != null ? $"<link=\"1\">{UtilityScripts.Utilities.ColorizeAndBoldName(activeTileObject.characterOwner.name)}</link>" : "None";
         UpdateLocationInfo();
         tileObjectPortrait.SetTileObject(activeTileObject);
