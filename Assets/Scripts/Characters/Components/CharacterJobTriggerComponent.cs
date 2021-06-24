@@ -3722,20 +3722,17 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
         }
     }
 
-    public void TryCreateHaulJobForCraftsman(ResourcePile target, out JobQueueItem jobQueueItem, int p_amount = -1) {
+    public void TryCreateHaulJobForCraftsman(ResourcePile target, out JobQueueItem jobQueueItem, int p_amount) {
         jobQueueItem = null;
-        if (owner.jobQueue.HasJob(JOB_TYPE.HAUL) == false && owner.structureComponent.workPlaceStructure != null) {
+        if (!owner.jobQueue.HasJob(JOB_TYPE.HAUL) && owner.structureComponent.workPlaceStructure != null && target.structureLocation != null) {
             LocationStructure workPlace = owner.structureComponent.workPlaceStructure;
             TileObject unbuiltPile = InnerMapManager.Instance.CreateNewTileObject<TileObject>(target.tileObjectType);
             if (workPlace.AddPOI(unbuiltPile)) {
                 unbuiltPile.SetMapObjectState(MAP_OBJECT_STATE.UNBUILT);
-                //ResourcePile chosenPileToDepositTo = target;// owner.mainStorage.GetResourcePileObjectWithLowestCount(target.tileObjectType);
-                GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.HAUL,
-                    INTERACTION_TYPE.DROP_RESOURCE_TO_WORK_STRUCTURE, target, owner);
-                job.AddOtherData(INTERACTION_TYPE.DROP_RESOURCE_TO_WORK_STRUCTURE, new object[] { unbuiltPile });
-                if (p_amount != -1) {
-                    job.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] { p_amount });
-                }
+                GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.HAUL, INTERACTION_TYPE.DROP_RESOURCE_TO_WORK_STRUCTURE, unbuiltPile, owner);
+                // job.AddOtherData(INTERACTION_TYPE.DROP_RESOURCE_TO_WORK_STRUCTURE, new object[] { unbuiltPile });
+                job.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] { p_amount });
+                job.AddPriorityLocation(INTERACTION_TYPE.TAKE_RESOURCE, target.structureLocation);
                 jobQueueItem = job;
             }
         }

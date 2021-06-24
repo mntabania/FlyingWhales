@@ -63,7 +63,7 @@ public class Summon : Character {
             if (tileToSpawnPile != null && tileToSpawnPile.tileObjectComponent.objHere != null) {
                 tileToSpawnPile = gridTileLocation.GetFirstNeighborThatIsPassableAndNoObject();
             }
-            tileToSpawnPile.structure.AddPOI(drop, tileToSpawnPile);
+            tileToSpawnPile?.structure.AddPOI(drop, tileToSpawnPile);
         }
     }
 
