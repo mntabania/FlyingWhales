@@ -297,6 +297,7 @@ namespace Inner_Maps.Location_Structures {
             if (!assignedWorkerIDs.Contains(p_worker.persistentID)) {
                 assignedWorkerIDs.Add(p_worker.persistentID);
                 p_worker.structureComponent.SetWorkPlaceStructure(this);
+                Messenger.Broadcast(StructureSignals.ON_WORKER_HIRED, p_worker, this);
             }
         }
         public bool RemoveAssignedWorker(Character p_worker) {
@@ -383,7 +384,7 @@ namespace Inner_Maps.Location_Structures {
                     return true;
                 } else if (!p_buyer.relationshipContainer.IsEnemiesWith(assignedWorker)) {
                     //structure is owned by a non-enemy villager
-                    needsToPay = true;
+                    needsToPay = assignedWorker.relationshipContainer.GetOpinionLabel(p_buyer) != RelationshipManager.Close_Friend;
                     buyerOpinionOfWorker = p_buyer.relationshipContainer.GetTotalOpinion(assignedWorker);
                     return true;
                 }

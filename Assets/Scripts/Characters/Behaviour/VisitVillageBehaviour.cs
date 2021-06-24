@@ -32,6 +32,13 @@ public class VisitVillageBehaviour : CharacterBehaviourComponent {
 #endif            
                 if (character.behaviourComponent.visitVillageIntent == VISIT_VILLAGE_INTENT.Socialize) {
                     LocationStructure targetStructure = character.behaviourComponent.targetVisitVillageStructure;
+                    if (targetStructure == null) {
+#if DEBUG_LOG
+                        log = $"{log}\n\t- Visit village target structure has not yet been processed. Wait for processing to kick in...";
+#endif            
+                        producedJob = null;
+                        return false;
+                    }
 #if DEBUG_LOG
                     log = $"{log}\n\t- Visit village target structure is {targetStructure.name}";
 #endif            

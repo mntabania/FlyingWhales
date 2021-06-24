@@ -57,6 +57,7 @@ namespace Ruinarch {
             {KeyCode.R},
             {KeyCode.LeftAlt},
             {KeyCode.LeftShift},
+            {KeyCode.P},
         };
 
         #region getters
@@ -151,7 +152,9 @@ namespace Ruinarch {
                 BroadcastHotkeyPress("Cultist Tab", KeyCode.F8);
             } else if (Input.GetKeyDown(KeyCode.F9)) {
                 BroadcastHotkeyPress("Tutorials Tab", KeyCode.F9);
-            } 
+            } else if (Input.GetKeyDown(KeyCode.P)) {
+                BroadcastHotkeyPress("portal shortcut", KeyCode.P);
+            }
             // else if (Input.GetKeyDown(KeyCode.M)) {
             //     BroadcastHotkeyPress("ToggleMapBtn", KeyCode.M);
             // } 
@@ -180,9 +183,7 @@ namespace Ruinarch {
                 Messenger.Broadcast(ControlsSignals.LEFT_SHIFT_UP);
             }
 
-            if (Input.GetKeyUp(KeyCode.P)) {
-                Messenger.Broadcast(ControlsSignals.PRESS_PORTAL_SHORTCUT);
-            }
+            
         }
         private void BroadcastHotkeyPress(string buttonToActivate, KeyCode p_keyCode) {
             if (!CanUseHotkey(p_keyCode)) return;
