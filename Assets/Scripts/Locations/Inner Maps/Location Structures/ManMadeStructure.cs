@@ -380,7 +380,7 @@ namespace Inner_Maps.Location_Structures {
                     return true;
                 } else if (!p_buyer.relationshipContainer.IsEnemiesWith(assignedWorker)) {
                     //structure is owned by a non-enemy villager
-                    needsToPay = true;
+                    needsToPay = assignedWorker.relationshipContainer.GetOpinionLabel(p_buyer) != RelationshipManager.Close_Friend;
                     buyerOpinionOfWorker = p_buyer.relationshipContainer.GetTotalOpinion(assignedWorker);
                     return true;
                 }
