@@ -1644,8 +1644,8 @@ public static class Extensions {
     #region Piercing and Resistances
     public static ELEMENTAL_TYPE GetElement(this RESISTANCE p_resistance) {
         switch (p_resistance) {
-            case RESISTANCE.Normal:
-                return ELEMENTAL_TYPE.Normal;
+            //case RESISTANCE.Normal:
+            //    return ELEMENTAL_TYPE.Normal;
             case RESISTANCE.Fire:
                 return ELEMENTAL_TYPE.Fire;
             case RESISTANCE.Poison:
@@ -1660,6 +1660,8 @@ public static class Extensions {
                 return ELEMENTAL_TYPE.Earth;
             case RESISTANCE.Wind:
                 return ELEMENTAL_TYPE.Wind;
+            case RESISTANCE.Physical:
+                return ELEMENTAL_TYPE.Normal;
             default:
                 return ELEMENTAL_TYPE.Normal;
         }
@@ -1667,7 +1669,10 @@ public static class Extensions {
     public static RESISTANCE GetResistance(this ELEMENTAL_TYPE p_element) {
         switch (p_element) {
             case ELEMENTAL_TYPE.Normal:
-                return RESISTANCE.Normal;
+                //Changed to Physical
+                //https://trello.com/c/b1xW2EvL/4909-physical-resistance-should-replace-normal
+                return RESISTANCE.Physical;
+                //return RESISTANCE.Normal;
             case ELEMENTAL_TYPE.Fire:
                 return RESISTANCE.Fire;
             case ELEMENTAL_TYPE.Poison:
@@ -1683,7 +1688,7 @@ public static class Extensions {
             case ELEMENTAL_TYPE.Wind:
                 return RESISTANCE.Wind;
             default:
-                return RESISTANCE.Normal;
+                return RESISTANCE.Physical;
         }
     }
     public static bool IsElemental(this RESISTANCE p_resistance) {

@@ -9,7 +9,7 @@ public class PiercingAndResistancesInfo : MonoBehaviour {
 
     [Space(10)]
     [Header("Resistances")]
-    [SerializeField] private TextMeshProUGUI normalResistanceTxt;
+    //[SerializeField] private TextMeshProUGUI normalResistanceTxt;
     [SerializeField] private TextMeshProUGUI fireResistanceTxt;
     [SerializeField] private TextMeshProUGUI poisonResistanceTxt;
     [SerializeField] private TextMeshProUGUI waterResistanceTxt;
@@ -61,7 +61,7 @@ public class PiercingAndResistancesInfo : MonoBehaviour {
         piercingTxt.text = TransformToPercentString(_character.piercingAndResistancesComponent.piercingPower);  
     }
     private void UpdateResistancesInfo() {
-        normalResistanceTxt.text = TransformToPercentString(_character.piercingAndResistancesComponent.GetResistanceValue(RESISTANCE.Normal));
+        //normalResistanceTxt.text = TransformToPercentString(_character.piercingAndResistancesComponent.GetResistanceValue(RESISTANCE.Normal));
         fireResistanceTxt.text = TransformToPercentString(_character.piercingAndResistancesComponent.GetResistanceValue(RESISTANCE.Fire));
         poisonResistanceTxt.text = TransformToPercentString(_character.piercingAndResistancesComponent.GetResistanceValue(RESISTANCE.Poison));
         waterResistanceTxt.text = TransformToPercentString(_character.piercingAndResistancesComponent.GetResistanceValue(RESISTANCE.Water));
