@@ -16,7 +16,14 @@ public class CharacterStructureComponent : CharacterComponent {
 
     #region General
     public void SetWorkPlaceStructure(ManMadeStructure p_structure) {
-        workPlaceStructure = p_structure;
+        if (workPlaceStructure != p_structure) {
+            workPlaceStructure = p_structure;
+            if (HasWorkPlaceStructure()) {
+                if (owner.partyComponent.hasParty) {
+                    owner.interruptComponent.TriggerInterrupt(INTERRUPT.Leave_Party, owner, "Became a worker");
+                }
+            }
+        }
     }
     public bool HasWorkPlaceStructure() {
         return workPlaceStructure != null;

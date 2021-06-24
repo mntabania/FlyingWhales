@@ -39,7 +39,8 @@ public class DefaultAtHome : CharacterBehaviourComponent {
 #if DEBUG_LOG
                 log = $"{log}\n-{character.name} is in home structure and just returned home";
 #endif
-                if ((character.characterClass.IsCombatant() || character.characterClass.className == "Noble") && !character.partyComponent.hasParty && character.homeSettlement != null && !character.traitContainer.HasTrait("Enslaved")) {
+                if ((character.characterClass.IsCombatant() || character.characterClass.className == "Noble") && !character.partyComponent.hasParty && character.homeSettlement != null 
+                    && !character.traitContainer.HasTrait("Enslaved") && !character.structureComponent.HasWorkPlaceStructure()) {
                     bool shouldCreateOrJoinParty = true;
                     if (character.HasAfflictedByPlayerWith(PLAYER_SKILL_TYPE.AGORAPHOBIA)) {
                         shouldCreateOrJoinParty = PlayerSkillManager.Instance.GetAfflictionData(PLAYER_SKILL_TYPE.AGORAPHOBIA).currentLevel >= 3;
