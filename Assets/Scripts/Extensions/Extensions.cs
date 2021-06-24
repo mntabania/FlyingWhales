@@ -23,9 +23,9 @@ public static class Extensions {
             case CRIME_TYPE.Demon_Worship:
             case CRIME_TYPE.Nature_Worship:
             case CRIME_TYPE.Divine_Worship:
-                return true;
+            return true;
             default:
-                return false;
+            return false;
         }
     }
     #endregion
@@ -60,9 +60,9 @@ public static class Extensions {
             case STRUCTURE_TYPE.RABBIT_HOLE:
             case STRUCTURE_TYPE.MINK_HOLE:
             case STRUCTURE_TYPE.MOONCRAWLER_HOLE:
-                return true;
+            return true;
             default:
-                return false;
+            return false;
         }
     }
     public static bool IsVillageStructure(this STRUCTURE_TYPE sub) {
@@ -86,9 +86,9 @@ public static class Extensions {
             case STRUCTURE_TYPE.TANNERY:
             case STRUCTURE_TYPE.FISHERY:
             case STRUCTURE_TYPE.BUTCHERS_SHOP:
-                return true;
+            return true;
             default:
-                return false;
+            return false;
         }
     }
     public static bool IsFacilityStructure(this STRUCTURE_TYPE sub) {
@@ -111,9 +111,9 @@ public static class Extensions {
             case STRUCTURE_TYPE.TANNERY:
             case STRUCTURE_TYPE.FISHERY:
             case STRUCTURE_TYPE.BUTCHERS_SHOP:
-                return true;
+            return true;
             default:
-                return false;
+            return false;
         }
     }
     public static bool IsResourceProducingStructure(this STRUCTURE_TYPE sub) {
@@ -121,9 +121,9 @@ public static class Extensions {
             case STRUCTURE_TYPE.MINE:
             case STRUCTURE_TYPE.LUMBERYARD:
             case STRUCTURE_TYPE.HUNTER_LODGE:
-                return true;
+            return true;
             default:
-                return false;
+            return false;
         }
     }
     public static bool IsFoodProducingStructure(this STRUCTURE_TYPE sub) {
@@ -131,9 +131,9 @@ public static class Extensions {
             case STRUCTURE_TYPE.FARM:
             case STRUCTURE_TYPE.FISHERY:
             case STRUCTURE_TYPE.BUTCHERS_SHOP:
-                return true;
+            return true;
             default:
-                return false;
+            return false;
         }
     }
     public static bool IsPlayerStructure(this STRUCTURE_TYPE type) {
@@ -154,27 +154,27 @@ public static class Extensions {
             case STRUCTURE_TYPE.TORTURE_CHAMBERS:
             case STRUCTURE_TYPE.BIOLAB:
             case STRUCTURE_TYPE.IMP_HUT:
-                return true;
+            return true;
             default:
-                return false;
+            return false;
         }
     }
     public static int StructurePriority(this STRUCTURE_TYPE sub) {
         switch (sub) {
             case STRUCTURE_TYPE.WILDERNESS:
-                return -1;
+            return -1;
             case STRUCTURE_TYPE.DWELLING:
-                return 0;
+            return 0;
             case STRUCTURE_TYPE.CITY_CENTER:
-                return 1;
+            return 1;
             case STRUCTURE_TYPE.TAVERN:
-                return 2;
+            return 2;
             case STRUCTURE_TYPE.WAREHOUSE:
-                return 3;
+            return 3;
             case STRUCTURE_TYPE.PRISON:
-                return 5;
+            return 5;
             default:
-                return 99;
+            return 99;
         }
     }
     public static bool IsInterior(this STRUCTURE_TYPE structureType) {
@@ -214,9 +214,9 @@ public static class Extensions {
             case STRUCTURE_TYPE.DEFENSE_POINT:
             case STRUCTURE_TYPE.IMP_HUT:
             case STRUCTURE_TYPE.BUTCHERS_SHOP:
-                return true;
+            return true;
             default:
-                return false;
+            return false;
         }
     }
     public static bool IsSpecialStructure(this STRUCTURE_TYPE structureType) {
@@ -235,9 +235,9 @@ public static class Extensions {
             // case STRUCTURE_TYPE.RABBIT_HOLE:
             // case STRUCTURE_TYPE.MINK_HOLE:
             // case STRUCTURE_TYPE.MOONCRAWLER_HOLE:
-                return true;
+            return true;
             default:
-                return false;
+            return false;
         }
     }
     public static bool IsBeastDen(this STRUCTURE_TYPE sub) {
@@ -245,9 +245,9 @@ public static class Extensions {
             case STRUCTURE_TYPE.BEAR_DEN:
             case STRUCTURE_TYPE.BOAR_DEN:
             case STRUCTURE_TYPE.WOLF_DEN:
-                return true;
+            return true;
             default:
-                return false;
+            return false;
         }
     }
     public static LANDMARK_TYPE GetLandmarkType(this STRUCTURE_TYPE structureType) {
@@ -261,11 +261,11 @@ public static class Extensions {
     public static SettlementResources.StructureRequirement GetRequiredObjectForBuilding(this STRUCTURE_TYPE structureType) {
         switch (structureType) {
             case STRUCTURE_TYPE.QUARRY:
-                return SettlementResources.StructureRequirement.ROCK;
+            return SettlementResources.StructureRequirement.ROCK;
             // case STRUCTURE_TYPE.HUNTER_LODGE:
             //     return SettlementResources.StructureRequirement.FEATURE_GAME;
             case STRUCTURE_TYPE.MINE:
-                return SettlementResources.StructureRequirement.MINE_SHACK_SPOT;
+            return SettlementResources.StructureRequirement.MINE_SHACK_SPOT;
             case STRUCTURE_TYPE.ABANDONED_MINE:
             case STRUCTURE_TYPE.ANCIENT_GRAVEYARD:
             case STRUCTURE_TYPE.ANCIENT_RUIN:
@@ -273,9 +273,9 @@ public static class Extensions {
             case STRUCTURE_TYPE.CAVE:
             case STRUCTURE_TYPE.TEMPLE:
             case STRUCTURE_TYPE.RUINED_ZOO:
-                return SettlementResources.StructureRequirement.NONE;
+            return SettlementResources.StructureRequirement.NONE;
             default:
-                return SettlementResources.StructureRequirement.NONE;
+            return SettlementResources.StructureRequirement.NONE;
         }
     }
     public static bool IsValidCenterTileForStructure(this STRUCTURE_TYPE structureType, LocationGridTile p_tile, BaseSettlement p_settlement) {
@@ -295,13 +295,13 @@ public static class Extensions {
     public static string StructureName(this STRUCTURE_TYPE structureType) {
         switch (structureType) {
             case STRUCTURE_TYPE.TORTURE_CHAMBERS:
-                return "Prison";
+            return "Prison";
             case STRUCTURE_TYPE.DEFENSE_POINT:
-                return "Prism";
+            return "Prism";
             case STRUCTURE_TYPE.HUNTER_LODGE:
-                return "Skinner's Lodge";
+            return "Skinner's Lodge";
             default:
-                return UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(structureType.ToString());
+            return UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(structureType.ToString());
         }
     }
     public static bool RequiresResourceToBuild(this STRUCTURE_TYPE structureType) {
@@ -309,9 +309,9 @@ public static class Extensions {
             case STRUCTURE_TYPE.FARM:
             case STRUCTURE_TYPE.MINE:
             case STRUCTURE_TYPE.LUMBERYARD:
-                return false;
+            return false;
             default:
-                return true;
+            return true;
         }
     }
     public static int GetResourceBuildCost(this STRUCTURE_TYPE structureType) {
@@ -319,9 +319,9 @@ public static class Extensions {
             case STRUCTURE_TYPE.FARM:
             case STRUCTURE_TYPE.MINE:
             case STRUCTURE_TYPE.LUMBERYARD:
-                return 0;
+            return 0;
             default:
-                return 100;
+            return 100;
         }
     }
     //public static bool IsFoodProducingStructure(this STRUCTURE_TYPE structureType) {
@@ -351,13 +351,13 @@ public static class Extensions {
     public static Cardinal_Direction OppositeDirection(this Cardinal_Direction dir) {
         switch (dir) {
             case Cardinal_Direction.North:
-                return Cardinal_Direction.South;
+            return Cardinal_Direction.South;
             case Cardinal_Direction.South:
-                return Cardinal_Direction.North;
+            return Cardinal_Direction.North;
             case Cardinal_Direction.East:
-                return Cardinal_Direction.West;
+            return Cardinal_Direction.West;
             case Cardinal_Direction.West:
-                return Cardinal_Direction.East;
+            return Cardinal_Direction.East;
         }
         throw new System.Exception($"No opposite direction for {dir}");
     }
@@ -367,9 +367,9 @@ public static class Extensions {
             case GridNeighbourDirection.South:
             case GridNeighbourDirection.West:
             case GridNeighbourDirection.East:
-                return true;
+            return true;
             default:
-                return false;
+            return false;
         }
     }
     #endregion
@@ -381,9 +381,9 @@ public static class Extensions {
             case INTERACTION_TYPE.SLEEP_OUTSIDE:
             case INTERACTION_TYPE.NAP:
             case INTERACTION_TYPE.NARCOLEPTIC_NAP:
-                return true;
+            return true;
             default:
-                return false;
+            return false;
         }
     }
     public static bool IsReturnHome(this INTERACTION_TYPE p_type) {
@@ -397,9 +397,9 @@ public static class Extensions {
             case CHARACTER_STATE.BERSERKED:
             case CHARACTER_STATE.COMBAT:
             case CHARACTER_STATE.HUNT:
-                return true;
+            return true;
             default:
-                return false;
+            return false;
         }
     }
     /// <summary>
@@ -410,9 +410,9 @@ public static class Extensions {
     public static bool HasUniqueSaveData(this CHARACTER_STATE type) {
         switch (type) {
             case CHARACTER_STATE.DOUSE_FIRE:
-                return true;
+            return true;
             default:
-                return false;
+            return false;
         }
     }
     #endregion
@@ -441,17 +441,17 @@ public static class Extensions {
     public static bool IsArtifact(this TILE_OBJECT_TYPE tileObjectType, out ARTIFACT_TYPE artifactType) {
         switch (tileObjectType) {
             case TILE_OBJECT_TYPE.NECRONOMICON:
-                artifactType = ARTIFACT_TYPE.Necronomicon;
-                return true;
+            artifactType = ARTIFACT_TYPE.Necronomicon;
+            return true;
             case TILE_OBJECT_TYPE.ANKH_OF_ANUBIS:
-                artifactType = ARTIFACT_TYPE.Ankh_Of_Anubis;
-                return true;
+            artifactType = ARTIFACT_TYPE.Ankh_Of_Anubis;
+            return true;
             case TILE_OBJECT_TYPE.CHAOS_ORB:
-                artifactType = ARTIFACT_TYPE.Berserk_Orb;
-                return true;
+            artifactType = ARTIFACT_TYPE.Berserk_Orb;
+            return true;
             default:
-                artifactType = ARTIFACT_TYPE.None;
-                return false;
+            artifactType = ARTIFACT_TYPE.None;
+            return false;
         }
     }
     public static bool IsPreBuilt(this TILE_OBJECT_TYPE tileObjectType) {
@@ -470,9 +470,9 @@ public static class Extensions {
             case TILE_OBJECT_TYPE.TABLE_HERBALISM:
             case TILE_OBJECT_TYPE.TABLE_METALWORKING_TOOLS:
             case TILE_OBJECT_TYPE.PLINTH_BOOK:
-                return false;
+            return false;
             default:
-                return true;
+            return true;
         }
     }
     public static bool IsTileObjectAnItem(this TILE_OBJECT_TYPE tileObjectType) {
@@ -543,7 +543,7 @@ public static class Extensions {
             case TILE_OBJECT_TYPE.ORICHALCUM_ARMOR:
             return true;
             default:
-                return false;
+            return false;
         }
     }
     public static bool IsTileObjectVisibleByDefault(this TILE_OBJECT_TYPE tileObjectType) {
@@ -580,7 +580,7 @@ public static class Extensions {
             case TILE_OBJECT_TYPE.POWER_CRYSTAL:
             return true;
             default:
-                return tileObjectType.IsTileObjectAnItem();
+            return tileObjectType.IsTileObjectAnItem();
         }
     }
     public static bool IsDemonicStructureTileObject(this TILE_OBJECT_TYPE tileObjectType) {
@@ -598,9 +598,9 @@ public static class Extensions {
             case TILE_OBJECT_TYPE.CRYPT_TILE_OBJECT:
             case TILE_OBJECT_TYPE.DEFENSE_POINT_TILE_OBJECT:
             case TILE_OBJECT_TYPE.DEFILER_TILE_OBJECT:
-                return true;
+            return true;
             default:
-                return false;
+            return false;
         }
     }
     public static bool CanBeRepaired(this TILE_OBJECT_TYPE tileObjectType) {
@@ -611,9 +611,9 @@ public static class Extensions {
             case TILE_OBJECT_TYPE.GUITAR:
             case TILE_OBJECT_TYPE.TORCH:
             case TILE_OBJECT_TYPE.WATER_WELL:
-                return true;
+            return true;
             default:
-                return false;
+            return false;
         }
     }
     public static bool IsTileObjectImportant(this TILE_OBJECT_TYPE tileObjectType) {
@@ -685,7 +685,7 @@ public static class Extensions {
             case TILE_OBJECT_TYPE.ORICHALCUM_ARMOR:
             return true;
             default:
-                return false;
+            return false;
         }
     }
     #endregion
@@ -699,9 +699,9 @@ public static class Extensions {
             case JOB_TYPE.FULLNESS_RECOVERY_NORMAL:
             case JOB_TYPE.HAPPINESS_RECOVERY:
             case JOB_TYPE.FULLNESS_RECOVERY_ON_SIGHT:
-                return true;
+            return true;
             default:
-                return false;
+            return false;
         }
     }
 
@@ -748,72 +748,72 @@ public static class Extensions {
             case JOB_TYPE.FULLNESS_RECOVERY_URGENT:
             case JOB_TYPE.FULLNESS_RECOVERY_NORMAL:
             case JOB_TYPE.FULLNESS_RECOVERY_ON_SIGHT:
-                return true;
+            return true;
             default:
-                return false;
+            return false;
         }
     }
     public static bool IsTirednessRecoveryTypeJob(this JOB_TYPE type) {
         switch (type) {
             case JOB_TYPE.ENERGY_RECOVERY_URGENT:
             case JOB_TYPE.ENERGY_RECOVERY_NORMAL:
-                return true;
+            return true;
             default:
-                return false;
+            return false;
         }
     }
     public static bool IsHappinessRecoveryTypeJob(this JOB_TYPE type) {
         switch (type) {
             case JOB_TYPE.HAPPINESS_RECOVERY:
-                return true;
+            return true;
             default:
-                return false;
+            return false;
         }
     }
     public static int GetJobTypePriority(this JOB_TYPE jobType) {
         int priority = 0;
         switch (jobType) {
             case JOB_TYPE.DIG_THROUGH:
-                priority = 1300;
-                break;
+            priority = 1300;
+            break;
             case JOB_TYPE.FLEE_TO_HOME:
-                priority = 1200;
-                break;
+            priority = 1200;
+            break;
             case JOB_TYPE.NEUTRALIZE_DANGER:
-                priority = 1100;
-                break;
+            priority = 1100;
+            break;
             case JOB_TYPE.COMBAT:
-                priority = 1090;
-                break;
+            priority = 1090;
+            break;
             case JOB_TYPE.FLEE_CRIME:
             case JOB_TYPE.BERSERK_ATTACK:
             case JOB_TYPE.BERSERK_STROLL:
-                priority = 1089;
-                break;
+            priority = 1089;
+            break;
             case JOB_TYPE.NO_PATH_IDLE:
-                priority = 1088;
-                break;
+            priority = 1088;
+            break;
             case JOB_TYPE.BUILD_CAMP:
             case JOB_TYPE.LYCAN_HUNT_PREY:
             case JOB_TYPE.MONSTER_EAT_CORPSE:
-                priority = 1087;
-                break;
+            priority = 1087;
+            break;
             case JOB_TYPE.DISPOSE_FOOD_PILE:
             case JOB_TYPE.FULLNESS_RECOVERY_ON_SIGHT:
-                priority = 1086;
-                break;
+            priority = 1086;
+            break;
             //case JOB_TYPE.FLEE_CRIME:
             //case JOB_TYPE.BERSERK_ATTACK:
             case JOB_TYPE.DESTROY:
             case JOB_TYPE.RETURN_STOLEN_THING:
             //case JOB_TYPE.BERSERK_STROLL:
             ////case JOB_TYPE.GO_TO:
-                priority = 1085;
-                break;
+            priority = 1085;
+            break;
             case JOB_TYPE.REPORT_CORRUPTED_STRUCTURE:
             case JOB_TYPE.COUNTERATTACK:
-                priority = 1080;
-                break;
+            priority = 1080;
+            break;
             case JOB_TYPE.TRIGGER_FLAW:
             case JOB_TYPE.FIND_NEW_VILLAGE:
             case JOB_TYPE.STEAL_CORPSE:
@@ -823,51 +823,51 @@ public static class Extensions {
             case JOB_TYPE.KLEPTOMANIAC_STEAL:
             case JOB_TYPE.LAZY_NAP:
             case JOB_TYPE.FIND_AFFAIR:
-                priority = 1050;
-                break;
+            priority = 1050;
+            break;
             case JOB_TYPE.RETURN_HOME_URGENT:
-                priority = 1055;
-                break;
+            priority = 1055;
+            break;
             case JOB_TYPE.HIDE_AT_HOME:
             case JOB_TYPE.SEEK_SHELTER:
-                priority = 1040;
-                break;
+            priority = 1040;
+            break;
             case JOB_TYPE.APPREHEND:
-                priority = 1030;
-                break;
+            priority = 1030;
+            break;
             case JOB_TYPE.SCREAM:
-                priority = 1020;
-                break;
+            priority = 1020;
+            break;
             case JOB_TYPE.RELEASE_CHARACTER:
-                priority = 1015;
-                break;
+            priority = 1015;
+            break;
             case JOB_TYPE.BURY_SERIAL_KILLER_VICTIM:
-                priority = 1010;
-                break;
+            priority = 1010;
+            break;
             case JOB_TYPE.OFFER_BLOOD:
-                priority = 1009;
-                break;
+            priority = 1009;
+            break;
             case JOB_TYPE.REMOVE_STATUS:
             case JOB_TYPE.CURE_MAGICAL_AFFLICTION:
-                priority = 1008;
-                break;
+            priority = 1008;
+            break;
             case JOB_TYPE.RECOVER_HP:
-                priority = 1005;
-                break;
+            priority = 1005;
+            break;
             case JOB_TYPE.FEED:
             case JOB_TYPE.RITUAL_KILLING:
             case JOB_TYPE.MONSTER_ABDUCT:
             case JOB_TYPE.OBTAIN_PERSONAL_FOOD:
-                priority = 1003;
-                break;
+            priority = 1003;
+            break;
             case JOB_TYPE.ENERGY_RECOVERY_URGENT:
             case JOB_TYPE.FULLNESS_RECOVERY_URGENT:
             case JOB_TYPE.HUNT_PREY:
             case JOB_TYPE.VISIT_STRUCTURE:
             case JOB_TYPE.SOCIALIZE:
             case JOB_TYPE.VISIT_DIFFERENT_VILLAGE:
-                priority = 1000;
-                break;
+            priority = 1000;
+            break;
             case JOB_TYPE.KNOCKOUT:
             case JOB_TYPE.BRAWL:
             case JOB_TYPE.ABSORB_LIFE:
@@ -875,27 +875,27 @@ public static class Extensions {
             case JOB_TYPE.SPAWN_SKELETON:
             case JOB_TYPE.RAISE_CORPSE:
             case JOB_TYPE.HOARD:
-                priority = 970;
-                break;
+            priority = 970;
+            break;
             case JOB_TYPE.DOUSE_FIRE:
             case JOB_TYPE.SUICIDE_FOLLOW:
-                priority = 950;
-                break;
+            priority = 950;
+            break;
             case JOB_TYPE.DEMON_KILL:
-                priority = 930;
-                break;
+            priority = 930;
+            break;
             case JOB_TYPE.MOVE_CHARACTER:
             case JOB_TYPE.CAPTURE_CHARACTER:
             case JOB_TYPE.TRITON_KIDNAP:
             case JOB_TYPE.RESCUE_MOVE_CHARACTER:
-                priority = 926;
-                break;
+            priority = 926;
+            break;
             case JOB_TYPE.GO_TO:
-                priority = 925;
-                break;
+            priority = 925;
+            break;
             case JOB_TYPE.ZOMBIE_STROLL:
-                priority = 915;
-                break;
+            priority = 915;
+            break;
             case JOB_TYPE.ABSORB_CRYSTAL:
             case JOB_TYPE.MINE_ORE:
             case JOB_TYPE.FIND_FISH:
@@ -910,21 +910,21 @@ public static class Extensions {
             case JOB_TYPE.CREATE_HOSPICE_ANTIDOTE:
             case JOB_TYPE.CREATE_HOSPICE_POTION:
             priority = 920;
-                break;
+            break;
             case JOB_TYPE.UNDERMINE:
             case JOB_TYPE.POISON_FOOD:
             case JOB_TYPE.PLACE_TRAP:
             case JOB_TYPE.OPEN_CHEST:
             case JOB_TYPE.ROAM_AROUND_STRUCTURE:
-                priority = 910;
-                break;
+            priority = 910;
+            break;
             //case JOB_TYPE.FEED:
             case JOB_TYPE.MONSTER_INVADE:
-                priority = 900;
-                break;
+            priority = 900;
+            break;
             case JOB_TYPE.RESTRAIN:
-                priority = 970;
-                break;
+            priority = 970;
+            break;
             //case JOB_TYPE.REPORT_CRIME:
             //    //case JOB_TYPE.BURY:
             //    priority = 870;
@@ -933,8 +933,8 @@ public static class Extensions {
             case JOB_TYPE.PLACE_BLUEPRINT:
             case JOB_TYPE.SPAWN_LAIR:
             case JOB_TYPE.BUILD_VAMPIRE_CASTLE:
-                priority = 850;
-                break;
+            priority = 850;
+            break;
             case JOB_TYPE.SABOTAGE_NEIGHBOUR:
             case JOB_TYPE.DECREASE_MOOD:
             case JOB_TYPE.DISABLE:
@@ -948,14 +948,14 @@ public static class Extensions {
             case JOB_TYPE.IMPRISON_BLOOD_SOURCE:
             case JOB_TYPE.SPREAD_RUMOR:
             case JOB_TYPE.SNATCH_RESTRAIN:
-                priority = 830;
-                break;
+            priority = 830;
+            break;
             case JOB_TYPE.BURY:
             case JOB_TYPE.TORTURE:
             case JOB_TYPE.CHANGE_CLASS:
             case JOB_TYPE.VISIT_HOSPICE:
-                priority = 820;
-                break;
+            priority = 820;
+            break;
             case JOB_TYPE.PRODUCE_FOOD:
             case JOB_TYPE.PRODUCE_FOOD_FOR_CAMP:
             case JOB_TYPE.PRODUCE_METAL:
@@ -966,57 +966,57 @@ public static class Extensions {
             case JOB_TYPE.PLAGUE_CARE:
             case JOB_TYPE.HEALER_CURE:
             case JOB_TYPE.STOCKPILE_FOOD:
-                priority = 800;
-                break;
+            priority = 800;
+            break;
             case JOB_TYPE.CRAFT_OBJECT:
-                priority = 750;
-                break;
+            priority = 750;
+            break;
             case JOB_TYPE.HAUL:
-                priority = 700;
-                break;
+            priority = 700;
+            break;
             case JOB_TYPE.REPAIR:
-                priority = 650;
-                break;
+            priority = 650;
+            break;
             case JOB_TYPE.CLEANSE_TILES:
-                priority = 630;
-                break;
+            priority = 630;
+            break;
             case JOB_TYPE.CLEANSE_CORRUPTION:
             case JOB_TYPE.RECRUIT:
-                priority = 600;
-                break;
+            priority = 600;
+            break;
             case JOB_TYPE.JUDGE_PRISONER:
-                priority = 570;
-                break;
+            priority = 570;
+            break;
             //case JOB_TYPE.APPREHEND:
             //    priority = 550;
             //    break;
             case JOB_TYPE.KIDNAP:
             case JOB_TYPE.KIDNAP_RAID:
             case JOB_TYPE.STEAL_RAID:
-                priority = 530;
-                break;
-            
+            priority = 530;
+            break;
+
             case JOB_TYPE.TAKE_ITEM:
             case JOB_TYPE.INSPECT:
-                priority = 510;
-                break;
+            priority = 510;
+            break;
             case JOB_TYPE.CONFIRM_RUMOR:
             case JOB_TYPE.SHARE_NEGATIVE_INFO:
-                priority = 505;
-                break;
+            priority = 505;
+            break;
             case JOB_TYPE.ENERGY_RECOVERY_NORMAL:
             case JOB_TYPE.FULLNESS_RECOVERY_NORMAL:
             case JOB_TYPE.HAPPINESS_RECOVERY:
-                priority = 500;
-                break;
+            priority = 500;
+            break;
             case JOB_TYPE.DROP_ITEM_PARTY:
-                priority = 495;
-                break;
+            priority = 495;
+            break;
             case JOB_TYPE.PARTY_GO_TO:
             case JOB_TYPE.GO_TO_WAITING:
             case JOB_TYPE.PARTYING:
-                priority = 490;
-                break;
+            priority = 490;
+            break;
             case JOB_TYPE.PATROL:
             case JOB_TYPE.EXPLORE:
             case JOB_TYPE.EXTERMINATE:
@@ -1026,24 +1026,24 @@ public static class Extensions {
             case JOB_TYPE.RAID:
             case JOB_TYPE.HOST_SOCIAL_PARTY:
             case JOB_TYPE.HUNT_HEIRLOOM:
-                priority = 450;
-                break;
+            priority = 450;
+            break;
             case JOB_TYPE.MINE:
             case JOB_TYPE.TEND_FARM:
-                priority = 440;
-                break;
+            priority = 440;
+            break;
             case JOB_TYPE.DRY_TILES:
-                priority = 430;
-                break;
+            priority = 430;
+            break;
             case JOB_TYPE.CHECK_PARALYZED_FRIEND:
-                priority = 400;
-                break;
+            priority = 400;
+            break;
             //case JOB_TYPE.OBTAIN_PERSONAL_FOOD:
             //    priority = 300;
             //    break;
             case JOB_TYPE.VISIT_FRIEND:
-                priority = 280;
-                break;
+            priority = 280;
+            break;
             case JOB_TYPE.OBTAIN_PERSONAL_ITEM:
             case JOB_TYPE.ABDUCT:
             case JOB_TYPE.LEARN_MONSTER:
@@ -1051,8 +1051,8 @@ public static class Extensions {
             case JOB_TYPE.GATHER_HERB:
             case JOB_TYPE.BUY_ITEM:
             case JOB_TYPE.OBTAIN_WANTED_ITEM:
-                priority = 260;
-                break;
+            priority = 260;
+            break;
             // case JOB_TYPE.MONSTER_EAT_CORPSE:
             //     priority = 255;
             //     break;
@@ -1075,134 +1075,134 @@ public static class Extensions {
             case JOB_TYPE.WARM_UP:
             case JOB_TYPE.BURY_IN_ACTIVE_PARTY:
             case JOB_TYPE.IDLE_CLEAN:
-                priority = 250;
-                break;
+            priority = 250;
+            break;
             case JOB_TYPE.HAUL_ANIMAL_CORPSE:
-                priority = 230;
-                break;
+            priority = 230;
+            break;
             case JOB_TYPE.COMBINE_STOCKPILE:
-                priority = 200;
-                break;
+            priority = 200;
+            break;
             case JOB_TYPE.COMMIT_SUICIDE:
-                priority = 150;
-                break;
+            priority = 150;
+            break;
             case JOB_TYPE.STROLL:
-                priority = 100;
-                break;
+            priority = 100;
+            break;
             case JOB_TYPE.MONSTER_EAT:
-                priority = 90;
-                break;
-                // case JOB_TYPE.SNUFF_TORNADO:
-                // case JOB_TYPE.INTERRUPTION:
-                //     priority = 2;
-                //     break;
-                // case JOB_TYPE.COMBAT:
-                //     priority = 3;
-                //     break;
-                // case JOB_TYPE.TRIGGER_FLAW:
-                //     priority = 4;
-                //     break;
-                // case JOB_TYPE.MISC:
-                // case JOB_TYPE.CORRUPT_CULTIST:
-                // case JOB_TYPE.DESTROY_FOOD:
-                // case JOB_TYPE.DESTROY_SUPPLY:
-                // case JOB_TYPE.SABOTAGE_FACTION:
-                // case JOB_TYPE.SCREAM:
-                // case JOB_TYPE.HUNT_SERIAL_KILLER_VICTIM:
-                //     //case JOB_TYPE.INTERRUPTION:
-                //     priority = 5;
-                //     break;
-                // case JOB_TYPE.TANTRUM:
-                // case JOB_TYPE.CLAIM_REGION:
-                // case JOB_TYPE.CLEANSE_REGION:
-                // case JOB_TYPE.ATTACK_DEMONIC_REGION:
-                // case JOB_TYPE.ATTACK_NON_DEMONIC_REGION:
-                // case JOB_TYPE.INVADE_REGION:
-                //     priority = 6;
-                //     break;
-                // // case JOB_TYPE.IDLE:
-                // //     priority = 7;
-                // //     break;
-                // case JOB_TYPE.DEATH:
-                // case JOB_TYPE.BERSERK:
-                // case JOB_TYPE.STEAL:
-                // case JOB_TYPE.RESOLVE_CONFLICT:
-                // case JOB_TYPE.DESTROY:
-                //     priority = 10;
-                //     break;
-                // case JOB_TYPE.KNOCKOUT:
-                // case JOB_TYPE.SEDUCE:
-                // case JOB_TYPE.UNDERMINE_ENEMY:
-                //     priority = 20;
-                //     break;
-                // case JOB_TYPE.HUNGER_RECOVERY_STARVING:
-                // case JOB_TYPE.TIREDNESS_RECOVERY_EXHAUSTED:
-                //     priority = 30;
-                //     break;
-                // case JOB_TYPE.APPREHEND:
-                // case JOB_TYPE.DOUSE_FIRE:
-                //     priority = 40;
-                //     break;
-                // case JOB_TYPE.REMOVE_TRAIT:
-                //     priority = 50;
-                //     break;
-                // case JOB_TYPE.RESTRAIN:
-                //     priority = 60;
-                //     break;
-                // case JOB_TYPE.HAPPINESS_RECOVERY_FORLORN:
-                //     priority = 100;
-                //     break;
-                // case JOB_TYPE.FEED:
-                //     priority = 110;
-                //     break;
-                // case JOB_TYPE.BURY:
-                // case JOB_TYPE.REPAIR:
-                // case JOB_TYPE.WATCH:
-                // case JOB_TYPE.DESTROY_PROFANE_LANDMARK:
-                // case JOB_TYPE.PERFORM_HOLY_INCANTATION:
-                // case JOB_TYPE.PRAY_GODDESS_STATUE:
-                // case JOB_TYPE.REACT_TO_SCREAM:
-                //     priority = 120;
-                //     break;
-                // case JOB_TYPE.BREAK_UP:
-                //     priority = 130;
-                //     break;
-                // case JOB_TYPE.PATROL:
-                //     priority = 170;
-                //     break;
-                // case JOB_TYPE.JUDGEMENT:
-                //     priority = 220;
-                //     break;
-                // case JOB_TYPE.SUICIDE:
-                // case JOB_TYPE.HAUL:
-                //     priority = 230;
-                //     break;
-                // case JOB_TYPE.CRAFT_OBJECT:
-                // case JOB_TYPE.PRODUCE_FOOD:
-                // case JOB_TYPE.PRODUCE_WOOD:
-                // case JOB_TYPE.PRODUCE_STONE:
-                // case JOB_TYPE.PRODUCE_METAL:
-                // case JOB_TYPE.TAKE_PERSONAL_FOOD:
-                // case JOB_TYPE.DROP:
-                // case JOB_TYPE.INSPECT:
-                // case JOB_TYPE.PLACE_BLUEPRINT:
-                // case JOB_TYPE.BUILD_BLUEPRINT:
-                // case JOB_TYPE.OBTAIN_PERSONAL_ITEM:
-                //     priority = 240;
-                //     break;
-                // case JOB_TYPE.HUNGER_RECOVERY:
-                // case JOB_TYPE.TIREDNESS_RECOVERY:
-                // case JOB_TYPE.HAPPINESS_RECOVERY:
-                //     priority = 270;
-                //     break;
-                // case JOB_TYPE.STROLL:
-                // case JOB_TYPE.IDLE:
-                //     priority = 290;
-                //     break;
-                // case JOB_TYPE.IMPROVE:
-                // case JOB_TYPE.EXPLORE:
-                //     priority = 300;
-                //     break;
+            priority = 90;
+            break;
+            // case JOB_TYPE.SNUFF_TORNADO:
+            // case JOB_TYPE.INTERRUPTION:
+            //     priority = 2;
+            //     break;
+            // case JOB_TYPE.COMBAT:
+            //     priority = 3;
+            //     break;
+            // case JOB_TYPE.TRIGGER_FLAW:
+            //     priority = 4;
+            //     break;
+            // case JOB_TYPE.MISC:
+            // case JOB_TYPE.CORRUPT_CULTIST:
+            // case JOB_TYPE.DESTROY_FOOD:
+            // case JOB_TYPE.DESTROY_SUPPLY:
+            // case JOB_TYPE.SABOTAGE_FACTION:
+            // case JOB_TYPE.SCREAM:
+            // case JOB_TYPE.HUNT_SERIAL_KILLER_VICTIM:
+            //     //case JOB_TYPE.INTERRUPTION:
+            //     priority = 5;
+            //     break;
+            // case JOB_TYPE.TANTRUM:
+            // case JOB_TYPE.CLAIM_REGION:
+            // case JOB_TYPE.CLEANSE_REGION:
+            // case JOB_TYPE.ATTACK_DEMONIC_REGION:
+            // case JOB_TYPE.ATTACK_NON_DEMONIC_REGION:
+            // case JOB_TYPE.INVADE_REGION:
+            //     priority = 6;
+            //     break;
+            // // case JOB_TYPE.IDLE:
+            // //     priority = 7;
+            // //     break;
+            // case JOB_TYPE.DEATH:
+            // case JOB_TYPE.BERSERK:
+            // case JOB_TYPE.STEAL:
+            // case JOB_TYPE.RESOLVE_CONFLICT:
+            // case JOB_TYPE.DESTROY:
+            //     priority = 10;
+            //     break;
+            // case JOB_TYPE.KNOCKOUT:
+            // case JOB_TYPE.SEDUCE:
+            // case JOB_TYPE.UNDERMINE_ENEMY:
+            //     priority = 20;
+            //     break;
+            // case JOB_TYPE.HUNGER_RECOVERY_STARVING:
+            // case JOB_TYPE.TIREDNESS_RECOVERY_EXHAUSTED:
+            //     priority = 30;
+            //     break;
+            // case JOB_TYPE.APPREHEND:
+            // case JOB_TYPE.DOUSE_FIRE:
+            //     priority = 40;
+            //     break;
+            // case JOB_TYPE.REMOVE_TRAIT:
+            //     priority = 50;
+            //     break;
+            // case JOB_TYPE.RESTRAIN:
+            //     priority = 60;
+            //     break;
+            // case JOB_TYPE.HAPPINESS_RECOVERY_FORLORN:
+            //     priority = 100;
+            //     break;
+            // case JOB_TYPE.FEED:
+            //     priority = 110;
+            //     break;
+            // case JOB_TYPE.BURY:
+            // case JOB_TYPE.REPAIR:
+            // case JOB_TYPE.WATCH:
+            // case JOB_TYPE.DESTROY_PROFANE_LANDMARK:
+            // case JOB_TYPE.PERFORM_HOLY_INCANTATION:
+            // case JOB_TYPE.PRAY_GODDESS_STATUE:
+            // case JOB_TYPE.REACT_TO_SCREAM:
+            //     priority = 120;
+            //     break;
+            // case JOB_TYPE.BREAK_UP:
+            //     priority = 130;
+            //     break;
+            // case JOB_TYPE.PATROL:
+            //     priority = 170;
+            //     break;
+            // case JOB_TYPE.JUDGEMENT:
+            //     priority = 220;
+            //     break;
+            // case JOB_TYPE.SUICIDE:
+            // case JOB_TYPE.HAUL:
+            //     priority = 230;
+            //     break;
+            // case JOB_TYPE.CRAFT_OBJECT:
+            // case JOB_TYPE.PRODUCE_FOOD:
+            // case JOB_TYPE.PRODUCE_WOOD:
+            // case JOB_TYPE.PRODUCE_STONE:
+            // case JOB_TYPE.PRODUCE_METAL:
+            // case JOB_TYPE.TAKE_PERSONAL_FOOD:
+            // case JOB_TYPE.DROP:
+            // case JOB_TYPE.INSPECT:
+            // case JOB_TYPE.PLACE_BLUEPRINT:
+            // case JOB_TYPE.BUILD_BLUEPRINT:
+            // case JOB_TYPE.OBTAIN_PERSONAL_ITEM:
+            //     priority = 240;
+            //     break;
+            // case JOB_TYPE.HUNGER_RECOVERY:
+            // case JOB_TYPE.TIREDNESS_RECOVERY:
+            // case JOB_TYPE.HAPPINESS_RECOVERY:
+            //     priority = 270;
+            //     break;
+            // case JOB_TYPE.STROLL:
+            // case JOB_TYPE.IDLE:
+            //     priority = 290;
+            //     break;
+            // case JOB_TYPE.IMPROVE:
+            // case JOB_TYPE.EXPLORE:
+            //     priority = 300;
+            //     break;
         }
         return priority;
     }
@@ -1269,9 +1269,9 @@ public static class Extensions {
             case JOB_TYPE.MONSTER_ABDUCT:
             case JOB_TYPE.SNATCH_RESTRAIN:
             case JOB_TYPE.RESCUE_MOVE_CHARACTER:
-                return false;
+            return false;
             default:
-                return true;
+            return true;
         }
     }
     public static bool IsCultistJob(this JOB_TYPE type) {
@@ -1279,9 +1279,9 @@ public static class Extensions {
             case JOB_TYPE.PREACH:
             case JOB_TYPE.CULTIST_POISON:
             case JOB_TYPE.CULTIST_BOOBY_TRAP:
-                return true;
+            return true;
             default:
-                return false;
+            return false;
         }
     }
     public static bool IsReturnHome(this JOB_TYPE p_type) {
@@ -1295,7 +1295,7 @@ public static class Extensions {
     public static string SummonName(this SUMMON_TYPE type) {
         switch (type) {
             default:
-                return UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(type.ToString());
+            return UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(type.ToString());
         }
     }
     public static bool IsAnimalBeast(this SUMMON_TYPE type) {
@@ -1303,9 +1303,9 @@ public static class Extensions {
             case SUMMON_TYPE.Boar:
             case SUMMON_TYPE.Bear:
             case SUMMON_TYPE.Wolf:
-                return true;
+            return true;
             default:
-                return false;
+            return false;
         }
     }
     #endregion
@@ -1314,9 +1314,9 @@ public static class Extensions {
     public static bool CanBeSummoned(this ARTIFACT_TYPE type) {
         switch (type) {
             case ARTIFACT_TYPE.None:
-                return true;
+            return true;
             default:
-                return false;
+            return false;
         }
     }
     #endregion
@@ -1340,25 +1340,38 @@ public static class Extensions {
             case LANDMARK_TYPE.DEFENSE_POINT:
             return true;
             default:
-                return false;
+            return false;
         }
     }
     public static STRUCTURE_TYPE GetStructureType(this LANDMARK_TYPE landmarkType) {
         switch (landmarkType) {
             case LANDMARK_TYPE.HOUSES:
-                return STRUCTURE_TYPE.DWELLING;
+            return STRUCTURE_TYPE.DWELLING;
             case LANDMARK_TYPE.VILLAGE:
-                return STRUCTURE_TYPE.CITY_CENTER;
+            return STRUCTURE_TYPE.CITY_CENTER;
             default:
-                STRUCTURE_TYPE parsed;
-                if (System.Enum.TryParse(landmarkType.ToString(), out parsed)) {
-                    return parsed;
-                } else {
-                    throw new System.Exception($"There is no corresponding structure type for {landmarkType.ToString()}");
-                }
+            STRUCTURE_TYPE parsed;
+            if (System.Enum.TryParse(landmarkType.ToString(), out parsed)) {
+                return parsed;
+            } else {
+                throw new System.Exception($"There is no corresponding structure type for {landmarkType.ToString()}");
+            }
         }
 
     }
+
+    public static bool IsJobStructure(this STRUCTURE_TYPE p_type) {
+		switch (p_type) {
+            case STRUCTURE_TYPE.WORKSHOP:
+            case STRUCTURE_TYPE.HUNTER_LODGE:
+            case STRUCTURE_TYPE.FISHERY:
+            case STRUCTURE_TYPE.MINE:
+            case STRUCTURE_TYPE.BUTCHERS_SHOP:
+            case STRUCTURE_TYPE.FARM:
+                return true;
+		}
+        return false;
+	}
     #endregion
 
     #region Deadly Sins

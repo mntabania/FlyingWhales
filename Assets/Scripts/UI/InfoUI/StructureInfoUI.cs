@@ -16,7 +16,8 @@ public class StructureInfoUI : InfoUIBase {
     [Header("Tabs")]
     [SerializeField] private RuinarchToggle prisonersTab;
     [SerializeField] private RuinarchToggle residentsTab;
-    
+    [SerializeField] private RuinarchToggle workersTab;
+
     [Space(10)]
     [Header("Content")]
     [SerializeField] private GameObject goPrisoners;
@@ -48,6 +49,8 @@ public class StructureInfoUI : InfoUIBase {
     [SerializeField] private GameObject characterItemPrefab;
     [SerializeField] private ScrollRect charactersScrollView;
     [SerializeField] private ScrollRect prisonersScrollView;
+    [SerializeField] private ScrollRect workersScrollView;
+
 
     [Space(10)]
     [Header("Eyes")]
@@ -72,8 +75,9 @@ public class StructureInfoUI : InfoUIBase {
 		Messenger.AddListener<Inner_Maps.Location_Structures.Watcher>(StructureSignals.UPDATE_EYE_WARDS, this.UpdateEyeWardsFromSignal);
         Messenger.AddListener<DemonicStructure>(StructureSignals.DEMONIC_STRUCTURE_REPAIRED, OnDemonicStructureRepaired);
         Messenger.AddListener<KeyCode>(ControlsSignals.KEY_DOWN_EMPTY_SPACE, OnReceiveKeyCodeSignal);
-        Messenger.AddListener(ControlsSignals.PRESS_PORTAL_SHORTCUT, OnReceivePortalShortCutSignal);
+        Messenger.AddListener<string>(UISignals.HOTKEY_CLICK, OnReceivePortalShortCutSignal);
         Messenger.AddListener<LocationStructure>(StructureSignals.STRUCTURE_HP_CHANGED, OnStructureHPChanged);
+        Messenger.AddListener<Character, ManMadeStructure>(StructureSignals.ON_WORKER_HIRED, UpdateWorkersFromSignal);
         ListenToPlayerActionSignals();
 
         villageEventLbl.SetOnLeftClickAction(OnLeftClickVillage);
@@ -114,13 +118,17 @@ public class StructureInfoUI : InfoUIBase {
         btnStoreTarget.SetTarget(activeStructure);
         UpdateStructureInfoUI();
         UpdateContentToShow();
-        if (UsesResidentsTab()) {
+        if (UsesWorkersTab()) {
+            UpdateResidents();
+            UpdateWorkers();
+        } else if (UsesResidentsTab()) {
             UpdateResidents();    
         } else if (UsesPrisonersTab()) {
             UpdatePrisoners();
         } else if (UsesEyesTab()) {
             UpdateEyes();
         }
+        
         LoadActions(activeStructure);
     }
     protected override void LoadActions(IPlayerActionTarget target) {
@@ -167,10 +175,21 @@ public class StructureInfoUI : InfoUIBase {
             return false;
         }
     }
+    private bool UsesWorkersTab() {
+        if (activeStructure.structureType.IsJobStructure()) {
+            return true;
+        } else {
+            return false;
+        }
+    }
     private void UpdateContentToShow() {
-        if (UsesResidentsTab()) {
+        if (UsesWorkersTab()) {
             prisonersTab.isOn = false;
             eyesTab.isOn = false;
+        } else if (UsesResidentsTab()) {
+            prisonersTab.isOn = false;
+            eyesTab.isOn = false;
+            workersTab.isOn = false;
         } else if (UsesPrisonersTab()) {
             residentsTab.isOn = false;
             eyesTab.isOn = false;
@@ -188,9 +207,13 @@ public class StructureInfoUI : InfoUIBase {
         residentsTab.gameObject.SetActive(false);
         prisonersTab.gameObject.SetActive(false);
         eyesTab.gameObject.SetActive(false);
-        if (UsesResidentsTab()) { residentsTab.gameObject.SetActive(true); }
+        workersTab.gameObject.SetActive(false);
+        if (UsesWorkersTab()) { workersTab.gameObject.SetActive(true); residentsTab.gameObject.SetActive(true); }
+        else if (UsesResidentsTab()) { residentsTab.gameObject.SetActive(true); }
         else if (UsesPrisonersTab()) { prisonersTab.gameObject.SetActive(true); }
         else if (UsesEyesTab()) { eyesTab.gameObject.SetActive(true); }
+
+       
     }
     public void UpdateStructureInfoUI() {
         if(activeStructure == null) { return; }
@@ -294,6 +317,22 @@ public class StructureInfoUI : InfoUIBase {
                 }
             }
         }
+        RuinarchListPool<Character>.Release(characters);
+    }
+
+    private void UpdateWorkers() {
+        UtilityScripts.Utilities.DestroyChildren(workersScrollView.content);
+        ManMadeStructure manMadeStructure = activeStructure as ManMadeStructure;
+        for (int i = 0; i < manMadeStructure.assignedWorkerIDs.Count; i++) {
+            string assignedWorkerID = manMadeStructure.assignedWorkerIDs[i];
+            Character assignedWorker = DatabaseManager.Instance.characterDatabase.GetCharacterByPersistentID(assignedWorkerID);
+            if (assignedWorker != null) {
+                GameObject characterGO = UIManager.Instance.InstantiateUIObject(characterItemPrefab.name, workersScrollView.content);
+                CharacterNameplateItem item = characterGO.GetComponent<CharacterNameplateItem>();
+                item.SetObject(assignedWorker);
+                item.SetAsDefaultBehaviour();
+            }
+        }
     }
     private void UpdateEyes() {
         UtilityScripts.Utilities.DestroyChildren(eyesParentTransform);
@@ -308,7 +347,7 @@ public class StructureInfoUI : InfoUIBase {
         }
     }
 
-    private void OnReceivePortalShortCutSignal() {
+    private void OnReceivePortalShortCutSignal(string p_braodcastKey) {
         if (!GameManager.Instance.gameHasStarted) {
             return;
         }
@@ -330,6 +369,11 @@ public class StructureInfoUI : InfoUIBase {
     private void UpdateResidentsFromSignal(Character resident, LocationStructure structure) {
         if (isShowing && activeStructure == structure && UsesResidentsTab()) {
             UpdateResidents();
+        }
+    }
+    private void UpdateWorkersFromSignal(Character resident, LocationStructure structure) {
+        if (isShowing && activeStructure == structure && UsesWorkersTab()) {
+            UpdateWorkers();
         }
     }
     private void UpdatePrisonersFromSignal(Character character, LocationStructure structure) {

@@ -36,4 +36,5 @@
     public static string DEMONIC_STRUCTURE_REPAIRED = "OnDemonicStructureRepaired";
     public static string UPDATE_EYE_WARDS = "OnUpdateEyeWards";
     public static string STRUCTURE_HP_CHANGED = "OnStructureHPChanged";
+    public static string ON_WORKER_HIRED = "OnWorkerHired";
 }

@@ -293,6 +293,7 @@ namespace Inner_Maps.Location_Structures {
             if (!assignedWorkerIDs.Contains(p_worker.persistentID)) {
                 assignedWorkerIDs.Add(p_worker.persistentID);
                 p_worker.structureComponent.SetWorkPlaceStructure(this);
+                Messenger.Broadcast(StructureSignals.ON_WORKER_HIRED, p_worker, this);
             }
         }
         public bool RemoveAssignedWorker(Character p_worker) {
