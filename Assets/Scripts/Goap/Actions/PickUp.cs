@@ -103,10 +103,10 @@ public class PickUp : GoapAction {
 #endif
             } else {
                 if (targetTileObject.characterOwner == null) {
-                    if (job != null && (job.jobType == JOB_TYPE.TAKE_ITEM || job.jobType == JOB_TYPE.HAUL)) {
+                    if (job != null && (job.jobType == JOB_TYPE.TAKE_ITEM || job.jobType == JOB_TYPE.HAUL || job.jobType == JOB_TYPE.COMBINE_STOCKPILE)) {
                         cost += 10;
 #if DEBUG_LOG
-                        costLog = $"{costLog} +10(No personal owner, Take Item/Haul)";
+                        costLog = $"{costLog} +10(No personal owner, Take Item/Haul/Combine Stockpile)";
 #endif
                     } else if (job != null && job.jobType == JOB_TYPE.REMOVE_STATUS) {
                         if (target.gridTileLocation != null && actor.homeSettlement != null &&
