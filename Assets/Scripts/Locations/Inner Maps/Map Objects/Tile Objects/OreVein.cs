@@ -52,13 +52,15 @@ public class OreVein : TileObject {
         return false;
     }
     public override void OnRemoveTileObject(Character removedBy, LocationGridTile removedFrom, bool removeTraits = true, bool destroyTileSlots = true) {
-        removedFrom.parentMap.structureTilemap.SetTile(removedFrom.localPlace, null);
+        removedFrom.SetWallTilemapTileAsset(null);
+        //removedFrom.parentMap.structureTilemap.SetTile(removedFrom.localPlace, null);
         removedFrom.SetTileType(LocationGridTile.Tile_Type.Empty);
         mapVisual.DestroyExistingGUS();
         base.OnRemoveTileObject(removedBy, removedFrom, removeTraits, destroyTileSlots);
     }
     protected override void OnPlaceTileObjectAtTile(LocationGridTile tile) {
-        tile.parentMap.structureTilemap.SetTile(tile.localPlace, InnerMapManager.Instance.assetManager.GetWallAssetBasedOnWallType(WALL_TYPE.Stone));
+        tile.SetWallTilemapTileAsset(InnerMapManager.Instance.assetManager.GetWallAssetBasedOnWallType(WALL_TYPE.Stone));
+        //tile.parentMap.structureTilemap.SetTile(tile.localPlace, InnerMapManager.Instance.assetManager.GetWallAssetBasedOnWallType(WALL_TYPE.Stone));
         // tile.parentMap.structureTilemap.SetColor(tile.localPlace, Color.cyan);
         tile.SetTileType(LocationGridTile.Tile_Type.Wall);
         Vector2 size = new Vector2(1.15f, 1.15f);

@@ -14,7 +14,7 @@ using UnityEngine.Profiling;
 using UtilityScripts;
 
 //actual nodes located in a finished plan that is going to be executed by a character
-public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
+public class ActualGoapNode : IRumorable, ICrimeable, ISavable, IObjectPoolTester {
     public string persistentID { get; private set; }
     public Character actor { get; private set; }
     public IPointOfInterest poiTarget { get; private set; }
@@ -29,6 +29,9 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
     public bool hasBeenReset { get; private set; }
     public bool isSupposedToBeInPool { get; private set; }
     public int stillProcessingCounter { get; private set; }
+    public bool isAssigned { get; set; }
+
+    public int assignmentCounter { get; private set; }
 
     public GoapAction action { get; private set; }
     public ACTION_STATUS actionStatus { get; private set; }
@@ -107,6 +110,7 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
         isSupposedToBeInPool = data.isSupposedToBeInPool;
         stillProcessingCounter = data.stillProcessingCounter;
         hasBeenReset = data.hasBeenReset;
+        isAssigned = data.isAssigned;
     }
 
     public void SetActionData(GoapAction action, Character actor, IPointOfInterest poiTarget, OtherData[] otherData, int cost) {
@@ -1374,6 +1378,9 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
     #endregion
 
     #region Object Pool
+    public void IncreaseAssignmentCounter() {
+
+    }
     public void SetIsStillProcessing(bool p_state) {
         if (p_state) {
             stillProcessingCounter++;
@@ -1465,7 +1472,8 @@ public class SaveDataActualGoapNode : SaveData<ActualGoapNode>, ISavableCounterp
     public bool isNegativeInfo;
     public bool isSupposedToBeInPool;
     public int stillProcessingCounter;
-    public bool hasBeenReset; //For testing only
+    public bool hasBeenReset;
+    public bool isAssigned;
 
     public INTERACTION_TYPE action;
     public ACTION_STATUS actionStatus;
@@ -1478,7 +1486,6 @@ public class SaveDataActualGoapNode : SaveData<ActualGoapNode>, ISavableCounterp
     public POINT_OF_INTEREST_TYPE targetPOIToGoToType;
     public JOB_TYPE associatedJobType;
     public string associatedJobID;
-
 
     public string currentStateName;
     public int currentStateDuration;
@@ -1600,6 +1607,7 @@ public class SaveDataActualGoapNode : SaveData<ActualGoapNode>, ISavableCounterp
         if (data.uniqueActionData != null) {
             uniqueActionData = data.uniqueActionData.Save();
         }
+        isAssigned = data.isAssigned;
     }
 
     public override ActualGoapNode Load() {

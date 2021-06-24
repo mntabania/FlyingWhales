@@ -86,9 +86,12 @@ public class SettlementRulerBehaviour : CharacterBehaviourComponent {
                     if (totalFacilityCount < characterHomeSettlement.settlementType.maxFacilities) {
                         STRUCTURE_TYPE determinedStructureToUse = STRUCTURE_TYPE.NONE;
                         int chance = ChanceData.GetChance(CHANCE_TYPE.Settlement_Ruler_Default_Facility_Chance);
-                        if (!characterHomeSettlement.HasStructure(STRUCTURE_TYPE.FISHERY) &&
-                             !characterHomeSettlement.HasStructure(STRUCTURE_TYPE.FARM) &&
-                             !characterHomeSettlement.HasStructure(STRUCTURE_TYPE.BUTCHERS_SHOP)) {
+                        if (!characterHomeSettlement.HasStructure(STRUCTURE_TYPE.FISHERY)
+                             && !characterHomeSettlement.HasStructure(STRUCTURE_TYPE.FARM)
+                             && !characterHomeSettlement.HasStructure(STRUCTURE_TYPE.BUTCHERS_SHOP)
+                             && !characterHomeSettlement.HasBlueprintOnTileForStructure(STRUCTURE_TYPE.FISHERY)
+                             && !characterHomeSettlement.HasBlueprintOnTileForStructure(STRUCTURE_TYPE.FARM)
+                             && !characterHomeSettlement.HasBlueprintOnTileForStructure(STRUCTURE_TYPE.BUTCHERS_SHOP)) {
                             chance = 50;
 #if DEBUG_LOG
                             log = $"{log}\n-{characterHomeSettlement.name} doesn't have a fishery, farm or butchers shop. Set chance to {chance}";
@@ -103,7 +106,7 @@ public class SettlementRulerBehaviour : CharacterBehaviourComponent {
 #if DEBUG_LOG
                             log = $"{log}\n-Will try to build {determinedStructureToUse}";
 #endif
-                        } else if (!characterHomeSettlement.HasStructure(STRUCTURE_TYPE.LUMBERYARD) && characterHomeSettlement.owner != null && 
+                        } else if (!characterHomeSettlement.HasStructure(STRUCTURE_TYPE.LUMBERYARD) && !characterHomeSettlement.HasBlueprintOnTileForStructure(STRUCTURE_TYPE.LUMBERYARD) && characterHomeSettlement.owner != null && 
                                   characterHomeSettlement.owner.factionType.type == FACTION_TYPE.Elven_Kingdom && characterHomeSettlement.occupiedVillageSpot.HasUnusedLumberyardSpots()) {
                             //build lumberyard
                             chance = 50;
@@ -111,7 +114,7 @@ public class SettlementRulerBehaviour : CharacterBehaviourComponent {
 #if DEBUG_LOG
                             log = $"{log}\n-{characterHomeSettlement.name} doesn't have a lumberyard and is owned by an elven kingdom and has unused lumberyard spots. Set chance to {chance} and will try to build {determinedStructureToUse}";
 #endif
-                        } else if (!characterHomeSettlement.HasStructure(STRUCTURE_TYPE.MINE) && characterHomeSettlement.owner != null && 
+                        } else if (!characterHomeSettlement.HasStructure(STRUCTURE_TYPE.MINE) && !characterHomeSettlement.HasBlueprintOnTileForStructure(STRUCTURE_TYPE.MINE) && characterHomeSettlement.owner != null && 
                                    characterHomeSettlement.owner.factionType.type == FACTION_TYPE.Human_Empire && characterHomeSettlement.occupiedVillageSpot.HasUnusedMiningSpots()) {
                             //build mine
                             chance = 50;
@@ -119,14 +122,14 @@ public class SettlementRulerBehaviour : CharacterBehaviourComponent {
 #if DEBUG_LOG
                             log = $"{log}\n-{characterHomeSettlement.name} doesn't have a mine and is owned by a Human Empire and has unused Mining spots. Set chance to {chance} and will try to build {determinedStructureToUse}";
 #endif
-                        } else if (!characterHomeSettlement.HasStructure(STRUCTURE_TYPE.LUMBERYARD) && characterHomeSettlement.occupiedVillageSpot.HasUnusedLumberyardSpots()) {
+                        } else if (!characterHomeSettlement.HasStructure(STRUCTURE_TYPE.LUMBERYARD) && !characterHomeSettlement.HasBlueprintOnTileForStructure(STRUCTURE_TYPE.LUMBERYARD) && characterHomeSettlement.occupiedVillageSpot.HasUnusedLumberyardSpots()) {
                             //build lumberyard
                             chance = 50;
                             determinedStructureToUse = STRUCTURE_TYPE.LUMBERYARD;  
 #if DEBUG_LOG
                             log = $"{log}\n-{characterHomeSettlement.name} doesn't have a lumberyard and has unused lumberyard spots. Set chance to {chance} and will try to build {determinedStructureToUse}";
 #endif
-                        } else if (!characterHomeSettlement.HasStructure(STRUCTURE_TYPE.MINE) && characterHomeSettlement.occupiedVillageSpot.HasUnusedMiningSpots()) {
+                        } else if (!characterHomeSettlement.HasStructure(STRUCTURE_TYPE.MINE) && !characterHomeSettlement.HasBlueprintOnTileForStructure(STRUCTURE_TYPE.MINE) && characterHomeSettlement.occupiedVillageSpot.HasUnusedMiningSpots()) {
                             //build mine
                             chance = 50;
                             determinedStructureToUse = STRUCTURE_TYPE.MINE;  
@@ -192,7 +195,7 @@ public class SettlementRulerBehaviour : CharacterBehaviourComponent {
 #endif
                                     } else {
                                         int neededWorkShopCount = Mathf.CeilToInt((float)villagerCount / 8f);
-                                        int workshopCount = characterHomeSettlement.GetStructureCount(STRUCTURE_TYPE.WORKSHOP);
+                                        int workshopCount = characterHomeSettlement.GetStructureCount(STRUCTURE_TYPE.WORKSHOP) + characterHomeSettlement.GetNumberOfBlueprintOnTileForStructure(STRUCTURE_TYPE.WORKSHOP);
 #if DEBUG_LOG
                                         log = $"{log}\n-Will check if should build workshop. Needed workshops is {neededWorkShopCount.ToString()}. Current Workshop count is {workshopCount.ToString()}";
 #endif
@@ -205,13 +208,13 @@ public class SettlementRulerBehaviour : CharacterBehaviourComponent {
 #if DEBUG_LOG
                                             log = $"{log}\n-Will check if should build tavern, hospice, prison or cemetery";
 #endif
-                                            if (!characterHomeSettlement.HasStructure(STRUCTURE_TYPE.TAVERN)) {
+                                            if (!characterHomeSettlement.HasStructure(STRUCTURE_TYPE.TAVERN) && !characterHomeSettlement.HasBlueprintOnTileForStructure(STRUCTURE_TYPE.TAVERN)) {
                                                 determinedStructureToUse = STRUCTURE_TYPE.TAVERN;    
-                                            } else if (!characterHomeSettlement.HasStructure(STRUCTURE_TYPE.HOSPICE)) {
+                                            } else if (!characterHomeSettlement.HasStructure(STRUCTURE_TYPE.HOSPICE) && !characterHomeSettlement.HasBlueprintOnTileForStructure(STRUCTURE_TYPE.HOSPICE)) {
                                                 determinedStructureToUse = STRUCTURE_TYPE.HOSPICE;    
-                                            } else if (!characterHomeSettlement.HasStructure(STRUCTURE_TYPE.PRISON)) {
+                                            } else if (!characterHomeSettlement.HasStructure(STRUCTURE_TYPE.PRISON) && !characterHomeSettlement.HasBlueprintOnTileForStructure(STRUCTURE_TYPE.PRISON)) {
                                                 determinedStructureToUse = STRUCTURE_TYPE.PRISON;    
-                                            } else if (!characterHomeSettlement.HasStructure(STRUCTURE_TYPE.CEMETERY)) {
+                                            } else if (!characterHomeSettlement.HasStructure(STRUCTURE_TYPE.CEMETERY) && !characterHomeSettlement.HasBlueprintOnTileForStructure(STRUCTURE_TYPE.CEMETERY)) {
                                                 determinedStructureToUse = STRUCTURE_TYPE.CEMETERY;    
                                             }
 #if DEBUG_LOG
@@ -325,7 +328,7 @@ public class SettlementRulerBehaviour : CharacterBehaviourComponent {
         return true;
     }
     private bool ShouldBuildSkinnersLodge(NPCSettlement p_settlement) {
-        if (p_settlement.HasStructure(STRUCTURE_TYPE.HUNTER_LODGE)) {
+        if (p_settlement.HasStructure(STRUCTURE_TYPE.HUNTER_LODGE) && !p_settlement.HasBlueprintOnTileForStructure(STRUCTURE_TYPE.HUNTER_LODGE)) {
             return false;
         }
         if (!p_settlement.occupiedVillageSpot.HasAccessToSkinnerAnimals()) {

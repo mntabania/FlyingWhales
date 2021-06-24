@@ -81,11 +81,11 @@ public class SaveDataTileObject : SaveData<TileObject>, ISavableCounterpart {
         
         currentHP = data.currentHP;
 
-        if (data.mapObjectVisual == null || data.mapObjectVisual.usedSprite == null) {
+        if (data.mapObjectVisual == null) {
             spriteName = string.Empty;
             rotation = Quaternion.identity;
         } else {
-            spriteName = data.mapObjectVisual.usedSprite.name;
+            spriteName = data.mapObjectVisual.usedSpriteName;
             rotation = data.mapObjectVisual.rotation;
         }
 

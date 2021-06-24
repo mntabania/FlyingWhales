@@ -4,6 +4,8 @@ namespace Inner_Maps.Location_Structures {
     public abstract class AnimalDen : NaturalStructure {
         
         public LocationStructureObject structureObj {get; private set;}
+        public string templateName { get; private set; } //Do not save this since this will be filled up automatically upon loading in SetStructureObject
+        public Vector3 structureObjectWorldPos { get; private set; } //Do not save this since this will be filled up automatically upon loading in SetStructureObject
 
         #region getters
         public override System.Type serializedData => typeof(SaveDataAnimalDen);
@@ -37,6 +39,8 @@ namespace Inner_Maps.Location_Structures {
         #region Structure Object
         public virtual void SetStructureObject(LocationStructureObject structureObj) {
             this.structureObj = structureObj;
+            templateName = structureObj.name;
+            structureObjectWorldPos = structureObj.transform.position;
             Vector3 position = structureObj.transform.position;
             position.x -= 0.5f;
             position.y -= 0.5f;

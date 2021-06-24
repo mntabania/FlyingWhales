@@ -132,6 +132,14 @@ public class SaveDataCurrentProgress {
             yield return null;
         }
     }
+    public void SaveFactions() {
+        for (int i = 0; i < FactionManager.Instance.allFactions.Count; i++) {
+            Faction faction = FactionManager.Instance.allFactions[i];
+            SaveDataFaction saveData = new SaveDataFaction();
+            saveData.Save(faction);
+            AddToSaveHub(saveData, saveData.objectType);
+        }
+    }
     public IEnumerator SaveCharactersCoroutine() {
         UIManager.Instance.optionsMenu.UpdateSaveMessage("Saving characters...");
         int batchCount = 0;
@@ -158,6 +166,19 @@ public class SaveDataCurrentProgress {
             }
         }
     }
+    public void SaveCharacters() {
+        for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
+            Character character = CharacterManager.Instance.allCharacters[i];
+            SaveDataCharacter saveData = CharacterManager.Instance.CreateNewSaveDataCharacter(character);
+            AddToSaveHub(saveData, saveData.objectType);
+        }
+
+        for (int i = 0; i < CharacterManager.Instance.limboCharacters.Count; i++) {
+            Character character = CharacterManager.Instance.limboCharacters[i];
+            SaveDataCharacter saveData = CharacterManager.Instance.CreateNewSaveDataCharacter(character);
+            AddToSaveHub(saveData, saveData.objectType);
+        }
+    }
     public IEnumerator SaveJobsCoroutine() {
         UIManager.Instance.optionsMenu.UpdateSaveMessage("Saving jobs...");
         int batchCount = 0;
@@ -172,6 +193,15 @@ public class SaveDataCurrentProgress {
                 batchCount = 0;
                 yield return null;    
             }
+        }
+    }
+    public void SaveJobs() {
+        for (int i = 0; i < DatabaseManager.Instance.jobDatabase.allJobs.Count; i++) {
+            JobQueueItem jobQueueItem = DatabaseManager.Instance.jobDatabase.allJobs[i];
+            if (jobQueueItem.jobType == JOB_TYPE.NONE) {
+                continue; //skip
+            }
+            AddToSaveHub(jobQueueItem);
         }
     }
     public IEnumerator SaveReactionQuestsCoroutine() {
@@ -189,6 +219,14 @@ public class SaveDataCurrentProgress {
             }
         }
     }
+    public void SaveReactionQuests() {
+        for (int i = 0; i < QuestManager.Instance.activeQuests.Count; i++) {
+            Quest quest = QuestManager.Instance.activeQuests[i];
+            if (quest is ReactionQuest reactionQuest) {
+                AddToSaveHub(reactionQuest);
+            }
+        }
+    }
     public void SavePlagueDisease() {
         hasPlagueDisease = PlagueDisease.HasInstance();
         if (hasPlagueDisease) {
@@ -198,7 +236,6 @@ public class SaveDataCurrentProgress {
     }
     public void SaveWinConditionTracker() {
         if (QuestManager.Instance.winConditionTracker != null) {
-            UIManager.Instance.optionsMenu.UpdateSaveMessage("Saving Win Conditions...");
             saveDataWinConditionTracker = CreateNewSaveDataForWinConditionTracker(QuestManager.Instance.winConditionTracker);
             saveDataWinConditionTracker.Save(QuestManager.Instance.winConditionTracker);    
         }
@@ -211,22 +248,61 @@ public class SaveDataCurrentProgress {
 
     #region Tile Objects
     public IEnumerator SaveTileObjectsCoroutine() {
-        UIManager.Instance.optionsMenu.UpdateSaveMessage("Saving Objects...");
-        int batchCount = 0;
+        yield return null;
+        //UIManager.Instance.optionsMenu.UpdateSaveMessage("Saving Objects...");
+        //int batchCount = 0;
 
-        HashSet<TileObject> allTileObjects = DatabaseManager.Instance.tileObjectDatabase.allTileObjectsList;
+        //HashSet<TileObject> allTileObjects = DatabaseManager.Instance.tileObjectDatabase.allTileObjectsList;
+        //for (int i = 0; i < allTileObjects.Count; i++) {
+        //    TileObject tileObject = allTileObjects.ElementAt(i);
+        //    if (!SaveTileObject(tileObject)) {
+        //        continue;
+        //    }
+        //    batchCount++;
+        //    if (batchCount >= SaveManager.TileObject_Save_Batches) {
+        //        batchCount = 0;
+        //        yield return null;    
+        //    }
+        //}
+
+        ////We copy the destroyedTileObjects in a separate list so that we wont have race conditions if it is still processing in the multithread
+        //List<WeakReference> copyOfDestroyedTileObjects = RuinarchListPool<WeakReference>.Claim();
+        //copyOfDestroyedTileObjects.AddRange(DatabaseManager.Instance.tileObjectDatabase.destroyedTileObjects);
+        //for (int i = 0; i < copyOfDestroyedTileObjects.Count; i++) {
+        //    WeakReference wr = copyOfDestroyedTileObjects[i];
+        //    if (!wr.IsAlive) {
+        //        continue;
+        //    }
+        //    TileObject t = wr.Target as TileObject;
+        //    if (t != null) {
+        //        if (!SaveTileObject(t)) {
+        //            continue;
+        //        }
+        //    }
+        //    batchCount++;
+        //    if (batchCount >= SaveManager.TileObject_Save_Batches) {
+        //        batchCount = 0;
+        //        yield return null;
+        //    }
+        //}
+        //RuinarchListPool<WeakReference>.Release(copyOfDestroyedTileObjects);
+    }
+    public void SaveTileObjects(List<TileObject> allTileObjects) {
         for (int i = 0; i < allTileObjects.Count; i++) {
-            TileObject tileObject = allTileObjects.ElementAt(i);
-            if (!SaveTileObject(tileObject)) {
+            TileObject tileObject = allTileObjects[i];
+            SaveTileObject(tileObject);
+        }
+    }
+    public void SaveGenericTileObjects(List<TileObject> allTileObjects) {
+        for (int i = 0; i < allTileObjects.Count; i++) {
+            GenericTileObject tileObject = allTileObjects[i] as GenericTileObject;
+            if (!SaveGenericTileObject(tileObject)) {
                 continue;
             }
-            batchCount++;
-            if (batchCount >= SaveManager.TileObject_Save_Batches) {
-                batchCount = 0;
-                yield return null;    
-            }
         }
+    }
 
+    public void SaveDestroyedTileObjects() {
         //We copy the destroyedTileObjects in a separate list so that we wont have race conditions if it is still processing in the multithread
         List<WeakReference> copyOfDestroyedTileObjects = RuinarchListPool<WeakReference>.Claim();
         copyOfDestroyedTileObjects.AddRange(DatabaseManager.Instance.tileObjectDatabase.destroyedTileObjects);
@@ -237,33 +313,49 @@ public class SaveDataCurrentProgress {
             }
             TileObject t = wr.Target as TileObject;
             if (t != null) {
-                if (!SaveTileObject(t)) {
+                if (!SaveDestroyedTileObject(t)) {
                     continue;
                 }
             }
-            batchCount++;
-            if (batchCount >= SaveManager.TileObject_Save_Batches) {
-                batchCount = 0;
-                yield return null;
-            }
         }
         RuinarchListPool<WeakReference>.Release(copyOfDestroyedTileObjects);
-
-
     }
-    private bool SaveTileObject(TileObject tileObject) {
+    private void SaveTileObject(TileObject tileObject) {
+        lock (SaveCurrentProgressManager.THREAD_LOCKER) {
+            SaveDataTileObject saveDataTileObject = CreateNewSaveDataForTileObject(tileObject);
+            saveDataTileObject.Save(tileObject);
+            AddToSaveHub(saveDataTileObject, saveDataTileObject.objectType);
+        }
+
+        //Wag na isave dito yung kapartner na wurm hole kasi dadaanan din yun since nasa database din naman sya
+        //if (tileObject is WurmHole wurmHole) {
+        //    //special case for wurm hole because connected wurm hole cannot be saved inside other wurm hole because it will produce a stack overflow exception
+        //    SaveDataTileObject otherWurmHoleSaveData = CreateNewSaveDataForTileObject(wurmHole.wurmHoleConnection);
+        //    otherWurmHoleSaveData.Save(wurmHole.wurmHoleConnection);
+        //    SaveManager.Instance.saveCurrentProgressManager.currentSaveDataProgress.AddToSaveHub(otherWurmHoleSaveData, otherWurmHoleSaveData.objectType);
+        //}
+    }
+    private bool SaveGenericTileObject(GenericTileObject tileObject) {
+        if (tileObject.gridTileLocation.isDefault) {
+            //if tile object is a Generic Tile Object and its parent tile is set as default then do not save it.
+            return false;
+        }
+        lock (SaveCurrentProgressManager.THREAD_LOCKER) {
+            SaveDataTileObject saveDataTileObject = CreateNewSaveDataForTileObject(tileObject);
+            saveDataTileObject.Save(tileObject);
+            AddToSaveHub(saveDataTileObject, saveDataTileObject.objectType);
+        }
+        return true;
+    }
+    private bool SaveDestroyedTileObject(TileObject tileObject) {
         if (tileObject is GenericTileObject genericTileObject && genericTileObject.gridTileLocation.isDefault) {
             //if tile object is a Generic Tile Object and its parent tile is set as default then do not save it.
             return false;
         }
-        SaveDataTileObject saveDataTileObject = CreateNewSaveDataForTileObject(tileObject);
-        saveDataTileObject.Save(tileObject);
-        AddToSaveHub(saveDataTileObject, saveDataTileObject.objectType);
-        if (tileObject is WurmHole wurmHole) {
-            //special case for wurm hole because connected wurm hole cannot be saved inside other wurm hole because it will produce a stack overflow exception
-            SaveDataTileObject otherWurmHoleSaveData = CreateNewSaveDataForTileObject(wurmHole.wurmHoleConnection);
-            otherWurmHoleSaveData.Save(wurmHole.wurmHoleConnection);
-            SaveManager.Instance.saveCurrentProgressManager.currentSaveDataProgress.AddToSaveHub(otherWurmHoleSaveData, otherWurmHoleSaveData.objectType);
+        lock (SaveCurrentProgressManager.THREAD_LOCKER) {
+            SaveDataTileObject saveDataTileObject = CreateNewSaveDataForTileObject(tileObject);
+            saveDataTileObject.Save(tileObject);
+            AddToSaveHub(saveDataTileObject, saveDataTileObject.objectType);
         }
         return true;
     }
