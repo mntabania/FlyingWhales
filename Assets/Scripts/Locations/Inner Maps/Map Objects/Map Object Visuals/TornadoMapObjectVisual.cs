@@ -89,7 +89,7 @@ public sealed class TornadoMapObjectVisual : MovingMapObjectVisual {
 
     public override void PlaceObjectAt(LocationGridTile tile) {
         base.PlaceObjectAt(tile);
-        
+
         GoToRandomTileInRadius();
         _expiryKey = SchedulingManager.Instance.AddEntry(_tornado.expiryDate, Expire, this);
         Messenger.AddListener(Signals.TICK_ENDED, PerTick);
@@ -98,7 +98,7 @@ public sealed class TornadoMapObjectVisual : MovingMapObjectVisual {
         Messenger.AddListener<TileObject, Character, LocationGridTile>(GridTileSignals.TILE_OBJECT_REMOVED, OnTileObjectRemovedFromTile);
         isSpawned = true;
 
-        if (GameManager.Instance.isPaused) {
+        if (GameManager.Instance.isPaused || !GameManager.Instance.gameHasStarted) {
             StartCoroutine(PlayParticleCoroutineWhenGameIsPaused());
         } else {
             PlayTornadoParticle();
@@ -112,6 +112,9 @@ public sealed class TornadoMapObjectVisual : MovingMapObjectVisual {
         RecalculatePathingValues();
     }
     private void RecalculatePathingValues() {
+        if (!GameManager.Instance.gameHasStarted || destinationTile == null) {
+            return;
+        }
         // Keep a note of the time the movement started.
         _startTime = Time.time;
         
@@ -178,7 +181,7 @@ public sealed class TornadoMapObjectVisual : MovingMapObjectVisual {
         if (gameObject.activeSelf == false) {
             return;
         }
-        if (GameManager.Instance.isPaused) {
+        if (GameManager.Instance.isPaused || !GameManager.Instance.gameHasStarted) {
             RecalculatePathingValues();
             return;
         }

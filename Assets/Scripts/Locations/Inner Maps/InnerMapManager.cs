@@ -401,6 +401,7 @@ namespace Inner_Maps {
 #if UNITY_EDITOR
             Area area = tile.area;
             string summary = tile.localPlace.ToString();
+            summary = $"{summary}\n{tile.centeredWorldLocation}";
             summary = $"{summary}\n<b>Area:</b>{(area.name ?? "None")}";
             summary = $"{summary}<b>Area Biome:</b>{area.biomeType.ToString()}";
             summary = $"{summary}<b>Area Elevation:</b>{(area.elevationType.ToString() ?? "None")}";

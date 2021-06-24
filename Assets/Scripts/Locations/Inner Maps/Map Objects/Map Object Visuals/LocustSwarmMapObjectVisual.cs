@@ -44,7 +44,7 @@ public class LocustSwarmMapObjectVisual : MovingMapObjectVisual {
         Messenger.AddListener<bool>(UISignals.PAUSED, OnGamePaused);
         Messenger.AddListener<PROGRESSION_SPEED>(UISignals.PROGRESSION_SPEED_CHANGED, OnProgressionSpeedChanged);
         Messenger.AddListener<ITraitable, Trait>(TraitSignals.TRAITABLE_GAINED_TRAIT, OnTraitableGainedTrait);
-        if (GameManager.Instance.isPaused) {
+        if (GameManager.Instance.isPaused || !GameManager.Instance.gameHasStarted) {
             _movement.Pause();
             StartCoroutine(PlayParticleCoroutineWhenGameIsPaused());
         } else {

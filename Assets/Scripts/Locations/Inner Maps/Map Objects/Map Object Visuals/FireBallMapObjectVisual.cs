@@ -48,7 +48,7 @@ public class FireBallMapObjectVisual : MovingMapObjectVisual {
         Messenger.AddListener<PROGRESSION_SPEED>(UISignals.PROGRESSION_SPEED_CHANGED, OnProgressionSpeedChanged);
         isSpawned = true;
 
-        if (GameManager.Instance.isPaused) {
+        if (GameManager.Instance.isPaused || !GameManager.Instance.gameHasStarted) {
             _movement.Pause();
             StartCoroutine(PlayParticleCoroutineWhenGameIsPaused());
         } else {
@@ -104,9 +104,11 @@ public class FireBallMapObjectVisual : MovingMapObjectVisual {
     }
     public override void SetWorldPosition(Vector3 worldPosition) {
         base.SetWorldPosition(worldPosition);
-        _movement?.Kill();
-        _movement = null;
-        MoveToRandomDirection();
+        if (GameManager.Instance.gameHasStarted) {
+            _movement?.Kill();
+            _movement = null;
+            MoveToRandomDirection();
+        }
     }
     #endregion
 
