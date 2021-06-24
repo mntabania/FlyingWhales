@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Assertions;
 using UtilityScripts;
-public class GoapPlan {
+public class GoapPlan: IObjectPoolTester {
 
     //public string name { get; private set; }
     // public string id { get; private set; }
@@ -21,6 +21,7 @@ public class GoapPlan {
     public bool doNotRecalculate { get; private set; }
     public GOAP_PLAN_STATE state { get; private set; }
     public bool resetPlanOnFinishRecalculation { get; private set; }
+    public bool isAssigned { get; set; }
 
     public GoapPlan() {
         // id = UtilityScripts.Utilities.SetID(this).ToString();
@@ -40,6 +41,8 @@ public class GoapPlan {
         isPersonalPlan = data.isPersonalPlan;
         doNotRecalculate = data.doNotRecalculate;
         state = data.state;
+        isAssigned = data.isAssigned;
+
         allNodes = RuinarchListPool<JobNode>.Claim();
         for (int i = 0; i < data.allNodes.Count; i++) {
             SaveDataJobNode saveDataJobNode = data.allNodes[i];
