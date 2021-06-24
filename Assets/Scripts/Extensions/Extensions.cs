@@ -1368,7 +1368,10 @@ public static class Extensions {
             case STRUCTURE_TYPE.MINE:
             case STRUCTURE_TYPE.BUTCHERS_SHOP:
             case STRUCTURE_TYPE.FARM:
-                return true;
+            case STRUCTURE_TYPE.LUMBERYARD:
+            case STRUCTURE_TYPE.HOSPICE:
+            case STRUCTURE_TYPE.TAVERN:
+            return true;
 		}
         return false;
 	}
