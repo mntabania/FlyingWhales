@@ -41,8 +41,14 @@ public abstract class ResourcePile : TileObject {
             } else if (isBeingCarriedBy != null) {
                 //If amount in pile was reduced to zero and is still being carried, remove from being carried and destroy it
                 isBeingCarriedBy.UncarryPOI(this, addToLocation: false);
+                eventDispatcher.ExecuteTileObjectDestroyed(this);
+                Messenger.Broadcast(TileObjectSignals.DESTROY_TILE_OBJECT, this as TileObject);
             }
         }
+    }
+    public void OnPileCombinedToOtherPile() {
+        eventDispatcher.ExecuteTileObjectDestroyed(this);
+        Messenger.Broadcast(TileObjectSignals.DESTROY_TILE_OBJECT, this as TileObject);
     }
     #endregion
 

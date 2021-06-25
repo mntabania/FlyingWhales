@@ -2111,33 +2111,79 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
                 return null;
             }
         }
-        bool canReportToFactionLeader = false;
-        bool canReportToSettlementRuler = false;
-        if (owner.faction != null && owner.faction.isMajorNonPlayer && owner.faction.leader != null && owner.faction.leader is Character characterLeader
-            && !characterLeader.isDead && !characterLeader.traitContainer.HasTrait("Travelling") && characterLeader != owner && characterLeader != crimeData.criminal && characterLeader != crimeData.target) {
-            if(!crimeData.IsWitness(characterLeader)) {
-                canReportToFactionLeader = true;
-            }
-        }
-        if (owner.homeSettlement != null && owner.homeSettlement.ruler != null && !owner.homeSettlement.ruler.isDead && !owner.homeSettlement.ruler.traitContainer.HasTrait("Travelling") && owner.homeSettlement.ruler != owner && owner.homeSettlement.ruler != crimeData.criminal && owner.homeSettlement.ruler != crimeData.target) {
-            if (!crimeData.IsWitness(owner.homeSettlement.ruler)) {
-                canReportToSettlementRuler = true;
-            }
-        }
         Character targetCharacter = null;
-        if(canReportToFactionLeader && canReportToSettlementRuler) {
-            if(UnityEngine.Random.Range(0, 2) == 0) {
-                targetCharacter = owner.faction.leader as Character;
-            } else {
-                targetCharacter = owner.homeSettlement.ruler;
-            }
-        } else {
-            if (canReportToFactionLeader) {
-                targetCharacter = owner.faction.leader as Character;
-            } else if (canReportToSettlementRuler) {
-                targetCharacter = owner.homeSettlement.ruler;
-            }
+        if (owner.homeSettlement != null) {
+	        Character settlementRuler = owner.homeSettlement.ruler;
+	        if (settlementRuler != null && !settlementRuler.isDead && settlementRuler != owner && settlementRuler != crimeData.criminal && 
+	            settlementRuler != crimeData.target && !settlementRuler.traitContainer.HasTrait("Travelling") && !settlementRuler.partyComponent.isActiveMember && 
+	            !crimeData.IsWitness(settlementRuler) && settlementRuler.currentSettlement == owner.currentSettlement) {
+		        targetCharacter = settlementRuler;
+	        }
         }
+
+        //could not report to settlement ruler, check if can report to faction leader
+        if (targetCharacter == null) {
+	        if (owner.faction != null) {
+		        Character factionLeader = owner.faction.leader as Character;
+		        if (factionLeader != null && !factionLeader.isDead && factionLeader != owner && factionLeader != crimeData.criminal && 
+		            factionLeader != crimeData.target && !factionLeader.traitContainer.HasTrait("Travelling") && !factionLeader.partyComponent.isActiveMember && 
+		            !crimeData.IsWitness(factionLeader) && factionLeader.currentSettlement == owner.currentSettlement) {
+			        targetCharacter = factionLeader;
+		        }
+
+		        //could not report to faction leader, check nearest leader that belongs from the same faction
+		        if (targetCharacter == null) {
+			        Character nearestLeader = null;
+			        float nearestDistance = float.MaxValue;
+			        for (int i = 0; i < owner.faction.characters.Count; i++) {
+				        Character factionMember = owner.faction.characters[i];
+				        if (factionMember.isFactionLeader || factionMember.isSettlementRuler) {
+					        if (!factionMember.isDead && factionMember != owner && factionMember != crimeData.criminal && 
+					            factionMember != crimeData.target && !factionMember.traitContainer.HasTrait("Travelling") && !factionMember.partyComponent.isActiveMember &&
+					            !crimeData.IsWitness(factionMember)) {
+						        float distanceToTarget = Vector2.Distance(owner.worldPosition, factionMember.worldPosition);
+						        if (distanceToTarget < nearestDistance) {
+							        nearestDistance = distanceToTarget;
+							        nearestLeader = factionMember;
+						        }
+					        }
+				        }
+			        }
+
+			        if (nearestLeader != null) {
+				        targetCharacter = nearestLeader;
+			        }
+		        }
+	        }
+        }
+        
+        // bool canReportToFactionLeader = false;
+        // bool canReportToSettlementRuler = false;
+        // if (owner.faction != null && owner.faction.isMajorNonPlayer && owner.faction.leader != null && owner.faction.leader is Character characterLeader
+        //     && !characterLeader.isDead && !characterLeader.traitContainer.HasTrait("Travelling") && characterLeader != owner && characterLeader != crimeData.criminal && characterLeader != crimeData.target) {
+        //     if(!crimeData.IsWitness(characterLeader)) {
+        //         canReportToFactionLeader = true;
+        //     }
+        // }
+        // if (owner.homeSettlement != null && owner.homeSettlement.ruler != null && !owner.homeSettlement.ruler.isDead && !owner.homeSettlement.ruler.traitContainer.HasTrait("Travelling") && owner.homeSettlement.ruler != owner && owner.homeSettlement.ruler != crimeData.criminal && owner.homeSettlement.ruler != crimeData.target) {
+        //     if (!crimeData.IsWitness(owner.homeSettlement.ruler)) {
+        //         canReportToSettlementRuler = true;
+        //     }
+        // }
+        // Character targetCharacter = null;
+        // if(canReportToFactionLeader && canReportToSettlementRuler) {
+        //     if(UnityEngine.Random.Range(0, 2) == 0) {
+        //         targetCharacter = owner.faction.leader as Character;
+        //     } else {
+        //         targetCharacter = owner.homeSettlement.ruler;
+        //     }
+        // } else {
+        //     if (canReportToFactionLeader) {
+        //         targetCharacter = owner.faction.leader as Character;
+        //     } else if (canReportToSettlementRuler) {
+        //         targetCharacter = owner.homeSettlement.ruler;
+        //     }
+        // }
         if(targetCharacter != null) {
             GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.REPORT_CRIME, INTERACTION_TYPE.REPORT_CRIME, targetCharacter, owner);
             job.AddOtherData(INTERACTION_TYPE.REPORT_CRIME, new object[] { crime, crimeData });

@@ -268,6 +268,7 @@ public class DepositResourcePile : GoapAction {
                     pileToBeDepositedTo.AdjustResourceInPile(poiTarget.resourceInPile);
                     TraitManager.Instance.CopyStatuses(poiTarget, pileToBeDepositedTo);
                     actor.UncarryPOI(poiTarget, addToLocation: false);
+                    poiTarget.OnPileCombinedToOtherPile();
                 } else {
                     actor.UncarryPOI(poiTarget);
                 }

@@ -2645,10 +2645,13 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         if (race == RACE.ANGEL) {
             chanceToKnockout = Mathf.RoundToInt(chanceToKnockout * 0.35f);
         }
+
+        chanceToKnockout = ProcessKnockoutChanceThroughPiercingAndResistances(chanceToKnockout, characterThatAttacked, this, ref attackSummary);
+        
         ELEMENTAL_TYPE elementalType = characterThatAttacked.combatComponent.elementalDamage.type;
         AdjustHP(-characterThatAttacked.combatComponent.GetAttackWithCritRateBonus(), elementalType, source: characterThatAttacked, showHPBar: true, piercingPower: characterThatAttacked.piercingAndResistancesComponent.piercingPower, isPlayerSource: isPlayerSource);
 #if DEBUG_LOG
-        attackSummary += $"\nDealt damage {stateComponent.owner.combatComponent.GetAttackWithCritRateBonus()}";
+        attackSummary += $"\nDealt damage {stateComponent.owner.combatComponent.GetAttackWithCritRateBonus().ToString()}";
 #endif
 
         //If the hostile reaches 0 hp, evaluate if he/she dies, get knock out, or get injured
@@ -2670,9 +2673,12 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 }
             }
         } else {
+#if DEBUG_LOG
+            attackSummary += $"\nRolling for knockout..";
+#endif
             //Each non lethal attack has a 15% chance of unconscious
             //https://trello.com/c/qxXVulZl/1126-each-non-lethal-attack-has-a-15-chance-of-making-target-unconscious
-            if (GameUtilities.RollChance(chanceToKnockout)) {
+            if (GameUtilities.RollChance(chanceToKnockout, ref attackSummary)) {
                 if (!characterThatAttacked.combatComponent.IsLethalCombatForTarget(this) && !traitContainer.HasTrait("Sturdy")) {
                     traitContainer.AddTrait(this, "Unconscious", GetCharacterResponsibleForUnconsciousness(characterThatAttacked, combatStateOfAttacker));
                 }
@@ -2710,6 +2716,31 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
         p_attackSummary += $"\nKnockout Chance: {finalChance}%";
         return finalChance;
+    }
+    private int ProcessKnockoutChanceThroughPiercingAndResistances(int p_currentKnockoutChance, Character p_attacker, Character p_target, ref string attackSummary) {
+        attackSummary = $"{attackSummary}\nWill process knockout chance of combat between attacker:{p_attacker.name} and defender:{p_target.name} through piercing";
+        //Reduce Knockout by 1 per 5 Mental and Physical Resistance of target
+        float mentalResistance = p_target.piercingAndResistancesComponent.GetResistanceValue(RESISTANCE.Mental);
+        float physicalResistance = p_target.piercingAndResistancesComponent.GetResistanceValue(RESISTANCE.Physical);
+        float totalResistance = mentalResistance + physicalResistance;
+        int chanceReduction = Mathf.RoundToInt(totalResistance / 5f);
+        attackSummary = $"{attackSummary}\n\tTotal resistance of {p_target.name} is {totalResistance.ToString()}. Chance Reduction is {chanceReduction.ToString()}";
+        
+        //Inc Knockout by 1 per 4 Piercing
+        float totalPiercing = p_attacker.piercingAndResistancesComponent.piercingPower;
+        int chanceIncrease = Mathf.RoundToInt(totalPiercing / 4f);
+        attackSummary = $"{attackSummary}\n\tTotal piercing of {p_attacker.name} is {totalPiercing.ToString()}. Chance Increase is {chanceIncrease.ToString()}";
+
+        int newChance = p_currentKnockoutChance;
+        newChance += chanceIncrease;
+        newChance -= chanceReduction;
+        attackSummary = $"{attackSummary}\n\tComputed chance is {newChance}";
+
+        //Min 1, Max 50
+        newChance = Mathf.Clamp(newChance, 1, 50);
+        attackSummary = $"{attackSummary}\n\tFinal value after Min/Max is {newChance}";
+        
+        return newChance;
     }
     private Character GetCharacterResponsibleForUnconsciousness(Character characterThatAttacked, CombatState combatStateOfAttacker) {
         Character responsibleCharacter = null;
