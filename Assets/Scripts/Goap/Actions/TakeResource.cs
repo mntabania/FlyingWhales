@@ -111,7 +111,7 @@ public class TakeResource : GoapAction {
                 costLog += $" +{cost}(not Obtain Personal Food)";
 #endif
             }
-            if (job.jobType == JOB_TYPE.BUILD_BLUEPRINT && target is ResourcePile resourcePile) {
+            if ((job.jobType == JOB_TYPE.BUILD_BLUEPRINT || job.jobType == JOB_TYPE.HAUL) && target is ResourcePile resourcePile) {
                 int neededResource = GetNeededResource(job, otherData, resourcePile);
                 if (actor.homeSettlement != null) {
                     if (resourcePile.resourceInPile < neededResource) {
