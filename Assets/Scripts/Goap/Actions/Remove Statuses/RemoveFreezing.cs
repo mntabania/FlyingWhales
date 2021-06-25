@@ -48,7 +48,7 @@ public class RemoveFreezing : GoapAction {
 
 #region State Effects
     public void AfterRemoveSuccess(ActualGoapNode goapNode) {
-        goapNode.actor.moneyComponent.AdjustCoins(10);
+        //goapNode.actor.moneyComponent.AdjustCoins(10);
         //**Effect 1**: Remove Poisoned Trait from target table
         goapNode.poiTarget.traitContainer.RemoveStatusAndStacks(goapNode.poiTarget, "Freezing");
         goapNode.poiTarget.traitContainer.RemoveStatusAndStacks(goapNode.poiTarget, "Frozen");

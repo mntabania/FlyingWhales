@@ -153,7 +153,7 @@ public class CraftEquipment : GoapAction {
         target.SetMapObjectState(MAP_OBJECT_STATE.BUILT);
         EquipmentItem targetItem = target as EquipmentItem;
         Assert.IsNotNull(targetItem);
-        p_node.actor.moneyComponent.AdjustCoins(10);
+        p_node.actor.moneyComponent.AdjustCoins(110);
         if (p_node.actor.talentComponent.GetTalent(CHARACTER_TALENT.Crafting).level >= 5) {
             if (GameUtilities.RollChance(20)) {
                 // Debug.LogError(targetItem.name + " Crafted as Premium Quality Item");

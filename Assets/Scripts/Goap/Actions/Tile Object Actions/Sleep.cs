@@ -242,6 +242,23 @@ public class Sleep : GoapAction {
         //goapNode.descriptionLog.AddToFillers(goapNode.targetStructure.location, goapNode.targetStructure.GetNameRelativeTo(goapNode.actor), LOG_IDENTIFIER.LANDMARK_1);
         goapNode.actor.traitContainer.AddTrait(goapNode.actor, "Resting");
         goapNode.actor.CancelAllJobsExceptForCurrent();
+
+        LocationStructure targetStructure = goapNode.poiTarget.gridTileLocation?.structure;
+        if (targetStructure != null && targetStructure.structureType == STRUCTURE_TYPE.TAVERN) {
+            if (targetStructure is ManMadeStructure mmStructure) {
+                if (mmStructure.HasAssignedWorker()) {
+                    //only added coins to first worker since we expect that the tavern only has 1 worker.
+                    //if that changes, this needs to be changed as well.
+                    string assignedWorkerID = mmStructure.assignedWorkerIDs[0];
+                    Character assignedWorker = DatabaseManager.Instance.characterDatabase.GetCharacterByPersistentID(assignedWorkerID);
+                    assignedWorker.moneyComponent.AdjustCoins(33);
+                }
+                // Character assignedWorker = mmStructure.assignedWorker;
+                // if (assignedWorker != null) {
+                //     assignedWorker.moneyComponent.AdjustCoins(10);
+                // }
+            }
+        }
         //goapNode.action.states[goapNode.currentStateName].OverrideDuration(goapNode.actor.currentSleepTicks);
     }
     public void PerTickRestSuccess(ActualGoapNode goapNode) {
@@ -270,22 +287,6 @@ public class Sleep : GoapAction {
     }
     public void AfterRestSuccess(ActualGoapNode goapNode) {
         goapNode.actor.traitContainer.RemoveTrait(goapNode.actor, "Resting");
-        LocationStructure targetStructure = goapNode.poiTarget.gridTileLocation?.structure;
-        if (targetStructure != null && targetStructure.structureType == STRUCTURE_TYPE.TAVERN) {
-            if (targetStructure is ManMadeStructure mmStructure) {
-                if (mmStructure.HasAssignedWorker()) {
-                    //only added coins to first worker since we expect that the tavern only has 1 worker.
-                    //if that changes, this needs to be changed as well.
-                    string assignedWorkerID = mmStructure.assignedWorkerIDs[0];
-                    Character assignedWorker = DatabaseManager.Instance.characterDatabase.GetCharacterByPersistentID(assignedWorkerID);
-                    assignedWorker.moneyComponent.AdjustCoins(10);
-                }
-                // Character assignedWorker = mmStructure.assignedWorker;
-                // if (assignedWorker != null) {
-                //     assignedWorker.moneyComponent.AdjustCoins(10);
-                // }
-            }
-        }
     }
     //public void PreRestFail(ActualGoapNode goapNode) {
     //    if (parentPlan != null && parentPlan.job != null && parentPlan.job.id == actor.sleepScheduleJobID) {
