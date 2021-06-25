@@ -224,7 +224,12 @@ namespace Generator.Map_Generation.Components {
 				yield return MapGenerator.Instance.StartCoroutine(CreateSpecialStructure(specialStructureSetting.structureType, area.region, area,settlement));
 			}
 			yield return null;
-			AdditionalResourceCreation();
+			if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Oona) {
+				AdditionalResourceCreationForOona();
+			} else {
+				AdditionalResourceCreation();	
+			}
+			
 		}
 		#endregion
 
@@ -451,6 +456,63 @@ namespace Generator.Map_Generation.Components {
 			int randomResourceCount = 0;
 			for (int i = 0; i < GridMap.Instance.mainRegion.villageSpots.Count; i++) {
 				randomResourceCount += UnityEngine.Random.Range(1, 4);
+			}
+			List<Area> validAreasNotInVillageSpot = RuinarchListPool<Area>.Claim();
+			List<Area> areasInVillageSpot = RuinarchListPool<Area>.Claim();
+			for (int i = 0; i < GridMap.Instance.allAreas.Count; i++) {
+				Area area = GridMap.Instance.allAreas[i];
+				if (area.GetOccupyingVillageSpot() == null) {
+					//make sure that area is not next to a spot that is reserved by a village
+					List<Area> areasInRange = RuinarchListPool<Area>.Claim();
+					area.PopulateAreasInRange(areasInRange, 1);
+					if (areasInRange.All(a => a.GetOccupyingVillageSpot() == null)) {
+						validAreasNotInVillageSpot.Add(area);	
+					}
+					RuinarchListPool<Area>.Release(areasInRange);
+				} else {
+					areasInVillageSpot.Add(area);
+				}
+			}
+
+			List<string> randomResourceChoices = RuinarchListPool<string>.Claim();
+			randomResourceChoices.Add("BOAR_DEN");
+			randomResourceChoices.Add("WOLF_DEN");
+			randomResourceChoices.Add("BEAR_DEN");
+	        randomResourceChoices.Add("RABBIT_HOLE");
+	        randomResourceChoices.Add("Game Feature");
+	        randomResourceChoices.Add("MINK_HOLE");
+	        randomResourceChoices.Add("MOONCRAWLER_HOLE");
+
+	        
+	        for (int i = 0; i < randomResourceCount; i++) {
+		        string randomType = CollectionUtilities.GetRandomElement(randomResourceChoices);
+
+		        if (randomType == "Game Feature" || randomType == "RABBIT_HOLE" || randomType == "MINK_HOLE" || randomType == "MOONCRAWLER_HOLE") {
+			        if (areasInVillageSpot.Count > 0) {
+				        Area randomArea = CollectionUtilities.GetRandomElement(areasInVillageSpot);
+				        areasInVillageSpot.Remove(randomArea);
+				        if (randomType == "Game Feature") {
+					        randomArea.featureComponent.AddFeature(AreaFeatureDB.Game_Feature, randomArea);    
+				        } else {
+					        CreateMonsterDen(randomType, randomArea);
+				        }
+			        }
+		        } else {
+			        if (validAreasNotInVillageSpot.Count > 0) {
+				        Area randomArea = CollectionUtilities.GetRandomElement(validAreasNotInVillageSpot);
+						validAreasNotInVillageSpot.Remove(randomArea);
+						CreateMonsterDen(randomType, randomArea);
+			        }
+		        }
+	        }
+	        RuinarchListPool<string>.Release(randomResourceChoices);
+	        RuinarchListPool<Area>.Release(areasInVillageSpot);
+	        RuinarchListPool<Area>.Release(validAreasNotInVillageSpot);
+		}
+		private void AdditionalResourceCreationForOona() {
+			int randomResourceCount = 0;
+			for (int i = 0; i < GridMap.Instance.mainRegion.villageSpots.Count; i++) {
+				randomResourceCount += 5;
 			}
 			List<Area> validAreasNotInVillageSpot = RuinarchListPool<Area>.Claim();
 			List<Area> areasInVillageSpot = RuinarchListPool<Area>.Claim();
