@@ -704,7 +704,14 @@ public class CharacterMarker : MapObjectVisual<Character> {
                 if (targetCharacter.marker && !targetCharacter.carryComponent.masterCharacter.movementComponent.isTravellingInWorld) {
                     LocationGridTile characterTileLocation = targetCharacter.gridTileLocation;
                     if (characterTileLocation != null) {
-                        if (characterTileLocation.HasUnwalkableNodes()) {
+                        //check if target character is temporarily unable to move for a long amount of time
+                        //and is located at a tile that has unwalkable nodes, go to a rile that is walkable.
+                        //Only checked specific traits since we do not want characters that are targeting Zapped characters to use this, since
+                        //we expect that once a zapped character can move again, this character will follow that villager.
+                        //Related issue: https://trello.com/c/1a1pneeJ/4869-feed-judge-failed-due-to-wall-line-of-sight
+                        if (characterTileLocation.HasUnwalkableNodes() && (targetCharacter.traitContainer.HasTrait("Unconscious") || 
+                                                                           targetCharacter.traitContainer.HasTrait("Paralyzed") || 
+                                                                           targetCharacter.traitContainer.HasTrait("Restrained"))) {
                             SetDestination(characterTileLocation.GetPositionWithinTileThatIsOnAWalkableNode(), characterTileLocation);
                         } else {
                             SetTargetTransform(targetCharacter.marker.transform);    
