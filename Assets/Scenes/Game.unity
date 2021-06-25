@@ -35857,7 +35857,7 @@ PrefabInstance:
     - target: {fileID: 1245468354585037708, guid: 4fba8bd825c4673419f375943d22d98a,
         type: 3}
       propertyPath: m_RootOrder
-      value: 56
+      value: 57
       objectReference: {fileID: 0}
     - target: {fileID: 1245468354585037708, guid: 4fba8bd825c4673419f375943d22d98a,
         type: 3}
@@ -41263,7 +41263,7 @@ PrefabInstance:
     - target: {fileID: 8551588542397676883, guid: ea7bde54217c7f040bb34433f1526c1c,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -10.100037
+      value: -10.099976
       objectReference: {fileID: 0}
     - target: {fileID: 8551588542397676883, guid: ea7bde54217c7f040bb34433f1526c1c,
         type: 3}
@@ -68186,6 +68186,55 @@ MonoBehaviour:
   m_tipsUIModel: {fileID: 4544559279412832462, guid: 1a569917dbb9ff34e804bddf3a03bb0f,
     type: 3}
   tipsItems: []
+  m_saveDataPlayer:
+    gameVersion: 
+    exp: 0
+    learnedSkills: 
+    unlockedSkills: 
+    cryptTileObjects: []
+    completedBonusTutorials: 
+    completedSpecialPopups: 
+    unlockedWorlds: 
+    unlockedTutorials: 
+    readTutorials: 
+    unlockedTips: 
+    ravagerLoadoutSaveData:
+      extraSpells: 
+      extraAfflictions: 
+      extraMinions: 
+      extraStructures: 
+      extraMiscs: 
+    puppetmasterLoadoutSaveData:
+      extraSpells: 
+      extraAfflictions: 
+      extraMinions: 
+      extraStructures: 
+      extraMiscs: 
+    lichLoadoutSaveData:
+      extraSpells: 
+      extraAfflictions: 
+      extraMinions: 
+      extraStructures: 
+      extraMiscs: 
+    oldRavagerLoadoutSaveData:
+      extraSpells: 
+      extraAfflictions: 
+      extraMinions: 
+      extraStructures: 
+      extraMiscs: 
+    oldPuppetmasterLoadoutSaveData:
+      extraSpells: 
+      extraAfflictions: 
+      extraMinions: 
+      extraStructures: 
+      extraMiscs: 
+    oldLichLoadoutSaveData:
+      extraSpells: 
+      extraAfflictions: 
+      extraMinions: 
+      extraStructures: 
+      extraMiscs: 
+    moreLoadoutOptions: 0
 --- !u!1 &2117699105
 GameObject:
   m_ObjectHideFlags: 0
