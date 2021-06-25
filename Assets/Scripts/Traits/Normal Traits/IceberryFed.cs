@@ -6,7 +6,7 @@ namespace Traits {
         
         public IceberryFed() {
             name = "Iceberry Fed";
-            description = "Doubles all elemental resistances";
+            description = "Doubles all elemental and secondary resistances";
             type = TRAIT_TYPE.STATUS;
             effect = TRAIT_EFFECT.POSITIVE;
             isStacking = true;

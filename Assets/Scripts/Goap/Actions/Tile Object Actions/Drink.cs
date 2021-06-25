@@ -124,6 +124,22 @@ public class Drink : GoapAction {
     public void PreDrinkSuccess(ActualGoapNode goapNode) {
         //goapNode.actor.needsComponent.AdjustDoNotGetBored(1);
         goapNode.actor.jobComponent.IncreaseNumOfTimesActionDone(this);
+        LocationStructure targetStructure = goapNode.poiTarget.gridTileLocation?.structure;
+        if (targetStructure != null && targetStructure.structureType == STRUCTURE_TYPE.TAVERN) {
+            if (targetStructure is ManMadeStructure mmStructure) {
+                if (mmStructure.HasAssignedWorker()) {
+                    //only added coins to first worker since we expect that the tavern only has 1 worker.
+                    //if that changes, this needs to be changed as well.
+                    string assignedWorkerID = mmStructure.assignedWorkerIDs[0];
+                    Character assignedWorker = DatabaseManager.Instance.characterDatabase.GetCharacterByPersistentID(assignedWorkerID);
+                    assignedWorker.moneyComponent.AdjustCoins(33);
+                }
+                // Character assignedWorker = mmStructure.assignedWorker;
+                // if (assignedWorker != null) {
+                //     assignedWorker.moneyComponent.AdjustCoins(10);
+                // }
+            }
+        }
     }
     public void PerTickDrinkSuccess(ActualGoapNode goapNode) {
         goapNode.actor.needsComponent.AdjustHappiness(goapNode.actor.traitContainer.HasTrait("Alcoholic") ? 1.35f : 2f);
@@ -140,23 +156,6 @@ public class Drink : GoapAction {
             goapNode.actor.traitContainer.AddTrait(goapNode.actor, "Alcoholic");
         }
         goapNode.actor.traitContainer.RemoveStatusAndStacks(goapNode.actor, "Withdrawal");
-        LocationStructure targetStructure = goapNode.poiTarget.gridTileLocation?.structure;
-        if (targetStructure != null && targetStructure.structureType == STRUCTURE_TYPE.TAVERN) {
-            if (targetStructure is ManMadeStructure mmStructure) {
-                if (mmStructure.HasAssignedWorker()) {
-                    //only added coins to first worker since we expect that the tavern only has 1 worker.
-                    //if that changes, this needs to be changed as well.
-                    string assignedWorkerID = mmStructure.assignedWorkerIDs[0];
-                    Character assignedWorker = DatabaseManager.Instance.characterDatabase.GetCharacterByPersistentID(assignedWorkerID);
-                    assignedWorker.moneyComponent.AdjustCoins(10);
-                }
-                // Character assignedWorker = mmStructure.assignedWorker;
-                // if (assignedWorker != null) {
-                //     assignedWorker.moneyComponent.AdjustCoins(10);
-                // }
-            }
-        }
-
     }
     //public void PreDrinkPoisoned() {
     //    actor.AdjustDoNotGetBored(1);

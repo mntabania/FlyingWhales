@@ -59,6 +59,7 @@ public class RescueBehaviour : CharacterBehaviourComponent {
 #if DEBUG_LOG
                         log += $"\n-Character is already in previous grid tile of target, will end quest";
 #endif
+                        quest.SetIsSuccessful(true);
                         quest.EndQuest("Target is nowhere to be found");
                         return true;
                     }
@@ -70,6 +71,7 @@ public class RescueBehaviour : CharacterBehaviourComponent {
 #if DEBUG_LOG
                             log += $"\n-Target is dead";
 #endif
+                            quest.SetIsSuccessful(true);
                             quest.EndQuest("Target is dead");
                             return true;
                         } else {
@@ -87,6 +89,7 @@ public class RescueBehaviour : CharacterBehaviourComponent {
 #if DEBUG_LOG
                                 log += $"\n-Target is not incapacitated";
 #endif
+                                quest.SetIsSuccessful(true);
                                 quest.EndQuest("Target is safe");
                                 //if target is paralyzed carry back home
                                 if (quest.targetCharacter.traitContainer.HasTrait("Paralyzed")) {
@@ -108,6 +111,7 @@ public class RescueBehaviour : CharacterBehaviourComponent {
 #if DEBUG_LOG
                     log += $"\n-No markers/tile locations, end quest";
 #endif
+                    quest.SetIsSuccessful(true);
                     quest.EndQuest("Target is nowhere to be found");
                     return true;
                 }

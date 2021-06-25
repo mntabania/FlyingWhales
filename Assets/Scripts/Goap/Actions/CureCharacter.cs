@@ -124,7 +124,7 @@ public class CureCharacter : GoapAction {
         }
     }
     public void AfterCureSuccess(ActualGoapNode goapNode) {
-        goapNode.actor.moneyComponent.AdjustCoins(10);
+        //goapNode.actor.moneyComponent.AdjustCoins(10);
         CureCharacterUAD data = goapNode.GetConvertedUniqueActionData<CureCharacterUAD>();
         if(goapNode.poiTarget is Character targetCharacter && goapNode.actor != targetCharacter) {
             if (data.usedPoisonedHealingPotion) {

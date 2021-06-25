@@ -62,7 +62,7 @@ public class Dispel : GoapAction {
         }
     }
     public void AfterDispelSuccess(ActualGoapNode goapNode) {
-        goapNode.actor.moneyComponent.AdjustCoins(10);
+        goapNode.actor.moneyComponent.AdjustCoins(33);
         string traitToRemove = (string)goapNode.otherData[0].obj;
         if (goapNode.poiTarget.traitContainer.HasTrait(traitToRemove)) {
             Character targetCharacter = goapNode.poiTarget as Character;

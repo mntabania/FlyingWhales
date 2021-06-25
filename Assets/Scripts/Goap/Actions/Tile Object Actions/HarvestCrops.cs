@@ -9,7 +9,7 @@ using UnityEngine.Assertions;
 public class HarvestCrops : GoapAction {
 
     public int m_amountProducedPerTick = 2;
-    private const int _coinGainMultiplier = 1;
+    private const float _coinGainMultiplier = 0.559f;
     public HarvestCrops() : base(INTERACTION_TYPE.HARVEST_CROPS) {
         actionIconString = GoapActionStateDB.Harvest_Icon;
         //advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
@@ -72,7 +72,7 @@ public class HarvestCrops : GoapAction {
             }
         }
 
-        p_node.actor.moneyComponent.AdjustCoins(amount * _coinGainMultiplier);
+        p_node.actor.moneyComponent.AdjustCoins(Mathf.CeilToInt(amount * _coinGainMultiplier));
         matsToHaul.SetResourceInPile(amount);
         tileToSpawnPile.structure.AddPOI(matsToHaul, tileToSpawnPile);
         ProduceLogs(p_node, crop);

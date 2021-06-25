@@ -42,6 +42,7 @@ public class CreateHospicePotion : GoapAction {
         //if (tileToSpawnPile != null && tileToSpawnPile.tileObjectComponent.objHere != null) {
         //    tileToSpawnPile = p_node.actor.gridTileLocation.GetFirstNearestTileFromThisWithNoObject();
         //}
+        p_node.actor.moneyComponent.AdjustCoins(66);
         LocationGridTile targetGridTile = p_node.target.gridTileLocation;
         p_node.actor.structureComponent.workPlaceStructure.RemovePOI(p_node.target);
         targetGridTile.structure.AddPOI(potion, targetGridTile);

@@ -8,7 +8,7 @@ using Traits;
 public class Butcher : GoapAction {
 
     public int m_amountProducedPerTick = 8;
-    private const int _coinGainMultiplier = 1;
+    private const float _coinGainMultiplier = 0.733f;
     public Butcher() : base(INTERACTION_TYPE.BUTCHER) {
         actionIconString = GoapActionStateDB.Butcher_Icon;
         canBeAdvertisedEvenIfTargetIsUnavailable = true;
@@ -480,7 +480,7 @@ public class Butcher : GoapAction {
 
         FoodPile foodPile = CharacterManager.Instance.CreateFoodPileForPOI(poiTarget, tileLocation, false);
         int amount = p_node.currentStateDuration * m_amountProducedPerTick;
-        p_node.actor.moneyComponent.AdjustCoins(amount * _coinGainMultiplier);
+        p_node.actor.moneyComponent.AdjustCoins(Mathf.CeilToInt(amount * _coinGainMultiplier));
         foodPile.SetResourceInPile(amount);
         if (p_node.associatedJobType == JOB_TYPE.PRODUCE_FOOD_FOR_CAMP) {
             if (p_node.actor.partyComponent.hasParty && p_node.actor.partyComponent.currentParty.targetCamp != null) {
