@@ -60,7 +60,7 @@ namespace Inner_Maps.Grid_Tile_Features {
         private void OnDayStarted() {
             for (int i = 0; i < _unoccupiedSpots.Count; i++) {
                 LocationGridTile tile = _unoccupiedSpots[i];
-                if (tile.tileObjectComponent.objHere == null && tile.structure is Wilderness) {
+                if (tile.tileObjectComponent.objHere == null && tile.structure is Wilderness && InnerMapManager.Instance.CanBigTreeBePlacedOnTile(tile)) {
                     if (GameUtilities.RollChance(30)) {
                         //Spawn tree.
                         TileObject tileObject = InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.BIG_TREE_OBJECT);

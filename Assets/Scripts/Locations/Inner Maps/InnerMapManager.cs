@@ -1009,7 +1009,7 @@ namespace Inner_Maps {
                 return false;
             }
             List<LocationGridTile> overlappedTiles = tile.parentMap.GetTiles(new Point(2, 2), tile);
-            int invalidOverlap = overlappedTiles.Count(t => t.tileObjectComponent.objHere != null || t.tileType == LocationGridTile.Tile_Type.Wall);
+            int invalidOverlap = overlappedTiles.Count(t => t.tileObjectComponent.objHere != null || t.tileType == LocationGridTile.Tile_Type.Wall || t.elevationType == ELEVATION.WATER);
             //|| t.partOfCollection.canBeBuiltOnByNPC == false
 
             return invalidOverlap <= 0;
@@ -1031,7 +1031,7 @@ namespace Inner_Maps {
             int invalidOverlap = 0;
             for (int i = 0; i < overlappedTiles.Count; i++) {
                 LocationGridTile overlapped = overlappedTiles[i];
-                if (overlapped.tileObjectComponent.objHere != null || overlapped.tileType == LocationGridTile.Tile_Type.Wall || p_data.GetGeneratedObjectOnTile(overlapped) != TILE_OBJECT_TYPE.NONE) {
+                if (overlapped.tileObjectComponent.objHere != null || overlapped.tileType == LocationGridTile.Tile_Type.Wall || p_data.GetGeneratedObjectOnTile(overlapped) != TILE_OBJECT_TYPE.NONE || overlapped.elevationType == ELEVATION.WATER) {
                     invalidOverlap++;
                 }
             }
