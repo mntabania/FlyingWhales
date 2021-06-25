@@ -50,8 +50,8 @@ public class Party : ILogFiller, ISavable, IJobOwner, IBookmarkable {
     //public bool cannotProduceFoodThisRestPeriod { get; private set; }
     //public bool hasStartedAcceptingQuests { get; private set; }
     public GameDate nextQuestCheckDate { get; private set; }
-    public bool canAcceptQuests { get; private set; }
-    public GameDate canAcceptQuestsAgainDate { get; private set; }
+    //public bool canAcceptQuests { get; private set; }
+    //public GameDate canAcceptQuestsAgainDate { get; private set; }
     public GameDate nextWaitingCheckDate { get; private set; }
     public bool hasSetNextSwitchToWaitingStateTrigger { get; private set; }
     public GameDate endQuestDate { get; private set; }
@@ -127,7 +127,7 @@ public class Party : ILogFiller, ISavable, IJobOwner, IBookmarkable {
         partyFaction = partyCreator.faction;
         isDisbanded = false;
         //hasRested = true;
-        canAcceptQuests = true;
+        //canAcceptQuests = true;
         //perHourElapsedInWaiting = 0;
         forcedCancelJobsOnTickEnded.Clear();
         jobBoard.Initialize();
@@ -168,8 +168,8 @@ public class Party : ILogFiller, ISavable, IJobOwner, IBookmarkable {
         //hasStartedAcceptingQuests = data.hasStartedAcceptingQuests;
         nextQuestCheckDate = data.nextQuestCheckDate;
 
-        canAcceptQuests = data.canAcceptQuests;
-        canAcceptQuestsAgainDate = data.canAcceptQuestsAgainDate;
+        //canAcceptQuests = data.canAcceptQuests;
+        //canAcceptQuestsAgainDate = data.canAcceptQuestsAgainDate;
 
         hasSetNextSwitchToWaitingStateTrigger = data.hasSetNextSwitchToWaitingStateTrigger;
         nextWaitingCheckDate = data.nextWaitingCheckDate;
@@ -196,9 +196,9 @@ public class Party : ILogFiller, ISavable, IJobOwner, IBookmarkable {
         if (!isDisbanded) {
             SchedulingManager.Instance.AddEntry(nextQuestCheckDate, TryAcceptQuest, null);
         }
-        if (!canAcceptQuests) {
-            SchedulingManager.Instance.AddEntry(canAcceptQuestsAgainDate, () => SetCanAcceptQuests(true), null);
-        }
+        //if (!canAcceptQuests) {
+        //    SchedulingManager.Instance.AddEntry(canAcceptQuestsAgainDate, () => SetCanAcceptQuests(true), null);
+        //}
         if (partyState == PARTY_STATE.Waiting) {
             SchedulingManager.Instance.AddEntry(waitingEndDate, WaitingEndedDecisionMaking, this);
         }
@@ -289,20 +289,20 @@ public class Party : ILogFiller, ISavable, IJobOwner, IBookmarkable {
             return;
         }
         if (!isActive) {
-            bool acceptQuest = false;
-            if (isPlayerParty) {
-                acceptQuest = true;
-            } else {
-                //TIME_IN_WORDS currentTimeInWords = GameManager.Instance.GetCurrentTimeInWordsOfTick();
-                acceptQuest = canAcceptQuests; //&& (currentTimeInWords == TIME_IN_WORDS.MORNING || currentTimeInWords == TIME_IN_WORDS.LUNCH_TIME || currentTimeInWords == TIME_IN_WORDS.AFTERNOON);
-            }
-            if (acceptQuest) {
+            //bool acceptQuest = false;
+            //if (isPlayerParty) {
+            //    acceptQuest = true;
+            //} else {
+            //    //TIME_IN_WORDS currentTimeInWords = GameManager.Instance.GetCurrentTimeInWordsOfTick();
+            //    acceptQuest = canAcceptQuests; //&& (currentTimeInWords == TIME_IN_WORDS.MORNING || currentTimeInWords == TIME_IN_WORDS.LUNCH_TIME || currentTimeInWords == TIME_IN_WORDS.AFTERNOON);
+            //}
+            //if (acceptQuest) {
                 PartyQuest quest = partyFaction.partyQuestBoard.GetFirstUnassignedPartyQuestFor(this);
                 if (quest != null) {
                     //hasStartedAcceptingQuests = false;
                     AcceptQuest(quest);
                 }
-            }
+            //}
         }
         ScheduleNextDateToCheckQuest();
     }
@@ -759,6 +759,9 @@ public class Party : ILogFiller, ISavable, IJobOwner, IBookmarkable {
             }
 
             OnDropQuest(currentQuest);
+            if (prevQuest.isSuccessful) {
+                MembersThatJoinedQuestGainsGold();
+            }
             ClearMembersThatJoinedQuest(shouldDropQuest: false);
             partyFaction.partyQuestBoard.RemovePartyQuest(currentQuest);
             SetPartyState(PARTY_STATE.None);
@@ -803,11 +806,12 @@ public class Party : ILogFiller, ISavable, IJobOwner, IBookmarkable {
         ForceCancelAllJobs();
         CancellAllPartyGoToJobsOfMembers();
 
-        //Do not start the 12-hour cooldown if party is already disbanded
-        if (!isDisbanded) {
-            //After a party drops quest, the party must not take quest for 12 hours, so that they can recupirate
-            StartNoQuestCooldown();
-        }
+        //Already removed no quest cooldown because accepting quest is now a different system
+        ////Do not start the 12-hour cooldown if party is already disbanded
+        //if (!isDisbanded) {
+        //    //After a party drops quest, the party must not take quest for 12 hours, so that they can recupirate
+        //    StartNoQuestCooldown();
+        //}
     }
     private void OnAfterDropQuest(PartyQuest quest) {
         for (int i = 0; i < members.Count; i++) {
@@ -815,16 +819,16 @@ public class Party : ILogFiller, ISavable, IJobOwner, IBookmarkable {
             c.dailyScheduleComponent.OnPartyEndQuest(c, quest);
         }
     }
-    private void StartNoQuestCooldown() {
-        if (canAcceptQuests) {
-            SetCanAcceptQuests(false);
-            canAcceptQuestsAgainDate = GameManager.Instance.Today().AddTicks(GameManager.Instance.GetTicksBasedOnHour(12));
-            SchedulingManager.Instance.AddEntry(canAcceptQuestsAgainDate, () => SetCanAcceptQuests(true), null);
-        }
-    }
-    private void SetCanAcceptQuests(bool state) {
-        canAcceptQuests = state;
-    }
+    //private void StartNoQuestCooldown() {
+    //    if (canAcceptQuests) {
+    //        SetCanAcceptQuests(false);
+    //        canAcceptQuestsAgainDate = GameManager.Instance.Today().AddTicks(GameManager.Instance.GetTicksBasedOnHour(12));
+    //        SchedulingManager.Instance.AddEntry(canAcceptQuestsAgainDate, () => SetCanAcceptQuests(true), null);
+    //    }
+    //}
+    //private void SetCanAcceptQuests(bool state) {
+    //    canAcceptQuests = state;
+    //}
     #endregion
 
     #region Members
@@ -860,6 +864,11 @@ public class Party : ILogFiller, ISavable, IJobOwner, IBookmarkable {
         }
         membersThatJoinedQuest.Clear();
         Messenger.Broadcast(PartySignals.CLEAR_MEMBERS_THAT_JOINED_QUEST, this);
+    }
+    public void MembersThatJoinedQuestGainsGold() {
+        for (int i = 0; i < membersThatJoinedQuest.Count; i++) {
+            membersThatJoinedQuest[i].moneyComponent.AdjustCoins(176);
+        }
     }
     public bool RemoveMemberThatJoinedQuest(Character character, bool broadcastSignal = true, bool shouldDropQuest = true) {
         if (membersThatJoinedQuest.Remove(character)) {
@@ -1402,7 +1411,7 @@ public class Party : ILogFiller, ISavable, IJobOwner, IBookmarkable {
         //foodProducer = null;
         //cannotProduceFoodThisRestPeriod = false;
         hasChangedTargetDestination = false;
-        canAcceptQuests = false;
+        //canAcceptQuests = false;
         //perHourElapsedInWaiting = 0;
         bookmarkEventDispatcher.ClearAll();
         damageAccumulator?.Reset();
@@ -1465,8 +1474,8 @@ public class SaveDataParty : SaveData<Party>, ISavableCounterpart {
     public PARTY_QUEST_TYPE plannedPartyType;
     //public bool hasStartedAcceptingQuests;
     public GameDate nextQuestCheckDate;
-    public bool canAcceptQuests;
-    public GameDate canAcceptQuestsAgainDate;
+    //public bool canAcceptQuests;
+    //public GameDate canAcceptQuestsAgainDate;
     public GameDate nextWaitingCheckDate;
     public bool hasSetNextSwitchToWaitingStateTrigger;
     public GameDate endQuestDate;
@@ -1536,8 +1545,8 @@ public class SaveDataParty : SaveData<Party>, ISavableCounterpart {
         //hasStartedAcceptingQuests = data.hasStartedAcceptingQuests;
         nextQuestCheckDate = data.nextQuestCheckDate;
 
-        canAcceptQuests = data.canAcceptQuests;
-        canAcceptQuestsAgainDate = data.canAcceptQuestsAgainDate;
+        //canAcceptQuests = data.canAcceptQuests;
+        //canAcceptQuestsAgainDate = data.canAcceptQuestsAgainDate;
 
         hasSetNextSwitchToWaitingStateTrigger = data.hasSetNextSwitchToWaitingStateTrigger;
         nextWaitingCheckDate = data.nextWaitingCheckDate;
