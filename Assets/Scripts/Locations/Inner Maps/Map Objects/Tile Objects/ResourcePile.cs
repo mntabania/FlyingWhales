@@ -92,5 +92,12 @@ public abstract class ResourcePile : TileObject {
             }
         }
     }
+    protected override void OnSetGridTileLocation() {
+        base.OnSetGridTileLocation();
+#if DEBUG_LOG
+        Debug.Log($"Grid tile location of {nameWithID} was set to {gridTileLocation?.ToString()}");
+#endif
+    }
     #endregion
+    
 }

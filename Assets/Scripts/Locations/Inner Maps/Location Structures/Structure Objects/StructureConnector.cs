@@ -26,7 +26,7 @@ namespace Inner_Maps.Location_Structures {
 #endif
         #endregion
         
-        private void SetOpenState(bool state) {
+        public void SetOpenState(bool state) {
             _isOpen = state;
         }
         public void SetIsPartOfLocationStructureObject(bool p_state) {

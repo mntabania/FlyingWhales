@@ -17,7 +17,7 @@ public class AreaTileObjectComponent : AreaComponent {
             itemsInArea.Add(item);
             if (item is ResourcePile resourcePile) {
                 if (owner.settlementOnArea != null) {
-                    owner.settlementOnArea.SettlementResources?.AddToResourcePiles(resourcePile);
+                    owner.settlementOnArea.SettlementResources?.AddToResourcePiles(resourcePile, owner.settlementOnArea);
                 }
             }
         }
@@ -25,7 +25,7 @@ public class AreaTileObjectComponent : AreaComponent {
     public bool RemoveItemInArea(TileObject item) {
         if (item is ResourcePile resourcePile) {
             if (owner.settlementOnArea != null) {
-                owner.settlementOnArea.SettlementResources?.RemoveFromResourcePiles(resourcePile);
+                owner.settlementOnArea.SettlementResources?.RemoveFromResourcePiles(resourcePile, owner.settlementOnArea);
             }
         }
         return itemsInArea.Remove(item);

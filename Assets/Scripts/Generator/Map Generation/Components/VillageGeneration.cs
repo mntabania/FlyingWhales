@@ -353,7 +353,8 @@ public class VillageGeneration : MapGenerationComponent {
 		for (int j = 0; j < prefabChoices.Count; j++) {
 			GameObject prefabGO = prefabChoices[j];
 			LocationStructureObject prefabObject = prefabGO.GetComponent<LocationStructureObject>();
-			StructureConnector validConnector = prefabObject.GetFirstValidConnector(availableStructureConnectors, region.innerMap, npcSettlement, out var connectorIndex, out LocationGridTile tileToPlaceStructure, out LocationGridTile connectorTile, structureSetting);
+			StructureConnector validConnector = prefabObject.GetFirstValidConnector(availableStructureConnectors, region.innerMap, npcSettlement, out var connectorIndex, 
+				out LocationGridTile tileToPlaceStructure, out LocationGridTile connectorTile, structureSetting, out var functionLog);
 			if (validConnector != null) {
 				//instantiate structure object at tile.
 				LocationStructure structure =  LandmarkManager.Instance.PlaceIndividualBuiltStructureForSettlement(npcSettlement, region.innerMap, prefabGO, tileToPlaceStructure);
@@ -363,7 +364,7 @@ public class VillageGeneration : MapGenerationComponent {
 				p_data.AddLastPlacedStructureTypes(structure.structureType);
 				break; //stop loop since structure was already placed.
 			} else {
-				Debug.LogWarning($"Could not find structure connector for {prefabObject.name}. Choices are:\n{availableStructureConnectors.ComafyList()}");
+				Debug.LogWarning($"Could not find structure connector for {prefabObject.name}. Choices are:\n{availableStructureConnectors.ComafyList()}. Connector Summaries:\n{functionLog}");
 			}
 		}
 		RuinarchListPool<StructureConnector>.Release(availableStructureConnectors);

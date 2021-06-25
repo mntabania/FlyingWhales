@@ -3,9 +3,16 @@ using System.Collections.Generic;
 using UtilityScripts;
 namespace Inner_Maps.Location_Structures {
     public class Lumberyard : ManMadeStructure {
-
         
-        public override Vector3 worldPosition => structureObj.transform.position;
+        public override Vector3 worldPosition {
+            get {
+                Vector3 defaultPos = structureObj.transform.position;
+                defaultPos.x -= 0.5f;
+                defaultPos.y -= 0.5f;
+
+                return defaultPos;
+            }
+        }
 
         public Lumberyard(Region location) : base(STRUCTURE_TYPE.LUMBERYARD, location){
             SetMaxHPAndReset(8000);

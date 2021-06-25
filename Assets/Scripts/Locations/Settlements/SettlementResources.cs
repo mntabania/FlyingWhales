@@ -4,6 +4,7 @@ using Inner_Maps;
 using UnityEngine;
 using UtilityScripts;
 using Inner_Maps.Location_Structures;
+using Locations.Settlements;
 
 public class SettlementResources
 {
@@ -118,12 +119,18 @@ public class SettlementResources
         return totalResource >= p_amount;
     }
 
-    public void AddToResourcePiles(ResourcePile p_newPile) {
+    public void AddToResourcePiles(ResourcePile p_newPile, BaseSettlement settlement) {
         resourcePiles.Add(p_newPile);
+#if DEBUG_LOG
+        Debug.Log($"Added resource pile {p_newPile.nameWithID} to {settlement.name}");
+#endif
     }
 
-    public void RemoveFromResourcePiles(ResourcePile p_newPile) {
+    public void RemoveFromResourcePiles(ResourcePile p_newPile, BaseSettlement settlement) {
         resourcePiles.Remove(p_newPile);
+#if DEBUG_LOG
+        Debug.Log($"Removed resource pile {p_newPile.nameWithID} from {settlement.name}");
+#endif
     }
 
     public ResourcePile GetRandomPileOfCrops() {
@@ -316,12 +323,8 @@ public class SettlementResources
         List<TileObject> pilePool = RuinarchListPool<TileObject>.Claim();
         for (int x = 0; x < resourcePiles.Count; ++x) {
             ResourcePile pile = resourcePiles[x];
-            if (pile.gridTileLocation == null) {
-                //TODO: Check why there is a pile that has no grid tile location in this list
-                continue; //skip
-            }
             if (pile.tileObjectType.IsMetal() || pile.tileObjectType == TILE_OBJECT_TYPE.STONE_PILE) {
-                if (pile.mapObjectState == MAP_OBJECT_STATE.BUILT && pile.currentStructure.structureType != STRUCTURE_TYPE.CITY_CENTER && 
+                if (pile.gridTileLocation != null && pile.mapObjectState == MAP_OBJECT_STATE.BUILT && pile.currentStructure.structureType != STRUCTURE_TYPE.CITY_CENTER && 
                     pile.currentStructure.structureType != STRUCTURE_TYPE.MINE && pile.currentStructure.structureType != STRUCTURE_TYPE.WORKSHOP && 
                     !pile.HasJobTargetingThis(JOB_TYPE.HAUL, JOB_TYPE.COMBINE_STOCKPILE)) {
                     pilePool.Add(pile);

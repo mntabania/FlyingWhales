@@ -10,17 +10,17 @@ public class Rock : TileObject{
 
     public int count { get; set; }
     public override Type serializedData => typeof(SaveDataRock);
-    public StructureConnector structureConnector {
-        get {
-            if (_rockGameObject != null) {
-                return _rockGameObject.structureConnector;
-            }
-            return null;
-        }
-    }
+    // public StructureConnector structureConnector {
+    //     get {
+    //         if (_rockGameObject != null) {
+    //             return _rockGameObject.structureConnector;
+    //         }
+    //         return null;
+    //     }
+    // }
     //public BaseSettlement parentSettlement { get; private set; }
     
-    private RockGameObject _rockGameObject;
+    // private RockGameObject _rockGameObject;
     public Rock() {
         Initialize(TILE_OBJECT_TYPE.ROCK, false);
         AddAdvertisedAction(INTERACTION_TYPE.ASSAULT);
@@ -31,14 +31,14 @@ public class Rock : TileObject{
         //BaseSettlement.onSettlementBuilt += UpdateSettlementResourcesParent;
     }
     public Rock(SaveDataTileObject data) : base(data) { }
-    protected override void CreateMapObjectVisual() {
-        base.CreateMapObjectVisual();
-        _rockGameObject = mapVisual as RockGameObject;
-    }
-    public override void DestroyMapVisualGameObject() {
-        base.DestroyMapVisualGameObject();
-        _rockGameObject = null;
-    }
+    // protected override void CreateMapObjectVisual() {
+    //     base.CreateMapObjectVisual();
+    //     _rockGameObject = mapVisual as RockGameObject;
+    // }
+    // public override void DestroyMapVisualGameObject() {
+    //     base.DestroyMapVisualGameObject();
+    //     _rockGameObject = null;
+    // }
     public void AdjustYield(int amount) {
         yield += amount;
         yield = Mathf.Max(0, yield);
@@ -79,9 +79,9 @@ public class Rock : TileObject{
 
     public override void OnPlacePOI() {
         base.OnPlacePOI();
-        if (structureConnector != null && gridTileLocation != null) {
-            structureConnector.OnPlaceConnector(gridTileLocation.parentMap);    
-        }
+        // if (structureConnector != null && gridTileLocation != null) {
+        //     structureConnector.OnPlaceConnector(gridTileLocation.parentMap);    
+        // }
         UpdateSettlementResourcesParent();
     }
     //public override void OnDestroyPOI() {

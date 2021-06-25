@@ -198,6 +198,17 @@ namespace Inner_Maps {
             }
             
             groundTilemap.SetTiles(positionArray, tileBaseArray);
+            
+            for (int i = 0; i < groundTiles.Count; i++) {
+                LocationGridTile tile = groundTiles[i];
+                tile.UpdateGroundTileMapAssetNameForBatchedTileSetting();
+                batchCount++;
+                if (batchCount == MapGenerationData.InnerMapElevationBatches) {
+                    batchCount = 0;
+                    yield return null;
+                }
+            }
+
             stopwatch.Stop();
             mapGenerationComponent.AddLog($"{region.name} Draw Cave Ground took {stopwatch.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)} seconds to complete.");
             
@@ -267,7 +278,6 @@ namespace Inner_Maps {
                 mapGenerationData.SetGeneratedMapPerlinDetails(oreVeinLocation.gridTileLocation, TILE_OBJECT_TYPE.NONE);
                 
                 //create structure connector on ore vein location, this is so that even if ore vein is destroyed villagers can still create mines.
-                oreVeinLocation.gridTileLocation.tileObjectComponent.genericTileObject.CreateMineShackSpotStructureConnector();
                 CreateOreVein(oreVeinLocation.gridTileLocation);
                 validWallsForOreVeins.Remove(oreVeinLocation);
             }
@@ -329,6 +339,7 @@ namespace Inner_Maps {
                 if (tile.tileObjectComponent.objHere != null) {
                     tile.structure.RemovePOI(tile.tileObjectComponent.objHere);
                 }
+                tile.tileObjectComponent.genericTileObject.CreateMineShackSpotStructureConnector();
                 TileObject well = InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.ORE_VEIN);
                 tile.structure.AddPOI(well, tile);
                 Debug.Log($"Created ore vein at {tile}");
@@ -358,6 +369,16 @@ namespace Inner_Maps {
             }
             structureTilemap.SetTiles(positionArray, tileBaseArray);
 
+            for (int i = 0; i < tiles.Count; i++) {
+                LocationGridTile tile = tiles[i];
+                tile.UpdateWallTileMapAssetNameForBatchedTileSetting();
+                batchCount++;
+                if (batchCount == MapGenerationData.InnerMapElevationBatches) {
+                    batchCount = 0;
+                    yield return null;
+                }
+            }
+            
             RuinarchListPool<LocationGridTile>.Release(tiles);
             stopwatch.Stop();
             mapGenerationComponent.AddLog($"{region.name} Draw Ocean took {stopwatch.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)} seconds to complete.");

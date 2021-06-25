@@ -756,8 +756,11 @@ public class LocationStructureObject : PooledObject, ISelectable {
     /// <param name="tileToPlaceStructure">The LocationGridTile to place the structure at. This is the computed center of the structure.</param>
     /// <param name="connectorTile">The LocationGridTile that the chosen connector is placed at.</param>
     /// <param name="p_structureSetting">The structure setting to place.</param>
+    /// <param name="functionLog">The output log of what happened inside this function. used for determining why this template could not be placed.</param>
     /// <returns>The first valid connector from the list of choices.</returns>
-    public StructureConnector GetFirstValidConnector(List<StructureConnector> connectionChoices, InnerTileMap innerTileMap, BaseSettlement p_settlement, out int usedConnectorIndex, out LocationGridTile tileToPlaceStructure, out LocationGridTile connectorTile, StructureSetting p_structureSetting) {
+    public StructureConnector GetFirstValidConnector(List<StructureConnector> connectionChoices, InnerTileMap innerTileMap, BaseSettlement p_settlement, out int usedConnectorIndex, 
+        out LocationGridTile tileToPlaceStructure, out LocationGridTile connectorTile, StructureSetting p_structureSetting, out string functionLog) {
+        string cannotPlaceSummary = string.Empty;
         //loop through connection choices
         for (int i = 0; i < connectionChoices.Count; i++) {
             StructureConnector connectorA = connectionChoices[i];
@@ -777,14 +780,22 @@ public class LocationStructureObject : PooledObject, ISelectable {
                 Vector2Int computedCenterLocation = new Vector2Int(connectorATileLocation.localPlace.x + distanceFromCenter.x, connectorATileLocation.localPlace.y + distanceFromCenter.y);
                 
                 LocationGridTile centerTile = innerTileMap.GetTileFromMapCoordinates(computedCenterLocation.x, computedCenterLocation.y);
-                if (centerTile != null && p_structureSetting.structureType.IsValidCenterTileForStructure(centerTile, p_settlement) && HasEnoughSpaceIfPlacedOn(centerTile)) {
-                    tileToPlaceStructure = centerTile;
-                    usedConnectorIndex = j;
-                    connectorTile = connectorA.GetLocationGridTileGivenCurrentPosition(innerTileMap);
-                    return connectorA;
+                if (centerTile != null) {
+                    bool isValidCenterTileForStructure = p_structureSetting.structureType.IsValidCenterTileForStructure(centerTile, p_settlement);
+                    string reason = string.Empty;
+                    if (isValidCenterTileForStructure && HasEnoughSpaceIfPlacedOn(centerTile, out reason)) {
+                        tileToPlaceStructure = centerTile;
+                        usedConnectorIndex = j;
+                        connectorTile = connectorA.GetLocationGridTileGivenCurrentPosition(innerTileMap);
+                        functionLog = cannotPlaceSummary;
+                        return connectorA;
+                    } else {
+                        cannotPlaceSummary = $"{cannotPlaceSummary}\n\t- Cannot place {name} connector {j} on {connectorA}. isValidCenterTileForStructure: {isValidCenterTileForStructure.ToString()} Reason: {reason}";
+                    }    
                 }
             }
         }
+        functionLog = cannotPlaceSummary;
         tileToPlaceStructure = null;
         usedConnectorIndex = -1;
         connectorTile = null;
@@ -895,20 +906,20 @@ public class LocationStructureObject : PooledObject, ISelectable {
             o_cannotPlaceReason = LocalizationManager.Instance.GetLocalizedValue("Locations", "Structures", "invalid_build_edge");
             return false;
         }
-        if (!GameManager.Instance.gameHasStarted && !structureType.IsPlayerStructure()) {
-            //need to check this before game starts since mountains and oceans are generated after settlements, this is so structures will not be built on Mountain/Ocean tiles
-            //since we expect that they will be generated later
-            Area areaOwner = tile.area;
-            if (areaOwner.elevationType == ELEVATION.WATER || areaOwner.elevationType == ELEVATION.MOUNTAIN) {
-                o_cannotPlaceReason = string.Empty;
-                return false;
-            }
-            // LocationStructure mostImportantStructure = areaOwner.structureComponent.GetMostImportantStructureOnTile();
-            // if (mostImportantStructure != null && mostImportantStructure.structureType.IsSpecialStructure()) {
-            //     o_cannotPlaceReason = string.Empty;
-            //     return false;
-            // }
-        }
+        // if (!GameManager.Instance.gameHasStarted && !structureType.IsPlayerStructure()) {
+        //     //need to check this before game starts since mountains and oceans are generated after settlements, this is so structures will not be built on Mountain/Ocean tiles
+        //     //since we expect that they will be generated later
+        //     Area areaOwner = tile.area;
+        //     if (areaOwner.elevationType == ELEVATION.WATER || areaOwner.elevationType == ELEVATION.MOUNTAIN) {
+        //         o_cannotPlaceReason = string.Empty;
+        //         return false;
+        //     }
+        //     // LocationStructure mostImportantStructure = areaOwner.structureComponent.GetMostImportantStructureOnTile();
+        //     // if (mostImportantStructure != null && mostImportantStructure.structureType.IsSpecialStructure()) {
+        //     //     o_cannotPlaceReason = string.Empty;
+        //     //     return false;
+        //     // }
+        // }
         //Note: Demonic structure can now be built if there is one tile that is on or beside a corrupted tile, so the checker for it is now moved to DemonicStructurePlayerSkill - CanBuildDemonicStructureOn
         //if (structureType != STRUCTURE_TYPE.THE_PORTAL && structureType.IsPlayerStructure() && !tile.corruptionComponent.isCorrupted) {
         //    //Note: Demonic structures must be placed on or beside corruption! Except for the portal, since it is the structure that will start the corruption
@@ -985,7 +996,7 @@ public class LocationStructureObject : PooledObject, ISelectable {
                 if (neighbour.tileObjectComponent.objHere is FishingSpot || 
                     neighbour.tileObjectComponent.objHere is OreVein || 
                     neighbour.tileObjectComponent.genericTileObject.structureConnector != null) {
-                    o_cannotPlaceReason = string.Empty;
+                    o_cannotPlaceReason = $"{tile} is near OreVein or Fishing Spot and structure is not a Mine, Fishery, City Center or Demonic Structure";
                     return false;
                 }
             }

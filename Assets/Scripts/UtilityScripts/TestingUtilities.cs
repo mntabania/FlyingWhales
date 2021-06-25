@@ -29,8 +29,7 @@ namespace UtilityScripts {
                 summary += $"\nMax Dwellings: {npcSettlement.settlementType?.maxDwellings}";
                 summary += $"\nNeeded Class Processing: {npcSettlement.classComponent.scheduleDateForProcessingOfNeededClasses.ToString()}";
                 summary += $"\nParty Quests Processing: {npcSettlement.partyComponent.scheduleDateForProcessingOfPartyQuests.ToString()}";
-                summary += $"\nPoisoned Tiles: {npcSettlement.settlementJobTriggerComponent.poisonedTiles.Count.ToString()}";
-                summary += $"\nHas Peasants: {npcSettlement.hasPeasants.ToString()}, Has Workers: {npcSettlement.hasWorkers.ToString()}";
+                summary += $"\nBuilt Resource Piles in settlement: {npcSettlement.SettlementResources.resourcePiles.Count(p => p.mapObjectState == MAP_OBJECT_STATE.BUILT).ToString()}";
                 summary += $"\nStorage: {npcSettlement.mainStorage?.name ?? "None"}. Prison: {npcSettlement.prison?.name ?? "None"}";
                 //summary += $"\nRocks Count: {npcSettlement.SettlementResources.rocks.Count}";
                 summary += $"\nTrees Count: {npcSettlement.SettlementResources.trees.Count}";
