@@ -1308,6 +1308,8 @@ public class ReactionComponent : CharacterComponent {
             actor.combatComponent.Flight(targetCharacter, CombatManager.Encountered_Hostile);
             return;
         }
+        LocationGridTile targetGridTile = targetCharacter.gridTileLocation;
+
         bool shouldRelease = disguisedActor.isNormalCharacter && !disguisedActor.traitContainer.HasTrait("Enslaved") && targetCharacter.traitContainer.HasTrait("Enslaved") && disguisedActor.relationshipContainer.HasRelationshipWith(disguisedTarget)
             && !disguisedActor.relationshipContainer.IsEnemiesWith(disguisedTarget) && !targetCharacter.traitContainer.GetTraitOrStatus<Trait>("Enslaved").IsResponsibleForTrait(disguisedActor) && disguisedActor.faction != targetCharacter.faction;
         bool isPartOfRescueJob = actor.partyComponent.hasParty && actor.partyComponent.currentParty.isActive && actor.partyComponent.currentParty.currentQuest is IRescuePartyQuest rescueQuest && rescueQuest.targetCharacter == targetCharacter
@@ -1316,6 +1318,9 @@ public class ReactionComponent : CharacterComponent {
         bool shouldNotAttackSkeletons = disguisedActor.traitContainer.HasTrait("Necromancer") && targetCharacter.race == RACE.SKELETON && targetCharacter.faction == disguisedActor.prevFaction && disguisedActor.prevFaction != null;
         bool shouldSwitchFaction = actor.race == RACE.SKELETON && disguisedTarget.traitContainer.HasTrait("Necromancer") && actor.faction == disguisedTarget.prevFaction && disguisedTarget.prevFaction != null;
         bool isInActiveRaid = actor.partyComponent.hasParty && actor.partyComponent.currentParty.isActive && actor.partyComponent.currentParty.currentQuest is RaidPartyQuest;
+        bool isTargetInStructureInNonHostileVillage = targetGridTile != null && targetGridTile.structure.structureType != STRUCTURE_TYPE.WILDERNESS
+            && targetGridTile.IsPartOfSettlement(out BaseSettlement settlement) && settlement.owner != null && disguisedActor.faction != null && !disguisedActor.faction.IsHostileWith(settlement.owner);
+
 
         if (shouldNotAttackSkeletons) {
 #if DEBUG_LOG
@@ -1332,6 +1337,10 @@ public class ReactionComponent : CharacterComponent {
             TrollHostileReactionToCharacter(actor, targetCharacter, disguisedActor, disguisedTarget, ref debugLog);
         } else if (disguisedActor.traitContainer.HasTrait("Cultist") && (disguisedTarget.faction.isPlayerFaction || disguisedTarget.traitContainer.HasTrait("Cultist"))) {
             CultistHostileReactionToCharacter(actor, targetCharacter, disguisedActor, disguisedTarget, ref debugLog);
+        } else if (targetCharacter.traitContainer.HasTrait("Restrained") && isTargetInStructureInNonHostileVillage) {
+#if DEBUG_LOG
+            debugLog = $"{debugLog}\n-Target is restrained and is in a structure in a village of a faction that is not hostile with the actor, do nothing";
+#endif        
         } else if (targetCharacter.traitContainer.HasTrait("Restrained", "Unconscious", "Frozen", "Ensnared") && (actor.faction.factionType.HasIdeology(FACTION_IDEOLOGY.Warmonger) || isInActiveRaid)) {
             WarmongerKidnapCharacter(actor, targetCharacter);
         } else if (!targetCharacter.isDead && (disguisedTarget.combatComponent.combatMode != COMBAT_MODE.Passive || targetCharacter.race == RACE.HARPY) && !targetCharacter.traitContainer.HasTrait("Hibernating")) {

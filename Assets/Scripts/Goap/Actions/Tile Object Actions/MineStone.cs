@@ -8,7 +8,7 @@ using UnityEngine.Assertions;
 
 public class MineStone : GoapAction {
 
-    public int m_amountProducedPerTick = 3;
+    public int m_amountProducedPerTick = 4;
     private const float _coinGainMultiplier = 0.516f;
 
     public MineStone() : base(INTERACTION_TYPE.MINE_STONE) {
