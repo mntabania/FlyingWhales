@@ -6472,24 +6472,41 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public void SetDeathLocation(LocationGridTile p_tile) {
         deathTilePosition = p_tile;
     }
-#endregion
+    #endregion
 
-#region villager progression HUMANS = skill levelup, Elven = Power Crystal absorbed
+    #region villager progression HUMANS = skill levelup, Elven = Power Crystal absorbed
+    public void RecomputeResistanceInitialChangeClass(string p_previousClass) {
+        if (p_previousClass != string.Empty && talentComponent != null) {
+            
+            int getLevelCount = 0;
+            talentComponent.allTalents.ForEach((eachTalent) => {
+                if(eachTalent.level > 1) {
+                    getLevelCount += eachTalent.level - 1;
+                }
+            });
+            for (int x = 0; x < getLevelCount; ++x) {
+                OnSkillLevelUp(p_previousClass, -1f);
+			}
+            for (int x = 0; x < getLevelCount; ++x) {
+                OnSkillLevelUp(classComponent.characterClass.className, 1f);
+            }
+        }
+    }
     //function to be attached on skill levelup NOTE!! - only humans should gain from this call
-    public void OnSkillLevelUp() {
-        CharacterClassData classData = CharacterManager.Instance.GetOrCreateCharacterClassData(classComponent.characterClass.className);
-        piercingAndResistancesComponent.AdjustPiercing(classData.characterSkillUpdateData.GetPiercingBonus());
+    public void OnSkillLevelUp(string p_className, float factor = 1f) {
+        CharacterClassData classData = CharacterManager.Instance.GetOrCreateCharacterClassData(p_className);
+        piercingAndResistancesComponent.AdjustPiercing(classData.characterSkillUpdateData.GetPiercingBonus() * factor);
 
         RESISTANCE[] resistances = CollectionUtilities.GetEnumValues<RESISTANCE>();
         for (int i = 0; i < resistances.Length; i++) {
             RESISTANCE res = resistances[i];
             if (res != RESISTANCE.None) {
                 if (res.IsElemental()) {
-                    piercingAndResistancesComponent.AdjustResistance(res, classData.characterSkillUpdateData.GetAllElementalResistanceBonus());
+                    piercingAndResistancesComponent.AdjustResistance(res, classData.characterSkillUpdateData.GetAllElementalResistanceBonus() * factor);
                 } else if (res.IsSecondary()) {
-                    piercingAndResistancesComponent.AdjustResistance(res, classData.characterSkillUpdateData.GetAllSecondaryResistanceBonus());
+                    piercingAndResistancesComponent.AdjustResistance(res, classData.characterSkillUpdateData.GetAllSecondaryResistanceBonus() * factor);
                 }
-                piercingAndResistancesComponent.AdjustResistance(res, classData.characterSkillUpdateData.GetBonusBaseOnElement(res));
+                piercingAndResistancesComponent.AdjustResistance(res, classData.characterSkillUpdateData.GetBonusBaseOnElement(res) * factor);
             }
         }
         //for (int x = 1; x < (int)RESISTANCE.Physical; ++x) {
