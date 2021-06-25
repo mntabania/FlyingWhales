@@ -1472,3 +1472,5 @@ public enum CHARACTER_TALENT { None, Martial_Arts, Combat_Magic, Healing_Magic, 
 public enum EQUIPMENT_QUALITY { Normal = 0, High, Premium }
 public enum DAILY_SCHEDULE { Free_Time, Work, Sleep }
 public enum VISIT_VILLAGE_INTENT { Socialize, Steal, Drink_Blood, Preach }
+
+public enum TIPS { Time_Manager = 0, Chaotic_Energy, Target_Menu, Base_Building, Unlocking_Powers, Upgrading_Portal }

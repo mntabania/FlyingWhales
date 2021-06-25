@@ -175,6 +175,9 @@ public class PlayerUI : BaseMonoBehaviour {
     void OnSpellCooldownFinished(SkillData p_skillData) {
         string rawString = p_skillData.name;
         if (p_skillData.category != PLAYER_SKILL_CATEGORY.MINION && p_skillData.category != PLAYER_SKILL_CATEGORY.SUMMON) {
+            if (p_skillData.category == PLAYER_SKILL_CATEGORY.SCHEME) {
+                rawString = "Scheme";
+            }
             rawString += " charge replenished by 1";
             PopUpTextNotification.ShowPlayerPoppingTextNotif($"{UtilityScripts.Utilities.YellowDotIcon()}{UtilityScripts.Utilities.ColorizeName(p_skillData.name)} charge replenished by 1", popUpDisplayPoint, rawString.Length);
         }

@@ -27,6 +27,7 @@ public class SaveDataPlayer {
 
     public List<TutorialManager.Tutorial_Type> unlockedTutorials;
     public List<TutorialManager.Tutorial_Type> readTutorials;
+    public List<TIPS> unlockedTips;
     
     //Loadouts
     public LoadoutSaveData ravagerLoadoutSaveData;
@@ -45,6 +46,7 @@ public class SaveDataPlayer {
         //learnedSkills = new List<PlayerSkillDataCopy>();
         learnedSkills = new List<PLAYER_SKILL_TYPE>();
         unlockedSkills = new List<PLAYER_SKILL_TYPE>();
+        unlockedTips = new List<TIPS>();
         for (int i = 0; i < PlayerSkillManager.Instance.allSkillTrees.Length; i++) {
             PlayerSkillTree currSkillTree = PlayerSkillManager.Instance.allSkillTrees[i];
             for (int j = 0; j < currSkillTree.initialLearnedSkills.Length; j++) {
@@ -677,6 +679,9 @@ public class SaveDataPlayer {
         }
         if (readTutorials == null) {
             readTutorials = new List<TutorialManager.Tutorial_Type>();
+        }
+        if (unlockedTips == null) {
+            unlockedTips = new List<TIPS>();
         }
     }
     #endregion

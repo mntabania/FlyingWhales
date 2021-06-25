@@ -7,7 +7,7 @@ using Inner_Maps;
 
 public class SkinAnimal : GoapAction {
 
-    public int m_amountProducedPerTick = 4;
+    public int m_amountProducedPerTick = 1;
     private const float _coinGainMultiplier = 2.2f;
     public SkinAnimal() : base(INTERACTION_TYPE.SKIN_ANIMAL) {
         actionIconString = GoapActionStateDB.Work_Icon;
