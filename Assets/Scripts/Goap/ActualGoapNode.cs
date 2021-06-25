@@ -736,16 +736,10 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable, IObjectPoolTeste
         ExecuteCurrentActionState();
     }
     private void ExecuteCurrentActionState() {
-        if (!action.states.ContainsKey(currentStateName)) {
-#if DEBUG_LOG
-            Debug.LogError(
-                $"Failed to execute current action state for {actor.name} because {action.goapName} does not have state with name: {currentStateName}");
-#endif
-        }
 #if DEBUG_LOG
         Debug.Log($"Executing action state of {actor.name}'s {action.goapName}, {currentStateName}");
 #endif
-        GoapActionState currentState = action.states[currentStateName];
+        GoapActionState state = currentState;
 
         IPointOfInterest target = poiTarget;
         //if(poiTarget is TileObject && action.goapType == INTERACTION_TYPE.STEAL) {
@@ -767,14 +761,14 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable, IObjectPoolTeste
             //Go to End Effect immediately
             //Because we do not want the actor to wait standing if the target is vigilant, the reaction should be instantaneous
             //So we need to bypass the duration and assume that the action will end already
-            if (currentState.duration != -1) {
-                currentStateDuration = currentState.duration;
+            if (state.duration != -1) {
+                currentStateDuration = state.duration;
                 EndPerTickEffect();
             }
 
         } else {
-            CreateDescriptionLog(currentState);
-            currentState.preEffect?.Invoke(this);
+            CreateDescriptionLog(state);
+            state.preEffect?.Invoke(this);
             List<Trait> actorTraitOverrideFunctions = actor.traitContainer.GetTraitOverrideFunctions(TraitManager.Execute_Pre_Effect_Trait);
             List<Trait> targetTraitOverrideFunctions = poiTarget.traitContainer.GetTraitOverrideFunctions(TraitManager.Execute_Pre_Effect_Trait);
             if (actorTraitOverrideFunctions != null) {
@@ -793,10 +787,10 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable, IObjectPoolTeste
             actor.marker.UpdateAnimation();
             //parentAction.SetExecutionDate(GameManager.Instance.Today());
 
-            if (currentState.duration > 0) {
+            if (state.duration > 0) {
                 currentStateDuration = 0;
                 StartPerTickEffect();
-            } else if (currentState.duration != -1) {
+            } else if (state.duration != -1) {
                 EndPerTickEffect();
             }
         }
@@ -855,17 +849,17 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable, IObjectPoolTeste
         if (shouldDoAfterEffect) {
             LogAction(descriptionLog);
         }
-        GoapActionState currentState = action.states[currentStateName];
+        GoapActionState state = currentState;
         Character p_actor = actor;
         IPointOfInterest p_target = poiTarget;
         GoapAction p_action = action;
         SetIsStillProcessing(true);
 
-        ActionResult(currentState);
+        ActionResult(state);
 
         //After effect and logs should be done after processing action result so that we can be sure that the action is completely done before doing anything
         if (shouldDoAfterEffect) { // && !(isStealth && target.traitContainer.HasTrait("Vigilant"))
-            currentState.afterEffect?.Invoke(this);
+            state.afterEffect?.Invoke(this);
             bool isRemoved = false;
             List<Trait> actorTraitOverrideFunctions = p_actor.traitContainer.GetTraitOverrideFunctions(TraitManager.Execute_After_Effect_Trait);
             List<Trait> targetTraitOverrideFunctions = p_target.traitContainer.GetTraitOverrideFunctions(TraitManager.Execute_After_Effect_Trait);
@@ -900,8 +894,8 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable, IObjectPoolTeste
         //Result of the action will be "successful" but only in writing
         //It's as if the action is successful but in reality it is not
         //The reason for this is for the action to go through proper flow in ActionResult, so that action done will not be broken and all action detachments and unassigning will be done
-        GoapActionState currentState = action.states[currentStateName];
-        ActionResult(currentState);
+        GoapActionState state = currentState;
+        ActionResult(state);
 
         //If there is still job after processing results, we need to cancel it here because if the target is vigilant the actio has failed in reality, so the job must be cancelled
         if (currentJob != null && currentJob.jobType != JOB_TYPE.NONE && !currentJob.hasBeenReset) {
@@ -920,7 +914,8 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable, IObjectPoolTeste
 #if DEBUG_PROFILER
         Profiler.BeginSample($"{actor.name} - {action.name} - Per Tick Effect");
 #endif
-        GoapActionState currentState = action.states[currentStateName];
+        
+        GoapActionState state = currentState;
         currentStateDuration++;
 
         IPointOfInterest target = poiTarget;
@@ -936,7 +931,7 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable, IObjectPoolTeste
         }
 
         //if (!(isStealth && target.traitContainer.HasTrait("Vigilant"))) {
-        currentState.perTickEffect?.Invoke(this);
+        state.perTickEffect?.Invoke(this);
 
         //Once per tick effect is called, check again if the action has already been reset to pool, because there are actions that cancels job in per tick effect
         //So, if that happens, the part below should no longer trigger
@@ -959,7 +954,7 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable, IObjectPoolTeste
             }
         }
         //}
-        if (currentStateDuration >= currentState.duration) {
+        if (currentStateDuration >= state.duration) {
 #if DEBUG_PROFILER
             Profiler.BeginSample($"{actor.name} - {action.name} - End Per Tick Effect");
 #endif
