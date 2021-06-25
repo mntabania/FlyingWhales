@@ -251,7 +251,7 @@ public class Sleep : GoapAction {
                     //if that changes, this needs to be changed as well.
                     string assignedWorkerID = mmStructure.assignedWorkerIDs[0];
                     Character assignedWorker = DatabaseManager.Instance.characterDatabase.GetCharacterByPersistentID(assignedWorkerID);
-                    assignedWorker.moneyComponent.AdjustCoins(10);
+                    assignedWorker.moneyComponent.AdjustCoins(33);
                 }
                 // Character assignedWorker = mmStructure.assignedWorker;
                 // if (assignedWorker != null) {
