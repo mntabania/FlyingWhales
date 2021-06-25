@@ -423,7 +423,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4435558848866174672}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -1.5, y: -2.5, z: 0}
+  m_LocalPosition: {x: -1.5, y: -1.5, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1749639012513024125}
@@ -716,7 +716,7 @@ MonoBehaviour:
   _detailTileMapRenderer: {fileID: 7967332999053670998}
   _blockWallsTilemap: {fileID: 0}
   _size: {x: 3, y: 2}
-  _center: {x: 1, y: 2, z: 0}
+  _center: {x: 1, y: 1, z: 0}
   _repairCost: 5
   objectsParent: {fileID: 380919107894509639}
   _blockWallType: 0

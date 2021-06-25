@@ -832,7 +832,8 @@ namespace Inner_Maps {
 			    (locationGridTile) => SetAsWall(locationGridTile, structure),
 			    (locationGridTile) => SetAsGround(locationGridTile, structure));
 
-            List<LocationGridTile> tilesToRefine = ObjectPoolManager.Instance.CreateNewGridTileList(); //new List<LocationGridTile>(refinedTiles);
+            
+            List<LocationGridTile> tilesToRefine = RuinarchListPool<LocationGridTile>.Claim();
             tilesToRefine.AddRange(tilesToAutomata);
             //refine further
             for (int i = 0; i < tilesToRefine.Count; i++) {
@@ -846,19 +847,23 @@ namespace Inner_Maps {
                     tilesToAutomata.Remove(tile);
 			    }
 		    }
-            ObjectPoolManager.Instance.ReturnGridTileListToPool(tilesToRefine);
-            
+            RuinarchListPool<LocationGridTile>.Release(tilesToRefine);
+
             MonsterLairPerlin(tilesToAutomata, structure, seed, seed);
 
             //create entrances
 		    //get tiles that are at the edge of the given tiles, but are not at the edge of its map.
-            List<LocationGridTile> targetChoices = tilesToAutomata
-                .Where(t => t.tileType == LocationGridTile.Tile_Type.Wall 
-                            && t.IsAtEdgeOfMap() == false
-                            && t.HasDifferentStructureNeighbour(true)
-                            && t.GetCountNeighboursOfType(LocationGridTile.Tile_Type.Wall, true) == 2 
-                            && t.GetCountNeighboursOfType(LocationGridTile.Tile_Type.Empty, true) == 2).ToList();
-		    for (int i = 0; i < 5; i++) {
+            List<LocationGridTile> targetChoices = RuinarchListPool<LocationGridTile>.Claim();
+            for (int i = 0; i < tilesToAutomata.Count; i++) {
+                LocationGridTile t = tilesToAutomata[i];
+                if (t.tileType == LocationGridTile.Tile_Type.Wall && !t.IsAtEdgeOfMap() &&
+                    t.HasDifferentStructureNeighbour(true) && 
+                    t.GetCountNeighboursOfType(LocationGridTile.Tile_Type.Wall, true) == 2 && 
+                    t.GetCountNeighboursOfType(LocationGridTile.Tile_Type.Empty, true) == 2) {
+                    targetChoices.Add(t);
+                }
+            }
+            for (int i = 0; i < 5; i++) {
                 if (targetChoices.Count > 0) {
 				    LocationGridTile target = CollectionUtilities.GetRandomElement(targetChoices);
 				    target.SetStructureTilemapVisual(null);
@@ -871,7 +876,7 @@ namespace Inner_Maps {
 				    break;
 			    }
 		    }
-		    
+		    RuinarchListPool<LocationGridTile>.Release(targetChoices);
             
 		    for (int i = 0; i < tilesToAutomata.Count; i++) {
 			    LocationGridTile tile = tilesToAutomata[i];
@@ -882,7 +887,7 @@ namespace Inner_Maps {
 				    structure.AddPOI(blockWall, tile);
 			    }
 		    }
-            // ObjectPoolManager.Instance.ReturnGridTileListToPool(refinedTiles);
+            RuinarchListPool<LocationGridTile>.Release(tilesToAutomata);
 	    }
 	    private void SetAsWall(LocationGridTile tile, LocationStructure structure) {
             // if (GameManager.Instance.gameHasStarted) {
