@@ -2308,19 +2308,19 @@
         },
         {
           "resource": "STONE",
-          "structureType": "CEMETERY",
+          "structureType": "BUTCHERS_SHOP",
           "hasValue": true,
           "isCorrupted": false
         },
         {
           "resource": "STONE",
-          "structureType": "TAVERN",
+          "structureType": "HUNTER_LODGE",
           "hasValue": true,
           "isCorrupted": false
         },
         {
-          "resource": "STONE",
-          "structureType": "PRISON",
+          "resource": "NONE",
+          "structureType": "LUMBERYARD",
           "hasValue": true,
           "isCorrupted": false
         },

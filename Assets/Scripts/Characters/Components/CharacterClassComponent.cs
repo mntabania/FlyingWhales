@@ -48,7 +48,7 @@ public class CharacterClassComponent : CharacterComponent {
                 //only populate previous class value if class set is not Initial!
                 //this was necessary since a characters class will be changed after it's talents have 
                 //been randomized. Reference: https://trello.com/c/0DSPyf4d/4716-update-starting-village-structures-villager-classes-and-talents
-                previousClassName = previousClass.className;    
+                previousClassName = previousClass.className;
             }
             //This means that the character currently has a class and it will be replaced with a new class
             for (int i = 0; i < previousClass.traitNames.Length; i++) {
@@ -65,6 +65,8 @@ public class CharacterClassComponent : CharacterComponent {
             //owner.homeSettlement?.UpdateAbleJobsOfResident(owner);
             OnUpdateCharacterClass();
             Messenger.Broadcast(CharacterSignals.CHARACTER_CLASS_CHANGE, owner, previousClass, this.characterClass);
+        } else {
+            owner.RecomputeResistanceInitialChangeClass("Farmer");
         }
         owner.combatComponent.UpdateElementalType();
     }
