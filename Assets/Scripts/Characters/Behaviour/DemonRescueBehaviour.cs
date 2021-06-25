@@ -25,6 +25,7 @@ public class DemonRescueBehaviour : CharacterBehaviourComponent {
                 if (IsInTargetDemonicStructure(character, quest)) {
                     if (character.hasMarker && IsInTargetDemonicStructure(quest.targetCharacter, quest)) {
                         if (quest.targetCharacter.isDead) {
+                            quest.SetIsSuccessful(true);
                             quest.EndQuest("Target is dead");
                         } else {
                             if (quest.targetCharacter.traitContainer.HasTrait("Restrained", "Unconscious", "Frozen", "Ensnared", "Enslaved")) {
@@ -34,6 +35,7 @@ public class DemonRescueBehaviour : CharacterBehaviourComponent {
                                 }
                                 return hasJob;
                             } else {
+                                quest.SetIsSuccessful(true);
                                 quest.EndQuest("Target is safe");
                                 //if target is paralyzed carry back home
                                 if (quest.targetCharacter.traitContainer.HasTrait("Paralyzed")) {
@@ -46,6 +48,7 @@ public class DemonRescueBehaviour : CharacterBehaviourComponent {
                             }
                         }
                     } else {
+                        quest.SetIsSuccessful(true);
                         quest.EndQuest("Target is nowhere to be found");
                         return true;
                     }

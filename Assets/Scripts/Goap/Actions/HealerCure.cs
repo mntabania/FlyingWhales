@@ -41,7 +41,7 @@ public class HealerCure : GoapAction {
     #region State Effects
     
     public void AfterHealerCureSuccess(ActualGoapNode goapNode) {
-        goapNode.actor.moneyComponent.AdjustCoins(10);
+        goapNode.actor.moneyComponent.AdjustCoins(33);
         // UnityEngine.Debug.LogError(goapNode.actor.talentComponent.GetTalent(CHARACTER_TALENT.Healing_Magic).level);
         if (goapNode.actor.talentComponent.GetTalent(CHARACTER_TALENT.Healing_Magic).level >= 3) {
             Level3Effect(goapNode);

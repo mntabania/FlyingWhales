@@ -48,7 +48,7 @@ public class RemovePoison : GoapAction {
     //    goapNode.descriptionLog.AddToFillers(goapNode.poiTarget.gridTileLocation.structure.location, goapNode.poiTarget.gridTileLocation.structure.GetNameRelativeTo(goapNode.actor), LOG_IDENTIFIER.LANDMARK_1);
     //}
     public void AfterRemoveSuccess(ActualGoapNode goapNode) {
-        goapNode.actor.moneyComponent.AdjustCoins(10);
+        //goapNode.actor.moneyComponent.AdjustCoins(10);
         //**Effect 1**: Remove Poisoned Trait from target table
         goapNode.poiTarget.traitContainer.RemoveStatusAndStacks(goapNode.poiTarget, "Poisoned");
         //**Effect 2**: Remove Tool from Actor's inventory

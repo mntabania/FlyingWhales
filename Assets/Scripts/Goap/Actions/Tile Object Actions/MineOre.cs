@@ -9,7 +9,7 @@ using UnityEngine.Assertions;
 public class MineOre : GoapAction {
 
     public int m_amountProducedPerTick = 5;
-    private const int _coinGainMultiplier = 1;
+    private const float _coinGainMultiplier = 0.825f;
     public MineOre() : base(INTERACTION_TYPE.MINE_ORE) {
         actionIconString = GoapActionStateDB.Mine_Icon;
         //advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
@@ -76,7 +76,7 @@ public class MineOre : GoapAction {
             }
         }
 
-        p_node.actor.moneyComponent.AdjustCoins(amount * _coinGainMultiplier);
+        p_node.actor.moneyComponent.AdjustCoins(Mathf.CeilToInt(amount * _coinGainMultiplier));
         matsToHaul.SetResourceInPile(amount);
         tileToSpawnPile.structure.AddPOI(matsToHaul, tileToSpawnPile);
         ProduceLogs(p_node);

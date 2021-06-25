@@ -35,6 +35,7 @@ public class RaidPartyQuest : PartyQuest {
     public override void OnAssignedPartySwitchedState(PARTY_STATE fromState, PARTY_STATE toState) {
         base.OnAssignedPartySwitchedState(fromState, toState);
         if(toState == PARTY_STATE.Working) {
+            SetIsSuccessful(true);
             StartRaidTimer();
             Messenger.AddListener<Character>(CharacterSignals.CHARACTER_CAN_NO_LONGER_MOVE, OnCharacterCanNoLongerMove);
         } else if (fromState == PARTY_STATE.Working) {
