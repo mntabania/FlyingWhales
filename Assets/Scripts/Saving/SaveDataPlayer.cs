@@ -680,6 +680,9 @@ public class SaveDataPlayer {
         if (readTutorials == null) {
             readTutorials = new List<TutorialManager.Tutorial_Type>();
         }
+        if (unlockedTips == null) {
+            unlockedTips = new List<TIPS>();
+        }
     }
     #endregion
 }
