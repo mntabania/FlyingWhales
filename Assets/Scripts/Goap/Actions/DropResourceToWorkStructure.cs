@@ -147,7 +147,7 @@ public class DropResourceToWorkStructure : GoapAction {
                 return true;
             }
         } else if (actionLocationType == ACTION_LOCATION_TYPE.NEAR_OTHER_TARGET) {
-            if (actor.gridTileLocation != node.targetTile && actor.gridTileLocation.IsNeighbour(node.targetTile, true) == false) {
+            if (actor.gridTileLocation != node.targetTile && actor.gridTileLocation.IsNeighbour(node.targetTile) == false) {
                 return true;
             }
         }
