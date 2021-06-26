@@ -146,10 +146,12 @@ public class TipsUIController : MVCUIController {
     private void OnSpiritEnergyCollected(int adjustedAmount, int spiritEnergy) {
         if (PlayerManager.Instance.player != null && PlayerManager.Instance.player.playerSettlement != null) {
             ThePortal portal = PlayerManager.Instance.player.playerSettlement.GetRandomStructureOfType(STRUCTURE_TYPE.THE_PORTAL) as ThePortal;
-            PortalUpgradeTier nextTier = portal.nextTier;
-            if (spiritEnergy >= nextTier.upgradeCost[0].amount) {
-                AddTips(TIPS.Upgrading_Portal);
-            }    
+            if (!portal.IsMaxLevel()) {
+                PortalUpgradeTier nextTier = portal.nextTier;
+                if (spiritEnergy >= nextTier.upgradeCost[0].amount) {
+                    AddTips(TIPS.Upgrading_Portal);
+                }    
+            }
         }
     }
 
