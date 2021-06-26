@@ -212,7 +212,7 @@ public class VillageGeneration : MapGenerationComponent {
 		//Generate Initial Objects
 		for (int i = 0; i < createdSettlements.Count; i++) {
 			NPCSettlement npcSettlement = createdSettlements[i];
-			yield return MapGenerator.Instance.StartCoroutine(npcSettlement.PlaceInitialObjectsCoroutine());
+			yield return MapGenerator.Instance.StartCoroutine(npcSettlement.PlaceInitialObjectsForWorldGenCoroutine());
 		}
 		
 		// //Generate facilities
@@ -405,7 +405,7 @@ public class VillageGeneration : MapGenerationComponent {
 				StructureSetting[] structureSettings = settlementTemplate.structureSettings;
 				yield return MapGenerator.Instance.StartCoroutine(EnsuredStructurePlacement(region, structureSettings.ToList(), npcSettlement, data));
 				// yield return MapGenerator.Instance.StartCoroutine(LandmarkManager.Instance.PlaceBuiltStructuresForSettlement(npcSettlement, region.innerMap, structureSettings));
-				yield return MapGenerator.Instance.StartCoroutine(npcSettlement.PlaceInitialObjectsCoroutine());
+				yield return MapGenerator.Instance.StartCoroutine(npcSettlement.PlaceInitialObjectsForWorldGenCoroutine());
 				
 				int dwellingCount = npcSettlement.structures[STRUCTURE_TYPE.DWELLING].Count;
 				List<Character> spawnedCharacters = CreateSettlementResidentsForScenario(dwellingCount, npcSettlement, faction, data, settlementTemplate.minimumVillagerCount);
