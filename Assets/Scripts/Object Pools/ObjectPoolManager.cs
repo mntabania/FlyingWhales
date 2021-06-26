@@ -564,7 +564,7 @@ public class ObjectPoolManager : MonoBehaviour {
         _stateJobPool = new List<CharacterStateJob>();
     }
     public GoapPlanJob CreateNewGoapPlanJob() {
-        lock (MultiThreadPool.THREAD_LOCKER) {
+        //lock (MultiThreadPool.THREAD_LOCKER) {
             if (_goapJobPool.Count > 0) {
                 GoapPlanJob job = _goapJobPool[0];
                 if (job.isAssigned) {
@@ -578,7 +578,7 @@ public class ObjectPoolManager : MonoBehaviour {
                 return job;
             }
             return new GoapPlanJob();
-        }
+        //}
 
     }
     public void ReturnGoapPlanJobToPool(GoapPlanJob job) {
@@ -857,7 +857,7 @@ public class ObjectPoolManager : MonoBehaviour {
         return actionNode;
     }
     private ActualGoapNode CreateNewAction() {
-        lock (MultiThreadPool.THREAD_LOCKER) {
+        //lock (MultiThreadPool.THREAD_LOCKER) {
             if (_actionPool.Count > 0) {
                 ActualGoapNode data = _actionPool[0];
 #if DEBUG_LOG
@@ -881,7 +881,7 @@ public class ObjectPoolManager : MonoBehaviour {
             ActualGoapNode action = new ActualGoapNode();
             action.SetHasBeenReset(true);
             return action;
-        }
+        //}
     }
     public void ReturnActionToPool(ActualGoapNode data) {
         if (data != null) {
