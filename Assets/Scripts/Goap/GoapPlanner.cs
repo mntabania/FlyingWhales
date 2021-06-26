@@ -8,18 +8,22 @@ using Locations;
 using Locations.Settlements;
 using UtilityScripts;
 public class GoapPlanner {
+    private const int CACHED_GOAP_NODE_CAPACITY = 10;
     public Character owner { get; private set; }
     public GOAP_PLANNING_STATUS status { get; private set; }
     private Precondition failedPrecondition { get; set; }
     public INTERACTION_TYPE failedPreconditionActionType { get; private set; }
-    
+
     private List<GoapNode> _rawPlan;
 
     private GoapThread _goapThreadInProcess;
 
+    private List<GoapNode> _cachedGoapNodes;
+
     public GoapPlanner(Character owner) {
         this.owner = owner;
         _rawPlan = new List<GoapNode>();
+        _cachedGoapNodes = new List<GoapNode>();
     }
     public void StartGOAP(GoapEffect goal, IPointOfInterest target, GoapPlanJob job, bool isPersonalPlan = true) {
         if (status == GOAP_PLANNING_STATUS.RUNNING) {
@@ -35,6 +39,7 @@ public class GoapPlanner {
         Debug.Log($"{GameManager.Instance.TodayLogString()}{owner.name} has started planning {job}");
 #endif
         Character actor = owner;
+        CreateGoapNodeCache();
         _goapThreadInProcess = ObjectPoolManager.Instance.CreateNewGoapThread();
         _goapThreadInProcess.Initialize(actor, target, goal, isPersonalPlan, job);
         MultiThreadPool.Instance.AddToThreadPool(_goapThreadInProcess);
@@ -52,6 +57,7 @@ public class GoapPlanner {
 #if DEBUG_LOG
         Debug.Log($"{GameManager.Instance.TodayLogString()}{owner.name} has started planning {job}");
 #endif
+        CreateGoapNodeCache();
         _goapThreadInProcess = ObjectPoolManager.Instance.CreateNewGoapThread();
         _goapThreadInProcess.Initialize(owner, goalType, target, isPersonalPlan, job);
         MultiThreadPool.Instance.AddToThreadPool(_goapThreadInProcess);
@@ -65,6 +71,7 @@ public class GoapPlanner {
         if (job.assignedPlan != null) {
             job.assignedPlan.SetIsBeingRecalculated(true);
             status = GOAP_PLANNING_STATUS.RUNNING;
+            CreateGoapNodeCache();
             _goapThreadInProcess = ObjectPoolManager.Instance.CreateNewGoapThread();
             _goapThreadInProcess.InitializeForRecalculation(owner, job.assignedPlan, job);
             MultiThreadPool.Instance.AddToThreadPool(_goapThreadInProcess);
@@ -107,7 +114,7 @@ public class GoapPlanner {
                     ObjectPoolManager.Instance.ReturnGoapThreadToPool(_goapThreadInProcess);
                     _goapThreadInProcess = null;
                     return;
-                }    
+                }
             }
         }
 #if DEBUG_LOG
@@ -135,7 +142,7 @@ public class GoapPlanner {
             }
             if (!owner.limiterComponent.canPerform) {
                 int canPerformValue = owner.limiterComponent.canPerformValue;
-                if(canPerformValue == -1 && (owner.traitContainer.HasTrait("Paralyzed") || owner.traitContainer.HasTrait("Quarantined"))) {
+                if (canPerformValue == -1 && (owner.traitContainer.HasTrait("Paralyzed") || owner.traitContainer.HasTrait("Quarantined"))) {
                     //If the owner is paralyzed or quarantined and the only reason he cannot perform is because of that paralyzed, the plan must not be scrapped
                 } else {
 #if DEBUG_LOG
@@ -148,7 +155,7 @@ public class GoapPlanner {
                 }
             }
             int jobIndex = owner.jobQueue.GetJobQueueIndex(_goapThreadInProcess.job);
-            if(jobIndex != -1) {
+            if (jobIndex != -1) {
                 //Only set assigned plan if job is still in character job queue because if not, it means that the job is no longer taken
                 _goapThreadInProcess.job.SetAssignedPlan(createdPlan);
                 if (jobIndex != 0) {
@@ -233,7 +240,7 @@ public class GoapPlanner {
             }
             _goapThreadInProcess.job.CancelJob();
 
-            if(jobType == JOB_TYPE.FULLNESS_RECOVERY_URGENT || jobType == JOB_TYPE.FULLNESS_RECOVERY_NORMAL) {
+            if (jobType == JOB_TYPE.FULLNESS_RECOVERY_URGENT || jobType == JOB_TYPE.FULLNESS_RECOVERY_NORMAL) {
                 //Do not produce food anymore personally, since it is already handled in character wants
                 //if (!owner.traitContainer.HasTrait("Vampire") && owner.isNormalCharacter && !owner.isConsideredRatman) {
                 //    //Special case for when a character cannot do hunger recovery, he/she must produce food instead
@@ -256,7 +263,7 @@ public class GoapPlanner {
         _goapThreadInProcess = null;
     }
     private void ForceCancelJobAndReturnToObjectPool(JobQueueItem job) {
-        if(job == null) {
+        if (job == null) {
             return;
         }
         job.ForceCancelJob();
@@ -285,7 +292,7 @@ public class GoapPlanner {
                 GoapAction currentAction = target.AdvertiseActionsToActor(owner, goalEffect, job, ref cost, ref log);
                 if (currentAction != null) {
                     //If an action is found, make it the goal node and start building the plan
-                    GoapNode goalNode = ObjectPoolManager.Instance.CreateNewGoapNode(cost, 0, currentAction, target);
+                    GoapNode goalNode = SetGoapNodeCacheData(cost, 0, currentAction, target);
                     BuildGoapTree(goalNode, owner, job, _rawPlan, actionsCategorizedByEffect, ref log); //, ref log
                 }
             }
@@ -302,11 +309,11 @@ public class GoapPlanner {
 
             ProcessFindingLowestCostActionAndTarget(job, goalEffect, target, actionsCategorizedByEffect, ref lowestCost, ref lowestCostAction, ref lowestCostTarget, ref log);
             if (lowestCostAction != null) {
-                GoapNode leafNode = ObjectPoolManager.Instance.CreateNewGoapNode(lowestCost, 0, lowestCostAction, lowestCostTarget);
+                GoapNode leafNode = SetGoapNodeCacheData(lowestCost, 0, lowestCostAction, lowestCostTarget);
                 BuildGoapTree(leafNode, owner, job, _rawPlan, actionsCategorizedByEffect, ref log); //, ref log
             }
         }
-        if(_rawPlan.Count > 0) {
+        if (_rawPlan.Count > 0) {
             //has a created plan
 #if DEBUG_LOG
             string rawPlanSummary = $"Generated raw plan for job { job.name } { owner.name }";
@@ -334,13 +341,13 @@ public class GoapPlanner {
         _rawPlan.Clear();
         failedPrecondition = null;
         failedPreconditionActionType = INTERACTION_TYPE.NONE;
-        
+
         owner.logComponent.ClearCostLog();
 
 #if DEBUG_LOG
         owner.logComponent.AppendCostLog($"BASE COSTS OF {owner.name} ACTIONS ON {job.name} PLANNING");
 #endif
-        if(target != job.targetPOI && !target.IsStillConsideredPartOfAwarenessByCharacter(owner)) {
+        if (target != job.targetPOI && !target.IsStillConsideredPartOfAwarenessByCharacter(owner)) {
             //POI must either be the job's target or the actor is still aware of it
             //return null;
             return;
@@ -350,7 +357,7 @@ public class GoapPlanner {
 #if DEBUG_LOG
         log += $"\n--Searching plan for target: {target.name} with goal action ({cost}){goalAction.goapName}";
 #endif
-        GoapNode goalNode = ObjectPoolManager.Instance.CreateNewGoapNode(cost, 0, goalAction, target);
+        GoapNode goalNode = SetGoapNodeCacheData(cost, 0, goalAction, target);
         BuildGoapTree(goalNode, owner, job, _rawPlan, actionsCategorizedByEffect, ref log); //, ref log
         if (_rawPlan.Count > 0) {
 #if DEBUG_LOG
@@ -395,7 +402,7 @@ public class GoapPlanner {
             //POI must either be the job's target or the actor is still aware of it
             if (target.CanAdvertiseActionToActor(owner, goalAction, job) && target.Advertises(goalAction.goapType)) {
                 int cost = goalAction.GetCost(owner, target, job);
-                GoapNode goalNode = ObjectPoolManager.Instance.CreateNewGoapNode(actualNode.cost, currentPlan.currentNodeIndex, goalAction, target);
+                GoapNode goalNode = SetGoapNodeCacheData(actualNode.cost, currentPlan.currentNodeIndex, goalAction, target);
                 BuildGoapTree(goalNode, owner, job, _rawPlan, actionsCategorizedByEffect, ref log); //
                 if (_rawPlan.Count > 0) {
                     //has a created plan
@@ -457,6 +464,7 @@ public class GoapPlanner {
             owner.logComponent.PrintLogIfActive(log);
 #endif
         }
+        ResetGoapNodeCache();
         return createdPlan;
     }
     //Note: The target specified here is the target for the precondition not the job itself
@@ -507,7 +515,7 @@ public class GoapPlanner {
 #if DEBUG_LOG
                         log += $"\n--Found action: {currentAction.goapName}, creating new node...";
 #endif
-                        GoapNode leafNode = ObjectPoolManager.Instance.CreateNewGoapNode(cost, node.level + 1, currentAction, target);
+                        GoapNode leafNode = SetGoapNodeCacheData(cost, node.level + 1, currentAction, target);
                         BuildGoapTree(leafNode, actor, job, rawPlan, actionsCategorizedByEffect, ref log); //
                     } else {
                         //Fail - rawPlan must be set to null so the plan will fail
@@ -532,7 +540,7 @@ public class GoapPlanner {
 #if DEBUG_LOG
                         log += $"\n--Found action: {lowestCostAction.goapName}, creating new node...";
 #endif
-                        GoapNode leafNode = ObjectPoolManager.Instance.CreateNewGoapNode(lowestCost, node.level + 1, lowestCostAction, lowestCostTarget);
+                        GoapNode leafNode = SetGoapNodeCacheData(lowestCost, node.level + 1, lowestCostAction, lowestCostTarget);
                         BuildGoapTree(leafNode, actor, job, rawPlan, actionsCategorizedByEffect, ref log); //, ref log
                     } else {
                         //Fail - rawPlan must be set to null so the plan will fail
@@ -588,7 +596,7 @@ public class GoapPlanner {
                 if (location is BaseSettlement settlement) {
                     for (int j = 0; j < settlement.allStructures.Count; j++) {
                         LocationStructure structure = settlement.allStructures[j];
-                        if(SetLowestCostActionGivenLocationAwareness(structure.locationAwareness, job, action, goalEffect, ref isJobTargetEvaluated, ref lowestCost, ref lowestCostAction, ref lowestCostTarget, ref log)) {
+                        if (SetLowestCostActionGivenLocationAwareness(structure.locationAwareness, job, action, goalEffect, ref isJobTargetEvaluated, ref lowestCost, ref lowestCostAction, ref lowestCostTarget, ref log)) {
                             hasSet = true;
                         }
                     }
@@ -614,7 +622,7 @@ public class GoapPlanner {
         }
 
         LocationGridTile currentGridTile = owner.gridTileLocation;
-        if(currentGridTile != null) {
+        if (currentGridTile != null) {
             LocationStructure currentStructure = currentGridTile.structure;
             //BaseSettlement currentSettlement = null;
             //currentGridTile.IsPartOfSettlement(out currentSettlement);
@@ -626,7 +634,7 @@ public class GoapPlanner {
             //First step: Process current structure, if there is an action, skip next processing
             if (currentStructure.structureType != STRUCTURE_TYPE.WILDERNESS && currentStructure.structureType != STRUCTURE_TYPE.OCEAN) {
                 bool hasSet = SetLowestCostActionGivenLocationAwareness(currentStructure.locationAwareness, job, action, goalEffect, ref isJobTargetEvaluated, ref lowestCost, ref lowestCostAction, ref lowestCostTarget, ref log);
-                if(hasSet) {
+                if (hasSet) {
                     return;
                 }
             }
@@ -705,22 +713,23 @@ public class GoapPlanner {
             tempNodeIndexHolder.Clear();
             for (int i = 0; i < rawPlan.Count; i++) {
                 GoapNode rawNode = rawPlan[i];
-                if(rawNode.level == index) {
+                if (rawNode.level == index) {
                     tempNodeIndexHolder.Add(i);
                 }
             }
-            if(tempNodeIndexHolder.Count > 0) {
+            if (tempNodeIndexHolder.Count > 0) {
                 int nodeIndex = tempNodeIndexHolder[0];
                 GoapNode rawNode = rawPlan[nodeIndex];
+                if (rawNode.action == null) {
+                    Debug.LogError("Null action in raw plan");
+                }
                 OtherData[] data = job.GetOtherDataFor(rawNode.action.goapType);
                 ActualGoapNode actualNode = ObjectPoolManager.Instance.CreateNewAction(rawNode.action, owner, rawNode.target, data, rawNode.cost);
                 //SingleJobNode singleJobNode = new SingleJobNode(actualNode);
                 SingleJobNode singleJobNode = ObjectPoolManager.Instance.CreateNewSingleJobNode();
                 singleJobNode.SetActionNode(actualNode);
                 actualPlan.Insert(0, singleJobNode);
-                GoapNode node = rawPlan[nodeIndex];
                 rawPlan.RemoveAt(nodeIndex);
-                ObjectPoolManager.Instance.ReturnGoapNodeToPool(node);
             }
             index++;
         }
@@ -728,4 +737,32 @@ public class GoapPlanner {
         RuinarchListPool<GoapNode>.Release(discardedNodes);
         return actualPlan;
     }
+
+    #region Goap Node Cache
+    private void CreateGoapNodeCache() {
+        if (_cachedGoapNodes.Count > 0) {
+            Debug.LogError("Creating cache but there is still cached data");
+        } else {
+            for (int i = 0; i < CACHED_GOAP_NODE_CAPACITY; i++) {
+                _cachedGoapNodes.Add(ObjectPoolManager.Instance.CreateNewGoapNode());
+            }
+        }
+    }
+    private void ResetGoapNodeCache() {
+        for (int i = 0; i < _cachedGoapNodes.Count; i++) {
+            ObjectPoolManager.Instance.ReturnGoapNodeToPool(_cachedGoapNodes[i]);
+        }
+        _cachedGoapNodes.Clear();
+    }
+    private GoapNode SetGoapNodeCacheData(int cost, int level, GoapAction action, IPointOfInterest target) {
+        for (int i = 0; i < _cachedGoapNodes.Count; i++) {
+            GoapNode gn = _cachedGoapNodes[i];
+            if (gn.action == null) {
+                gn.Initialize(cost, level, action, target);
+                return gn;
+            }
+        }
+        throw new System.Exception("Cached goap nodes are fully filled up, need to adjust max capacity");
+    }
+    #endregion
 }

@@ -221,6 +221,10 @@ public class ObjectPoolManager : MonoBehaviour {
         node.Initialize(cost, level, action, target);
         return node;
     }
+    public GoapNode CreateNewGoapNode() {
+        GoapNode node = GetGoapNodeFromPool();
+        return node;
+    }
     public void ReturnGoapNodeToPool(GoapNode node) {
         node.Reset();
         goapNodesPool.Add(node);
@@ -389,8 +393,12 @@ public class ObjectPoolManager : MonoBehaviour {
         return new GoapThread();
     }
     public void ReturnGoapThreadToPool(GoapThread data) {
-        data.Reset();
-        _goapThreadPool.Add(data);
+        if (!_goapThreadPool.Contains(data)) {
+            data.Reset();
+            _goapThreadPool.Add(data);
+        } else {
+            Debug.LogError("Duplicate in returnin Goap Thread");
+        }
     }
     #endregion
 

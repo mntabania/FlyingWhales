@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class GoapThread : Multithread {
     public Character actor { get; private set; }
-        public GoapEffect goalEffect { get; private set; }
+    public GoapEffect goalEffect { get; private set; }
     public INTERACTION_TYPE goalType { get; private set; }
     public IPointOfInterest target { get; private set; }
     public bool isPersonalPlan { get; private set; }
