@@ -8,11 +8,11 @@ namespace Quests {
         }
         
         public override void Enable() {
-            if (TutorialManager.Instance.HasTutorialBeenCompleted(_tutorialToComplete)) {
-                SetCriteriaAsMet();
-            } else {
-                Messenger.AddListener<TutorialQuest>(PlayerQuestSignals.TUTORIAL_QUEST_COMPLETED, OnTutorialQuestCompleted);    
-            }
+            // if (TutorialManager.Instance.HasTutorialBeenCompleted(_tutorialToComplete)) {
+            //     SetCriteriaAsMet();
+            // } else {
+            //     Messenger.AddListener<TutorialQuest>(PlayerQuestSignals.TUTORIAL_QUEST_COMPLETED, OnTutorialQuestCompleted);    
+            // }
         }
         public override void Disable() {
             Messenger.RemoveListener<TutorialQuest>(PlayerQuestSignals.TUTORIAL_QUEST_COMPLETED, OnTutorialQuestCompleted);

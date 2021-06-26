@@ -111,9 +111,7 @@ namespace Inner_Maps {
                 OnRightClick();
             } else if (keyCode == KeyCode.Mouse2) {
                 OnMiddleClick();
-            } else if (keyCode == KeyCode.R) {
-                CycleRegions();
-            }    
+            }
         }
         private void OnRightClick() {
             if (!UIManager.Instance.IsMouseOnUI() && !ReferenceEquals(currentlyShowingMap, null) && GameManager.Instance.gameHasStarted) {

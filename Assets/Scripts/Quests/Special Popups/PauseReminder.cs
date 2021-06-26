@@ -38,7 +38,7 @@ namespace Quests.Special_Popups {
             PlayerUI.Instance.ShowGeneralConfirmation("Pause", 
                 $"Don't forget that you can {UtilityScripts.Utilities.ColorizeAction("Pause")} the game at anytime! " +
                 "A smart Ruinarch will liberally use his time-bending powers to ruminate over what's taking place in the world." +
-                $"\n\nUse the {UtilityScripts.Utilities.ColorizeAction("spacebar")} to quickly toggle between pause and unpause."
+                $"\n\nUse the {UtilityScripts.Utilities.ColorizeAction("Space bar")} to quickly toggle between pause and unpause."
             );
             CompleteQuest();
         }

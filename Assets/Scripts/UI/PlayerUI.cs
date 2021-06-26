@@ -204,10 +204,7 @@ public class PlayerUI : BaseMonoBehaviour {
         Messenger.AddListener<IPointOfInterest>(CharacterSignals.ON_SEIZE_POI, OnSeizePOI);
         Messenger.AddListener<IPointOfInterest>(CharacterSignals.ON_UNSEIZE_POI, OnUnseizePOI);
         Messenger.AddListener<int>(PlayerSignals.UPDATED_PLAGUE_POINTS, UpdatePlaguePointsAmount);
-
-        //key presses
-        Messenger.AddListener<KeyCode>(ControlsSignals.KEY_DOWN, OnKeyPressed);
-
+        
         //currencies
         Messenger.AddListener<int, int>(PlayerSignals.PLAYER_ADJUSTED_MANA, OnManaAdjusted);
         Messenger.AddListener<int, int>(PlayerSignals.PLAYER_ADJUSTED_SPIRIT_ENERGY, OnSpiritEnergyAdjusted);
@@ -248,11 +245,6 @@ public class PlayerUI : BaseMonoBehaviour {
     //private void OnInnerMapClosed(Region location) {
     //    UpdateRegionNameState();
     //}
-    private void OnKeyPressed(KeyCode pressedKey) {
-        // if (pressedKey == KeyCode.F9) {
-        //     UIManager.Instance.optionsMenu.QuickSave();
-        // }
-    }
     private void OnThreatUpdated() {
         threatLbl.text = PlayerManager.Instance.player.threatComponent.threat.ToString();
         //threatLbl.transform.DOPunchScale(new Vector3(1.2f, 1.2f, 1.2f), 0.5f);

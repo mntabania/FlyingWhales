@@ -162,41 +162,41 @@ namespace Tutorial {
                 // InstantiatePendingBonusTutorials();    
             }
         }
-        /// <summary>
-        /// Instantiate all Important tutorials. NOTE: This is called after Start Popup is hidden
-        /// <see cref="PopUpScreensUI.HideStartDemoScreen"/>
-        /// </summary>
-        public void InstantiateImportantTutorials() {
-            if (SettingsManager.Instance.settings.skipTutorials) {
-                hasCompletedImportantTutorials = true;
-                return; //do not create tutorials if skip tutorials switch is on.
-            } else {
-                hasCompletedImportantTutorials = false;
-            }
-            for (int i = 0; i < mainTutorialTypes.Length; i++) {
-                Tutorial tutorial = mainTutorialTypes[i];
-                InstantiateTutorial(tutorial);
-            }
-        }
-        [System.Obsolete("This should no longer used.")]
-        public void InstantiatePendingBonusTutorials() {
-            if (SettingsManager.Instance.settings.skipAdvancedTutorials) {
-                return; //do not create tutorials if skip advanced tutorials switch is on.
-            }
-            if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Custom) {
-                return; //Tutorials shouldn't show up on Customize Worlds
-            }
-            //Create instances for all uncompleted tutorials.
-            List<Tutorial> completedTutorials = SaveManager.Instance.currentSaveDataPlayer.completedBonusTutorials;
-            for (int i = 0; i < bonusTutorialTypes.Length; i++) {
-                Tutorial tutorial = bonusTutorialTypes[i];
-                //only instantiate tutorial if it has not yet been completed and has not yet been instantiated
-                bool instantiateTutorial = completedTutorials.Contains(tutorial) == false && _instantiatedTutorials.Count(quest => quest.tutorialType == tutorial) == 0;
-                if (instantiateTutorial) {
-                   InstantiateTutorial(tutorial);
-                }
-            }
-        }
+        // /// <summary>
+        // /// Instantiate all Important tutorials. NOTE: This is called after Start Popup is hidden
+        // /// <see cref="PopUpScreensUI.HideStartDemoScreen"/>
+        // /// </summary>
+        // public void InstantiateImportantTutorials() {
+        //     if (SettingsManager.Instance.settings.skipTutorials) {
+        //         hasCompletedImportantTutorials = true;
+        //         return; //do not create tutorials if skip tutorials switch is on.
+        //     } else {
+        //         hasCompletedImportantTutorials = false;
+        //     }
+        //     for (int i = 0; i < mainTutorialTypes.Length; i++) {
+        //         Tutorial tutorial = mainTutorialTypes[i];
+        //         InstantiateTutorial(tutorial);
+        //     }
+        // }
+        // [System.Obsolete("This should no longer used.")]
+        // public void InstantiatePendingBonusTutorials() {
+        //     if (SettingsManager.Instance.settings.skipAdvancedTutorials) {
+        //         return; //do not create tutorials if skip advanced tutorials switch is on.
+        //     }
+        //     if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Custom) {
+        //         return; //Tutorials shouldn't show up on Customize Worlds
+        //     }
+        //     //Create instances for all uncompleted tutorials.
+        //     List<Tutorial> completedTutorials = SaveManager.Instance.currentSaveDataPlayer.completedBonusTutorials;
+        //     for (int i = 0; i < bonusTutorialTypes.Length; i++) {
+        //         Tutorial tutorial = bonusTutorialTypes[i];
+        //         //only instantiate tutorial if it has not yet been completed and has not yet been instantiated
+        //         bool instantiateTutorial = completedTutorials.Contains(tutorial) == false && _instantiatedTutorials.Count(quest => quest.tutorialType == tutorial) == 0;
+        //         if (instantiateTutorial) {
+        //            InstantiateTutorial(tutorial);
+        //         }
+        //     }
+        // }
         public void InstantiateTutorial(Tutorial tutorial) {
             string noSpacesName = UtilityScripts.Utilities.RemoveAllWhiteSpace(UtilityScripts.Utilities.
                 NormalizeStringUpperCaseFirstLettersNoSpace(tutorial.ToString()));
@@ -212,34 +212,34 @@ namespace Tutorial {
         #endregion
 
         #region Inquiry
-        public bool HasTutorialBeenCompleted(Tutorial tutorial) {
-            if (mainTutorialTypes.Contains(tutorial)) {
-                if (SettingsManager.Instance.settings.skipTutorials) {
-                    //if tutorials are skipped then when this is used always return true
-                    return true;
-                }
-            } else if (bonusTutorialTypes.Contains(tutorial)) {
-                if (SettingsManager.Instance.settings.skipAdvancedTutorials) {
-                    //if advanced tutorials are skipped then when this is used always return true
-                    return true;
-                }
-            }
-            return SaveManager.Instance.currentSaveDataPlayer.completedBonusTutorials.Contains(tutorial) || _completedImportantTutorials.Contains(tutorial);
-        }
-        public bool HasTutorialBeenCompletedInCurrentPlaythrough(Tutorial tutorial) {
-            if (mainTutorialTypes.Contains(tutorial)) {
-                if (SettingsManager.Instance.settings.skipTutorials) {
-                    //if tutorials are skipped then when this is used always return true
-                    return true;
-                }
-            } else if (bonusTutorialTypes.Contains(tutorial)) {
-                if (SettingsManager.Instance.settings.skipAdvancedTutorials) {
-                    //if advanced tutorials are skipped then when this is used always return true
-                    return true;
-                }
-            }
-            return _completedImportantTutorials.Contains(tutorial);
-        }
+        // public bool HasTutorialBeenCompleted(Tutorial tutorial) {
+        //     if (mainTutorialTypes.Contains(tutorial)) {
+        //         if (SettingsManager.Instance.settings.skipTutorials) {
+        //             //if tutorials are skipped then when this is used always return true
+        //             return true;
+        //         }
+        //     } else if (bonusTutorialTypes.Contains(tutorial)) {
+        //         if (SettingsManager.Instance.settings.skipAdvancedTutorials) {
+        //             //if advanced tutorials are skipped then when this is used always return true
+        //             return true;
+        //         }
+        //     }
+        //     return SaveManager.Instance.currentSaveDataPlayer.completedBonusTutorials.Contains(tutorial) || _completedImportantTutorials.Contains(tutorial);
+        // }
+        // public bool HasTutorialBeenCompletedInCurrentPlaythrough(Tutorial tutorial) {
+        //     if (mainTutorialTypes.Contains(tutorial)) {
+        //         if (SettingsManager.Instance.settings.skipTutorials) {
+        //             //if tutorials are skipped then when this is used always return true
+        //             return true;
+        //         }
+        //     } else if (bonusTutorialTypes.Contains(tutorial)) {
+        //         if (SettingsManager.Instance.settings.skipAdvancedTutorials) {
+        //             //if advanced tutorials are skipped then when this is used always return true
+        //             return true;
+        //         }
+        //     }
+        //     return _completedImportantTutorials.Contains(tutorial);
+        // }
         public bool IsTutorialCurrentlyActive(Tutorial tutorial) {
             return _instantiatedTutorials.Any(t => t.tutorialType == tutorial && t.isActivated);
         }

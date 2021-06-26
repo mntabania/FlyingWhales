@@ -74,11 +74,11 @@ public class PopUpScreensUI : MonoBehaviour {
         InnerMapCameraMove.Instance.EnableMovement();
         InputManager.Instance.SetAllHotkeysEnabledState(true);
 
-        if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Tutorial) {
-            TutorialManager.Instance.InstantiateImportantTutorials();
-            // TutorialManager.Instance.InstantiatePendingBonusTutorials();
-            QuestManager.Instance.InitializeAfterStartTutorial();    
-        }
+        // if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Tutorial) {
+        //     TutorialManager.Instance.InstantiateImportantTutorials();
+        //     // TutorialManager.Instance.InstantiatePendingBonusTutorials();
+        //     QuestManager.Instance.InitializeAfterStartTutorial();    
+        // }
     }
     public void OnToggleSkipTutorials(bool state) {
         SettingsManager.Instance.OnToggleSkipTutorials(state);

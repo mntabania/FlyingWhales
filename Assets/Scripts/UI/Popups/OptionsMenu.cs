@@ -11,7 +11,17 @@ public class OptionsMenu : PopupMenuBase {
     [SerializeField] private GameObject saveLoadingGO;
     [SerializeField] private TextMeshProUGUI saveLbl;
     [SerializeField] private Button saveBtn;
-    [SerializeField] private LoadWindow loadWindow;
+
+    #region Listeners
+    public void SubscribeListeners() {
+        Messenger.AddListener<KeyCode>(ControlsSignals.KEY_DOWN, OnKeyDown);
+    }
+    private void OnKeyDown(KeyCode p_keyPressed) {
+        if (p_keyPressed == KeyCode.F5) {
+            QuickSave();
+        }
+    }
+    #endregion
     
     public override void Open() {
         UIManager.Instance.Pause();
@@ -48,7 +58,7 @@ public class OptionsMenu : PopupMenuBase {
         SaveCurrentProgress(saveCallback: UIManager.Instance.ResumeLastProgressionSpeed);
     }
     public void OnClickLoadGame() {
-        loadWindow.Open();
+        UIManager.Instance.OpenLoadWindow();
     }
     public void ExitGame() {
         UIManager.Instance.ShowYesNoConfirmation("Exit Game", "Are you sure you want to exit?", Application.Quit, layer: 50, showCover: true);
@@ -81,12 +91,6 @@ public class OptionsMenu : PopupMenuBase {
         LevelLoaderManager.Instance.UpdateLoadingInfo("Initializing Data...");
         LevelLoaderManager.Instance.UpdateLoadingBar(0.1f, 3f);
         LevelLoaderManager.Instance.LoadLevel("Game");
-    }
-    public bool IsLoadWindowShowing() {
-        return loadWindow.isShowing;
-    }
-    public void CloseLoadWindow() {
-        loadWindow.Close();
     }
 
     #region Saving

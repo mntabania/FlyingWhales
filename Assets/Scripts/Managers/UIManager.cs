@@ -138,6 +138,10 @@ public class UIManager : BaseMonoBehaviour {
     [Space(10)]
     [Header("Logs")]
     public LogTagSpriteDictionary logTagSpriteDictionary;
+    
+    [Space(10)]
+    [Header("Load Window")]
+    [SerializeField] private LoadWindow loadWindow;
 
     public InfoUIBase latestOpenedInfoUI { get; private set; }
     private InfoUIBase _lastOpenedInfoUI;
@@ -202,6 +206,8 @@ public class UIManager : BaseMonoBehaviour {
 
         Messenger.AddListener<LocationStructure>(StructureSignals.STRUCTURE_DESTROYED, OnStructureDestroyed);
         Messenger.AddListener<PlayerAction>(PlayerSkillSignals.PLAYER_ACTION_ACTIVATED, OnPlayerActionActivated);
+        
+        Messenger.AddListener<KeyCode>(ControlsSignals.KEY_DOWN, OnKeyPressed);
 
         AddPlayerActionContextMenuSignals();
         
@@ -219,6 +225,7 @@ public class UIManager : BaseMonoBehaviour {
         
         contextMenuUIController.SetOnHoverOverAction(OnHoverOverPlayerActionContextMenuItem);
         contextMenuUIController.SetOnHoverOutAction(OnHoverOutPlayerActionContextMenuItem);
+        optionsMenu.SubscribeListeners();
         
         UpdateUI();
     }
@@ -264,6 +271,11 @@ public class UIManager : BaseMonoBehaviour {
     }
     private void OnGameLoaded() {
         UpdateUI();
+    }
+    private void OnKeyPressed(KeyCode p_pressedKey) {
+        if (p_pressedKey == KeyCode.F8) {
+            OnLoadHotkeyPressed();
+        }
     }
     private void UpdateUI() {
         dateLbl.SetText($"Day {GameManager.Instance.continuousDays.ToString()}\n{GameManager.Instance.ConvertTickToTime(GameManager.Instance.Today().tick)}");
@@ -2064,6 +2076,27 @@ public class UIManager : BaseMonoBehaviour {
     }
     public bool IsWaitingForTileObjectGenerationToComplete() {
         return waitWindow.activeInHierarchy;
+    }
+    #endregion
+
+    #region Load Window
+    public void OpenLoadWindow() {
+        loadWindow.Open();
+    }
+    private void OnLoadHotkeyPressed() {
+        if (SaveManager.Instance.saveCurrentProgressManager.isSaving || SaveManager.Instance.saveCurrentProgressManager.isWritingToDisk) {
+            //prevent opening load window while player is currently saving
+            return;
+        }
+        if (!IsLoadWindowShowing()) {
+            OpenLoadWindow();    
+        }
+    }
+    public bool IsLoadWindowShowing() {
+        return loadWindow.isShowing;
+    }
+    public void CloseLoadWindow() {
+        loadWindow.Close();
     }
     #endregion
 
