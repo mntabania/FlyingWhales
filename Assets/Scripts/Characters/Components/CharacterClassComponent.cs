@@ -16,7 +16,7 @@ public class CharacterClassComponent : CharacterComponent {
     public bool shouldChangeClass { get; private set; }
 
     #region getters
-    public bool canChangeClass => !characterClass.IsSpecialClass() && characterClass.className != "Ratman";
+    public bool canChangeClass => !characterClass.IsSpecialClass(); // && characterClass.className != "Ratman"; As per Marvs - allowed ratmen to change class for now June 26, 2021 - Changed by Mykel
     #endregion
     public CharacterClassComponent() {
         previousClassName = string.Empty;

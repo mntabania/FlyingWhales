@@ -79,6 +79,10 @@ public class PlayerSkillDetailsTooltip : MonoBehaviour {
             //NOTE: Use charges in both max and current amount since PlayerSkillData is just the raw spell data that has not yet been used
             bonusesText.text = $"{bonusesText.text}{UtilityScripts.Utilities.ColorizeSpellTitle("Charges:")} {charges.ToString()}/{charges.ToString()}";
         }
+        if (p_playerSkillData.resistanceType != RESISTANCE.None) {
+            ELEMENTAL_TYPE elementalType = p_playerSkillData.resistanceType.GetElement();
+            bonusesText.text = $"{bonusesText.text}{UtilityScripts.Utilities.ColorizeSpellTitle("Element:")}{UtilityScripts.Utilities.GetRichTextIconForElement(elementalType)}";
+        }
         if (p_playerSkillData.isAffliction) {
             bonusesText.text = $"{bonusesText.text}\n{GetAfflictionBonusesString(p_playerSkillData, 1)}";
         } else {
@@ -260,7 +264,11 @@ public class PlayerSkillDetailsTooltip : MonoBehaviour {
         string additionalBonusesStr = string.Empty;
         if (spellData.maxCharges > 0) {
             //NOTE: Use charges in both max and current amount since PlayerSkillData is just the raw spell data that has not yet been used
-            additionalBonusesStr = $"{additionalBonusesStr}{UtilityScripts.Utilities.ColorizeSpellTitle("Max Charges:")} {spellData.maxCharges.ToString()}";
+            additionalBonusesStr = $"{additionalBonusesStr}{UtilityScripts.Utilities.ColorizeSpellTitle("Max Charges:")} {spellData.maxCharges.ToString()}\n";
+        }
+        if (p_data.resistanceType != RESISTANCE.None) {
+            ELEMENTAL_TYPE elementalType = p_data.resistanceType.GetElement();
+            additionalBonusesStr = $"{additionalBonusesStr}{UtilityScripts.Utilities.ColorizeSpellTitle("Element:")} {UtilityScripts.Utilities.GetRichTextIconForElement(elementalType)}";
         }
         return additionalBonusesStr;
     }
@@ -377,6 +385,11 @@ public class PlayerSkillDetailsTooltip : MonoBehaviour {
             if (difference > 0) {
                 additionalBonusesStr = $"{additionalBonusesStr} {UtilityScripts.Utilities.UpgradeArrowIcon()} {UtilityScripts.Utilities.ColorizeUpgradeText($"{nextMaxCharges.ToString()}")}";
             }
+        }
+        
+        if (p_data.resistanceType != RESISTANCE.None) {
+            ELEMENTAL_TYPE elementalType = p_data.resistanceType.GetElement();
+            additionalBonusesStr = $"{additionalBonusesStr}{UtilityScripts.Utilities.ColorizeSpellTitle("Element:")}{UtilityScripts.Utilities.GetRichTextIconForElement(elementalType)}";
         }
         return additionalBonusesStr;
     }

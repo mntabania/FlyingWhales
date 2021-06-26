@@ -107,7 +107,10 @@ public class PlayerAction : SkillData, IContextMenuItem {
     //Calculate chance based on piercing and resistance if the player action would be a success if activated
     protected bool RollSuccessChance(IPlayerActionTarget p_target) {
         int baseChance = 100;
-        if(p_target is Character targetCharacter) {
+        //added checking for is dead because of this:
+        //https://trello.com/c/y8KCVTqN/4923-resistance-update
+        //Because we expect that only alive characters should be able to resist player abilities 
+        if(p_target is Character targetCharacter && !targetCharacter.isDead) {
             PlayerSkillData data = PlayerSkillManager.Instance.GetScriptableObjPlayerSkillData<PlayerSkillData>(type);
             if(data.resistanceType != RESISTANCE.None) {
                 float resistanceValue = targetCharacter.piercingAndResistancesComponent.GetResistanceValue(data.resistanceType);
@@ -115,7 +118,15 @@ public class PlayerAction : SkillData, IContextMenuItem {
                 CombatManager.ModifyValueByPiercingAndResistance(ref baseChance, piercing, resistanceValue);
             }
         }
-        return GameUtilities.RollChance(baseChance);
+        string log = string.Empty;
+#if DEBUG_LOG
+        log = $"Rolling chance to succeed for skill {name} against {p_target.name}";
+#endif
+        bool didRollSucceed = GameUtilities.RollChance(baseChance, ref log);
+#if DEBUG_LOG
+        Debug.Log(log);        
+#endif
+        return didRollSucceed;
     }
 
     #region IContextMenuItem Implementation

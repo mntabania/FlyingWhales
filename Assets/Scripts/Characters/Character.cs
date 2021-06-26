@@ -475,7 +475,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             talentComponent.ConstructAllTalents();
             talentComponent.RandomizeInitialTalents(this);
         }
-        if (race.IsSapient()) {
+        if (race.IsSapient() || race == RACE.RATMAN) {
             villagerWantsComponent = new VillagerWantsComponent(); villagerWantsComponent.SetOwner(this);
             villagerWantsComponent.Initialize(this);
         }
@@ -6526,7 +6526,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     //function to be attached on skill levelup NOTE!! - only humans should gain from this call
     public void OnSkillLevelUp(string p_className, float factor = 1f) {
         CharacterClassData classData = CharacterManager.Instance.GetOrCreateCharacterClassData(p_className);
-        piercingAndResistancesComponent.AdjustPiercing(classData.characterSkillUpdateData.GetPiercingBonus() * factor);
+        piercingAndResistancesComponent.AdjustBasePiercing(classData.characterSkillUpdateData.GetPiercingBonus() * factor);
 
         RESISTANCE[] resistances = CollectionUtilities.GetEnumValues<RESISTANCE>();
         for (int i = 0; i < resistances.Length; i++) {
@@ -6599,7 +6599,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         p_crystal.resistanceBonuses.ForEach((eachResistance) => {
             piercingAndResistancesComponent.AdjustResistance(eachResistance, p_crystal.amountBonusResistance);
         });
-        piercingAndResistancesComponent.AdjustPiercing(p_crystal.amountBonusPiercing);
+        piercingAndResistancesComponent.AdjustBasePiercing(p_crystal.amountBonusPiercing);
     }
 #endregion
 

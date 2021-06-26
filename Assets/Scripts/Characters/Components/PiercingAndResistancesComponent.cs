@@ -3,10 +3,15 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class PiercingAndResistancesComponent : CharacterComponent {
+    /// <summary>
+    /// This is the computed value of basePiercing * piercingMultiplier
+    /// </summary>
     public float piercingPower { get; private set; }
     public Dictionary<RESISTANCE, float> resistances { get; private set; }
     public Dictionary<RESISTANCE, float> resistancesMultipliers { get; private set; }
-
+    public float piercingMultiplier { get; private set; }
+    public float basePiercing { get; private set; }
+    
     public PiercingAndResistancesComponent() {
         resistances = new Dictionary<RESISTANCE, float>();
         resistancesMultipliers = new Dictionary<RESISTANCE, float>();
@@ -15,15 +20,26 @@ public class PiercingAndResistancesComponent : CharacterComponent {
         piercingPower = data.piercingPower;
         resistances = data.resistances;
         resistancesMultipliers = data.resistancesMultipliers;
+        piercingMultiplier = data.piercingMultiplier;
+        basePiercing = data.basePiercing;
     }
 
     #region Piercing
-    public void AdjustPiercing(float p_amount) {
-        piercingPower += p_amount;
-        Messenger.Broadcast(UISignals.UPDATE_PIERCING_AND_RESISTANCE_INFO, owner);
+    public void AdjustBasePiercing(float p_amount) {
+        basePiercing += p_amount;
+        UpdatePiercing();
     }
-    public void SetPiercing(float p_amount) {
-        piercingPower = p_amount;
+    public void SetBasePiercing(float p_amount) {
+        basePiercing = p_amount;
+        UpdatePiercing();
+    }
+    public void AdjustPiercingMultiplier(float p_amount) {
+        piercingMultiplier += p_amount;
+        UpdatePiercing();
+    }
+    private void UpdatePiercing() {
+        piercingPower = basePiercing + (basePiercing * (piercingMultiplier / 100f));
+        piercingPower = Mathf.Round(piercingPower);
         Messenger.Broadcast(UISignals.UPDATE_PIERCING_AND_RESISTANCE_INFO, owner);
     }
     #endregion
@@ -49,6 +65,7 @@ public class PiercingAndResistancesComponent : CharacterComponent {
             float multiplier = 1f;
             if (resistancesMultipliers.ContainsKey(p_resistance)) {
                 multiplier = resistancesMultipliers[p_resistance];
+                multiplier = Mathf.Max(multiplier, 1);
             }
             return baseResistance * multiplier;
         }
@@ -80,12 +97,16 @@ public class SaveDataPiercingAndResistancesComponent : SaveData<PiercingAndResis
     public float piercingPower;
     public Dictionary<RESISTANCE, float> resistances;
     public Dictionary<RESISTANCE, float> resistancesMultipliers;
+    public float piercingMultiplier;
+    public float basePiercing;
 
     #region Overrides
     public override void Save(PiercingAndResistancesComponent data) {
         piercingPower = data.piercingPower;
         resistances = data.resistances;
         resistancesMultipliers = data.resistancesMultipliers;
+        piercingMultiplier = data.piercingMultiplier;
+        basePiercing = data.basePiercing;
     }
 
     public override PiercingAndResistancesComponent Load() {
