@@ -159,9 +159,12 @@ public class GoapPlanner {
                 //Only set assigned plan if job is still in character job queue because if not, it means that the job is no longer taken
                 _goapThreadInProcess.job.SetAssignedPlan(createdPlan);
                 if (jobIndex != 0) {
+                    ObjectPoolManager.Instance.ReturnGoapThreadToPool(_goapThreadInProcess);
+                    _goapThreadInProcess = null;
                     //If the job of the receive plan is no longer the top priority, process the top most job because it means that while the goap planner is running, the top most priority has been replaced
                     //This means that the top most priority was not processed since the goap planner is still running
                     owner.jobQueue.ProcessFirstJobInQueue();
+                    return;
                 }
             }
         } else {
@@ -179,20 +182,6 @@ public class GoapPlanner {
                 owner.trapStructure.ResetAllTrappedValues();
                 owner.traitContainer.AddTrait(owner, "Abstain Happiness");
             }
-            //if (jobType.IsNeedsTypeJob()) {
-            //If unable to do a Need while in a Trapped Structure, remove Trap Structure.
-            //if (owner.partyComponent.isActiveMember) {
-            //    if (owner.partyComponent.currentParty.startedTrueRestingState) {
-            //        if (jobType.IsFullnessRecoveryTypeJob()) {
-            //            owner.traitContainer.AddTrait(owner, "Abstain Fullness");
-            //        } else if (jobType.IsTirednessRecoveryTypeJob()) {
-            //            owner.traitContainer.AddTrait(owner, "Abstain Tiredness");
-            //        } else if (jobType.IsHappinessRecoveryTypeJob()) {
-            //            owner.traitContainer.AddTrait(owner, "Abstain Happiness");
-            //        }
-            //    }
-            //}
-            //}
             if (_goapThreadInProcess.recalculationPlan == null) {
                 //This means that the planner cannot create a new plan
                 if (_goapThreadInProcess.job.targetPOI != null) {

@@ -393,12 +393,13 @@ public class ObjectPoolManager : MonoBehaviour {
         return new GoapThread();
     }
     public void ReturnGoapThreadToPool(GoapThread data) {
-        if (!_goapThreadPool.Contains(data)) {
-            data.Reset();
-            _goapThreadPool.Add(data);
-        } else {
-            Debug.LogError("Duplicate in returnin Goap Thread");
-        }
+        data.Reset();
+        _goapThreadPool.Add(data);
+        //if (!_goapThreadPool.Contains(data)) {
+
+        //} else {
+        //    Debug.LogError("Duplicate in returnin Goap Thread");
+        //}
     }
     #endregion
 
