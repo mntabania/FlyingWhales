@@ -128,7 +128,22 @@ public class ConsoleBase : InfoUIBase {
         tglShowPOIHoverData.SetIsOnWithoutNotify(showPOIHoverData);
         tglShowPOIHoverData.onValueChanged.RemoveAllListeners();
         tglShowPOIHoverData.onValueChanged.AddListener(OnToggleShowPOIHoverData);
+        
+        // Messenger.AddListener(Signals.TICK_STARTED, OnTickStarted);
     }
+    // private void OnTickStarted() {
+    //     for (int i = 0; i < DatabaseManager.Instance.settlementDatabase.allNonPlayerSettlements.Count; i++) {
+    //         NPCSettlement settlement = DatabaseManager.Instance.settlementDatabase.allNonPlayerSettlements[i];
+    //         if (settlement.SettlementResources != null) {
+    //             for (int j = 0; j < settlement.SettlementResources.resourcePiles.Count; j++) {
+    //                 ResourcePile resourcePile = settlement.SettlementResources.resourcePiles[j];
+    //                 if (resourcePile.gridTileLocation == null) {
+    //                     Debug.LogError($"Resource pile {resourcePile.nameWithID} is in resource list of {settlement.name} but has no grid tile location!");
+    //                 }
+    //             }
+    //         }
+    //     }
+    // }
     private void Update() {
         if (!isShowing) {
             return;
