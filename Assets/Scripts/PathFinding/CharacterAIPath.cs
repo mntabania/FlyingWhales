@@ -108,13 +108,15 @@ public class CharacterAIPath : AILerp {
         //Check the node distance with the limiter set in the job, if it exceeds, cancel job
         if (marker.character.currentJob != null) {
             int nodeDistanceLimit = marker.character.currentJob.jobType.GetJobTypeNodeDistanceLimit();
-            if (newPath.vectorPath.Count > nodeDistanceLimit) {
+            if (nodeDistanceLimit != -1) {
+                if (newPath.vectorPath.Count > nodeDistanceLimit) {
 #if DEBUG_LOG
-                Debug.LogWarning($"{marker.character.currentJob.ToString()} of {marker.character.ToString()} path node count is {newPath.vectorPath.Count}. It exceeded job node distance limiter which is {nodeDistanceLimit}. Cancel job.");
+                    Debug.LogWarning($"{marker.character.currentJob.ToString()} of {marker.character.ToString()} path node count is {newPath.vectorPath.Count}. It exceeded job node distance limiter which is {nodeDistanceLimit}. Cancel job.");
 #endif
-                marker.character.currentJob.CancelJob();
-                ClearAllCurrentPathData();
-                return;
+                    marker.character.currentJob.CancelJob();
+                    ClearAllCurrentPathData();
+                    return;
+                }
             }
         }
     }
