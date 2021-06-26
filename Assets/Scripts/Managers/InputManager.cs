@@ -38,26 +38,29 @@ namespace Ruinarch {
 
         private Dictionary<KeyCode, bool> _allowedHotKeys;
         private List<KeyCode> _allowedHotKeysList = new List<KeyCode>() {
-            {KeyCode.F1},
-            {KeyCode.F2},
-            {KeyCode.F3},
-            {KeyCode.F4},
-            {KeyCode.F5},
-            {KeyCode.F6},
-            {KeyCode.F7},
-            {KeyCode.F8},
-            {KeyCode.F9},
-            {KeyCode.F10},
-            {KeyCode.Space},
-            {KeyCode.Escape},
             {KeyCode.Alpha1},
             {KeyCode.Alpha2},
             {KeyCode.Alpha3},
+            {KeyCode.Alpha4},
+            {KeyCode.Alpha5},
+            {KeyCode.Alpha6},
+            {KeyCode.Alpha7},
+            {KeyCode.Alpha8},
+            {KeyCode.Alpha9},
+            {KeyCode.F10},
+            {KeyCode.Space},
+            {KeyCode.Escape},
+            {KeyCode.F5},
+            {KeyCode.F8},
             {KeyCode.Tab},
-            {KeyCode.R},
             {KeyCode.LeftAlt},
             {KeyCode.LeftShift},
             {KeyCode.P},
+            {KeyCode.Minus},
+            {KeyCode.Plus},
+            {KeyCode.Equals},
+            {KeyCode.KeypadPlus},
+            {KeyCode.KeypadMinus},
         };
 
         #region getters
@@ -110,15 +113,27 @@ namespace Ruinarch {
             } else if (Input.GetKeyDown(KeyCode.Space)) {
                 if (!CanUseHotkey(KeyCode.Space)) return;
                 Messenger.Broadcast(ControlsSignals.KEY_DOWN, KeyCode.Space);
-            } else if (Input.GetKeyDown(KeyCode.Alpha1)) {
-                if (!CanUseHotkey(KeyCode.Alpha1)) return;
-                Messenger.Broadcast(ControlsSignals.KEY_DOWN, KeyCode.Alpha1);
-            } else if (Input.GetKeyDown(KeyCode.Alpha2)) {
-                if (!CanUseHotkey(KeyCode.Alpha2)) return;
-                Messenger.Broadcast(ControlsSignals.KEY_DOWN, KeyCode.Alpha2);
-            } else if (Input.GetKeyDown(KeyCode.Alpha3)) {
-                if (!CanUseHotkey(KeyCode.Alpha3)) return;
-                Messenger.Broadcast(ControlsSignals.KEY_DOWN, KeyCode.Alpha3);
+            } else if (Input.GetKeyDown(KeyCode.Minus)) {
+                if (!CanUseHotkey(KeyCode.Minus)) return;
+                Messenger.Broadcast(ControlsSignals.KEY_DOWN, KeyCode.Minus);
+            } else if (Input.GetKeyDown(KeyCode.KeypadMinus)) {
+                if (!CanUseHotkey(KeyCode.KeypadMinus)) return;
+                Messenger.Broadcast(ControlsSignals.KEY_DOWN, KeyCode.KeypadMinus);
+            } else if (Input.GetKeyDown(KeyCode.Plus)) {
+                if (!CanUseHotkey(KeyCode.Plus)) return;
+                Messenger.Broadcast(ControlsSignals.KEY_DOWN, KeyCode.Plus);
+            } else if (Input.GetKeyDown(KeyCode.KeypadPlus)) {
+                if (!CanUseHotkey(KeyCode.KeypadPlus)) return;
+                Messenger.Broadcast(ControlsSignals.KEY_DOWN, KeyCode.KeypadPlus);
+            } else if (Input.GetKeyDown(KeyCode.Equals)) {
+                if (!CanUseHotkey(KeyCode.Equals)) return;
+                Messenger.Broadcast(ControlsSignals.KEY_DOWN, KeyCode.Equals);
+            } else if (Input.GetKeyDown(KeyCode.F5)) {
+                if (!CanUseHotkey(KeyCode.F5)) return;
+                Messenger.Broadcast(ControlsSignals.KEY_DOWN, KeyCode.F5);
+            } else if (Input.GetKeyDown(KeyCode.F8)) {
+                if (!CanUseHotkey(KeyCode.F8)) return;
+                Messenger.Broadcast(ControlsSignals.KEY_DOWN, KeyCode.F8);
             } else if (Input.GetKeyDown(KeyCode.Escape)) {
                 if (!CanUseHotkey(KeyCode.Escape)) return;
                 Messenger.Broadcast(ControlsSignals.KEY_DOWN, KeyCode.Escape);
@@ -133,40 +148,31 @@ namespace Ruinarch {
                         }    
                     }
                 }
-                // CancelActionsByPriority();
-            } else if (Input.GetKeyDown(KeyCode.F1)) {
-                BroadcastHotkeyPress("Spells Tab", KeyCode.F1);
-            } else if (Input.GetKeyDown(KeyCode.F2)) {
-                BroadcastHotkeyPress("Structures Tab", KeyCode.F2);
-            } else if (Input.GetKeyDown(KeyCode.F3)) {
-                BroadcastHotkeyPress("Demons Tab", KeyCode.F3);
-            } else if (Input.GetKeyDown(KeyCode.F4)) {
-                BroadcastHotkeyPress("Monsters Tab", KeyCode.F4);
-            } else if (Input.GetKeyDown(KeyCode.F5)) {
-                BroadcastHotkeyPress("Intel Tab", KeyCode.F5);
-            } else if (Input.GetKeyDown(KeyCode.F6)) {
-                BroadcastHotkeyPress("Targets Tab", KeyCode.F6);
-            } else if (Input.GetKeyDown(KeyCode.F7)) {
-                BroadcastHotkeyPress("Villagers Tab", KeyCode.F7);
-            } else if (Input.GetKeyDown(KeyCode.F8)) {
-                BroadcastHotkeyPress("Cultist Tab", KeyCode.F8);
-            } else if (Input.GetKeyDown(KeyCode.F9)) {
-                BroadcastHotkeyPress("Tutorials Tab", KeyCode.F9);
+            } else if (Input.GetKeyDown(KeyCode.Alpha1)) {
+                BroadcastHotkeyPress("Spells Tab", KeyCode.Alpha1);
+            } else if (Input.GetKeyDown(KeyCode.Alpha2)) {
+                BroadcastHotkeyPress("Structures Tab", KeyCode.Alpha2);
+            } else if (Input.GetKeyDown(KeyCode.Alpha3)) {
+                BroadcastHotkeyPress("Demons Tab", KeyCode.Alpha3);
+            } else if (Input.GetKeyDown(KeyCode.Alpha4)) {
+                BroadcastHotkeyPress("Monsters Tab", KeyCode.Alpha4);
+            } else if (Input.GetKeyDown(KeyCode.Alpha5)) {
+                BroadcastHotkeyPress("Intel Tab", KeyCode.Alpha5);
+            } else if (Input.GetKeyDown(KeyCode.Alpha6)) {
+                BroadcastHotkeyPress("Targets Tab", KeyCode.Alpha6);
+            } else if (Input.GetKeyDown(KeyCode.Alpha7)) {
+                BroadcastHotkeyPress("Villagers Tab", KeyCode.Alpha7);
+            } else if (Input.GetKeyDown(KeyCode.Alpha8)) {
+                BroadcastHotkeyPress("Cultist Tab", KeyCode.Alpha8);
+            } else if (Input.GetKeyDown(KeyCode.Alpha9)) {
+                BroadcastHotkeyPress("Tutorials Tab", KeyCode.Alpha9);
             } else if (Input.GetKeyDown(KeyCode.P)) {
                 BroadcastHotkeyPress("portal shortcut", KeyCode.P);
-            }
-            // else if (Input.GetKeyDown(KeyCode.M)) {
-            //     BroadcastHotkeyPress("ToggleMapBtn", KeyCode.M);
-            // } 
-            else if (Input.GetKeyDown(KeyCode.Tab)) {
+            } else if (Input.GetKeyDown(KeyCode.Tab)) {
                 if (!CanUseHotkey(KeyCode.Tab)) return;
                 if (HasSelectedUIObject()) { return; } //if currently selecting a UI object, ignore (This is mostly for Input fields)
                 CharacterCenterCycle();
                 Messenger.Broadcast(ControlsSignals.KEY_DOWN, KeyCode.Tab);
-            } else if (Input.GetKeyDown(KeyCode.R)) {
-                if (!CanUseHotkey(KeyCode.R)) return;
-                if (HasSelectedUIObject()) { return; } //if currently selecting a UI object, ignore (This is mostly for Input fields)
-                Messenger.Broadcast(ControlsSignals.KEY_DOWN, KeyCode.R);
             } else if (Input.GetKeyDown(KeyCode.LeftAlt)) {
                 if (!CanUseHotkey(KeyCode.LeftAlt)) return;
                 if (GameManager.Instance != null && GameManager.Instance.gameHasStarted) {
@@ -322,8 +328,8 @@ namespace Ruinarch {
             if (!CancelSpellsByPriority()) {
                 if (UIManager.Instance.IsOptionsMenuShowing()) {
                     //if options menu is showing, check if load window is showing, if it is close load window.
-                    if (UIManager.Instance.optionsMenu.IsLoadWindowShowing()) {
-                        UIManager.Instance.optionsMenu.CloseLoadWindow();
+                    if (UIManager.Instance.IsLoadWindowShowing()) {
+                        UIManager.Instance.CloseLoadWindow();
                         return true;
                     }
                     //if load window is not showing then close options menu

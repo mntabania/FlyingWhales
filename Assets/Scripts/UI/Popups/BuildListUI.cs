@@ -118,15 +118,15 @@ public class BuildListUI : PopupMenuBase {
         bool canChooseLandmark = p_spellData.CanPerformAbility();
 
         if (canChooseLandmark) {
-            if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Tutorial) {
-                if (p_spellData.type == PLAYER_SKILL_TYPE.WATCHER) {
-                    return TutorialManager.Instance.HasTutorialBeenCompletedInCurrentPlaythrough(TutorialManager.Tutorial.Share_An_Intel) ||
-                           TutorialManager.Instance.IsTutorialCurrentlyActive(TutorialManager.Tutorial.Share_An_Intel);
-                } else if (p_spellData.type == PLAYER_SKILL_TYPE.KENNEL) {
-                    return TutorialManager.Instance.HasTutorialBeenCompleted(TutorialManager.Tutorial.Build_A_Kennel) ||
-                           TutorialManager.Instance.IsTutorialCurrentlyActive(TutorialManager.Tutorial.Build_A_Kennel);
-                }
-            }
+            // if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Tutorial) {
+            //     if (p_spellData.type == PLAYER_SKILL_TYPE.WATCHER) {
+            //         return TutorialManager.Instance.HasTutorialBeenCompletedInCurrentPlaythrough(TutorialManager.Tutorial.Share_An_Intel) ||
+            //                TutorialManager.Instance.IsTutorialCurrentlyActive(TutorialManager.Tutorial.Share_An_Intel);
+            //     } else if (p_spellData.type == PLAYER_SKILL_TYPE.KENNEL) {
+            //         return TutorialManager.Instance.HasTutorialBeenCompleted(TutorialManager.Tutorial.Build_A_Kennel) ||
+            //                TutorialManager.Instance.IsTutorialCurrentlyActive(TutorialManager.Tutorial.Build_A_Kennel);
+            //     }
+            // }
             // if (structureType == SPELL_TYPE.EYE && InnerMapManager.Instance.currentlyShowingLocation.HasStructure(STRUCTURE_TYPE.EYE)) {
             //     canChooseLandmark = false; //only 1 eye per region.
             // }

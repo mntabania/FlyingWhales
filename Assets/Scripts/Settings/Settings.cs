@@ -5,7 +5,7 @@
         //Controls
         public bool useEdgePanning;
         public bool skipTutorials;
-        public bool skipAdvancedTutorials;
+        // public bool skipAdvancedTutorials;
         public bool confineCursor;
         
         //Graphics

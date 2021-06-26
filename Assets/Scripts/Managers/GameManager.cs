@@ -87,19 +87,57 @@ public class GameManager : BaseMonoBehaviour {
                     UIManager.Instance.PauseByPlayer();
                 }
             }
-        } else if (keyCode == KeyCode.Alpha1) {
-            if (!UIManager.Instance.IsConsoleShowing() && UIManager.Instance.x1Btn.IsInteractable() && !InputManager.Instance.HasSelectedUIObject()) {
-                UIManager.Instance.SetProgressionSpeed1X();
+        } else if (keyCode == KeyCode.Minus || keyCode == KeyCode.KeypadMinus) {
+            if (!UIManager.Instance.IsConsoleShowing() && !InputManager.Instance.HasSelectedUIObject()) {
+                if (!isPaused) {
+                    switch (currProgressionSpeed) {
+                        case PROGRESSION_SPEED.X1:
+                            if (UIManager.Instance.pauseBtn.IsInteractable()) {
+                                UIManager.Instance.PauseByPlayer();    
+                            }
+                            break;
+                        case PROGRESSION_SPEED.X2:
+                            UIManager.Instance.SetProgressionSpeed1X();
+                            break;
+                        case PROGRESSION_SPEED.X4:
+                            UIManager.Instance.SetProgressionSpeed2X();
+                            break;
+                    }
+                }
             }
-        } else if (keyCode == KeyCode.Alpha2) {
-            if (!UIManager.Instance.IsConsoleShowing() && UIManager.Instance.x2Btn.IsInteractable() && !InputManager.Instance.HasSelectedUIObject()) {
-                UIManager.Instance.SetProgressionSpeed2X();
-            }
-        } else if (keyCode == KeyCode.Alpha3) {
-            if (!UIManager.Instance.IsConsoleShowing() && UIManager.Instance.x4Btn.IsInteractable() && !InputManager.Instance.HasSelectedUIObject()) {
-                UIManager.Instance.SetProgressionSpeed4X();
+        } else if (keyCode == KeyCode.Plus || keyCode == KeyCode.Equals || keyCode == KeyCode.KeypadPlus) {
+            if (isPaused) {
+                if (UIManager.Instance.pauseBtn.IsInteractable()) {
+                    UIManager.Instance.Unpause();    
+                }
+            } else {
+                switch (currProgressionSpeed) {
+                    case PROGRESSION_SPEED.X1:
+                        UIManager.Instance.SetProgressionSpeed2X();
+                        break;
+                    case PROGRESSION_SPEED.X2:
+                        UIManager.Instance.SetProgressionSpeed4X();
+                        break;
+                    case PROGRESSION_SPEED.X4:
+                        //do nothing, since 4x is the max speed
+                        break;
+                }
             }
         }
+        
+        // else if (keyCode == KeyCode.Alpha1) {
+        //     if (!UIManager.Instance.IsConsoleShowing() && UIManager.Instance.x1Btn.IsInteractable() && !InputManager.Instance.HasSelectedUIObject()) {
+        //         UIManager.Instance.SetProgressionSpeed1X();
+        //     }
+        // } else if (keyCode == KeyCode.Alpha2) {
+        //     if (!UIManager.Instance.IsConsoleShowing() && UIManager.Instance.x2Btn.IsInteractable() && !InputManager.Instance.HasSelectedUIObject()) {
+        //         UIManager.Instance.SetProgressionSpeed2X();
+        //     }
+        // } else if (keyCode == KeyCode.Alpha3) {
+        //     if (!UIManager.Instance.IsConsoleShowing() && UIManager.Instance.x4Btn.IsInteractable() && !InputManager.Instance.HasSelectedUIObject()) {
+        //         UIManager.Instance.SetProgressionSpeed4X();
+        //     }
+        // }
     }
     
     private void Update() {

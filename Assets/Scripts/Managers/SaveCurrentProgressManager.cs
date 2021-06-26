@@ -50,7 +50,7 @@ public class SaveCurrentProgressManager : MonoBehaviour {
             return false;
         }
         if (UIManager.Instance != null) {
-            if (UIManager.Instance.optionsMenu.IsLoadWindowShowing()) {
+            if (UIManager.Instance.IsLoadWindowShowing()) {
                 return false;    
             }
             if (UIManager.Instance.IsShowingEndScreen()) {

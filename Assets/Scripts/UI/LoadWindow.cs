@@ -14,6 +14,12 @@ public class LoadWindow : PopupMenuBase  {
     private bool isFetchingSaves;
     
     public override void Open() {
+        if (UIManager.Instance != null) {
+            if (!UIManager.Instance.optionsMenu.isShowing) {
+                UIManager.Instance.Pause();
+                UIManager.Instance.SetSpeedTogglesState(false);    
+            }
+        }
         // LoadSavedGameItems();
         Messenger.AddListener<string>(UISignals.LOAD_SAVE_FILE, OnLoadFileChosen);
         // Messenger.AddListener<string>(Signals.SAVE_FILE_DELETED, OnSaveFileDeleted);
@@ -27,6 +33,11 @@ public class LoadWindow : PopupMenuBase  {
         if (isFetchingSaves) {
             //do not allow close while saves are being loaded.
             return;
+        }
+        if (UIManager.Instance != null) {
+            if (!UIManager.Instance.optionsMenu.isShowing) {
+                UIManager.Instance.ResumeLastProgressionSpeed();
+            }
         }
         base.Close();
         isFetchingSaves = false;
