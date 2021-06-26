@@ -15,6 +15,8 @@ public class GoapPlanner {
     
     private List<GoapNode> _rawPlan;
 
+    private GoapThread _goapThreadInProcess;
+
     public GoapPlanner(Character owner) {
         this.owner = owner;
         _rawPlan = new List<GoapNode>();
@@ -33,9 +35,9 @@ public class GoapPlanner {
         Debug.Log($"{GameManager.Instance.TodayLogString()}{owner.name} has started planning {job}");
 #endif
         Character actor = owner;
-        GoapThread thread = ObjectPoolManager.Instance.CreateNewGoapThread();
-        thread.Initialize(actor, target, goal, isPersonalPlan, job);
-        MultiThreadPool.Instance.AddToThreadPool(thread);
+        _goapThreadInProcess = ObjectPoolManager.Instance.CreateNewGoapThread();
+        _goapThreadInProcess.Initialize(actor, target, goal, isPersonalPlan, job);
+        MultiThreadPool.Instance.AddToThreadPool(_goapThreadInProcess);
         job.SetIsInMultithread(true);
     }
     public void StartGOAP(INTERACTION_TYPE goalType, IPointOfInterest target, GoapPlanJob job, bool isPersonalPlan = true) {
@@ -50,9 +52,9 @@ public class GoapPlanner {
 #if DEBUG_LOG
         Debug.Log($"{GameManager.Instance.TodayLogString()}{owner.name} has started planning {job}");
 #endif
-        GoapThread thread = ObjectPoolManager.Instance.CreateNewGoapThread();
-        thread.Initialize(owner, goalType, target, isPersonalPlan, job);
-        MultiThreadPool.Instance.AddToThreadPool(thread);
+        _goapThreadInProcess = ObjectPoolManager.Instance.CreateNewGoapThread();
+        _goapThreadInProcess.Initialize(owner, goalType, target, isPersonalPlan, job);
+        MultiThreadPool.Instance.AddToThreadPool(_goapThreadInProcess);
         job.SetIsInMultithread(true);
     }
     public void RecalculateJob(GoapPlanJob job) {
@@ -63,42 +65,47 @@ public class GoapPlanner {
         if (job.assignedPlan != null) {
             job.assignedPlan.SetIsBeingRecalculated(true);
             status = GOAP_PLANNING_STATUS.RUNNING;
-            GoapThread thread = ObjectPoolManager.Instance.CreateNewGoapThread();
-            thread.InitializeForRecalculation(owner, job.assignedPlan, job);
-            MultiThreadPool.Instance.AddToThreadPool(thread);
+            _goapThreadInProcess = ObjectPoolManager.Instance.CreateNewGoapThread();
+            _goapThreadInProcess.InitializeForRecalculation(owner, job.assignedPlan, job);
+            MultiThreadPool.Instance.AddToThreadPool(_goapThreadInProcess);
             job.SetIsInMultithread(true);
         }
     }
-    public void ReceivePlanFromGoapThread(GoapThread goapThread) {
+    public void ReceivePlanFromGoapThread(GoapPlan createdPlan) {
         status = GOAP_PLANNING_STATUS.NONE;
-        if (goapThread.job != null) {
-            goapThread.job.SetIsInMultithread(false);
-            if (goapThread.job.shouldForceCancelUponReceiving) {
-                ForceCancelJobAndReturnToObjectPool(goapThread.job);
-                if (goapThread.recalculationPlan != null && goapThread.recalculationPlan.resetPlanOnFinishRecalculation) {
-                    ObjectPoolManager.Instance.ReturnGoapPlanToPool(goapThread.recalculationPlan);
+        if (_goapThreadInProcess.job != null) {
+            _goapThreadInProcess.job.SetIsInMultithread(false);
+            if (_goapThreadInProcess.job.shouldForceCancelUponReceiving) {
+                ForceCancelJobAndReturnToObjectPool(_goapThreadInProcess.job);
+                if (_goapThreadInProcess.recalculationPlan != null && _goapThreadInProcess.recalculationPlan.resetPlanOnFinishRecalculation) {
+                    ObjectPoolManager.Instance.ReturnGoapPlanToPool(_goapThreadInProcess.recalculationPlan);
                 }
-                ObjectPoolManager.Instance.ReturnGoapThreadToPool(goapThread);
+                ObjectPoolManager.Instance.ReturnGoapThreadToPool(_goapThreadInProcess);
+                _goapThreadInProcess = null;
                 return;
             }
         }
         if (owner.isDead || !owner.marker) {
-            ForceCancelJobAndReturnToObjectPool(goapThread.job);
-            ObjectPoolManager.Instance.ReturnGoapThreadToPool(goapThread);
+            ForceCancelJobAndReturnToObjectPool(_goapThreadInProcess.job);
+            ObjectPoolManager.Instance.ReturnGoapThreadToPool(_goapThreadInProcess);
+            _goapThreadInProcess = null;
             return;
         }
-        if (goapThread.recalculationPlan != null) {
+        if (_goapThreadInProcess.recalculationPlan != null) {
             // owner.logComponent.PrintLogIfActive(goapThread.log);
-            if (goapThread.recalculationPlan.isEnd) {
-                ForceCancelJobAndReturnToObjectPool(goapThread.job);
-                if (goapThread.recalculationPlan.resetPlanOnFinishRecalculation) {
-                    ObjectPoolManager.Instance.ReturnGoapPlanToPool(goapThread.recalculationPlan);
+            if (_goapThreadInProcess.recalculationPlan.isEnd) {
+                ForceCancelJobAndReturnToObjectPool(_goapThreadInProcess.job);
+                if (_goapThreadInProcess.recalculationPlan.resetPlanOnFinishRecalculation) {
+                    ObjectPoolManager.Instance.ReturnGoapPlanToPool(_goapThreadInProcess.recalculationPlan);
                 }
-                ObjectPoolManager.Instance.ReturnGoapThreadToPool(goapThread);
+                ObjectPoolManager.Instance.ReturnGoapThreadToPool(_goapThreadInProcess);
+                _goapThreadInProcess = null;
                 return;
             } else {
-                if (goapThread.recalculationPlan.resetPlanOnFinishRecalculation) {
-                    ObjectPoolManager.Instance.ReturnGoapPlanToPool(goapThread.recalculationPlan);
+                if (_goapThreadInProcess.recalculationPlan.resetPlanOnFinishRecalculation) {
+                    ObjectPoolManager.Instance.ReturnGoapPlanToPool(_goapThreadInProcess.recalculationPlan);
+                    ObjectPoolManager.Instance.ReturnGoapThreadToPool(_goapThreadInProcess);
+                    _goapThreadInProcess = null;
                     return;
                 }    
             }
@@ -106,24 +113,25 @@ public class GoapPlanner {
 #if DEBUG_LOG
         string additionalLog = string.Empty;
 #endif
-        if (goapThread.job.originalOwner == null) {
+        if (_goapThreadInProcess.job.originalOwner == null) {
             //This means that the job is already in the object pool, meaning that the received plan for the job is no longer applicable since the job is already deleted/cancelled
 #if DEBUG_LOG
             additionalLog += "\nJOB NO LONGER APPLICABLE, DISCARD PLAN IF THERE'S ANY";
-            owner.logComponent.PrintLogIfActive(goapThread.log + additionalLog);
+            owner.logComponent.PrintLogIfActive(_goapThreadInProcess.log + additionalLog);
 #endif
-            ForceCancelJobAndReturnToObjectPool(goapThread.job);
-            ObjectPoolManager.Instance.ReturnGoapThreadToPool(goapThread);
+            ForceCancelJobAndReturnToObjectPool(_goapThreadInProcess.job);
+            ObjectPoolManager.Instance.ReturnGoapThreadToPool(_goapThreadInProcess);
+            _goapThreadInProcess = null;
             return;
         }
 #if DEBUG_LOG
-        owner.logComponent.PrintLogIfActive(goapThread.log + additionalLog);
+        owner.logComponent.PrintLogIfActive(_goapThreadInProcess.log + additionalLog);
 #endif
-        if (goapThread.createdPlan != null) {
-            goapThread.createdPlan.SetDoNotRecalculate(goapThread.job.doNotRecalculate);
-            if (goapThread.recalculationPlan != null) {
+        if (createdPlan != null) {
+            createdPlan.SetDoNotRecalculate(_goapThreadInProcess.job.doNotRecalculate);
+            if (_goapThreadInProcess.recalculationPlan != null) {
                 //This means that the created plan is a recalculated plan
-                goapThread.createdPlan.SetIsBeingRecalculated(false);
+                createdPlan.SetIsBeingRecalculated(false);
             }
             if (!owner.limiterComponent.canPerform) {
                 int canPerformValue = owner.limiterComponent.canPerformValue;
@@ -131,17 +139,18 @@ public class GoapPlanner {
                     //If the owner is paralyzed or quarantined and the only reason he cannot perform is because of that paralyzed, the plan must not be scrapped
                 } else {
 #if DEBUG_LOG
-                    owner.logComponent.PrintLogIfActive($"{owner.name} is scrapping plan since {owner.name} cannot perform. {goapThread.job.name} is the job.");
+                    owner.logComponent.PrintLogIfActive($"{owner.name} is scrapping plan since {owner.name} cannot perform. {_goapThreadInProcess.job.name} is the job.");
 #endif
-                    goapThread.job.CancelJob();
-                    ObjectPoolManager.Instance.ReturnGoapThreadToPool(goapThread);
+                    _goapThreadInProcess.job.CancelJob();
+                    ObjectPoolManager.Instance.ReturnGoapThreadToPool(_goapThreadInProcess);
+                    _goapThreadInProcess = null;
                     return;
                 }
             }
-            int jobIndex = owner.jobQueue.GetJobQueueIndex(goapThread.job);
+            int jobIndex = owner.jobQueue.GetJobQueueIndex(_goapThreadInProcess.job);
             if(jobIndex != -1) {
                 //Only set assigned plan if job is still in character job queue because if not, it means that the job is no longer taken
-                goapThread.job.SetAssignedPlan(goapThread.createdPlan);
+                _goapThreadInProcess.job.SetAssignedPlan(createdPlan);
                 if (jobIndex != 0) {
                     //If the job of the receive plan is no longer the top priority, process the top most job because it means that while the goap planner is running, the top most priority has been replaced
                     //This means that the top most priority was not processed since the goap planner is still running
@@ -149,7 +158,7 @@ public class GoapPlanner {
                 }
             }
         } else {
-            JOB_TYPE jobType = goapThread.job.jobType;
+            JOB_TYPE jobType = _goapThreadInProcess.job.jobType;
             //If unable to do a Need while in a Trapped Structure, remove Trap Structure.
             if (jobType.IsFullnessRecoveryTypeJob()) {
                 owner.trapStructure.ResetAllTrappedValues();
@@ -177,20 +186,20 @@ public class GoapPlanner {
             //    }
             //}
             //}
-            if (goapThread.recalculationPlan == null) {
+            if (_goapThreadInProcess.recalculationPlan == null) {
                 //This means that the planner cannot create a new plan
-                if (goapThread.job.targetPOI != null) {
+                if (_goapThreadInProcess.job.targetPOI != null) {
                     //Note: Added checking for target POI because there are times that a job has no target POI (defaults to target actor when planning)
-                    bool logCancelJobNoPlan = !(jobType == JOB_TYPE.DOUSE_FIRE && goapThread.job.targetPOI.gridTileLocation == null);
+                    bool logCancelJobNoPlan = !(jobType == JOB_TYPE.DOUSE_FIRE && _goapThreadInProcess.job.targetPOI.gridTileLocation == null);
                     if (logCancelJobNoPlan && !CharacterManager.Instance.lessenCharacterLogs) {
                         Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "NonIntel", "cancel_job_no_plan", providedTags: LOG_TAG.Work);
                         log.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                        log.AddToFillers(null, goapThread.job.GetJobDetailString(), LOG_IDENTIFIER.STRING_1);
+                        log.AddToFillers(null, _goapThreadInProcess.job.GetJobDetailString(), LOG_IDENTIFIER.STRING_1);
                         owner.logComponent.RegisterLog(log, true);
                     }
                 }
-                if (goapThread.job.originalOwner.ownerType != JOB_OWNER.CHARACTER) {
-                    goapThread.job.AddBlacklistedCharacter(owner);
+                if (_goapThreadInProcess.job.originalOwner.ownerType != JOB_OWNER.CHARACTER) {
+                    _goapThreadInProcess.job.AddBlacklistedCharacter(owner);
                 }
             }
             //Every time no plan is generated for the job, remove carried poi because this means that the carried poi is part of that job that has no plan, so the character needs to let go of the poi now
@@ -218,11 +227,11 @@ public class GoapPlanner {
                 }
                 owner.UncarryPOI();
             }
-            if (goapThread.job != null && goapThread.job.jobType.IsCultistJob()) {
-                string reason = owner.GetCultistUnableToDoJobReason(goapThread.job, failedPrecondition, failedPreconditionActionType);
+            if (_goapThreadInProcess.job != null && _goapThreadInProcess.job.jobType.IsCultistJob()) {
+                string reason = owner.GetCultistUnableToDoJobReason(_goapThreadInProcess.job, failedPrecondition, failedPreconditionActionType);
                 owner.LogUnableToDoJob(reason);
             }
-            goapThread.job.CancelJob();
+            _goapThreadInProcess.job.CancelJob();
 
             if(jobType == JOB_TYPE.FULLNESS_RECOVERY_URGENT || jobType == JOB_TYPE.FULLNESS_RECOVERY_NORMAL) {
                 //Do not produce food anymore personally, since it is already handled in character wants
@@ -243,7 +252,8 @@ public class GoapPlanner {
             }
         }
 
-        ObjectPoolManager.Instance.ReturnGoapThreadToPool(goapThread);
+        ObjectPoolManager.Instance.ReturnGoapThreadToPool(_goapThreadInProcess);
+        _goapThreadInProcess = null;
     }
     private void ForceCancelJobAndReturnToObjectPool(JobQueueItem job) {
         if(job == null) {
@@ -254,34 +264,7 @@ public class GoapPlanner {
             JobManager.Instance.OnFinishJob(job);
         }
     }
-    //public GoapPlan PlanActions(IPointOfInterest target, GoapAction goalAction, List<GoapAction> usableActions, GOAP_CATEGORY category, bool isPersonalPlan, ref string log, GoapPlanJob job = null) {
-    //    //List of all starting nodes that can do the goal
-    //    List<GoapNode> startingNodes = new List<GoapNode>();
-
-    //    GoapNode goalNode = ObjectPoolManager.Instance.CreateNewGoapPlanJob(null, goalAction.cost, goalAction);
-    //    bool success = BuildGoapTree(goalNode, startingNodes, usableActions, ref log, job);
-    //    if (!success) {
-    //        return null;
-    //    }
-
-    //    GoapNode cheapestStartingNode = null;
-    //    for (int i = 0; i < startingNodes.Count; i++) {
-    //        if(cheapestStartingNode == null) {
-    //            cheapestStartingNode = startingNodes[i];
-    //        } else {
-    //            if(startingNodes[i].cost < cheapestStartingNode.cost) {
-    //                cheapestStartingNode = startingNodes[i];
-    //            }
-    //        }
-    //    }
-    //    GOAP_EFFECT_CONDITION[] goalEffects = new GOAP_EFFECT_CONDITION[goalAction.expectedEffects.Count];
-    //    for (int i = 0; i < goalAction.expectedEffects.Count; i++) {
-    //        goalEffects[i] = goalAction.expectedEffects[i].conditionType;
-    //    }
-    //    GoapPlan plan = new GoapPlan(cheapestStartingNode, goalEffects, category, isPersonalPlan);
-    //    return plan;
-    //}
-    public GoapPlan PlanActions(IPointOfInterest target, GoapEffect goalEffect, bool isPersonalPlan, ref string log, GoapPlanJob job, GoapThread goapThread) {
+    public void PlanActions(IPointOfInterest target, GoapEffect goalEffect, bool isPersonalPlan, ref string log, GoapPlanJob job, GoapThread goapThread) {
         //Cache all needed data
         Dictionary<GOAP_EFFECT_CONDITION, List<GoapAction>> actionsCategorizedByEffect = InteractionManager.Instance.actionsCategorizedByEffect;
         _rawPlan.Clear();
@@ -332,20 +315,21 @@ public class GoapPlanner {
                 rawPlanSummary = $"{rawPlanSummary}\n - {currNode.action.goapName}";
             }
             Debug.Log(rawPlanSummary);
-            owner.logComponent.PrintCostLog();
 #endif
-            List<JobNode> actualNodes = TransformRawPlanToActualNodes(_rawPlan, job);
-            // GoapPlan plan = ObjectPoolManager.Instance.CreateNewGoapPlan(actualNodes, target);
-            GoapPlan plan = goapThread.cachedPlan;
-            plan.SetNodes(actualNodes);
-            plan.SetTarget(target);
-            plan.SetIsPersonalPlan(isPersonalPlan);
-            return plan;
+            //List<JobNode> actualNodes = TransformRawPlanToActualNodes(_rawPlan, job);
+            //// GoapPlan plan = ObjectPoolManager.Instance.CreateNewGoapPlan(actualNodes, target);
+            //GoapPlan plan = goapThread.cachedPlan;
+            //plan.SetNodes(actualNodes);
+            //plan.SetTarget(target);
+            //plan.SetIsPersonalPlan(isPersonalPlan);
+            //return plan;
         }
+
+#if DEBUG_LOG
         owner.logComponent.PrintCostLog();
-        return null;
+#endif
     }
-    public GoapPlan PlanActions(IPointOfInterest target, GoapAction goalAction, bool isPersonalPlan, ref string log, GoapPlanJob job, GoapThread goapThread) {
+    public void PlanActions(IPointOfInterest target, GoapAction goalAction, bool isPersonalPlan, ref string log, GoapPlanJob job, GoapThread goapThread) {
         Dictionary<GOAP_EFFECT_CONDITION, List<GoapAction>> actionsCategorizedByEffect = InteractionManager.Instance.actionsCategorizedByEffect;
         _rawPlan.Clear();
         failedPrecondition = null;
@@ -358,7 +342,8 @@ public class GoapPlanner {
 #endif
         if(target != job.targetPOI && !target.IsStillConsideredPartOfAwarenessByCharacter(owner)) {
             //POI must either be the job's target or the actor is still aware of it
-            return null;
+            //return null;
+            return;
         }
         int cost = goalAction.GetCost(owner, target, job);
 
@@ -375,19 +360,23 @@ public class GoapPlanner {
                 rawPlanSummary += $"\n - {currNode.action.goapName }";
             }
             Debug.Log(rawPlanSummary);
-            owner.logComponent.PrintCostLog();
 #endif
+
+            //Move this to Main Thread so that there will be no race conditions
             //has a created plan
-            List<JobNode> actualNodes = TransformRawPlanToActualNodes(_rawPlan, job);
-            // GoapPlan plan = ObjectPoolManager.Instance.CreateNewGoapPlan(actualNodes, target);
-            GoapPlan plan = goapThread.cachedPlan;
-            plan.SetNodes(actualNodes);
-            plan.SetTarget(target);
-            plan.SetIsPersonalPlan(isPersonalPlan);
-            return plan;
+            //List<JobNode> actualNodes = TransformRawPlanToActualNodes(_rawPlan, job);
+            //// GoapPlan plan = ObjectPoolManager.Instance.CreateNewGoapPlan(actualNodes, target);
+            //GoapPlan plan = goapThread.cachedPlan;
+            //plan.SetNodes(actualNodes);
+            //plan.SetTarget(target);
+            //plan.SetIsPersonalPlan(isPersonalPlan);
+            //return plan;
         }
+
+#if DEBUG_LOG
         owner.logComponent.PrintCostLog();
-        return null;
+#endif
+        //return null;
     }
     public bool RecalculatePathForPlan(GoapPlan currentPlan, GoapPlanJob job, ref string log) {
         //In plan recalculation, only recalculate nodes starting from the previous node, because this means that the current node does not satisfy all preconditions, which in turn, means that somewhere in the previous nodes, the character failed to do the action
@@ -418,13 +407,57 @@ public class GoapPlanner {
                     }
                     Debug.Log(rawPlanSummary);
 #endif
-                    List<JobNode> plannedNodes = TransformRawPlanToActualNodes(_rawPlan, job, currentPlan);
-                    currentPlan.SetNodes(plannedNodes);
+                    //List<JobNode> plannedNodes = TransformRawPlanToActualNodes(_rawPlan, job, currentPlan);
+                    //currentPlan.SetNodes(plannedNodes);
                     return true;
                 }
             }
         }
         return false;
+    }
+    public GoapPlan TransformRawPlanToActualPlan() {
+        GoapPlan createdPlan = null;
+        if (_rawPlan.Count > 0) {
+            string log = string.Empty;
+            if (_goapThreadInProcess.recalculationPlan != null) {
+                GoapPlan recalculatedPlan = _goapThreadInProcess.recalculationPlan;
+                if (_goapThreadInProcess.isRecalculationSuccess) {
+                    List<JobNode> plannedNodes = TransformRawPlanToActualNodes(_rawPlan, _goapThreadInProcess.job, recalculatedPlan);
+                    recalculatedPlan.SetNodes(plannedNodes);
+#if DEBUG_LOG
+                    log += "\nGENERATED RECALCULATED PLAN: ";
+                    log += recalculatedPlan.LogPlan();
+#endif
+                    createdPlan = recalculatedPlan;
+                } else {
+#if DEBUG_LOG
+                    log += "\nFAILED TO RECALCULATE PLAN!";
+#endif
+                }
+            } else {
+                List<JobNode> actualNodes = TransformRawPlanToActualNodes(_rawPlan, _goapThreadInProcess.job);
+                GoapPlan plan = ObjectPoolManager.Instance.CreateNewGoapPlan(actualNodes, _goapThreadInProcess.target);
+                plan.SetNodes(actualNodes);
+                plan.SetTarget(_goapThreadInProcess.target);
+                plan.SetIsPersonalPlan(_goapThreadInProcess.isPersonalPlan);
+
+                if (plan != null) {
+#if DEBUG_LOG
+                    log += "GENERATED PLAN: ";
+                    log += plan.LogPlan();
+#endif
+                    createdPlan = plan;
+                } else {
+#if DEBUG_LOG
+                    log += "\n\nNO PLAN WAS GENERATED! End goap...";
+#endif
+                }
+            }
+#if DEBUG_LOG
+            owner.logComponent.PrintLogIfActive(log);
+#endif
+        }
+        return createdPlan;
     }
     //Note: The target specified here is the target for the precondition not the job itself
     private void BuildGoapTree(GoapNode node, Character actor, GoapPlanJob job, List<GoapNode> rawPlan, Dictionary<GOAP_EFFECT_CONDITION, List<GoapAction>> actionsCategorizedByEffect, ref string log) { //
