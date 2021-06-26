@@ -1450,7 +1450,8 @@ public enum CHANCE_TYPE {
     Do_Work_Chance,
     Monster_Migration,
     Socialize_Chance,
-    Visit_Village_Chance
+    Visit_Village_Chance,
+    Create_Change_Class_Combatant
 }
 public enum Gradient_Direction {
     Top, Bottom, Left, Right

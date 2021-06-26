@@ -519,7 +519,7 @@ public class SettlementClassComponent : NPCSettlementComponent {
 #if DEBUG_LOG
                         log += "\nOtherwise, 35% to create Change Class Job to Combatant";
 #endif
-                        if (GameUtilities.RollChance(35, ref log)) {
+                        if (ChanceData.RollChance(CHANCE_TYPE.Create_Change_Class_Combatant, ref log)) {
                             string combatantClass = CharacterManager.Instance.GetRandomCombatant();
 #if DEBUG_LOG
                             log += "\nCreate Change Class Job to " + combatantClass;
