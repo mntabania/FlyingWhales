@@ -73,9 +73,8 @@ MonoBehaviour:
     m_iceResistanceBonus: 0
     m_electricResistanceBonus: 0
     m_allSecondaryresistanceBonus: 6
-    m_normalResistanceBonus: 0
     m_piercingBonus: 8
-    m_mentalResistanceBonus: 14
+    m_mentalResistanceBonus: 4
     m_physicalResistanceBonus: 16
   craftableWeapons: 03010000cc000000cd000000ce000000cf000000
   craftableArmors: 05010000d0000000bc000000d1000000d3000000
