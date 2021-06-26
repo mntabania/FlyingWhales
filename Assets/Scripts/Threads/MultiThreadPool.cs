@@ -49,14 +49,15 @@ public class MultiThreadPool : BaseMonoBehaviour {
 
     public void AddToThreadPool(Multithread multiThread) {
         //functionsToBeRunInThread.Enqueue(multiThread);
-        ThreadPool.UnsafeQueueUserWorkItem(ThreadQueueFunction, multiThread);
+        //ThreadPool.UnsafeQueueUserWorkItem(ThreadQueueFunction, multiThread);
+        ThreadPool.QueueUserWorkItem(ThreadQueueFunction, multiThread);
     }
     private void ThreadQueueFunction(object p_thread) {
-        lock (THREAD_LOCKER) {
+        //lock (THREAD_LOCKER) {
             Multithread mt = p_thread as Multithread;
             mt.DoMultithread();
             functionsToBeResolved.Enqueue(mt);
-        }
+        //}
     }
 
     //private void RunThread() {
