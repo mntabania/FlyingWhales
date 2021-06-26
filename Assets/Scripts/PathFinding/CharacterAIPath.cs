@@ -70,15 +70,18 @@ public class CharacterAIPath : AILerp {
 #endif
     }
     protected override void OnPathComplete(Path newPath) {
-        if (marker.character.isDead) {
+        if (marker.character == null || marker.character.isDead) {
             ClearAllCurrentPathData();
             return;
         }
+
+
 #if DEBUG_LOG
         if (newPath.CompleteState == PathCompleteState.Error) {
             Debug.LogWarning($"{marker.character.name} path request returned a path with errors! Arrival action is: {marker.arrivalAction?.Method.Name}. Destination is {destination.ToString()}");
         }
 #endif
+
         currentPath = newPath;
         if (newPath is FleeMultiplePath) {
             marker.OnFleePathComputed(newPath);
@@ -101,6 +104,19 @@ public class CharacterAIPath : AILerp {
             base.OnPathComplete(newPath);
         }
         _hasReachedTarget = false;
+
+        //Check the node distance with the limiter set in the job, if it exceeds, cancel job
+        if (marker.character.currentJob != null) {
+            int nodeDistanceLimit = marker.character.currentJob.jobType.GetJobTypeNodeDistanceLimit();
+            if (newPath.vectorPath.Count > nodeDistanceLimit) {
+#if DEBUG_LOG
+                Debug.LogWarning($"{marker.character.currentJob.ToString()} of {marker.character.ToString()} path node count is {newPath.vectorPath.Count}. It exceeded job node distance limiter which is {nodeDistanceLimit}. Cancel job.");
+#endif
+                marker.character.currentJob.CancelJob();
+                ClearAllCurrentPathData();
+                return;
+            }
+        }
     }
     public override void SearchPath() {
         if (float.IsPositiveInfinity(destination.x)) return;

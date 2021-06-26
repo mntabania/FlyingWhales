@@ -1206,6 +1206,18 @@ public static class Extensions {
         }
         return priority;
     }
+    public static int GetJobTypeNodeDistanceLimit(this JOB_TYPE jobType) {
+        switch (jobType) {
+            case JOB_TYPE.ROAM_AROUND_TILE:
+            case JOB_TYPE.ROAM_AROUND_STRUCTURE:
+            case JOB_TYPE.ROAM_AROUND_TERRITORY:
+                return 60;
+            case JOB_TYPE.REPORT_CRIME:
+                return 140;
+            default:
+                return -1;
+        }
+    }
 
     public static bool IsButcherableWhenDeadOrAlive(this RACE type) {
         switch (type) {
