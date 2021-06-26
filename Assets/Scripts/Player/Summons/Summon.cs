@@ -271,7 +271,7 @@ public class Summon : Character {
     }
     public override void LoadReferences(SaveDataCharacter data) {
         base.LoadReferences(data);
-        Messenger.RemoveListener(Signals.HOUR_STARTED, () => needsComponent.DecreaseNeeds()); //do not make summons decrease needs
+        //Messenger.RemoveListener(Signals.HOUR_STARTED, () => needsComponent.DecreaseNeeds()); //do not make summons decrease needs
         movementComponent.UpdateSpeed();
     }
 #endregion

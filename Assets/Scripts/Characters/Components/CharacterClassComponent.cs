@@ -211,7 +211,7 @@ public class CharacterClassComponent : CharacterComponent {
         Character c = owner;
         if (!c.isDead && c.characterClass.className.IsFoodProducerClassName() && c.structureComponent.HasWorkPlaceStructure()) {
             //If character is paralyzed, restrained or quarantined, he should not be counted
-            bool isAvailable = !c.traitContainer.HasTrait("Paralyzed", "Restrained", "Quarantined");
+            bool isAvailable = !c.traitContainer.HasTrait("Paralyzed", "Restrained", "Quarantined") && c.HasTalents();
             if (isAvailable) {
                 CharacterClassData classData = CharacterManager.Instance.GetOrCreateCharacterClassData(c.characterClass.className);
                 if (c.structureComponent.workPlaceStructure.structureType == classData.workStructureType) {
@@ -242,7 +242,7 @@ public class CharacterClassComponent : CharacterComponent {
         Character c = owner;
         if (!c.isDead && c.characterClass.className == p_className && c.structureComponent.HasWorkPlaceStructure()) {
             //If character is paralyzed, restrained or quarantined, he should not be counted
-            bool isAvailable = !c.traitContainer.HasTrait("Paralyzed", "Restrained", "Quarantined");
+            bool isAvailable = !c.traitContainer.HasTrait("Paralyzed", "Restrained", "Quarantined") && c.HasTalents();
             if (isAvailable) {
                 CharacterClassData classData = CharacterManager.Instance.GetOrCreateCharacterClassData(c.characterClass.className);
                 if (c.structureComponent.workPlaceStructure.structureType == classData.workStructureType) {
@@ -265,6 +265,22 @@ public class CharacterClassComponent : CharacterComponent {
                 //    default:
                 //        break;
                 //}
+            }
+        }
+        return supply;
+    }
+    public int GetCombatSupplyValue() {
+        int supply = 0;
+        Character c = owner;
+        if (!c.isDead) {
+            //If character is paralyzed, restrained or quarantined, he should not be counted
+            bool isAvailable = !c.traitContainer.HasTrait("Paralyzed", "Restrained", "Quarantined") && c.HasTalents();
+            if (isAvailable) {
+                if (characterClass.attackType == ATTACK_TYPE.PHYSICAL) {
+                    supply += c.talentComponent.GetTalent(CHARACTER_TALENT.Martial_Arts).level;
+                } else {
+                    supply += c.talentComponent.GetTalent(CHARACTER_TALENT.Combat_Magic).level;
+                }
             }
         }
         return supply;
