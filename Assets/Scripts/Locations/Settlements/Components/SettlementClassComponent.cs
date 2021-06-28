@@ -119,8 +119,10 @@ public class SettlementClassComponent : NPCSettlementComponent {
         int reservedCombatantCount = 0;
         int numberOfAvailableVillagers = 0;
         List<Character> sortedFoodProducers = RuinarchListPool<Character>.Claim();
+        List<Character> foodProducersNoValue = RuinarchListPool<Character>.Claim();
         List<int> sortedFoodProducersSupplyCapacity = RuinarchListPool<int>.Claim();
         List<Character> sortedResourceProducers = RuinarchListPool<Character>.Claim();
+        List<Character> resourceProducersNoValue = RuinarchListPool<Character>.Claim();
         List<int> sortedResourceProducersSupplyCapacity = RuinarchListPool<int>.Claim();
         List<Character> sortedCombatants = RuinarchListPool<Character>.Claim();
         List<int> sortedCombatantValues = RuinarchListPool<int>.Claim();
@@ -181,8 +183,9 @@ public class SettlementClassComponent : NPCSettlementComponent {
                         int supply = c.classComponent.GetFoodSupplyCapacityValue();
                         if (supply == 0) {
                             //If supply is 0, it is automatically added at the bottom of the list
-                            sortedFoodProducers.Add(c);
-                            sortedFoodProducersSupplyCapacity.Add(supply);
+                            //sortedFoodProducers.Add(c);
+                            //sortedFoodProducersSupplyCapacity.Add(supply);
+                            foodProducersNoValue.Add(c);
                         } else {
                             bool hasInserted = false;
                             for (int j = 0; j < sortedFoodProducersSupplyCapacity.Count; j++) {
@@ -204,8 +207,9 @@ public class SettlementClassComponent : NPCSettlementComponent {
                         int supply = c.classComponent.GetResourceSupplyCapacityValue(c.characterClass.className);
                         if (supply == 0) {
                             //If supply is 0, it is automatically added at the bottom of the list
-                            sortedResourceProducers.Add(c);
-                            sortedResourceProducersSupplyCapacity.Add(supply);
+                            //sortedResourceProducers.Add(c);
+                            //sortedResourceProducersSupplyCapacity.Add(supply);
+                            resourceProducersNoValue.Add(c);
                         } else {
                             bool hasInserted = false;
                             for (int j = 0; j < sortedResourceProducersSupplyCapacity.Count; j++) {
@@ -275,7 +279,7 @@ public class SettlementClassComponent : NPCSettlementComponent {
 #endif
 
 #if DEBUG_LOG
-        log += "\nReserved Food Producers: ";
+        log += "\nReserved Food Producers With Work: ";
 #endif
         int totalFSP = 0;
         for (int i = 0; i < sortedFoodProducers.Count; i++) {
@@ -293,7 +297,33 @@ public class SettlementClassComponent : NPCSettlementComponent {
         }
 
 #if DEBUG_LOG
-        log += "\nReserved Resource Producers: ";
+        log += "\nReserved Food Producers Without Work: ";
+#endif
+        if (totalFSP < numOfActiveResidents) {
+            for (int i = 0; i < foodProducersNoValue.Count; i++) {
+                Character fp = foodProducersNoValue[i];
+                int newValue = fp.classComponent.GetFoodSupplyCapacityValueBase();
+                if (totalFSP >= numOfActiveResidents || newValue == 0) {
+                    fp.classComponent.SetShouldChangeClass(true);
+                    numberOfAvailableVillagers++;
+                } else {
+                    CharacterClassData characterClassData = CharacterManager.Instance.GetOrCreateCharacterClassData(fp.characterClass.className);
+                    if (owner.HasStructure(characterClassData.workStructureType) || owner.HasBlueprintOnTileForStructure(characterClassData.workStructureType)) {
+                        totalFSP += newValue;
+                        fp.classComponent.SetShouldChangeClass(false);
+#if DEBUG_LOG
+                        log += $"{fp.name},";
+#endif
+                    } else {
+                        fp.classComponent.SetShouldChangeClass(true);
+                        numberOfAvailableVillagers++;
+                    }
+                }
+            }
+        }
+
+#if DEBUG_LOG
+        log += "\nReserved Resource Producers With Work: ";
 #endif
         int totalRSP = 0;
         for (int i = 0; i < sortedResourceProducers.Count; i++) {
@@ -310,9 +340,37 @@ public class SettlementClassComponent : NPCSettlementComponent {
             }
         }
 
+#if DEBUG_LOG
+        log += "\nReserved Resource Producers Without Work: ";
+#endif
+        if (totalRSP < numOfActiveResidents) {
+            for (int i = 0; i < resourceProducersNoValue.Count; i++) {
+                Character rp = resourceProducersNoValue[i];
+                int newValue = rp.classComponent.GetResourceSupplyCapacityValueBase(rp.characterClass.className);
+                if (totalFSP >= numOfActiveResidents || newValue == 0) {
+                    rp.classComponent.SetShouldChangeClass(true);
+                    numberOfAvailableVillagers++;
+                } else {
+                    CharacterClassData characterClassData = CharacterManager.Instance.GetOrCreateCharacterClassData(rp.characterClass.className);
+                    if (owner.HasStructure(characterClassData.workStructureType) || owner.HasBlueprintOnTileForStructure(characterClassData.workStructureType)) {
+                        totalFSP += newValue;
+                        rp.classComponent.SetShouldChangeClass(false);
+#if DEBUG_LOG
+                        log += $"{rp.name},";
+#endif
+                    } else {
+                        rp.classComponent.SetShouldChangeClass(true);
+                        numberOfAvailableVillagers++;
+                    }
+                }
+            }
+        }
+
+        RuinarchListPool<Character>.Release(foodProducersNoValue);
         RuinarchListPool<Character>.Release(sortedFoodProducers);
         RuinarchListPool<int>.Release(sortedFoodProducersSupplyCapacity);
         RuinarchListPool<Character>.Release(sortedResourceProducers);
+        RuinarchListPool<Character>.Release(resourceProducersNoValue);
         RuinarchListPool<int>.Release(sortedResourceProducersSupplyCapacity);
 
 #if DEBUG_LOG
@@ -321,10 +379,17 @@ public class SettlementClassComponent : NPCSettlementComponent {
 
         ProcessNeededFoodProducerClasses(numOfActiveResidents, foodSupplyCapacity, villagerCanBecomeButcher, villagerCanBecomeFisher, ref log);
         ProcessNeededResourceClasses(numOfActiveResidents, resourceSupplyCapacity, ref log);
+
         if (m_bypass) {
 #if DEBUG_LOG
             log += "\nBypass: Will NOT process Combatants and special classes because food and resource producers are already available";
 #endif
+
+            for (int i = 0; i < sortedCombatants.Count; i++) {
+                Character c = sortedCombatants[i];
+                c.classComponent.SetShouldChangeClass(true);
+                numberOfAvailableVillagers++;
+            }
         } else {
 #if DEBUG_LOG
             log += "\nNot Bypass: Will process Combatants and special classes";
