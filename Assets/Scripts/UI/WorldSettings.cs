@@ -124,11 +124,15 @@ public class WorldSettings : MonoBehaviour {
             WorldPickerItem worldPickerItem = worldPickerItems[i];
             if (SaveManager.Instance.currentSaveDataPlayer.IsWorldUnlocked(worldPickerItem.worldType) ||
                 SaveManager.Instance.unlockAllWorlds) {
-                worldPickerItem.Enable();
+                // worldPickerItem.Disable();
+                worldPickerItem.Enable(); //Enable for now for testing
             } else {
                 worldPickerItem.Disable();
             }
         }
+        //enable custom
+        worldPickerItems[0].Enable();
+        worldPickerItems[0].OnToggle(true);
     }
     public void OnHoverEnterWorldPicker(WorldPickerItem item) {
         ShowHover(UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(item.worldType.ToString()), item.description, item.isScenario);
@@ -151,14 +155,18 @@ public class WorldSettings : MonoBehaviour {
             if (p_isScenario) {
                 subHoverTitle.text = title;
                 subHoverText.text = text;
-                hoverTitle.text = "Scenario Game\n";
-                hoverText.text = "Scenarios are shorter games with a variety of different situations and victory conditions. Unlike Custom, you will start with a bigger loadout with some optional configurable slots.\n\nHowever, you don't get to upgrade the Portal, so you won't get permanent access to more Powers. Unleash Power is still available in the Portal so you can still get Bonus Charges.";
-                subHoverGO.SetActive(true);
+                hoverTitle.text = "Scenarios\n";
+                //hoverText.text = "Scenarios are shorter games with a variety of different situations and victory conditions. Unlike Custom, you will start with a bigger loadout with some optional configurable slots.\n\nHowever, you don't get to upgrade the Portal, so you won't get permanent access to more Powers. Unleash Power is still available in the Portal so you can still get Bonus Charges.";
+                hoverText.text = "Scenarios have been temporarily disabled while we rework them to adapt to new features. These will be back soon!";
+                hoverText.color = Color.red;
+                subHoverGO.SetActive(false);
                 LayoutRebuilder.ForceRebuildLayoutImmediate(subHoverGO.transform as RectTransform);
             } else {
                 subHoverGO.SetActive(false);
+                
                 hoverTitle.text = "Custom Game\n";
                 hoverText.text = "Configure game settings and generate a random world.";
+                hoverText.color = new Color(248f, 225f, 169f);
             }
             hoverGO.SetActive(true);
             LayoutRebuilder.ForceRebuildLayoutImmediate(hoverGO.transform as RectTransform);
