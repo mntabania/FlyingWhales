@@ -15,21 +15,21 @@ MonoBehaviour:
   resourceType: 4
   specificResource: 00000000
   resourceAmount: 20
-  purchaseCost: 50
-  tier: 1
+  purchaseCost: 20
+  tier: 2
   description: This is Copper Staff
   imgIcon: {fileID: 21300000, guid: ce796ebb143f43a4c89d4a3dcd0e539a, type: 3}
   equipmentUpgradeData:
-    bonuses: 0000000006000000
-    AdditionalPiercing: 25
+    bonuses: 000000000d00000008000000
+    AdditionalPiercing: 30
     AdditionalMaxHPPercentage: 0
     AdditionalMaxHPActual: 0
     AdditionalAttackPercentage: 25
     AdditionalAttackActual: 0
     AdditionalIntPercentage: 0
-    AdditionalIntActual: 0
+    AdditionalIntActual: 25
     AdditionalCritRate: 0
     additionalResistanceBonus: 0
-    elementAttackBonus: 0
+    elementAttackBonus: 1
     slayerBonus: 0
     wardBonus: 2

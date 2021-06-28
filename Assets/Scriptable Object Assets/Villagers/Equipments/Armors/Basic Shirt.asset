@@ -15,21 +15,21 @@ MonoBehaviour:
   resourceType: 4
   specificResource: 170000000c000000
   resourceAmount: 20
-  purchaseCost: 0
-  tier: 0
+  purchaseCost: 20
+  tier: 1
   description: 
   imgIcon: {fileID: 21300000, guid: 5c7297f74a9199b4d94d1e42c2c52643, type: 3}
   equipmentUpgradeData:
-    bonuses: 
+    bonuses: 0100000005000000
     AdditionalPiercing: 0
     AdditionalMaxHPPercentage: 0
-    AdditionalMaxHPActual: 0
+    AdditionalMaxHPActual: 150
     AdditionalAttackPercentage: 0
     AdditionalAttackActual: 0
     AdditionalIntPercentage: 0
     AdditionalIntActual: 0
     AdditionalCritRate: 0
-    additionalResistanceBonus: 0
+    additionalResistanceBonus: 10
     elementAttackBonus: 0
     slayerBonus: 0
     wardBonus: 0

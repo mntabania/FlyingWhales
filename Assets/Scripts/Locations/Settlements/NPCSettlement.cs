@@ -929,6 +929,17 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
             }
         }
     }
+    public void PopulateAbleClassesOfAllResidents(List<string> p_ableClasses) {
+        for (int i = 0; i < residents.Count; i++) {
+            Character resident = residents[i];
+            for (int j = 0; j < resident.classComponent.ableClasses.Count; j++) {
+                string ableClass = resident.classComponent.ableClasses[j];
+                if (!p_ableClasses.Contains(ableClass)) {
+                    p_ableClasses.Add(ableClass);
+                }
+            }
+        }
+    }
     #endregion
 
     #region Tile Objects

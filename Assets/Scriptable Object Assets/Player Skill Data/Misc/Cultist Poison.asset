@@ -29,7 +29,7 @@ MonoBehaviour:
   unlockCost: 0
   tier: 0
   baseLoadoutWeight: 0
-  resistanceType: 3
+  resistanceType: 0
   archetypeWeightedBonus: 2
   canBeReleasedEvenIfLearned: 0
   contextMenuIcon: {fileID: 21300000, guid: 3aa12ad36bc6d1d479696c177317a09a, type: 3}
@@ -38,9 +38,10 @@ MonoBehaviour:
   isNonUpgradeable: 1
   isAffliction: 0
   isLockedBaseOnRequirements: 0
+  canBeCastedOnMaxLevel: 0
   requirementData:
     requirements: 08000000
-    requiredArchetype: 0
+    requiredArchetypes: 
     requiredSkills: 
     actionCount: 0
     afflictionCount: 0
@@ -61,6 +62,7 @@ MonoBehaviour:
     additionalAttackPercentagePerLevel: []
     additionalHpValuePerLevel: 
     additionalAttackValuePerLevel: 
+    applyOnLevel: 
     additionalmanaReceivedPercentagePerLevel: []
     statsIncreasedPercentagePerLevel: []
     durationBonusPerLevel: 

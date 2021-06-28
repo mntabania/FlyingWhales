@@ -764,42 +764,88 @@ public class LocationStructureObject : PooledObject, ISelectable {
         //loop through connection choices
         for (int i = 0; i < connectionChoices.Count; i++) {
             StructureConnector connectorA = connectionChoices[i];
-            LocationGridTile connectorATileLocation = connectorA.GetLocationGridTileGivenCurrentPosition(innerTileMap);
-            if (connectorATileLocation == null) {
-                continue;
+            if (IsConnectorValid(connectorA, innerTileMap, p_settlement, out usedConnectorIndex, out tileToPlaceStructure, out connectorTile, p_structureSetting, out functionLog)) {
+                return connectorA;
             }
-            //for each choice check each connector that I own, and check if that connector can connect to the other connector
-            for (int j = 0; j < connectors.Length; j++) {
-                //To check if connectorA and connectorB can connect, get the center tile that this object will occupy given the location of connectorA
-                //and from that, get the tiles, that this object will occupy if placed on the computed center tile.
-                //If it will occupy a tile that is NOT part of the Wilderness, then connectorA is invalid.
-                StructureConnector connectorB = connectors[j];
-                var connectorBLocalPos = connectorB.transform.localPosition;
-                Vector2Int connectorBLocalPosition = new Vector2Int(Mathf.FloorToInt(connectorBLocalPos.x), Mathf.FloorToInt(connectorBLocalPos.y));
-                Vector2Int distanceFromCenter = new Vector2Int(center.x - connectorBLocalPosition.x, center.y - connectorBLocalPosition.y);
-                Vector2Int computedCenterLocation = new Vector2Int(connectorATileLocation.localPlace.x + distanceFromCenter.x, connectorATileLocation.localPlace.y + distanceFromCenter.y);
-                
-                LocationGridTile centerTile = innerTileMap.GetTileFromMapCoordinates(computedCenterLocation.x, computedCenterLocation.y);
-                if (centerTile != null) {
-                    bool isValidCenterTileForStructure = p_structureSetting.structureType.IsValidCenterTileForStructure(centerTile, p_settlement);
-                    string reason = string.Empty;
-                    if (isValidCenterTileForStructure && HasEnoughSpaceIfPlacedOn(centerTile, out reason)) {
-                        tileToPlaceStructure = centerTile;
-                        usedConnectorIndex = j;
-                        connectorTile = connectorA.GetLocationGridTileGivenCurrentPosition(innerTileMap);
-                        functionLog = cannotPlaceSummary;
-                        return connectorA;
-                    } else {
-                        cannotPlaceSummary = $"{cannotPlaceSummary}\n\t- Cannot place {name} connector {j} on {connectorA}. isValidCenterTileForStructure: {isValidCenterTileForStructure.ToString()} Reason: {reason}";
-                    }    
-                }
-            }
+            // LocationGridTile connectorATileLocation = connectorA.GetLocationGridTileGivenCurrentPosition(innerTileMap);
+            // if (connectorATileLocation == null) {
+            //     continue;
+            // }
+            // //for each choice check each connector that I own, and check if that connector can connect to the other connector
+            // for (int j = 0; j < connectors.Length; j++) {
+            //     //To check if connectorA and connectorB can connect, get the center tile that this object will occupy given the location of connectorA
+            //     //and from that, get the tiles, that this object will occupy if placed on the computed center tile.
+            //     //If it will occupy a tile that is NOT part of the Wilderness, then connectorA is invalid.
+            //     StructureConnector connectorB = connectors[j];
+            //     var connectorBLocalPos = connectorB.transform.localPosition;
+            //     Vector2Int connectorBLocalPosition = new Vector2Int(Mathf.FloorToInt(connectorBLocalPos.x), Mathf.FloorToInt(connectorBLocalPos.y));
+            //     Vector2Int distanceFromCenter = new Vector2Int(center.x - connectorBLocalPosition.x, center.y - connectorBLocalPosition.y);
+            //     Vector2Int computedCenterLocation = new Vector2Int(connectorATileLocation.localPlace.x + distanceFromCenter.x, connectorATileLocation.localPlace.y + distanceFromCenter.y);
+            //     
+            //     LocationGridTile centerTile = innerTileMap.GetTileFromMapCoordinates(computedCenterLocation.x, computedCenterLocation.y);
+            //     if (centerTile != null) {
+            //         bool isValidCenterTileForStructure = p_structureSetting.structureType.IsValidCenterTileForStructure(centerTile, p_settlement);
+            //         string reason = string.Empty;
+            //         if (isValidCenterTileForStructure && HasEnoughSpaceIfPlacedOn(centerTile, out reason)) {
+            //             tileToPlaceStructure = centerTile;
+            //             usedConnectorIndex = j;
+            //             connectorTile = connectorA.GetLocationGridTileGivenCurrentPosition(innerTileMap);
+            //             functionLog = cannotPlaceSummary;
+            //             return connectorA;
+            //         } else {
+            //             cannotPlaceSummary = $"{cannotPlaceSummary}\n\t- Cannot place {name} connector {j} on {connectorA}. isValidCenterTileForStructure: {isValidCenterTileForStructure.ToString()} Reason: {reason}";
+            //         }    
+            //     }
+            // }
         }
         functionLog = cannotPlaceSummary;
         tileToPlaceStructure = null;
         usedConnectorIndex = -1;
         connectorTile = null;
         return null;
+    }
+    public bool IsConnectorValid(StructureConnector connectorA, InnerTileMap innerTileMap, BaseSettlement p_settlement, out int usedConnectorIndex,
+        out LocationGridTile tileToPlaceStructure, out LocationGridTile connectorTile, StructureSetting p_structureSetting, out string functionLog) {
+        string cannotPlaceSummary = string.Empty;
+        LocationGridTile connectorATileLocation = connectorA.GetLocationGridTileGivenCurrentPosition(innerTileMap);
+        if (connectorATileLocation == null) {
+            functionLog = cannotPlaceSummary;
+            tileToPlaceStructure = null;
+            usedConnectorIndex = -1;
+            connectorTile = null;
+            return false;
+        }
+        //for each choice check each connector that I own, and check if that connector can connect to the other connector
+        for (int j = 0; j < connectors.Length; j++) {
+            //To check if connectorA and connectorB can connect, get the center tile that this object will occupy given the location of connectorA
+            //and from that, get the tiles, that this object will occupy if placed on the computed center tile.
+            //If it will occupy a tile that is NOT part of the Wilderness, then connectorA is invalid.
+            StructureConnector connectorB = connectors[j];
+            var connectorBLocalPos = connectorB.transform.localPosition;
+            Vector2Int connectorBLocalPosition = new Vector2Int(Mathf.FloorToInt(connectorBLocalPos.x), Mathf.FloorToInt(connectorBLocalPos.y));
+            Vector2Int distanceFromCenter = new Vector2Int(center.x - connectorBLocalPosition.x, center.y - connectorBLocalPosition.y);
+            Vector2Int computedCenterLocation = new Vector2Int(connectorATileLocation.localPlace.x + distanceFromCenter.x, connectorATileLocation.localPlace.y + distanceFromCenter.y);
+            
+            LocationGridTile centerTile = innerTileMap.GetTileFromMapCoordinates(computedCenterLocation.x, computedCenterLocation.y);
+            if (centerTile != null) {
+                bool isValidCenterTileForStructure = p_structureSetting.structureType.IsValidCenterTileForStructure(centerTile, p_settlement);
+                string reason = string.Empty;
+                if (isValidCenterTileForStructure && HasEnoughSpaceIfPlacedOn(centerTile, out reason)) {
+                    tileToPlaceStructure = centerTile;
+                    usedConnectorIndex = j;
+                    connectorTile = connectorA.GetLocationGridTileGivenCurrentPosition(innerTileMap);
+                    functionLog = cannotPlaceSummary;
+                    return true;
+                } else {
+                    cannotPlaceSummary = $"{cannotPlaceSummary}\n\t- Cannot place {name} connector {j} on {connectorA}. isValidCenterTileForStructure: {isValidCenterTileForStructure.ToString()} Reason: {reason}";
+                }    
+            }
+        }
+        functionLog = cannotPlaceSummary;
+        tileToPlaceStructure = null;
+        usedConnectorIndex = -1;
+        connectorTile = null;
+        return false;
     }
     public bool HasAffectedCorruptedTilesIfPlacedOn(LocationGridTile centerTile) {
         if (centerTile.corruptionComponent.isCorrupted || centerTile.corruptionComponent.isCurrentlyBeingCorrupted) {

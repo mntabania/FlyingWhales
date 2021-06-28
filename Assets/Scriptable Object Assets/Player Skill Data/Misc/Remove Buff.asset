@@ -41,7 +41,7 @@ MonoBehaviour:
   canBeCastedOnMaxLevel: 1
   requirementData:
     requirements: 08000000
-    requiredArchetype: 0
+    requiredArchetypes: 
     requiredSkills: 
     actionCount: 0
     afflictionCount: 0
@@ -59,9 +59,9 @@ MonoBehaviour:
     additionalDamagePerLevel: 
     additionalPiercePerLevel:
     - 0
+    - 25
     - 50
     - 100
-    - 150
     additionalHpPercentagePerLevel:
     - 50
     - 100

@@ -44,6 +44,29 @@ public class OptionsMenu : PopupMenuBase {
         SaveManager.Instance.savePlayerManager.SavePlayerData();
         SaveCurrentProgress();
     }
+
+    public void SaveAndExit() {
+        if (SaveManager.Instance.saveCurrentProgressManager.isSaving || SaveManager.Instance.saveCurrentProgressManager.isWritingToDisk) {
+            //prevent saving if player is already saving
+            return;
+        }
+        SaveManager.Instance.savePlayerManager.SavePlayerData();
+        SaveCurrentProgress();
+        saveLoadingGO.SetActive(true);
+        StartCoroutine(WaitForLoadToFinishThenExit());
+    }
+
+    IEnumerator WaitForLoadToFinishThenExit() { 
+        while(SaveManager.Instance.saveCurrentProgressManager.isWritingToDisk || SaveManager.Instance.saveCurrentProgressManager.isSaving) {
+            if (!saveLoadingGO.activeSelf) {
+                saveLoadingGO.SetActive(true);
+            }
+            yield return 0;
+		}
+        saveLoadingGO.SetActive(false);
+        Abandon();
+    }
+
     public void QuickSave() {
         if (SaveManager.Instance.saveCurrentProgressManager.isSaving || SaveManager.Instance.saveCurrentProgressManager.isWritingToDisk) {
             //prevent saving if player is already saving

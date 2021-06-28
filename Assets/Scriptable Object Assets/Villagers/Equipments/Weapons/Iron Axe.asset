@@ -15,17 +15,17 @@ MonoBehaviour:
   resourceType: 4
   specificResource: 01000000
   resourceAmount: 20
-  purchaseCost: 50
-  tier: 1
+  purchaseCost: 20
+  tier: 2
   description: This is Iron Axe
   imgIcon: {fileID: 21300000, guid: 3ea8443d42d55cb438560a336b7cb641, type: 3}
   equipmentUpgradeData:
-    bonuses: 0000000006000000
-    AdditionalPiercing: 50
+    bonuses: 0000000007000000
+    AdditionalPiercing: 30
     AdditionalMaxHPPercentage: 0
     AdditionalMaxHPActual: 0
     AdditionalAttackPercentage: 50
-    AdditionalAttackActual: 0
+    AdditionalAttackActual: 18
     AdditionalIntPercentage: 0
     AdditionalIntActual: 0
     AdditionalCritRate: 0

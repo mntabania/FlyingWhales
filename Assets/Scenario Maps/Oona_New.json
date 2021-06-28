@@ -2332,6 +2332,18 @@
         },
         {
           "resource": "STONE",
+          "structureType": "TAVERN",
+          "hasValue": true,
+          "isCorrupted": false
+        },
+        {
+          "resource": "STONE",
+          "structureType": "HOSPICE",
+          "hasValue": true,
+          "isCorrupted": false
+        },
+        {
+          "resource": "STONE",
           "structureType": "DWELLING",
           "hasValue": true,
           "isCorrupted": false
@@ -2385,7 +2397,7 @@
           "isCorrupted": false
         }
       ],
-      "minimumVillagerCount": 12,
+      "minimumVillagerCount": 30,
       "factionRace": "HUMANS",
       "settlementType": "Human_Village"
     }

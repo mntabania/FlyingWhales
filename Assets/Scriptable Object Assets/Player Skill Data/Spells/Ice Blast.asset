@@ -38,9 +38,10 @@ MonoBehaviour:
   isNonUpgradeable: 0
   isAffliction: 0
   isLockedBaseOnRequirements: 0
+  canBeCastedOnMaxLevel: 0
   requirementData:
     requirements: 08000000
-    requiredArchetype: 0
+    requiredArchetypes: 
     requiredSkills: 
     actionCount: 0
     afflictionCount: 0
@@ -58,13 +59,14 @@ MonoBehaviour:
     additionalDamagePerLevel: 0e01000063010000bd01000080020000
     additionalPiercePerLevel:
     - 0
+    - 25
     - 50
     - 100
-    - 150
     additionalHpPercentagePerLevel: []
     additionalAttackPercentagePerLevel: []
     additionalHpValuePerLevel: 
     additionalAttackValuePerLevel: 2c01000090010000f401000058020000
+    applyOnLevel: 
     additionalmanaReceivedPercentagePerLevel: []
     statsIncreasedPercentagePerLevel: []
     durationBonusPerLevel: 

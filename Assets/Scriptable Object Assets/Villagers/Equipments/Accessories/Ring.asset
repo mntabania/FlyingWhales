@@ -15,15 +15,15 @@ MonoBehaviour:
   resourceType: 3
   specificResource: 
   resourceAmount: 20
-  purchaseCost: 50
-  tier: 1
+  purchaseCost: 20
+  tier: 2
   description: This is ring
   imgIcon: {fileID: 21300000, guid: 11539cea24b72df4682c57a99db1ddce, type: 3}
   equipmentUpgradeData:
-    bonuses: 07000000050000000a000000
+    bonuses: 0900000004000000
     AdditionalPiercing: 0
-    AdditionalMaxHPPercentage: 0
-    AdditionalMaxHPActual: 0
+    AdditionalMaxHPPercentage: 10
+    AdditionalMaxHPActual: 10
     AdditionalAttackPercentage: 0
     AdditionalAttackActual: 30
     AdditionalIntPercentage: 0

@@ -15,20 +15,20 @@ MonoBehaviour:
   resourceType: 4
   specificResource: 02000000
   resourceAmount: 20
-  purchaseCost: 50
-  tier: 1
+  purchaseCost: 20
+  tier: 3
   description: This is Mithril Sword
   imgIcon: {fileID: 21300000, guid: 263b829918332514c83a88d36e41a17f, type: 3}
   equipmentUpgradeData:
-    bonuses: 0c000000
-    AdditionalPiercing: 100
+    bonuses: 00000000070000000e000000
+    AdditionalPiercing: 20
     AdditionalMaxHPPercentage: 0
     AdditionalMaxHPActual: 0
     AdditionalAttackPercentage: 75
-    AdditionalAttackActual: 0
+    AdditionalAttackActual: 24
     AdditionalIntPercentage: 40
     AdditionalIntActual: 0
-    AdditionalCritRate: 0
+    AdditionalCritRate: 5
     additionalResistanceBonus: 0
     elementAttackBonus: 0
     slayerBonus: 0
