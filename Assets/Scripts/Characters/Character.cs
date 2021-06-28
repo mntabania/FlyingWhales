@@ -3363,6 +3363,14 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
 #endif
 
 #if DEBUG_PROFILER
+        Profiler.BeginSample($"{name} OnTickStarted - Needs Component");
+#endif
+        needsComponent.PerTick();
+#if DEBUG_PROFILER
+        Profiler.EndSample();
+#endif
+
+#if DEBUG_PROFILER
         Profiler.BeginSample($"{name} OnTickStarted - Process Traits");
 #endif
         ProcessTraitsOnTickStarted();
@@ -3485,6 +3493,12 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
         if (CanPlanGoap()) {
             PerStartTickActionPlanning();
+        } else {
+            if (currentActionNode != null) {
+                if (currentActionNode.hasStartedPerTickEffect) {
+                    currentActionNode.PerTickEffect();
+                }
+            }
         }
         //Always set this to false here even if the character cannot do goap planning
         //The reason is that there is a bug in Wurm that after combat, if the Wurm is restrained, it will not go through the behaviour, hence, the value of this is still true
