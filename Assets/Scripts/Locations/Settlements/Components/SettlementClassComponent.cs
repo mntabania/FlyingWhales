@@ -425,7 +425,7 @@ public class SettlementClassComponent : NPCSettlementComponent {
 #endif
     }
     public static int GetNumberOfNeededCombatants(int numOfActiveResidents) {
-        return Mathf.CeilToInt((numOfActiveResidents / 8f) * 3f);
+        return numOfActiveResidents - (Mathf.CeilToInt((numOfActiveResidents / 8f) * 3f));
     }
     private void ProcessNeededFoodProducerClasses(int numOfActiveResidents, int foodSupplyCapacity, bool villagerCanBecomeButcher, bool villagerCanBecomeFisher, ref string log) {
 #if DEBUG_LOG
