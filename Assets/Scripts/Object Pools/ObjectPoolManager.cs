@@ -2,6 +2,7 @@
 using System.Collections;
 using EZObjectPools;
 using System.Collections.Generic;
+using System.Collections.Concurrent;
 using System;
 using System.Diagnostics;
 using System.Linq;
@@ -41,7 +42,7 @@ public class ObjectPoolManager : MonoBehaviour {
     private List<CharacterTalent> _characterTalentPool;
     private List<ActualGoapNode> _actionPool;
 
-    private List<List<GoapEffect>> _expectedEffectsListPool;
+    private ConcurrentQueue<List<GoapEffect>> _expectedEffectsListPool; //We use concurrent queue
     private List<List<Precondition>> _preconditionsListPool;
     private List<List<Character>> _characterListPool;
     private List<List<TileObject>> _tileObjectListPool;
@@ -405,19 +406,21 @@ public class ObjectPoolManager : MonoBehaviour {
 
     #region Goap Action Expected Effects
     private void ConstructExpectedEffectsListPool() {
-        _expectedEffectsListPool = new List<List<GoapEffect>>();
+        _expectedEffectsListPool = new ConcurrentQueue<List<GoapEffect>>();
     }
     public List<GoapEffect> CreateNewExpectedEffectsList() {
         if (_expectedEffectsListPool.Count > 0) {
-            List<GoapEffect> data = _expectedEffectsListPool[0];
-            _expectedEffectsListPool.RemoveAt(0);
-            return data;
+            List<GoapEffect> data;
+            if (_expectedEffectsListPool.TryDequeue(out data)) {
+                return data;
+            }
+            return new List<GoapEffect>();
         }
         return new List<GoapEffect>();
     }
     public void ReturnExpectedEffectsListToPool(List<GoapEffect> data) {
         data.Clear();
-        _expectedEffectsListPool.Add(data);
+        _expectedEffectsListPool.Enqueue(data);
     }
     #endregion
 

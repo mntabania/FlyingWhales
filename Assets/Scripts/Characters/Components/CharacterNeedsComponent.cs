@@ -157,15 +157,15 @@ public class CharacterNeedsComponent : CharacterComponent {
 
     #region Initialization
     public void SubscribeToSignals() {
-        if(!(owner is Summon)) {
-            Messenger.AddListener(Signals.TICK_STARTED, DecreaseNeeds); //do not make summons decrease needs
-        }
+        //if(!(owner is Summon)) {
+        //    Messenger.AddListener(Signals.TICK_STARTED, DecreaseNeeds); //do not make summons decrease needs
+        //}
         Messenger.AddListener(Signals.HOUR_STARTED, PerHour);
     }
     public void UnsubscribeToSignals() {
-        if (Messenger.eventTable.ContainsKey(Signals.TICK_STARTED)) {
-            Messenger.RemoveListener(Signals.TICK_STARTED, DecreaseNeeds);
-        }
+        //if (Messenger.eventTable.ContainsKey(Signals.TICK_STARTED)) {
+        //    Messenger.RemoveListener(Signals.TICK_STARTED, DecreaseNeeds);
+        //}
         Messenger.RemoveListener(Signals.HOUR_STARTED, PerHour);
     }
     public void DailyGoapProcesses() {
@@ -209,6 +209,9 @@ public class CharacterNeedsComponent : CharacterComponent {
     }
     #endregion
 
+    public void PerTick() {
+        DecreaseNeeds();
+    }
     private void PerHour() {
 #if DEBUG_PROFILER
         Profiler.BeginSample($"{owner.name} Needs Component Hour Started");
@@ -295,6 +298,29 @@ public class CharacterNeedsComponent : CharacterComponent {
 #if DEBUG_PROFILER
         Profiler.BeginSample($"{owner.name} Decrease Needs");
 #endif
+        if (owner is Summon) {
+            StaminaAdjustments();
+        } else {
+            StaminaAdjustments();
+
+            if (HasNeeds() == false) {
+                return;
+            }
+            if (!doesNotGetHungry) {
+                AdjustFullness(-(EditableValuesManager.Instance.baseFullnessDecreaseRate + fullnessDecreaseRate));
+            }
+            if (!doesNotGetTired) {
+                AdjustTiredness(-(EditableValuesManager.Instance.baseTirednessDecreaseRate + tirednessDecreaseRate));
+            }
+            if (!doesNotGetBored) {
+                AdjustHappiness(-(EditableValuesManager.Instance.baseHappinessDecreaseRate + happinessDecreaseRate));
+            }
+        }
+#if DEBUG_PROFILER
+        Profiler.EndSample();
+#endif
+    }
+    private void StaminaAdjustments() {
         //Stamina is not affected by HasNeeds checker, so anyone, even demons will decrease their stamina
         if (doNotGetDrained <= 0) {
             if (owner.marker && owner.marker.isMoving) {
@@ -307,23 +333,8 @@ public class CharacterNeedsComponent : CharacterComponent {
                 AdjustStamina(10f);
             }
         }
-
-        if (HasNeeds() == false) {
-            return;
-        }
-        if (!doesNotGetHungry) {
-            AdjustFullness(-(EditableValuesManager.Instance.baseFullnessDecreaseRate + fullnessDecreaseRate));
-        }
-        if (!doesNotGetTired) {
-            AdjustTiredness(-(EditableValuesManager.Instance.baseTirednessDecreaseRate + tirednessDecreaseRate));
-        }
-        if (!doesNotGetBored) {
-            AdjustHappiness(-(EditableValuesManager.Instance.baseHappinessDecreaseRate + happinessDecreaseRate));
-        }
-#if DEBUG_PROFILER
-        Profiler.EndSample();
-#endif
     }
+
     public string GetNeedsSummary() {
         string summary = $"Fullness: {fullness.ToString(CultureInfo.InvariantCulture)}/{FULLNESS_DEFAULT.ToString(CultureInfo.InvariantCulture)}";
         summary += $"\nTiredness: {tiredness.ToString(CultureInfo.InvariantCulture)}/{TIREDNESS_DEFAULT.ToString(CultureInfo.InvariantCulture)}";
