@@ -185,7 +185,8 @@ namespace Traits {
                 //}
                 else if (item.tileObjectType.IsDemonicStructureTileObject() && item.gridTileLocation?.structure is DemonicStructure demonicStructure) {
                     bool wasReportJobCreated = false;
-                    if (!PlayerManager.Instance.player.retaliationComponent.isRetaliating &&
+                    if (WorldSettings.Instance.worldSettingsData.IsRetaliationAllowed() &&
+                        !PlayerManager.Instance.player.retaliationComponent.isRetaliating &&
                         !PlayerManager.Instance.player.HasAlreadyReportedADemonicStructure(characterThatWillDoJob) &&
                         characterThatWillDoJob.limiterComponent.canWitness && !characterThatWillDoJob.behaviourComponent.isAttackingDemonicStructure && 
                         characterThatWillDoJob.homeSettlement != null && characterThatWillDoJob.necromancerTrait == null && characterThatWillDoJob.race.IsSapient() && 

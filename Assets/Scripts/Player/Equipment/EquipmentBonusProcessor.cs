@@ -93,7 +93,7 @@ public static class EquipmentBonusProcessor
             if (p_initializedStackCountOnly) {
                 return;
             }
-            p_targetCharacter.piercingAndResistancesComponent.AdjustPiercing(p_equipItem.equipmentData.equipmentUpgradeData.GetProcessedAdditionalPiercing(p_equipItem.quality));
+            p_targetCharacter.piercingAndResistancesComponent.AdjustBasePiercing(p_equipItem.equipmentData.equipmentUpgradeData.GetProcessedAdditionalPiercing(p_equipItem.quality));
             break;
             case EQUIPMENT_BONUS.Attack_Element:
             if (p_initializedStackCountOnly) {
@@ -175,7 +175,7 @@ public static class EquipmentBonusProcessor
             p_targetCharacter.combatComponent.AdjustMaxHPPercentModifier(-p_equipItem.equipmentData.equipmentUpgradeData.AdditionalMaxHPPercentage);
             break;
             case EQUIPMENT_BONUS.Increased_Piercing:
-            p_targetCharacter.piercingAndResistancesComponent.AdjustPiercing(-p_equipItem.equipmentData.equipmentUpgradeData.GetProcessedAdditionalPiercing(p_equipItem.quality));
+            p_targetCharacter.piercingAndResistancesComponent.AdjustBasePiercing(-p_equipItem.equipmentData.equipmentUpgradeData.GetProcessedAdditionalPiercing(p_equipItem.quality));
             break;
             case EQUIPMENT_BONUS.Attack_Element:
             EquipmentComponent ec = p_targetCharacter.equipmentComponent;

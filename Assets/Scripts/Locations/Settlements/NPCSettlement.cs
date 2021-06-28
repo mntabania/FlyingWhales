@@ -1295,7 +1295,80 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
     #endregion
 
     #region Inner Map
-    public IEnumerator PlaceInitialObjectsCoroutine() {
+    public IEnumerator PlaceInitialObjectsForWorldGenCoroutine() {
+        if (HasStructure(STRUCTURE_TYPE.LUMBERYARD)) {
+            List<LocationStructure> lumberyards = GetStructuresOfType(STRUCTURE_TYPE.LUMBERYARD);
+            for (int i = 0; i < lumberyards.Count; i++) {
+                LocationStructure lumberyard = lumberyards[i];
+                WoodPile woodPile = InnerMapManager.Instance.CreateNewTileObject<WoodPile>(TILE_OBJECT_TYPE.WOOD_PILE);
+                woodPile.SetResourceInPile(GameUtilities.RandomBetweenTwoNumbers(50, 100));
+                lumberyard.AddPOI(woodPile);
+            }
+        }
+        if (HasStructure(STRUCTURE_TYPE.MINE)) {
+            List<LocationStructure> mines = GetStructuresOfType(STRUCTURE_TYPE.MINE);
+            for (int i = 0; i < mines.Count; i++) {
+                LocationStructure lumberyard = mines[i];
+                StonePile stonePile = InnerMapManager.Instance.CreateNewTileObject<StonePile>(TILE_OBJECT_TYPE.STONE_PILE);
+                stonePile.SetResourceInPile(GameUtilities.RandomBetweenTwoNumbers(50, 100));
+                lumberyard.AddPOI(stonePile);
+            }
+        }
+        List<TILE_OBJECT_TYPE> spawnedFoodTypes = RuinarchListPool<TILE_OBJECT_TYPE>.Claim();
+        if (HasStructure(STRUCTURE_TYPE.FARM)) {
+            List<LocationStructure> farms = GetStructuresOfType(STRUCTURE_TYPE.FARM);
+            for (int i = 0; i < farms.Count; i++) {
+                Farm farm = farms[i] as Farm;
+                List<TILE_OBJECT_TYPE> cropChoices = RuinarchListPool<TILE_OBJECT_TYPE>.Claim();
+                for (int j = 0; j < farm.farmTiles.Count; j++) {
+                    LocationGridTile farmTile = farm.farmTiles[j];
+                    if (farmTile.tileObjectComponent.objHere is Crops crops && 
+                        !cropChoices.Contains(crops.producedObjectOnHarvest)) {
+                        cropChoices.Add(crops.producedObjectOnHarvest);
+                    }
+                }
+                TILE_OBJECT_TYPE chosenCrop = CollectionUtilities.GetRandomElement(cropChoices);
+                if (!spawnedFoodTypes.Contains(chosenCrop)) {
+                    spawnedFoodTypes.Add(chosenCrop);
+                }
+                RuinarchListPool<TILE_OBJECT_TYPE>.Release(cropChoices);
+                FoodPile foodPile = InnerMapManager.Instance.CreateNewTileObject<FoodPile>(chosenCrop);
+                foodPile.SetResourceInPile(GameUtilities.RandomBetweenTwoNumbers(50, 100));
+                farm.AddPOI(foodPile);
+            }
+        }
+        if (HasStructure(STRUCTURE_TYPE.FISHERY)) {
+            spawnedFoodTypes.Add(TILE_OBJECT_TYPE.FISH_PILE);
+            List<LocationStructure> fisheries = GetStructuresOfType(STRUCTURE_TYPE.FISHERY);
+            for (int i = 0; i < fisheries.Count; i++) {
+                LocationStructure fishery = fisheries[i];
+                FishPile stonePile = InnerMapManager.Instance.CreateNewTileObject<FishPile>(TILE_OBJECT_TYPE.FISH_PILE);
+                stonePile.SetResourceInPile(GameUtilities.RandomBetweenTwoNumbers(50, 100));
+                fishery.AddPOI(stonePile);
+            }
+        }
+        if (HasStructure(STRUCTURE_TYPE.BUTCHERS_SHOP)) {
+            spawnedFoodTypes.Add(TILE_OBJECT_TYPE.ANIMAL_MEAT);
+            List<LocationStructure> butcherShops = GetStructuresOfType(STRUCTURE_TYPE.BUTCHERS_SHOP);
+            for (int i = 0; i < butcherShops.Count; i++) {
+                LocationStructure butcherShop = butcherShops[i];
+                AnimalMeat animalMeat = InnerMapManager.Instance.CreateNewTileObject<AnimalMeat>(TILE_OBJECT_TYPE.ANIMAL_MEAT);
+                animalMeat.SetResourceInPile(GameUtilities.RandomBetweenTwoNumbers(50, 100));
+                butcherShop.AddPOI(animalMeat);
+            }
+        }
+        if (HasStructure(STRUCTURE_TYPE.DWELLING) && spawnedFoodTypes.Count > 0) {
+            List<LocationStructure> dwellings = GetStructuresOfType(STRUCTURE_TYPE.DWELLING);
+            for (int i = 0; i < dwellings.Count; i++) {
+                LocationStructure dwelling = dwellings[i];
+                if (GameUtilities.RollChance(50)) {
+                    TILE_OBJECT_TYPE randomFood = CollectionUtilities.GetRandomElement(spawnedFoodTypes);
+                    FoodPile foodPile = InnerMapManager.Instance.CreateNewTileObject<FoodPile>(randomFood);
+                    foodPile.SetResourceInPile(GameUtilities.RandomBetweenTwoNumbers(20, 60));
+                    dwelling.AddPOI(foodPile);    
+                }
+            }
+        }
         // PlaceResourcePiles();
         yield return null;
     }

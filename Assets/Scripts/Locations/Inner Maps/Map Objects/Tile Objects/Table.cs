@@ -163,6 +163,12 @@ public class Table : TileObject {
             case CONCRETE_RESOURCES.Iceberry:
                 p_consumer.traitContainer.AddTrait(p_consumer, "Iceberry Fed");
                 break;
+            case CONCRETE_RESOURCES.Fish:
+                p_consumer.traitContainer.AddTrait(p_consumer, "Fish Fed");
+                break;
+            case CONCRETE_RESOURCES.Animal_Meat:
+                p_consumer.traitContainer.AddTrait(p_consumer, "Animal Fed");
+                break;
         }
     }
     #endregion
