@@ -21,12 +21,32 @@ public class LeaveVillageData : SchemeData {
             UIManager.Instance.ShowSchemeUI(targetCharacter, null, this);
         }
     }
-    public override bool IsValid(IPlayerActionTarget target) {
-        if (target is Character character) {
-            bool isValid = base.IsValid(target);
-            return isValid && character.homeSettlement != null && !character.isConsideredRatman;
+    //public override bool IsValid(IPlayerActionTarget target) {
+    //    if (target is Character character) {
+    //        bool isValid = base.IsValid(target);
+    //        return isValid && character.homeSettlement != null && !character.isConsideredRatman;
+    //    }
+    //    return false;
+    //}
+    public override bool CanPerformAbilityTowards(Character targetCharacter) {
+        bool canPerform = base.CanPerformAbilityTowards(targetCharacter);
+        if (canPerform) {
+            if (targetCharacter.homeSettlement == null || targetCharacter.isConsideredRatman) {
+                return false;
+            }
+            return true;
         }
-        return false;
+        return canPerform;
+    }
+    public override string GetReasonsWhyCannotPerformAbilityTowards(Character targetCharacter) {
+        string reasons = base.GetReasonsWhyCannotPerformAbilityTowards(targetCharacter);
+        if (targetCharacter.homeSettlement == null) {
+            reasons += "Target is already has no home village.";
+        }
+        if (targetCharacter.isConsideredRatman) {
+            reasons += "Ratmen cannot leave home village.";
+        }
+        return reasons;
     }
     protected override void OnSuccessScheme(Character character, object target) {
         base.OnSuccessScheme(character, target);
