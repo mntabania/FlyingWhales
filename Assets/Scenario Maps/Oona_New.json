@@ -2332,6 +2332,12 @@
         },
         {
           "resource": "STONE",
+          "structureType": "TAVERN",
+          "hasValue": true,
+          "isCorrupted": false
+        },
+        {
+          "resource": "STONE",
           "structureType": "DWELLING",
           "hasValue": true,
           "isCorrupted": false
