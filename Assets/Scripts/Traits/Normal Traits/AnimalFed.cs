@@ -3,7 +3,7 @@
         
         public AnimalFed() {
             name = "Animal Fed";
-            description = "Doubles all secondary resistances";
+            description = "Increases piercing by 50%";
             type = TRAIT_TYPE.STATUS;
             effect = TRAIT_EFFECT.POSITIVE;
             isStacking = true;

@@ -6,7 +6,7 @@ namespace Traits {
         
         public StockedUp() {
             name = "Stocked Up";
-            description = "Well prepared food-wise";
+            description = "Well prepared food-wise.";
             type = TRAIT_TYPE.STATUS;
             effect = TRAIT_EFFECT.POSITIVE;
             ticksDuration = 0;

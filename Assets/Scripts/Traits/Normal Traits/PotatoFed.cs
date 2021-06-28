@@ -6,7 +6,7 @@ namespace Traits {
         
         public PotatoFed() {
             name = "Potato Fed";
-            description = "Increased Intelligence by 50%.";
+            description = "Increases Intelligence by 50%.";
             type = TRAIT_TYPE.STATUS;
             effect = TRAIT_EFFECT.POSITIVE;
             isStacking = true;
