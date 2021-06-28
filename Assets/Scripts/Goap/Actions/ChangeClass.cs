@@ -49,15 +49,15 @@ public class ChangeClass : GoapAction {
         OtherData[] otherData = goapNode.otherData;
         string className = (string) otherData[0].obj;
         goapNode.actor.classComponent.AssignClass(className);
-
+        
+        ManMadeStructure previousWorkStructure = goapNode.actor.structureComponent.workPlaceStructure;
+        if (previousWorkStructure != null) { previousWorkStructure.RemoveAssignedWorker(goapNode.actor); }
+        
         if (otherData.Length > 1) {
             OtherData structureOtherData = otherData[1];
             if (structureOtherData != null) {
                 ManMadeStructure workStructure = structureOtherData.obj as ManMadeStructure;
                 if (workStructure != null && !workStructure.hasBeenDestroyed) {
-                    ManMadeStructure previousWorkStructure = goapNode.actor.structureComponent.workPlaceStructure;
-                    if (previousWorkStructure != null) { previousWorkStructure.RemoveAssignedWorker(goapNode.actor); }
-                    
                     //Upon changing class assign worker immediately to the attached structure
                     workStructure.AddAssignedWorker(goapNode.actor);
                     goapNode.actor.interruptComponent.TriggerInterrupt(INTERRUPT.Claim_Work_Structure, goapNode.actor);
