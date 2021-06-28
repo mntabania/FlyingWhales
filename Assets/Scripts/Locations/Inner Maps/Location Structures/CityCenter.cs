@@ -53,14 +53,12 @@ namespace Inner_Maps.Location_Structures {
         #endregion
 
         private void OnDayStarted() {
-            if (GameUtilities.RollChance(50)) {
-                Area hex = occupiedArea;
-                LocationGridTile tile = hex.gridTileComponent.GetRandomTileThatIsPassableAndHasNoObjectAndIsNotInStructure(this);
-                if(tile != null) {
-                    int numberOfHerbPlants = hex.tileObjectComponent.GetNumberOfTileObjectsInHexTile(TILE_OBJECT_TYPE.HERB_PLANT);
-                    if(numberOfHerbPlants < 4) {
-                        tile.structure.AddPOI(InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.HERB_PLANT), tile);
-                    }
+            Area hex = occupiedArea;
+            LocationGridTile tile = hex.gridTileComponent.GetRandomTileThatIsPassableAndHasNoObjectAndIsInWilderness();
+            if(tile != null) {
+                int numberOfHerbPlants = hex.tileObjectComponent.GetNumberOfTileObjectsInHexTile(TILE_OBJECT_TYPE.HERB_PLANT);
+                if(numberOfHerbPlants < 4) {
+                    tile.structure.AddPOI(InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.HERB_PLANT), tile);
                 }
             }
         }

@@ -216,27 +216,42 @@ public class VampireBehaviour : CharacterBehaviourComponent {
 
     public static WeightedDictionary<Character> GetVampiricEmbraceTargetWeights(Character character) {
         WeightedDictionary<Character> embraceWeights = new WeightedDictionary<Character>();
+        List<Character> embraceChoices = RuinarchListPool<Character>.Claim();
+        if (character.homeSettlement != null) {
+            embraceChoices.AddRange(character.homeSettlement.residents);
+            embraceChoices.Remove(character);
+        }
         foreach (var relationships in character.relationshipContainer.relationships) {
             Character otherCharacter = DatabaseManager.Instance.characterDatabase.GetCharacterByID(relationships.Key);
-            if (otherCharacter != null) {
-                if (!otherCharacter.traitContainer.HasTrait("Vampire") && relationships.Value.awareness.state != AWARENESS_STATE.Presumed_Dead && 
-                    relationships.Value.awareness.state != AWARENESS_STATE.Missing && !otherCharacter.partyComponent.isActiveMember && !otherCharacter.isDead
-                    && otherCharacter.marker && otherCharacter.gridTileLocation != null && otherCharacter.grave == null) {
-                    var opinionLabel = relationships.Value.opinions.GetOpinionLabel();
-                    if (relationships.Value.IsLover() && (opinionLabel == RelationshipManager.Close_Friend || opinionLabel == RelationshipManager.Friend)) {
-                        embraceWeights.AddElement(otherCharacter, 100);
-                    } else if (relationships.Value.HasRelationship(RELATIONSHIP_TYPE.AFFAIR) && (opinionLabel == RelationshipManager.Close_Friend || opinionLabel == RelationshipManager.Friend)) {
-                        embraceWeights.AddElement(otherCharacter, 50);
-                    } else if (opinionLabel == RelationshipManager.Close_Friend) {
-                        embraceWeights.AddElement(otherCharacter, 50);
-                    } else if (opinionLabel == RelationshipManager.Friend) {
-                        embraceWeights.AddElement(otherCharacter, 10);
-                    } else if (opinionLabel == RelationshipManager.Acquaintance || opinionLabel == RelationshipManager.Enemy || opinionLabel == RelationshipManager.Rival) {
-                        embraceWeights.AddElement(otherCharacter, 5);
-                    }
+            if (otherCharacter != null && !embraceChoices.Contains(otherCharacter)) {
+                embraceChoices.Add(otherCharacter);
+            }
+        }
+
+        for (int i = 0; i < embraceChoices.Count; i++) {
+            Character otherCharacter = embraceChoices[i];
+            AWARENESS_STATE awarenessState = character.relationshipContainer.GetAwarenessState(otherCharacter);
+            if (!otherCharacter.traitContainer.HasTrait("Vampire") && awarenessState != AWARENESS_STATE.Presumed_Dead && 
+                awarenessState != AWARENESS_STATE.Missing && !otherCharacter.partyComponent.isActiveMember && !otherCharacter.isDead && 
+                otherCharacter.marker && otherCharacter.gridTileLocation != null && otherCharacter.grave == null) {
+                var opinionLabel = character.relationshipContainer.GetOpinionLabel(otherCharacter);
+                IRelationshipData relationshipData = character.relationshipContainer.GetRelationshipDataWith(otherCharacter);
+                if (relationshipData != null && relationshipData.IsLover() && (opinionLabel == RelationshipManager.Close_Friend || opinionLabel == RelationshipManager.Friend)) {
+                    embraceWeights.AddElement(otherCharacter, 100);
+                } else if (relationshipData != null && relationshipData.HasRelationship(RELATIONSHIP_TYPE.AFFAIR) && (opinionLabel == RelationshipManager.Close_Friend || opinionLabel == RelationshipManager.Friend)) {
+                    embraceWeights.AddElement(otherCharacter, 50);
+                } else if (opinionLabel == RelationshipManager.Close_Friend) {
+                    embraceWeights.AddElement(otherCharacter, 50);
+                } else if (opinionLabel == RelationshipManager.Friend) {
+                    embraceWeights.AddElement(otherCharacter, 10);
+                } else if (opinionLabel == RelationshipManager.Acquaintance || opinionLabel == RelationshipManager.Enemy || opinionLabel == RelationshipManager.Rival) {
+                    embraceWeights.AddElement(otherCharacter, 5);
+                } else {
+                    embraceWeights.AddElement(otherCharacter, 5);
                 }
             }
         }
+        
         return embraceWeights;
     }
 }

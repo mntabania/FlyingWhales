@@ -51,7 +51,13 @@ public class ChangeClass : GoapAction {
         goapNode.actor.classComponent.AssignClass(className);
         
         ManMadeStructure previousWorkStructure = goapNode.actor.structureComponent.workPlaceStructure;
-        if (previousWorkStructure != null) { previousWorkStructure.RemoveAssignedWorker(goapNode.actor); }
+        if (previousWorkStructure != null) {
+            //if actor can no longer work at its current work structure, unassign them
+            CharacterClassData classData = CharacterManager.Instance.GetOrCreateCharacterClassData(className);
+            if (classData.workStructureType != previousWorkStructure.structureType) {
+                previousWorkStructure.RemoveAssignedWorker(goapNode.actor);    
+            }
+        }
         
         if (otherData.Length > 1) {
             OtherData structureOtherData = otherData[1];

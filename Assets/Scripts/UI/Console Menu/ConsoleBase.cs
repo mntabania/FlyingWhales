@@ -116,7 +116,8 @@ public class ConsoleBase : InfoUIBase {
             {"/toggle_vs", ToggleVillageSpots},
             {"/coins", AdjustCoins},
             {"/talent_level_up", TalentLevelUp},
-            {"/adjust_resistance", AdjustResistance}
+            {"/adjust_resistance", AdjustResistance},
+            {"/log_structure_connectors", LogStructureConnectors}
         };
         
         SchemeData.alwaysSuccessScheme = false;
@@ -1800,6 +1801,33 @@ public class ConsoleBase : InfoUIBase {
     #endregion
 
     #region Settlements
+    private void LogStructureConnectors(string[] parameters) {
+        if (parameters.Length != 2) { //Settlement, STRUCTURE_TYPE
+            AddCommandHistory(consoleLbl.text);
+            AddErrorMessage("There was an error in the command format of /log_structure_connectors");
+            return;
+        }
+        string settlementName = parameters[0];
+        string structureName = parameters[1];
+        BaseSettlement settlement = DatabaseManager.Instance.settlementDatabase.GetSettlementByName(settlementName);
+        if (settlement is NPCSettlement npcSettlement) {
+            if (Enum.TryParse(structureName, true, out STRUCTURE_TYPE structureType)) {
+                List<StructureConnector> connectors = RuinarchListPool<StructureConnector>.Claim();
+                npcSettlement.PopulateStructureConnectorsForStructureType(connectors, structureType);
+                if (structureType == STRUCTURE_TYPE.MINE) {
+                    connectors = connectors.OrderBy(c => Vector2.Distance(c.transform.position, 
+                        npcSettlement.cityCenter.tiles.ElementAt(0).centeredWorldLocation)).ToList();
+                }
+                Debug.Log($"Found structure connectors for {structureType.ToString()} at {npcSettlement.name} are:\n {connectors.ComafyList()}");
+                RuinarchListPool<StructureConnector>.Release(connectors);
+                AddSuccessMessage($"Logged structure connectors for {structureType.ToString()} at {settlement.name}. Check your console.");
+            } else {
+                AddErrorMessage($"Could not parse {structureName} into a STRUCTURE_TYPE");  
+            }
+        } else {
+            AddErrorMessage($"Could not find NPCSettlement with name {settlementName}");
+        }
+    }
     private void RemoveNeededClassFromSettlement(string[] parameters) {
         if (parameters.Length != 2) { //Settlement, class name
             AddCommandHistory(consoleLbl.text);

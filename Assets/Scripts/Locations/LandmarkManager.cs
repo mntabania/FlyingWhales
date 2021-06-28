@@ -307,31 +307,119 @@ public partial class LandmarkManager : BaseMonoBehaviour {
     }
     public bool CanPlaceStructureBlueprint(NPCSettlement npcSettlement, StructureSetting structureToPlace, out LocationGridTile targetTile, out string structurePrefabName, 
         out int connectorToUse, out LocationGridTile connectorTile) {
+        bool canPlace = false;
         List<StructureConnector> availableStructureConnectors = RuinarchListPool<StructureConnector>.Claim();
         npcSettlement.PopulateStructureConnectorsForStructureType(availableStructureConnectors, structureToPlace.structureType);
-        CollectionUtilities.Shuffle(availableStructureConnectors);
+        string connectorLog;
+        if (structureToPlace.structureType == STRUCTURE_TYPE.MINE) {
+            //order spots based on distance with settlement city center
+            availableStructureConnectors = availableStructureConnectors.OrderBy(c => Vector2.Distance(c.transform.position, 
+                npcSettlement.cityCenter.tiles.ElementAt(0).centeredWorldLocation)).ToList();
+// #if DEBUG_LOG
+//             Debug.Log($"Evaluating structure connectors for {npcSettlement.name} to place {structureToPlace.ToString()}. Available connectors are:\n {availableStructureConnectors.ComafyList()}");
+// #endif
+            CanPlaceStructureBlueprintMine(npcSettlement, structureToPlace, availableStructureConnectors, out targetTile, out structurePrefabName, out connectorToUse, out connectorTile, out canPlace, out connectorLog);
+// #if DEBUG_LOG
+//             Debug.Log($"Found Connector at {connectorTile}. Connector Log for {npcSettlement.name} to place {structureToPlace.ToString()}:\n {connectorLog}");
+// #endif
+        } else {
+            //did not shuffle connectors for mine since we want the village to place the mine as close as possible.
+            //Related card: https://trello.com/c/lFTbmJ4d/4932-optimize-mine-placement
+            CollectionUtilities.Shuffle(availableStructureConnectors);
+// #if DEBUG_LOG
+//             Debug.Log($"Evaluating structure connectors for {npcSettlement.name} to place {structureToPlace.ToString()}. Available connectors are:\n {availableStructureConnectors.ComafyList()}");
+// #endif
+            CanPlaceStructureBlueprintDefault(npcSettlement, structureToPlace, availableStructureConnectors, out targetTile, out structurePrefabName, out connectorToUse, out connectorTile, out canPlace, out connectorLog);
+// #if DEBUG_LOG
+//             Debug.Log($"Found Connector at {connectorTile}. Connector Log for {npcSettlement.name} to place {structureToPlace.ToString()}:\n {connectorLog}");
+// #endif
+        }
+        // List<GameObject> prefabChoices = InnerMapManager.Instance.GetStructurePrefabsForStructure(structureToPlace);
+        // CollectionUtilities.Shuffle(prefabChoices);
+        // bool canPlace = false;
+        // targetTile = null;
+        // structurePrefabName = string.Empty;
+        // connectorToUse = -1;
+        // connectorTile = null;
+        // for (int j = 0; j < prefabChoices.Count; j++) {
+        //     GameObject prefabGO = prefabChoices[j];
+        //     LocationStructureObject prefabObject = prefabGO.GetComponent<LocationStructureObject>();
+        //     StructureConnector validConnector = prefabObject.GetFirstValidConnector(availableStructureConnectors, npcSettlement.region.innerMap, npcSettlement, 
+        //         out var connectorIndex, out LocationGridTile tileToPlaceStructure, out connectorTile, structureToPlace, out _);
+        //     if (validConnector != null) {
+        //         targetTile = tileToPlaceStructure;
+        //         structurePrefabName = prefabGO.name;
+        //         connectorToUse = connectorIndex;
+        //         canPlace = true;
+        //         break;
+        //     }
+        // }
+        RuinarchListPool<StructureConnector>.Release(availableStructureConnectors);
+        return canPlace;
+    }
+    public StructureConnector CanPlaceStructureBlueprintDefault(NPCSettlement npcSettlement, StructureSetting structureToPlace, List<StructureConnector> availableStructureConnectors,
+        out LocationGridTile targetTile, out string structurePrefabName, out int connectorToUse, out LocationGridTile connectorTile, out bool canPlace, out string functionLog) {
         List<GameObject> prefabChoices = InnerMapManager.Instance.GetStructurePrefabsForStructure(structureToPlace);
         CollectionUtilities.Shuffle(prefabChoices);
-        bool canPlace = false;
+        canPlace = false;
         targetTile = null;
         structurePrefabName = string.Empty;
         connectorToUse = -1;
         connectorTile = null;
+        functionLog = string.Empty;
         for (int j = 0; j < prefabChoices.Count; j++) {
             GameObject prefabGO = prefabChoices[j];
             LocationStructureObject prefabObject = prefabGO.GetComponent<LocationStructureObject>();
             StructureConnector validConnector = prefabObject.GetFirstValidConnector(availableStructureConnectors, npcSettlement.region.innerMap, npcSettlement, 
-                out var connectorIndex, out LocationGridTile tileToPlaceStructure, out connectorTile, structureToPlace, out _);
+                out var connectorIndex, out LocationGridTile tileToPlaceStructure, out connectorTile, structureToPlace, out var connectorLog);
             if (validConnector != null) {
                 targetTile = tileToPlaceStructure;
                 structurePrefabName = prefabGO.name;
                 connectorToUse = connectorIndex;
                 canPlace = true;
-                break;
+#if DEBUG_LOG
+                functionLog = $"{functionLog}\n{connectorLog}";
+#endif
+                return validConnector;
             }
+#if DEBUG_LOG
+            functionLog = $"{functionLog}\n{connectorLog}";
+#endif
         }
-        RuinarchListPool<StructureConnector>.Release(availableStructureConnectors);
-        return canPlace;
+        return null;
+    }
+    public StructureConnector CanPlaceStructureBlueprintMine(NPCSettlement npcSettlement, StructureSetting structureToPlace, List<StructureConnector> availableStructureConnectors,
+        out LocationGridTile targetTile, out string structurePrefabName, out int connectorToUse, out LocationGridTile connectorTile, out bool canPlace, out string functionLog) {
+        List<GameObject> prefabChoices = InnerMapManager.Instance.GetStructurePrefabsForStructure(structureToPlace);
+        CollectionUtilities.Shuffle(prefabChoices);
+        canPlace = false;
+        targetTile = null;
+        structurePrefabName = string.Empty;
+        connectorToUse = -1;
+        connectorTile = null;
+        functionLog = string.Empty;
+        for (int i = 0; i < availableStructureConnectors.Count; i++) {
+            StructureConnector connector = availableStructureConnectors[i];
+            for (int j = 0; j < prefabChoices.Count; j++) {
+                GameObject prefabGO = prefabChoices[j];
+                LocationStructureObject prefabObject = prefabGO.GetComponent<LocationStructureObject>();
+                if (prefabObject.IsConnectorValid(connector, npcSettlement.region.innerMap, npcSettlement, 
+                    out var connectorIndex, out LocationGridTile tileToPlaceStructure, out connectorTile, structureToPlace, out var connectorLog)) {
+                    targetTile = tileToPlaceStructure;
+                    structurePrefabName = prefabGO.name;
+                    connectorToUse = connectorIndex;
+                    canPlace = true;
+#if DEBUG_LOG
+                    functionLog = $"{functionLog}\n{connectorLog}";
+#endif
+                    return connector;
+                }
+#if DEBUG_LOG
+                functionLog = $"{functionLog}\n{connectorLog}";
+#endif
+            }   
+        }
+        return null;
     }
     public bool HasEnoughSpaceForStructure(string structurePrefabName, LocationGridTile tileLocation) {
         GameObject ogObject = ObjectPoolManager.Instance.GetOriginalObjectFromPool(structurePrefabName);

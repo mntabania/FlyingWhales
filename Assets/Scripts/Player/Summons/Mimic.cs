@@ -33,6 +33,12 @@ public class Mimic : Summon {
         }
         base.OnTickStarted();
     }
+    public override void OnSeizePOI() {
+        if (isTreasureChest) {
+            ExecuteAwakenMimicEvent();
+        }
+        base.OnSeizePOI();
+    }
     // public override bool CanBeSeenBy(Character p_character) {
     //     bool canBeSeen = base.CanBeSeenBy(p_character);
     //     if (!canBeSeen) {

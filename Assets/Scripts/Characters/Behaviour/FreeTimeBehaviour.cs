@@ -9,7 +9,7 @@ using UnityEngine.Assertions;
 using UtilityScripts;
 
 public class FreeTimeBehaviour : CharacterBehaviourComponent {
-    
+    private readonly string[] highTierClasses = new string[] {"Knight", "Hunter", "Mage", "Barbarian", "Stalker", "Shaman"};
     public FreeTimeBehaviour() {
         priority = 9;
     }
@@ -199,22 +199,81 @@ public class FreeTimeBehaviour : CharacterBehaviourComponent {
 #if DEBUG_LOG
             log = $"{log}\n-{character.name} is in home structure and just returned home";
 #endif
-            if ((character.characterClass.IsCombatant() || character.characterClass.className == "Noble") && !character.partyComponent.hasParty &&
-                character.homeSettlement != null && !character.traitContainer.HasTrait("Enslaved") && !character.structureComponent.HasWorkPlaceStructure()) {
-                bool shouldCreateOrJoinParty = true;
-                if (character.HasAfflictedByPlayerWith(PLAYER_SKILL_TYPE.AGORAPHOBIA)) {
-                    shouldCreateOrJoinParty = PlayerSkillManager.Instance.GetAfflictionData(PLAYER_SKILL_TYPE.AGORAPHOBIA).currentLevel >= 3;
-                }
-                Party unFullParty = character.homeSettlement.GetFirstUnfullParty();
-                if (unFullParty == null) {
-                    if (GameUtilities.RollChance(30) && character.faction != null && shouldCreateOrJoinParty) {
-                        character.interruptComponent.TriggerInterrupt(INTERRUPT.Create_Party, character);
+            if ((character.characterClass.IsCombatant() || character.characterClass.className == "Noble") && !character.traitContainer.HasTrait("Enslaved")) {
+#if DEBUG_LOG
+                log = $"{log}\n-{character.name} is a Combatant that is not Enslaved";
+#endif
+                if (ChanceData.RollChance(CHANCE_TYPE.Personal_Combatant_Change_Class, ref log) && CanCharacterChangeToAHigherTierCombatClass(character)) {
+#if DEBUG_LOG
+                    log = $"{log}\n-{character.name} can upgrade to a higher tier.";
+#endif
+                    List<string> classChoices = RuinarchListPool<string>.Claim();
+                    if (character.characterClass.attackType == ATTACK_TYPE.MAGICAL && character.structureComponent.HasWorkPlaceStructure()) {
+                        //added this case for magic users assigned to the Hospice, so that they can still be assigned to the hospice after upgrading their class
+                        TryAddClassToChangeClassChoices(character, "Mage", classChoices);
+                        TryAddClassToChangeClassChoices(character, "Shaman", classChoices);
+                    } else {
+                        TryAddClassToChangeClassChoices(character, "Knight", classChoices);
+                        TryAddClassToChangeClassChoices(character, "Hunter", classChoices);
+                        TryAddClassToChangeClassChoices(character, "Mage", classChoices);
+                        if (classChoices.Count <= 0) {
+                            TryAddClassToChangeClassChoices(character, "Barbarian", classChoices);
+                            TryAddClassToChangeClassChoices(character, "Stalker", classChoices);
+                            TryAddClassToChangeClassChoices(character, "Shaman", classChoices);    
+                        }    
+                    }
+
+                    if (classChoices.Count > 0) {
+#if DEBUG_LOG
+                        log = $"{log}\n-{character.name} change class choices are {classChoices.ComafyList()}";
+#endif
+                        string classToChangeTo = CollectionUtilities.GetRandomElement(classChoices);
+#if DEBUG_LOG
+                        log = $"{log}\n-{character.name} chosen Change Class target is {classToChangeTo}";
+#endif
+                        if (character.jobComponent.TriggerPersonalChangeClassJob(classToChangeTo, out producedJob)) {
+#if DEBUG_LOG
+                            log = $"{log}\n-Personal Change Class was created.";
+#endif
+                            return true;
+                        }
+                    } else {
+#if DEBUG_LOG
+                        log = $"{log}\n-{character.name} has no higher tier classes that it can change to";
+#endif
                     }
                 }
-                else {
-                    if (GameUtilities.RollChance(45) && shouldCreateOrJoinParty) {
-                        character.interruptComponent.TriggerInterrupt(INTERRUPT.Join_Party, unFullParty.members[0]);
+                
+                if (!character.partyComponent.hasParty && character.homeSettlement != null && !character.structureComponent.HasWorkPlaceStructure()) {
+#if DEBUG_LOG
+                    log = $"{log}\n-{character.name} is not yet part of a party. Will try to join or create one.";
+#endif
+                    bool shouldCreateOrJoinParty = true;
+                    if (character.HasAfflictedByPlayerWith(PLAYER_SKILL_TYPE.AGORAPHOBIA)) {
+                        shouldCreateOrJoinParty = PlayerSkillManager.Instance.GetAfflictionData(PLAYER_SKILL_TYPE.AGORAPHOBIA).currentLevel >= 3;
                     }
+                    Party unFullParty = character.homeSettlement.GetFirstUnfullParty();
+                    if (unFullParty == null) {
+#if DEBUG_LOG
+                        log = $"{log}\n-No un-full party. Will try to create party, rolling chance...";
+#endif
+                        if (GameUtilities.RollChance(30, ref log) && character.faction != null && shouldCreateOrJoinParty) {
+#if DEBUG_LOG
+                            log = $"{log}\n-Chance met, will create party.";
+#endif
+                            character.interruptComponent.TriggerInterrupt(INTERRUPT.Create_Party, character);
+                        }
+                    } else {
+#if DEBUG_LOG
+                        log = $"{log}\n-Found an un-full party: {unFullParty.name}. Rolling chance to join...";
+#endif
+                        if (GameUtilities.RollChance(45, ref log) && shouldCreateOrJoinParty) {
+#if DEBUG_LOG
+                            log = $"{log}\n-Will join party";
+#endif
+                            character.interruptComponent.TriggerInterrupt(INTERRUPT.Join_Party, unFullParty.members[0]);
+                        }
+                    }    
                 }
             }
 
@@ -506,7 +565,7 @@ public class FreeTimeBehaviour : CharacterBehaviourComponent {
         }
     }
 
-#region Utilities
+    #region Utilities
     private Character GetDisabledCharacterToVisit(Character p_character) {
         //List<Character> charactersWithRel = relationshipContainer.relationships.Keys.Where(x => x is AlterEgoData).Select(x => (x as AlterEgoData).owner).ToList();
         Character chosenCharacter = null;
@@ -546,8 +605,6 @@ public class FreeTimeBehaviour : CharacterBehaviourComponent {
         producedJob = job;
         return true;
     }
-#endregion
-
     private void CreateCleanJob(Character character, ref string log, out JobQueueItem producedJob) {
         producedJob = null;
 #if DEBUG_LOG
@@ -561,7 +618,7 @@ public class FreeTimeBehaviour : CharacterBehaviourComponent {
                     character.jobComponent.TryCreateCleanItemJob(allObjectsInsideCurrentStructure[x], out producedJob);
                     if(producedJob != null) {
 #if DEBUG_LOG
-                        log = $"{log}\n  -Will create cClean Up Item";
+                        log = $"{log}\n  -Will create Clean Up Item";
 #endif
                         break;
                     }
@@ -569,4 +626,16 @@ public class FreeTimeBehaviour : CharacterBehaviourComponent {
             }
         }
     }
+    private bool CanCharacterChangeToAHigherTierCombatClass(Character p_character) {
+        //characters can upgrade its current class if its current class is not part of the high tier list
+        return !highTierClasses.Contains(p_character.characterClass.className);
+    }
+    private void TryAddClassToChangeClassChoices(Character p_character, string p_className, List<string> p_classChoices) {
+        if (p_character.classComponent.ableClasses.Contains(p_className)) {
+            p_classChoices.Add(p_className);
+        }
+    }
+    #endregion
+
+    
 }

@@ -344,29 +344,71 @@ public class VillageGeneration : MapGenerationComponent {
 		yield return null;
 	}
 
-	private IEnumerator PlaceStructure(Region region, StructureSetting structureSetting, NPCSettlement npcSettlement, MapGenerationData p_data) {
+	private IEnumerator PlaceStructure(Region region, StructureSetting structureToPlace, NPCSettlement npcSettlement, MapGenerationData p_data) {
 		List<StructureConnector> availableStructureConnectors = RuinarchListPool<StructureConnector>.Claim();
-		npcSettlement.PopulateStructureConnectorsForStructureType(availableStructureConnectors, structureSetting.structureType);
-		// availableStructureConnectors = CollectionUtilities.Shuffle(availableStructureConnectors);
-		List<GameObject> prefabChoices = InnerMapManager.Instance.GetStructurePrefabsForStructure(structureSetting);
-		CollectionUtilities.Shuffle(prefabChoices);
-		for (int j = 0; j < prefabChoices.Count; j++) {
-			GameObject prefabGO = prefabChoices[j];
-			LocationStructureObject prefabObject = prefabGO.GetComponent<LocationStructureObject>();
-			StructureConnector validConnector = prefabObject.GetFirstValidConnector(availableStructureConnectors, region.innerMap, npcSettlement, out var connectorIndex, 
-				out LocationGridTile tileToPlaceStructure, out LocationGridTile connectorTile, structureSetting, out var functionLog);
-			if (validConnector != null) {
-				//instantiate structure object at tile.
-				LocationStructure structure =  LandmarkManager.Instance.PlaceIndividualBuiltStructureForSettlement(npcSettlement, region.innerMap, prefabGO, tileToPlaceStructure);
-				if (structure is ManMadeStructure mmStructure) {
-					mmStructure.OnUseStructureConnector(connectorTile);    
-				}
-				p_data.AddLastPlacedStructureTypes(structure.structureType);
-				break; //stop loop since structure was already placed.
-			} else {
-				Debug.LogWarning($"Could not find structure connector for {prefabObject.name}. Choices are:\n{availableStructureConnectors.ComafyList()}. Connector Summaries:\n{functionLog}");
-			}
+		npcSettlement.PopulateStructureConnectorsForStructureType(availableStructureConnectors, structureToPlace.structureType);
+		
+		// string connectorLog;
+		StructureConnector validConnector;
+		string structurePrefabName;
+		LocationGridTile connectorTile;
+		LocationGridTile targetTile;
+		
+		if (structureToPlace.structureType == STRUCTURE_TYPE.MINE) {
+			//order spots based on distance with settlement city center
+			availableStructureConnectors = availableStructureConnectors.OrderBy(c => Vector2.Distance(c.transform.position, 
+				npcSettlement.cityCenter.tiles.ElementAt(0).centeredWorldLocation)).ToList();
+// #if DEBUG_LOG
+// 			Debug.Log($"Evaluating structure connectors for {npcSettlement.name} to place {structureToPlace.ToString()}. Available connectors are:\n {availableStructureConnectors.ComafyList()}");
+// #endif
+			validConnector = LandmarkManager.Instance.CanPlaceStructureBlueprintMine(npcSettlement, structureToPlace, availableStructureConnectors, out targetTile, 
+				out structurePrefabName, out var connectorToUse, out connectorTile, out var canPlace, out _);
+// #if DEBUG_LOG
+// 			Debug.Log($"Found Connector at {validConnector}. Connector Log for {npcSettlement.name} to place {structureToPlace.ToString()}:\n {connectorLog}");
+// #endif
+		} else {
+			//did not shuffle connectors for mine since we want the village to place the mine as close as possible.
+			//Related card: https://trello.com/c/lFTbmJ4d/4932-optimize-mine-placement
+			CollectionUtilities.Shuffle(availableStructureConnectors);
+// #if DEBUG_LOG
+// 			Debug.Log($"Evaluating structure connectors for {npcSettlement.name} to place {structureToPlace.ToString()}. Available connectors are:\n {availableStructureConnectors.ComafyList()}");
+// #endif
+			validConnector = LandmarkManager.Instance.CanPlaceStructureBlueprintDefault(npcSettlement, structureToPlace, availableStructureConnectors, out targetTile, 
+				out structurePrefabName, out var connectorToUse, out connectorTile, out var canPlace, out _);
+// #if DEBUG_LOG
+// 			Debug.Log($"Found Connector at {validConnector}. Connector Log for {npcSettlement.name} to place {structureToPlace.ToString()}:\n {connectorLog}");
+// #endif
 		}
+		
+		if (validConnector != null) {
+			//instantiate structure object at tile.
+			GameObject prefabGO = ObjectPoolManager.Instance.GetOriginalObjectFromPool(structurePrefabName);
+			LocationStructure structure =  LandmarkManager.Instance.PlaceIndividualBuiltStructureForSettlement(npcSettlement, region.innerMap, prefabGO, targetTile);
+			if (structure is ManMadeStructure mmStructure) {
+				mmStructure.OnUseStructureConnector(connectorTile);    
+			}
+			p_data.AddLastPlacedStructureTypes(structure.structureType);
+		}
+		
+		// List<GameObject> prefabChoices = InnerMapManager.Instance.GetStructurePrefabsForStructure(structureSetting);
+		// CollectionUtilities.Shuffle(prefabChoices);
+		// for (int j = 0; j < prefabChoices.Count; j++) {
+		// 	GameObject prefabGO = prefabChoices[j];
+		// 	LocationStructureObject prefabObject = prefabGO.GetComponent<LocationStructureObject>();
+		// 	StructureConnector validConnector = prefabObject.GetFirstValidConnector(availableStructureConnectors, region.innerMap, npcSettlement, out var connectorIndex, 
+		// 		out LocationGridTile tileToPlaceStructure, out LocationGridTile connectorTile, structureSetting, out var functionLog);
+		// 	if (validConnector != null) {
+		// 		//instantiate structure object at tile.
+		// 		LocationStructure structure =  LandmarkManager.Instance.PlaceIndividualBuiltStructureForSettlement(npcSettlement, region.innerMap, prefabGO, tileToPlaceStructure);
+		// 		if (structure is ManMadeStructure mmStructure) {
+		// 			mmStructure.OnUseStructureConnector(connectorTile);    
+		// 		}
+		// 		p_data.AddLastPlacedStructureTypes(structure.structureType);
+		// 		break; //stop loop since structure was already placed.
+		// 	} else {
+		// 		Debug.LogWarning($"Could not find structure connector for {prefabObject.name}. Choices are:\n{availableStructureConnectors.ComafyList()}. Connector Summaries:\n{functionLog}");
+		// 	}
+		// }
 		RuinarchListPool<StructureConnector>.Release(availableStructureConnectors);
 		yield return null;
 	}

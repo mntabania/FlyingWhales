@@ -86,19 +86,19 @@ public class SettlementRulerBehaviour : CharacterBehaviourComponent {
                     if (totalFacilityCount < characterHomeSettlement.settlementType.maxFacilities) {
                         STRUCTURE_TYPE determinedStructureToUse = STRUCTURE_TYPE.NONE;
                         int chance = ChanceData.GetChance(CHANCE_TYPE.Settlement_Ruler_Default_Facility_Chance);
-                        if (!characterHomeSettlement.HasStructure(STRUCTURE_TYPE.FISHERY)
-                             && !characterHomeSettlement.HasStructure(STRUCTURE_TYPE.FARM)
-                             && !characterHomeSettlement.HasStructure(STRUCTURE_TYPE.BUTCHERS_SHOP)
-                             && !characterHomeSettlement.HasBlueprintOnTileForStructure(STRUCTURE_TYPE.FISHERY)
-                             && !characterHomeSettlement.HasBlueprintOnTileForStructure(STRUCTURE_TYPE.FARM)
-                             && !characterHomeSettlement.HasBlueprintOnTileForStructure(STRUCTURE_TYPE.BUTCHERS_SHOP)) {
+                        List<string> ableClassesOfAllResidents = RuinarchListPool<string>.Claim();
+                        characterHomeSettlement.PopulateAbleClassesOfAllResidents(ableClassesOfAllResidents);
+                        
+                        if (!HasActiveWorkStructureOfType(characterHomeSettlement, STRUCTURE_TYPE.FISHERY, "Fisher", ableClassesOfAllResidents)
+                             && !HasActiveWorkStructureOfType(characterHomeSettlement, STRUCTURE_TYPE.FARM, "Farmer", ableClassesOfAllResidents)
+                             && !HasActiveWorkStructureOfType(characterHomeSettlement, STRUCTURE_TYPE.BUTCHERS_SHOP, "Butcher", ableClassesOfAllResidents)) {
                             chance = 50;
 #if DEBUG_LOG
                             log = $"{log}\n-{characterHomeSettlement.name} doesn't have a fishery, farm or butchers shop. Set chance to {chance}";
 #endif
-                            if (ShouldBuildFishery(characterHomeSettlement)) {
+                            if (ShouldBuildFishery(characterHomeSettlement, ableClassesOfAllResidents)) {
                                 determinedStructureToUse = STRUCTURE_TYPE.FISHERY;
-                            } else if (ShouldBuildButcher(characterHomeSettlement)) {
+                            } else if (ShouldBuildButcher(characterHomeSettlement, ableClassesOfAllResidents)) {
                                 determinedStructureToUse = STRUCTURE_TYPE.BUTCHERS_SHOP;  
                             } else {
                                 determinedStructureToUse = STRUCTURE_TYPE.FARM;
@@ -155,9 +155,9 @@ public class SettlementRulerBehaviour : CharacterBehaviourComponent {
 #if DEBUG_LOG
                                     log = $"{log}\n-Villager count exceeds food supply capacity.";
 #endif
-                                    if (ShouldBuildFishery(characterHomeSettlement)) {
+                                    if (ShouldBuildFishery(characterHomeSettlement, ableClassesOfAllResidents)) {
                                         determinedStructureToUse = STRUCTURE_TYPE.FISHERY;
-                                    } else if (ShouldBuildButcher(characterHomeSettlement)) {
+                                    } else if (ShouldBuildButcher(characterHomeSettlement, ableClassesOfAllResidents)) {
                                         determinedStructureToUse = STRUCTURE_TYPE.BUTCHERS_SHOP;
                                     } else {
                                         determinedStructureToUse = STRUCTURE_TYPE.FARM;
@@ -188,7 +188,7 @@ public class SettlementRulerBehaviour : CharacterBehaviourComponent {
 #if DEBUG_LOG
                                     log = $"{log}\n-Checking if should build skinners lodge...";
 #endif
-                                    if (ShouldBuildSkinnersLodge(characterHomeSettlement)) {
+                                    if (ShouldBuildSkinnersLodge(characterHomeSettlement, ableClassesOfAllResidents)) {
                                         determinedStructureToUse = STRUCTURE_TYPE.HUNTER_LODGE;
 #if DEBUG_LOG
                                         log = $"{log}\n-Checking passed. Will try to build Skinners lodge";
@@ -227,6 +227,7 @@ public class SettlementRulerBehaviour : CharacterBehaviourComponent {
 #if DEBUG_LOG
                             log = $"{log}\n-Final determined structure to build: {determinedStructureToUse}";
 #endif
+                            RuinarchListPool<string>.Release(ableClassesOfAllResidents);
                             if (determinedStructureToUse != STRUCTURE_TYPE.NONE) {
                                 return TryCreatePlaceBlueprintJob(determinedStructureToUse, character, characterHomeSettlement, out producedJob, ref log);
                             }
@@ -295,15 +296,15 @@ public class SettlementRulerBehaviour : CharacterBehaviourComponent {
         }
         return count;
     }
-    public static bool ShouldBuildFishery(NPCSettlement p_settlement) {
+    private bool ShouldBuildFishery(NPCSettlement p_settlement, List<string> p_ableClassesOfResidents) {
         if (p_settlement.owner != null && p_settlement.owner.factionType.IsActionConsideredACrime(CRIME_TYPE.Animal_Killing)) {
             //Animal Killing is considered a crime.
             return false;
         }
-        if (!p_settlement.occupiedVillageSpot.HasUnusedFishingSpot()) {
+        if (!p_ableClassesOfResidents.Contains("Fisher")) {
             return false;
         }
-        if (!p_settlement.HasResidentThatIsOrCanBecomeClass("Fisher")) {
+        if (!p_settlement.occupiedVillageSpot.HasUnusedFishingSpot()) {
             return false;
         }
         if (!p_settlement.settlementJobTriggerComponent.HasTotalResource(RESOURCE.WOOD, STRUCTURE_TYPE.FISHERY.GetResourceBuildCost())) {
@@ -311,15 +312,18 @@ public class SettlementRulerBehaviour : CharacterBehaviourComponent {
         }
         return true;
     }
-    public static bool ShouldBuildButcher(NPCSettlement p_settlement) {
+    private bool ShouldBuildButcher(NPCSettlement p_settlement, List<string> p_ableClassesOfResidents) {
+        if (p_settlement.HasStructure(STRUCTURE_TYPE.BUTCHERS_SHOP)) {
+            return false;
+        }
         if (p_settlement.owner != null && p_settlement.owner.factionType.IsActionConsideredACrime(CRIME_TYPE.Animal_Killing)) {
             //Animal Killing is considered a crime.
             return false;
         }
-        if (!p_settlement.occupiedVillageSpot.HasAccessToButcherAnimals()) {
+        if (!p_ableClassesOfResidents.Contains("Butcher")) {
             return false;
         }
-        if (!p_settlement.HasResidentThatIsOrCanBecomeClass("Butcher")) {
+        if (!p_settlement.occupiedVillageSpot.HasAccessToButcherAnimals()) {
             return false;
         }
         if (!p_settlement.settlementJobTriggerComponent.HasTotalResource(RESOURCE.STONE, STRUCTURE_TYPE.BUTCHERS_SHOP.GetResourceBuildCost())) {
@@ -327,17 +331,27 @@ public class SettlementRulerBehaviour : CharacterBehaviourComponent {
         }
         return true;
     }
-    private bool ShouldBuildSkinnersLodge(NPCSettlement p_settlement) {
+    private bool ShouldBuildSkinnersLodge(NPCSettlement p_settlement, List<string> p_ableClassesOfResidents) {
         if (p_settlement.HasStructure(STRUCTURE_TYPE.HUNTER_LODGE) && !p_settlement.HasBlueprintOnTileForStructure(STRUCTURE_TYPE.HUNTER_LODGE)) {
+            return false;
+        }
+        if (!p_ableClassesOfResidents.Contains("Skinner")) {
             return false;
         }
         if (!p_settlement.occupiedVillageSpot.HasAccessToSkinnerAnimals()) {
             return false;
         }
-        if (!p_settlement.HasResidentThatIsOrCanBecomeClass("Skinner")) {
-            return false;
-        }
         return true;
+    }
+    private bool HasActiveWorkStructureOfType(NPCSettlement p_settlement, STRUCTURE_TYPE p_structureType, string p_workerClass, List<string> p_ableClassesOfResidents) {
+        if (p_settlement.HasStructure(p_structureType) || p_settlement.HasBlueprintOnTileForStructure(p_structureType)) {
+            if (p_ableClassesOfResidents.Contains(p_workerClass)) {
+                //I assume that if the settlement has the given structure and has a resident that is able to man it
+                //I can consider that the given work structure is active or can be active.
+                return true;
+            }
+        }
+        return false;
     }
 
     private bool TryCreatePlaceBlueprintJob(STRUCTURE_TYPE p_structureType, Character character, NPCSettlement p_settlement, out JobQueueItem producedJob, ref string log) {
