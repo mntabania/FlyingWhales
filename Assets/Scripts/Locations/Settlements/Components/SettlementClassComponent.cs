@@ -532,7 +532,7 @@ public class SettlementClassComponent : NPCSettlementComponent {
 #endif
         if (numOfCombatants < neededCombatants) {
             //Combatant is needed
-            string combatantClass = CharacterManager.Instance.GetRandomCombatant();
+            string combatantClass = CharacterManager.Instance.GetRandomLowTierCombatant();
 #if DEBUG_LOG
             log += "\nCurrent Combatants is less than needed, will create change to combatant class job";
             log += "\nCreate Change Class Job to " + combatantClass;
@@ -585,7 +585,7 @@ public class SettlementClassComponent : NPCSettlementComponent {
                         log += "\nOtherwise, 35% to create Change Class Job to Combatant";
 #endif
                         if (ChanceData.RollChance(CHANCE_TYPE.Create_Change_Class_Combatant, ref log)) {
-                            string combatantClass = CharacterManager.Instance.GetRandomCombatant();
+                            string combatantClass = CharacterManager.Instance.GetRandomLowTierCombatant();
 #if DEBUG_LOG
                             log += "\nCreate Change Class Job to " + combatantClass;
 #endif
