@@ -125,6 +125,49 @@ public class PartyQuest : ISavable {
     }
     #endregion
 
+    #region Cultist Betrayal
+    public void CultistBetrayalProcessing(ref bool hasEndQuest) {
+        if (assignedParty != null) {
+            List<Character> membersAlliedWithPlayer = RuinarchListPool<Character>.Claim();
+            for (int i = 0; i < assignedParty.membersThatJoinedQuest.Count; i++) {
+                Character member = assignedParty.membersThatJoinedQuest[i];
+                if (member.isAlliedWithPlayer) {
+                    membersAlliedWithPlayer.Add(member);
+                }
+            }
+            if (membersAlliedWithPlayer.Count == assignedParty.membersThatJoinedQuest.Count) {
+                //This means that all members that joined quest are allied with player
+                //When this happens instead of leaving party, the party should just end the quest because if they left the party the party will be disbanded
+                hasEndQuest = true;
+                EndQuest("Allied with the Ruinarch");
+            } else {
+                for (int i = 0; i < membersAlliedWithPlayer.Count; i++) {
+                    Character memberAlliedWithPlayer = membersAlliedWithPlayer[i];
+                    MembersAreBetrayedByThis(memberAlliedWithPlayer);
+                    memberAlliedWithPlayer.interruptComponent.TriggerInterrupt(INTERRUPT.Leave_Party, memberAlliedWithPlayer, "Abandoned party quest");
+                }
+            }
+            RuinarchListPool<Character>.Release(membersAlliedWithPlayer);
+        }
+    }
+    private void MembersAreBetrayedByThis(Character p_betrayer) {
+        if (assignedParty != null) {
+            for (int i = 0; i < assignedParty.membersThatJoinedQuest.Count; i++) {
+                Character member = assignedParty.membersThatJoinedQuest[i];
+                if (member != p_betrayer && !member.isAlliedWithPlayer) {
+                    CharacterManager.Instance.TriggerEmotion(EMOTION.Betrayal, member, p_betrayer, REACTION_STATUS.WITNESSED);
+                    // Betrayed betrayed = member.traitContainer.GetTraitOrStatus<Betrayed>("Betrayed");
+                    // if(betrayed != null) {
+                    //     betrayed.AddCharacterResponsibleForTrait(character);
+                    // } else {
+                    //     member.traitContainer.AddTrait(member, "Betrayed", characterResponsible: character);
+                    // }
+                }
+            }
+        }
+    }
+    #endregion
+
     #region Loading
     public virtual void LoadReferences(SaveDataPartyQuest data) {
         if (!string.IsNullOrEmpty(data.assignedParty)) {

@@ -221,25 +221,22 @@ public class CharacterClassComponent : CharacterComponent {
             //If character is paralyzed, restrained or quarantined, he should not be counted
             bool isAvailable = !c.traitContainer.HasTrait("Paralyzed", "Restrained", "Quarantined") && c.HasTalents();
             if (isAvailable) {
-                CharacterClassData classData = CharacterManager.Instance.GetOrCreateCharacterClassData(c.characterClass.className);
-                if (c.structureComponent.workPlaceStructure.structureType == classData.workStructureType) {
-                    //Only consider if the claimed work structure type is the appropriate one
-                    CharacterTalent foodTalent = c.talentComponent.GetTalent(CHARACTER_TALENT.Food);
-                    switch (foodTalent.level) {
-                        case 1:
-                        case 2:
-                            supply += 8;
-                            break;
-                        case 3:
-                        case 4:
-                            supply += 16;
-                            break;
-                        case 5:
-                            supply += 24;
-                            break;
-                        default:
-                            break;
-                    }
+                //Only consider if the claimed work structure type is the appropriate one
+                CharacterTalent foodTalent = c.talentComponent.GetTalent(CHARACTER_TALENT.Food);
+                switch (foodTalent.level) {
+                    case 1:
+                    case 2:
+                        supply += 8;
+                        break;
+                    case 3:
+                    case 4:
+                        supply += 16;
+                        break;
+                    case 5:
+                        supply += 24;
+                        break;
+                    default:
+                        break;
                 }
             }
         }

@@ -123,14 +123,16 @@ public class PartyQuestBoard {
         }
         LocationStructure targetStructure = targetCharacter.currentStructure;
         if (targetStructure != null && targetStructure.structureType.IsPlayerStructure()) {
-            CreateDemonRescuePartyQuest(questCreator, madeInLocation, targetCharacter, targetStructure as DemonicStructure);
+            //Should not create rescue if the faction is a demon/demon cult and the target is in demonic structure
+            if (owner.factionType.type != FACTION_TYPE.Demons && owner.factionType.type != FACTION_TYPE.Demon_Cult) {
+                CreateDemonRescuePartyQuest(questCreator, madeInLocation, targetCharacter, targetStructure as DemonicStructure);
+            }
         } else {
             RescuePartyQuest quest = PartyManager.Instance.CreateNewPartyQuest(PARTY_QUEST_TYPE.Rescue) as RescuePartyQuest;
             quest.SetMadeInLocation(madeInLocation);
             quest.SetTargetCharacter(targetCharacter);
             AddPartyQuest(quest, questCreator);
         }
-
     }
     public void CreateDemonRescuePartyQuest(Character questCreator, BaseSettlement madeInLocation, Character targetCharacter, DemonicStructure targetDemonicStructure) {
         if (!owner.isMajorFaction) {

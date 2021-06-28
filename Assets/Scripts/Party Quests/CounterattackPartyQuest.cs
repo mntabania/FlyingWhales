@@ -88,7 +88,8 @@ public class CounterattackPartyQuest : PartyQuest {
     public override void OnAssignedPartySwitchedState(PARTY_STATE fromState, PARTY_STATE toState) {
         base.OnAssignedPartySwitchedState(fromState, toState);
         if (toState == PARTY_STATE.Working) {
-            CultistBetrayalProcessing();
+            bool hasEndQuest = false;
+            CultistBetrayalProcessing(ref hasEndQuest);
         }
     }
     #endregion
@@ -100,39 +101,6 @@ public class CounterattackPartyQuest : PartyQuest {
             //if (targetStructure != null) {
             //    SetWaitingArea();
             //}
-        }
-    }
-    private void CultistBetrayalProcessing() {
-        if(assignedParty != null) {
-            List<Character> membersAlliedWithPlayer = ObjectPoolManager.Instance.CreateNewCharactersList();
-            for (int i = 0; i < assignedParty.membersThatJoinedQuest.Count; i++) {
-                Character member = assignedParty.membersThatJoinedQuest[i];
-                if (member.isAlliedWithPlayer) {
-                    membersAlliedWithPlayer.Add(member);
-                }
-            }
-            for (int i = 0; i < membersAlliedWithPlayer.Count; i++) {
-                Character memberAlliedWithPlayer = membersAlliedWithPlayer[i];
-                MembersAreBetrayedByThis(memberAlliedWithPlayer);
-                memberAlliedWithPlayer.interruptComponent.TriggerInterrupt(INTERRUPT.Leave_Party, memberAlliedWithPlayer, "Abandoned party quest");
-            }
-            ObjectPoolManager.Instance.ReturnCharactersListToPool(membersAlliedWithPlayer);
-        }
-    }
-    private void MembersAreBetrayedByThis(Character p_betrayer) {
-        if (assignedParty != null) {
-            for (int i = 0; i < assignedParty.membersThatJoinedQuest.Count; i++) {
-                Character member = assignedParty.membersThatJoinedQuest[i];
-                if (member != p_betrayer && !member.isAlliedWithPlayer) {
-                    CharacterManager.Instance.TriggerEmotion(EMOTION.Betrayal, member, p_betrayer, REACTION_STATUS.WITNESSED);
-                    // Betrayed betrayed = member.traitContainer.GetTraitOrStatus<Betrayed>("Betrayed");
-                    // if(betrayed != null) {
-                    //     betrayed.AddCharacterResponsibleForTrait(character);
-                    // } else {
-                    //     member.traitContainer.AddTrait(member, "Betrayed", characterResponsible: character);
-                    // }
-                }
-            }
         }
     }
     private void RemoveAllCombatToDemonicStructure() {

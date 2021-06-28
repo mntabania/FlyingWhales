@@ -25,6 +25,14 @@ public class RescueBehaviour : CharacterBehaviourComponent {
 #if DEBUG_LOG
                     log += $"\n-Target is in a demonic structure";
 #endif
+                    bool hasEndQuest = false;
+                    quest.CultistBetrayalProcessing(ref hasEndQuest);
+                    if (hasEndQuest) {
+#if DEBUG_LOG
+                        log += "\n-All members are cultists, end quest";
+#endif
+                        return true;
+                    }
                     if (!targetCurrentStructure.hasBeenDestroyed && targetCurrentStructure.objectsThatContributeToDamage.Count > 0) {
 #if DEBUG_LOG
                         log += "\n-Has tile object that contribute damage";
