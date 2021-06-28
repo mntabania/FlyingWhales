@@ -15,14 +15,14 @@ MonoBehaviour:
   resourceType: 1
   specificResource: 
   resourceAmount: 20
-  purchaseCost: 0
-  tier: 0
+  purchaseCost: 20
+  tier: 1
   description: 
   imgIcon: {fileID: 21300000, guid: d426d16409b59454aa161e09a6069d8a, type: 3}
   equipmentUpgradeData:
-    bonuses: 
+    bonuses: 0900000004000000
     AdditionalPiercing: 0
-    AdditionalMaxHPPercentage: 0
+    AdditionalMaxHPPercentage: 5
     AdditionalMaxHPActual: 0
     AdditionalAttackPercentage: 0
     AdditionalAttackActual: 0

@@ -5,7 +5,7 @@
   "_baseAttackSpeed": 500,
   "_inventoryCapacity": 5,
   "_attackRange": 1.0,
-  "_staminaReduction": 7.0,
+  "_staminaReduction": 5.0,
   "_identifier": "Beast",
   "_traitNameOnTamedByPlayer": "Pest",
   "_traitNames": ["Beast", "Coward"],

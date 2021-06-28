@@ -15,20 +15,20 @@ MonoBehaviour:
   resourceType: 4
   specificResource: 03000000
   resourceAmount: 20
-  purchaseCost: 50
-  tier: 1
+  purchaseCost: 20
+  tier: 4
   description: This is Oricalchum Sword
   imgIcon: {fileID: 21300000, guid: 8c9ade4b7d3a25b4f9aff76a4622b6a0, type: 3}
   equipmentUpgradeData:
-    bonuses: 0000000006000000
-    AdditionalPiercing: 150
+    bonuses: 00000000070000000e000000
+    AdditionalPiercing: 10
     AdditionalMaxHPPercentage: 0
     AdditionalMaxHPActual: 0
     AdditionalAttackPercentage: 100
-    AdditionalAttackActual: 0
+    AdditionalAttackActual: 8
     AdditionalIntPercentage: 0
     AdditionalIntActual: 0
-    AdditionalCritRate: 0
+    AdditionalCritRate: 10
     additionalResistanceBonus: 0
     elementAttackBonus: 0
     slayerBonus: 0

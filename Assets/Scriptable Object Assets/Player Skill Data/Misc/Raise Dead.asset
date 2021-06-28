@@ -29,7 +29,7 @@ MonoBehaviour:
   unlockCost: 80
   tier: 3
   baseLoadoutWeight: 350
-  resistanceType: 10
+  resistanceType: 0
   archetypeWeightedBonus: 2
   canBeReleasedEvenIfLearned: 0
   contextMenuIcon: {fileID: 21300000, guid: 183bc8179a8da544da6cb0d1e8081285, type: 3}
@@ -38,9 +38,10 @@ MonoBehaviour:
   isNonUpgradeable: 0
   isAffliction: 0
   isLockedBaseOnRequirements: 0
+  canBeCastedOnMaxLevel: 0
   requirementData:
     requirements: 08000000
-    requiredArchetype: 0
+    requiredArchetypes: 
     requiredSkills: 
     actionCount: 0
     afflictionCount: 0
@@ -54,7 +55,7 @@ MonoBehaviour:
     upgradeCosts: 140000003200000050000000
     manacostPerLevel: 6400000096000000c80000002c010000
     chargesPerLevel: 01000000010000000200000002000000
-    bonuses: 0100000004000000060000000e000000
+    bonuses: 0e0000000400000006000000
     additionalDamagePerLevel: 
     additionalPiercePerLevel:
     - 0
@@ -72,6 +73,7 @@ MonoBehaviour:
     - 50
     additionalHpValuePerLevel: 
     additionalAttackValuePerLevel: 
+    applyOnLevel: 
     additionalmanaReceivedPercentagePerLevel: []
     statsIncreasedPercentagePerLevel: []
     durationBonusPerLevel: 

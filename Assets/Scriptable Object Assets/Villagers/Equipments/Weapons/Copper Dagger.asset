@@ -15,17 +15,17 @@ MonoBehaviour:
   resourceType: 4
   specificResource: 00000000
   resourceAmount: 20
-  purchaseCost: 50
-  tier: 1
+  purchaseCost: 20
+  tier: 2
   description: This is Copper Dagger
   imgIcon: {fileID: 21300000, guid: 0f60cd867c1e1794a93da5cb36a7a0bc, type: 3}
   equipmentUpgradeData:
-    bonuses: 0000000006000000
-    AdditionalPiercing: 25
+    bonuses: 0000000007000000
+    AdditionalPiercing: 10
     AdditionalMaxHPPercentage: 0
     AdditionalMaxHPActual: 0
     AdditionalAttackPercentage: 25
-    AdditionalAttackActual: 0
+    AdditionalAttackActual: 4
     AdditionalIntPercentage: 0
     AdditionalIntActual: 0
     AdditionalCritRate: 0

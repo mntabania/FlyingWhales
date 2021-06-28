@@ -15,21 +15,21 @@ MonoBehaviour:
   resourceType: 4
   specificResource: 02000000
   resourceAmount: 20
-  purchaseCost: 50
-  tier: 1
+  purchaseCost: 20
+  tier: 3
   description: This is Mithril Staff
   imgIcon: {fileID: 21300000, guid: 7e3348110f39cff438609e6b7364b9b5, type: 3}
   equipmentUpgradeData:
-    bonuses: 0000000006000000
-    AdditionalPiercing: 100
+    bonuses: 000000000d000000080000000e000000
+    AdditionalPiercing: 10
     AdditionalMaxHPPercentage: 0
     AdditionalMaxHPActual: 0
     AdditionalAttackPercentage: 75
     AdditionalAttackActual: 0
     AdditionalIntPercentage: 0
-    AdditionalIntActual: 0
-    AdditionalCritRate: 0
+    AdditionalIntActual: 40
+    AdditionalCritRate: 5
     additionalResistanceBonus: 0
-    elementAttackBonus: 0
+    elementAttackBonus: 1
     slayerBonus: 0
     wardBonus: 2
