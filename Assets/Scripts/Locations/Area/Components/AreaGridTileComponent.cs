@@ -124,6 +124,21 @@ public class AreaGridTileComponent : AreaComponent {
         RuinarchListPool<LocationGridTile>.Release(tiles);
         return chosenTile;
     }
+    public LocationGridTile GetRandomTileThatIsPassableAndHasNoObjectAndIsInWilderness() {
+        List<LocationGridTile> tiles = RuinarchListPool<LocationGridTile>.Claim();
+        for (int i = 0; i < passableTiles.Count; i++) {
+            LocationGridTile t = passableTiles[i];
+            if (t.tileObjectComponent.objHere == null && t.structure is Wilderness) {
+                tiles.Add(t);
+            }
+        }
+        LocationGridTile chosenTile = null;
+        if (tiles.Count > 0) {
+            chosenTile = UtilityScripts.CollectionUtilities.GetRandomElement(tiles);
+        }
+        RuinarchListPool<LocationGridTile>.Release(tiles);
+        return chosenTile;
+    }
     public LocationGridTile GetRandomPassableTile() {
         // LocationGridTile chosenTile = null;
         // List<LocationGridTile> passableTiles = ObjectPoolManager.Instance.CreateNewGridTileList();

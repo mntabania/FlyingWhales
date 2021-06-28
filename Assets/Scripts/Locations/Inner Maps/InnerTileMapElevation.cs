@@ -271,7 +271,7 @@ namespace Inner_Maps {
             List<BlockWall> validWallsForOreVeins = RuinarchListPool<BlockWall>.Claim();
             p_caveStructure.PopulateTileObjectsOfTypeThatIsBlockWallValidForOreVein2(validWallsForOreVeins);
 		    
-            var randomOreAmount = p_caveStructure.occupiedAreas.Count == 1 ? UnityEngine.Random.Range(4, 11) : UnityEngine.Random.Range(8, 16);
+            var randomOreAmount = p_caveStructure.occupiedAreas.Count == 1 ? GameUtilities.RandomBetweenTwoNumbers(8, 14) : GameUtilities.RandomBetweenTwoNumbers(15, 24);
             for (int i = 0; i < randomOreAmount; i++) {
                 if (validWallsForOreVeins.Count == 0) { break; }
                 BlockWall oreVeinLocation = CollectionUtilities.GetRandomElement(validWallsForOreVeins);

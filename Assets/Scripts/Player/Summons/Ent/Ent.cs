@@ -71,7 +71,13 @@ public abstract class Ent : Summon {
         }
         base.OnTickStarted();
     }
-    
+    public override void OnSeizePOI() {
+        if (isTree) {
+            ExecuteAwakenEntEvent();
+        }
+        base.OnSeizePOI();
+    }
+
     #region General
     public void EntAgitatedHandling() {
         if (isTree) {

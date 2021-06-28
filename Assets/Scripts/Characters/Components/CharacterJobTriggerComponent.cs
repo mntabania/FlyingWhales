@@ -3955,6 +3955,19 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 	    return false;
     }
     #endregion
+
+    #region Change Class
+    public bool TriggerPersonalChangeClassJob(string className, out JobQueueItem p_producedJob) {
+	    if (!owner.jobQueue.HasJob(JOB_TYPE.CHANGE_CLASS)) {
+		    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.CHANGE_CLASS, INTERACTION_TYPE.CHANGE_CLASS, null, owner);
+		    job.AddOtherData(INTERACTION_TYPE.CHANGE_CLASS, new object[] { className });
+		    p_producedJob = job;
+		    return true;    
+	    }
+	    p_producedJob = null;
+	    return false;
+    }
+    #endregion
 }
 
 [System.Serializable]

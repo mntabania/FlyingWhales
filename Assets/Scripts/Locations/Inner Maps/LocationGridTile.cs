@@ -1839,9 +1839,9 @@ namespace Inner_Maps {
 #region Connectors
         public void AddConnector(StructureConnector p_connector) {
             connectorsOnTile++;
-#if DEBUG_LOG
-            Debug.Log($"Added connector on {this}. Connectors on tile are {connectorsOnTile.ToString()}");
-#endif
+// #if DEBUG_LOG
+//             Debug.Log($"Added connector on {this}. Connectors on tile are {connectorsOnTile.ToString()}");
+// #endif
             area.structureComponent.AddStructureConnector(p_connector);
         }
         public void RemoveConnector(StructureConnector p_connector) {
