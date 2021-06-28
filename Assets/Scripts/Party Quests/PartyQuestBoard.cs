@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Locations.Settlements;
 using Inner_Maps.Location_Structures;
-
+using UtilityScripts;
 public class PartyQuestBoard {
     public Faction owner { get; private set; }
     public List<PartyQuest> availablePartyQuests { get; protected set; }
@@ -32,6 +32,24 @@ public class PartyQuestBoard {
             }
         }
         return chosenSecondaryQuest;
+    }
+    public PartyQuest GetRandomUnassignedPartyQuestFor(Party party) {
+        PartyQuest chosenQuest = null;
+        List<int> indexPool = RuinarchListPool<int>.Claim();
+        for (int i = 0; i < availablePartyQuests.Count; i++) {
+            PartyQuest quest = availablePartyQuests[i];
+            if (!quest.isAssigned && (party.members.Count >= quest.minimumPartySize || party.isPlayerParty)) {
+                if (quest.madeInLocation != null && quest.madeInLocation == party.partySettlement) {
+                    indexPool.Add(i);
+                }
+            }
+        }
+        if (indexPool.Count > 0) {
+            int chosenIndex = indexPool[GameUtilities.RandomBetweenTwoNumbers(0, indexPool.Count - 1)];
+            chosenQuest = availablePartyQuests[chosenIndex];
+        }
+        RuinarchListPool<int>.Release(indexPool);
+        return chosenQuest;
     }
     public bool HasPartyQuest(PARTY_QUEST_TYPE questType) {
         return GetPartyQuest(questType) != null;

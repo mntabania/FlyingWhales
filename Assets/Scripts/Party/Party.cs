@@ -297,11 +297,14 @@ public class Party : ILogFiller, ISavable, IJobOwner, IBookmarkable {
             //    acceptQuest = canAcceptQuests; //&& (currentTimeInWords == TIME_IN_WORDS.MORNING || currentTimeInWords == TIME_IN_WORDS.LUNCH_TIME || currentTimeInWords == TIME_IN_WORDS.AFTERNOON);
             //}
             //if (acceptQuest) {
-                PartyQuest quest = partyFaction.partyQuestBoard.GetFirstUnassignedPartyQuestFor(this);
-                if (quest != null) {
-                    //hasStartedAcceptingQuests = false;
-                    AcceptQuest(quest);
-                }
+
+            //Randomize getting of party quests
+            //https://trello.com/c/hyMbiwX6/4864-revisit-system-on-how-parties-choose-which-quest-to-take-first
+            PartyQuest quest = partyFaction.partyQuestBoard.GetRandomUnassignedPartyQuestFor(this);
+            if (quest != null) {
+                //hasStartedAcceptingQuests = false;
+                AcceptQuest(quest);
+            }
             //}
         }
         ScheduleNextDateToCheckQuest();
