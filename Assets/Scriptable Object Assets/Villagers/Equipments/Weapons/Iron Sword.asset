@@ -15,17 +15,17 @@ MonoBehaviour:
   resourceType: 4
   specificResource: 01000000
   resourceAmount: 20
-  purchaseCost: 50
-  tier: 1
+  purchaseCost: 20
+  tier: 2
   description: This is Iron Sword
   imgIcon: {fileID: 21300000, guid: 52be75f6a62dc45428d5795bbb44a384, type: 3}
   equipmentUpgradeData:
-    bonuses: 06000000
-    AdditionalPiercing: 50
+    bonuses: 0700000000000000
+    AdditionalPiercing: 20
     AdditionalMaxHPPercentage: 0
     AdditionalMaxHPActual: 0
     AdditionalAttackPercentage: 20
-    AdditionalAttackActual: 0
+    AdditionalAttackActual: 21
     AdditionalIntPercentage: 0
     AdditionalIntActual: 0
     AdditionalCritRate: 0

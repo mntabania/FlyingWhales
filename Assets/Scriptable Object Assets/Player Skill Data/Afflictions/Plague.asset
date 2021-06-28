@@ -38,9 +38,10 @@ MonoBehaviour:
   isNonUpgradeable: 1
   isAffliction: 0
   isLockedBaseOnRequirements: 1
+  canBeCastedOnMaxLevel: 0
   requirementData:
     requirements: 
-    requiredArchetype: 0
+    requiredArchetypes: 
     requiredSkills: 
     actionCount: 0
     afflictionCount: 0
@@ -54,7 +55,7 @@ MonoBehaviour:
     upgradeCosts: 140000003200000050000000
     manacostPerLevel: 96000000
     chargesPerLevel: 01000000010000000200000002000000
-    bonuses: 010000000e000000
+    bonuses: 0e000000
     additionalDamagePerLevel: 
     additionalPiercePerLevel:
     - 0
@@ -62,6 +63,7 @@ MonoBehaviour:
     additionalAttackPercentagePerLevel: []
     additionalHpValuePerLevel: 
     additionalAttackValuePerLevel: 
+    applyOnLevel: 
     additionalmanaReceivedPercentagePerLevel: []
     statsIncreasedPercentagePerLevel: []
     durationBonusPerLevel: 

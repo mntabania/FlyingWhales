@@ -38,9 +38,10 @@ MonoBehaviour:
   isNonUpgradeable: 0
   isAffliction: 1
   isLockedBaseOnRequirements: 0
+  canBeCastedOnMaxLevel: 0
   requirementData:
     requirements: 08000000
-    requiredArchetype: 0
+    requiredArchetypes: 
     requiredSkills: 
     actionCount: 0
     afflictionCount: 0
@@ -65,6 +66,7 @@ MonoBehaviour:
     additionalAttackPercentagePerLevel: []
     additionalHpValuePerLevel: 
     additionalAttackValuePerLevel: 
+    applyOnLevel: 
     additionalmanaReceivedPercentagePerLevel: []
     statsIncreasedPercentagePerLevel: []
     durationBonusPerLevel: 
@@ -80,9 +82,9 @@ MonoBehaviour:
     cooldown: 40010000400100004001000040010000
     additionalPiercePerLevel:
     - 0
+    - 25
     - 50
     - 100
-    - 150
     rateChance: 
     crowdNumber: 
     napsDuration: 

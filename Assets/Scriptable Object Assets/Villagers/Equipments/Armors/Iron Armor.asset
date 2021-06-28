@@ -15,21 +15,21 @@ MonoBehaviour:
   resourceType: 4
   specificResource: 01000000
   resourceAmount: 20
-  purchaseCost: 50
-  tier: 1
+  purchaseCost: 20
+  tier: 6
   description: This is Iron Armor
   imgIcon: {fileID: 21300000, guid: 6ec293672da3f2d49a19f45177155557, type: 3}
   equipmentUpgradeData:
-    bonuses: 01000000
+    bonuses: 0500000003000000
     AdditionalPiercing: 12.5
     AdditionalMaxHPPercentage: 0
-    AdditionalMaxHPActual: 0
+    AdditionalMaxHPActual: 400
     AdditionalAttackPercentage: 25
     AdditionalAttackActual: 0
     AdditionalIntPercentage: 0
     AdditionalIntActual: 0
     AdditionalCritRate: 0
-    additionalResistanceBonus: 80
+    additionalResistanceBonus: 40
     elementAttackBonus: 0
     slayerBonus: 0
     wardBonus: 4
