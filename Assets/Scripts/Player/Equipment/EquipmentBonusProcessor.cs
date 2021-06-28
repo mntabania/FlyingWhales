@@ -30,7 +30,15 @@ public static class EquipmentBonusProcessor
         }
         p_equipItem.equipmentData.equipmentUpgradeData.bonuses.ForEach((eachBonus) => {
             ApplyEachBonusToTarget(p_equipItem, eachBonus, p_targetCharacter, p_initializedStackCountOnly);
-        });  
+        });
+        p_equipItem.addedBonus.ForEach((eachBonus) => {
+            if (eachBonus == EQUIPMENT_BONUS.Slayer_Bonus) {
+                ApplyEachBonusToTarget(p_equipItem, eachBonus, p_targetCharacter, p_initializedStackCountOnly, p_slayerBonus: p_equipItem.randomSlayerBonus);
+            }
+            if (eachBonus == EQUIPMENT_BONUS.Ward_Bonus) {
+                ApplyEachBonusToTarget(p_equipItem, eachBonus, p_targetCharacter, p_initializedStackCountOnly, p_wardBonus: p_equipItem.randomWardBonus);
+            }
+        });
     }
 
     public static void RemoveEquipBonusToTarget(EquipmentItem p_equipItem, Character p_targetCharacter) {
@@ -40,9 +48,17 @@ public static class EquipmentBonusProcessor
         p_equipItem.equipmentData.equipmentUpgradeData.bonuses.ForEach((eachBonus) => {
             RemoveEachBonusToTarget(p_equipItem, eachBonus, p_targetCharacter);
         });
+        p_equipItem.addedBonus.ForEach((eachBonus) => {
+            if (eachBonus == EQUIPMENT_BONUS.Slayer_Bonus) {
+                RemoveEachBonusToTarget(p_equipItem, eachBonus, p_targetCharacter, p_slayerBonus: p_equipItem.randomSlayerBonus);
+            }
+            if (eachBonus == EQUIPMENT_BONUS.Ward_Bonus) {
+                RemoveEachBonusToTarget(p_equipItem, eachBonus, p_targetCharacter, p_wardBonus: p_equipItem.randomWardBonus);
+            }
+        });
     }
 
-    static void ApplyEachBonusToTarget(EquipmentItem p_equipItem, EQUIPMENT_BONUS p_equipBonus, Character p_targetCharacter, bool p_initializedStackCountOnly = false) {
+    static void ApplyEachBonusToTarget(EquipmentItem p_equipItem, EQUIPMENT_BONUS p_equipBonus, Character p_targetCharacter, bool p_initializedStackCountOnly = false, EQUIPMENT_WARD_BONUS p_wardBonus = EQUIPMENT_WARD_BONUS.None, EQUIPMENT_SLAYER_BONUS p_slayerBonus = EQUIPMENT_SLAYER_BONUS.None) {
         switch (p_equipBonus) {
             case EQUIPMENT_BONUS.Str_Actual:
             if (p_initializedStackCountOnly) {
@@ -110,25 +126,33 @@ public static class EquipmentBonusProcessor
             ApplyResistanceBonusOnCharacter(p_equipItem, p_targetCharacter);
             break;
             case EQUIPMENT_BONUS.Slayer_Bonus:
-            if (p_targetCharacter.traitContainer.HasTrait(traitDictionaryForSlayer[p_equipItem.equipmentData.equipmentUpgradeData.slayerBonus])) {
-                Trait trait = p_targetCharacter.traitContainer.GetTraitOrStatus<Trait>(traitDictionaryForSlayer[p_equipItem.equipmentData.equipmentUpgradeData.slayerBonus]);
+            EQUIPMENT_SLAYER_BONUS esb = p_equipItem.equipmentData.equipmentUpgradeData.slayerBonus;
+            if (p_slayerBonus != EQUIPMENT_SLAYER_BONUS.None) {
+                esb = p_slayerBonus;
+            }
+            if (p_targetCharacter.traitContainer.HasTrait(traitDictionaryForSlayer[esb])) {
+                Trait trait = p_targetCharacter.traitContainer.GetTraitOrStatus<Trait>(traitDictionaryForSlayer[esb]);
                 Slayer monsterSlayerTrait = trait as Slayer;
                 monsterSlayerTrait.stackCount++;
             } else {
-                p_targetCharacter.traitContainer.AddTrait(p_targetCharacter, traitDictionaryForSlayer[p_equipItem.equipmentData.equipmentUpgradeData.slayerBonus]);
-                Trait trait = p_targetCharacter.traitContainer.GetTraitOrStatus<Trait>(traitDictionaryForSlayer[p_equipItem.equipmentData.equipmentUpgradeData.slayerBonus]);
+                p_targetCharacter.traitContainer.AddTrait(p_targetCharacter, traitDictionaryForSlayer[esb]);
+                Trait trait = p_targetCharacter.traitContainer.GetTraitOrStatus<Trait>(traitDictionaryForSlayer[esb]);
                 Slayer monsterSlayerTrait = trait as Slayer;
                 monsterSlayerTrait.stackCount++;
             }
             break;
             case EQUIPMENT_BONUS.Ward_Bonus:
-            if (p_targetCharacter.traitContainer.HasTrait(traitDictionaryForWard[p_equipItem.equipmentData.equipmentUpgradeData.wardBonus])) {
-                Trait trait = p_targetCharacter.traitContainer.GetTraitOrStatus<Trait>(traitDictionaryForWard[p_equipItem.equipmentData.equipmentUpgradeData.wardBonus]);
+            EQUIPMENT_WARD_BONUS ewb = p_equipItem.equipmentData.equipmentUpgradeData.wardBonus;
+            if (p_wardBonus != EQUIPMENT_WARD_BONUS.None) {
+                ewb = p_wardBonus;
+            }
+            if (p_targetCharacter.traitContainer.HasTrait(traitDictionaryForWard[ewb])) {
+                Trait trait = p_targetCharacter.traitContainer.GetTraitOrStatus<Trait>(traitDictionaryForWard[ewb]);
                 Ward monsterSLayerWard = trait as Ward;
                 monsterSLayerWard.stackCount++;
             } else {
-                p_targetCharacter.traitContainer.AddTrait(p_targetCharacter, traitDictionaryForWard[p_equipItem.equipmentData.equipmentUpgradeData.wardBonus]);
-                Trait trait = p_targetCharacter.traitContainer.GetTraitOrStatus<Trait>(traitDictionaryForWard[p_equipItem.equipmentData.equipmentUpgradeData.wardBonus]);
+                p_targetCharacter.traitContainer.AddTrait(p_targetCharacter, traitDictionaryForWard[ewb]);
+                Trait trait = p_targetCharacter.traitContainer.GetTraitOrStatus<Trait>(traitDictionaryForWard[ewb]);
                 Ward monsterWard = trait as Ward;
                 monsterWard.stackCount++;
             }
@@ -147,7 +171,7 @@ public static class EquipmentBonusProcessor
             break;
         }
     }
-    static void RemoveEachBonusToTarget(EquipmentItem p_equipItem, EQUIPMENT_BONUS p_equipBonus, Character p_targetCharacter) {
+    static void RemoveEachBonusToTarget(EquipmentItem p_equipItem, EQUIPMENT_BONUS p_equipBonus, Character p_targetCharacter, EQUIPMENT_WARD_BONUS p_wardBonus = EQUIPMENT_WARD_BONUS.None, EQUIPMENT_SLAYER_BONUS p_slayerBonus = EQUIPMENT_SLAYER_BONUS.None) {
         switch (p_equipBonus) {
             case EQUIPMENT_BONUS.Str_Actual:
             p_targetCharacter.combatComponent.AdjustStrengthModifier(-p_equipItem.equipmentData.equipmentUpgradeData.GetProcessedAdditionalAttack(p_equipItem.quality));
@@ -190,22 +214,30 @@ public static class EquipmentBonusProcessor
             RemoveResistanceBonusOnCharacter(p_equipItem, p_targetCharacter);
             break;
             case EQUIPMENT_BONUS.Slayer_Bonus:
-            if (p_targetCharacter.traitContainer.HasTrait(traitDictionaryForSlayer[p_equipItem.equipmentData.equipmentUpgradeData.slayerBonus])) {
-                Trait trait = p_targetCharacter.traitContainer.GetTraitOrStatus<Trait>(traitDictionaryForSlayer[p_equipItem.equipmentData.equipmentUpgradeData.slayerBonus]);
+            EQUIPMENT_SLAYER_BONUS esb = p_equipItem.equipmentData.equipmentUpgradeData.slayerBonus;
+            if (p_slayerBonus != EQUIPMENT_SLAYER_BONUS.None) {
+                esb = p_slayerBonus;
+            }
+            if (p_targetCharacter.traitContainer.HasTrait(traitDictionaryForSlayer[esb])) {
+                Trait trait = p_targetCharacter.traitContainer.GetTraitOrStatus<Trait>(traitDictionaryForSlayer[esb]);
                 Slayer monsterSlayerTrait = trait as Slayer;
                 monsterSlayerTrait.stackCount--;
                 if (monsterSlayerTrait.stackCount <= 0) {
-                    p_targetCharacter.traitContainer.RemoveTrait(p_targetCharacter, traitDictionaryForSlayer[p_equipItem.equipmentData.equipmentUpgradeData.slayerBonus]);
+                    p_targetCharacter.traitContainer.RemoveTrait(p_targetCharacter, traitDictionaryForSlayer[esb]);
                 }
             }
             break;
             case EQUIPMENT_BONUS.Ward_Bonus:
-            if (p_targetCharacter.traitContainer.HasTrait(traitDictionaryForWard[p_equipItem.equipmentData.equipmentUpgradeData.wardBonus])) {
-                Trait trait = p_targetCharacter.traitContainer.GetTraitOrStatus<Trait>(traitDictionaryForWard[p_equipItem.equipmentData.equipmentUpgradeData.wardBonus]);
+            EQUIPMENT_WARD_BONUS ewb = p_equipItem.equipmentData.equipmentUpgradeData.wardBonus;
+            if (p_wardBonus != EQUIPMENT_WARD_BONUS.None) {
+                ewb = p_wardBonus;
+            }
+            if (p_targetCharacter.traitContainer.HasTrait(traitDictionaryForWard[ewb])) {
+                Trait trait = p_targetCharacter.traitContainer.GetTraitOrStatus<Trait>(traitDictionaryForWard[ewb]);
                 Ward monsterWard = trait as Ward;
                 monsterWard.stackCount--;
                 if (monsterWard.stackCount <= 0) {
-                    p_targetCharacter.traitContainer.RemoveTrait(p_targetCharacter, traitDictionaryForWard[p_equipItem.equipmentData.equipmentUpgradeData.wardBonus]);
+                    p_targetCharacter.traitContainer.RemoveTrait(p_targetCharacter, traitDictionaryForWard[ewb]);
                 }
             }
             break;
