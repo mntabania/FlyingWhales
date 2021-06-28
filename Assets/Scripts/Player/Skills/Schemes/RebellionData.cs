@@ -26,13 +26,29 @@ public class RebellionData : SchemeData {
         if (WorldSettings.Instance.worldSettingsData.factionSettings.disableNewFactions) {
             return false;
         }
-        if (target is Character character) {
-            bool isValid = base.IsValid(target);
-            if (isValid) {
-                return character.faction != null && !character.isFactionLeader && character.isSettlementRuler && character.faction.HasOwnedSettlementThatHasAliveResidentAndIsNotHomeOf(character);
+        return base.IsValid(target);
+    }
+    public override bool CanPerformAbilityTowards(Character targetCharacter) {
+        bool canPerform = base.CanPerformAbilityTowards(targetCharacter);
+        if (canPerform) {
+            if (targetCharacter.faction != null && !targetCharacter.isFactionLeader && targetCharacter.isSettlementRuler) {
+                if (targetCharacter.faction.HasOwnedSettlementThatHasAliveResidentAndIsNotHomeOf(targetCharacter)) {
+                    return true;
+                }
             }
+            return false;
         }
-        return false;
+        return canPerform;
+    }
+    public override string GetReasonsWhyCannotPerformAbilityTowards(Character targetCharacter) {
+        string reasons = base.GetReasonsWhyCannotPerformAbilityTowards(targetCharacter);
+        if (!(!targetCharacter.isFactionLeader && targetCharacter.isSettlementRuler)) {
+            reasons += "Target should be a settlement ruler but not a faction leader.";
+        }
+        if (targetCharacter.faction == null || !targetCharacter.faction.HasOwnedSettlementThatHasAliveResidentAndIsNotHomeOf(targetCharacter)) {
+            reasons += "Target is has no faction or simply cannot rebel.";
+        }
+        return reasons;
     }
     protected override void OnSuccessScheme(Character character, object target) {
         base.OnSuccessScheme(character, target);

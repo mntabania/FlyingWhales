@@ -31,12 +31,29 @@ public class InstigateWarData : SchemeData {
             ObjectPoolManager.Instance.ReturnFactionListToPool(choices);
         }
     }
-    public override bool IsValid(IPlayerActionTarget target) {
-        if (target is Character character) {
-            bool isValid = base.IsValid(target);
-            return isValid && character.isFactionLeader;
+    //public override bool IsValid(IPlayerActionTarget target) {
+    //    if (target is Character character) {
+    //        bool isValid = base.IsValid(target);
+    //        return isValid && character.isFactionLeader;
+    //    }
+    //    return false;
+    //}
+    public override bool CanPerformAbilityTowards(Character targetCharacter) {
+        bool canPerform = base.CanPerformAbilityTowards(targetCharacter);
+        if (canPerform) {
+            if (!targetCharacter.isFactionLeader) {
+                return false;
+            }
+            return true;
         }
-        return false;
+        return canPerform;
+    }
+    public override string GetReasonsWhyCannotPerformAbilityTowards(Character targetCharacter) {
+        string reasons = base.GetReasonsWhyCannotPerformAbilityTowards(targetCharacter);
+        if (!targetCharacter.isFactionLeader) {
+            reasons += "Target is not a faction leader.";
+        }
+        return reasons;
     }
     protected override void OnSuccessScheme(Character character, object target) {
         base.OnSuccessScheme(character, target);

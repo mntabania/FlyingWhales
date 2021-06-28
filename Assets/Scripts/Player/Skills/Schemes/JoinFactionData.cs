@@ -33,12 +33,29 @@ public class JoinFactionData : SchemeData {
             ObjectPoolManager.Instance.ReturnFactionListToPool(choices);
         }
     }
-    public override bool IsValid(IPlayerActionTarget target) {
-        if (target is Character character) {
-            bool isValid = base.IsValid(target);
-            return isValid && character.isVagrant;
+    //public override bool IsValid(IPlayerActionTarget target) {
+    //    if (target is Character character) {
+    //        bool isValid = base.IsValid(target);
+    //        return isValid && character.isVagrant;
+    //    }
+    //    return false;
+    //}
+    public override bool CanPerformAbilityTowards(Character targetCharacter) {
+        bool canPerform = base.CanPerformAbilityTowards(targetCharacter);
+        if (canPerform) {
+            if (!targetCharacter.isVagrant) {
+                return false;
+            }
+            return true;
         }
-        return false;
+        return canPerform;
+    }
+    public override string GetReasonsWhyCannotPerformAbilityTowards(Character targetCharacter) {
+        string reasons = base.GetReasonsWhyCannotPerformAbilityTowards(targetCharacter);
+        if (!targetCharacter.isVagrant) {
+            reasons += "Target is not a vagrant.";
+        }
+        return reasons;
     }
     protected override void OnSuccessScheme(Character character, object target) {
         base.OnSuccessScheme(character, target);

@@ -209,7 +209,15 @@ public class CharacterClassComponent : CharacterComponent {
     public int GetFoodSupplyCapacityValue() {
         int supply = 0;
         Character c = owner;
-        if (!c.isDead && c.characterClass.className.IsFoodProducerClassName() && c.structureComponent.HasWorkPlaceStructure()) {
+        if (c.structureComponent.HasWorkPlaceStructure()) {
+            supply += GetFoodSupplyCapacityValueBase();
+        }
+        return supply;
+    }
+    public int GetFoodSupplyCapacityValueBase() {
+        int supply = 0;
+        Character c = owner;
+        if (!c.isDead && c.characterClass.className.IsFoodProducerClassName()) {
             //If character is paralyzed, restrained or quarantined, he should not be counted
             bool isAvailable = !c.traitContainer.HasTrait("Paralyzed", "Restrained", "Quarantined") && c.HasTalents();
             if (isAvailable) {
@@ -240,15 +248,20 @@ public class CharacterClassComponent : CharacterComponent {
     public int GetResourceSupplyCapacityValue(string p_className) {
         int supply = 0;
         Character c = owner;
-        if (!c.isDead && c.characterClass.className == p_className && c.structureComponent.HasWorkPlaceStructure()) {
+        if (c.structureComponent.HasWorkPlaceStructure()) {
+            supply += GetResourceSupplyCapacityValueBase(p_className);
+        }
+        return supply;
+    }
+    public int GetResourceSupplyCapacityValueBase(string p_className) {
+        int supply = 0;
+        Character c = owner;
+        if (!c.isDead && c.characterClass.className == p_className) {
             //If character is paralyzed, restrained or quarantined, he should not be counted
             bool isAvailable = !c.traitContainer.HasTrait("Paralyzed", "Restrained", "Quarantined") && c.HasTalents();
             if (isAvailable) {
-                CharacterClassData classData = CharacterManager.Instance.GetOrCreateCharacterClassData(c.characterClass.className);
-                if (c.structureComponent.workPlaceStructure.structureType == classData.workStructureType) {
-                    //Only consider if the claimed work structure type is the appropriate one
-                    supply += 8;
-                }
+                //Only consider if the claimed work structure type is the appropriate one
+                supply += 8;
                 //CharacterTalent foodTalent = c.talentComponent.GetTalent(CHARACTER_TALENT.Food);
                 //switch (foodTalent.level) {
                 //    case 1:

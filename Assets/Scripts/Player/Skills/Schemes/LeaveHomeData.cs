@@ -24,12 +24,32 @@ public class LeaveHomeData : SchemeData {
             UIManager.Instance.ShowSchemeUI(targetCharacter, null, this);
         }
     }
-    public override bool IsValid(IPlayerActionTarget target) {
-        if (target is Character character) {
-            bool isValid = base.IsValid(target);
-            return isValid && character.homeStructure != null && !character.isConsideredRatman;
+    //public override bool IsValid(IPlayerActionTarget target) {
+    //    if (target is Character character) {
+    //        bool isValid = base.IsValid(target);
+    //        return isValid && character.homeStructure != null && !character.isConsideredRatman;
+    //    }
+    //    return false;
+    //}
+    public override bool CanPerformAbilityTowards(Character targetCharacter) {
+        bool canPerform = base.CanPerformAbilityTowards(targetCharacter);
+        if (canPerform) {
+            if (targetCharacter.homeStructure == null || targetCharacter.isConsideredRatman) {
+                return false;
+            }
+            return true;
         }
-        return false;
+        return canPerform;
+    }
+    public override string GetReasonsWhyCannotPerformAbilityTowards(Character targetCharacter) {
+        string reasons = base.GetReasonsWhyCannotPerformAbilityTowards(targetCharacter);
+        if (targetCharacter.homeStructure == null) {
+            reasons += "Target is already homeless.";
+        }
+        if (targetCharacter.isConsideredRatman) {
+            reasons += "Ratmen cannot leave home.";
+        }
+        return reasons;
     }
     protected override void OnSuccessScheme(Character character, object target) {
         base.OnSuccessScheme(character, target);
