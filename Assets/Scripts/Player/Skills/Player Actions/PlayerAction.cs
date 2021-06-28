@@ -56,7 +56,7 @@ public class PlayerAction : SkillData, IContextMenuItem {
     #endregion  
 
     public virtual void Activate(IPlayerActionTarget target) {
-        if (RollSuccessChance(target) || category == PLAYER_SKILL_CATEGORY.SCHEME) {
+        if (RollSuccessChance(target) || category == PLAYER_SKILL_CATEGORY.SCHEME || type == PLAYER_SKILL_TYPE.AFFLICT) {
             //Schemes should always be activated regardless of piercing and resistances because the success calculation for it upon activation of actual scheme in the Scheme UI Controller
             if (target is IPointOfInterest targetPOI) {
                 ActivateAbility(targetPOI);
