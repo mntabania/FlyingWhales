@@ -170,7 +170,7 @@ namespace Inner_Maps.Location_Structures {
 
             List<TileObject> potions = GetTileObjectsOfType(TILE_OBJECT_TYPE.HEALING_POTION);
             if (potions == null || potions.Count <= 0) {
-                if (plants != null && plants.Count > 1) {
+                if (plants != null && plants.Count >= 1) {
                     p_worker.jobComponent.TriggerCraftHospicePotion(plants[0], out producedJob);
                     if(producedJob != null) {
                         return;

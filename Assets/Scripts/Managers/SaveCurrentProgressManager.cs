@@ -139,6 +139,12 @@ public class SaveCurrentProgressManager : MonoBehaviour {
         saveCallback?.Invoke();
     }
     private string fileName;
+
+    public string GetFileName() {
+        //string timeStampStr = $"{System.DateTime.Now.ToString("yyyy-MM-dd_HHmmss")}";
+        string newFileName = $"{WorldSettings.Instance.worldSettingsData.worldType.ToString()}-{GameManager.Instance.continuousDays.ToString()}_{GameManager.Instance.ConvertTickToTime(GameManager.Instance.currentTick, "-")}";
+        return newFileName;
+    }
     private IEnumerator SaveThisGame(string fileName, Action saveCallback = null) {
         isSaving = true;
         InnerMapCameraMove.Instance.DisableMovement();

@@ -228,8 +228,10 @@ public class Party : ILogFiller, ISavable, IJobOwner, IBookmarkable {
             //This arrangement of calls is intended
             //The waiting state call is last so that if the party decided to switch to moving state while in waiting state, it will not immediately check the PerHourInMovingState
             //it will instead wait for 1 hour before calling the PerHourInMovingState because of this arrangement
-            PerHourInRestingState();
-            PerHourInMovingState();
+            
+            //Note: Parties should no longer switch to resting state so these calls are now useless
+            //PerHourInRestingState();
+            //PerHourInMovingState();
             PerHourInWaitingState();
         }
     }

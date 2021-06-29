@@ -631,6 +631,10 @@ public class CombatManager : BaseMonoBehaviour {
     public static void ModifyValueByPiercingAndResistance(ref int p_value, float p_piercingPower, float p_resistance) {
         float percentMultiplier = (100f - (p_resistance - p_piercingPower)) / 100f;
         if(percentMultiplier > 1f) {
+            //Capped at x1 multiplier
+            //The reason is that piercing should not amplify initial damage (which is p_value)
+            //Its purpose is only to reduce the resistance so if piercing is higher than the resistance, the affected character will take the full amount of damage (p_value) but it will not be doubled or increased any further
+            //This means that its resistance is neglected when piercing is higher
             percentMultiplier = 1f;
         } else if (percentMultiplier < 0f) {
             percentMultiplier = 0f;

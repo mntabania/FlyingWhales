@@ -117,10 +117,11 @@ public class BallLightningMapObjectVisual : MovingMapObjectVisual {
 #endif
         SkillData ballLightningData = PlayerSkillManager.Instance.GetSpellData(PLAYER_SKILL_TYPE.BALL_LIGHTNING);
         int processedDamage = -PlayerSkillManager.Instance.GetDamageBaseOnLevel(ballLightningData);
+        float piercing = PlayerSkillManager.Instance.GetAdditionalPiercePerLevelBaseOnLevel(ballLightningData);
         for (int i = 0; i < _objsInRange.Count; i++) {
             ITraitable traitable = _objsInRange[i];
             if (owner != traitable) {
-                traitable.AdjustHP(processedDamage, ELEMENTAL_TYPE.Electric, true, showHPBar: true, isPlayerSource: owner.isPlayerSource, source: owner.isPlayerSource ? ballLightningData : null);
+                traitable.AdjustHP(processedDamage, ELEMENTAL_TYPE.Electric, true, showHPBar: true, piercingPower: piercing, isPlayerSource: owner.isPlayerSource, source: owner.isPlayerSource ? ballLightningData : null);
             }
             if (traitable is Character character) {
                 Messenger.Broadcast(PlayerSignals.PLAYER_HIT_CHARACTER_VIA_SPELL, character, processedDamage);
