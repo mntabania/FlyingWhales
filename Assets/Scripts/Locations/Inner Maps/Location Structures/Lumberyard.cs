@@ -45,7 +45,7 @@ namespace Inner_Maps.Location_Structures {
         protected override void ProcessWorkStructureJobsByWorker(Character p_worker, out JobQueueItem producedJob) {
             producedJob = null;
             //check if there are woodpiles that can be hauled inside settlement
-            ResourcePile woodPile = p_worker.homeSettlement.SettlementResources.GetRandomPileOfWoodsForHaul();
+            ResourcePile woodPile = p_worker.homeSettlement.SettlementResources.GetRandomPileOfWoodsForLumberyardHaul(p_worker.homeSettlement);
             if (woodPile != null && p_worker.structureComponent.workPlaceStructure.unoccupiedTiles.Count > 0) {
                 p_worker.jobComponent.TryCreateHaulJob(woodPile, out producedJob);
                 if(producedJob != null) {

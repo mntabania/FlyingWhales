@@ -489,36 +489,44 @@ public class GenericTileObject : TileObject {
         StructureConnector connector = objectVisual.gameObject.AddComponent<StructureConnector>();
         connector.OnPlaceConnector(gridTileLocation.parentMap);
         structureConnector = connector;
-        if (gridTileLocation.area.settlementOnArea != null) {
-            gridTileLocation.area.settlementOnArea.SettlementResources?.AddToListBasedOnRequirement(SettlementResources.StructureRequirement.MINE_SHACK_SPOT, this);
+        //if (gridTileLocation.area.settlementOnArea != null) {
+        //    gridTileLocation.area.settlementOnArea.SettlementResources?.AddToListBasedOnRequirement(SettlementResources.StructureRequirement.MINE_SHACK_SPOT, this);
+        //}
+        if (gridTileLocation.area != null) {
+            gridTileLocation.area.tileObjectComponent.AddMineShackSpot(gridTileLocation);
         }
-        Messenger.AddListener<Area, BaseSettlement>(SettlementSignals.SETTLEMENT_ADDED_AREA, OnSettlementAddedArea);
-        Messenger.AddListener<Area, BaseSettlement>(SettlementSignals.SETTLEMENT_REMOVED_AREA, OnSettlementRemovedArea);
+        //Messenger.AddListener<Area, BaseSettlement>(SettlementSignals.SETTLEMENT_ADDED_AREA, OnSettlementAddedArea);
+        //Messenger.AddListener<Area, BaseSettlement>(SettlementSignals.SETTLEMENT_REMOVED_AREA, OnSettlementRemovedArea);
         gridTileLocation.SetIsDefault(false);
     }
     private void LoadMineShackSpotStructureConnector() {
         BaseMapObjectVisual objectVisual = GetOrCreateMapVisual();
         StructureConnector connector = objectVisual.gameObject.AddComponent<StructureConnector>();
         structureConnector = connector;
-        if (gridTileLocation.area.settlementOnArea != null) {
-            gridTileLocation.area.settlementOnArea.SettlementResources?.AddToListBasedOnRequirement(SettlementResources.StructureRequirement.MINE_SHACK_SPOT, this);
+        //if (gridTileLocation.area.settlementOnArea != null) {
+        //    gridTileLocation.area.settlementOnArea.SettlementResources?.AddToListBasedOnRequirement(SettlementResources.StructureRequirement.MINE_SHACK_SPOT, this);
+        //}
+        if (gridTileLocation.area != null) {
+            gridTileLocation.area.tileObjectComponent.AddMineShackSpot(gridTileLocation);
         }
-        Messenger.AddListener<Area, BaseSettlement>(SettlementSignals.SETTLEMENT_ADDED_AREA, OnSettlementAddedArea);
-        Messenger.AddListener<Area, BaseSettlement>(SettlementSignals.SETTLEMENT_REMOVED_AREA, OnSettlementRemovedArea);
+        //Messenger.AddListener<Area, BaseSettlement>(SettlementSignals.SETTLEMENT_ADDED_AREA, OnSettlementAddedArea);
+        //Messenger.AddListener<Area, BaseSettlement>(SettlementSignals.SETTLEMENT_REMOVED_AREA, OnSettlementRemovedArea);
         if (structureConnector != null && gridTileLocation != null) {
             structureConnector.LoadConnectorForTileObjects(gridTileLocation.parentMap);
         }
     }
-    private void OnSettlementAddedArea(Area p_area, BaseSettlement p_settlement) {
-        if (gridTileLocation.area == p_area && p_settlement is NPCSettlement npcSettlement) {
-            npcSettlement.SettlementResources?.AddToListBasedOnRequirement(SettlementResources.StructureRequirement.MINE_SHACK_SPOT, this);
-        }
-    }
-    private void OnSettlementRemovedArea(Area p_area, BaseSettlement p_settlement) {
-        if (gridTileLocation.area == p_area && p_settlement is NPCSettlement npcSettlement) {
-            npcSettlement.SettlementResources?.mineShackSpots.Remove(gridTileLocation);
-        }
-    }
+
+    //Note: No longer needed to check if area is added or removed from settlement to add or remove mine shack spot since it is now connected to the area
+    //private void OnSettlementAddedArea(Area p_area, BaseSettlement p_settlement) {
+    //    if (gridTileLocation.area == p_area && p_settlement is NPCSettlement npcSettlement) {
+    //        npcSettlement.SettlementResources?.AddToListBasedOnRequirement(SettlementResources.StructureRequirement.MINE_SHACK_SPOT, this);
+    //    }
+    //}
+    //private void OnSettlementRemovedArea(Area p_area, BaseSettlement p_settlement) {
+    //    if (gridTileLocation.area == p_area && p_settlement is NPCSettlement npcSettlement) {
+    //        npcSettlement.SettlementResources?.mineShackSpots.Remove(gridTileLocation);
+    //    }
+    //}
     #endregion
 }
 

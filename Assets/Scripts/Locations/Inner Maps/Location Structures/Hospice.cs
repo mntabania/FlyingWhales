@@ -159,7 +159,7 @@ namespace Inner_Maps.Location_Structures {
             List<TileObject> plants = GetTileObjectsOfType(TILE_OBJECT_TYPE.HERB_PLANT);
             
             if (plants == null || plants.Count < 3) {
-                HerbPlant plant = p_worker.homeSettlement.SettlementResources.GetAvailableHerbPlant();
+                HerbPlant plant = p_worker.homeSettlement.SettlementResources.GetFirstAvailableHerbPlant(p_worker.homeSettlement);
                 if (plant != null) {
                     p_worker.jobComponent.TriggerGatherHerb(plant, out producedJob);
                     if(producedJob != null) {

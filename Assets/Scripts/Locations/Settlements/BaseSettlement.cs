@@ -13,7 +13,7 @@ using Locations.Area_Features;
 namespace Locations.Settlements {
     public abstract class BaseSettlement : IPartyQuestTarget, IPartyTargetDestination, IGatheringTarget, ILogFiller, IPlayerActionTarget, ILocation, IStoredTarget {
 
-        public static Action onSettlementBuilt;
+        //public static Action onSettlementBuilt;
         
         public string persistentID { get; private set; }
         public int id { get; }

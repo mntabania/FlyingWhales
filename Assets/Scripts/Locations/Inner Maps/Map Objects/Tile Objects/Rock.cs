@@ -77,13 +77,13 @@ public class Rock : TileObject{
         return data += $" <b>Count:</b> {count.ToString()}";
     }
 
-    public override void OnPlacePOI() {
-        base.OnPlacePOI();
-        // if (structureConnector != null && gridTileLocation != null) {
-        //     structureConnector.OnPlaceConnector(gridTileLocation.parentMap);    
-        // }
-        UpdateSettlementResourcesParent();
-    }
+    //public override void OnPlacePOI() {
+    //    base.OnPlacePOI();
+    //    // if (structureConnector != null && gridTileLocation != null) {
+    //    //     structureConnector.OnPlaceConnector(gridTileLocation.parentMap);    
+    //    // }
+    //    UpdateSettlementResourcesParent();
+    //}
     //public override void OnDestroyPOI() {
     //    base.OnDestroyPOI();
     //    BaseSettlement.onSettlementBuilt -= UpdateSettlementResourcesParent;
