@@ -20,7 +20,7 @@ MonoBehaviour:
   description: 
   imgIcon: {fileID: 21300000, guid: bbc3a4022697c1f4b9c87b662d66a4d6, type: 3}
   equipmentUpgradeData:
-    bonuses: 0e00000009000000
+    bonuses: 0e000000
     AdditionalPiercing: 10
     AdditionalMaxHPPercentage: 0
     AdditionalMaxHPActual: 0
@@ -28,7 +28,7 @@ MonoBehaviour:
     AdditionalAttackActual: 10
     AdditionalIntPercentage: 0
     AdditionalIntActual: 0
-    AdditionalCritRate: 10
+    AdditionalCritRate: 15
     additionalResistanceBonus: 0
     elementAttackBonus: 0
     slayerBonus: 0

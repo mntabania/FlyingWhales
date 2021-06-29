@@ -20,9 +20,9 @@ MonoBehaviour:
   description: This is Mithril Armor
   imgIcon: {fileID: 21300000, guid: 7e895e4ff89a68b418d346d1e2dfec76, type: 3}
   equipmentUpgradeData:
-    bonuses: 0400000003000000050000000a000000
+    bonuses: 040000000f000000
     AdditionalPiercing: 12.5
-    AdditionalMaxHPPercentage: 5
+    AdditionalMaxHPPercentage: 30
     AdditionalMaxHPActual: 400
     AdditionalAttackPercentage: 25
     AdditionalAttackActual: 0
