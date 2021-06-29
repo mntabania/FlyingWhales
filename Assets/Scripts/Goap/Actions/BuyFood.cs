@@ -115,7 +115,7 @@ public class BuyFood : GoapAction {
         TakeFood(goapNode);
     }
     private void TakeFood(ActualGoapNode goapNode) {
-        int amount = 30;
+        int amount = 60;
         if (goapNode.otherData != null && goapNode.otherData.Length > 0 && goapNode.otherData[0] is IntOtherData intData) {
             amount = intData.integer;
         }

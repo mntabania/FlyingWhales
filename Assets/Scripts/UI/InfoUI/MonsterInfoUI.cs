@@ -228,7 +228,8 @@ public class MonsterInfoUI : InfoUIBase {
             attackLbl.text = $"{summon.combatComponent.attack.ToString()}";
             speedLbl.text = $"{summon.combatComponent.attackSpeed / 1000f}s";
             raceLbl.text = $"{UtilityScripts.GameUtilities.GetNormalizedSingularRace(summon.race)}";
-            elementLbl.text = UtilityScripts.Utilities.GetRichTextIconForElement(_activeMonster.combatComponent.elementalDamage.type) + $"{_activeMonster.combatComponent.elementalDamage.type}";
+            elementLbl.text = $"<size=\"20\">{UtilityScripts.Utilities.GetRichTextIconForElement(_activeMonster.combatComponent.elementalDamage.type)}</size>"; // + $"{_activeCharacter.combatComponent.elementalDamage.type}"
+            // elementLbl.text = UtilityScripts.Utilities.GetRichTextIconForElement(_activeMonster.combatComponent.elementalDamage.type) + $"{_activeMonster.combatComponent.elementalDamage.type}";
             behaviourLbl.gameObject.SetActive(false);
             // behaviourLbl.text = $"<link=\"0\">{summon.bredBehaviour}</link>";    
         } else {
@@ -236,7 +237,8 @@ public class MonsterInfoUI : InfoUIBase {
             attackLbl.text = $"{_activeMonster.combatComponent.attack.ToString()}";
             speedLbl.text = $"{_activeMonster.combatComponent.attackSpeed / 1000f}s";
             raceLbl.text = $"{UtilityScripts.GameUtilities.GetNormalizedSingularRace(_activeMonster.race)}";
-            elementLbl.text = UtilityScripts.Utilities.GetRichTextIconForElement(_activeMonster.combatComponent.elementalDamage.type) + $"{_activeMonster.combatComponent.elementalDamage.type}";
+            elementLbl.text = $"<size=\"20\">{UtilityScripts.Utilities.GetRichTextIconForElement(_activeMonster.combatComponent.elementalDamage.type)}</size>"; // + $"{_activeCharacter.combatComponent.elementalDamage.type}"
+            // elementLbl.text = UtilityScripts.Utilities.GetRichTextIconForElement(_activeMonster.combatComponent.elementalDamage.type) + $"{_activeMonster.combatComponent.elementalDamage.type}";
             // behaviourLbl.text = $"<link=\"0\">{_activeMonster.characterClass.traitNameOnTamedByPlayer}</link>";
             behaviourLbl.gameObject.SetActive(false);
         }
