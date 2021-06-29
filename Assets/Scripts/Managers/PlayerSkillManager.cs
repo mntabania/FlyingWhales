@@ -478,14 +478,20 @@ public class PlayerSkillManager : MonoBehaviour {
     }
 
     public float GetIncreaseStatsPercentagePerLevel(PLAYER_SKILL_TYPE p_skillType) {
-        PlayerSkillData playerSkillData = GetScriptableObjPlayerSkillData<PlayerSkillData>(p_skillType);
-        return playerSkillData.skillUpgradeData.GetIncreaseStatsPercentagePerLevel(GetSkillData(p_skillType).currentLevel);
+        return GetIncreaseStatsPercentagePerLevel(GetSkillData(p_skillType));
+    }
+    public float GetIncreaseStatsPercentagePerLevel(SkillData p_skill) {
+        PlayerSkillData playerSkillData = GetScriptableObjPlayerSkillData<PlayerSkillData>(p_skill.type);
+        return playerSkillData.skillUpgradeData.GetIncreaseStatsPercentagePerLevel(p_skill.currentLevel);
     }
 
     public int GetDurationBonusPerLevel(PLAYER_SKILL_TYPE p_skillType, int p_forcedLevel = -1) {
-        PlayerSkillData playerSkillData = GetScriptableObjPlayerSkillData<PlayerSkillData>(p_skillType);
+        return GetDurationBonusPerLevel(GetSkillData(p_skillType), p_forcedLevel);
+    }
+    public int GetDurationBonusPerLevel(SkillData p_skill, int p_forcedLevel = -1) {
+        PlayerSkillData playerSkillData = GetScriptableObjPlayerSkillData<PlayerSkillData>(p_skill.type);
         if (p_forcedLevel == -1) {
-            return playerSkillData.skillUpgradeData.GetDurationBonusPerLevel(GetSkillData(p_skillType).currentLevel);
+            return playerSkillData.skillUpgradeData.GetDurationBonusPerLevel(p_skill.currentLevel);
         } else {
             return playerSkillData.skillUpgradeData.GetDurationBonusPerLevel(p_forcedLevel);
         }

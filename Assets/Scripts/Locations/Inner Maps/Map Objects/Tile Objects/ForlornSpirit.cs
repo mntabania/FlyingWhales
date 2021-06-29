@@ -131,8 +131,17 @@ public class ForlornSpirit : TileObject {
     }
 
     private void ForlornEffect() {
-        float processedHappinessDrain = (-(int)PlayerSkillManager.Instance.GetIncreaseStatsPercentagePerLevel(PLAYER_SKILL_TYPE.FORLORN_SPIRIT));
-        possessionTarget.needsComponent.AdjustHappiness(processedHappinessDrain);
+        int baseChance = 100;
+        SkillData spiritData = PlayerSkillManager.Instance.GetSpellData(PLAYER_SKILL_TYPE.FORLORN_SPIRIT);
+        RESISTANCE resistanceType = PlayerSkillManager.Instance.GetScriptableObjPlayerSkillData<PlayerSkillData>(PLAYER_SKILL_TYPE.FORLORN_SPIRIT).resistanceType;
+        float piercing = PlayerSkillManager.Instance.GetAdditionalPiercePerLevelBaseOnLevel(spiritData);
+        float resistanceValue = possessionTarget.piercingAndResistancesComponent.GetResistanceValue(resistanceType);
+        CombatManager.ModifyValueByPiercingAndResistance(ref baseChance, piercing, resistanceValue);
+        if (GameUtilities.RollChance(baseChance)) {
+            //Triggers Effect
+            float processedHappinessDrain = -PlayerSkillManager.Instance.GetIncreaseStatsPercentagePerLevel(spiritData);
+            possessionTarget.needsComponent.AdjustHappiness(processedHappinessDrain);
+        }
     }
     private void DonePossession() {
         GameManager.Instance.CreateParticleEffectAt(possessionTarget.gridTileLocation, PARTICLE_EFFECT.Minion_Dissipate);

@@ -133,8 +133,17 @@ public class RavenousSpirit : TileObject {
     }
 
     private void RavenousEffect() {
-        int processedEffect = (-(int)(PlayerSkillManager.Instance.GetIncreaseStatsPercentagePerLevel(PLAYER_SKILL_TYPE.RAVENOUS_SPIRIT)));
-        possessionTarget.needsComponent.AdjustFullness(processedEffect);
+        int baseChance = 100;
+        SkillData spiritData = PlayerSkillManager.Instance.GetSpellData(PLAYER_SKILL_TYPE.RAVENOUS_SPIRIT);
+        RESISTANCE resistanceType = PlayerSkillManager.Instance.GetScriptableObjPlayerSkillData<PlayerSkillData>(PLAYER_SKILL_TYPE.RAVENOUS_SPIRIT).resistanceType;
+        float piercing = PlayerSkillManager.Instance.GetAdditionalPiercePerLevelBaseOnLevel(spiritData);
+        float resistanceValue = possessionTarget.piercingAndResistancesComponent.GetResistanceValue(resistanceType);
+        CombatManager.ModifyValueByPiercingAndResistance(ref baseChance, piercing, resistanceValue);
+        if (GameUtilities.RollChance(baseChance)) {
+            //Triggers Effect
+            float processedEffect = -PlayerSkillManager.Instance.GetIncreaseStatsPercentagePerLevel(spiritData);
+            possessionTarget.needsComponent.AdjustFullness(processedEffect);
+        }
     }
 
     private void DonePossession() {
