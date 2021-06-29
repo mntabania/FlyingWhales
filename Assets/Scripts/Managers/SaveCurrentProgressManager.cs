@@ -162,7 +162,10 @@ public class SaveCurrentProgressManager : MonoBehaviour {
         currentSaveDataProgress = new SaveDataCurrentProgress();
         currentSaveDataProgress.Initialize();
 
-        yield return null;
+        while (MultiThreadPool.Instance.IsThereStillFunctionsToBeResolved()) {
+            yield return null;
+        }
+
         ThreadPool.QueueUserWorkItem(SaveGeneralMultithread);
         foreach (KeyValuePair<TILE_OBJECT_TYPE, List<TileObject>> item in DatabaseManager.Instance.tileObjectDatabase.allTileObjects) {
             //Note: No longer pools SaveTileObjectThreadQueueItem, since they are not processed every time

@@ -10,7 +10,8 @@ public class MultiThreadPool : BaseMonoBehaviour {
     public static readonly object THREAD_LOCKER = new object();
 
     //private Queue<Multithread> functionsToBeRunInThread;
-    private ConcurrentQueue<Multithread> functionsToBeResolved;
+    private ConcurrentQueue<Multithread> generalFunctionsToBeResolved;
+    private ConcurrentQueue<SQLWorkerItem> logFunctionsToBeResolved;
 
     //private Thread newThread;
     //private ManualResetEventSlim exitHandle = new ManualResetEventSlim();
@@ -23,7 +24,8 @@ public class MultiThreadPool : BaseMonoBehaviour {
         //this.isRunning = true;
 
         //functionsToBeRunInThread = new Queue<Multithread>();
-        functionsToBeResolved = new ConcurrentQueue<Multithread>();
+        generalFunctionsToBeResolved = new ConcurrentQueue<Multithread>();
+        logFunctionsToBeResolved = new ConcurrentQueue<SQLWorkerItem>();
 
         //newThread = new Thread(RunThread);
         //newThread.IsBackground = true;
@@ -32,19 +34,24 @@ public class MultiThreadPool : BaseMonoBehaviour {
     protected override void OnDestroy() {
         //this.isRunning = false;
         //functionsToBeRunInThread.Clear();
-        functionsToBeResolved = null;
+        generalFunctionsToBeResolved = null;
+        logFunctionsToBeResolved = null;
         base.OnDestroy();
         Instance = null;
     }
 
     void LateUpdate() {
-        if (this.functionsToBeResolved.Count > 0) {
+        if (generalFunctionsToBeResolved.Count > 0) {
             Multithread action;
-            if (this.functionsToBeResolved.TryDequeue(out action)) {
+            if (generalFunctionsToBeResolved.TryDequeue(out action)) {
                 action.FinishMultithread();
-                if (action is SQLWorkerItem sqlItem) {
-                    ObjectPoolManager.Instance.ReturnLogDatabaseThreadToPool(sqlItem);
-                }
+            }
+        }
+        if (logFunctionsToBeResolved.Count > 0) {
+            SQLWorkerItem action;
+            if (logFunctionsToBeResolved.TryDequeue(out action)) {
+                action.FinishMultithread();
+                ObjectPoolManager.Instance.ReturnLogDatabaseThreadToPool(action);
             }
         }
     }
@@ -58,8 +65,15 @@ public class MultiThreadPool : BaseMonoBehaviour {
         //lock (THREAD_LOCKER) {
         Multithread mt = p_thread as Multithread;
         mt.DoMultithread();
-        functionsToBeResolved.Enqueue(mt);
+        if (mt is SQLWorkerItem sqlItem) {
+            logFunctionsToBeResolved.Enqueue(sqlItem);
+        } else {
+            generalFunctionsToBeResolved.Enqueue(mt);
+        }
         //}
+    }
+    public bool IsThereStillFunctionsToBeResolved() {
+        return generalFunctionsToBeResolved.Count > 0 || logFunctionsToBeResolved.Count > 0;
     }
 
     //private void RunThread() {
