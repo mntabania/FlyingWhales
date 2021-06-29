@@ -152,7 +152,7 @@ public class TakeResource : GoapAction {
     public override void AddFillersToLog(Log log, ActualGoapNode node) {
         base.AddFillersToLog(log, node);
         ResourcePile resourcePile = node.poiTarget as ResourcePile;
-        log.AddToFillers(null, UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetterOnly(resourcePile.providedResource.ToString()), LOG_IDENTIFIER.STRING_2);
+        log.AddToFillers(null, UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetterOnly(resourcePile.specificProvidedResource.ToString()), LOG_IDENTIFIER.STRING_2);
     }
 #endregion
 
@@ -184,7 +184,7 @@ public class TakeResource : GoapAction {
         if (takenResource > resourcePile.resourceInPile) {
             takenResource = resourcePile.resourceInPile;
         }
-        goapNode.descriptionLog.AddToFillers(null, takenResource.ToString(), LOG_IDENTIFIER.STRING_1);
+        goapNode.descriptionLog.AddToFillers(null, takenResource.ToString() + "TEST", LOG_IDENTIFIER.STRING_1);
         //goapNode.descriptionLog.AddToFillers(null, Utilities.NormalizeString(resourcePile.providedResource.ToString()), LOG_IDENTIFIER.STRING_2);
     }
     public void AfterTakeSuccess(ActualGoapNode goapNode) {
