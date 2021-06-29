@@ -17,7 +17,8 @@ public class SettlementClassComponent : NPCSettlementComponent {
     private int _currentClassOrderIndex;
     private bool m_bypass;
 
-    public GameDate scheduleDateForProcessingOfNeededClasses { get; private set; }
+    public GameDate morningScheduleDateForProcessingOfNeededClasses { get; private set; }
+    public GameDate afternoonScheduleDateForProcessingOfNeededClasses { get; private set; }
 
     #region getters
     public int currentClassOrderIndex => _currentClassOrderIndex;
@@ -31,7 +32,8 @@ public class SettlementClassComponent : NPCSettlementComponent {
     public SettlementClassComponent(SaveDataSettlementClassComponent data) {
         _currentClassOrderIndex = data.currentClassOrderIndex;
         _currentResidentClasses = data.currentResidentClasses;
-        scheduleDateForProcessingOfNeededClasses = data.scheduleDateForProcessingOfNeededClasses;
+        morningScheduleDateForProcessingOfNeededClasses = data.morningScheduleDateForProcessingOfNeededClasses;
+        afternoonScheduleDateForProcessingOfNeededClasses = data.afternoonScheduleDateForProcessingOfNeededClasses;
     }
 
     #region Character Class Order
@@ -77,7 +79,7 @@ public class SettlementClassComponent : NPCSettlementComponent {
     #endregion
 
     #region Needed Classes
-    public void InitialScheduleProcessingOfNeededClasses() {
+    public void InitialMorningScheduleProcessingOfNeededClasses() {
         if (owner.locationType == LOCATION_TYPE.VILLAGE) {
             int minimumTick = GameManager.Instance.GetTicksBasedOnHour(2); //2 AM in ticks
             int maximumTick = GameManager.Instance.GetTicksBasedOnHour(5); //5 AM in ticks
@@ -85,16 +87,35 @@ public class SettlementClassComponent : NPCSettlementComponent {
             int scheduledTick = GameUtilities.RandomBetweenTwoNumbers(minimumTick, maximumTick);
             GameDate schedule = GameManager.Instance.Today().AddDays(1);
             schedule.SetTicks(scheduledTick);
-            scheduleDateForProcessingOfNeededClasses = schedule;
-            SchedulingManager.Instance.AddEntry(scheduleDateForProcessingOfNeededClasses, ProcessingOfNeededClasses, null);
+            morningScheduleDateForProcessingOfNeededClasses = schedule;
+            SchedulingManager.Instance.AddEntry(morningScheduleDateForProcessingOfNeededClasses, MorningProcessingOfNeededClasses, null);
         }
     }
-    private void ProcessingOfNeededClasses() {
+    public void InitialAfternoonScheduleProcessingOfNeededClasses() {
+        if (owner.locationType == LOCATION_TYPE.VILLAGE) {
+            int minimumTick = GameManager.Instance.GetTicksBasedOnHour(12); //12 PM in ticks
+            int maximumTick = GameManager.Instance.GetTicksBasedOnHour(15); //3 PM in ticks
+
+            int scheduledTick = GameUtilities.RandomBetweenTwoNumbers(minimumTick, maximumTick);
+            GameDate schedule = GameManager.Instance.Today();
+            schedule.SetTicks(scheduledTick);
+            afternoonScheduleDateForProcessingOfNeededClasses = schedule;
+            SchedulingManager.Instance.AddEntry(afternoonScheduleDateForProcessingOfNeededClasses, AfternoonProcessingOfNeededClasses, null);
+        }
+    }
+    private void MorningProcessingOfNeededClasses() {
         if (owner.HasResidentThatIsNotDead()) {
             ProcessNeededClasses();
         }
-        scheduleDateForProcessingOfNeededClasses = GameManager.Instance.Today().AddDays(1);
-        SchedulingManager.Instance.AddEntry(scheduleDateForProcessingOfNeededClasses, ProcessingOfNeededClasses, null);
+        morningScheduleDateForProcessingOfNeededClasses = GameManager.Instance.Today().AddDays(1);
+        SchedulingManager.Instance.AddEntry(morningScheduleDateForProcessingOfNeededClasses, MorningProcessingOfNeededClasses, null);
+    }
+    private void AfternoonProcessingOfNeededClasses() {
+        if (owner.HasResidentThatIsNotDead()) {
+            ProcessNeededClasses();
+        }
+        afternoonScheduleDateForProcessingOfNeededClasses = GameManager.Instance.Today().AddDays(1);
+        SchedulingManager.Instance.AddEntry(afternoonScheduleDateForProcessingOfNeededClasses, AfternoonProcessingOfNeededClasses, null);
     }
     private void ProcessNeededClasses() {
         string log = string.Empty;
@@ -641,7 +662,8 @@ public class SettlementClassComponent : NPCSettlementComponent {
 #region Loading
     public void LoadReferences(SaveDataSettlementClassComponent data) {
         if (owner.locationType == LOCATION_TYPE.VILLAGE) {
-            SchedulingManager.Instance.AddEntry(scheduleDateForProcessingOfNeededClasses, ProcessingOfNeededClasses, null);
+            SchedulingManager.Instance.AddEntry(morningScheduleDateForProcessingOfNeededClasses, MorningProcessingOfNeededClasses, null);
+            SchedulingManager.Instance.AddEntry(afternoonScheduleDateForProcessingOfNeededClasses, AfternoonProcessingOfNeededClasses, null);
         }
     }
 #endregion
@@ -651,13 +673,15 @@ public class SettlementClassComponent : NPCSettlementComponent {
 public class SaveDataSettlementClassComponent : SaveData<SettlementClassComponent> {
     public int currentClassOrderIndex;
     public List<string> currentResidentClasses;
-    public GameDate scheduleDateForProcessingOfNeededClasses;
+    public GameDate morningScheduleDateForProcessingOfNeededClasses;
+    public GameDate afternoonScheduleDateForProcessingOfNeededClasses;
 
-#region Overrides
+    #region Overrides
     public override void Save(SettlementClassComponent data) {
         currentClassOrderIndex = data.currentClassOrderIndex;
         currentResidentClasses = data.currentResidentClasses;
-        scheduleDateForProcessingOfNeededClasses = data.scheduleDateForProcessingOfNeededClasses;
+        morningScheduleDateForProcessingOfNeededClasses = data.morningScheduleDateForProcessingOfNeededClasses;
+        afternoonScheduleDateForProcessingOfNeededClasses = data.afternoonScheduleDateForProcessingOfNeededClasses;
     }
 
     public override SettlementClassComponent Load() {

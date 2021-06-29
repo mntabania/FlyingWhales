@@ -91,7 +91,8 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         migrationComponent = new SettlementVillageMigrationComponent(); migrationComponent.SetOwner(this);
         resourcesComponent = new SettlementResourcesComponent(); resourcesComponent.SetOwner(this);
         classComponent = new SettlementClassComponent(); classComponent.SetOwner(this);
-        classComponent.InitialScheduleProcessingOfNeededClasses();
+        classComponent.InitialMorningScheduleProcessingOfNeededClasses();
+        classComponent.InitialAfternoonScheduleProcessingOfNeededClasses();
         partyComponent = new SettlementPartyComponent(); partyComponent.SetOwner(this);
         partyComponent.InitialScheduleProcessingOfPartyQuests();
         structureComponent = new SettlementStructureComponent(); structureComponent.SetOwner(this);

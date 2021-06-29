@@ -27,7 +27,8 @@ namespace UtilityScripts {
                 summary += $"\n<b>{npcSettlement.name}</b> Settlement Type: {npcSettlement.settlementType?.settlementType.ToString() ?? "None"}";
                 summary += $"\nMax Facilities: {npcSettlement.settlementType?.maxFacilities}";
                 summary += $"\nMax Dwellings: {npcSettlement.settlementType?.maxDwellings}";
-                summary += $"\nNeeded Class Processing: {npcSettlement.classComponent.scheduleDateForProcessingOfNeededClasses.ToString()}";
+                summary += $"\nMorning Needed Class: {npcSettlement.classComponent.morningScheduleDateForProcessingOfNeededClasses.ToString()}";
+                summary += $"\nAfternoon Needed Class: {npcSettlement.classComponent.afternoonScheduleDateForProcessingOfNeededClasses.ToString()}";
                 summary += $"\nParty Quests Processing: {npcSettlement.partyComponent.scheduleDateForProcessingOfPartyQuests.ToString()}";
                 summary += $"\nBuilt Resource Piles in settlement: {npcSettlement.SettlementResources.resourcePiles.Count(p => p.mapObjectState == MAP_OBJECT_STATE.BUILT).ToString()}";
                 summary += $"\nStorage: {npcSettlement.mainStorage?.name ?? "None"}. Prison: {npcSettlement.prison?.name ?? "None"}";
