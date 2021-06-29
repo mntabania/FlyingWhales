@@ -31,6 +31,10 @@ public class RebellionData : SchemeData {
     public override bool CanPerformAbilityTowards(Character targetCharacter) {
         bool canPerform = base.CanPerformAbilityTowards(targetCharacter);
         if (canPerform) {
+            int villagerFactionCount = FactionManager.Instance.GetActiveVillagerFactionCount();
+            if (villagerFactionCount >= FactionManager.MaxActiveVillagerFactions) {
+                return false;
+            }
             if (targetCharacter.faction != null && !targetCharacter.isFactionLeader && targetCharacter.isSettlementRuler) {
                 if (targetCharacter.faction.HasOwnedSettlementThatHasAliveResidentAndIsNotHomeOf(targetCharacter)) {
                     return true;
@@ -47,6 +51,10 @@ public class RebellionData : SchemeData {
         }
         if (targetCharacter.faction == null || !targetCharacter.faction.HasOwnedSettlementThatHasAliveResidentAndIsNotHomeOf(targetCharacter)) {
             reasons += "Target is has no faction or simply cannot rebel.";
+        }
+        int villagerFactionCount = FactionManager.Instance.GetActiveVillagerFactionCount();
+        if (villagerFactionCount >= FactionManager.MaxActiveVillagerFactions) {
+            reasons += "Maximum number of active factions have been reached,";
         }
         return reasons;
     }

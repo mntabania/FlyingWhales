@@ -39,7 +39,7 @@ public class DefaultFactionRelated : CharacterBehaviourComponent {
 #if DEBUG_LOG
                     log += $"\nActive villager faction count is {villagerFactionCount.ToString()}";
 #endif
-                    if (villagerFactionCount < 10) {
+                    if (villagerFactionCount < FactionManager.MaxActiveVillagerFactions) {
 #if DEBUG_LOG
                         log += $"\nActive villager factions is less than 10, rolling chances";
 #endif

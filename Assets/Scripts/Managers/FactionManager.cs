@@ -15,6 +15,8 @@ public class FactionManager : BaseMonoBehaviour {
 
     public static FactionManager Instance = null;
 
+    public static int MaxActiveVillagerFactions = 10;
+    
     public Faction neutralFaction { get; private set; }
     public Faction vagrantFaction { get; private set; }
     public Faction disguisedFaction { get; private set; }
