@@ -141,7 +141,7 @@ public class OptionsMenu : PopupMenuBase {
         bool sameFile = false;
         string sameName = string.Empty;
         for(int x = 0; x < saveFiles.Length; ++x) {
-            if (saveNameInput.text == Path.GetFileNameWithoutExtension(saveFiles[x])) {
+            if (saveNameInput.text == Path.GetFileNameWithoutExtension(saveFiles[x])){
                 sameFile = true;
                 sameName = Path.GetFileNameWithoutExtension(saveFiles[x]) + ".zip";
                 break;

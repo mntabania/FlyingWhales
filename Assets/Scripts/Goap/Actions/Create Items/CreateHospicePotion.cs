@@ -47,7 +47,7 @@ public class CreateHospicePotion : GoapAction {
         p_node.actor.structureComponent.workPlaceStructure.RemovePOI(p_node.target);
         targetGridTile.structure.AddPOI(potion, targetGridTile);
         
-        p_node.actor.jobComponent.CreateDropItemJob(JOB_TYPE.CREATE_HOSPICE_POTION, potion, p_node.actor.structureComponent.workPlaceStructure);
+        //p_node.actor.jobComponent.CreateDropItemJob(JOB_TYPE.CREATE_HOSPICE_POTION, potion, p_node.actor.structureComponent.workPlaceStructure);
     }
     #endregion
 

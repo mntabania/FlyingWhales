@@ -1818,6 +1818,12 @@ public static class Extensions {
                 return 10;
             case TutorialManager.Tutorial_Type.Base_Building:
                 return 11;
+            case TutorialManager.Tutorial_Type.Resistances:
+                return 12;
+            case TutorialManager.Tutorial_Type.Time_Management:
+                return 13;
+            case TutorialManager.Tutorial_Type.Target_Menu:
+                return 14;
             default:
                 return (int)p_type;
         }
