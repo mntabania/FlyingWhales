@@ -66,9 +66,11 @@ public class MovementComponent : CharacterComponent {
 
     public void SubscribeToSignals() {
         Messenger.AddListener<Character>(CharacterSignals.STARTED_TRAVELLING, OnStartedTravelling);
+        Messenger.AddListener<Faction>(FactionSignals.FACTION_DISBANDED, OnFactionDisbanded);
     }
     public void UnsubscribeFromSignals() {
         Messenger.RemoveListener<Character>(CharacterSignals.STARTED_TRAVELLING, OnStartedTravelling);
+        Messenger.RemoveListener<Faction>(FactionSignals.FACTION_DISBANDED, OnFactionDisbanded);
     }
 
     public void UpdateSpeed() {
@@ -213,6 +215,9 @@ public class MovementComponent : CharacterComponent {
         if (newFaction != null) {
             DoNotAvoidFaction(newFaction);
         }
+    }
+    private void OnFactionDisbanded(Faction p_faction) {
+        DoNotAvoidFaction(p_faction); //clear out any avoidance of the faction, this is to ensure no conflicts will arise if a new faction will use the disbanded factions tags
     }
     #endregion
 

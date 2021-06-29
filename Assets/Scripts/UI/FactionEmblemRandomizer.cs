@@ -50,10 +50,14 @@ public static class FactionEmblemRandomizer {
 
     public static void SetEmblemAsUsed(Sprite p_emblem) {
         _unusedEmblems.Remove(p_emblem);
-        _usedEmblems.Add(p_emblem);
+        if (!_usedEmblems.Contains(p_emblem)) {
+            _usedEmblems.Add(p_emblem);    
+        }
     }
     public static void SetEmblemAsUnUsed(Sprite p_emblem) {
-        _unusedEmblems.Add(p_emblem);
+        if (!_unusedEmblems.Contains(p_emblem)) {
+            _unusedEmblems.Add(p_emblem);    
+        }
         _usedEmblems.Remove(p_emblem);
     }
     public static void Reset() {

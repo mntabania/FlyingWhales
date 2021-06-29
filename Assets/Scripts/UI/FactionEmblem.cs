@@ -24,12 +24,11 @@ public class FactionEmblem : MonoBehaviour, IPointerClickHandler{
         foreach (KeyValuePair<Faction, FactionRelationship> kvp in faction.relationships) {
             text += $"\n{kvp.Key.nameWithColor} - {kvp.Value.relationshipStatus}";
         }
-// #if UNITY_EDITOR || DEVELOPMENT_BUILD
-//         text = $"{text}\n Crimes:";
-//         foreach (var crime in faction.factionType.crimes) {
-//             text = $"{text}\n\t {crime.Key.ToString()} - {crime.Value.ToString()}";    
-//         }
-// #endif
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+        text = $"{text}\nTesting Info:";
+        text = $"{text}\nPathfinding Tag: {faction.pathfindingTag.ToString()}";
+        text = $"{text}\nDoor Pathfinding Tag: {faction.pathfindingDoorTag.ToString()}";
+#endif
         UIManager.Instance.ShowSmallInfo(text, autoReplaceText: false);
     }
     public void HideSmallInfo() {

@@ -39,9 +39,9 @@ public class DefaultFactionRelated : CharacterBehaviourComponent {
 #if DEBUG_LOG
                     log += $"\nActive villager faction count is {villagerFactionCount.ToString()}";
 #endif
-                    if (villagerFactionCount < 20) {
+                    if (villagerFactionCount < 10) {
 #if DEBUG_LOG
-                        log += $"\nActive villager factions is less than 20, rolling chances";
+                        log += $"\nActive villager factions is less than 10, rolling chances";
 #endif
                         int factionsInRegion = GetFactionsInRegion(character.currentRegion);
                         float createChance = factionsInRegion >= 2 ? 2f : 3f;

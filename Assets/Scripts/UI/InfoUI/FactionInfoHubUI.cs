@@ -69,7 +69,7 @@ public class FactionInfoHubUI : MonoBehaviour {
     private void PopulateInitialFactions() {
         for (int i = 0; i < FactionManager.Instance.allFactions.Count; i++) {
             Faction faction = FactionManager.Instance.allFactions[i];
-            if(faction.isMajorNonPlayer) {
+            if(faction.isMajorNonPlayer && !faction.isDisbanded) {
                 AddFactionItem(faction);
             }
         }

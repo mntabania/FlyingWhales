@@ -49,8 +49,9 @@ public class SettlementRulerBehaviour : CharacterBehaviourComponent {
                     log += $"\n-Check chance to build dwelling if not yet at max.";
 #endif
                     int dwellingCount = characterHomeSettlement.GetStructureCount(STRUCTURE_TYPE.DWELLING);
-                    int totalDwellingCount = dwellingCount + GetJobsThatWillBuildDwelling(buildJobs);
-                    if (totalDwellingCount < characterHomeSettlement.settlementType.maxDwellings) {
+                    int totalDwellingBlueprintJobs = GetJobsThatWillBuildDwelling(buildJobs);
+                    int totalDwellingCount = dwellingCount + totalDwellingBlueprintJobs;
+                    if (totalDwellingBlueprintJobs <= 0 && totalDwellingCount < characterHomeSettlement.settlementType.maxDwellings) {
                         int chance = 3;
                         if (dwellingCount < (characterHomeSettlement.settlementType.maxDwellings/2)) {
                             chance = 5;
@@ -82,8 +83,9 @@ public class SettlementRulerBehaviour : CharacterBehaviourComponent {
                     log += $"\n-Check chance to build a missing facility.";
 #endif
                     int facilityCount = characterHomeSettlement.GetFacilityCount();
-                    int totalFacilityCount = facilityCount + GetJobsThatWillBuildFacility(buildJobs);
-                    if (totalFacilityCount < characterHomeSettlement.settlementType.maxFacilities) {
+                    int totalFacilityBlueprintJobs = GetJobsThatWillBuildFacility(buildJobs);
+                    int totalFacilityCount = facilityCount + totalFacilityBlueprintJobs;
+                    if (totalFacilityBlueprintJobs <= 0 && totalFacilityCount < characterHomeSettlement.settlementType.maxFacilities) {
                         STRUCTURE_TYPE determinedStructureToUse = STRUCTURE_TYPE.NONE;
                         int chance = ChanceData.GetChance(CHANCE_TYPE.Settlement_Ruler_Default_Facility_Chance);
                         List<string> ableClassesOfAllResidents = RuinarchListPool<string>.Claim();
@@ -135,6 +137,13 @@ public class SettlementRulerBehaviour : CharacterBehaviourComponent {
                             determinedStructureToUse = STRUCTURE_TYPE.MINE;  
 #if DEBUG_LOG
                             log = $"{log}\n-{characterHomeSettlement.name} doesn't have a mine and has unused mining spots. Set chance to {chance} and will try to build {determinedStructureToUse}";
+#endif
+                        } else if (!characterHomeSettlement.HasStructure(STRUCTURE_TYPE.WORKSHOP) && !characterHomeSettlement.HasBlueprintOnTileForStructure(STRUCTURE_TYPE.WORKSHOP)) {
+                            //build workshop
+                            chance = 50;
+                            determinedStructureToUse = STRUCTURE_TYPE.WORKSHOP;  
+#if DEBUG_LOG
+                            log = $"{log}\n-{characterHomeSettlement.name} doesn't have a workshop. Set chance to {chance} and will try to build {determinedStructureToUse}";
 #endif
                         }
 

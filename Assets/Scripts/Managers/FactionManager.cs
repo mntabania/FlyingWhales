@@ -36,9 +36,7 @@ public class FactionManager : BaseMonoBehaviour {
     [Header("Character Name Colors")]
     public Color factionNameColor;
     private string _factionNameColorHex;
-
-    private List<Sprite> _usedEmblems = new List<Sprite>();
-
+    
     private Dictionary<FACTION_SUCCESSION_TYPE, FactionSuccession> _factionSuccessions = new Dictionary<FACTION_SUCCESSION_TYPE, FactionSuccession>();
 
     //public readonly string[] exclusiveIdeologyTraitRequirements = new string[] { "Worker", "Combatant", "Royalty" };
@@ -202,9 +200,10 @@ public class FactionManager : BaseMonoBehaviour {
             faction.SetPathfindingDoorTag(InnerMapManager.Ratmen_Faction_Doors);
         } else {
             if (faction.isMajorNonPlayer) {
+                PathfindingTagPair pathfindingTagPair = InnerMapManager.Instance.ClaimNextPathfindingTagPair(); 
                 //claim new tags per new MAJOR faction.
-                faction.SetPathfindingTag(InnerMapManager.Instance.ClaimNextTag());
-                faction.SetPathfindingDoorTag(InnerMapManager.Instance.ClaimNextTag());    
+                faction.SetPathfindingTag(pathfindingTagPair.groundTag);
+                faction.SetPathfindingDoorTag(pathfindingTagPair.doorsTag);    
             }
         }
     }
@@ -229,11 +228,6 @@ public class FactionManager : BaseMonoBehaviour {
             SetVagrantFaction(newFaction);
         } else if (data.factionType.type == FACTION_TYPE.Ratmen) {
             SetRatmenFaction(newFaction);
-        }
-        if (newFaction.isMajorNonPlayer) {
-            //claim 2 tags per MAJOR non Player faction, this is so that the last tag is still accurate.
-            InnerMapManager.Instance.ClaimNextTag();
-            InnerMapManager.Instance.ClaimNextTag();
         }
         DatabaseManager.Instance.factionDatabase.RegisterFaction(newFaction);
         if (!newFaction.isPlayerFaction) {
@@ -298,11 +292,6 @@ public class FactionManager : BaseMonoBehaviour {
         }
         return null;
     }
-    public void SetEmblemAsUsed(Sprite sprite) {
-        if (sprite != null && !_usedEmblems.Contains(sprite)) {
-            _usedEmblems.Add(sprite);
-        }   
-    }
     #endregion
 
     #region Utilities
@@ -332,6 +321,16 @@ public class FactionManager : BaseMonoBehaviour {
                 return neutralFaction;
         }
     }
+    public int GetActiveVillagerFactionCount() {
+        int count = 0;
+        for (int i = 0; i < DatabaseManager.Instance.factionDatabase.allFactionsList.Count; i++) {
+            Faction faction = DatabaseManager.Instance.factionDatabase.allFactionsList[i];
+            if (faction.isMajorNonPlayer && !faction.isDisbanded) {
+                count++;
+            }
+        }
+        return count;
+    }
     #endregion
 
     #region Relationships
@@ -339,7 +338,13 @@ public class FactionManager : BaseMonoBehaviour {
         for (int i = 0; i < DatabaseManager.Instance.factionDatabase.allFactionsList.Count; i++) {
             Faction otherFaction = DatabaseManager.Instance.factionDatabase.allFactionsList[i];
             if(otherFaction.id != faction.id) {
-                CreateNewRelationshipBetween(otherFaction, faction);
+                //only create relationships for the following factions:
+                // - Villager factions that are not yet disbanded
+                // - Non-Villager factions
+                // - The Player Faction
+                if ((otherFaction.isMajorNonPlayer && !otherFaction.isDisbanded) || !otherFaction.isMajorNonPlayer || otherFaction.isPlayerFaction) {
+                    CreateNewRelationshipBetween(otherFaction, faction);    
+                }
             }
         }
     }
@@ -348,6 +353,7 @@ public class FactionManager : BaseMonoBehaviour {
             Faction otherFaction = DatabaseManager.Instance.factionDatabase.allFactionsList[i];
             if (otherFaction.id != faction.id) {
                 otherFaction.RemoveRelationshipWith(faction);
+                faction.RemoveRelationshipWith(otherFaction);
             }
         }
     }
@@ -367,6 +373,10 @@ public class FactionManager : BaseMonoBehaviour {
         faction1.SetRelationshipFor(faction2, status);
         faction2.SetRelationshipFor(faction1, status);
 
+#if DEBUG_LOG
+        Debug.Log($"Created new relationship between {faction1.name} and {faction2.name}");
+#endif
+        
         //if (faction1.isPlayerFaction || faction2.isPlayerFaction || 
         //   faction1.factionType.type == FACTION_TYPE.Wild_Monsters || faction2.factionType.type == FACTION_TYPE.Wild_Monsters || 
         //   faction1.factionType.type == FACTION_TYPE.Undead || faction2.factionType.type == FACTION_TYPE.Undead ||
@@ -788,17 +798,8 @@ public class FactionManager : BaseMonoBehaviour {
         return null;
     }
     #endregion
-
-    public int GetActiveVillagerFactionCount() {
-        int count = 0;
-        for (int i = 0; i < DatabaseManager.Instance.factionDatabase.allFactionsList.Count; i++) {
-            Faction faction = DatabaseManager.Instance.factionDatabase.allFactionsList[i];
-            if (faction.isMajorNonPlayer && !faction.isDisbanded) {
-                count++;
-            }
-        }
-        return count;
-    }
+    
+    
 }
 
 [System.Serializable]
