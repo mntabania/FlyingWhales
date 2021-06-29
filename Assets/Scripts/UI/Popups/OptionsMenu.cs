@@ -80,7 +80,7 @@ public class OptionsMenu : PopupMenuBase {
             yield return 0;
 		}
         saveLoadingGO.SetActive(false);
-        Abandon();
+        Application.Quit();
     }
 
     public void QuickSave() {
