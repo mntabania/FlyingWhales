@@ -324,31 +324,63 @@ namespace Inner_Maps {
             }
         }
         public void TriggerFreezingTrap(Character triggeredBy) {
-            int duration = 0;
-            if (triggeredBy is Summon summon) {
-                if (summon.summonType == SUMMON_TYPE.Kobold) {
-                    duration = PlayerSkillManager.Instance.GetDurationBonusPerLevel(PLAYER_SKILL_TYPE.FREEZING_TRAP, 0);
-                }
-            } else {
-                if (triggeredBy.isNormalAndNotAlliedWithPlayer) {
-                    Messenger.Broadcast(PlayerSkillSignals.ON_TRAP_ACTIVATED_ON_VILLAGER, triggeredBy);
-                }
-                duration = PlayerSkillManager.Instance.GetDurationBonusPerLevel(PLAYER_SKILL_TYPE.FREEZING_TRAP);
-            }
-            GameManager.Instance.CreateParticleEffectAt(triggeredBy, PARTICLE_EFFECT.Freezing_Trap_Explosion);
-            AudioManager.Instance.TryCreateAudioObject(PlayerSkillManager.Instance.GetScriptableObjPlayerSkillData<FreezingTrapSkillData>(PLAYER_SKILL_TYPE.FREEZING_TRAP).trapExplosionSound, owner, 1, false);
+            bool willTrigger = false;
+            int baseChance = 100;
+            SkillData trapData = PlayerSkillManager.Instance.GetSpellData(PLAYER_SKILL_TYPE.FREEZING_TRAP);
+            FreezingTrapSkillData trapSkillData = PlayerSkillManager.Instance.GetScriptableObjPlayerSkillData<FreezingTrapSkillData>(PLAYER_SKILL_TYPE.FREEZING_TRAP);
+            RESISTANCE resistanceType = trapSkillData.resistanceType;
+            float piercing = PlayerSkillManager.Instance.GetAdditionalPiercePerLevelBaseOnLevel(trapData);
+            float resistanceValue = triggeredBy.piercingAndResistancesComponent.GetResistanceValue(resistanceType);
 
-            bool isFreezingTrapPlayerSource = this.isFreezingTrapPlayerSource;
+            if (triggeredBy.traitContainer.HasTrait("Recently Trapped")) {
+                resistanceValue += 50f;
+            }
+
+            CombatManager.ModifyValueByPiercingAndResistance(ref baseChance, piercing, resistanceValue);
+            string debugLog = string.Empty;
+#if DEBUG_LOG
+            debugLog += "Freezing Trap Chance";
+#endif
+            if (GameUtilities.RollChance(baseChance, ref debugLog)) {
+                willTrigger = true;
+            }
+#if DEBUG_LOG
+            triggeredBy.logComponent.PrintLogIfActive(debugLog);
+#endif
+
+            bool isFreezingTrapPlayerSource = false;
+            int duration = 0;
+            if (willTrigger) {
+                if (triggeredBy is Summon summon) {
+                    if (summon.summonType == SUMMON_TYPE.Kobold) {
+                        duration = PlayerSkillManager.Instance.GetDurationBonusPerLevel(trapData, 0);
+                    }
+                } else {
+                    if (triggeredBy.isNormalAndNotAlliedWithPlayer) {
+                        Messenger.Broadcast(PlayerSkillSignals.ON_TRAP_ACTIVATED_ON_VILLAGER, triggeredBy);
+                    }
+                    duration = PlayerSkillManager.Instance.GetDurationBonusPerLevel(trapData);
+                }
+                GameManager.Instance.CreateParticleEffectAt(triggeredBy, PARTICLE_EFFECT.Freezing_Trap_Explosion);
+                AudioManager.Instance.TryCreateAudioObject(trapSkillData.trapExplosionSound, owner, 1, false);
+
+                isFreezingTrapPlayerSource = this.isFreezingTrapPlayerSource;
+            }
+
             SetHasFreezingTrap(false, false);
-            
-            triggeredBy.traitContainer.RemoveStatusAndStacks(triggeredBy, "Freezing");
-            triggeredBy.traitContainer.AddTrait(triggeredBy, "Frozen", bypassElementalChance: true, overrideDuration: duration);
-            Frozen frozen = triggeredBy.traitContainer.GetTraitOrStatus<Frozen>("Frozen");
-            frozen?.SetIsPlayerSource(isFreezingTrapPlayerSource);
-            Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "InterventionAbility", "Freezing Trap", "trap_activated", null, LOG_TAG.Player);
-            log.AddToFillers(triggeredBy, triggeredBy.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-            log.AddLogToDatabase();
-            PlayerManager.Instance.player.ShowNotificationFrom(triggeredBy, log, true);
+
+            if (willTrigger) {
+                triggeredBy.traitContainer.RemoveStatusAndStacks(triggeredBy, "Freezing");
+                triggeredBy.traitContainer.AddTrait(triggeredBy, "Frozen", bypassElementalChance: true, overrideDuration: duration);
+                Frozen frozen = triggeredBy.traitContainer.GetTraitOrStatus<Frozen>("Frozen");
+                frozen?.SetIsPlayerSource(isFreezingTrapPlayerSource);
+                Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "InterventionAbility", "Freezing Trap", "trap_activated", null, LOG_TAG.Player);
+                log.AddToFillers(triggeredBy, triggeredBy.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                log.AddLogToDatabase();
+                PlayerManager.Instance.player.ShowNotificationFrom(triggeredBy, log, true);
+
+                triggeredBy.traitContainer.AddTrait(triggeredBy, "Recently Trapped");
+            }
         }
         #endregion
 
@@ -367,21 +399,53 @@ namespace Inner_Maps {
             }
         }
         public void TriggerSnareTrap(Character triggeredBy) {
-            GameManager.Instance.CreateParticleEffectAt(triggeredBy, PARTICLE_EFFECT.Snare_Trap_Explosion);
-            bool isSnareTrapPlayerSource = this.isSnareTrapPlayerSource;
-            SetHasSnareTrap(false, false);
-            //int duration = TraitManager.Instance.allTraits["Ensnared"].ticksDuration + PlayerSkillManager.Instance.GetDurationBonusPerLevel(PLAYER_SKILL_TYPE.SNARE_TRAP);
-            int duration = PlayerSkillManager.Instance.GetDurationBonusPerLevel(PLAYER_SKILL_TYPE.SNARE_TRAP);
-            triggeredBy.traitContainer.AddTrait(triggeredBy, "Ensnared", overrideDuration: duration);
-            Ensnared ensnared = triggeredBy.traitContainer.GetTraitOrStatus<Ensnared>("Ensnared");
-            ensnared?.SetIsPlayerSource(isSnareTrapPlayerSource);
-            if (triggeredBy.isNormalAndNotAlliedWithPlayer) {
-                Messenger.Broadcast(PlayerSkillSignals.ON_TRAP_ACTIVATED_ON_VILLAGER, triggeredBy);
+            bool willTrigger = false;
+            int baseChance = 100;
+            SkillData trapData = PlayerSkillManager.Instance.GetSpellData(PLAYER_SKILL_TYPE.SNARE_TRAP);
+            PlayerSkillData trapSkillData = PlayerSkillManager.Instance.GetScriptableObjPlayerSkillData<PlayerSkillData>(PLAYER_SKILL_TYPE.SNARE_TRAP);
+            RESISTANCE resistanceType = trapSkillData.resistanceType;
+            float piercing = PlayerSkillManager.Instance.GetAdditionalPiercePerLevelBaseOnLevel(trapData);
+            float resistanceValue = triggeredBy.piercingAndResistancesComponent.GetResistanceValue(resistanceType);
+
+            if (triggeredBy.traitContainer.HasTrait("Recently Trapped")) {
+                resistanceValue += 50f;
             }
-            Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "InterventionAbility", "Snare Trap", "trap_activated", null, LOG_TAG.Player);
-            log.AddToFillers(triggeredBy, triggeredBy.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-            log.AddLogToDatabase();
-            PlayerManager.Instance.player.ShowNotificationFrom(triggeredBy, log, true);
+
+            CombatManager.ModifyValueByPiercingAndResistance(ref baseChance, piercing, resistanceValue);
+            string debugLog = string.Empty;
+#if DEBUG_LOG
+            debugLog += "Snare Trap Chance";
+#endif
+            if (GameUtilities.RollChance(baseChance, ref debugLog)) {
+                willTrigger = true;
+            }
+#if DEBUG_LOG
+            triggeredBy.logComponent.PrintLogIfActive(debugLog);
+#endif
+            bool isSnareTrapPlayerSource = false;
+            if (willTrigger) {
+                GameManager.Instance.CreateParticleEffectAt(triggeredBy, PARTICLE_EFFECT.Snare_Trap_Explosion);
+                isSnareTrapPlayerSource = this.isSnareTrapPlayerSource;
+            }
+
+            SetHasSnareTrap(false, false);
+
+            if (willTrigger) {
+                //int duration = TraitManager.Instance.allTraits["Ensnared"].ticksDuration + PlayerSkillManager.Instance.GetDurationBonusPerLevel(PLAYER_SKILL_TYPE.SNARE_TRAP);
+                int duration = PlayerSkillManager.Instance.GetDurationBonusPerLevel(trapData);
+                triggeredBy.traitContainer.AddTrait(triggeredBy, "Ensnared", overrideDuration: duration);
+                Ensnared ensnared = triggeredBy.traitContainer.GetTraitOrStatus<Ensnared>("Ensnared");
+                ensnared?.SetIsPlayerSource(isSnareTrapPlayerSource);
+                if (triggeredBy.isNormalAndNotAlliedWithPlayer) {
+                    Messenger.Broadcast(PlayerSkillSignals.ON_TRAP_ACTIVATED_ON_VILLAGER, triggeredBy);
+                }
+                Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "InterventionAbility", "Snare Trap", "trap_activated", null, LOG_TAG.Player);
+                log.AddToFillers(triggeredBy, triggeredBy.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                log.AddLogToDatabase();
+                PlayerManager.Instance.player.ShowNotificationFrom(triggeredBy, log, true);
+
+                triggeredBy.traitContainer.AddTrait(triggeredBy, "Recently Trapped");
+            }
         }
         #endregion
 

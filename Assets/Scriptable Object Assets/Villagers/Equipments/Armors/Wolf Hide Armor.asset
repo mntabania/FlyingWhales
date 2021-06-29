@@ -20,10 +20,10 @@ MonoBehaviour:
   description: This is Wolfhide Armor
   imgIcon: {fileID: 21300000, guid: 08cf146e7e025da44b3980eef7f16598, type: 3}
   equipmentUpgradeData:
-    bonuses: 0500000002000000
+    bonuses: 05000000
     AdditionalPiercing: 12.5
     AdditionalMaxHPPercentage: 0
-    AdditionalMaxHPActual: 450
+    AdditionalMaxHPActual: 250
     AdditionalAttackPercentage: 25
     AdditionalAttackActual: 0
     AdditionalIntPercentage: 0
