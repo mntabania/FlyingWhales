@@ -6,6 +6,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using System;
+using System.IO;
 
 public class OptionsMenu : PopupMenuBase {
 
@@ -18,6 +19,7 @@ public class OptionsMenu : PopupMenuBase {
     [SerializeField] private Button btnSaveFileName;
 
     private Action m_saveAction;
+    private string m_fileNameToDelete;
 
     #region Listeners
     public void SubscribeListeners() {
@@ -135,7 +137,29 @@ public class OptionsMenu : PopupMenuBase {
     }
     public void SaveNameFromInputName() {
         HideInputFileName();
+        string[] saveFiles = System.IO.Directory.GetFiles(UtilityScripts.Utilities.gameSavePath, "*.zip");
+        bool sameFile = false;
+        string sameName = string.Empty;
+        for(int x = 0; x < saveFiles.Length; ++x) {
+            if (saveNameInput.text == Path.GetFileNameWithoutExtension(saveFiles[x])) {
+                sameFile = true;
+                sameName = Path.GetFileNameWithoutExtension(saveFiles[x]) + ".zip";
+                break;
+			}
+        }
+
+        if (sameFile) {
+            m_fileNameToDelete = UtilityScripts.Utilities.gameSavePath + sameName;
+            UIManager.Instance.ShowYesNoConfirmation("Overwrite Existing File", "Are you sure you want to Overwrite existing file?", DeleteExistingFileThenSave, layer: 50, showCover: true);
+        } else {
+            m_saveAction?.Invoke();
+        }
+    }
+
+    private void DeleteExistingFileThenSave() {
+        File.Delete(m_fileNameToDelete);
         m_saveAction?.Invoke();
+
     }
     private void Abandon() {
         DOTween.Clear(true);
