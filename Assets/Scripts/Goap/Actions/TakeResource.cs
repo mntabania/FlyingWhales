@@ -184,7 +184,7 @@ public class TakeResource : GoapAction {
         if (takenResource > resourcePile.resourceInPile) {
             takenResource = resourcePile.resourceInPile;
         }
-        goapNode.descriptionLog.AddToFillers(null, takenResource.ToString() + "TEST", LOG_IDENTIFIER.STRING_1);
+        goapNode.descriptionLog.AddToFillers(null, takenResource.ToString(), LOG_IDENTIFIER.STRING_1);
         //goapNode.descriptionLog.AddToFillers(null, Utilities.NormalizeString(resourcePile.providedResource.ToString()), LOG_IDENTIFIER.STRING_2);
     }
     public void AfterTakeSuccess(ActualGoapNode goapNode) {
