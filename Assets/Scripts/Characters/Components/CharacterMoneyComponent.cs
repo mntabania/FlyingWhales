@@ -5,7 +5,7 @@ public class CharacterMoneyComponent : CharacterComponent {
     public int coins { get; private set; }
 
     public CharacterMoneyComponent() {
-        coins = 1000;
+        coins = 50;
     }
 
     public CharacterMoneyComponent(SaveDataCharacterMoneyComponent data) {
