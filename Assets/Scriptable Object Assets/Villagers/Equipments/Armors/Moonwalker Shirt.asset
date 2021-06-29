@@ -20,10 +20,10 @@ MonoBehaviour:
   description: This is Moonthread Shirt
   imgIcon: {fileID: 21300000, guid: 863aa5bcd01f1574181c14d1a1160665, type: 3}
   equipmentUpgradeData:
-    bonuses: 0400000003000000050000000b000000
+    bonuses: 0500000001000000
     AdditionalPiercing: 12.5
     AdditionalMaxHPPercentage: 10
-    AdditionalMaxHPActual: 300
+    AdditionalMaxHPActual: 270
     AdditionalAttackPercentage: 25
     AdditionalAttackActual: 0
     AdditionalIntPercentage: 0

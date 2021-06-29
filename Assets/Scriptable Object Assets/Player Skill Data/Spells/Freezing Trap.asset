@@ -53,7 +53,7 @@ MonoBehaviour:
     isOR: 0
   skillUpgradeData:
     upgradeCosts: 140000003200000050000000
-    manacostPerLevel: 32000000320000003200000032000000
+    manacostPerLevel: 96000000fa0000005e010000c2010000
     chargesPerLevel: 02000000020000000200000003000000
     bonuses: 010000000a0000000e000000
     additionalDamagePerLevel: 
@@ -73,7 +73,7 @@ MonoBehaviour:
     - 20
     - 40
     - 60
-    durationBonusPerLevel: 2800000050000000780000008c000000
+    durationBonusPerLevel: 280000003c0000005000000064000000
     additionalMaxHPPercentagePerLevel: []
     additionalMaxHPActualPerLevel: 
     additionalChanceBonusPercentagePerLevel: []
