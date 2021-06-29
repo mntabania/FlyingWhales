@@ -47,21 +47,6 @@ public class CharacterTalentComponent : CharacterComponent {
         chosenTalent = CollectionUtilities.GetRandomElement(talentChoices);
         talent = GetTalent(chosenTalent);
         talent.LevelUp(p_character);
-
-        //TODO: BELOW CODE IS FOR TESTING ONLY
-        CharacterTalent martialArts = GetTalent(CHARACTER_TALENT.Martial_Arts);
-        int currentMartialArts = martialArts.level;
-        int maxLevel = 5;
-        int missing = maxLevel - currentMartialArts;
-        for (int i = 0; i < missing; i++) {
-            martialArts.LevelUp(p_character);
-        }
-        CharacterTalent combatMagic = GetTalent(CHARACTER_TALENT.Combat_Magic);
-        int combatMagicLevel = combatMagic.level;
-        missing = maxLevel - combatMagicLevel;
-        for (int i = 0; i < missing; i++) {
-            combatMagic.LevelUp(p_character);
-        }
     }
     private void LoadAllTalents(SaveDataCharacterTalentComponent data) {
         allTalents = new List<CharacterTalent>();
