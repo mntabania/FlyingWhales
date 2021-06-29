@@ -2,34 +2,44 @@
 using System.Collections.Generic;
 using UnityEngine.Profiling;
 using UtilityScripts;
+using Inner_Maps.Location_Structures;
+
 namespace Locations {
     public class LocationCharacterTracker {
         public List<Character> charactersAtLocation { get; private set; }
-
+        public List<Summon> animalsThatProducesMats { get; private set; }
+        public List<Summon> shearables { get; private set; }
+        public List<Summon> skinnables { get; private set; }
+        public List<Summon> butcherables { get; private set; }
         public LocationCharacterTracker() {
             charactersAtLocation = new List<Character>();
+            animalsThatProducesMats = new List<Summon>();
+            shearables = new List<Summon>();
+            skinnables = new List<Summon>();
+            butcherables = new List<Summon>();
         }
 
         public void AddCharacterAtLocation(Character p_character, Area p_area) {
             charactersAtLocation.Add(p_character);
-            if (p_character.race.IsSapient()) {
-                //if (character.currentSettlement != null) {
-                //    character.currentSettlement.SettlementResources?.RemoveCharacterFromSettlement(character);
-                //}
-                p_area.settlementOnArea?.SettlementResources?.AddCharacterToSettlement(p_character);
-            } else if (p_character.race.IsShearable() || p_character.race.IsSkinnable()) {
-                //if (character.currentSettlement != null) {
-                //    character.currentSettlement.SettlementResources?.RemoveAnimalFromSettlement(character as Summon);
-                //}
-                p_area.settlementOnArea?.SettlementResources?.AddAnimalToSettlement(p_character as Summon);
+            //if (p_character.race.IsSapient()) {
+            //    //if (character.currentSettlement != null) {
+            //    //    character.currentSettlement.SettlementResources?.RemoveCharacterFromSettlement(character);
+            //    //}
+            //    p_area.settlementOnArea?.SettlementResources?.AddCharacterToSettlement(p_character);
+            //} else 
+            if (p_character is Summon summon && (p_character.race.IsShearable() || p_character.race.IsSkinnable())) {
+                AddAnimalToSettlement(summon);
             }
         }
         public void RemoveCharacterFromLocation(Character p_character, Area p_area) {
             if (charactersAtLocation.Remove(p_character)) {
-                if (p_character.race.IsSapient()) {
-                    p_area.settlementOnArea?.SettlementResources?.RemoveCharacterFromSettlement(p_character);
-                } else if (p_character.race.IsShearable() || p_character.race.IsSkinnable()) {
-                    p_area.settlementOnArea?.SettlementResources?.RemoveAnimalFromSettlement(p_character as Summon);
+                //if (p_character.race.IsSapient()) {
+                //    p_area.settlementOnArea?.SettlementResources?.RemoveCharacterFromSettlement(p_character);
+                //} else if (p_character.race.IsShearable() || p_character.race.IsSkinnable()) {
+                //    p_area.settlementOnArea?.SettlementResources?.RemoveAnimalFromSettlement(p_character as Summon);
+                //}
+                if (p_character is Summon summon && (p_character.race.IsShearable() || p_character.race.IsSkinnable())) {
+                    RemoveAnimalFromSettlement(summon);
                 }
             }
 
@@ -57,6 +67,67 @@ namespace Locations {
             Profiler.EndSample();
 #endif
         }
+
+        #region Animals
+        private void AddAnimalToSettlement(Summon p_character) {
+            if (!animalsThatProducesMats.Contains(p_character)) {
+                animalsThatProducesMats.Add(p_character);
+                if (p_character.race.IsButcherableWhenDead() || p_character.race.IsButcherableWhenDeadOrAlive()) {
+                    if (!butcherables.Contains(p_character)) {
+                        butcherables.Add(p_character);
+                    }
+                }
+                if (p_character.race.IsShearable()) {
+                    shearables.Add(p_character);
+                } 
+                if (p_character.race.IsSkinnable()) {
+                    skinnables.Add(p_character);
+                }
+            }
+        }
+        private void RemoveAnimalFromSettlement(Summon p_character) {
+            animalsThatProducesMats.Remove(p_character);
+            shearables.Remove(p_character);
+            skinnables.Remove(p_character);
+            butcherables.Remove(p_character);
+        }
+        public void PopulateAllAnimalsForSkinnersLodgeSkinning(List<Character> allAvailableAnimals) {
+            for (int i = 0; i < animalsThatProducesMats.Count; i++) {
+                Summon animal = animalsThatProducesMats[i];
+                if (!animal.isBeingSeized && !animal.HasJobTargetingThis(JOB_TYPE.MONSTER_BUTCHER) && animal.currentStructure?.structureType == STRUCTURE_TYPE.CITY_CENTER) {
+                    if (animal.isDead && animal.race.IsSkinnable()) {
+                        allAvailableAnimals.Add(animal);
+                    }
+                }
+            }
+        }
+        public void PopulateAllAnimalsForSkinnersLodgeShearing(List<Character> ableToShearTodayList) {
+            for (int i = 0; i < animalsThatProducesMats.Count; i++) {
+                Summon animal = animalsThatProducesMats[i];
+                if (!animal.isBeingSeized && animal is ShearableAnimal target && target.isAvailableForShearing && !target.HasJobTargetingThis(JOB_TYPE.MONSTER_BUTCHER)) {
+                    if (animal.isDead || animal.combatComponent.combatMode == COMBAT_MODE.Passive) {
+                        ableToShearTodayList.Add(animal);
+                    }
+                }
+            }
+        }
+        public Summon GetFirstButcherableAnimal() {
+            for (int i = 0; i < butcherables.Count; i++) {
+                Summon monster = butcherables[i];
+                LocationStructure currentStructure = monster.currentStructure;
+                if (currentStructure != null && !monster.HasJobTargetingThis(JOB_TYPE.MONSTER_BUTCHER)) {
+                    if (monster.race.IsButcherableWhenDead()) {
+                        if (monster.isDead) {
+                            return monster;
+                        }
+                    } else if (monster.race.IsButcherableWhenDeadOrAlive()) {
+                        return monster;
+                    }
+                }
+            }
+            return null;
+        }
+        #endregion
 
         #region Utilities
         public void PopulateCharacterListInsideHex(List<Character> p_characterList) {
@@ -223,6 +294,9 @@ namespace Locations {
                 }
             }
             return count;
+        }
+        public int GetCharacterCount() {
+            return charactersAtLocation.Count;
         }
 #endregion
 

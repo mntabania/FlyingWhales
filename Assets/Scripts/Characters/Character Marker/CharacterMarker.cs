@@ -1745,9 +1745,9 @@ public class CharacterMarker : MapObjectVisual<Character> {
     //    }
     //    return false;
     //}
-#endregion
+    #endregion
 
-#region Avoid In Range
+    #region Avoid In Range
     //public bool AddAvoidInRange(IPointOfInterest poi, bool processCombatBehavior = true, string reason = "") {
     //    if (poi is Character) {
     //        return AddAvoidInRange(poi as Character, processCombatBehavior, reason);
@@ -1853,9 +1853,9 @@ public class CharacterMarker : MapObjectVisual<Character> {
     //        }
     //    }
     //}
-#endregion
+    #endregion
 
-#region Flee
+    #region Flee
     public void OnStartFlee() {
         if (!hasFleePath) {
             //Only clear path on the first start of flee, once the character is already in flee path and decided to flee again do not clear path anymore

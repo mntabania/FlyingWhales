@@ -16,7 +16,7 @@ public class FishingSpot : TileObject {
     private FishingSpotGameObject _fishingSpotGameObject;
     
     public Fishery connectedFishingShack { get; private set; }
-    public BaseSettlement parentSettlement { get; private set; }
+    //public BaseSettlement parentSettlement { get; private set; }
     public override Type serializedData => typeof(SaveDataFishingSpot);
     public FishingSpot() {
         Initialize(TILE_OBJECT_TYPE.FISHING_SPOT);
@@ -26,7 +26,7 @@ public class FishingSpot : TileObject {
         for (int i = 0; i < 10; i++) {
             traitContainer.AddTrait(this, "Wet", overrideDuration: 0);
         }
-        BaseSettlement.onSettlementBuilt += UpdateSettlementResourcesParent;
+        //BaseSettlement.onSettlementBuilt += UpdateSettlementResourcesParent;
     }
     public FishingSpot(SaveDataTileObject data) : base(data) { }
 
@@ -49,25 +49,25 @@ public class FishingSpot : TileObject {
         base.DestroyMapVisualGameObject();
         _fishingSpotGameObject = null;
     }
-    protected override void UpdateSettlementResourcesParent() {
-        if (gridTileLocation.area.settlementOnArea != null) {
-            gridTileLocation.area.settlementOnArea.SettlementResources?.AddToListBasedOnRequirement(SettlementResources.StructureRequirement.FISHING_SPOT, this);
-        }
-        gridTileLocation.area.neighbourComponent.neighbours.ForEach((eachNeighbor) => {
-            if (eachNeighbor.settlementOnArea != null) {
-                //eachNeighbor.settlementOnArea.SettlementResources?.AddToListBasedOnRequirement(SettlementResources.StructureRequirement.FISHING_SPOT, this);
-                parentSettlement = eachNeighbor.settlementOnArea;
-            }
-        });
-    }
-    protected override void RemoveFromSettlementResourcesParent() {
-        if (parentSettlement != null && parentSettlement.SettlementResources != null) {
-            if (parentSettlement.SettlementResources.fishingSpots.Remove(this)) {
-                parentSettlement = null;
-            }    
-        }
+    //protected override void UpdateSettlementResourcesParent() {
+    //    if (gridTileLocation.area.settlementOnArea != null) {
+    //        gridTileLocation.area.settlementOnArea.SettlementResources?.AddToListBasedOnRequirement(SettlementResources.StructureRequirement.FISHING_SPOT, this);
+    //    }
+    //    gridTileLocation.area.neighbourComponent.neighbours.ForEach((eachNeighbor) => {
+    //        if (eachNeighbor.settlementOnArea != null) {
+    //            //eachNeighbor.settlementOnArea.SettlementResources?.AddToListBasedOnRequirement(SettlementResources.StructureRequirement.FISHING_SPOT, this);
+    //            parentSettlement = eachNeighbor.settlementOnArea;
+    //        }
+    //    });
+    //}
+    //protected override void RemoveFromSettlementResourcesParent() {
+    //    if (parentSettlement != null && parentSettlement.SettlementResources != null) {
+    //        if (parentSettlement.SettlementResources.fishingSpots.Remove(this)) {
+    //            parentSettlement = null;
+    //        }    
+    //    }
         
-    }
+    //}
     public override void OnPlacePOI() {
         base.OnPlacePOI();
         traitContainer.AddTrait(this, "Indestructible");
@@ -88,7 +88,7 @@ public class FishingSpot : TileObject {
     public override void OnDestroyPOI() {
         base.OnDestroyPOI();
         Messenger.RemoveListener(Signals.HOUR_STARTED, HourStarted);
-        BaseSettlement.onSettlementBuilt -= UpdateSettlementResourcesParent;
+        //BaseSettlement.onSettlementBuilt -= UpdateSettlementResourcesParent;
     }
     public override bool CanBeAffectedByElementalStatus(string traitName) {
         if (traitName == "Wet") {

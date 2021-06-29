@@ -319,7 +319,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
     #region Utilities
     public void Initialize() {
         SubscribeToSignals();
-        onSettlementBuilt?.Invoke();
+        //onSettlementBuilt?.Invoke();
     }
     protected override void SettlementWipedOut() {
         base.SettlementWipedOut();
@@ -1065,7 +1065,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
             int cap = settlementType.GetFacilityCap(kvp.Key);
             int currentAmount = GetStructureCount(kvp.Key.structureType);
             SettlementResources.StructureRequirement required = kvp.Key.structureType.GetRequiredObjectForBuilding();
-            if (currentAmount >= cap || !m_settlementResources.IsRequirementAvailable(required)) {
+            if (currentAmount >= cap || !m_settlementResources.IsRequirementAvailable(required, this)) {
                 facilityWeights.SetElementWeight(kvp.Key, 0); //remove weight of object since it is already at max.
             }
         }
@@ -1144,48 +1144,52 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         }
     }
     private void PopulateAvailableTreeConnectors(List<StructureConnector> connectors) {
-        for (int i = 0; i < SettlementResources.trees.Count; i++) {
-            TreeObject treeObject = SettlementResources.trees[i];
+        List<TileObject> allTrees = RuinarchListPool<TileObject>.Claim();
+        SettlementResources.PopulateAllTrees(allTrees, this);
+        for (int i = 0; i < allTrees.Count; i++) {
+            TreeObject treeObject = allTrees[i] as TreeObject;
             if (treeObject.structureConnector != null && treeObject.structureConnector.isOpen) {
                 connectors.Add(treeObject.structureConnector);
             }
         }
         for (int i = 0; i < occupiedVillageSpot.reservedAreas.Count; i++) {
             Area area = occupiedVillageSpot.reservedAreas[i];
-            for (int j = 0; j < area.tileObjectComponent.itemsInArea.Count; j++) {
-                TileObject tileObject = area.tileObjectComponent.itemsInArea[j];
-                if (tileObject is TreeObject treeObject) {
-                    if (treeObject.structureConnector != null && treeObject.structureConnector.isOpen && 
-                        !connectors.Contains(treeObject.structureConnector)) {
-                        connectors.Add(treeObject.structureConnector);
-                    }
+            for (int j = 0; j < area.tileObjectComponent.trees.Count; j++) {
+                TreeObject treeObject = area.tileObjectComponent.trees[j];
+                if (treeObject.structureConnector != null && treeObject.structureConnector.isOpen &&
+                    !connectors.Contains(treeObject.structureConnector)) {
+                    connectors.Add(treeObject.structureConnector);
                 }
             }
         }
+        RuinarchListPool<TileObject>.Release(allTrees);
     }
     private void PopulateAvailableFishingSpotConnectors(List<StructureConnector> connectors) {
-        for (int i = 0; i < SettlementResources.fishingSpots.Count; i++) {
-            FishingSpot fishingSpot = SettlementResources.fishingSpots[i];
+        List<TileObject> allFishingSpots = RuinarchListPool<TileObject>.Claim();
+        SettlementResources.PopulateAllFishingSpots(allFishingSpots, this);
+        for (int i = 0; i < allFishingSpots.Count; i++) {
+            FishingSpot fishingSpot = allFishingSpots[i] as FishingSpot;
             if (fishingSpot.structureConnector != null && fishingSpot.structureConnector.isOpen) {
                 connectors.Add(fishingSpot.structureConnector);
             }
         }
         for (int i = 0; i < occupiedVillageSpot.reservedAreas.Count; i++) {
             Area area = occupiedVillageSpot.reservedAreas[i];
-            for (int j = 0; j < area.tileObjectComponent.itemsInArea.Count; j++) {
-                TileObject tileObject = area.tileObjectComponent.itemsInArea[j];
-                if (tileObject is FishingSpot fishingSpot) {
-                    if (fishingSpot.structureConnector != null && fishingSpot.structureConnector.isOpen && 
-                        !connectors.Contains(fishingSpot.structureConnector)) {
-                        connectors.Add(fishingSpot.structureConnector);
-                    }
+            for (int j = 0; j < area.tileObjectComponent.fishingSpots.Count; j++) {
+                FishingSpot fishingSpot = area.tileObjectComponent.fishingSpots[j];
+                if (fishingSpot.structureConnector != null && fishingSpot.structureConnector.isOpen &&
+                    !connectors.Contains(fishingSpot.structureConnector)) {
+                    connectors.Add(fishingSpot.structureConnector);
                 }
             }
         }
+        RuinarchListPool<TileObject>.Release(allFishingSpots);
     }
     private void PopulateAvailableMineShackConnectors(List<StructureConnector> connectors) {
-        for (int i = 0; i < SettlementResources.mineShackSpots.Count; i++) {
-            LocationGridTile oreVein = SettlementResources.mineShackSpots[i];
+        List<LocationGridTile> allMineShackSpots = RuinarchListPool<LocationGridTile>.Claim();
+        SettlementResources.PopulateAllMineShackSpots(allMineShackSpots, this);
+        for (int i = 0; i < allMineShackSpots.Count; i++) {
+            LocationGridTile oreVein = allMineShackSpots[i];
             if (oreVein.tileObjectComponent.genericTileObject.structureConnector != null && oreVein.tileObjectComponent.genericTileObject.structureConnector.isOpen) {
                 connectors.Add(oreVein.tileObjectComponent.genericTileObject.structureConnector);
             }
@@ -1199,6 +1203,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
                 }
             }
         }
+        RuinarchListPool<LocationGridTile>.Release(allMineShackSpots);
     }
     public bool HasReservedSpotWithFeature(string p_feature) {
         for (int i = 0; i < occupiedVillageSpot.reservedAreas.Count; i++) {
