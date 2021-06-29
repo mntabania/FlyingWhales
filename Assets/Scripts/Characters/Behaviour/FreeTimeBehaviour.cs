@@ -57,13 +57,16 @@ public class FreeTimeBehaviour : CharacterBehaviourComponent {
                 }
             }
         }
+
+        //join or create party
+        FreeTimePartyLogic(character, ref log);
         
 #if DEBUG_LOG
         log = $"{log}\n-{character.name} Will try to obtain want.";
 #endif
         //obtain want
         //only villagers part of major faction can process wants since all of it requires a character that is part of a faction that lives in a village with the needed facilities.
-        if (ChanceData.RollChance(CHANCE_TYPE.Free_Time_Obtain_Want, ref log) && character.faction != null && character.faction.isMajorFaction) { //20
+        if (!character.trapStructure.IsTrapped() && ChanceData.RollChance(CHANCE_TYPE.Free_Time_Obtain_Want, ref log) && character.faction != null && character.faction.isMajorFaction) { //20
 #if DEBUG_LOG
             GameManager.stopwatch.Stop();
             GameManager.stopwatch.Reset();
@@ -242,38 +245,6 @@ public class FreeTimeBehaviour : CharacterBehaviourComponent {
                         log = $"{log}\n-{character.name} has no higher tier classes that it can change to";
 #endif
                     }
-                }
-                
-                if (!character.partyComponent.hasParty && character.homeSettlement != null && !character.structureComponent.HasWorkPlaceStructure()) {
-#if DEBUG_LOG
-                    log = $"{log}\n-{character.name} is not yet part of a party. Will try to join or create one.";
-#endif
-                    bool shouldCreateOrJoinParty = true;
-                    if (character.HasAfflictedByPlayerWith(PLAYER_SKILL_TYPE.AGORAPHOBIA)) {
-                        shouldCreateOrJoinParty = PlayerSkillManager.Instance.GetAfflictionData(PLAYER_SKILL_TYPE.AGORAPHOBIA).currentLevel >= 3;
-                    }
-                    Party unFullParty = character.homeSettlement.GetFirstUnfullParty();
-                    if (unFullParty == null) {
-#if DEBUG_LOG
-                        log = $"{log}\n-No un-full party. Will try to create party, rolling chance...";
-#endif
-                        if (GameUtilities.RollChance(30, ref log) && character.faction != null && shouldCreateOrJoinParty) {
-#if DEBUG_LOG
-                            log = $"{log}\n-Chance met, will create party.";
-#endif
-                            character.interruptComponent.TriggerInterrupt(INTERRUPT.Create_Party, character);
-                        }
-                    } else {
-#if DEBUG_LOG
-                        log = $"{log}\n-Found an un-full party: {unFullParty.name}. Rolling chance to join...";
-#endif
-                        if (GameUtilities.RollChance(45, ref log) && shouldCreateOrJoinParty) {
-#if DEBUG_LOG
-                            log = $"{log}\n-Will join party";
-#endif
-                            character.interruptComponent.TriggerInterrupt(INTERRUPT.Join_Party, unFullParty.members[0]);
-                        }
-                    }    
                 }
             }
 
@@ -633,6 +604,41 @@ public class FreeTimeBehaviour : CharacterBehaviourComponent {
     private void TryAddClassToChangeClassChoices(Character p_character, string p_className, List<string> p_classChoices) {
         if (p_character.classComponent.ableClasses.Contains(p_className)) {
             p_classChoices.Add(p_className);
+        }
+    }
+    private void FreeTimePartyLogic(Character character, ref string log) {
+        if ((character.characterClass.IsCombatant() || character.characterClass.className == "Noble") && !character.traitContainer.HasTrait("Enslaved")) {
+            if (!character.partyComponent.hasParty && character.homeSettlement != null && !character.structureComponent.HasWorkPlaceStructure()) {
+#if DEBUG_LOG
+                log = $"{log}\n-{character.name} is not yet part of a party. Will try to join or create one.";
+#endif
+                bool shouldCreateOrJoinParty = true;
+                if (character.HasAfflictedByPlayerWith(PLAYER_SKILL_TYPE.AGORAPHOBIA)) {
+                    shouldCreateOrJoinParty = PlayerSkillManager.Instance.GetAfflictionData(PLAYER_SKILL_TYPE.AGORAPHOBIA).currentLevel >= 3;
+                }
+                Party unFullParty = character.homeSettlement.GetFirstUnfullParty();
+                if (unFullParty == null) {
+#if DEBUG_LOG
+                    log = $"{log}\n-No un-full party. Will try to create party, rolling chance...";
+#endif
+                    if (GameUtilities.RollChance(30, ref log) && character.faction != null && shouldCreateOrJoinParty) {
+#if DEBUG_LOG
+                        log = $"{log}\n-Chance met, will create party.";
+#endif
+                        character.interruptComponent.TriggerInterrupt(INTERRUPT.Create_Party, character);
+                    }
+                } else {
+#if DEBUG_LOG
+                    log = $"{log}\n-Found an un-full party: {unFullParty.name}. Rolling chance to join...";
+#endif
+                    if (GameUtilities.RollChance(45, ref log) && shouldCreateOrJoinParty) {
+#if DEBUG_LOG
+                        log = $"{log}\n-Will join party";
+#endif
+                        character.interruptComponent.TriggerInterrupt(INTERRUPT.Join_Party, unFullParty.members[0]);
+                    }
+                }    
+            }
         }
     }
     #endregion

@@ -437,13 +437,13 @@ public class CharacterInfoUI : InfoUIBase {
         hpLbl.text = $"{_activeCharacter.currentHP.ToString()}/{_activeCharacter.maxHP.ToString()}";
         attackLbl.text = $"{_activeCharacter.combatComponent.GetComputedStrength().ToString()}";
         speedLbl.text =  $"{_activeCharacter.combatComponent.attackSpeed / 1000f}s";
-        coinsLbl.text = $"{_activeCharacter.moneyComponent.coins}";
-        intLbl.text = $"{_activeCharacter.combatComponent.GetComputedIntelligence()}";
-        critRateLbl.text = $"{_activeCharacter.combatComponent.critRate}";
-        raceLbl.text = $"{UtilityScripts.GameUtilities.GetNormalizedSingularRace(_activeCharacter.race)}";
-        elementLbl.text = UtilityScripts.Utilities.GetRichTextIconForElement(_activeCharacter.combatComponent.elementalDamage.type) + $"{_activeCharacter.combatComponent.elementalDamage.type}";
-        piercingLbl.text = $"{_activeCharacter.piercingAndResistancesComponent.piercingPower}";
-        titlePiercingLbl.text = $"Piercing{UtilityScripts.Utilities.ColorizeSpellTitle($"{UtilityScripts.Utilities.PiercingIcon()}")}";
+        coinsLbl.text = $"{_activeCharacter.moneyComponent.coins.ToString()}";
+        intLbl.text = $"{_activeCharacter.combatComponent.GetComputedIntelligence().ToString()}";
+        critRateLbl.text = $"{_activeCharacter.combatComponent.critRate.ToString()}%";
+        raceLbl.text = $"{GameUtilities.GetNormalizedSingularRace(_activeCharacter.race)}";
+        elementLbl.text = $"<size=\"20\">{UtilityScripts.Utilities.GetRichTextIconForElement(_activeCharacter.combatComponent.elementalDamage.type)}</size>"; // + $"{_activeCharacter.combatComponent.elementalDamage.type}"
+        piercingLbl.text = $"{_activeCharacter.piercingAndResistancesComponent.piercingPower}<size=\"20\">{UtilityScripts.Utilities.PiercingIcon()}</size>";
+        // titlePiercingLbl.text = $"Piercing{UtilityScripts.Utilities.ColorizeSpellTitle($"{UtilityScripts.Utilities.PiercingIcon()}")}";
     }
     #endregion
 

@@ -1159,7 +1159,7 @@ namespace UtilityScripts {
             string formatted = string.Empty;
             switch (p_type) {
                 case ELEMENTAL_TYPE.Normal:
-                formatted = $"{ColorizeSpellTitle($"{NormalIcon()}")}";
+                formatted = $"{ColorizeSpellTitle($"{AttackIcon()}")}"; //NormalIcon
                 break;
                 case ELEMENTAL_TYPE.Poison:
                 formatted = $"{ColorizeSpellTitle($"{PoisonIcon()}")}";
