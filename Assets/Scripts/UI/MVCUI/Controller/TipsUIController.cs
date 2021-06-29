@@ -82,7 +82,7 @@ public class TipsUIController : MVCUIController {
     void OnItemClicked(TIPS p_tips) {
         switch (p_tips) {
             case TIPS.Time_Manager:
-            PlayerUI.Instance.ShowSpecificTutorial(Tutorial.TutorialManager.Tutorial_Type.Chaotic_Energy);
+            PlayerUI.Instance.ShowSpecificTutorial(Tutorial.TutorialManager.Tutorial_Type.Time_Management);
             break;
             case TIPS.Chaotic_Energy:
             PlayerUI.Instance.ShowSpecificTutorial(Tutorial.TutorialManager.Tutorial_Type.Chaotic_Energy);
@@ -97,7 +97,7 @@ public class TipsUIController : MVCUIController {
             PlayerUI.Instance.ShowSpecificTutorial(Tutorial.TutorialManager.Tutorial_Type.Upgrading_The_Portal);
             break;
             case TIPS.Target_Menu:
-            PlayerUI.Instance.ShowSpecificTutorial(Tutorial.TutorialManager.Tutorial_Type.Intel);
+            PlayerUI.Instance.ShowSpecificTutorial(Tutorial.TutorialManager.Tutorial_Type.Target_Menu);
             break;
         }
         TipsItemUI ti = null;

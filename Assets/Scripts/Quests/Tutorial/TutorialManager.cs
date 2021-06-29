@@ -26,7 +26,10 @@ namespace Tutorial {
             Spirit_Energy,
             Migration_Controls,
             Base_Building,
-            Abilities
+            Abilities,
+            Resistances,
+            Time_Management,
+            Target_Menu,
         }
         
         [System.Obsolete("Old Tutorials will be removed")]
