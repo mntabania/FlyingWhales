@@ -391,10 +391,12 @@ namespace Inner_Maps.Location_Structures {
                 needsToPay = true;
                 buyerOpinionOfWorker = -100;
                 return false;    
+            } else {
+                //if no worker allow character to buy but buyer now always has to pay.
+                needsToPay = true;
+                buyerOpinionOfWorker = -100;
+                return true;
             }
-            needsToPay = true;
-            buyerOpinionOfWorker = -100;
-            return false;
         }
         #endregion
 

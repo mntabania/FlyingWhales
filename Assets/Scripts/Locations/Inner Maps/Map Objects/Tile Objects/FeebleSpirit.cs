@@ -128,8 +128,19 @@ public class FeebleSpirit : TileObject {
         }
     }
     private void FeebleEffect() {
-        float processedEnergyDrain = (-PlayerSkillManager.Instance.GetIncreaseStatsPercentagePerLevel(PLAYER_SKILL_TYPE.FEEBLE_SPIRIT));
-        possessionTarget.needsComponent.AdjustTiredness(processedEnergyDrain);
+        int baseChance = 100;
+        SkillData spiritData = PlayerSkillManager.Instance.GetSpellData(PLAYER_SKILL_TYPE.FEEBLE_SPIRIT);
+        RESISTANCE resistanceType = PlayerSkillManager.Instance.GetScriptableObjPlayerSkillData<PlayerSkillData>(PLAYER_SKILL_TYPE.FEEBLE_SPIRIT).resistanceType;
+        float piercing = PlayerSkillManager.Instance.GetAdditionalPiercePerLevelBaseOnLevel(spiritData);
+        float resistanceValue = possessionTarget.piercingAndResistancesComponent.GetResistanceValue(resistanceType);
+        CombatManager.ModifyValueByPiercingAndResistance(ref baseChance, piercing, resistanceValue);
+        if (GameUtilities.RollChance(baseChance)) {
+            //Triggers Effect
+            float processedEnergyDrain = -PlayerSkillManager.Instance.GetIncreaseStatsPercentagePerLevel(spiritData);
+            possessionTarget.needsComponent.AdjustTiredness(processedEnergyDrain);
+        }
+
+
     }
     private void DonePossession() {
         GameManager.Instance.CreateParticleEffectAt(possessionTarget.gridTileLocation, PARTICLE_EFFECT.Minion_Dissipate);

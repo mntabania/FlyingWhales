@@ -699,7 +699,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
             GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.FEED, goapEffect, targetCharacter, owner);
             if (owner.homeStructure != null) {
                 job.AddPriorityLocation(INTERACTION_TYPE.TAKE_RESOURCE, owner.homeStructure);
-                job.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] { 10 });
+                job.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] { 20 });
             }
             if (owner.homeSettlement != null) {
                 for (int i = 0; i < owner.homeSettlement.allStructures.Count; i++) {
@@ -708,7 +708,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
                         job.AddPriorityLocation(INTERACTION_TYPE.BUY_FOOD, s);
                     }
                 }
-                job.AddOtherData(INTERACTION_TYPE.BUY_FOOD, new object[] { 10 });
+                job.AddOtherData(INTERACTION_TYPE.BUY_FOOD, new object[] { 20 });
             }
             producedJob = job;
             return true;

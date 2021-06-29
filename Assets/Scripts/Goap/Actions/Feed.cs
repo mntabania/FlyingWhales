@@ -138,7 +138,7 @@ public class Feed : GoapAction {
                     log.AddToFillers(goapNode.poiTarget, goapNode.poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
                     goapNode.OverrideDescriptionLog(log);
                 }
-                carriedPile.AdjustResourceInPile(-10);
+                carriedPile.AdjustResourceInPile(-20);
                 // targetCharacter.resourceStorageComponent.AdjustResource(RESOURCE.FOOD, 12);
             }    
         }

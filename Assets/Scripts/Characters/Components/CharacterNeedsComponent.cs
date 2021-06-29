@@ -1422,7 +1422,7 @@ public class CharacterNeedsComponent : CharacterComponent {
         if (!triggerGrieving) {
             GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType, new GoapEffect(GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, string.Empty, false, GOAP_EFFECT_TARGET.ACTOR), owner, owner);
             JobUtilities.PopulatePriorityLocationsForFullnessRecovery(owner, job);
-            job.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] { 12 });
+            job.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] { 20 });
             return job;
         } else {
             griefstricken.TriggerGrieving();

@@ -237,6 +237,9 @@ public class VillageGeneration : MapGenerationComponent {
 		RuinarchListPool<VillageSetting>.Release(villageSettings);
 	}
 	private bool ShouldBuildFishery(NPCSettlement p_settlement) {
+		if (p_settlement.HasStructure(STRUCTURE_TYPE.FISHERY)) {
+			return false;
+		}
 		if (p_settlement.owner != null && p_settlement.owner.factionType.IsActionConsideredACrime(CRIME_TYPE.Animal_Killing)) {
 			//Animal Killing is considered a crime.
 			return false;
@@ -250,6 +253,9 @@ public class VillageGeneration : MapGenerationComponent {
 		return true;
 	}
 	private bool ShouldBuildButcher(NPCSettlement p_settlement) {
+		if (p_settlement.HasStructure(STRUCTURE_TYPE.BUTCHERS_SHOP)) {
+			return false;
+		}
 		if (p_settlement.owner != null && p_settlement.owner.factionType.IsActionConsideredACrime(CRIME_TYPE.Animal_Killing)) {
 			//Animal Killing is considered a crime.
 			return false;
@@ -961,7 +967,7 @@ public class VillageGeneration : MapGenerationComponent {
 		charactersToChangeClass.AddRange(spawnedCharacters);
 		//change class of spawned characters.
 		//combatants
-		int neededCombatants = spawnedCharacters.Count - SettlementClassComponent.GetNumberOfNeededCombatants(spawnedCharacters.Count);
+		int neededCombatants = SettlementClassComponent.GetNumberOfNeededCombatants(spawnedCharacters.Count);
 #if DEBUG_LOG
 		summary = $"{summary}\nGenerating {neededCombatants.ToString()} Combatants";
 #endif

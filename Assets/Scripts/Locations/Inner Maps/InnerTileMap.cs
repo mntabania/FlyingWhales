@@ -881,7 +881,7 @@ namespace Inner_Maps {
                         return Tile_Tag.Tree;
                     } else if (oasisRoll < 18) {
                         return Tile_Tag.Decor;
-                    } else if (oasisRoll < 20) {
+                    } else if (oasisRoll < 19) {
                         return Tile_Tag.Berry_Shrub;
                     } else {
                         return Tile_Tag.None;
@@ -892,7 +892,7 @@ namespace Inner_Maps {
                         return Tile_Tag.Tree;
                     } else if (grasslandRoll < 12) {
                         return Tile_Tag.Decor;
-                    } else if (grasslandRoll < 14) {
+                    } else if (grasslandRoll < 13) {
                         return Tile_Tag.Berry_Shrub;
                     } else {
                         return Tile_Tag.None;
@@ -903,7 +903,7 @@ namespace Inner_Maps {
                         return Tile_Tag.Tree;
                     } else if (jungleRoll < 28) {
                         return Tile_Tag.Decor;
-                    } else if (jungleRoll < 30) {
+                    } else if (jungleRoll < 29) {
                         return Tile_Tag.Berry_Shrub;
                     } else {
                         return Tile_Tag.None;
@@ -914,7 +914,7 @@ namespace Inner_Maps {
                         return Tile_Tag.Tree;
                     } else if (taigaRoll < 22) {
                         return Tile_Tag.Decor;
-                    } else if (taigaRoll < 24) {
+                    } else if (taigaRoll < 23) {
                         return Tile_Tag.Berry_Shrub;
                     } else {
                         return Tile_Tag.None;
@@ -925,7 +925,7 @@ namespace Inner_Maps {
                         return Tile_Tag.Tree;
                     } else if (tundraRoll < 12) {
                         return Tile_Tag.Decor;
-                    } else if (tundraRoll < 14) {
+                    } else if (tundraRoll < 13) {
                         return Tile_Tag.Berry_Shrub;
                     } else {
                         return Tile_Tag.None;
