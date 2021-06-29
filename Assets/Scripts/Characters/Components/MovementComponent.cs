@@ -590,9 +590,12 @@ public class MovementComponent : CharacterComponent {
         }
     }
     public void SetPenaltyForTag(int tag, int penalty) {
-        tagPenalties[tag] = penalty;
-        if (owner != null && owner.hasMarker) {
-            owner.marker.UpdateTagPenalties();
+        tag -= 1; //had to subtract 1 since faction tags do not start at 0, but instead start at 1, causing a 1 index difference if they are in an array
+        if (tag > 0) {
+            tagPenalties[tag] = penalty;
+            if (owner != null && owner.hasMarker) {
+                owner.marker.UpdateTagPenalties();
+            }    
         }
     }
     private void AvoidAllFactions() {

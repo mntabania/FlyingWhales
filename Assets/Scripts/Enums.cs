@@ -1331,15 +1331,15 @@ public enum UPGRADE_BONUS {
 public enum EQUIPMENT_TYPE { WEAPON = 0, ARMOR, ACCESSORY }
 
 public enum EQUIPMENT_BONUS {
-    Increased_Piercing = 0, Increased_3_Random_Resistance, Increased_4_Random_Resistance, Increased_5_Random_Resistance, Max_HP_Percentage, Max_HP_Actual, Str_Percentage, Str_Actual, Attack_Element, Slayer_Bonus, Ward_Bonus, Flight, Int_Percentage, Int_Actual, Crit_Rate_Actual, None,
+    Increased_Piercing = 0, Increased_3_Random_Resistance, Increased_4_Random_Resistance, Increased_5_Random_Resistance, Max_HP_Percentage, Max_HP_Actual, Str_Percentage, Str_Actual, Attack_Element, Slayer_Bonus, Ward_Bonus, Flight, Int_Percentage, Int_Actual, Crit_Rate_Actual, Random_Ward_Bonus, Random_Slayer_Bonus, None,
 }
 
 public enum EQUIPMENT_SLAYER_BONUS { 
-    Monster_Slayer = 0, Elf_Slayer, Human_Slayer, Undead_SLayer, Demon_Slayer,
+    None = 0, Monster_Slayer, Elf_Slayer, Human_Slayer, Undead_SLayer, Demon_Slayer,
 }
 
 public enum EQUIPMENT_WARD_BONUS {
-    Monster_Ward = 0, Elf_Wawrd, Human_Ward, Undead_Ward, Demon_Ward,
+    None = 0, Monster_Ward, Elf_Wawrd, Human_Ward, Undead_Ward, Demon_Ward,
 }
 
 public enum EQUIPMENT_CLASS_COMPATIBILITY {

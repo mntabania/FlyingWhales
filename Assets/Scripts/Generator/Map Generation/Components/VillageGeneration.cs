@@ -19,13 +19,16 @@ public class VillageGeneration : MapGenerationComponent {
 		for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
 			Region region = GridMap.Instance.allRegions[i];
 			yield return MapGenerator.Instance.StartCoroutine(CreateSettlements(region, data));
+			if (!succeess) {
+				yield break;
+			}
 			
 		}
 		ApplyPreGeneratedCharacterRelationships(data);
 		for (int i = 0; i < DatabaseManager.Instance.settlementDatabase.allNonPlayerSettlements.Count; i++) {
 			NPCSettlement settlement = DatabaseManager.Instance.settlementDatabase.allNonPlayerSettlements[i];
 			settlement.migrationComponent.ForceRandomizePerHourIncrement();
-		}
+		}	
 		yield return null;
 	}
 	private IEnumerator CreateSettlements(Region region, MapGenerationData data) {
@@ -74,8 +77,13 @@ public class VillageGeneration : MapGenerationComponent {
 			NPCSettlement npcSettlement = createdSettlements[i];
 			VillageSetting villageSetting = villageSettings[i];
 			var structureSettings = GenerateDwellings(npcSettlement.owner, villageSetting, npcSettlement);
+			int neededDwellingCount = structureSettings.Count;
 			yield return MapGenerator.Instance.StartCoroutine(EnsuredStructurePlacement(region, structureSettings, npcSettlement, data));
 			RuinarchListPool<StructureSetting>.Release(structureSettings);
+			if (npcSettlement.GetStructureCount(STRUCTURE_TYPE.DWELLING) < neededDwellingCount) {
+				succeess = false; //failed to generate needed amount of dwellings
+				yield break;
+			}
 		}
 
 		//generate residents

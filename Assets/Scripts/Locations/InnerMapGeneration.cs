@@ -17,6 +17,9 @@ public partial class LandmarkManager {
         float ySeed = Random.Range(0f, 99999f);
         int biomeSeed = Random.Range(0, 99999);
         int elevationSeed = Random.Range(0, 99999);
+        // xSeed = 16240.02f;
+        // ySeed = 20230.05f;
+        // elevationSeed = 7882;
         innerTileMap.Initialize(region, xSeed, ySeed, biomeSeed, elevationSeed);
         region.GenerateStructures();
         yield return StartCoroutine(innerTileMap.GenerateMap(mapGenerationComponent, data));

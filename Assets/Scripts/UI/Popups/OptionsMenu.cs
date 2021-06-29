@@ -5,12 +5,18 @@ using Settings;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using System;
 
 public class OptionsMenu : PopupMenuBase {
 
     [SerializeField] private GameObject saveLoadingGO;
     [SerializeField] private TextMeshProUGUI saveLbl;
     [SerializeField] private Button saveBtn;
+
+    [SerializeField] private GameObject inputSaveNameGO;
+    [SerializeField] private InputField saveNameInput;
+
+    private Action m_saveAction;
 
     #region Listeners
     public void SubscribeListeners() {
@@ -37,21 +43,31 @@ public class OptionsMenu : PopupMenuBase {
         SettingsManager.Instance.OpenSettings();
     }
     public void SaveGame() {
+        m_saveAction = ActualSavegame;
+        ShowInputFileName();
+    }
+
+    void ActualSavegame() {
         if (SaveManager.Instance.saveCurrentProgressManager.isSaving || SaveManager.Instance.saveCurrentProgressManager.isWritingToDisk) {
             //prevent saving if player is already saving
             return;
         }
         SaveManager.Instance.savePlayerManager.SavePlayerData();
-        SaveCurrentProgress();
+        SaveCurrentProgress(saveNameInput.text);
     }
 
     public void SaveAndExit() {
+        m_saveAction = ActualSaveAndExit;
+        ShowInputFileName();
+    }
+
+    void ActualSaveAndExit() {
         if (SaveManager.Instance.saveCurrentProgressManager.isSaving || SaveManager.Instance.saveCurrentProgressManager.isWritingToDisk) {
             //prevent saving if player is already saving
             return;
         }
         SaveManager.Instance.savePlayerManager.SavePlayerData();
-        SaveCurrentProgress();
+        SaveCurrentProgress(saveNameInput.text);
         saveLoadingGO.SetActive(true);
         StartCoroutine(WaitForLoadToFinishThenExit());
     }
@@ -96,6 +112,18 @@ public class OptionsMenu : PopupMenuBase {
     public void SubmitFeedback() {
         UIManager.Instance.ShowYesNoConfirmation("Open Browser", "To submit feedback, the game needs to open a Web browser, do you want to proceed?",
             () => Application.OpenURL("https://forms.gle/6QYHiSmU8ySVGSXp7"), layer: 50, showCover: true);
+    }
+
+    void ShowInputFileName() {
+        inputSaveNameGO.gameObject.SetActive(true);
+    }
+
+    public void HideInputFileName() {
+        inputSaveNameGO.gameObject.SetActive(false);
+    }
+    public void SaveNameFromInputName() {
+        HideInputFileName();
+        m_saveAction?.Invoke();
     }
     private void Abandon() {
         DOTween.Clear(true);
