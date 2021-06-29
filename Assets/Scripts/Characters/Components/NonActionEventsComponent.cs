@@ -591,7 +591,9 @@ public class NonActionEventsComponent : CharacterComponent {
         string opinionLabel = disguisedActor.relationshipContainer.GetOpinionLabel(disguisedTarget);
 
         //do not develop relationships if either actor or target is disguised
-        if (!actorIsDisguised && !targetIsDisguised) { //&& disguisedActor.isNormalCharacter && disguisedTarget.isNormalCharacter
+        //Note: Do not trigger new relationships if the 2 characters are from different factions
+        //https://trello.com/c/G2bItJDj/4791-ibang-faction-tumira-sa-bahay
+        if (!actorIsDisguised && !targetIsDisguised && disguisedActor.faction == disguisedTarget.faction) { //&& disguisedActor.isNormalCharacter && disguisedTarget.isNormalCharacter
             // If Opinion of Target towards Actor is already in Acquaintance range
             if (string.IsNullOrEmpty(opinionLabel) || opinionLabel == RelationshipManager.Acquaintance) {
                 // 25% chance to develop Lover relationship if both characters have no Lover yet
