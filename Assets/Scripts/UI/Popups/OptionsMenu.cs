@@ -15,6 +15,7 @@ public class OptionsMenu : PopupMenuBase {
 
     [SerializeField] private GameObject inputSaveNameGO;
     [SerializeField] private InputField saveNameInput;
+    [SerializeField] private Button btnSaveFileName;
 
     private Action m_saveAction;
 
@@ -30,12 +31,14 @@ public class OptionsMenu : PopupMenuBase {
     #endregion
     
     public override void Open() {
+        saveNameInput.onValueChanged.AddListener(OnInputSaveFileNameChanged);
         UIManager.Instance.Pause();
         UIManager.Instance.SetSpeedTogglesState(false);
         base.Open();
         UpdateSaveBtnState();
     }
     public override void Close() {
+        saveNameInput.onValueChanged.RemoveListener(OnInputSaveFileNameChanged);
         UIManager.Instance.ResumeLastProgressionSpeed();
         base.Close();
     }
@@ -114,7 +117,16 @@ public class OptionsMenu : PopupMenuBase {
             () => Application.OpenURL("https://forms.gle/6QYHiSmU8ySVGSXp7"), layer: 50, showCover: true);
     }
 
+    public void OnInputSaveFileNameChanged(string p_fileName) {
+        if(p_fileName.Length <= 0) {
+            btnSaveFileName.interactable = false;
+		} else {
+            btnSaveFileName.interactable = true;
+        }
+	}
+
     void ShowInputFileName() {
+        saveNameInput.text = SaveManager.Instance.saveCurrentProgressManager.GetFileName();
         inputSaveNameGO.gameObject.SetActive(true);
     }
 

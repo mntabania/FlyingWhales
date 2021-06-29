@@ -29,7 +29,7 @@ MonoBehaviour:
   unlockCost: 30
   tier: 2
   baseLoadoutWeight: 150
-  resistanceType: 3
+  resistanceType: 0
   archetypeWeightedBonus: 2
   canBeReleasedEvenIfLearned: 0
   contextMenuIcon: {fileID: 0}
@@ -55,7 +55,7 @@ MonoBehaviour:
     upgradeCosts: 140000003200000050000000
     manacostPerLevel: 6400000096000000c8000000fa000000
     chargesPerLevel: 01000000010000000200000003000000
-    bonuses: 0e000000010000000a000000
+    bonuses: 0e0000000a000000
     additionalDamagePerLevel: 
     additionalPiercePerLevel:
     - 0

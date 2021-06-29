@@ -20,8 +20,8 @@ MonoBehaviour:
   description: 
   imgIcon: {fileID: 21300000, guid: d426d16409b59454aa161e09a6069d8a, type: 3}
   equipmentUpgradeData:
-    bonuses: 0900000004000000
-    AdditionalPiercing: 0
+    bonuses: 00000000
+    AdditionalPiercing: 30
     AdditionalMaxHPPercentage: 5
     AdditionalMaxHPActual: 0
     AdditionalAttackPercentage: 0
