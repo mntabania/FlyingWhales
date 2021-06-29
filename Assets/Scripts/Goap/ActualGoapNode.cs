@@ -28,6 +28,7 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable, IObjectPoolTeste
     public bool isNegativeInfo { get; private set; }
     public bool hasBeenReset { get; private set; }
     public bool isSupposedToBeInPool { get; private set; }
+    public bool hasStartedPerTickEffect { get; private set; }
     public int stillProcessingCounter { get; private set; }
     public bool isAssigned { get; set; }
 
@@ -111,6 +112,7 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable, IObjectPoolTeste
         stillProcessingCounter = data.stillProcessingCounter;
         hasBeenReset = data.hasBeenReset;
         isAssigned = data.isAssigned;
+        hasStartedPerTickEffect = data.hasStartedPerTickEffect;
     }
 
     public void SetActionData(GoapAction action, Character actor, IPointOfInterest poiTarget, OtherData[] otherData, int cost) {
@@ -798,16 +800,18 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable, IObjectPoolTeste
 
     }
     private void StartPerTickEffect() {
-//#if DEBUG_LOG
-//        Debug.Log("Started per tick effect: " + ToString());
-//#endif
-        Messenger.AddListener(Signals.TICK_STARTED, PerTickEffect);
+        //#if DEBUG_LOG
+        //        Debug.Log("Started per tick effect: " + ToString());
+        //#endif
+        hasStartedPerTickEffect = true;
+        //Messenger.AddListener(Signals.TICK_STARTED, PerTickEffect);
     }
     public void StopPerTickEffect() {
-//#if DEBUG_LOG
-//        Debug.Log("Stopped per tick effect: " + ToString());
-//#endif
-        Messenger.RemoveListener(Signals.TICK_STARTED, PerTickEffect);
+        //#if DEBUG_LOG
+        //        Debug.Log("Stopped per tick effect: " + ToString());
+        //#endif
+        //Messenger.RemoveListener(Signals.TICK_STARTED, PerTickEffect);
+        hasStartedPerTickEffect = false;
     }
     public void EndPerTickEffect(bool shouldDoAfterEffect = true) {
         //if (isDone) {
@@ -903,10 +907,17 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable, IObjectPoolTeste
             currentJob.CancelJob();
         }
     }
-    private void PerTickEffect() {
+    public void PerTickEffect() {
         if (hasBeenReset) {
 #if DEBUG_LOG
             Debug.Log("Per Tick Effect called but already in pool");
+#endif
+            StopPerTickEffect();
+            return;
+        }
+        if (!hasStartedPerTickEffect) {
+#if DEBUG_LOG
+            Debug.Log("Per Tick Effect called but not started yet");
 #endif
             return;
         }
@@ -936,6 +947,7 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable, IObjectPoolTeste
         //Once per tick effect is called, check again if the action has already been reset to pool, because there are actions that cancels job in per tick effect
         //So, if that happens, the part below should no longer trigger
         if (hasBeenReset) {
+            StopPerTickEffect();
             return;
         }
 
@@ -1086,7 +1098,7 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable, IObjectPoolTeste
 
     #region General
     public override string ToString() {
-        return $"Action: {action?.name ?? "Null"}. Actor: {actor.name} . Target: {poiTarget?.name ?? "Null"}";
+        return $"Action: {action?.name ?? "Null"}. Actor: {actor?.name} . Target: {poiTarget?.name ?? "Null"}";
     }
     #endregion
 
@@ -1444,9 +1456,7 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable, IObjectPoolTeste
         isNegativeInfo = false;
         stillProcessingCounter = 0;
         SetHasBeenReset(true);
-        if (Messenger.eventTable.ContainsKey(Signals.TICK_STARTED)) {
-            Messenger.RemoveListener(Signals.TICK_STARTED, PerTickEffect);
-        }
+        StopPerTickEffect();
     }
     #endregion
 }
@@ -1469,6 +1479,7 @@ public class SaveDataActualGoapNode : SaveData<ActualGoapNode>, ISavableCounterp
     public int stillProcessingCounter;
     public bool hasBeenReset;
     public bool isAssigned;
+    public bool hasStartedPerTickEffect;
 
     public INTERACTION_TYPE action;
     public ACTION_STATUS actionStatus;
@@ -1523,6 +1534,7 @@ public class SaveDataActualGoapNode : SaveData<ActualGoapNode>, ISavableCounterp
         stillProcessingCounter = data.stillProcessingCounter;
         hasBeenReset = data.hasBeenReset;
         logTags = data.logTags;
+        hasStartedPerTickEffect = data.hasStartedPerTickEffect;
 
         disguisedActor = string.Empty;
         disguisedTarget = string.Empty;

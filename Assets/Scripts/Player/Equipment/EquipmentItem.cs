@@ -1,4 +1,4 @@
-﻿using System.Collections;
+﻿using UtilityScripts;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -8,10 +8,35 @@ public class EquipmentItem : TileObject {
     public EQUIPMENT_QUALITY quality = EQUIPMENT_QUALITY.Normal;
     public EquipmentData equipmentData;
 
+    public List<EQUIPMENT_BONUS> addedBonus = new List<EQUIPMENT_BONUS>();
+    public EQUIPMENT_SLAYER_BONUS randomSlayerBonus = EQUIPMENT_SLAYER_BONUS.None;
+    public EQUIPMENT_WARD_BONUS randomWardBonus = EQUIPMENT_WARD_BONUS.None;
     public override System.Type serializedData => typeof(SaveDataEquipmentItem);
 
     public void AssignData() {
         equipmentData = EquipmentDataHandler.Instance.GetEquipmentDataBaseOnName(this.name);
+        if (equipmentData.equipmentUpgradeData.bonuses.Contains(EQUIPMENT_BONUS.Random_Ward_Bonus)) {
+            if (randomWardBonus == EQUIPMENT_WARD_BONUS.None) {
+                randomWardBonus = (EQUIPMENT_WARD_BONUS)GameUtilities.RandomBetweenTwoNumbers(1, (int)EQUIPMENT_WARD_BONUS.Demon_Ward);
+                addedBonus.Add(EQUIPMENT_BONUS.Ward_Bonus);
+            }
+        }
+        if (equipmentData.equipmentUpgradeData.bonuses.Contains(EQUIPMENT_BONUS.Random_Slayer_Bonus)) {
+            if (randomSlayerBonus == EQUIPMENT_SLAYER_BONUS.None) {
+                randomSlayerBonus = (EQUIPMENT_SLAYER_BONUS)GameUtilities.RandomBetweenTwoNumbers(1, (int)EQUIPMENT_SLAYER_BONUS.Demon_Slayer);
+                addedBonus.Add(EQUIPMENT_BONUS.Slayer_Bonus);
+            }
+        }
+        if (randomSlayerBonus != EQUIPMENT_SLAYER_BONUS.None) { 
+            if(equipmentData.equipmentUpgradeData.slayerBonus == EQUIPMENT_SLAYER_BONUS.None) {
+                equipmentData.equipmentUpgradeData.slayerBonus = randomSlayerBonus;
+            }
+        }
+        if (randomWardBonus != EQUIPMENT_WARD_BONUS.None) {
+            if (equipmentData.equipmentUpgradeData.wardBonus == EQUIPMENT_WARD_BONUS.None) {
+                equipmentData.equipmentUpgradeData.wardBonus = randomWardBonus;
+            }
+        }
     }
 
     public override void LoadSecondWave(SaveDataTileObject data) {
@@ -21,6 +46,10 @@ public class EquipmentItem : TileObject {
             saveDataEquipment.resistanceBonuses.ForEach(eachResistance => {
                 resistanceBonuses.Add(eachResistance);
             });
+            randomSlayerBonus = saveDataEquipment.randomSlayerBonus;
+            randomWardBonus = saveDataEquipment.randomWardBonus;
+            saveDataEquipment.addedBonus.ForEach((eachBonus) => addedBonus.Add(eachBonus));
+            AssignData();
         }
     }
     //this is for testing purpose only OnPlacePOI()
@@ -58,10 +87,19 @@ public class EquipmentItem : TileObject {
     }
 
 	public string GetBonusDescription() {
-        if(equipmentData == null) {
+        if(equipmentData.equipmentUpgradeData.bonuses.Contains(EQUIPMENT_BONUS.Random_Slayer_Bonus) && randomSlayerBonus == EQUIPMENT_SLAYER_BONUS.None) {
+            AssignData();
+        }
+        if (equipmentData.equipmentUpgradeData.bonuses.Contains(EQUIPMENT_BONUS.Random_Ward_Bonus) && randomWardBonus == EQUIPMENT_WARD_BONUS.None) {
             AssignData();
         }
         string description = equipmentData.equipmentUpgradeData.GetBonusDescription(quality);
+        if(randomSlayerBonus != EQUIPMENT_SLAYER_BONUS.None) {
+            description += "\nAdded Random Slayer Bonus " + randomSlayerBonus;
+        }
+        if (randomWardBonus != EQUIPMENT_WARD_BONUS.None) {
+            description += "\nAdded Random Ward Bonus " + randomWardBonus;
+        }
         description += "\nQuality " + quality;
         resistanceBonuses.ForEach((eachBonus) => description += ("\n" + eachBonus.ToString()));
         return description;
@@ -80,13 +118,19 @@ public class EquipmentItem : TileObject {
     public class SaveDataEquipmentItem : SaveDataTileObject {
 
         public List<RESISTANCE> resistanceBonuses = new List<RESISTANCE>();
+        public EQUIPMENT_SLAYER_BONUS randomSlayerBonus = EQUIPMENT_SLAYER_BONUS.None;
+        public EQUIPMENT_WARD_BONUS randomWardBonus = EQUIPMENT_WARD_BONUS.None;
+        public List<EQUIPMENT_BONUS> addedBonus = new List<EQUIPMENT_BONUS>();
         public override void Save(TileObject tileObject) {
             base.Save(tileObject);
             EquipmentItem equipment = tileObject as EquipmentItem;
             //Assert.IsNotNull(equipment);
             equipment.resistanceBonuses.ForEach((eachRes) => {
                 resistanceBonuses.Add(eachRes);
-            }); 
+            });
+            randomSlayerBonus = equipment.randomSlayerBonus;
+            randomWardBonus = equipment.randomWardBonus;
+            equipment.addedBonus.ForEach((eachBonus) => addedBonus.Add(eachBonus));
         }
     }
     #endregion

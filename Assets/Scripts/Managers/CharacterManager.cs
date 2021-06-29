@@ -853,6 +853,9 @@ public class CharacterManager : BaseMonoBehaviour {
     public string GetRandomCombatant() {
         return classManager.GetRandomCombatant().className;
     }
+    public string GetRandomLowTierCombatant() {
+        return classManager.GetRandomLowTierCombatant().className;
+    }
     public bool HasCharacterClass(string className) {
         return classManager.classesDictionary.ContainsKey(className);
     }

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Collections.Concurrent;
 using System.Threading;
 using UnityEngine;
 using Threads;
@@ -9,7 +10,7 @@ public class MultiThreadPool : BaseMonoBehaviour {
     public static readonly object THREAD_LOCKER = new object();
 
     //private Queue<Multithread> functionsToBeRunInThread;
-    private Queue<Multithread> functionsToBeResolved;
+    private ConcurrentQueue<Multithread> functionsToBeResolved;
 
     //private Thread newThread;
     //private ManualResetEventSlim exitHandle = new ManualResetEventSlim();
@@ -22,7 +23,7 @@ public class MultiThreadPool : BaseMonoBehaviour {
         //this.isRunning = true;
 
         //functionsToBeRunInThread = new Queue<Multithread>();
-        functionsToBeResolved = new Queue<Multithread>();
+        functionsToBeResolved = new ConcurrentQueue<Multithread>();
 
         //newThread = new Thread(RunThread);
         //newThread.IsBackground = true;
@@ -31,7 +32,6 @@ public class MultiThreadPool : BaseMonoBehaviour {
     protected override void OnDestroy() {
         //this.isRunning = false;
         //functionsToBeRunInThread.Clear();
-        functionsToBeResolved.Clear();
         functionsToBeResolved = null;
         base.OnDestroy();
         Instance = null;
@@ -39,10 +39,12 @@ public class MultiThreadPool : BaseMonoBehaviour {
 
     void LateUpdate() {
         if (this.functionsToBeResolved.Count > 0) {
-            Multithread action = this.functionsToBeResolved.Dequeue();
-            action.FinishMultithread();
-            if (action is SQLWorkerItem sqlItem) {
-                ObjectPoolManager.Instance.ReturnLogDatabaseThreadToPool(sqlItem);
+            Multithread action;
+            if (this.functionsToBeResolved.TryDequeue(out action)) {
+                action.FinishMultithread();
+                if (action is SQLWorkerItem sqlItem) {
+                    ObjectPoolManager.Instance.ReturnLogDatabaseThreadToPool(sqlItem);
+                }
             }
         }
     }
@@ -54,9 +56,9 @@ public class MultiThreadPool : BaseMonoBehaviour {
     }
     private void ThreadQueueFunction(object p_thread) {
         //lock (THREAD_LOCKER) {
-            Multithread mt = p_thread as Multithread;
-            mt.DoMultithread();
-            functionsToBeResolved.Enqueue(mt);
+        Multithread mt = p_thread as Multithread;
+        mt.DoMultithread();
+        functionsToBeResolved.Enqueue(mt);
         //}
     }
 
