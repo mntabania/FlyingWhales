@@ -171,16 +171,20 @@ public class PoisonCloudMapObjectVisual : MovingMapObjectVisual {
         _cloudEffect.TriggerSubEmitter(0);
         _poisonCloud.SetDoExpireEffect(false);
         Expire();
+        float piercing = 0f;
+        if (_poisonCloud.isPlayerSource) {
+            piercing = PlayerSkillManager.Instance.GetAdditionalPiercePerLevelBaseOnLevel(PLAYER_SKILL_TYPE.POISON_CLOUD);
+        }
         List<LocationGridTile> affectedTiles = RuinarchListPool<LocationGridTile>.Claim();
         gridTileLocation.PopulateTilesInRadius(affectedTiles, _size, includeCenterTile: true, includeTilesInDifferentStructure: true);
         for (int i = 0; i < affectedTiles.Count; i++) {
             LocationGridTile tile = affectedTiles[i];
-            tile.PerformActionOnTraitables(ApplyExplosionEffect);
+            tile.PerformActionOnTraitables((t) => ApplyExplosionEffect(t, piercing));
         }
         RuinarchListPool<LocationGridTile>.Release(affectedTiles);
     }
-    private void ApplyExplosionEffect(ITraitable traitable) {
-        traitable.AdjustHP(-350, ELEMENTAL_TYPE.Fire, true, showHPBar: true, isPlayerSource : _poisonCloud.isPlayerSource);
+    private void ApplyExplosionEffect(ITraitable traitable, float piercing) {
+        traitable.AdjustHP(-350, ELEMENTAL_TYPE.Fire, true, showHPBar: true, piercingPower: piercing, isPlayerSource : _poisonCloud.isPlayerSource);
         //if (traitable.currentHP > 0 || traitable is GenericTileObject) {
         //    traitable.traitContainer.AddTrait(traitable, "Poisoned");
         //    Poisoned poisoned = traitable.traitContainer.GetTraitOrStatus<Poisoned>("Poisoned");

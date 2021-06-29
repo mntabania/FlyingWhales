@@ -456,13 +456,14 @@ public class AreaSpellsComponent : AreaComponent {
             //     pois[i].AdjustHP(-175, ELEMENTAL_TYPE.Electric, true, showHPBar: true);
             // }
             SkillData electricStormData = PlayerSkillManager.Instance.GetSpellData(PLAYER_SKILL_TYPE.ELECTRIC_STORM);
+            float piercing = 0f;
             int processedDamage;
             if (!isElectricStormCastedByPlayer) {
                 processedDamage = -PlayerSkillManager.Instance.GetDamageBaseOnLevel(electricStormData, 0);
             } else {
                 processedDamage = -PlayerSkillManager.Instance.GetDamageBaseOnLevel(electricStormData);
+                piercing = PlayerSkillManager.Instance.GetAdditionalPiercePerLevelBaseOnLevel(electricStormData);
             }
-            float piercing = PlayerSkillManager.Instance.GetAdditionalPiercePerLevelBaseOnLevel(electricStormData);
             chosenTile.PerformActionOnTraitables((traitable) => ElectricStormEffect(traitable, processedDamage, piercing, electricStormData));
         }
     }

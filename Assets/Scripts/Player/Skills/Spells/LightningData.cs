@@ -24,14 +24,15 @@ public class LightningData : SkillData {
             targetTile, 1, false
         );
         int processedDamage = -PlayerSkillManager.Instance.GetDamageBaseOnLevel(this);
+        float piercing = PlayerSkillManager.Instance.GetAdditionalPiercePerLevelBaseOnLevel(this);
         GameManager.Instance.CreateParticleEffectAt(targetTile, PARTICLE_EFFECT.Lightning_Strike);
-        targetTile.PerformActionOnTraitables((t) => LightningDamage(t, processedDamage));
+        targetTile.PerformActionOnTraitables((t) => LightningDamage(t, processedDamage, piercing));
         targetTile.tileObjectComponent.genericTileObject.traitContainer.AddTrait(targetTile.tileObjectComponent.genericTileObject, "Lightning Remnant");
 
         List<LocationGridTile> crossNeighbours = targetTile.FourNeighbours();
         for (int i = 0; i < crossNeighbours.Count; i++) {
             LocationGridTile neighbour = crossNeighbours[i];
-            neighbour.PerformActionOnTraitables((t) => LightningDamage(t, processedDamage));
+            neighbour.PerformActionOnTraitables((t) => LightningDamage(t, processedDamage, piercing));
         }
         // List<IPointOfInterest> pois = targetTile.GetPOIsOnTile();
         // for (int i = 0; i < pois.Count; i++) {
@@ -40,9 +41,9 @@ public class LightningData : SkillData {
         //IncreaseThreatThatSeesTile(targetTile, 10);
         base.ActivateAbility(targetTile);
     }
-    private void LightningDamage(ITraitable traitable, int processedDamage) {
+    private void LightningDamage(ITraitable traitable, int processedDamage, float piercing) {
         if (traitable is IPointOfInterest poi) {
-            poi.AdjustHP(processedDamage, ELEMENTAL_TYPE.Electric, triggerDeath: true, showHPBar: true, isPlayerSource: true, source: this);
+            poi.AdjustHP(processedDamage, ELEMENTAL_TYPE.Electric, triggerDeath: true, showHPBar: true, piercingPower: piercing, isPlayerSource: true, source: this);
             Messenger.Broadcast(PlayerSignals.PLAYER_HIT_CHARACTER_VIA_SPELL, traitable as Character, processedDamage);
             if (traitable is Character character && character.isDead && character.skillCauseOfDeath == PLAYER_SKILL_TYPE.NONE) {
                 character.skillCauseOfDeath = PLAYER_SKILL_TYPE.LIGHTNING;

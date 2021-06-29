@@ -122,11 +122,12 @@ public class FireBallMapObjectVisual : MovingMapObjectVisual {
 #endif
         SkillData fireBallData = PlayerSkillManager.Instance.GetSpellData(PLAYER_SKILL_TYPE.FIRE_BALL);
         int processedDamage = -PlayerSkillManager.Instance.GetDamageBaseOnLevel(fireBallData);
+        float piercing = PlayerSkillManager.Instance.GetAdditionalPiercePerLevelBaseOnLevel(fireBallData);
         BurningSource bs = null;
         for (int i = 0; i < _objsInRange.Count; i++) {
             ITraitable traitable = _objsInRange[i];
             if (owner != traitable) {
-                traitable.AdjustHP(processedDamage, ELEMENTAL_TYPE.Fire, true, showHPBar: true, isPlayerSource: owner.isPlayerSource, source: owner.isPlayerSource ? fireBallData : null);
+                traitable.AdjustHP(processedDamage, ELEMENTAL_TYPE.Fire, true, showHPBar: true, piercingPower: piercing, isPlayerSource: owner.isPlayerSource, source: owner.isPlayerSource ? fireBallData : null);
             }
             Burning burningTrait = traitable.traitContainer.GetTraitOrStatus<Burning>("Burning");
             if (burningTrait != null && burningTrait.sourceOfBurning == null) {

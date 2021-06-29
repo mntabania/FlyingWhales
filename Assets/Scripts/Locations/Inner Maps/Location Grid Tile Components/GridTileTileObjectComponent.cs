@@ -270,7 +270,8 @@ namespace Inner_Maps {
             owner.PopulateTilesInRadius(tiles, 3, includeCenterTile: true, includeTilesInDifferentStructure: true);
             SkillData landmineData = PlayerSkillManager.Instance.GetSpellData(PLAYER_SKILL_TYPE.LANDMINE);
             int processedDamage = -PlayerSkillManager.Instance.GetDamageBaseOnLevel(landmineData);
-            
+            float piercing = PlayerSkillManager.Instance.GetAdditionalPiercePerLevelBaseOnLevel(landmineData);
+
             for (int i = 0; i < tiles.Count; i++) {
                 LocationGridTile tile = tiles[i];
                 List<IPointOfInterest> pois = RuinarchListPool<IPointOfInterest>.Claim();
@@ -282,12 +283,12 @@ namespace Inner_Maps {
                     }
                     if (poi is TileObject obj) {
                         if (obj.tileObjectType != TILE_OBJECT_TYPE.GENERIC_TILE_OBJECT) {
-                            obj.AdjustHP(processedDamage, ELEMENTAL_TYPE.Normal, true, showHPBar: true, isPlayerSource: true, source : landmineData);
+                            obj.AdjustHP(processedDamage, ELEMENTAL_TYPE.Normal, true, showHPBar: true, piercingPower: piercing, isPlayerSource: true, source : landmineData);
                         } else {
                             CombatManager.Instance.ApplyElementalDamage(0, ELEMENTAL_TYPE.Normal, obj, setAsPlayerSource: true);
                         }
                     } else if (poi is Character character) {
-                        character.AdjustHP(processedDamage, ELEMENTAL_TYPE.Normal, true, showHPBar: true, isPlayerSource: true, source: landmineData);
+                        character.AdjustHP(processedDamage, ELEMENTAL_TYPE.Normal, true, showHPBar: true, piercingPower: piercing, isPlayerSource: true, source: landmineData);
                         Messenger.Broadcast(PlayerSignals.PLAYER_HIT_CHARACTER_VIA_SPELL, character, processedDamage);
                         if (character.isDead && character.skillCauseOfDeath == PLAYER_SKILL_TYPE.NONE) {
                             character.skillCauseOfDeath = PLAYER_SKILL_TYPE.LANDMINE;
@@ -295,7 +296,7 @@ namespace Inner_Maps {
                             //Messenger.Broadcast(PlayerSignals.CREATE_CHAOS_ORBS, character.deathTilePosition.centeredWorldLocation, 1, character.deathTilePosition.parentMap);
                         }
                     } else {
-                        poi.AdjustHP(processedDamage, ELEMENTAL_TYPE.Normal, true, showHPBar: true, isPlayerSource: true, source: landmineData);
+                        poi.AdjustHP(processedDamage, ELEMENTAL_TYPE.Normal, true, showHPBar: true, piercingPower: piercing, isPlayerSource: true, source: landmineData);
                     }
                 }
                 RuinarchListPool<IPointOfInterest>.Release(pois);
