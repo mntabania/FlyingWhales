@@ -2288,5 +2288,9 @@ public class CharacterMarker : MapObjectVisual<Character> {
         float startSize = 1.5f;
         textRendererParticleSystem.SpawnParticle(transform.position, damage, color, startSize);
     }
-#endregion
+    public void ShowTextEffect(string p_text, Color p_color) {
+        float startSize = 1.5f;
+        textRendererParticleSystem.SpawnParticle(transform.position, p_text, p_color, startSize);
+    }
+    #endregion
 }

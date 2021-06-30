@@ -73,7 +73,10 @@ public class PlayerAction : SkillData, IContextMenuItem {
         } else {
             //Go into cooldown but do not activate ability
             OnExecutePlayerSkill();
-            PlayerUI.Instance.ShowGeneralConfirmation("Action Failed", target.name + " resisted the power of the Ruinarch!");
+            //PlayerUI.Instance.ShowGeneralConfirmation("Action Failed", target.name + " resisted the power of the Ruinarch!");
+            if (target is Character character) {
+                character.reactionComponent.ResistRuinarchPower();
+            }
         }
 	}
     public bool CanPerformAbilityTo(IPlayerActionTarget target) {

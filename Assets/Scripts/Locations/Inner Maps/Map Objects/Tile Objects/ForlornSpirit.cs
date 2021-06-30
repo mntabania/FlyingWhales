@@ -141,6 +141,8 @@ public class ForlornSpirit : TileObject {
             //Triggers Effect
             float processedHappinessDrain = -PlayerSkillManager.Instance.GetIncreaseStatsPercentagePerLevel(spiritData);
             possessionTarget.needsComponent.AdjustHappiness(processedHappinessDrain);
+        } else {
+            possessionTarget.reactionComponent.ResistRuinarchPower();
         }
     }
     private void DonePossession() {

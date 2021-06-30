@@ -1225,7 +1225,7 @@ public enum PARTICLE_EFFECT { None, Poison, Freezing, Fire, Burning, Explode, El
     Rain, Landmine, Burnt, Terrifying_Howl, Freezing_Trap, Snare_Trap, Wind_Blast, Iceteroids, Heat_Wave, Gorgon_Eye, Landmine_Explosion, Freezing_Trap_Explosion,
     Snare_Trap_Explosion, Fervor, Desert_Rose, Winter_Rose, Build_Demonic_Structure, Zombie_Transformation, Torture_Cloud, Freezing_Object,
     Necronomicon_Activate, Berserk_Orb_Activate, Artifact, Infected, Ankh_Of_Anubis_Activate, Fog_Of_War, Stoned, Demooder,
-    Disabler, Overheating, Transform_Revert, Teleport, Protection, Build_Grid_Tile_Smoke, Place_Demonic_Structure, Eye_Ward_Highlight, Heal, Ice_Blast, Earth_Spike, Water_Spike, Taunt,
+    Disabler, Overheating, Transform_Revert, Teleport, Protection, Build_Grid_Tile_Smoke, Place_Demonic_Structure, Eye_Ward_Highlight, Heal, Ice_Blast, Earth_Spike, Water_Spike, Taunt, Resist,
 }
 public enum PLAYER_SKILL_STATE { Locked, Unlocked, Learned, }
 public enum REACTABLE_EFFECT { Neutral, Positive, Negative, }
@@ -1357,7 +1357,7 @@ public enum UNLOCKING_SKILL_REQUIREMENT {
 }
 
 public enum SOUND_EFFECT {
-    Heal
+    Heal, Resist,
 }
 
 public enum CURRENCY { 

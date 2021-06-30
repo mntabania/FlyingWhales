@@ -70,7 +70,8 @@ public class CharacterManager : BaseMonoBehaviour {
         Harpy_Behaviour = "Harpy Behaviour",
         Triton_Behaviour = "Triton Behaviour";
 
-    
+    public static readonly string[] resistRuinarchPowerText = { "How dare you!", "Nope!", "Fuck off bitch!", "Huh?!", "Who's there?!", "What's this feeling?", "I feel violated!" };
+
     public const int VISION_RANGE = 8;
     public const int AVOID_COMBAT_VISION_RANGE = 12;
     public bool lessenCharacterLogs;
@@ -1150,6 +1151,9 @@ public class CharacterManager : BaseMonoBehaviour {
             return prisoner.IsConsideredPrisonerOf(p_considerer);
         }
         return false;
+    }
+    public string GetRandomResistRuinarchPowerText() {
+        return resistRuinarchPowerText[GameUtilities.RandomBetweenTwoNumbers(0, resistRuinarchPowerText.Length)];
     }
     #endregion
 

@@ -138,9 +138,9 @@ public class FeebleSpirit : TileObject {
             //Triggers Effect
             float processedEnergyDrain = -PlayerSkillManager.Instance.GetIncreaseStatsPercentagePerLevel(spiritData);
             possessionTarget.needsComponent.AdjustTiredness(processedEnergyDrain);
+        } else {
+            possessionTarget.reactionComponent.ResistRuinarchPower();
         }
-
-
     }
     private void DonePossession() {
         GameManager.Instance.CreateParticleEffectAt(possessionTarget.gridTileLocation, PARTICLE_EFFECT.Minion_Dissipate);

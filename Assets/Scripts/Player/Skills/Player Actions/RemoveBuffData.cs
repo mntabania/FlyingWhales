@@ -60,7 +60,8 @@ public class RemoveBuffData : PlayerAction {
         } else {
             //Go into cooldown but do not activate ability
             OnExecutePlayerSkill();
-            PlayerUI.Instance.ShowGeneralConfirmation("Action Failed", p_character.name + " resisted the power of the Ruinarch!");
+            //PlayerUI.Instance.ShowGeneralConfirmation("Action Failed", p_character.name + " resisted the power of the Ruinarch!");
+            p_character.reactionComponent.ResistRuinarchPower();
         }
     }
 
