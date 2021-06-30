@@ -15,6 +15,18 @@ namespace Traits {
             ticksDuration = 0;
             advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.FEED };
             isHidden = true;
+            AddTraitOverrideFunctionIdentifier(TraitManager.Tick_Started_Trait);
+        }
+
+        public override void OnTickStarted(ITraitable traitable) {
+            base.OnTickStarted(traitable);
+            if (traitable is Character character) {
+                RecoverHP(character);
+            }
+        }
+
+        private void RecoverHP(Character character) {
+            character.HPRecovery(1); //0.02
         }
     }
 }

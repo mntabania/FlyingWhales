@@ -33,9 +33,11 @@ public class Recuperate : GoapAction {
     public override void OnStopWhilePerforming(ActualGoapNode p_node) {
         base.OnStopWhilePerforming(p_node);
         p_node.actor.traitContainer.RemoveTrait(p_node.actor, "Recuperating");
+        //p_node.actor.traitContainer.RemoveTrait(p_node.actor, "Resting");
     }
     public override void OnStopWhileStarted(ActualGoapNode node) {
         base.OnStopWhileStarted(node);
+        //node.actor.traitContainer.RemoveTrait(node.actor, "Resting");
         node.actor.traitContainer.RemoveTrait(node.actor, "Recuperating");
     }
     #endregion
@@ -54,9 +56,11 @@ public class Recuperate : GoapAction {
 
     #region State Effects
     public void PreRecuperateSuccess(ActualGoapNode goapNode) {
+        //goapNode.actor.traitContainer.AddTrait(goapNode.actor, "Resting");
         goapNode.actor.traitContainer.AddTrait(goapNode.actor, "Recuperating");
     }
     public void AfterRecuperateSuccess(ActualGoapNode goapNode) {
+        //goapNode.actor.traitContainer.RemoveTrait(goapNode.actor, "Resting");
         goapNode.actor.traitContainer.RemoveTrait(goapNode.actor, "Recuperating");
         goapNode.actor.traitContainer.RemoveStatusAndStacks(goapNode.actor, "Poisoned");
         goapNode.actor.traitContainer.RemoveStatusAndStacks(goapNode.actor, "Plagued");
@@ -81,9 +85,17 @@ public class Recuperate : GoapAction {
     }
 
     public void PerTickRecuperateSuccess(ActualGoapNode p_node) {
+        Character actor = p_node.actor;
+        CharacterNeedsComponent needsComponent = actor.needsComponent;
+        // if (needsComponent.currentSleepTicks == 1) { //If sleep ticks is down to 1 tick left, set current duration to end duration so that the action will end now, we need this because the character must only sleep the remaining hours of his sleep if ever that character is interrupted while sleeping
+        //     goapNode.OverrideCurrentStateDuration(goapNode.currentState.duration);
+        // }
+        needsComponent.AdjustTiredness(0.417f);
         if (!IsSubjectForRecuperate(p_node)) {
             p_node.associatedJob.CancelJob();
+            return;
         }
+        
     }
-    #endregion
+	#endregion
 }
