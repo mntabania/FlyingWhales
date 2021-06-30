@@ -619,6 +619,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         RemoveListeners();
         HideHPBar();
         HideAdditionalEffect();
+        _previousAreaLocation?.locationCharacterTracker.RemoveCharacterFromLocation(character, _previousAreaLocation);
         Messenger.Broadcast(CharacterSignals.CHARACTER_EXITED_AREA, character, _previousAreaLocation);
         visionCollider.Reset();
         GameObject.Destroy(visionTrigger.gameObject);
