@@ -40,8 +40,11 @@ public class SettlementPartyComponent : NPCSettlementComponent {
     }
     private void ProcessPartyQuests() {
         string log = string.Empty;
+
+        int villagePartyCount = owner.GetPartyCount();
 #if DEBUG_LOG
         log = GameManager.Instance.TodayLogString() + owner.name + " will process party quests";
+        log += "\nParty Count: " + villagePartyCount;
 #endif
         Faction factionOwner = owner.owner;
         if (factionOwner != null) {
@@ -49,7 +52,11 @@ public class SettlementPartyComponent : NPCSettlementComponent {
 #if DEBUG_LOG
             log += "\nWill try Explore";
 #endif
-            if (GameUtilities.RollChance(50, ref log)) { //50
+            int exploreChance = 50;
+            if (villagePartyCount >= 3) {
+                exploreChance = 100;
+            }
+            if (GameUtilities.RollChance(exploreChance, ref log)) { //50
                 if (!factionOwner.partyQuestBoard.HasPartyQuest(PARTY_QUEST_TYPE.Exploration)) {
                     factionOwner.partyQuestBoard.CreateExplorationPartyQuest(null, owner, owner.region);
                 }
@@ -59,7 +66,11 @@ public class SettlementPartyComponent : NPCSettlementComponent {
 #if DEBUG_LOG
             log += "\nWill try Morning Patrol";
 #endif
-            if (GameUtilities.RollChance(25, ref log)) { //25
+            int morningPatrolChance = 50;
+            if (villagePartyCount >= 3) {
+                morningPatrolChance = 100;
+            }
+            if (GameUtilities.RollChance(morningPatrolChance, ref log)) { //25
                 if (!factionOwner.partyQuestBoard.HasPartyQuest(PARTY_QUEST_TYPE.Morning_Patrol)) {
                     factionOwner.partyQuestBoard.CreateMorningPatrolPartyQuest(null, owner);
                 }
@@ -69,7 +80,11 @@ public class SettlementPartyComponent : NPCSettlementComponent {
 #if DEBUG_LOG
             log += "\nWill try Night Patrol";
 #endif
-            if (GameUtilities.RollChance(50, ref log)) { //50
+            int nightPatrolChance = 50;
+            if (villagePartyCount >= 2) {
+                nightPatrolChance = 100;
+            }
+            if (GameUtilities.RollChance(nightPatrolChance, ref log)) { //50
                 if (!factionOwner.partyQuestBoard.HasPartyQuest(PARTY_QUEST_TYPE.Night_Patrol)) {
                     factionOwner.partyQuestBoard.CreateNightPatrolPartyQuest(null, owner);
                 }
@@ -107,7 +122,11 @@ public class SettlementPartyComponent : NPCSettlementComponent {
 #if DEBUG_LOG
             log += "\nWill try Rescue";
 #endif
-            if (GameUtilities.RollChance(ChanceData.GetChance(CHANCE_TYPE.Rescue_Chance), ref log)) { //50
+            int rescueChance = 50;
+            if (villagePartyCount >= 2) {
+                rescueChance = 100;
+            }
+            if (GameUtilities.RollChance(rescueChance, ref log)) { //50
                 if (!factionOwner.partyQuestBoard.HasPartyQuest(PARTY_QUEST_TYPE.Rescue) && !factionOwner.partyQuestBoard.HasPartyQuest(PARTY_QUEST_TYPE.Demon_Rescue)) {
                     Character characterToRescue = owner.GetRandomResidentForRescue();
                     if (characterToRescue != null) {
@@ -140,7 +159,8 @@ public class SettlementPartyComponent : NPCSettlementComponent {
 #if DEBUG_LOG
             log += "\nWill try Hunt Beast";
 #endif
-            if (GameUtilities.RollChance(ChanceData.GetChance(CHANCE_TYPE.Hunt_Chance), ref log)) { //50
+            if (owner.HasStructure(STRUCTURE_TYPE.BUTCHERS_SHOP) || owner.HasBlueprintOnTileForStructure(STRUCTURE_TYPE.BUTCHERS_SHOP)
+                || owner.HasStructure(STRUCTURE_TYPE.HUNTER_LODGE) || owner.HasBlueprintOnTileForStructure(STRUCTURE_TYPE.HUNTER_LODGE)) {
                 if (owner.occupiedVillageSpot != null) {
                     if (!factionOwner.partyQuestBoard.HasPartyQuest(PARTY_QUEST_TYPE.Hunt_Beast)) {
                         LocationStructure targetStructure = owner.occupiedVillageSpot.GetRandomLinkedAliveBeastDen();
@@ -156,6 +176,10 @@ public class SettlementPartyComponent : NPCSettlementComponent {
                     log += "\nNo occupied village spot, will not hunt";
 #endif
                 }
+            } else {
+#if DEBUG_LOG
+                log += "\nNo Butcher's Shop or Skinner's Lodge";
+#endif
             }
         }
 #if DEBUG_LOG

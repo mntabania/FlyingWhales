@@ -608,11 +608,9 @@ namespace Locations.Settlements {
             }
             return null;
         }
-        public bool HasStructure(params STRUCTURE_TYPE[] type) {
-            for (int i = 0; i < type.Length; i++) {
-                if (HasStructure(type[i])) {
-                    return true;
-                }
+        public bool HasStructure(STRUCTURE_TYPE type1, STRUCTURE_TYPE type2, STRUCTURE_TYPE type3) {
+            if (HasStructure(type1) || HasStructure(type2) || HasStructure(type3)) {
+                return true;
             }
             return false;
         }
@@ -1054,6 +1052,9 @@ namespace Locations.Settlements {
                 }
             }
             return null;
+        }
+        public int GetPartyCount() {
+            return parties.Count;
         }
         #endregion
 
