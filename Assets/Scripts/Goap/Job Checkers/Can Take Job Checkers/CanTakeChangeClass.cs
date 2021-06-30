@@ -22,6 +22,12 @@
                     if (!character.classComponent.HasAbleClass(classToChangeTo)) {
                         return false;
                     }
+                    CharacterClass classToChangeToInstance = CharacterManager.Instance.GetCharacterClass(classToChangeTo);
+                    if (classToChangeToInstance.IsCombatant() && character.characterClass.IsCombatant()) {
+                        //If character is already combatant, it should not change class if the class to change to is also combatant
+                        //https://trello.com/c/Ql1ACBvN/4948-change-class-to-combatant-update
+                        return false;
+                    }
                 }
                 return true;
             }

@@ -49,7 +49,11 @@ public class ChangeClass : GoapAction {
         OtherData[] otherData = goapNode.otherData;
         string className = (string) otherData[0].obj;
         goapNode.actor.classComponent.AssignClass(className);
-        
+        //Reserve character after changing class
+        //This is to prevent 1 character from changing class again immediately after changing class
+        //Also to prevent 1 character from getting all change class jobs in settlement
+        goapNode.actor.classComponent.SetShouldChangeClass(false);
+
         ManMadeStructure previousWorkStructure = goapNode.actor.structureComponent.workPlaceStructure;
         if (previousWorkStructure != null) {
             //if actor can no longer work at its current work structure, unassign them

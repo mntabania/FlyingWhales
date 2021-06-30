@@ -1550,7 +1550,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
             GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.FULLNESS_RECOVERY_ON_SIGHT, INTERACTION_TYPE.EAT, target, owner);
             JobUtilities.PopulatePriorityLocationsForFullnessRecovery(owner, job);
             if (target is Table) {
-                job.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] { 10 });
+                job.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] { 20 });
             }
             producedJob = job;
             if (cancelOtherFullnessRecoveryJobs) {
