@@ -289,14 +289,18 @@ public class AreaTileObjectComponent : AreaComponent {
         RuinarchListPool<TileObject>.Release(pilePool);
         return chosenPile;
     }
-    public ResourcePile GetRandomPileOfMeatsForButchersShopHaul() {
+    public ResourcePile GetRandomPileOfMeatsForButchersShopHaul(Character p_butcher) {
         List<TileObject> pilePool = RuinarchListPool<TileObject>.Claim();
         for (int i = 0; i < resourcePiles.Count; i++) {
             ResourcePile pile = resourcePiles[i];
             LocationStructure currentStructure = pile.currentStructure;
-            if (pile.tileObjectType == TILE_OBJECT_TYPE.ANIMAL_MEAT ||
-               pile.tileObjectType == TILE_OBJECT_TYPE.ELF_MEAT ||
-               pile.tileObjectType == TILE_OBJECT_TYPE.HUMAN_MEAT) {
+            bool isFoodTypeValid;
+            if (p_butcher.traitContainer.HasTrait("Cannibal")) {
+                isFoodTypeValid = pile.tileObjectType == TILE_OBJECT_TYPE.ANIMAL_MEAT || pile.tileObjectType == TILE_OBJECT_TYPE.ELF_MEAT || pile.tileObjectType == TILE_OBJECT_TYPE.HUMAN_MEAT;
+            } else {
+                isFoodTypeValid = pile.tileObjectType == TILE_OBJECT_TYPE.ANIMAL_MEAT;
+            }
+            if (isFoodTypeValid) {
                 if (currentStructure != null && currentStructure.structureType != STRUCTURE_TYPE.CITY_CENTER && currentStructure.structureType != STRUCTURE_TYPE.BUTCHERS_SHOP && currentStructure.structureType != STRUCTURE_TYPE.FARM && currentStructure.structureType != STRUCTURE_TYPE.DWELLING && !pile.HasJobTargetingThis(JOB_TYPE.HAUL, JOB_TYPE.COMBINE_STOCKPILE)) {
                     pilePool.Add(pile);
                 }

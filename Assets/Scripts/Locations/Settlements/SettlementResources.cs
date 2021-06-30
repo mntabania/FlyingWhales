@@ -174,11 +174,11 @@ public class SettlementResources
         return chosenPile;
     }
 
-    public ResourcePile GetRandomPileOfMeatsForButchersShopHaul(BaseSettlement p_settlement) {
+    public ResourcePile GetRandomPileOfMeatsForButchersShopHaul(BaseSettlement p_settlement, Character p_butcher) {
         List<TileObject> pilePool = RuinarchListPool<TileObject>.Claim();
         for (int i = 0; i < p_settlement.areas.Count; i++) {
             Area area = p_settlement.areas[i];
-            ResourcePile pile = area.tileObjectComponent.GetRandomPileOfMeatsForButchersShopHaul();
+            ResourcePile pile = area.tileObjectComponent.GetRandomPileOfMeatsForButchersShopHaul(p_butcher);
             if (pile != null) {
                 pilePool.Add(pile);
             }

@@ -422,7 +422,7 @@ namespace Inner_Maps {
             if (tile != null) {
                 TileObject well = InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.FISHING_SPOT);
                 tile.structure.AddPOI(well, tile);
-                // well.mapObjectVisual.SetVisual(null);	
+                well.mapObjectVisual.SetVisual(null);	
             }
         }
         private void SetAsWater(LocationGridTile tile, LocationStructure structure, MapGenerationData mapGenerationData) {
