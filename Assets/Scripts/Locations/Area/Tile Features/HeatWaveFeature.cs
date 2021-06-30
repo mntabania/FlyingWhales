@@ -149,6 +149,8 @@ namespace Locations.Area_Features {
                     character.traitContainer.AddTrait(character, "Overheating");
                     Overheating overheating = character.traitContainer.GetTraitOrStatus<Overheating>("Overheating");
                     overheating?.SetIsPlayerSource(isPlayerSource);
+                } else {
+                    character.reactionComponent.ResistRuinarchPower();
                 }
             }
             RescheduleHeatWaveCheck(p_area);

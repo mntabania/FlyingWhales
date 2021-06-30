@@ -143,6 +143,8 @@ public class RavenousSpirit : TileObject {
             //Triggers Effect
             float processedEffect = -PlayerSkillManager.Instance.GetIncreaseStatsPercentagePerLevel(spiritData);
             possessionTarget.needsComponent.AdjustFullness(processedEffect);
+        } else {
+            possessionTarget.reactionComponent.ResistRuinarchPower();
         }
     }
 

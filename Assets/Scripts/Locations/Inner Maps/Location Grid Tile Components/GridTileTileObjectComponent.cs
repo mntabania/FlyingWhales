@@ -380,6 +380,8 @@ namespace Inner_Maps {
                 PlayerManager.Instance.player.ShowNotificationFrom(triggeredBy, log, true);
 
                 triggeredBy.traitContainer.AddTrait(triggeredBy, "Recently Trapped");
+            } else {
+                triggeredBy.reactionComponent.ResistRuinarchPower();
             }
         }
         #endregion
@@ -445,6 +447,8 @@ namespace Inner_Maps {
                 PlayerManager.Instance.player.ShowNotificationFrom(triggeredBy, log, true);
 
                 triggeredBy.traitContainer.AddTrait(triggeredBy, "Recently Trapped");
+            } else {
+                triggeredBy.reactionComponent.ResistRuinarchPower();
             }
         }
         #endregion
