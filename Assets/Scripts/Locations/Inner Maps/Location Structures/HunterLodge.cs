@@ -90,7 +90,7 @@ namespace Inner_Maps.Location_Structures {
             Character randomTarget;
             List<Character> targetAnimals = RuinarchListPool<Character>.Claim();
             if (!p_worker.faction.factionType.IsActionConsideredACrime(CRIME_TYPE.Animal_Killing)) {
-                p_worker.homeSettlement.SettlementResources.PopulateAllAnimalsForSkinnersLodgeSkinning(targetAnimals, p_worker.homeSettlement);
+                p_worker.homeSettlement.SettlementResources.PopulateAllAnimalsForSkinnersLodgeSkinning(targetAnimals, p_worker.homeSettlement, this);
 
                 randomTarget = CollectionUtilities.GetRandomElement(targetAnimals);
                 if (randomTarget != null) {

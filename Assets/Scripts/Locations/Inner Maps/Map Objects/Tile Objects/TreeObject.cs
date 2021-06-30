@@ -44,7 +44,7 @@ public abstract class TreeObject : TileObject {
         AddAdvertisedAction(INTERACTION_TYPE.ASSAULT);
         AddAdvertisedAction(INTERACTION_TYPE.RESOLVE_COMBAT);
         _occupiedState = Occupied_State.Undecided;
-        count = 1000;
+        count = 80;
     }
     protected TreeObject(SaveDataTreeObject data) : base(data) {
         Assert.IsNotNull(data);

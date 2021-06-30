@@ -8,7 +8,7 @@ public class SkinnableAnimal : Summon {
     public override System.Type serializedData => typeof(SaveDataSkinnableAnimal);
 
     public SkinnableAnimal(SUMMON_TYPE summonType, string className, RACE race, GENDER gender) : base(summonType, className, race, gender) {
-        count = 1000;
+        count = 80;
     }
     public SkinnableAnimal(SaveDataSkinnableAnimal data) : base(data) {
         SaveDataSkinnableAnimal sd = data as SaveDataSkinnableAnimal;

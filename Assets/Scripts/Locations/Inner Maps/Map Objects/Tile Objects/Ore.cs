@@ -16,7 +16,7 @@ public class Ore : TileObject {
         AddAdvertisedAction(INTERACTION_TYPE.ASSAULT);
         AddAdvertisedAction(INTERACTION_TYPE.RESOLVE_COMBAT);
         AddAdvertisedAction(INTERACTION_TYPE.MINE_METAL);
-        count = 1000;
+        count = 120;
         SetYield(50);
     }
     public Ore(SaveDataOre data) : base(data) {

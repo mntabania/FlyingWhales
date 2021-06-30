@@ -107,10 +107,10 @@ public class SettlementResources
         }
         return count;
     }
-    public void PopulateAllAnimalsForSkinnersLodgeSkinning(List<Character> allAvailableAnimals, BaseSettlement p_settlement) {
+    public void PopulateAllAnimalsForSkinnersLodgeSkinning(List<Character> allAvailableAnimals, BaseSettlement p_settlement, LocationStructure p_workerStructure) {
         for (int i = 0; i < p_settlement.areas.Count; i++) {
             Area area = p_settlement.areas[i];
-            area.locationCharacterTracker.PopulateAllAnimalsForSkinnersLodgeSkinning(allAvailableAnimals);
+            area.locationCharacterTracker.PopulateAllAnimalsForSkinnersLodgeSkinning(allAvailableAnimals, p_workerStructure);
         }
     }
     public void PopulateAllAnimalsForSkinnersLodgeShearing(List<Character> ableToShearTodayList, BaseSettlement p_settlement) {

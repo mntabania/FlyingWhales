@@ -8,7 +8,7 @@ using UnityEngine.Assertions;
 
 public class ChopWood : GoapAction {
 
-    public int m_amountProducedPerTick = 2;
+    public int m_amountProducedPerTick = 1;
     private const float _coinGainMultiplier = 0.88f;
 
     public ChopWood() : base(INTERACTION_TYPE.CHOP_WOOD) {
