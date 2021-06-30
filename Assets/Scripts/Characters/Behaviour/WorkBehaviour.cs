@@ -69,7 +69,7 @@ public class WorkBehaviour : CharacterBehaviourComponent {
 #if DEBUG_LOG
                         log = $"{log}\n  -Actor has Injured or Plagued and there is still an available Bed in the Hospice: Create Recuperate Job";
 #endif
-                        BedClinic bedClinic = hospice.GetFirstUnoccupiedBed();
+                        BedClinic bedClinic = hospice.GetFirstBedToRecuperate();
                         if (bedClinic != null) {
                             if (character.jobComponent.TryRecuperate(bedClinic, out producedJob)) {
                                 return true;
