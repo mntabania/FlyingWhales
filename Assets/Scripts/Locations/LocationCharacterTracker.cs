@@ -27,7 +27,7 @@ namespace Locations {
             //    //}
             //    p_area.settlementOnArea?.SettlementResources?.AddCharacterToSettlement(p_character);
             //} else 
-            if (p_character is Summon summon && (p_character.race.IsShearable() || p_character.race.IsSkinnable())) {
+            if (p_character is Summon summon && (p_character.race.IsShearable() || p_character.race.IsSkinnable() || p_character.race.IsButcherableWhenDead() || p_character.race.IsButcherableWhenDeadOrAlive())) {
                 AddAnimalToSettlement(summon);
             }
         }
@@ -38,7 +38,7 @@ namespace Locations {
                 //} else if (p_character.race.IsShearable() || p_character.race.IsSkinnable()) {
                 //    p_area.settlementOnArea?.SettlementResources?.RemoveAnimalFromSettlement(p_character as Summon);
                 //}
-                if (p_character is Summon summon && (p_character.race.IsShearable() || p_character.race.IsSkinnable())) {
+                if (p_character is Summon summon && (p_character.race.IsShearable() || p_character.race.IsSkinnable() || p_character.race.IsButcherableWhenDead() || p_character.race.IsButcherableWhenDeadOrAlive())) {
                     RemoveAnimalFromSettlement(summon);
                 }
             }
@@ -115,7 +115,7 @@ namespace Locations {
             for (int i = 0; i < butcherables.Count; i++) {
                 Summon monster = butcherables[i];
                 LocationStructure currentStructure = monster.currentStructure;
-                if (currentStructure != null && !monster.HasJobTargetingThis(JOB_TYPE.MONSTER_BUTCHER)) {
+                if (!monster.isBeingSeized && currentStructure != null && !monster.HasJobTargetingThis(JOB_TYPE.MONSTER_BUTCHER)) {
                     if (monster.race.IsButcherableWhenDead()) {
                         if (monster.isDead) {
                             return monster;

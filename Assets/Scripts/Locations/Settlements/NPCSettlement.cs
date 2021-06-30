@@ -1088,7 +1088,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         return count;
     }
     public bool HasFoodProducingStructure() {
-        return HasStructure(STRUCTURE_TYPE.HUNTER_LODGE) || HasStructure(STRUCTURE_TYPE.FARM) || HasStructure(STRUCTURE_TYPE.FISHERY);
+        return HasStructure(STRUCTURE_TYPE.HUNTER_LODGE, STRUCTURE_TYPE.FARM, STRUCTURE_TYPE.FISHERY);
     }
     public bool HasBasicResourceProducingStructure() {
         if (owner != null) {
