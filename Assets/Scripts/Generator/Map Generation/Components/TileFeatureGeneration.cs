@@ -167,19 +167,19 @@ public class TileFeatureGeneration : MapGenerationComponent {
 		int villageSpotsToCreate = WorldSettings.Instance.worldSettingsData.mapSettings.GetMaxVillagesForMapSize();
 		while (p_data.villageSpots.Count < villageSpotsToCreate) {
 			if (villageSpotChoices.Count == 0) { break; }
-			Area candidate = CollectionUtilities.GetRandomElement(villageSpotChoices);
-			if (IsAreaValidVillageSpotCandidate(candidate, p_data)) {
-				villageSpotChoices.Remove(candidate);
+			Area mainSpotCandidate = CollectionUtilities.GetRandomElement(villageSpotChoices);
+			if (IsAreaValidVillageSpotCandidate(mainSpotCandidate, p_data)) {
+				villageSpotChoices.Remove(mainSpotCandidate);
 				//must be connected to at least 6 unreserved contiguous flat external tiles
 				List<Area> connectedPlainAreas = RuinarchListPool<Area>.Claim();
-				connectedPlainAreas.Add(candidate);
+				connectedPlainAreas.Add(mainSpotCandidate);
 
 				List<Area> areasToCheck = RuinarchListPool<Area>.Claim();
 				List<Area> checkedAreas = RuinarchListPool<Area>.Claim();
 				List<Area> waterAreas = RuinarchListPool<Area>.Claim();
 				List<Area> caveAreas = RuinarchListPool<Area>.Claim();
-				areasToCheck.AddRange(candidate.neighbourComponent.cardinalNeighbours);
-				checkedAreas.Add(candidate);
+				areasToCheck.AddRange(mainSpotCandidate.neighbourComponent.cardinalNeighbours);
+				checkedAreas.Add(mainSpotCandidate);
 
 				int lumberyardSpots = 0;
 				int miningSpots = 0;
@@ -228,10 +228,11 @@ public class TileFeatureGeneration : MapGenerationComponent {
 								waterAreas.Add(currentAreaBeingChecked);
 							}
 						} 
-						if (currentAreaBeingChecked.elevationComponent.HasElevation(ELEVATION.MOUNTAIN)) {
-							if (!caveAreas.Contains(currentAreaBeingChecked) && caveAreas.Count < 2) {
+						if (currentAreaBeingChecked.elevationComponent.HasElevation(ELEVATION.MOUNTAIN) && 
+						    currentAreaBeingChecked.elevationComponent.elevationDictionary[ELEVATION.MOUNTAIN] > 5) {
+							if (!caveAreas.Contains(currentAreaBeingChecked)) { //&& caveAreas.Count < 2 //Removed Count checking to maximize Ore Vein creation
 								//add ore vein to area and tag as Metal Source
-								ReservedCaveAreaMetalSourceProcessing(p_data, currentAreaBeingChecked);
+								ReservedCaveAreaMetalSourceProcessing(p_data, currentAreaBeingChecked, mainSpotCandidate);
 								caveAreas.Add(currentAreaBeingChecked);
 								miningSpots++;
 							}
@@ -242,7 +243,7 @@ public class TileFeatureGeneration : MapGenerationComponent {
 				}
 
 				if (connectedPlainAreas.Count >= 6) {
-					VillageSpot villageSpot = p_data.AddVillageSpot(candidate, connectedPlainAreas, lumberyardSpots, miningSpots);
+					VillageSpot villageSpot = p_data.AddVillageSpot(mainSpotCandidate, connectedPlainAreas, lumberyardSpots, miningSpots);
 					//try to add more cave and water areas if less than 2
 					if (waterAreas.Count < 2 || caveAreas.Count < 2) {
 						for (int i = 0; i < villageSpot.reservedAreas.Count; i++) {
@@ -254,7 +255,7 @@ public class TileFeatureGeneration : MapGenerationComponent {
 								if (neighbour.elevationComponent.elevationType == ELEVATION.MOUNTAIN) {
 									if (caveAreas.Count < 2 && !caveAreas.Contains(neighbour)) {
 										//add ore vein to area and tag as Metal Source
-										ReservedCaveAreaMetalSourceProcessing(p_data, neighbour);
+										ReservedCaveAreaMetalSourceProcessing(p_data, neighbour, mainSpotCandidate);
 										caveAreas.Add(neighbour);
 									}
 								} else if (neighbour.elevationComponent.elevationType == ELEVATION.WATER) {
@@ -269,7 +270,7 @@ public class TileFeatureGeneration : MapGenerationComponent {
 					}
 					villageSpot.AddWaterAreas(waterAreas);
 					villageSpot.AddCaveAreas(caveAreas);
-					Debug.Log($"Created village spot at {candidate}. " +
+					Debug.Log($"Created village spot at {mainSpotCandidate}. " +
 					          $"\nAreas are({connectedPlainAreas.Count.ToString()}): {connectedPlainAreas.ComafyList()}" +
 					          $"\nAdded Water areas({waterAreas.Count.ToString()}): {waterAreas.ComafyList()}" +
 					          $"\nAdded Cave areas({caveAreas.Count.ToString()}): {caveAreas.ComafyList()}");
@@ -291,7 +292,7 @@ public class TileFeatureGeneration : MapGenerationComponent {
 				RuinarchListPool<Area>.Release(caveAreas);
 				RuinarchListPool<Area>.Release(waterAreas);
 			} else {
-				villageSpotChoices.Remove(candidate);
+				villageSpotChoices.Remove(mainSpotCandidate);
 			}
 		}
 		
@@ -304,21 +305,48 @@ public class TileFeatureGeneration : MapGenerationComponent {
 		Debug.Log($"Created {p_data.villageSpots.Count.ToString()} Village Spots");
 		yield return null;
 	}
-	private void ReservedCaveAreaMetalSourceProcessing(MapGenerationData p_data, Area currentAreaBeingChecked) {
+	private void ReservedCaveAreaMetalSourceProcessing(MapGenerationData p_data, Area currentAreaBeingChecked, Area p_mainSpotCandidate) {
 		if (!currentAreaBeingChecked.featureComponent.HasFeature(AreaFeatureDB.Metal_Source_Feature)) {
 			currentAreaBeingChecked.featureComponent.AddFeature(AreaFeatureDB.Metal_Source_Feature, currentAreaBeingChecked);
-			if (!currentAreaBeingChecked.tileObjectComponent.HasTileObjectOfTypeInHexTile(TILE_OBJECT_TYPE.ORE_VEIN)) {
-				int oreVeinAmount = GameUtilities.RandomBetweenTwoNumbers(10, 15);
-				for (int i = 0; i < oreVeinAmount; i++) {
-					//add a Ore Vein to a random cave tile inside area.
+		}
+		// if (!currentAreaBeingChecked.tileObjectComponent.HasTileObjectOfTypeInHexTile(TILE_OBJECT_TYPE.ORE_VEIN)) {
+		// 	int oreVeinAmount = GameUtilities.RandomBetweenTwoNumbers(5, 7);
+		// 	for (int i = 0; i < oreVeinAmount; i++) {
+		// 		//add a Ore Vein to a random cave tile inside area.
+		// 		// LocationGridTile oreVeinLocation = p_data.GetFirstUnoccupiedNonEdgeCaveTile(currentAreaBeingChecked, p_data);
+		// 		LocationGridTile oreVeinLocation = p_data.GetFirstUnoccupiedNonEdgeCaveTileThatIsFacingVillageSpot(currentAreaBeingChecked, p_data, p_mainSpotCandidate);
+		// 		if (oreVeinLocation != null) {
+		// 			p_data.SetGeneratedMapPerlinDetails(oreVeinLocation, TILE_OBJECT_TYPE.NONE);	
+		// 			currentAreaBeingChecked.region.innerMap.CreateOreVein(oreVeinLocation);
+		// 		}	
+		// 	}
+		// }
+		if (!currentAreaBeingChecked.tileObjectComponent.HasTileObjectOfTypeInHexTile(TILE_OBJECT_TYPE.ORE_VEIN)) {
+			int oreVeinAmount = GameUtilities.RandomBetweenTwoNumbers(5, 7);
+			int createdOreVeinAmount = 0;
+			for (int i = 0; i < oreVeinAmount; i++) {
+				//add a Ore Vein to a random cave tile inside area.
+				// LocationGridTile oreVeinLocation = p_data.GetFirstUnoccupiedNonEdgeCaveTile(currentAreaBeingChecked, p_data);
+				LocationGridTile oreVeinLocation = p_data.GetFirstUnoccupiedNonEdgeCaveTileThatIsFacingVillageSpot(currentAreaBeingChecked, p_data, p_mainSpotCandidate);
+				if (oreVeinLocation != null) {
+					p_data.SetGeneratedMapPerlinDetails(oreVeinLocation, TILE_OBJECT_TYPE.NONE);
+					currentAreaBeingChecked.region.innerMap.CreateOreVein(oreVeinLocation);
+					createdOreVeinAmount++;
+				}
+			}
+			if (createdOreVeinAmount <= 0) {
+				for (int i = 0; i < 2; i++) {
 					LocationGridTile oreVeinLocation = p_data.GetFirstUnoccupiedNonEdgeCaveTile(currentAreaBeingChecked, p_data);
 					if (oreVeinLocation != null) {
+						//fail-safe in case village spot is not placed in an optimal position, and no ore veins facing it could be placed.
 						p_data.SetGeneratedMapPerlinDetails(oreVeinLocation, TILE_OBJECT_TYPE.NONE);	
 						currentAreaBeingChecked.region.innerMap.CreateOreVein(oreVeinLocation);
 					}	
 				}
 			}
 		}
+
+		
 	}
 	private void ReservedWaterAreaFishSourceHandling(MapGenerationData p_data, Area currentAreaBeingChecked) {
 		if (!currentAreaBeingChecked.featureComponent.HasFeature(AreaFeatureDB.Fish_Source)) {

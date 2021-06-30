@@ -1794,35 +1794,35 @@ public static class Extensions {
     #region Tutorials
     public static int GetTutorialOrder(this TutorialManager.Tutorial_Type p_type) {
         switch (p_type) {
-            case TutorialManager.Tutorial_Type.Unlocking_Bonus_Powers:
-                return 0;
-            case TutorialManager.Tutorial_Type.Upgrading_The_Portal:
-                return 1;
-            case TutorialManager.Tutorial_Type.Mana:
-                return 2;
-            case TutorialManager.Tutorial_Type.Chaotic_Energy:
-                return 3;
-            case TutorialManager.Tutorial_Type.Spirit_Energy:
-                return 4;
-            case TutorialManager.Tutorial_Type.Storing_Targets:
-                return 5;
-            case TutorialManager.Tutorial_Type.Prism:
-                return 6;
-            case TutorialManager.Tutorial_Type.Maraud:
-                return 7;
-            case TutorialManager.Tutorial_Type.Intel:
-                return 8;
-            case TutorialManager.Tutorial_Type.Migration_Controls:
-                return 9;
-            case TutorialManager.Tutorial_Type.Abilities:
-                return 10;
-            case TutorialManager.Tutorial_Type.Base_Building:
-                return 11;
-            case TutorialManager.Tutorial_Type.Resistances:
-                return 12;
             case TutorialManager.Tutorial_Type.Time_Management:
-                return 13;
+                return 0;
             case TutorialManager.Tutorial_Type.Target_Menu:
+                return 1;
+            case TutorialManager.Tutorial_Type.Chaotic_Energy:
+                return 2;
+            case TutorialManager.Tutorial_Type.Base_Building:
+                return 3;
+            case TutorialManager.Tutorial_Type.Unlocking_Bonus_Powers:
+                return 4;
+            case TutorialManager.Tutorial_Type.Upgrading_The_Portal:
+                return 5;
+            case TutorialManager.Tutorial_Type.Mana:
+                return 6;
+            case TutorialManager.Tutorial_Type.Spirit_Energy:
+                return 7;
+            case TutorialManager.Tutorial_Type.Storing_Targets:
+                return 8;
+            case TutorialManager.Tutorial_Type.Prism:
+                return 9;
+            case TutorialManager.Tutorial_Type.Maraud:
+                return 10;
+            case TutorialManager.Tutorial_Type.Intel:
+                return 11;
+            case TutorialManager.Tutorial_Type.Migration_Controls:
+                return 12;
+            case TutorialManager.Tutorial_Type.Abilities:
+                return 13;
+            case TutorialManager.Tutorial_Type.Resistances:
                 return 14;
             default:
                 return (int)p_type;

@@ -454,7 +454,8 @@ namespace Inner_Maps.Location_Structures {
             m_dirtyObjects.Remove(p_object);
         }
         private bool ProducesDirt() {
-            return structureType.IsVillageStructure() && structureType != STRUCTURE_TYPE.CITY_CENTER && structureType != STRUCTURE_TYPE.CEMETERY && structureType != STRUCTURE_TYPE.PRISON;
+            return structureType.IsVillageStructure() && structureType != STRUCTURE_TYPE.CITY_CENTER && structureType != STRUCTURE_TYPE.CEMETERY && 
+                   structureType != STRUCTURE_TYPE.PRISON && structureType != STRUCTURE_TYPE.MINE && structureType != STRUCTURE_TYPE.LUMBERYARD;
         }
         private void ScheduleDirtProduction() {
             GameDate dueDate = GameManager.Instance.Today();

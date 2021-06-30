@@ -63,9 +63,9 @@ public class DefaultFactionRelated : CharacterBehaviourComponent {
             if(character.faction != null && character.faction.isMajorNonPlayer) {
                 int leaveFactionChance = 0;
                 if (character.moodComponent.moodState == MOOD_STATE.Bad) {
-                    leaveFactionChance += 3;
+                    leaveFactionChance += 2;
                 } else if (character.moodComponent.moodState == MOOD_STATE.Critical) {
-                    leaveFactionChance += 8;
+                    leaveFactionChance += 6;
                 }
                 if (character.traitContainer.HasTrait("Betrayed") && character.faction.leader != null) {
                     Betrayed betrayed = character.traitContainer.GetTraitOrStatus<Betrayed>("Betrayed");
