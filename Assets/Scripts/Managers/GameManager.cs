@@ -206,6 +206,7 @@ public class GameManager : BaseMonoBehaviour {
         SchedulingManager.Instance.StartScheduleCalls ();
         Messenger.AddListener<KeyCode>(ControlsSignals.KEY_DOWN, OnKeyDown);
         Canvas.ForceUpdateCanvases();
+        Messenger.Broadcast(Signals.PROGRESSION_LOADED);
     }
     public GameDate Today() {
         return new GameDate(today.month, today.day, today.year, today.tick);
