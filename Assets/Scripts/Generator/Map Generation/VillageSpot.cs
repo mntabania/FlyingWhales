@@ -161,6 +161,23 @@ public class VillageSpot {
         }
         return false;
     }
+    public bool HasUnusedMiningSpotsThatSettlementHasNotYetConnectedTo(NPCSettlement p_settlement) {
+        for (int i = 0; i < reservedAreas.Count; i++) {
+            Area area = reservedAreas[i];
+            if (area.elevationComponent.HasElevation(ELEVATION.MOUNTAIN)) {
+                for (int j = 0; j < area.structureComponent.structureConnectors.Count; j++) {
+                    StructureConnector structureConnector = area.structureComponent.structureConnectors[j];
+                    //NOTE: Did not add null checking for structureConnector.tileLocation since I expect that all structure connectors
+                    //in an area should have a tile location. Also added checking for isPartOfLocationStructureObject so that structure connectors
+                    //that are part of settlement structures will not be counted as mining spots, even though they are inside a cave.
+                    if (structureConnector.tileLocation.structure is Cave cave && !structureConnector.isPartOfLocationStructureObject && !cave.IsConnectedToSettlement(p_settlement)) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
     public bool HasUnusedLumberyardSpots() {
         BigTreeSpotFeature bigTreeSpotFeature = GridMap.Instance.mainRegion.gridTileFeatureComponent.GetFeature<BigTreeSpotFeature>();
         SmallTreeSpotFeature smallTreeSpotFeature = GridMap.Instance.mainRegion.gridTileFeatureComponent.GetFeature<SmallTreeSpotFeature>();

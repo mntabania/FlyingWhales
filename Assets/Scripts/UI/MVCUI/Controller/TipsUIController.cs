@@ -54,8 +54,8 @@ public class TipsUIController : MVCUIController {
         Messenger.AddListener<LocationStructure>(StructureSignals.STRUCTURE_OBJECT_PLACED, OnStructureObjectPlaced);
         Messenger.AddListener<IPlayerActionTarget>(UISignals.PLAYER_ACTION_CONTEXT_MENU_SHOWN, OnContextMenuClicked);
         Messenger.AddListener(Signals.HOUR_STARTED, HourlyCheck);
+        Messenger.AddListener(Signals.PROGRESSION_LOADED, OnSavedProgressionLoaded);
     }
-
     void UnSubscribeToEvents() {
         Messenger.RemoveListener(Signals.GAME_STARTED, OnGameStarted);
         Messenger.RemoveListener(PlayerSignals.CHAOS_ORB_COLLECTED, OnOrbCollected);
@@ -63,6 +63,7 @@ public class TipsUIController : MVCUIController {
         Messenger.RemoveListener<LocationStructure>(StructureSignals.STRUCTURE_OBJECT_PLACED, OnStructureObjectPlaced);
         Messenger.RemoveListener<IPlayerActionTarget>(UISignals.PLAYER_ACTION_CONTEXT_MENU_SHOWN, OnContextMenuClicked);
         Messenger.RemoveListener(Signals.HOUR_STARTED, HourlyCheck);
+        Messenger.RemoveListener(Signals.PROGRESSION_LOADED, OnSavedProgressionLoaded);
         tipsItems.ForEach((eachItem) => eachItem.onClickTip -= OnItemClicked);
     }
 
@@ -142,6 +143,10 @@ public class TipsUIController : MVCUIController {
         m_saveDataPlayer.unlockedTips.ForEach((eachTip) => clickedTips.Add(eachTip));
         
         AddTips(TIPS.Time_Manager);
+    }
+    private void OnSavedProgressionLoaded() {
+        m_saveDataPlayer = SaveManager.Instance.currentSaveDataPlayer;
+        m_saveDataPlayer.unlockedTips.ForEach((eachTip) => clickedTips.Add(eachTip));
     }
 
     private void OnSpiritEnergyCollected(int adjustedAmount, int spiritEnergy) {

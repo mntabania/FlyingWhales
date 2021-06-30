@@ -12,12 +12,12 @@ namespace Inner_Maps.Location_Structures {
         public CONCRETE_RESOURCES producedResource { get; }
         public List<LocationGridTile> stoneSpots { get; }
         public List<LocationGridTile> oreSpots { get; }
-        public int connectedMinesCount { get; private set; }
+        public List<LocationStructure> connectedMines { get; private set; }
         
         
         #region getters
         public override System.Type serializedData => typeof(SaveDataCave);
-        public bool hasConnectedMine => connectedMinesCount > 0;
+        public bool hasConnectedMine => connectedMines.Count > 0;
         #endregion
 
         public Cave(Region location) : base(STRUCTURE_TYPE.CAVE, location) {
@@ -31,6 +31,7 @@ namespace Inner_Maps.Location_Structures {
             producedResource = _resourceWeights.PickRandomElementGivenWeights();
             stoneSpots = new List<LocationGridTile>();
             oreSpots = new List<LocationGridTile>();
+            connectedMines = new List<LocationStructure>();
         }
 
         public Cave(Region location, SaveDataNaturalStructure data) : base(location, data) {
@@ -38,6 +39,7 @@ namespace Inner_Maps.Location_Structures {
             producedResource = saveDataCave.producedResource;
             oreSpots = new List<LocationGridTile>();
             stoneSpots = new List<LocationGridTile>();
+            connectedMines = new List<LocationStructure>();
         }
         public override void LoadReferences(SaveDataLocationStructure saveDataLocationStructure) {
             base.LoadReferences(saveDataLocationStructure);
@@ -54,7 +56,13 @@ namespace Inner_Maps.Location_Structures {
                 LocationGridTile tile = DatabaseManager.Instance.locationGridTileDatabase.GetTileBySavedData(saveData);
                 stoneSpots.Add(tile);
             }
-            connectedMinesCount = saveDataCave.connectedMineCount;
+            if (saveDataCave.connectedMines != null) {
+                for (int i = 0; i < saveDataCave.connectedMines.Length; i++) {
+                    string connectedMine = saveDataCave.connectedMines[i];
+                    LocationStructure structure = DatabaseManager.Instance.structureDatabase.GetStructureByPersistentID(connectedMine);
+                    connectedMines.Add(structure);
+                }
+            }
         }
         protected override void OnTileAddedToStructure(LocationGridTile tile) {
             base.OnTileAddedToStructure(tile);
@@ -113,10 +121,21 @@ namespace Inner_Maps.Location_Structures {
 
         #region Mines
         public void ConnectMine(Mine p_mine) {
-            connectedMinesCount++;
+            if (!connectedMines.Contains(p_mine)) {
+                connectedMines.Add(p_mine);    
+            }
         }
         public void DisconnectMine(Mine p_mine) {
-            connectedMinesCount--;
+            connectedMines.Remove(p_mine);
+        }
+        public bool IsConnectedToSettlement(NPCSettlement p_settlement) {
+            for (int i = 0; i < connectedMines.Count; i++) {
+                LocationStructure structure = connectedMines[i];
+                if (structure.settlementLocation == p_settlement) {
+                    return true;
+                }
+            }
+            return false;
         }
         #endregion
 
@@ -126,7 +145,7 @@ namespace Inner_Maps.Location_Structures {
             info = $"{info}\nProduced Resource: {producedResource.ToString()}";
             info = $"{info}\nStone Spots: {stoneSpots.ComafyList()}";
             info = $"{info}\nOre Spots: {oreSpots.ComafyList()}";
-            info = $"{info}\nConnected Mine Count: {connectedMinesCount.ToString()}";
+            info = $"{info}\nConnected Mines ({connectedMines.Count.ToString()}): {connectedMines.ComafyList()}";
             return info;
         }
         #endregion
@@ -139,7 +158,7 @@ public class SaveDataCave : SaveDataNaturalStructure {
     public CONCRETE_RESOURCES producedResource;
     public TileLocationSave[] stoneSpots;
     public TileLocationSave[] oreSpots;
-    public int connectedMineCount;
+    public string[] connectedMines;
     public override void Save(LocationStructure structure) {
         base.Save(structure);
         Cave cave = structure as Cave;
@@ -157,7 +176,13 @@ public class SaveDataCave : SaveDataNaturalStructure {
             stoneSpots[i] = new TileLocationSave(stoneSpot);
         }
 
-        connectedMineCount = cave.connectedMinesCount;
+        if (cave.connectedMines.Count > 0) {
+            connectedMines = new string[cave.connectedMines.Count];
+            for (int i = 0; i < cave.connectedMines.Count; i++) {
+                LocationStructure mine = cave.connectedMines[i];
+                connectedMines[i] = mine.persistentID;
+            }
+        }
     }
 }
 #endregion

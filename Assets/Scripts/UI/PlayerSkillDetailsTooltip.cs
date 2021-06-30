@@ -389,7 +389,7 @@ public class PlayerSkillDetailsTooltip : MonoBehaviour {
         
         if (p_data.resistanceType != RESISTANCE.None) {
             ELEMENTAL_TYPE elementalType = p_data.resistanceType.GetElement();
-            additionalBonusesStr = $"{additionalBonusesStr}{UtilityScripts.Utilities.ColorizeSpellTitle("Element:")}{UtilityScripts.Utilities.GetRichTextIconForElement(elementalType)}";
+            additionalBonusesStr = $"{additionalBonusesStr}\n{UtilityScripts.Utilities.ColorizeSpellTitle("Element:")}{UtilityScripts.Utilities.GetRichTextIconForElement(elementalType)}";
         }
         return additionalBonusesStr;
     }
