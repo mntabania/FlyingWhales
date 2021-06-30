@@ -26,7 +26,7 @@ public class Rock : TileObject{
         AddAdvertisedAction(INTERACTION_TYPE.ASSAULT);
         AddAdvertisedAction(INTERACTION_TYPE.RESOLVE_COMBAT);
         AddAdvertisedAction(INTERACTION_TYPE.MINE_STONE);
-        count = 1000;
+        count = 100;
         SetYield(50);
         //BaseSettlement.onSettlementBuilt += UpdateSettlementResourcesParent;
     }

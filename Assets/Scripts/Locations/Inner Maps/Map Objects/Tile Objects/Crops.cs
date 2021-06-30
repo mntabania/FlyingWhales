@@ -21,7 +21,7 @@ public abstract class Crops : TileObject {
     public abstract TILE_OBJECT_TYPE producedObjectOnHarvest { get; }
     #endregion
     
-    protected Crops() { count = 1000; }
+    protected Crops() { count = 80; }
     protected Crops(SaveDataCrops data) : base(data) { }
 
     #region Initialization

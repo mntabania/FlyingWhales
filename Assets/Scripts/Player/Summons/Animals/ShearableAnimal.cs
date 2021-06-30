@@ -9,7 +9,7 @@ public class ShearableAnimal : Animal {
     public override System.Type serializedData => typeof(SaveDataShearableAnimal);
 
     public ShearableAnimal(SUMMON_TYPE summonType, string className, RACE race) : base(summonType, className, race) {
-        count = 1000;
+        count = 80;
     }
     public ShearableAnimal(SaveDataShearableAnimal data) : base(data) {
         SaveDataShearableAnimal sd = data as SaveDataShearableAnimal;
