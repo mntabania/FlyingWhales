@@ -10,8 +10,9 @@ public class TipsItemUI : MonoBehaviour {
     public Action<TIPS> onClickTip;
 
     public TIPS tip;
-    [SerializeField] private TextMeshProUGUI lblTipsName;
     [SerializeField] private TextMeshProUGUI lblTipsDescription;
+    [SerializeField] private EnvelopContentUnityUI envelopContent;
+    [SerializeField] private CanvasGroup canvasGroup;
 
     public Button btnClick;
 
@@ -26,11 +27,12 @@ public class TipsItemUI : MonoBehaviour {
     public void BtnClick() {
         onClickTip?.Invoke(tip);
     }
-
-	public void SetName(string p_name) {
-        lblTipsName.text = p_name;
-    }
     public void SetDescription(string p_description) {
         lblTipsDescription.text = p_description;
+        envelopContent.Execute();
+    }
+    public void PlayIntroAnimation() {
+        canvasGroup.alpha = 0f;
+        canvasGroup.DOFade(1f, 1f);
     }
 }

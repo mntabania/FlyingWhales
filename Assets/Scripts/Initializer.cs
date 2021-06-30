@@ -9,7 +9,7 @@ using UnityEngine;
 
 public class Initializer : MonoBehaviour {
     public IEnumerator InitializeDataBeforeWorldCreation() {
-        BaseSettlement.onSettlementBuilt = null; //TODO: Make this better
+        //BaseSettlement.onSettlementBuilt = null; //TODO: Make this better
         LocalizationManager.Instance.Initialize();
         GameManager.Instance.Initialize();
         SaveManager.Instance.PrepareTempDirectory();

@@ -80,12 +80,15 @@ namespace Inner_Maps {
         public List<LocationGridTile> currentlyHighlightedTiles { get; private set; }
         public List<LocationStructure> worldKnownDemonicStructures { get; private set; }
         public GraphMask mainGraphMask { get; private set; }
-
-        public bool isAnInnerMapShowing => currentlyShowingMap != null;
+        public List<PathfindingTagPair> unusedPathfindingTags { get; private set; }
+        
         private LocationGridTile lastClickedTile;
         private Dictionary<TILE_OBJECT_TYPE, TileObjectScriptableObject> _tileObjectScriptableObjects;
-
         private float[] monsterLairSeeds = new[] {4f, 22f, 69f, 96f };
+        
+        #region getters
+        public bool isAnInnerMapShowing => currentlyShowingMap != null;
+        #endregion
         
         #region Monobehaviours
         private void Awake() {
@@ -287,6 +290,7 @@ namespace Inner_Maps {
             worldKnownDemonicStructures = new List<LocationStructure>();
             mapObjectFactory = new MapVisualFactory();
             InnerMapCameraMove.Instance.Initialize();
+            ConstructInitialUnusedPathfindingTags();
             Messenger.AddListener<KeyCode>(ControlsSignals.KEY_DOWN, OnKeyDown);
         }
         /// <summary>
@@ -958,14 +962,57 @@ namespace Inner_Maps {
         #endregion
 
         #region Tags
-        public uint ClaimNextTag() {
-            if (currentTagIndex > 31) {
-                Debug.LogError("Max Tag limit has been reached! Could not claim new tags!");
-                return 0; //always return 0 if ever tags run out, this should rarely happen!
+        // public uint ClaimNextTag() {
+        //     if (currentTagIndex > 31) {
+        //         Debug.LogError("Max Tag limit has been reached! Could not claim new tags!");
+        //         return 0; //always return 0 if ever tags run out, this should rarely happen!
+        //     }
+        //     uint claimedTag = currentTagIndex;
+        //     currentTagIndex++;
+        //     return claimedTag;
+        // }
+        public PathfindingTagPair ClaimNextPathfindingTagPair() {
+            if (unusedPathfindingTags.Count > 0) {
+                PathfindingTagPair pair = unusedPathfindingTags[0];
+                unusedPathfindingTags.RemoveAt(0);
+                return pair;
             }
-            uint claimedTag = currentTagIndex;
-            currentTagIndex++;
-            return claimedTag;
+            throw new Exception("No more pathfinding tags found!");
+            // if (currentTagIndex > 31) {
+            //     Debug.LogError("Max Tag limit has been reached! Could not claim new tags!");
+            //     return 0; //always return 0 if ever tags run out, this should rarely happen!
+            // }
+            // uint claimedTag = currentTagIndex;
+            // currentTagIndex++;
+            // return claimedTag;
+        }
+        public void SetPathfindingTagPairAsClaimed(PathfindingTagPair p_pair) {
+            for (int i = 0; i < unusedPathfindingTags.Count; i++) {
+                PathfindingTagPair pair = unusedPathfindingTags[i];
+                if (pair.Equals(p_pair)) {
+                    unusedPathfindingTags.RemoveAt(i);
+                    break;
+                }
+            }
+        }
+        public void ReturnPathfindingPair(Faction p_faction) {
+            PathfindingTagPair pair = new PathfindingTagPair(p_faction.pathfindingTag, p_faction.pathfindingDoorTag);
+            if (!unusedPathfindingTags.Contains(pair)) {
+                unusedPathfindingTags.Add(pair);
+#if DEBUG_LOG
+                Debug.Log($"Returned pathfinding pair - {pair.ToString()} to pool. Updated pool is: {unusedPathfindingTags.ComafyList()}");
+#endif
+            }
+        }
+        private void ConstructInitialUnusedPathfindingTags() {
+            unusedPathfindingTags = new List<PathfindingTagPair>();
+            for (int i = Starting_Tag_Index; i < 32; i+= 2) {
+                PathfindingTagPair pathfindingTagPair = new PathfindingTagPair((uint)i, (uint)i + 1);
+                unusedPathfindingTags.Add(pathfindingTagPair);
+            }
+#if DEBUG_LOG
+            Debug.Log($"Constructed initial unused pathfinding pairs {unusedPathfindingTags.ComafyList()}");
+#endif
         }
         #endregion
 
@@ -1059,5 +1106,33 @@ namespace Inner_Maps {
                 Instance = null;    
             }
         }
+    }
+}
+
+[System.Serializable]
+public struct PathfindingTagPair {
+    public readonly uint groundTag;
+    public readonly uint doorsTag;
+
+    public PathfindingTagPair(uint p_groundTag, uint p_doorsTag) {
+        groundTag = p_groundTag;
+        doorsTag = p_doorsTag;
+    }
+    public override bool Equals(object obj) {
+        if (obj is PathfindingTagPair pair) {
+            return Equals(pair);
+        }
+        return false;
+    }
+    public bool Equals(PathfindingTagPair other) {
+        return groundTag == other.groundTag && doorsTag == other.doorsTag;
+    }
+    public override int GetHashCode() {
+        unchecked {
+            return ((int) groundTag * 397) ^ (int) doorsTag;
+        }
+    }
+    public override string ToString() {
+        return $"Ground Tag: {groundTag.ToString()}. Door Tag: {doorsTag.ToString()}";
     }
 }

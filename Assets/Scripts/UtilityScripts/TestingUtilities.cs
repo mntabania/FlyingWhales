@@ -30,12 +30,12 @@ namespace UtilityScripts {
                 summary += $"\nMorning Needed Class: {npcSettlement.classComponent.morningScheduleDateForProcessingOfNeededClasses.ToString()}";
                 summary += $"\nAfternoon Needed Class: {npcSettlement.classComponent.afternoonScheduleDateForProcessingOfNeededClasses.ToString()}";
                 summary += $"\nParty Quests Processing: {npcSettlement.partyComponent.scheduleDateForProcessingOfPartyQuests.ToString()}";
-                summary += $"\nBuilt Resource Piles in settlement: {npcSettlement.SettlementResources.resourcePiles.Count(p => p.mapObjectState == MAP_OBJECT_STATE.BUILT).ToString()}";
+                summary += $"\nBuilt Resource Piles in Settlement: {npcSettlement.SettlementResources.GetBuiltResourcePileCount(npcSettlement)}";
                 summary += $"\nStorage: {npcSettlement.mainStorage?.name ?? "None"}. Prison: {npcSettlement.prison?.name ?? "None"}";
                 //summary += $"\nRocks Count: {npcSettlement.SettlementResources.rocks.Count}";
-                summary += $"\nTrees Count: {npcSettlement.SettlementResources.trees.Count}";
-                summary += $"\nFishing Spots Count: {npcSettlement.SettlementResources.fishingSpots.Count}";
-                summary += $"\nCharacters inside: {npcSettlement.SettlementResources.characters.Count}";
+                summary += $"\nTrees Count: {npcSettlement.SettlementResources.GetTreesCount(npcSettlement)}";
+                summary += $"\nFishing Spots Count: {npcSettlement.SettlementResources.GetFishingSpotCount(npcSettlement)}";
+                summary += $"\nCharacters Inside: {npcSettlement.SettlementResources.GetCharacterCount(npcSettlement)}";
                 summary += $"\nNeeded Items: ";
                 for (int j = 0; j < npcSettlement.neededObjects.Count; j++) {
                     summary += $"|{npcSettlement.neededObjects[j].ToString()}|";

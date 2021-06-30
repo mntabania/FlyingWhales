@@ -111,6 +111,9 @@ public class MapGenerationFinalization : MapGenerationComponent {
 		yield return MapGenerator.Instance.StartCoroutine(ExecuteLoadedFeatureInitialActions());
 		yield return MapGenerator.Instance.StartCoroutine(LoadWorldEvents(saveData));
 		yield return null;
+#if DEBUG_LOG
+		Debug.Log($"Unused pathfinding tags are {InnerMapManager.Instance.unusedPathfindingTags.ComafyList()}");
+#endif
 	}
 	private IEnumerator ExecuteLoadedFeatureInitialActions() {
 		for (int i = 0; i < GridMap.Instance.allAreas.Count; i++) {

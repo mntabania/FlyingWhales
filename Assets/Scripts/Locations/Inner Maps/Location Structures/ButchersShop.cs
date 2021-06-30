@@ -106,7 +106,7 @@ namespace Inner_Maps.Location_Structures {
         protected override void ProcessWorkStructureJobsByWorker(Character p_worker, out JobQueueItem producedJob) {
             producedJob = null;
 
-            ResourcePile foodPile = p_worker.homeSettlement.SettlementResources.GetRandomPileOfMeats();
+            ResourcePile foodPile = p_worker.homeSettlement.SettlementResources.GetRandomPileOfMeatsForButchersShopHaul(p_worker.homeSettlement);
             if (foodPile != null && p_worker.structureComponent.workPlaceStructure.unoccupiedTiles.Count > 0) {
                 p_worker.jobComponent.TryCreateHaulJob(foodPile, out producedJob);
                 if (producedJob != null) {
@@ -128,7 +128,7 @@ namespace Inner_Maps.Location_Structures {
             }
             RuinarchListPool<TileObject>.Release(builtPilesInSideStructure);
 
-            Summon targetForButchering = p_worker.homeSettlement.SettlementResources.GetFirstButcherableAnimal();
+            Summon targetForButchering = p_worker.homeSettlement.SettlementResources.GetFirstButcherableAnimal(p_worker.homeSettlement);
             if (targetForButchering != null){
                 p_worker.jobComponent.CreateButcherJob(targetForButchering, JOB_TYPE.MONSTER_BUTCHER, out producedJob);
                 if (producedJob != null) {

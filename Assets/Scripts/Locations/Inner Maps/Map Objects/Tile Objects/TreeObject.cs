@@ -19,7 +19,7 @@ public abstract class TreeObject : TileObject {
     private Character[] _users;
     private Occupied_State _occupiedState;
     private TreeGameObject _treeGameObject;
-    private BaseSettlement _parentSettlement;
+    //private BaseSettlement _parentSettlement;
 
     public int count { set; get; }
 
@@ -50,25 +50,25 @@ public abstract class TreeObject : TileObject {
         Assert.IsNotNull(data);
         _occupiedState = data.occupiedState;
     }
-    protected override void UpdateSettlementResourcesParent() {
-        if (gridTileLocation.area.settlementOnArea != null) {
-            gridTileLocation.area.settlementOnArea.SettlementResources?.AddToListBasedOnRequirement(SettlementResources.StructureRequirement.TREE, this);
-        }
-        gridTileLocation.area.neighbourComponent.neighbours.ForEach((eachNeighbor) => {
-            if (eachNeighbor.settlementOnArea != null) {
-                //eachNeighbor.settlementOnArea.SettlementResources?.AddToListBasedOnRequirement(SettlementResources.StructureRequirement.TREE, this);
-               _parentSettlement = eachNeighbor.settlementOnArea;
-            }
-        });
-    }
-    protected override void RemoveFromSettlementResourcesParent() {
-        if (_parentSettlement != null && _parentSettlement.SettlementResources != null) {
-            if (_parentSettlement.SettlementResources.trees.Remove(this)) {
-                _parentSettlement = null;
-            }    
-        }
+    //protected override void UpdateSettlementResourcesParent() {
+    //    if (gridTileLocation.area.settlementOnArea != null) {
+    //        gridTileLocation.area.settlementOnArea.SettlementResources?.AddToListBasedOnRequirement(SettlementResources.StructureRequirement.TREE, this);
+    //    }
+    //    gridTileLocation.area.neighbourComponent.neighbours.ForEach((eachNeighbor) => {
+    //        if (eachNeighbor.settlementOnArea != null) {
+    //            //eachNeighbor.settlementOnArea.SettlementResources?.AddToListBasedOnRequirement(SettlementResources.StructureRequirement.TREE, this);
+    //           _parentSettlement = eachNeighbor.settlementOnArea;
+    //        }
+    //    });
+    //}
+    //protected override void RemoveFromSettlementResourcesParent() {
+    //    if (_parentSettlement != null && _parentSettlement.SettlementResources != null) {
+    //        if (_parentSettlement.SettlementResources.trees.Remove(this)) {
+    //            _parentSettlement = null;
+    //        }    
+    //    }
         
-    }
+    //}
 
     #region Loading
     public override void LoadSecondWave(SaveDataTileObject data) {
@@ -125,7 +125,7 @@ public abstract class TreeObject : TileObject {
         if (structureConnector != null && gridTileLocation != null) {
             structureConnector.OnPlaceConnector(gridTileLocation.parentMap);    
         }
-        UpdateSettlementResourcesParent();
+        //UpdateSettlementResourcesParent();
     }
     public override void OnLoadPlacePOI() {
         DefaultProcessOnPlacePOI();
@@ -136,7 +136,7 @@ public abstract class TreeObject : TileObject {
         if (structureConnector != null && gridTileLocation != null) {
             structureConnector.LoadConnectorForTileObjects(gridTileLocation.parentMap);    
         }
-        UpdateSettlementResourcesParent();
+        //UpdateSettlementResourcesParent();
     }
     protected override void CreateMapObjectVisual() {
         base.CreateMapObjectVisual();

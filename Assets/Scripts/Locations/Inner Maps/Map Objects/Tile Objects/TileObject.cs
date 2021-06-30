@@ -173,8 +173,8 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         DatabaseManager.Instance.tileObjectDatabase.RegisterTileObject(this);
         SubscribeListeners();
     }
-    protected virtual void UpdateSettlementResourcesParent() { }
-    protected virtual void RemoveFromSettlementResourcesParent() { }
+    //protected virtual void UpdateSettlementResourcesParent() { }
+    //protected virtual void RemoveFromSettlementResourcesParent() { }
 
     #region Loading
     /// <summary>
@@ -432,7 +432,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         if (removeTraits) {
             traitContainer.RemoveAllTraitsAndStatuses(this);
         }
-        RemoveFromSettlementResourcesParent();
+        //RemoveFromSettlementResourcesParent();
     }
     public virtual void OnTileObjectGainedTrait(Trait trait) {
         if (trait is Status status && status.isTangible && mapObjectVisual != null) {

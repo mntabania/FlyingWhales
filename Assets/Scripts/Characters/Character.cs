@@ -773,11 +773,15 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public void DestroyMarker(LocationGridTile destroyedAt = null, bool removeFromMasterList = true) {
         if (destroyedAt == null) {
             LocationGridTile gridTile = gridTileLocation;
-            gridTile?.RemoveCharacterHere(this);
-            gridTile?.structure.RemoveCharacterAtLocation(this);
+            if (gridTile != null) {
+                gridTile.RemoveCharacterHere(this);
+                gridTile.structure.RemoveCharacterAtLocation(this);
+                gridTile.area.locationCharacterTracker.RemoveCharacterFromLocation(this, gridTile.area);
+            }
         } else {
             destroyedAt.RemoveCharacterHere(this);
             destroyedAt.structure.RemoveCharacterAtLocation(this);
+            destroyedAt.area.locationCharacterTracker.RemoveCharacterFromLocation(this, destroyedAt.area);
         }
         ObjectPoolManager.Instance.DestroyObject(marker);
         SetCharacterMarker(null);
@@ -2083,6 +2087,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     private void OnBeforeSeizingCharacter(Character character) {
         if (this == character) {
             marker.OnBeforeSeizingThisCharacter();
+        } else {
+            marker.OnBeforeSeizingOtherCharacter(character);
         }
         //if (character.id != id) {
         //    //RemoveRelationship(characterThatDied); //do not remove relationships when dying
@@ -2091,16 +2097,20 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     }
     private void OnSeizeCharacter(Character character) {
         if (character != this) {
-            //RemoveRelationship(characterThatDied); //do not remove relationships when dying
-            combatComponent.RemoveHostileInRange(character);
-            combatComponent.RemoveAvoidInRange(character);
-            if (character is Summon) {
-                currentSettlement?.SettlementResources?.RemoveAnimalFromSettlement(character as Summon);
-            } else {
-                currentSettlement?.SettlementResources?.RemoveCharacterFromSettlement(this);
-            }
+            OnSeizeOtherCharacter(character);
         }
     }
+    private void OnSeizeOtherCharacter(Character character) {
+        //RemoveRelationship(characterThatDied); //do not remove relationships when dying
+        combatComponent.RemoveHostileInRange(character);
+        combatComponent.RemoveAvoidInRange(character);
+        //if (character is Summon) {
+        //    currentSettlement?.SettlementResources?.RemoveAnimalFromSettlement(character as Summon);
+        //} else {
+        //    currentSettlement?.SettlementResources?.RemoveCharacterFromSettlement(this);
+        //}
+    }
+
     private void OnBeforeSeizingTileObject(TileObject tileObject) {
         //if(faction != null && faction.isMajorNonPlayerFriendlyNeutral && marker) {
         //    if (marker.IsPOIInVision(tileObject)) {
@@ -6015,7 +6025,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             }
 
             SetHP(0);
-            currentSettlement?.SettlementResources?.RemoveCharacterFromSettlement(this);
+            //currentSettlement?.SettlementResources?.RemoveCharacterFromSettlement(this);
             if (structureComponent.HasWorkPlaceStructure() && structureComponent.workPlaceStructure.DoesCharacterWorkHere(this)) {
                 structureComponent.workPlaceStructure.RemoveAssignedWorker(this);
             }

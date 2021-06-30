@@ -1,11 +1,13 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Inner_Maps;
 using Inner_Maps.Location_Structures;
 using UnityEngine;
 using UtilityScripts;
-using Inner_Maps;
 using UnityEngine.Assertions;
+using Locations.Settlements;
+
 namespace Traits {
     public class Kleptomaniac : Trait {
         private Character traitOwner;
@@ -94,15 +96,25 @@ namespace Traits {
                     //        }
                     //    }
                     //}
-                    List<Character> choices = ObjectPoolManager.Instance.CreateNewCharactersList();
-                    if (character.currentSettlement != null && character.currentSettlement.SettlementResources != null) {
+                    List<Character> choices = RuinarchListPool<Character>.Claim();
+                    BaseSettlement currentSettlement = character.currentSettlement;
+                    if (currentSettlement != null) {
                         //Pickpocket only from characters inside Settlement, if not inside a settlement, cannot target anyone
-                        for (int i = 0; i < character.currentSettlement.SettlementResources.characters.Count; i++) {
-                            Character otherCharacter = character.currentSettlement.SettlementResources.characters[i];
-                            if (character != otherCharacter && (otherCharacter.HasItem() || otherCharacter.moneyComponent.HasCoins())) {
-                                choices.Add(otherCharacter);
+                        for (int i = 0; i < currentSettlement.areas.Count; i++) {
+                            Area area = currentSettlement.areas[i];
+                            for (int j = 0; j < area.locationCharacterTracker.charactersAtLocation.Count; j++) {
+                                Character otherCharacter = area.locationCharacterTracker.charactersAtLocation[j];
+                                if (character != otherCharacter && otherCharacter.hasMarker && !otherCharacter.isBeingSeized && (otherCharacter.HasItem() || otherCharacter.moneyComponent.HasCoins())) {
+                                    choices.Add(otherCharacter);
+                                }
                             }
-                        }    
+                        }
+                        //for (int i = 0; i < character.currentSettlement.SettlementResources.characters.Count; i++) {
+                        //    Character otherCharacter = character.currentSettlement.SettlementResources.characters[i];
+                        //    if (character != otherCharacter && otherCharacter.hasMarker && !otherCharacter.isBeingSeized && (otherCharacter.HasItem() || otherCharacter.moneyComponent.HasCoins())) {
+                        //        choices.Add(otherCharacter);
+                        //    }
+                        //}    
                     }
                     if (choices.Count > 0) {
                         Character target = CollectionUtilities.GetRandomElement(choices);
@@ -143,7 +155,7 @@ namespace Traits {
                     } else {
                         return "no_target";
                     }
-                    ObjectPoolManager.Instance.ReturnCharactersListToPool(choices);
+                    RuinarchListPool<Character>.Release(choices);
                 } else {
                     heartbroken.TriggerBrokenhearted();
                 }
