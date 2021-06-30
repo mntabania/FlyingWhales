@@ -59,6 +59,6 @@ MonoBehaviour:
   craftableAccessories: b9000000df000000
   droppableItems:
   - item: 13
-    weight: 10
+    weight: 100
   - item: 189
     weight: 10

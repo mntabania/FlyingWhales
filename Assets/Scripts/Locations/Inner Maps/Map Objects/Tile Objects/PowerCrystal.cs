@@ -5,9 +5,7 @@ public class PowerCrystal : TileObject {
 
     public bool hasScheduleDestruction { get; private set; }
     public GameDate destroyDate { get; private set; }
-
     public override string description => GetDescription();
-
     public override Type serializedData => typeof(SaveDataPowerCrystal);
 
 	public List<RESISTANCE> resistanceBonuses = new List<RESISTANCE>();
@@ -20,7 +18,7 @@ public class PowerCrystal : TileObject {
         currentHP = maxHP;
 
         AddAdvertisedAction(INTERACTION_TYPE.ABSORB_POWER_CRYSTAL);
-        if(UtilityScripts.GameUtilities.RandomBetweenTwoNumbers(1, 100) > 50) {
+        if(UtilityScripts.GameUtilities.RandomBetweenTwoNumbers(1, 100) <= 30) {
             amountBonusPiercing = 5;
         } else {
             amountBonusResistance = 10;

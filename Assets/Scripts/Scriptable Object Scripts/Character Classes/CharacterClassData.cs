@@ -54,7 +54,7 @@ public class CharacterClassData : ScriptableObject {
     [ContextMenu("Set Monster Drop Items")]
     public void SetMonsterDrops() {
         droppableItems.Clear();
-        droppableItems.Add(new DroppableItemWithWeights(TILE_OBJECT_TYPE.NONE, 10));
+        droppableItems.Add(new DroppableItemWithWeights(TILE_OBJECT_TYPE.NONE, 100));
         droppableItems.Add(new DroppableItemWithWeights(TILE_OBJECT_TYPE.POWER_CRYSTAL, 10));
     }
     
