@@ -186,15 +186,18 @@ namespace Inner_Maps.Location_Structures {
                     return;
                 }
             }
-            GenericTileObject untilledTileObject = GetUntilledFarmTile();
-            if (untilledTileObject != null) {
-                //do till farm tile
-                p_worker.jobComponent.TriggerTillTile(untilledTileObject, out producedJob);
-                if (producedJob != null) {
-                    return;
+
+            if (GameUtilities.RollChance(35)) {
+                GenericTileObject untilledTileObject = GetUntilledFarmTile();
+                if (untilledTileObject != null) {
+                    //do till farm tile
+                    p_worker.jobComponent.TriggerTillTile(untilledTileObject, out producedJob);
+                    if (producedJob != null) {
+                        return;
+                    }
                 }
             }
-
+            
             //do combine resourcepiles job
             List<TileObject> builtPilesInSideStructure = RuinarchListPool<TileObject>.Claim();
             PopulateListOfFoodPilesOfSameType(builtPilesInSideStructure);

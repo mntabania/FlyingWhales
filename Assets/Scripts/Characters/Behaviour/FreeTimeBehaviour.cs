@@ -621,7 +621,7 @@ public class FreeTimeBehaviour : CharacterBehaviourComponent {
 #if DEBUG_LOG
                     log = $"{log}\n-No un-full party. Will try to create party, rolling chance...";
 #endif
-                    if (GameUtilities.RollChance(30, ref log) && character.faction != null && shouldCreateOrJoinParty) {
+                    if (GameUtilities.RollChance(10, ref log) && character.faction != null && shouldCreateOrJoinParty) {
 #if DEBUG_LOG
                         log = $"{log}\n-Chance met, will create party.";
 #endif
@@ -631,7 +631,7 @@ public class FreeTimeBehaviour : CharacterBehaviourComponent {
 #if DEBUG_LOG
                     log = $"{log}\n-Found an un-full party: {unFullParty.name}. Rolling chance to join...";
 #endif
-                    if (GameUtilities.RollChance(45, ref log) && shouldCreateOrJoinParty) {
+                    if (GameUtilities.RollChance(15, ref log) && shouldCreateOrJoinParty) {
 #if DEBUG_LOG
                         log = $"{log}\n-Will join party";
 #endif

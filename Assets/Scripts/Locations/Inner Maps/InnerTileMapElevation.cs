@@ -267,22 +267,24 @@ namespace Inner_Maps {
                 tileMap, cellMap, InnerMapManager.Instance.assetManager.caveWallTile, null, ELEVATION.MOUNTAIN, p_caveStructure, mapGenerationData));
             
             
-            //generate ores
-            List<BlockWall> validWallsForOreVeins = RuinarchListPool<BlockWall>.Claim();
-            p_caveStructure.PopulateTileObjectsOfTypeThatIsBlockWallValidForOreVein2(validWallsForOreVeins);
-		    
-            var randomOreAmount = p_caveStructure.occupiedAreas.Count == 1 ? GameUtilities.RandomBetweenTwoNumbers(8, 14) : GameUtilities.RandomBetweenTwoNumbers(15, 24);
-            for (int i = 0; i < randomOreAmount; i++) {
-                if (validWallsForOreVeins.Count == 0) { break; }
-                BlockWall oreVeinLocation = CollectionUtilities.GetRandomElement(validWallsForOreVeins);
-                mapGenerationData.SetGeneratedMapPerlinDetails(oreVeinLocation.gridTileLocation, TILE_OBJECT_TYPE.NONE);
-                
-                //create structure connector on ore vein location, this is so that even if ore vein is destroyed villagers can still create mines.
-                CreateOreVein(oreVeinLocation.gridTileLocation);
-                validWallsForOreVeins.Remove(oreVeinLocation);
-            }
-            RuinarchListPool<BlockWall>.Release(validWallsForOreVeins);
-            
+            // //generate ores
+            // if (!p_caveStructure.HasTileObjectOfType(TILE_OBJECT_TYPE.ORE_VEIN)) {
+            //     List<BlockWall> validWallsForOreVeins = RuinarchListPool<BlockWall>.Claim();
+            //     p_caveStructure.PopulateTileObjectsOfTypeThatIsBlockWallValidForOreVein2(validWallsForOreVeins);
+		          //
+            //     var randomOreAmount = p_caveStructure.occupiedAreas.Count == 1 ? GameUtilities.RandomBetweenTwoNumbers(2, 3) : GameUtilities.RandomBetweenTwoNumbers(3, 5);
+            //     for (int i = 0; i < randomOreAmount; i++) {
+            //         if (validWallsForOreVeins.Count == 0) { break; }
+            //         BlockWall oreVeinLocation = CollectionUtilities.GetRandomElement(validWallsForOreVeins);
+            //         mapGenerationData.SetGeneratedMapPerlinDetails(oreVeinLocation.gridTileLocation, TILE_OBJECT_TYPE.NONE);
+            //     
+            //         //create structure connector on ore vein location, this is so that even if ore vein is destroyed villagers can still create mines.
+            //         CreateOreVein(oreVeinLocation.gridTileLocation);
+            //         validWallsForOreVeins.Remove(oreVeinLocation);
+            //     }
+            //     RuinarchListPool<BlockWall>.Release(validWallsForOreVeins);    
+            // }
+
             //generate stone and ore spots
             Cave cave = p_caveStructure as Cave;
             Assert.IsNotNull(cave);

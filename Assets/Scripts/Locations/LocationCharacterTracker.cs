@@ -91,10 +91,10 @@ namespace Locations {
             skinnables.Remove(p_character);
             butcherables.Remove(p_character);
         }
-        public void PopulateAllAnimalsForSkinnersLodgeSkinning(List<Character> allAvailableAnimals) {
+        public void PopulateAllAnimalsForSkinnersLodgeSkinning(List<Character> allAvailableAnimals, LocationStructure p_currentWorkingStructure) {
             for (int i = 0; i < animalsThatProducesMats.Count; i++) {
                 Summon animal = animalsThatProducesMats[i];
-                if (!animal.isBeingSeized && !animal.HasJobTargetingThis(JOB_TYPE.MONSTER_BUTCHER) && animal.currentStructure?.structureType == STRUCTURE_TYPE.CITY_CENTER) {
+                if (!animal.isBeingSeized && !animal.HasJobTargetingThis(JOB_TYPE.MONSTER_BUTCHER) && (animal.currentStructure?.structureType == STRUCTURE_TYPE.CITY_CENTER || animal.currentStructure == p_currentWorkingStructure)) {
                     if (animal.isDead && animal.race.IsSkinnable()) {
                         allAvailableAnimals.Add(animal);
                     }

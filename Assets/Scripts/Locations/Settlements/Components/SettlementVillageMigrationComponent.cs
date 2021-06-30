@@ -297,7 +297,7 @@ public class SettlementVillageMigrationComponent : NPCSettlementComponent {
         List<LocationGridTile> edgeTileChoices = RuinarchListPool<LocationGridTile>.Claim();
         for (int i = 0; i < owner.occupiedVillageSpot.migrationSpawningArea.gridTileComponent.borderTiles.Count; i++) {
             LocationGridTile tile = owner.occupiedVillageSpot.migrationSpawningArea.gridTileComponent.borderTiles[i];
-            if (tile.IsAtEdgeOfMap() && !tile.corruptionComponent.isCorrupted && tile.IsPassable()) { //&& !connectedAreaOrNearestArea.isCorrupted
+            if (tile.IsAtEdgeOfMap() && !tile.corruptionComponent.isCorrupted && tile.IsPassable() && !tile.structure.isInterior) { //&& !connectedAreaOrNearestArea.isCorrupted
                 edgeTileChoices.Add(tile);
             }
         }

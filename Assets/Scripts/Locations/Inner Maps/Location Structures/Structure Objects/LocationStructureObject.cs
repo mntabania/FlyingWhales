@@ -1034,7 +1034,7 @@ public class LocationStructureObject : PooledObject, ISelectable {
         //reserve tiles near oceans and caves
         if (structureType != STRUCTURE_TYPE.CITY_CENTER && structureType != STRUCTURE_TYPE.MINE && structureType != STRUCTURE_TYPE.FISHERY && !structureType.IsPlayerStructure()) {
             tilesInRadius = ObjectPoolManager.Instance.CreateNewGridTileList();
-            int radiusToCheck = 4;
+            int radiusToCheck = 5;
             tile.PopulateTilesInRadius(tilesInRadius, radiusToCheck, includeCenterTile: true, includeTilesInDifferentStructure: true);
             tilesToCheck = tilesInRadius;
             for (int j = 0; j < tilesToCheck.Count; j++) {

@@ -120,6 +120,7 @@ public class TutorialUIController : MVCUIController, TutorialUIView.IListener {
         InputManager.Instance.SetAllHotkeysEnabledState(false);
         InputManager.Instance.SetSpecificHotkeyEnabledState(KeyCode.Escape, true);
         InnerMapCameraMove.Instance.DisableMovement();
+        m_tutorialUIView.UIModel.scrollRectTutorialItems.verticalNormalizedPosition = 1f;
     }
     public void HideViaShortcutKey() {
         HideUI();

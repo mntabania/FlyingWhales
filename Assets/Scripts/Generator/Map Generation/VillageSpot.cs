@@ -239,7 +239,7 @@ public class VillageSpot {
         float nearestArea = float.MaxValue;
         for (int i = 0; i < GridMap.Instance.edgeAreas.Count; i++) {
             Area edgeArea = GridMap.Instance.edgeAreas[i];
-            if (edgeArea.elevationComponent.HasElevation(ELEVATION.PLAIN) && PathfindingManager.Instance.HasPath(edgeArea.gridTileComponent.centerGridTile, mainSpot.gridTileComponent.centerGridTile)) {
+            if (edgeArea.elevationComponent.elevationType == ELEVATION.PLAIN && PathfindingManager.Instance.HasPath(edgeArea.gridTileComponent.centerGridTile, mainSpot.gridTileComponent.centerGridTile)) {
                 float distance = Vector2.Distance(edgeArea.gridTileComponent.centerGridTile.centeredLocalLocation, mainSpot.gridTileComponent.centerGridTile.centeredLocalLocation);
                 if (distance < nearestArea) {
                     closestValidArea = edgeArea;

@@ -154,23 +154,131 @@ public class MapGenerationData {
 		}
 		return null;
 	}
+	public LocationGridTile GetFirstUnoccupiedNonEdgeCaveTileThatIsFacingVillageSpot(Area p_area, MapGenerationData p_data, Area p_villageSpot) {
+#if DEBUG_LOG
+		string summary = $"Generating ore vein at {p_area} for village spot at {p_villageSpot}. ";
+#endif
+		if (caveBorderTilesCategorizedByArea.ContainsKey(p_area)) {
+			List<LocationGridTile> caveBorderTiles = caveBorderTilesCategorizedByArea[p_area];
+#if DEBUG_LOG
+			summary = $"{summary}Will determine tiles facing village spot. Cave border tiles are:\n{caveBorderTiles.ComafyList()}";
+#endif
+			List<LocationGridTile> tilesFacingArea = RuinarchListPool<LocationGridTile>.Claim();
+			PopulateTilesFacingArea(tilesFacingArea, caveBorderTiles, p_villageSpot);
+#if DEBUG_LOG
+			summary = $"{summary}\nTiles facing village spot are:\n{tilesFacingArea.ComafyList()}";
+#endif
+			for (int i = 0; i < tilesFacingArea.Count; i++) {
+				LocationGridTile tileFacingArea = tilesFacingArea[i];
+				
+				bool isTooNearToVillageSpotArea = false;
+				List<LocationGridTile> neighbours = RuinarchListPool<LocationGridTile>.Claim();
+				tileFacingArea.PopulateTilesInRadius(neighbours, 1, includeTilesInDifferentStructure: true);
+				for (int j = 0; j < neighbours.Count; j++) {
+					LocationGridTile neighbour = neighbours[j];
+					if (neighbour.area == p_villageSpot) {
+						isTooNearToVillageSpotArea = true;
+						break;
+					}
+				}
+				RuinarchListPool<LocationGridTile>.Release(neighbours);
+				bool isTileValidOreVeinTarget = IsTileValidOreVeinTarget(tileFacingArea, p_data);
+#if DEBUG_LOG
+				summary = $"{summary}\n\t-Evaluating {tileFacingArea}. is too near to village: {isTooNearToVillageSpotArea}. Is valid ore vein target {isTileValidOreVeinTarget.ToString()}";
+#endif
+				if (!isTooNearToVillageSpotArea && isTileValidOreVeinTarget) {
+					RuinarchListPool<LocationGridTile>.Release(tilesFacingArea);
+#if DEBUG_LOG
+					summary = $"{summary}\n\t-Found valid tile {tileFacingArea}!";
+					Debug.Log(summary);
+#endif
+					return tileFacingArea;
+				}
+			}
+			//
+			// for (int i = 0; i < caveBorderTiles.Count; i++) {
+			// 	LocationGridTile tile = caveBorderTiles[i];
+			// 	if (IsTileValidOreVeinTarget(tile, p_data)) {
+			// 		return tile;
+			// 	}
+			// }
+			RuinarchListPool<LocationGridTile>.Release(tilesFacingArea);
+
+		} else {
+#if DEBUG_LOG
+			summary = $"{summary}\nArea doesn't have key in caveBorderTilesCategorizedByArea";
+#endif
+		}
+#if DEBUG_LOG
+		Debug.Log(summary);
+#endif
+		return null;
+	}
 
 	private bool IsTileValidOreVeinTarget(LocationGridTile p_tile, MapGenerationData p_data) {
 		if ((p_tile.tileObjectComponent.objHere is BlockWall || p_data.GetGeneratedObjectOnTile(p_tile) == TILE_OBJECT_TYPE.BLOCK_WALL) && !p_tile.IsAtEdgeOfMap()) {
+			if (p_tile.GetCountOfNeighboursThatHasTileObjectOfType(TILE_OBJECT_TYPE.ORE_VEIN) > 0) {
+				return false;
+			}
 			List<LocationGridTile> fourNeighbours = p_tile.FourNeighbours();
 			int wildernessNeighboursInCardinal = fourNeighbours.Count(t => t.structure is Wilderness);
-			if (wildernessNeighboursInCardinal == 1) {
+			if (wildernessNeighboursInCardinal == 1 || wildernessNeighboursInCardinal == 2) {
 				List<LocationGridTile> allNeighbours = p_tile.neighbourList;
 				int wildernessNeighboursInOrdinal = allNeighbours.Count(t => t.structure is Wilderness);
-				if (wildernessNeighboursInOrdinal == 3) {
+				if (wildernessNeighboursInOrdinal == 3 || wildernessNeighboursInOrdinal == 2) {
 					return true;
 				}
 			}
-			
-			
 		}
-
 		return false;
+	}
+	private int AllowedHeightTolerance = 5;
+	private void PopulateTilesFacingArea(List<LocationGridTile> p_listToPopulate, List<LocationGridTile> p_choices, Area p_area) {
+		LocationGridTile centerTileOfArea = p_area.gridTileComponent.centerGridTile;
+		for (int i = 0; i < p_choices.Count; i++) {
+			LocationGridTile tile = p_choices[i];
+			GridNeighbourDirection directionFromTileToArea = GridNeighbourDirection.North;
+			if (tile.localPlace.x < centerTileOfArea.localPlace.x) {
+				//east
+				int yDifference = Mathf.Abs(tile.localPlace.y - centerTileOfArea.localPlace.y); 
+				if (tile.localPlace.y < centerTileOfArea.localPlace.y && yDifference > AllowedHeightTolerance) {
+					directionFromTileToArea = GridNeighbourDirection.North_East;	
+				} else if (tile.localPlace.y > centerTileOfArea.localPlace.y && yDifference > AllowedHeightTolerance) {
+					directionFromTileToArea = GridNeighbourDirection.South_East;	
+				} else {
+					directionFromTileToArea = GridNeighbourDirection.East;	
+				}
+			} else if (tile.localPlace.x > centerTileOfArea.localPlace.x) {
+				//west
+				int yDifference = Mathf.Abs(tile.localPlace.y - centerTileOfArea.localPlace.y);
+				if (tile.localPlace.y < centerTileOfArea.localPlace.y && yDifference > AllowedHeightTolerance) {
+					directionFromTileToArea = GridNeighbourDirection.North_West;	
+				} else if (tile.localPlace.y > centerTileOfArea.localPlace.y && yDifference > AllowedHeightTolerance) {
+					directionFromTileToArea = GridNeighbourDirection.South_West;	
+				} else {
+					directionFromTileToArea = GridNeighbourDirection.West;	
+				}
+			} else if (tile.localPlace.x == centerTileOfArea.localPlace.x) {
+				//same place as center of village spot. check difference in y position
+				if (tile.localPlace.y < centerTileOfArea.localPlace.y) {
+					directionFromTileToArea = GridNeighbourDirection.North;	
+				} else if (tile.localPlace.y > centerTileOfArea.localPlace.y) {
+					directionFromTileToArea = GridNeighbourDirection.South;	
+				} else {
+					//same x and y as center tile of given area, logic should NEVER reach this point, but handled it just in case.
+					directionFromTileToArea = GridNeighbourDirection.North;	
+				}
+			}
+			// else if (tile.localPlace.y < centerTileOfArea.localPlace.y) {
+			// 	directionFromTileToArea = GridNeighbourDirection.North;
+			// } else if (tile.localPlace.y > centerTileOfArea.localPlace.y) {
+			// 	directionFromTileToArea = GridNeighbourDirection.South;
+			// }
+			LocationGridTile neighbourInDirectionOfArea = tile.GetNeighbourAtDirection(directionFromTileToArea);
+			if (neighbourInDirectionOfArea != null && neighbourInDirectionOfArea.structure.structureType == STRUCTURE_TYPE.WILDERNESS) {
+				p_listToPopulate.Add(tile);
+			}
+		}
 	}
 	#endregion
 

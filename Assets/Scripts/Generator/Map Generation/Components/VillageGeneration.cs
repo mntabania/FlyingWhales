@@ -203,6 +203,7 @@ public class VillageGeneration : MapGenerationComponent {
 			specialStructureTypes.Add(STRUCTURE_TYPE.CEMETERY);
 			specialStructureTypes.Add(STRUCTURE_TYPE.TAVERN);
 			specialStructureTypes.Add(STRUCTURE_TYPE.HOSPICE);
+			specialStructureTypes.Add(STRUCTURE_TYPE.WORKSHOP);
 			
 			Debug.Log($"Will generate {totalSpecialStructures.ToString()} for {npcSettlement.name}");
 			for (int j = 0; j < totalSpecialStructures; j++) {

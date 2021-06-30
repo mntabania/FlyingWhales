@@ -21,7 +21,6 @@ MonoBehaviour:
   aspeedFill: {fileID: 4354847045969403520}
   particleEffectParent: {fileID: 1032619423266128767}
   statusIconsParent: {fileID: 3173268901581422493}
-  _structureConnector: {fileID: 0}
   _oreVeinSprite:
     m_keys:
     - {fileID: 21300000, guid: 340e1ae64b6a22f4fbde896f6081c937, type: 3}
@@ -40,6 +39,14 @@ MonoBehaviour:
     - {fileID: 21300000, guid: 9d949a9d86f0c9f458c42a0331f5d9ed, type: 3}
     - {fileID: 21300000, guid: e6295c851676c984cb7dfc0c3e5f154b, type: 3}
     - {fileID: 21300000, guid: 92a0be22a19218b4b8e7cceccd0351dc, type: 3}
+    - {fileID: 21300000, guid: b5c02b9ef4f2108498c7ba82f044151c, type: 3}
+    - {fileID: 21300000, guid: 311d25dabd05b66439498c9eb8694073, type: 3}
+    - {fileID: 21300000, guid: 34a6f5e2ed4f9844ca33ede5d41c5d98, type: 3}
+    - {fileID: 21300000, guid: 593cabacba39ed24390a9e8d53d783a0, type: 3}
+    - {fileID: 21300000, guid: ac83381350d92f04bb36c704e3ef4509, type: 3}
+    - {fileID: 21300000, guid: 87c1d7451e64d684589c5159d9e221a8, type: 3}
+    - {fileID: 21300000, guid: 02f0b4d1b676fd14cba7eceb09ad03c3, type: 3}
+    - {fileID: 21300000, guid: 287396b2075d13248a96c0e28c087b2b, type: 3}
     m_values:
     - {fileID: 21300000, guid: 247fe68038f87e844a962f5a8ec58cf1, type: 3}
     - {fileID: 21300000, guid: 247fe68038f87e844a962f5a8ec58cf1, type: 3}
@@ -57,6 +64,14 @@ MonoBehaviour:
     - {fileID: 21300000, guid: e83e8e14ad81e0744b832f9acfb16582, type: 3}
     - {fileID: 21300000, guid: 16b98b687d822e1498696d2e2dd1ec68, type: 3}
     - {fileID: 21300000, guid: 107e0f6bf205b02409507acc866ba6c2, type: 3}
+    - {fileID: 21300000, guid: be30755e1fa3c7d45ae8868456da8fda, type: 3}
+    - {fileID: 21300000, guid: 107e0f6bf205b02409507acc866ba6c2, type: 3}
+    - {fileID: 21300000, guid: c732ecbf34482ee49b0f639dcf01251f, type: 3}
+    - {fileID: 21300000, guid: be30755e1fa3c7d45ae8868456da8fda, type: 3}
+    - {fileID: 21300000, guid: 0e8c03078ccf82c49a998cc203d473d1, type: 3}
+    - {fileID: 21300000, guid: be30755e1fa3c7d45ae8868456da8fda, type: 3}
+    - {fileID: 21300000, guid: 0e8c03078ccf82c49a998cc203d473d1, type: 3}
+    - {fileID: 21300000, guid: 9603dca974aa5874a869a94b9cf7d999, type: 3}
 --- !u!61 &6749103177372989536
 BoxCollider2D:
   m_ObjectHideFlags: 0
