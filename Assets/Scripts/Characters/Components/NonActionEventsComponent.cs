@@ -95,7 +95,7 @@ public class NonActionEventsComponent : CharacterComponent {
     //    }
     //    return false;
     //}
-    public bool ForceChatCharacter(Character target, Log overrideLog) {
+    public bool ForceChatCharacter(Character target, ref Log overrideLog) {
         //if (!CanInteract(target)) {
         //    return false;
         //}
@@ -108,12 +108,12 @@ public class NonActionEventsComponent : CharacterComponent {
             disguisedTarget = target.reactionComponent.disguisedCharacter;
         }
         if (!disguisedActor.IsHostileWith(disguisedTarget)) {
-            TriggerChatCharacter(target, overrideLog);
+            TriggerChatCharacter(target, ref overrideLog);
             return true;
         }
         return false;
     }
-    private void TriggerChatCharacter(Character target, Log overrideLog) {
+    private void TriggerChatCharacter(Character target, ref Log overrideLog) {
 #if DEBUG_LOG
         string strLog = $"{owner.name} chat with {target.name}";
 #endif
