@@ -104,8 +104,9 @@ namespace Inner_Maps.Location_Structures {
         // }
         public override bool IsAvailableForTargeting() {
             if (rooms.Length > 0 && rooms[0] is PrisonCell prisonCell) {
-                List<Character> charactersInRoom = prisonCell.charactersInRoom;
-                return !charactersInRoom.Any(prisonCell.IsValidOccupant); //can target character for snatch if prison does not currently have a valid occupant
+                //List<Character> charactersInRoom = prisonCell.charactersInRoom;
+                //return !charactersInRoom.Any(prisonCell.IsValidOccupant); //can target character for snatch if prison does not currently have a valid occupant
+                return !prisonCell.HasValidOccupant();
             }
             return false;
         }

@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using Inner_Maps;
 
 public class SnatchVillagerData : PlayerAction {
     public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.SNATCH_VILLAGER;
@@ -21,11 +22,15 @@ public class SnatchVillagerData : PlayerAction {
     public override bool IsValid(IPlayerActionTarget target) {
         if (target is TortureChambers tortureChambers) {
             if (tortureChambers.rooms != null && tortureChambers.rooms.Length > 0 && tortureChambers.rooms[0] is PrisonCell prisonCell) {
-                List<Character> charactersInRoom = prisonCell.charactersInRoom;
-                if (!charactersInRoom.Any(c => prisonCell.IsValidOccupant(c) && base.IsValid(c))) {
+                if (!HasCharacterInPrisonCellThatIsValid(prisonCell)) {
                     //if prison cell does not have any valid occupants yet, then allow snatch action.
-                    return true;    
+                    return true;
                 }
+                //List<Character> charactersInRoom = prisonCell.charactersInRoom;
+                //if (!charactersInRoom.Any(c => prisonCell.IsValidOccupant(c) && base.IsValid(c))) {
+                //    //if prison cell does not have any valid occupants yet, then allow snatch action.
+                //    return true;    
+                //}
             }
         }
         return false;
@@ -46,4 +51,20 @@ public class SnatchVillagerData : PlayerAction {
         base.ActivateAbility(structure);
     }
     #endregion
+
+    private bool HasCharacterInPrisonCellThatIsValid(PrisonCell prisonCell) {
+        return GetFirstCharacterInPrisonCellThatIsValid(prisonCell) != null;
+    }
+    private Character GetFirstCharacterInPrisonCellThatIsValid(PrisonCell prisonCell) {
+        for (int i = 0; i < prisonCell.tilesInRoom.Count; i++) {
+            LocationGridTile t = prisonCell.tilesInRoom[i];
+            for (int j = 0; j < t.charactersHere.Count; j++) {
+                Character c = t.charactersHere[j];
+                if (prisonCell.IsValidOccupant(c) && base.IsValid(c)) {
+                    return c;
+                }
+            }
+        }
+        return null;
+    }
 }

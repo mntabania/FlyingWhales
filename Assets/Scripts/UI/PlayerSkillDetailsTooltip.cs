@@ -121,15 +121,15 @@ public class PlayerSkillDetailsTooltip : MonoBehaviour {
         
         if (skillData is BrainwashData) {
             Character targetCharacter = null;
-            if (UIManager.Instance.structureRoomInfoUI.isShowing && UIManager.Instance.structureRoomInfoUI.activeRoom is PrisonCell defilerRoom && defilerRoom.charactersInRoom.Count > 0) {
-                targetCharacter = defilerRoom.charactersInRoom.First();    
+            if (UIManager.Instance.structureRoomInfoUI.isShowing && UIManager.Instance.structureRoomInfoUI.activeRoom is PrisonCell prisonCell && prisonCell.HasCharacterInRoom()) {
+                targetCharacter = prisonCell.GetFirstAliveCharacterInRoom();
             } else if (PlayerManager.Instance.player.currentlySelectedPlayerActionTarget is Character character) {
                 targetCharacter = character;
-            } else if (PlayerManager.Instance.player.currentlySelectedPlayerActionTarget is PrisonCell room && room.charactersInRoom.Count > 0) {
-                targetCharacter = room.charactersInRoom.First();    
+            } else if (PlayerManager.Instance.player.currentlySelectedPlayerActionTarget is PrisonCell room && room.HasCharacterInRoom()) {
+                targetCharacter = room.GetFirstAliveCharacterInRoom();    
             } else if (UIManager.Instance.structureInfoUI.isShowing && UIManager.Instance.structureInfoUI.activeStructure is TortureChambers tortureChambers &&
-                       tortureChambers.rooms.Length > 0 && tortureChambers.rooms[0] is PrisonCell prisonCell && prisonCell.charactersInRoom.Count == 1) {
-                targetCharacter = prisonCell.charactersInRoom.First();    
+                       tortureChambers.rooms.Length > 0 && tortureChambers.rooms[0] is PrisonCell cell && cell.HasCharacterInRoom()) {
+                targetCharacter = cell.GetFirstAliveCharacterInRoom();    
             }
             if (targetCharacter != null) {
                 fullDescription = $"{fullDescription}\n<b>{targetCharacter.name} Brainwash Success Rate: {PrisonCell.GetBrainwashSuccessRate(targetCharacter).ToString("N0")}%</b>";    

@@ -299,10 +299,11 @@ public class StructureInfoUI : InfoUIBase {
                 characters.Add(kennel.occupyingSummon);
             }
         } else if (activeStructure is TortureChambers tortureChambers&& tortureChambers.rooms != null && tortureChambers.rooms.Length > 0 && tortureChambers.rooms[0] is PrisonCell prisonCell) {
-            List<Character> validCharacters = prisonCell.charactersInRoom.Where(c => prisonCell.IsValidOccupant(c)).ToList();
-            if (validCharacters.Count > 0) {
-                characters.AddRange(validCharacters);    
-            }
+            prisonCell.PopulateValidOccupants(characters);
+            //List<Character> validCharacters = prisonCell.charactersInRoom.Where(c => prisonCell.IsValidOccupant(c)).ToList();
+            //if (validCharacters.Count > 0) {
+            //    characters.AddRange(validCharacters);    
+            //}
         } else {
             characters.AddRange(activeStructure.charactersHere);
         }

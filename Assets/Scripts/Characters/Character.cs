@@ -6707,23 +6707,25 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     }
 #endregion
 
-#region Operators
-    public static bool operator ==(Character left, IPointOfInterest right) {
-        return left?.persistentID == right?.persistentID;
-    }
-    public static bool operator !=(Character left, IPointOfInterest right) {
-        return left?.persistentID != right?.persistentID;
-    }
-    public override bool Equals(object obj) {
-        if (obj is Character c) {
-            return persistentID.Equals(c.persistentID);
-        }
-        return false;
-    }
-    public override int GetHashCode() {
-        return base.GetHashCode();
-    }
-#endregion
+    //Remove this temporarily since we do not yet object pool characters
+    //Only do this when we object pool characters
+    //#region Operators
+    //public static bool operator ==(Character left, IPointOfInterest right) {
+    //    return left?.persistentID == right?.persistentID;
+    //}
+    //public static bool operator !=(Character left, IPointOfInterest right) {
+    //    return left?.persistentID != right?.persistentID;
+    //}
+    //public override bool Equals(object obj) {
+    //    if (obj is Character c) {
+    //        return persistentID.Equals(c.persistentID);
+    //    }
+    //    return false;
+    //}
+    //public override int GetHashCode() {
+    //    return base.GetHashCode();
+    //}
+    //#endregion
 
 #region IGCollectable
     public void SetIsDeadReference(bool p_state) {

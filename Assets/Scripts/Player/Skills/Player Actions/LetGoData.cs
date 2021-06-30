@@ -66,7 +66,7 @@ public class LetGoData : PlayerAction {
             if (tortureChambers.rooms.Length <= 0) {
                 return false;
             }
-            if (tortureChambers.rooms[0] is PrisonCell prisonCell && !prisonCell.charactersInRoom.Any(CanPerformAbilityTowards)) {
+            if (tortureChambers.rooms[0] is PrisonCell prisonCell && !HasCharacterInPrisonCellThatIsValid(prisonCell) /*!prisonCell.charactersInRoom.Any(CanPerformAbilityTowards)*/) {
                 return false;
             }
         }
@@ -97,7 +97,7 @@ public class LetGoData : PlayerAction {
         } else if (p_targetStructure is TortureChambers tortureChambers) {
             if (tortureChambers.rooms.Length <= 0) {
                 reasons += "Prison has no Prison Cell.";
-            } else if (tortureChambers.rooms[0] is PrisonCell prisonCell && !prisonCell.charactersInRoom.Any(CanPerformAbilityTowards)) {
+            } else if (tortureChambers.rooms[0] is PrisonCell prisonCell && !HasCharacterInPrisonCellThatIsValid(prisonCell) /*!prisonCell.charactersInRoom.Any(CanPerformAbilityTowards)*/) {
                 reasons += "Cannot let go of anybody. Cannot let go of characters being Brainwashed or Tortured";
             }
         }
@@ -111,23 +111,47 @@ public class LetGoData : PlayerAction {
             Assert.IsFalse(tortureChambers.rooms.Length <= 0);
             PrisonCell prisonCell = tortureChambers.rooms[0] as PrisonCell;
             Assert.IsNotNull(prisonCell);
-            Character firstCharacterThatCanLetGoOf = prisonCell.charactersInRoom.FirstOrDefault(CanPerformAbilityTowards);
-            Assert.IsNotNull(firstCharacterThatCanLetGoOf);
-            ActivateAbility(firstCharacterThatCanLetGoOf);
+            List<Character> charactersInRoom = RuinarchListPool<Character>.Claim();
+            prisonCell.PopulateCharactersInRoom(charactersInRoom);
+            for (int i = 0; i < charactersInRoom.Count; i++) {
+                Character c = charactersInRoom[i];
+                if (CanPerformAbilityTowards(c)) {
+                    LetGo(c);
+                }
+            }
+            RuinarchListPool<Character>.Release(charactersInRoom);
+            base.ActivateAbility(targetStructure);
         }
     }
     public override void ActivateAbility(IPointOfInterest targetPOI) {
         if (targetPOI is Character targetCharacter) {
-            LocationStructure letGoFrom = targetCharacter.currentStructure;
-            targetCharacter.movementComponent.LetGo(true);
-            
-            Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "InterventionAbility", "Let Go", "activated");
-            log.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-            log.AddToFillers(letGoFrom, letGoFrom?.name, LOG_IDENTIFIER.LANDMARK_1);
-            log.AddLogToDatabase();
-            PlayerManager.Instance.player.ShowNotificationFromPlayer(log, true);
-            
+            LetGo(targetCharacter);
             base.ActivateAbility(targetPOI);    
         }
+    }
+    private void LetGo(Character targetCharacter) {
+        LocationStructure letGoFrom = targetCharacter.currentStructure;
+        targetCharacter.movementComponent.LetGo(true);
+
+        Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "InterventionAbility", "Let Go", "activated");
+        log.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+        log.AddToFillers(letGoFrom, letGoFrom?.name, LOG_IDENTIFIER.LANDMARK_1);
+        log.AddLogToDatabase();
+        PlayerManager.Instance.player.ShowNotificationFromPlayer(log, true);
+    }
+    private bool HasCharacterInPrisonCellThatIsValid(PrisonCell prisonCell) {
+        return GetFirstCharacterInPrisonCellThatIsValid(prisonCell) != null;
+    }
+    private Character GetFirstCharacterInPrisonCellThatIsValid(PrisonCell prisonCell) {
+        for (int i = 0; i < prisonCell.tilesInRoom.Count; i++) {
+            LocationGridTile t = prisonCell.tilesInRoom[i];
+            for (int j = 0; j < t.charactersHere.Count; j++) {
+                Character c = t.charactersHere[j];
+                if (CanPerformAbilityTowards(c)) {
+                    return c;
+                }
+            }
+        }
+        return null;
     }
 }
