@@ -55,6 +55,10 @@ public class FoundCultData : PlayerAction {
             if (targetCharacter.traitContainer.HasTrait("Enslaved")) {
                 return false;
             }
+            int villagerFactionCount = FactionManager.Instance.GetActiveVillagerFactionCount();
+            if (villagerFactionCount >= FactionManager.MaxActiveVillagerFactions) {
+                return false;
+            }
             return true;
         }
         return false;
@@ -69,6 +73,10 @@ public class FoundCultData : PlayerAction {
         }
         if (targetCharacter.traitContainer.HasTrait("Enslaved")) {
             reasons += "Slaves cannot perform this action,";
+        }
+        int villagerFactionCount = FactionManager.Instance.GetActiveVillagerFactionCount();
+        if (villagerFactionCount >= FactionManager.MaxActiveVillagerFactions) {
+            reasons += "Maximum number of active factions have been reached,";
         }
         return reasons;
     }

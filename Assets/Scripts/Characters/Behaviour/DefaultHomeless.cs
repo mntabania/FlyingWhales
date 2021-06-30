@@ -61,7 +61,7 @@ public class DefaultHomeless : CharacterBehaviourComponent {
         }
 
         if (character.homeStructure == null || character.homeStructure.hasBeenDestroyed) {
-            if (character.currentSettlement != null) {
+            if (character.currentSettlement != null && character.currentSettlement.locationType == LOCATION_TYPE.VILLAGE) {
 #if DEBUG_LOG
                 log += $"\n-{character.name} is currently inside settlement {character.currentSettlement.name}";
 #endif

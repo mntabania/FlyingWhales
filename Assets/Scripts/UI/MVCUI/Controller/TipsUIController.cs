@@ -39,6 +39,7 @@ public class TipsUIController : MVCUIController {
             m_tipsUIView = p_ui;
             InitUI(p_ui.UIModel, p_ui);
             SubscribeToEvents();
+            p_ui.UIModel.transform.SetSiblingIndex(siblingIndex);
         });
     }
 
@@ -76,7 +77,7 @@ public class TipsUIController : MVCUIController {
         item.onClickTip += OnItemClicked;
         tipsItems.Add(item);
         displayedTips.Add(p_tips);
-
+        item.PlayIntroAnimation();
     }
 
     void OnItemClicked(TIPS p_tips) {

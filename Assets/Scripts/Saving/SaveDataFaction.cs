@@ -38,6 +38,7 @@ public class SaveDataFaction : SaveData<Faction>, ISavableCounterpart {
     public SaveDataFactionSuccessionComponent successionComponent;
 
     public bool isInfoUnlocked;
+    public bool isDisbanded;
 
     #region getters
     public OBJECT_TYPE objectType => OBJECT_TYPE.Faction;
@@ -109,6 +110,7 @@ public class SaveDataFaction : SaveData<Faction>, ISavableCounterpart {
         pathfindingTag = data.pathfindingTag;
         isInfoUnlocked = data.isInfoUnlocked;
         pathfindingDoorTag = data.pathfindingDoorTag;
+        isDisbanded = data.isDisbanded;
     }
 
     public override Faction Load() {

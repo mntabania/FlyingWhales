@@ -73,7 +73,6 @@ MonoBehaviour:
     m_iceResistanceBonus: 0
     m_electricResistanceBonus: 0
     m_allSecondaryresistanceBonus: 9
-    m_normalResistanceBonus: 0
     m_piercingBonus: 5
     m_mentalResistanceBonus: 9
     m_physicalResistanceBonus: 12
@@ -82,6 +81,6 @@ MonoBehaviour:
   craftableAccessories: dd000000
   droppableItems:
   - item: 13
-    weight: 10
+    weight: 100
   - item: 189
     weight: 10

@@ -5,6 +5,7 @@ using Factions.Faction_Components;
 using UnityEngine;
 using Factions.Faction_Types;
 using Factions.Faction_Succession;
+using Inner_Maps;
 using Locations.Settlements;
 using Traits;
 using Inner_Maps.Location_Structures;
@@ -42,6 +43,7 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
     public uint pathfindingDoorTag { get; private set; }
     public Heirloom factionHeirloom { get; private set; }
     public FactionEventDispatcher factionEventDispatcher { get; private set; }
+    public bool isDisbanded { get; private set; }
 
     //Components
     public FactionIdeologyComponent ideologyComponent { get; private set; }
@@ -53,7 +55,6 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
 
 
     #region getters/setters
-    public bool isDisbanded => characters.Count <= 0;
     public bool isMajorOrVagrant => isMajorFaction || this.factionType.type == FACTION_TYPE.Vagrants;
     public bool isMajorNonPlayerOrVagrant => isMajorNonPlayer || this.factionType.type == FACTION_TYPE.Vagrants;
     public bool isMajorNonPlayer => isMajorFaction && !isPlayerFaction;
@@ -109,7 +110,6 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
         description = data.description;
         emblem = FactionManager.Instance.GetFactionEmblem(data);
         emblemName = emblem.name;
-        FactionManager.Instance.SetEmblemAsUsed(emblem);
         factionColor = data.factionColor;
         race = data.race;
         isActive = data.isActive;
@@ -127,6 +127,7 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
         forcedCancelJobsOnTickEnded = new List<JobQueueItem>();
         factionEventDispatcher = new FactionEventDispatcher();
         isInfoUnlocked = data.isInfoUnlocked;
+        isDisbanded = data.isDisbanded;
         AddListeners();
     }
 
@@ -185,13 +186,30 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
             }
             character.SetFaction(null);
             Messenger.Broadcast(FactionSignals.CHARACTER_REMOVED_FROM_FACTION, character, this);
-            if (isDisbanded && factionType.type != FACTION_TYPE.Undead && factionType.type != FACTION_TYPE.Vagrants && factionType.type != FACTION_TYPE.Demons) {
+            if (characters.All(c => c.isDead) && factionType.type != FACTION_TYPE.Undead && factionType.type != FACTION_TYPE.Vagrants && factionType.type != FACTION_TYPE.Demons) {
                 Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Faction", "Generic", "disband", providedTags: LOG_TAG.Major);
                 log.AddToFillers(this, name, LOG_IDENTIFIER.FACTION_1);
                 log.AddLogToDatabase();
                 PlayerManager.Instance.player.ShowNotificationFromPlayer(log, true);
-                Messenger.Broadcast(FactionSignals.FACTION_DISBANDED, this);
+                // Messenger.Broadcast(FactionSignals.FACTION_DISBANDED, this);
+                DisbandFaction();
             }
+            return true;
+        }
+        return false;
+    }
+    /// <summary>
+    /// Function used for making a character leave this faction because we want to disband it
+    /// aka. Removing all characters from the faction. Usually because all members are dead.
+    /// </summary>
+    /// <param name="character">The character to remove.</param>
+    public bool LeaveFactionForDisband(Character character) {
+        if (characters.Remove(character)) {
+            if (leader == character) {
+                SetLeader(null); //so a new leader can be set if the leader is ever removed from the list of characters of this faction
+            }
+            character.SetFaction(null);
+            Messenger.Broadcast(FactionSignals.CHARACTER_REMOVED_FROM_FACTION, character, this);
             return true;
         }
         return false;
@@ -347,6 +365,38 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
         }
         successionComponent.OnCharacterDied(deadCharacter);
         UpdateFactionCount();
+        if (!isDisbanded && isMajorNonPlayer) {
+            if (characters.All(c => c.isDead)) {
+                //all characters are dead
+                DisbandFaction();
+            }    
+        }
+    }
+    /// <summary>
+    /// Disband this faction. This is used to clear out all faction data,
+    /// and remove all current members of the faction.
+    /// </summary>
+    private void DisbandFaction() {
+#if DEBUG_LOG
+        Debug.Log($"Disbanded faction {name} because it has no more living members");
+#endif
+        isDisbanded = true;
+        SetFactionActiveState(false);
+        ClearOutReservedFactionData();
+        List<Character> currentMembers = RuinarchListPool<Character>.Claim();
+        currentMembers.AddRange(characters);
+        for (int i = 0; i < currentMembers.Count; i++) {
+            Character character = currentMembers[i];
+            LeaveFactionForDisband(character);
+        }
+        RuinarchListPool<Character>.Release(currentMembers);
+        RemoveListeners();
+        FactionManager.Instance.RemoveRelationshipsWith(this);
+        Messenger.Broadcast(FactionSignals.FACTION_DISBANDED, this);
+    }
+    private void ClearOutReservedFactionData() {
+        FactionEmblemRandomizer.SetEmblemAsUnUsed(emblem);
+        InnerMapManager.Instance.ReturnPathfindingPair(this);
     }
 
     private void OnCharacterReturnToLife(Character deadCharacter) {
@@ -1284,25 +1334,31 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
             }
         }
 
-        foreach (KeyValuePair<string, SaveDataFactionRelationship> item in data.relationships) {
-            Faction faction2 = FactionManager.Instance.GetFactionByPersistentID(item.Key);
-            FactionRelationship rel = GetRelationshipWith(faction2); //check first if this faction has reference to relationship with faction 2
-            if (rel == null) {
-                rel = faction2.GetRelationshipWith(this); //if none, check if faction 2 has reference to relationship with faction 1
+        if (!isDisbanded) {
+            //only load relationships if this faction is not yet disbanded since we remove relations with disbanded factions, 
+            //this is currently a problem because we still load disbanded factions, since some things might still reference it.
+            //And it is currently unsafe to completely remove disbanded factions from the all factions list. Change added June 29, 2021
+            foreach (KeyValuePair<string, SaveDataFactionRelationship> item in data.relationships) {
+                Faction faction2 = FactionManager.Instance.GetFactionByPersistentID(item.Key);
+                FactionRelationship rel = GetRelationshipWith(faction2); //check first if this faction has reference to relationship with faction 2
                 if (rel == null) {
-                    rel = item.Value.Load(); //if still none, then load new instance of relationship between the 2 factions
+                    rel = faction2.GetRelationshipWith(this); //if none, check if faction 2 has reference to relationship with faction 1
+                    if (rel == null) {
+                        rel = item.Value.Load(); //if still none, then load new instance of relationship between the 2 factions
+                    }
                 }
-            }
-            Assert.IsNotNull(rel, $"Relationship between {name} and {faction2.name} is null!");
-            AddNewRelationship(faction2, rel);
-            faction2.AddNewRelationship(this, rel);
+                Assert.IsNotNull(rel, $"Relationship between {name} and {faction2.name} is null!");
+                AddNewRelationship(faction2, rel);
+                faction2.AddNewRelationship(this, rel);
             
-            // rel = faction2.GetRelationshipWith(this);
-            // if (rel == null) {
-            //     rel = item.Value.Load();
-            // }
-            // faction2.AddNewRelationship(this, rel);
+                // rel = faction2.GetRelationshipWith(this);
+                // if (rel == null) {
+                //     rel = item.Value.Load();
+                // }
+                // faction2.AddNewRelationship(this, rel);
+            }    
         }
+        
 
         // for (int i = 0; i < data.history.Count; i++) {
         //     Log log = DatabaseManager.Instance.logDatabase.GetLogByPersistentID(data.history[i]);
@@ -1313,7 +1369,13 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
             BaseSettlement settlement = DatabaseManager.Instance.settlementDatabase.GetSettlementByPersistentID(data.ownedSettlementIDs[i]);
             ownedSettlements.Add(settlement);
         }
-
+        if (isMajorNonPlayer && isActive && !isDisbanded) {
+            PathfindingTagPair pair = new PathfindingTagPair(data.pathfindingTag, data.pathfindingDoorTag);
+            InnerMapManager.Instance.SetPathfindingTagPairAsClaimed(pair); 
+        }
+        if (isActive && !isDisbanded) {
+            FactionEmblemRandomizer.SetEmblemAsUsed(emblem);
+        }
         partyQuestBoard.LoadReferences(data.partyQuestBoard);
         successionComponent.LoadReferences(data.successionComponent);
 
