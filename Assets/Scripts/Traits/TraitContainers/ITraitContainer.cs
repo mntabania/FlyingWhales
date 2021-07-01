@@ -42,11 +42,14 @@ namespace Traits {
         #endregion
 
         #region Getting
-        T GetTraitOrStatus<T>(params string[] traitNames) where T : Trait;
         T GetTraitOrStatus<T>(string traitName) where T : Trait;
-        List<T> GetTraitsOrStatuses<T>(params string[] traitNames) where T : Trait;
-        bool HasTrait(params string[] traitNames);
+        T GetTraitOrStatus<T>(string traitName1, string traitName2) where T : Trait;
         bool HasTrait(string traitName);
+        bool HasTrait(string traitName1, string traitName2);
+        bool HasTrait(string traitName1, string traitName2, string traitName3);
+        bool HasTrait(string traitName1, string traitName2, string traitName3, string traitName4);
+        bool HasTrait(string traitName1, string traitName2, string traitName3, string traitName4, string traitName5);
+        bool HasTrait(string[] traitNames);
         bool HasTraitOf(TRAIT_TYPE traitType);
         bool HasTraitOrStatusOf(TRAIT_EFFECT traitEffect);
         List<Trait> GetAllTraitsOf(TRAIT_TYPE type);

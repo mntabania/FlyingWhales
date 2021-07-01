@@ -675,11 +675,13 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 	private void TryCreateRemoveStatusJob() {
 		if (owner.homeSettlement != null && owner.gridTileLocation.IsNextToOrPartOfSettlement(owner.homeSettlement)
 		    && owner.traitContainer.HasTrait("Criminal") == false) {
-			List<Trait> statusTraits = owner.traitContainer.GetTraitsOrStatuses<Trait>(TraitManager.Instance.removeStatusTraits.ToArray());
-			for (int i = 0; i < statusTraits.Count; i++) {
-				Trait trait = statusTraits[i];
-				TryCreateSettlementRemoveStatusJob(trait);
-			}
+            for (int i = 0; i < TraitManager.Instance.removeStatusTraits.Count; i++) {
+                string statusName = TraitManager.Instance.removeStatusTraits[i];
+                Trait status = owner.traitContainer.GetTraitOrStatus<Trait>(statusName);
+                if (status != null) {
+                    TryCreateSettlementRemoveStatusJob(status);
+                }
+            }
 		}
 	}
 #endregion
@@ -3947,7 +3949,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 	    for (int i = 0; i < p_structure.pointsOfInterest.Count; i++) {
 		    IPointOfInterest poi = p_structure.pointsOfInterest.ElementAt(i);
 		    if (poi is TileObject tileObject && tileObject.mapObjectState == MAP_OBJECT_STATE.BUILT && 
-		        (tileObject.traitContainer.HasTrait("Wet") || tileObject.traitContainer.HasTrait("Dirty"))) {
+		        tileObject.traitContainer.HasTrait("Wet", "Dirty")) {
 			    return TryCreateCleanItemJob(tileObject, out p_producedJob);
 		    }
 	    }
