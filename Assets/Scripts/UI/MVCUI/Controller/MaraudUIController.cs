@@ -388,7 +388,7 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 				item.SetObject(entry.Value);
 				item.SetAsButton();
 				m_minionList.Add(item);
-				bool canDoAbility = true;// skillData.CanPerformAbility();
+				bool canDoAbility = skillData.CanPerformAbility();
 				item.SetInteractableState(canDoAbility);
 				item.AddHoverEnterAction(OnHoverItemOccupiedStructure);
 				item.AddHoverExitAction(OnHoverExitItemOccupiedStructure);

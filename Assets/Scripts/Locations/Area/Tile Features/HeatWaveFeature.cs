@@ -150,7 +150,8 @@ namespace Locations.Area_Features {
                     Overheating overheating = character.traitContainer.GetTraitOrStatus<Overheating>("Overheating");
                     overheating?.SetIsPlayerSource(isPlayerSource);
                 } else {
-                    character.reactionComponent.ResistRuinarchPower();
+                    character.reactionComponent.PlayResistVFX();
+                    //character.reactionComponent.ResistRuinarchPower();
                 }
             }
             RescheduleHeatWaveCheck(p_area);

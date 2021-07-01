@@ -870,6 +870,9 @@ public class Party : ILogFiller, ISavable, IJobOwner, IBookmarkable {
         Messenger.Broadcast(PartySignals.CLEAR_MEMBERS_THAT_JOINED_QUEST, this);
     }
     public void MembersThatJoinedQuestGainsGold() {
+        if (isPlayerParty) {
+            return;
+        }
         for (int i = 0; i < membersThatJoinedQuest.Count; i++) {
             membersThatJoinedQuest[i].moneyComponent.AdjustCoins(83);
         }
@@ -1172,6 +1175,9 @@ public class Party : ILogFiller, ISavable, IJobOwner, IBookmarkable {
         DestroyParty();
     }
     public void AllMembersThatJoinedQuestGainsRandomCoinAmount(int p_minAmount, int p_maxAmount) {
+        if (isPlayerParty) {
+            return;
+        }
         for (int i = 0; i < membersThatJoinedQuest.Count; i++) {
             Character c = membersThatJoinedQuest[i];
             c.moneyComponent.AdjustCoins(GameUtilities.RandomBetweenTwoNumbers(p_minAmount, p_maxAmount));
