@@ -102,7 +102,32 @@ public abstract class MonsterEgg : TileObject {
         if (settlement != null) {
             homeRegion = settlement.region;
         }
+        ProcessHomeOfHatchedEggs(ref homeSettlement, ref homeStructure, ref homeRegion);
+        //BaseSettlement currentSettlement;
+        //if (gridTileLocation.IsPartOfSettlement(out currentSettlement)) {
+        //    if (currentSettlement.owner == null) {
+        //        homeSettlement = currentSettlement;
+        //        homeStructure = null;
+        //        homeRegion = currentSettlement.region;
+        //    } else if (currentSettlement.owner == faction) {
+        //        homeSettlement = currentSettlement;
+        //        if (structure.settlementLocation == currentSettlement) {
+        //            homeStructure = structure;
+        //        } else {
+        //            homeStructure = null;
+        //        }
+        //        homeRegion = currentSettlement.region;
+        //    }
+        //}
 
+        Summon monster = CharacterManager.Instance.CreateNewSummon(summonType, faction: faction, homeLocation: homeSettlement, homeRegion: homeRegion, homeStructure: homeStructure, bypassIdeologyChecking: true);
+        CharacterManager.Instance.PlaceSummonInitially(monster, gridTileLocation);
+        if (!monster.HasHome()) {
+            monster.ClearTerritory();
+            monster.SetTerritory(gridTileLocation.area);
+        }
+    }
+    protected void ProcessHomeOfHatchedEggs(ref BaseSettlement homeSettlement, ref LocationStructure homeStructure, ref Region homeRegion) {
         BaseSettlement currentSettlement;
         if (gridTileLocation.IsPartOfSettlement(out currentSettlement)) {
             if (currentSettlement.owner == null) {
@@ -111,20 +136,13 @@ public abstract class MonsterEgg : TileObject {
                 homeRegion = currentSettlement.region;
             } else if (currentSettlement.owner == faction) {
                 homeSettlement = currentSettlement;
-                if (structure.settlementLocation == currentSettlement) {
+                if (structure != null && structure.settlementLocation == currentSettlement) {
                     homeStructure = structure;
                 } else {
                     homeStructure = null;
                 }
                 homeRegion = currentSettlement.region;
             }
-        }
-
-        Summon monster = CharacterManager.Instance.CreateNewSummon(summonType, faction: faction, homeLocation: homeSettlement, homeRegion: homeRegion, homeStructure: homeStructure, bypassIdeologyChecking: true);
-        CharacterManager.Instance.PlaceSummonInitially(monster, gridTileLocation);
-        if (!monster.HasHome()) {
-            monster.ClearTerritory();
-            monster.SetTerritory(gridTileLocation.area);
         }
     }
 
