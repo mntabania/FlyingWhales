@@ -9,7 +9,7 @@ using UnityEngine.Assertions;
 public class HarvestCrops : GoapAction {
 
     public int m_amountProducedPerTick = 1;
-    private const float _coinGainMultiplier = 0.559f;
+    private const float _coinGainMultiplier = 0.344f;
     public HarvestCrops() : base(INTERACTION_TYPE.HARVEST_CROPS) {
         actionIconString = GoapActionStateDB.Harvest_Icon;
         //advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };

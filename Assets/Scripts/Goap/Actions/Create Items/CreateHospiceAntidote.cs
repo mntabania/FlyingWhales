@@ -37,7 +37,7 @@ public class CreateHospiceAntidote : GoapAction {
 
     #region State Effects
     public void AfterCreateHospiceAntidoteSuccess(ActualGoapNode p_node) {
-        p_node.actor.moneyComponent.AdjustCoins(66);
+        p_node.actor.moneyComponent.AdjustCoins(28);
         TileObject antidote = InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.ANTIDOTE);
         LocationGridTile tileToSpawnPile = p_node.actor.gridTileLocation;
         if (tileToSpawnPile != null && tileToSpawnPile.tileObjectComponent.objHere != null) {
