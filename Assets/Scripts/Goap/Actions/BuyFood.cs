@@ -124,8 +124,7 @@ public class BuyFood : GoapAction {
         if (targetFoodPile.resourceInPile <= amount) {
             //take the whole food pile.
             goapNode.actor.PickUpItem(targetFoodPile);
-        }
-        else {
+        } else {
             //create new food pile and take needed amount
             FoodPile newPile = InnerMapManager.Instance.CreateNewTileObject<FoodPile>(targetFoodPile.tileObjectType);
             newPile.SetResourceInPile(amount);

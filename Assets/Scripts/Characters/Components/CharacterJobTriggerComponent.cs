@@ -3814,7 +3814,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
     }
     #endregion
 
-    #region Stockpile Food
+    #region Buy Food
     public bool TryCreateStockpileFood(Character p_character, LocationStructure p_preferredStore, out JobQueueItem producedJob) {
 	    if (!owner.jobQueue.HasJob(JOB_TYPE.STOCKPILE_FOOD)) {
 		    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.STOCKPILE_FOOD, INTERACTION_TYPE.STOCKPILE_FOOD, p_character, p_character);
@@ -3825,8 +3825,25 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 	    producedJob = null;
 	    return false;
     }
+    public bool TryCreateBuyFoodForTavernTable(TileObject p_targetTable, out JobQueueItem producedJob) {
+        if (!owner.jobQueue.HasJob(JOB_TYPE.BUY_FOOD_FOR_TAVERN)) {
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.BUY_FOOD_FOR_TAVERN, INTERACTION_TYPE.DROP_RESOURCE, p_targetTable, owner);
+            if (owner.homeSettlement != null) {
+                for (int i = 0; i < owner.homeSettlement.allStructures.Count; i++) {
+                    LocationStructure s = owner.homeSettlement.allStructures[i];
+                    if (s.structureType.IsFoodProducingStructure()) {
+                        job.AddPriorityLocation(INTERACTION_TYPE.BUY_FOOD, s);
+                    }
+                }
+            }
+            producedJob = job;
+            return true;
+        }
+        producedJob = null;
+        return false;
+    }
     #endregion
-    
+
     #region Craft Furniture
     public bool CreateCraftFurniture(TILE_OBJECT_TYPE tileObjectType, LocationStructure targetStructure, LocationStructure p_preferredStore, out JobQueueItem producedJob) {
 	    TileObject unbuiltFurniture = InnerMapManager.Instance.CreateNewTileObject<TileObject>(tileObjectType);
