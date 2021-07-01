@@ -55,7 +55,7 @@ public class MineStone : GoapAction {
     #region State Effects
     public void AfterMineSuccess(ActualGoapNode p_node) {
         ResourcePile pile = ProduceMatsPile(p_node);
-        if (pile.resourceInPile > 0) {
+        if (pile != null && pile.resourceInPile > 0) {
             p_node.actor.jobComponent.TryCreateHaulToWorkplaceJob(ProduceMatsPile(p_node));
         }
     }
@@ -80,7 +80,10 @@ public class MineStone : GoapAction {
             }
         }
 
-         p_node.actor.moneyComponent.AdjustCoins(Mathf.CeilToInt(amount * _coinGainMultiplier));
+        if (amount <= 0) {
+            return null;
+        }
+        p_node.actor.moneyComponent.AdjustCoins(Mathf.CeilToInt(amount * _coinGainMultiplier));
         matsToHaul.SetResourceInPile(amount);
         tileToSpawnPile.structure.AddPOI(matsToHaul, tileToSpawnPile);
         ProduceLogs(p_node);
