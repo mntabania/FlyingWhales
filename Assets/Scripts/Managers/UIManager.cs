@@ -755,7 +755,9 @@ public class UIManager : BaseMonoBehaviour {
         } else if (obj is TileObject tileObject) {
             ShowTileObjectInfo(tileObject);
         } else if (obj is LocationStructure structure) {
-            ShowStructureInfo(structure);
+            if (!structure.hasBeenDestroyed) {
+                ShowStructureInfo(structure);    
+            }
             // structure.CenterOnStructure();
         }
     }
