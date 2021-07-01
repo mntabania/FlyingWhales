@@ -149,7 +149,7 @@ public class Fish : GoapAction {
                 InnerMapManager.Instance.CreateNewResourcePileAndTryCreateHaulJob<FoodPile>(TILE_OBJECT_TYPE.FISH_PILE, 50, goapNode.actor, tile);
             }
         }
-        goapNode.actor.talentComponent?.GetTalent(CHARACTER_TALENT.Food).AdjustExperience(8, p_node.actor);
+        goapNode.actor.talentComponent?.GetTalent(CHARACTER_TALENT.Food).AdjustExperience(8, goapNode.actor);
     }
 #endregion
 }
