@@ -686,7 +686,7 @@ MonoBehaviour:
   projectileParent: {fileID: 4968866154022664}
   colorHighlight: {fileID: 212374460377128016}
   useCanTraverse: 0
-  endReachedDistance: 0.3
+  endReachedDistance: 0.1
 --- !u!114 &114578536136533292
 MonoBehaviour:
   m_ObjectHideFlags: 0

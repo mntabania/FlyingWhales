@@ -51,7 +51,7 @@ namespace Inner_Maps.Location_Structures {
         }
         public bool TryGetMissingDefaultBedPosition(out StructureTemplateObjectData p_objectTemplate) {
             List<StructureTemplateObjectData> defaultMissingBeds = RuinarchListPool<StructureTemplateObjectData>.Claim();
-            structureObj.PopulateMissingPreplacedObjectsOfType(defaultMissingBeds, TILE_OBJECT_TYPE.BED_CLINIC, region.innerMap);
+            structureObj.PopulateMissingPreplacedObjectsOfTypeThatIsOnUnoccupiedTile(defaultMissingBeds, TILE_OBJECT_TYPE.BED_CLINIC, region.innerMap);
             if (defaultMissingBeds.Count > 0) {
                 p_objectTemplate = CollectionUtilities.GetRandomElement(defaultMissingBeds);
                 return true;

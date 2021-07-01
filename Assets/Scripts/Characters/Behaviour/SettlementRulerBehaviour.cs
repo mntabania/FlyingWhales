@@ -125,21 +125,25 @@ public class SettlementRulerBehaviour : CharacterBehaviourComponent {
 #if DEBUG_LOG
                             log = $"{log}\n-{characterHomeSettlement.name} doesn't have a mine and is owned by a Human Empire and has unused Mining spots. Set chance to {chance} and will try to build {determinedStructureToUse}";
 #endif
-                        } else if (!characterHomeSettlement.HasStructure(STRUCTURE_TYPE.LUMBERYARD) && !characterHomeSettlement.HasBlueprintOnTileForStructure(STRUCTURE_TYPE.LUMBERYARD)) {
-                            //build lumberyard
-                            chance = 50;
-                            determinedStructureToUse = STRUCTURE_TYPE.LUMBERYARD;  
+                        } else if (!characterHomeSettlement.HasStructure(STRUCTURE_TYPE.MINE) && !characterHomeSettlement.HasBlueprintOnTileForStructure(STRUCTURE_TYPE.MINE) &&
+                                   !characterHomeSettlement.HasStructure(STRUCTURE_TYPE.LUMBERYARD) && !characterHomeSettlement.HasBlueprintOnTileForStructure(STRUCTURE_TYPE.LUMBERYARD)) {
 #if DEBUG_LOG
-                            log = $"{log}\n-{characterHomeSettlement.name} doesn't have a lumberyard and has unused lumberyard spots. Set chance to {chance} and will try to build {determinedStructureToUse}";
+                            log = $"{log}\n-{characterHomeSettlement.name} doesn't have a mine or a lumberyard. Set chance to {chance}.";
 #endif
-                        } else if (!characterHomeSettlement.HasStructure(STRUCTURE_TYPE.MINE) && !characterHomeSettlement.HasBlueprintOnTileForStructure(STRUCTURE_TYPE.MINE) && 
-                                   characterHomeSettlement.occupiedVillageSpot.HasUnusedMiningSpots()) {
-                            //build mine
                             chance = 50;
-                            determinedStructureToUse = STRUCTURE_TYPE.MINE;  
+                            if (characterHomeSettlement.occupiedVillageSpot.HasUnusedMiningSpots()) {
 #if DEBUG_LOG
-                            log = $"{log}\n-{characterHomeSettlement.name} doesn't have a mine and has unused mining spots. Set chance to {chance} and will try to build {determinedStructureToUse}";
+                                log = $"{log}\n-{characterHomeSettlement.name} has an unused mining spot.";
 #endif
+                                //build mine
+                                determinedStructureToUse = STRUCTURE_TYPE.MINE;      
+                            } else {
+#if DEBUG_LOG
+                                log = $"{log}\n-{characterHomeSettlement.name} doesn't have an unused mining spot.";
+#endif
+                                //build lumberyard
+                                determinedStructureToUse = STRUCTURE_TYPE.LUMBERYARD;  
+                            }
                         } else if (!characterHomeSettlement.HasStructure(STRUCTURE_TYPE.WORKSHOP) && !characterHomeSettlement.HasBlueprintOnTileForStructure(STRUCTURE_TYPE.WORKSHOP)) {
                             //build workshop
                             chance = 50;

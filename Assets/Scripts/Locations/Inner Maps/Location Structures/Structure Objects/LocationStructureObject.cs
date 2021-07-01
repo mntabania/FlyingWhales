@@ -250,7 +250,7 @@ public class LocationStructureObject : PooledObject, ISelectable {
         }
         return false;
     }
-    public void PopulateMissingPreplacedObjectsOfType(List<StructureTemplateObjectData> p_objects, TILE_OBJECT_TYPE p_tileObjectType, InnerTileMap innerMap) {
+    public void PopulateMissingPreplacedObjectsOfTypeThatIsOnUnoccupiedTile(List<StructureTemplateObjectData> p_objects, TILE_OBJECT_TYPE p_tileObjectType, InnerTileMap innerMap) {
         StructureTemplateObjectData[] prePlacedObjects = GetPreplacedObjects();
         if (prePlacedObjects != null) {
             for (int i = 0; i < prePlacedObjects.Length; i++) {
@@ -266,6 +266,22 @@ public class LocationStructureObject : PooledObject, ISelectable {
             }
         }
     }
+    public void PopulateMissingPreplacedObjectsOfType(List<StructureTemplateObjectData> p_objects, TILE_OBJECT_TYPE p_tileObjectType, InnerTileMap innerMap) {
+        StructureTemplateObjectData[] prePlacedObjects = GetPreplacedObjects();
+        if (prePlacedObjects != null) {
+            for (int i = 0; i < prePlacedObjects.Length; i++) {
+                StructureTemplateObjectData preplacedObj = prePlacedObjects[i];
+                if (preplacedObj.tileObjectType == p_tileObjectType) {
+                    Vector3Int tileCoords = innerMap.groundTilemap.WorldToCell(preplacedObj.transform.position);
+                    LocationGridTile tile = innerMap.map[tileCoords.x, tileCoords.y];
+                    if (tile.tileObjectComponent.objHere == null || tile.tileObjectComponent.objHere.tileObjectType != p_tileObjectType) {
+                        p_objects.Add(preplacedObj);
+                    }
+                }
+            }
+        }
+    }
+    
     public LocationGridTile GetTileLocationOfPreplacedObject(StructureTemplateObjectData p_templateObject, InnerTileMap innerTileMap) {
         Vector3Int tileCoords = innerTileMap.groundTilemap.WorldToCell(p_templateObject.transform.position);
         LocationGridTile tile = innerTileMap.map[tileCoords.x, tileCoords.y];

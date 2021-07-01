@@ -1378,14 +1378,44 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
             List<LocationStructure> dwellings = GetStructuresOfType(STRUCTURE_TYPE.DWELLING);
             for (int i = 0; i < dwellings.Count; i++) {
                 LocationStructure dwelling = dwellings[i];
+                TILE_OBJECT_TYPE randomFood = CollectionUtilities.GetRandomElement(spawnedFoodTypes);
                 if (GameUtilities.RollChance(50)) {
-                    TILE_OBJECT_TYPE randomFood = CollectionUtilities.GetRandomElement(spawnedFoodTypes);
                     FoodPile foodPile = InnerMapManager.Instance.CreateNewTileObject<FoodPile>(randomFood);
                     foodPile.SetResourceInPile(GameUtilities.RandomBetweenTwoNumbers(20, 60));
                     dwelling.AddPOI(foodPile);    
                 }
+                Table tableInDwelling = dwelling.GetTileObjectOfType<Table>();
+                if (tableInDwelling != null) {
+                    tableInDwelling.resourceStorageComponent.SetResource(CONCRETE_RESOURCES.Animal_Meat, 0);
+                    CONCRETE_RESOURCES chosenFoodType = CONCRETE_RESOURCES.Animal_Meat;
+                    switch (randomFood) {
+                        case TILE_OBJECT_TYPE.CORN:
+                            chosenFoodType = CONCRETE_RESOURCES.Corn;
+                            break;
+                        case TILE_OBJECT_TYPE.FISH_PILE:
+                            chosenFoodType = CONCRETE_RESOURCES.Fish;
+                            break;
+                        case TILE_OBJECT_TYPE.HYPNO_HERB:
+                            chosenFoodType = CONCRETE_RESOURCES.Hypno_Herb;
+                            break;
+                        case TILE_OBJECT_TYPE.ICEBERRY:
+                            chosenFoodType = CONCRETE_RESOURCES.Iceberry;
+                            break;
+                        case TILE_OBJECT_TYPE.PINEAPPLE:
+                            chosenFoodType = CONCRETE_RESOURCES.Pineapple;
+                            break;
+                        case TILE_OBJECT_TYPE.POTATO:
+                            chosenFoodType = CONCRETE_RESOURCES.Potato;
+                            break;
+                        case TILE_OBJECT_TYPE.VEGETABLES:
+                            chosenFoodType = CONCRETE_RESOURCES.Vegetables;
+                            break;
+                    }
+                    tableInDwelling.SetFood(chosenFoodType, UnityEngine.Random.Range(20, 81));
+                }
             }
         }
+        RuinarchListPool<TILE_OBJECT_TYPE>.Release(spawnedFoodTypes);
         // PlaceResourcePiles();
         yield return null;
     }
