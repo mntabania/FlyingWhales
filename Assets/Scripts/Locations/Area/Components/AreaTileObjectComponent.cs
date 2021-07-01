@@ -334,7 +334,7 @@ public class AreaTileObjectComponent : AreaComponent {
             ResourcePile pile = resourcePiles[i];
             LocationStructure currentStructure = pile.currentStructure;
             if (pile.tileObjectType == TILE_OBJECT_TYPE.WOOD_PILE) {
-                if (pile.mapObjectState == MAP_OBJECT_STATE.BUILT && currentStructure != null && currentStructure.structureType != STRUCTURE_TYPE.CITY_CENTER && currentStructure.structureType != STRUCTURE_TYPE.LUMBERYARD && !pile.HasJobTargetingThis(JOB_TYPE.HAUL, JOB_TYPE.COMBINE_STOCKPILE)) {
+                if (pile.mapObjectState == MAP_OBJECT_STATE.BUILT && currentStructure != null && currentStructure.structureType != STRUCTURE_TYPE.CITY_CENTER && currentStructure.structureType != STRUCTURE_TYPE.LUMBERYARD && currentStructure.structureType != STRUCTURE_TYPE.WORKSHOP && !pile.HasJobTargetingThis(JOB_TYPE.HAUL, JOB_TYPE.COMBINE_STOCKPILE)) {
                     pilePool.Add(pile);
                 }
             }
