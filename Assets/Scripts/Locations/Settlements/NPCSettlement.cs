@@ -1260,6 +1260,20 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         }
         return null;
     }
+    public LocationStructure GetFirstStructureOfTypeThatHasWorkerOrIsReserved(STRUCTURE_TYPE type) {
+        if (HasStructure(type)) {
+            List<LocationStructure> structuresOfType = structures[type];
+            if (structuresOfType != null && structuresOfType.Count > 0) {
+                for (int i = 0; i < structuresOfType.Count; i++) {
+                    ManMadeStructure s = structuresOfType[i] as ManMadeStructure;
+                    if (s.HasAssignedWorker() || availableJobs.HasJobWithOtherData(JOB_TYPE.CHANGE_CLASS, INTERACTION_TYPE.CHANGE_CLASS, s)) {
+                        return s;
+                    }
+                }
+            }
+        }
+        return null;
+    }
     public LocationStructure GetRandomStructureOfTypeThatCanAcceptWorkerAndIsNotReserved(STRUCTURE_TYPE type) {
         if (HasStructure(type)) {
             List<LocationStructure> structuresOfType = structures[type];
