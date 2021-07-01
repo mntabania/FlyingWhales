@@ -27,6 +27,7 @@ public abstract class BaseVisionTrigger : MonoBehaviour{
         _projectileReceiver.gameObject.SetActive(true);
         _projectileReceiver.Initialize(damageable);
         _mainCollider.isTrigger = true; //vision triggers should always be set as triggers.
+        _mainCollider.enabled = true;
         SetAllCollidersState(true);
     }
     /// <summary>
@@ -48,7 +49,7 @@ public abstract class BaseVisionTrigger : MonoBehaviour{
     public virtual void Reset() {
         _filterVotes = 0;
         if (_mainCollider != null) {
-            _mainCollider.enabled = true;    
+            _mainCollider.enabled = false;
         }
         TransferToNonFilteredLayer();
         damageable = null;

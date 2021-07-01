@@ -1153,7 +1153,7 @@ public class CharacterManager : BaseMonoBehaviour {
         return false;
     }
     public string GetRandomResistRuinarchPowerText() {
-        return resistRuinarchPowerText[GameUtilities.RandomBetweenTwoNumbers(0, resistRuinarchPowerText.Length)];
+        return resistRuinarchPowerText[GameUtilities.RandomBetweenTwoNumbers(0, resistRuinarchPowerText.Length - 1)];
     }
     #endregion
 
