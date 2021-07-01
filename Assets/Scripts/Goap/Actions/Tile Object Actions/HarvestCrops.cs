@@ -49,7 +49,10 @@ public class HarvestCrops : GoapAction {
 
     #region State Effects
     public void AfterHarvestCropsSuccess(ActualGoapNode p_node) {
-        p_node.actor.jobComponent.TryCreateHaulToWorkplaceJob(ProduceMatsPile(p_node));
+        ResourcePile pile = ProduceMatsPile(p_node);
+        if (pile != null && pile.resourceInPile > 0) {
+            p_node.actor.jobComponent.TryCreateHaulToWorkplaceJob(ProduceMatsPile(p_node));
+        }
     }
     #endregion
 
@@ -70,6 +73,10 @@ public class HarvestCrops : GoapAction {
             if (crop.count <= 0) {
                 targetCrop.gridTileLocation.structure.RemovePOI(targetCrop);
             }
+        }
+
+        if (amount <= 0) {
+            return null;
         }
 
         p_node.actor.moneyComponent.AdjustCoins(Mathf.CeilToInt(amount * _coinGainMultiplier));

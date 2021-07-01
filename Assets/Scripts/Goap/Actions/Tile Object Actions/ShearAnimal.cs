@@ -53,7 +53,10 @@ public class ShearAnimal : GoapAction {
         }
     }
     public void AfterShearAnimalSuccess(ActualGoapNode p_node) {
-        p_node.actor.jobComponent.TryCreateHaulToWorkplaceJob(ProduceMatsPile(p_node));
+        ResourcePile pile = ProduceMatsPile(p_node);
+        if (pile != null && pile.resourceInPile > 0) {
+            p_node.actor.jobComponent.TryCreateHaulToWorkplaceJob(ProduceMatsPile(p_node));
+        }
     }
     #endregion
 
@@ -76,7 +79,9 @@ public class ShearAnimal : GoapAction {
                 animal.isAvailableForShearing = false;
             }
         }
-
+        if (amount <= 0) {
+            return null;
+        }
         p_node.actor.moneyComponent.AdjustCoins(Mathf.CeilToInt(amount * _coinGainMultiplier));
         matsToHaul.SetResourceInPile(amount);
         tileToSpawnPile.structure.AddPOI(matsToHaul, tileToSpawnPile);

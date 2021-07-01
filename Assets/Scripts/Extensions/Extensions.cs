@@ -1389,6 +1389,17 @@ public static class Extensions {
 	}
     #endregion
 
+    public static bool IsTileObjectWithCount(this TILE_OBJECT_TYPE p_type) {
+        switch (p_type) {
+            case TILE_OBJECT_TYPE.ROCK:
+            case TILE_OBJECT_TYPE.ORE:
+            case TILE_OBJECT_TYPE.BIG_TREE_OBJECT:
+            case TILE_OBJECT_TYPE.SMALL_TREE_OBJECT:
+            return true;
+        }
+        return false;
+    }
+
     #region Deadly Sins
     public static string Description(this DEADLY_SIN_ACTION sin) {
         switch (sin) {
