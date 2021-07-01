@@ -32,6 +32,8 @@ public class TerrifyingHowlCollisionListener : ParticleCollisionListener {
                     characterMarker.character.traitContainer.AddTrait(characterMarker.character, "Spooked", overrideDuration: duration);
                     characterMarker.character.marker.AddPOIAsInVisionRange(_baseParticleEffect.targetTile.tileObjectComponent.genericTileObject);
                     characterMarker.character.combatComponent.Flight(_baseParticleEffect.targetTile.tileObjectComponent.genericTileObject, "heard a terrifying howl");
+                } else {
+                    characterMarker.character.reactionComponent.ResistRuinarchPower();
                 }
                 affectedCharacters.Add(characterMarker.character);
             }

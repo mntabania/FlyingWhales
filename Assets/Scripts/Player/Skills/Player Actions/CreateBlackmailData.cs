@@ -44,7 +44,8 @@ public class CreateBlackmailData : PlayerAction {
     }
     public override void ActivateAbility(LocationStructure targetStructure) {
         if (targetStructure is TortureChambers tortureChambers && tortureChambers.rooms.Length > 0 && tortureChambers.rooms[0] is PrisonCell prisonCell) {
-            Character targetCharacter = prisonCell.charactersInRoom.FirstOrDefault(c => CanPerformAbilityTowards(c) && IsValid(c));
+            //Character targetCharacter = prisonCell.charactersInRoom.FirstOrDefault(c => CanPerformAbilityTowards(c) && IsValid(c));
+            Character targetCharacter = GetFirstCharacterInPrisonCellThatIsValid(prisonCell);
             if (targetCharacter != null) {
                 ActivateAbility(targetCharacter);
             }
@@ -83,7 +84,7 @@ public class CreateBlackmailData : PlayerAction {
         bool canPerform = base.CanPerformAbilityTowards(targetStructure);
         if (canPerform) {
             if (targetStructure is TortureChambers tortureChambers) {
-                if (tortureChambers.rooms.Length > 0 && tortureChambers.rooms[0] is PrisonCell prisonCell && prisonCell.charactersInRoom.Any(c => CanPerformAbilityTowards(c) && IsValid(c))) {
+                if (tortureChambers.rooms.Length > 0 && tortureChambers.rooms[0] is PrisonCell prisonCell && HasCharacterInPrisonCellThatIsValid(prisonCell)/*prisonCell.charactersInRoom.Any(c => CanPerformAbilityTowards(c) && IsValid(c))*/) {
                     return true;
                 }
                 return false;
@@ -101,10 +102,26 @@ public class CreateBlackmailData : PlayerAction {
     public override string GetReasonsWhyCannotPerformAbilityTowards(LocationStructure p_targetStructure) {
         string reasons =  base.GetReasonsWhyCannotPerformAbilityTowards(p_targetStructure);
         if (p_targetStructure is TortureChambers tortureChambers) {
-            if (tortureChambers.rooms.Length > 0 && tortureChambers.rooms[0] is PrisonCell prisonCell && !prisonCell.charactersInRoom.Any(c => CanPerformAbilityTowards(c) && IsValid(c))) {
+            if (tortureChambers.rooms.Length > 0 && tortureChambers.rooms[0] is PrisonCell prisonCell && !HasCharacterInPrisonCellThatIsValid(prisonCell)/*!prisonCell.charactersInRoom.Any(c => CanPerformAbilityTowards(c) && IsValid(c))*/) {
                 reasons += $"Player already has Hostage Blackmail on all Villagers inside Prison Cell.";
             }
         }
         return reasons;
+    }
+
+    private bool HasCharacterInPrisonCellThatIsValid(PrisonCell prisonCell) {
+        return GetFirstCharacterInPrisonCellThatIsValid(prisonCell) != null;
+    }
+    private Character GetFirstCharacterInPrisonCellThatIsValid(PrisonCell prisonCell) {
+        for (int i = 0; i < prisonCell.tilesInRoom.Count; i++) {
+            LocationGridTile t = prisonCell.tilesInRoom[i];
+            for (int j = 0; j < t.charactersHere.Count; j++) {
+                Character c = t.charactersHere[j];
+                if (CanPerformAbilityTowards(c) && IsValid(c)) {
+                    return c;
+                }
+            }
+        }
+        return null;
     }
 }

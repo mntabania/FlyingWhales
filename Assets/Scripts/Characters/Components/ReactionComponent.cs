@@ -2470,9 +2470,31 @@ public class ReactionComponent : CharacterComponent {
             }
         }
     }
-#endregion
+    #endregion
 
-#region Loading
+    #region Resist Ruinarch
+    public void ResistRuinarchPower() {
+        if (owner.hasMarker) {
+            string chosenText = CharacterManager.Instance.GetRandomResistRuinarchPowerText();
+            owner.marker.ShowTextEffect(chosenText, Color.yellow);
+        }
+        Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "General", "Player", "resist_ruinarch_power", null, LOG_TAG.Major);
+        log.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+        log.AddLogToDatabase();
+        PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
+        LogPool.Release(log);
+
+        GameObject go = GameManager.Instance.CreateParticleEffectAt(owner, PARTICLE_EFFECT.Resist);
+        ResistEffect effect = go.GetComponent<ResistEffect>();
+        effect.PlayEffect(owner.marker.usedSprite);
+
+        //if (owner.gridTileLocation != null) {
+        //    AudioManager.Instance.CreateSFXAt(owner.gridTileLocation, SOUND_EFFECT.Resist);
+        //}
+    }
+    #endregion
+
+    #region Loading
     public void LoadReferences(SaveDataReactionComponent data) {
         for (int i = 0; i < data.charactersThatSawThisDead.Count; i++) {
             Character character = CharacterManager.Instance.GetCharacterByPersistentID(data.charactersThatSawThisDead[i]);

@@ -1396,23 +1396,25 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     }
     #endregion
 
-    #region Operators
-    public static bool operator ==(TileObject left, IPointOfInterest right) {
-        return left?.persistentID == right?.persistentID;
-    }
-    public static bool operator !=(TileObject left, IPointOfInterest right) {
-        return left?.persistentID != right?.persistentID;
-    }
-    public override bool Equals(object obj) {
-        if (obj is TileObject to) {
-            return persistentID.Equals(to.persistentID);
-        }
-        return false;
-    }
-    public override int GetHashCode() {
-        return base.GetHashCode();
-    }
-    #endregion
+    //Remove this temporarily since we do not yet object pool tile objects
+    //Only do this when we object pool tile objects
+    //#region Operators
+    //public static bool operator ==(TileObject left, IPointOfInterest right) {
+    //    return left?.persistentID == right?.persistentID;
+    //}
+    //public static bool operator !=(TileObject left, IPointOfInterest right) {
+    //    return left?.persistentID != right?.persistentID;
+    //}
+    //public override bool Equals(object obj) {
+    //    if (obj is TileObject to) {
+    //        return persistentID.Equals(to.persistentID);
+    //    }
+    //    return false;
+    //}
+    //public override int GetHashCode() {
+    //    return base.GetHashCode();
+    //}
+    //#endregion
 
     #region Reactions
     public virtual void GeneralReactionToTileObject(Character actor, ref string debugLog) {

@@ -108,30 +108,32 @@ public class SettlementRulerBehaviour : CharacterBehaviourComponent {
 #if DEBUG_LOG
                             log = $"{log}\n-Will try to build {determinedStructureToUse}";
 #endif
-                        } else if (!characterHomeSettlement.HasStructure(STRUCTURE_TYPE.LUMBERYARD) && !characterHomeSettlement.HasBlueprintOnTileForStructure(STRUCTURE_TYPE.LUMBERYARD) && characterHomeSettlement.owner != null && 
-                                  characterHomeSettlement.owner.factionType.type == FACTION_TYPE.Elven_Kingdom && characterHomeSettlement.occupiedVillageSpot.HasUnusedLumberyardSpots()) {
+                        } else if (characterHomeSettlement.owner != null && characterHomeSettlement.owner.factionType.type == FACTION_TYPE.Elven_Kingdom &&
+                                   !characterHomeSettlement.HasStructure(STRUCTURE_TYPE.LUMBERYARD) && !characterHomeSettlement.HasBlueprintOnTileForStructure(STRUCTURE_TYPE.LUMBERYARD)) {
                             //build lumberyard
                             chance = 50;
                             determinedStructureToUse = STRUCTURE_TYPE.LUMBERYARD;
 #if DEBUG_LOG
                             log = $"{log}\n-{characterHomeSettlement.name} doesn't have a lumberyard and is owned by an elven kingdom and has unused lumberyard spots. Set chance to {chance} and will try to build {determinedStructureToUse}";
 #endif
-                        } else if (!characterHomeSettlement.HasStructure(STRUCTURE_TYPE.MINE) && !characterHomeSettlement.HasBlueprintOnTileForStructure(STRUCTURE_TYPE.MINE) && characterHomeSettlement.owner != null && 
-                                   characterHomeSettlement.owner.factionType.type == FACTION_TYPE.Human_Empire && characterHomeSettlement.occupiedVillageSpot.HasUnusedMiningSpots()) {
+                        } else if (characterHomeSettlement.owner != null && characterHomeSettlement.owner.factionType.type == FACTION_TYPE.Human_Empire &&
+                                   !characterHomeSettlement.HasStructure(STRUCTURE_TYPE.MINE) && !characterHomeSettlement.HasBlueprintOnTileForStructure(STRUCTURE_TYPE.MINE) &&
+                                   characterHomeSettlement.occupiedVillageSpot.HasUnusedMiningSpots()) {
                             //build mine
                             chance = 50;
                             determinedStructureToUse = STRUCTURE_TYPE.MINE;
 #if DEBUG_LOG
                             log = $"{log}\n-{characterHomeSettlement.name} doesn't have a mine and is owned by a Human Empire and has unused Mining spots. Set chance to {chance} and will try to build {determinedStructureToUse}";
 #endif
-                        } else if (!characterHomeSettlement.HasStructure(STRUCTURE_TYPE.LUMBERYARD) && !characterHomeSettlement.HasBlueprintOnTileForStructure(STRUCTURE_TYPE.LUMBERYARD) && characterHomeSettlement.occupiedVillageSpot.HasUnusedLumberyardSpots()) {
+                        } else if (!characterHomeSettlement.HasStructure(STRUCTURE_TYPE.LUMBERYARD) && !characterHomeSettlement.HasBlueprintOnTileForStructure(STRUCTURE_TYPE.LUMBERYARD)) {
                             //build lumberyard
                             chance = 50;
                             determinedStructureToUse = STRUCTURE_TYPE.LUMBERYARD;  
 #if DEBUG_LOG
                             log = $"{log}\n-{characterHomeSettlement.name} doesn't have a lumberyard and has unused lumberyard spots. Set chance to {chance} and will try to build {determinedStructureToUse}";
 #endif
-                        } else if (!characterHomeSettlement.HasStructure(STRUCTURE_TYPE.MINE) && !characterHomeSettlement.HasBlueprintOnTileForStructure(STRUCTURE_TYPE.MINE) && characterHomeSettlement.occupiedVillageSpot.HasUnusedMiningSpots()) {
+                        } else if (!characterHomeSettlement.HasStructure(STRUCTURE_TYPE.MINE) && !characterHomeSettlement.HasBlueprintOnTileForStructure(STRUCTURE_TYPE.MINE) && 
+                                   characterHomeSettlement.occupiedVillageSpot.HasUnusedMiningSpots()) {
                             //build mine
                             chance = 50;
                             determinedStructureToUse = STRUCTURE_TYPE.MINE;  
@@ -175,19 +177,21 @@ public class SettlementRulerBehaviour : CharacterBehaviourComponent {
                                     log = $"{log}\n-Will build {determinedStructureToUse}";
 #endif
                                 } else if (villagerCount > resourceSupplyCapacity) {
-                                    bool hasUnusedLumberyardSpots = characterHomeSettlement.occupiedVillageSpot.HasUnusedLumberyardSpots();
-                                    bool hasUnusedMiningSpots = characterHomeSettlement.occupiedVillageSpot.HasUnusedMiningSpots();
+                                    // bool hasUnusedLumberyardSpots = characterHomeSettlement.occupiedVillageSpot.HasUnusedLumberyardSpots();
+                                    bool hasUnusedMiningSpots = characterHomeSettlement.occupiedVillageSpot.HasUnusedMiningSpotsThatSettlementHasNotYetConnectedTo(characterHomeSettlement);
 #if DEBUG_LOG
-                                    log = $"{log}\n-Villager Count exceeds resource supply capacity. Has Unused Lumberyard Spots? {hasUnusedLumberyardSpots.ToString()}. Has Unused Mining Spots? {hasUnusedMiningSpots.ToString()}";
+                                    log = $"{log}\n-Villager Count exceeds resource supply capacity.";
 #endif
-                                    if (characterHomeSettlement.owner != null && characterHomeSettlement.owner.factionType.type == FACTION_TYPE.Elven_Kingdom && hasUnusedLumberyardSpots) {
+                                    if (characterHomeSettlement.owner != null && characterHomeSettlement.owner.factionType.type == FACTION_TYPE.Elven_Kingdom && 
+                                        !characterHomeSettlement.HasStructure(STRUCTURE_TYPE.LUMBERYARD) && !characterHomeSettlement.HasBlueprintOnTileForStructure(STRUCTURE_TYPE.LUMBERYARD)) {
                                         determinedStructureToUse = STRUCTURE_TYPE.LUMBERYARD;
-                                    } else if (characterHomeSettlement.owner != null && characterHomeSettlement.owner.factionType.type == FACTION_TYPE.Human_Empire && hasUnusedMiningSpots) {
+                                    } else if (characterHomeSettlement.owner != null && characterHomeSettlement.owner.factionType.type == FACTION_TYPE.Human_Empire && hasUnusedMiningSpots &&
+                                               !characterHomeSettlement.HasStructure(STRUCTURE_TYPE.MINE) && !characterHomeSettlement.HasBlueprintOnTileForStructure(STRUCTURE_TYPE.MINE)) {
                                         determinedStructureToUse = STRUCTURE_TYPE.MINE;
-                                    } else if (hasUnusedLumberyardSpots) {
+                                    } else if (hasUnusedMiningSpots && !characterHomeSettlement.HasBlueprintOnTileForStructure(STRUCTURE_TYPE.MINE)) {
+                                        determinedStructureToUse = STRUCTURE_TYPE.MINE;
+                                    } else if (!characterHomeSettlement.HasStructure(STRUCTURE_TYPE.LUMBERYARD) && !characterHomeSettlement.HasBlueprintOnTileForStructure(STRUCTURE_TYPE.LUMBERYARD)) {
                                         determinedStructureToUse = STRUCTURE_TYPE.LUMBERYARD;
-                                    } else if (hasUnusedMiningSpots) {
-                                        determinedStructureToUse = STRUCTURE_TYPE.MINE;
                                     }
 #if DEBUG_LOG
                                     log = $"{log}\n-Determined structure to build is {determinedStructureToUse.ToString()}";

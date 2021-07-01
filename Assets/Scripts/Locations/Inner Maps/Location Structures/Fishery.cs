@@ -120,6 +120,8 @@ namespace Inner_Maps.Location_Structures {
             }
             RuinarchListPool<TileObject>.Release(builtPilesInSideStructure);
 
+            if (TryCreateCleanJob(p_worker, out producedJob)) { return; }
+            
             //Find Fish
             TileObject fishingSpot = GetRandomFishingSpot();
             if (fishingSpot == null) { fishingSpot = connectedFishingSpot; }

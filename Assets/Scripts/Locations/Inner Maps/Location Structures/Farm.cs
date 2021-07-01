@@ -210,15 +210,22 @@ namespace Inner_Maps.Location_Structures {
             }
             RuinarchListPool<TileObject>.Release(builtPilesInSideStructure);
 
-            TileObject crop = GetHarvestableCrop();
-            if (crop != null) {
-                //do harvest crops
-                p_worker.jobComponent.TriggerHarvestCrops(crop, out producedJob);
-                if (producedJob != null) {
-                    return;
-                }
+            int chanceToHarvest = 100;
+            int currentFoodInFarm = GetTotalResourceInStructure(RESOURCE.FOOD);
+            if (currentFoodInFarm >= 180) {
+                chanceToHarvest = 35;
             }
-            
+            if (GameUtilities.RollChance(chanceToHarvest)) {
+                TileObject crop = GetHarvestableCrop();
+                if (crop != null) {
+                    //do harvest crops
+                    p_worker.jobComponent.TriggerHarvestCrops(crop, out producedJob);
+                    if (producedJob != null) {
+                        return;
+                    }
+                }    
+            }
+
             if(TryCreateCleanJob(p_worker, out producedJob)) { return; }
         }
 
@@ -234,6 +241,7 @@ namespace Inner_Maps.Location_Structures {
         public override string GetTestingInfo() {
             string info = base.GetTestingInfo();
             info = $"{info}\nFarm Tiles: {farmTiles.ComafyList()}";
+            info = $"{info}\nTotal Food: {GetTotalResourceInStructure(RESOURCE.FOOD).ToString()}";
             return info;
         }
         #endregion

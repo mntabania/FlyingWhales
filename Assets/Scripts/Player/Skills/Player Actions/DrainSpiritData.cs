@@ -2,7 +2,7 @@
 using System.Linq;
 using Inner_Maps.Location_Structures;
 using UnityEngine.Assertions;
-
+using Inner_Maps;
 public class DrainSpiritData : PlayerAction {
     public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.DRAIN_SPIRIT;
     public override string name => "Drain Spirit";
@@ -22,7 +22,8 @@ public class DrainSpiritData : PlayerAction {
         } else if (targetStructure is TortureChambers tortureChambers) {
             PrisonCell prisonCell = tortureChambers.rooms[0] as PrisonCell;
             Assert.IsNotNull(prisonCell);
-            Character chosenCharacter = prisonCell.charactersInRoom.FirstOrDefault(c =>  CanPerformAbilityTowards(c) && IsValid(c));
+            //Character chosenCharacter = prisonCell.charactersInRoom.FirstOrDefault(c =>  CanPerformAbilityTowards(c) && IsValid(c));
+            Character chosenCharacter = GetFirstCharacterInPrisonCellThatIsValid(prisonCell);
             Assert.IsNotNull(chosenCharacter);
             ActivateAbility(chosenCharacter);
         }
@@ -86,11 +87,14 @@ public class DrainSpiritData : PlayerAction {
                 }
             } else if (targetStructure is TortureChambers tortureChambers) {
                 if (tortureChambers.rooms.Length > 0 && tortureChambers.rooms[0] is PrisonCell prisonCell) {
-                    List<Character> charactersInRoom = prisonCell.charactersInRoom;
-                    if (!charactersInRoom.Any(c => CanPerformAbilityTowards(c) && IsValid(c))) { //charactersInRoom.Any(c => c.traitContainer.HasTrait("Being Drained")) || 
-                        //if cannot drain any character in room or a character in the room is already being drained.
-                        return false;    
+                    if (!HasCharacterInPrisonCellThatIsValid(prisonCell)) {
+                        return false;
                     }
+                    //List<Character> charactersInRoom = prisonCell.charactersInRoom;
+                    //if (!charactersInRoom.Any(c => CanPerformAbilityTowards(c) && IsValid(c))) { //charactersInRoom.Any(c => c.traitContainer.HasTrait("Being Drained")) || 
+                    //    //if cannot drain any character in room or a character in the room is already being drained.
+                    //    return false;    
+                    //}
                 }
             }
             return true;
@@ -119,15 +123,35 @@ public class DrainSpiritData : PlayerAction {
             }
         } else if (p_targetStructure is TortureChambers tortureChambers) {
             if (tortureChambers.rooms.Length > 0 && tortureChambers.rooms[0] is PrisonCell prisonCell) {
-                List<Character> charactersInRoom = prisonCell.charactersInRoom;
-                if (!charactersInRoom.Any(c => CanPerformAbilityTowards(c) && IsValid(c))) {
-                    reasons += "Cannot find valid Drain target. Cannot drain characters that are currently being Brainwashed or Tortured.";    
-                } 
+                if (!HasCharacterInPrisonCellThatIsValid(prisonCell)) {
+                    reasons += "Cannot find valid Drain target. Cannot drain characters that are currently being Brainwashed or Tortured.";
+                }
+                //List<Character> charactersInRoom = prisonCell.charactersInRoom;
+                //if (!charactersInRoom.Any(c => CanPerformAbilityTowards(c) && IsValid(c))) {
+                //    reasons += "Cannot find valid Drain target. Cannot drain characters that are currently being Brainwashed or Tortured.";
+                //}
+
+
                 // else if (charactersInRoom.Any(c => c.traitContainer.HasTrait("Being Drained"))) {
                 //     reasons += "A character is already being drained.";
                 // }
             }
         }
         return reasons;
+    }
+    private bool HasCharacterInPrisonCellThatIsValid(PrisonCell prisonCell) {
+        return GetFirstCharacterInPrisonCellThatIsValid(prisonCell) != null;
+    }
+    private Character GetFirstCharacterInPrisonCellThatIsValid(PrisonCell prisonCell) {
+        for (int i = 0; i < prisonCell.tilesInRoom.Count; i++) {
+            LocationGridTile t = prisonCell.tilesInRoom[i];
+            for (int j = 0; j < t.charactersHere.Count; j++) {
+                Character c = t.charactersHere[j];
+                if (CanPerformAbilityTowards(c) && IsValid(c)) {
+                    return c;
+                }
+            }
+        }
+        return null;
     }
 }

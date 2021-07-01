@@ -90,27 +90,59 @@ namespace Inner_Maps.Location_Structures {
             return character.isNormalCharacter && character.isDead == false && (character.faction == null || !character.faction.isPlayerFaction);
         }
         public bool HasValidOccupant() {
-            return charactersInRoom.Any(IsValidOccupant);
+            for (int i = 0; i < tilesInRoom.Count; i++) {
+                LocationGridTile t = tilesInRoom[i];
+                for (int j = 0; j < t.charactersHere.Count; j++) {
+                    Character c = t.charactersHere[j];
+                    if (IsValidOccupant(c)) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+        public void PopulateValidOccupants(List<Character> p_characters) {
+            for (int i = 0; i < tilesInRoom.Count; i++) {
+                LocationGridTile t = tilesInRoom[i];
+                for (int j = 0; j < t.charactersHere.Count; j++) {
+                    Character c = t.charactersHere[j];
+                    if (IsValidOccupant(c)) {
+                        p_characters.Add(c);
+                    }
+                }
+            }
         }
         #endregion
 
         #region Torture
         public void BeginTorture() {
-            List<Character> characters = charactersInRoom.Where(IsValidTortureTarget).ToList();
+            List<Character> characters = RuinarchListPool<Character>.Claim();
+            for (int i = 0; i < tilesInRoom.Count; i++) {
+                LocationGridTile t = tilesInRoom[i];
+                for (int j = 0; j < t.charactersHere.Count; j++) {
+                    Character c = t.charactersHere[j];
+                    if (IsValidTortureTarget(c)) {
+                        characters.Add(c);
+                    }
+                }
+            }
             if (characters.Count > 0) {
                 Character chosenTarget = CollectionUtilities.GetRandomElement(characters);
                 StartTorture(chosenTarget);    
             }
+            RuinarchListPool<Character>.Release(characters);
         }
         public void BeginTorture(Character p_character) {
             StartTorture(p_character);
         }
         public bool HasValidTortureTarget() {
-            List<Character> characters = charactersInRoom;
-            for (int i = 0; i < characters.Count; i++) {
-                Character character = characters[i];
-                if (IsValidTortureTarget(character)) {
-                    return true;
+            for (int i = 0; i < tilesInRoom.Count; i++) {
+                LocationGridTile t = tilesInRoom[i];
+                for (int j = 0; j < t.charactersHere.Count; j++) {
+                    Character c = t.charactersHere[j];
+                    if (IsValidTortureTarget(c)) {
+                        return true;
+                    }
                 }
             }
             return false;
@@ -252,15 +284,35 @@ namespace Inner_Maps.Location_Structures {
             return ((float)successWeight / (successWeight + failWeight)) * 100f;
         }
         public bool HasValidBrainwashTarget() {
-            List<Character> characters = charactersInRoom;
-            for (int i = 0; i < characters.Count; i++) {
-                Character character = characters[i];
-                //if there is a normal character that is not dead and is not a cultist
-                if (IsValidBrainwashTarget(character)) {
-                    return true;
+            for (int i = 0; i < tilesInRoom.Count; i++) {
+                LocationGridTile t = tilesInRoom[i];
+                for (int j = 0; j < t.charactersHere.Count; j++) {
+                    Character c = t.charactersHere[j];
+                    if (IsValidBrainwashTarget(c)) {
+                        return true;
+                    }
                 }
             }
+            //List<Character> characters = charactersInRoom;
+            //for (int i = 0; i < characters.Count; i++) {
+            //    Character character = characters[i];
+            //    //if there is a normal character that is not dead and is not a cultist
+            //    if (IsValidBrainwashTarget(character)) {
+            //        return true;
+            //    }
+            //}
             return false;
+        }
+        public void PopulateBrainwashTargets(List<Character> p_characters) {
+            for (int i = 0; i < tilesInRoom.Count; i++) {
+                LocationGridTile t = tilesInRoom[i];
+                for (int j = 0; j < t.charactersHere.Count; j++) {
+                    Character c = t.charactersHere[j];
+                    if (IsValidBrainwashTarget(c)) {
+                        p_characters.Add(c);
+                    }
+                }
+            }
         }
         public bool IsValidBrainwashTarget(Character p_character) {
             return p_character.isNormalCharacter && !p_character.isDead && !p_character.traitContainer.HasTrait("Cultist") && !p_character.traitContainer.IsBlessed() && 
@@ -270,7 +322,12 @@ namespace Inner_Maps.Location_Structures {
             wasBrainwashStartedInTutorial = TutorialManager.Instance.IsTutorialCurrentlyActive(TutorialManager.Tutorial.Create_A_Cultist);
             DoorTileObject door = GetTileObjectInRoom<DoorTileObject>();
             door?.Close();
-            Character chosenTarget = CollectionUtilities.GetRandomElement(charactersInRoom.Where(IsValidBrainwashTarget));
+            Character chosenTarget = null;
+            List<Character> targets = RuinarchListPool<Character>.Claim();
+            PopulateBrainwashTargets(targets);
+            chosenTarget = CollectionUtilities.GetRandomElement(targets);
+            RuinarchListPool<Character>.Release(targets);
+            //CollectionUtilities.GetRandomElement(charactersInRoom.Where(IsValidBrainwashTarget));
             currentBrainwashTarget = chosenTarget;
             currentBrainwashTarget.interruptComponent.ForceEndNonSimultaneousInterrupt();
             currentBrainwashTarget.interruptComponent.TriggerInterrupt(INTERRUPT.Being_Brainwashed, currentBrainwashTarget);
@@ -382,7 +439,7 @@ namespace Inner_Maps.Location_Structures {
         //     }
         // }
         // #endregion
-        
+
         #region Destruction
         public override void OnParentStructureDestroyed() {
             base.OnParentStructureDestroyed();

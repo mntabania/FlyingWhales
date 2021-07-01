@@ -47,7 +47,7 @@ public class PlayerAction : SkillData, IContextMenuItem {
 
     #region Overrides
     public override void ActivateAbility(IPointOfInterest targetPOI) {
-        if(targetPOI is TileObject tileObject) {
+        if(targetPOI is TileObject) {
             IncreaseThreatForEveryCharacterThatSeesPOI(targetPOI, 5);
         }
         base.ActivateAbility(targetPOI);
@@ -73,7 +73,10 @@ public class PlayerAction : SkillData, IContextMenuItem {
         } else {
             //Go into cooldown but do not activate ability
             OnExecutePlayerSkill();
-            PlayerUI.Instance.ShowGeneralConfirmation("Action Failed", target.name + " resisted the power of the Ruinarch!");
+            //PlayerUI.Instance.ShowGeneralConfirmation("Action Failed", target.name + " resisted the power of the Ruinarch!");
+            if (target is Character character) {
+                character.reactionComponent.ResistRuinarchPower();
+            }
         }
 	}
     public bool CanPerformAbilityTo(IPlayerActionTarget target) {
