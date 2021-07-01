@@ -86,22 +86,22 @@ public class EquipmentItem : TileObject {
         }
     }
 
-	public string GetBonusDescription() {
-        if(equipmentData.equipmentUpgradeData.bonuses.Contains(EQUIPMENT_BONUS.Random_Slayer_Bonus) && randomSlayerBonus == EQUIPMENT_SLAYER_BONUS.None) {
+    public string GetBonusDescription() {
+        if (equipmentData.equipmentUpgradeData.bonuses.Contains(EQUIPMENT_BONUS.Random_Slayer_Bonus) && randomSlayerBonus == EQUIPMENT_SLAYER_BONUS.None) {
             AssignData();
         }
         if (equipmentData.equipmentUpgradeData.bonuses.Contains(EQUIPMENT_BONUS.Random_Ward_Bonus) && randomWardBonus == EQUIPMENT_WARD_BONUS.None) {
             AssignData();
         }
         string description = equipmentData.equipmentUpgradeData.GetBonusDescription(quality);
-        if(randomSlayerBonus != EQUIPMENT_SLAYER_BONUS.None) {
-            description += "\nAdded Random Slayer Bonus " + randomSlayerBonus;
+        if (randomSlayerBonus != EQUIPMENT_SLAYER_BONUS.None) {
+            description += randomSlayerBonus.ToString().Replace("_", " ");
         }
         if (randomWardBonus != EQUIPMENT_WARD_BONUS.None) {
-            description += "\nAdded Random Ward Bonus " + randomWardBonus;
+            description += randomWardBonus.ToString().Replace("_", " ");
         }
-        description += "\nQuality " + quality;
-        resistanceBonuses.ForEach((eachBonus) => description += ("\n" + eachBonus.ToString()));
+        //description += "\nQuality " + quality;
+        description += equipmentData.equipmentUpgradeData.GetDescriptionForRandomResistance(resistanceBonuses, quality);
         return description;
     }
 
@@ -109,7 +109,9 @@ public class EquipmentItem : TileObject {
     public override void GeneralReactionToTileObject(Character actor, ref string debugLog) {
         base.GeneralReactionToTileObject(actor, ref debugLog);
         if (this.currentStructure.structureType != STRUCTURE_TYPE.WORKSHOP && (this.characterOwner == null || this.characterOwner == actor) && actor.equipmentComponent.EvaluateNewEquipment(this, actor)) {
-            actor.jobComponent.CreateTakeItemJob(JOB_TYPE.TAKE_ITEM, this);
+            if (!actor.jobQueue.HasJob(JOB_TYPE.TAKE_ITEM)) {
+                actor.jobComponent.CreateTakeItemJob(JOB_TYPE.TAKE_ITEM, this);
+            }
         }
     }
     #endregion
