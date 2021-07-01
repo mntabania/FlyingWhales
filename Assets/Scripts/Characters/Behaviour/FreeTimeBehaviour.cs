@@ -389,7 +389,8 @@ public class FreeTimeBehaviour : CharacterBehaviourComponent {
 #endif
                 Hospice hospice = foundStructure as Hospice;
                 Assert.IsNotNull(hospice);
-                if ((character.traitContainer.HasTrait("Injured") || character.traitContainer.HasTrait("Plagued")) && ChanceData.RollChance(CHANCE_TYPE.Plauged_Injured_Visit_Hospice)) {
+                if ((character.traitContainer.HasTrait("Injured") || character.traitContainer.HasTrait("Plagued")) && 
+                    !character.traitContainer.HasTrait("Plague Reservoir") && ChanceData.RollChance(CHANCE_TYPE.Plauged_Injured_Visit_Hospice)) {
                     //recuperate
 #if DEBUG_LOG
                     log = $"{log}\n  -Actor has Injured or Plagued and there is still an available Bed in the Hospice: Create Recuperate Job";
@@ -519,7 +520,8 @@ public class FreeTimeBehaviour : CharacterBehaviourComponent {
 #if DEBUG_LOG
         log = $"{log}\n-{character.name} is at Hospice";
 #endif
-        if (character.traitContainer.HasTrait("Injured") || character.traitContainer.HasTrait("Poisoned") || character.traitContainer.HasTrait("Plagued")) {
+        if ((character.traitContainer.HasTrait("Injured") || character.traitContainer.HasTrait("Poisoned") || character.traitContainer.HasTrait("Plagued")) && 
+            !character.traitContainer.HasTrait("Plague Reservoir")) {
             Hospice hospice = character.currentStructure as Hospice;
             BedClinic bedClinic = hospice.GetFirstBedToRecuperate();
             if (bedClinic != null) {

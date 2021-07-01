@@ -61,12 +61,18 @@ public class CharacterClassComponent : CharacterComponent {
         this.characterClass = characterClass;
         owner.movementComponent.OnAssignedClass(characterClass);
         //behaviourComponent.OnChangeClass(_characterClass, previousClass);
-        if (!isInitial) {
+        if (isInitial) {
+            if (GameManager.Instance.gameHasStarted) {
+                owner.RecomputeResistanceInitialChangeClass(owner, "Farmer");    
+            } else {
+                //if villager is an initial villager, randomize resistances based on fixed values from here:
+                //https://docs.google.com/spreadsheets/d/1XEsZ2Fzi9Hwnx6EVdH1boCcFLR2sCUNyDm-Hh_A734Y/edit#gid=746271279
+                owner.RecomputePiercingAndResistanceForGameStart(owner, owner.characterClass.className);
+            }
+        } else {
             //owner.homeSettlement?.UpdateAbleJobsOfResident(owner);
             OnUpdateCharacterClass();
             Messenger.Broadcast(CharacterSignals.CHARACTER_CLASS_CHANGE, owner, previousClass, this.characterClass);
-        } else {
-            owner.RecomputeResistanceInitialChangeClass("Farmer");
         }
         owner.combatComponent.UpdateElementalType();
     }

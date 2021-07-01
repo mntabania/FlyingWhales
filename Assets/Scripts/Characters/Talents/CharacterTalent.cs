@@ -52,9 +52,14 @@ namespace Character_Talents {
             SetLevel(level + 1);
             CharacterTalentData talentData = CharacterManager.Instance.talentManager.GetOrCreateCharacterTalentData(talentType);
             talentData.OnLevelUp(p_character, level);
-            if (p_character.race == RACE.HUMANS) {
+            if (p_character.race == RACE.HUMANS) { 
                 p_character.ApplyClassBonusOnLevelUp(p_character.classComponent.characterClass.className);
             }
+        }
+        public void LevelUpForInitialVillagersInWorldGen(Character p_character) {
+            SetLevel(level + 1);
+            CharacterTalentData talentData = CharacterManager.Instance.talentManager.GetOrCreateCharacterTalentData(talentType);
+            talentData.OnLevelUp(p_character, level);
         }
         public void ApplyEffectsBasedOnLevel(Character p_character) {
             CharacterTalentData talentData = CharacterManager.Instance.talentManager.GetOrCreateCharacterTalentData(talentType);

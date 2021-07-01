@@ -63,6 +63,23 @@ MonoBehaviour:
       - {fileID: 21300000, guid: f76c86552b17bef4c8c323dfd13838f4, type: 3}
       - {fileID: 21300000, guid: bfe1fc0b406489644befa13862e5282d, type: 3}
       - {fileID: 21300000, guid: e89c694b84381334982ebe8af4c2fa44, type: 3}
+  initialVillagerPiercing: 15
+  initialVillagerPhysicalResistances:
+  - 5
+  - 10
+  - 15
+  initialVillagerMentalResistances:
+  - 5
+  - 10
+  - 15
+  initialVillagerElementalResistances:
+  - 5
+  - 10
+  - 15
+  initialVillagerSecondaryResistances:
+  - 5
+  - 10
+  - 15
   characterSkillUpdateData:
     m_fireResistanceBonus: 0
     m_earthResistanceBonus: 0
