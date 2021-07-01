@@ -11,6 +11,8 @@ public class Sleep : GoapAction {
 
     public override ACTION_CATEGORY actionCategory { get { return ACTION_CATEGORY.DIRECT; } }
 
+    private const int SleepAtTavernCost = 33;
+    
     public Sleep() : base(INTERACTION_TYPE.SLEEP) {
         actionIconString = GoapActionStateDB.Sleep_Icon;
         //advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.TILE_OBJECT };
@@ -107,6 +109,25 @@ public class Sleep : GoapAction {
 #if DEBUG_LOG
                         costLog += $" +{cost}(Owned/Location is in home structure)";
 #endif
+                    }
+                } else if (targetBed.structureLocation != null && targetBed.structureLocation.structureType == STRUCTURE_TYPE.TAVERN) {
+                    if (actor.homeStructure != null && actor.currentSettlement != null && actor.currentSettlement == actor.homeSettlement) {
+                        cost += 2000;
+#if DEBUG_LOG
+                        costLog += $" +2000(Bed is in Tavern and Actor has a home and is currently at his/her home settlement)";
+#endif
+                    } else {
+                        if (actor.moneyComponent.CanAfford(SleepAtTavernCost)) {
+                            cost += UtilityScripts.Utilities.Rng.Next(20, 26);;
+#if DEBUG_LOG
+                            costLog += $" +{cost}(Bed is in Tavern and Actor doesn't have a home or is currently not at his/her home settlement and actor can afford to pay Tavern)";
+#endif  
+                        } else {
+                            cost += 2000;
+#if DEBUG_LOG
+                            costLog += $" +2000(Bed is in Tavern and Actor doesn't have a home or is currently not at his/her home settlement. But actor cannot afford to pay Tavern)";
+#endif  
+                        }
                     }
                 } else if (actor.needsComponent.isExhausted) {
                     BaseSettlement settlement = null;
@@ -246,12 +267,13 @@ public class Sleep : GoapAction {
         LocationStructure targetStructure = goapNode.poiTarget.gridTileLocation?.structure;
         if (targetStructure != null && targetStructure.structureType == STRUCTURE_TYPE.TAVERN) {
             if (targetStructure is ManMadeStructure mmStructure) {
+                goapNode.actor.moneyComponent.AdjustCoins(-SleepAtTavernCost);
                 if (mmStructure.HasAssignedWorker()) {
                     //only added coins to first worker since we expect that the tavern only has 1 worker.
                     //if that changes, this needs to be changed as well.
                     string assignedWorkerID = mmStructure.assignedWorkerIDs[0];
                     Character assignedWorker = DatabaseManager.Instance.characterDatabase.GetCharacterByPersistentID(assignedWorkerID);
-                    assignedWorker.moneyComponent.AdjustCoins(33);
+                    assignedWorker.moneyComponent.AdjustCoins(SleepAtTavernCost);
                 }
                 // Character assignedWorker = mmStructure.assignedWorker;
                 // if (assignedWorker != null) {

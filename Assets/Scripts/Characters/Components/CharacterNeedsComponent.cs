@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Globalization;
 using Interrupts;
@@ -720,6 +721,15 @@ public class CharacterNeedsComponent : CharacterComponent {
                     job.AddPriorityLocation(INTERACTION_TYPE.SLEEP, owner.homeStructure);
                 }
             }
+            if (owner.currentSettlement != null && owner.currentSettlement.HasStructure(STRUCTURE_TYPE.TAVERN)) {
+                // if (owner.homeStructure == null || owner.homeStructure.settlementLocation != owner.currentSettlement) {
+                    List<LocationStructure> taverns = owner.currentSettlement.GetStructuresOfType(STRUCTURE_TYPE.TAVERN);
+                    for (int i = 0; i < taverns.Count; i++) {
+                        LocationStructure tavern = taverns[i];
+                        job.AddPriorityLocation(INTERACTION_TYPE.SLEEP, tavern);
+                    }    
+                // }
+            }
             owner.jobQueue.AddJobInQueue(job);
             // if (shouldSetScheduleJobID) {
             //     sleepScheduleJobID = job.persistentID;
@@ -757,6 +767,15 @@ public class CharacterNeedsComponent : CharacterComponent {
                 if(owner.homeStructure != null) {
                     job.AddPriorityLocation(INTERACTION_TYPE.SLEEP, owner.homeStructure);
                 }
+            }
+            if (owner.currentSettlement != null && owner.currentSettlement.HasStructure(STRUCTURE_TYPE.TAVERN)) {
+                // if (owner.homeStructure == null || owner.homeStructure.settlementLocation != owner.currentSettlement) {
+                    List<LocationStructure> taverns = owner.currentSettlement.GetStructuresOfType(STRUCTURE_TYPE.TAVERN);
+                    for (int i = 0; i < taverns.Count; i++) {
+                        LocationStructure tavern = taverns[i];
+                        job.AddPriorityLocation(INTERACTION_TYPE.SLEEP, tavern);
+                    }    
+                // }
             }
             // if (shouldSetScheduleJobID) {
             //     sleepScheduleJobID = job.persistentID;
