@@ -195,10 +195,28 @@ public class TileObjectInfoUI : InfoUIBase {
             quantity = activeTileObject.resourceStorageComponent.GetResourceValue(RESOURCE.FOOD);
         }
         quantityLbl.text = $"{quantity}";
+        if (activeTileObject.tileObjectType.IsTileObjectWithCount()) {
+            quantityLbl.text = GetCountQuantityBaseOnType(activeTileObject).ToString();
+        }
+        //if(activeTileObject.tileObjectType.)
         generalDescription.text = activeTileObject.description;
         ownerLbl.text = activeTileObject.characterOwner != null ? $"<link=\"1\">{UtilityScripts.Utilities.ColorizeAndBoldName(activeTileObject.characterOwner.name)}</link>" : "None";
         UpdateLocationInfo();
         tileObjectPortrait.SetTileObject(activeTileObject);
+    }
+
+    public int GetCountQuantityBaseOnType(TileObject p_object) {
+        switch (p_object.tileObjectType) {
+            case TILE_OBJECT_TYPE.ROCK:
+            return (p_object as Rock).count;
+            case TILE_OBJECT_TYPE.ORE:
+            return (p_object as Ore).count;
+            case TILE_OBJECT_TYPE.SMALL_TREE_OBJECT:
+            case TILE_OBJECT_TYPE.BIG_TREE_OBJECT:
+            return (p_object as TreeObject).count;
+        }
+
+        return 1;
     }
     private void OnRightClickPortrait(TileObject p_tileObject) {
         UIManager.Instance.ShowPlayerActionContextMenu(p_tileObject, Input.mousePosition, true);
