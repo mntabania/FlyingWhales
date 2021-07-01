@@ -21,8 +21,8 @@ public class PartyQuestBoard {
         PartyQuest chosenSecondaryQuest = null; //The quest that is not made in the location. Party must prioritize quest that is made in their settlement, if there is none, just get the first unassigned, i.e the secondary quest
         for (int i = 0; i < availablePartyQuests.Count; i++) {
             PartyQuest quest = availablePartyQuests[i];
-            if (!quest.isAssigned && (party.members.Count >= quest.minimumPartySize || party.isPlayerParty)) {
-                if(quest.madeInLocation != null && quest.madeInLocation == party.partySettlement) {
+            if (!quest.isAssigned) {
+                if((party.members.Count >= quest.minimumPartySize && quest.madeInLocation != null && quest.madeInLocation == party.partySettlement) || party.isPlayerParty) {
                     return quest;
                 } else {
                     if(chosenSecondaryQuest == null) {
@@ -38,8 +38,8 @@ public class PartyQuestBoard {
         List<int> indexPool = RuinarchListPool<int>.Claim();
         for (int i = 0; i < availablePartyQuests.Count; i++) {
             PartyQuest quest = availablePartyQuests[i];
-            if (!quest.isAssigned && (party.members.Count >= quest.minimumPartySize || party.isPlayerParty)) {
-                if (quest.madeInLocation != null && quest.madeInLocation == party.partySettlement) {
+            if (!quest.isAssigned) {
+                if ((party.members.Count >= quest.minimumPartySize && quest.madeInLocation != null && quest.madeInLocation == party.partySettlement) || party.isPlayerParty) {
                     indexPool.Add(i);
                 }
             }

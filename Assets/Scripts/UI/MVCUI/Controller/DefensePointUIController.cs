@@ -230,7 +230,7 @@ public class DefensePointUIController : MVCUIController, DefensePointUIView.ILis
 		int newDeployedCount = 0;
 		m_deployedSummonsUI.ForEach((eachSummonToBeDeployed) => {
 			if (eachSummonToBeDeployed.isReadyForDeploy) {
-				Summon summon = CharacterManager.Instance.CreateNewSummon(eachSummonToBeDeployed.obj.monsterType, PlayerManager.Instance.player.playerFaction, m_targetPartyStructure.currentSettlement);
+				Summon summon = CharacterManager.Instance.CreateNewSummon(eachSummonToBeDeployed.obj.monsterType, PlayerManager.Instance.player.playerFaction, PlayerManager.Instance.player.playerSettlement);
 				CharacterManager.Instance.PlaceSummonInitially(summon, m_targetPartyStructure.GetRandomPassableTile());
 				summon.OnSummonAsPlayerMonster();
 				eachSummonToBeDeployed.HideManaCost();
