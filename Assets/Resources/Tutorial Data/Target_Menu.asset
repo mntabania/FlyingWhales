@@ -15,6 +15,6 @@ MonoBehaviour:
   tutorialType: 14
   tutorialNameKey: Target_Menu
   pages:
-  - imgTutorial: {fileID: 21300000, guid: aad8d75c17585ae42924bf422178e989, type: 3}
+  - imgTutorial: {fileID: 21300000, guid: 07db149e5bf6912419de0a36151b2de1, type: 3}
     description: Open the Target Menu by right-clicking on a character or object.
       The Target Menu allows you to use various abilities on the active target.
