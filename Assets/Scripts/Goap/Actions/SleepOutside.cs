@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;  
 using Traits;
 using System.Linq;
+using Inner_Maps;
+using Inner_Maps.Location_Structures;
 
 public class SleepOutside : GoapAction {
 
     public SleepOutside() : base(INTERACTION_TYPE.SLEEP_OUTSIDE) {
-        actionLocationType = ACTION_LOCATION_TYPE.IN_PLACE;
+        actionLocationType = ACTION_LOCATION_TYPE.RANDOM_LOCATION_B;
         actionIconString = GoapActionStateDB.Sleep_Icon;
         //animationName = "Sleep Ground";
         //advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
@@ -40,9 +42,26 @@ public class SleepOutside : GoapAction {
         Character actor = node.actor;
         actor.traitContainer.RemoveTrait(actor, "Resting");
     }
-#endregion
+    public override LocationStructure GetTargetStructure(ActualGoapNode node) {
+        if (node.actor.homeStructure != null && node.actor.homeStructure.structureType == STRUCTURE_TYPE.DWELLING) {
+            //Reference: https://trello.com/c/SQeH6f8c/4972-villagers-should-sleep-in-house
+            return node.actor.homeStructure;
+        }
+        return base.GetTargetStructure(node);
+    }
+    public override LocationGridTile GetTargetTileToGoTo(ActualGoapNode goapNode) {
+        if (goapNode.actor.homeStructure != null && goapNode.actor.homeStructure.structureType == STRUCTURE_TYPE.DWELLING) {
+            //Reference: https://trello.com/c/SQeH6f8c/4972-villagers-should-sleep-in-house
+            if (goapNode.actor.isAtHomeStructure) {
+                return goapNode.actor.gridTileLocation; //sleep in place        
+            }
+            return null; //Returned null so that Random Location B Logic will be applied to inside the actors house
+        }
+        return goapNode.actor.gridTileLocation; //sleep in place
+    }
+    #endregion
 
-#region Requirements
+    #region Requirements
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, OtherData[] otherData, JobQueueItem job) { 
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData, job);
         if (satisfied) {
@@ -56,9 +75,9 @@ public class SleepOutside : GoapAction {
         }
         return false;
     }
-#endregion
+    #endregion
 
-#region State Effects
+    #region State Effects
     public void PreRestSuccess(ActualGoapNode goapNode) {
         goapNode.actor.traitContainer.AddTrait(goapNode.actor, "Resting");
         //GoapActionState currentState = goapNode.action.states[goapNode.currentStateName];
@@ -80,5 +99,5 @@ public class SleepOutside : GoapAction {
     public void AfterRestSuccess(ActualGoapNode goapNode) {
         goapNode.actor.traitContainer.RemoveTrait(goapNode.actor, "Resting");
     }
-#endregion
+    #endregion
 }
