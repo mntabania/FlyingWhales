@@ -14,10 +14,10 @@ namespace Character_Talents {
         public virtual bool hasReevaluation => false;
 
         public string GetBonusDescription(int p_level) {
-            if (addOnBonusSetDisplay.Count < p_level) {
+            /*if (addOnBonusSetDisplay.Count < p_level) {
                 return name + " Lv. " + p_level + "\n\n" + description + "\n\n";
-            }
-            return name + " Lv. " + p_level + "\n\n" + description + "\n\n" + addOnBonusSetDisplay[p_level - 1];
+            }*/
+            return addOnBonusSetDisplay[p_level - 1];
         }
 
         public CharacterTalentData(CHARACTER_TALENT p_talentType) {

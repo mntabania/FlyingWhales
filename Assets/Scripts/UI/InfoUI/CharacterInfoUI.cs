@@ -81,13 +81,14 @@ public class CharacterInfoUI : InfoUIBase {
     [SerializeField] private TextMeshProUGUI resourcesLbl;
     [SerializeField] private TextMeshProUGUI foodLbl;
     [SerializeField] private TextMeshProUGUI socialLbl;
-    [SerializeField] private HoverText martialArtsHoverText;
-    [SerializeField] private HoverText combatMagicHoverText;
-    [SerializeField] private HoverText healingMagicHoverText;
-    [SerializeField] private HoverText craftingHoverText;
-    [SerializeField] private HoverText resourcesHoverText;
-    [SerializeField] private HoverText foodHoverText;
-    [SerializeField] private HoverText socialHoverText;
+    [SerializeField] private HoverHandler martialArtsHoverText;
+    [SerializeField] private HoverHandler combatMagicHoverText;
+    [SerializeField] private HoverHandler healingMagicHoverText;
+    [SerializeField] private HoverHandler craftingHoverText;
+    [SerializeField] private HoverHandler resourcesHoverText;
+    [SerializeField] private HoverHandler foodHoverText;
+    [SerializeField] private HoverHandler socialHoverText;
+    [SerializeField] private CharacterTalentTooltip talentToolTip;
 
     [Space(10)] [Header("Relationships")]
     [SerializeField] private EventLabel relationshipNamesEventLbl;
@@ -494,34 +495,46 @@ public class CharacterInfoUI : InfoUIBase {
         }
     }
 
+    private void OnHoverTalent(Character p_character, CHARACTER_TALENT p_talentType) {
+        talentToolTip.gameObject.SetActive(true);
+        talentToolTip.ShowCharacterTalentData(activeCharacter, p_talentType);
+    }
+
     private void UpdatetalentsDisplay() {
         martialArtsLbl.text = _activeCharacter.talentComponent.GetTalent(CHARACTER_TALENT.Martial_Arts).level.ToString();
         CharacterTalentData talentData = CharacterManager.Instance.talentManager.GetOrCreateCharacterTalentData(CHARACTER_TALENT.Martial_Arts);
-        martialArtsHoverText.SetText(talentData.bonusDescription(_activeCharacter.talentComponent.GetTalent(CHARACTER_TALENT.Martial_Arts).level));
-        
+        //martialArtsHoverText.SetText(talentData.bonusDescription(_activeCharacter.talentComponent.GetTalent(CHARACTER_TALENT.Martial_Arts).level));
+        martialArtsHoverText.AddOnHoverOverAction(() => OnHoverTalent(activeCharacter, CHARACTER_TALENT.Martial_Arts));
+
         combatMagicLbl.text = _activeCharacter.talentComponent.GetTalent(CHARACTER_TALENT.Combat_Magic).level.ToString();
         talentData = CharacterManager.Instance.talentManager.GetOrCreateCharacterTalentData(CHARACTER_TALENT.Combat_Magic);
-        combatMagicHoverText.SetText(talentData.bonusDescription(_activeCharacter.talentComponent.GetTalent(CHARACTER_TALENT.Combat_Magic).level));
-        
+        combatMagicHoverText.AddOnHoverOverAction(() => OnHoverTalent(activeCharacter, CHARACTER_TALENT.Combat_Magic));
+        //combatMagicHoverText.SetText(talentData.bonusDescription(_activeCharacter.talentComponent.GetTalent(CHARACTER_TALENT.Combat_Magic).level));
+
         healingMagicLbl.text = _activeCharacter.talentComponent.GetTalent(CHARACTER_TALENT.Healing_Magic).level.ToString();
         talentData = CharacterManager.Instance.talentManager.GetOrCreateCharacterTalentData(CHARACTER_TALENT.Healing_Magic);
-        healingMagicHoverText.SetText(talentData.bonusDescription(_activeCharacter.talentComponent.GetTalent(CHARACTER_TALENT.Healing_Magic).level));
+        healingMagicHoverText.AddOnHoverOverAction(() => OnHoverTalent(activeCharacter, CHARACTER_TALENT.Healing_Magic));
+        //healingMagicHoverText.SetText(talentData.bonusDescription(_activeCharacter.talentComponent.GetTalent(CHARACTER_TALENT.Healing_Magic).level));
 
         craftingLbl.text = _activeCharacter.talentComponent.GetTalent(CHARACTER_TALENT.Crafting).level.ToString();
         talentData = CharacterManager.Instance.talentManager.GetOrCreateCharacterTalentData(CHARACTER_TALENT.Crafting);
-        craftingHoverText.SetText(talentData.bonusDescription(_activeCharacter.talentComponent.GetTalent(CHARACTER_TALENT.Crafting).level));
+        craftingHoverText.AddOnHoverOverAction(() => OnHoverTalent(activeCharacter, CHARACTER_TALENT.Crafting));
+        //craftingHoverText.SetText(talentData.bonusDescription(_activeCharacter.talentComponent.GetTalent(CHARACTER_TALENT.Crafting).level));
 
         resourcesLbl.text = _activeCharacter.talentComponent.GetTalent(CHARACTER_TALENT.Resources).level.ToString();
         talentData = CharacterManager.Instance.talentManager.GetOrCreateCharacterTalentData(CHARACTER_TALENT.Resources);
-        resourcesHoverText.SetText(talentData.bonusDescription(_activeCharacter.talentComponent.GetTalent(CHARACTER_TALENT.Resources).level)); 
-        
+        resourcesHoverText.AddOnHoverOverAction(() => OnHoverTalent(activeCharacter, CHARACTER_TALENT.Resources));
+        //resourcesHoverText.SetText(talentData.bonusDescription(_activeCharacter.talentComponent.GetTalent(CHARACTER_TALENT.Resources).level)); 
+
         foodLbl.text = _activeCharacter.talentComponent.GetTalent(CHARACTER_TALENT.Food).level.ToString();
         talentData = CharacterManager.Instance.talentManager.GetOrCreateCharacterTalentData(CHARACTER_TALENT.Food);
-        foodHoverText.SetText(talentData.bonusDescription(_activeCharacter.talentComponent.GetTalent(CHARACTER_TALENT.Food).level)); 
-        
+        foodHoverText.AddOnHoverOverAction(() => OnHoverTalent(activeCharacter, CHARACTER_TALENT.Food));
+        //foodHoverText.SetText(talentData.bonusDescription(_activeCharacter.talentComponent.GetTalent(CHARACTER_TALENT.Food).level)); 
+
         socialLbl.text = _activeCharacter.talentComponent.GetTalent(CHARACTER_TALENT.Social).level.ToString();
         talentData = CharacterManager.Instance.talentManager.GetOrCreateCharacterTalentData(CHARACTER_TALENT.Social);
-        socialHoverText.SetText(talentData.bonusDescription(_activeCharacter.talentComponent.GetTalent(CHARACTER_TALENT.Social).level));
+        socialHoverText.AddOnHoverOverAction(() => OnHoverTalent(activeCharacter, CHARACTER_TALENT.Social));
+        //socialHoverText.SetText(talentData.bonusDescription(_activeCharacter.talentComponent.GetTalent(CHARACTER_TALENT.Social).level));
     }
     private void OnClickFaction(object obj) {
         UIManager.Instance.ShowFactionInfo(activeCharacter.faction);
