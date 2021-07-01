@@ -349,7 +349,7 @@ namespace Inner_Maps {
 #endif
 
             bool isFreezingTrapPlayerSource = false;
-            int duration = 0;
+            int duration = PlayerSkillManager.Instance.GetDurationBonusPerLevel(trapData);
             if (willTrigger) {
                 if (triggeredBy is Summon summon) {
                     if (summon.summonType == SUMMON_TYPE.Kobold) {
@@ -359,7 +359,6 @@ namespace Inner_Maps {
                     if (triggeredBy.isNormalAndNotAlliedWithPlayer) {
                         Messenger.Broadcast(PlayerSkillSignals.ON_TRAP_ACTIVATED_ON_VILLAGER, triggeredBy);
                     }
-                    duration = PlayerSkillManager.Instance.GetDurationBonusPerLevel(trapData);
                 }
                 GameManager.Instance.CreateParticleEffectAt(triggeredBy, PARTICLE_EFFECT.Freezing_Trap_Explosion);
                 AudioManager.Instance.TryCreateAudioObject(trapSkillData.trapExplosionSound, owner, 1, false);
