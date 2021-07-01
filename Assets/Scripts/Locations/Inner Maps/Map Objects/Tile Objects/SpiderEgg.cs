@@ -19,23 +19,7 @@ public class SpiderEgg : MonsterEgg {
         if (settlement != null) {
             homeRegion = settlement.region;
         }
-
-        BaseSettlement currentSettlement;
-        if (gridTileLocation.IsPartOfSettlement(out currentSettlement)) {
-            if (currentSettlement.owner == null) {
-                homeSettlement = currentSettlement;
-                homeStructure = null;
-                homeRegion = currentSettlement.region;
-            } else if (currentSettlement.owner == faction) {
-                homeSettlement = currentSettlement;
-                if (structure.settlementLocation == currentSettlement) {
-                    homeStructure = structure;
-                } else {
-                    homeStructure = null;
-                }
-                homeRegion = currentSettlement.region;
-            }
-        }
+        ProcessHomeOfHatchedEggs(ref homeSettlement, ref homeStructure, ref homeRegion);
 
         int numOfSpiders = UnityEngine.Random.Range(2, 4);
         for (int i = 0; i < numOfSpiders; i++) {

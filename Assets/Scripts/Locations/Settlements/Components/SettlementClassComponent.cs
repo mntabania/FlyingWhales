@@ -403,9 +403,8 @@ public class SettlementClassComponent : NPCSettlementComponent {
 
         if (m_bypass) {
 #if DEBUG_LOG
-            log += "\nBypass: Will NOT process Combatants and special classes because food and resource producers are already available";
+            log += "\nBypass: Will NOT process Crafter, Combatants, and Special Classes because food and resource producers are already available";
 #endif
-
             for (int i = 0; i < sortedCombatants.Count; i++) {
                 Character c = sortedCombatants[i];
                 c.classComponent.SetShouldChangeClass(true);
@@ -413,10 +412,7 @@ public class SettlementClassComponent : NPCSettlementComponent {
             }
         } else {
 #if DEBUG_LOG
-            log += "\nNot Bypass: Will process Combatants and special classes";
-#endif
-
-#if DEBUG_LOG
+            log += "\nNot Bypass: Will process Crafter, Combatants, and Special Classes";
             log += "\nReserved Combatants: ";
 #endif
             for (int i = 0; i < sortedCombatants.Count; i++) {
@@ -432,6 +428,7 @@ public class SettlementClassComponent : NPCSettlementComponent {
                     numberOfAvailableVillagers++;
                 }
             }
+            ProcessNeededCrafter(ref log);
             ProcessNeededCombatantClasses(numOfCombatants, neededCombatants, ref log);
             ProcessNeededSpecialClasses(numberOfAvailableVillagers, villagerCanBecomeSkinner, villagerCanBecomeMerchant, ref log);
 
@@ -545,6 +542,34 @@ public class SettlementClassComponent : NPCSettlementComponent {
 #endif
                 ResourceProducersProcessing(STRUCTURE_TYPE.MINE, "Miner", STRUCTURE_TYPE.LUMBERYARD, "Logger", ref log);
             }
+        }
+    }
+    private void ProcessNeededCrafter(ref string log) {
+#if DEBUG_LOG
+        log += "\nProcess Needed Crafter";
+        log += "\nChecking Workshop...";
+#endif
+        LocationStructure noWorkerStructure = owner.GetFirstStructureOfTypeThatHasNoWorkerAndIsNotReserved(STRUCTURE_TYPE.WORKSHOP);
+        if (noWorkerStructure != null) {
+#if DEBUG_LOG
+            log += "\nHas unclaimed Workshop: " + noWorkerStructure.name;
+#endif
+            LocationStructure structureWithWorker = owner.GetFirstStructureOfTypeThatHasWorkerOrIsReserved(STRUCTURE_TYPE.WORKSHOP);
+            if (structureWithWorker == null) {
+#if DEBUG_LOG
+                log += "\nHas no claimed Workshop in village, create change class job";
+                log += "\nCreate Change Class Job to CRAFTER";
+#endif
+                owner.settlementJobTriggerComponent.TriggerChangeClassJob("Crafter", noWorkerStructure);
+            } else {
+#if DEBUG_LOG
+                log += "\nHas claimed Workshop in village: " + structureWithWorker.name;
+#endif
+            }
+        } else {
+#if DEBUG_LOG
+            log += "\nHas no unclaimed Workshop";
+#endif
         }
     }
     private void ProcessNeededCombatantClasses(int numOfCombatants, int neededCombatants, ref string log) {
