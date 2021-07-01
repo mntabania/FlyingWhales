@@ -54,7 +54,10 @@ public class ChopWood : GoapAction {
 
     #region State Effects
     public void AfterChopSuccess(ActualGoapNode p_node) {
-        p_node.actor.jobComponent.TryCreateHaulToWorkplaceJob(ProduceMatsPile(p_node));
+        ResourcePile pile = ProduceMatsPile(p_node);
+        if (pile != null && pile.resourceInPile > 0) {
+            p_node.actor.jobComponent.TryCreateHaulToWorkplaceJob(pile);
+        }  
     }
     #endregion
 
@@ -77,6 +80,9 @@ public class ChopWood : GoapAction {
             }
         }
 
+        if (amount <= 0) {
+            return null;
+        }
         p_node.actor.moneyComponent.AdjustCoins(Mathf.CeilToInt(amount * _coinGainMultiplier));
         matsToHaul.SetResourceInPile(amount);
         tileToSpawnPile.structure.AddPOI(matsToHaul, tileToSpawnPile);

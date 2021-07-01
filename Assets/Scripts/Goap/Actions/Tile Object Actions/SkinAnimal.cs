@@ -65,7 +65,10 @@ public class SkinAnimal : GoapAction {
 
     #region State Effects
     public void AfterSkinAnimalSuccess(ActualGoapNode p_node) {
-        p_node.actor.jobComponent.TryCreateHaulToWorkplaceJob(ProduceMatsPile(p_node));
+        ResourcePile pile = ProduceMatsPile(p_node);
+        if (pile != null && pile.resourceInPile > 0) {
+            p_node.actor.jobComponent.TryCreateHaulToWorkplaceJob(ProduceMatsPile(p_node));
+        }
     }
     #endregion
 
@@ -82,6 +85,8 @@ public class SkinAnimal : GoapAction {
         if (animal.count - amount < 0) {
             amount = animal.count;
         }
+
+        
         animal.count = (int)Mathf.Clamp(animal.count - amount, 0f, 1000f);
         if (targetAnimal.gridTileLocation != null) {
             if (animal.count <= 0) {
@@ -89,11 +94,15 @@ public class SkinAnimal : GoapAction {
             }
         }
 
+        if (amount <= 0) {
+            return null;
+        }
+
         p_node.actor.moneyComponent.AdjustCoins(Mathf.CeilToInt(amount * _coinGainMultiplier));
+        p_node.actor.talentComponent?.GetTalent(CHARACTER_TALENT.Resources).AdjustExperience(12, p_node.actor);
         matsToHaul.SetResourceInPile(amount);
         tileToSpawnPile.structure.AddPOI(matsToHaul, tileToSpawnPile);
         ProduceLogs(p_node);
-        p_node.actor.talentComponent?.GetTalent(CHARACTER_TALENT.Resources).AdjustExperience(12, p_node.actor);
         return matsToHaul;
     }
 
