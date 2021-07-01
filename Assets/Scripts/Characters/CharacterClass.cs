@@ -139,7 +139,7 @@ public class CharacterClass {
         }
     }
     public bool IsSpecialCivilian() {
-        return className == "Skinner" || className == "Craftsman" || className == "Merchant";
+        return className == "Skinner" || className == "Crafter" || className == "Merchant";
     }
     #endregion
 }

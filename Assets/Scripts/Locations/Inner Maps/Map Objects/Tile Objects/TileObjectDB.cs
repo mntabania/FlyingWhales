@@ -8,7 +8,7 @@ public static class TileObjectDB {
 
     public static TileObjectData Default = new TileObjectData() {
         maxHP = 200,
-        neededCharacterClass = new string[] { "Craftsman" },
+        neededCharacterClass = new string[] { "Crafter" },
         occupiedSize = new Point(1, 1),
     };
 
@@ -16,7 +16,7 @@ public static class TileObjectDB {
     public static Dictionary<TILE_OBJECT_TYPE, TileObjectData> tileObjectData = new Dictionary<TILE_OBJECT_TYPE, TileObjectData>() {
         { TILE_OBJECT_TYPE.WOOD_PILE, new TileObjectData() {
             maxHP = 600,
-            neededCharacterClass =  new string[] { "Craftsman" },
+            neededCharacterClass =  new string[] { "Crafter" },
         } },
         { TILE_OBJECT_TYPE.ANIMAL_MEAT, new TileObjectData() {
             maxHP = 300,
@@ -45,7 +45,7 @@ public static class TileObjectDB {
         } },
         { TILE_OBJECT_TYPE.BED, new TileObjectData() {
             maxHP = 400,
-            neededCharacterClass =  new string[] { "Craftsman" },
+            neededCharacterClass =  new string[] { "Crafter" },
             repairCost = 5,
             craftResourceCost = 15,
             craftRecipes = new [] {
@@ -56,7 +56,7 @@ public static class TileObjectDB {
         } },
         { TILE_OBJECT_TYPE.DESK, new TileObjectData() {
             maxHP = 250,
-            neededCharacterClass =  new string[] { "Craftsman" },
+            neededCharacterClass =  new string[] { "Crafter" },
             repairCost = 5,
             craftRecipes = new [] {
                 new TileObjectRecipe(
@@ -66,7 +66,7 @@ public static class TileObjectDB {
         } },
         { TILE_OBJECT_TYPE.GUITAR, new TileObjectData() {
             maxHP = 120,
-            neededCharacterClass =  new string[] { "Craftsman" },
+            neededCharacterClass =  new string[] { "Crafter" },
             repairCost = 5,
             craftResourceCost = 10,
             craftRecipes = new [] {
@@ -77,7 +77,7 @@ public static class TileObjectDB {
         } },
         { TILE_OBJECT_TYPE.TABLE, new TileObjectData() {
             maxHP = 250,
-            neededCharacterClass =  new string[] { "Craftsman" },
+            neededCharacterClass =  new string[] { "Crafter" },
             repairCost = 5,
             craftResourceCost = 20,
             craftRecipes = new [] {
@@ -88,11 +88,11 @@ public static class TileObjectDB {
         } },
         { TILE_OBJECT_TYPE.SMALL_TREE_OBJECT, new TileObjectData() {
             maxHP = 600,
-            neededCharacterClass =  new string[] { "Craftsman" },
+            neededCharacterClass =  new string[] { "Crafter" },
         } },
         { TILE_OBJECT_TYPE.BIG_TREE_OBJECT, new TileObjectData() {
             maxHP = 1200,
-            neededCharacterClass =  new string[] { "Craftsman" },
+            neededCharacterClass =  new string[] { "Crafter" },
             occupiedSize =  new Point(2, 2),
         } },
         { TILE_OBJECT_TYPE.HEALING_POTION, new TileObjectData() {
@@ -182,7 +182,7 @@ public static class TileObjectDB {
         } },
         { TILE_OBJECT_TYPE.WATER_WELL, new TileObjectData() {
             maxHP = 1000,
-            neededCharacterClass = new string[] { "Craftsman" },
+            neededCharacterClass = new string[] { "Crafter" },
             repairCost = 5,
             craftRecipes = new [] {
                 new TileObjectRecipe(
@@ -262,7 +262,7 @@ public static class TileObjectDB {
         } },
         { TILE_OBJECT_TYPE.TORCH, new TileObjectData() {
             maxHP = 200,
-            neededCharacterClass = new string[] { "Craftsman" },
+            neededCharacterClass = new string[] { "Crafter" },
             repairCost = 5,
             craftResourceCost = 5,
             craftRecipes = new [] {

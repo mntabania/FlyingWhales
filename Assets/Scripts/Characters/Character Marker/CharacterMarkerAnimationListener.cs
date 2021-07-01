@@ -30,7 +30,7 @@ public class CharacterMarkerAnimationListener : MonoBehaviour {
                         parentMarker.character.gridTileLocation, 1, false);    
                 } else {
                     switch (parentMarker.character.characterClass.className) {
-                        case "Craftsman":
+                        case "Crafter":
                         case "Miner":
                             AudioManager.Instance.TryCreateAudioObject(AudioManager.Instance.GetRandomBluntWeaponAudio(),
                                 parentMarker.character.gridTileLocation, 1, false);

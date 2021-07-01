@@ -36,7 +36,7 @@ namespace Character_Talents {
             }
         }
         private void Level1(Character p_character) {
-            p_character.classComponent.AddAbleClass("Craftsman");
+            p_character.classComponent.AddAbleClass("Crafter");
             /*
              * - 20% chance to add [High Quality](https://www.notion.so/High-Quality-f225af49428d479eb877fb489611f35a) Trait to crafted object
              * */

@@ -3768,7 +3768,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
         }
     }
 
-    public void TryCreateHaulJobForCraftsman(ResourcePile target, out JobQueueItem jobQueueItem, int p_amount) {
+    public void TryCreateHaulJobForCrafter(ResourcePile target, out JobQueueItem jobQueueItem, int p_amount) {
         jobQueueItem = null;
         if (!owner.jobQueue.HasJob(JOB_TYPE.HAUL) && owner.structureComponent.workPlaceStructure != null && target.structureLocation != null) {
             LocationStructure workPlace = owner.structureComponent.workPlaceStructure;
