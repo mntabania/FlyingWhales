@@ -38,6 +38,11 @@ public class TileObjectInfoUI : InfoUIBase {
     [SerializeField] private GameObject characterItemPrefab;
     [SerializeField] private ScrollRect charactersScrollView;
 
+    [Space(10)]
+    [Header("Item Effects")]
+    [SerializeField] private GameObject itemEffectParent;
+    [SerializeField] private TextMeshProUGUI itemEffectsLbl;
+
     [Space(10)] [Header("Logs")] 
     [SerializeField] private LogsWindow logsWindow;
     
@@ -246,14 +251,18 @@ public class TileObjectInfoUI : InfoUIBase {
         }
 
         statusTraitsLbl.text = string.Empty;
-        if (activeTileObject is EquipmentItem) {
-            equipBonusGO.gameObject.SetActive(true);
-            equipTraits += "\n" + (activeTileObject as EquipmentItem).GetBonusDescription();
+        if (activeTileObject is EquipmentItem equip) {
+            itemEffectParent.gameObject.SetActive(true);
+            equipBonusGO.gameObject.SetActive(false);
+            equipTraits += "\n" + equip.GetBonusDescription();
             if (string.IsNullOrEmpty(equipTraits) == false) {
                 //character has status traits
                 equipBonusLbl.text = equipTraits;
             }
+            
+            itemEffectsLbl.text = equip.GetBonusDescription();
         } else {
+            itemEffectParent.gameObject.SetActive(false);
             equipBonusGO.gameObject.SetActive(false);
         }
         if (string.IsNullOrEmpty(statusTraits) == false) {
