@@ -149,6 +149,8 @@ public class EquipmentComponent {
             if (currentWeapon != null) {
                 if (currentWeapon.equipmentData.tier < p_newEquipment.equipmentData.tier) {
                     return true;
+                } else {
+                    return false;
                 }
             } else {
                 return true;
@@ -158,6 +160,8 @@ public class EquipmentComponent {
             if (currentArmor != null) {
                 if (currentArmor.equipmentData.tier < p_newEquipment.equipmentData.tier) {
                     return true;
+                } else {
+                    return false;
                 }
             } else {
                 return true;
@@ -167,6 +171,8 @@ public class EquipmentComponent {
             if (currentAccessory != null) {
                 if (currentAccessory.equipmentData.tier < p_newEquipment.equipmentData.tier) {
                     return true;
+                } else {
+                    return false;
                 }
             } else {
                 return true;

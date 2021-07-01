@@ -714,6 +714,7 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 
 	public void OnHoverOut() {
 		Tooltip.Instance.HideSmallInfo();
+		UIManager.Instance.HideSmallInfo();
 	}
 	public void OnClickNoTargetsTip() {
 		PlayerUI.Instance.ShowSpecificTutorial(TutorialManager.Tutorial_Type.Storing_Targets);

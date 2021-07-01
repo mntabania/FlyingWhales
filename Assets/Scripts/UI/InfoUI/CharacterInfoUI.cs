@@ -64,12 +64,13 @@ public class CharacterInfoUI : InfoUIBase {
     [SerializeField] private Image weaponImg;
     [SerializeField] private Image armorImg;
     [SerializeField] private Image accessoryImg;
-    [SerializeField] private HoverText weaponHoverText;
-    [SerializeField] private HoverText armorHoverText;
-    [SerializeField] private HoverText accessoryHoverText;
+    [SerializeField] private HoverHandler weaponHoverText;
+    [SerializeField] private HoverHandler armorHoverText;
+    [SerializeField] private HoverHandler accessoryHoverText;
     [SerializeField] private EventEquipButton weaponEventButton;
     [SerializeField] private EventEquipButton armorEventButton;
     [SerializeField] private EventEquipButton accessoryEventButton;
+    [SerializeField] private EquipmentToolTip equipmentToolTip;
 
     [Space(10)]
     [Header("Talents")]
@@ -240,6 +241,9 @@ public class CharacterInfoUI : InfoUIBase {
 
         piercingAndResistancesInfo.Initialize();
         SetButtonRevealPriceDisplay();
+
+        ListenTalentHoverListener();
+        ListenEquipmentHoverListener();
     }
 
     void SetButtonRevealPriceDisplay() {
@@ -463,35 +467,50 @@ public class CharacterInfoUI : InfoUIBase {
         if (_activeCharacter.equipmentComponent.currentWeapon != null) {
             weaponImg.enabled = true;
             weaponImg.sprite = _activeCharacter.equipmentComponent.currentWeapon.equipmentData.imgIcon;
-            weaponHoverText.Enable();
-            weaponHoverText.SetText(_activeCharacter.equipmentComponent.currentWeapon.name + "\n\n" + _activeCharacter.equipmentComponent.currentWeapon.GetBonusDescription());
+            //weaponHoverText.Enable();
+            //weaponHoverText.SetText(_activeCharacter.equipmentComponent.currentWeapon.name + "\n\n" + _activeCharacter.equipmentComponent.currentWeapon.GetBonusDescription());
             weaponEventButton.SetData(_activeCharacter, _activeCharacter.equipmentComponent.currentWeapon);
         } else {
-            weaponHoverText.Disable();
+            //weaponHoverText.Disable();
             weaponImg.enabled = false;
             weaponEventButton.ClearData();
         }
         if (_activeCharacter.equipmentComponent.currentArmor != null) {
             armorImg.enabled = true;
             armorImg.sprite = _activeCharacter.equipmentComponent.currentArmor.equipmentData.imgIcon;
-            armorHoverText.Enable();
-            armorHoverText.SetText(_activeCharacter.equipmentComponent.currentArmor.name + "\n\n" + _activeCharacter.equipmentComponent.currentArmor.GetBonusDescription());
+            //armorHoverText.Enable();
+            //armorHoverText.SetText(_activeCharacter.equipmentComponent.currentArmor.name + "\n\n" + _activeCharacter.equipmentComponent.currentArmor.GetBonusDescription());
             armorEventButton.SetData(_activeCharacter, _activeCharacter.equipmentComponent.currentArmor);
         } else {
-            armorHoverText.Disable();
+            //armorHoverText.Disable();
             armorImg.enabled = false;
             armorEventButton.ClearData();
         }
         if (_activeCharacter.equipmentComponent.currentAccessory != null) {
             accessoryImg.enabled = true;
             accessoryImg.sprite = _activeCharacter.equipmentComponent.currentAccessory.equipmentData.imgIcon;
-            accessoryHoverText.Enable();
-            accessoryHoverText.SetText(_activeCharacter.equipmentComponent.currentAccessory.name + "\n\n" + _activeCharacter.equipmentComponent.currentAccessory.GetBonusDescription());
+            //accessoryHoverText.Enable();
+            //accessoryHoverText.SetText(_activeCharacter.equipmentComponent.currentAccessory.name + "\n\n" + _activeCharacter.equipmentComponent.currentAccessory.GetBonusDescription());
             accessoryEventButton.SetData(_activeCharacter, _activeCharacter.equipmentComponent.currentAccessory);
         } else {
-            accessoryHoverText.Disable();
+            //accessoryHoverText.Disable();
             accessoryImg.enabled = false;
             accessoryEventButton.ClearData();
+        }
+    }
+
+    private void OnHoverExitEquipment() {
+        equipmentToolTip.gameObject.SetActive(false);
+    }
+
+    private void OnHoverExitTalent() {
+        talentToolTip.gameObject.SetActive(false);
+    }
+
+    private void OnHoverEquipment(EquipmentItem p_equipmentItem) {
+        if (p_equipmentItem != null) {
+            equipmentToolTip.gameObject.SetActive(true);
+            equipmentToolTip.ShowEquipmentItem(p_equipmentItem);
         }
     }
 
@@ -500,42 +519,64 @@ public class CharacterInfoUI : InfoUIBase {
         talentToolTip.ShowCharacterTalentData(activeCharacter, p_talentType);
     }
 
+    private void ListenTalentHoverListener() {
+        martialArtsHoverText.AddOnHoverOverAction(() => OnHoverTalent(activeCharacter, CHARACTER_TALENT.Martial_Arts));
+        combatMagicHoverText.AddOnHoverOverAction(() => OnHoverTalent(activeCharacter, CHARACTER_TALENT.Combat_Magic));
+        healingMagicHoverText.AddOnHoverOverAction(() => OnHoverTalent(activeCharacter, CHARACTER_TALENT.Healing_Magic));
+        craftingHoverText.AddOnHoverOverAction(() => OnHoverTalent(activeCharacter, CHARACTER_TALENT.Crafting));
+        resourcesHoverText.AddOnHoverOverAction(() => OnHoverTalent(activeCharacter, CHARACTER_TALENT.Resources));
+        foodHoverText.AddOnHoverOverAction(() => OnHoverTalent(activeCharacter, CHARACTER_TALENT.Food));
+        socialHoverText.AddOnHoverOverAction(() => OnHoverTalent(activeCharacter, CHARACTER_TALENT.Social));
+
+        martialArtsHoverText.AddOnHoverOutAction(OnHoverExitTalent);
+        combatMagicHoverText.AddOnHoverOutAction(OnHoverExitTalent);
+        healingMagicHoverText.AddOnHoverOutAction(OnHoverExitTalent);
+        craftingHoverText.AddOnHoverOutAction(OnHoverExitTalent);
+        resourcesHoverText.AddOnHoverOutAction(OnHoverExitTalent);
+        foodHoverText.AddOnHoverOutAction(OnHoverExitTalent);
+        socialHoverText.AddOnHoverOutAction(OnHoverExitTalent);
+    }
+
+    private void ListenEquipmentHoverListener() {
+        weaponHoverText.AddOnHoverOverAction(() => OnHoverEquipment(activeCharacter.equipmentComponent.currentWeapon));
+        armorHoverText.AddOnHoverOverAction(() => OnHoverEquipment(activeCharacter.equipmentComponent.currentArmor));
+        accessoryHoverText.AddOnHoverOverAction(() => OnHoverEquipment(activeCharacter.equipmentComponent.currentAccessory));
+
+        weaponHoverText.AddOnHoverOutAction(OnHoverExitEquipment);
+        armorHoverText.AddOnHoverOutAction(OnHoverExitEquipment);
+        accessoryHoverText.AddOnHoverOutAction(OnHoverExitEquipment);
+    }
+
     private void UpdatetalentsDisplay() {
         martialArtsLbl.text = _activeCharacter.talentComponent.GetTalent(CHARACTER_TALENT.Martial_Arts).level.ToString();
         CharacterTalentData talentData = CharacterManager.Instance.talentManager.GetOrCreateCharacterTalentData(CHARACTER_TALENT.Martial_Arts);
-        //martialArtsHoverText.SetText(talentData.bonusDescription(_activeCharacter.talentComponent.GetTalent(CHARACTER_TALENT.Martial_Arts).level));
-        martialArtsHoverText.AddOnHoverOverAction(() => OnHoverTalent(activeCharacter, CHARACTER_TALENT.Martial_Arts));
+        
 
         combatMagicLbl.text = _activeCharacter.talentComponent.GetTalent(CHARACTER_TALENT.Combat_Magic).level.ToString();
         talentData = CharacterManager.Instance.talentManager.GetOrCreateCharacterTalentData(CHARACTER_TALENT.Combat_Magic);
-        combatMagicHoverText.AddOnHoverOverAction(() => OnHoverTalent(activeCharacter, CHARACTER_TALENT.Combat_Magic));
-        //combatMagicHoverText.SetText(talentData.bonusDescription(_activeCharacter.talentComponent.GetTalent(CHARACTER_TALENT.Combat_Magic).level));
+        
 
         healingMagicLbl.text = _activeCharacter.talentComponent.GetTalent(CHARACTER_TALENT.Healing_Magic).level.ToString();
         talentData = CharacterManager.Instance.talentManager.GetOrCreateCharacterTalentData(CHARACTER_TALENT.Healing_Magic);
-        healingMagicHoverText.AddOnHoverOverAction(() => OnHoverTalent(activeCharacter, CHARACTER_TALENT.Healing_Magic));
-        //healingMagicHoverText.SetText(talentData.bonusDescription(_activeCharacter.talentComponent.GetTalent(CHARACTER_TALENT.Healing_Magic).level));
+        
 
         craftingLbl.text = _activeCharacter.talentComponent.GetTalent(CHARACTER_TALENT.Crafting).level.ToString();
         talentData = CharacterManager.Instance.talentManager.GetOrCreateCharacterTalentData(CHARACTER_TALENT.Crafting);
-        craftingHoverText.AddOnHoverOverAction(() => OnHoverTalent(activeCharacter, CHARACTER_TALENT.Crafting));
-        //craftingHoverText.SetText(talentData.bonusDescription(_activeCharacter.talentComponent.GetTalent(CHARACTER_TALENT.Crafting).level));
+        
 
         resourcesLbl.text = _activeCharacter.talentComponent.GetTalent(CHARACTER_TALENT.Resources).level.ToString();
         talentData = CharacterManager.Instance.talentManager.GetOrCreateCharacterTalentData(CHARACTER_TALENT.Resources);
-        resourcesHoverText.AddOnHoverOverAction(() => OnHoverTalent(activeCharacter, CHARACTER_TALENT.Resources));
-        //resourcesHoverText.SetText(talentData.bonusDescription(_activeCharacter.talentComponent.GetTalent(CHARACTER_TALENT.Resources).level)); 
+        
 
         foodLbl.text = _activeCharacter.talentComponent.GetTalent(CHARACTER_TALENT.Food).level.ToString();
         talentData = CharacterManager.Instance.talentManager.GetOrCreateCharacterTalentData(CHARACTER_TALENT.Food);
-        foodHoverText.AddOnHoverOverAction(() => OnHoverTalent(activeCharacter, CHARACTER_TALENT.Food));
-        //foodHoverText.SetText(talentData.bonusDescription(_activeCharacter.talentComponent.GetTalent(CHARACTER_TALENT.Food).level)); 
+        
 
         socialLbl.text = _activeCharacter.talentComponent.GetTalent(CHARACTER_TALENT.Social).level.ToString();
         talentData = CharacterManager.Instance.talentManager.GetOrCreateCharacterTalentData(CHARACTER_TALENT.Social);
-        socialHoverText.AddOnHoverOverAction(() => OnHoverTalent(activeCharacter, CHARACTER_TALENT.Social));
-        //socialHoverText.SetText(talentData.bonusDescription(_activeCharacter.talentComponent.GetTalent(CHARACTER_TALENT.Social).level));
+        
     }
+
     private void OnClickFaction(object obj) {
         UIManager.Instance.ShowFactionInfo(activeCharacter.faction);
     }
