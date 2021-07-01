@@ -39,14 +39,22 @@ public class CharacterTalentComponent : CharacterComponent {
         CHARACTER_TALENT chosenTalent = CollectionUtilities.GetRandomElement(talentChoices);
         CharacterTalent talent = GetTalent(chosenTalent);
         for (int i = 0; i < 2; i++) {
-            talent.LevelUp(p_character);
+            if (GameManager.Instance.gameHasStarted) {
+                talent.LevelUp(p_character);    
+            } else {
+              talent.LevelUpForInitialVillagersInWorldGen(p_character);  
+            }
         }
         talentChoices.Remove(chosenTalent);
         
         //random talent +1 extra point
         chosenTalent = CollectionUtilities.GetRandomElement(talentChoices);
         talent = GetTalent(chosenTalent);
-        talent.LevelUp(p_character);
+        if (GameManager.Instance.gameHasStarted) {
+            talent.LevelUp(p_character);    
+        } else {
+            talent.LevelUpForInitialVillagersInWorldGen(p_character);  
+        }
     }
     private void LoadAllTalents(SaveDataCharacterTalentComponent data) {
         allTalents = new List<CharacterTalent>();

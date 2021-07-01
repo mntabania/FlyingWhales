@@ -8,7 +8,7 @@ using Inner_Maps;
 public class SkinAnimal : GoapAction {
 
     public int m_amountProducedPerTick = 1;
-    private const float _coinGainMultiplier = 2.2f;
+    private const float _coinGainMultiplier = 1.375f;
     public SkinAnimal() : base(INTERACTION_TYPE.SKIN_ANIMAL) {
         actionIconString = GoapActionStateDB.Work_Icon;
         //advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
@@ -93,7 +93,7 @@ public class SkinAnimal : GoapAction {
         matsToHaul.SetResourceInPile(amount);
         tileToSpawnPile.structure.AddPOI(matsToHaul, tileToSpawnPile);
         ProduceLogs(p_node);
-        p_node.actor.talentComponent?.GetTalent(CHARACTER_TALENT.Resources).AdjustExperience(4, p_node.actor);
+        p_node.actor.talentComponent?.GetTalent(CHARACTER_TALENT.Resources).AdjustExperience(12, p_node.actor);
         return matsToHaul;
     }
 

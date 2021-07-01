@@ -50,6 +50,9 @@ public class PiercingAndResistancesComponent : CharacterComponent {
             resistances.Add(p_resistance, 0f);
         }
         resistances[p_resistance] += p_value;
+#if DEBUG_LOG
+        Debug.Log($"Adjusted base resistance {p_resistance.ToString()} of {owner.name} by {p_value.ToString()}. New value is: {resistances[p_resistance].ToString()}");
+#endif
         Messenger.Broadcast(UISignals.UPDATE_PIERCING_AND_RESISTANCE_INFO, owner);
     }
     public void SetResistance(RESISTANCE p_resistance, float p_value) {
@@ -57,6 +60,9 @@ public class PiercingAndResistancesComponent : CharacterComponent {
             resistances.Add(p_resistance, 0f);
         }
         resistances[p_resistance] = p_value;
+#if DEBUG_LOG
+        Debug.Log($"Set base resistance {p_resistance.ToString()} of {owner.name} to {p_value.ToString()}");
+#endif
         Messenger.Broadcast(UISignals.UPDATE_PIERCING_AND_RESISTANCE_INFO, owner);
     }
     public float GetResistanceValue(RESISTANCE p_resistance) {

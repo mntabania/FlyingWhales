@@ -108,7 +108,7 @@ public class EquipmentItem : TileObject {
     #region Reactions
     public override void GeneralReactionToTileObject(Character actor, ref string debugLog) {
         base.GeneralReactionToTileObject(actor, ref debugLog);
-        if (this.currentStructure.structureType != STRUCTURE_TYPE.WORKSHOP && this.characterOwner == null && actor.equipmentComponent.EvaluateNewEquipment(this, actor)) {
+        if (this.currentStructure.structureType != STRUCTURE_TYPE.WORKSHOP && (this.characterOwner == null || this.characterOwner == actor) && actor.equipmentComponent.EvaluateNewEquipment(this, actor)) {
             actor.jobComponent.CreateTakeItemJob(JOB_TYPE.TAKE_ITEM, this);
         }
     }

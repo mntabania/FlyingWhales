@@ -6532,9 +6532,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     #endregion
 
     #region villager progression HUMANS = skill levelup, Elven = Power Crystal absorbed
-    public void RecomputeResistanceInitialChangeClass(string p_previousClass) {
-        if (p_previousClass != string.Empty && talentComponent != null) {
-            
+    public void RecomputeResistanceInitialChangeClass(Character p_character, string p_previousClass) {
+        if (p_previousClass != string.Empty && talentComponent != null && p_character.race == RACE.HUMANS) {
             int getLevelCount = 0;
             talentComponent.allTalents.ForEach((eachTalent) => {
                 if(eachTalent.level > 1) {
@@ -6545,14 +6544,52 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 ApplyClassBonusOnLevelUp(p_previousClass, -1f);
 			}
             for (int x = 0; x < getLevelCount; ++x) {
-                if (GameManager.Instance.gameHasStarted) {
-                    ApplyClassBonusOnLevelUp(classComponent.characterClass.className, 1f);
-                } else {
-                    ApplyInitialClassBonusLevelUp();
-                }
-                
+                ApplyClassBonusOnLevelUp(classComponent.characterClass.className, 1f);
             }
         }
+    }
+    // private void ApplyInitialClassBonus(string p_className) {
+    //     CharacterClassData classData = CharacterManager.Instance.GetOrCreateCharacterClassData(p_className);
+    //     piercingAndResistancesComponent.AdjustBasePiercing(classData.characterSkillUpdateData.GetPiercingBonus());
+    //
+    //     RESISTANCE[] resistances = CollectionUtilities.GetEnumValues<RESISTANCE>();
+    //     for (int i = 0; i < resistances.Length; i++) {
+    //         RESISTANCE res = resistances[i];
+    //         if (res != RESISTANCE.None) {
+    //             if (res.IsElemental()) {
+    //                 piercingAndResistancesComponent.AdjustResistance(res, classData.characterSkillUpdateData.GetAllElementalResistanceBonus());
+    //             } else if (res.IsSecondary()) {
+    //                 piercingAndResistancesComponent.AdjustResistance(res, classData.characterSkillUpdateData.GetAllSecondaryResistanceBonus());
+    //             }
+    //             piercingAndResistancesComponent.AdjustResistance(res, classData.characterSkillUpdateData.GetBonusBaseOnElement(res));
+    //         }
+    //     }
+    // }
+    public void RecomputePiercingAndResistanceForGameStart(Character p_character, string p_className) {
+        CharacterClassData classData = CharacterManager.Instance.GetOrCreateCharacterClassData(p_className);
+        float piercing = classData.initialVillagerPiercing;
+        float physicalResistance = CollectionUtilities.GetRandomElement(classData.initialVillagerPhysicalResistances);
+        float mentalResistance = CollectionUtilities.GetRandomElement(classData.initialVillagerMentalResistances);
+        
+        p_character.piercingAndResistancesComponent.SetBasePiercing(piercing);
+        p_character.piercingAndResistancesComponent.SetResistance(RESISTANCE.Physical, physicalResistance);
+        p_character.piercingAndResistancesComponent.SetResistance(RESISTANCE.Mental, mentalResistance);
+        
+        RESISTANCE[] resistances = CollectionUtilities.GetEnumValues<RESISTANCE>();
+        for (int i = 0; i < resistances.Length; i++) {
+            RESISTANCE res = resistances[i];
+            if (res != RESISTANCE.None) {
+                float randomResistanceValue = 0f;
+                if (res.IsElemental()) {
+                    randomResistanceValue = CollectionUtilities.GetRandomElement(classData.initialVillagerElementalResistances);
+                    p_character.piercingAndResistancesComponent.SetResistance(res, randomResistanceValue);
+                } else if (res.IsSecondary()) {
+                    randomResistanceValue = CollectionUtilities.GetRandomElement(classData.initialVillagerSecondaryResistances);
+                    p_character.piercingAndResistancesComponent.SetResistance(res, randomResistanceValue);
+                }
+            }
+        }
+
     }
     //function to be attached on skill levelup NOTE!! - only humans should gain from this call
     public void ApplyClassBonusOnLevelUp(string p_className, float factor = 1f) {
@@ -6574,83 +6611,83 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     }
 
     #region levelup bonus
-    public void InitialBonusForCharacterBaseOnClass(Character p_character) {
-        if (!p_character.characterClass.IsCombatant()) {
-            InitialLevelUpNonCombatantCharacter(p_character);
-        } else if (p_character.characterClass.className == "Druid") {
-            InitialLevelUpDruidCharacter(p_character);
-        } else if (p_character.characterClass.className == "Shaman") {
-            InitialLevelUpShamanCharacter(p_character);
-        } else if (p_character.characterClass.className == "Archer") {
-            InitialLevelUpArcherCharacter(p_character);
-        } else if (p_character.characterClass.className == "Stalker") {
-            InitialLevelUpStalkerCharacter(p_character);
-        } else if (p_character.characterClass.className == "Marauder") {
-            InitialLevelUpMarauderCharacter(p_character);
-        } else if (p_character.characterClass.className == "Barbarian") {
-            InitialLevelUpBarbarianCharacter(p_character);
-        }
-    }
+    // public void InitialBonusForCharacterBaseOnClass(Character p_character) {
+    //     if (!p_character.characterClass.IsCombatant()) {
+    //         InitialLevelUpNonCombatantCharacter(p_character);
+    //     } else if (p_character.characterClass.className == "Druid") {
+    //         InitialLevelUpDruidCharacter(p_character);
+    //     } else if (p_character.characterClass.className == "Shaman") {
+    //         InitialLevelUpShamanCharacter(p_character);
+    //     } else if (p_character.characterClass.className == "Archer") {
+    //         InitialLevelUpArcherCharacter(p_character);
+    //     } else if (p_character.characterClass.className == "Stalker") {
+    //         InitialLevelUpStalkerCharacter(p_character);
+    //     } else if (p_character.characterClass.className == "Marauder") {
+    //         InitialLevelUpMarauderCharacter(p_character);
+    //     } else if (p_character.characterClass.className == "Barbarian") {
+    //         InitialLevelUpBarbarianCharacter(p_character);
+    //     }
+    // }
 
-    public void InitialLevelUpNonCombatantCharacter(Character p_targetCharacter) {
-        List<float> bonusNumbers = new List<float>() { 0f, 5f, 10f };
-        LevelUpresistancesWithSetOfNumbers(p_targetCharacter, bonusNumbers);
-    }
+    // public void InitialLevelUpNonCombatantCharacter(Character p_targetCharacter) {
+    //     List<float> bonusNumbers = new List<float>() { 0f, 5f, 10f };
+    //     LevelUpresistancesWithSetOfNumbers(p_targetCharacter, bonusNumbers);
+    // }
 
-    private void LevelUpresistancesWithSetOfNumbers(Character p_targetCharacter, List<float> bonusNumbers) {
-        RESISTANCE[] resistances = CollectionUtilities.GetEnumValues<RESISTANCE>();
-        for (int i = 0; i < resistances.Length; i++) {
-            RESISTANCE res = resistances[i];
-            if (res != RESISTANCE.None) {
-                if (res.IsElemental()) {
-                    p_targetCharacter.piercingAndResistancesComponent.AdjustResistance(res, bonusNumbers[GameUtilities.RandomBetweenTwoNumbers(0, bonusNumbers.Count - 1)]);
-                } else if (res.IsSecondary()) {
-                    p_targetCharacter.piercingAndResistancesComponent.AdjustResistance(res, bonusNumbers[GameUtilities.RandomBetweenTwoNumbers(0, bonusNumbers.Count - 1)]);
-                }
-                p_targetCharacter.piercingAndResistancesComponent.AdjustResistance(res, bonusNumbers[GameUtilities.RandomBetweenTwoNumbers(0, bonusNumbers.Count - 1)]);
-            }
-        }
-    }
+    // private void LevelUpresistancesWithSetOfNumbers(Character p_targetCharacter, List<float> bonusNumbers) {
+    //     RESISTANCE[] resistances = CollectionUtilities.GetEnumValues<RESISTANCE>();
+    //     for (int i = 0; i < resistances.Length; i++) {
+    //         RESISTANCE res = resistances[i];
+    //         if (res != RESISTANCE.None) {
+    //             if (res.IsElemental()) {
+    //                 p_targetCharacter.piercingAndResistancesComponent.AdjustResistance(res, bonusNumbers[GameUtilities.RandomBetweenTwoNumbers(0, bonusNumbers.Count - 1)]);
+    //             } else if (res.IsSecondary()) {
+    //                 p_targetCharacter.piercingAndResistancesComponent.AdjustResistance(res, bonusNumbers[GameUtilities.RandomBetweenTwoNumbers(0, bonusNumbers.Count - 1)]);
+    //             }
+    //             p_targetCharacter.piercingAndResistancesComponent.AdjustResistance(res, bonusNumbers[GameUtilities.RandomBetweenTwoNumbers(0, bonusNumbers.Count - 1)]);
+    //         }
+    //     }
+    // }
 
-    public void InitialLevelUpDruidCharacter(Character p_targetCharacter) {
-        List<float> bonusNumbers = new List<float>() { 5f, 10f, 15f };
-        LevelUpresistancesWithSetOfNumbers(p_targetCharacter, bonusNumbers);
-    }
-
-    public void InitialLevelUpShamanCharacter(Character p_targetCharacter) {
-        List<float> bonusNumbers = new List<float>() { 5f, 10f, 15f };
-        p_targetCharacter.piercingAndResistancesComponent.AdjustBasePiercing(5f);
-        LevelUpresistancesWithSetOfNumbers(p_targetCharacter, bonusNumbers);
-    }
-
-    public void InitialLevelUpArcherCharacter(Character p_targetCharacter) {
-        List<float> bonusNumbers = new List<float>() { 5f, 10f, 15f };
-        p_targetCharacter.piercingAndResistancesComponent.AdjustBasePiercing(10f);
-        LevelUpresistancesWithSetOfNumbers(p_targetCharacter, bonusNumbers);
-    }
-
-    public void InitialLevelUpStalkerCharacter(Character p_targetCharacter) {
-        List<float> bonusNumbers = new List<float>() { 5f, 10f, 15f };
-        p_targetCharacter.piercingAndResistancesComponent.AdjustBasePiercing(15f);
-        LevelUpresistancesWithSetOfNumbers(p_targetCharacter, bonusNumbers);
-    }
-
-    public void InitialLevelUpMarauderCharacter(Character p_targetCharacter) {
-        List<float> bonusNumbers = new List<float>() { 5f, 10f, 15f };
-        p_targetCharacter.piercingAndResistancesComponent.AdjustBasePiercing(5f);
-        LevelUpresistancesWithSetOfNumbers(p_targetCharacter, bonusNumbers);
-    }
-
-    public void InitialLevelUpBarbarianCharacter(Character p_targetCharacter) {
-        List<float> bonusNumbers = new List<float>() { 5f, 10f, 15f };
-        p_targetCharacter.piercingAndResistancesComponent.AdjustBasePiercing(10f);
-        LevelUpresistancesWithSetOfNumbers(p_targetCharacter, bonusNumbers);
-    }
+    // public void InitialLevelUpDruidCharacter(Character p_targetCharacter) {
+    //     List<float> bonusNumbers = new List<float>() { 5f, 10f, 15f };
+    //     LevelUpresistancesWithSetOfNumbers(p_targetCharacter, bonusNumbers);
+    // }
+    //
+    // public void InitialLevelUpShamanCharacter(Character p_targetCharacter) {
+    //     List<float> bonusNumbers = new List<float>() { 5f, 10f, 15f };
+    //     p_targetCharacter.piercingAndResistancesComponent.AdjustBasePiercing(5f);
+    //     LevelUpresistancesWithSetOfNumbers(p_targetCharacter, bonusNumbers);
+    // }
+    //
+    // public void InitialLevelUpArcherCharacter(Character p_targetCharacter) {
+    //     List<float> bonusNumbers = new List<float>() { 5f, 10f, 15f };
+    //     p_targetCharacter.piercingAndResistancesComponent.AdjustBasePiercing(10f);
+    //     LevelUpresistancesWithSetOfNumbers(p_targetCharacter, bonusNumbers);
+    // }
+    //
+    // public void InitialLevelUpStalkerCharacter(Character p_targetCharacter) {
+    //     List<float> bonusNumbers = new List<float>() { 5f, 10f, 15f };
+    //     p_targetCharacter.piercingAndResistancesComponent.AdjustBasePiercing(15f);
+    //     LevelUpresistancesWithSetOfNumbers(p_targetCharacter, bonusNumbers);
+    // }
+    //
+    // public void InitialLevelUpMarauderCharacter(Character p_targetCharacter) {
+    //     List<float> bonusNumbers = new List<float>() { 5f, 10f, 15f };
+    //     p_targetCharacter.piercingAndResistancesComponent.AdjustBasePiercing(5f);
+    //     LevelUpresistancesWithSetOfNumbers(p_targetCharacter, bonusNumbers);
+    // }
+    //
+    // public void InitialLevelUpBarbarianCharacter(Character p_targetCharacter) {
+    //     List<float> bonusNumbers = new List<float>() { 5f, 10f, 15f };
+    //     p_targetCharacter.piercingAndResistancesComponent.AdjustBasePiercing(10f);
+    //     LevelUpresistancesWithSetOfNumbers(p_targetCharacter, bonusNumbers);
+    // }
     #endregion
 
-    public void ApplyInitialClassBonusLevelUp() {
-        InitialBonusForCharacterBaseOnClass(this);
-    }
+    // public void ApplyInitialClassBonusLevelUp() {
+    //     InitialBonusForCharacterBaseOnClass(this);
+    // }
 
     //function to be attached on signal that 1 elven got a power crystal
     //check if they are on the same village

@@ -9,7 +9,7 @@ using UnityEngine.Assertions;
 public class ChopWood : GoapAction {
 
     public int m_amountProducedPerTick = 1;
-    private const float _coinGainMultiplier = 0.88f;
+    private const float _coinGainMultiplier = 0.516f;
 
     public ChopWood() : base(INTERACTION_TYPE.CHOP_WOOD) {
         actionIconString = GoapActionStateDB.Chop_Icon;
@@ -81,7 +81,7 @@ public class ChopWood : GoapAction {
         matsToHaul.SetResourceInPile(amount);
         tileToSpawnPile.structure.AddPOI(matsToHaul, tileToSpawnPile);
         ProduceLogs(p_node);
-        p_node.actor.talentComponent?.GetTalent(CHARACTER_TALENT.Resources).AdjustExperience(2, p_node.actor);
+        p_node.actor.talentComponent?.GetTalent(CHARACTER_TALENT.Resources).AdjustExperience(8, p_node.actor);
         return matsToHaul;
     }
 

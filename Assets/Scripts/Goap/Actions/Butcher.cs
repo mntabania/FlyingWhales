@@ -8,7 +8,7 @@ using Traits;
 public class Butcher : GoapAction {
 
     public int m_amountProducedPerTick = 2;
-    private const float _coinGainMultiplier = 0.733f;
+    private const float _coinGainMultiplier = 0.344f;
     public Butcher() : base(INTERACTION_TYPE.BUTCHER) {
         actionIconString = GoapActionStateDB.Butcher_Icon;
         canBeAdvertisedEvenIfTargetIsUnavailable = true;
@@ -504,7 +504,7 @@ public class Butcher : GoapAction {
                 p_node.actor.traitContainer.AddTrait(p_node.actor, "Traumatized", targetCharacter);
             }
         }
-        p_node.actor.talentComponent?.GetTalent(CHARACTER_TALENT.Food).AdjustExperience(4, p_node.actor);
+        p_node.actor.talentComponent?.GetTalent(CHARACTER_TALENT.Food).AdjustExperience(8, p_node.actor);
         ProduceLogs(p_node, foodPile);
     }
 

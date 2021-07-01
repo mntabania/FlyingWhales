@@ -871,7 +871,7 @@ public class Party : ILogFiller, ISavable, IJobOwner, IBookmarkable {
     }
     public void MembersThatJoinedQuestGainsGold() {
         for (int i = 0; i < membersThatJoinedQuest.Count; i++) {
-            membersThatJoinedQuest[i].moneyComponent.AdjustCoins(176);
+            membersThatJoinedQuest[i].moneyComponent.AdjustCoins(83);
         }
     }
     public bool RemoveMemberThatJoinedQuest(Character character, bool broadcastSignal = true, bool shouldDropQuest = true) {
