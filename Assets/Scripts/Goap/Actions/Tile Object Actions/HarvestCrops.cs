@@ -49,7 +49,10 @@ public class HarvestCrops : GoapAction {
 
     #region State Effects
     public void AfterHarvestCropsSuccess(ActualGoapNode p_node) {
-        p_node.actor.jobComponent.TryCreateHaulToWorkplaceJob(ProduceMatsPile(p_node));
+        ResourcePile pile = ProduceMatsPile(p_node);
+        if (pile.resourceInPile > 0) {
+            p_node.actor.jobComponent.TryCreateHaulToWorkplaceJob(ProduceMatsPile(p_node));
+        }
     }
     #endregion
 
