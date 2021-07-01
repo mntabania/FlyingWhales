@@ -18,15 +18,15 @@ public class TortureChambersTileObject : TileObject {
         return true;
     }
     public override void LeftSelectAction() {
-        UIManager.Instance.ShowStructureInfo(gridTileLocation.structure);
+        // UIManager.Instance.ShowStructureInfo(gridTileLocation.structure);
     }
-    public override bool IsCurrentlySelected() {
-        if (gridTileLocation != null) {
-            return UIManager.Instance.structureInfoUI.isShowing &&
-                   UIManager.Instance.structureInfoUI.activeStructure == gridTileLocation.structure;    
-        }
-        return base.IsCurrentlySelected();
-    }
+    // public override bool IsCurrentlySelected() {
+    //     if (gridTileLocation != null) {
+    //         return UIManager.Instance.structureInfoUI.isShowing &&
+    //                UIManager.Instance.structureInfoUI.activeStructure == gridTileLocation.structure;    
+    //     }
+    //     return base.IsCurrentlySelected();
+    // }
     public override void RightSelectAction() { }
     public override void MiddleSelectAction() { }
     public override void ConstructDefaultActions() {

@@ -138,7 +138,7 @@ public class Table : TileObject {
             Messenger.Broadcast(StructureSignals.FOOD_IN_DWELLING_CHANGED, this);   
         }
     }
-    private void SetFood(CONCRETE_RESOURCES p_foodType, int p_amount) {
+    public void SetFood(CONCRETE_RESOURCES p_foodType, int p_amount) {
         Assert.IsTrue(p_foodType.GetResourceCategory() == RESOURCE.FOOD, $"A non-food resource is being used to increase food resource of {nameWithID}");
         lastAddedFoodType = p_foodType;
         resourceStorageComponent.SetResource(p_foodType, p_amount);

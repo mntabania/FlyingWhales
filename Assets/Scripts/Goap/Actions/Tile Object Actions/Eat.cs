@@ -269,43 +269,7 @@ public class Eat : GoapAction {
                         }
                     }
                 } else if (target.gridTileLocation != null && target.gridTileLocation.IsPartOfSettlement(out var settlement) && settlement.owner != null && actor.faction != null) {
-                    if (actor.homeSettlement == settlement) {
-                        //target is at home settlement of actor
-                        if (target is FoodPile foodPile) {
-                            if (foodPile.structureLocation != null && foodPile.structureLocation is ManMadeStructure manMadeStructure) {
-                                if (manMadeStructure == actor.homeStructure) {
-                                    cost = UtilityScripts.Utilities.Rng.Next(100, 151);
-#if DEBUG_LOG
-                                    costLog += $" +{cost}(Target is food pile inside actors home)";
-#endif
-                                } else if (manMadeStructure.CanPurchaseFromHere(actor, out var needsToPay, out _)) {
-                                    if (needsToPay) {
-                                        if (actor.moneyComponent.CanAfford(BuyFood.FoodCost)) {
-                                            cost = UtilityScripts.Utilities.Rng.Next(600, 651);
-#if DEBUG_LOG
-                                            costLog += $" +{cost}(Target is a food pile inside food producing structure and actor NEEDS TO PAY and CAN AFFORD it)";
-#endif                                        
-                                        } else {
-                                            cost = 2000;
-#if DEBUG_LOG
-                                            costLog += $" +{cost}(Target is a food pile inside food producing structure and actor NEEDS TO PAY and CANNOT AFFORD it)";
-#endif                    
-                                        }
-                                    } else {
-                                        cost = UtilityScripts.Utilities.Rng.Next(100, 151);
-#if DEBUG_LOG
-                                        costLog += $" +{cost}(Target is a food pile inside food producing structure and actor DOES NOT NEED TO PAY)";
-#endif                                    
-                                    }
-                                } else {
-                                    cost = 2000;
-#if DEBUG_LOG
-                                    costLog += $" +{cost}(Target is a food pile inside food producing structure but actor cannot buy from there)";
-#endif                    
-                                }
-                            }
-                        }
-                    } else if (!actor.faction.IsHostileWith(settlement.owner)) {
+                    if (!actor.faction.IsHostileWith(settlement.owner)) {
                         if (target.gridTileLocation.structure.structureType == STRUCTURE_TYPE.TAVERN) {
                             cost = UtilityScripts.Utilities.Rng.Next(600, 651);
 #if DEBUG_LOG
@@ -316,16 +280,49 @@ public class Eat : GoapAction {
 #if DEBUG_LOG
                             costLog += $" +{cost}(Target is inside a special structure owned by a non hostile faction)";
 #endif
-                        } else if (actor.needsComponent.isStarving) {
-                            cost = UtilityScripts.Utilities.Rng.Next(970, 981);
+                        } else if (target.gridTileLocation.structure is ManMadeStructure manMadeStructure && target is FoodPile) {
+                            if (manMadeStructure == actor.homeStructure) {
+                                cost = UtilityScripts.Utilities.Rng.Next(100, 151);
 #if DEBUG_LOG
-                            costLog += $" +{cost}(Actor is starving and is inside a structure owned by a non hostile faction)";
+                                costLog += $" +{cost}(Target is food pile inside actors home)";
 #endif
+                            } else if (manMadeStructure.CanPurchaseFromHere(actor, out var needsToPay, out _)) {
+                                if (needsToPay) {
+                                    if (actor.moneyComponent.CanAfford(BuyFood.FoodCost)) {
+                                        cost = UtilityScripts.Utilities.Rng.Next(600, 651);
+#if DEBUG_LOG
+                                        costLog += $" +{cost}(Target is a food pile inside food producing structure and actor NEEDS TO PAY and CAN AFFORD it)";
+#endif                                        
+                                    } else {
+                                        cost = 2000;
+#if DEBUG_LOG
+                                        costLog += $" +{cost}(Target is a food pile inside food producing structure and actor NEEDS TO PAY and CANNOT AFFORD it)";
+#endif                    
+                                    }
+                                } else {
+                                    cost = UtilityScripts.Utilities.Rng.Next(100, 151);
+#if DEBUG_LOG
+                                    costLog += $" +{cost}(Target is a food pile inside food producing structure and actor DOES NOT NEED TO PAY)";
+#endif                                    
+                                }
+                            } else {
+                                cost += 2000;
+#if DEBUG_LOG
+                                costLog += $" +{cost}(Target is a food pile inside manmade structure)";
+#endif
+                            }
                         } else {
-                            cost += 2000;
+                            if (actor.needsComponent.isStarving) {
+                                cost = UtilityScripts.Utilities.Rng.Next(970, 981);
 #if DEBUG_LOG
-                            costLog += $" +{cost}(Target is inside settlement owned by a non hostile faction)";
+                                costLog += $" +{cost}(Actor is starving and is inside a structure owned by a non hostile faction)";
 #endif
+                            } else {
+                                cost += 2000;
+#if DEBUG_LOG
+                                costLog += $" +{cost}(Target is inside settlement owned by a non hostile faction)";
+#endif
+                            }
                         }
                     } else {
                         cost += 2000;
