@@ -15,7 +15,7 @@ MonoBehaviour:
   tutorialType: 13
   tutorialNameKey: Time_Management
   pages:
-  - imgTutorial: {fileID: 21300002, guid: 822d07f56afeab6449b5a8b2a2609329, type: 3}
+  - imgTutorial: {fileID: 21300000, guid: 6cbaccdee8b800049a9ad6e93b550464, type: 3}
     description: Click on the various Speed buttons to change game speed. You may
       also press Spacebar to Pause or Unpause the game. You can also use the + and
       - keys to change game speed.

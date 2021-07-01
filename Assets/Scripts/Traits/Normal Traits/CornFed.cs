@@ -6,7 +6,7 @@ namespace Traits {
         
         public CornFed() {
             name = "Corn Fed";
-            description = "Increased Strength by 50%.";
+            description = "Recently ate: Corn. Increased Strength by 50%.";
             type = TRAIT_TYPE.STATUS;
             effect = TRAIT_EFFECT.POSITIVE;
             isStacking = true;

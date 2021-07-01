@@ -3,7 +3,7 @@
         
         public FishFed() {
             name = "Fish Fed";
-            description = "Doubles all secondary resistances";
+            description = "Recently ate: Fish. Doubles all secondary resistances";
             type = TRAIT_TYPE.STATUS;
             effect = TRAIT_EFFECT.POSITIVE;
             isStacking = true;

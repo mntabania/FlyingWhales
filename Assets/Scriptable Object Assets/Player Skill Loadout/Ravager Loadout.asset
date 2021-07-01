@@ -42,16 +42,16 @@ MonoBehaviour:
   - name: Level 2
     skillTypesToUnlock: b50000004a000000ae00000017000000160000002e000000
     upgradeCost:
-    - name: 20 Spirit_Energy
+    - name: 10 Spirit_Energy
       currency: 2
-      amount: 20
+      amount: 10
     upgradeTime: 240
   - name: Level 3
     skillTypesToUnlock: b8000000be0000004a0000004f0000003400000019000000
     upgradeCost:
-    - name: 40 Spirit_Energy
+    - name: 30 Spirit_Energy
       currency: 2
-      amount: 40
+      amount: 30
     upgradeTime: 240
   - name: Level 4
     skillTypesToUnlock: 4a000000b900000026000000c00000001d00000001000000
@@ -63,28 +63,28 @@ MonoBehaviour:
   - name: Level 5
     skillTypesToUnlock: 4c000000be0000005000000007000000090000000a000000
     upgradeCost:
-    - name: 80 Spirit_Energy
-      currency: 2
-      amount: 80
-    upgradeTime: 480
-  - name: Level 6
-    skillTypesToUnlock: 5800000018000000330000001f000000060000001e000000
-    upgradeCost:
     - name: 100 Spirit_Energy
       currency: 2
       amount: 100
-    upgradeTime: 960
-  - name: Level 7
-    skillTypesToUnlock: b8000000be0000009b00000054000000
+    upgradeTime: 480
+  - name: Level 6
+    skillTypesToUnlock: 5800000018000000330000001f000000060000001e000000
     upgradeCost:
     - name: 120 Spirit_Energy
       currency: 2
       amount: 120
     upgradeTime: 960
-  - name: Level 8
-    skillTypesToUnlock: 
+  - name: Level 7
+    skillTypesToUnlock: b8000000be0000009b00000054000000
     upgradeCost:
     - name: 150 Spirit_Energy
       currency: 2
       amount: 150
+    upgradeTime: 960
+  - name: Level 8
+    skillTypesToUnlock: 
+    upgradeCost:
+    - name: 200 Spirit_Energy
+      currency: 2
+      amount: 200
     upgradeTime: 1440

@@ -6,7 +6,7 @@ namespace Traits {
         
         public PineappleFed() {
             name = "Pineapple Fed";
-            description = "Doubles mental and physical resistances";
+            description = "Recently ate: Pineapple. Doubles mental and physical resistances";
             type = TRAIT_TYPE.STATUS;
             effect = TRAIT_EFFECT.POSITIVE;
             isStacking = true;

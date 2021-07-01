@@ -15,18 +15,18 @@ MonoBehaviour:
   tutorialType: 12
   tutorialNameKey: Resistances
   pages:
-  - imgTutorial: {fileID: 21300000, guid: 1de8b7335028dce4b8e2c6254181530f, type: 3}
+  - imgTutorial: {fileID: 21300000, guid: e351508d623560c4a81c0a47b90635c9, type: 3}
     description: Characters have various Resistances that reduce damage and may also
       sometimes even completely resist your Power.
-  - imgTutorial: {fileID: 21300000, guid: 26ca39cf2c4aefc45882e0028f698aa1, type: 3}
+  - imgTutorial: {fileID: 21300000, guid: e351508d623560c4a81c0a47b90635c9, type: 3}
     description: Physical Resistance reduces physical damage, prevents physical Abilities
       like Seize and some physical based Afflictions like Paralysis. Mental Resistance
       prevents mental Abilities like Remove Flaw and some magical based Afflictions
       like Kleptomania.
-  - imgTutorial: {fileID: 21300000, guid: 7c08a1d611e09e54099db40c49a7a46c, type: 3}
+  - imgTutorial: {fileID: 21300000, guid: e351508d623560c4a81c0a47b90635c9, type: 3}
     description: 'Elemental Resistances refer to resistance to the four primary elements:
       Earth, Wind, Fire and Water. Secondary Resistances refer to resistance to the
       three special elements: Poison, Electric and Ice.'
-  - imgTutorial: {fileID: 21300000, guid: b0e98f6e5eb8c424ab82432343bba225, type: 3}
+  - imgTutorial: {fileID: 21300000, guid: f3f76112fe6e590479e90c6a3ce0c386, type: 3}
     description: Piercing negates Resistances. You must level up your Powers using
       the Spire structure to increase their Piercing.

@@ -3,7 +3,7 @@
         
         public AnimalFed() {
             name = "Animal Fed";
-            description = "Increases piercing by 50%";
+            description = "Recently ate: Animal Meat. Increases piercing by 50%";
             type = TRAIT_TYPE.STATUS;
             effect = TRAIT_EFFECT.POSITIVE;
             isStacking = true;

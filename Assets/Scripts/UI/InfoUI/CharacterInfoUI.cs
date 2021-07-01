@@ -643,7 +643,7 @@ public class CharacterInfoUI : InfoUIBase {
             }
 #endif
             string color = UIManager.normalTextColor;
-            if (currStatus.moodEffect > 0) {
+            if (currStatus.moodEffect > 0 || currStatus.effect == TRAIT_EFFECT.POSITIVE) {
                 color = UIManager.buffTextColor;
             } else if (currStatus.moodEffect < 0) {
                 color = UIManager.flawTextColor;
