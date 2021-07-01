@@ -6580,10 +6580,11 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 float randomResistanceValue = 0f;
                 if (res.IsElemental()) {
                     randomResistanceValue = CollectionUtilities.GetRandomElement(classData.initialVillagerElementalResistances);
+                    p_character.piercingAndResistancesComponent.SetResistance(res, randomResistanceValue);
                 } else if (res.IsSecondary()) {
                     randomResistanceValue = CollectionUtilities.GetRandomElement(classData.initialVillagerSecondaryResistances);
+                    p_character.piercingAndResistancesComponent.SetResistance(res, randomResistanceValue);
                 }
-                p_character.piercingAndResistancesComponent.SetResistance(res, randomResistanceValue);
             }
         }
 
