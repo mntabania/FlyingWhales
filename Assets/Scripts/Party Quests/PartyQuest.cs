@@ -10,7 +10,7 @@ public class PartyQuest : ISavable {
     public bool isWaitTimeOver { get; protected set; }
     public System.Type relatedBehaviour { get; protected set; }
     public Party assignedParty { get; protected set; }
-    public BaseSettlement madeInLocation { get; protected set; } //Where was this party quest created?
+    public BaseSettlement madeInLocation { get; protected set; } //Where was this party quest created? This is null if party is summoned by player
     public bool isSuccessful { get; protected set; }
 
     #region getters
@@ -72,7 +72,7 @@ public class PartyQuest : ISavable {
     public virtual string GetPartyQuestTextInLog() { return string.Empty; }
     public virtual void OnCharacterDeath(Character p_character) {
         if (shouldAssignedPartyRetreatUponKnockoutOrKill) {
-            if (assignedParty != null && assignedParty.membersThatJoinedQuest.Contains(p_character)) {
+            if (assignedParty != null && !assignedParty.isPlayerParty && assignedParty.membersThatJoinedQuest.Contains(p_character)) {
                 if (GameUtilities.RollChance(assignedParty.chanceToRetreatUponKnockoutOrDeath)) {
                     EndQuest(p_character.name + " is dead");
                 } else {
@@ -103,7 +103,7 @@ public class PartyQuest : ISavable {
     }
     private void OnCharacterNoLongerPerform(Character character) {
         if (character.traitContainer.HasTrait("Unconscious")) {
-            if (assignedParty != null && assignedParty.membersThatJoinedQuest.Contains(character)) {
+            if (assignedParty != null && !assignedParty.isPlayerParty && assignedParty.membersThatJoinedQuest.Contains(character)) {
                 if (GameUtilities.RollChance(assignedParty.chanceToRetreatUponKnockoutOrDeath)) {
                     EndQuest(character.name + " is incapacitated");
                 } else {
@@ -113,7 +113,7 @@ public class PartyQuest : ISavable {
         }
     }
     public bool TryTriggerRetreat(string endQuestReason) {
-        if (assignedParty != null) {
+        if (assignedParty != null && !assignedParty.isPlayerParty) {
             if (GameUtilities.RollChance(assignedParty.chanceToRetreatUponKnockoutOrDeath)) {
                 EndQuest(endQuestReason);
                 return true;

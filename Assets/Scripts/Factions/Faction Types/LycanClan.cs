@@ -25,7 +25,7 @@ namespace Factions.Faction_Types {
 
             //AddCivilianClass("Peasant");
             AddCivilianClass("Miner");
-            AddCivilianClass("Craftsman");
+            AddCivilianClass("Crafter");
             AddCivilianClass("Farmer");
             AddCivilianClass("Fisher");
             AddCivilianClass("Logger");
@@ -56,7 +56,7 @@ namespace Factions.Faction_Types {
 
             //AddCivilianClass("Peasant");
             AddCivilianClass("Miner");
-            AddCivilianClass("Craftsman");
+            AddCivilianClass("Crafter");
             AddCivilianClass("Farmer");
             AddCivilianClass("Fisher");
             AddCivilianClass("Logger");

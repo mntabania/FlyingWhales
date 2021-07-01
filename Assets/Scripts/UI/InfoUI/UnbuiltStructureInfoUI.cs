@@ -20,11 +20,13 @@ public class UnbuiltStructureInfoUI : InfoUIBase {
     public LocationStructureObject activeStructureObject { get; private set; }
 
     #region Overrides
-    internal override void Initialize() {
-        base.Initialize();
-        Messenger.AddListener<LocationStructure>(StructureSignals.STRUCTURE_OBJECT_PLACED, OnStructureObjectPlaced);
-    }
-    private void OnStructureObjectPlaced(LocationStructure p_structure) {
+    //internal override void Initialize() {
+    //    base.Initialize();
+    //    Messenger.AddListener<LocationStructure>(StructureSignals.STRUCTURE_OBJECT_PLACED, OnStructureObjectPlaced);
+    //}
+
+    //Call this after creation of rooms because some player actions require checking of rooms (like LetGo)
+    public void OnBuiltStructure(LocationStructure p_structure) { //OnStructureObjectPlaced
         if (isShowing) {
             if (p_structure is DemonicStructure demonicStructure && demonicStructure.structureObj == activeStructureObject) {
                 CloseMenu();            

@@ -309,7 +309,9 @@ public class Party : ILogFiller, ISavable, IJobOwner, IBookmarkable {
             }
             //}
         }
-        ScheduleNextDateToCheckQuest();
+        if (!isPlayerParty) {
+            ScheduleNextDateToCheckQuest();
+        }
     }
     private void TryStartToWaitQuest() {
         if (hasSetNextSwitchToWaitingStateTrigger) {
@@ -520,9 +522,6 @@ public class Party : ILogFiller, ISavable, IJobOwner, IBookmarkable {
                     SetPartyState(PARTY_STATE.Working);
                 } else {
                     SetPartyState(PARTY_STATE.Moving);
-                }
-                if (true) {
-
                 }
             } else {
                 //Drop quest only instead of ending quest so that the quest can still be taken by other parties
@@ -739,8 +738,8 @@ public class Party : ILogFiller, ISavable, IJobOwner, IBookmarkable {
             if (!isPlayerParty) {
                 ScheduleToStartWaitingQuest(members[0]);
                 ScheduleToEndQuest(members[0]);
+                SetChanceToRetreatUponKnockoutOrDeath(ChanceData.GetChance(CHANCE_TYPE.Party_Quest_First_Knockout)); //25
             }
-            SetChanceToRetreatUponKnockoutOrDeath(ChanceData.GetChance(CHANCE_TYPE.Party_Quest_First_Knockout)); //25
         }
     }
     //private void DistributeQuestToMembersThatJoinedParty() {

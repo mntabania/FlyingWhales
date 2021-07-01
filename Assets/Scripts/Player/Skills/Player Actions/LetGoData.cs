@@ -32,7 +32,7 @@ public class LetGoData : PlayerAction {
                 if (demonicStructure is Kennel kennel && kennel.occupyingSummon != null) {
                     return true;
                 }
-                if (demonicStructure is TortureChambers tortureChambers && tortureChambers.rooms.Length > 0 && tortureChambers.rooms[0] is PrisonCell prisonCell && 
+                if (demonicStructure is TortureChambers tortureChambers && tortureChambers.rooms.ElementAtOrDefault(0) is PrisonCell prisonCell && 
                     prisonCell.HasValidOccupant()) {
                     return true;
                 }

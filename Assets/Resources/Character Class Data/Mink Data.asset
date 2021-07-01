@@ -22,10 +22,27 @@ MonoBehaviour:
     animationSprites:
     - {fileID: 21300000, guid: bb68ff13fcdad8042be3a5f0535e4d43, type: 3}
     - {fileID: 21300000, guid: ac8efed256865714582dff9596cac73f, type: 3}
-    - {fileID: 21300000, guid: a25b18aa24290084bb8506f2423e114a, type: 3}
+    - {fileID: 21300000, guid: cffc8b47aecacc844b7d981bb7b07dc4, type: 3}
   raceSprites:
     m_keys: 
     m_values: []
+  initialVillagerPiercing: 0
+  initialVillagerPhysicalResistances:
+  - 5
+  - 10
+  - 15
+  initialVillagerMentalResistances:
+  - 5
+  - 10
+  - 15
+  initialVillagerElementalResistances:
+  - 5
+  - 10
+  - 15
+  initialVillagerSecondaryResistances:
+  - 5
+  - 10
+  - 15
   characterSkillUpdateData:
     m_fireResistanceBonus: 0
     m_earthResistanceBonus: 0

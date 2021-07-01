@@ -372,7 +372,7 @@ public class SettlementResources
     //#endif
     //    }
 
-    //public ResourcePile GetRandomPileOfWoodForCraftsman(Character p_getter) {
+    //public ResourcePile GetRandomPileOfWoodForCrafter(Character p_getter) {
     //    //bool found = false;
     //    List<TileObject> pilePool = RuinarchListPool<TileObject>.Claim();
     //    for (int x = 0; x < resourcePiles.Count; ++x) {
@@ -393,7 +393,7 @@ public class SettlementResources
     //    return chosenPile;
     //}
 
-    //public ResourcePile GetRandomPileOfClothForCraftsman(Character p_getter) {
+    //public ResourcePile GetRandomPileOfClothForCrafter(Character p_getter) {
     //    //bool found = false;
     //    List<TileObject> pilePool = RuinarchListPool<TileObject>.Claim();
     //    for (int x = 0; x < resourcePiles.Count; ++x) {
@@ -414,7 +414,7 @@ public class SettlementResources
     //    RuinarchListPool<TileObject>.Release(pilePool);
     //    return chosenPile;
     //}
-    //public ResourcePile GetRandomPileOfLeatherForCraftsman(Character p_getter) {
+    //public ResourcePile GetRandomPileOfLeatherForCrafter(Character p_getter) {
     //    //bool found = false;
     //    List<TileObject> pilePool = RuinarchListPool<TileObject>.Claim();
     //    for (int x = 0; x < resourcePiles.Count; ++x) {

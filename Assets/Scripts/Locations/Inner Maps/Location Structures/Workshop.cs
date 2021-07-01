@@ -296,7 +296,7 @@ namespace Inner_Maps.Location_Structures {
             if (!ignoreHaul) {
                 ResourcePile metalPile = p_worker.homeSettlement.SettlementResources.GetRandomPileOfResourceTypeForWorkshopHaul(RESOURCE.METAL, STRUCTURE_TYPE.MINE, p_worker.homeSettlement);
                 if (metalPile != null) {
-                    p_worker.jobComponent.TryCreateHaulJobForCraftsman(metalPile, out producedJob, 40);
+                    p_worker.jobComponent.TryCreateHaulJobForCrafter(metalPile, out producedJob, 40);
                     if(producedJob != null) {
                         //Debug.LogError("Try haul metal Accepted: " + metalPile + " " + p_worker.name);
                         return;
@@ -309,7 +309,7 @@ namespace Inner_Maps.Location_Structures {
             if (!ignoreHaul) {
                 ResourcePile stonePile = p_worker.homeSettlement.SettlementResources.GetRandomPileOfResourceTypeForWorkshopHaul(RESOURCE.STONE, STRUCTURE_TYPE.MINE, p_worker.homeSettlement);
                 if (stonePile != null) {
-                    p_worker.jobComponent.TryCreateHaulJobForCraftsman(stonePile, out producedJob, 40);
+                    p_worker.jobComponent.TryCreateHaulJobForCrafter(stonePile, out producedJob, 40);
                     if (producedJob != null) {
                         //Debug.LogError("Try haul m_stones Accepted: " + stonePile + " " + p_worker.name);
                         return;
@@ -322,7 +322,7 @@ namespace Inner_Maps.Location_Structures {
             if (!ignoreHaul) {
                 ResourcePile clothPile = p_worker.homeSettlement.SettlementResources.GetRandomPileOfResourceTypeForWorkshopHaul(RESOURCE.CLOTH, STRUCTURE_TYPE.HUNTER_LODGE, p_worker.homeSettlement);
                 if (clothPile != null) {
-                    p_worker.jobComponent.TryCreateHaulJobForCraftsman(clothPile, out producedJob, 40);
+                    p_worker.jobComponent.TryCreateHaulJobForCrafter(clothPile, out producedJob, 40);
                     if (producedJob != null) {
                         //Debug.LogError("Try haul m_cloth Accepted: " + clothPile + " " + p_worker.name);
                         return;
@@ -335,7 +335,7 @@ namespace Inner_Maps.Location_Structures {
             if (!ignoreHaul) {
                 ResourcePile leatherPile = p_worker.homeSettlement.SettlementResources.GetRandomPileOfResourceTypeForWorkshopHaul(RESOURCE.LEATHER, STRUCTURE_TYPE.HUNTER_LODGE, p_worker.homeSettlement);
                 if (leatherPile != null) {
-                    p_worker.jobComponent.TryCreateHaulJobForCraftsman(leatherPile, out producedJob, 40);
+                    p_worker.jobComponent.TryCreateHaulJobForCrafter(leatherPile, out producedJob, 40);
                     if (producedJob != null) {
                         //Debug.LogError("Try haul m_leather Accepted: " + leatherPile + " " + p_worker.name);
                         return;
@@ -348,7 +348,7 @@ namespace Inner_Maps.Location_Structures {
             if (!ignoreHaul) {
                 ResourcePile woodPile = p_worker.homeSettlement.SettlementResources.GetRandomPileOfResourceTypeForWorkshopHaul(RESOURCE.WOOD, STRUCTURE_TYPE.LUMBERYARD, p_worker.homeSettlement);
                 if (woodPile != null) {
-                    p_worker.jobComponent.TryCreateHaulJobForCraftsman(woodPile, out producedJob, 40);
+                    p_worker.jobComponent.TryCreateHaulJobForCrafter(woodPile, out producedJob, 40);
                     if (producedJob != null) {
                         //Debug.LogError("Try haul m_woods Accepted: " + woodPile + " " + p_worker.name);
                         return;

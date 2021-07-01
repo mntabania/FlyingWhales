@@ -290,8 +290,8 @@ public class PlayerSkillDetailsTooltip : MonoBehaviour {
                 }
                 break;
             case UPGRADE_BONUS.Pierce:
-                fltCurrentValue = p_data.skillUpgradeData.GetAdditionalPiercePerLevelBaseOnLevel(p_level);
-                fltNextValue = p_data.skillUpgradeData.GetAdditionalPiercePerLevelBaseOnLevel(p_nextLevel);
+                fltCurrentValue = p_data.GetAdditionalPiercePerLevelBaseOnLevel(p_level);
+                fltNextValue = p_data.GetAdditionalPiercePerLevelBaseOnLevel(p_nextLevel);
                 fltDifference = fltNextValue - fltCurrentValue;
                 if (fltDifference > 0) {
                     differenceStr = $"{fltNextValue.ToString()}";    

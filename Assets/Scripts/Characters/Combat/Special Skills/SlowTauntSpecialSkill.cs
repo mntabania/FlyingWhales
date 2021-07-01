@@ -10,7 +10,7 @@ public class SlowTauntSpecialSkill : CombatSpecialSkill {
     #region Overrides
     public override bool TryActivateSkill(Character p_character) {
         bool hasActivated = false;
-        List<Character> tauntedCharacters = ObjectPoolManager.Instance.CreateNewCharactersList();
+        List<Character> tauntedCharacters = RuinarchListPool<Character>.Claim();
         PopulateValidTargetsFor(p_character, tauntedCharacters);
         if(tauntedCharacters.Count > 0) {
             hasActivated = true;
@@ -23,7 +23,7 @@ public class SlowTauntSpecialSkill : CombatSpecialSkill {
             p_character.logComponent.PrintLogIfActive("SLOW TAUNT SPECIAL SKILL OF " + p_character.name + " ACTIVATED!");
 #endif
         }
-        ObjectPoolManager.Instance.ReturnCharactersListToPool(tauntedCharacters);
+        RuinarchListPool<Character>.Release(tauntedCharacters);
         return hasActivated;
     }
     protected override void PopulateValidTargetsFor(Character p_character, List<Character> p_validTargets) {
@@ -37,6 +37,10 @@ public class SlowTauntSpecialSkill : CombatSpecialSkill {
                         && !p_character.combatComponent.IsAvoidInRange(visionCharacter)) {
                         if (visionCharacter.combatComponent.IsCurrentlyAttackingFriendlyWith(p_character)) {
                             p_validTargets.Add(visionCharacter);
+                        } else if (p_character.faction != null && p_character.faction.isPlayerFaction) {
+                            if (visionCharacter.combatComponent.IsCurrentlyAttackingDemonicStructure()) {
+                                p_validTargets.Add(visionCharacter);
+                            }
                         }
                     }
                 }

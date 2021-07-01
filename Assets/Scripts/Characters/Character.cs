@@ -280,6 +280,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         combatComponent.UpdateBasicData(true);
         structureComponent = new CharacterStructureComponent(); structureComponent.SetOwner(this);
         afflictionsSkillsInflictedByPlayer = new List<PLAYER_SKILL_TYPE>();
+        combatComponent.ApplyInitialBonusStrengthAndIntelligenceOnCreation();
     }
     public Character(string className, RACE race, GENDER gender) : this() {
         skillCauseOfDeath = PLAYER_SKILL_TYPE.NONE;
@@ -295,6 +296,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         combatComponent.UpdateBasicData(true);
         structureComponent = new CharacterStructureComponent(); structureComponent.SetOwner(this);
         afflictionsSkillsInflictedByPlayer = new List<PLAYER_SKILL_TYPE>();
+        combatComponent.ApplyInitialBonusStrengthAndIntelligenceOnCreation();
     }
     private Character() {
         SetIsDead(false);
@@ -2822,7 +2824,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 }
             }
             if (source is Character character) {
-                if (character.partyComponent.hasParty && character.partyComponent.currentParty.isPlayerParty) {
+                if (character.partyComponent.hasParty && character.partyComponent.currentParty.isPlayerParty && character.partyComponent.currentParty.isActive) {
                     if (character.partyComponent.currentParty.currentQuest.partyQuestType == PARTY_QUEST_TYPE.Demon_Raid) {
                         int damageDone = amount;
                         if (currentHP == 0) {
@@ -6580,10 +6582,11 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 float randomResistanceValue = 0f;
                 if (res.IsElemental()) {
                     randomResistanceValue = CollectionUtilities.GetRandomElement(classData.initialVillagerElementalResistances);
+                    p_character.piercingAndResistancesComponent.SetResistance(res, randomResistanceValue);
                 } else if (res.IsSecondary()) {
                     randomResistanceValue = CollectionUtilities.GetRandomElement(classData.initialVillagerSecondaryResistances);
+                    p_character.piercingAndResistancesComponent.SetResistance(res, randomResistanceValue);
                 }
-                p_character.piercingAndResistancesComponent.SetResistance(res, randomResistanceValue);
             }
         }
 

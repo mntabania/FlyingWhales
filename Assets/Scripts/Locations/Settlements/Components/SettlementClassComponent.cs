@@ -578,7 +578,7 @@ public class SettlementClassComponent : NPCSettlementComponent {
                 log += "\nThere is unclaimed/non-reserved Workshop: " + noWorkerStructure.name;
                 log += "\nCreate Change Class Job to CRAFTSMAN";
 #endif
-                owner.settlementJobTriggerComponent.TriggerChangeClassJob("Craftsman", noWorkerStructure);
+                owner.settlementJobTriggerComponent.TriggerChangeClassJob("Crafter", noWorkerStructure);
             } else {
 #if DEBUG_LOG
                 log += "\nChecking Skinner's Lodge...";

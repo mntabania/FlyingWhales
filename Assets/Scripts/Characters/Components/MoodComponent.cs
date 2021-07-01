@@ -317,7 +317,7 @@ public class MoodComponent : CharacterComponent {
 #endif
 		isInMajorMentalBreak = true;
 		if (owner.characterClass.className.Equals("Peasant") || owner.characterClass.className.Equals("Miner") 
-		    || owner.characterClass.className.Equals("Craftsman")) {
+		    || owner.characterClass.className.Equals("Crafter")) {
 			int roll = Random.Range(0, 2);
 			if (roll == 0) {
 				//catatonic

@@ -175,7 +175,11 @@ namespace Inner_Maps.Location_Structures {
         /// Called when this structure is newly built.
         /// This function assumes that the structure that was built is in perfect condition.
         /// </summary>
-        public virtual void OnBuiltNewStructure() { }
+        public virtual void OnBuiltNewStructure() {
+            if (UIManager.Instance != null) {
+                UIManager.Instance.unbuiltStructureInfoUI.OnBuiltStructure(this);
+            }
+        }
         /// <summary>
         /// Called when this structure has been fully loaded. (Tiles, StructureObject, Walls, etc.)
         /// NOTE: This is called instead of <see cref="OnBuiltNewStructure"/> when loading from save data.
