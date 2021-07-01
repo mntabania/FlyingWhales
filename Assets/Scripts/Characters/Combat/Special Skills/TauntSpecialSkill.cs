@@ -10,7 +10,7 @@ public class TauntSpecialSkill : CombatSpecialSkill {
     #region Overrides
     public override bool TryActivateSkill(Character p_character) {
         bool hasActivated = false;
-        List<Character> tauntedCharacters = ObjectPoolManager.Instance.CreateNewCharactersList();
+        List<Character> tauntedCharacters = RuinarchListPool<Character>.Claim();
         PopulateValidTargetsFor(p_character, tauntedCharacters);
         if(tauntedCharacters.Count > 0) {
             hasActivated = true;
@@ -23,7 +23,7 @@ public class TauntSpecialSkill : CombatSpecialSkill {
             p_character.logComponent.PrintLogIfActive("TAUNT SPECIAL SKILL OF " + p_character.name + " ACTIVATED!");
 #endif
         }
-        ObjectPoolManager.Instance.ReturnCharactersListToPool(tauntedCharacters);
+        RuinarchListPool<Character>.Release(tauntedCharacters);
         return hasActivated;
     }
     protected override void PopulateValidTargetsFor(Character p_character, List<Character> p_validTargets) {
@@ -32,11 +32,15 @@ public class TauntSpecialSkill : CombatSpecialSkill {
                 Character visionCharacter = p_character.marker.inVisionCharacters[i];
                 if (!visionCharacter.isDead && !visionCharacter.traitContainer.HasTrait("Taunted")) {
                     if (p_character.faction != null
-                        && visionCharacter.faction != null 
+                        && visionCharacter.faction != null
                         && p_character.faction.IsHostileWith(visionCharacter.faction)
                         && !p_character.combatComponent.IsAvoidInRange(visionCharacter)) {
                         if (visionCharacter.combatComponent.IsCurrentlyAttackingFriendlyWith(p_character)) {
                             p_validTargets.Add(visionCharacter);
+                        } else if (p_character.faction != null && p_character.faction.isPlayerFaction) {
+                            if (visionCharacter.combatComponent.IsCurrentlyAttackingDemonicStructure()) {
+                                p_validTargets.Add(visionCharacter);
+                            }
                         }
                     }
                 }

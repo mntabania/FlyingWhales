@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Forest Ent Data
   m_EditorClassIdentifier: 
   combatBehaviourType: 6
-  combatSpecialSkillType: 0
+  combatSpecialSkillType: 2
   workStructureType: 21
   summonCost: 50
   portraitSprite: {fileID: 21300000, guid: 69cd6ef15db19ba4db8dffbbba9c93b9, type: 3}

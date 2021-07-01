@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 namespace Inner_Maps.Location_Structures {
-    public class Tavern : ManMadeStructure{
+    public class Tavern : ManMadeStructure {
         
         // public override Vector2 selectableSize { get; }
         // public override Vector3 worldPosition => structureObj.transform.position;

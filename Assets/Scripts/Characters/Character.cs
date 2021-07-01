@@ -280,6 +280,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         combatComponent.UpdateBasicData(true);
         structureComponent = new CharacterStructureComponent(); structureComponent.SetOwner(this);
         afflictionsSkillsInflictedByPlayer = new List<PLAYER_SKILL_TYPE>();
+        combatComponent.ApplyInitialBonusStrengthAndIntelligenceOnCreation();
     }
     public Character(string className, RACE race, GENDER gender) : this() {
         skillCauseOfDeath = PLAYER_SKILL_TYPE.NONE;
@@ -295,6 +296,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         combatComponent.UpdateBasicData(true);
         structureComponent = new CharacterStructureComponent(); structureComponent.SetOwner(this);
         afflictionsSkillsInflictedByPlayer = new List<PLAYER_SKILL_TYPE>();
+        combatComponent.ApplyInitialBonusStrengthAndIntelligenceOnCreation();
     }
     private Character() {
         SetIsDead(false);

@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Desert Ent Data
   m_EditorClassIdentifier: 
   combatBehaviourType: 6
-  combatSpecialSkillType: 0
+  combatSpecialSkillType: 2
   workStructureType: 21
   summonCost: 50
   portraitSprite: {fileID: 21300000, guid: 68cd1ff0454ef1e4cb4ebea1f50e6be3, type: 3}

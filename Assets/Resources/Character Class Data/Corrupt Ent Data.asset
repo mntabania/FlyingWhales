@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Corrupt Ent Data
   m_EditorClassIdentifier: 
   combatBehaviourType: 6
-  combatSpecialSkillType: 0
+  combatSpecialSkillType: 2
   workStructureType: 21
   summonCost: 50
   portraitSprite: {fileID: 21300000, guid: 98d557a1c3fa4a74fb348a35421e9b98, type: 3}

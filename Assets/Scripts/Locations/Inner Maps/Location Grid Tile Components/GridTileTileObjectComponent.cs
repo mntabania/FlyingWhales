@@ -381,7 +381,11 @@ namespace Inner_Maps {
 
                 triggeredBy.traitContainer.AddTrait(triggeredBy, "Recently Trapped");
             } else {
-                triggeredBy.reactionComponent.ResistRuinarchPower();
+                if (isFreezingTrapPlayerSource) {
+                    triggeredBy.reactionComponent.ResistRuinarchPower();
+                } else {
+                    triggeredBy.reactionComponent.PlayResistVFX();
+                }
             }
         }
         #endregion
@@ -448,7 +452,11 @@ namespace Inner_Maps {
 
                 triggeredBy.traitContainer.AddTrait(triggeredBy, "Recently Trapped");
             } else {
-                triggeredBy.reactionComponent.ResistRuinarchPower();
+                if (isSnareTrapPlayerSource) {
+                    triggeredBy.reactionComponent.ResistRuinarchPower();
+                } else {
+                    triggeredBy.reactionComponent.PlayResistVFX();
+                }
             }
         }
         #endregion

@@ -2484,13 +2484,16 @@ public class ReactionComponent : CharacterComponent {
         PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
         LogPool.Release(log);
 
-        GameObject go = GameManager.Instance.CreateParticleEffectAt(owner, PARTICLE_EFFECT.Resist);
-        ResistEffect effect = go.GetComponent<ResistEffect>();
-        effect.PlayEffect(owner.marker.usedSprite);
+        PlayResistVFX();
 
         //if (owner.gridTileLocation != null) {
         //    AudioManager.Instance.CreateSFXAt(owner.gridTileLocation, SOUND_EFFECT.Resist);
         //}
+    }
+    public void PlayResistVFX() {
+        GameObject go = GameManager.Instance.CreateParticleEffectAt(owner, PARTICLE_EFFECT.Resist);
+        ResistEffect effect = go.GetComponent<ResistEffect>();
+        effect.PlayEffect(owner.marker.usedSprite);
     }
     #endregion
 

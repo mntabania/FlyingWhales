@@ -116,6 +116,10 @@ public class CombatComponent : CharacterComponent {
     public DamageDoneType damageDone;
 
     #region General
+    public void ApplyInitialBonusStrengthAndIntelligenceOnCreation() {
+        AdjustStrengthModifier(GameUtilities.RandomBetweenTwoNumbers(2, 5));
+        AdjustIntelligenceModifier(GameUtilities.RandomBetweenTwoNumbers(2, 5));
+    }
     public int GetAttackWithCritRateBonus() {
         int multiplier = 1;
         if(GameUtilities.RandomBetweenTwoNumbers(0, 99) < critRate) {
@@ -987,6 +991,17 @@ public class CombatComponent : CharacterComponent {
             CombatState state = owner.stateComponent.currentState as CombatState;
             if(state.currentClosestHostile != null && state.currentClosestHostile is Character currentHostileTarget) {
                 if (currentHostileTarget.faction != null && p_character.faction != null && currentHostileTarget.faction.IsFriendlyWith(p_character.faction)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    public bool IsCurrentlyAttackingDemonicStructure() {
+        if (isInCombat) {
+            CombatState state = owner.stateComponent.currentState as CombatState;
+            if (state.currentClosestHostile != null && state.currentClosestHostile is TileObject t) {
+                if ((t.gridTileLocation != null && t.gridTileLocation.structure.structureType.IsPlayerStructure()) || t.tileObjectType.IsDemonicStructureTileObject()) {
                     return true;
                 }
             }

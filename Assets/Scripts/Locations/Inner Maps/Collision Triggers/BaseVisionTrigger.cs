@@ -49,7 +49,7 @@ public abstract class BaseVisionTrigger : MonoBehaviour{
     public virtual void Reset() {
         _filterVotes = 0;
         if (_mainCollider != null) {
-            _mainCollider.enabled = true;
+            _mainCollider.enabled = false;
         }
         TransferToNonFilteredLayer();
         damageable = null;
