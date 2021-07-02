@@ -41,6 +41,18 @@ namespace Characters.Villager_Wants {
         }
         public override void OnWantToggledOff(Character p_character) {
             //character has at least 2 types of food at home
+            if (!CharacterLivesInADwelling(p_character)) {
+                p_character.traitContainer.RemoveTrait(p_character, "Stocked Up");
+                return;
+            }
+            if (!CharacterHasFaction(p_character)) {
+                p_character.traitContainer.RemoveTrait(p_character, "Stocked Up");
+                return;
+            }
+            if (!CharacterLivesInAVillage(p_character)) {
+                p_character.traitContainer.RemoveTrait(p_character, "Stocked Up");
+                return;
+            }
             p_character.traitContainer.AddTrait(p_character, "Stocked Up");
         }
     }
