@@ -95,6 +95,7 @@ public class FindFish : GoapAction {
 
     #region State Effects
     public void AfterFindFishSuccess(ActualGoapNode p_node) {
+        p_node.actor.jobQueue.CancelAllJobs(JOB_TYPE.STOCKPILE_FOOD);
         if (p_node.actor.jobComponent.fishPile != null) {
             p_node.actor.jobComponent.TryCreateHaulToWorkplaceJob(p_node.actor.jobComponent.fishPile);
         }

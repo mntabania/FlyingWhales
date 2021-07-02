@@ -964,8 +964,7 @@ public static class Extensions {
             case JOB_TYPE.MONSTER_BUTCHER:
             case JOB_TYPE.QUARANTINE:
             case JOB_TYPE.PLAGUE_CARE:
-            case JOB_TYPE.HEALER_CURE:
-            case JOB_TYPE.STOCKPILE_FOOD:
+            case JOB_TYPE.HEALER_CURE: 
             priority = 800;
             break;
             case JOB_TYPE.CRAFT_OBJECT:
@@ -982,6 +981,7 @@ public static class Extensions {
             break;
             case JOB_TYPE.CLEANSE_CORRUPTION:
             case JOB_TYPE.RECRUIT:
+            case JOB_TYPE.STOCKPILE_FOOD:
             priority = 600;
             break;
             case JOB_TYPE.JUDGE_PRISONER:
