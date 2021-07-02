@@ -666,10 +666,21 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable, IObjectPoolTeste
     }
     public void StopActionNode() {
         if (actionStatus == ACTION_STATUS.PERFORMING) {
+            //Toggle is processing here so that when StopActionNode is called, the currentActionNode will not be put in object pool
+            SetIsStillProcessing(true);
             action.OnStopWhilePerforming(this);
             OnCancelActionTowardsTarget();
-            ActionInterruptedWhilePerforming();
+            SetIsStillProcessing(false);
+#if DEBUG_LOG
+            if (hasBeenReset) {
+                Debug.LogError($"reset");
+            }
+            if (isSupposedToBeInPool) {
+                Debug.LogError($"Action: {ToString()} is supposed to be in pool");
+            }
+#endif
 
+            ActionInterruptedWhilePerforming();
             //if (currentState.duration == 0) { //If action has no duration then do EndPerTickEffect (this will also call the action result)
             //    //ReturnToActorTheActionResult(InteractionManager.Goap_State_Fail);
             //    EndPerTickEffect(false);
