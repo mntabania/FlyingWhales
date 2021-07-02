@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UtilityScripts;
 public class SlowTauntSpecialSkill : CombatSpecialSkill {
-    public SlowTauntSpecialSkill() : base(COMBAT_SPECIAL_SKILL.Slow_Taunt, COMBAT_SPECIAL_SKILL_TARGET.Multiple, 40) {
+    public SlowTauntSpecialSkill() : base(COMBAT_SPECIAL_SKILL.Slow_Taunt, COMBAT_SPECIAL_SKILL_TARGET.Multiple, 10) {
 
     }
 

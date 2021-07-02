@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UtilityScripts;
 public class TauntSpecialSkill : CombatSpecialSkill {
-    public TauntSpecialSkill() : base(COMBAT_SPECIAL_SKILL.Taunt, COMBAT_SPECIAL_SKILL_TARGET.Multiple, 20) {
+    public TauntSpecialSkill() : base(COMBAT_SPECIAL_SKILL.Taunt, COMBAT_SPECIAL_SKILL_TARGET.Multiple, 5) {
 
     }
 
