@@ -704,7 +704,7 @@ public class SaveDataSettlementClassComponent : SaveData<SettlementClassComponen
     #region Overrides
     public override void Save(SettlementClassComponent data) {
         currentClassOrderIndex = data.currentClassOrderIndex;
-        currentResidentClasses = data.currentResidentClasses;
+        currentResidentClasses = new List<string>(data.currentResidentClasses);
         morningScheduleDateForProcessingOfNeededClasses = data.morningScheduleDateForProcessingOfNeededClasses;
         afternoonScheduleDateForProcessingOfNeededClasses = data.afternoonScheduleDateForProcessingOfNeededClasses;
     }

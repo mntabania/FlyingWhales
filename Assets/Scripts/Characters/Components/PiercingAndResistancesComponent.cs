@@ -109,8 +109,14 @@ public class SaveDataPiercingAndResistancesComponent : SaveData<PiercingAndResis
     #region Overrides
     public override void Save(PiercingAndResistancesComponent data) {
         piercingPower = data.piercingPower;
-        resistances = data.resistances;
-        resistancesMultipliers = data.resistancesMultipliers;
+        resistances = new Dictionary<RESISTANCE, float>();
+        foreach (var kvp in data.resistances) {
+            resistances.Add(kvp.Key, kvp.Value);
+        }
+        resistancesMultipliers = new Dictionary<RESISTANCE, float>();
+        foreach (var kvp in data.resistancesMultipliers) {
+            resistancesMultipliers.Add(kvp.Key, kvp.Value);
+        }
         piercingMultiplier = data.piercingMultiplier;
         basePiercing = data.basePiercing;
     }

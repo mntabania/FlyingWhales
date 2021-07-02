@@ -321,7 +321,7 @@ public class SaveDataCharacterClassComponent : SaveData<CharacterClassComponent>
         className = data.characterClass.className;
         previousClassName = data.previousClassName;
         shouldChangeClass = data.shouldChangeClass;
-        ableClasses = data.ableClasses;
+        ableClasses = new List<string>(data.ableClasses);
     }
 
     public override CharacterClassComponent Load() {

@@ -430,7 +430,7 @@ public class SaveDataInterruptHolder : SaveData<InterruptHolder>, ISavableCounte
                 awareCharacterIDs.Add(character.persistentID);
             }
         }
-        logTags = data.logTags;
+        logTags = new List<LOG_TAG>(data.logTags);
     }
 
     public override InterruptHolder Load() {

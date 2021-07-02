@@ -262,8 +262,14 @@ public class SaveDataPlayerUnderlingsComponent : SaveData<PlayerUnderlingsCompon
 
     public override void Save(PlayerUnderlingsComponent data) {
         base.Save(data);
-        monsterUnderlingCharges = data.monsterUnderlingCharges;
-        demonUnderlingCharges = data.demonUnderlingCharges;
+        monsterUnderlingCharges = new Dictionary<SUMMON_TYPE, MonsterAndDemonUnderlingCharges>();
+        foreach (var kvp in data.monsterUnderlingCharges) {
+            monsterUnderlingCharges.Add(kvp.Key, kvp.Value);
+        }
+        demonUnderlingCharges = new Dictionary<MINION_TYPE, MonsterAndDemonUnderlingCharges>();
+        foreach (var kvp in data.demonUnderlingCharges) {
+            demonUnderlingCharges.Add(kvp.Key, kvp.Value);
+        }
     }
     public override PlayerUnderlingsComponent Load() {
         PlayerUnderlingsComponent component = new PlayerUnderlingsComponent(this);

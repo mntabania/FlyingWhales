@@ -545,7 +545,10 @@ public class SaveDataMoodComponent : SaveData<MoodComponent> {
         hasMoodChanged = data.hasMoodChanged;
         mentalBreakName = data.mentalBreakName;
         // moodModificationsSummary = data.moodModificationsSummary;
-        allMoodModifications = data.allMoodModifications;
+        allMoodModifications = new Dictionary<string, MoodModification>();
+        foreach (var kvp in data.allMoodModifications) {
+	        allMoodModifications.Add(kvp.Key, kvp.Value);
+        }
     }
 
     public override MoodComponent Load() {
