@@ -213,6 +213,9 @@ public class CharacterNeedsComponent : CharacterComponent {
     public void PerTick() {
         DecreaseNeeds();
     }
+    public void PerTickSummon() {
+        StaminaAdjustments();
+    }
     private void PerHour() {
 #if DEBUG_PROFILER
         Profiler.BeginSample($"{owner.name} Needs Component Hour Started");
@@ -299,23 +302,19 @@ public class CharacterNeedsComponent : CharacterComponent {
 #if DEBUG_PROFILER
         Profiler.BeginSample($"{owner.name} Decrease Needs");
 #endif
-        if (owner is Summon) {
-            StaminaAdjustments();
-        } else {
-            StaminaAdjustments();
+        StaminaAdjustments();
 
-            if (HasNeeds() == false) {
-                return;
-            }
-            if (!doesNotGetHungry) {
-                AdjustFullness(-(EditableValuesManager.Instance.baseFullnessDecreaseRate + fullnessDecreaseRate));
-            }
-            if (!doesNotGetTired) {
-                AdjustTiredness(-(EditableValuesManager.Instance.baseTirednessDecreaseRate + tirednessDecreaseRate));
-            }
-            if (!doesNotGetBored) {
-                AdjustHappiness(-(EditableValuesManager.Instance.baseHappinessDecreaseRate + happinessDecreaseRate));
-            }
+        if (HasNeeds() == false) {
+            return;
+        }
+        if (!doesNotGetHungry) {
+            AdjustFullness(-(EditableValuesManager.Instance.baseFullnessDecreaseRate + fullnessDecreaseRate));
+        }
+        if (!doesNotGetTired) {
+            AdjustTiredness(-(EditableValuesManager.Instance.baseTirednessDecreaseRate + tirednessDecreaseRate));
+        }
+        if (!doesNotGetBored) {
+            AdjustHappiness(-(EditableValuesManager.Instance.baseHappinessDecreaseRate + happinessDecreaseRate));
         }
 #if DEBUG_PROFILER
         Profiler.EndSample();
