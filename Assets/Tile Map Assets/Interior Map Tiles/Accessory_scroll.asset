@@ -10,6 +10,6 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 816337ccf1b2424e9349db70f358ac41, type: 3}
-  m_Name: item_scroll
+  m_Name: Accessory_scroll
   m_EditorClassIdentifier: 
   sprite: {fileID: 21300000, guid: 3837e226b4181fd469141267ff6c204b, type: 3}
