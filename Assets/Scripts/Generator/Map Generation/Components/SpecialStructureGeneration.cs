@@ -453,10 +453,11 @@ namespace Generator.Map_Generation.Components {
 		
 		#region Utilities
 		private void AdditionalResourceCreation() {
-			int randomResourceCount = 0;
-			for (int i = 0; i < GridMap.Instance.mainRegion.villageSpots.Count; i++) {
-				randomResourceCount += UnityEngine.Random.Range(1, 4);
-			}
+			//Reference: https://trello.com/c/rR5Bmg0h/5020-set-special-resources-per-village-to-just-1
+			int randomResourceCount = GridMap.Instance.mainRegion.villageSpots.Count;
+			// for (int i = 0; i < GridMap.Instance.mainRegion.villageSpots.Count; i++) {
+			// 	randomResourceCount += UnityEngine.Random.Range(1, 4);
+			// }
 			List<Area> validAreasNotInVillageSpot = RuinarchListPool<Area>.Claim();
 			List<Area> areasInVillageSpot = RuinarchListPool<Area>.Claim();
 			for (int i = 0; i < GridMap.Instance.allAreas.Count; i++) {
