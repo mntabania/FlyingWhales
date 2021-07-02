@@ -3835,7 +3835,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
             GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.COMBINE_STOCKPILE,
                 INTERACTION_TYPE.DEPOSIT_RESOURCE_PILE, p_pileToDeposit, owner);
             job.AddOtherData(INTERACTION_TYPE.DEPOSIT_RESOURCE_PILE, new object[] { targetDrop });
-            job.SetStillApplicableChecker(JobManager.Combine_Stockpile_Applicability);
+            // job.SetStillApplicableChecker(JobManager.Combine_Stockpile_Applicability);
             jobQueueItem = job;
         }
     }
