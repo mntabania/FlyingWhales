@@ -68,12 +68,12 @@ public class MineStone : GoapAction {
         if (tileToSpawnPile != null && tileToSpawnPile.tileObjectComponent.objHere != null) {
             tileToSpawnPile = p_node.actor.gridTileLocation.GetFirstNearestTileFromThisWithNoObject();
         }
-        StonePile matsToHaul = InnerMapManager.Instance.CreateNewTileObject<StonePile>(TILE_OBJECT_TYPE.STONE_PILE);
+        
         int amount = p_node.currentStateDuration * m_amountProducedPerTick;
         if (rock.count - amount < 0) {
             amount = rock.count;
         }
-        rock.count = (int)Mathf.Clamp(rock.count - amount, 0f, 1000f);
+        
         if (targetStone.gridTileLocation != null) {
             if (rock.count <= 0) {
                 targetStone.gridTileLocation.structure.RemovePOI(targetStone);
@@ -83,6 +83,8 @@ public class MineStone : GoapAction {
         if (amount <= 0) {
             return null;
         }
+        rock.count = (int)Mathf.Clamp(rock.count - amount, 0f, 1000f);
+        StonePile matsToHaul = InnerMapManager.Instance.CreateNewTileObject<StonePile>(TILE_OBJECT_TYPE.STONE_PILE);
         p_node.actor.moneyComponent.AdjustCoins(Mathf.CeilToInt(amount * _coinGainMultiplier));
         matsToHaul.SetResourceInPile(amount);
         tileToSpawnPile.structure.AddPOI(matsToHaul, tileToSpawnPile);

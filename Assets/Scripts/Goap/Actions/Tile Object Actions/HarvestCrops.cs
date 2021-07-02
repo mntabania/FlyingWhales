@@ -63,12 +63,12 @@ public class HarvestCrops : GoapAction {
         if (tileToSpawnPile != null && tileToSpawnPile.tileObjectComponent.objHere != null) {
             tileToSpawnPile = p_node.actor.gridTileLocation.GetFirstNearestTileFromThisWithNoObject();
         }
-        FoodPile matsToHaul = InnerMapManager.Instance.CreateNewTileObject<FoodPile>(crop.producedObjectOnHarvest);
+        
         int amount = p_node.currentStateDuration * m_amountProducedPerTick;
         if (crop.count - amount < 0) {
             amount = crop.count;
         }
-        crop.count = (int)Mathf.Clamp(crop.count - amount, 0f, 1000f);
+        
         if (targetCrop.gridTileLocation != null) {
             if (crop.count <= 0) {
                 targetCrop.gridTileLocation.structure.RemovePOI(targetCrop);
@@ -78,7 +78,8 @@ public class HarvestCrops : GoapAction {
         if (amount <= 0) {
             return null;
         }
-
+        crop.count = (int)Mathf.Clamp(crop.count - amount, 0f, 1000f);
+        FoodPile matsToHaul = InnerMapManager.Instance.CreateNewTileObject<FoodPile>(crop.producedObjectOnHarvest);
         p_node.actor.moneyComponent.AdjustCoins(Mathf.CeilToInt(amount * _coinGainMultiplier));
         matsToHaul.SetResourceInPile(amount);
         tileToSpawnPile.structure.AddPOI(matsToHaul, tileToSpawnPile);

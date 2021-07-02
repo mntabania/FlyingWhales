@@ -68,12 +68,12 @@ public class ChopWood : GoapAction {
         if (tileToSpawnPile != null && tileToSpawnPile.tileObjectComponent.objHere != null) {
             tileToSpawnPile = p_node.actor.gridTileLocation.GetFirstNearestTileFromThisWithNoObject();
         }
-        WoodPile matsToHaul = InnerMapManager.Instance.CreateNewTileObject<WoodPile>(TILE_OBJECT_TYPE.WOOD_PILE);
+        
         int amount = p_node.currentStateDuration * m_amountProducedPerTick;
         if (tree.count - amount < 0) {
             amount = tree.count;
         }
-        tree.count = (int)Mathf.Clamp(tree.count - amount, 0f, 1000f);
+        
         if (targetTree.gridTileLocation != null) {
             if (tree.count <= 0) {
                 targetTree.gridTileLocation.structure.RemovePOI(targetTree);
@@ -83,6 +83,8 @@ public class ChopWood : GoapAction {
         if (amount <= 0) {
             return null;
         }
+        tree.count = (int)Mathf.Clamp(tree.count - amount, 0f, 1000f);
+        WoodPile matsToHaul = InnerMapManager.Instance.CreateNewTileObject<WoodPile>(TILE_OBJECT_TYPE.WOOD_PILE);
         p_node.actor.moneyComponent.AdjustCoins(Mathf.CeilToInt(amount * _coinGainMultiplier));
         matsToHaul.SetResourceInPile(amount);
         tileToSpawnPile.structure.AddPOI(matsToHaul, tileToSpawnPile);
