@@ -75,7 +75,7 @@ namespace Characters.Villager_Wants {
                 }
                 if (hasNeededResource) {
                     //character works at a basic resource producing structure
-                    needsToPay = false;
+                    needsToPay = true;
                     foundStructure = p_character.structureComponent.workPlaceStructure;
                     return true;    
                 }
