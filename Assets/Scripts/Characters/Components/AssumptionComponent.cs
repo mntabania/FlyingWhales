@@ -53,7 +53,7 @@ public class AssumptionComponent : CharacterComponent {
         assumptionLog.AddLogToDatabase();
         newAssumption.SetAssumptionLog(assumptionLog);
         
-        PlayerManager.Instance.player.ShowNotificationFrom(owner, InteractionManager.Instance.CreateNewIntel(newAssumption.assumedAction) as IIntel);
+        PlayerManager.Instance.player.ShowNotificationFrom(owner, InteractionManager.Instance.CreateNewIntel(newAssumption.assumedAction));
 
         owner.reactionComponent.ReactTo(newAssumption, reactionStatus, false);
 
