@@ -108,8 +108,8 @@ public class Cook : GoapAction {
     //    }
     //    return reaction;
     //}
-    public override void PopulateReactionsToTarget(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
-        base.PopulateReactionsToTarget(reactions, actor, target, witness, node, status);
+    public override void PopulateEmotionReactionsToTarget(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
+        base.PopulateEmotionReactionsToTarget(reactions, actor, target, witness, node, status);
         if (target is Character targetCharacter) {
             if (witness.relationshipContainer.IsFriendsWith(targetCharacter)) {
                 if (!witness.traitContainer.HasTrait("Psychopath")) {

@@ -76,6 +76,13 @@ public class DropResource : GoapAction {
         ResourcePile pile = node.actor.carryComponent.carriedPOI as ResourcePile;
         log.AddToFillers(null, UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetterOnly(pile.providedResource.ToString()), LOG_IDENTIFIER.STRING_2);
     }
+    public override void OnActionStarted(ActualGoapNode node) {
+        base.OnActionStarted(node);
+        if (node.associatedJobType == JOB_TYPE.BUY_FOOD_FOR_TAVERN) {
+            FoodPile item = node.actor.GetItem<FoodPile>();
+            node.actor.ShowItemVisualCarryingPOI(item);
+        }
+    }
     public override void OnStopWhileStarted(ActualGoapNode node) {
         base.OnStopWhileStarted(node);
         Character actor = node.actor;
@@ -96,7 +103,7 @@ public class DropResource : GoapAction {
         return false;
     }
     private bool HasBoughtFood(Character actor, IPointOfInterest poiTarget, OtherData[] otherData, JOB_TYPE jobType) {
-        if (actor.carryComponent.isCarryingAnyPOI && actor.carryComponent.carriedPOI is FoodPile) {
+        if (actor.HasItem<FoodPile>()) {
             return true;
         }
         return false;

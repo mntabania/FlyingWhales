@@ -187,8 +187,8 @@ public class Invite : GoapAction {
             target.combatComponent.Fight(node.actor, CombatManager.Hostility);
         }
     }
-    public override void PopulateReactionsToActor(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
-        base.PopulateReactionsToActor(reactions, actor, target, witness, node, status);
+    public override void PopulateEmotionReactionsToActor(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
+        base.PopulateEmotionReactionsToActor(reactions, actor, target, witness, node, status);
         if (target != witness && target is Character targetCharacter) {
             bool isActorLoverOrAffairOfWitness = witness.relationshipContainer.HasRelationshipWith(actor, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.AFFAIR);
             bool isTargetLoverOrAffairOfWitness = witness.relationshipContainer.HasRelationshipWith(targetCharacter, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.AFFAIR);

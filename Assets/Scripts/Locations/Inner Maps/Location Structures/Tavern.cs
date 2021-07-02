@@ -16,6 +16,7 @@ namespace Inner_Maps.Location_Structures {
             SetMaxHP(8000);
         }
 
+        #region Overrides
         protected override void ProcessWorkStructureJobsByWorker(Character p_worker, out JobQueueItem producedJob) {
             producedJob = null;
             string log = string.Empty;
@@ -81,5 +82,12 @@ namespace Inner_Maps.Location_Structures {
             p_worker.logComponent.PrintLogIfActive(log);
 #endif
         }
+        #endregion
+
+        #region Worker
+        public override bool CanHireAWorker() {
+            return true;
+        }
+        #endregion
     }
 }

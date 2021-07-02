@@ -60,8 +60,8 @@ public class Recruit : GoapAction {
         }
         return goapActionInvalidity;
     }
-    public override void PopulateReactionsToActor(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
-        base.PopulateReactionsToActor(reactions, actor, target, witness, node, status);
+    public override void PopulateEmotionReactionsToActor(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
+        base.PopulateEmotionReactionsToActor(reactions, actor, target, witness, node, status);
         if (target is Character targetCharacter) {
             if (targetCharacter.prevFaction != null && targetCharacter.prevFaction.leader == witness) {
                 reactions.Add(EMOTION.Anger);

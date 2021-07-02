@@ -73,8 +73,8 @@ public class RitualKilling : GoapAction {
     //    }
     //    return goapActionInvalidity;
     //}
-    public override void PopulateReactionsToActor(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
-        base.PopulateReactionsToActor(reactions, actor, target, witness, node, status);
+    public override void PopulateEmotionReactionsToActor(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
+        base.PopulateEmotionReactionsToActor(reactions, actor, target, witness, node, status);
         if (target is Character) {
             if (witness.traitContainer.HasTrait("Coward")) {
                 reactions.Add(EMOTION.Fear);
@@ -94,8 +94,8 @@ public class RitualKilling : GoapAction {
             }
         }
     }
-    public override void PopulateReactionsToTarget(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
-        base.PopulateReactionsToTarget(reactions, actor, target, witness, node, status);
+    public override void PopulateEmotionReactionsToTarget(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
+        base.PopulateEmotionReactionsToTarget(reactions, actor, target, witness, node, status);
         if (target is Character) {
             Character targetCharacter = target as Character;
             if (!witness.traitContainer.HasTrait("Psychopath")) {
@@ -106,8 +106,8 @@ public class RitualKilling : GoapAction {
             }
         }
     }
-    public override void PopulateReactionsOfTarget(List<EMOTION> reactions, Character actor, IPointOfInterest target, ActualGoapNode node, REACTION_STATUS status) {
-        base.PopulateReactionsOfTarget(reactions, actor, target, node, status);
+    public override void PopulateEmotionReactionsOfTarget(List<EMOTION> reactions, Character actor, IPointOfInterest target, ActualGoapNode node, REACTION_STATUS status) {
+        base.PopulateEmotionReactionsOfTarget(reactions, actor, target, node, status);
         if (target is Character) {
             Character targetCharacter = target as Character;
             if (targetCharacter.traitContainer.HasTrait("Coward")) {

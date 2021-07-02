@@ -57,8 +57,8 @@ public class CureCharacter : GoapAction {
         }
         return goapActionInvalidity;
     }
-    public override void PopulateReactionsToActor(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
-        base.PopulateReactionsToActor(reactions, actor, target, witness, node, status);
+    public override void PopulateEmotionReactionsToActor(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
+        base.PopulateEmotionReactionsToActor(reactions, actor, target, witness, node, status);
         Character targetCharacter = target as Character;
         string opinionOfTarget = witness.relationshipContainer.GetOpinionLabel(targetCharacter);
         CureCharacterUAD data = node.GetConvertedUniqueActionData<CureCharacterUAD>();
@@ -77,8 +77,8 @@ public class CureCharacter : GoapAction {
             }
         }
     }
-    public override void PopulateReactionsOfTarget(List<EMOTION> reactions, Character actor, IPointOfInterest target, ActualGoapNode node, REACTION_STATUS status) {
-        base.PopulateReactionsOfTarget(reactions, actor, target, node, status);
+    public override void PopulateEmotionReactionsOfTarget(List<EMOTION> reactions, Character actor, IPointOfInterest target, ActualGoapNode node, REACTION_STATUS status) {
+        base.PopulateEmotionReactionsOfTarget(reactions, actor, target, node, status);
         Character targetCharacter = target as Character;
         Debug.Assert(targetCharacter != null, nameof(targetCharacter) + " != null");
         CureCharacterUAD data = node.GetConvertedUniqueActionData<CureCharacterUAD>();

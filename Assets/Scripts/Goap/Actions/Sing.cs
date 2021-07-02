@@ -69,8 +69,8 @@ public class Sing : GoapAction {
     //    Character actor = node.actor;
     //    actor.needsComponent.AdjustDoNotGetBored(-1);
     //}
-    public override void PopulateReactionsToActor(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
-        base.PopulateReactionsToActor(reactions, actor, target, witness, node, status);
+    public override void PopulateEmotionReactionsToActor(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
+        base.PopulateEmotionReactionsToActor(reactions, actor, target, witness, node, status);
         Trait trait = witness.traitContainer.GetTraitOrStatus<Trait>("Music Hater", "Music Lover");
         if (trait != null) {
             if (trait.name == "Music Hater") {
