@@ -1,7 +1,7 @@
 ﻿using UtilityScripts;
 namespace Inner_Maps.Location_Structures {
     public class AncientGraveyardStructureObject : LocationStructureObject {
-        private readonly string[] _classChoices = new[] {"Barbarian", "Archer", "Noble", "Peasant"};
+        private readonly string[] _classChoices = new[] {"Barbarian", "Archer", "Noble", "Farmer"};
         protected override void PreplacedObjectProcessing(StructureTemplateObjectData preplacedObj,
             LocationGridTile tile, LocationStructure structure, TileObject newTileObject) { 
             

@@ -162,7 +162,7 @@ public class MapGenerationFinalization : MapGenerationComponent {
 				if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Pangat_Loo) {
 					if (i == 1) {
 						//spawn multiple tombstones
-						string[] _classChoices = new[] {"Barbarian", "Archer", "Noble", "Peasant"};
+						string[] _classChoices = new[] {"Barbarian", "Archer", "Noble", "Farmer"};
 						int randomAmount = Random.Range(20, 30);
 						for (int j = 0; j < randomAmount; j++) {
 							if (locationChoices.Count == 0) { break; } //no more location choices
