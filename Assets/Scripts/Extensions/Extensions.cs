@@ -321,7 +321,7 @@ public static class Extensions {
             case STRUCTURE_TYPE.LUMBERYARD:
             return 0;
             default:
-            return 100;
+            return 60;
         }
     }
     //public static bool IsFoodProducingStructure(this STRUCTURE_TYPE structureType) {
