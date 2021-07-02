@@ -1190,7 +1190,8 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         SettlementResources.PopulateAllMineShackSpots(allMineShackSpots, this);
         for (int i = 0; i < allMineShackSpots.Count; i++) {
             LocationGridTile oreVein = allMineShackSpots[i];
-            if (oreVein.tileObjectComponent.genericTileObject.structureConnector != null && oreVein.tileObjectComponent.genericTileObject.structureConnector.isOpen) {
+            if (oreVein.structure is Cave cave && oreVein.tileObjectComponent.genericTileObject.structureConnector != null && 
+                oreVein.tileObjectComponent.genericTileObject.structureConnector.isOpen && !cave.IsConnectedToSettlement(this)) {
                 connectors.Add(oreVein.tileObjectComponent.genericTileObject.structureConnector);
             }
         }
@@ -1198,7 +1199,8 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
             Area area = occupiedVillageSpot.reservedAreas[i];
             for (int j = 0; j < area.structureComponent.structureConnectors.Count; j++) {
                 StructureConnector connector = area.structureComponent.structureConnectors[j];
-                if (connector.tileLocation != null && connector.isOpen && !connectors.Contains(connector) && connector.tileLocation.structure is Cave) {
+                if (connector.tileLocation != null && connector.isOpen && !connectors.Contains(connector) && 
+                    connector.tileLocation.structure is Cave cave && !cave.IsConnectedToSettlement(this)) {
                     connectors.Add(connector);
                 }
             }
@@ -1278,21 +1280,34 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         if (HasStructure(type)) {
             List<LocationStructure> structuresOfType = structures[type];
             if (structuresOfType != null && structuresOfType.Count > 0) {
-                List<LocationStructure> structureChoices = RuinarchListPool<LocationStructure>.Claim();
+                List<LocationStructure> assignedStructures = RuinarchListPool<LocationStructure>.Claim();
+                List<LocationStructure> unAssignedStructures = RuinarchListPool<LocationStructure>.Claim();
                 for (int i = 0; i < structuresOfType.Count; i++) {
                     ManMadeStructure s = structuresOfType[i] as ManMadeStructure;
                     if (s.CanHireAWorker()) {
                         if (!availableJobs.HasJobWithOtherData(JOB_TYPE.CHANGE_CLASS, INTERACTION_TYPE.CHANGE_CLASS, s)) {
-                            structureChoices.Add(s);
+                            if (s.HasAssignedWorker()) {
+                                assignedStructures.Add(s);    
+                            } else {
+                                unAssignedStructures.Add(s);
+                            }
                         }
                     }
                 }
-                if (structureChoices.Count > 0) {
-                    LocationStructure chosenStructure = CollectionUtilities.GetRandomElement(structureChoices);
-                    RuinarchListPool<LocationStructure>.Release(structureChoices);
+                if (unAssignedStructures.Count > 0) {
+                    LocationStructure chosenStructure = CollectionUtilities.GetRandomElement(unAssignedStructures);
+                    RuinarchListPool<LocationStructure>.Release(assignedStructures);
+                    RuinarchListPool<LocationStructure>.Release(unAssignedStructures);
                     return chosenStructure;
                 }
-                RuinarchListPool<LocationStructure>.Release(structureChoices);
+                if (assignedStructures.Count > 0) {
+                    LocationStructure chosenStructure = CollectionUtilities.GetRandomElement(assignedStructures);
+                    RuinarchListPool<LocationStructure>.Release(assignedStructures);
+                    RuinarchListPool<LocationStructure>.Release(unAssignedStructures);
+                    return chosenStructure;
+                }
+                RuinarchListPool<LocationStructure>.Release(assignedStructures);
+                RuinarchListPool<LocationStructure>.Release(unAssignedStructures);
             }
             
         }

@@ -140,7 +140,8 @@ namespace Locations.Area_Features {
         private bool CreateNewSmallTree() {
             List<LocationGridTile> choices = owner.gridTileComponent.gridTiles.Where(x => x.isOccupied == false 
                                                                                 && x.structure.structureType.IsOpenSpace()
-                                                                                && x.groundType != LocationGridTile.Ground_Type.Bone).ToList();
+                                                                                && x.groundType != LocationGridTile.Ground_Type.Bone 
+                                                                                && x.groundType != LocationGridTile.Ground_Type.Water).ToList();
             if (choices.Count > 0) {
                 LocationGridTile chosenTile = CollectionUtilities.GetRandomElement(choices);
                 chosenTile.structure.AddPOI(InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.SMALL_TREE_OBJECT),

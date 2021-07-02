@@ -40,7 +40,7 @@ public class CharacterClassComponent : CharacterComponent {
             }
         }
     }
-    public void AssignClass(CharacterClass characterClass, bool isInitial = false) {
+    public void AssignClass(CharacterClass p_newClass, bool isInitial = false) {
         CharacterClass previousClass = characterClass;
         if (previousClass != null) {
             //owner.homeSettlement?.UnapplyAbleJobsFromSettlement(owner);
@@ -58,8 +58,8 @@ public class CharacterClassComponent : CharacterComponent {
                 owner.RemoveItemAsInteresting(previousClass.interestedItemNames);
             }
         }
-        this.characterClass = characterClass;
-        owner.movementComponent.OnAssignedClass(characterClass);
+        characterClass = p_newClass;
+        owner.movementComponent.OnAssignedClass(p_newClass);
         //behaviourComponent.OnChangeClass(_characterClass, previousClass);
         if (isInitial) {
             if (GameManager.Instance.gameHasStarted) {

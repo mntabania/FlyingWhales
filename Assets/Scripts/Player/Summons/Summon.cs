@@ -88,6 +88,7 @@ public class Summon : Character {
         moodComponent.SetMoodValue(50);
         
         needsComponent.Initialize();
+        moneyComponent.Initialize();
         
         advertisedActions.Clear(); //This is so that any advertisements from OnUpdateRace will be negated. TODO: Make updating advertisements better.
         //TODO: Put this in a system

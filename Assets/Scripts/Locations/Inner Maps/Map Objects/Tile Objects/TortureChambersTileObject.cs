@@ -17,6 +17,7 @@ public class TortureChambersTileObject : TileObject {
     public override bool CanBeSelected() {
         return true;
     }
+    public override bool IsCurrentlySelected() { return false; }
     public override void LeftSelectAction() {
         // UIManager.Instance.ShowStructureInfo(gridTileLocation.structure);
     }

@@ -471,6 +471,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             needsComponent.Initialize();
         }
         religionComponent.Initialize();
+        moneyComponent.Initialize();
         if (race != RACE.DEMON) {
             //Demons and Summons/Monsters can't have talents
             talentComponent = new CharacterTalentComponent(); talentComponent.SetOwner(this);

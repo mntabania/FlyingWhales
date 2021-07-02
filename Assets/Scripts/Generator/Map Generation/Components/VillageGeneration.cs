@@ -521,7 +521,7 @@ public class VillageGeneration : MapGenerationComponent {
 		if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Pangat_Loo) {
 			List<Character> createdCharacters = new List<Character>();
 			int citizenCount = 0;
-			List<string> elfClassesInOrder = new List<string> {"Crafter", "Crafter", "Peasant", "Peasant", "Miner", "Miner"};
+			List<string> elfClassesInOrder = new List<string> {"Crafter", "Crafter", "Farmer", "Farmer", "Miner", "Miner"};
 			List<string> humanClassesPriority = new List<string>() { "Knight", "Shaman", "Knight", "Shaman", "Knight",  "Shaman" };
 			GenerateResidentConfiguration(providedCitizenCount, dwellingCount, out var coupleCharacters, out var singleCharacters);
 			int neededElves = elfClassesInOrder.Count;

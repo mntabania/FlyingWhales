@@ -56,7 +56,7 @@ public class SpreadRumorData : PlayerAction {
         return reasons;
     }
     public override bool IsValid(IPlayerActionTarget target) {
-        if(PlayerSkillManager.Instance.selectedArchetype != PLAYER_ARCHETYPE.Puppet_Master) {
+        if(PlayerSkillManager.Instance.selectedArchetype != PLAYER_ARCHETYPE.Puppet_Master && !PlayerSkillManager.Instance.unlockAllSkills) {
             return false;
         }
         return base.IsValid(target);
