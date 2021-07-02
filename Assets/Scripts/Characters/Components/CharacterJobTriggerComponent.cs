@@ -2758,10 +2758,34 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
                 RuinarchListPool<TileObject>.Release(magicCircles);
             } else {
 			    MagicCircle newCircle = InnerMapManager.Instance.CreateNewTileObject<MagicCircle>(TILE_OBJECT_TYPE.MAGIC_CIRCLE);
-			    List<LocationGridTile> choices = owner.currentRegion.wilderness.unoccupiedTiles.ToList();
-			    if (choices.Count > 0) {
-				    LocationGridTile targetTile = CollectionUtilities.GetRandomElement(choices);
-				    targetTile.structure.AddPOI(newCircle, targetTile);
+                LocationGridTile chosenTile = null;
+                if (owner.homeSettlement != null) {
+                    List<Area> areas = RuinarchListPool<Area>.Claim();
+                    List<LocationGridTile> tiles = RuinarchListPool<LocationGridTile>.Claim();
+                    owner.homeSettlement.PopulateSurroundingAreas(areas);
+                    for (int i = 0; i < areas.Count; i++) {
+                        Area a = areas[i];
+                        for (int j = 0; j < a.gridTileComponent.passableTiles.Count; j++) {
+                            LocationGridTile t = a.gridTileComponent.passableTiles[j];
+                            if (!t.isOccupied && t.tileObjectComponent.objHere == null && t.tileObjectComponent.hiddenObjHere == null && t.structure.structureType == STRUCTURE_TYPE.WILDERNESS) {
+                                tiles.Add(t);
+                            }
+                        }
+                    }
+                    if (tiles.Count > 0) {
+                        chosenTile = CollectionUtilities.GetRandomElement(tiles);
+                    }
+                    RuinarchListPool<Area>.Release(areas);
+                    RuinarchListPool<LocationGridTile>.Release(tiles);
+                }
+                if (chosenTile == null) {
+                    List<LocationGridTile> choices = owner.currentRegion.wilderness.unoccupiedTiles;
+                    if (choices.Count > 0) {
+                        chosenTile = CollectionUtilities.GetRandomElement(choices);
+                    }
+                }
+			    if (chosenTile != null) {
+                    chosenTile.structure.AddPOI(newCircle, chosenTile);
 				    newCircle.SetMapObjectState(MAP_OBJECT_STATE.UNBUILT);
 				    magicCircle = newCircle;
 			    }

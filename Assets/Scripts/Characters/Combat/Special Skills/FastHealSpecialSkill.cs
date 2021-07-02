@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class FastHealSpecialSkill : CombatSpecialSkill {
-    public FastHealSpecialSkill() : base(COMBAT_SPECIAL_SKILL.Fast_Heal, COMBAT_SPECIAL_SKILL_TARGET.Single, 10) {
+    public FastHealSpecialSkill() : base(COMBAT_SPECIAL_SKILL.Fast_Heal, COMBAT_SPECIAL_SKILL_TARGET.Single, 4) {
 
     }
 
