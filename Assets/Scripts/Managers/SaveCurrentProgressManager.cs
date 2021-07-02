@@ -165,6 +165,10 @@ public class SaveCurrentProgressManager : MonoBehaviour {
         while (MultiThreadPool.Instance.IsThereStillFunctionsToBeResolved()) {
             yield return null;
         }
+        //Copy sql database here so that the sql database will be copied before writing to disk in case the player unpauses the game when writing to disk, the database might already be altered
+        //That is why copy it here before writing to disk
+        DatabaseManager.Instance.mainSQLDatabase.SaveInMemoryDatabaseToFile($"{UtilityScripts.Utilities.tempZipPath}gameDB.db");
+        yield return null;
 
         ThreadPool.QueueUserWorkItem(SaveGeneralMultithread);
         foreach (KeyValuePair<TILE_OBJECT_TYPE, List<TileObject>> item in DatabaseManager.Instance.tileObjectDatabase.allTileObjects) {
@@ -236,9 +240,6 @@ public class SaveCurrentProgressManager : MonoBehaviour {
             SetIsWritingToDisk(false);
             yield return null;
         } else {
-            DatabaseManager.Instance.mainSQLDatabase.SaveInMemoryDatabaseToFile($"{UtilityScripts.Utilities.tempZipPath}gameDB.db");
-            yield return null;
-
             //zip files
             string zipPath = $"{UtilityScripts.Utilities.gameSavePath}/{this.fileName}.zip";
             ZipFile.CreateFromDirectory(UtilityScripts.Utilities.tempZipPath, zipPath);

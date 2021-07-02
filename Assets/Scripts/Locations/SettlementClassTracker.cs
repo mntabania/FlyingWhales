@@ -109,8 +109,8 @@ namespace Locations {
         public override void Save(SettlementClassTracker data) {
             base.Save(data);
             currentClassOrderIndex = data.currentClassOrderIndex;
-            neededClasses = data.neededClasses;
-            currentResidentClasses = data.currentResidentClasses;
+            neededClasses = new List<string>(data.neededClasses);
+            currentResidentClasses = new List<string>(data.currentResidentClasses);
         }
     }
 }

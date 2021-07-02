@@ -53,7 +53,7 @@ public class AssumptionComponent : CharacterComponent {
         assumptionLog.AddLogToDatabase();
         newAssumption.SetAssumptionLog(assumptionLog);
         
-        PlayerManager.Instance.player.ShowNotificationFrom(owner, InteractionManager.Instance.CreateNewIntel(newAssumption.assumedAction) as IIntel);
+        PlayerManager.Instance.player.ShowNotificationFrom(owner, InteractionManager.Instance.CreateNewIntel(newAssumption.assumedAction));
 
         owner.reactionComponent.ReactTo(newAssumption, reactionStatus, false);
 
@@ -114,7 +114,7 @@ public class SaveDataAssumptionComponent : SaveData<AssumptionComponent> {
 
     #region Overrides
     public override void Save(AssumptionComponent data) {
-        assumptionData = data.assumptionData;
+        assumptionData = new List<AssumptionData>(data.assumptionData);
     }
 
     public override AssumptionComponent Load() {

@@ -224,7 +224,8 @@ public class SchemeUIController : MVCUIController, SchemeUIView.IListener {
                 }
                 log.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                 log.AddToFillers(null, temptations, LOG_IDENTIFIER.STRING_1);
-                _targetCharacter.logComponent.RegisterLog(log);
+                log.AddLogToDatabase();
+                //_targetCharacter.logComponent.RegisterLog(log);
                 PlayerManager.Instance.player.ShowNotificationFromPlayer(log, true);
             }
         }

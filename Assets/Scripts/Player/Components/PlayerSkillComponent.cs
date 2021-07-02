@@ -885,7 +885,7 @@ public class SaveDataPlayerSkillComponent : SaveData<PlayerSkillComponent> {
         
         timerUnlockSpell = component.timerUnlockSpell;
         // cooldownReroll = component.cooldownReroll;
-        currentSpellChoices = component.currentSpellChoices;
+        currentSpellChoices = new List<PLAYER_SKILL_TYPE>(component.currentSpellChoices);
         currentPortalUpgradeCost = component.currentPortalUpgradeCost;
         timerUpgradePortal = component.timerUpgradePortal;
         lastPortalUpgradeSummary = component.lastPortalUpgradeSummary;

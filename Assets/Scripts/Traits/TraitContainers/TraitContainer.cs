@@ -274,7 +274,7 @@ namespace Traits {
                     } else {
                         stacks.Add(statusName, 1);
                         statuses.Add(status);
-                        allTraitsAndStatuses.Add(statusName, status);
+                        allTraitsAndStatuses.Add(statusName, status);    
                         addTo.traitProcessor.OnTraitAdded(addTo, status, characterResponsible, overrideDuration);
                     }
                 } else {
@@ -1016,7 +1016,10 @@ public class SaveDataTraitContainer : SaveData<ITraitContainer> {
         //        nonInstancedTraits.Add(trait.name);
         //    }
         //}
-        stacks = data.stacks;
+        stacks = new Dictionary<string, int>();
+        foreach (var kvp in data.stacks) {
+            stacks.Add(kvp.Key, kvp.Value);
+        }
         scheduleTickets = new Dictionary<string, List<GameDate>>();
         foreach (var schedule in data.scheduleTickets) {
             scheduleTickets.Add(schedule.Key, new List<GameDate>());

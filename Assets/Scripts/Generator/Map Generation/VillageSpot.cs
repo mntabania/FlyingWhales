@@ -289,7 +289,7 @@ public class SaveDataVillageSpot : SaveData<VillageSpot> {
             Area area = data.reservedAreas[i];
             reservedAreas[i] = new Point(area.areaData.xCoordinate, area.areaData.yCoordinate);
         }
-        linkedBeastDens = data.linkedBeastDens;
+        linkedBeastDens = new List<string>(data.linkedBeastDens);
         lumberyardSpots = data.lumberyardSpots;
         miningSpots = data.miningSpots;
         migrationSpawningArea = new Point(data.migrationSpawningArea.areaData.xCoordinate, data.migrationSpawningArea.areaData.yCoordinate);

@@ -84,7 +84,10 @@ public class CultistBehaviour : CharacterBehaviourComponent {
                         }
                     }
                 }
-                producedJob.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] { TileObjectDB.GetTileObjectData(TILE_OBJECT_TYPE.CULTIST_KIT).mainRecipe });
+                //Should pass only the amount needed, not the mainRecipe because the cultist's main recipe is the stone pile which will not work if he decided to get a wood pile
+                //It will result in getting 0 wood from the pile.
+                producedJob.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] { TileObjectDB.GetTileObjectData(TILE_OBJECT_TYPE.CULTIST_KIT).mainRecipe.ingredient.amount });
+                //producedJob.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] { TileObjectDB.GetTileObjectData(TILE_OBJECT_TYPE.CULTIST_KIT).mainRecipe });
             }
             return success;
         } else {

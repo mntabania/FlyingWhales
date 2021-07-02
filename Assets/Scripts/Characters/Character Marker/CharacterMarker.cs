@@ -526,9 +526,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
             //if (!otherCharacter.limiterComponent.canPerform) {
             if (character.combatComponent.IsLethalCombatForTarget(otherCharacter) == false) {
                 if (otherCharacter.traitContainer.HasTrait("Unconscious", "Paralyzed", "Restrained")) {
-                    if (character.combatComponent.IsHostileInRange(otherCharacter)) {
-                        character.combatComponent.RemoveHostileInRange(otherCharacter);
-                    }
+                    character.combatComponent.RemoveHostileInRange(otherCharacter);
                     character.combatComponent.RemoveAvoidInRange(otherCharacter);
                 }
             }

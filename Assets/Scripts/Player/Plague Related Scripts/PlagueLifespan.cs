@@ -340,7 +340,10 @@ public class SaveDataPlagueLifespan : SaveData<PlagueLifespan> {
         tileObjectInfectionTimeInHours = p_data.tileObjectInfectionTimeInHours;
         monsterInfectionTimeInHours = p_data.monsterInfectionTimeInHours;
         undeadInfectionTimeInHours = p_data.undeadInfectionTimeInHours;
-        sapientInfectionTimeInHours = p_data.sapientInfectionTimeInHours;
+        sapientInfectionTimeInHours = new Dictionary<RACE, int>();
+        foreach (var kvp in p_data.sapientInfectionTimeInHours) {
+            sapientInfectionTimeInHours.Add(kvp.Key, kvp.Value);
+        }
     }
     public override PlagueLifespan Load() {
         PlagueLifespan component = new PlagueLifespan(this);
