@@ -143,7 +143,7 @@ namespace Traits {
                         !characterThatWillDoJob.jobComponent.HasHigherPriorityJobThan(JOB_TYPE.INSPECT)) {
                         characterThatWillDoJob.jobComponent.TriggerInspect(item);
                     }
-                } else if (item.traitContainer.HasTrait("Edible") && characterThatWillDoJob.needsComponent.isStarving && characterThatWillDoJob.limiterComponent.canDoFullnessRecovery && 
+                } else if (item.traitContainer.HasTrait("Edible") && characterThatWillDoJob.needsComponent.isStarving /*&& characterThatWillDoJob.limiterComponent.canDoFullnessRecovery*/ && 
                            !characterThatWillDoJob.traitContainer.HasTrait("Vampire") && !characterThatWillDoJob.traitContainer.HasTrait("Paralyzed")) {
                     characterThatWillDoJob.jobComponent.CreateFullnessRecoveryOnSight(item);
                 } else if (!characterThatWillDoJob.IsInventoryAtFullCapacity() && (item.traitContainer.HasTrait("Treasure")) // characterThatWillDoJob.IsItemInteresting(item.name) || 
