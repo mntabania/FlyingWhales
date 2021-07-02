@@ -1190,7 +1190,8 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         SettlementResources.PopulateAllMineShackSpots(allMineShackSpots, this);
         for (int i = 0; i < allMineShackSpots.Count; i++) {
             LocationGridTile oreVein = allMineShackSpots[i];
-            if (oreVein.tileObjectComponent.genericTileObject.structureConnector != null && oreVein.tileObjectComponent.genericTileObject.structureConnector.isOpen) {
+            if (oreVein.structure is Cave cave && oreVein.tileObjectComponent.genericTileObject.structureConnector != null && 
+                oreVein.tileObjectComponent.genericTileObject.structureConnector.isOpen && !cave.IsConnectedToSettlement(this)) {
                 connectors.Add(oreVein.tileObjectComponent.genericTileObject.structureConnector);
             }
         }
@@ -1198,7 +1199,8 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
             Area area = occupiedVillageSpot.reservedAreas[i];
             for (int j = 0; j < area.structureComponent.structureConnectors.Count; j++) {
                 StructureConnector connector = area.structureComponent.structureConnectors[j];
-                if (connector.tileLocation != null && connector.isOpen && !connectors.Contains(connector) && connector.tileLocation.structure is Cave) {
+                if (connector.tileLocation != null && connector.isOpen && !connectors.Contains(connector) && 
+                    connector.tileLocation.structure is Cave cave && !cave.IsConnectedToSettlement(this)) {
                     connectors.Add(connector);
                 }
             }
