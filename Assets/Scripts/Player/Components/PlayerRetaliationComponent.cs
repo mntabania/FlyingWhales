@@ -199,7 +199,8 @@ public class PlayerRetaliationComponent {
 #endif
     }
     public void StructureDestroyedRetaliation(LocationStructure p_structure) {
-        if (p_structure.settlementLocation != null && p_structure.settlementLocation.locationType == LOCATION_TYPE.VILLAGE && p_structure.settlementLocation.owner != null && p_structure.settlementLocation.owner.isMajorNonPlayer) {
+        if (p_structure.settlementLocation != null && p_structure.settlementLocation.locationType == LOCATION_TYPE.VILLAGE && p_structure.settlementLocation.owner != null && p_structure.settlementLocation.owner.isMajorNonPlayer
+            && !p_structure.settlementLocation.owner.IsFriendlyWith(PlayerManager.Instance.player.playerFaction)) {
             string debugLog = string.Empty;
 #if DEBUG_LOG
             debugLog = "ADD RETALIATION COUNTER!";
