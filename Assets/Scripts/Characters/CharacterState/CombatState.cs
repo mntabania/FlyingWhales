@@ -1014,7 +1014,7 @@ public class CombatState : CharacterState {
         p_gridTile.PopulateTilesInRadius(tilesToCheck, Mathf.CeilToInt(p_distanceLimit), includeCenterTile: true, includeTilesInDifferentStructure: true);
         Vector3 chosenPosition = Vector3.positiveInfinity;
         if (tilesToCheck.Count > 0) {
-            for (int i = 0; i < tilesToCheck.Count; i++) {
+            for (int i = tilesToCheck.Count - 1; i >= 0; i--) {
                 LocationGridTile tile = tilesToCheck[i];
                 Vector3 pos = tile.GetUnoccupiedWalkablePositionInTileWithDistanceLimitOf(p_distanceLimit, p_relativeToPos);
                 if (!pos.Equals(Vector3.positiveInfinity)) {
