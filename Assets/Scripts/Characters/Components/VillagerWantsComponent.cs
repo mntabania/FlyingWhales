@@ -134,6 +134,9 @@ public class VillagerWantsComponent : CharacterComponent, CharacterEventDispatch
         } else if (p_homeStructure is null) {
             DwellingWant dwellingWant = CharacterManager.Instance.GetVillagerWantInstance<DwellingWant>();
             ToggleWantOn(dwellingWant);
+            
+            //check if other wants are still valid given no home.
+            EvaluateAllWants(p_character);
         }
     }
     public void OnObjectPlacedInHomeDwelling(Character p_character, LocationStructure p_homeStructure, TileObject p_placedObject) {

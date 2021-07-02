@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using Characters.Villager_Wants;
+using Inner_Maps;
 using Inner_Maps.Location_Structures;
 using UnityEngine;
 using UnityEngine.Assertions;
@@ -185,8 +186,8 @@ public class FreeTimeBehaviour : CharacterBehaviourComponent {
         log = $"{log}\n-{character.name} will run through idle behaviour.";
 #endif
         //Idle Behaviour
-        if ((character.homeStructure == null || character.homeStructure.hasBeenDestroyed) && !character.HasTerritory()) {
-            return NoHomeBehaviour(character, ref log, out producedJob);
+        if (!HasHomeStructureOrTerritory(character)) {
+            return HomelessBehaviour(character, ref log, out producedJob);
         } else if (character.isAtHomeStructure || character.IsInTerritory()) {
             return AtHomeBehaviour(character, ref log, out producedJob);
         } else if (character.currentStructure is Tavern) {
@@ -495,7 +496,209 @@ public class FreeTimeBehaviour : CharacterBehaviourComponent {
             return true;
         }
     }
-    private bool NoHomeBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
+    private bool HomelessBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
+#if DEBUG_LOG
+        log = $"{log}\n-{character.name} is homeless";
+#endif
+        if (character.homeSettlement != null && character.homeSettlement.locationType == LOCATION_TYPE.VILLAGE) {
+#if DEBUG_LOG
+            log = $"{log}\n-{character.name} lives in a village: {character.homeSettlement.name}";
+#endif
+            if (character.currentStructure != null && character.currentStructure.structureType != STRUCTURE_TYPE.CITY_CENTER && character.currentStructure.structureType != STRUCTURE_TYPE.TAVERN) {
+#if DEBUG_LOG
+                log = $"{log}\n-{character.name} is not in city center or tavern. Rolling to go to city center or tavern...";
+#endif
+                if (GameUtilities.RollChance(25, ref log)) {
+                    if (character.homeSettlement.HasStructure(STRUCTURE_TYPE.TAVERN) && !character.traitContainer.HasTrait("Agoraphobic")) {
+#if DEBUG_LOG
+                        log = $"{log}\n-Home village has tavern and character is not Agoraphobic";
+#endif
+                        LocationStructure targetStructure = GameUtilities.RollChance(50) ? character.homeSettlement.GetRandomStructureOfType(STRUCTURE_TYPE.TAVERN) : character.homeSettlement.cityCenter;
+#if DEBUG_LOG
+                        log = $"{log}\n-Target Structure is {targetStructure.name}";
+#endif
+                        if (targetStructure.passableTiles.Count > 0) {
+                            LocationGridTile targetTile = CollectionUtilities.GetRandomElement(targetStructure.passableTiles);
+                            return character.jobComponent.CreateGoToJob(JOB_TYPE.IDLE, targetTile, out producedJob);  
+                        }
+                    } else {
+#if DEBUG_LOG
+                        log = $"{log}\n-Home village doesn't have a tavern or character is Agoraphobic. Will Go to City Center";
+#endif
+                        LocationStructure targetStructure = character.homeSettlement.cityCenter;
+                        if (targetStructure.passableTiles.Count > 0) {
+                            LocationGridTile targetTile = CollectionUtilities.GetRandomElement(targetStructure.passableTiles);
+                            return character.jobComponent.CreateGoToJob(JOB_TYPE.IDLE, targetTile, out producedJob);  
+                        }
+                    }
+                } else {
+#if DEBUG_LOG
+                    log = $"{log}\n-Chance not met. Will do action Stand";
+#endif
+                    character.PlanFixedJob(JOB_TYPE.IDLE_STAND, INTERACTION_TYPE.STAND, character, out producedJob);                
+                }
+            } else {
+#if DEBUG_LOG
+                log = $"{log}\n-Character is at city center or tavern";
+#endif
+                //socializing and visit village
+                 if (character.dailyScheduleComponent.schedule.GetScheduleType(GameManager.Instance.currentTick) == DAILY_SCHEDULE.Free_Time &&
+                    character.dailyScheduleComponent.schedule.IsInFirstHourOfCurrentScheduleType(GameManager.Instance.currentTick) && !character.traitContainer.HasTrait("Agoraphobic")) {
+#if DEBUG_LOG
+                     log = $"{log}\n-Is in first hour of free time. Will roll chance to socialize";
+#endif
+                    if (ChanceData.RollChance(CHANCE_TYPE.Socialize_Chance, ref log) && !character.behaviourComponent.HasBehaviour(typeof(SocializingBehaviour)) && 
+                        character.homeSettlement != null && character.homeSettlement.locationType == LOCATION_TYPE.VILLAGE) {
+                        LocationStructure targetStructure;
+                        if (character.homeSettlement.HasStructure(STRUCTURE_TYPE.TAVERN)) {
+                            targetStructure = GameUtilities.RollChance(50) ? character.homeSettlement.GetRandomStructureOfType(STRUCTURE_TYPE.TAVERN) : character.homeSettlement.cityCenter;
+                        } else {
+                            targetStructure = character.homeSettlement.cityCenter;
+                        }
+#if DEBUG_LOG
+                        log = $"{log}\n-Will socialize at {targetStructure.name}";
+#endif
+                        character.behaviourComponent.GoSocializing(character, targetStructure);
+                        producedJob = null;
+                        return true;
+                    }
+#if DEBUG_LOG
+                    log = $"{log}\n-Will roll for chance to Visit Village...";
+#endif
+                    if (ChanceData.RollChance(CHANCE_TYPE.Visit_Village_Chance, ref log) && !character.behaviourComponent.HasBehaviour(typeof(VisitVillageBehaviour))) {
+                        List<NPCSettlement> villageChoices = RuinarchListPool<NPCSettlement>.Claim();
+                        character.currentRegion.PopulateVillagesInRegionThatAreOwnedByFactionOrNotHostileToIt(villageChoices, character.faction);
+                        if (character.homeSettlement != null) {
+                            villageChoices.Remove(character.homeSettlement);    
+                        }
+                        if (villageChoices.Count > 0) {
+                            NPCSettlement targetVillage = CollectionUtilities.GetRandomElement(villageChoices);
+#if DEBUG_LOG
+                            log = $"{log}\n-Will visit {targetVillage.name}";
+#endif
+                            character.behaviourComponent.VisitVillage(character, targetVillage);
+                            RuinarchListPool<NPCSettlement>.Release(villageChoices);
+                            producedJob = null;
+                            return true;    
+                        }
+                        RuinarchListPool<NPCSettlement>.Release(villageChoices);
+                    } 
+                 }
+                 
+                 //combatant change class
+                 if ((character.characterClass.IsCombatant() || character.characterClass.className == "Noble") && !character.traitContainer.HasTrait("Enslaved")) {
+#if DEBUG_LOG
+                    log = $"{log}\n-{character.name} is a Combatant that is not Enslaved";
+#endif
+                    if (ChanceData.RollChance(CHANCE_TYPE.Personal_Combatant_Change_Class, ref log) && CanCharacterChangeToAHigherTierCombatClass(character)) {
+#if DEBUG_LOG
+                        log = $"{log}\n-{character.name} can upgrade to a higher tier.";
+#endif
+                        List<string> classChoices = RuinarchListPool<string>.Claim();
+                        if (character.characterClass.attackType == ATTACK_TYPE.MAGICAL && character.structureComponent.HasWorkPlaceStructure()) {
+                            //added this case for magic users assigned to the Hospice, so that they can still be assigned to the hospice after upgrading their class
+                            TryAddClassToChangeClassChoices(character, "Mage", classChoices);
+                            TryAddClassToChangeClassChoices(character, "Shaman", classChoices);
+                        } else {
+                            TryAddClassToChangeClassChoices(character, "Knight", classChoices);
+                            TryAddClassToChangeClassChoices(character, "Hunter", classChoices);
+                            TryAddClassToChangeClassChoices(character, "Mage", classChoices);
+                            if (classChoices.Count <= 0) {
+                                TryAddClassToChangeClassChoices(character, "Barbarian", classChoices);
+                                TryAddClassToChangeClassChoices(character, "Stalker", classChoices);
+                                TryAddClassToChangeClassChoices(character, "Shaman", classChoices);    
+                            }    
+                        }
+
+                        if (classChoices.Count > 0) {
+#if DEBUG_LOG
+                            log = $"{log}\n-{character.name} change class choices are {classChoices.ComafyList()}";
+#endif
+                            string classToChangeTo = CollectionUtilities.GetRandomElement(classChoices);
+#if DEBUG_LOG
+                            log = $"{log}\n-{character.name} chosen Change Class target is {classToChangeTo}";
+#endif
+                            if (character.jobComponent.TriggerPersonalChangeClassJob(classToChangeTo, out producedJob)) {
+#if DEBUG_LOG
+                                log = $"{log}\n-Personal Change Class was created.";
+#endif
+                                return true;
+                            }
+                        } else {
+#if DEBUG_LOG
+                            log = $"{log}\n-{character.name} has no higher tier classes that it can change to";
+#endif
+                        }
+                    }
+                }
+                 
+                 //visit disabled friend
+                 if (GameUtilities.RollChance(30, ref log) && !character.trapStructure.IsTrapped() && !character.trapStructure.IsTrappedInArea()) {
+                     Character chosenCharacter = GetDisabledCharacterToVisit(character);
+                     if (chosenCharacter != null) {
+                         if (chosenCharacter.homeStructure != null) {
+#if DEBUG_LOG
+                             log = $"{log}\n  -Will visit house of Disabled Character {chosenCharacter.name}";
+#endif
+                             character.PlanFixedJob(JOB_TYPE.CHECK_PARALYZED_FRIEND, INTERACTION_TYPE.VISIT, character, out producedJob,
+                                 new OtherData[] {new LocationStructureOtherData(chosenCharacter.homeStructure), new CharacterOtherData(chosenCharacter),});
+                             return true;
+                         }
+                     }
+#if DEBUG_LOG
+                     log = $"{log}\n  -No available character to visit ";
+#endif
+                 }
+                 
+                 //visit Hospice
+                 if (character.currentSettlement != null && character.currentSettlement.HasStructureClaimedByNonEnemyOrSelf(STRUCTURE_TYPE.HOSPICE, character, out LocationStructure foundStructure)) {
+#if DEBUG_LOG
+                    log = $"{log}\n  -There is a Hospice in the Village claimed by a non-Enemy or by self: ";
+#endif
+                    Hospice hospice = foundStructure as Hospice;
+                    Assert.IsNotNull(hospice);
+                    if ((character.traitContainer.HasTrait("Injured") || character.traitContainer.HasTrait("Plagued")) && 
+                        !character.traitContainer.HasTrait("Plague Reservoir") && ChanceData.RollChance(CHANCE_TYPE.Plauged_Injured_Visit_Hospice)) {
+                        //recuperate
+#if DEBUG_LOG
+                        log = $"{log}\n  -Actor has Injured or Plagued and there is still an available Bed in the Hospice: Create Recuperate Job";
+#endif
+                        
+                        BedClinic bedClinic = hospice.GetFirstBedToRecuperate();
+                        if (bedClinic != null) {
+                            if (character.jobComponent.TryRecuperate(bedClinic, out producedJob)) {
+                                return true;
+                            }
+                        }
+                    }
+                    if (ChanceData.RollChance(CHANCE_TYPE.Vampire_Lycan_Visit_Hospice, ref log) && character.currentStructure != foundStructure && hospice.HasWorkerWithLevel5HealingMagic()) {
+#if DEBUG_LOG
+                        log = $"{log}\n  -Hospice is claimed by a Villager with Level 5 Healing Magic:";
+#endif
+                        Traits.Vampire vampire = character.traitContainer.GetTraitOrStatus<Traits.Vampire>("Vampire");
+                        if (vampire != null && vampire.dislikedBeingVampire) {
+                            //Go to hospice and wait there for 2 hours
+#if DEBUG_LOG
+                            log = $"{log}\n  -Actor has Vampirism and disliked being a Vampire";
+                            character.PlanFixedJob(JOB_TYPE.VISIT_HOSPICE, INTERACTION_TYPE.VISIT, character, out producedJob,
+                                new OtherData[] {new LocationStructureOtherData(hospice)});
+                            return true;
+#endif
+                        }
+                        if (character.lycanData != null && character.lycanData.dislikesBeingLycan) {
+                            //Go to hospice and wait there for 2 hours
+#if DEBUG_LOG
+                            log = $"{log}\n  -If Actor has Lycanthropy and disliked being a Werewolf";
+                            character.PlanFixedJob(JOB_TYPE.VISIT_HOSPICE, INTERACTION_TYPE.VISIT, character, out producedJob,
+                                new OtherData[] {new LocationStructureOtherData(hospice)});
+                            return true;
+#endif
+                        }
+                    }
+                }
+            } 
+        }
+        
 #if DEBUG_LOG
         log = $"{log}\n-No home structure";
         log = $"{log}\n-Will do action Stand";
@@ -539,6 +742,9 @@ public class FreeTimeBehaviour : CharacterBehaviourComponent {
     }
 
     #region Utilities
+    private bool HasHomeStructureOrTerritory(Character character) {
+        return (character.homeStructure != null && !character.homeStructure.hasBeenDestroyed) || character.HasTerritory();
+    }
     private Character GetDisabledCharacterToVisit(Character p_character) {
         //List<Character> charactersWithRel = relationshipContainer.relationships.Keys.Where(x => x is AlterEgoData).Select(x => (x as AlterEgoData).owner).ToList();
         Character chosenCharacter = null;
