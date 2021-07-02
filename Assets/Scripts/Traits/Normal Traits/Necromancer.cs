@@ -74,7 +74,7 @@ namespace Traits {
             owner.SetNecromancerTrait(this);
             //NOTE: The changing of faction and clearing out home is moved in Necromantic Transformation interrupt, the reason is the necromancer must not change faction every time he changes classes because he can be a master lycan
             //The creation of lair must also be done only once
-            AdjustEnergy(5);
+            AdjustEnergy(10);
             owner.jobQueue.CancelAllJobs();
             owner.movementComponent.SetEnableDigging(true);
             owner.movementComponent.SetAvoidSettlements(true);
@@ -132,6 +132,7 @@ namespace Traits {
         }
         public void AdjustEnergy(int amount) {
             energy += amount;
+            energy = Mathf.Clamp(energy, 0, 10);
         }
         // private int GetNumOfSkeletonFollowers() {
         //     int count = 0;

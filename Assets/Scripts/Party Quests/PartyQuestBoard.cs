@@ -78,7 +78,7 @@ public class PartyQuestBoard {
     public void AddPartyQuest(PartyQuest quest, Character questCreator) {
         if (!availablePartyQuests.Contains(quest)) {
             availablePartyQuests.Add(quest);
-
+#if DEBUG_LOG
             if (!owner.isPlayerFaction) {
                 if (questCreator == null) {
                     Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Party", "Quest", "post_quest_no_creator", providedTags: LOG_TAG.Party);
@@ -95,6 +95,7 @@ public class PartyQuestBoard {
                     PlayerManager.Instance.player.ShowNotificationFromPlayer(log, true);
                 }
             }
+#endif
         }
     }
     public bool RemovePartyQuest(PartyQuest quest) {

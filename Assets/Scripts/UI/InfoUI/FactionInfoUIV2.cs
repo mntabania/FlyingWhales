@@ -109,7 +109,7 @@ public class FactionInfoUIV2 : MonoBehaviour {
         Messenger.AddListener<Log>(UISignals.LOG_IN_DATABASE_UPDATED, UpdateHistory);
         Messenger.AddListener<Faction>(FactionSignals.FACTION_IDEOLOGIES_CHANGED, OnFactionIdeologiesChanged);
         Messenger.AddListener<Faction>(FactionSignals.FACTION_CRIMES_CHANGED, OnFactionCrimesChanged);
-        Messenger.AddListener<Character, Character>(CharacterSignals.ON_SWITCH_FROM_LIMBO, OnCharacterSwitchFromLimbo);
+        //Messenger.AddListener<Character, Character>(CharacterSignals.ON_SWITCH_FROM_LIMBO, OnCharacterSwitchFromLimbo);
         Messenger.AddListener<Character, Character>(CharacterSignals.ON_SET_AS_SETTLEMENT_RULER, OnCharacterSetAsSettlementRuler);
         Messenger.AddListener<Faction>(FactionSignals.UPDATED_SUCCESSORS, OnFactionUpdatedSuccessors);
         logsWindow.Initialize();

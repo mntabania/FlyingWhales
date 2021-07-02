@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using UtilityScripts;
 public class PiercingAndResistancesComponent : CharacterComponent {
     /// <summary>
     /// This is the computed value of basePiercing * piercingMultiplier
@@ -45,7 +45,7 @@ public class PiercingAndResistancesComponent : CharacterComponent {
     #endregion
 
     #region Resistances
-    public void AdjustResistance(RESISTANCE p_resistance, float p_value) {
+    public void AdjustResistance(RESISTANCE p_resistance, float p_value, bool shouldBroadcastSignal = true) {
         if (!resistances.ContainsKey(p_resistance)) {
             resistances.Add(p_resistance, 0f);
         }
@@ -53,6 +53,18 @@ public class PiercingAndResistancesComponent : CharacterComponent {
 #if DEBUG_LOG
         Debug.Log($"Adjusted base resistance {p_resistance.ToString()} of {owner.name} by {p_value.ToString()}. New value is: {resistances[p_resistance].ToString()}");
 #endif
+        if (shouldBroadcastSignal) {
+            Messenger.Broadcast(UISignals.UPDATE_PIERCING_AND_RESISTANCE_INFO, owner);
+        }
+    }
+    public void AdjustAllResistances(float p_value) {
+        RESISTANCE[] resistances = CollectionUtilities.GetEnumValues<RESISTANCE>();
+        for (int i = 0; i < resistances.Length; i++) {
+            RESISTANCE r = resistances[i];
+            if (r != RESISTANCE.None) {
+                AdjustResistance(r, p_value, shouldBroadcastSignal: false);
+            }
+        }
         Messenger.Broadcast(UISignals.UPDATE_PIERCING_AND_RESISTANCE_INFO, owner);
     }
     public void SetResistance(RESISTANCE p_resistance, float p_value) {
