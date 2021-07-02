@@ -18,6 +18,7 @@ public class ExpelData : PlayerAction {
     #region Overrides
     public override void ActivateAbility(IPointOfInterest targetPOI) {
         if (targetPOI is Character targetCharacter) {
+            targetCharacter.jobQueue.CancelAllJobs();
             if(targetCharacter.faction != null) {
                 targetCharacter.faction.KickOutCharacter(targetCharacter);
             }
