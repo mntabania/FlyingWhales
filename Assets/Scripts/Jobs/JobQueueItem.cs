@@ -128,7 +128,21 @@ public abstract class JobQueueItem : ISavable {
     
     #region Virtuals
     protected virtual bool CanTakeJob(Character character) {
-        return !character.traitContainer.HasTrait("Criminal") && character.limiterComponent.canPerform; //!character.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)
+        //Character cannot take settlement job only if he is wanted by his current faction
+        //If he is not a criminal or he is not wanted by his current faction, allow to take job
+        bool isWantedByCurrentFaction = false;
+        if (character.traitContainer.HasTrait("Criminal") && character.faction != null) {
+            if (character.crimeComponent.activeCrimes.Count > 0) {
+                for (int i = 0; i < character.crimeComponent.activeCrimes.Count; i++) {
+                    CrimeData data = character.crimeComponent.activeCrimes[i];
+                    if (data.IsWantedBy(character.faction)) {
+                        isWantedByCurrentFaction = true;
+                        break;
+                    }
+                }
+            }
+        }
+        return !isWantedByCurrentFaction && character.limiterComponent.canPerform; //!character.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)
     }
     public virtual void UnassignJob(string reason) { }
     public virtual void OnAddJobToQueue() { }

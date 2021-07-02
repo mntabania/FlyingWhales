@@ -236,6 +236,7 @@ public class Summon : Character {
 #if DEBUG_PROFILER
         Profiler.BeginSample($"{name} OnTickStarted");
 #endif
+        needsComponent.PerTickSummon();
         ProcessTraitsOnTickStarted();
         StartTickGoapPlanGeneration();
 #if DEBUG_PROFILER
