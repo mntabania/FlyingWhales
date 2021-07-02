@@ -5030,16 +5030,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
 #if DEBUG_LOG
         logComponent.PrintLogIfActive($"Stopped action of {name} which is {currentActionNode.action.goapName} targetting {currentActionNode.poiTarget.name}!");
 #endif
-        //Toggle is processing here so that when StopActionNode is called, the currentActionNode will not be put in object pool
-        ActualGoapNode currentAction = currentActionNode;
-        currentAction.SetIsStillProcessing(true);
-        currentAction.StopActionNode();
-        currentAction.SetIsStillProcessing(false);
-#if DEBUG_LOG
-        if (currentAction.isSupposedToBeInPool) {
-            logComponent.PrintLogErrorIfActive($"Action: {currentAction.ToString()} is supposed to be in pool");
-        }
-#endif
+        currentActionNode.StopActionNode();
 
         SetCurrentActionNode(null, null, null);
 
