@@ -20,8 +20,8 @@ public class IsCultist : GoapAction {
 #endif
         return 10;
     }
-    public override void PopulateReactionsToActor(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
-        base.PopulateReactionsToActor(reactions, actor, target, witness, node, status);
+    public override void PopulateEmotionReactionsToActor(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
+        base.PopulateEmotionReactionsToActor(reactions, actor, target, witness, node, status);
         Character poiTarget = target as Character;
         if (witness.traitContainer.HasTrait("Cultist") == false) {
             reactions.Add(EMOTION.Shock);
@@ -56,9 +56,9 @@ public class IsCultist : GoapAction {
     }
 #endregion
 
-#region State Effects
-    public void PreCultistSuccess(ActualGoapNode goapNode) { }
-    public void PerTickCultistSuccess(ActualGoapNode goapNode) { }
-    public void AfterCultistSuccess(ActualGoapNode goapNode) { }
-#endregion
+//#region State Effects
+//    public void PreCultistSuccess(ActualGoapNode goapNode) { }
+//    public void PerTickCultistSuccess(ActualGoapNode goapNode) { }
+//    public void AfterCultistSuccess(ActualGoapNode goapNode) { }
+//#endregion
 }

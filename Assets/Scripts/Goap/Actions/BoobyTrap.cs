@@ -35,10 +35,14 @@ public class BoobyTrap : GoapAction {
 #endif
         return cost;
     }
-    public override void PopulateReactionsToActor(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
-        base.PopulateReactionsToActor(reactions, actor, target, witness, node, status);
+    public override string ReactionToActor(Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
+        string response = base.ReactionToActor(actor, target, witness, node, status);
         BoobyTrapped boobyTrapped = target.traitContainer.GetTraitOrStatus<BoobyTrapped>("Booby Trapped");
         boobyTrapped?.AddAwareCharacter(witness);
+        return response;
+    }
+    public override void PopulateEmotionReactionsToActor(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
+        base.PopulateEmotionReactionsToActor(reactions, actor, target, witness, node, status);
 
         if (target is TileObject tileObject) {
             if (tileObject.IsOwnedBy(witness)) {

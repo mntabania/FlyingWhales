@@ -79,11 +79,6 @@ public class EquipmentItem : TileObject {
 
 	public override void OnPlacePOI() {
 		base.OnPlacePOI();
-        if (UnityEngine.Random.Range(0, 100) > 50) {
-            MakeQualityHigh();
-        } else {
-            MakeQualityPremium();
-        }
     }
 
     public string GetBonusDescription() {

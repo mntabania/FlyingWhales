@@ -152,7 +152,7 @@ public class EquipmentUpgradeData {
         string descripton = String.Empty;
         if (bonuses.Contains(EQUIPMENT_BONUS.Increased_Piercing)) {
             if (AdditionalPiercing > 0) {
-                descripton += $"{GetProcessedAdditionalPiercing(p_quality)} {UtilityScripts.Utilities.PiercingIcon()}\n";
+                descripton += $"{Mathf.Round(GetProcessedAdditionalPiercing(p_quality))} {UtilityScripts.Utilities.PiercingIcon()}\n";
             }
         }
         if (bonuses.Contains(EQUIPMENT_BONUS.Str_Actual)) {
@@ -162,7 +162,7 @@ public class EquipmentUpgradeData {
         }
         if (bonuses.Contains(EQUIPMENT_BONUS.Str_Percentage)) {
             if (AdditionalAttackPercentage > 0) {
-                descripton += $"+{GetProcessedAdditionalAttackPercentage(p_quality)}% Str\n";
+                descripton += $"+{Mathf.Round(GetProcessedAdditionalAttackPercentage(p_quality))}% Str\n";
             }
         }
         
@@ -174,7 +174,7 @@ public class EquipmentUpgradeData {
         
         if (bonuses.Contains(EQUIPMENT_BONUS.Max_HP_Percentage)) {
             if (AdditionalMaxHPPercentage > 0) {
-                descripton += $"+{GetProcessedAdditionalmaxHPPercentage(p_quality)}% Hitpoints\n";
+                descripton += $"+{Mathf.Round(GetProcessedAdditionalmaxHPPercentage(p_quality))}% Hitpoints\n";
             }
         }
         if (bonuses.Contains(EQUIPMENT_BONUS.Int_Actual)) {
@@ -184,7 +184,7 @@ public class EquipmentUpgradeData {
         }
         if (bonuses.Contains(EQUIPMENT_BONUS.Int_Percentage)) {
             if (AdditionalIntPercentage > 0) {
-                descripton += $"+{GetProcessedAdditionalIntPercentage(p_quality)}% Int\n";
+                descripton += $"+{Mathf.Round(GetProcessedAdditionalIntPercentage(p_quality))}% Int\n";
             }
         }
         if (bonuses.Contains(EQUIPMENT_BONUS.Attack_Element)) {
@@ -204,7 +204,7 @@ public class EquipmentUpgradeData {
         }
 
         if (bonuses.Contains(EQUIPMENT_BONUS.Crit_Rate_Actual)) {
-            descripton += $"+{GetProcessedAdditionalCritRate(p_quality)}% Crit\n";
+            descripton += $"+{Mathf.Round(GetProcessedAdditionalCritRate(p_quality))}% Crit\n";
         }
         
         
