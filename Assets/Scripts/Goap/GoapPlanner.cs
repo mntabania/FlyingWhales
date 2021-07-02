@@ -135,6 +135,10 @@ public class GoapPlanner {
         owner.logComponent.PrintLogIfActive(_goapThreadInProcess.log + additionalLog);
 #endif
         if (createdPlan != null) {
+            JOB_TYPE jobType = _goapThreadInProcess.job.jobType;
+            if (jobType == JOB_TYPE.PRODUCE_FOOD && owner.traitContainer.HasTrait("Abstain Fullness")) {
+                owner.traitContainer.RemoveTrait(owner, "Abstain Fullness");
+            }
             createdPlan.SetDoNotRecalculate(_goapThreadInProcess.job.doNotRecalculate);
             if (_goapThreadInProcess.recalculationPlan != null) {
                 //This means that the created plan is a recalculated plan
@@ -231,15 +235,15 @@ public class GoapPlanner {
 
             if (jobType == JOB_TYPE.FULLNESS_RECOVERY_URGENT || jobType == JOB_TYPE.FULLNESS_RECOVERY_NORMAL) {
                 //Do not produce food anymore personally, since it is already handled in character wants
-                //if (!owner.traitContainer.HasTrait("Vampire") && owner.isNormalCharacter && !owner.isConsideredRatman) {
-                //    //Special case for when a character cannot do hunger recovery, he/she must produce food instead
-                //    //NOTE: Excluded vampires because we don't want vampires to produce food when they fail to drink blood.
-                //    if (!owner.partyComponent.isMemberThatJoinedQuest) {
-                //        //If character is currently in an active party with a quest and it is one of the members that joined the quest
-                //        //It should not produce food personally because the produce food while in a party that has quest is controlled by the party itseld, the Produce Food For Camp
-                //        owner.jobComponent.CreateProduceFoodJob();
-                //    }
-                //}
+                if (!owner.traitContainer.HasTrait("Vampire") && owner.isNormalCharacter && !owner.isConsideredRatman) {
+                    //Special case for when a character cannot do hunger recovery, he/she must produce food instead
+                    //NOTE: Excluded vampires because we don't want vampires to produce food when they fail to drink blood.
+                    if (!owner.partyComponent.isMemberThatJoinedQuest) {
+                        //If character is currently in an active party with a quest and it is one of the members that joined the quest
+                        //It should not produce food personally because the produce food while in a party that has quest is controlled by the party itseld, the Produce Food For Camp
+                        owner.jobComponent.CreateProduceFoodJob();
+                    }
+                }
                 if (owner.traitContainer.HasTrait("Pest") || owner is Rat) {
                     owner.behaviourComponent.SetPestHasFailedEat(true);
                 }
