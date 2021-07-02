@@ -67,13 +67,13 @@ public class ShearAnimal : GoapAction {
         if (tileToSpawnPile != null && tileToSpawnPile.tileObjectComponent.objHere != null) {
             tileToSpawnPile = p_node.actor.gridTileLocation.GetFirstNearestTileFromThisWithNoObject();
         }
-        ResourcePile matsToHaul = InnerMapManager.Instance.CreateNewTileObject<ResourcePile>(animal.produceableMaterial);
+        
         int amount = p_node.currentStateDuration * m_amountProducedPerTick;
 
         if (animal.count - amount < 0) {
             amount = animal.count;
         }
-        animal.count = (int)Mathf.Clamp(animal.count - amount, 0f, 1000f);
+        
         if (targetAnimal.gridTileLocation != null) {
             if (animal.count <= 0) {
                 animal.isAvailableForShearing = false;
@@ -82,6 +82,8 @@ public class ShearAnimal : GoapAction {
         if (amount <= 0) {
             return null;
         }
+        animal.count = (int)Mathf.Clamp(animal.count - amount, 0f, 1000f);
+        ResourcePile matsToHaul = InnerMapManager.Instance.CreateNewTileObject<ResourcePile>(animal.produceableMaterial);
         p_node.actor.moneyComponent.AdjustCoins(Mathf.CeilToInt(amount * _coinGainMultiplier));
         matsToHaul.SetResourceInPile(amount);
         tileToSpawnPile.structure.AddPOI(matsToHaul, tileToSpawnPile);
