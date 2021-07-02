@@ -8,6 +8,7 @@ using Inner_Maps.Location_Structures;
 public class DropResource : GoapAction {
 
     private Precondition _foodPrecondition;
+    private Precondition _buyFoodPrecondition;
 
     public DropResource() : base(INTERACTION_TYPE.DROP_RESOURCE) {
         actionIconString = GoapActionStateDB.Haul_Icon;
@@ -16,6 +17,7 @@ public class DropResource : GoapAction {
         logTags = new[] {LOG_TAG.Work};
 
         _foodPrecondition = new Precondition(new GoapEffect(GOAP_EFFECT_CONDITION.TAKE_POI, "Food Pile" /*+ (int)otherData[0]*/, false, GOAP_EFFECT_TARGET.ACTOR), HasTakenEnoughAmount);
+        _buyFoodPrecondition = new Precondition(new GoapEffect(GOAP_EFFECT_CONDITION.BUY_OBJECT, "Food Pile", false, GOAP_EFFECT_TARGET.ACTOR), HasBoughtFood);
     }
 
     #region Overrides
@@ -47,7 +49,11 @@ public class DropResource : GoapAction {
         //p.AddRange(baseP);
         Precondition p = null;
         if (target is Table) {
-            p = _foodPrecondition;
+            if (jobType == JOB_TYPE.BUY_FOOD_FOR_TAVERN) {
+                p = _buyFoodPrecondition;
+            } else {
+                p = _foodPrecondition;
+            }
         } else {
             p = new Precondition(new GoapEffect(GOAP_EFFECT_CONDITION.TAKE_POI, target.name /*+ (int) otherData[0]*/, false, GOAP_EFFECT_TARGET.ACTOR), HasTakenEnoughAmount);
         }
@@ -82,16 +88,22 @@ public class DropResource : GoapAction {
     }
 #endregion
 
-#region Preconditions
+    #region Preconditions
     private bool HasTakenEnoughAmount(Character actor, IPointOfInterest poiTarget, OtherData[] otherData, JOB_TYPE jobType) {
         if (actor.carryComponent.isCarryingAnyPOI && actor.carryComponent.carriedPOI is ResourcePile) {
             return true;
         }
         return false;
     }
-#endregion
+    private bool HasBoughtFood(Character actor, IPointOfInterest poiTarget, OtherData[] otherData, JOB_TYPE jobType) {
+        if (actor.carryComponent.isCarryingAnyPOI && actor.carryComponent.carriedPOI is FoodPile) {
+            return true;
+        }
+        return false;
+    }
+    #endregion
 
-#region Requirements
+    #region Requirements
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, OtherData[] otherData, JobQueueItem job) { 
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData, job);
         if (satisfied) {

@@ -115,7 +115,7 @@ public class VampireBehaviour : CharacterBehaviourComponent {
                 }
                 if (!hasPrisonerAtHome) {
                     Vampire vampire = character.traitContainer.GetTraitOrStatus<Vampire>("Vampire");
-                    if (!vampire.dislikedBeingVampire || character.traitContainer.GetTraitsOrStatuses<Trait>("Evil", "Treacherous", "Glutton").Count > 0) {
+                    if (!vampire.dislikedBeingVampire || character.traitContainer.HasTrait("Evil", "Treacherous", "Glutton")) { //character.traitContainer.GetTraitsOrStatuses<Trait>("Evil", "Treacherous", "Glutton").Count > 0
                         if (GameUtilities.RollChance(15)) { //15
                             return character.jobComponent.TriggerImprisonBloodSource(out producedJob, ref log);
                         }

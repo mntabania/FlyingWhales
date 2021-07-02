@@ -574,37 +574,36 @@ namespace Traits {
         #endregion
 
         #region Getting
-        public T GetTraitOrStatus<T>(params string[] traitNames) where T : Trait {
-            for (int i = 0; i < traitNames.Length; i++) {
-                string name = traitNames[i];
-                if (HasTrait(name)) {
-                    return allTraitsAndStatuses[name] as T;
-                }
-            }
-            return null;
-        }
         public T GetTraitOrStatus<T>(string traitName) where T : Trait {
             if (HasTrait(traitName)) {
                 return allTraitsAndStatuses[traitName] as T;
             }
             return null;
         }
-        public List<T> GetTraitsOrStatuses<T>(params string[] traitNames) where T : Trait {
-            List<T> traits = new List<T>();
-            for (int i = 0; i < traitNames.Length; i++) {
-                string name = traitNames[i];
-                if (HasTrait(name)) {
-                    traits.Add(allTraitsAndStatuses[name] as T);
-                }
+        public T GetTraitOrStatus<T>(string traitName1, string traitName2) where T : Trait {
+            if (HasTrait(traitName1)) {
+                return allTraitsAndStatuses[traitName1] as T;
+            } else if (HasTrait(traitName2)) {
+                return allTraitsAndStatuses[traitName2] as T;
             }
-            //for (int i = 0; i < allTraitsAndStatuses.Count; i++) {
-            //    Trait trait = allTraitsAndStatuses[i];
-            //    if (traitNames.Contains(trait.name)) {
-            //        traits.Add(trait as T);
-            //    }
-            //}
-            return traits;
+            return null;
         }
+        //public List<T> GetTraitsOrStatuses<T>(params string[] traitNames) where T : Trait {
+        //    List<T> traits = new List<T>();
+        //    for (int i = 0; i < traitNames.Length; i++) {
+        //        string name = traitNames[i];
+        //        if (HasTrait(name)) {
+        //            traits.Add(allTraitsAndStatuses[name] as T);
+        //        }
+        //    }
+        //    //for (int i = 0; i < allTraitsAndStatuses.Count; i++) {
+        //    //    Trait trait = allTraitsAndStatuses[i];
+        //    //    if (traitNames.Contains(trait.name)) {
+        //    //        traits.Add(trait as T);
+        //    //    }
+        //    //}
+        //    return traits;
+        //}
         public bool HasTraitOf(TRAIT_TYPE traitType) {
             for (int i = 0; i < traits.Count; i++) {
                 if (traits[i].type == traitType) {
@@ -790,7 +789,37 @@ namespace Traits {
         //    }
         //    return false;
         //}
-        public bool HasTrait(params string[] traitNames) {
+        public bool HasTrait(string traitName) {
+            return allTraitsAndStatuses.ContainsKey(traitName);
+        }
+        public bool HasTrait(string traitName1, string traitName2) {
+            if (allTraitsAndStatuses.ContainsKey(traitName1) || allTraitsAndStatuses.ContainsKey(traitName2)) {
+                return true;
+            }
+            return false;
+        }
+        public bool HasTrait(string traitName1, string traitName2, string traitName3) {
+            if (allTraitsAndStatuses.ContainsKey(traitName1) || allTraitsAndStatuses.ContainsKey(traitName2) || allTraitsAndStatuses.ContainsKey(traitName3)) {
+                return true;
+            }
+            return false;
+        }
+        public bool HasTrait(string traitName1, string traitName2, string traitName3, string traitName4) {
+            if (allTraitsAndStatuses.ContainsKey(traitName1) || allTraitsAndStatuses.ContainsKey(traitName2) 
+                || allTraitsAndStatuses.ContainsKey(traitName3) || allTraitsAndStatuses.ContainsKey(traitName4)) {
+                return true;
+            }
+            return false;
+        }
+        public bool HasTrait(string traitName1, string traitName2, string traitName3, string traitName4, string traitName5) {
+            if (allTraitsAndStatuses.ContainsKey(traitName1) || allTraitsAndStatuses.ContainsKey(traitName2)
+                || allTraitsAndStatuses.ContainsKey(traitName3) || allTraitsAndStatuses.ContainsKey(traitName4)
+                || allTraitsAndStatuses.ContainsKey(traitName5)) {
+                return true;
+            }
+            return false;
+        }
+        public bool HasTrait(string[] traitNames) {
             for (int i = 0; i < traitNames.Length; i++) {
                 if (allTraitsAndStatuses.ContainsKey(traitNames[i])) {
                     return true;
@@ -798,12 +827,9 @@ namespace Traits {
             }
             return false;
         }
-        public bool HasTrait(string traitName) {
-            return allTraitsAndStatuses.ContainsKey(traitName);
-        }
-#endregion
-        
-#region Trait Override Functions
+        #endregion
+
+        #region Trait Override Functions
         public void AddTraitOverrideFunction(string identifier, Trait trait) {
             if (traitOverrideFunctions.ContainsKey(identifier)) {
                 traitOverrideFunctions[identifier].Add(trait);

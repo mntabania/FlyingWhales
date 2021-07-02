@@ -965,6 +965,7 @@ public static class Extensions {
             case JOB_TYPE.QUARANTINE:
             case JOB_TYPE.PLAGUE_CARE:
             case JOB_TYPE.HEALER_CURE: 
+            case JOB_TYPE.BUY_FOOD_FOR_TAVERN:
             priority = 800;
             break;
             case JOB_TYPE.CRAFT_OBJECT:
