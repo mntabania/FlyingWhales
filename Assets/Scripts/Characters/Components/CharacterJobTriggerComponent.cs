@@ -2516,7 +2516,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 
         canDoJob = InteractionManager.Instance.CanCharacterTakeApprehendJob(owner, target) && prison != null && CanDoJob(JOB_TYPE.APPREHEND);
         if (canDoJob) {
-            if (owner.jobQueue.HasJob(JOB_TYPE.APPREHEND, target) == false) {
+            if (owner.jobQueue.HasJob(JOB_TYPE.APPREHEND, target) == false && target.currentStructure != prison) {
                 bool isCriminal = target.traitContainer.HasTrait("Criminal") && target.crimeComponent.IsWantedBy(owner.faction);
                 bool isPrisoner = prisonerStatus != null && prisonerStatus.IsConsideredPrisonerOf(owner);
                 if (isCriminal || isPrisoner) {

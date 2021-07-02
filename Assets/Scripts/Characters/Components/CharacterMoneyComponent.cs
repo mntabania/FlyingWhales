@@ -13,6 +13,11 @@ public class CharacterMoneyComponent : CharacterComponent {
     }
 
     #region General
+    public void Initialize() {
+        if (!owner.isNormalCharacter || owner.isConsideredRatman) {
+            coins = 0; //set initial coins of monsters and ratmen to 0
+        }
+    }
     public void AdjustCoins(int amount) {
         coins += amount;
         if (coins < 0) {
