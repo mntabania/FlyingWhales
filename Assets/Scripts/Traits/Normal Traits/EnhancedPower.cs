@@ -8,7 +8,7 @@ namespace Traits {
 
         public EnhancedPower() {
             name = "Enhanced Power";
-            description = "Pawerrrrr!";
+            description = "Powerrrrr!";
             type = TRAIT_TYPE.STATUS;
             effect = TRAIT_EFFECT.POSITIVE;
             isHidden = true;

@@ -66,8 +66,28 @@ public class CultistBehaviour : CharacterBehaviourComponent {
             log += $"\n{character.name} has no cultist kit available. Will create obtain personal item job.";
             bool success = character.jobComponent.TryCreateObtainPersonalItemJob("Cultist Kit", out producedJob);
             if (success) {
-                JobUtilities.PopulatePriorityLocationsForTakingPersonalItem(character, producedJob as GoapPlanJob, INTERACTION_TYPE.NONE);
-                producedJob.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] { TileObjectDB.GetTileObjectData(TILE_OBJECT_TYPE.CULTIST_KIT).mainRecipe });
+                GoapPlanJob gJob = producedJob as GoapPlanJob;
+                if (character.homeSettlement != null) {
+                    JobUtilities.PopulatePriorityLocationsForTakingPersonalItem(character, gJob, INTERACTION_TYPE.NONE);
+                    List<LocationStructure> mines = character.homeSettlement.GetStructuresOfType(STRUCTURE_TYPE.MINE);
+                    if (mines != null) {
+                        for (int i = 0; i < mines.Count; i++) {
+                            LocationStructure mine = mines[i];
+                            gJob.AddPriorityLocation(INTERACTION_TYPE.NONE, mine);
+                        }
+                    }
+                    List<LocationStructure> lumberyards = character.homeSettlement.GetStructuresOfType(STRUCTURE_TYPE.LUMBERYARD);
+                    if (lumberyards != null) {
+                        for (int i = 0; i < lumberyards.Count; i++) {
+                            LocationStructure lumberyard = lumberyards[i];
+                            gJob.AddPriorityLocation(INTERACTION_TYPE.NONE, lumberyard);
+                        }
+                    }
+                }
+                //Should pass only the amount needed, not the mainRecipe because the cultist's main recipe is the stone pile which will not work if he decided to get a wood pile
+                //It will result in getting 0 wood from the pile.
+                producedJob.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] { TileObjectDB.GetTileObjectData(TILE_OBJECT_TYPE.CULTIST_KIT).mainRecipe.ingredient.amount });
+                //producedJob.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] { TileObjectDB.GetTileObjectData(TILE_OBJECT_TYPE.CULTIST_KIT).mainRecipe });
             }
             return success;
         } else {

@@ -36,12 +36,16 @@ public class CharacterNameplateItem : NameplateItem<Character> {
     }
     
     #region Overrides
-    public override void SetObject(Character character) {
-        base.SetObject(character);
-        this.character = character;
-        portrait.GeneratePortrait(character);
-        btnStoreTarget.SetTarget(character);
+    public override void SetObject(Character p_character) {
+        if (p_character.isInLimbo && p_character.isLycanthrope) {
+            p_character = p_character.lycanData.activeForm;
+        }
+        base.SetObject(p_character);
+        this.character = p_character;
+        portrait.GeneratePortrait(p_character);
+        btnStoreTarget.SetTarget(p_character);
         UpdateAllTextsAndIcon();
+        Messenger.AddListener<Character, Character>(CharacterSignals.ON_SWITCH_FROM_LIMBO, OnCharacterSwitchFromLimbo);
     }
     public override void UpdateObject(Character character) {
         base.UpdateObject(character);
@@ -58,7 +62,10 @@ public class CharacterNameplateItem : NameplateItem<Character> {
         base.OnHoverExit();
     }
     public override void Reset() {
-        base.Reset(); ;
+        base.Reset();
+        if (Messenger.eventTable.ContainsKey(CharacterSignals.ON_SWITCH_FROM_LIMBO)) {
+            Messenger.RemoveListener<Character, Character>(CharacterSignals.ON_SWITCH_FROM_LIMBO, OnCharacterSwitchFromLimbo);
+        }
         SetPortraitInteractableState(true);
         character = null;
     }
@@ -70,6 +77,16 @@ public class CharacterNameplateItem : NameplateItem<Character> {
 
     public void SetIsActive(bool state) {
         isActive = state;
+    }
+    private void OnCharacterSwitchFromLimbo(Character toLimbo, Character fromLimbo) {
+        if (toLimbo == character) {
+            if (toLimbo.isLycanthrope) {
+                UpdateObject(fromLimbo);
+            } else {
+                //TODO: Which faction should be followed the one from the limbo or the one going to limbo?
+                //If both forms are from diff factions, the nameplate of each one will be shown at each faction UI, this will cause problems because only one must exist in the world at the same time
+            }
+        }
     }
 
     /// <summary>
@@ -141,5 +158,5 @@ public class CharacterNameplateItem : NameplateItem<Character> {
     public void OnHoverExitRaceIcon() {
         UIManager.Instance.HideSmallInfo();
     }
-#endregion
+    #endregion
 }
