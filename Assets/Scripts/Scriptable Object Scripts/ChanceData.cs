@@ -50,6 +50,7 @@ public static class ChanceData {
         {CHANCE_TYPE.Visit_Village_Chance, 10},
         {CHANCE_TYPE.Create_Change_Class_Combatant, 35},
         {CHANCE_TYPE.Personal_Combatant_Change_Class, 5},
+        {CHANCE_TYPE.Kobold_Place_Freezing_Trap, 10},
     };
     public static bool RollChance(CHANCE_TYPE p_chanceType) {
         if (integerChances.ContainsKey(p_chanceType)) {

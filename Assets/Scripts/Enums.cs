@@ -1452,7 +1452,8 @@ public enum CHANCE_TYPE {
     Socialize_Chance,
     Visit_Village_Chance,
     Create_Change_Class_Combatant,
-    Personal_Combatant_Change_Class
+    Personal_Combatant_Change_Class,
+    Kobold_Place_Freezing_Trap
 }
 public enum Gradient_Direction {
     Top, Bottom, Left, Right

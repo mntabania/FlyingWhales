@@ -15,13 +15,14 @@ public class KoboldBehaviour : BaseMonsterBehaviour {
 #if DEBUG_LOG
         log += $"\n{character.name} is Kobold";
 #endif
-        if (UnityEngine.Random.Range(0, 100) < 10) {
+        if (ChanceData.RollChance(CHANCE_TYPE.Kobold_Place_Freezing_Trap, ref log)) { //10
 #if DEBUG_LOG
             log += $"\nChance to place freezing trap met.";
 #endif
 #if DEBUG_PROFILER
             Profiler.BeginSample($"Kobold Place Freezing Trap");
 #endif
+
             List<Area> areaChoices = ObjectPoolManager.Instance.CreateNewAreaList();
             PopulateValidHexTilesNextToHome(areaChoices, character);
             if (areaChoices.Count > 0) {
@@ -188,7 +189,7 @@ public class KoboldBehaviour : BaseMonsterBehaviour {
     private void PopulateValidHexTilesNextToHome(List<Area> areas, Character character) {
         Area homeArea = null;
         if (character.homeSettlement != null) {
-            character.homeSettlement.PopulateSurroundingAreasInSameRegionWithLessThanNumOfFreezingTraps(areas, character.homeRegion, 4);
+            character.homeSettlement.PopulateSurroundingAreasInSameRegionWithLessThanNumOfFreezingTraps(areas, character.homeRegion, 2);
         } else if (character.homeStructure != null) {
             if (character.homeStructure is Cave cave) {
                 homeArea = CollectionUtilities.GetRandomElement(cave.occupiedAreas.Keys);
@@ -204,7 +205,7 @@ public class KoboldBehaviour : BaseMonsterBehaviour {
         if (homeArea != null) {
             for (int i = 0; i < homeArea.neighbourComponent.neighbours.Count; i++) {
                 Area neighbour = homeArea.neighbourComponent.neighbours[i];
-                if (neighbour.region == homeArea.region && neighbour.freezingTraps < 4) {
+                if (neighbour.region == homeArea.region && neighbour.freezingTraps < 2) {
                     areas.Add(neighbour);
                 }
             }
