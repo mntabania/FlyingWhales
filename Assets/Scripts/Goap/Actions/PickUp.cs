@@ -103,7 +103,7 @@ public class PickUp : GoapAction {
 #endif
             } else {
                 if (targetTileObject.characterOwner == null) {
-                    if (job != null && (job.jobType == JOB_TYPE.TAKE_ITEM || job.jobType == JOB_TYPE.HAUL || job.jobType == JOB_TYPE.COMBINE_STOCKPILE || job.jobType == JOB_TYPE.STOCKPILE_FOOD)) {
+                    if (job != null && (job.jobType == JOB_TYPE.TAKE_ITEM || job.jobType == JOB_TYPE.HAUL || job.jobType == JOB_TYPE.COMBINE_STOCKPILE || job.jobType == JOB_TYPE.STOCKPILE_FOOD || job.jobType == JOB_TYPE.OBTAIN_WANTED_ITEM)) {
                         cost += 10;
 #if DEBUG_LOG
                         costLog = $"{costLog} +10(No personal owner, Take Item/Haul/Combine Stockpile/Stockpile Food)";
