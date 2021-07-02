@@ -43,7 +43,7 @@ public class PsychopathUI : MonoBehaviour {
     private List<string> serialVictimType2AsStrings = new List<string>();
     private List<string> criteriaGenders = new List<string>() { "Male", "Female" };
     private List<string> criteriaRaces = new List<string>() { "Humans", "Elves" };
-    private List<string> criteriaClasses = new List<string>() { "Peasant", "Miner", "Crafter", "Archer", "Stalker", "Hunter", "Druid", "Shaman"
+    private List<string> criteriaClasses = new List<string>() { "Farmer", "Miner", "Crafter", "Archer", "Stalker", "Hunter", "Druid", "Shaman"
         , "Mage", "Knight", "Barbarian", "Marauder", "Noble" };
     private List<string> criteriaTraits = new List<string>() { 
         "Accident Prone", "Agoraphobic", "Alcoholic", "Ambitious", "Authoritative"

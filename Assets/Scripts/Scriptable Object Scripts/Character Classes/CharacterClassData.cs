@@ -33,10 +33,10 @@ public class CharacterClassData : ScriptableObject {
     
     [Header("Game Start Values")] 
     public float initialVillagerPiercing;
-    public float[] initialVillagerPhysicalResistances = new[] {5f, 10f, 15f};
-    public float[] initialVillagerMentalResistances = new[] {5f, 10f, 15f};
-    public float[] initialVillagerElementalResistances = new[] {5f, 10f, 15f};
-    public float[] initialVillagerSecondaryResistances = new[] {5f, 10f, 15f};
+    public float[] initialVillagerPhysicalResistances;
+    public float[] initialVillagerMentalResistances;
+    public float[] initialVillagerElementalResistances;
+    public float[] initialVillagerSecondaryResistances;
     
     [Header("Upgrade bonus per skill level up")]
     public CharacterProgressionBonusData characterSkillUpdateData;

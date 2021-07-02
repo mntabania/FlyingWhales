@@ -5030,7 +5030,17 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
 #if DEBUG_LOG
         logComponent.PrintLogIfActive($"Stopped action of {name} which is {currentActionNode.action.goapName} targetting {currentActionNode.poiTarget.name}!");
 #endif
-        currentActionNode.StopActionNode();
+        //Toggle is processing here so that when StopActionNode is called, the currentActionNode will not be put in object pool
+        ActualGoapNode currentAction = currentActionNode;
+        currentAction.SetIsStillProcessing(true);
+        currentAction.StopActionNode();
+        currentAction.SetIsStillProcessing(false);
+#if DEBUG_LOG
+        if (currentAction.isSupposedToBeInPool) {
+            logComponent.PrintLogErrorIfActive($"Action: {currentAction.ToString()} is supposed to be in pool");
+        }
+#endif
+
         SetCurrentActionNode(null, null, null);
 
         //Every time current node is stopped, drop carried poi
@@ -6570,9 +6580,14 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public void RecomputePiercingAndResistanceForGameStart(Character p_character, string p_className) {
         CharacterClassData classData = CharacterManager.Instance.GetOrCreateCharacterClassData(p_className);
         float piercing = classData.initialVillagerPiercing;
-        float physicalResistance = CollectionUtilities.GetRandomElement(classData.initialVillagerPhysicalResistances);
-        float mentalResistance = CollectionUtilities.GetRandomElement(classData.initialVillagerMentalResistances);
-        
+        float physicalResistance = 0f;
+        float mentalResistance = 0f;
+        if (classData.initialVillagerPhysicalResistances != null && classData.initialVillagerPhysicalResistances.Length > 0) {
+            physicalResistance = CollectionUtilities.GetRandomElement(classData.initialVillagerPhysicalResistances);
+        }
+        if (classData.initialVillagerMentalResistances != null && classData.initialVillagerMentalResistances.Length > 0) {
+            mentalResistance = CollectionUtilities.GetRandomElement(classData.initialVillagerMentalResistances);
+        }
         p_character.piercingAndResistancesComponent.SetBasePiercing(piercing);
         p_character.piercingAndResistancesComponent.SetResistance(RESISTANCE.Physical, physicalResistance);
         p_character.piercingAndResistancesComponent.SetResistance(RESISTANCE.Mental, mentalResistance);
@@ -6583,10 +6598,14 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             if (res != RESISTANCE.None) {
                 float randomResistanceValue = 0f;
                 if (res.IsElemental()) {
-                    randomResistanceValue = CollectionUtilities.GetRandomElement(classData.initialVillagerElementalResistances);
+                    if (classData.initialVillagerElementalResistances != null && classData.initialVillagerElementalResistances.Length > 0) {
+                        randomResistanceValue = CollectionUtilities.GetRandomElement(classData.initialVillagerElementalResistances);
+                    }
                     p_character.piercingAndResistancesComponent.SetResistance(res, randomResistanceValue);
                 } else if (res.IsSecondary()) {
-                    randomResistanceValue = CollectionUtilities.GetRandomElement(classData.initialVillagerSecondaryResistances);
+                    if (classData.initialVillagerSecondaryResistances != null && classData.initialVillagerSecondaryResistances.Length > 0) {
+                        randomResistanceValue = CollectionUtilities.GetRandomElement(classData.initialVillagerSecondaryResistances);
+                    }
                     p_character.piercingAndResistancesComponent.SetResistance(res, randomResistanceValue);
                 }
             }

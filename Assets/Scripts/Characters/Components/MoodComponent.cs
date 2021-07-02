@@ -316,8 +316,10 @@ public class MoodComponent : CharacterComponent {
 		string summary = $"{GameManager.Instance.TodayLogString()}{owner.name} triggered major mental break.";
 #endif
 		isInMajorMentalBreak = true;
-		if (owner.characterClass.className.Equals("Peasant") || owner.characterClass.className.Equals("Miner") 
+		if (owner.characterClass.className.Equals("Farmer") || owner.characterClass.className.Equals("Miner") 
 		    || owner.characterClass.className.Equals("Crafter")) {
+			//owner.characterClass.className.Equals("Farmer") || owner.characterClass.className.Equals("Miner") 
+			//|| owner.characterClass.className.Equals("Crafter")
 			int roll = Random.Range(0, 2);
 			if (roll == 0) {
 				//catatonic
