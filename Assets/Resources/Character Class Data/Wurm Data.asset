@@ -37,6 +37,11 @@ MonoBehaviour:
   raceSprites:
     m_keys: 
     m_values: []
+  initialVillagerPiercing: 0
+  initialVillagerPhysicalResistances: []
+  initialVillagerMentalResistances: []
+  initialVillagerElementalResistances: []
+  initialVillagerSecondaryResistances: []
   characterSkillUpdateData:
     m_fireResistanceBonus: 0
     m_earthResistanceBonus: 0
