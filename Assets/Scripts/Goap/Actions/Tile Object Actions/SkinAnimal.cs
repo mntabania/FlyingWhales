@@ -79,7 +79,7 @@ public class SkinAnimal : GoapAction {
         if (tileToSpawnPile != null && tileToSpawnPile.tileObjectComponent.objHere != null) {
             tileToSpawnPile = p_node.actor.gridTileLocation.GetFirstNearestTileFromThisWithNoObject();
         }
-        ResourcePile matsToHaul = InnerMapManager.Instance.CreateNewTileObject<ResourcePile>(animal.produceableMaterial);
+        
         int amount = p_node.currentStateDuration * m_amountProducedPerTick;
 
         if (animal.count - amount < 0) {
@@ -87,7 +87,7 @@ public class SkinAnimal : GoapAction {
         }
 
         
-        animal.count = (int)Mathf.Clamp(animal.count - amount, 0f, 1000f);
+        
         if (targetAnimal.gridTileLocation != null) {
             if (animal.count <= 0) {
                 targetAnimal.gridTileLocation.structure.RemovePOI(targetAnimal);
@@ -97,7 +97,8 @@ public class SkinAnimal : GoapAction {
         if (amount <= 0) {
             return null;
         }
-
+        animal.count = (int)Mathf.Clamp(animal.count - amount, 0f, 1000f);
+        ResourcePile matsToHaul = InnerMapManager.Instance.CreateNewTileObject<ResourcePile>(animal.produceableMaterial);
         p_node.actor.moneyComponent.AdjustCoins(Mathf.CeilToInt(amount * _coinGainMultiplier));
         p_node.actor.talentComponent?.GetTalent(CHARACTER_TALENT.Resources).AdjustExperience(12, p_node.actor);
         matsToHaul.SetResourceInPile(amount);
