@@ -54,7 +54,7 @@ MonoBehaviour:
   skillUpgradeData:
     upgradeCosts: 140000003200000050000000
     manacostPerLevel: 96000000c8000000fa0000005e010000
-    chargesPerLevel: 01000000010000000200000002000000
+    chargesPerLevel: 01000000010000000100000001000000
     bonuses: 0e0000000100000009000000
     additionalDamagePerLevel: 
     additionalPiercePerLevel:
@@ -83,7 +83,7 @@ MonoBehaviour:
     skillMovementSpeed: 
   afflictionUpgradeData:
     bonuses: 04000000080000000200000000000000
-    cooldown: a0000000a0000000a0000000a0000000
+    cooldown: f0000000f0000000f0000000f0000000
     additionalPiercePerLevel:
     - 0
     - 25
