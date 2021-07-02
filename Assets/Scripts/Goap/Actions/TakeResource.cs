@@ -138,7 +138,7 @@ public class TakeResource : GoapAction {
         IPointOfInterest poiTarget = node.poiTarget;
         if (goapActionInvalidity.isInvalid == false) {
             ResourcePile pile = poiTarget as ResourcePile;
-            if (node.associatedJobType == JOB_TYPE.BUILD_BLUEPRINT && pile.resourceInPile < 100) {
+            if (node.associatedJobType == JOB_TYPE.BUILD_BLUEPRINT && pile.resourceInPile < 60) {
                 //only checked 100 since at the time of coding, all structures either cost no resource or 100 resource.
                 goapActionInvalidity.isInvalid = true;
                 goapActionInvalidity.reason = "not_enough_resource";

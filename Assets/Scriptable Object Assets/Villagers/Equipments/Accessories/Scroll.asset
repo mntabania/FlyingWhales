@@ -18,7 +18,7 @@ MonoBehaviour:
   purchaseCost: 20
   tier: 1
   description: 
-  imgIcon: {fileID: 21300000, guid: d426d16409b59454aa161e09a6069d8a, type: 3}
+  imgIcon: {fileID: 21300000, guid: 3837e226b4181fd469141267ff6c204b, type: 3}
   equipmentUpgradeData:
     bonuses: 00000000
     AdditionalPiercing: 30

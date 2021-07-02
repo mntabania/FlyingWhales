@@ -89,6 +89,7 @@ public class LocustSwarmMapObjectVisual : MovingMapObjectVisual {
         Vector3 position = transform.position;
         Vector3 direction = (new Vector3(Random.Range(-1.0f, 1.0f), Random.Range(-1.0f, 1.0f), 0f)).normalized * 50f;
         direction += position;
+        if (_movement != null) { _movement.Kill(); }
         _movement = transform.DOMove(direction, processedSpeed).SetSpeedBased(true);
         OnGamePaused(GameManager.Instance.isPaused);
         //schedule change direction after 1 hour

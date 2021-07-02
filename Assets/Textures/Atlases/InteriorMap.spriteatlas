@@ -43,7 +43,7 @@ SpriteAtlas:
     variantMultiplier: 1
     packables:
     - {fileID: 102900000, guid: 129c2b5e0c8f0e14d9fb8b1c30296b6d, type: 3}
-    totalSpriteSurfaceArea: 5493466
+    totalSpriteSurfaceArea: 5497562
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
@@ -372,6 +372,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: f3e22e06561fdc045b016985dc9be1ce, type: 3}
   - {fileID: 21300000, guid: 827cd3164ec9b11459eb68fd6e3a90ac, type: 3}
   - {fileID: 21300000, guid: ef9922262d513cc43927866d6d2450f5, type: 3}
+  - {fileID: 21300000, guid: 3837e226b4181fd469141267ff6c204b, type: 3}
   - {fileID: 21300000, guid: 2a34d32667e37da428bb1b07812f778f, type: 3}
   - {fileID: 21300000, guid: a89ce426ae91ef64c96e38537660a9a1, type: 3}
   - {fileID: 21300000, guid: be7916260ec2784418dd3893c73feb4e, type: 3}
@@ -1239,6 +1240,7 @@ SpriteAtlas:
   - desertGrass_v00
   - wood_floorA02
   - chair01
+  - accessory_scroll
   - demonManaRunes03
   - grass_v01
   - shelf_armor
