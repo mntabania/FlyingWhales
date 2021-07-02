@@ -114,7 +114,7 @@ public class SaveDataAssumptionComponent : SaveData<AssumptionComponent> {
 
     #region Overrides
     public override void Save(AssumptionComponent data) {
-        assumptionData = data.assumptionData;
+        assumptionData = new List<AssumptionData>(data.assumptionData);
     }
 
     public override AssumptionComponent Load() {

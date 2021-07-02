@@ -165,7 +165,7 @@ public class SaveDataExcalibur : SaveDataTileObject {
         Excalibur excalibur = tileObject as Excalibur;
         Assert.IsNotNull(excalibur);
         lockedState = excalibur.lockedState;
-        traitsGainedByCurrentOwner = excalibur.traitsGainedByCurrentOwner;
+        traitsGainedByCurrentOwner = new List<string>(excalibur.traitsGainedByCurrentOwner);
         finishedCharacters = new List<int>(excalibur.finishedCharacters);
         previousClass = excalibur.previousClassOfCurrentOwner;
     }
