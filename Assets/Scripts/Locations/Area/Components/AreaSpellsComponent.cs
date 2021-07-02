@@ -290,7 +290,7 @@ public class AreaSpellsComponent : AreaComponent {
                 continue;
             }
             poi.AdjustHP(processedDamage, ELEMENTAL_TYPE.Normal, showHPBar: true, piercingPower: piercing, isPlayerSource: true, source: earthquakeData); //right now, earthquake is always player source because we do not have any other way to create earthquake
-            if (gridTile != null) {
+            if (poi.gridTileLocation != null && poi.mapObjectVisual) {//Should check this so that in case the object or character dies, it should no longer go inside the if
                 if (!DOTween.IsTweening(poi.mapObjectVisual.transform)) {
                     if (UnityEngine.Random.Range(0, 100) < 30) {
                         List<LocationGridTile> adjacentTiles = RuinarchListPool<LocationGridTile>.Claim();

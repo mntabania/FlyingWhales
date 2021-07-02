@@ -191,6 +191,7 @@ public abstract class BaseMapObjectVisual : PooledObject, IPointerEnterHandler, 
         DestroyAllStatusIcons();
         DestroyAllParticleEffects();
         SetMaterial(InnerMapManager.Instance.assetManager.defaultObjectMaterial);
+        DOTween.Kill(this.transform);
     }
     private void DestroyAllStatusIcons() {
         if (statusIconsParent != null) {
