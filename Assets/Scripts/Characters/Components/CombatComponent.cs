@@ -52,8 +52,8 @@ public class CombatComponent : CharacterComponent {
         specialSkillParent = new CombatSpecialSkillWrapper();
         combatBehaviourParent = new CharacterCombatBehaviourParent();
         SetCombatMode(COMBAT_MODE.Aggressive);
-        SetElementalType(ELEMENTAL_TYPE.Normal);
-        initialElementalType = ELEMENTAL_TYPE.Normal;
+        //SetElementalType(ELEMENTAL_TYPE.Normal);
+        //initialElementalType = ELEMENTAL_TYPE.Normal;
         //UpdateBasicData(true);
     }
     public CombatComponent(SaveDataCombatComponent data) {
@@ -76,7 +76,7 @@ public class CombatComponent : CharacterComponent {
         attackSpeed = data.attackSpeed;
         combatMode = data.combatMode;
         elementalDamage = ScriptableObjectsManager.Instance.GetElementalDamageData(data.elementalDamageType);
-        initialElementalType = data.initialElementalDamageType;
+        //initialElementalType = data.initialElementalDamageType;
         elementalStatusWaitingList = new List<ELEMENTAL_TYPE>();
         data.elementalStatusWaitingList.ForEach((eachElem) => elementalStatusWaitingList.Add(eachElem));
         willProcessCombat = data.willProcessCombat;
@@ -224,7 +224,7 @@ public class CombatComponent : CharacterComponent {
                 SetElementalType(elementalStatusWaitingList[index]);
             }
             if (!hasSetElementalType) {
-                SetElementalType(initialElementalType);
+                SetElementalType(owner.characterClass.elementalType);
             }
         } else {
             
@@ -1495,7 +1495,7 @@ public class CombatComponent : CharacterComponent {
                 bannedFromHostileList.Add(character);
             }
         }
-        initialElementalType = data.initialElementalDamageType;
+        //initialElementalType = data.initialElementalDamageType;
         elementalStatusWaitingList = new List<ELEMENTAL_TYPE>();
         data.elementalStatusWaitingList.ForEach((eachElem) => elementalStatusWaitingList.Add(eachElem));
         combatBehaviourParent.LoadReferences(data.combatBehaviourParent);
@@ -1627,7 +1627,7 @@ public class SaveDataCombatComponent : SaveData<CombatComponent> {
         maxHPPercentModification = data.maxHPPercentModification;
         attackSpeed = data.attackSpeed;
         combatMode = data.combatMode;
-        initialElementalDamageType = data.initialElementalType;
+        //initialElementalDamageType = data.initialElementalType;
         data.elementalStatusWaitingList.ForEach((eachElem) => elementalStatusWaitingList.Add(eachElem));
         elementalDamageType = data.elementalDamage.type;
         willProcessCombat = data.willProcessCombat;
