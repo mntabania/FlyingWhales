@@ -35,8 +35,8 @@ public class Evangelize : GoapAction {
     public override REACTABLE_EFFECT GetReactableEffect(ActualGoapNode node, Character witness) {
         return REACTABLE_EFFECT.Negative;
     }
-    public override void PopulateReactionsToActor(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
-        base.PopulateReactionsToActor(reactions, actor, target, witness, node, status);
+    public override void PopulateEmotionReactionsToActor(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
+        base.PopulateEmotionReactionsToActor(reactions, actor, target, witness, node, status);
         Character poiTarget = target as Character;
         if (witness.traitContainer.HasTrait("Cultist") == false) {
             reactions.Add(EMOTION.Shock);
@@ -88,7 +88,7 @@ public class Evangelize : GoapAction {
         WeightedDictionary<bool> weights = new WeightedDictionary<bool>();
 
         int success = 50;
-        int fail = 50;
+        int fail = 5000;
 
         
         int opinion = targetCharacter.relationshipContainer.GetTotalOpinion(goapNode.actor);

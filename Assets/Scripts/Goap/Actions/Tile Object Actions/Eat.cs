@@ -394,8 +394,8 @@ public class Eat : GoapAction {
         }
         return base.GetCrimeType(actor, target, crime);
     }
-    public override void PopulateReactionsToActor(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
-        base.PopulateReactionsToActor(reactions, actor, target, witness, node, status);
+    public override void PopulateEmotionReactionsToActor(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
+        base.PopulateEmotionReactionsToActor(reactions, actor, target, witness, node, status);
         Character targetCharacter = target as Character;
         if (!witness.traitContainer.HasTrait("Cannibal") && ((targetCharacter != null && targetCharacter.race.IsSapient()) || target is HumanMeat || target is ElfMeat)) {
             reactions.Add(EMOTION.Shock);

@@ -1161,13 +1161,13 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable, IObjectPoolTeste
         return action.ReactionOfTarget(actor, target, this, status);
     }
     public void PopulateReactionsToActor(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness, REACTION_STATUS status) {
-        action.PopulateReactionsToActor(reactions, actor, target, witness, this, status);
+        action.PopulateEmotionReactionsToActor(reactions, actor, target, witness, this, status);
     }
     public void PopulateReactionsToTarget(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness, REACTION_STATUS status) {
-        action.PopulateReactionsToTarget(reactions, actor, target, witness, this, status);
+        action.PopulateEmotionReactionsToTarget(reactions, actor, target, witness, this, status);
     }
     public void PopulateReactionsOfTarget(List<EMOTION> reactions, Character actor, IPointOfInterest target, REACTION_STATUS status) {
-        action.PopulateReactionsOfTarget(reactions, actor, target, this, status);
+        action.PopulateEmotionReactionsOfTarget(reactions, actor, target, this, status);
     }
     public REACTABLE_EFFECT GetReactableEffect(Character witness) {
         return action.GetReactableEffect(this, witness);
@@ -1448,7 +1448,7 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable, IObjectPoolTeste
         logTags.Clear();
 
         //Crime
-        crimeType = CRIME_TYPE.None;
+        crimeType = CRIME_TYPE.Unset;
         uniqueActionData = null;
         actionStatus = ACTION_STATUS.NONE;
         isSupposedToBeInPool = false;

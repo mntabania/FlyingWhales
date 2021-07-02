@@ -304,8 +304,8 @@ public class Butcher : GoapAction {
         }
         return false;
     }
-    public override void PopulateReactionsToActor(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
-        base.PopulateReactionsToActor(reactions, actor, target, witness, node, status);
+    public override void PopulateEmotionReactionsToActor(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
+        base.PopulateEmotionReactionsToActor(reactions, actor, target, witness, node, status);
         Character targetCharacter = GetDeadCharacter(target);
         if (targetCharacter != null) {
             if (!witness.traitContainer.HasTrait("Cannibal") && targetCharacter.race.IsSapient()) {
@@ -338,8 +338,8 @@ public class Butcher : GoapAction {
             }
         }
     }
-    public override void PopulateReactionsToTarget(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
-        base.PopulateReactionsToTarget(reactions, actor, target, witness, node, status);
+    public override void PopulateEmotionReactionsToTarget(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
+        base.PopulateEmotionReactionsToTarget(reactions, actor, target, witness, node, status);
         Character targetCharacter = GetDeadCharacter(target);
         if (targetCharacter != null) {
             string witnessOpinionToTarget = witness.relationshipContainer.GetOpinionLabel(targetCharacter);

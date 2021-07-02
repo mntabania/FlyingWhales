@@ -191,7 +191,7 @@ public class GoapAction {
         CrimeManager.Instance.ReactToCrime(witness, actor, target, target.factionOwner, node.crimeType, node, status);
 
         List<EMOTION> emotions = ObjectPoolManager.Instance.CreateNewEmotionList();
-        PopulateReactionsToActor(emotions, actor, target, witness, node, status);
+        PopulateEmotionReactionsToActor(emotions, actor, target, witness, node, status);
         string response = string.Empty;
         if(emotions != null) {
             for (int i = 0; i < emotions.Count; i++) {
@@ -204,7 +204,7 @@ public class GoapAction {
     public virtual string ReactionToTarget(Character actor, IPointOfInterest target, Character witness,
         ActualGoapNode node, REACTION_STATUS status) {
         List<EMOTION> emotions = ObjectPoolManager.Instance.CreateNewEmotionList();
-        PopulateReactionsToTarget(emotions, actor, target, witness, node, status);
+        PopulateEmotionReactionsToTarget(emotions, actor, target, witness, node, status);
         string response = string.Empty;
         if (emotions != null) {
             for (int i = 0; i < emotions.Count; i++) {
@@ -219,7 +219,7 @@ public class GoapAction {
         if(target is Character targetCharacter) {
             CrimeManager.Instance.ReactToCrime(targetCharacter, actor, target, target.factionOwner, node.crimeType, node, status);
             List<EMOTION> emotions = ObjectPoolManager.Instance.CreateNewEmotionList();
-            PopulateReactionsOfTarget(emotions, actor, target, node, status);
+            PopulateEmotionReactionsOfTarget(emotions, actor, target, node, status);
             string response = string.Empty;
             if (emotions != null) {
                 for (int i = 0; i < emotions.Count; i++) {
@@ -231,11 +231,11 @@ public class GoapAction {
         }
         return string.Empty;
     }
-    public virtual void PopulateReactionsToActor(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness,
+    public virtual void PopulateEmotionReactionsToActor(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness,
         ActualGoapNode node, REACTION_STATUS status) { }
-    public virtual void PopulateReactionsToTarget(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness,
+    public virtual void PopulateEmotionReactionsToTarget(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness,
     ActualGoapNode node, REACTION_STATUS status) { }
-    public virtual void PopulateReactionsOfTarget(List<EMOTION> reactions, Character actor, IPointOfInterest target,
+    public virtual void PopulateEmotionReactionsOfTarget(List<EMOTION> reactions, Character actor, IPointOfInterest target,
     ActualGoapNode node, REACTION_STATUS status) { }
     public virtual void OnActionStarted(ActualGoapNode node) { }
     public virtual void OnStoppedInterrupt(ActualGoapNode node) { }

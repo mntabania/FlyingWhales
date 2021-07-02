@@ -191,8 +191,8 @@ public class PickUp : GoapAction {
         }
         return REACTABLE_EFFECT.Neutral;
     }
-    public override void PopulateReactionsToActor(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
-        base.PopulateReactionsToActor(reactions, actor, target, witness, node, status);
+    public override void PopulateEmotionReactionsToActor(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
+        base.PopulateEmotionReactionsToActor(reactions, actor, target, witness, node, status);
         if (target is TileObject targetTileObject) {
             if (targetTileObject.characterOwner != null && !targetTileObject.IsOwnedBy(node.actor)) {
                 reactions.Add(EMOTION.Disapproval);
