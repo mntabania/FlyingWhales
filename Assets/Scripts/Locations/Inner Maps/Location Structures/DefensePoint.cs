@@ -23,7 +23,6 @@ namespace Inner_Maps.Location_Structures {
             partyData.deployedSummonUnderlings.Remove(PlayerManager.Instance.player.underlingsComponent.GetSummonUnderlingChargesBySummonType((p_removeSummon as Summon).summonType));
             if (p_removeSummon.partyComponent.IsAMemberOfParty(party)) {
                 party.RemoveMember(p_removeSummon);
-                party.RemoveMemberThatJoinedQuest(p_removeSummon);
                 //Removed this because replenish of charge is done with a cooldown now. See MonsterAndDemonUnderlingCharges
                 //PlayerManager.Instance.player.underlingsComponent.AdjustMonsterUnderlingCharge((p_removeSummon as Summon).summonType, 1);
             }
