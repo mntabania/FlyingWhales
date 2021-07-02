@@ -1500,7 +1500,10 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
     public void CreateProduceFoodJob() {
         if (!owner.jobQueue.HasJob(JOB_TYPE.PRODUCE_FOOD)) {
             GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.PRODUCE_FOOD, new GoapEffect(GOAP_EFFECT_CONDITION.PRODUCE_FOOD, string.Empty, false, GOAP_EFFECT_TARGET.ACTOR), owner, owner);
-            JobUtilities.PopulatePriorityLocationsForProduceResources(owner.homeSettlement, job, RESOURCE.FOOD);
+            if (owner.faction != null && owner.faction.factionType.type != FACTION_TYPE.Vagrants && owner.currentStructure != null) {
+	            job.AddPriorityLocation(INTERACTION_TYPE.NONE, owner.currentStructure);
+            }
+            // JobUtilities.PopulatePriorityLocationsForProduceResources(owner.homeSettlement, job, RESOURCE.FOOD);
             owner.jobQueue.AddJobInQueue(job);
         }
     }
