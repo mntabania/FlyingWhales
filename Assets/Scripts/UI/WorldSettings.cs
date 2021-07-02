@@ -124,15 +124,16 @@ public class WorldSettings : MonoBehaviour {
             WorldPickerItem worldPickerItem = worldPickerItems[i];
             if (SaveManager.Instance.currentSaveDataPlayer.IsWorldUnlocked(worldPickerItem.worldType) ||
                 SaveManager.Instance.unlockAllWorlds) {
-                // worldPickerItem.Disable();
-                worldPickerItem.Enable(); //Enable for now for testing
+                worldPickerItem.Disable();
+                // worldPickerItem.Enable(); //Enable for now for testing
             } else {
                 worldPickerItem.Disable();
             }
         }
         //enable custom
         worldPickerItems[0].Enable();
-        worldPickerItems[0].OnToggle(true);
+        worldPickerItems[0].toggle.isOn = true;
+        // worldPickerItems[0].OnToggle(true);
     }
     public void OnHoverEnterWorldPicker(WorldPickerItem item) {
         ShowHover(UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(item.worldType.ToString()), item.description, item.isScenario);

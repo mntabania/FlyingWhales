@@ -2127,9 +2127,10 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         Character[] currentUsers = tileObject.users;
         if (currentUsers != null && currentUsers.Length > 0) {
             for (int i = 0; i < currentUsers.Length; i++) {
-                if (currentUsers[i] != null) {
-                    currentUsers[i].StopCurrentActionNode();
-                    if (tileObject.RemoveUser(currentUsers[i])) {
+                Character currentUser = currentUsers[i];
+                if (currentUser != null) {
+                    currentUser.StopCurrentActionNode();
+                    if (tileObject.RemoveUser(currentUser)) {
                         i--;
                     }
                 }

@@ -58,13 +58,29 @@ public abstract class FoodPile : ResourcePile {
             //        }
             //    }
             //}
-            if (actor.race.IsSapient() && (tileObjectType == TILE_OBJECT_TYPE.ELF_MEAT || tileObjectType == TILE_OBJECT_TYPE.HUMAN_MEAT) &&
-                !actor.traitContainer.HasTrait("Cannibal") && !actor.traitContainer.HasTrait("Malnourished")) {
-                if (!actor.defaultCharacterTrait.HasAlreadyReactedToFoodPile(this)) {
-                    actor.defaultCharacterTrait.AddFoodPileAsReactedTo(this);
-                    actor.interruptComponent.TriggerInterrupt(INTERRUPT.Puke, this, $"saw {name}");
+            if (actor.race.IsSapient()) {
+                if ((tileObjectType == TILE_OBJECT_TYPE.ELF_MEAT || tileObjectType == TILE_OBJECT_TYPE.HUMAN_MEAT) &&
+                    !actor.traitContainer.HasTrait("Cannibal") && !actor.traitContainer.HasTrait("Malnourished")) {
+                    if (!actor.defaultCharacterTrait.HasAlreadyReactedToFoodPile(this)) {
+                        actor.defaultCharacterTrait.AddFoodPileAsReactedTo(this);
+                        actor.interruptComponent.TriggerInterrupt(INTERRUPT.Puke, this, $"saw {name}");
+                    }
+                    actor.jobComponent.TryCreateDisposeFoodPileJob(this);
                 }
-                actor.jobComponent.TryCreateDisposeFoodPileJob(this);
+                bool isInterestedInFoodPile = false;
+                if (actor.traitContainer.HasTrait("Cannibal")) {
+                    isInterestedInFoodPile = true;
+                } else {
+                    isInterestedInFoodPile = tileObjectType != TILE_OBJECT_TYPE.HUMAN_MEAT && tileObjectType != TILE_OBJECT_TYPE.ELF_MEAT;
+                }
+                if (isInterestedInFoodPile) {
+                    if (!actor.needsComponent.isStarving && !actor.partyComponent.isActiveMember && actor.homeStructure != null && 
+                        gridTileLocation != null && gridTileLocation.structure.structureType != STRUCTURE_TYPE.DWELLING && 
+                        !gridTileLocation.structure.structureType.IsFoodProducingStructure() && !actor.jobQueue.HasJob(JOB_TYPE.STOCKPILE_FOOD) && 
+                        !actor.jobQueue.HasJob(JOB_TYPE.HAUL) && actor.movementComponent.HasPathToEvenIfDiffRegion(actor.homeStructure)) {
+                        actor.jobComponent.CreateDropItemJob(JOB_TYPE.STOCKPILE_FOOD, this, actor.homeStructure);
+                    }
+                }
             }
         }
     }

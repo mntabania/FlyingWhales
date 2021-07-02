@@ -389,6 +389,17 @@ public class MovementComponent : CharacterComponent {
             return PathfindingManager.Instance.HasPathEvenDiffRegion(fromTile, toTile);
         }
     }
+    public bool HasPathToEvenIfDiffRegion(LocationStructure locationStructure) {
+        if (locationStructure.passableTiles.Count > 0) {
+            LocationGridTile randomTile = CollectionUtilities.GetRandomElement(locationStructure.passableTiles);
+            return HasPathToEvenIfDiffRegion(randomTile);
+        } else if (locationStructure.tiles.Count > 0) {
+            LocationGridTile randomTile = CollectionUtilities.GetRandomElement(locationStructure.tiles);
+            return HasPathToEvenIfDiffRegion(randomTile);
+        } else {
+            return false;
+        }
+    }
     /// <summary>
     /// Does this character have a path towards the target tile?
     /// Even if that tile is part of a different region?

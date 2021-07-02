@@ -411,6 +411,7 @@ namespace Inner_Maps {
             summary = $"{summary}<b>Area Elevation:</b>{(area.elevationType.ToString() ?? "None")}";
             summary = $"{summary}<b>Area Passable Tiles:</b>{area.gridTileComponent.passableTiles.Count.ToString()}";
             summary = $"{summary}<b>Settlement on Area:</b>{(area.settlementOnArea?.name ?? "None")}";
+            summary = $"{summary}<b>Freezing Traps in Area:</b>{(area.freezingTraps.ToString())}";
             summary = $"{summary}<b>Structure Connectors on Area</b>({area.structureComponent.structureConnectors.Count.ToString()}): {area.structureComponent.structureConnectors.ComafyList()}";
             summary = $"{summary}\n<b>Area Features:</b>{area.featureComponent.features.ComafyList()}";
             summary = $"{summary}\n<b>Feature Details:</b>";
