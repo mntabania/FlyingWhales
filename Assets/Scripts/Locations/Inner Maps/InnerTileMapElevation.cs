@@ -297,6 +297,7 @@ namespace Inner_Maps {
                 if (locationChoices.Count == 0) { break; }
                 LocationGridTile spot = CollectionUtilities.GetRandomElement(locationChoices);
                 cave.AddStoneSpot(spot);
+                GridMap.Instance.mainRegion.gridTileFeatureComponent.AddFeatureToTile<StoneSpotFeature>(spot);
                 locationChoices.Remove(spot);
             }
             

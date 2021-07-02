@@ -63,7 +63,7 @@ namespace Inner_Maps.Grid_Tile_Features {
                 Cave cave = tile.structure as Cave;
                 Assert.IsNotNull(cave);
                 if (tile.tileObjectComponent.objHere == null) {
-                    if (GameUtilities.RollChance(30)) {
+                    if (GameUtilities.RollChance(50)) {
                         //Spawn rock.
                         TileObject tileObject = InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.ROCK);
                         tile.structure.AddPOI(tileObject, tile);
