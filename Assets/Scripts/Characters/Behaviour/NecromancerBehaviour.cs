@@ -201,7 +201,7 @@ public class NecromancerBehaviour : CharacterBehaviourComponent {
                     log += $"\n-Will try to create more skeletons";
 #endif
                     bool hasCreated = false;
-                    if (character.necromancerTrait.energy > 0) {
+                    if (character.necromancerTrait.energy >= 5) {
                         //hasCreated = character.jobComponent.TriggerSpawnSkeleton(out producedJob);
                         int followersInRegion = character.necromancerTrait.numOfSkeletonFollowers;
                         if (followersInRegion > 15) {
@@ -240,7 +240,17 @@ public class NecromancerBehaviour : CharacterBehaviourComponent {
                             }
                         }
                     } else {
-                        hasCreated = character.jobComponent.TriggerRegainEnergy(out producedJob);
+#if DEBUG_LOG
+                        log += $"\n-70% chance to regain energy";
+#endif
+                        if (GameUtilities.RollChance(70, ref log)) {
+                            hasCreated = character.jobComponent.TriggerRegainEnergy(out producedJob);
+                        } else {
+#if DEBUG_LOG
+                            log += $"\n-Will roam instead of regain energy";
+#endif
+                            character.jobComponent.TriggerRoamAroundTile(out producedJob);
+                        }
                     }
                     if (!hasCreated) {
                         character.jobComponent.TriggerRoamAroundTile(out producedJob);

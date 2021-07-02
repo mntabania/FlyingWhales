@@ -45,7 +45,7 @@ public class SpawnSkeleton : GoapAction {
 #region State Effects
     public void AfterSpawnSuccess(ActualGoapNode goapNode) {
         //goapNode.actor.necromancerTrait.AdjustLifeAbsorbed(-1);
-        goapNode.actor.necromancerTrait.AdjustEnergy(-1);
+        goapNode.actor.necromancerTrait.AdjustEnergy(-5);
         LocationGridTile gridTile = goapNode.actor.gridTileLocation.GetRandomUnoccupiedNeighbor();
         if(gridTile == null) {
             gridTile = goapNode.actor.gridTileLocation;

@@ -40,11 +40,16 @@ public class RegainEnergy : GoapAction {
 #endregion
 
 #region State Effects
-    public void PerTickRegainSuccess(ActualGoapNode goapNode) {
-        if(goapNode.actor.necromancerTrait != null && goapNode.actor.necromancerTrait.energy < 5) {
-            goapNode.actor.necromancerTrait.AdjustEnergy(1);
+    //public void PerTickRegainSuccess(ActualGoapNode goapNode) {
+    //    if(goapNode.actor.necromancerTrait != null && goapNode.actor.necromancerTrait.energy < 5) {
+    //        goapNode.actor.necromancerTrait.AdjustEnergy(1);
+    //    }
+    //}
+    public void AfterRegainSuccess(ActualGoapNode goapNode) {
+        if (goapNode.actor.necromancerTrait != null) {
+            goapNode.actor.necromancerTrait.AdjustEnergy(2);
         }
     }
-#endregion
+    #endregion
 
 }
