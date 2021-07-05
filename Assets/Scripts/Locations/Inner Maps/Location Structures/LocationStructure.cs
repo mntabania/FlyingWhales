@@ -639,6 +639,14 @@ namespace Inner_Maps.Location_Structures {
                 }
             }
         }
+        public void PopulateBuiltTileObjectsOfType<T>(List<TileObject> objs) where T : TileObject {
+            for (int i = 0; i < pointsOfInterest.Count; i++) {
+                IPointOfInterest poi = pointsOfInterest.ElementAt(i);
+                if (poi is T t && t.mapObjectState == MAP_OBJECT_STATE.BUILT) {
+                    objs.Add(t);
+                }
+            }
+        }
         public void PopulateTileObjectsOfType(List<TileObject> objs, TILE_OBJECT_TYPE p_type) {
             for (int i = 0; i < pointsOfInterest.Count; i++) {
                 IPointOfInterest poi = pointsOfInterest.ElementAt(i);
