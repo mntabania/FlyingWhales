@@ -1,0 +1,1 @@
+{"name":"Fire Resistant","description":"Receives significantly reduced damage from Fire attacks.","thoughtText":"","type":1,"effect":0,"advertisedInteractions":[],"ticksDuration":0,"moodEffect":0,"isHidden":false,"mutuallyExclusive":["Fire Prone"],"canBeTriggered":false,"elementalType":0,"resistancesType":[2],"resistancesValue":[85]}

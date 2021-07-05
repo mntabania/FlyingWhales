@@ -11,22 +11,26 @@ using UnityEngine.Tilemaps;
 
 public class RegionInnerMapGeneration : MapGenerationComponent {
     public override IEnumerator ExecuteRandomGeneration(MapGenerationData data) {
-        LevelLoaderManager.Instance.UpdateLoadingInfo("Generating inner maps...");
+        LevelLoaderManager.Instance.UpdateLoadingInfo("Generating Map...");
         for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
             Region region = GridMap.Instance.allRegions[i];
-            yield return MapGenerator.Instance.StartCoroutine(LandmarkManager.Instance.GenerateRegionMap(region, this));
+            yield return MapGenerator.Instance.StartCoroutine(LandmarkManager.Instance.GenerateRegionMap(region, this, data));
         }
     }
 
     #region Scenario Maps
     public override IEnumerator LoadScenarioData(MapGenerationData data, ScenarioMapData scenarioMapData) {
-        yield return MapGenerator.Instance.StartCoroutine(ExecuteRandomGeneration(data));
+        LevelLoaderManager.Instance.UpdateLoadingInfo("Generating Map...");
+        for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
+            Region region = GridMap.Instance.allRegions[i];
+            yield return MapGenerator.Instance.StartCoroutine(LandmarkManager.Instance.GenerateScenarioMap(region, this, data, scenarioMapData));
+        }
     }
     #endregion
 
     #region Saved World
     public override IEnumerator LoadSavedData(MapGenerationData data, SaveDataCurrentProgress saveData) {
-        LevelLoaderManager.Instance.UpdateLoadingInfo("Loading inner maps...");
+        LevelLoaderManager.Instance.UpdateLoadingInfo("Loading Inner Maps...");
         for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
             Region region = GridMap.Instance.allRegions[i];
             region.CreateStructureList();
@@ -38,6 +42,9 @@ public class RegionInnerMapGeneration : MapGenerationComponent {
             Region location = DatabaseManager.Instance.regionDatabase.GetRegionByPersistentID(saveDataLocationStructure.regionLocationID);
             LocationStructure createdStructure = saveDataLocationStructure.InitialLoad(location);
             if (createdStructure != null && !createdStructure.hasBeenDestroyed) {
+                if (createdStructure is Wilderness wilderness) {
+                    location.LoadWilderness(wilderness);
+                }
                 //only add undestroyed structures to location.
                 location.AddStructure(createdStructure);
                 if (!string.IsNullOrEmpty(saveDataLocationStructure.settlementLocationID)) {
@@ -56,7 +63,7 @@ public class RegionInnerMapGeneration : MapGenerationComponent {
             // yield return MapGenerator.Instance.StartCoroutine(LoadTileObjects(saveDataRegion, location));
         }
         
-        LevelLoaderManager.Instance.UpdateLoadingInfo($"Loading structures...");
+        LevelLoaderManager.Instance.UpdateLoadingInfo($"Loading Structures...");
         
         //place structures
         for (int i = 0; i < saveData.worldMapSave.structureSaves.Count; i++) {
@@ -119,9 +126,9 @@ public class RegionInnerMapGeneration : MapGenerationComponent {
             structureObject.SetTilesInStructure(occupiedTiles.ToArray());
             manMadeStructure.SetStructureObject(structureObject);
 
-            if (!string.IsNullOrEmpty(saveDataLocationStructure.occupiedHexTileID)) {
-                HexTile occupiedHexTile = DatabaseManager.Instance.hexTileDatabase.GetHextileByPersistentID(saveDataLocationStructure.occupiedHexTileID);
-                structure.SetOccupiedHexTile(occupiedHexTile.innerMapHexTile);
+            if (!string.IsNullOrEmpty(saveDataLocationStructure.occupiedAreaID)) {
+                Area occupiedArea = DatabaseManager.Instance.areaDatabase.GetAreaByPersistentID(saveDataLocationStructure.occupiedAreaID);
+                structure.SetOccupiedArea(occupiedArea);
             }
             
             structureObject.OnLoadStructureObjectPlaced(region.innerMap, structure, saveDataLocationStructure);
@@ -132,8 +139,8 @@ public class RegionInnerMapGeneration : MapGenerationComponent {
                 //load wall data
                 Assert.IsTrue(manMadeStructure.structureWalls.Count == saveDataManMadeStructure.structureWallObjects.Length, $"Structure walls of {structure} is inconsistent with save data!");
                 for (int j = 0; j < manMadeStructure.structureWalls.Count; j++) {
-                    StructureWallObject structureWallObject = manMadeStructure.structureWalls[j];
-                    SaveDataStructureWallObject saveDataStructureWallObject = saveDataManMadeStructure.structureWallObjects[j];
+                    ThinWall structureWallObject = manMadeStructure.structureWalls[j];
+                    SaveDataTileObject saveDataStructureWallObject = saveDataManMadeStructure.structureWallObjects[j];
                     structureWallObject.LoadDataFromSave(saveDataStructureWallObject);
                 }    
             }
@@ -149,9 +156,9 @@ public class RegionInnerMapGeneration : MapGenerationComponent {
             structureObject.SetTilesInStructure(occupiedTiles.ToArray());
             demonicStructure.SetStructureObject(structureObject);
 
-            if (!string.IsNullOrEmpty(saveDataLocationStructure.occupiedHexTileID)) {
-                HexTile occupiedHexTile = DatabaseManager.Instance.hexTileDatabase.GetHextileByPersistentID(saveDataLocationStructure.occupiedHexTileID);
-                structure.SetOccupiedHexTile(occupiedHexTile.innerMapHexTile);
+            if (!string.IsNullOrEmpty(saveDataLocationStructure.occupiedAreaID)) {
+                Area occupiedArea = DatabaseManager.Instance.areaDatabase.GetAreaByPersistentID(saveDataLocationStructure.occupiedAreaID);
+                structure.SetOccupiedArea(occupiedArea);
             }
             
             structureObject.OnLoadStructureObjectPlaced(region.innerMap, structure, saveDataLocationStructure);
@@ -161,13 +168,23 @@ public class RegionInnerMapGeneration : MapGenerationComponent {
             yield return null;
         } else if (structure is NaturalStructure naturalStructure && saveDataLocationStructure is SaveDataNaturalStructure saveDataNaturalStructure) {
             //natural structures
-            if (naturalStructure is Cave cave && saveDataNaturalStructure is SaveDataCave saveDataCave) {
-                cave.LoadOccupiedHexTiles(saveDataCave);
-            } else {
-                if (!string.IsNullOrEmpty(saveDataLocationStructure.occupiedHexTileID)) {
-                    HexTile occupiedHexTile = DatabaseManager.Instance.hexTileDatabase.GetHextileByPersistentID(saveDataLocationStructure.occupiedHexTileID);
-                    structure.SetOccupiedHexTile(occupiedHexTile.innerMapHexTile);
-                }
+            if (!string.IsNullOrEmpty(saveDataLocationStructure.occupiedAreaID)) {
+                Area occupiedArea = DatabaseManager.Instance.areaDatabase.GetAreaByPersistentID(saveDataLocationStructure.occupiedAreaID);
+                structure.SetOccupiedArea(occupiedArea);
+            }
+            if (naturalStructure is AnimalDen animalDen && saveDataNaturalStructure is SaveDataAnimalDen saveDataAnimalDen) {
+                GameObject structurePrefab = ObjectPoolManager.Instance.InstantiateObjectFromPool(saveDataAnimalDen.structureTemplateName, saveDataAnimalDen.structureObjectWorldPosition,
+                    Quaternion.identity, region.innerMap.structureParent, true);
+                LocationStructureObject structureObject = structurePrefab.GetComponent<LocationStructureObject>();
+
+                structureObject.RefreshAllTilemaps();
+                List<LocationGridTile> occupiedTiles = structureObject.GetTilesOccupiedByStructure(region.innerMap);
+                structureObject.SetTilesInStructure(occupiedTiles.ToArray());
+                animalDen.SetStructureObject(structureObject);
+
+                structureObject.OnLoadStructureObjectPlaced(region.innerMap, structure, saveDataLocationStructure);
+                structure.CreateRoomsBasedOnStructureObject(structureObject);
+                structure.OnDoneLoadStructure();
             }
             
         }

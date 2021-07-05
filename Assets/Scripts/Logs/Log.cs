@@ -1,20 +1,21 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Inner_Maps.Location_Structures;
 using Logs;
+using Object_Pools;
 using UnityEngine;
 using UnityEngine.Profiling;
 
 [System.Serializable]
-public struct Log {
-    public readonly string persistentID;
-    public readonly string category;
-    public readonly string file;
-    public readonly string key;
-    public readonly GameDate gameDate;
+public class Log {
+    public string persistentID;
+    public string category;
+    public string file;
+    public string key;
+    public GameDate gameDate;
     public readonly List<LOG_TAG> tags;
     public readonly List<LogFillerStruct> fillers;
-    public readonly string actionID;
-    public readonly bool hasValue;
+    public string actionID;
     public string allInvolvedObjectIDs;
     public string rawText; //text without rich text tags
     [SerializeField] private bool hasBeenFinalized;
@@ -30,67 +31,124 @@ public struct Log {
         }
     }
     public string unReplacedText => LocalizationManager.Instance.GetLocalizedValue(category, file, key);
+    public bool hasValue => !string.IsNullOrEmpty(category) && !string.IsNullOrEmpty(file) && !string.IsNullOrEmpty(key);
     #endregion
         
-    public Log(GameDate date, string category, string file, string key, ActualGoapNode node = null, params LOG_TAG[] providedTags) {
-        persistentID = UtilityScripts.Utilities.GetNewUniqueID();
-        this.category = category;
-        this.file = file;
-        this.key = key;
-        gameDate = date;
-        _logText = LocalizationManager.Instance.GetLocalizedValue(category, file, key);
-        rawText = string.Empty;
-        actionID = node?.persistentID ?? string.Empty;
+    // public Log(GameDate date, string category, string file, string key, ActualGoapNode node = null, params LOG_TAG[] providedTags) {
+    //     persistentID = UtilityScripts.Utilities.GetNewUniqueID();
+    //     this.category = category;
+    //     this.file = file;
+    //     this.key = key;
+    //     gameDate = date;
+    //     _logText = LocalizationManager.Instance.GetLocalizedValue(category, file, key);
+    //     rawText = string.Empty;
+    //     actionID = node?.persistentID ?? string.Empty;
+    //     fillers = new List<LogFillerStruct>();
+    //     tags = new List<LOG_TAG>();
+    //     hasBeenFinalized = false;
+    //     allInvolvedObjectIDs = string.Empty;
+    //     if (providedTags != null && providedTags.Length > 0) {
+    //         AddTag(providedTags);
+    //     } else {
+    //         //always default log to misc if no tags were provided, this is to prevent logs from having no tags
+    //         AddTag(LOG_TAG.Work);
+    //     }
+    // }
+    // public Log(GameDate date, string category, string file, string key, ActualGoapNode node = null, LOG_TAG providedTag = LOG_TAG.Work) {
+    //     persistentID = UtilityScripts.Utilities.GetNewUniqueID();
+    //     this.category = category;
+    //     this.file = file;
+    //     this.key = key;
+    //     gameDate = date;
+    //     _logText = LocalizationManager.Instance.GetLocalizedValue(category, file, key);
+    //     rawText = string.Empty;
+    //     actionID = node?.persistentID ?? string.Empty;
+    //     fillers = new List<LogFillerStruct>();
+    //     tags = new List<LOG_TAG>();
+    //     hasBeenFinalized = false;
+    //     allInvolvedObjectIDs = string.Empty;
+    //     AddTag(providedTag);
+    // }
+    // public Log(string id, GameDate date, string logText, string category, string key, string file, string involvedObjects, List<LOG_TAG> providedTags, string rawText, List<LogFillerStruct> fillers = null) {
+    //     persistentID = id;
+    //     this.category = category;
+    //     this.file = file;
+    //     this.key = key;
+    //     gameDate = date;
+    //     _logText = logText;
+    //     actionID = string.Empty;
+    //     this.fillers = fillers;
+    //     tags = new List<LOG_TAG>();
+    //     hasBeenFinalized = true;
+    //     allInvolvedObjectIDs = involvedObjects;
+    //     this.rawText = rawText;
+    //     if (providedTags != null && providedTags.Count > 0) {
+    //         AddTag(providedTags);
+    //     } else {
+    //         //always default log to misc if no tags were provided, this is to prevent logs from having no tags
+    //         AddTag(LOG_TAG.Work);
+    //     }
+    // }
+    public Log() {
         fillers = new List<LogFillerStruct>();
         tags = new List<LOG_TAG>();
-        hasValue = true;
         hasBeenFinalized = false;
-        allInvolvedObjectIDs = string.Empty;
-        if (providedTags != null && providedTags.Length > 0) {
-            AddTag(providedTags);
-        } else {
-            //always default log to misc if no tags were provided, this is to prevent logs from having no tags
-            AddTag(LOG_TAG.Work);
-        }
-    }
-    public Log(GameDate date, string category, string file, string key, ActualGoapNode node = null, LOG_TAG providedTag = LOG_TAG.Work) {
-        persistentID = UtilityScripts.Utilities.GetNewUniqueID();
-        this.category = category;
-        this.file = file;
-        this.key = key;
-        gameDate = date;
-        _logText = LocalizationManager.Instance.GetLocalizedValue(category, file, key);
-        rawText = string.Empty;
-        actionID = node?.persistentID ?? string.Empty;
-        fillers = new List<LogFillerStruct>();
-        tags = new List<LOG_TAG>();
-        hasValue = true;
-        hasBeenFinalized = false;
-        allInvolvedObjectIDs = string.Empty;
-        AddTag(providedTag);
-    }
-    public Log(string id, GameDate date, string logText, string category, string key, string file, string involvedObjects, List<LOG_TAG> providedTags, string rawText, List<LogFillerStruct> fillers = null) {
-        persistentID = id;
-        this.category = category;
-        this.file = file;
-        this.key = key;
-        gameDate = date;
-        _logText = logText;
-        actionID = string.Empty;
-        this.fillers = fillers;
-        tags = new List<LOG_TAG>();
-        hasValue = true;
-        hasBeenFinalized = true;
-        allInvolvedObjectIDs = involvedObjects;
-        this.rawText = rawText;
-        if (providedTags != null && providedTags.Count > 0) {
-            AddTag(providedTags);
-        } else {
-            //always default log to misc if no tags were provided, this is to prevent logs from having no tags
-            AddTag(LOG_TAG.Work);
-        }
     }
 
+    #region Data Setting
+    public void SetDate(GameDate p_date) {
+        gameDate = p_date;
+    }
+    public void SetCategory(string s) {
+        category = s;
+    }
+    public void SetFile(string s) {
+        file = s;
+    }
+    public void SetKey(string s) {
+        key = s;
+    }
+    public void DetermineInitialLogText() {
+        _logText = LocalizationManager.Instance.GetLocalizedValue(category, file, key);
+    }
+    public void SetConnectedAction(ActualGoapNode node) {
+        if (node != null) {
+            actionID = node.persistentID;
+        }
+    }
+    public void SetPersistentID(string p_id) {
+        persistentID = p_id;
+    }
+    public void SetInvolvedObjects(string p_involved) {
+        allInvolvedObjectIDs = p_involved;
+    }
+    public void SetRawText(string p_text) {
+        rawText = p_text;
+    }
+    public void SetFillers(List<LogFillerStruct> p_logFillerStructs) {
+        fillers.AddRange(p_logFillerStructs);
+    }
+    public void SetLogText(string p_logText) {
+        _logText = p_logText;
+    }
+    public void Copy(Log p_log) {
+        persistentID = p_log.persistentID;
+        category = p_log.category;
+        file = p_log.file;
+        key = p_log.key;
+        gameDate = p_log.gameDate;
+        tags.Clear();
+        tags.AddRange(p_log.tags);
+        fillers.Clear();
+        fillers.AddRange(p_log.fillers);
+        actionID = p_log.actionID;
+        allInvolvedObjectIDs = p_log.allInvolvedObjectIDs;
+        rawText = p_log.rawText; //text without rich text tags
+        hasBeenFinalized = p_log.hasBeenFinalized;
+        _logText = p_log.logText;
+    }
+    #endregion
+    
     #region Fillers
     internal void AddToFillers(ILogFiller obj, string value, LOG_IDENTIFIER identifier, bool replaceExisting = true){
         if (replaceExisting && HasFillerForIdentifier(identifier)) {
@@ -190,18 +248,22 @@ public struct Log {
     #endregion
         
     #region Addition
-    public void AddLogToDatabase() {
+    public void AddLogToDatabase(bool releaseLogAfter = false) {
+#if DEBUG_PROFILER
         Profiler.BeginSample("Add Log To Database");
-        DatabaseManager.Instance.mainSQLDatabase.InsertLog(this);
+#endif
+        DatabaseManager.Instance.mainSQLDatabase.InsertLogUsingMultiThread(this);
+#if DEBUG_PROFILER
         Profiler.EndSample();
-        
-        Profiler.BeginSample("Log Added Signal");
-        Messenger.Broadcast(UISignals.LOG_ADDED, this);
-        Profiler.EndSample();
-    }
-    #endregion
+#endif
 
-    #region Tags
+        if (releaseLogAfter) {
+            LogPool.Release(this);
+        }
+    }
+#endregion
+
+#region Tags
     public void AddTag(LOG_TAG tag) {
         if (!tags.Contains(tag)) {
             tags.Add(tag);    
@@ -221,9 +283,9 @@ public struct Log {
             }    
         }
     }
-    #endregion
+#endregion
 
-    #region Updates
+#region Updates
     public bool TryUpdateLogAfterRename(Character updatedCharacter, bool force = false) {
         if (IsInvolved(updatedCharacter) || force) {
             if (fillers != null) {
@@ -253,11 +315,28 @@ public struct Log {
         ResetText();
         FinalizeText();
     }
-    #endregion
+#endregion
 
-    #region Utilities
+#region Utilities
     public bool IsImportant() {
         return tags.Contains(LOG_TAG.Major);
     }
-    #endregion
+#endregion
+
+#region Object Pools
+    public void Reset() {
+        fillers.Clear();
+        tags.Clear();
+        persistentID = string.Empty;
+        category = string.Empty;
+        file = string.Empty;
+        key = string.Empty;
+        gameDate = default;
+        actionID = string.Empty;
+        allInvolvedObjectIDs = string.Empty;
+        rawText = string.Empty;
+        hasBeenFinalized = false;
+        _logText = string.Empty;
+    }
+#endregion
 }

@@ -4,7 +4,7 @@ public class PlinthBook : TileObject{
     public PlinthBook() {
         Initialize(TILE_OBJECT_TYPE.PLINTH_BOOK);
     }
-    public PlinthBook(SaveDataTileObject data) {
+    public PlinthBook(SaveDataTileObject data) : base(data) {
         
     }
 }

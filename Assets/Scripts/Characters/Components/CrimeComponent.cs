@@ -35,6 +35,13 @@ public class CrimeComponent : CharacterComponent {
         }
     }
 
+    #region Listeners
+    public void OnCharacterDied() {
+        RemoveAllActiveCrimes(true);
+    }
+    #endregion
+
+
     #region Crimes
     public void AddWitnessedCrime(CrimeData data) {
         witnessedCrimes.Add(data);
@@ -134,12 +141,15 @@ public class CrimeComponent : CharacterComponent {
             owner.traitContainer.RemoveTrait(owner, "Criminal");
         }
     }
-    public void RemoveAllActiveCrimes() {
+    public void RemoveAllActiveCrimes(bool removeTrait) {
         while (activeCrimes.Count > 0) {
             CrimeData data = activeCrimes[0];
             data.OnCrimeRemoved();
             previousCrimes.Add(data);
             activeCrimes.RemoveAt(0);
+        }
+        if (removeTrait) {
+            owner.traitContainer.RemoveTrait(owner, "Criminal");
         }
     }
     public void RemoveCrime(CrimeData crimeData) {

@@ -11,47 +11,6 @@ public class PathGenerator : MonoBehaviour {
 
 	public static PathGenerator Instance = null;
 
-	private List<HexTile> roadTiles = new List<HexTile>();
-
-    #region For Testing
-    [Header("For Testing")]
-    [SerializeField] private HexTile startTile;
-    [SerializeField] private HexTile targetTile;
-    [SerializeField] private Vector2Int startLocGrid;
-    [SerializeField] private Vector2Int destLocGrid;
-    public PATHFINDING_MODE modeToUse;
-    public GRID_PATHFINDING_MODE gridModeToUse;
-    
-    [ContextMenu("Get Distance")]
-    public void GetDistance() {
-        Debug.Log(Vector2.Distance(startTile.transform.position, targetTile.transform.position));
-    }
-    [ContextMenu("Show all road tiles")]
-    public void ShowAllRoadTiles() {
-        foreach (HexTile h in roadTiles) {
-            h.spriteRenderer.color = Color.red;
-        }
-    }
-    [ContextMenu("Hide all road tiles")]
-    public void HideAllRoadTiles() {
-        foreach (HexTile h in roadTiles) {
-            h.spriteRenderer.color = Color.white;
-        }
-    }
-    [ContextMenu("Get Loc GridPath")]
-    public void GetLocGridPathForTesting() {
-        List<LocationGridTile> path = GetPath(InnerMapManager.Instance.currentlyShowingMap.map[startLocGrid.x, startLocGrid.y], InnerMapManager.Instance.currentlyShowingMap.map[destLocGrid.x, destLocGrid.y], gridModeToUse);
-        if (path != null) {
-            Debug.Log($"========== Path from {startTile.name} to {targetTile.name}============");
-            for (int i = 0; i < path.Count; i++) {
-                Debug.Log(path[i].ToString());
-            }
-        } else {
-            Debug.LogError($"Cannot get path from {startTile.name} to {targetTile.name} using {modeToUse}");
-        }
-    }
-    #endregion
-
     void Awake(){
 		Instance = this;
 	}
@@ -75,32 +34,7 @@ public class PathGenerator : MonoBehaviour {
         }
         return null;
     }
-    //public PathFindingThread CreatePath(CharacterAvatar characterAvatar, HexTile startingTile, HexTile destinationTile, PATHFINDING_MODE pathfindingMode, object data = null) {
-    //    if (startingTile == null || destinationTile == null) {
-    //        return null;
-    //    }
-    //    //if (startingTile.tileTag != destinationTile.tileTag) {
-    //    //    return null;
-    //    //}
-    //    PathFindingThread newThread = new PathFindingThread(characterAvatar, startingTile, destinationTile, pathfindingMode, data);
-    //    MultiThreadPool.Instance.AddToThreadPool(newThread);
-    //    return newThread;
-    //}
-    public PathFindingThread CreatePath(BaseLandmark landmark, HexTile startingTile, HexTile destinationTile, PATHFINDING_MODE pathfindingMode, object data = null) {
-        if (startingTile == null || destinationTile == null) {
-            return null;
-        }
-        //if (startingTile.tileTag != destinationTile.tileTag) {
-        //    return null;
-        //}
-        PathFindingThread newThread = new PathFindingThread(landmark, startingTile, destinationTile, pathfindingMode, data);
-        MultiThreadPool.Instance.AddToThreadPool(newThread);
-        return newThread;
-    }
-    public int GetTravelTime(HexTile from, HexTile to) {
-        float distance = Vector3.Distance(from.transform.position, to.transform.position);
-        return (Mathf.CeilToInt(distance / 2.315188f)) * 2;
-    }
+
     #region Tile Getters
     private List<LocationGridTile> SameStructureTiles(LocationGridTile tile, params object[] args) {
         LocationStructure structure = args[0] as LocationStructure;

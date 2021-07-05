@@ -7,7 +7,7 @@ using Inner_Maps.Location_Structures;
 public class HeirloomHuntPartyQuest : PartyQuest {
 
     public Heirloom targetHeirloom { get; private set; }
-    public HexTile targetHex { get; private set; }
+    public Area targetArea { get; private set; }
     public bool foundHeirloom { get; private set; }
     public Region regionToSearch { get; private set; }
 
@@ -33,7 +33,7 @@ public class HeirloomHuntPartyQuest : PartyQuest {
 
     #region Overrides
     public override IPartyTargetDestination GetTargetDestination() {
-        return targetHex;
+        return targetArea;
     }
     public override string GetPartyQuestTextInLog() {
         return "Heirloom Hunt";
@@ -78,7 +78,7 @@ public class HeirloomHuntPartyQuest : PartyQuest {
     //    if (foundHeirloom) {
     //    } else {
     //        //if(targetHeirloom.isBeingCarriedBy != null || !targetHeirloom.gridTileLocation.collectionOwner.isPartOfParentRegionMap
-    //        //    || targetHeirloom.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.biomeType != BIOMES.DESERT) {
+    //        //    || targetHeirloom.gridTileLocation.hexTileOwner.biomeType != BIOMES.DESERT) {
     //        //    DisbandParty();
     //        //} else {
     //        if (UnityEngine.Random.Range(0, 100) < currentChance) {
@@ -102,11 +102,11 @@ public class HeirloomHuntPartyQuest : PartyQuest {
         }
     }
     private void ProcessSettingTargetHex() {
-        HexTile chosenHex = regionToSearch.GetRandomHexThatMeetCriteria(h => h.elevationType != ELEVATION.WATER && h != targetHex);
+        //Area chosenArea = regionToSearch.GetRandomAreaThatMeetCriteria(h => h.elevationType != ELEVATION.WATER && h != targetArea);
         //if (chosenHex == null) {
         //    DisbandParty();
         //} else {
-            targetHex = chosenHex;
+        //targetArea = chosenArea;
         //}
     }
     //public Character GetMemberCarryingHeirloom() {
@@ -155,8 +155,8 @@ public class HeirloomHuntPartyQuest : PartyQuest {
             if (!string.IsNullOrEmpty(subData.targetHeirloom)) {
                 targetHeirloom = DatabaseManager.Instance.tileObjectDatabase.GetTileObjectByPersistentID(subData.targetHeirloom) as Heirloom;
             }
-            if (!string.IsNullOrEmpty(subData.targetHex)) {
-                targetHex = DatabaseManager.Instance.hexTileDatabase.GetHextileByPersistentID(subData.targetHex);
+            if (!string.IsNullOrEmpty(subData.targetArea)) {
+                targetArea = DatabaseManager.Instance.areaDatabase.GetAreaByPersistentID(subData.targetArea);
             }
             if (!string.IsNullOrEmpty(subData.regionToSearch)) {
                 regionToSearch = DatabaseManager.Instance.regionDatabase.GetRegionByPersistentID(subData.regionToSearch);
@@ -172,7 +172,7 @@ public class HeirloomHuntPartyQuest : PartyQuest {
 [System.Serializable]
 public class SaveDataHeirloomHuntPartyQuest : SaveDataPartyQuest {
     public string targetHeirloom;
-    public string targetHex;
+    public string targetArea;
     //public bool foundHeirloom;
     public string regionToSearch;
 
@@ -186,8 +186,8 @@ public class SaveDataHeirloomHuntPartyQuest : SaveDataPartyQuest {
                 targetHeirloom = subData.targetHeirloom.persistentID;
                 SaveManager.Instance.saveCurrentProgressManager.AddToSaveHub(subData.targetHeirloom);
             }
-            if (subData.targetHex != null) {
-                targetHex = subData.targetHex.persistentID;
+            if (subData.targetArea != null) {
+                targetArea = subData.targetArea.persistentID;
             }
             if (subData.regionToSearch != null) {
                 regionToSearch = subData.regionToSearch.persistentID;

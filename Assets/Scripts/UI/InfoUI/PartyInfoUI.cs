@@ -8,6 +8,7 @@ using System.Linq;
 using Inner_Maps;
 using Traits;
 using Locations.Settlements;
+using Object_Pools;
 
 public class PartyInfoUI : InfoUIBase {
 
@@ -32,6 +33,8 @@ public class PartyInfoUI : InfoUIBase {
     [Space(10)] [Header("Logs")] 
     [SerializeField] private LogsWindow logsWindow;
 
+    private Log m_log;
+
     public Party activeParty { get; private set; }
 
     #region Overrides
@@ -44,16 +47,19 @@ public class PartyInfoUI : InfoUIBase {
         Messenger.AddListener<Party, Character>(PartySignals.CHARACTER_JOINED_PARTY_QUEST, UpdateMembersFromSignal);
         Messenger.AddListener<Party, Character>(PartySignals.CHARACTER_LEFT_PARTY_QUEST, UpdateMembersFromSignal);
         Messenger.AddListener<Party>(PartySignals.CLEAR_MEMBERS_THAT_JOINED_QUEST, UpdateMembersFromSignal);
-
+        Messenger.AddListener<Party>(PartySignals.DISBAND_PARTY, ShowDisbandLog);
         Messenger.AddListener<Party>(PartySignals.DISBAND_PARTY, UpdateMembersFromSignal);
+
 
         homeSettlementNameplate.SetAsButton();
         homeSettlementNameplate.ClearAllOnClickActions();
         homeSettlementNameplate.AddOnClickAction(OnClickSettlementItem);
-
         logsWindow.Initialize();
     }
     public override void CloseMenu() {
+        if (m_log != null) {
+            LogPool.Release(m_log);
+        }
         base.CloseMenu();
         Selector.Instance.Deselect();
         activeParty = null;
@@ -134,6 +140,12 @@ public class PartyInfoUI : InfoUIBase {
             }
         }
     }
+    private void ShowDisbandLog(Party party) {
+        m_log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Party", "General", "disband", providedTags: LOG_TAG.Party);
+        m_log.AddToFillers(party, party.name, LOG_IDENTIFIER.PARTY_1);
+        m_log.AddLogToDatabase();
+        PlayerManager.Instance.player.ShowNotificationFromPlayer(m_log, false);
+    }
     public void UpdateLogs() {
         logsWindow.UpdateAllHistoryInfo();
     }
@@ -146,12 +158,12 @@ public class PartyInfoUI : InfoUIBase {
         }
     }
     private void UpdateMembersFromSignal(Party party, Character member) {
-        if (isShowing && activeParty == party) {
+        if (isShowing && activeParty.IsPartyTheSameAsThisParty(party)) {
             UpdateMembers();
         }
     }
     private void UpdateMembersFromSignal(Party party) {
-        if (isShowing && activeParty == party) {
+        if (isShowing && activeParty.IsPartyTheSameAsThisParty(party)) {
             UpdateMembers();
         }
     }

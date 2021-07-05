@@ -1,6 +1,6 @@
 ﻿using System;
 namespace Quests.Steps {
-    public class ReachDayStep : QuestStep, PangatLooWinConditionTracker.Listener {
+    public class ReachDayStep : QuestStep {
         private readonly Func<int, string> _descriptionGetter;
         private readonly int _targetDay;
         
@@ -9,10 +9,10 @@ namespace Quests.Steps {
             _targetDay = p_day;
         }
         protected override void SubscribeListeners() {
-            QuestManager.Instance.GetWinConditionTracker<PangatLooWinConditionTracker>().Subscribe(this);
+            // QuestManager.Instance.GetWinConditionTracker<WipeOutAllUntilDayWinConditionTracker>().Subscribe(this);
         }
         protected override void UnSubscribeListeners() {
-            QuestManager.Instance.GetWinConditionTracker<PangatLooWinConditionTracker>().Unsubscribe(this);
+            // QuestManager.Instance.GetWinConditionTracker<WipeOutAllUntilDayWinConditionTracker>().Unsubscribe(this);
         }
         protected override bool CheckIfStepIsAlreadyCompleted() {
             return GameManager.Instance.continuousDays >= _targetDay;

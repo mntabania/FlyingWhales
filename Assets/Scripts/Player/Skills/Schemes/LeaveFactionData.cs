@@ -21,24 +21,48 @@ public class LeaveFactionData : SchemeData {
             UIManager.Instance.ShowSchemeUI(targetCharacter, null, this);
         }
     }
-    public override bool IsValid(IPlayerActionTarget target) {
-        if (target is Character character) {
-            bool isNonVagrant = character.faction != null && character.faction.isMajorNonPlayer;
-            bool isRatman = character.isConsideredRatman;
-            if (isNonVagrant || isRatman) { // && !character.isFactionLeader && !character.isSettlementRuler
-                return true;
-            } else {
+    //public override bool IsValid(IPlayerActionTarget target) {
+    //    bool isValid = base.IsValid(target);
+    //    if (isValid) {
+    //        if (target is Character character) {
+    //            bool isNonVagrant = character.faction != null && character.faction.isMajorNonPlayer;
+    //            bool isRatman = character.isConsideredRatman;
+    //            if (isNonVagrant || isRatman) { // && !character.isFactionLeader && !character.isSettlementRuler
+    //                return true;
+    //            } else {
+    //                return false;
+    //            }
+    //        }
+    //    }
+    //    return false;
+    //}
+    public override bool CanPerformAbilityTowards(Character targetCharacter) {
+        bool canPerform = base.CanPerformAbilityTowards(targetCharacter);
+        if (canPerform) {
+            bool isNonVagrant = targetCharacter.faction != null && targetCharacter.faction.isMajorNonPlayer;
+            bool isRatman = targetCharacter.isConsideredRatman;
+            if (!isNonVagrant && !isRatman) {
                 return false;
             }
+            return true;
         }
-        return false;
+        return canPerform;
+    }
+    public override string GetReasonsWhyCannotPerformAbilityTowards(Character targetCharacter) {
+        string reasons = base.GetReasonsWhyCannotPerformAbilityTowards(targetCharacter);
+        bool isNonVagrant = targetCharacter.faction != null && targetCharacter.faction.isMajorNonPlayer;
+        bool isRatman = targetCharacter.isConsideredRatman;
+        if (!isNonVagrant && !isRatman) {
+            reasons += "Target is already a vagrant and is not considered a ratman.";
+        }
+        return reasons;
     }
     protected override void OnSuccessScheme(Character character, object target) {
         base.OnSuccessScheme(character, target);
         character.interruptComponent.TriggerInterrupt(INTERRUPT.Leave_Faction, character, "left_faction_normal");
-        HexTile chosenHex = character.currentRegion.GetRandomHexThatMeetCriteria(currHex => currHex.elevationType != ELEVATION.WATER && currHex.elevationType != ELEVATION.MOUNTAIN && currHex.landmarkOnTile == null && !currHex.IsNextToOrPartOfVillage() && !currHex.isCorrupted);
-        if (chosenHex != null) {
-            LocationGridTile chosenTile = chosenHex.GetRandomPassableTile();
+        Area chosenArea = character.currentRegion.GetRandomAreaThatIsUncorruptedAndNotMountainWaterAndNoStructureAndNotNextToOrPartOfVillage();
+        if (chosenArea != null) {
+            LocationGridTile chosenTile = chosenArea.gridTileComponent.GetRandomPassableTile();
             if (chosenTile != null) {
                 character.jobComponent.CreateGoToJob(chosenTile);
             }

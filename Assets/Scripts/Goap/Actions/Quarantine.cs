@@ -3,7 +3,7 @@ using System.Linq;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
 using UnityEngine.Assertions;
-
+using UtilityScripts;
 public class Quarantine : GoapAction {
     
     public Quarantine() : base(INTERACTION_TYPE.QUARANTINE) {
@@ -39,12 +39,12 @@ public class Quarantine : GoapAction {
         if (goapActionInvalidity.isInvalid == false) {
             Character targetCharacter = node.poiTarget as Character;
             Assert.IsNotNull(targetCharacter, $"Quarantine of {node.actor.name} is not a character! {node.poiTarget?.ToString() ?? "Null"}");
-            BedClinic targetBed = node.actor.gridTileLocation.objHere as BedClinic;
+            BedClinic targetBed = node.actor.gridTileLocation.tileObjectComponent.objHere as BedClinic;
             if (targetBed == null) {
                 //check neighbours
                 for (int i = 0; i < node.actor.gridTileLocation.neighbourList.Count; i++) {
                     LocationGridTile neighbour = node.actor.gridTileLocation.neighbourList[i];
-                    if (neighbour.objHere is BedClinic bed && bed.IsAvailable() && bed.CanUseBed(targetCharacter)) {
+                    if (neighbour.tileObjectComponent.objHere is BedClinic bed && bed.IsAvailable() && bed.CanUseBed(targetCharacter)) {
                         targetBed = bed;
                         break;
                     }
@@ -90,9 +90,9 @@ public class Quarantine : GoapAction {
             if (apothecaries != null) {
                 for (int i = 0; i < apothecaries.Count; i++) {
                     LocationStructure structure = apothecaries[i];
-                    List<BedClinic> beds = structure.GetTileObjectsOfType<BedClinic>(t => t.CanUseBed(targetCharacter));
-                    if (beds.Count > 0) {
-                        return beds.First();
+                    BedClinic bed = structure.GetFirstBedClinicThatCanBeUsedBy(targetCharacter);
+                    if (bed != null) {
+                        return bed;
                     }
                 }    
             }
@@ -100,12 +100,12 @@ public class Quarantine : GoapAction {
         return null;
      }
      private BedClinic GetBedNearActor(Character actor, Character targetCharacter) {
-         BedClinic targetBed = actor.gridTileLocation.objHere as BedClinic;
+         BedClinic targetBed = actor.gridTileLocation.tileObjectComponent.objHere as BedClinic;
          if (targetBed == null || !targetBed.IsAvailable() || !targetBed.CanUseBed(targetCharacter)) {
              //check neighbours
              for (int i = 0; i < actor.gridTileLocation.neighbourList.Count; i++) {
                  LocationGridTile neighbour = actor.gridTileLocation.neighbourList[i];
-                 if (neighbour.objHere is BedClinic bed && bed.IsAvailable() && bed.CanUseBed(targetCharacter)) {
+                 if (neighbour.tileObjectComponent.objHere is BedClinic bed && bed.IsAvailable() && bed.CanUseBed(targetCharacter)) {
                      targetBed = bed;
                      break;
                  }

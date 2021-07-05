@@ -4,7 +4,8 @@ using Characters.Components;
 using Inner_Maps.Location_Structures;
 using UnityEngine;
 namespace Traits {
-    public class Quarantined : Status, CharacterEventDispatcher.ITraitListener, CharacterEventDispatcher.ICarryListener, CharacterEventDispatcher.ILocationListener {
+    public class Quarantined : Status, CharacterEventDispatcher.ITraitListener, CharacterEventDispatcher.ICarryListener, 
+        CharacterEventDispatcher.ILocationListener {
         public override bool isSingleton => true;
         
         public Quarantined() {
@@ -72,7 +73,9 @@ namespace Traits {
                             newExpiryDate = GameManager.Instance.Today();
                             newExpiryDate.AddTicks(1);
                         }
+#if DEBUG_LOG
                         Debug.Log($"{traitable.name} Will reschedule Plagued removal to {newExpiryDate.ToString()} from {originalRemovalDate.ToString()}");
+#endif
                         traitable.traitContainer.RescheduleLatestTraitRemoval(traitable, plagued, newExpiryDate);    
                     }
                 }
@@ -108,7 +111,7 @@ namespace Traits {
             }
         }
         
-        #region Tiredness Recovery
+#region Tiredness Recovery
         private bool PlanTirednessRecovery(Character owner) {
             if ((owner.needsComponent.isExhausted || owner.needsComponent.isTired) && !owner.HasJobTargetingThis(JOB_TYPE.ENERGY_RECOVERY_NORMAL, JOB_TYPE.ENERGY_RECOVERY_URGENT)) {
                 return CreateSleepJob(owner);
@@ -117,7 +120,7 @@ namespace Traits {
         }
         private bool CreateSleepJob(Character owner) {
             if (owner.homeStructure != null) {
-                if (owner.gridTileLocation.objHere != null && owner.gridTileLocation.objHere is BedClinic bed) {
+                if (owner.gridTileLocation.tileObjectComponent.objHere != null && owner.gridTileLocation.tileObjectComponent.objHere is BedClinic bed) {
                     CreateActualSleepJob(owner, bed);
                     return true;
                 }
@@ -132,9 +135,9 @@ namespace Traits {
             GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType, INTERACTION_TYPE.SLEEP, bed, owner);
             owner.jobQueue.AddJobInQueue(job);
         }
-        #endregion
+#endregion
         
-        #region Happiness Recovery
+#region Happiness Recovery
         private bool PlanHappinessRecovery(Character owner) {
             if ((owner.needsComponent.isSulking || owner.needsComponent.isBored) && !owner.HasJobTargetingThis(JOB_TYPE.HAPPINESS_RECOVERY)) {
                 return CreateDaydreamOrPrayJob(owner);
@@ -164,10 +167,10 @@ namespace Traits {
                 heartbroken.TriggerBrokenhearted();
             }
         }
-        #endregion
+#endregion
 
 
-        #region Listeners
+#region Listeners
         public void OnCharacterGainedTrait(Character p_character, Trait p_gainedTrait) {
             if (p_gainedTrait is Transforming) {
                 //remove quarantined from character whenever it starts transforming into something else
@@ -191,6 +194,8 @@ namespace Traits {
                 p_character.traitContainer.RemoveTrait(p_character, this);
             }
         }
+        public void OnCharacterArrivedAtStructure(Character p_character, LocationStructure p_leftStructure) { }
+        public void OnCharacterArrivedAtSettlement(Character p_character, NPCSettlement p_settlement) { }
         #endregion
     }
 }

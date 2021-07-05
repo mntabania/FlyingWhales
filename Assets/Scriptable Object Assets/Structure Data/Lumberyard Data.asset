@@ -1,0 +1,32 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4fe081999e2948579e671f1ff7494f4c, type: 3}
+  m_Name: Lumberyard Data
+  m_EditorClassIdentifier: 
+  _structureSprite: {fileID: 21300000, guid: 570ccff55171ccc4baaed36deacc95a0, type: 3}
+  _itemGenerationSetting: {fileID: 0}
+  structurePrefabs:
+    m_keys:
+    - resource: 4
+      structureType: 40
+      hasValue: 1
+      isCorrupted: 1
+    - resource: 4
+      structureType: 40
+      hasValue: 1
+      isCorrupted: 0
+    m_values:
+    - data:
+      - {fileID: 2928342377004912309, guid: 6b7147a8afd8a8248b5aa91649a117f4, type: 3}
+    - data:
+      - {fileID: 2928342377004912309, guid: ece5c24cba2b5b44693415c006ae14bb, type: 3}
+      - {fileID: 5617079378761776647, guid: 944c1bb9cd2289043a1b1a82e4fb0d90, type: 3}

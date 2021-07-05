@@ -15,15 +15,17 @@ public class IsPlagued : GoapAction {
         SetState("Plague Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
+#if DEBUG_LOG
         string costLog = $"\n{name} {target.nameWithID}: +10(Constant)";
         actor.logComponent.AppendCostLog(costLog);
+#endif
         return 0;
     }
     public override REACTABLE_EFFECT GetReactableEffect(ActualGoapNode node, Character witness) {
         return REACTABLE_EFFECT.Negative;
     }
-    public override void PopulateReactionsToActor(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
-        base.PopulateReactionsToActor(reactions, actor, target, witness, node, status);
+    public override void PopulateEmotionReactionsToActor(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
+        base.PopulateEmotionReactionsToActor(reactions, actor, target, witness, node, status);
         if (witness.relationshipContainer.IsFriendsWith(actor)) {
             reactions.Add(EMOTION.Concern);
         } else if (witness.relationshipContainer.IsEnemiesWith(actor)) {
@@ -45,11 +47,11 @@ public class IsPlagued : GoapAction {
     public override CRIME_TYPE GetCrimeType(Character actor, IPointOfInterest target, ActualGoapNode crime) {
         return CRIME_TYPE.Plagued;
     }
-    #endregion
+#endregion
 
-    #region State Effects
+#region State Effects
     public void PrePlagueSuccess(ActualGoapNode goapNode) { }
     public void PerTickPlagueSuccess(ActualGoapNode goapNode) { }
     public void AfterPlagueSuccess(ActualGoapNode goapNode) { }
-    #endregion
+#endregion
 }

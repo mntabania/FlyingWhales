@@ -1,0 +1,2030 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!29 &1
+OcclusionCullingSettings:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_OcclusionBakeSettings:
+    smallestOccluder: 5
+    smallestHole: 0.25
+    backfaceThreshold: 100
+  m_SceneGUID: 00000000000000000000000000000000
+  m_OcclusionCullingData: {fileID: 0}
+--- !u!104 &2
+RenderSettings:
+  m_ObjectHideFlags: 0
+  serializedVersion: 9
+  m_Fog: 0
+  m_FogColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
+  m_FogMode: 3
+  m_FogDensity: 0.01
+  m_LinearFogStart: 0
+  m_LinearFogEnd: 300
+  m_AmbientSkyColor: {r: 0.212, g: 0.227, b: 0.259, a: 1}
+  m_AmbientEquatorColor: {r: 0.114, g: 0.125, b: 0.133, a: 1}
+  m_AmbientGroundColor: {r: 0.047, g: 0.043, b: 0.035, a: 1}
+  m_AmbientIntensity: 1
+  m_AmbientMode: 0
+  m_SubtractiveShadowColor: {r: 0.42, g: 0.478, b: 0.627, a: 1}
+  m_SkyboxMaterial: {fileID: 10304, guid: 0000000000000000f000000000000000, type: 0}
+  m_HaloStrength: 0.5
+  m_FlareStrength: 1
+  m_FlareFadeSpeed: 3
+  m_HaloTexture: {fileID: 0}
+  m_SpotCookie: {fileID: 10001, guid: 0000000000000000e000000000000000, type: 0}
+  m_DefaultReflectionMode: 0
+  m_DefaultReflectionResolution: 128
+  m_ReflectionBounces: 1
+  m_ReflectionIntensity: 1
+  m_CustomReflection: {fileID: 0}
+  m_Sun: {fileID: 0}
+  m_IndirectSpecularColor: {r: 0, g: 0, b: 0, a: 1}
+  m_UseRadianceAmbientProbe: 0
+--- !u!157 &3
+LightmapSettings:
+  m_ObjectHideFlags: 0
+  serializedVersion: 11
+  m_GIWorkflowMode: 1
+  m_GISettings:
+    serializedVersion: 2
+    m_BounceScale: 1
+    m_IndirectOutputScale: 1
+    m_AlbedoBoost: 1
+    m_EnvironmentLightingMode: 0
+    m_EnableBakedLightmaps: 1
+    m_EnableRealtimeLightmaps: 0
+  m_LightmapEditorSettings:
+    serializedVersion: 12
+    m_Resolution: 2
+    m_BakeResolution: 40
+    m_AtlasSize: 1024
+    m_AO: 0
+    m_AOMaxDistance: 1
+    m_CompAOExponent: 1
+    m_CompAOExponentDirect: 0
+    m_ExtractAmbientOcclusion: 0
+    m_Padding: 2
+    m_LightmapParameters: {fileID: 0}
+    m_LightmapsBakeMode: 1
+    m_TextureCompression: 1
+    m_FinalGather: 0
+    m_FinalGatherFiltering: 1
+    m_FinalGatherRayCount: 256
+    m_ReflectionCompression: 2
+    m_MixedBakeMode: 2
+    m_BakeBackend: 1
+    m_PVRSampling: 1
+    m_PVRDirectSampleCount: 32
+    m_PVRSampleCount: 512
+    m_PVRBounces: 2
+    m_PVREnvironmentSampleCount: 256
+    m_PVREnvironmentReferencePointCount: 2048
+    m_PVRFilteringMode: 1
+    m_PVRDenoiserTypeDirect: 1
+    m_PVRDenoiserTypeIndirect: 1
+    m_PVRDenoiserTypeAO: 1
+    m_PVRFilterTypeDirect: 0
+    m_PVRFilterTypeIndirect: 0
+    m_PVRFilterTypeAO: 0
+    m_PVREnvironmentMIS: 1
+    m_PVRCulling: 1
+    m_PVRFilteringGaussRadiusDirect: 1
+    m_PVRFilteringGaussRadiusIndirect: 5
+    m_PVRFilteringGaussRadiusAO: 2
+    m_PVRFilteringAtrousPositionSigmaDirect: 0.5
+    m_PVRFilteringAtrousPositionSigmaIndirect: 2
+    m_PVRFilteringAtrousPositionSigmaAO: 1
+    m_ExportTrainingData: 0
+    m_TrainingDataDestination: TrainingData
+    m_LightProbeSampleCountMultiplier: 4
+  m_LightingDataAsset: {fileID: 0}
+  m_UseShadowmask: 0
+--- !u!196 &4
+NavMeshSettings:
+  serializedVersion: 2
+  m_ObjectHideFlags: 0
+  m_BuildSettings:
+    serializedVersion: 2
+    agentTypeID: 0
+    agentRadius: 0.5
+    agentHeight: 2
+    agentSlope: 45
+    agentClimb: 0.4
+    ledgeDropHeight: 0
+    maxJumpAcrossDistance: 0
+    minRegionArea: 2
+    manualCellSize: 0
+    cellSize: 0.16666667
+    manualTileSize: 0
+    tileSize: 256
+    accuratePlacement: 0
+    debug:
+      m_Flags: 0
+  m_NavMeshData: {fileID: 0}
+--- !u!1 &101171838
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 101171840}
+  - component: {fileID: 101171839}
+  m_Layer: 0
+  m_Name: FakePlayer
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &101171839
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 101171838}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 694d00de0bf39c44eac195785133ec02, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  availableSkills: 110000001c000000120000001d000000150000002f0000001600000029000000020000001f0000004e000000
+  summons: 180000001f00000021000000
+--- !u!4 &101171840
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 101171838}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 4
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &248977108
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 248977110}
+  - component: {fileID: 248977109}
+  m_Layer: 0
+  m_Name: Directional Light
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!108 &248977109
+Light:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 248977108}
+  m_Enabled: 1
+  serializedVersion: 10
+  m_Type: 1
+  m_Shape: 0
+  m_Color: {r: 1, g: 0.95686275, b: 0.8392157, a: 1}
+  m_Intensity: 1
+  m_Range: 10
+  m_SpotAngle: 30
+  m_InnerSpotAngle: 21.80208
+  m_CookieSize: 10
+  m_Shadows:
+    m_Type: 2
+    m_Resolution: -1
+    m_CustomResolution: -1
+    m_Strength: 1
+    m_Bias: 0.05
+    m_NormalBias: 0.4
+    m_NearPlane: 0.2
+    m_CullingMatrixOverride:
+      e00: 1
+      e01: 0
+      e02: 0
+      e03: 0
+      e10: 0
+      e11: 1
+      e12: 0
+      e13: 0
+      e20: 0
+      e21: 0
+      e22: 1
+      e23: 0
+      e30: 0
+      e31: 0
+      e32: 0
+      e33: 1
+    m_UseCullingMatrixOverride: 0
+  m_Cookie: {fileID: 0}
+  m_DrawHalo: 0
+  m_Flare: {fileID: 0}
+  m_RenderMode: 0
+  m_CullingMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_RenderingLayerMask: 1
+  m_Lightmapping: 4
+  m_LightShadowCasterMode: 0
+  m_AreaSize: {x: 1, y: 1}
+  m_BounceIntensity: 1
+  m_ColorTemperature: 6570
+  m_UseColorTemperature: 0
+  m_BoundingSphereOverride: {x: 0, y: 0, z: 0, w: 0}
+  m_UseBoundingSphereOverride: 0
+  m_ShadowRadius: 0
+  m_ShadowAngle: 0
+--- !u!4 &248977110
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 248977108}
+  m_LocalRotation: {x: 0.40821788, y: -0.23456968, z: 0.10938163, w: 0.8754261}
+  m_LocalPosition: {x: 0, y: 3, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
+--- !u!1 &347554662
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 347554664}
+  - component: {fileID: 347554663}
+  m_Layer: 0
+  m_Name: UIController
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &347554663
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 347554662}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 298e9418dfa752e478e8f13e9bcae95c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _canvas: {fileID: 1137966293}
+  siblingIndex: -1
+  m_maraudUIModel: {fileID: 2060806865198195864, guid: f896c18de75dce946a8d03895f40303a,
+    type: 3}
+  m_availableMonsterItemUI: {fileID: 0}
+  m_availableTargetItemUI: {fileID: 0}
+  m_deployedMonsterItemUI: {fileID: 5273214898117788424, guid: 9a6ad23b2df0e5a4cb931e2cb4b11018,
+    type: 3}
+  m_deployedSummonsUI: []
+  m_deployedMinionsUI: []
+  m_deployedTargetItemUI: []
+--- !u!4 &347554664
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 347554662}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 5
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &444849751
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 444849754}
+  - component: {fileID: 444849753}
+  - component: {fileID: 444849752}
+  m_Layer: 0
+  m_Name: EventSystem
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &444849752
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 444849751}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4f231c4fb786f3946a6b90b886c48677, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_HorizontalAxis: Horizontal
+  m_VerticalAxis: Vertical
+  m_SubmitButton: Submit
+  m_CancelButton: Cancel
+  m_InputActionsPerSecond: 10
+  m_RepeatDelay: 0.5
+  m_ForceModuleActive: 0
+--- !u!114 &444849753
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 444849751}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 76c392e42b5098c458856cdf6ecaaaa1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_FirstSelected: {fileID: 0}
+  m_sendNavigationEvents: 1
+  m_DragThreshold: 10
+--- !u!4 &444849754
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 444849751}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1137966290
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1137966294}
+  - component: {fileID: 1137966293}
+  - component: {fileID: 1137966292}
+  - component: {fileID: 1137966291}
+  m_Layer: 5
+  m_Name: Canvas
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1137966291
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1137966290}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc42784cf147c0c48a680349fa168899, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_IgnoreReversedGraphics: 1
+  m_BlockingObjects: 0
+  m_BlockingMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+--- !u!114 &1137966292
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1137966290}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0cd44c1031e13a943bb63640046fad76, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_UiScaleMode: 0
+  m_ReferencePixelsPerUnit: 100
+  m_ScaleFactor: 1
+  m_ReferenceResolution: {x: 800, y: 600}
+  m_ScreenMatchMode: 0
+  m_MatchWidthOrHeight: 0
+  m_PhysicalUnit: 3
+  m_FallbackScreenDPI: 96
+  m_DefaultSpriteDPI: 96
+  m_DynamicPixelsPerUnit: 1
+--- !u!223 &1137966293
+Canvas:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1137966290}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_RenderMode: 0
+  m_Camera: {fileID: 0}
+  m_PlaneDistance: 100
+  m_PixelPerfect: 0
+  m_ReceivesEvents: 1
+  m_OverrideSorting: 0
+  m_OverridePixelPerfect: 0
+  m_SortingBucketNormalizedSize: 0
+  m_AdditionalShaderChannelsFlag: 25
+  m_SortingLayerID: 0
+  m_SortingOrder: 0
+  m_TargetDisplay: 0
+--- !u!224 &1137966294
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1137966290}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 0, y: 0, z: 0}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
+  m_Pivot: {x: 0, y: 0}
+--- !u!1 &1749487530
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1749487533}
+  - component: {fileID: 1749487532}
+  - component: {fileID: 1749487531}
+  - component: {fileID: 1749487535}
+  - component: {fileID: 1749487534}
+  - component: {fileID: 1749487536}
+  m_Layer: 0
+  m_Name: Main Camera
+  m_TagString: MainCamera
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!81 &1749487531
+AudioListener:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1749487530}
+  m_Enabled: 1
+--- !u!20 &1749487532
+Camera:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1749487530}
+  m_Enabled: 1
+  serializedVersion: 2
+  m_ClearFlags: 1
+  m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
+  m_projectionMatrixMode: 1
+  m_GateFitMode: 2
+  m_FOVAxisMode: 0
+  m_SensorSize: {x: 36, y: 24}
+  m_LensShift: {x: 0, y: 0}
+  m_FocalLength: 50
+  m_NormalizedViewPortRect:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 1
+    height: 1
+  near clip plane: 0.3
+  far clip plane: 1000
+  field of view: 60
+  orthographic: 0
+  orthographic size: 5
+  m_Depth: -1
+  m_CullingMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_RenderingPath: -1
+  m_TargetTexture: {fileID: 0}
+  m_TargetDisplay: 0
+  m_TargetEye: 3
+  m_HDR: 1
+  m_AllowMSAA: 1
+  m_AllowDynamicResolution: 0
+  m_ForceIntoRT: 0
+  m_OcclusionCulling: 1
+  m_StereoConvergence: 10
+  m_StereoSeparation: 0.022
+--- !u!4 &1749487533
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1749487530}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 1, z: -10}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1749487534
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1749487530}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6f18ce7226593b04f92845dc3ee88939, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  allSkillTrees:
+  - {fileID: 11400000, guid: 7d1c50c07a6c8a846a98324818442b50, type: 2}
+  - {fileID: 11400000, guid: bf56438e4caa69f448508406f75ac271, type: 2}
+  - {fileID: 11400000, guid: 30189063000958a4aa46188960846076, type: 2}
+  allSkillLoadouts:
+    m_keys: 010000000300000002000000040000000500000006000000
+    m_values:
+    - {fileID: 11400000, guid: e1f36ee7301daa44d8e797c44c9d05ec, type: 2}
+    - {fileID: 11400000, guid: ebd774438b9b3cb4b9f4370c269f2bc4, type: 2}
+    - {fileID: 11400000, guid: f8f9965a7c1cfc342ac69c8e61876c1b, type: 2}
+    - {fileID: 11400000, guid: 86214c8f51b09ba4ba0f509b5b04d5e4, type: 2}
+    - {fileID: 11400000, guid: 4b0f51420af94874ab3d7ccb017dccde, type: 2}
+    - {fileID: 11400000, guid: 4ef57ae772137be4e813b1aeeaeecd96, type: 2}
+  _unlockAllSkills: 0
+  _unlimitedCast: 0
+  _playerSkillDataDictionary:
+    m_keys: 590000000c000000220000001f0000001d000000430000004900000060000000530000005100000054000000500000004f000000520000004e000000070000002300000058000000480000001400000026000000150000002a000000630000005c0000002e0000005a0000002d0000000a0000004a00000002000000280000005b0000001700000019000000010000001c000000090000005f000000450000000f0000000e000000160000002100000011000000440000002000000008000000130000003300000034000000320000002b0000001e0000005d00000029000000120000004c00000004000000030000005e0000002c000000060000003c0000003b0000003e0000002f000000470000004b000000180000008a0000008b0000008c0000008e0000008f0000009400000095000000960000009700000098000000990000009b0000009d0000009e000000a40000009f000000a5000000a1000000a2000000a3000000a6000000a0000000a7000000a8000000a9000000ad000000aa000000ac000000ae000000af000000b3000000
+    m_values:
+    - {fileID: 11400000, guid: 5f127a3777b992c448fb91349adc7ec7, type: 2}
+    - {fileID: 11400000, guid: d979ef1cfe3a65e47ae414a3a514b8fc, type: 2}
+    - {fileID: 11400000, guid: b634867033dbac34e84e700cff162246, type: 2}
+    - {fileID: 11400000, guid: f7cd6ba3c5814464ea777b6cf05e2c28, type: 2}
+    - {fileID: 11400000, guid: a60b32968d5285d4b89a89c9332978a8, type: 2}
+    - {fileID: 11400000, guid: 82cc8186a84f67e4396ddc9da0e64d65, type: 2}
+    - {fileID: 11400000, guid: a87910001fde0aa4ab0a8081d96e323c, type: 2}
+    - {fileID: 11400000, guid: 6bde2fe6a8b87fa4ca9c4a5f1810e8de, type: 2}
+    - {fileID: 11400000, guid: 4301a5076d8360643b442eae4a29b3c8, type: 2}
+    - {fileID: 11400000, guid: dbb7cbcbd46acae4c919431cb85c5c4c, type: 2}
+    - {fileID: 11400000, guid: d74aeef6946223244855b2862b9e3778, type: 2}
+    - {fileID: 11400000, guid: ec14d91ee8ba12443b474769c08d37b9, type: 2}
+    - {fileID: 11400000, guid: d06478a28d403b14ab676023d0de7d6d, type: 2}
+    - {fileID: 11400000, guid: 27846e3d86588f34bafa96ea12ef50e3, type: 2}
+    - {fileID: 11400000, guid: 55f6caf7a03037b4e8c95040311bf0bb, type: 2}
+    - {fileID: 11400000, guid: fe50ed33cecdc1049952484b80a1e345, type: 2}
+    - {fileID: 11400000, guid: 0f5595477b56f844e996453032adf1f0, type: 2}
+    - {fileID: 11400000, guid: f5d9461643129d04fa27b0aab4bf8c9e, type: 2}
+    - {fileID: 11400000, guid: 329e5cfd4fef90640a36693ab5a5b71b, type: 2}
+    - {fileID: 11400000, guid: 72cb104925eb9b947b3138c4769665c9, type: 2}
+    - {fileID: 11400000, guid: d4b174e394b4b5246be5001e420e07d4, type: 2}
+    - {fileID: 11400000, guid: 61ba2c867124eff4bb4e93120e363bda, type: 2}
+    - {fileID: 11400000, guid: 52ad26c969d94644f82d575f09030881, type: 2}
+    - {fileID: 11400000, guid: e3c2f0eeabb4f214c99f6ab7df0e4d10, type: 2}
+    - {fileID: 11400000, guid: 110d530273c64044b90b3149c2a590d9, type: 2}
+    - {fileID: 11400000, guid: af97790384d30f144b6380e8bdf95fa4, type: 2}
+    - {fileID: 11400000, guid: 73ec376793995cf4e8ba3cc6ab7a5897, type: 2}
+    - {fileID: 11400000, guid: 813a9175a9cf15f4fb405fa40eca0dc4, type: 2}
+    - {fileID: 11400000, guid: e8659cf19ff0b4d4c8b0772b9bc658ac, type: 2}
+    - {fileID: 11400000, guid: 3338d255156d95d41beee44eebf42794, type: 2}
+    - {fileID: 11400000, guid: 738f7824a4a5a7d4b8b740b671b32631, type: 2}
+    - {fileID: 11400000, guid: c803b9295f42ce641b5bed17ac5caf31, type: 2}
+    - {fileID: 11400000, guid: c9fc11c496270194eb720175a58a29b5, type: 2}
+    - {fileID: 11400000, guid: f398904d7be3b964db648b665ab4d3e9, type: 2}
+    - {fileID: 11400000, guid: f3ef7cf8b7843cd4ca3a7b91e55b9eac, type: 2}
+    - {fileID: 11400000, guid: cc1b7d16920cd534a86a70320443760f, type: 2}
+    - {fileID: 11400000, guid: 95b0b4294bd338c4fb96e6d90da663e1, type: 2}
+    - {fileID: 11400000, guid: 7af231d6c366ce84d8b6432fd734543d, type: 2}
+    - {fileID: 11400000, guid: 38c8c0db80dc3e747a13579a78aa2306, type: 2}
+    - {fileID: 11400000, guid: eb443de875f36ca4db92a243ea26d893, type: 2}
+    - {fileID: 11400000, guid: fbffa4f5514c3e04fa2e9d51b8cb51af, type: 2}
+    - {fileID: 11400000, guid: 841c10dae06516f4483894c349a86659, type: 2}
+    - {fileID: 11400000, guid: c033b3eb01d7cdf4796a6e182352a32c, type: 2}
+    - {fileID: 11400000, guid: 164a7116dcfe9d045922d9e11b5eda54, type: 2}
+    - {fileID: 11400000, guid: ddb873a23832e2a4d8d39bdf6b2752b8, type: 2}
+    - {fileID: 11400000, guid: 0f3f3e0a5cd054c48b0dd592ae61441c, type: 2}
+    - {fileID: 11400000, guid: e2cc798ab105055459d568ff0c0dfd2c, type: 2}
+    - {fileID: 11400000, guid: 17e318cf3954e3848a8a940cc1951669, type: 2}
+    - {fileID: 11400000, guid: 5c32fed61340e7f43a1dca5f641f5cb7, type: 2}
+    - {fileID: 11400000, guid: c4f6df890210560408c0ba7b637ae85e, type: 2}
+    - {fileID: 11400000, guid: 298d934adfdce6842ac49f3cf8b84676, type: 2}
+    - {fileID: 11400000, guid: 49691b3eacc361a47875dbb3bf3ab01a, type: 2}
+    - {fileID: 11400000, guid: fb7623442d9daa5449e2d14814ce93e3, type: 2}
+    - {fileID: 11400000, guid: 48aa78f9829cf554cba2c20fc8311718, type: 2}
+    - {fileID: 11400000, guid: e21d9bbe6baf72542a9d3da544750325, type: 2}
+    - {fileID: 11400000, guid: ffcfe08192001754d8b09eb078957abc, type: 2}
+    - {fileID: 11400000, guid: e1cfd7325a9fa3444a4147dd00613890, type: 2}
+    - {fileID: 11400000, guid: 58601ed57fee6b64b9fddc25095abb48, type: 2}
+    - {fileID: 11400000, guid: 99938403003f67448a4c093d6ca442d9, type: 2}
+    - {fileID: 11400000, guid: 74db6c555c520114abf0b318ac33c599, type: 2}
+    - {fileID: 11400000, guid: e3efe3b2cc1943b4a854930d678d0f17, type: 2}
+    - {fileID: 11400000, guid: f6ab7d6be6158f342b7de0c62973004b, type: 2}
+    - {fileID: 11400000, guid: a0c2307b4c9c297479a32072b53a6ff3, type: 2}
+    - {fileID: 11400000, guid: 325eeedcc2c407b46bf686132dcdaaf4, type: 2}
+    - {fileID: 11400000, guid: aebe2b0b2bc11194e95e04596badd93e, type: 2}
+    - {fileID: 11400000, guid: 038ddcf37f0652d45930834ba2c82f31, type: 2}
+    - {fileID: 11400000, guid: b3dd79a41ff238840840987a6f0ded0e, type: 2}
+    - {fileID: 11400000, guid: 8b766d191035d354283ebe92ec9c433f, type: 2}
+    - {fileID: 11400000, guid: d574b8e1fdc6cdd4587beb29d30f5f68, type: 2}
+    - {fileID: 11400000, guid: 4aaa160a052373645bd22ce85ce964ec, type: 2}
+    - {fileID: 11400000, guid: 2d50205062ce7854695badebddbeab1d, type: 2}
+    - {fileID: 11400000, guid: cba5fa75e7d23b746aee8de1ceb0e7af, type: 2}
+    - {fileID: 11400000, guid: 1ced91063ec12af47bf5dba4ce2c25e8, type: 2}
+    - {fileID: 11400000, guid: 0bcc8f87ddd838d4caa7f0c3a42f1524, type: 2}
+    - {fileID: 11400000, guid: a5927f126f551fc478b0a586d31c0f5a, type: 2}
+    - {fileID: 11400000, guid: 420e3a64ed3549a42a656dbcb0e3f7ea, type: 2}
+    - {fileID: 11400000, guid: 1ef670a92ffd02c4fb83a3109185e9d0, type: 2}
+    - {fileID: 11400000, guid: 8ac01dd1b8fd9d04696355323b2c0b55, type: 2}
+    - {fileID: 11400000, guid: f032ea3aac7452641999bee1482f22be, type: 2}
+    - {fileID: 11400000, guid: f737da313b652074da4bddb1db242c14, type: 2}
+    - {fileID: 11400000, guid: 23db717899abaee42968e46cec14ade3, type: 2}
+    - {fileID: 11400000, guid: 5f41119514ef2ef4e8115d23cacf4f13, type: 2}
+    - {fileID: 11400000, guid: 690bf31161ce23e4eb13d1231d1617fd, type: 2}
+    - {fileID: 11400000, guid: 8e7e570907e64c74fafa3dbe6707d5f1, type: 2}
+    - {fileID: 11400000, guid: 3de920639ceb3bc449c465107fd964a8, type: 2}
+    - {fileID: 11400000, guid: 11898fa8b6688184a9b082c859d053c8, type: 2}
+    - {fileID: 11400000, guid: 764113930ea44c74f99404e90c0d036d, type: 2}
+    - {fileID: 11400000, guid: 399ae9be7f7a789409c097210f54f520, type: 2}
+    - {fileID: 11400000, guid: 1b0b8a2e5f03d644b9b6a79ae87fa429, type: 2}
+    - {fileID: 11400000, guid: 937d50c31b4def040b4d9ab4f191b12b, type: 2}
+    - {fileID: 11400000, guid: d0223da6f36f54540b4b93fd661b2a47, type: 2}
+    - {fileID: 11400000, guid: d0d8d3547185ede46a8077891c61ec57, type: 2}
+    - {fileID: 11400000, guid: 56d0559e5d4eca649bbcc9908462886d, type: 2}
+    - {fileID: 11400000, guid: 7a0c7f089b858c44a8e62d3d52167e17, type: 2}
+    - {fileID: 11400000, guid: e09ba54aac98d624993f8d49637015d4, type: 2}
+    - {fileID: 11400000, guid: 29831d9385ef49c45968cdba3f77237a, type: 2}
+    - {fileID: 11400000, guid: 2f6ad2977be40d54b990d03445eb5a3b, type: 2}
+    - {fileID: 11400000, guid: 6e9ac2fce20740d4e94897139d10d251, type: 2}
+    - {fileID: 11400000, guid: 6a5b8924124b56a42884347b86aac810, type: 2}
+    - {fileID: 11400000, guid: cbca6bc8079a51c49ace23dbc5dae971, type: 2}
+    - {fileID: 11400000, guid: b3ec642a51d9a6647b81cfc2c891c222, type: 2}
+--- !u!114 &1749487535
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1749487530}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a79441f348de89743a2939f4d699eac1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_RenderShadows: 1
+  m_RequiresDepthTextureOption: 2
+  m_RequiresOpaqueTextureOption: 2
+  m_CameraType: 0
+  m_Cameras: []
+  m_RendererIndex: -1
+  m_VolumeLayerMask:
+    serializedVersion: 2
+    m_Bits: 1
+  m_VolumeTrigger: {fileID: 0}
+  m_RenderPostProcessing: 0
+  m_Antialiasing: 0
+  m_AntialiasingQuality: 2
+  m_StopNaN: 0
+  m_Dithering: 0
+  m_ClearDepth: 1
+  m_RequiresDepthTexture: 0
+  m_RequiresColorTexture: 0
+  m_Version: 2
+--- !u!114 &1749487536
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1749487530}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 26f8d9838afb5fc40a0c8e247b4f74ca, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  classManager: {fileID: 1821517478}
+  characterIconPrefab: {fileID: 1000012712350628, guid: 5372250d22a51bc40a200236eee58ac2,
+    type: 3}
+  characterIconsParent: {fileID: 0}
+  lessenCharacterLogs: 1
+  _characterPortraitPrefab: {fileID: 1995387493181358, guid: cdfed07929227104599994075478446b,
+    type: 3}
+  portraitAssets:
+  - raceName: ABOMINATION
+    race: 23
+    neutralAssets:
+      head:
+      - {fileID: 21300000, guid: 9b0e42b61dbe3bb47ae54d8d3d8d6393, type: 3}
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+      ears: []
+    maleAssets:
+      head: []
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+      ears: []
+    femaleAssets:
+      head: []
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+      ears: []
+  - raceName: ANGEL
+    race: 32
+    neutralAssets:
+      head: []
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+      ears: []
+    maleAssets:
+      head: []
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+      ears: []
+    femaleAssets:
+      head: []
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+      ears: []
+  - raceName: CHICKEN
+    race: 26
+    neutralAssets:
+      head:
+      - {fileID: 21300000, guid: 59f382848bf662e49a24e9fa7fd1080b, type: 3}
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+      ears: []
+    maleAssets:
+      head: []
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+      ears: []
+    femaleAssets:
+      head: []
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+      ears: []
+  - raceName: DRAGON
+    race: 8
+    neutralAssets:
+      head:
+      - {fileID: 21300000, guid: 5483171b9e7c90743943dbbd7fa20a7a, type: 3}
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+      ears: []
+    maleAssets:
+      head: []
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+      ears: []
+    femaleAssets:
+      head: []
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+      ears: []
+  - raceName: ELEMENTAL
+    race: 19
+    neutralAssets:
+      head:
+      - {fileID: 21300000, guid: 8079e2be5be425e4984d3bff7e212764, type: 3}
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+      ears: []
+    maleAssets:
+      head: []
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+      ears: []
+    femaleAssets:
+      head: []
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+      ears: []
+  - raceName: ELVES
+    race: 2
+    neutralAssets:
+      head: []
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+      ears: []
+    maleAssets:
+      head:
+      - {fileID: 21300000, guid: 79a393715d76bbf449513e6ec37b00dd, type: 3}
+      - {fileID: 21300000, guid: 84016ddfb8674d648bf5f363de762402, type: 3}
+      - {fileID: 21300000, guid: 1b059dea75021604198792780a3eda4e, type: 3}
+      - {fileID: 21300000, guid: 84a354b15cd3a3e40a79642393ca60fb, type: 3}
+      - {fileID: 21300000, guid: cd9cb89bacbdb1849938079f67a045f2, type: 3}
+      brows:
+      - {fileID: 21300000, guid: e1e522fa56236994e865d9a2ba0d03e2, type: 3}
+      - {fileID: 21300000, guid: e252097856f314d4abd5b6b0c5712a92, type: 3}
+      - {fileID: 21300000, guid: 7f4ef6fa23069b449bebfe5578b48bd8, type: 3}
+      - {fileID: 21300000, guid: 591fb730474c1304fab2d96257e2f720, type: 3}
+      eyes:
+      - {fileID: 21300000, guid: 1aef3bbac3ef1f447901ee1f3f904657, type: 3}
+      - {fileID: 21300000, guid: 934bd434be619a046a2e414048091958, type: 3}
+      - {fileID: 21300000, guid: d4269d17148e0a34ebf0b72e49688303, type: 3}
+      - {fileID: 21300000, guid: 6fdc005307832d64fa853e8aa5db90f7, type: 3}
+      mouth:
+      - {fileID: 21300000, guid: e40fd2fa1f5f1f34cbb41ca28e16cc4c, type: 3}
+      - {fileID: 21300000, guid: 234c4f93cab84904d9a808435eb2acfd, type: 3}
+      - {fileID: 21300000, guid: 519654f75c76fc740a03c3944790d514, type: 3}
+      - {fileID: 21300000, guid: 8befbc06ae20c6145b10595935721c32, type: 3}
+      nose:
+      - {fileID: 21300000, guid: f26017566351fd445a08b6dce92bedb8, type: 3}
+      - {fileID: 21300000, guid: 716bb68b956ad2f43af89451fe9680d8, type: 3}
+      - {fileID: 21300000, guid: 975c482941c711f4c86f69852843c3c1, type: 3}
+      - {fileID: 21300000, guid: 48f6269ed8a689447ad8a7b11a34435b, type: 3}
+      - {fileID: 21300000, guid: 702e2d10a6176974dbc912ec712bca24, type: 3}
+      - {fileID: 21300000, guid: 259b59b34a3089342ae9be5e8b9f5002, type: 3}
+      hair:
+      - {fileID: 21300000, guid: f0c25e61a6a5fe242b73d8190632b3b8, type: 3}
+      - {fileID: 21300000, guid: a56f24c4ef4765541a12de228beecac9, type: 3}
+      - {fileID: 21300000, guid: 7125bdb76b847cc448836f1605675c42, type: 3}
+      - {fileID: 21300000, guid: 94250dcedb49183449de96e3d34f6e2d, type: 3}
+      - {fileID: 21300000, guid: 4d1b68241fa614a4b8dd9e64fe63cd5c, type: 3}
+      - {fileID: 21300000, guid: f85e66a926e2c2a4d8f90c5042d16132, type: 3}
+      - {fileID: 21300000, guid: 0654d4bd9682b194eb1bb75fe48d4716, type: 3}
+      - {fileID: 21300000, guid: 4146d3e350ac08e45a5f8e0001dc8d6d, type: 3}
+      - {fileID: 21300000, guid: 83c820757c7a74b489ab9c72daeb0fd4, type: 3}
+      - {fileID: 21300000, guid: a50211475c2109f4c8522954f775f932, type: 3}
+      mustache: []
+      beard: []
+      ears:
+      - {fileID: 21300000, guid: 9178512c96957d74a9107fce70f9a498, type: 3}
+      - {fileID: 21300000, guid: c397e1822b5ed124f90f57c2fdf710ab, type: 3}
+      - {fileID: 21300000, guid: d38fb521664a8c74abab0cae98c31877, type: 3}
+      - {fileID: 21300000, guid: c29f96f9060abe34ab5d3822d82b82b9, type: 3}
+      - {fileID: 21300000, guid: 3fe76c1144f7df743aee5663796dd624, type: 3}
+    femaleAssets:
+      head:
+      - {fileID: 21300000, guid: f4050a24f408d2945aebf0cff738a313, type: 3}
+      - {fileID: 21300000, guid: 41c3cc6dfca174c4db0d50fc344cb436, type: 3}
+      - {fileID: 21300000, guid: 470eebd2a50dd5749a5319c8ae215e0c, type: 3}
+      - {fileID: 21300000, guid: f7f2c2ba22cbeae4db852c466b31d36d, type: 3}
+      - {fileID: 21300000, guid: 6a60f06697749dd4588ef4df797b110b, type: 3}
+      brows:
+      - {fileID: 21300000, guid: a506aef3bf28dcb40939be1b5a7e6739, type: 3}
+      - {fileID: 21300000, guid: 003212dc83781b545ae3db4300852022, type: 3}
+      - {fileID: 21300000, guid: cf6cf0700fd7ef04083b9d20bb3ed598, type: 3}
+      - {fileID: 21300000, guid: 8847b5333c6c4bc429114dcad373d8f3, type: 3}
+      eyes:
+      - {fileID: 21300000, guid: d4740915052439b42b8605c6ffa0e012, type: 3}
+      - {fileID: 21300000, guid: 008c4a28aa544154cac3d1725ba62046, type: 3}
+      - {fileID: 21300000, guid: ca1a4fc9d1d701f49a129a9fb030a9f0, type: 3}
+      - {fileID: 21300000, guid: 49970b5d947987945b23fad358e82ea1, type: 3}
+      mouth:
+      - {fileID: 21300000, guid: c7155dee93dd0b44e9521906d629ef73, type: 3}
+      - {fileID: 21300000, guid: 56fa9d1349ee0394092b040e9ed8d4ad, type: 3}
+      - {fileID: 21300000, guid: e0a176743f8746b49b486df8b9bab3d7, type: 3}
+      - {fileID: 21300000, guid: 5a4956d826e0f89479571b31fd3d1622, type: 3}
+      nose:
+      - {fileID: 21300000, guid: eb95285e5b4bfed4aa021eaf823e2e85, type: 3}
+      - {fileID: 21300000, guid: b96224fb6da78634094b169ea4cce888, type: 3}
+      - {fileID: 21300000, guid: 91791662e1933534eae0821cdb338e52, type: 3}
+      - {fileID: 21300000, guid: 77fcc5a5c62d2b543b3f57c21030e34a, type: 3}
+      - {fileID: 21300000, guid: 5cc6d47cff6ad0f4bbb9bd64a9bbbba6, type: 3}
+      hair:
+      - {fileID: 21300000, guid: 5c14fe530bcccae4c8b3b2c528c022c1, type: 3}
+      - {fileID: 21300000, guid: 8e9489bba9fe18c4da79a39f7369761c, type: 3}
+      - {fileID: 21300000, guid: bbd953a7e3b51a548aa006c6b78b2576, type: 3}
+      - {fileID: 21300000, guid: aba9c763bddd4714c85e6c921f0ac5b3, type: 3}
+      - {fileID: 21300000, guid: 0cb8e3d4bacb34b4ba7372a186571ac7, type: 3}
+      - {fileID: 21300000, guid: e6811e16cec9d6448a251477f0046316, type: 3}
+      - {fileID: 21300000, guid: 5799ddd9bf2cb0f478d1c0d465ab1efe, type: 3}
+      - {fileID: 21300000, guid: bb8b107ac1619d143a08088b4382bc9f, type: 3}
+      - {fileID: 21300000, guid: 7fadc3eed19dc5c49bd65691acebe1a7, type: 3}
+      - {fileID: 21300000, guid: 06d838b6677bd874bac3dd6f9ebe815f, type: 3}
+      mustache: []
+      beard: []
+      ears:
+      - {fileID: 21300000, guid: 40db3a2e00143a14cbc7a0156c676cf1, type: 3}
+      - {fileID: 21300000, guid: 56106638e18d8b3429bbcb1103b62af3, type: 3}
+      - {fileID: 21300000, guid: 4ce22e48a7bcfd64ba4d61940a39b1cf, type: 3}
+      - {fileID: 21300000, guid: 35a3791950f0e3b4e93cdd4bd78a0fc6, type: 3}
+      - {fileID: 21300000, guid: c0512fbea76344946bf751d6e821f9fa, type: 3}
+  - raceName: ENT
+    race: 22
+    neutralAssets:
+      head: []
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+      ears: []
+    maleAssets:
+      head: []
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+      ears: []
+    femaleAssets:
+      head: []
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+      ears: []
+  - raceName: GHOST
+    race: 31
+    neutralAssets:
+      head:
+      - {fileID: 21300000, guid: 7357917f81b59fc4c8bd413941774aa7, type: 3}
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+      ears: []
+    maleAssets:
+      head: []
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+      ears: []
+    femaleAssets:
+      head: []
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+      ears: []
+  - raceName: GOLEM
+    race: 18
+    neutralAssets:
+      head:
+      - {fileID: 21300000, guid: c6756a4a1e068244bbb0505a07406409, type: 3}
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+      ears: []
+    maleAssets:
+      head: []
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+      ears: []
+    femaleAssets:
+      head: []
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+      ears: []
+  - raceName: HARPY
+    race: 38
+    neutralAssets:
+      head:
+      - {fileID: 21300000, guid: ed184afac7a62a7469733a2479af94e8, type: 3}
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+      ears: []
+    maleAssets:
+      head: []
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+      ears: []
+    femaleAssets:
+      head: []
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+      ears: []
+  - raceName: HUMANS
+    race: 1
+    neutralAssets:
+      head: []
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+      ears: []
+    maleAssets:
+      head:
+      - {fileID: 21300000, guid: 37ca32002f93f0d42adcaa5d97aaadf3, type: 3}
+      - {fileID: 21300000, guid: be4a5b381ee08a44fb38f4231f8955e6, type: 3}
+      - {fileID: 21300000, guid: e7ed28e4088901b44abdf90055f857a6, type: 3}
+      - {fileID: 21300000, guid: 64f66803f86c746439e21001ac813e80, type: 3}
+      - {fileID: 21300000, guid: 04666f52b21550f438961f6127ce72ae, type: 3}
+      brows:
+      - {fileID: 21300000, guid: 9d3ce8178f5bb35478f3dafc4d259284, type: 3}
+      - {fileID: 21300000, guid: 069b3a11c714dfb4a8e95d8b64f42d51, type: 3}
+      - {fileID: 21300000, guid: e9aca6c51c973ae4a88acebcf9441479, type: 3}
+      - {fileID: 21300000, guid: a4336e33f1e824645ad3fa0bf731aa25, type: 3}
+      eyes:
+      - {fileID: 21300000, guid: 2a598c31a1d7d5c4bb641f04ca98f223, type: 3}
+      - {fileID: 21300000, guid: a657484cd2323604da890b3920f6b0e9, type: 3}
+      - {fileID: 21300000, guid: 045fe816b7003134f93a6ce4ab92f008, type: 3}
+      - {fileID: 21300000, guid: 61e9aeeb643a72d408839d250914c3ef, type: 3}
+      - {fileID: 21300000, guid: 818c54564f33815448313c9b5ac985a7, type: 3}
+      - {fileID: 21300000, guid: 2b22b55c366eaa14a9c53ce14e86d640, type: 3}
+      mouth:
+      - {fileID: 21300000, guid: 61685b33f690e9f4391ebe958e17c633, type: 3}
+      - {fileID: 21300000, guid: 808e75ee1ad46d748a82e120eb6308a4, type: 3}
+      - {fileID: 21300000, guid: a5fd5989e96f6114584dfc212d968ee6, type: 3}
+      - {fileID: 21300000, guid: 6955f12105973bb4a86c0559254b5e09, type: 3}
+      - {fileID: 21300000, guid: c31d66ccc0868e14793b6009979d6876, type: 3}
+      - {fileID: 21300000, guid: 6176a3763778528479c45ccb8a9cb90d, type: 3}
+      nose:
+      - {fileID: 21300000, guid: 0fa119a2e1b399c408e2a44f5be3d0d2, type: 3}
+      - {fileID: 21300000, guid: ce8b4f4633f1b6e4f8beae02c2435ac0, type: 3}
+      - {fileID: 21300000, guid: 358cb862cbbfb514f93097d7026d2b83, type: 3}
+      - {fileID: 21300000, guid: 7347733b47ae73e42860da651e610381, type: 3}
+      - {fileID: 21300000, guid: 7cadbe0d1b6d2f543906c3d7be6a7187, type: 3}
+      - {fileID: 21300000, guid: a63131c16706e3d4b95c1022635dec4a, type: 3}
+      hair:
+      - {fileID: 21300000, guid: 2485a5e0dc240864c967276cc44cf808, type: 3}
+      - {fileID: 21300000, guid: d0a13b85f27fe3246b98589efc9cecc9, type: 3}
+      - {fileID: 21300000, guid: c8e0472ad1dfbec49b485182c69ba18b, type: 3}
+      - {fileID: 21300000, guid: 31119ce30a95c974aaedc0fe23b28005, type: 3}
+      - {fileID: 21300000, guid: 22c00a58c954dea468623c717bb4c28f, type: 3}
+      - {fileID: 21300000, guid: b3896ed4724834a4e8207ae217f7449c, type: 3}
+      - {fileID: 21300000, guid: 34f37449cd041c34591dbac72a6f23bc, type: 3}
+      - {fileID: 21300000, guid: eaba41ada2c3c80489aa61144942ef90, type: 3}
+      - {fileID: 21300000, guid: c2e596a458889a5488a493d21df7df28, type: 3}
+      mustache:
+      - {fileID: 21300000, guid: a9083bef72d147e448fddfb137cee902, type: 3}
+      - {fileID: 21300000, guid: 0557d8764ceafa1478c6f89b7fe82bbb, type: 3}
+      - {fileID: 21300000, guid: 235a88e9f694f4748b56e2d697092c1d, type: 3}
+      - {fileID: 21300000, guid: a37351cef93aad34c9270326b1cf4422, type: 3}
+      beard:
+      - {fileID: 21300000, guid: d459842f083d044458148372000c83ef, type: 3}
+      - {fileID: 21300000, guid: 0af3b9c1d71a8f24ab4f327f349f51e5, type: 3}
+      - {fileID: 21300000, guid: dc6984594e1e8b74eaae60933ea80eb0, type: 3}
+      - {fileID: 21300000, guid: 7be163bf3e3baa74184e0722b192bd2f, type: 3}
+      - {fileID: 21300000, guid: 5b3cbfbf7bf28a247b7ad1de91c930de, type: 3}
+      - {fileID: 21300000, guid: 7775cc93bc5c8e5418297f536d68820f, type: 3}
+      - {fileID: 21300000, guid: 0f72a4f380a7505449fe061883609d51, type: 3}
+      - {fileID: 21300000, guid: 74855c26ebb5ecd458d725598626c440, type: 3}
+      ears: []
+    femaleAssets:
+      head:
+      - {fileID: 21300000, guid: 51b57d7ccfa6a0c43b7d82e502e9eb3a, type: 3}
+      - {fileID: 21300000, guid: 5fbb804b2d79ecf4dbf0c4a3abc12f49, type: 3}
+      - {fileID: 21300000, guid: 06ec2e605be1fff49ac27118f4801cc1, type: 3}
+      - {fileID: 21300000, guid: 9cd7c17da0b879644bdd33ba57a04054, type: 3}
+      - {fileID: 21300000, guid: dfc0dadde54370f469219a045b6f4d6d, type: 3}
+      - {fileID: 21300000, guid: 9e6265b52b591dd41ab07ef45fea45df, type: 3}
+      brows:
+      - {fileID: 21300000, guid: e5d9fd985aee8be40a03df8b4c567c3c, type: 3}
+      - {fileID: 21300000, guid: 2e0deab37199dba47b53e45040c924b5, type: 3}
+      - {fileID: 21300000, guid: 54e18915b63296441851c0072d2280a7, type: 3}
+      - {fileID: 21300000, guid: f6e8830f64304df4ab724d09811293f8, type: 3}
+      - {fileID: 21300000, guid: 23155af263f488645bbff2c93b8d7979, type: 3}
+      - {fileID: 21300000, guid: 591f1c03258c37445becdb481ad5c9f0, type: 3}
+      - {fileID: 21300000, guid: e80724b17f1557747bf2cae9a760edf7, type: 3}
+      eyes:
+      - {fileID: 21300000, guid: b388b89f6ed8ee14f866d8e77b7d1853, type: 3}
+      - {fileID: 21300000, guid: 9ad94965a6829494e9cb4d99a98c1873, type: 3}
+      - {fileID: 21300000, guid: 2e4b1de159a8d6a44974b3553fc2185a, type: 3}
+      - {fileID: 21300000, guid: 90dd9d0adcfb2434fb5c59d976b3da61, type: 3}
+      - {fileID: 21300000, guid: e88cd608eb8aa774aa9cb9e855f04a6c, type: 3}
+      - {fileID: 21300000, guid: 1e1df827c62dc2143b1272f7d654a601, type: 3}
+      - {fileID: 21300000, guid: fe4bd486b4c85564e8172fae009c2c68, type: 3}
+      mouth:
+      - {fileID: 21300000, guid: 219ca38d20cabe649add7559a5fd9285, type: 3}
+      - {fileID: 21300000, guid: 54aa40bc58c59bd448edd0cf903711ef, type: 3}
+      - {fileID: 21300000, guid: f75712dcff0e6f84a86a006e6bacaab2, type: 3}
+      - {fileID: 21300000, guid: 327af01d74243f14999a3b1efca81f4a, type: 3}
+      - {fileID: 21300000, guid: 4dbbe350e6a9b374da07d79c78e4b185, type: 3}
+      - {fileID: 21300000, guid: d193797ea8413bf4681eff63bc3a061b, type: 3}
+      - {fileID: 21300000, guid: 8f23255f41b2c7142baee139fca327ed, type: 3}
+      nose:
+      - {fileID: 21300000, guid: 59e76e030fa4f4b4a911be0b3fb3b4bf, type: 3}
+      - {fileID: 21300000, guid: a634caadee87a2a4cb80088f4ccd619c, type: 3}
+      - {fileID: 21300000, guid: 70f830329e6c25e4fa78b54cb5fb8567, type: 3}
+      - {fileID: 21300000, guid: 3a641b12296c62440b4445f671127d76, type: 3}
+      - {fileID: 21300000, guid: 80f7feb10d7beb9409be78e160c16772, type: 3}
+      - {fileID: 21300000, guid: db389eafa22f0ee4cae0cdb4542d57f1, type: 3}
+      - {fileID: 21300000, guid: 92163ce8a5818244caf0584031447ef9, type: 3}
+      hair:
+      - {fileID: 21300000, guid: 4412bb51c12937f4aa49e78856767003, type: 3}
+      - {fileID: 21300000, guid: feb3d3fb40f06214ca9b4d4e383a29af, type: 3}
+      - {fileID: 21300000, guid: 8fa4fffd3cbe7df4f9f11d6a933cfc81, type: 3}
+      - {fileID: 21300000, guid: 2a37343a77ef6d84c86192ce1b15113b, type: 3}
+      - {fileID: 21300000, guid: 4f0516f458f2d624db68b0fe4275c9e3, type: 3}
+      - {fileID: 21300000, guid: 376548bb6b8c7b349800d9704e5ce1ca, type: 3}
+      - {fileID: 21300000, guid: cd25722b295492042b6eaa246112781c, type: 3}
+      - {fileID: 21300000, guid: efae009bf1ffd1b4ca241898ee76f955, type: 3}
+      - {fileID: 21300000, guid: 92fde844032a71b41b31f92d8183a682, type: 3}
+      - {fileID: 21300000, guid: e126ab51989d4b04faf56c39e6a80cfa, type: 3}
+      - {fileID: 21300000, guid: 31817397d853d484fb120d4203a6bb6e, type: 3}
+      mustache: []
+      beard: []
+      ears: []
+  - raceName: IMP
+    race: 40
+    neutralAssets:
+      head:
+      - {fileID: 21300000, guid: cbb07a794c232b944a5fb53de05ce5aa, type: 3}
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+      ears: []
+    maleAssets:
+      head: []
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+      ears: []
+    femaleAssets:
+      head: []
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+      ears: []
+  - raceName: KOBOLD
+    race: 20
+    neutralAssets:
+      head:
+      - {fileID: 21300000, guid: fa0619b7cb438ad43bd60489182d2aa1, type: 3}
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+      ears: []
+    maleAssets:
+      head: []
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+      ears: []
+    femaleAssets:
+      head: []
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+      ears: []
+  - raceName: MIMIC
+    race: 21
+    neutralAssets:
+      head:
+      - {fileID: 21300000, guid: a139866de57b9d84b814b5a52126a901, type: 3}
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+      ears: []
+    maleAssets:
+      head: []
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+      ears: []
+    femaleAssets:
+      head: []
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+      ears: []
+  - raceName: NYMPH
+    race: 28
+    neutralAssets:
+      head: []
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+      ears: []
+    maleAssets:
+      head: []
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+      ears: []
+    femaleAssets:
+      head: []
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+      ears: []
+  - raceName: PIG
+    race: 24
+    neutralAssets:
+      head:
+      - {fileID: 21300000, guid: 40507c8f8647b26409f2f9d92b28fb70, type: 3}
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+      ears: []
+    maleAssets:
+      head: []
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+      ears: []
+    femaleAssets:
+      head: []
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+      ears: []
+  - raceName: RAT
+    race: 35
+    neutralAssets:
+      head:
+      - {fileID: 21300000, guid: 24b73dbd41dbd1f459072d0dcf1f4314, type: 3}
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+      ears: []
+    maleAssets:
+      head: []
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+      ears: []
+    femaleAssets:
+      head: []
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+      ears: []
+  - raceName: RATMAN
+    race: 36
+    neutralAssets:
+      head:
+      - {fileID: 21300000, guid: b8afed78d95feec4f8065ced0d0a7884, type: 3}
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+      ears: []
+    maleAssets:
+      head: []
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+      ears: []
+    femaleAssets:
+      head: []
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+      ears: []
+  - raceName: REVENANT
+    race: 34
+    neutralAssets:
+      head:
+      - {fileID: 21300000, guid: 6a7b5bac1c96118428f50fc9cd5ba1f4, type: 3}
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+      ears: []
+    maleAssets:
+      head: []
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+      ears: []
+    femaleAssets:
+      head: []
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+      ears: []
+  - raceName: SCORPION
+    race: 37
+    neutralAssets:
+      head:
+      - {fileID: 21300000, guid: 178794461f348bf4bbfa485a335d0c96, type: 3}
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+      ears: []
+    maleAssets:
+      head: []
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+      ears: []
+    femaleAssets:
+      head: []
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+      ears: []
+  - raceName: SHEEP
+    race: 25
+    neutralAssets:
+      head:
+      - {fileID: 21300000, guid: e03a0da1821763243b38cfa2edaef43e, type: 3}
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+      ears: []
+    maleAssets:
+      head: []
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+      ears: []
+    femaleAssets:
+      head: []
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+      ears: []
+  - raceName: SKELETON
+    race: 13
+    neutralAssets:
+      head:
+      - {fileID: 21300000, guid: 362b5aa2e37e9da499ca8a81f43cdae7, type: 3}
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+      ears: []
+    maleAssets:
+      head: []
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+      ears: []
+    femaleAssets:
+      head: []
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+      ears: []
+  - raceName: SLUDGE
+    race: 30
+    neutralAssets:
+      head:
+      - {fileID: 21300000, guid: 22cfd84bf71a94148a77f19eecc86c75, type: 3}
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+      ears: []
+    maleAssets:
+      head: []
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+      ears: []
+    femaleAssets:
+      head: []
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+      ears: []
+  - raceName: SPIDER
+    race: 17
+    neutralAssets:
+      head:
+      - {fileID: 21300000, guid: 24ddc0decde552649b24891f92edac8b, type: 3}
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+      ears: []
+    maleAssets:
+      head: []
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+      ears: []
+    femaleAssets:
+      head: []
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+      ears: []
+  - raceName: TRITON
+    race: 39
+    neutralAssets:
+      head:
+      - {fileID: 21300000, guid: 5a559ddc24c142e45afcc44ad0833f80, type: 3}
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+      ears: []
+    maleAssets:
+      head: []
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+      ears: []
+    femaleAssets:
+      head: []
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+      ears: []
+  - raceName: TROLL
+    race: 7
+    neutralAssets:
+      head:
+      - {fileID: 21300000, guid: 372b94906660deb43b5bd3f454be6217, type: 3}
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+      ears: []
+    maleAssets:
+      head: []
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+      ears: []
+    femaleAssets:
+      head: []
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+      ears: []
+  - raceName: WISP
+    race: 29
+    neutralAssets:
+      head: []
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+      ears: []
+    maleAssets:
+      head: []
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+      ears: []
+    femaleAssets:
+      head: []
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+      ears: []
+  - raceName: WOLF
+    race: 10
+    neutralAssets:
+      head:
+      - {fileID: 21300000, guid: bb519cc5a55c1284d8bfe22ff5cd0e25, type: 3}
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+      ears: []
+    maleAssets:
+      head: []
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+      ears: []
+    femaleAssets:
+      head: []
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+      ears: []
+  - raceName: WURM
+    race: 33
+    neutralAssets:
+      head:
+      - {fileID: 21300000, guid: 4e988cd7d035c5f4c912ac30b3ef0421, type: 3}
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+      ears: []
+    maleAssets:
+      head: []
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+      ears: []
+    femaleAssets:
+      head: []
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+      ears: []
+  portraitFrames:
+    m_keys: 030000000700000002000000010000000500000004000000060000000800000009000000
+    m_values:
+    - baseBG: {fileID: 21300000, guid: 15f890e3e4e2dbe489f30640f9216043, type: 3}
+    - baseBG: {fileID: 21300000, guid: 1a3fc1ca90050a74aa21609e4eeb7ebc, type: 3}
+    - baseBG: {fileID: 21300000, guid: c18f5d6f944cfbc48819debe987cdaba, type: 3}
+    - baseBG: {fileID: 21300000, guid: fd831390331f6a9438bcbbdbc410df2b, type: 3}
+    - baseBG: {fileID: 21300000, guid: 76281f5e595b10341a1cfcf28ada49f0, type: 3}
+    - baseBG: {fileID: 21300000, guid: 76777303e5e4de04ca96fb3200b75bf9, type: 3}
+    - baseBG: {fileID: 21300000, guid: 94079e3476351c243b5ce1bc5dfdd56c, type: 3}
+    - baseBG: {fileID: 21300000, guid: b1facc086f831d64990f9d4056411274, type: 3}
+    - baseBG: {fileID: 21300000, guid: 51cc2170d7bb77744b58e9a139303d2d, type: 3}
+  hairColors:
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0.5, z: 0}
+  - {x: 0.06, y: 0.3, z: 0}
+  - {x: 0.1, y: 0, z: 0}
+  - {x: 0.2, y: 0, z: 0}
+  - {x: 0.4, y: 0, z: 0}
+  - {x: 0.5, y: 0.1, z: 0}
+  - {x: 0.55, y: 0.25, z: 0}
+  - {x: 0.58, y: 0.4, z: 0}
+  - {x: 0.6, y: 0, z: 0}
+  - {x: 0.7, y: 0.05, z: 0}
+  - {x: 0.8, y: 0.2, z: 0}
+  - {x: 0.85, y: 0.7, z: 0.05}
+  - {x: 0.9, y: 0.1, z: 0}
+  - {x: 0.94, y: 0.8, z: 0}
+  hsvMaterial: {fileID: 2100000, guid: 4f1995ec43a3fc14cb91dcd56050fd9e, type: 2}
+  hairUIMaterial: {fileID: 2100000, guid: f635580cdf2e2344ea31e0dba17cb9b5, type: 2}
+  spriteLightingMaterial: {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3,
+    type: 2}
+  maleHairSprite:
+  - {fileID: 21300000, guid: 262b3712b96ca0b44824cc35aae3ec03, type: 3}
+  femaleHairSprite:
+  - {fileID: 21300000, guid: 68cf74ef33622e043a41883bef5e2a12, type: 3}
+  maleKnockoutHairSprite:
+  - {fileID: 21300000, guid: 9481352b2de5e7a42806c589fa9d73d1, type: 3}
+  femaleKnockoutHairSprite:
+  - {fileID: 21300000, guid: 4d03f179d3552154497aa52fe16b546a, type: 3}
+  additionalMarkerAssets:
+  - identifier: Vampire Bat
+    asset:
+      stillSprite: {fileID: 21300000, guid: ba06203cf50b1834290351e49bfa8835, type: 3}
+      animationSprites:
+      - {fileID: 21300000, guid: ba06203cf50b1834290351e49bfa8835, type: 3}
+      - {fileID: 21300000, guid: 134a0c52f1cb18c4881aca600fc8c540, type: 3}
+      - {fileID: 21300000, guid: 667c6fcb442d10b46b54d19885e9c520, type: 3}
+  - identifier: Werewolf
+    asset:
+      stillSprite: {fileID: 21300000, guid: c8949f606c3a56a4ba039b972257de73, type: 3}
+      animationSprites:
+      - {fileID: 21300000, guid: c8949f606c3a56a4ba039b972257de73, type: 3}
+      - {fileID: 21300000, guid: 2c02cfd9ad40a474298f29d1f6fd8fda, type: 3}
+      - {fileID: 21300000, guid: 6987d8f375e6a494c91f9c60dac1a1b7, type: 3}
+  summonSettings:
+    m_keys: 0100000002000000030000000400000005000000060000000700000008000000090000000a0000000b0000000c0000000d0000000e0000000f000000100000001100000012000000130000001400000015000000160000001700000018000000190000001a0000001b0000001c0000001d0000001e0000001f000000200000002100000022000000230000002400000025000000260000002700000028000000
+    m_values:
+    - className: Wolf
+    - className: Skeleton
+    - className: Golem
+    - className: Succubus
+    - className: Incubus
+    - className: FireElemental
+    - className: Kobold
+    - className: GiantSpider
+    - className: Mimic
+    - className: SmallSpider
+    - className: Abomination
+    - className: Pig
+    - className: Sheep
+    - className: Chicken
+    - className: DesertEnt
+    - className: ForestEnt
+    - className: SnowEnt
+    - className: GrassEnt
+    - className: CorruptEnt
+    - className: IceNymph
+    - className: WaterNymph
+    - className: WindNymph
+    - className: ElectricWisp
+    - className: FireWisp
+    - className: EarthenWisp
+    - className: Sludge
+    - className: Ghost
+    - className: WarriorAngel
+    - className: MagicalAngel
+    - className: VengefulGhost
+    - className: Wurm
+    - className: Revenant
+    - className: Dragon
+    - className: Troll
+    - className: BoneGolem
+    - className: Rat
+    - className: Scorpion
+    - className: Harpy
+    - className: Triton
+    - className: Imp
+  minionSettings:
+    m_keys: 
+    m_values: []
+  artifactSettings:
+    m_keys: 000000000100000002000000030000000400000005000000
+    m_values:
+    - artifactPortrait: {fileID: 21300000, guid: 9446df3c48b01e7409f52c0e260f7f62,
+        type: 3}
+    - artifactPortrait: {fileID: 21300000, guid: 383ae1de09e8119428f08e6cb2fb1bc5,
+        type: 3}
+    - artifactPortrait: {fileID: 21300000, guid: 383ae1de09e8119428f08e6cb2fb1bc5,
+        type: 3}
+    - artifactPortrait: {fileID: 21300000, guid: 383ae1de09e8119428f08e6cb2fb1bc5,
+        type: 3}
+    - artifactPortrait: {fileID: 21300000, guid: 383ae1de09e8119428f08e6cb2fb1bc5,
+        type: 3}
+    - artifactPortrait: {fileID: 21300000, guid: 383ae1de09e8119428f08e6cb2fb1bc5,
+        type: 3}
+  webbedEffect: {fileID: 21300000, guid: b1c5464425860584ab1a0bad4f0de369, type: 3}
+  stakeEffect: {fileID: 21300000, guid: 87ce134795f668b409001e3d605ebe27, type: 3}
+  summonNameColor: {r: 1, g: 0.52156866, b: 0.52156866, a: 1}
+  demonNameColor: {r: 0.972549, g: 0.6627451, b: 0.96862745, a: 1}
+  undeadNameColor: {r: 0.5372549, g: 0.5372549, b: 0.5372549, a: 1}
+  normalNameColor: {r: 0.972549, g: 0.92941177, b: 0.2627451, a: 1}
+--- !u!1 &1821517477
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1821517479}
+  - component: {fileID: 1821517478}
+  m_Layer: 0
+  m_Name: ClassManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1821517478
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1821517477}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dbc3557ac4f8f364c939b7d4724e63b7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!4 &1821517479
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1821517477}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 6
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Assertions;
-
-public class GoapPlan {
+using UtilityScripts;
+public class GoapPlan: IObjectPoolTester {
 
     //public string name { get; private set; }
+    // public string id { get; private set; }
     public IPointOfInterest target { get; private set; }
     public JobNode startingNode { get; private set; }
     public JobNode endNode { get; private set; } //IMPORTANT! End node must always be Single Job Node
@@ -19,20 +20,11 @@ public class GoapPlan {
     public bool isPersonalPlan { get; private set; }
     public bool doNotRecalculate { get; private set; }
     public GOAP_PLAN_STATE state { get; private set; }
+    public bool resetPlanOnFinishRecalculation { get; private set; }
+    public bool isAssigned { get; set; }
 
-    public GoapPlan(List<JobNode> nodes, IPointOfInterest target, bool isPersonalPlan = true) {
-        this.startingNode = nodes[0];
-        this.endNode = nodes[nodes.Count - 1];
-        this.currentNode = startingNode;
-        currentNodeIndex = 0;
-        this.target = target;
-        //this.goalEffects = goalEffects;
-        this.isPersonalPlan = isPersonalPlan;
-        //this.category = category;
-        this.doNotRecalculate = false;
-        //hasShownNotification = false;
-        allNodes = nodes;
-        //ConstructAllNodes();
+    public GoapPlan() {
+        // id = UtilityScripts.Utilities.SetID(this).ToString();
     }
     public GoapPlan(SaveDataGoapPlan data) {
         if (!string.IsNullOrEmpty(data.poiTargetID)) {
@@ -49,19 +41,31 @@ public class GoapPlan {
         isPersonalPlan = data.isPersonalPlan;
         doNotRecalculate = data.doNotRecalculate;
         state = data.state;
-        allNodes = new List<JobNode>();
+        isAssigned = data.isAssigned;
+
+        allNodes = RuinarchListPool<JobNode>.Claim();
         for (int i = 0; i < data.allNodes.Count; i++) {
             SaveDataJobNode saveDataJobNode = data.allNodes[i];
-            allNodes.Add(saveDataJobNode.Load());
+            JobNode node = saveDataJobNode.Load();
+            if (node.singleNode != null) {
+                allNodes.Add(node);
+            }
         }
-        startingNode = GetJobNodeWithPersistentID(data.startingNodeID);
-        endNode = GetJobNodeWithPersistentID(data.endNodeID);
-        currentNode = GetJobNodeWithPersistentID(data.currentNodeID);
-        previousNode = GetJobNodeWithPersistentID(data.previousNodeID);
+        if (allNodes.Count > 0) {
+            startingNode = GetJobNodeWithPersistentID(data.startingNodeID);
+            endNode = GetJobNodeWithPersistentID(data.endNodeID);
+            currentNode = GetJobNodeWithPersistentID(data.currentNodeID);
+            previousNode = GetJobNodeWithPersistentID(data.previousNodeID);
+        }
     }
-
+    public void SetTarget(IPointOfInterest p_target) {
+        target = p_target;
+    }
+    public void SetIsPersonalPlan(bool p_state) {
+        isPersonalPlan = p_state;
+    }
     private JobNode GetJobNodeWithPersistentID(string id) {
-        Assert.IsTrue(allNodes != null && allNodes.Count > 0);
+        //Assert.IsTrue(allNodes != null && allNodes.Count > 0);
         for (int i = 0; i < allNodes.Count; i++) {
             JobNode jobNode = allNodes[i];
             if (jobNode.persistentID == id) {
@@ -70,13 +74,36 @@ public class GoapPlan {
         }
         return null;
     }
-    
-    public void Reset(List<JobNode> nodes) {
-        this.startingNode = nodes[0];
-        this.endNode = nodes[nodes.Count - 1];
+    public void SetActionNodes(ActualGoapNode p_action) {
+        if (allNodes == null) {
+            allNodes = RuinarchListPool<JobNode>.Claim();
+        }
+        SingleJobNode sj = ObjectPoolManager.Instance.CreateNewSingleJobNode();
+        sj.SetActionNode(p_action);
+        allNodes.Add(sj);
+        InitializeNodes();
+    }
+    public void SetActionNodes(ActualGoapNode p_action1, ActualGoapNode p_action2) {
+        if (allNodes == null) {
+            allNodes = RuinarchListPool<JobNode>.Claim();
+        }
+        SingleJobNode sj1 = ObjectPoolManager.Instance.CreateNewSingleJobNode();
+        SingleJobNode sj2 = ObjectPoolManager.Instance.CreateNewSingleJobNode();
+        sj1.SetActionNode(p_action1);
+        sj2.SetActionNode(p_action2);
+        allNodes.Add(sj1);
+        allNodes.Add(sj2);
+        InitializeNodes();
+    }
+    public void SetNodes(List<JobNode> nodes) {
+        allNodes = nodes;
+        InitializeNodes();
+    }
+    private void InitializeNodes() {
+        this.startingNode = allNodes[0];
+        this.endNode = allNodes[allNodes.Count - 1];
         this.currentNode = startingNode;
         currentNodeIndex = 0;
-        allNodes = nodes;
     }
     public void SetNextNode() {
         if (currentNode == null) {
@@ -88,11 +115,16 @@ public class GoapPlan {
             currentNode = allNodes[nextNodeIndex];
             currentNodeIndex = nextNodeIndex;
         } else {
+#if DEBUG_LOG
             Debug.Log($"{GameManager.Instance.TodayLogString()} current node of Plan was set to null {GetPlanSummary()}");
+#endif
             currentNode = null;
         }
     }
     private ActualGoapNode GetCurrentActualNode() {
+        // if (currentNode == null) {
+        //     return startingNode.singleNode;
+        // }
         return currentNode.singleNode;
     }
     public bool HasNodeWithAction(INTERACTION_TYPE actionType) {
@@ -166,6 +198,9 @@ public class GoapPlan {
     public void SetDoNotRecalculate(bool state) {
         doNotRecalculate = state;
     }
+    public void SetResetPlanOnFinishRecalculation(bool p_state) {
+        resetPlanOnFinishRecalculation = p_state;
+    }
     //public void SetHasShownNotification(bool state) {
     //    hasShownNotification = state;
     //}
@@ -192,7 +227,7 @@ public class GoapPlan {
             }
             log += $"{(i + 1)}.";
             ActualGoapNode node = jobNode.singleNode;
-            log += $" ({node.cost}) {node.action.goapName} - {node.poiTarget.name}";
+            log += $" ({node.cost}){node.action.goapName} - Actor: {node.actor.name}, Target: {node.poiTarget.name}";
         }
         return log;
     }
@@ -210,6 +245,30 @@ public class GoapPlan {
         }
         return summary;
     }
+
+#region Object Pool
+    public void Reset() {
+        for (int i = 0; i < allNodes.Count; i++) {
+            JobNode jn = allNodes[i];
+            if (jn is SingleJobNode sj) {
+                ObjectPoolManager.Instance.ReturnSingleJobNodeToPool(sj);
+            }
+        }
+        RuinarchListPool<JobNode>.Release(allNodes);
+        allNodes = null;
+        state = GOAP_PLAN_STATE.CANCELLED;
+        target = null;
+        startingNode = null;
+        endNode = null;
+        currentNode = null;
+        previousNode = null;
+        currentNodeIndex = 0;
+        isEnd = false;
+        isBeingRecalculated = false;
+        doNotRecalculate = false;
+        resetPlanOnFinishRecalculation = false;
+    }
+#endregion
     //public void OnActionInPlanFinished(Character actor, GoapAction action, string result) {
     //    if (endNode == null || action == endNode.action) {
     //        if (result == InteractionManager.Goap_State_Success) {

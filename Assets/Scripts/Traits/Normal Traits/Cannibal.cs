@@ -23,7 +23,7 @@ namespace Traits {
                 Character owner = sourcePOI as Character;
                 GoapPlanJob job = owner.jobQueue.GetJob(JOB_TYPE.FULLNESS_RECOVERY_NORMAL, JOB_TYPE.FULLNESS_RECOVERY_URGENT) as GoapPlanJob;
                 if (job != null) {
-                    job.CancelJob(false);
+                    job.CancelJob();
                 }
             }
         }

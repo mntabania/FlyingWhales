@@ -1,34 +1,34 @@
 ﻿using UnityEngine.Assertions;
 
-public class HexTileOtherData : OtherData {
-    public HexTile hexTile { get; }
-    public override object obj => hexTile;
+public class AreaOtherData : OtherData {
+    public Area area { get; }
+    public override object obj => area;
     
-    public HexTileOtherData(HexTile hexTile) {
-        this.hexTile = hexTile;
+    public AreaOtherData(Area p_area) {
+        this.area = p_area;
     }
-    public HexTileOtherData(SaveDataHexTileOtherData hexTile) {
-        this.hexTile = DatabaseManager.Instance.hexTileDatabase.GetHextileByPersistentID(hexTile.hexTileID);
+    public AreaOtherData(SaveDataAreaOtherData p_area) {
+        this.area = DatabaseManager.Instance.areaDatabase.GetAreaByPersistentID(p_area.areaID);
     }
     
     public override SaveDataOtherData Save() {
-        SaveDataHexTileOtherData saveDataHexTileOtherData = new SaveDataHexTileOtherData();
-        saveDataHexTileOtherData.Save(this);
-        return saveDataHexTileOtherData;
+        SaveDataAreaOtherData saveDataAreaOtherData = new SaveDataAreaOtherData();
+        saveDataAreaOtherData.Save(this);
+        return saveDataAreaOtherData;
     }
 }
 
 #region Save Data
-public class SaveDataHexTileOtherData : SaveDataOtherData {
-    public string hexTileID;
+public class SaveDataAreaOtherData : SaveDataOtherData {
+    public string areaID;
     public override void Save(OtherData data) {
         base.Save(data);
-        HexTileOtherData otherData = data as HexTileOtherData;
+        AreaOtherData otherData = data as AreaOtherData;
         Assert.IsNotNull(otherData);
-        hexTileID = otherData.hexTile.persistentID;
+        areaID = otherData.area.persistentID;
     }
     public override OtherData Load() {
-        return new HexTileOtherData(this);
+        return new AreaOtherData(this);
     }
 }
 #endregion

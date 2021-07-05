@@ -14,7 +14,7 @@ public abstract class Nymph : Summon {
     }
     protected Nymph(SaveDataSummon data) : base(data) {
         //combatComponent.SetCombatMode(COMBAT_MODE.Defend);
-        ScheduleAOEEffect(Random.Range(20, 40)); //Did not save _currentEffectSchedule, instead redo schedule upon loading because we cannot save schedules right now
+        ScheduleAOEEffect(UtilityScripts.GameUtilities.RandomBetweenTwoNumbers(12, 24)); //Did not save _currentEffectSchedule, instead redo schedule upon loading because we cannot save schedules right now
     }
 
     #region Overrides
@@ -22,11 +22,11 @@ public abstract class Nymph : Summon {
         base.OnPlaceSummon(tile);
         //after a nymph has been initially placed, schedule it's effect after a random amount of minutes,
         //this is so that nymphs placed on the same tick will execute their effects at different times. 
-        ScheduleAOEEffect(Random.Range(20, 40));
+        ScheduleAOEEffect(UtilityScripts.GameUtilities.RandomBetweenTwoNumbers(12, 24));
     }
     public override void Death(string cause = "normal", ActualGoapNode deathFromAction = null, Character responsibleCharacter = null,
-        Log _deathLog = default, LogFillerStruct[] deathLogFillers = null, Interrupt interrupt = null) {
-        base.Death(cause, deathFromAction, responsibleCharacter, _deathLog, deathLogFillers, interrupt);
+        Log _deathLog = default, LogFillerStruct[] deathLogFillers = null, Interrupt interrupt = null, bool isPlayerSource = false) {
+        base.Death(cause, deathFromAction, responsibleCharacter, _deathLog, deathLogFillers, interrupt, isPlayerSource);
         CancelAOEEffect();
     }
     public override void OnSeizePOI() {
@@ -42,7 +42,7 @@ public abstract class Nymph : Summon {
     #endregion
 
     #region Effects
-    private void ScheduleAOEEffect(int minutes = 20) {
+    private void ScheduleAOEEffect(int minutes = 12) {
         GameDate dueDate = GameManager.Instance.Today().AddTicks(GameManager.Instance.GetTicksBasedOnMinutes(minutes));
         _currentEffectSchedule = SchedulingManager.Instance.AddEntry(dueDate, ExecuteAOEEffect, this);
     }
@@ -54,21 +54,33 @@ public abstract class Nymph : Summon {
     }
     private void ExecuteAOEEffect() {
         if (Random.Range(0, 100) < 25) {
+#if DEBUG_PROFILER
             Profiler.BeginSample($"Nymph - Adjust HP Current Tile");
-            gridTileLocation.genericTileObject.AdjustHP(-50, combatComponent.elementalDamage.type, true, this);
+#endif
+            gridTileLocation.tileObjectComponent.genericTileObject.AdjustHP(-50, combatComponent.elementalDamage.type, true, this);
+#if DEBUG_PROFILER
             Profiler.EndSample();
-            
+#endif
+
+#if DEBUG_PROFILER
             Profiler.BeginSample($"Nymph - Adjust HP Neighbours");
+#endif
             for (int i = 0; i < gridTileLocation.neighbourList.Count; i++) {
                 LocationGridTile tile = gridTileLocation.neighbourList[i];
-                tile.genericTileObject.AdjustHP(-50, combatComponent.elementalDamage.type, true, this);
+                tile.tileObjectComponent.genericTileObject.AdjustHP(-50, combatComponent.elementalDamage.type, true, this);
             }
+#if DEBUG_PROFILER
             Profiler.EndSample();
+#endif
         }
+#if DEBUG_PROFILER
         Profiler.BeginSample($"Nymph - Schedule AOE Effect");
+#endif
         //reschedule after 20 minutes
         ScheduleAOEEffect();
+#if DEBUG_PROFILER
         Profiler.EndSample();
+#endif
     }
     #endregion
 
@@ -79,5 +91,5 @@ public abstract class Nymph : Summon {
             ScheduleAOEEffect();
         }
     }
-    #endregion
+#endregion
 }

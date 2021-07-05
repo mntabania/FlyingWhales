@@ -19,7 +19,7 @@ namespace Plague.Fatality {
         public virtual void PerTickWhileStationaryOrUnoccupied(Character p_character) { }
         public virtual void CharacterGainedTrait(Character p_character, Trait p_gainedTrait) { }
         public virtual void CharacterStartedPerformingAction(Character p_character, ActualGoapNode p_action) { }
-        public virtual void CharacterDonePerformingAction(Character p_character, ActualGoapNode p_actionPerformed) { }
+        public virtual void CharacterDonePerformingAction(Character p_character, INTERACTION_TYPE p_actionPerformed) { }
         public virtual void HourStarted(Character p_character, int p_numOfHoursPassed) { }
         #endregion
 

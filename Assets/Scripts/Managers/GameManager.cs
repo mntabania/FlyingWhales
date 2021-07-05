@@ -1,12 +1,16 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using Inner_Maps;
+using Object_Pools;
 using Ruinarch;
 using Traits;
 using UnityEngine;
 using UnityEngine.Profiling;
 using UnityEngine.Serialization;
+using UtilityScripts;
+using Debug = UnityEngine.Debug;
 using Random = UnityEngine.Random;
 
 public class GameManager : BaseMonoBehaviour {
@@ -21,8 +25,9 @@ public class GameManager : BaseMonoBehaviour {
     [FormerlySerializedAs("tick")] public int startTick;
     public int continuousDays;
     public const int daysPerMonth = 30;
-    public const int ticksPerDay = 288;
-    public const int ticksPerHour = 12;
+    public const int ticksPerDay = 480;
+    public const int ticksPerHour = 20;
+    private const int minutesPerTick = 3;
     
     public PROGRESSION_SPEED currProgressionSpeed;
 
@@ -31,9 +36,6 @@ public class GameManager : BaseMonoBehaviour {
     public bool displayFPS = true;
     public bool showFullDebug;
     public static bool showAllTilesTooltip = false;
-    
-    public GameObject travelLineParentPrefab;
-    public GameObject travelLinePrefab;
 
     [Header("Particle Effects")]
     [SerializeField] private GameObject aoeParticlesPrefab;
@@ -50,7 +52,9 @@ public class GameManager : BaseMonoBehaviour {
     private static GameDate today;
 
     private List<BaseParticleEffect> _activeEffects;
-
+    public static Stopwatch stopwatch;
+    
+    
     #region getters/setters
     public bool gameHasStarted => _gameHasStarted;
     public int currentTick => today.tick;
@@ -63,6 +67,7 @@ public class GameManager : BaseMonoBehaviour {
         _gameHasStarted = false;
         InputManager.Instance.SetCursorTo(InputManager.Cursor_Type.Default);
         _activeEffects = new List<BaseParticleEffect>();
+        stopwatch = new Stopwatch();
     }
     protected override void OnDestroy() {
         base.OnDestroy();
@@ -82,38 +87,84 @@ public class GameManager : BaseMonoBehaviour {
                     UIManager.Instance.PauseByPlayer();
                 }
             }
-        } else if (keyCode == KeyCode.Alpha1) {
-            if (!UIManager.Instance.IsConsoleShowing() && UIManager.Instance.x1Btn.IsInteractable() && !InputManager.Instance.HasSelectedUIObject()) {
-                UIManager.Instance.SetProgressionSpeed1X();
+        } else if (keyCode == KeyCode.Minus || keyCode == KeyCode.KeypadMinus) {
+            if (!UIManager.Instance.IsConsoleShowing() && !InputManager.Instance.HasSelectedUIObject()) {
+                if (!isPaused) {
+                    switch (currProgressionSpeed) {
+                        case PROGRESSION_SPEED.X1:
+                            if (UIManager.Instance.pauseBtn.IsInteractable()) {
+                                UIManager.Instance.PauseByPlayer();    
+                            }
+                            break;
+                        case PROGRESSION_SPEED.X2:
+                            UIManager.Instance.SetProgressionSpeed1X();
+                            break;
+                        case PROGRESSION_SPEED.X4:
+                            UIManager.Instance.SetProgressionSpeed2X();
+                            break;
+                    }
+                }
             }
-        } else if (keyCode == KeyCode.Alpha2) {
-            if (!UIManager.Instance.IsConsoleShowing() && UIManager.Instance.x2Btn.IsInteractable() && !InputManager.Instance.HasSelectedUIObject()) {
-                UIManager.Instance.SetProgressionSpeed2X();
-            }
-        } else if (keyCode == KeyCode.Alpha3) {
-            if (!UIManager.Instance.IsConsoleShowing() && UIManager.Instance.x4Btn.IsInteractable() && !InputManager.Instance.HasSelectedUIObject()) {
-                UIManager.Instance.SetProgressionSpeed4X();
+        } else if (keyCode == KeyCode.Plus || keyCode == KeyCode.Equals || keyCode == KeyCode.KeypadPlus) {
+            if (isPaused) {
+                if (UIManager.Instance.pauseBtn.IsInteractable()) {
+                    UIManager.Instance.Unpause();    
+                }
+            } else {
+                switch (currProgressionSpeed) {
+                    case PROGRESSION_SPEED.X1:
+                        UIManager.Instance.SetProgressionSpeed2X();
+                        break;
+                    case PROGRESSION_SPEED.X2:
+                        UIManager.Instance.SetProgressionSpeed4X();
+                        break;
+                    case PROGRESSION_SPEED.X4:
+                        //do nothing, since 4x is the max speed
+                        break;
+                }
             }
         }
+        
+        // else if (keyCode == KeyCode.Alpha1) {
+        //     if (!UIManager.Instance.IsConsoleShowing() && UIManager.Instance.x1Btn.IsInteractable() && !InputManager.Instance.HasSelectedUIObject()) {
+        //         UIManager.Instance.SetProgressionSpeed1X();
+        //     }
+        // } else if (keyCode == KeyCode.Alpha2) {
+        //     if (!UIManager.Instance.IsConsoleShowing() && UIManager.Instance.x2Btn.IsInteractable() && !InputManager.Instance.HasSelectedUIObject()) {
+        //         UIManager.Instance.SetProgressionSpeed2X();
+        //     }
+        // } else if (keyCode == KeyCode.Alpha3) {
+        //     if (!UIManager.Instance.IsConsoleShowing() && UIManager.Instance.x4Btn.IsInteractable() && !InputManager.Instance.HasSelectedUIObject()) {
+        //         UIManager.Instance.SetProgressionSpeed4X();
+        //     }
+        // }
     }
     
     private void Update() {
         if (_gameHasStarted && !isPaused) {
+#if DEBUG_PROFILER
             Profiler.BeginSample("Tick Started Call");
+#endif
             if (Math.Abs(timeElapsed) <= 0f) {
                 TickStarted();
             }
+#if DEBUG_PROFILER
             Profiler.EndSample();
+#endif
             timeElapsed += Time.deltaTime;
             if (timeElapsed >= progressionSpeed) {
                 timeElapsed = 0f;
+#if DEBUG_PROFILER
                 Profiler.BeginSample("Tick Ended Call");
+#endif
                 TickEnded();
+#if DEBUG_PROFILER
                 Profiler.EndSample();
+#endif
             }
         }
     }
-    #endregion
+#endregion
     public void Initialize() {
         today = new GameDate(startMonth, startDay, startYear, startTick);
         BaseParticleEffect.particleEffectActivated = AddActiveEffect;
@@ -121,9 +172,11 @@ public class GameManager : BaseMonoBehaviour {
     }
     
 	public void StartProgression(){
+        WorldConfigManager.Instance.mapGenerationData?.CleanUpAfterMapGeneration();
         _gameHasStarted = true;
         UIManager.Instance.Pause();
         lastProgressionBeforePausing = "paused";
+        Messenger.Broadcast(Signals.GAME_STARTED);
         SchedulingManager.Instance.StartScheduleCalls ();
         Messenger.Broadcast(Signals.DAY_STARTED); //for the first day
         Messenger.Broadcast(Signals.MONTH_START); //for the first month
@@ -132,13 +185,17 @@ public class GameManager : BaseMonoBehaviour {
             string message = LocalizationManager.Instance.GetLocalizedValue("Scenarios", $"{WorldSettings.Instance.worldSettingsData.worldType.ToString()}_Text", "popup_text");
             if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Pangat_Loo) {
                 message = UtilityScripts.Utilities.StringReplacer(message, new List<LogFillerStruct>() {
-                    new LogFillerStruct(null, PangatLooWinConditionTracker.DueDay.ToString(), LOG_IDENTIFIER.STRING_1)
+                    new LogFillerStruct(null, WipeOutAllUntilDayWinConditionTracker.DueDay.ToString(), LOG_IDENTIFIER.STRING_1)
                 });
             }
             if (!string.IsNullOrEmpty(message)) {
                 message = message.Replace("\\n", "\n");
                 UIManager.Instance.ShowStartScenario(message);    
             }
+        } else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Custom && !SaveManager.Instance.useSaveData) {
+            string message = "The key to winning the game is in knowing how to produce <color=#FB6F37>Chaos Orbs</color>. In early game, try using various <color=#FB6F37>traps</color> and damaging <color=#FB6F37>Spells</color>. " +
+                             "As you upgrade your <color=#FB6F37>Portal</color>, learn which Powers can provide Chaos Orbs by going through their tooltip descriptions.";
+            UIManager.Instance.ShowStartScenario(message);
         }
         Canvas.ForceUpdateCanvases();
     }
@@ -149,6 +206,7 @@ public class GameManager : BaseMonoBehaviour {
         SchedulingManager.Instance.StartScheduleCalls ();
         Messenger.AddListener<KeyCode>(ControlsSignals.KEY_DOWN, OnKeyDown);
         Canvas.ForceUpdateCanvases();
+        Messenger.Broadcast(Signals.PROGRESSION_LOADED);
     }
     public GameDate Today() {
         return new GameDate(today.month, today.day, today.year, today.tick);
@@ -228,49 +286,106 @@ public class GameManager : BaseMonoBehaviour {
     private void TickStarted() {
         if (today.tick % ticksPerHour == 0 && !IsStartOfGame()) {
             //hour reached
+#if DEBUG_PROFILER
             Profiler.BeginSample("Hour Started");
+#endif
             Messenger.Broadcast(Signals.HOUR_STARTED);
+#if DEBUG_PROFILER
             Profiler.EndSample();
+#endif
         }
+#if DEBUG_PROFILER
         Profiler.BeginSample("Tick Started Signal");
+#endif
+
+        ////Note: When the GC.Collect command is after the Debug.Log, the wr.Target does not get collected by garbage if we do the "wr.Target.ToString()"
+        ////The reason is because, when the supposed dead object (which is the Target) is accessed on the same scope the GC.Collect is called, the GC will skip the collection of it because it knows that it was just accessed
+        //if (DatabaseManager.Instance.tileObjectDatabase.destroyedTileObjects.Count > 0) {
+        //    GC.Collect();
+        //    string test = "Destroyed Tile Objects: " + DatabaseManager.Instance.tileObjectDatabase.destroyedTileObjects.Count;
+        //    for (int i = 0; i < DatabaseManager.Instance.tileObjectDatabase.destroyedTileObjects.Count; i++) {
+        //        WeakReference wr = DatabaseManager.Instance.tileObjectDatabase.destroyedTileObjects[i];
+        //        if (wr.IsAlive) {
+        //            test += "\n" + wr.Target.ToString() + " -> " + wr.IsAlive;
+        //        } else {
+        //            test += "\n" + wr.IsAlive;
+        //        }
+        //    }
+        //    Debug.Log(test);
+        //}
+
         Messenger.Broadcast(Signals.TICK_STARTED);
+#if DEBUG_PROFILER
         Profiler.EndSample();
-        
+#endif
+
+#if DEBUG_PROFILER
         Profiler.BeginSample("Tick Started - Update UI");
+#endif
         Messenger.Broadcast(UISignals.UPDATE_UI);
+#if DEBUG_PROFILER
         Profiler.EndSample();
+#endif
     }
-    private void TickEnded(){
+    private void TickEnded() {
+#if DEBUG_PROFILER
         Profiler.BeginSample("Check Schedules");
+#endif
         Messenger.Broadcast(Signals.CHECK_SCHEDULES);
+#if DEBUG_PROFILER
         Profiler.EndSample();
-        
+#endif
+
+#if DEBUG_PROFILER
         Profiler.BeginSample("Character Tick Ended Movement");
+#endif
         Messenger.Broadcast(CharacterSignals.CHARACTER_TICK_ENDED_MOVEMENT);
+#if DEBUG_PROFILER
         Profiler.EndSample();
-        
+#endif
+
+#if DEBUG_PROFILER
         Profiler.BeginSample("Process All Unprocessed POIS");
+#endif
         Messenger.Broadcast(CharacterSignals.PROCESS_ALL_UNPOROCESSED_POIS);
+#if DEBUG_PROFILER
         Profiler.EndSample();
-        
+#endif
+
+#if DEBUG_PROFILER
         Profiler.BeginSample("Character Tick Ended");
+#endif
         Messenger.Broadcast(CharacterSignals.CHARACTER_TICK_ENDED);
+#if DEBUG_PROFILER
         Profiler.EndSample();
-        
+#endif
+
+#if DEBUG_PROFILER
         Profiler.BeginSample("Generic Tick Ended Signal");
+#endif
         Messenger.Broadcast(Signals.TICK_ENDED);
+#if DEBUG_PROFILER
         Profiler.EndSample();
-        
+#endif
+
         today.tick += 1;
         if (today.tick > ticksPerDay) {
             today.tick = 1;
+#if DEBUG_PROFILER
             Profiler.BeginSample("Tick Ended - Day Started");
+#endif
             DayStarted(false);
+#if DEBUG_PROFILER
             Profiler.EndSample();
+#endif
         }
+#if DEBUG_PROFILER
         Profiler.BeginSample("Tick Ended - Update UI");
+#endif
         Messenger.Broadcast(UISignals.UPDATE_UI);
+#if DEBUG_PROFILER
         Profiler.EndSample();
+#endif
     }
     public void SetTick(int amount) {
         today.tick = amount;
@@ -293,10 +408,10 @@ public class GameManager : BaseMonoBehaviour {
             Messenger.Broadcast(UISignals.UPDATE_UI);
         }
     }
-    public static string ConvertTickToTime(int tick, string timeSeparator = ":") {
+    public string ConvertTickToTime(int tick, string timeSeparator = ":") {
         float floatConversion = tick / (float) ticksPerHour;
         int hour = (int) floatConversion;
-        int minutes = Mathf.RoundToInt(((floatConversion - hour) * 12) * 5);
+        int minutes = Mathf.RoundToInt((floatConversion - hour) * ticksPerHour * minutesPerTick);
         string timeOfDay = "AM";
         if(hour >= 12) {
             if(hour < 24) {
@@ -309,23 +424,27 @@ public class GameManager : BaseMonoBehaviour {
         }
         return $"{hour}{timeSeparator}{minutes:D2} {timeOfDay}";
     }
-    public static TIME_IN_WORDS GetTimeInWordsOfTick(int tick) {
-        if ((tick >= 265 && tick <= 288) || (tick >= 1 && tick <= 60)) {
+    public TIME_IN_WORDS GetTimeInWordsOfTick(int tick) {
+        //We use float instead of integer so that the decimal places will not be truncated
+        //Example: AFTER MIDNIGHT is only up to 5:00 AM Sharp. If we use integer, tick 61 or 5:03 AM will still be AFTER MIDNIGHT instead of MORNING because the decimal places are truncated
+        float currentHourInFloat = GetHoursBasedOnTicksInFloat(tick); 
+        //MILITARY TIME
+        if ((currentHourInFloat > 22 && currentHourInFloat <= 24) || (currentHourInFloat >= 0 && currentHourInFloat <= 5)) {
             return TIME_IN_WORDS.AFTER_MIDNIGHT;
         }
-        if (tick >= 61 && tick <= 132) {
+        if (currentHourInFloat > 5 && currentHourInFloat <= 11) {
             return TIME_IN_WORDS.MORNING;
         }
-        if (tick >= 133 && tick <= 156) {
+        if (currentHourInFloat > 11 && currentHourInFloat <= 13) {
             return TIME_IN_WORDS.LUNCH_TIME;
         }
-        if (tick >= 157 && tick <= 204) {
+        if (currentHourInFloat > 13 && currentHourInFloat <= 17) {
             return TIME_IN_WORDS.AFTERNOON;
         }
-        if (tick >= 205 && tick <= 240) {
+        if (currentHourInFloat > 17 && currentHourInFloat <= 20) {
             return TIME_IN_WORDS.EARLY_NIGHT;
         }
-        if (tick >= 241 && tick <= 264) {
+        if (currentHourInFloat > 20 && currentHourInFloat <= 22) {
             return TIME_IN_WORDS.LATE_NIGHT;
         }
         return TIME_IN_WORDS.NONE;
@@ -333,22 +452,9 @@ public class GameManager : BaseMonoBehaviour {
 
     //Note: If there is a character parameter, it means that the current time in words might not be the actual one because we will get the time in words relative to the character
     //Example: If the character is Nocturnal, MORNING will become LATE_NIGHT
-    public static TIME_IN_WORDS GetCurrentTimeInWordsOfTick(Character relativeTo = null) {
-        TIME_IN_WORDS time = TIME_IN_WORDS.NONE;
+    public TIME_IN_WORDS GetCurrentTimeInWordsOfTick(Character relativeTo = null) {
         int currentTick = today.tick;
-        if ((currentTick >= 265 && currentTick <= 288) || (currentTick >= 1 && currentTick <= 60)) {
-            time = TIME_IN_WORDS.AFTER_MIDNIGHT;
-        } else if (currentTick >= 61 && currentTick <= 132) {
-            time = TIME_IN_WORDS.MORNING;
-        } else if (currentTick >= 133 && currentTick <= 156) {
-            time = TIME_IN_WORDS.LUNCH_TIME;
-        } else if (currentTick >= 157 && currentTick <= 204) {
-            time = TIME_IN_WORDS.AFTERNOON;
-        } else if (currentTick >= 205 && currentTick <= 240) {
-            time = TIME_IN_WORDS.EARLY_NIGHT;
-        } else if (currentTick >= 241 && currentTick <= 264) {
-            time = TIME_IN_WORDS.LATE_NIGHT;
-        }
+        TIME_IN_WORDS time = GetTimeInWordsOfTick(currentTick);
         if(relativeTo != null && relativeTo.traitContainer.HasTrait("Nocturnal")) {
             time = ConvertTimeInWordsWhenNocturnal(time);
         }
@@ -363,67 +469,72 @@ public class GameManager : BaseMonoBehaviour {
         //}
         //return timeInWords[intTime];
     }
-    public static int GetRandomTickFromTimeInWords(TIME_IN_WORDS timeInWords) {
+    public int GetRandomTickFromTimeInWords(TIME_IN_WORDS timeInWords) {
+        //NOTE: The passed parameter value in GetTicksBasedOnHour must be military time, i.e., 6PM = 18
         if (timeInWords == TIME_IN_WORDS.AFTER_MIDNIGHT) {
             //After Midnight has special processing because it goes beyond the max tick, its 10:00PM to 5:00AM 
-            int maxRange = ticksPerDay + 60;
-            int chosenTick = Random.Range(265, maxRange + 1);
+            int maxRange = ticksPerDay + GetTicksBasedOnHour(5); //60;
+            //Min value is GetTicksBasedOnHour(22) + 1 because it should start on 10:03PM, 10:00PM is still part of LATE NIGHT 
+            int chosenTick = GameUtilities.RandomBetweenTwoNumbers(GetTicksBasedOnHour(22) + 1, maxRange);
             if(chosenTick > ticksPerDay) {
                 chosenTick -= ticksPerDay;
             }
             return chosenTick;
         }
         if (timeInWords == TIME_IN_WORDS.MORNING) {
-            return Random.Range(61, 133);
+            return GameUtilities.RandomBetweenTwoNumbers(GetTicksBasedOnHour(5) + 1, GetTicksBasedOnHour(11));
         }
         if (timeInWords == TIME_IN_WORDS.LUNCH_TIME) {
-            return Random.Range(133, 157);
+            return GameUtilities.RandomBetweenTwoNumbers(GetTicksBasedOnHour(11) + 1, GetTicksBasedOnHour(13));
         }
         if (timeInWords == TIME_IN_WORDS.AFTERNOON) {
-            return Random.Range(157, 205);
+            return GameUtilities.RandomBetweenTwoNumbers(GetTicksBasedOnHour(13) + 1, GetTicksBasedOnHour(17));
         }
         if (timeInWords == TIME_IN_WORDS.EARLY_NIGHT) {
-            return Random.Range(205, 241);
+            return GameUtilities.RandomBetweenTwoNumbers(GetTicksBasedOnHour(17) + 1, GetTicksBasedOnHour(20));
         }
         if (timeInWords == TIME_IN_WORDS.LATE_NIGHT) {
-            return Random.Range(241, 265);
+            return GameUtilities.RandomBetweenTwoNumbers(GetTicksBasedOnHour(20) + 1, GetTicksBasedOnHour(22));
         }
         throw new Exception($"{timeInWords} time in words has no tick!");
     }
-    public static int GetRandomTickFromTimeInWords(TIME_IN_WORDS timeInWords, int minimumThreshold) {
+    public int GetRandomTickFromTimeInWords(TIME_IN_WORDS timeInWords, int minimumThreshold) {
+        //NOTE: The passed parameter value in GetTicksBasedOnHour must be military time, i.e., 6PM = 18
         if (timeInWords == TIME_IN_WORDS.AFTER_MIDNIGHT) {
-            int maxRange = ticksPerDay + 60;
-            int chosenTick = Random.Range(minimumThreshold, maxRange + 1);
+            //After Midnight has special processing because it goes beyond the max tick, its 10:00PM to 5:00AM 
+            int maxRange = ticksPerDay + GetTicksBasedOnHour(5); //60;
+            //Min value is GetTicksBasedOnHour(22) + 1 because it should start on 10:03PM, 10:00PM is still part of LATE NIGHT 
+            int chosenTick = GameUtilities.RandomBetweenTwoNumbers(minimumThreshold, maxRange);
             if (chosenTick > ticksPerDay) {
                 chosenTick -= ticksPerDay;
             }
             return chosenTick;
         }
         if (timeInWords == TIME_IN_WORDS.MORNING) {
-            return Random.Range(minimumThreshold, 133);
+            return GameUtilities.RandomBetweenTwoNumbers(minimumThreshold, GetTicksBasedOnHour(11));
         }
         if (timeInWords == TIME_IN_WORDS.LUNCH_TIME) {
-            return Random.Range(minimumThreshold, 157);
+            return GameUtilities.RandomBetweenTwoNumbers(minimumThreshold, GetTicksBasedOnHour(13));
         }
         if (timeInWords == TIME_IN_WORDS.AFTERNOON) {
-            return Random.Range(minimumThreshold, 205);
+            return GameUtilities.RandomBetweenTwoNumbers(minimumThreshold, GetTicksBasedOnHour(17));
         }
         if (timeInWords == TIME_IN_WORDS.EARLY_NIGHT) {
-            return Random.Range(minimumThreshold, 241);
+            return GameUtilities.RandomBetweenTwoNumbers(minimumThreshold, GetTicksBasedOnHour(20));
         }
         if (timeInWords == TIME_IN_WORDS.LATE_NIGHT) {
-            return Random.Range(minimumThreshold, 265);
+            return GameUtilities.RandomBetweenTwoNumbers(minimumThreshold, GetTicksBasedOnHour(22));
         }
         throw new Exception($"{timeInWords} time in words has no tick!");
     }
-    public static TIME_IN_WORDS[] ConvertTimeInWordsWhenNocturnal(TIME_IN_WORDS[] currentTimeInWords) {
+    public TIME_IN_WORDS[] ConvertTimeInWordsWhenNocturnal(TIME_IN_WORDS[] currentTimeInWords) {
         TIME_IN_WORDS[] convertedTimeInWords = new TIME_IN_WORDS[currentTimeInWords.Length];
         for (int i = 0; i < currentTimeInWords.Length; i++) {
             convertedTimeInWords[i] = ConvertTimeInWordsWhenNocturnal(currentTimeInWords[i]);
         }
         return convertedTimeInWords;
     }
-    public static TIME_IN_WORDS ConvertTimeInWordsWhenNocturnal(TIME_IN_WORDS currentTimeInWords) {
+    public TIME_IN_WORDS ConvertTimeInWordsWhenNocturnal(TIME_IN_WORDS currentTimeInWords) {
         if (currentTimeInWords == TIME_IN_WORDS.MORNING) {
             return TIME_IN_WORDS.LATE_NIGHT;
         }
@@ -454,8 +565,11 @@ public class GameManager : BaseMonoBehaviour {
     public int GetHoursBasedOnTicks(int ticks) {
         return ticks / ticksPerHour;
     }
+    private float GetHoursBasedOnTicksInFloat(int ticks) {
+        return ticks / (float) ticksPerHour;
+    }
     public int GetMinutesBasedOnTicks(int ticks) {
-        return ticks * 5; //since per tick is 5 minutes
+        return ticks * minutesPerTick;
     }
     public int GetCeilingHoursBasedOnTicks(int ticks) {
         return Mathf.CeilToInt(ticks / (float) ticksPerHour);
@@ -464,7 +578,38 @@ public class GameManager : BaseMonoBehaviour {
         return Mathf.CeilToInt(ticks / (float) ticksPerDay);
     }
     public int GetCeilingMinsBasedOnTicks(int ticks) {
-        return ticks * 5;
+        return ticks * minutesPerTick;
+    }
+    public static string ConvertTicksToWholeTime(int ticks) {
+        string converted = string.Empty;
+        List<string> times = RuinarchListPool<string>.Claim();
+        int ticksRemaining = ticks;
+        if (ticksRemaining >= ticksPerDay) {
+            int days = Mathf.FloorToInt(ticksRemaining / (float) ticksPerDay);
+            // converted = $"{converted}{days.ToString()}";
+            string formatted = days == 1 ? $"{days.ToString()} day" : $"{days.ToString()} days";
+            times.Add(formatted);
+            // converted = formatted;
+            ticksRemaining -= days * ticksPerDay;
+        }
+        if (ticksRemaining >= ticksPerHour) {
+            int hours = Mathf.FloorToInt(ticksRemaining / (float) ticksPerHour);
+            // converted = $"{converted}{hours.ToString()}";
+            string formatted = hours == 1 ? $"{hours.ToString()} hour" : $"{hours.ToString()} hours";
+            times.Add(formatted);
+            // converted = formatted;
+            ticksRemaining -= hours * ticksPerHour;
+        }
+        if (ticksRemaining > 0) {
+            int minutes = ticksRemaining * minutesPerTick;
+            // converted = $"{converted}{minutes.ToString()}";
+            string formatted = minutes == 1 ? $"{minutes.ToString()} min" : $"{minutes.ToString()} mins";
+            times.Add(formatted);
+            // converted = formatted;
+        }
+        converted = times.ComafyList();
+        RuinarchListPool<string>.Release(times);
+        return converted;
     }
     public static int GetTimeAsWholeDuration(int ticks) {
         //Returns duration not as ticks but as time
@@ -477,7 +622,7 @@ public class GameManager : BaseMonoBehaviour {
         } else if(ticks >= ticksPerHour) {
             return Mathf.CeilToInt(ticks / (float) ticksPerHour);
         } else {
-            return ticks * 5;
+            return ticks * minutesPerTick;
         }
     }
     public static string GetTimeIdentifierAsWholeDuration(int ticks) {
@@ -498,7 +643,7 @@ public class GameManager : BaseMonoBehaviour {
         }
     }
 
-    #region Particle Effects
+#region Particle Effects
     public GameObject CreateParticleEffectAt(Vector3 worldLocation, InnerTileMap innerTileMap, PARTICLE_EFFECT particle, int sortingOrder = -1) {
         GameObject prefab = null;
         GameObject go = null;
@@ -542,7 +687,7 @@ public class GameManager : BaseMonoBehaviour {
         }
         return go;
     }
-    public GameObject CreateParticleEffectAt(StructureWallObject wallObject, PARTICLE_EFFECT particle) {
+    public GameObject CreateParticleEffectAt(ThinWall wallObject, PARTICLE_EFFECT particle) {
         GameObject prefab = null;
         GameObject go = null;
         if (particleEffectsDictionary.ContainsKey(particle)) {
@@ -645,34 +790,77 @@ public class GameManager : BaseMonoBehaviour {
             }
         }
     }
-    #endregion
+#endregion
 
-    #region For Testing
+#region For Testing
     [ContextMenu("Print Event Table")]
     public void PrintEventTable() {
         Messenger.PrintEventTable();
     }
-    #endregion
+#endregion
 
-    #region Utilities
+#region Utilities
     private bool IsStartOfGame() {
         if (today.year == startYear && today.month == startMonth && today.day == startDay && today.tick == startTick) {
             return true;
         }
         return false;
     }
-    #endregion
+#endregion
 
     public static Log CreateNewLog() {
-        return new Log();
+        return LogPool.Claim();
     }
     public static Log CreateNewLog(GameDate date, string category, string file, string key, ActualGoapNode node = null, params LOG_TAG[] providedTags) {
-        return new Log(date, category, file, key, node, providedTags);
+        Log log = CreateNewLog();
+        log.SetPersistentID(UtilityScripts.Utilities.GetNewUniqueID());
+        log.SetDate(date);
+        log.SetCategory(category);
+        log.SetFile(file);
+        log.SetKey(key);
+        log.SetConnectedAction(node);
+        log.AddTag(providedTags);
+        log.DetermineInitialLogText();
+        return log;
+    }
+    public static Log CreateNewLog(GameDate date, string category, string file, string key, List<LOG_TAG> providedTags, ActualGoapNode node = null) {
+        Log log = CreateNewLog();
+        log.SetPersistentID(UtilityScripts.Utilities.GetNewUniqueID());
+        log.SetDate(date);
+        log.SetCategory(category);
+        log.SetFile(file);
+        log.SetKey(key);
+        log.SetConnectedAction(node);
+        log.AddTag(providedTags);
+        log.DetermineInitialLogText();
+        return log;
     }
     public static Log CreateNewLog(GameDate date, string category, string file, string key, ActualGoapNode node = null, LOG_TAG providedTags = LOG_TAG.Work) {
-        return new Log(date, category, file, key, node, providedTags);
+        Log log = CreateNewLog();
+        log.SetPersistentID(UtilityScripts.Utilities.GetNewUniqueID());
+        log.SetDate(date);
+        log.SetCategory(category);
+        log.SetFile(file);
+        log.SetKey(key);
+        log.SetConnectedAction(node);
+        log.AddTag(providedTags);
+        log.DetermineInitialLogText();
+        return log;
     }
     public static Log CreateNewLog(string id, GameDate date, string logText, string category, string key, string file, string involvedObjects, List<LOG_TAG> providedTags, string rawText, List<LogFillerStruct> fillers = null) {
-        return new Log(id, date, logText, category, key, file, involvedObjects, providedTags, rawText, fillers);
+        Log log = CreateNewLog();
+        log.SetPersistentID(id);
+        log.SetDate(date);
+        log.SetLogText(logText);
+        log.SetCategory(category);
+        log.SetFile(file);
+        log.SetKey(key);
+        log.SetInvolvedObjects(involvedObjects);
+        log.AddTag(providedTags);
+        log.SetRawText(rawText);
+        if (fillers != null) {
+            log.SetFillers(fillers);    
+        }
+        return log;
     }
 }

@@ -26,13 +26,12 @@ public class Stand : GoapAction {
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
         return 4;
     }
-    public override List<LocationGridTile> NearbyLocationGetter(ActualGoapNode goapNode) {
+    public override void PopulateNearbyLocation(List<LocationGridTile> gridTiles, ActualGoapNode goapNode) {
         if (goapNode.actor is Summon && goapNode.actor.homeStructure != null && goapNode.actor.homeStructure == goapNode.actor.currentStructure) {
             //This might be performance heavy because it returns a new list every time, that is why I switched it to all tiles instead of unoccupied tiles
             //return goapNode.actor.homeStructure.unoccupiedTiles.ToList();
-            return goapNode.actor.homeStructure.passableTiles;
+            gridTiles.AddRange(goapNode.actor.homeStructure.passableTiles);
         }
-        return base.NearbyLocationGetter(goapNode);
     }
     #endregion
 

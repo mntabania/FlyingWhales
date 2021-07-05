@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UtilityScripts;
+using Random = System.Random;
 
 [System.Serializable]
 public class MapSettings {
@@ -63,11 +64,11 @@ public class MapSettings {
     public Vector2 GetMapSize() {
         switch (mapSize) {
             case MAP_SIZE.Small:
-                return new Vector2(8, 8);
+                return new Vector2(10, 8);
             case MAP_SIZE.Medium:
-                return new Vector2(12, 8);
+                return new Vector2(13, 10);
             case MAP_SIZE.Large:
-                return new Vector2(16, 10);
+                return new Vector2(16, 12);
             case MAP_SIZE.Extra_Large:
                 return new Vector2(20, 14);
             default:
@@ -79,25 +80,53 @@ public class MapSettings {
             case MAP_SIZE.Small:
                 return 1;
             case MAP_SIZE.Medium:
-                return 2;
+                return 1;
             case MAP_SIZE.Large:
-                return 3;
+                return 2;
             case MAP_SIZE.Extra_Large:
-                return 4;
+                return 3;
             default:
                 throw new ArgumentOutOfRangeException();
         }
     }
-    public int GetMaxVillages() {
+    public int GetMaxStartingVillages() {
         switch (mapSize) {
             case MAP_SIZE.Small:
                 return 1;
+            case MAP_SIZE.Medium:
+                return 2;
+            case MAP_SIZE.Large:
+                return 4;
+            case MAP_SIZE.Extra_Large:
+                return 6;
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
+    }
+    public int GetMaxVillagesForMapSize() {
+        switch (mapSize) {
+            case MAP_SIZE.Small:
+                return 2;
             case MAP_SIZE.Medium:
                 return 4;
             case MAP_SIZE.Large:
                 return 6;
             case MAP_SIZE.Extra_Large:
                 return 8;
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
+    }
+    public int GetSpecialStructuresToCreate() {
+        switch (mapSize) {
+            case MAP_SIZE.Small:
+                return UnityEngine.Random.Range(0, 5);
+            case MAP_SIZE.Medium:
+                return UnityEngine.Random.Range(1, 7);
+            case MAP_SIZE.Large:
+                return UnityEngine.Random.Range(2, 9);
+            case MAP_SIZE.Extra_Large:
+                return UnityEngine.Random.Range(3, 11);
             default:
                 throw new ArgumentOutOfRangeException();
         }

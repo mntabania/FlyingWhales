@@ -1,14 +1,15 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using UnityEngine.Assertions;
 namespace Traits {
     /// <summary>
     /// Functions to be used to determine what happens when a trait is added/removed to a character
     /// </summary>
     public class CharacterTraitProcessor : TraitProcessor {
-        public override void OnTraitAdded(ITraitable traitable, Trait trait, Character characterResponsible, ActualGoapNode gainedFromDoing, int overrideDuration) {
+        public override void OnTraitAdded(ITraitable traitable, Trait trait, Character characterResponsible, int overrideDuration) {
             Character character = traitable as Character;
+            Assert.IsNotNull(character);
             if(trait is Status status) {
                 ApplyStatusEffects(character, status);
             }
@@ -26,7 +27,13 @@ namespace Traits {
                     character.needsComponent.PlanTirednessRecoveryActions();
                 }
             }
-            DefaultProcessOnAddTrait(traitable, trait, characterResponsible, gainedFromDoing, overrideDuration);
+            DefaultProcessOnAddTrait(traitable, trait, characterResponsible, overrideDuration);
+            if (trait.affectsNameIcon) {
+                character.bookmarkEventDispatcher.ExecuteBookmarkChangedNameOrElementsEvent(character);
+                if (character.hasMarker) {
+                    character.marker.UpdateName();
+                }
+            }
             Messenger.Broadcast(CharacterSignals.CHARACTER_TRAIT_ADDED, character, trait);
         }
         public override void OnTraitRemoved(ITraitable traitable, Trait trait, Character removedBy) {
@@ -42,9 +49,9 @@ namespace Traits {
             DefaultProcessOnRemoveTrait(traitable, trait, removedBy);
             Messenger.Broadcast(CharacterSignals.CHARACTER_TRAIT_REMOVED, character, trait);
         }
-        public override void OnStatusStacked(ITraitable traitable, Status status, Character characterResponsible, ActualGoapNode gainedFromDoing, int overrideDuration) {
+        public override void OnStatusStacked(ITraitable traitable, Status status, Character characterResponsible, int overrideDuration) {
             Character character = traitable as Character;
-            if(DefaultProcessOnStackStatus(traitable, status, characterResponsible, gainedFromDoing, overrideDuration)) {
+            if(DefaultProcessOnStackStatus(traitable, status, characterResponsible, overrideDuration)) {
                 Messenger.Broadcast(CharacterSignals.CHARACTER_TRAIT_STACKED, character, status.GetBase());
             }
         }
@@ -81,9 +88,18 @@ namespace Traits {
             }
         }
         private void ApplyTraitEffects(Character character, Trait trait) {
+            if (trait.resistancesType != null && trait.resistancesValue != null) {
+                if (trait.resistancesType.Count != trait.resistancesValue.Count) {
+                    Debug.LogError("Resistances does not match for " + trait.name);
+                } else {
+                    for (int i = 0; i < trait.resistancesType.Count; i++) {
+                        character.piercingAndResistancesComponent.AdjustResistance(trait.resistancesType[i], trait.resistancesValue[i]);
+                    }
+                }
+            }
             if (trait.name == "Abducted" || trait.name == "Restrained") {
                 character.needsComponent.AdjustDoNotGetTired(1);
-            } else if (trait.name == "Packaged" || trait.name == "Hibernating" || trait.name == "Resting" || trait.name == "Unconscious") {
+            } else if (trait.name == "Packaged" || trait.name == "Hibernating" || trait.name == "Resting" || trait.name == "Unconscious" || trait.name == "Recuperating") {
                 character.needsComponent.AdjustDoNotGetTired(1);
                 character.needsComponent.AdjustDoNotGetHungry(1);
                 character.needsComponent.AdjustDoNotGetBored(1);
@@ -130,6 +146,15 @@ namespace Traits {
             }
         }
         public void UnapplyTraitEffects(Character character, Trait trait) {
+            if (trait.resistancesType != null && trait.resistancesValue != null) {
+                if (trait.resistancesType.Count != trait.resistancesValue.Count) {
+                    Debug.LogError("Resistances does not match for " + trait.name);
+                } else {
+                    for (int i = 0; i < trait.resistancesType.Count; i++) {
+                        character.piercingAndResistancesComponent.AdjustResistance(trait.resistancesType[i], -trait.resistancesValue[i]);
+                    }
+                }
+            }
             if (trait.name == "Abducted" || trait.name == "Restrained") {
                 character.needsComponent.AdjustDoNotGetTired(-1);
             } else if (trait.name == "Packaged" || trait.name == "Hibernating" || trait.name == "Resting" || trait.name == "Unconscious") {

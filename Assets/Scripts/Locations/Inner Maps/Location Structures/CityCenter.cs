@@ -31,27 +31,34 @@ namespace Inner_Maps.Location_Structures {
             base.Initialize();
             Messenger.AddListener(Signals.DAY_STARTED, OnDayStarted);
         }
-        protected override void AfterStructureDestruction() {
-            base.AfterStructureDestruction();
+        protected override void AfterStructureDestruction(Character p_responsibleCharacter = null) {
+            base.AfterStructureDestruction(p_responsibleCharacter);
             Messenger.RemoveListener(Signals.DAY_STARTED, OnDayStarted);
+        }
+
+        public override void OnTileDamaged(LocationGridTile tile, int amount, bool isPlayerSource) {
+            //emptied out on tile damaged function since city centers cannot be damaged
+        }
+        public override void OnTileRepaired(LocationGridTile tile, int amount) {
+            //emptied out on tile repaired function since city centers cannot be repaired
         }
 
         #region IPlayerActionTarget
         public override void ConstructDefaultActions() {
             base.ConstructDefaultActions();
-            AddPlayerAction(PLAYER_SKILL_TYPE.SCHEME);
+            AddPlayerAction(PLAYER_SKILL_TYPE.INDUCE_MIGRATION);
+            AddPlayerAction(PLAYER_SKILL_TYPE.STIFLE_MIGRATION);
+            //AddPlayerAction(PLAYER_SKILL_TYPE.SCHEME);
         }
         #endregion
 
         private void OnDayStarted() {
-            if (GameUtilities.RollChance(50)) {
-                HexTile hex = occupiedHexTile.hexTileOwner;
-                LocationGridTile tile = hex.GetRandomTileThatMeetCriteria(t => t.objHere == null && t.structure != this && t.IsPassable());
-                if(tile != null) {
-                    int numberOfHerbPlants = hex.GetNumberOfTileObjectsInHexTile(TILE_OBJECT_TYPE.HERB_PLANT);
-                    if(numberOfHerbPlants < 4) {
-                        tile.structure.AddPOI(InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.HERB_PLANT), tile);
-                    }
+            Area hex = occupiedArea;
+            LocationGridTile tile = hex.gridTileComponent.GetRandomTileThatIsPassableAndHasNoObjectAndIsInWilderness();
+            if(tile != null) {
+                int numberOfHerbPlants = hex.tileObjectComponent.GetNumberOfTileObjectsInHexTile(TILE_OBJECT_TYPE.HERB_PLANT);
+                if(numberOfHerbPlants < 4) {
+                    tile.structure.AddPOI(InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.HERB_PLANT), tile);
                 }
             }
         }

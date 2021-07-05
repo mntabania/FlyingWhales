@@ -54,13 +54,13 @@ namespace Plague.Death_Effect {
         public static int GetUnlockCost(this PLAGUE_DEATH_EFFECT p_deathEffect) {
             switch (p_deathEffect) {
                 case PLAGUE_DEATH_EFFECT.Explosion:
-                    return SpellUtilities.GetModifiedSpellCost(10, WorldSettings.Instance.worldSettingsData.playerSkillSettings.GetCostsModification());
+                    return SpellUtilities.GetModifiedSpellCost(25, WorldSettings.Instance.worldSettingsData.playerSkillSettings.GetCostsModification());
                 case PLAGUE_DEATH_EFFECT.Zombie:
-                    return SpellUtilities.GetModifiedSpellCost(10, WorldSettings.Instance.worldSettingsData.playerSkillSettings.GetCostsModification());
-                case PLAGUE_DEATH_EFFECT.Mana_Generator:
-                    return SpellUtilities.GetModifiedSpellCost(10, WorldSettings.Instance.worldSettingsData.playerSkillSettings.GetCostsModification());
+                    return SpellUtilities.GetModifiedSpellCost(25, WorldSettings.Instance.worldSettingsData.playerSkillSettings.GetCostsModification());
+                case PLAGUE_DEATH_EFFECT.Chaos_Generator:
+                    return SpellUtilities.GetModifiedSpellCost(25, WorldSettings.Instance.worldSettingsData.playerSkillSettings.GetCostsModification());
                 case PLAGUE_DEATH_EFFECT.Haunted_Spirits:
-                    return SpellUtilities.GetModifiedSpellCost(10, WorldSettings.Instance.worldSettingsData.playerSkillSettings.GetCostsModification());
+                    return SpellUtilities.GetModifiedSpellCost(25, WorldSettings.Instance.worldSettingsData.playerSkillSettings.GetCostsModification());
                 default:
                     throw new ArgumentOutOfRangeException(nameof(p_deathEffect), p_deathEffect, null);
             }
@@ -85,9 +85,9 @@ namespace Plague.Death_Effect {
                         return "Plagued corpses will eventually reanimate into various different types of zombies.";
                     else
                         return "-";
-                case PLAGUE_DEATH_EFFECT.Mana_Generator:
+                case PLAGUE_DEATH_EFFECT.Chaos_Generator:
                     if (p_level == 1 || p_level == 2 || p_level == 3)
-                        return "Plagued victims produce Mana Orbs when they die.";
+                        return "Plagued victims produce Chaos Orbs when they die.";
                     else
                         return "-";
                 case PLAGUE_DEATH_EFFECT.Haunted_Spirits:

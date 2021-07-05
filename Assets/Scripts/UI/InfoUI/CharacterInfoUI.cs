@@ -6,8 +6,13 @@ using TMPro;
 using UnityEngine.UI;
 using Traits;
 using UtilityScripts;
-
+using Inner_Maps;
+using Ruinarch.Custom_UI;
+using Character_Talents;
 public class CharacterInfoUI : InfoUIBase {
+
+    private enum VIEW_MODE { None = 0, Info, Mood, Relationship, Logs, }
+    private VIEW_MODE m_currentViewMode = VIEW_MODE.None;
     
     [Header("Basic Info")]
     [SerializeField] private CharacterPortrait characterPortrait;
@@ -18,6 +23,7 @@ public class CharacterInfoUI : InfoUIBase {
     [SerializeField] private TextMeshProUGUI partyLbl;
     [SerializeField] private EventLabel partyEventLbl;
     [SerializeField] private Image raceIcon;
+    [SerializeField] private TextMeshProUGUI coinsLbl;
 
     [Space(10)] [Header("Location")]
     [SerializeField] private TextMeshProUGUI factionLbl;
@@ -36,8 +42,12 @@ public class CharacterInfoUI : InfoUIBase {
     [SerializeField] private TextMeshProUGUI hpLbl;
     [SerializeField] private TextMeshProUGUI attackLbl;
     [SerializeField] private TextMeshProUGUI speedLbl;
+    [SerializeField] private TextMeshProUGUI titlePiercingLbl;
+    [SerializeField] private TextMeshProUGUI piercingLbl;
     [SerializeField] private TextMeshProUGUI raceLbl;
     [SerializeField] private TextMeshProUGUI elementLbl;
+    [SerializeField] private TextMeshProUGUI intLbl;
+    [SerializeField] private TextMeshProUGUI critRateLbl;
 
     [Space(10)] [Header("Traits")]
     [SerializeField] private TextMeshProUGUI statusTraitsLbl;
@@ -48,7 +58,39 @@ public class CharacterInfoUI : InfoUIBase {
     [Space(10)] [Header("Items")]
     [SerializeField] private TextMeshProUGUI itemsLbl;
     [SerializeField] private EventLabel itemsEventLbl;
-    
+
+    [Space(10)]
+    [Header("Equips")]
+    [SerializeField] private Image weaponImg;
+    [SerializeField] private Image armorImg;
+    [SerializeField] private Image accessoryImg;
+    [SerializeField] private HoverHandler weaponHoverText;
+    [SerializeField] private HoverHandler armorHoverText;
+    [SerializeField] private HoverHandler accessoryHoverText;
+    [SerializeField] private EventEquipButton weaponEventButton;
+    [SerializeField] private EventEquipButton armorEventButton;
+    [SerializeField] private EventEquipButton accessoryEventButton;
+    [SerializeField] private EquipmentToolTip equipmentToolTip;
+
+    [Space(10)]
+    [Header("Talents")]
+    [SerializeField] private GameObject talentsParentObject;
+    [SerializeField] private TextMeshProUGUI martialArtsLbl;
+    [SerializeField] private TextMeshProUGUI combatMagicLbl;
+    [SerializeField] private TextMeshProUGUI healingMagicLbl;
+    [SerializeField] private TextMeshProUGUI craftingLbl;
+    [SerializeField] private TextMeshProUGUI resourcesLbl;
+    [SerializeField] private TextMeshProUGUI foodLbl;
+    [SerializeField] private TextMeshProUGUI socialLbl;
+    [SerializeField] private HoverHandler martialArtsHoverText;
+    [SerializeField] private HoverHandler combatMagicHoverText;
+    [SerializeField] private HoverHandler healingMagicHoverText;
+    [SerializeField] private HoverHandler craftingHoverText;
+    [SerializeField] private HoverHandler resourcesHoverText;
+    [SerializeField] private HoverHandler foodHoverText;
+    [SerializeField] private HoverHandler socialHoverText;
+    [SerializeField] private CharacterTalentTooltip talentToolTip;
+
     [Space(10)] [Header("Relationships")]
     [SerializeField] private EventLabel relationshipNamesEventLbl;
     [SerializeField] private TextMeshProUGUI relationshipTypesLbl;
@@ -74,6 +116,14 @@ public class CharacterInfoUI : InfoUIBase {
     [SerializeField] private MarkedMeter hopeMeter;
     [SerializeField] private MarkedMeter staminaMeter;
 
+    [Space(10)]
+    [Header("Piercing And Resistances")]
+    [SerializeField] private PiercingAndResistancesInfo piercingAndResistancesInfo;
+
+    [Space(10)]
+    [Header("Store Target")] 
+    [SerializeField] private StoreTargetButton btnStoreTarget;
+
     private Character _activeCharacter;
     private Character _previousCharacter;
 
@@ -85,7 +135,22 @@ public class CharacterInfoUI : InfoUIBase {
     private RELATIONS_FILTER[] allFilters;
     private Dictionary<string, MoodSummaryEntry> _dictMoodSummary;
 
-    internal override void Initialize() {
+    #region reveal info objects
+    public GameObject infoContent;
+    public GameObject btnRevealInfo;
+    public GameObject moodContent;
+    public GameObject btnRevealMood;
+    public GameObject relationshipContent;
+    public GameObject btnRevealRelationship;
+    public GameObject logContent;
+    public GameObject btnRevealLogs;
+    #endregion
+
+    #region pierce display UI
+    public PiercingAndResistancesInfo pierceUI;
+	#endregion
+
+	internal override void Initialize() {
         base.Initialize();
         Messenger.AddListener<Log>(UISignals.LOG_ADDED, UpdateHistory);
         Messenger.AddListener<Log>(UISignals.LOG_IN_DATABASE_UPDATED, UpdateHistory);
@@ -108,13 +173,17 @@ public class CharacterInfoUI : InfoUIBase {
         Messenger.AddListener<MoodComponent>(CharacterSignals.MOOD_SUMMARY_MODIFIED, OnMoodModified);
         Messenger.AddListener<Character>(CharacterSignals.CHARACTER_CHANGED_NAME, OnCharacterChangedName);
         Messenger.AddListener<Character, CharacterClass, CharacterClass>(CharacterSignals.CHARACTER_CLASS_CHANGE, OnCharacterChangedClass);
+        Messenger.AddListener<Character>(UISignals.UPDATE_CHARACTER_INFO, CharacterRequestedForUpdate);
+        Messenger.AddListener<KeyCode>(ControlsSignals.KEY_DOWN_EMPTY_SPACE, OnReceiveKeyCodeSignal);
+        Messenger.AddListener<Character, EquipmentItem>(CharacterSignals.WEAPON_UNEQUIPPED, OnEquipmentUnequipped);
+        Messenger.AddListener<Character, EquipmentItem>(CharacterSignals.ARMOR_UNEQUIPPED, OnEquipmentUnequipped);
+        Messenger.AddListener<Character, EquipmentItem>(CharacterSignals.ACCESSORY_UNEQUIPPED, OnEquipmentUnequipped);
 
         actionEventLabel.SetOnRightClickAction(OnRightClickThoughtBubble);
         relationshipNamesEventLbl.SetOnLeftClickAction(OnLeftClickRelationship);
         relationshipNamesEventLbl.SetOnRightClickAction(OnRightClickRelationship);
         
         factionEventLbl.SetOnLeftClickAction(OnClickFaction);
-        currentLocationEventLbl.SetOnLeftClickAction(OnClickCurrentLocation);
         homeRegionEventLbl.SetOnLeftClickAction(OnLeftClickHomeVillage);
         homeRegionEventLbl.SetOnRightClickAction(OnRightClickHomeVillage);
         houseEventLbl.SetOnLeftClickAction(OnLeftClickHomeStructure);
@@ -123,7 +192,12 @@ public class CharacterInfoUI : InfoUIBase {
         
         itemsEventLbl.SetOnLeftClickAction(OnLeftClickItem);
         itemsEventLbl.SetOnRightClickAction(OnRightClickItem);
-        
+
+        weaponEventButton.AddPointerRightClickAction(OnRightClickEquipment);
+        armorEventButton.AddPointerRightClickAction(OnRightClickEquipment);
+        accessoryEventButton.AddPointerRightClickAction(OnRightClickEquipment);
+        //weaponEventButton.AddPointerLeftClickAction(OnLeftClickEquipment);
+
         opinionsEventLabel.SetShouldColorHighlight(false);
         statusTraitsEventLbl.SetShouldColorHighlight(false);
         normalTraitsEventLbl.SetShouldColorHighlight(false);
@@ -164,6 +238,59 @@ public class CharacterInfoUI : InfoUIBase {
         
         afflictions = new List<SkillData>();
         _dictMoodSummary = new Dictionary<string, MoodSummaryEntry>();
+
+        piercingAndResistancesInfo.Initialize();
+        SetButtonRevealPriceDisplay();
+
+        ListenTalentHoverListener();
+        ListenEquipmentHoverListener();
+    }
+
+    void SetButtonRevealPriceDisplay() {
+        btnRevealInfo.transform.Find("Chaotic").GetComponentInChildren<RuinarchText>().text = EditableValuesManager.Instance.GetRevealCharacterInfoCost().ToString();
+        btnRevealLogs.transform.Find("Chaotic").GetComponentInChildren<RuinarchText>().text = EditableValuesManager.Instance.GetRevealCharacterInfoCost().ToString();
+        btnRevealMood.transform.Find("Chaotic").GetComponentInChildren<RuinarchText>().text = EditableValuesManager.Instance.GetRevealCharacterInfoCost().ToString();
+        btnRevealRelationship.transform.Find("Chaotic").GetComponentInChildren<RuinarchText>().text = EditableValuesManager.Instance.GetRevealCharacterInfoCost().ToString();
+    }
+
+    private void InitializeRevealHoverText() {
+        if (PlayerManager.Instance.player.plagueComponent.plaguePoints < EditableValuesManager.Instance.GetRevealCharacterInfoCost()) {
+            btnRevealInfo.GetComponent<HoverText>()?.SetText("Not Enough Chaotic Energy");
+            btnRevealLogs.GetComponent<HoverText>()?.SetText("Not Enough Chaotic Energy");
+            btnRevealMood.GetComponent<HoverText>()?.SetText("Not Enough Chaotic Energy");
+            btnRevealRelationship.GetComponent<HoverText>()?.SetText("Not Enough Chaotic Energy");
+            btnRevealInfo.GetComponent<RuinarchButton>().MakeUnavailable();
+            btnRevealLogs.GetComponent<RuinarchButton>().MakeUnavailable();
+            btnRevealMood.GetComponent<RuinarchButton>().MakeUnavailable();
+            btnRevealRelationship.GetComponent<RuinarchButton>().MakeUnavailable();
+        } else {
+            btnRevealInfo.GetComponent<HoverText>()?.SetText("Reveal Character Info");
+            btnRevealLogs.GetComponent<HoverText>()?.SetText("Reveal Character Info");
+            btnRevealMood.GetComponent<HoverText>()?.SetText("Reveal Character Info");
+            btnRevealRelationship.GetComponent<HoverText>()?.SetText("Reveal Character Info");
+            btnRevealInfo.GetComponent<RuinarchButton>().MakeAvailable();
+            btnRevealLogs.GetComponent<RuinarchButton>().MakeAvailable();
+            btnRevealMood.GetComponent<RuinarchButton>().MakeAvailable();
+            btnRevealRelationship.GetComponent<RuinarchButton>().MakeAvailable();
+        }
+    }
+
+    private void CharacterRequestedForUpdate(Character p_character) {
+        if (isShowing && _activeCharacter == p_character) {
+            UpdateCharacterInfo();
+        }
+    }
+    
+    private void OnEquipmentUnequipped(Character p_character, EquipmentItem p_unequipped) {
+        if (isShowing && activeCharacter == p_character) {
+            UpdateEquipmentDisplay();
+        }
+    }
+    
+    private void OnReceiveKeyCodeSignal(KeyCode p_key) {
+        if (p_key == KeyCode.Mouse1) {
+            CloseMenu();
+        }
     }
 
     #region Overrides
@@ -178,13 +305,19 @@ public class CharacterInfoUI : InfoUIBase {
             }
             character.marker.UpdateNameplateElementsState();
         }
+        m_currentViewMode = VIEW_MODE.None;
     }
     public override void OpenMenu() {
         _previousCharacter = _activeCharacter;
         _activeCharacter = _data as Character;
         base.OpenMenu();
+        InitializeRevealHoverText();
+        piercingAndResistancesInfo.UpdatePierceUI(_activeCharacter);
         if (_previousCharacter != null && _previousCharacter.hasMarker) {
-            _previousCharacter.marker.UpdateNameplateElementsState();
+            bool updateNameplate = _previousCharacter.grave == null || _previousCharacter.grave.isBeingCarriedBy == null;
+            if (updateNameplate) {
+                _previousCharacter.marker.UpdateNameplateElementsState();    
+            }
         }
         if (UIManager.Instance.IsConversationMenuOpen()) {
             backButton.interactable = false;
@@ -200,8 +333,14 @@ public class CharacterInfoUI : InfoUIBase {
             } else {
                 Selector.Instance.Select(_activeCharacter, _activeCharacter.marker.transform);
             }
-            _activeCharacter.marker.UpdateNameplateElementsState();
+            
+            //if character has no grave or grave is not being carried by anyone, then update nameplate elements
+            bool updateNameplate = _activeCharacter.grave == null || _activeCharacter.grave.isBeingCarriedBy == null; 
+            if (updateNameplate) {
+                _activeCharacter.marker.UpdateNameplateElementsState();    
+            }
         }
+        btnStoreTarget.SetTarget(_activeCharacter);
         UpdateCharacterInfo();
         UpdateTraits();
         UpdateRelationships();
@@ -210,8 +349,33 @@ public class CharacterInfoUI : InfoUIBase {
         UpdateAllHistoryInfo();
         ResetAllScrollPositions();
         UpdateMoodSummary();
+        ProcessDisplay();
     }
     #endregion
+
+    void ProcessDisplay() {
+        switch (m_currentViewMode) {
+            case VIEW_MODE.Info:    
+            OnToggleInfo(true);
+            break;
+            case VIEW_MODE.Mood:
+            OnToggleMood(true);
+            break;
+            case VIEW_MODE.Relationship:
+            OnToggleRelations(true);
+            break;
+            case VIEW_MODE.Logs:
+            OnToggleLogs(true);
+            break;
+            default:
+            OnToggleInfo(false);
+            OnToggleMood(false);
+            OnToggleRelations(false);
+            OnToggleInfo(true);
+            break;
+        }
+        InitializeRevealHoverText();
+    }
 
     #region Utilities
     private void ResetAllScrollPositions() {
@@ -276,32 +440,152 @@ public class CharacterInfoUI : InfoUIBase {
     #region Stats
     private void UpdateStatInfo() {
         hpLbl.text = $"{_activeCharacter.currentHP.ToString()}/{_activeCharacter.maxHP.ToString()}";
-        attackLbl.text = $"{_activeCharacter.combatComponent.attack.ToString()}";
+        attackLbl.text = $"{_activeCharacter.combatComponent.GetComputedStrength().ToString()}";
         speedLbl.text =  $"{_activeCharacter.combatComponent.attackSpeed / 1000f}s";
-        raceLbl.text = $"{UtilityScripts.GameUtilities.GetNormalizedSingularRace(_activeCharacter.race)}";
-        elementLbl.text = $"{_activeCharacter.combatComponent.elementalDamage.type.ToString()}";
+        coinsLbl.text = $"{_activeCharacter.moneyComponent.coins.ToString()}";
+        intLbl.text = $"{_activeCharacter.combatComponent.GetComputedIntelligence().ToString()}";
+        critRateLbl.text = $"{_activeCharacter.combatComponent.critRate.ToString()}%";
+        raceLbl.text = $"{GameUtilities.GetNormalizedSingularRace(_activeCharacter.race)}";
+        elementLbl.text = $"<size=\"20\">{UtilityScripts.Utilities.GetRichTextIconForElement(_activeCharacter.combatComponent.elementalDamage.type)}</size>"; // + $"{_activeCharacter.combatComponent.elementalDamage.type}"
+        piercingLbl.text = $"{_activeCharacter.piercingAndResistancesComponent.piercingPower}<size=\"20\">{UtilityScripts.Utilities.PiercingIcon()}</size>";
+        // titlePiercingLbl.text = $"Piercing{UtilityScripts.Utilities.ColorizeSpellTitle($"{UtilityScripts.Utilities.PiercingIcon()}")}";
     }
     #endregion
 
     #region Location
     private void UpdateLocationInfo() {
         factionLbl.text = _activeCharacter.faction != null ? $"<link=\"faction\">{UtilityScripts.Utilities.ColorizeAndBoldName(_activeCharacter.faction.name, FactionManager.Instance.GetFactionNameColorHex())}</link>" : "Factionless";
-        currentLocationLbl.text = _activeCharacter.currentRegion != null ? $"{_activeCharacter.currentRegion.name}" : "None";
+        currentLocationLbl.text = _activeCharacter.structureComponent.workPlaceStructure != null ? $"{_activeCharacter.structureComponent.workPlaceStructure.name}" : "None";
         homeRegionLbl.text = _activeCharacter.homeSettlement != null ? $"<link=\"home\">{UtilityScripts.Utilities.ColorizeAndBoldName(_activeCharacter.homeSettlement.name)}</link>" : "Homeless";
         houseLbl.text = _activeCharacter.homeStructure != null ? $"<link=\"house\">{UtilityScripts.Utilities.ColorizeAndBoldName(_activeCharacter.homeStructure.name)}</link>" : "Homeless";
+
+        UpdateEquipmentDisplay();
+        UpdatetalentsDisplay();
     }
+
+    private void UpdateEquipmentDisplay() {
+        if (_activeCharacter.equipmentComponent.currentWeapon != null) {
+            weaponImg.enabled = true;
+            weaponImg.sprite = _activeCharacter.equipmentComponent.currentWeapon.equipmentData.imgIcon;
+            //weaponHoverText.Enable();
+            //weaponHoverText.SetText(_activeCharacter.equipmentComponent.currentWeapon.name + "\n\n" + _activeCharacter.equipmentComponent.currentWeapon.GetBonusDescription());
+            weaponEventButton.SetData(_activeCharacter, _activeCharacter.equipmentComponent.currentWeapon);
+        } else {
+            //weaponHoverText.Disable();
+            weaponImg.enabled = false;
+            weaponEventButton.ClearData();
+        }
+        if (_activeCharacter.equipmentComponent.currentArmor != null) {
+            armorImg.enabled = true;
+            armorImg.sprite = _activeCharacter.equipmentComponent.currentArmor.equipmentData.imgIcon;
+            //armorHoverText.Enable();
+            //armorHoverText.SetText(_activeCharacter.equipmentComponent.currentArmor.name + "\n\n" + _activeCharacter.equipmentComponent.currentArmor.GetBonusDescription());
+            armorEventButton.SetData(_activeCharacter, _activeCharacter.equipmentComponent.currentArmor);
+        } else {
+            //armorHoverText.Disable();
+            armorImg.enabled = false;
+            armorEventButton.ClearData();
+        }
+        if (_activeCharacter.equipmentComponent.currentAccessory != null) {
+            accessoryImg.enabled = true;
+            accessoryImg.sprite = _activeCharacter.equipmentComponent.currentAccessory.equipmentData.imgIcon;
+            //accessoryHoverText.Enable();
+            //accessoryHoverText.SetText(_activeCharacter.equipmentComponent.currentAccessory.name + "\n\n" + _activeCharacter.equipmentComponent.currentAccessory.GetBonusDescription());
+            accessoryEventButton.SetData(_activeCharacter, _activeCharacter.equipmentComponent.currentAccessory);
+        } else {
+            //accessoryHoverText.Disable();
+            accessoryImg.enabled = false;
+            accessoryEventButton.ClearData();
+        }
+    }
+
+    private void OnHoverExitEquipment() {
+        equipmentToolTip.gameObject.SetActive(false);
+    }
+
+    private void OnHoverExitTalent() {
+        talentToolTip.gameObject.SetActive(false);
+    }
+
+    private void OnHoverEquipment(EquipmentItem p_equipmentItem) {
+        if (p_equipmentItem != null) {
+            equipmentToolTip.gameObject.SetActive(true);
+            equipmentToolTip.ShowEquipmentItem(p_equipmentItem);
+        }
+    }
+
+    private void OnHoverTalent(Character p_character, CHARACTER_TALENT p_talentType) {
+        talentToolTip.gameObject.SetActive(true);
+        talentToolTip.ShowCharacterTalentData(activeCharacter, p_talentType);
+    }
+
+    private void ListenTalentHoverListener() {
+        martialArtsHoverText.AddOnHoverOverAction(() => OnHoverTalent(activeCharacter, CHARACTER_TALENT.Martial_Arts));
+        combatMagicHoverText.AddOnHoverOverAction(() => OnHoverTalent(activeCharacter, CHARACTER_TALENT.Combat_Magic));
+        healingMagicHoverText.AddOnHoverOverAction(() => OnHoverTalent(activeCharacter, CHARACTER_TALENT.Healing_Magic));
+        craftingHoverText.AddOnHoverOverAction(() => OnHoverTalent(activeCharacter, CHARACTER_TALENT.Crafting));
+        resourcesHoverText.AddOnHoverOverAction(() => OnHoverTalent(activeCharacter, CHARACTER_TALENT.Resources));
+        foodHoverText.AddOnHoverOverAction(() => OnHoverTalent(activeCharacter, CHARACTER_TALENT.Food));
+        socialHoverText.AddOnHoverOverAction(() => OnHoverTalent(activeCharacter, CHARACTER_TALENT.Social));
+
+        martialArtsHoverText.AddOnHoverOutAction(OnHoverExitTalent);
+        combatMagicHoverText.AddOnHoverOutAction(OnHoverExitTalent);
+        healingMagicHoverText.AddOnHoverOutAction(OnHoverExitTalent);
+        craftingHoverText.AddOnHoverOutAction(OnHoverExitTalent);
+        resourcesHoverText.AddOnHoverOutAction(OnHoverExitTalent);
+        foodHoverText.AddOnHoverOutAction(OnHoverExitTalent);
+        socialHoverText.AddOnHoverOutAction(OnHoverExitTalent);
+    }
+
+    private void ListenEquipmentHoverListener() {
+        weaponHoverText.AddOnHoverOverAction(() => OnHoverEquipment(activeCharacter.equipmentComponent.currentWeapon));
+        armorHoverText.AddOnHoverOverAction(() => OnHoverEquipment(activeCharacter.equipmentComponent.currentArmor));
+        accessoryHoverText.AddOnHoverOverAction(() => OnHoverEquipment(activeCharacter.equipmentComponent.currentAccessory));
+
+        weaponHoverText.AddOnHoverOutAction(OnHoverExitEquipment);
+        armorHoverText.AddOnHoverOutAction(OnHoverExitEquipment);
+        accessoryHoverText.AddOnHoverOutAction(OnHoverExitEquipment);
+    }
+
+    private void UpdatetalentsDisplay() {
+        martialArtsLbl.text = _activeCharacter.talentComponent.GetTalent(CHARACTER_TALENT.Martial_Arts).level.ToString();
+        CharacterTalentData talentData = CharacterManager.Instance.talentManager.GetOrCreateCharacterTalentData(CHARACTER_TALENT.Martial_Arts);
+        
+
+        combatMagicLbl.text = _activeCharacter.talentComponent.GetTalent(CHARACTER_TALENT.Combat_Magic).level.ToString();
+        talentData = CharacterManager.Instance.talentManager.GetOrCreateCharacterTalentData(CHARACTER_TALENT.Combat_Magic);
+        
+
+        healingMagicLbl.text = _activeCharacter.talentComponent.GetTalent(CHARACTER_TALENT.Healing_Magic).level.ToString();
+        talentData = CharacterManager.Instance.talentManager.GetOrCreateCharacterTalentData(CHARACTER_TALENT.Healing_Magic);
+        
+
+        craftingLbl.text = _activeCharacter.talentComponent.GetTalent(CHARACTER_TALENT.Crafting).level.ToString();
+        talentData = CharacterManager.Instance.talentManager.GetOrCreateCharacterTalentData(CHARACTER_TALENT.Crafting);
+        
+
+        resourcesLbl.text = _activeCharacter.talentComponent.GetTalent(CHARACTER_TALENT.Resources).level.ToString();
+        talentData = CharacterManager.Instance.talentManager.GetOrCreateCharacterTalentData(CHARACTER_TALENT.Resources);
+        
+
+        foodLbl.text = _activeCharacter.talentComponent.GetTalent(CHARACTER_TALENT.Food).level.ToString();
+        talentData = CharacterManager.Instance.talentManager.GetOrCreateCharacterTalentData(CHARACTER_TALENT.Food);
+        
+
+        socialLbl.text = _activeCharacter.talentComponent.GetTalent(CHARACTER_TALENT.Social).level.ToString();
+        talentData = CharacterManager.Instance.talentManager.GetOrCreateCharacterTalentData(CHARACTER_TALENT.Social);
+        
+    }
+
     private void OnClickFaction(object obj) {
         UIManager.Instance.ShowFactionInfo(activeCharacter.faction);
-    }
-    private void OnClickCurrentLocation(object obj) {
-        UIManager.Instance.ShowRegionInfo(activeCharacter.currentRegion);
     }
     private void OnLeftClickHomeVillage(object obj) {
         if (_activeCharacter.homeSettlement != null) {
             UIManager.Instance.ShowSettlementInfo(_activeCharacter.homeSettlement);
         }
     }
-    private void OnRightClickHomeVillage(object obj) {
+    private void OnRightClickHomeVillage(object obj) { 
         if (_activeCharacter.homeSettlement != null) {
             UIManager.Instance.ShowPlayerActionContextMenu(_activeCharacter.homeSettlement, Input.mousePosition, true);
         }
@@ -316,8 +600,14 @@ public class CharacterInfoUI : InfoUIBase {
     }
     #endregion
 
-    #region Traits
-    private void UpdateTraitsFromSignal(Character character, Trait trait) {
+    #region Talents
+    public void ToggleTalents() {
+        talentsParentObject.SetActive(!talentsParentObject.activeSelf);
+    }
+	#endregion
+
+	#region Traits
+	private void UpdateTraitsFromSignal(Character character, Trait trait) {
         if(_activeCharacter == null || _activeCharacter != character) {
             return;
         }
@@ -353,7 +643,7 @@ public class CharacterInfoUI : InfoUIBase {
             }
 #endif
             string color = UIManager.normalTextColor;
-            if (currStatus.moodEffect > 0) {
+            if (currStatus.moodEffect > 0 || currStatus.effect == TRAIT_EFFECT.POSITIVE) {
                 color = UIManager.buffTextColor;
             } else if (currStatus.moodEffect < 0) {
                 color = UIManager.flawTextColor;
@@ -447,6 +737,18 @@ public class CharacterInfoUI : InfoUIBase {
             if (tileObject != null) {
                 UIManager.Instance.ShowPlayerActionContextMenu(tileObject, Input.mousePosition, true);    
             }
+        }
+    }
+    private void OnLeftClickEquipment(Character p_owner, TileObject targetWeapon) {
+        //TileObject tileObject = p_owner.equipmentInventory.ElementAtOrDefault(index);
+        if (targetWeapon != null) {
+            UIManager.Instance.ShowTileObjectInfo(targetWeapon);
+        }
+    }
+    private void OnRightClickEquipment(Character p_owner, TileObject targetWeapon) {
+        //TileObject tileObject = _activeCharacter.equipmentInventory.ElementAtOrDefault(index);
+        if (targetWeapon != null) {
+            UIManager.Instance.ShowPlayerActionContextMenu(targetWeapon, Input.mousePosition, true);
         }
     }
     private void UpdateInventoryInfo() {
@@ -761,7 +1063,7 @@ public class CharacterInfoUI : InfoUIBase {
         } else {
             //character has not yet been spawned
             IRelationshipData relationshipData = _activeCharacter.relationshipContainer.relationships[id];
-            UIManager.Instance.ShowSmallInfo($"{relationshipData.targetName} is not yet in this region.", relationshipNameplateItemPosition);
+            UIManager.Instance.ShowSmallInfo($"{relationshipData.targetName} is not yet in this region or is already gone.", relationshipNameplateItemPosition);
             UIManager.Instance.HideCharacterNameplateTooltip();
         }
     }
@@ -777,7 +1079,7 @@ public class CharacterInfoUI : InfoUIBase {
         List<PLAYER_SKILL_TYPE> afflictionTypes = PlayerManager.Instance.player.playerSkillComponent.afflictions;
         for (int i = 0; i < afflictionTypes.Count; i++) {
             PLAYER_SKILL_TYPE spellType = afflictionTypes[i];
-            SkillData spellData = PlayerSkillManager.Instance.GetPlayerSkillData(spellType);
+            SkillData spellData = PlayerSkillManager.Instance.GetSkillData(spellType);
             afflictions.Add(spellData);
         }
         UIManager.Instance.ShowClickableObjectPicker(afflictions, ActivateAfflictionConfirmation, null, CanActivateAffliction,
@@ -833,6 +1135,7 @@ public class CharacterInfoUI : InfoUIBase {
             MoodModification moodModification = modification.Value;
             for (int i = 0; i < moodModification.flavorTexts.Count; i++) {
                 Log flavorLog = moodModification.flavorTexts[i];
+                if (flavorLog == null) { continue; }
                 int modificationAmount = moodModification.modifications[i];
                 GameDate expiryDate = moodModification.expiryDates.ElementAtOrDefault(moodModification.expiryDates.Count - 1 - i);
                 MoodSummaryEntry moodSummaryEntry;
@@ -913,7 +1216,7 @@ public class CharacterInfoUI : InfoUIBase {
     }
     public void ShowMoodTooltip() {
         string summary = $"Represents the Villagers' overall state of mind. Lower a Villagers' Mood to make them less effective and more volatile.\n\n" +
-                         $"{_activeCharacter.moodComponent.moodValue.ToString()}/100\nBrainwash Success Rate: {DefilerRoom.GetBrainwashSuccessRate(_activeCharacter).ToString("N0")}%";
+                         $"{_activeCharacter.moodComponent.moodValue.ToString()}/100\nBrainwash Success Rate: {PrisonCell.GetBrainwashSuccessRate(_activeCharacter).ToString("N0")}%";
         UIManager.Instance.ShowSmallInfo(summary, $"MOOD: {_activeCharacter.moodComponent.moodStateName}");
     }
     public void HideSmallInfo() {
@@ -930,39 +1233,196 @@ public class CharacterInfoUI : InfoUIBase {
         // staminaMeter.SetFillAmount(_activeCharacter.needsComponent.stamina/CharacterNeedsComponent.STAMINA_DEFAULT);
     }
     public void ShowEnergyTooltip() {
+#if UNITY_EDITOR
+        string summary = $"Villagers will become Unconscious once this Meter is empty. This is replenished through rest.\n\n" +
+                         $"Value: {_activeCharacter.needsComponent.tiredness.ToString()}/100";
+#else
         string summary = $"Villagers will become Unconscious once this Meter is empty. This is replenished through rest.\n\n" +
                          $"Value: {_activeCharacter.needsComponent.tiredness.ToString("N0")}/100";
+#endif
         UIManager.Instance.ShowSmallInfo(summary, "ENERGY");
     }
     public void ShowFullnessTooltip() {
+#if UNITY_EDITOR
+        string summary = $"Villagers will become Malnourished and eventually die once this Meter is empty. This is replenished through eating.\n\n" +
+                         $"Value: {_activeCharacter.needsComponent.fullness.ToString()}/100";
+#else
         string summary = $"Villagers will become Malnourished and eventually die once this Meter is empty. This is replenished through eating.\n\n" +
                          $"Value: {_activeCharacter.needsComponent.fullness.ToString("N0")}/100";
+#endif
         UIManager.Instance.ShowSmallInfo(summary, "FULLNESS");
     }
     public void ShowHappinessTooltip() {
+#if UNITY_EDITOR
+        string summary = $"Villager's Mood becomes significantly affected when this Meter goes down. This is replenished by doing fun activities.\n\n" +
+                         $"Value: {_activeCharacter.needsComponent.happiness.ToString()}/100";
+#else
         string summary = $"Villager's Mood becomes significantly affected when this Meter goes down. This is replenished by doing fun activities.\n\n" +
                          $"Value: {_activeCharacter.needsComponent.happiness.ToString("N0")}/100";
+#endif
+        
         UIManager.Instance.ShowSmallInfo(summary, "ENTERTAINMENT");
     }
     public void ShowHopeTooltip() {
+#if UNITY_EDITOR
+        string summary = $"How much this Villager trusts you. If this gets too low, they will be uncooperative towards you in various way.\n\n" +
+                         $"Value: {_activeCharacter.needsComponent.hope.ToString()}/100";
+#else   
         string summary = $"How much this Villager trusts you. If this gets too low, they will be uncooperative towards you in various way.\n\n" +
                          $"Value: {_activeCharacter.needsComponent.hope.ToString("N0")}/100";
+#endif
         UIManager.Instance.ShowSmallInfo(summary, "TRUST");
     }
     public void ShowStaminaTooltip() {
+#if UNITY_EDITOR
+        string summary = $"Villagers will be unable to run when this Meter is empty. This is used up when the Villager is running and quickly replenished when he isn't.\n\n" +
+                         $"Value: {_activeCharacter.needsComponent.stamina.ToString()}/100";
+#else
         string summary = $"Villagers will be unable to run when this Meter is empty. This is used up when the Villager is running and quickly replenished when he isn't.\n\n" +
                          $"Value: {_activeCharacter.needsComponent.stamina.ToString("N0")}/100";
+#endif
         UIManager.Instance.ShowSmallInfo(summary, "STAMINA");
     }
     #endregion
 
+    #region pierce UI
+    public void ClickPierce() {
+        if (pierceUI.isShowing) {
+            pierceUI.HidePiercingAndResistancesInfo();
+        } else {
+            pierceUI.ShowPiercingAndResistancesInfo(activeCharacter);
+        }
+    }
+
+    public void HidePierceUI() {
+        pierceUI.HidePiercingAndResistancesInfo();
+    }
+    #endregion
+
     #region Tabs
-    public void OnToggleInfo(bool isOn) { }
-    public void OnToggleMood(bool isOn) { }
+    public void OnRevealInfoclicked() {
+        if (PlayerManager.Instance.player.plagueComponent.plaguePoints >= EditableValuesManager.Instance.GetRevealCharacterInfoCost()) {
+            if (!activeCharacter.isInfoUnlocked) {
+                activeCharacter.isInfoUnlocked = true;
+                PlayerManager.Instance.player.plagueComponent.AdjustPlaguePoints(-EditableValuesManager.Instance.GetRevealCharacterInfoCost());
+                ProcessDisplay();
+                Messenger.Broadcast(CharacterSignals.CHARACTER_INFO_REVEALED);
+            }
+        }
+    }
+
+    void ShowInfoHideRevealButton() {
+        btnRevealInfo.SetActive(false);
+        infoContent.SetActive(true);
+    }
+
+    void ShowRevealButtonHideInfo() {
+        btnRevealInfo.SetActive(true);
+        infoContent.SetActive(false);
+    }
+
+    void ShowMoodHideRevealButton() {
+        btnRevealMood.SetActive(false);
+        moodContent.SetActive(true);
+    }
+
+    void ShowRevealButtonHideMood() {
+        btnRevealMood.SetActive(true);
+        moodContent.SetActive(false);
+    }
+
+    void ShowRelationshipHideRevealButton() {
+        btnRevealRelationship.SetActive(false);
+        relationshipContent.SetActive(true);
+    }
+
+    void ShowRevealButtonHideRelationship() {
+        btnRevealRelationship.SetActive(true);
+        relationshipContent.SetActive(false);
+    }
+
+    void ShowLogsHideRevealButton() {
+        btnRevealLogs.SetActive(false);
+        logContent.SetActive(true);
+    }
+
+    void ShowRevealButtonHideLogs() {
+        btnRevealLogs.SetActive(true);
+        logContent.SetActive(false);
+    }
+
+    void HideAllInfo() {
+        ShowRevealButtonHideInfo();
+        ShowRevealButtonHideMood();
+        ShowRevealButtonHideRelationship();
+        ShowRevealButtonHideLogs();
+    }
+
+    void ShowAllInfo() {
+        ShowInfoHideRevealButton();
+        ShowMoodHideRevealButton();
+        ShowRelationshipHideRevealButton();
+        ShowLogsHideRevealButton();
+    }
+
+    public void OnToggleInfo(bool isOn) {
+        if (isOn) {
+            m_currentViewMode = VIEW_MODE.Info;
+            if (activeCharacter.race.IsSapient()) {
+                if (activeCharacter.isInfoUnlocked) {
+                    ShowAllInfo();
+                } else {
+                    HideAllInfo();
+                }
+            } else {
+                ShowInfoHideRevealButton();
+            }
+        }
+    }
+    public void OnToggleMood(bool isOn) {
+        if (isOn) {
+            m_currentViewMode = VIEW_MODE.Mood;
+            if (activeCharacter.race.IsSapient()) {
+                if (activeCharacter.isInfoUnlocked) {
+                    ShowAllInfo();
+                } else {
+                    HideAllInfo();
+                }
+            } else {
+                ShowMoodHideRevealButton();
+            }
+        }
+    }
     public void OnToggleRelations(bool isOn) {
+        if (isOn) {
+            m_currentViewMode = VIEW_MODE.Relationship;
+            if (activeCharacter.race.IsSapient()) {
+                if (activeCharacter.isInfoUnlocked) {
+                    ShowAllInfo();
+                } else {
+                    HideAllInfo();
+                }
+            } else {
+                ShowRelationshipHideRevealButton();
+            }
+        }
         LayoutRebuilder.ForceRebuildLayoutImmediate(relationshipsScrollView.content);
     }
-    public void OnToggleLogs(bool isOn) { }
+    public void OnToggleLogs(bool isOn) {
+        if (isOn) {
+            m_currentViewMode = VIEW_MODE.Logs;
+            if (activeCharacter.race.IsSapient()) {
+                if (activeCharacter.isInfoUnlocked) {
+                    ShowAllInfo();
+                } else {
+                    HideAllInfo();
+                }
+            } else {
+                ShowLogsHideRevealButton();
+            }
+        }
+        LayoutRebuilder.ForceRebuildLayoutImmediate(relationshipsScrollView.content);
+    }
     #endregion
 
     #region Party
@@ -992,13 +1452,26 @@ public class CharacterInfoUI : InfoUIBase {
             return;
         }
         string message = GameUtilities.GetNormalizedSingularRace(activeCharacter.race);
+        if (activeCharacter.talentComponent != null) {
+            message += "\n" + activeCharacter.talentComponent.GetTalentSummary();
+        }
         UIManager.Instance.ShowSmallInfo(message);
     }
     public void OnHoverExitRaceIcon() {
         UIManager.Instance.HideSmallInfo();
     }
     #endregion
-    
+
+    #region Piercing and Resistances
+    public void TogglePiercingAndResistances() {
+        if (piercingAndResistancesInfo.isShowing) {
+            piercingAndResistancesInfo.HidePiercingAndResistancesInfo();
+        } else {
+            piercingAndResistancesInfo.ShowPiercingAndResistancesInfo(activeCharacter);
+        }
+    }
+    #endregion
+
     private struct MoodSummaryEntry {
         public int amount;
         public GameDate expiryDate;

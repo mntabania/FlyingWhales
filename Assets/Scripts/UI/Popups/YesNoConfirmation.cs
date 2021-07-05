@@ -15,6 +15,9 @@ public class YesNoConfirmation : PopupMenuBase{
     [SerializeField] private TextMeshProUGUI yesBtnLbl;
     [SerializeField] private TextMeshProUGUI noBtnLbl;
     [SerializeField] private HoverHandler yesBtnUnInteractableHoverHandler;
+
+    private System.Action _onHideUIAction;
+    
     /// <summary>
     /// Show a yes/no pop up window
     /// </summary>
@@ -28,14 +31,16 @@ public class YesNoConfirmation : PopupMenuBase{
     /// <param name="noBtnText">The no button text.</param>
     /// <param name="yesBtnInteractable">Should the yes button be clickable?</param>
     /// <param name="noBtnInteractable">Should the no button be clickable?</param>
-    /// <param name="pauseAndResume">Should the game pause when this window shows, and resume when it closes?</param>
     /// <param name="yesBtnActive">Should the yes button be visible?</param>
     /// <param name="noBtnActive">Should the no button be visible?</param>
     /// <param name="yesBtnInactiveHoverAction">Action to execute when user hover over an un-clickable yes button</param>
     /// <param name="yesBtnInactiveHoverExitAction">Action to execute when user hover over an un-clickable no button</param>
+    /// <param name="onClickCloseAction">Action to execute when clicking on close btn. NOTE: Hide action is added by default</param>
+    /// <param name="onHideUIAction">Action to execute when popup is closed.</param>
     public void ShowYesNoConfirmation(string header, string question, System.Action onClickYesAction = null, System.Action onClickNoAction = null,
-        bool showCover = false, int layer = 21, string yesBtnText = "Yes", string noBtnText = "No", bool yesBtnInteractable = true, bool noBtnInteractable = true, bool pauseAndResume = false, 
-        bool yesBtnActive = true, bool noBtnActive = true, System.Action yesBtnInactiveHoverAction = null, System.Action yesBtnInactiveHoverExitAction = null) {
+        bool showCover = false, int layer = 21, string yesBtnText = "Yes", string noBtnText = "No", bool yesBtnInteractable = true, bool noBtnInteractable = true, 
+        bool yesBtnActive = true, bool noBtnActive = true, System.Action yesBtnInactiveHoverAction = null, System.Action yesBtnInactiveHoverExitAction = null, System.Action onClickCloseAction = null,
+        System.Action onHideUIAction = null) {
         
         yesNoHeaderLbl.text = header;
         yesNoDescriptionLbl.text = question;
@@ -60,9 +65,9 @@ public class YesNoConfirmation : PopupMenuBase{
             noBtn.onClick.AddListener(UIManager.Instance.HideYesNoConfirmation);
             closeBtn.onClick.AddListener(UIManager.Instance.HideYesNoConfirmation);    
         } else {
-            yesBtn.onClick.AddListener(HideYesNoConfirmation);
-            noBtn.onClick.AddListener(HideYesNoConfirmation);
-            closeBtn.onClick.AddListener(HideYesNoConfirmation);
+            yesBtn.onClick.AddListener(Close);
+            noBtn.onClick.AddListener(Close);
+            closeBtn.onClick.AddListener(Close);
         }
         
 
@@ -74,6 +79,9 @@ public class YesNoConfirmation : PopupMenuBase{
             noBtn.onClick.AddListener(onClickNoAction.Invoke);
             //closeBtn.onClick.AddListener(onClickNoAction.Invoke);
         }
+        if (onClickCloseAction != null) {
+            closeBtn.onClick.AddListener(onClickCloseAction.Invoke);
+        }
 
         yesBtnUnInteractableHoverHandler.gameObject.SetActive(!yesBtn.interactable);
         if (yesBtnInactiveHoverAction != null) {
@@ -83,13 +91,17 @@ public class YesNoConfirmation : PopupMenuBase{
             yesBtnUnInteractableHoverHandler.SetOnHoverOutAction(yesBtnInactiveHoverExitAction.Invoke);
         }
 
+        _onHideUIAction = onHideUIAction;
+        
         yesNoGO.SetActive(true);
         yesNoGO.transform.SetSiblingIndex(layer);
         yesNoCover.SetActive(showCover);
         TweenIn(yesNoCanvasGroup);
     }
-    public void HideYesNoConfirmation() {
+    public override void Close() {
+        base.Close();
         yesNoGO.SetActive(false);
+        _onHideUIAction?.Invoke();
     }
     private void TweenIn(CanvasGroup canvasGroup) {
         canvasGroup.alpha = 0;

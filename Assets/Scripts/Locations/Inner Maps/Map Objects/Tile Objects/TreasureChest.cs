@@ -23,7 +23,6 @@ public class TreasureChest : TileObject {
         TILE_OBJECT_TYPE.ICE,
         TILE_OBJECT_TYPE.WOOD_PILE,
         TILE_OBJECT_TYPE.STONE_PILE,
-        TILE_OBJECT_TYPE.METAL_PILE,
         TILE_OBJECT_TYPE.ANIMAL_MEAT,
     };
     
@@ -43,11 +42,11 @@ public class TreasureChest : TileObject {
         if (!string.IsNullOrEmpty(saveDataTreasureChest.objectInsideID) && gridTileLocation != null) {
             if (saveDataTreasureChest.objectInsideType == OBJECT_TYPE.Character) {
                 Character character = DatabaseManager.Instance.characterDatabase.GetCharacterByPersistentID(saveDataTreasureChest.objectInsideID);
-                if (character != null) {
+                if (character is Mimic mimic) {
                     SetObjectInside(character);
                     if (character.hasMarker) {
                         character.marker.PlaceMarkerAt(gridTileLocation);
-                        character.DisableMarker();
+                        character.marker.SetVisualState(false);
                     }    
                 }
             } else if (saveDataTreasureChest.objectInsideType == OBJECT_TYPE.Tile_Object) {
@@ -65,27 +64,22 @@ public class TreasureChest : TileObject {
         }
     }
     public override void AdjustHP(int amount, ELEMENTAL_TYPE elementalDamageType, bool triggerDeath = false, object source = null,
-        CombatManager.ElementalTraitProcessor elementalTraitProcessor = null, bool showHPBar = false) {
+        CombatManager.ElementalTraitProcessor elementalTraitProcessor = null, bool showHPBar = false, float piercingPower = 0f, bool isPlayerSource = false) {
         LocationGridTile location = gridTileLocation;
-        base.AdjustHP(amount, elementalDamageType, triggerDeath, source, elementalTraitProcessor, showHPBar);
+        base.AdjustHP(amount, elementalDamageType, triggerDeath, source, elementalTraitProcessor, showHPBar, piercingPower, isPlayerSource);
         if (CanBeDamaged() && amount < 0) {
             //check if can awaken a mimic
             if (objectInside == null) {
                 //no object inside yet, roll fot item
                 RollForItem(location);
                 //if it is mimic then spawn the mimic now.
-                if (objectInside is Mimic summon) {
-                    SpawnInitialMimic(location, summon);
+                if (objectInside is Mimic mimic) {
+                    SpawnInitialMimic(location, mimic);
                     location.structure.RemovePOI(this);
+                    mimic.UnsubscribeToAwakenMimicEvent(this);
                 }
             } else if (objectInside is Mimic summon) {
-                //if there is an object inside the chest and it is a mimic, awaken it
-                if (!summon.isDead) {
-                    summon.marker.PlaceMarkerAt(location);
-                    summon.SetIsTreasureChest(false);    
-                }
-                location.structure.RemovePOI(this);
-                TraitManager.Instance.CopyStatuses(this, summon);
+                AwakenOccupant(summon, location);
             }
         }
     }
@@ -93,13 +87,27 @@ public class TreasureChest : TileObject {
         base.OnPlacePOI();
         if (objectInside is Character character) {
             character.marker.PlaceMarkerAt(gridTileLocation);
-            character.DisableMarker();
+            // character.DisableMarker();
+            character.marker.SetVisualState(false);
         }
     }
+    
     #region Object Inside
+    private void AwakenOccupant(Mimic p_mimic, LocationGridTile p_location) {
+        //if there is an object inside the chest and it is a mimic, awaken it
+        if (!p_mimic.isDead) {
+            p_mimic.SetIsTreasureChest(false);
+            p_mimic.marker.PlaceMarkerAt(p_location);
+            p_mimic.marker.SetVisualState(true);
+        }
+        p_location.structure.RemovePOI(this);
+        TraitManager.Instance.CopyStatuses(this, p_mimic);
+        p_mimic.UnsubscribeToAwakenMimicEvent(this);
+        ClearUsers();
+    }
     private void RollForItem(LocationGridTile locationGridTile) {
         if (objectInside != null) { return; } //already has object inside
-        if (GameUtilities.RollChance(5)) { //5
+        if (ChanceData.RollChance(CHANCE_TYPE.Mimic_Spawn)) { //5
             Summon summon = CharacterManager.Instance.CreateNewSummon(SUMMON_TYPE.Mimic, FactionManager.Instance.neutralFaction, homeRegion: locationGridTile.parentMap.region);
             SetObjectInside(summon);
         } else {
@@ -109,14 +117,25 @@ public class TreasureChest : TileObject {
     }
     public void SetObjectInside(IPointOfInterest pointOfInterest) {
         objectInside = pointOfInterest;
-        if (objectInside is Character character) {
-            _users = new[] { character };
+        if (objectInside is Mimic mimic) {
+            _users = new Character[] { mimic };
+            mimic.SubscribeToAwakenMimicEvent(this);
         }
     }
-    public void SpawnInitialMimic(LocationGridTile tile, Summon summon) {
-        CharacterManager.Instance.PlaceSummonInitially(summon, tile);
-        summon.SetTerritory(tile.GetNearestHexTileWithinRegion());
-        TraitManager.Instance.CopyStatuses(this, summon);
+    public void SpawnInitialMimic(LocationGridTile p_tile, Mimic p_mimic) {
+        CharacterManager.Instance.PlaceSummonInitially(p_mimic, p_tile);
+        p_mimic.SetTerritory(p_tile.GetNearestHexTileWithinRegion());
+        TraitManager.Instance.CopyStatuses(this, p_mimic);
+        ClearUsers();
+    }
+    public void TryAwakenMimic(Mimic p_mimic) {
+        if (_users != null && _users.Contains(p_mimic) && p_mimic.gridTileLocation != null) {
+            AwakenOccupant(p_mimic, p_mimic.gridTileLocation);
+        }
+    }
+    private void ClearUsers() {
+        _users = null;
+        objectInside = null;
     }
     #endregion
 }

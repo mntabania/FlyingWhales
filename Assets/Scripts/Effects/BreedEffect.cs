@@ -38,7 +38,7 @@ public class BreedEffect : PooledObject {
 
     private void OnCompleteSequence() {
         AudioManager.Instance.PlayParticleMagnet();
-        PlayerUI.Instance.DoMonsterTabPunchEffect();;
+        PlayerUI.Instance.DoMonsterTabPunchEffect();
         ObjectPoolManager.Instance.DestroyObject(this);
     }
     public override void Reset() {

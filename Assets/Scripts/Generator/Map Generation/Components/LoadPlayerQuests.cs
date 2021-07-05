@@ -20,7 +20,7 @@ public class LoadPlayerQuests : MapGenerationComponent {
 
     private IEnumerator LoadReactionQuests(SaveDataCurrentProgress saveData) {
         saveData.LoadWinConditionTracker();
-        saveData.LoadReactionQuests();
+        // saveData.LoadReactionQuests();
         yield return null;
     }
     

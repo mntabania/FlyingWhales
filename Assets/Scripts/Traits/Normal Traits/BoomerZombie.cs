@@ -27,10 +27,11 @@ namespace Traits {
         //}
         public override bool OnDeath(Character character) {
             if (character.traitContainer.HasTrait("Poisoned")) {
+                Poisoned poisoned = character.traitContainer.GetTraitOrStatus<Poisoned>("Poisoned");
                 int poisonStacks = character.traitContainer.GetStacks("Poisoned");
                 character.traitContainer.RemoveStatusAndStacks(character, "Poisoned");
                 if (character.gridTileLocation != null) {
-                    CombatManager.Instance.PoisonExplosion(character, character.gridTileLocation, poisonStacks, character, 2);
+                    CombatManager.Instance.PoisonExplosion(character, character.gridTileLocation, poisonStacks, character, 2, poisoned.isPlayerSource);
                 }
                 character.SetDestroyMarkerOnDeath(true);
             }

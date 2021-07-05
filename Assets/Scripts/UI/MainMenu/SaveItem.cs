@@ -4,11 +4,16 @@ using System.IO.Compression;
 using System.Linq;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class SaveItem : MonoBehaviour {
 
     [SerializeField] private TextMeshProUGUI saveNameLbl;
     [SerializeField] private TextMeshProUGUI timeStampLbl;
+    [SerializeField] private InputField inpFldNewSaveName;
+    [SerializeField] private Button btnSave;
+
+    private bool m_isTyping;
 
     private string path;
     private string json;
@@ -53,6 +58,11 @@ public class SaveItem : MonoBehaviour {
                 UIManager.Instance.yesNoConfirmation.ShowYesNoConfirmation("Load Game", $"Are you sure you want to load {saveNameLbl.text}?", OnConfirmLoad, showCover: true, layer:50);
             }    
         }
+    }
+
+    public void OnClickRename() {
+        btnSave.GetComponentInChildren<Text>().text = "Save";
+        inpFldNewSaveName.gameObject.SetActive(true);
     }
     
     

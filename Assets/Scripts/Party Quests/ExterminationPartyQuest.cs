@@ -9,13 +9,14 @@ public class ExterminationPartyQuest : PartyQuest {
 
     public LocationStructure targetStructure { get; private set; }
     //public HexTile waitingArea { get; private set; }
-    public bool isExterminating { get; private set; }
+    //public bool isExterminating { get; private set; }
     public NPCSettlement originSettlement { get; private set; }
 
     #region getters
     public override IPartyQuestTarget target => targetStructure;
     //public override HexTile waitingHexArea => waitingArea;
     public override System.Type serializedData => typeof(SaveDataExterminationPartyQuest);
+    public override bool shouldAssignedPartyRetreatUponKnockoutOrKill => true;
     #endregion
 
     public ExterminationPartyQuest() : base(PARTY_QUEST_TYPE.Extermination) {
@@ -25,7 +26,7 @@ public class ExterminationPartyQuest : PartyQuest {
         //jobQueueOwnerType = JOB_OWNER.FACTION;
     }
     public ExterminationPartyQuest(SaveDataExterminationPartyQuest data) : base(data) {
-        isExterminating = data.isExterminating;
+        //isExterminating = data.isExterminating;
     }
 
     #region Overrides
@@ -52,7 +53,7 @@ public class ExterminationPartyQuest : PartyQuest {
         base.OnAssignedPartySwitchedState(fromState, toState);
         if (toState == PARTY_STATE.Working) {
             SetIsSuccessful(true);
-            StartExterminationTimer();
+            //StartExterminationTimer();
         }
     }
     //protected override void OnAddMember(Character member) {
@@ -72,10 +73,10 @@ public class ExterminationPartyQuest : PartyQuest {
     //}
     protected override void OnEndQuest() {
         base.OnEndQuest();
-        isExterminating = false;
-        if (originSettlement.exterminateTargetStructure == targetStructure) {
-            originSettlement.SetExterminateTarget(null);
-        }
+        //isExterminating = false;
+        //if (originSettlement.exterminateTargetStructure == targetStructure) {
+        //    originSettlement.SetExterminateTarget(null);
+        //}
         if (Messenger.eventTable.ContainsKey(StructureSignals.STRUCTURE_DESTROYED)) {
             Messenger.RemoveListener<LocationStructure>(StructureSignals.STRUCTURE_DESTROYED, OnStructureDestroyed);
         }
@@ -86,13 +87,10 @@ public class ExterminationPartyQuest : PartyQuest {
     private void ProcessExterminationOrDisbandment() {
         if (assignedParty != null && assignedParty.isActive && assignedParty.currentQuest == this) {
             Faction faction = assignedParty.partySettlement.owner;
-            if (targetStructure == null || targetStructure.hasBeenDestroyed || targetStructure.tiles.Count <= 0 || !targetStructure.settlementLocation.HasResidentThatMeetsCriteria(resident => !resident.isDead
-                    && !resident.partyComponent.IsAMemberOfParty(assignedParty)
-                    && !resident.isBeingSeized
-                    && resident.gridTileLocation != null
-                    && resident.gridTileLocation.IsPartOfSettlement(targetStructure.settlementLocation)
-                    && (resident.faction == null || faction == null || faction.IsHostileWith(resident.faction))
-                    && !resident.traitContainer.HasTrait("Hibernating"))) {
+            if (targetStructure == null 
+                || targetStructure.hasBeenDestroyed 
+                || targetStructure.tiles.Count <= 0 
+                || !targetStructure.settlementLocation.HasResidentForExterminationPartyQuest(targetStructure.settlementLocation, faction, assignedParty)) {
                 assignedParty.GoBackHomeAndEndQuest();
             } else {
                 StartExterminationTimer();
@@ -122,18 +120,18 @@ public class ExterminationPartyQuest : PartyQuest {
 
     #region Extermination Timer
     private void StartExterminationTimer() {
-        if (!isExterminating) {
-            isExterminating = true;
-            GameDate dueDate = GameManager.Instance.Today();
-            dueDate.AddTicks(GameManager.Instance.GetTicksBasedOnHour(1) + GameManager.Instance.GetTicksBasedOnMinutes(30));
-            SchedulingManager.Instance.AddEntry(dueDate, DoneExterminationTimer, this);
-        }
+        //if (!isExterminating) {
+        //    isExterminating = true;
+        //    GameDate dueDate = GameManager.Instance.Today();
+        //    dueDate.AddTicks(GameManager.Instance.GetTicksBasedOnHour(1) + GameManager.Instance.GetTicksBasedOnMinutes(30));
+        //    SchedulingManager.Instance.AddEntry(dueDate, DoneExterminationTimer, this);
+        //}
     }
     private void DoneExterminationTimer() {
-        if (isExterminating) {
-            isExterminating = false;
-            ProcessExterminationOrDisbandment();
-        }
+        //if (isExterminating) {
+        //    isExterminating = false;
+        //    ProcessExterminationOrDisbandment();
+        //}
     }
     #endregion
 
@@ -163,14 +161,14 @@ public class ExterminationPartyQuest : PartyQuest {
 public class SaveDataExterminationPartyQuest : SaveDataPartyQuest {
     public string targetStructure;
     //public string waitingArea;
-    public bool isExterminating;
+    //public bool isExterminating;
     public string originSettlement;
 
     #region Overrides
     public override void Save(PartyQuest data) {
         base.Save(data);
         if (data is ExterminationPartyQuest subData) {
-            isExterminating = subData.isExterminating;
+            //isExterminating = subData.isExterminating;
 
             if (subData.targetStructure != null) {
                 targetStructure = subData.targetStructure.persistentID;

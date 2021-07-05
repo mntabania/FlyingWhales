@@ -8,6 +8,7 @@ using Inner_Maps;
 using Inner_Maps.Location_Structures;
 using Locations.Settlements;
 using Logs;
+using Object_Pools;
 using UnityEngine.Assertions;
 using UnityEngine.Profiling;
 
@@ -46,12 +47,16 @@ public class InterruptComponent : CharacterComponent {
         Interrupt triggeredInterrupt = InteractionManager.Instance.GetInterruptData(interrupt);
         if (!triggeredInterrupt.isSimulateneous) {
             if (isInterrupted) {
+#if DEBUG_LOG
                 owner.logComponent.PrintLogIfActive(
                     $"Cannot trigger interrupt {interrupt} because there is already a current interrupt: {currentInterrupt.name}");
+#endif
                 return false;
             }
+#if DEBUG_LOG
             owner.logComponent.PrintLogIfActive(
                 $"{owner.name} triggered a non simultaneous interrupt: {triggeredInterrupt.name}");
+#endif
 
             InterruptHolder interruptHolder = ObjectPoolManager.Instance.CreateNewInterrupt();
             interruptHolder.Initialize(triggeredInterrupt, owner, targetPOI, identifier, reason);
@@ -65,7 +70,7 @@ public class InterruptComponent : CharacterComponent {
                 owner.marker.SetHasFleePath(false);
             }
             if (currentInterrupt.interrupt.doesDropCurrentJob) {
-                owner.currentJob?.CancelJob(false);
+                owner.currentJob?.CancelJob();
             }
             if (currentInterrupt.interrupt.doesStopCurrentAction) {
                 owner.currentJob?.StopJobNotDrop();
@@ -85,12 +90,9 @@ public class InterruptComponent : CharacterComponent {
         return true;
     }
     private void TriggeredSimultaneousInterrupt(Interrupt interrupt, IPointOfInterest targetPOI, string identifier, ActualGoapNode actionThatTriggered, string reason) {
+#if DEBUG_LOG
         owner.logComponent.PrintLogIfActive($"{owner.name} triggered a simultaneous interrupt: {interrupt.name}");
-        //if (hasTriggeredSimultaneousInterrupt) {
-        //    //character is currently running a simultaneous interrupt.
-        //    AddPendingSimultaneousInterrupt(() => TriggeredSimultaneousInterrupt(interrupt, targetPOI, identifier, actionThatTriggered, reason));
-        //    return;
-        //}
+#endif
         InterruptHolder newTriggeredInterrupt = ObjectPoolManager.Instance.CreateNewInterrupt();
         newTriggeredInterrupt.Initialize(interrupt, owner, targetPOI, identifier, reason);
         ExecuteStartInterrupt(newTriggeredInterrupt, actionThatTriggered);
@@ -111,24 +113,10 @@ public class InterruptComponent : CharacterComponent {
         currentSimultaneousInterruptDuration = 0;
         if (!alreadyHasSimultaneousInterrupt) {
             Messenger.AddListener(Signals.TICK_ENDED, PerTickSimultaneousInterrupt);
-        } 
-        //else {
-        //    if (owner.marker) {
-        //        owner.marker.UpdateActionIcon();
-        //    }
-        //}
+        }
     }
-    //private void AddPendingSimultaneousInterrupt(System.Action pendingSimultaneousInterrupt) {
-    //    _pendingSimultaneousInterrupts.Add(pendingSimultaneousInterrupt);
-    //}
-    //private void TryExecutePendingSimultaneousInterrupt() {
-    //    if (_pendingSimultaneousInterrupts.Count > 0) {
-    //        _pendingSimultaneousInterrupts.First().Invoke();
-    //        _pendingSimultaneousInterrupts.RemoveAt(0);
-    //    }
-    //}
     private void ExecuteStartInterrupt(InterruptHolder interruptHolder, ActualGoapNode actionThatTriggered) {
-        Log effectLog = GameManager.CreateNewLog();
+        Log effectLog = null;
         Assert.IsNotNull(interruptHolder, $"Interrupt Holder of {owner.name} is null!");
         Assert.IsNotNull(interruptHolder.interrupt, $"Interrupt in interrupt holder {interruptHolder} used by {owner.name} is null!");
         INTERRUPT interruptType = interruptHolder.interrupt.type;
@@ -138,16 +126,13 @@ public class InterruptComponent : CharacterComponent {
         Assert.IsNotNull(interruptHolder, $"Interrupt Holder of {owner.name} became null after executing start effect of {interruptType.ToString()}!");
         Assert.IsNotNull(interruptHolder.interrupt, $"Interrupt in interrupt holder {interruptHolder} used by {owner.name} became null after executing start effect of {interruptType.ToString()}!");
         
-        if(!effectLog.hasValue) {
+        if(effectLog == null || !effectLog.hasValue) {
             effectLog = interruptHolder.interrupt.CreateEffectLog(owner, interruptHolder.target);
         }
-        if (effectLog.hasValue && interruptHolder.interrupt.isIntel) {
+        if (effectLog != null && interruptHolder.interrupt.isIntel) {
             effectLog.AddTag(LOG_TAG.Intel);
         }
         interruptHolder.SetEffectLog(effectLog);
-        //if (owner.marker) {
-        //    owner.marker.UpdateActionIcon();
-        //}
         InnerMapManager.Instance.FaceTarget(owner, interruptHolder.target);
     }
     public void OnTickEnded() {
@@ -163,52 +148,34 @@ public class InterruptComponent : CharacterComponent {
         }
     }
     private void PerTickSimultaneousInterrupt() {
+#if DEBUG_PROFILER
         Profiler.BeginSample($"Per Tick Simultaneous Interrupt");
+#endif
         if (hasTriggeredSimultaneousInterrupt) {
             currentSimultaneousInterruptDuration++;
             if (currentSimultaneousInterruptDuration > 2) {
                 Messenger.RemoveListener(Signals.TICK_ENDED, PerTickSimultaneousInterrupt);
                 SetSimultaneousInterrupt(null);
-                //if (owner.marker) {
-                //    owner.marker.UpdateActionIcon();
-                //}
-                //TryExecutePendingSimultaneousInterrupt();
             }
         }
+#if DEBUG_PROFILER
         Profiler.EndSample();
+#endif
     }
-    //public void ForceEndAllInterrupt() {
-    //    ForceEndNonSimultaneousInterrupt();
-    //    ForceEndSimultaneousInterrupt();
-    //}
     public void ForceEndNonSimultaneousInterrupt() {
         if (isInterrupted) {
             currentInterrupt.interrupt.OnForceEndInterrupt(currentInterrupt);
             EndInterrupt();
         }
     }
-    //public void ForceEndSimultaneousInterrupt() {
-    //    if (hasTriggeredSimultaneousInterrupt) {
-    //        triggeredSimultaneousInterrupt = null;
-    //        if (owner.marker) {
-    //            owner.marker.UpdateActionIcon();
-    //        }
-    //    }
-    //}
     private void EndInterrupt() { //bool shouldAddLog = false
         if (currentInterrupt == null || currentInterrupt.interrupt == null) {
             //Will not process anymore if there is no current interrupt, this means that the interrupt has already been ended before and has returned to the object pool
             //This can happen if the actor is a minion and the ExecuteInterruptEndEffect triggers the death of the actor
             //In this manner, the minion actor will have already ended the interrupt during death because we the ForceEndNonSimultaneousInterrupt is being called when a minion dies/unsummoned
             //so when the EndInterrupt is called again after the ExecuteInterruptEndEffect call, the current interrupt is already null
-            //if (owner.marker) {
-            //    owner.marker.UpdateActionIcon();
-            //}
             return;
         }
-        //if (shouldAddLog) {
-        //    AddEffectLog(currentInterrupt);
-        //}
         bool willCheckInVision = currentInterrupt.interrupt.duration > 0;
         Interrupt finishedInterrupt = currentInterrupt.interrupt;
         SetNonSimultaneousInterrupt(null);
@@ -236,10 +203,10 @@ public class InterruptComponent : CharacterComponent {
                 }
             }
         }
-        //if (owner.marker) {
-        //    owner.marker.UpdateActionIcon();
-        //}
-        thoughtBubbleLog = default;
+        if (thoughtBubbleLog != null) {
+            LogPool.Release(thoughtBubbleLog);
+        }
+        thoughtBubbleLog = null;
         Messenger.Broadcast(CharacterSignals.INTERRUPT_FINISHED, finishedInterrupt.type, owner);
     }
     private void CreateThoughtBubbleLog(Interrupt interrupt) {
@@ -251,19 +218,10 @@ public class InterruptComponent : CharacterComponent {
         }
     }
     private void AddEffectLog(InterruptHolder interruptHolder) {
-        if(interruptHolder.effectLog.hasValue) {
+        if(interruptHolder.effectLog != null) {
             if (interruptHolder.interrupt.ShouldAddLogs(interruptHolder) || interruptHolder.interrupt.shouldShowNotif) {
                 interruptHolder.effectLog.AddLogToDatabase();
             }
-            // if (interruptHolder.interrupt.shouldAddLogs) {
-            //     // if (owner != interruptHolder.target) {
-            //     //     interruptHolder.effectLog.AddLogToInvolvedObjects();
-            //     // } else {
-            //     //     owner.logComponent.AddHistory(interruptHolder.effectLog);
-            //     //     interruptHolder.effectLog.AddLogToSpecificObjects(LOG_IDENTIFIER.FACTION_1,
-            //     //         LOG_IDENTIFIER.FACTION_2, LOG_IDENTIFIER.FACTION_3);
-            //     // }    
-            // }
             if (interruptHolder.interrupt.shouldShowNotif) {
                 if (interruptHolder.interrupt.type == INTERRUPT.Create_Party || interruptHolder.interrupt.type == INTERRUPT.Mental_Break) {
                     PlayerManager.Instance.player.ShowNotificationFromPlayer(interruptHolder.effectLog);
@@ -277,34 +235,8 @@ public class InterruptComponent : CharacterComponent {
                 }
             }
         }
-        //if (LocalizationManager.Instance.HasLocalizedValue("Interrupt", currentInterrupt.name, "effect")) {
-        //    Log effectLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Interrupt", currentInterrupt.name, "effect");
-        //    effectLog.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-        //    effectLog.AddToFillers(currentTargetPOI, currentTargetPOI.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-        //    effectLog.AddLogToInvolvedObjects();
-        //    PlayerManager.Instance.player.ShowNotificationFrom(owner, effectLog);
-        //} 
-        //else {
-        //    Debug.LogWarning(currentInterrupt.name + " interrupt does not have effect log!");
-        //}
     }
-    //private void CreateAndAddEffectLog(Interrupt interrupt, IPointOfInterest target) {
-    //    if (LocalizationManager.Instance.HasLocalizedValue("Interrupt", interrupt.name, "effect")) {
-    //        Log effectLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Interrupt", interrupt.name, "effect");
-    //        effectLog.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-    //        effectLog.AddToFillers(target, target.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-    //        effectLog.AddLogToInvolvedObjects();
-    //        PlayerManager.Instance.player.ShowNotificationFrom(owner, effectLog);
-    //    }
-    //}
-    //public void SetIdentifier(string text, bool isSimultaneous) {
-    //    if (isSimultaneous) {
-    //        simultaneousIdentifier = text;
-    //    } else {
-    //        identifier = text;
-    //    }
-    //}
-    public void SetNonSimultaneousInterrupt(InterruptHolder interrupt) {
+    private void SetNonSimultaneousInterrupt(InterruptHolder interrupt) {
         if (currentInterrupt != interrupt) {
             if (currentInterrupt != null) {
                 ObjectPoolManager.Instance.ReturnInterruptToPool(currentInterrupt);
@@ -315,7 +247,7 @@ public class InterruptComponent : CharacterComponent {
             }
         }
     }
-    public void SetSimultaneousInterrupt(InterruptHolder interrupt) {
+    private void SetSimultaneousInterrupt(InterruptHolder interrupt) {
         if(triggeredSimultaneousInterrupt != interrupt) {
             if(triggeredSimultaneousInterrupt != null) {
                 ObjectPoolManager.Instance.ReturnInterruptToPool(triggeredSimultaneousInterrupt);
@@ -331,16 +263,16 @@ public class InterruptComponent : CharacterComponent {
             ForceEndNonSimultaneousInterrupt();
         }
     }
-    #endregion
+#endregion
 
-    #region Miscellaneous
+#region Miscellaneous
     public void SetRaidTargetSettlement(BaseSettlement settlement) {
         raidTargetSettlement = settlement;
     }
-    #endregion
+#endregion
 
-    #region Necromancer
-    public bool NecromanticTranform() {
+#region Necromancer
+    public bool NecromanticTransform() {
         if (CanNecromanticTransform()) {
             if (owner.HasItem("Necronomicon")) {
                 return owner.interruptComponent.TriggerInterrupt(INTERRUPT.Necromantic_Transformation, owner);
@@ -348,15 +280,15 @@ public class InterruptComponent : CharacterComponent {
         }
         return false;
     }
-    public bool CanNecromanticTransform() {
+    private bool CanNecromanticTransform() {
         if(CharacterManager.Instance.necromancerInTheWorld == null && owner.characterClass.className != "Necromancer") {
             return owner.traitContainer.HasTrait("Evil", "Treacherous", "Cultist");
         }
         return false; 
     }
-    #endregion
+#endregion
 
-    #region Loading
+#region Loading
     public void LoadReferences(SaveDataInterruptComponent data) {
         if (!string.IsNullOrEmpty(data.currentInterruptID)) {
             currentInterrupt = DatabaseManager.Instance.interruptDatabase.GetInterruptByPersistentID(data.currentInterruptID);
@@ -367,7 +299,7 @@ public class InterruptComponent : CharacterComponent {
             Messenger.AddListener(Signals.TICK_ENDED, PerTickSimultaneousInterrupt);
         }
     }
-    #endregion
+#endregion
 }
 
 [System.Serializable]
@@ -377,7 +309,7 @@ public class SaveDataInterruptComponent : SaveData<InterruptComponent> {
     public string triggeredSimultaneousInterruptID;
     public int currentSimultaneousInterruptDuration;
 
-    #region Overrides
+#region Overrides
     public override void Save(InterruptComponent data) {
         currentDuration = data.currentDuration;
         currentSimultaneousInterruptDuration = data.currentSimultaneousInterruptDuration;
@@ -395,5 +327,5 @@ public class SaveDataInterruptComponent : SaveData<InterruptComponent> {
         InterruptComponent component = new InterruptComponent(this);
         return component;
     }
-    #endregion
+#endregion
 }

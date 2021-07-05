@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Inner_Maps.Location_Structures;
 using Inner_Maps;
+using UtilityScripts;
 
 public class DropItem : GoapAction {
 
@@ -35,8 +36,10 @@ public class DropItem : GoapAction {
         SetState("Drop Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
+#if DEBUG_LOG
         string costLog = $"\n{name} {target.nameWithID}: +10(Constant)";
         actor.logComponent.AppendCostLog(costLog);
+#endif
         return 10;
     }
     public override LocationStructure GetTargetStructure(ActualGoapNode node) {
@@ -67,20 +70,28 @@ public class DropItem : GoapAction {
         GoapActionInvalidity goapActionInvalidity = new GoapActionInvalidity(defaultTargetMissing, stateName, "target_unavailable");
         return goapActionInvalidity;
     }
-    #endregion
+#endregion
 
-    #region Preconditions
+#region Preconditions
     private bool IsItemInInventory(Character actor, IPointOfInterest poiTarget, OtherData[] otherData, JOB_TYPE jobType) {
         return actor.HasItem(poiTarget as TileObject);
     }
-    #endregion
+#endregion
 
-    #region State Effects
+#region State Effects
     public void AfterDropSuccess(ActualGoapNode goapNode) {
         //if current grid location is occupied and cannot get any unoccupied tile from current location, then just let the object disappear
         LocationGridTile tile = goapNode.actor.gridTileLocation;
-        if(tile != null && tile.objHere != null) {
-            tile = goapNode.actor.gridTileLocation.GetFirstNearestTileFromThisWithNoObject();
+        LocationStructure targetStructure = GetTargetStructure(goapNode);
+        if(tile != null && tile.tileObjectComponent.objHere != null) {
+            tile = goapNode.actor.gridTileLocation.GetFirstNearestTileFromThisWithNoObject(thisStructureOnly: true);
+            if (tile == null) {
+                //in case no tile was found inside structure
+                tile = goapNode.actor.gridTileLocation.GetFirstNearestTileFromThisWithNoObject();    
+            }
+        }
+        if(targetStructure != null && tile.structure != targetStructure && targetStructure.passableTiles.Count > 0) {
+            tile = CollectionUtilities.GetRandomElement(targetStructure.passableTiles);        
         }
         bool addToLocation = tile != null;
         goapNode.actor.UncarryPOI(goapNode.poiTarget as TileObject, addToLocation: addToLocation, dropLocation: tile);
@@ -88,7 +99,7 @@ public class DropItem : GoapAction {
         //    goapNode.actor.behaviourComponent.SetIsDefending(false, null);
         //}
     }
-    #endregion
+#endregion
 
     private bool IsTargetMissingOverride(ActualGoapNode node) {
         Character actor = node.actor;
@@ -107,6 +118,9 @@ public class DropItem : GoapAction {
         if (actionLocationType == ACTION_LOCATION_TYPE.NEAR_TARGET) {
             //if the action type is NEAR_TARGET, then check if the actor is near the target, if not, this action is invalid.
             if (actor.gridTileLocation != poiTarget.gridTileLocation && actor.gridTileLocation.IsNeighbour(poiTarget.gridTileLocation, true) == false) {
+                if (actor.hasMarker && actor.marker.IsCharacterInLineOfSightWith(poiTarget)) {
+                    return false;
+                }
                 return true;
             }
         } else if (actionLocationType == ACTION_LOCATION_TYPE.NEAR_OTHER_TARGET) {

@@ -35,9 +35,7 @@ public class ThreatParticleEffect : MonoBehaviour {
         }
     }
     private void OnInnerMapClosed(Region region) {
-        gameObject.transform.SetParent(WorldMapCameraMove.Instance.transform);
         gameObject.transform.localPosition = Vector3.zero;
-        UpdatePosition(WorldMapCameraMove.Instance.mainCamera);
         if (_isPlaying) {
             StopEffect();
             PlayEffect();
@@ -81,7 +79,7 @@ public class ThreatParticleEffect : MonoBehaviour {
     
     private void CheckEffectState() {
         if (QuestManager.Instance.IsQuestActive<DivineIntervention>() 
-            || PlayerManager.Instance.player.threatComponent.threat >= ThreatComponent.MAX_THREAT) {
+            || PlayerManager.Instance.player.retaliationComponent.isRetaliating) { //|| PlayerManager.Instance.player.threatComponent.threat >= ThreatComponent.MAX_THREAT
             //play effect if threat is at max or counterattack quest is active or divine intervention quest is active
             PlayEffect();
         } else {

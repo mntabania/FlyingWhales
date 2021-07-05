@@ -12,6 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 88e6d539796c490aa0efea676d6fae59, type: 3}
   m_Name: Knight Data
   m_EditorClassIdentifier: 
+  combatBehaviourType: 0
+  combatSpecialSkillType: 0
+  workStructureType: 21
+  summonCost: 50
+  portraitSprite: {fileID: 0}
   defaultSprites:
     stillSprite: {fileID: 0}
     animationSprites: []
@@ -58,3 +63,24 @@ MonoBehaviour:
       - {fileID: 21300000, guid: a8160f8e666925d4c8703d2f41c566d2, type: 3}
       - {fileID: 21300000, guid: 03313112cafd86646b194931eeb611fa, type: 3}
       - {fileID: 21300000, guid: 88262f59ba48124499bfe7cf71d86fc1, type: 3}
+  characterSkillUpdateData:
+    m_fireResistanceBonus: 0
+    m_earthResistanceBonus: 0
+    m_windResistanceBonus: 0
+    m_waterResistanceBonus: 0
+    m_allElementalresistanceBonus: 12
+    m_poisonResistanceBonus: 0
+    m_iceResistanceBonus: 0
+    m_electricResistanceBonus: 0
+    m_allSecondaryresistanceBonus: 8
+    m_piercingBonus: 15
+    m_mentalResistanceBonus: 8
+    m_physicalResistanceBonus: 20
+  craftableWeapons: 01010000b7000000b8000000be000000bf000000
+  craftableArmors: 05010000d0000000bc000000d1000000d3000000d9000000da000000db000000dc000000
+  craftableAccessories: ba000000
+  droppableItems:
+  - item: 13
+    weight: 100
+  - item: 189
+    weight: 10

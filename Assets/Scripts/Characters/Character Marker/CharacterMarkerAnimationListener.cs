@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Inner_Maps;
+using UtilityScripts;
 
 [ExecuteInEditMode]
 public class CharacterMarkerAnimationListener : MonoBehaviour {
@@ -14,19 +15,22 @@ public class CharacterMarkerAnimationListener : MonoBehaviour {
     
     public void OnAttackExecuted() {
         if (parentMarker.character.stateComponent.currentState is CombatState combatState && combatState.isExecutingAttack) {
+#if DEBUG_LOG
             Debug.Log($"{parentMarker.character.name} executed attack.");
+#endif
             if (parentMarker.character.characterClass.rangeType == RANGE_TYPE.RANGED) {
                 CreateProjectile(combatState.currentClosestHostile, combatState);
                 //combatState.isExecutingAttack = false;
             } else {
                 //combatState.isExecutingAttack = false;
                 combatState.OnAttackHit(combatState.currentClosestHostile);
+                if (parentMarker.character == null) { return; } 
                 if (parentMarker.character is Summon) {
                     AudioManager.Instance.TryCreateAudioObject(AudioManager.Instance.GetRandomPunchAudio(),
                         parentMarker.character.gridTileLocation, 1, false);    
                 } else {
                     switch (parentMarker.character.characterClass.className) {
-                        case "Craftsman":
+                        case "Crafter":
                         case "Miner":
                             AudioManager.Instance.TryCreateAudioObject(AudioManager.Instance.GetRandomBluntWeaponAudio(),
                                 parentMarker.character.gridTileLocation, 1, false);
@@ -94,27 +98,39 @@ public class CharacterMarkerAnimationListener : MonoBehaviour {
             }
             if (parentMarker.character.stateComponent.currentState is CombatState combatState) {
                 if (projectile.isAOE) {
-                    List<LocationGridTile> tiles = target.gridTileLocation.GetTilesInRadius(1, 0, true, true); //radius
+                    List<LocationGridTile> tiles = RuinarchListPool<LocationGridTile>.Claim();
+                    target.gridTileLocation.PopulateTilesInRadius(tiles, 1, 0, true, true); //radius
                     for (int i = 0; i < tiles.Count; i++) {
                         LocationGridTile tile = tiles[i];
                         tile.PerformActionOnTraitables((traitable) => combatState.OnAttackHit(traitable == parentMarker.character ? null : traitable));
                     }
+                    RuinarchListPool<LocationGridTile>.Release(tiles);
                 } else {
                     combatState.OnAttackHit(target);
                 }
             } else if (target != null) {
-                string attackSummary = $"{parentMarker.character.name} hit {target.name}, outside of combat state";
+                string attackSummary = string.Empty;
+#if DEBUG_LOG
+                attackSummary = $"{parentMarker.character.name} hit {target.name}, outside of combat state";
+#endif
                 if (projectile.isAOE) {
-                    List<LocationGridTile> tiles = target.gridTileLocation.GetTilesInRadius(1, 0, true, true); //radius
+                    List<LocationGridTile> tiles = RuinarchListPool<LocationGridTile>.Claim();
+                    target.gridTileLocation.PopulateTilesInRadius(tiles, 1, 0, true, true); //radius
                     for (int i = 0; i < tiles.Count; i++) {
                         LocationGridTile tile = tiles[i];
                         tile.PerformActionOnTraitables((traitable) => traitable.OnHitByAttackFrom(traitable == parentMarker.character ? null : parentMarker.character, fromState, ref attackSummary));
                     }
+                    RuinarchListPool<LocationGridTile>.Release(tiles);
                 } else {
                     target.OnHitByAttackFrom(parentMarker.character, fromState, ref attackSummary);
                 }
+#if DEBUG_LOG
                 parentMarker.character.logComponent.PrintLogIfActive(attackSummary);
+#endif
             }    
         }
+    }
+    public void Reset() {
+        isExecutingAttack = false;
     }
 }

@@ -27,12 +27,15 @@ public class Revenant : Summon {
     public override void Initialize() {
         base.Initialize();
         behaviourComponent.ChangeDefaultBehaviourSet(CharacterManager.Revenant_Behaviour);
+        isWildMonster = false;
     }
     public override void LoadReferences(SaveDataCharacter data) {
         if (data is SaveDataRevenant savedData) {
             for (int i = 0; i < savedData.betrayers.Count; i++) {
                 Character character = CharacterManager.Instance.GetCharacterByPersistentID(savedData.betrayers[i]);
-                betrayers.Add(character);
+                if (character != null) {
+                    betrayers.Add(character);
+                }
             }
         }
         base.LoadReferences(data);

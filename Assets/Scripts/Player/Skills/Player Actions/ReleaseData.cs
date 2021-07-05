@@ -7,7 +7,7 @@ using Logs;
 public class ReleaseData : PlayerAction {
     public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.RELEASE;
     public override string name => "Release";
-    public override string description => "This Action releases a character that has been Restrained, Ensnared, Frozen or Enslaved.";
+    public override string description => "This Ability releases a character that has been Restrained, Ensnared, Frozen or Enslaved.";
     public ReleaseData() : base() {
         targetTypes = new SPELL_TARGET[] { SPELL_TARGET.CHARACTER };
     }
@@ -40,7 +40,8 @@ public class ReleaseData : PlayerAction {
     }
     public override bool IsValid(IPlayerActionTarget target) {
         if (target is Character targetCharacter) {
-            return targetCharacter.traitContainer.HasTrait("Restrained", "Ensnared", "Frozen", "Enslaved");
+            bool isValid = base.IsValid(target);
+            return isValid && targetCharacter.traitContainer.HasTrait("Restrained", "Ensnared", "Frozen", "Enslaved");
         }
         return false;
     }

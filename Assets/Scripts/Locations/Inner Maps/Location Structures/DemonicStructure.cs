@@ -1,18 +1,27 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System;
+using System.Linq;
 using UnityEngine;
+using UnityEngine.Assertions;
 using Inner_Maps;
+using Inner_Maps.Location_Structures;
+using BayatGames.SaveGameFree.Types;
 using Debug = System.Diagnostics.Debug;
+
 namespace Inner_Maps.Location_Structures {
     public class DemonicStructure : LocationStructure {
-        
+
         public LocationStructureObject structureObj {get; private set;}
         public HashSet<Character> currentAttackers { get; }
-        
+        public Character preOccupiedBy { get; private set; }
+        public string templateName { get; private set; } //Do not save this since this will be filled up automatically upon loading in SetStructureObject
+        public Vector3 structureObjectWorldPos { get; private set; } //Do not save this since this will be filled up automatically upon loading in SetStructureObject
+
         #region Getters
         public override Vector2 selectableSize => structureObj.size;
         public override Type serializedData => typeof(SaveDataDemonicStructure);
+        public virtual SUMMON_TYPE housedMonsterType => SUMMON_TYPE.None;
         #endregion
 
         protected DemonicStructure(STRUCTURE_TYPE structureType, Region location) : base(structureType, location) {
@@ -24,26 +33,43 @@ namespace Inner_Maps.Location_Structures {
         }
 
         #region Overrides
-        protected override void DestroyStructure() {
+        protected override void DestroyStructure(Character p_responsibleCharacter = null, bool isPlayerSource = false) {
             if (hasBeenDestroyed) {
                 return;
             }
             InnerMapManager.Instance.RemoveWorldKnownDemonicStructure(this);
-            base.DestroyStructure();
+            base.DestroyStructure(p_responsibleCharacter);
         }
-        protected override void AfterStructureDestruction() {
+        protected override void AfterStructureDestruction(Character p_responsibleCharacter = null) {
             structureObj.OnOwnerStructureDestroyed(region.innerMap); 
-            HexTile hexTile = occupiedHexTile.hexTileOwner;
-            base.AfterStructureDestruction();
-            hexTile.RemoveCorruption();
-            CharacterManager.Instance.SetNewCurrentDemonicStructureTargetOfAngels();
+            //Area area = occupiedArea;
+            base.AfterStructureDestruction(p_responsibleCharacter);
+            //area.RemoveCorruption();
+            //CharacterManager.Instance.SetNewCurrentDemonicStructureTargetOfAngels();
+            for (int i = 0; i < currentAttackers.Count; i++) {
+                Character attacker = currentAttackers.ElementAt(i);
+                if (attacker.race == RACE.ANGEL) {
+                    PlayerManager.Instance.player.retaliationComponent.AddDestroyedStructureByAngels();
+                    break;
+                }
+            }
             currentAttackers.Clear();
+            if (structureType != STRUCTURE_TYPE.THE_PORTAL) {
+                DemonicStructurePlayerSkill skill = PlayerSkillManager.Instance.GetDemonicStructureSkillData(structureType);
+                if(skill.isInUse) {
+                    int numberOfActiveStructures = PlayerManager.Instance.player.playerSettlement.GetStructureCount(structureType);
+                    if (numberOfActiveStructures < skill.maxCharges) {
+                        skill.AdjustCharges(1);
+                    }
+                }
+            }
             Messenger.RemoveListener<Character, CharacterBehaviourComponent>(CharacterSignals.CHARACTER_REMOVED_BEHAVIOUR, OnCharacterRemovedBehaviour);
-            Messenger.Broadcast(SpellSignals.RELOAD_PLAYER_ACTIONS, this as IPlayerActionTarget);
+            Messenger.Broadcast(PlayerSkillSignals.RELOAD_PLAYER_ACTIONS, this as IPlayerActionTarget);
         }
         public override void ConstructDefaultActions() {
             base.ConstructDefaultActions();
             AddPlayerAction(PLAYER_SKILL_TYPE.REPAIR);
+            AddPlayerAction(PLAYER_SKILL_TYPE.DESTROY_STRUCTURE);
         }
         #endregion
 
@@ -51,17 +77,22 @@ namespace Inner_Maps.Location_Structures {
         public override void LoadReferences(SaveDataLocationStructure saveDataLocationStructure) {
             base.LoadReferences(saveDataLocationStructure);
             SaveDataDemonicStructure demonicStructure = saveDataLocationStructure as SaveDataDemonicStructure;
+            if (!string.IsNullOrEmpty(demonicStructure.preOccupiedBy)) {
+                preOccupiedBy = CharacterManager.Instance.GetCharacterByPersistentID(demonicStructure.preOccupiedBy);
+            }
             // activeSnatchJobs = demonicStructure.activeSnatchJobs;
         }
         #endregion
 
         #region Listeners
         protected override void SubscribeListeners() {
-            Messenger.AddListener<TileObject, int>(TileObjectSignals.TILE_OBJECT_DAMAGED, OnObjectDamaged);
+            Messenger.AddListener<TileObject, int, bool>(TileObjectSignals.TILE_OBJECT_DAMAGED, OnObjectDamaged);
+            Messenger.AddListener<TileObject, int, Character, bool>(TileObjectSignals.TILE_OBJECT_DAMAGED_BY, OnObjectDamagedBy);
             Messenger.AddListener<TileObject, int>(TileObjectSignals.TILE_OBJECT_REPAIRED, OnObjectRepaired);
         }
         protected override void UnsubscribeListeners() {
-            Messenger.RemoveListener<TileObject, int>(TileObjectSignals.TILE_OBJECT_DAMAGED, OnObjectDamaged);
+            Messenger.RemoveListener<TileObject, int, bool>(TileObjectSignals.TILE_OBJECT_DAMAGED, OnObjectDamaged);
+            Messenger.RemoveListener<TileObject, int, Character, bool>(TileObjectSignals.TILE_OBJECT_DAMAGED_BY, OnObjectDamagedBy);
             Messenger.RemoveListener<TileObject, int>(TileObjectSignals.TILE_OBJECT_REPAIRED, OnObjectRepaired);
         }
         private bool DoesSnatchJobTargetThisStructure(JobQueueItem job) {
@@ -130,12 +161,15 @@ namespace Inner_Maps.Location_Structures {
             }
             return count;
         }
+        public void SetPreOccupiedBy(Character p_character) {
+            preOccupiedBy = p_character;
+        }
         #endregion
 
         #region HP
         public override void OnTileRepaired(LocationGridTile tile, int amount) {
             if (hasBeenDestroyed) { return; }
-            if (tile.genericTileObject.currentHP >= tile.genericTileObject.maxHP) {
+            if (tile.tileObjectComponent.genericTileObject.currentHP >= tile.tileObjectComponent.genericTileObject.maxHP) {
                 // ReSharper disable once Unity.NoNullPropagation
                 structureObj?.ApplyGroundTileAssetForTile(tile);    
                 tile.CreateSeamlessEdgesForSelfAndNeighbours();
@@ -146,6 +180,8 @@ namespace Inner_Maps.Location_Structures {
         #region Structure Object
         public virtual void SetStructureObject(LocationStructureObject structureObj) {
             this.structureObj = structureObj;
+            templateName = structureObj.name;
+            structureObjectWorldPos = structureObj.transform.position;
             Vector3 position = structureObj.transform.position;
             position.x -= 0.5f;
             position.y -= 0.5f;
@@ -161,22 +197,86 @@ namespace Inner_Maps.Location_Structures {
                 Messenger.Broadcast(CharacterSignals.CHARACTER_HIT_DEMONIC_STRUCTURE, p_attacker, this);
                 if (wasEmptyBeforeAdding) {
                     Messenger.AddListener<Character, CharacterBehaviourComponent>(CharacterSignals.CHARACTER_REMOVED_BEHAVIOUR, OnCharacterRemovedBehaviour);
+                    Messenger.AddListener<Character>(CharacterSignals.CHARACTER_MARKER_DESTROYED, OnCharacterMarkerDestroyed);
                 }
+#if DEBUG_LOG
                 UnityEngine.Debug.Log($"Added attacker {p_attacker.name} to {this.name}");
+#endif
             }
         }
         private void RemoveAttacker(Character p_attacker) {
-            currentAttackers.Remove(p_attacker);
-            UnityEngine.Debug.Log($"Removed attacker {p_attacker.name} to {this.name}");
-            if (currentAttackers.Count == 0) {
-                Messenger.RemoveListener<Character, CharacterBehaviourComponent>(CharacterSignals.CHARACTER_REMOVED_BEHAVIOUR, OnCharacterRemovedBehaviour);
+            if (currentAttackers.Remove(p_attacker)) {
+#if DEBUG_LOG
+                UnityEngine.Debug.Log($"Removed attacker {p_attacker.name} to {this.name}");
+#endif
+                if (currentAttackers.Count == 0) {
+                    Messenger.RemoveListener<Character, CharacterBehaviourComponent>(CharacterSignals.CHARACTER_REMOVED_BEHAVIOUR, OnCharacterRemovedBehaviour);
+                    Messenger.RemoveListener<Character>(CharacterSignals.CHARACTER_MARKER_DESTROYED, OnCharacterMarkerDestroyed);
+                }
             }
         }
         private void OnCharacterRemovedBehaviour(Character p_character, CharacterBehaviourComponent p_removedBehaviour) {
-            if (p_removedBehaviour is AttackDemonicStructureBehaviour) {
+            if (p_removedBehaviour is AttackDemonicStructureBehaviour || p_removedBehaviour is DemonRescueBehaviour) {
                 RemoveAttacker(p_character);    
             }
         }
-        #endregion
+        private void OnCharacterMarkerDestroyed(Character p_character) {
+            RemoveAttacker(p_character);
+        }
+#endregion
+        
+#region IPartyTargetDestination
+        public override bool IsAtTargetDestination(Character character) {
+            bool isAtTargetDestination = base.IsAtTargetDestination(character);
+            if (!isAtTargetDestination) {
+                return CanSeeObjectLocatedHere(character);
+            }
+            return true;
+        }
+#endregion
+
+        public bool CanSeeObjectLocatedHere(Character p_character) {
+            if (p_character.hasMarker) {
+                //since characters usually cannot directly step on a demonic structure,
+                //consider character as arrived if it has a tile object in its vision that is at the target structure
+                for (int i = 0; i < p_character.marker.inVisionTileObjects.Count; i++) {
+                    TileObject tileObject = p_character.marker.inVisionTileObjects[i];
+                    if (tileObject.structureLocation != null && tileObject.structureLocation == this) {
+                        return true;
+                    }
+                }    
+            }
+            return false;
+        }
+    }
+}
+public class SaveDataDemonicStructure : SaveDataLocationStructure
+{
+
+    public string structureTemplateName;
+    public Vector3Save structureObjectWorldPosition;
+    public string preOccupiedBy;
+    // public int activeSnatchJobs;
+
+    public override void Save(LocationStructure locationStructure) {
+        base.Save(locationStructure);
+        DemonicStructure demonicStructure = locationStructure as DemonicStructure;
+        Assert.IsNotNull(demonicStructure);
+
+        if (demonicStructure.preOccupiedBy != null) {
+            preOccupiedBy = demonicStructure.preOccupiedBy.persistentID;
+        }
+        if (demonicStructure.hasBeenDestroyed) {
+            structureTemplateName = string.Empty;
+            structureObjectWorldPosition = Vector3.zero;
+        } else {
+            //structure object
+            string templateName = demonicStructure.templateName;
+            templateName = templateName.Replace("(Clone)", "");
+            structureTemplateName = templateName;
+            structureObjectWorldPosition = demonicStructure.structureObjectWorldPos;
+        }
+
+        // activeSnatchJobs = demonicStructure.activeSnatchJobs;
     }
 }

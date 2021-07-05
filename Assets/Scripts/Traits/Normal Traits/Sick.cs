@@ -40,14 +40,11 @@ namespace Traits {
                 owner.movementComponent.AdjustSpeedModifier(-0.10f);
                 owner.AddTraitNeededToBeRemoved(this);
 
-                if (gainedFromDoing == null || gainedFromDoing.goapType != INTERACTION_TYPE.EAT) {
-                    Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "NonIntel", "add_trait", gainedFromDoing, LOG_TAG.Needs);
-                    // if (gainedFromDoing != null) {
-                    //     addLog.SetLogType(LOG_TYPE.Action);
-                    // }
+                if (gainedFromDoingType != INTERACTION_TYPE.EAT) {
+                    Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "NonIntel", "add_trait", null, LOG_TAG.Needs);
                     log.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                     log.AddToFillers(null, this.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-                    log.AddLogToDatabase();
+                    log.AddLogToDatabase(true);
                 }
             }
         }
@@ -57,10 +54,10 @@ namespace Traits {
             Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "NonIntel", "remove_trait", null, LOG_TAG.Needs);
             log.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             log.AddToFillers(null, this.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-            log.AddLogToDatabase();
+            log.AddLogToDatabase(true);
             base.OnRemoveTrait(sourceCharacter, removedBy);
         }
-        public override bool PerTickWhileStationaryOrUnoccupied() {
+        public override bool PerTickWhileStationaryOrUnoccupied(Character p_character) {
             float pukeRoll = Random.Range(0f, 100f);
             if (pukeRoll < pukeChance) {
                 //do puke action

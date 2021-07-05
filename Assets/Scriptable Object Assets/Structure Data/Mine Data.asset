@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4fe081999e2948579e671f1ff7494f4c, type: 3}
+  m_Name: Mine Data
+  m_EditorClassIdentifier: 
+  _structureSprite: {fileID: 21300000, guid: 4cf45f8b0eb110b439e65339b06fc82f, type: 3}
+  _itemGenerationSetting: {fileID: 0}
+  structurePrefabs:
+    m_keys:
+    - resource: 4
+      structureType: 41
+      hasValue: 1
+      isCorrupted: 0
+    - resource: 4
+      structureType: 41
+      hasValue: 1
+      isCorrupted: 1
+    m_values:
+    - data:
+      - {fileID: 4975527039402339271, guid: 33a4edcf2ab2d5947abdf454f85ae72f, type: 3}
+      - {fileID: 1318641501492832096, guid: 8366f3b2df4d9fb43bd85b75561350c9, type: 3}
+      - {fileID: 1488659619888436793, guid: 953bce2abf434df429ae25c5c7ca0b87, type: 3}
+      - {fileID: 4850251799321415751, guid: 634c01c526c991d409d4b677dcbfbe1c, type: 3}
+    - data:
+      - {fileID: 4850251799321415751, guid: 4b6653346b2f6104daf4ad66be874fd7, type: 3}
+      - {fileID: 4975527039402339271, guid: fb63bc0f9b1fc2540ab1dc577e00e00f, type: 3}

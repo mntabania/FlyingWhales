@@ -123,7 +123,13 @@ public class PlayerSkillLoadoutUI : MonoBehaviour {
         for (int i = 0; i < extraSlots; i++) {
             PlayerSkillData skillData = null;
             if(extraSkills != null && extraSkills.Count > 0 && i < extraSkills.Count) {
-                skillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(extraSkills[i]);
+                skillData = PlayerSkillManager.Instance.GetScriptableObjPlayerSkillData<PlayerSkillData>(extraSkills[i]);
+            }
+            if (skillData != null) {
+                var playerSkillData = PlayerSkillManager.Instance.GetSkillData(skillData.skill);
+                if (playerSkillData == null) {
+                    continue;
+                }    
             }
             SkillSlotItem skillSlotItem = CreateNewSkillSlotItem(parent);
             skillSlotItem.SetSkillSlotItem(loadout.archetype, skillData, false);
@@ -204,14 +210,20 @@ public class PlayerSkillLoadoutUI : MonoBehaviour {
         }
     }
     private void OnHoverEnterSkill(PlayerSkillData skillData) {
-        skillDetailsTooltip.ShowPlayerSkillDetails(skillData, objectPicker.hoverPos);
+        skillDetailsTooltip.ShowPlayerSkillDetails(skillData, position: objectPicker.hoverPos);
     }
     private void OnHoverExitSkill(PlayerSkillData skillData) {
         skillDetailsTooltip.HidePlayerSkillDetails();
     }
     private void OnHoverEnterSkillSlotItem(PlayerSkillData skillData) {
         if(skillData != null) {
-            skillDetailsTooltip.ShowPlayerSkillDetails(skillData);
+            if (loadout.archetype.IsScenarioArchetype()) {
+                ScenarioData scenarioData = WorldSettings.Instance.GetScenarioDataByWorldType(WorldSettings.Instance.worldSettingsData.worldType);
+                skillDetailsTooltip.ShowPlayerSkillDetails(skillData, scenarioData.GetLevelForPower(skillData.skill));
+            } else {
+                skillDetailsTooltip.ShowPlayerSkillDetails(skillData);    
+            }
+            
         }
     }
     private void OnHoverExitSkillSlotItem(PlayerSkillData skillData) {

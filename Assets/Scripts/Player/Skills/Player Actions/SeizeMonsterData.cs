@@ -8,7 +8,7 @@ using Inner_Maps.Location_Structures;
 public class SeizeMonsterData : PlayerAction {
     public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.SEIZE_MONSTER;
     public override string name => "Seize Monster";
-    public override string description => $"This Action can be used to take a Monster and then transfer it to an unoccupied tile.";
+    public override string description => $"This Ability can be used to take a Monster and then transfer it to an unoccupied tile.";
     public SeizeMonsterData() : base() {
         targetTypes = new SPELL_TARGET[] { SPELL_TARGET.CHARACTER };
     }
@@ -24,7 +24,7 @@ public class SeizeMonsterData : PlayerAction {
             if (targetCharacter.race == RACE.TRITON) {
                 return false;
             }
-            return !PlayerManager.Instance.player.seizeComponent.hasSeizedPOI && !targetCharacter.traitContainer.HasTrait("Hibernating");
+            return !PlayerManager.Instance.player.seizeComponent.hasSeizedPOI && !targetCharacter.traitContainer.HasTrait("Hibernating") && !targetCharacter.traitContainer.HasTrait("Being Drained");
         }
         return canPerform;
     }
@@ -38,13 +38,15 @@ public class SeizeMonsterData : PlayerAction {
             } else {
                 reasons += "Hibernating characters cannot be seized.";    
             }
-            
+        } else if (targetCharacter.traitContainer.HasTrait("Being Drained")) {
+            reasons += "Characters being drained cannot be seized.";
         }
         return reasons;
     }
     public override bool IsValid(IPlayerActionTarget target) {
         if (target is Character targetCharacter) {
-            return !(targetCharacter is Dragon);
+            bool isValid = base.IsValid(target);
+            return isValid && !(targetCharacter is Dragon);
         }
         return false;
     }

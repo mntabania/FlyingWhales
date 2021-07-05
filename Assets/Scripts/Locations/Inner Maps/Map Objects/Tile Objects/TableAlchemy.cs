@@ -4,7 +4,7 @@ public class TableAlchemy : TileObject{
     public TableAlchemy() {
         Initialize(TILE_OBJECT_TYPE.TABLE_ALCHEMY);
     }
-    public TableAlchemy(SaveDataTileObject data) {
+    public TableAlchemy(SaveDataTileObject data) : base(data){
         
     }
     

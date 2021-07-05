@@ -7,6 +7,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
 using Logs;
+using Object_Pools;
 using UnityEngine.Assertions;
 
 public class PlayerNotificationItem : PooledObject {
@@ -30,6 +31,11 @@ public class PlayerNotificationItem : PooledObject {
 
     private Action<PlayerNotificationItem> onDestroyAction;
     private bool _adjustHeightOnEnable;
+
+    #region getters
+    public string currentTextDisplayed => $"{dateLbl.text} - {logLbl.text}";
+    #endregion
+    
     private void Awake() {
         _logEventLbl.SetOnRightClickAction(OnRightClickLog);
     }
@@ -133,15 +139,16 @@ public class PlayerNotificationItem : PooledObject {
         }
     }
     private void OnCharacterChangedName(Character character) {
-        if (_involvedObjects.Contains(character.persistentID)) {
+        if (character != null && !string.IsNullOrEmpty(_involvedObjects) && _involvedObjects.Contains(character.persistentID)) {
             Log log = DatabaseManager.Instance.mainSQLDatabase.GetFullLogWithPersistentID(logPersistentID);
-            if (log.hasValue) {
+            if (log != null) {
                 log.TryUpdateLogAfterRename(character);
                 logLbl.text = log.logText;
                 if (gameObject.activeInHierarchy) {
                     StartCoroutine(InstantHeight());
                 }
             }
+            LogPool.Release(log);
         }
     }
     #endregion

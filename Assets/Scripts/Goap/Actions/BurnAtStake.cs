@@ -25,13 +25,15 @@ public class BurnAtStake : GoapAction {
         SetState("Burn Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
+#if DEBUG_LOG
         string costLog = $"\n{name} {target.nameWithID}: +10(Constant)";
         actor.logComponent.AppendCostLog(costLog);
+#endif
         return 10;
     }
-    #endregion
+#endregion
 
-    #region Requirements
+#region Requirements
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, OtherData[] otherData, JobQueueItem job) { 
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData, job);
         if (satisfied) {
@@ -44,15 +46,15 @@ public class BurnAtStake : GoapAction {
         }
         return false;
     }
-    #endregion
+#endregion
 
-    #region Preconditions
+#region Preconditions
     private bool CanDoBurnAtStake(Character actor, IPointOfInterest target, object[] otherData, JOB_TYPE jobType) {
         return target is Character targetCharacter && target.traitContainer.HasTrait("Restrained") && targetCharacter.gridTileLocation.structure.structureType == STRUCTURE_TYPE.WILDERNESS;
     }
-    #endregion
+#endregion
 
-    #region State Effects
+#region State Effects
     public void AfterBurnSuccess(ActualGoapNode goapNode) {
         Character target = goapNode.target as Character;
         if (target.traitContainer.HasTrait("Criminal")) {
@@ -70,6 +72,6 @@ public class BurnAtStake : GoapAction {
 
         target.interruptComponent.TriggerInterrupt(INTERRUPT.Burning_At_Stake, goapNode.actor);
     }
-    #endregion
+#endregion
 
 }

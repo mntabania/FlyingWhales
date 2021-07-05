@@ -79,17 +79,19 @@ public class CraftTileObject : GoapAction {
         //craft cannot be invalid because all cases are handled by the requirements of the action
         return goapActionInvalidity;
     }
-    public override void AddFillersToLog(ref Log log, ActualGoapNode node) {
-        base.AddFillersToLog(ref log, node);
+    public override void AddFillersToLog(Log log, ActualGoapNode node) {
+        base.AddFillersToLog(log, node);
         TileObject obj = node.poiTarget as TileObject;
         log.AddToFillers(null, UtilityScripts.Utilities.GetArticleForWord(obj.tileObjectType.ToString()), LOG_IDENTIFIER.STRING_1);
         log.AddToFillers(null, UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(obj.tileObjectType.ToString()), LOG_IDENTIFIER.ITEM_1);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
-        string costLog = $"\n{name} {target.nameWithID}:";
         int cost = UtilityScripts.Utilities.Rng.Next(150, 201);
+#if DEBUG_LOG
+        string costLog = $"\n{name} {target.nameWithID}:";
         costLog += $" +{cost}(Initial)";
         actor.logComponent.AppendCostLog(costLog);
+#endif
         return cost;
     }
     public override void OnStopWhileStarted(ActualGoapNode node) {
@@ -104,7 +106,7 @@ public class CraftTileObject : GoapAction {
         actor.UncarryPOI();
         (node.poiTarget as TileObject).SetMapObjectState(MAP_OBJECT_STATE.UNBUILT);    
     }
-    #endregion
+#endregion
 
     #region State Effects
     public void PreCraftSuccess(ActualGoapNode goapNode) {
@@ -138,13 +140,19 @@ public class CraftTileObject : GoapAction {
                 } else if (neededItem == "Stone Pile") {
                     ResourcePile resourcePile = actor.GetItem(TILE_OBJECT_TYPE.STONE_PILE) as ResourcePile;
                     resourcePile?.AdjustResourceInPile(-ingredient.amount);
-                } else if (neededItem == "Metal Pile") {
-                    ResourcePile resourcePile = actor.GetItem(TILE_OBJECT_TYPE.METAL_PILE) as ResourcePile;
-                    resourcePile?.AdjustResourceInPile(-ingredient.amount);
                 } else {
-                    if (!actor.UnobtainItem(neededItem)) {
-                        actor.logComponent.PrintLogErrorIfActive("Trying to craft " + obj.name + " but " + actor + " does not have " + neededItem);
+                    TileObject objectToUse = actor.GetItem(neededItem);
+                    if (objectToUse is ResourcePile resourcePile) {
+                        resourcePile.AdjustResourceInPile(-ingredient.amount);
+                    } else {
+                        if (!actor.UnobtainItem(neededItem)) {
+#if DEBUG_LOG
+                            actor.logComponent.PrintLogErrorIfActive("Trying to craft " + obj.name + " but " + actor + " does not have " + neededItem);
+#endif
+                        }    
                     }
+                    
+                    
                 }
             }
             //for (int i = 0; i < recipe.ingredients.Length; i++) {
@@ -169,7 +177,7 @@ public class CraftTileObject : GoapAction {
         obj.SetMapObjectState(MAP_OBJECT_STATE.BUILDING);
         goapNode.descriptionLog.AddToFillers(null, UtilityScripts.Utilities.GetArticleForWord(obj.tileObjectType.ToString()), LOG_IDENTIFIER.STRING_1);
         goapNode.descriptionLog.AddToFillers(null, UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(obj.tileObjectType.ToString()), LOG_IDENTIFIER.ITEM_1);
-        if (goapNode.thoughtBubbleLog.hasValue) {
+        if (goapNode.thoughtBubbleLog != null) {
             goapNode.thoughtBubbleLog.AddToFillers(null, UtilityScripts.Utilities.GetArticleForWord(obj.tileObjectType.ToString()), LOG_IDENTIFIER.STRING_1);
             goapNode.thoughtBubbleLog.AddToFillers(null, UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(obj.tileObjectType.ToString()), LOG_IDENTIFIER.ITEM_1);
         }
@@ -213,10 +221,6 @@ public class CraftTileObject : GoapAction {
     private bool HasStone(Character actor, IPointOfInterest poiTarget, OtherData[] otherData, JOB_TYPE jobType) {
         return poiTarget is TileObject tileObject && actor.GetItem(TILE_OBJECT_TYPE.STONE_PILE) is ResourcePile pile && 
                pile.resourceInPile >= TileObjectDB.GetTileObjectData(tileObject.tileObjectType).mainRecipe.GetNeededAmountForIngredient(TILE_OBJECT_TYPE.STONE_PILE); 
-    }
-    private bool HasMetal(Character actor, IPointOfInterest poiTarget, OtherData[] otherData, JOB_TYPE jobType) {
-        return poiTarget is TileObject tileObject && actor.GetItem(TILE_OBJECT_TYPE.METAL_PILE) is ResourcePile pile && 
-               pile.resourceInPile >= TileObjectDB.GetTileObjectData(tileObject.tileObjectType).mainRecipe.GetNeededAmountForIngredient(TILE_OBJECT_TYPE.METAL_PILE); 
     }
     #endregion
 

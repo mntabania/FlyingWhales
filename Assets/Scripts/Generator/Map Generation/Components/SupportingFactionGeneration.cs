@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class SupportingFactionGeneration : MapGenerationComponent {
 	public override IEnumerator ExecuteRandomGeneration(MapGenerationData data) {
-		LevelLoaderManager.Instance.UpdateLoadingInfo("Creating factions...");
+		LevelLoaderManager.Instance.UpdateLoadingInfo("Creating Factions...");
 		FactionManager.Instance.CreateWildMonsterFaction();
 		FactionManager.Instance.CreateVagrantFaction();
 		FactionManager.Instance.CreateDisguisedFaction();

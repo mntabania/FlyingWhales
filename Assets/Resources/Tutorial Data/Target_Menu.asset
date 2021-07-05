@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1e0fe33fc91848c68ab8d6bd0b390d79, type: 3}
+  m_Name: Target_Menu
+  m_EditorClassIdentifier: 
+  tutorialType: 14
+  tutorialNameKey: Target_Menu
+  pages:
+  - imgTutorial: {fileID: 21300000, guid: 07db149e5bf6912419de0a36151b2de1, type: 3}
+    description: Open the Target Menu by right-clicking on a character or object.
+      The Target Menu allows you to use various abilities on the active target.

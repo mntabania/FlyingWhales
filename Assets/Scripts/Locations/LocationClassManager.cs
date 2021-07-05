@@ -18,7 +18,7 @@ public class LocationClassManager {
         combatantClasses = new Dictionary<string, int>();
         civilianClasses = new Dictionary<string, int>() {
             {"Peasant", 1},
-            {"Craftsman", 1},
+            {"Crafter", 1},
             {"Miner", 1},
         };
             
@@ -55,7 +55,7 @@ public class LocationClassManager {
             // } else if (i == 1) {
             //     currentClass = "Peasant";
             // } else {
-            //     currentClass = "Craftsman";
+            //     currentClass = "Crafter";
             // }
         }
         return currentClass;
@@ -63,7 +63,7 @@ public class LocationClassManager {
     private void CreateCharacterClassOrderAndGuide() {
         characterClassOrder = new string[] {
             //"Leader",
-            "Craftsman",
+            "Crafter",
             "Peasant",
             "Combatant",
             //"Peasant",
@@ -79,7 +79,7 @@ public class LocationClassManager {
             //{ "Leader", new LocationClassNumberGuide() { supposedNumber = 0, currentNumber = 0, } },
             {"Peasant", new LocationClassNumberGuide() {supposedNumber = 0, currentNumber = 0,}},
             {"Combatant", new LocationClassNumberGuide() {supposedNumber = 0, currentNumber = 0,}},
-            {"Craftsman", new LocationClassNumberGuide() {supposedNumber = 0, currentNumber = 0,}},
+            {"Crafter", new LocationClassNumberGuide() {supposedNumber = 0, currentNumber = 0,}},
             {"Civilian", new LocationClassNumberGuide() {supposedNumber = 0, currentNumber = 0,}},
             {"Noble", new LocationClassNumberGuide() {supposedNumber = 0, currentNumber = 0,}},
         };
@@ -116,7 +116,7 @@ public class LocationClassManager {
                     $"Wrong location class requirement data! Removal of resident{residentClassName} {residentRemoved.name} but current number of Civilian is {characterClassGuide["Civilian"].currentNumber} (supposed number: {characterClassGuide["Civilian"].supposedNumber})");
             }
         }
-        else if (residentClassName == "Peasant" || residentClassName == "Craftsman") {
+        else if (residentClassName == "Peasant" || residentClassName == "Crafter") {
             if (characterClassGuide[residentClassName].currentNumber > 0) {
                 AdjustCurrentNumberOfClass(residentClassName, -1);
             }
@@ -169,7 +169,7 @@ public class LocationClassManager {
                 AdjustCurrentNumberOfClass("Civilian", -1);
             }
         }
-        else if (previousClassName == "Peasant" || previousClassName == "Craftsman") {
+        else if (previousClassName == "Peasant" || previousClassName == "Crafter") {
             if (characterClassGuide[previousClassName].currentNumber > 0) {
                 AdjustCurrentNumberOfClass(previousClassName, -1);
             }
@@ -199,7 +199,7 @@ public class LocationClassManager {
         if (currentClassName == "Miner") {
             AdjustCurrentNumberOfClass("Civilian", 1);
         }
-        else if (currentClassName == "Peasant" || currentClassName == "Craftsman") {
+        else if (currentClassName == "Peasant" || currentClassName == "Crafter") {
             if (characterClassGuide[currentClassName].currentNumber <
                 characterClassGuide[currentClassName].supposedNumber) {
                 AdjustCurrentNumberOfClass(currentClassName, 1);

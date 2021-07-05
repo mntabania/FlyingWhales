@@ -22,23 +22,18 @@ public class BuildTrollCauldron : GoapAction {
         SetState("Build Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
+#if DEBUG_LOG
         string costLog = $"\n{name} {target.nameWithID}: +10(Constant)";
         actor.logComponent.AppendCostLog(costLog);
+#endif
         return 10;
     }
-    public override List<LocationGridTile> NearbyLocationGetter(ActualGoapNode goapNode) {
-        List<LocationGridTile> tiles = goapNode.actor.gridTileLocation.GetTilesInRadius(3, includeImpassable: false);
-        for (int i = 0; i < tiles.Count; i++) {
-            if(tiles[i].objHere != null) {
-                tiles.RemoveAt(i);
-                i--;
-            }
-        }
-        return tiles;
+    public override void PopulateNearbyLocation(List<LocationGridTile> gridTiles, ActualGoapNode goapNode) {
+        goapNode.actor.gridTileLocation.PopulateTilesInRadius(gridTiles, 3, includeImpassable: false, includeTilesWithObject: false);
     }
-    #endregion
+#endregion
 
-    #region Requirement
+#region Requirement
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, OtherData[] otherData, JobQueueItem job) {
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData, job);
         if (satisfied) {
@@ -46,13 +41,13 @@ public class BuildTrollCauldron : GoapAction {
         }
         return false;
     }
-    #endregion
+#endregion
 
-    #region Effects
+#region Effects
     public void AfterBuildSuccess(ActualGoapNode goapNode) {
         TrollCauldron cauldron = InnerMapManager.Instance.CreateNewTileObject<TrollCauldron>(TILE_OBJECT_TYPE.TROLL_CAULDRON);
         goapNode.actor.gridTileLocation.structure.AddPOI(cauldron, goapNode.actor.gridTileLocation);
         // cauldron.logComponent.AddHistory(goapNode.descriptionLog);
     }
-    #endregion
+#endregion
 }

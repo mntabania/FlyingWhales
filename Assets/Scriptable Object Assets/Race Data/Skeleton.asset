@@ -13,10 +13,10 @@ MonoBehaviour:
   m_Name: Skeleton
   m_EditorClassIdentifier: 
   race: 13
-  hpMultiplier: 1
-  attackMultiplier: 0.5
-  attackSpeedMultiplier: 1
-  staminaReductionMultiplier: 1.6
+  hpMultiplier: 0
+  attackMultiplier: 0
+  attackSpeedMultiplier: 0
+  staminaReductionMultiplier: 0
   walkSpeed: 1.8
   runSpeed: 3.3
   traitNames: []

@@ -45,26 +45,36 @@ public class Pickpocket : GoapAction {
         SetState("Pickpocket Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
+#if DEBUG_LOG
         string costLog = $"\n{name} {target.nameWithID}:";
+#endif
         if (actor.traitContainer.HasTrait("Enslaved")) {
             if (target.gridTileLocation == null || !target.gridTileLocation.IsInHomeOf(actor)) {
+#if DEBUG_LOG
                 costLog += $" +2000(Slave, target is not in actor's home)";
                 actor.logComponent.AppendCostLog(costLog);
+#endif
                 return 2000;
             }
         }
         int cost = UtilityScripts.Utilities.Rng.Next(300, 351);
+#if DEBUG_LOG
         costLog += $" +{cost}(Initial)";
+#endif
         if (actor.traitContainer.HasTrait("Kleptomaniac")) {
             cost = UtilityScripts.Utilities.Rng.Next(90, 151);
+#if DEBUG_LOG
             costLog = " {cost}(Kleptomaniac)";
+#endif
         } else {
             if(target is Character targetCharacter) {
                 string opinionLabel = actor.relationshipContainer.GetOpinionLabel(targetCharacter);
                 if (actor.moodComponent.moodState == MOOD_STATE.Normal || opinionLabel == RelationshipManager.Acquaintance ||
                    opinionLabel == RelationshipManager.Friend || opinionLabel == RelationshipManager.Close_Friend) {
                     cost += 2000;
+#if DEBUG_LOG
                     costLog += " +2000(not Kleptomaniac, Friend/Close/Acquaintance)";
+#endif
                 } else if (actor.moodComponent.moodState == MOOD_STATE.Bad) {
                     cost += UtilityScripts.Utilities.Rng.Next(500, 601);
                 } else if (actor.moodComponent.moodState == MOOD_STATE.Critical) {
@@ -72,7 +82,9 @@ public class Pickpocket : GoapAction {
                 }
             }
         }
+#if DEBUG_LOG
         actor.logComponent.AppendCostLog(costLog);
+#endif
         return cost;
     }
     public override GoapActionInvalidity IsInvalid(ActualGoapNode node) {
@@ -84,8 +96,8 @@ public class Pickpocket : GoapAction {
         GoapActionInvalidity goapActionInvalidity = new GoapActionInvalidity(isInvalid, stateName);
         return goapActionInvalidity;
     }
-    public override void PopulateReactionsToActor(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
-        base.PopulateReactionsToActor(reactions, actor, target, witness, node, status);
+    public override void PopulateEmotionReactionsToActor(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
+        base.PopulateEmotionReactionsToActor(reactions, actor, target, witness, node, status);
         if (!witness.traitContainer.HasTrait("Cultist")) {
             reactions.Add(EMOTION.Disapproval);
             if (witness.relationshipContainer.IsFriendsWith(actor)) {
@@ -96,8 +108,8 @@ public class Pickpocket : GoapAction {
             reactions.Add(EMOTION.Betrayal);
         }
     }
-    public override void PopulateReactionsOfTarget(List<EMOTION> reactions, Character actor, IPointOfInterest target, ActualGoapNode node, REACTION_STATUS status) {
-        base.PopulateReactionsOfTarget(reactions, actor, target, node, status);
+    public override void PopulateEmotionReactionsOfTarget(List<EMOTION> reactions, Character actor, IPointOfInterest target, ActualGoapNode node, REACTION_STATUS status) {
+        base.PopulateEmotionReactionsOfTarget(reactions, actor, target, node, status);
         if (target is Character targetCharacter) {
             reactions.Add(EMOTION.Disappointment);
             if (targetCharacter.traitContainer.HasTrait("Hothead") || UnityEngine.Random.Range(0, 100) < 35) {
@@ -111,9 +123,9 @@ public class Pickpocket : GoapAction {
     public override CRIME_TYPE GetCrimeType(Character actor, IPointOfInterest target, ActualGoapNode crime) {
         return CRIME_TYPE.Theft;
     }
-    #endregion
+#endregion
 
-    #region Requirements
+#region Requirements
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, OtherData[] otherData, JobQueueItem job) { 
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData, job);
         if (satisfied) {
@@ -127,9 +139,9 @@ public class Pickpocket : GoapAction {
         }
         return false;
     }
-    #endregion
+#endregion
 
-    #region State Effects
+#region State Effects
     //public void PreStealSuccess(ActualGoapNode goapNode) {
     //    //**Note**: This is a Theft crime
     //    //GoapActionState currentState = goapNode.action.states[goapNode.currentStateName];
@@ -152,5 +164,5 @@ public class Pickpocket : GoapAction {
             goapNode.actor.needsComponent.AdjustHappiness(10);
         }
     }
-    #endregion
+#endregion
 }

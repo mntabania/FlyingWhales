@@ -64,9 +64,21 @@ public class FactionInfoUIV2 : MonoBehaviour {
 
     private List<string> filteredTraits; //Characters must NOT have the traits inside this list
     private List<Region> filteredRegions;
+    private List<BaseSettlement> filteredVillages;
     //private int traitFilterHalfCount;
 
+    public GameObject overviewScrollRectParent;
+    public GameObject membersScrollRectParent;
+    public GameObject logScrollRectParent;
+    public GameObject crimesScrollRectParent;
+    public GameObject relationshipScrollRectParent;
+
+    public GameObject btnRevealInfo;
+
     public Faction activeFaction { get; private set; }
+
+    private enum VIEW_MODE { Overview = 0, Members, Crimes, Relations, Logs }
+    private VIEW_MODE m_viewMode = VIEW_MODE.Members;
 
     public void Initialize() {
         _characterItems = new List<CharacterNameplateItem>();
@@ -75,12 +87,11 @@ public class FactionInfoUIV2 : MonoBehaviour {
         _regionFilterItems = new List<FactionRegionFilterItem>();
         filteredTraits = new List<string>();
         filteredRegions = new List<Region>();
-
+        filteredVillages = new List<BaseSettlement>();
         searchTraitFilterField.onValueChanged.AddListener(OnSearchTraitFilterValueChanged);
         searchRegionFilterField.onValueChanged.AddListener(OnSearchRegionFilterValueChanged);
 
         PopulateFilterTraits();
-        PopulateFilterRegions();
 
         ClearFilteredTraits();
         ClearFilteredRegions();
@@ -98,11 +109,17 @@ public class FactionInfoUIV2 : MonoBehaviour {
         Messenger.AddListener<Log>(UISignals.LOG_IN_DATABASE_UPDATED, UpdateHistory);
         Messenger.AddListener<Faction>(FactionSignals.FACTION_IDEOLOGIES_CHANGED, OnFactionIdeologiesChanged);
         Messenger.AddListener<Faction>(FactionSignals.FACTION_CRIMES_CHANGED, OnFactionCrimesChanged);
-        Messenger.AddListener<Character, Character>(CharacterSignals.ON_SWITCH_FROM_LIMBO, OnCharacterSwitchFromLimbo);
+        //Messenger.AddListener<Character, Character>(CharacterSignals.ON_SWITCH_FROM_LIMBO, OnCharacterSwitchFromLimbo);
         Messenger.AddListener<Character, Character>(CharacterSignals.ON_SET_AS_SETTLEMENT_RULER, OnCharacterSetAsSettlementRuler);
         Messenger.AddListener<Faction>(FactionSignals.UPDATED_SUCCESSORS, OnFactionUpdatedSuccessors);
         logsWindow.Initialize();
+        SetButtonRevealPriceDisplay();
     }
+
+    void SetButtonRevealPriceDisplay() {
+        btnRevealInfo.transform.Find("icon").GetComponentInChildren<RuinarchText>().text = EditableValuesManager.Instance.GetRevealFactionInfoCost().ToString();
+    }
+
     public void SetFaction(Faction faction) {
         activeFaction = faction;
         if(activeFaction != null) {
@@ -115,6 +132,9 @@ public class FactionInfoUIV2 : MonoBehaviour {
             UpdateAllHistoryInfo();
             UpdateAllCharacters();
             ResetScrollPositions();
+            ProcessDisplay();
+            PopulateFilterRegions();
+            InitializeRevealHoverText();
         }
     }
     //public void UpdateFactionInfo() {
@@ -158,6 +178,7 @@ public class FactionInfoUIV2 : MonoBehaviour {
         }
     }
     private void UpdateOverview() {
+       
         if (activeFaction.leader is Character leader) {
             Character characterToShow = leader;
             if (leader.isLycanthrope) {
@@ -170,12 +191,11 @@ public class FactionInfoUIV2 : MonoBehaviour {
             leaderNameplateItem.gameObject.SetActive(false);
             noLeaderTextGO.SetActive(true);
         }
-
         Character[] successors = activeFaction.successionComponent.successors;
         for (int i = 0; i < successorPortraits.Length; i++) {
             CharacterPortrait portrait = successorPortraits[i];
             Character successor = null;
-            if(i >= 0 && i < successors.Length) {
+            if (i >= 0 && i < successors.Length) {
                 successor = successors[i];
             }
             if (successor == null) {
@@ -190,7 +210,7 @@ public class FactionInfoUIV2 : MonoBehaviour {
         for (int i = 0; i < activeFaction.factionType.ideologies.Count; i++) {
             FactionIdeology ideology = activeFaction.factionType.ideologies[i];
             ideologyLbl.text += $"<sprite=\"Text_Sprites\" name=\"Arrow_Icon\">   <link=\"{i}\">{ideology.GetIdeologyName()}</link>\n";
-        }
+        }    
     }
     public void OnHoverIdeology(object obj) {
         if (obj is string text) {
@@ -270,7 +290,7 @@ public class FactionInfoUIV2 : MonoBehaviour {
     #endregion
 
     #region Relationships
-    private void UpdateAllRelationships() {
+    public void UpdateAllRelationships() {
         UtilityScripts.Utilities.DestroyChildren(relationshipsScrollRect.content);
 
         foreach (KeyValuePair<Faction, FactionRelationship> keyValuePair in activeFaction.relationships) {
@@ -321,7 +341,7 @@ public class FactionInfoUIV2 : MonoBehaviour {
                 crimeLbl.text += $"<sprite=\"Text_Sprites\" name=\"Arrow_Icon\">   {crimeType}\n";
             }
         }
-        crimesScrollRect.gameObject.SetActive(true);
+        
         //crimesScrollRectTransform.ForceUpdateRectTransforms();
         //Canvas.ForceUpdateCanvases();
         //for (int i = 0; i < crimesTransform.Length; i++) {
@@ -371,8 +391,8 @@ public class FactionInfoUIV2 : MonoBehaviour {
                 //this is a solution for https://trello.com/c/EbPTZFAv/2288-03314-skeleton-from-defiler-appears-on-vagrant-tab
                 continue;
             }
-            if(currCharacter.race != RACE.ANGEL) {
-                if(currCharacter.isLycanthrope) {
+            if (currCharacter.race != RACE.ANGEL) {
+                if (currCharacter.isLycanthrope) {
                     currCharacter = currCharacter.lycanData.activeForm;
                 }
                 if (!currCharacter.isDead) {
@@ -422,6 +442,15 @@ public class FactionInfoUIV2 : MonoBehaviour {
         //}
         return item;
     }
+    private CharacterNameplateItem GetCharacterItem(Character character) {
+        for (int i = 0; i < _characterItems.Count; i++) {
+            CharacterNameplateItem item = _characterItems[i];
+            if (item.obj == character) {
+                return item;
+            }
+        }
+        return null;
+    }
     private void OrderCharacterItems() {
         if (activeFaction.leader != null && activeFaction.leader is Character leader) {
             CharacterNameplateItem leaderItem = GetItem(leader);
@@ -435,7 +464,9 @@ public class FactionInfoUIV2 : MonoBehaviour {
         //Angels should not show in the characters list of faction in UI
         //https://trello.com/c/SGow0hA0/2234-angels-on-list
         if (FactionInfoHubUI.Instance.IsShowing(faction) && character.race != RACE.ANGEL) {
-            CreateNewCharacterItem(character);
+            if (GetCharacterItem(character) == null) {
+                CreateNewCharacterItem(character);
+            }
         }
     }
     private void OnCharacterRemovedFromFaction(Character character, Faction faction) {
@@ -458,7 +489,7 @@ public class FactionInfoUIV2 : MonoBehaviour {
             return true;
         }
         for (int i = 0; i < filteredTraits.Count; i++) {
-            if (character.traitContainer.HasTrait(filteredTraits[i])) {
+            if (character.traitContainer.HasTrait(filteredTraits[i]) && character.isInfoUnlocked) {
                 return true;
             }
         }
@@ -467,11 +498,11 @@ public class FactionInfoUIV2 : MonoBehaviour {
     private bool IsCharacterFilteredByRegion(Character character) {
         //If character's home region is in one of the filtered regions, it means that the nameplate item of the character must show
         //The list of the filtered regions contains the traits that the player does want to show
-        if (filteredRegions.Count <= 0) {
+        if (filteredVillages.Count <= 0) {
             return true;
         }
-        for (int i = 0; i < filteredRegions.Count; i++) {
-            if (character.homeRegion == filteredRegions[i]) {
+        for (int i = 0; i < filteredVillages.Count; i++) {
+            if (character.homeSettlement == filteredVillages[i] && character.isInfoUnlocked) {
                 return true;
             }
         }
@@ -493,9 +524,14 @@ public class FactionInfoUIV2 : MonoBehaviour {
         }
     }
     private void PopulateFilterRegions() {
-        for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
-            Region region = GridMap.Instance.allRegions[i];
-            CreateFactionRegionFilterItem(region);
+        if (activeFaction != null) {
+            ClearFilteredRegions();
+            for (int i = 0; i < GridMap.Instance.mainRegion.settlementsInRegion.Count; i++) {
+                if (GridMap.Instance.mainRegion.settlementsInRegion[i].locationType == LOCATION_TYPE.VILLAGE &&
+                    GridMap.Instance.mainRegion.settlementsInRegion[i].owner == activeFaction) {
+                    CreateFactionRegionFilterItem(GridMap.Instance.mainRegion.settlementsInRegion[i]);
+                }
+            }
         }
     }
     public void AddFilteredTrait(string traitName) {
@@ -517,22 +553,24 @@ public class FactionInfoUIV2 : MonoBehaviour {
             _traitFilterItems[i].toggle.isOn = false;
         }
     }
-    public void AddFilteredRegion(Region region) {
-        filteredRegions.Add(region);
+    public void AddFilteredRegion(BaseSettlement village) {
+        filteredVillages.Add(village);
         FilterCharacters();
     }
-    public void RemoveFilteredRegion(Region region) {
-        if (filteredRegions.Remove(region)) {
+    public void RemoveFilteredRegion(BaseSettlement village) {
+        if (filteredVillages.Remove(village)) {
             FilterCharacters();
         }
     }
     public void ClearFilteredRegions() {
+        filteredVillages.Clear();
         filteredRegions.Clear();
         FilterCharacters();
         ResetFilterRegions();
     }
     private void ResetFilterRegions() {
         for (int i = 0; i < _regionFilterItems.Count; i++) {
+            ObjectPoolManager.Instance.DestroyObject(_regionFilterItems[i]);
             _regionFilterItems[i].toggle.isOn = false;
         }
     }
@@ -581,10 +619,10 @@ public class FactionInfoUIV2 : MonoBehaviour {
         _traitFilterItems.Add(item);
         return item;
     }
-    private FactionRegionFilterItem CreateFactionRegionFilterItem(Region region) {
+    private FactionRegionFilterItem CreateFactionRegionFilterItem(BaseSettlement village) {
         GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(regionFilterItemPrefab.name, Vector3.zero, Quaternion.identity, regionFilterScrollRect.content);
         FactionRegionFilterItem item = go.GetComponent<FactionRegionFilterItem>();
-        item.SetRegion(region);
+        item.SetVillage(village);
         _regionFilterItems.Add(item);
         return item;
     }
@@ -600,6 +638,34 @@ public class FactionInfoUIV2 : MonoBehaviour {
         FilterCharacters();
     }
     #endregion
+
+    public void RevealInfo() {
+        if (PlayerManager.Instance.player.plagueComponent.plaguePoints >= EditableValuesManager.Instance.GetRevealFactionInfoCost()) {
+            PlayerManager.Instance.player.plagueComponent.AdjustPlaguePoints(-EditableValuesManager.Instance.GetRevealFactionInfoCost());
+            activeFaction.isInfoUnlocked = true;
+            ProcessDisplay();
+        }
+    }
+
+    void ProcessDisplay() {
+        switch (m_viewMode) {
+            case VIEW_MODE.Overview:
+            OnToggleOverview(true);
+            break;
+            case VIEW_MODE.Members:
+            OnToggleMembers(true);
+            break;
+            case VIEW_MODE.Relations:
+            OnToggleRelations(true);
+            break;
+            case VIEW_MODE.Crimes:
+            OnToggleCrimes(true);
+            break;
+            case VIEW_MODE.Logs:
+            OnToggleLogs(true);
+            break;
+        }
+    }
 
     #region Utilities
     private void ResetScrollPositions() {
@@ -639,7 +705,115 @@ public class FactionInfoUIV2 : MonoBehaviour {
         UIManager.Instance.HideSmallInfo();
     }
     #endregion
-    
+
+    private void InitializeRevealHoverText() {
+        if (PlayerManager.Instance.player == null) {
+            return;
+        }
+        if (PlayerManager.Instance.player.plagueComponent.plaguePoints < EditableValuesManager.Instance.GetRevealFactionInfoCost()) {
+            btnRevealInfo.GetComponent<HoverText>()?.SetText("Not Enough Chaotic Energy");
+            btnRevealInfo.GetComponent<RuinarchButton>().MakeUnavailable();
+        } else {
+            btnRevealInfo.GetComponent<HoverText>()?.SetText("Reveal Faction Info");
+            btnRevealInfo.GetComponent<RuinarchButton>().MakeAvailable();
+        }
+    }
+
+    #region toggles tabs
+    public void OnToggleOverview(bool isOn) {
+        HideAllScrollView();
+        if (isOn) {
+            InitializeRevealHoverText();
+            m_viewMode = VIEW_MODE.Overview;
+            if (activeFaction.isInfoUnlocked) {
+                overviewScrollRectParent.SetActive(true);
+                btnRevealInfo.SetActive(false);
+            } else {
+                overviewScrollRectParent.SetActive(false);
+                btnRevealInfo.SetActive(true);
+            }
+        } else {
+            overviewScrollRectParent.SetActive(false);
+        }
+    }
+
+    public void OnToggleMembers(bool isOn) {
+        HideAllScrollView();
+        if (isOn) {
+            InitializeRevealHoverText();
+            m_viewMode = VIEW_MODE.Members;
+            if (activeFaction.isInfoUnlocked) {
+                membersScrollRectParent.SetActive(true);
+                btnRevealInfo.SetActive(false);
+            } else {
+                membersScrollRectParent.SetActive(false);
+                btnRevealInfo.SetActive(true);
+            }
+        } else {
+            membersScrollRectParent.SetActive(false);
+        }
+    }
+
+    public void OnToggleRelations(bool isOn) {
+        HideAllScrollView();
+        if (isOn) {
+            InitializeRevealHoverText();
+            m_viewMode = VIEW_MODE.Relations;
+            if (activeFaction.isInfoUnlocked) {
+                relationshipScrollRectParent.SetActive(true);
+                btnRevealInfo.SetActive(false);
+            } else {
+                relationshipScrollRectParent.SetActive(false);
+                btnRevealInfo.SetActive(true);
+            }
+        } else {
+            relationshipScrollRectParent.SetActive(false);
+        }
+    }
+
+    public void OnToggleCrimes(bool isOn) {
+        HideAllScrollView();
+        if (isOn) {
+            InitializeRevealHoverText();
+            m_viewMode = VIEW_MODE.Crimes;
+            if (activeFaction.isInfoUnlocked) {
+                crimesScrollRectParent.SetActive(true);
+                btnRevealInfo.SetActive(false);
+            } else {
+                crimesScrollRectParent.SetActive(false);
+                btnRevealInfo.SetActive(true);
+            }
+        } else {
+            crimesScrollRectParent.SetActive(false);
+        }
+    }
+
+    public void OnToggleLogs(bool isOn) {
+        HideAllScrollView();
+        if (isOn) {
+            InitializeRevealHoverText();
+            m_viewMode = VIEW_MODE.Logs;
+            if (activeFaction.isInfoUnlocked) {
+                logScrollRectParent.SetActive(true);
+                btnRevealInfo.SetActive(false);
+            } else {
+                logScrollRectParent.SetActive(false);
+                btnRevealInfo.SetActive(true);
+            }
+        } else {
+            logScrollRectParent.SetActive(false);
+        }
+    }
+
+    void HideAllScrollView() {
+        overviewScrollRectParent.SetActive(false);
+        membersScrollRectParent.SetActive(false);
+        relationshipScrollRectParent.SetActive(false);
+        crimesScrollRectParent.SetActive(false);
+        logScrollRectParent.SetActive(false);
+    }
+    #endregion
+
     #region History
     private void UpdateHistory(Log log) {
         if (activeFaction != null && log.IsInvolved(activeFaction)) {

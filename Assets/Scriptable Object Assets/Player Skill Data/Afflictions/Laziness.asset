@@ -13,14 +13,88 @@ MonoBehaviour:
   m_Name: Laziness
   m_EditorClassIdentifier: 
   skill: 91
-  manaCost: 4
+  manaCost: 20
   charges: 1
-  cooldown: 288
+  cooldown: 160
   threat: 0
   threatPerHour: 0
   expCost: 300
+  cheatedLevel: 0
+  pierce: 0
+  bonusChargeWhenUnlocked: 1
+  unlockChargeOnPortalUpgrade: 1
   buttonSprite: {fileID: 21300000, guid: e82f28130057b894cb52771c34d33c2d, type: 3}
   tooltipVideoClip: {fileID: 0}
   tooltipImage: {fileID: 0}
+  unlockCost: 50
+  tier: 1
+  baseLoadoutWeight: 150
+  resistanceType: 9
+  archetypeWeightedBonus: 3
+  canBeReleasedEvenIfLearned: 0
   contextMenuIcon: {fileID: 21300000, guid: aed08912ad482904f8fb50c3578510bd, type: 3}
   contextMenuColumn: 1
+  playerActionIcon: {fileID: 0}
+  isNonUpgradeable: 0
+  isAffliction: 1
+  isLockedBaseOnRequirements: 0
+  canBeCastedOnMaxLevel: 0
+  requirementData:
+    requirements: 08000000
+    requiredArchetypes: 
+    requiredSkills: 
+    actionCount: 0
+    afflictionCount: 0
+    spellsCount: 0
+    tier1Count: 0
+    tier2Count: 0
+    tier3Count: 0
+    portalLevel: 1
+    isOR: 0
+  skillUpgradeData:
+    upgradeCosts: 140000003200000050000000
+    manacostPerLevel: 96000000c8000000fa0000005e010000
+    chargesPerLevel: 01000000010000000100000001000000
+    bonuses: 0e0000000100000009000000
+    additionalDamagePerLevel: 
+    additionalPiercePerLevel:
+    - 0
+    - 50
+    - 100
+    - 150
+    additionalHpPercentagePerLevel: []
+    additionalAttackPercentagePerLevel: []
+    additionalHpValuePerLevel: 
+    additionalAttackValuePerLevel: 
+    applyOnLevel: 
+    additionalmanaReceivedPercentagePerLevel: []
+    statsIncreasedPercentagePerLevel:
+    - 0
+    - 50
+    - 75
+    - 100
+    durationBonusPerLevel: 
+    additionalMaxHPPercentagePerLevel: []
+    additionalMaxHPActualPerLevel: 
+    additionalChanceBonusPercentagePerLevel: []
+    additionalTileRangeBonusPerLevel: 
+    decreaseMovementSpeedPerLevel: 
+    cooldownPerLevel: a0000000800000008000000070000000
+    skillMovementSpeed: 
+  afflictionUpgradeData:
+    bonuses: 04000000080000000200000000000000
+    cooldown: f0000000f0000000f0000000f0000000
+    additionalPiercePerLevel:
+    - 0
+    - 25
+    - 50
+    - 100
+    rateChance: 0f00000014000000190000001e000000
+    crowdNumber: 
+    napsDuration: 
+    numberOfCriteria: 
+    hungerRate: 
+    duration: []
+    opinionTrigger: 
+    addedBehaviour: 00000000000000001800000003000000
+    listOfCriteria: 

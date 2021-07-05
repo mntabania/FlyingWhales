@@ -31,6 +31,8 @@ public abstract class JobQueueItem : ISavable {
     public bool isInMultithread { get; protected set; }
     public bool shouldForceCancelUponReceiving { get; protected set; }
 
+    public bool isTriggeredFlaw { set; get; }
+
     //object pool
     /// <summary>
     /// Has this job been returned to the pool?
@@ -59,6 +61,7 @@ public abstract class JobQueueItem : ISavable {
         SetInitialPriority();
         Messenger.AddListener<JOB_TYPE, IPointOfInterest>(JobSignals.CHECK_JOB_APPLICABILITY, CheckJobApplicability);
         Messenger.AddListener<IPointOfInterest>(JobSignals.CHECK_APPLICABILITY_OF_ALL_JOBS_TARGETING, CheckJobApplicability);
+        Messenger.AddListener<JOB_TYPE>(JobSignals.CHECK_JOB_APPLICABILITY_OF_ALL_JOBS_OF_TYPE, CheckJobApplicability);
         DatabaseManager.Instance.jobDatabase.Register(this);
     }
     protected void Initialize(SaveDataJobQueueItem data) {
@@ -85,11 +88,14 @@ public abstract class JobQueueItem : ISavable {
         SetInitialPriority();
         Messenger.AddListener<JOB_TYPE, IPointOfInterest>(JobSignals.CHECK_JOB_APPLICABILITY, CheckJobApplicability);
         Messenger.AddListener<IPointOfInterest>(JobSignals.CHECK_APPLICABILITY_OF_ALL_JOBS_TARGETING, CheckJobApplicability);
+        Messenger.AddListener<JOB_TYPE>(JobSignals.CHECK_JOB_APPLICABILITY_OF_ALL_JOBS_OF_TYPE, CheckJobApplicability);
         DatabaseManager.Instance.jobDatabase.Register(this);
     }
 
     #region Loading
-    public virtual void LoadSecondWave(SaveDataJobQueueItem data) {
+    //Returns true if the job is still viable (meaning the data is not corrupted), false, if already corrupted, i.e. the original owner/actor/target is null even if it actually isn't
+    public virtual bool LoadSecondWave(SaveDataJobQueueItem data) {
+        bool isViable = true;
         if (!string.IsNullOrEmpty(data.originalOwnerID)) {
             if (data.originalOwnerType == OBJECT_TYPE.Settlement) {
                 originalOwner = DatabaseManager.Instance.settlementDatabase.GetSettlementByPersistentID(data.originalOwnerID) as NPCSettlement;
@@ -100,19 +106,45 @@ public abstract class JobQueueItem : ISavable {
             } else if (data.originalOwnerType == OBJECT_TYPE.Party) {
                 originalOwner = DatabaseManager.Instance.partyDatabase.GetPartyByPersistentID(data.originalOwnerID);
             }
+            if (originalOwner == null) {
+                isViable = false;
+            }
         }
-        assignedCharacter = string.IsNullOrEmpty(data.assignedCharacterID) ? null : DatabaseManager.Instance.characterDatabase.GetCharacterByPersistentID(data.assignedCharacterID);
+        if (!string.IsNullOrEmpty(data.assignedCharacterID)) {
+            assignedCharacter = DatabaseManager.Instance.characterDatabase.GetCharacterByPersistentID(data.assignedCharacterID);
+            if (assignedCharacter == null) {
+                isViable = false;
+            }
+        }
         for (int i = 0; i < data.blacklistedCharacterIDs.Count; i++) {
-            blacklistedCharacters.Add(DatabaseManager.Instance.characterDatabase.GetCharacterByPersistentID(data.blacklistedCharacterIDs[i]));
+            Character character = DatabaseManager.Instance.characterDatabase.GetCharacterByPersistentID(data.blacklistedCharacterIDs[i]);
+            if (character != null) {
+                blacklistedCharacters.Add(character);
+            }
         }
+        return isViable;
     }
     #endregion
     
     #region Virtuals
     protected virtual bool CanTakeJob(Character character) {
-        return !character.traitContainer.HasTrait("Criminal") && character.limiterComponent.canPerform; //!character.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)
+        //Character cannot take settlement job only if he is wanted by his current faction
+        //If he is not a criminal or he is not wanted by his current faction, allow to take job
+        bool isWantedByCurrentFaction = false;
+        if (character.traitContainer.HasTrait("Criminal") && character.faction != null) {
+            if (character.crimeComponent.activeCrimes.Count > 0) {
+                for (int i = 0; i < character.crimeComponent.activeCrimes.Count; i++) {
+                    CrimeData data = character.crimeComponent.activeCrimes[i];
+                    if (data.IsWantedBy(character.faction)) {
+                        isWantedByCurrentFaction = true;
+                        break;
+                    }
+                }
+            }
+        }
+        return !isWantedByCurrentFaction && character.limiterComponent.canPerform; //!character.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)
     }
-    public virtual void UnassignJob(bool shouldDoAfterEffect, string reason) { }
+    public virtual void UnassignJob(string reason) { }
     public virtual void OnAddJobToQueue() { }
     public virtual bool OnRemoveJobFromQueue() { return true; }
     public virtual void AddOtherData(INTERACTION_TYPE actionType, object[] data) { }
@@ -153,14 +185,14 @@ public abstract class JobQueueItem : ISavable {
     public virtual bool ProcessJob() { return false; }
     //Returns true or false if job was really removed in queue
     //reason parameter only applies if the job that is being cancelled is the currentActionNode's job
-    public virtual bool CancelJob(bool shouldDoAfterEffect = true, string reason = "") {
+    public virtual bool CancelJob(string reason = "") {
         //When cancelling a job, we must check if it's personal or not because if it is a faction/npcSettlement job it cannot be removed from queue
         //The only way for a faction/npcSettlement job to be removed is if it is forced or it is actually finished
         if(assignedCharacter == null) {
             //Can only cancel jobs that are in character job queue
             return false;
         }
-        return assignedCharacter.jobQueue.RemoveJobInQueue(this, shouldDoAfterEffect, reason);
+        return assignedCharacter.jobQueue.RemoveJobInQueue(this, reason);
         //if (process) {
         //    if (job is GoapPlanJob && cause != "") {
         //        GoapPlanJob planJob = job as GoapPlanJob;
@@ -178,10 +210,10 @@ public abstract class JobQueueItem : ISavable {
         //}
         //return hasBeenRemovedInJobQueue;
     }
-    public virtual bool ForceCancelJob(bool shouldDoAfterEffect = true, string reason = "") {
+    public virtual bool ForceCancelJob(string reason = "") {
         if (assignedCharacter != null) {
             JOB_OWNER ownerType = originalOwner.ownerType;
-            bool hasBeenRemoved = assignedCharacter.jobQueue.RemoveJobInQueue(this, shouldDoAfterEffect, reason);
+            bool hasBeenRemoved = assignedCharacter.jobQueue.RemoveJobInQueue(this, reason);
             if (ownerType == JOB_OWNER.CHARACTER) {
                 return hasBeenRemoved;
             }
@@ -202,32 +234,37 @@ public abstract class JobQueueItem : ISavable {
             // if (jobThatPushedBack.IsAnInterruptionJob()) {
             //     stopText = "Interrupted";
             // }
-            assignedCharacter?.StopCurrentActionNode(false, stopText);
+            assignedCharacter?.StopCurrentActionNode(stopText);
         } else {
             //If job is cannot be pushed back and it is pushed back, cancel it instead
-            CancelJob(false);
+            CancelJob();
         }
     }
     public virtual void StopJobNotDrop() {
         if (cannotBePushedBack) {
             //If job is cannot be pushed back and it is stopped, cancel it
-            CancelJob(false);
+            CancelJob();
         } else {
-            assignedCharacter?.StopCurrentActionNode(false);
+            assignedCharacter?.StopCurrentActionNode();
         }
     }
     public virtual bool CanBeInterruptedBy(JOB_TYPE jobType) { return true; }
-    protected virtual void CheckJobApplicability(JOB_TYPE jobType, IPointOfInterest targetPOI) { }
-    protected virtual void CheckJobApplicability(IPointOfInterest targetPOI) { }
+    protected virtual void CheckJobApplicability(JOB_TYPE p_jobType, IPointOfInterest p_targetPOI) { }
+    protected virtual void CheckJobApplicability(JOB_TYPE p_jobType) { }
+    protected virtual void CheckJobApplicability(IPointOfInterest p_targetPOI) { }
     #endregion
 
     public void SetAssignedCharacter(Character character) {
         Character previousAssignedCharacter = null;
         if (assignedCharacter != null) {
             previousAssignedCharacter = assignedCharacter;
+#if DEBUG_LOG
             assignedCharacter.logComponent.PrintLogIfActive($"{assignedCharacter.name} quit job {name}");
+#endif
         }
+#if DEBUG_LOG
         character?.logComponent.PrintLogIfActive($"{character.name} took job {name}");
+#endif
 
         assignedCharacter = character;
         if (assignedCharacter != null) {
@@ -237,23 +274,23 @@ public abstract class JobQueueItem : ISavable {
         }
     }
 
-    #region Can Take Job
+#region Can Take Job
     private void SetCanTakeThisJobChecker(CanTakeJobChecker canTakeJobChecker) {
         this.canTakeJobChecker = canTakeJobChecker;
     }
     public void SetCanTakeThisJobChecker(string canTakeJobCheckerKey) {
         SetCanTakeThisJobChecker(JobManager.Instance.GetJobChecker(canTakeJobCheckerKey));
     }
-    #endregion
+#endregion
 
-    #region Applicability
+#region Applicability
     public void SetStillApplicableChecker(string applicabilityKey) {
         SetStillApplicableChecker(JobManager.Instance.GetApplicabilityChecker(applicabilityKey));
     }
     public void SetStillApplicableChecker(JobApplicabilityChecker jobApplicabilityChecker) {
         stillApplicable = jobApplicabilityChecker;
     }
-    #endregion
+#endregion
     
     public void SetCannotBePushedBack (bool state) {
         cannotBePushedBack = state;
@@ -287,7 +324,7 @@ public abstract class JobQueueItem : ISavable {
         forceCancelOnInvalid = state;
     }
 
-    #region Priority
+#region Priority
     public int GetPriority() {
         return _priority;
     }
@@ -299,9 +336,9 @@ public abstract class JobQueueItem : ISavable {
         Assert.IsTrue(priority > 0, $"Cannot set initial priority for {name} job because priority is {priority}");
         SetPriority(priority);
     }
-    #endregion
+#endregion
 
-    #region Utilities
+#region Utilities
     public bool CanCharacterDoJob(Character character) {
         return CanCharacterTakeThisJob(character) && !blacklistedCharacters.Contains(character);
     }
@@ -335,11 +372,13 @@ public abstract class JobQueueItem : ISavable {
     public void SetShouldForceCancelJobUponReceiving(bool state) {
         shouldForceCancelUponReceiving = state;
     }
-    #endregion
+#endregion
 
-    #region Job Object Pool
+#region Job Object Pool
     public virtual void Reset() {
+#if DEBUG_LOG
         Debug.Log($"{GameManager.Instance.TodayLogString()}Job {this} was reset with original owner {originalOwner}");
+#endif
         DatabaseManager.Instance.jobDatabase.UnRegister(this);
         persistentID = string.Empty;
         hasBeenReset = true;
@@ -352,6 +391,7 @@ public abstract class JobQueueItem : ISavable {
         canTakeJobChecker = null;
         assignedCharacter = null;
         stillApplicable = null;
+        isTriggeredFlaw = false;
         SetIsStealth(false);
         SetPriority(-1);
         SetCannotBePushedBack(false);
@@ -365,6 +405,7 @@ public abstract class JobQueueItem : ISavable {
         ResetInvalidCounter();
         Messenger.RemoveListener<JOB_TYPE, IPointOfInterest>(JobSignals.CHECK_JOB_APPLICABILITY, CheckJobApplicability);
         Messenger.RemoveListener<IPointOfInterest>(JobSignals.CHECK_APPLICABILITY_OF_ALL_JOBS_TARGETING, CheckJobApplicability);
+        Messenger.RemoveListener<JOB_TYPE>(JobSignals.CHECK_JOB_APPLICABILITY_OF_ALL_JOBS_OF_TYPE, CheckJobApplicability);
     }
-    #endregion
+#endregion
 }

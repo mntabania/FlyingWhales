@@ -8,7 +8,7 @@ using UtilityScripts;
 public class FoundCultData : PlayerAction {
     public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.FOUND_CULT;
     public override string name => "Found Cult";
-    public override string description => "This Action forces the character to create a new Demon Cult faction.";
+    public override string description => "This Ability instructs the Cult Leader to start a new Demon Cult faction. Available only on Cult Leaders.";
     public override PLAYER_SKILL_CATEGORY category => PLAYER_SKILL_CATEGORY.PLAYER_ACTION;
     public override bool canBeCastOnBlessed => true;
     
@@ -21,15 +21,19 @@ public class FoundCultData : PlayerAction {
         if (targetPOI is Character character) {
             character.MigrateHomeStructureTo(null);
             character.interruptComponent.TriggerInterrupt(INTERRUPT.Create_Faction, character);
-            Messenger.Broadcast(SpellSignals.RELOAD_PLAYER_ACTIONS, targetPOI as IPlayerActionTarget);
+            Messenger.Broadcast(PlayerSkillSignals.RELOAD_PLAYER_ACTIONS, targetPOI as IPlayerActionTarget);
             if (!WorldSettings.Instance.worldSettingsData.villageSettings.disableNewVillages) {
                 if (!character.currentRegion.IsRegionVillageCapacityReached()) {
-                    HexTile targetTile = character.currentRegion.GetRandomHexThatMeetCriteria(currHex => currHex.elevationType != ELEVATION.WATER && currHex.elevationType != ELEVATION.MOUNTAIN && currHex.landmarkOnTile == null && !currHex.IsNextToOrPartOfVillage() && !currHex.isCorrupted);
-                    if (targetTile != null) {
+                    // Area targetArea = character.currentRegion.GetRandomHexThatMeetCriteria(a => a.elevationType != ELEVATION.WATER && a.elevationType != ELEVATION.MOUNTAIN && !a.structureComponent.HasStructureInArea() && !a.IsNextToOrPartOfVillage() && !a.gridTileComponent.HasCorruption());
+                    VillageSpot villageSpot = character.currentRegion.GetRandomUnoccupiedVillageSpot();
+                    if (villageSpot != null) {
+                        Area targetArea = villageSpot.mainSpot;
                         StructureSetting structureSetting = new StructureSetting(STRUCTURE_TYPE.CITY_CENTER, character.faction.factionType.mainResource, character.faction.factionType.usesCorruptedStructures);
-                        List<GameObject> choices = InnerMapManager.Instance.GetIndividualStructurePrefabsForStructure(structureSetting);
+                        List<GameObject> choices = InnerMapManager.Instance.GetStructurePrefabsForStructure(structureSetting);
                         GameObject chosenStructurePrefab = CollectionUtilities.GetRandomElement(choices);
-                        character.jobComponent.TriggerFindNewVillage(targetTile.GetCenterLocationGridTile(), chosenStructurePrefab.name);
+                        if (LandmarkManager.Instance.HasEnoughSpaceForStructure(chosenStructurePrefab.name, targetArea.gridTileComponent.centerGridTile)) {
+                            character.jobComponent.TriggerFindNewVillage(targetArea.gridTileComponent.centerGridTile, chosenStructurePrefab.name);
+                        }
                     }    
                 } else {
                     PlayerUI.Instance.ShowGeneralConfirmation("Village Capacity Reached", 
@@ -51,6 +55,10 @@ public class FoundCultData : PlayerAction {
             if (targetCharacter.traitContainer.HasTrait("Enslaved")) {
                 return false;
             }
+            int villagerFactionCount = FactionManager.Instance.GetActiveVillagerFactionCount();
+            if (villagerFactionCount >= FactionManager.MaxActiveVillagerFactions) {
+                return false;
+            }
             return true;
         }
         return false;
@@ -65,6 +73,10 @@ public class FoundCultData : PlayerAction {
         }
         if (targetCharacter.traitContainer.HasTrait("Enslaved")) {
             reasons += "Slaves cannot perform this action,";
+        }
+        int villagerFactionCount = FactionManager.Instance.GetActiveVillagerFactionCount();
+        if (villagerFactionCount >= FactionManager.MaxActiveVillagerFactions) {
+            reasons += "Maximum number of active factions have been reached,";
         }
         return reasons;
     }

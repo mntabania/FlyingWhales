@@ -6,7 +6,7 @@ using Traits;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-public class VaporMapObjectVisual : MovingMapObjectVisual<TileObject> {
+public class VaporMapObjectVisual : MovingMapObjectVisual {
     
     [SerializeField] private ParticleSystem _vaporEffect;
     
@@ -52,7 +52,7 @@ public class VaporMapObjectVisual : MovingMapObjectVisual<TileObject> {
         Messenger.AddListener<PROGRESSION_SPEED>(UISignals.PROGRESSION_SPEED_CHANGED, OnProgressionSpeedChanged);
         isSpawned = true;
 
-        if (GameManager.Instance.isPaused) {
+        if (GameManager.Instance.isPaused || !GameManager.Instance.gameHasStarted) {
             _movement.Pause();
             StartCoroutine(PlayParticleCoroutineWhenGameIsPaused());
         } else {
@@ -102,9 +102,11 @@ public class VaporMapObjectVisual : MovingMapObjectVisual<TileObject> {
     }
     public override void SetWorldPosition(Vector3 worldPosition) {
         base.SetWorldPosition(worldPosition);
-        _movement?.Kill();
-        _movement = null;
-        MoveToRandomDirection();
+        if (GameManager.Instance.gameHasStarted) {
+            _movement?.Kill();
+            _movement = null;
+            MoveToRandomDirection();
+        }
     }
     #endregion
 
@@ -127,7 +129,9 @@ public class VaporMapObjectVisual : MovingMapObjectVisual<TileObject> {
     
     #region Expiration
     public void Expire() {
+#if DEBUG_LOG
         Debug.Log($"{this.name} expired!");
+#endif
         _vapor.OnExpire();
         _vaporEffect.Stop();
         visionTrigger.SetAllCollidersState(false);
@@ -144,9 +148,9 @@ public class VaporMapObjectVisual : MovingMapObjectVisual<TileObject> {
         yield return new WaitForSeconds(2f);
         ObjectPoolManager.Instance.DestroyObject(this);
     }
-    #endregion
+#endregion
 
-    #region Particles
+#region Particles
     private IEnumerator PlayParticleCoroutineWhenGameIsPaused() {
         //Playing particle effect is done in a coroutine so that it will wait one frame before pausing the particles if the game is paused when the particle is activated
         //This will make sure that the particle effect will show but it will be paused right away
@@ -154,9 +158,9 @@ public class VaporMapObjectVisual : MovingMapObjectVisual<TileObject> {
         yield return new WaitForSeconds(0.1f);
         _vaporEffect.Pause();
     }
-    #endregion
+#endregion
 
-    #region Triggers
+#region Triggers
     public void OnTriggerEnter2D(Collider2D collision) {
         if (isSpawned == false) { return; }
         BaseVisionTrigger collidedWith = collision.gameObject.GetComponent<BaseVisionTrigger>();
@@ -178,5 +182,5 @@ public class VaporMapObjectVisual : MovingMapObjectVisual<TileObject> {
             }
         }
     }
-    #endregion
+#endregion
 }

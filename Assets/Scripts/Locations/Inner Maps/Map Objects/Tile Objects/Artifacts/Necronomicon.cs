@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Inner_Maps;
-
+using UtilityScripts;
 public class Necronomicon : Artifact {
 
     public Necronomicon() : base(ARTIFACT_TYPE.Necronomicon) {
@@ -17,14 +17,15 @@ public class Necronomicon : Artifact {
         if(isBeingCarriedBy != p_newOwner) {
             base.SetInventoryOwner(p_newOwner);
             if (isBeingCarriedBy != null) {
-                isBeingCarriedBy.interruptComponent.NecromanticTranform();
+                isBeingCarriedBy.interruptComponent.NecromanticTransform();
             }
         }
     }
     public override void ActivateTileObject() {
         if (gridTileLocation != null) {
             base.ActivateTileObject();
-            List<LocationGridTile> tilesInRange = gridTileLocation.GetTilesInRadius(1);
+            List<LocationGridTile> tilesInRange = RuinarchListPool<LocationGridTile>.Claim();
+            gridTileLocation.PopulateTilesInRadius(tilesInRange, 1);
             LocationGridTile tile1 = null;
             LocationGridTile tile2 = null;
             LocationGridTile tile3 = null;
@@ -54,6 +55,7 @@ public class Necronomicon : Artifact {
             CharacterManager.Instance.PlaceSummonInitially(skeleton3, tile3);
 
             GameManager.Instance.CreateParticleEffectAt(gridTileLocation, PARTICLE_EFFECT.Necronomicon_Activate);
+            RuinarchListPool<LocationGridTile>.Release(tilesInRange);
             //gridTileLocation.structure.RemovePOI(this);
         }
     }

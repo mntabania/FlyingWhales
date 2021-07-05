@@ -4,12 +4,14 @@ using Inner_Maps;
 using Inner_Maps.Location_Structures;
 using UnityEngine;
 using UtilityScripts;
+using Locations.Settlements;
+
 namespace Traits {
     public class Lycanthrope : Trait {
         public Character owner { get; private set; }
 
-        private int _level;
-
+        private Collider2D[] _triggerFlawNearbyTargets;
+        
         #region getters
         public override bool isPersistent => true;
         #endregion
@@ -24,6 +26,7 @@ namespace Traits {
             AddTraitOverrideFunctionIdentifier(TraitManager.Per_Tick_While_Stationary_Unoccupied);
             AddTraitOverrideFunctionIdentifier(TraitManager.See_Poi_Cannot_Witness_Trait);
             advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.DISPEL };
+            _triggerFlawNearbyTargets = new Collider2D[100];
         }
 
         #region Overrides
@@ -47,7 +50,7 @@ namespace Traits {
         public override string GetTestingData(ITraitable traitable = null) {
             string data = base.GetTestingData(traitable);
             if (traitable is Character character) {
-                data = $"{data}Is Master: {character.lycanData.isMaster.ToString()}";
+                data = $"{data}Is Master: {character.lycanData.isMaster}";
             }
             return data;
         }
@@ -78,31 +81,32 @@ namespace Traits {
                     CRIME_SEVERITY severity = CrimeManager.Instance.GetCrimeSeverity(seenCharacter, owner, owner, CRIME_TYPE.Werewolf);
                     if (severity != CRIME_SEVERITY.None && severity != CRIME_SEVERITY.Unapplicable) {
                         JobQueueItem huntPreyJob = owner.jobQueue.GetJob(JOB_TYPE.LYCAN_HUNT_PREY);
-                        huntPreyJob?.ForceCancelJob(false, "avoiding discovery");
+                        huntPreyJob?.ForceCancelJob("avoiding discovery");
                         owner.crimeComponent.FleeToAllVillagerInRangeThatConsidersCrimeTypeACrime(owner, CRIME_TYPE.Werewolf, "avoiding discovery");
                     }
                 }
             }
         }
-        public override bool PerTickWhileStationaryOrUnoccupied() {
-            if (owner.hasMarker && owner.marker.isMoving && (owner.lycanData.activeForm == owner.lycanData.lycanthropeForm || owner.lycanData.isInWerewolfForm)) {
+        public override bool PerTickWhileStationaryOrUnoccupied(Character p_character) {
+            if (p_character.hasMarker && p_character.marker.isMoving && (p_character.lycanData.activeForm == p_character.lycanData.lycanthropeForm || p_character.lycanData.isInWerewolfForm)) {
                 float roll = Random.Range(0f, 100f);
                 float chance = 0.85f;
-                if (owner.currentRegion.GetTileObjectInRegionCount(TILE_OBJECT_TYPE.WEREWOLF_PELT) >= 3) {
+                if (p_character.currentRegion.GetTileObjectInRegionCount(TILE_OBJECT_TYPE.WEREWOLF_PELT) >= 3) {
                     chance = 0.5f;
                 }
-                if (roll < chance && owner.gridTileLocation.objHere == null) {
+                if (roll < chance && p_character.gridTileLocation.tileObjectComponent.objHere == null) {
                     //spawn werewolf pelt
-                    owner.interruptComponent.TriggerInterrupt(INTERRUPT.Shed_Pelt, owner);
+                    Messenger.Broadcast(CharacterSignals.LYCANTHROPE_SHED_WOLF_PELT, p_character);
+                    p_character.interruptComponent.TriggerInterrupt(INTERRUPT.Shed_Pelt, p_character);
                 }
             }
-            if (owner.needsComponent.isStarving && owner.lycanData.isMaster && !IsHuntingForPrey() && GameUtilities.RollChance(1)) {
+            if (p_character.needsComponent.isStarving && p_character.lycanData.isMaster && !IsHuntingForPrey() && GameUtilities.RollChance(1)) {
                 Character huntPreyTarget = GetHuntPreyTarget();
                 if (huntPreyTarget != null) {
-                    owner.jobComponent.TriggerHuntPreyJob(huntPreyTarget);    
+                    p_character.jobComponent.TriggerHuntPreyJob(huntPreyTarget);    
                 }
             }
-            if (owner.lycanData.dislikesBeingLycan && GameUtilities.RollChance(1)) { //1
+            if (p_character.lycanData.dislikesBeingLycan && GameUtilities.RollChance(1)) { //1
                 if (IsHuntingForPrey()) {
                     ResistHunger();
                 }
@@ -111,12 +115,12 @@ namespace Traits {
         }
         private void ResistHunger() {
             JobQueueItem huntPreyJob = owner.jobQueue.GetJob(JOB_TYPE.LYCAN_HUNT_PREY);
-            huntPreyJob?.ForceCancelJob(false, "Resisted Hunger");
+            huntPreyJob?.ForceCancelJob("Resisted Hunger");
             
             owner.traitContainer.AddTrait(owner, "Ashamed");
             Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Trait", "Lycanthrope", "resist_hunger", null, LOG_TAG.Needs);
             log.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-            log.AddLogToDatabase();
+            log.AddLogToDatabase(true);
             if (owner.lycanData.isInWerewolfForm) {
                 owner.interruptComponent.TriggerInterrupt(INTERRUPT.Revert_From_Werewolf, owner);    
             }
@@ -162,101 +166,135 @@ namespace Traits {
         #endregion
 
         public override string TriggerFlaw(Character character) {
-            if (IsAlone()) {
-                if (!DoTriggerFlawTransform()) {
-                    return "fail_no_target";
-                }
-            } else {
-                if (CanDoTriggerFlaw()) {
-                    //go to a random tile in the wilderness
-                    //then check if the character is alone, if not pick another random tile,
-                    //repeat the process until alone, then transform to wolf
-                    LocationStructure wilderness = character.currentRegion.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
-                    //LocationGridTile randomWildernessTile = wilderness.tiles[Random.Range(0, wilderness.tiles.Count)];
-                    //character.marker.GoTo(randomWildernessTile, CheckIfAlone);
-                    character.PlanFixedJob(JOB_TYPE.TRIGGER_FLAW, INTERACTION_TYPE.STEALTH_TRANSFORM, character, new OtherData[] { new LocationStructureOtherData(wilderness),  });    
-                } else {
-                    return "fail_no_target";
-                }
+            if (!TryDoLycanBehaviour(true)) {
+                return "fail_no_target";
             }
             return base.TriggerFlaw(character);
         }
 
         public void CheckIfAlone() {
-            if (IsAlone()) {
-                //alone
-                DoTriggerFlawTransform();
+            TryDoLycanBehaviour();
+        }
+        private bool TryDoLycanBehaviour(bool p_isFlawTriggered = false) {
+            if (owner.lycanData.isMaster) {
+                return TryMasterLycanHuntPrey(p_isFlawTriggered);
             } else {
-                //go to a different tile
-                LocationStructure wilderness = owner.currentRegion.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
-                //LocationGridTile randomWildernessTile = wilderness.tiles[Random.Range(0, wilderness.tiles.Count)];
-                //character.marker.GoTo(randomWildernessTile, CheckIfAlone);
-                owner.PlanFixedJob(JOB_TYPE.TRIGGER_FLAW, INTERACTION_TYPE.STEALTH_TRANSFORM, owner, new OtherData[] { new LocationStructureOtherData(wilderness) });
+                if (IsAlone()) {
+                    DoTriggerFlawTransform();
+                } else {
+                    GoOutsideForStealthTransform();
+                }
+                return true;
             }
         }
         private bool IsAlone() {
             return !owner.crimeComponent.HasNonHostileVillagerInRangeThatConsidersCrimeTypeACrime(CRIME_TYPE.Werewolf);
             // return owner.marker.inVisionCharacters.Count == 0;
         }
-        private bool DoTriggerFlawTransform() {
-            if (owner.lycanData.isMaster) {
-                Character huntPreyTarget = GetHuntPreyTarget();
-                if (huntPreyTarget != null) {
-                    owner.jobQueue.CancelAllJobs();
-                    return owner.jobComponent.TriggerHuntPreyJob(huntPreyTarget);
-                }
-                return false;
-            } else {
-                owner.lycanData.Transform(owner);
-                return true;
-            }
+        private void DoTriggerFlawTransform() {
+            owner.lycanData.Transform(owner);
         }
-        private bool CanDoTriggerFlaw() {
-            if (owner.lycanData.isMaster) {
-                Character huntPreyTarget = GetHuntPreyTarget();
-                return huntPreyTarget != null;
+        private void GoOutsideForStealthTransform() {
+            //go to a random tile outside settlement or surrounding areas
+            //then check if the character is alone, if not pick another random tile,
+            //repeat the process until alone, then transform to wolf
+            OtherData[] otherData = null;
+            BaseSettlement currentSettlement = owner.currentSettlement;
+            if (currentSettlement != null && currentSettlement.locationType == LOCATION_TYPE.VILLAGE) {
+                otherData = new OtherData[] { new SettlementOtherData(currentSettlement) };
             } else {
-                return true;
+                Area chosenArea = owner.areaLocation.neighbourComponent.GetRandomAdjacentNoSettlementHextileWithinRegion();
+                if (chosenArea == null) {
+                    chosenArea = owner.areaLocation;
+                }
+                otherData = new OtherData[] { new AreaOtherData(chosenArea) };
             }
+            owner.PlanFixedJob(JOB_TYPE.TRIGGER_FLAW, INTERACTION_TYPE.STEALTH_TRANSFORM, owner, otherData);
+        }
+        private bool TryMasterLycanHuntPrey(bool p_isFlawTriggered = false) {
+            Character huntPreyTarget = GetHuntPreyTarget();
+            if (huntPreyTarget != null) {
+                owner.jobQueue.CancelAllJobs();
+                return owner.jobComponent.TriggerHuntPreyJob(huntPreyTarget, p_isFlawTriggered);
+            }
+            return false;
         }
 
-        private Character GetHuntPreyTarget() { 
-            string log = $"{GameManager.Instance.TodayLogString()} {owner.name} will try to get hunt prey target"; 
+        private Character GetHuntPreyTarget() {
+#if DEBUG_LOG
+            string log = $"{GameManager.Instance.TodayLogString()} {owner.name} will try to get hunt prey target";
+#endif
             WeightedDictionary<Character> choices = new WeightedDictionary<Character>();
-            
             int animalCount = 0;
-            for (int i = 0; i < owner.currentRegion.charactersAtLocation.Count; i++) { 
-                Character otherCharacter = owner.currentRegion.charactersAtLocation[i]; 
-                if (otherCharacter != owner && !otherCharacter.isDead) { 
-                    int weight = 0; 
-                    if (otherCharacter is Animal) { 
-                        if (animalCount< 3) { 
-                            weight = 10; 
-                            animalCount++;    
-                        } else { 
-                            continue; //skip
-                        }
-                    } else if (otherCharacter.race.IsSapient()){ 
-                        if (otherCharacter.faction != owner.faction && !owner.isDead) { 
-                            if (!owner.relationshipContainer.IsFriendsWith(otherCharacter)) { 
-                                weight = 10;    
+            var size = Physics2D.OverlapCircleNonAlloc(owner.worldPosition, 20f, _triggerFlawNearbyTargets, GameUtilities.Filtered_Layer_Mask);
+            for (int i = 0; i < size; i++) {
+                Collider2D collider2D = _triggerFlawNearbyTargets[i];
+                POIVisionTrigger visionTrigger = collider2D.gameObject.GetComponent<POIVisionTrigger>();
+                if (visionTrigger != null && visionTrigger.poi is Character otherCharacter) {
+                    if (otherCharacter != owner && !otherCharacter.isDead) { 
+                        int weight = 0; 
+                        if (otherCharacter is Animal) { 
+                            if (animalCount< 3) { 
+                                weight = 10; 
+                                animalCount++;    
+                            } else { 
+                                continue; //skip
+                            }
+                        } else if (otherCharacter.race.IsSapient()){ 
+                            if (otherCharacter.faction != owner.faction && !owner.isDead) { 
+                                if (!owner.relationshipContainer.IsFriendsWith(otherCharacter) && owner.movementComponent.HasPathToEvenIfDiffRegion(otherCharacter.gridTileLocation)) {
+                                    weight = 10;
+                                }
                             }
                         }
-                    }
-                    if (weight > 0) { 
-                        choices.AddElement(otherCharacter, weight);
+                        if (weight > 0) { 
+                            choices.AddElement(otherCharacter, weight);
+                        }
                     }
                 }
             }
-             
+
+
+
+            // int animalCount = 0;
+            // for (int i = 0; i < owner.currentRegion.charactersAtLocation.Count; i++) { 
+            //     Character otherCharacter = owner.currentRegion.charactersAtLocation[i]; 
+            //     if (otherCharacter != owner && !otherCharacter.isDead) { 
+            //         int weight = 0; 
+            //         if (otherCharacter is Animal) { 
+            //             if (animalCount< 3) { 
+            //                 weight = 10; 
+            //                 animalCount++;    
+            //             } else { 
+            //                 continue; //skip
+            //             }
+            //         } else if (otherCharacter.race.IsSapient()){ 
+            //             if (otherCharacter.faction != owner.faction && !owner.isDead) { 
+            //                 if (!owner.relationshipContainer.IsFriendsWith(otherCharacter)) { 
+            //                     weight = 10;    
+            //                 }
+            //             }
+            //         }
+            //         if (weight > 0) { 
+            //             choices.AddElement(otherCharacter, weight);
+            //         }
+            //     }
+            // }
+
+#if DEBUG_LOG
             log += $"\n{choices.GetWeightsSummary("Weights are:")}";
-		    if (choices.GetTotalOfWeights() > 0) {
+#endif
+            if (choices.GetTotalOfWeights() > 0) {
 			    Character target = choices.PickRandomElementGivenWeights();
+#if DEBUG_LOG
 			    log += $"\nChosen target is {target.name}";
                 owner.logComponent.PrintLogIfActive(log);
+#endif
                 return target;
             }
+#if DEBUG_LOG
             owner.logComponent.PrintLogIfActive(log);
+#endif
             return null;
         }
         public override string GetTriggerFlawEffectDescription(Character character, string key) {
@@ -272,7 +310,6 @@ namespace Traits {
     public class LycanthropeData {
         public Character activeForm { get; private set; }
         public Character limboForm { get; private set; }
-
         public Character lycanthropeForm { get; private set; }
         public Character originalForm { get; private set; }
         
@@ -281,31 +318,69 @@ namespace Traits {
         public List<Character> awareCharacters { get; private set; }
         public bool isInWerewolfForm { get; private set; }
 
+        public Character plainWolf { get; private set; }
+        public Character direWolf { get; private set; }
+
         public GameObject transformRevertEffectGO { get; private set; }
 
         public LycanthropeData(Character originalForm) {
             this.originalForm = originalForm;
-            CreateLycanthropeForm();
+            isMaster = false;
+            CreatePlainWolfForm();
+            UpdateLycanForm();
             activeForm = originalForm;
             limboForm = lycanthropeForm;
-            originalForm.traitContainer.AddTrait(originalForm, "Lycanthrope");
-            lycanthropeForm.traitContainer.AddTrait(lycanthropeForm, "Lycanthrope");
             originalForm.SetLycanthropeData(this);
-            lycanthropeForm.SetLycanthropeData(this);
-            isMaster = false;
+            originalForm.traitContainer.AddTrait(originalForm, "Lycanthrope");
             awareCharacters = new List<Character>();
             DetermineIfDesireOrDislike(originalForm);
+            Messenger.AddListener<SkillData>("LycanthropyLevelUp", OnLycanthropyLevelUp);
         }
-        public LycanthropeData(Character originalForm, Character lycanthropeForm, Character activeForm, Character limboForm) {
+        public LycanthropeData(Character originalForm, Character lycanthropeForm, Character activeForm, Character limboForm, Character plainWolf, Character direWolf) {
             this.originalForm = originalForm;
             this.lycanthropeForm = lycanthropeForm;
             this.activeForm = activeForm;
             this.limboForm = limboForm;
+            this.plainWolf = plainWolf;
+            this.direWolf = direWolf;
+            originalForm.SetLycanthropeData(this);
+            plainWolf?.SetLycanthropeData(this);
+            direWolf?.SetLycanthropeData(this);
+            Messenger.AddListener<SkillData>("LycanthropyLevelUp", OnLycanthropyLevelUp);
         }
 
-        private void CreateLycanthropeForm() {
-            lycanthropeForm = CharacterManager.Instance.CreateNewLimboSummon(SUMMON_TYPE.Wolf, faction: FactionManager.Instance.neutralFaction);
-            lycanthropeForm.ConstructInitialGoapAdvertisementActions();
+        private void CreatePlainWolfForm() {
+            plainWolf = CharacterManager.Instance.CreateNewLimboSummon(SUMMON_TYPE.Wolf, faction: FactionManager.Instance.neutralFaction);
+            plainWolf.ConstructInitialGoapAdvertisementActions();
+            plainWolf.SetFirstAndLastName(originalForm.firstName, originalForm.surName);
+            plainWolf.SetLycanthropeData(this);
+            plainWolf.traitContainer.AddTrait(plainWolf, "Lycanthrope");
+        }
+        private void CreateDireWolfForm() {
+            direWolf = CharacterManager.Instance.CreateNewLimboSummon(SUMMON_TYPE.Dire_Wolf, faction: FactionManager.Instance.neutralFaction);
+            direWolf.ConstructInitialGoapAdvertisementActions();
+            direWolf.SetFirstAndLastName(originalForm.firstName, originalForm.surName);
+            direWolf.SetLycanthropeData(this);
+            direWolf.traitContainer.AddTrait(direWolf, "Lycanthrope");
+        }
+
+        private void UpdateLycanForm() {
+            lycanthropeForm = plainWolf;
+            if (originalForm.HasAfflictedByPlayerWith(PLAYER_SKILL_TYPE.LYCANTHROPY)) {
+                int level = PlayerSkillManager.Instance.GetAfflictionData(PLAYER_SKILL_TYPE.LYCANTHROPY).currentLevel;
+                if(level >= 2) {
+                    SetIsMaster(true);
+                }
+                if (level >= 1) {
+                    if(direWolf == null) {
+                        CreateDireWolfForm();
+                    }
+                    lycanthropeForm = direWolf;
+                }
+
+            }
+        }
+        private void UpdateLycanFormName() {
             lycanthropeForm.SetFirstAndLastName(originalForm.firstName, originalForm.surName);
         }
 
@@ -326,13 +401,14 @@ namespace Traits {
             if (UIManager.Instance.monsterInfoUI.activeMonster == activeForm) {
                 UIManager.Instance.monsterInfoUI.CloseMenu();
             }
-
+            UpdateLycanForm();
             activeForm.traitContainer.RemoveTrait(activeForm, "Transforming");
             activeForm = lycanthropeForm;
             limboForm = originalForm;
             LocationGridTile tile = originalForm.gridTileLocation;
             Region homeRegion = originalForm.homeRegion;
             PutToLimbo(originalForm);
+            UpdateLycanFormName();
             ReleaseFromLimbo(lycanthropeForm, tile, homeRegion);
             CopyImportantTraits(originalForm, lycanthropeForm);
             lycanthropeForm.needsComponent.ResetFullnessMeter();
@@ -347,6 +423,7 @@ namespace Traits {
             }
             
             Messenger.Broadcast(CharacterSignals.ON_SWITCH_FROM_LIMBO, originalForm, lycanthropeForm);
+            activeForm.bookmarkEventDispatcher.ExecuteBookmarkChangedNameOrElementsEvent(activeForm);
         }
 
         public void RevertToNormal() {
@@ -362,6 +439,7 @@ namespace Traits {
             limboForm = lycanthropeForm;
             LocationGridTile tile = lycanthropeForm.gridTileLocation;
             Region homeRegion = lycanthropeForm.homeRegion;
+            UpdateLycanFormName();
             PutToLimbo(lycanthropeForm);
             ReleaseFromLimbo(originalForm, tile, homeRegion);
             CopyImportantTraits(lycanthropeForm, originalForm);
@@ -372,6 +450,7 @@ namespace Traits {
             }
             
             Messenger.Broadcast(CharacterSignals.ON_SWITCH_FROM_LIMBO, lycanthropeForm, originalForm);
+            activeForm.bookmarkEventDispatcher.ExecuteBookmarkChangedNameOrElementsEvent(activeForm);
         }
         private void CopyImportantTraits(Character p_copyFrom, Character p_copyTo) {
             if (p_copyFrom.traitContainer.HasTrait("Restrained")) {
@@ -393,8 +472,13 @@ namespace Traits {
             if (form.trapStructure.IsTrapped()) {
                 form.trapStructure.ResetAllTrapStructures();
             }
-            if (form.trapStructure.IsTrappedInHex()) {
-                form.trapStructure.ResetAllTrapHexes();
+            if (form.trapStructure.IsTrappedInArea()) {
+                form.trapStructure.ResetTrapArea();
+            }
+            //Added this because of this issue:
+            //https://trello.com/c/Vx50lcFi/4344-nullreference-canseeobjectlocationhere
+            if (form.partyComponent.hasParty) {
+                form.partyComponent.currentParty.RemoveMemberThatJoinedQuest(form);
             }
             Messenger.Broadcast(CharacterSignals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, form as IPointOfInterest, "");
             Messenger.Broadcast(CharacterSignals.FORCE_CANCEL_ALL_ACTIONS_TARGETING_POI, form as IPointOfInterest, "");
@@ -423,17 +507,17 @@ namespace Traits {
                         (otherPOI as Character).marker.RemovePOIAsInRangeButDifferentStructure(form);
                     }
                 }
-                form.DestroyMarker();
+                form.DestroyMarker(removeFromMasterList: false);
             }
             form.currentRegion?.RemoveCharacterFromLocation(form);
             form.homeRegion?.RemoveResident(form);
             CharacterManager.Instance.AddNewLimboCharacter(form);
-            CharacterManager.Instance.RemoveCharacter(form, false);
-            Messenger.AddListener(Signals.TICK_STARTED, form.OnTickStartedWhileSeized);
+            CharacterManager.Instance.RemoveCharacter(form, false, false);
+            Messenger.AddListener(Signals.TICK_STARTED, form.OnTickStartedWhileSeizedOrIsInLimbo);
         }
         private void ReleaseFromLimbo(Character form, LocationGridTile tileLocation, Region homeRegion) {
             if (Messenger.eventTable.ContainsKey(Signals.TICK_STARTED)) {
-                Messenger.RemoveListener(Signals.TICK_STARTED, form.OnTickStartedWhileSeized);
+                Messenger.RemoveListener(Signals.TICK_STARTED, form.OnTickStartedWhileSeizedOrIsInLimbo);
             }
             homeRegion?.AddResident(form);
             form.needsComponent.OnCharacterArrivedAtLocation(tileLocation.structure.region.coreTile.region);
@@ -452,7 +536,7 @@ namespace Traits {
             //    form.marker.InitialPlaceMarkerAt(tileLocation, false);
             //}
             form.needsComponent.CheckExtremeNeeds();
-            CharacterManager.Instance.AddNewCharacter(form, false);
+            CharacterManager.Instance.AddNewCharacter(form, false, false);
             CharacterManager.Instance.RemoveLimboCharacter(form);
         }
 
@@ -469,7 +553,9 @@ namespace Traits {
             lycanthropeForm.faction?.LeaveFaction(lycanthropeForm);
             CharacterManager.Instance.RemoveLimboCharacter(lycanthropeForm);
             originalForm.SetLycanthropeData(null);
-            lycanthropeForm.SetLycanthropeData(null);
+            plainWolf?.SetLycanthropeData(null);
+            direWolf?.SetLycanthropeData(null);
+            Messenger.RemoveListener<SkillData>("LycanthropyLevelUp", OnLycanthropyLevelUp);
         }
 
         //Parameter: which form is this data erased?
@@ -482,18 +568,28 @@ namespace Traits {
                 RevertToNormal();
                 //CharacterManager.Instance.RemoveLimboCharacter(lycanthropeForm);
                 originalForm.SetLycanthropeData(null);
-                lycanthropeForm.SetLycanthropeData(null);
+                plainWolf?.SetLycanthropeData(null);
+                direWolf?.SetLycanthropeData(null);
+                Messenger.RemoveListener<SkillData>("LycanthropyLevelUp", OnLycanthropyLevelUp);
                 originalForm.Death(cause, deathFromAction, responsibleCharacter, _deathLog, deathLogFillers);
             } 
             //else if (form == originalForm) {
             //    originalForm.traitContainer.RemoveTrait(originalForm, "Lycanthrope");
             //}
         }
+
+        private void OnLycanthropyLevelUp(SkillData p_skill) {
+            if (p_skill.currentLevel >= 2) {
+                if (originalForm.HasAfflictedByPlayerWith(PLAYER_SKILL_TYPE.LYCANTHROPY)) {
+                    SetIsMaster(true);
+                }
+            }
+        }
         public void SetIsInWerewolfForm(bool state) {
             isInWerewolfForm = state;
         }
 
-        #region Additional Data
+#region Additional Data
         public void SetDislikesBeingLycan(bool state) {
             dislikesBeingLycan = state;
         }
@@ -535,9 +631,9 @@ namespace Traits {
             }
             SetDislikesBeingLycan(GameUtilities.RollChance(50));
         }
-        #endregion
+#endregion
 
-        #region Aware Characters
+#region Aware Characters
         public void AddAwareCharacter(Character character) {
             if (!awareCharacters.Contains(character)) {
                 awareCharacters.Add(character);
@@ -570,7 +666,7 @@ namespace Traits {
             }
             return false;
         }
-        #endregion
+#endregion
     }
 
     [System.Serializable]
@@ -580,20 +676,27 @@ namespace Traits {
 
         public string lycanthropeForm;
         public string originalForm;
-        
+
+        public string plainWolf;
+        public string direWolf;
+
         public bool dislikesBeingLycan;
         public bool isMaster;
         public List<string> awareCharacterIDs;
 
         public bool isInWerewolfForm;
 
-        #region Overrides
+#region Overrides
         public override void Save(LycanthropeData data) {
             activeForm = data.activeForm.persistentID;
             limboForm = data.limboForm.persistentID;
 
             lycanthropeForm = data.lycanthropeForm.persistentID;
             originalForm = data.originalForm.persistentID;
+
+            plainWolf = data.plainWolf?.persistentID;
+            direWolf = data.direWolf?.persistentID;
+
             dislikesBeingLycan = data.dislikesBeingLycan;
             isMaster = data.isMaster;
             isInWerewolfForm = data.isInWerewolfForm;
@@ -602,6 +705,14 @@ namespace Traits {
         public override LycanthropeData Load() {
             Character origForm = CharacterManager.Instance.GetCharacterByPersistentID(originalForm);
             Character lycanForm = CharacterManager.Instance.GetCharacterByPersistentID(lycanthropeForm);
+            Character plainWolf = null;
+            if (!string.IsNullOrEmpty(this.plainWolf)) {
+                plainWolf = CharacterManager.Instance.GetCharacterByPersistentID(this.plainWolf);
+            }
+            Character direWolf = null;
+            if (!string.IsNullOrEmpty(this.direWolf)) {
+                direWolf = CharacterManager.Instance.GetCharacterByPersistentID(this.direWolf);
+            }
             Character activeForm = origForm;
             Character limboForm = lycanForm;
             if (this.activeForm == this.lycanthropeForm) {
@@ -611,13 +722,13 @@ namespace Traits {
                 activeForm = origForm;
                 limboForm = lycanForm;
             }
-            LycanthropeData data = new LycanthropeData(origForm, lycanForm, activeForm, limboForm);
+            LycanthropeData data = new LycanthropeData(origForm, lycanForm, activeForm, limboForm, plainWolf, direWolf);
             data.SetDislikesBeingLycan(dislikesBeingLycan);
             data.SetIsMaster(isMaster);
             data.SetIsInWerewolfForm(isInWerewolfForm);
             data.LoadAwareCharacters(SaveUtilities.ConvertIDListToCharacters(awareCharacterIDs));
             return data;
         }
-        #endregion
+#endregion
     }
 }

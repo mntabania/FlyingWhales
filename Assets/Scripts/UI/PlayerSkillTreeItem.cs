@@ -18,7 +18,7 @@ public class PlayerSkillTreeItem : MonoBehaviour {
 
     public void SetData(PLAYER_SKILL_TYPE skillType, PlayerSkillTreeNode data, System.Action<PLAYER_SKILL_TYPE, PlayerSkillTreeItem> onClick) {
         this.skillType = skillType;
-        skillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(this.skillType);
+        skillData = PlayerSkillManager.Instance.GetScriptableObjPlayerSkillData<PlayerSkillData>(this.skillType);
         this.onClick = onClick;
         SetButtonImg(skillData.buttonSprite);
         SetSkillState();

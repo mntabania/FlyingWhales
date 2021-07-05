@@ -25,7 +25,6 @@ namespace UtilityScripts {
         public static readonly System.Random Rng = new System.Random();
         private static int _lastFactionColorIndex;
         private static int _lastLogID;
-        private static int _lastLandmarkID;
         private static int _lastFactionID;
         private static int _lastCharacterID;
         private static int _lastAreaID;
@@ -35,7 +34,7 @@ namespace UtilityScripts {
         private static int _lastRegionID;
         private static int _lastJobID;
         private static int _lastBurningSourceID;
-        private static int _lastTileCollectionID;
+        private static int _lastGoapPlanID;
         public static LANGUAGES defaultLanguage = LANGUAGES.ENGLISH;
         public static string dataPath => $"{Application.streamingAssetsPath}/Data/";
         public static string gameSavePath => $"{Application.persistentDataPath}/Ruinarch Game Saves/";
@@ -55,10 +54,6 @@ namespace UtilityScripts {
             if (obj is Log) {
                 _lastLogID += 1;
                 return _lastLogID;
-            }
-            if (obj is BaseLandmark) {
-                _lastLandmarkID += 1;
-                return _lastLandmarkID;
             }
             if (obj is Faction) {
                 _lastFactionID += 1;
@@ -96,9 +91,9 @@ namespace UtilityScripts {
                 _lastBurningSourceID += 1;
                 return _lastBurningSourceID;
             }
-            if (obj is LocationGridTileCollection) {
-                _lastTileCollectionID += 1;
-                return _lastTileCollectionID;
+            if (obj is GoapPlan) {
+                _lastGoapPlanID += 1;
+                return _lastGoapPlanID;
             }
             return 0;
         }
@@ -108,8 +103,6 @@ namespace UtilityScripts {
         public static int SetID<T>(T obj, int idToUse) {
             if (obj is Log) {
                 if (_lastLogID <= idToUse) { _lastLogID = idToUse; }
-            } else if (obj is BaseLandmark) {
-                if (_lastLandmarkID <= idToUse) { _lastLandmarkID = idToUse; }
             } else if (obj is Faction) {
                 if (_lastFactionID <= idToUse) { _lastFactionID = idToUse; }
             } else if (obj is Character) {
@@ -130,8 +123,6 @@ namespace UtilityScripts {
                 if (_lastJobID <= idToUse) { _lastJobID = idToUse; }
             } else if (obj is BurningSource) {
                 if (_lastBurningSourceID <= idToUse) { _lastBurningSourceID = idToUse; }
-            } else if (obj is LocationGridTileCollection) {
-                if (_lastTileCollectionID <= idToUse) { _lastTileCollectionID = idToUse; }
             }
             return idToUse;
         }
@@ -166,6 +157,16 @@ namespace UtilityScripts {
                 };
             }
         }
+        public static Dictionary<GridNeighbourDirection, Point> gridPossibleNeighbours = new Dictionary<GridNeighbourDirection, Point>() {
+            {GridNeighbourDirection.North, new Point(0,1) },
+            {GridNeighbourDirection.South, new Point(0,-1) },
+            {GridNeighbourDirection.West, new Point(-1,0) },
+            {GridNeighbourDirection.East, new Point(1,0) },
+            {GridNeighbourDirection.North_West, new Point(-1,1) },
+            {GridNeighbourDirection.North_East, new Point(1,1) },
+            {GridNeighbourDirection.South_West, new Point(-1,-1) },
+            {GridNeighbourDirection.South_East, new Point(1,-1) },
+        };
         #endregion
 
         #region Color Utilities
@@ -309,17 +310,23 @@ namespace UtilityScripts {
                     if (logFiller.identifier == identifier) {
                         object obj = logFiller.GetObjectForFiller();
                         if (obj != null) {
-                            wordToReplace = $"<b><link={logFiller.GetLinkText()}>{logFiller.value}</link></b>";
-                            if (obj is Character c) {
-                                wordToReplace = ColorizeName(wordToReplace, CharacterManager.Instance.GetCharacterNameColorHex(c));
-                            } else if (obj is Faction) {
-                                wordToReplace = ColorizeName(wordToReplace, FactionManager.Instance.GetFactionNameColorHex());
-                            } else if (obj is TileObject) {
-                                wordToReplace = ColorizeName(wordToReplace);
+                            if (obj is Wilderness) {
+                                //do not add link to wilderness, since it should not be selectable
+                                wordToReplace = $"<b>{logFiller.value}</b>";
+                            } else {
+                                wordToReplace = $"<b><link={logFiller.GetLinkText()}>{logFiller.value}</link></b>";
+                                if (obj is Character c) {
+                                    wordToReplace = ColorizeName(wordToReplace, CharacterManager.Instance.GetCharacterNameColorHex(c));
+                                } else if (obj is Faction) {
+                                    wordToReplace = ColorizeName(wordToReplace, FactionManager.Instance.GetFactionNameColorHex());
+                                } else if (obj is TileObject) {
+                                    wordToReplace = ColorizeName(wordToReplace);
+                                }
+                                if (obj is Character character) {
+                                    wordToReplace = $"{character.visuals.GetCharacterStringIcon()}{wordToReplace}";
+                                }    
                             }
-                            if (obj is Character character) {
-                                wordToReplace = $"{character.visuals.GetCharacterStringIcon()}{wordToReplace}";
-                            }
+                            
                         } else {
                             wordToReplace = $"<b>{logFiller.value}</b>";
                         }
@@ -433,9 +440,10 @@ namespace UtilityScripts {
             if (InteractionManager.Instance.forcedActionNames.Contains(word)) {
                 return true;
             }
-            if (word.EndsWith("ing") || word.EndsWith("ed")) {
-                return true;
-            } else if (InteractionManager.Instance.actionNames.Contains(word)) {
+            // if (word.EndsWith("ing") || word.EndsWith("ed")) {
+            //     return true;
+            // } else 
+            if (InteractionManager.Instance.actionNames.Contains(word)) {
                 return true;
             }
             return false;
@@ -548,16 +556,21 @@ namespace UtilityScripts {
                     LogFiller logFiller = objectLog[i];
                     if (logFiller.identifier == identifier) {
                         if (logFiller.obj != null) {
-                            wordToReplace = $"<b><link={i}>{logFiller.value}</link></b>";
-                            if (logFiller.obj is Character c) {
-                                wordToReplace = ColorizeName(wordToReplace, CharacterManager.Instance.GetCharacterNameColorHex(c));
-                            } else if (logFiller.obj is Faction) {
-                                wordToReplace = ColorizeName(wordToReplace, FactionManager.Instance.GetFactionNameColorHex());
-                            } else if (logFiller.obj is TileObject) {
-                                wordToReplace = ColorizeName(wordToReplace);
-                            }
-                            if (logFiller.obj is Character character) {
-                                wordToReplace = $"{character.visuals.GetCharacterStringIcon()}{wordToReplace}";
+                            if (logFiller.obj is Wilderness) {
+                                //do not add link to wilderness, since it should not be selectable
+                                wordToReplace = $"<b>{logFiller.value}</b>";
+                            } else {
+                                wordToReplace = $"<b><link={i}>{logFiller.value}</link></b>";
+                                if (logFiller.obj is Character c) {
+                                    wordToReplace = ColorizeName(wordToReplace, CharacterManager.Instance.GetCharacterNameColorHex(c));
+                                } else if (logFiller.obj is Faction) {
+                                    wordToReplace = ColorizeName(wordToReplace, FactionManager.Instance.GetFactionNameColorHex());
+                                } else if (logFiller.obj is TileObject) {
+                                    wordToReplace = ColorizeName(wordToReplace);
+                                }
+                                if (logFiller.obj is Character character) {
+                                    wordToReplace = $"{character.visuals.GetCharacterStringIcon()}{wordToReplace}";
+                                }
                             }
                         } else {
                             wordToReplace = $"<b>{logFiller.value}</b>";
@@ -1016,8 +1029,17 @@ namespace UtilityScripts {
         public static string ManaIcon() {
             return "<sprite=\"Text_Sprites\" name=\"Mana_Icon\">";
         }
+        public static string UpgradeArrowIcon() {
+            return "<sprite=\"Text_Sprites\" name=\"upgrade_arrow_icon\">";
+        }
+        public static string YellowDotIcon() {
+            return "<sprite=\"Text_Sprites\" name=\"exclamation\">";
+        }
         public static string ChargesIcon() {
             return "<sprite=\"Text_Sprites\" name=\"Charges_Icon\">";
+        }
+        public static string BonusChargesIcon() {
+            return "<sprite=\"Text_Sprites\" name=\"Bonus_Charges_Icon\">";
         }
         public static string ThreatIcon() {
             return "<sprite=\"Text_Sprites\" name=\"Threat_Icon\">";
@@ -1037,12 +1059,75 @@ namespace UtilityScripts {
         public static string UndeadIcon() {
             return "<sprite=\"Text_Sprites\" name=\"Undead_Icon\">";
         }
-        public static string PlagueIcon() {
+        public static string ChaoticEnergyIcon() {
             return "<sprite=\"Text_Sprites\" name=\"Plague_Icon\">";
+        }
+        public static string SpiritEnergyIcon() {
+            return "<sprite=\"Text_Sprites\" name=\"spirit_energy_icon\">";
+        }
+        public static string AttackIcon() {
+            return "<sprite=\"Text_Sprites\" name=\"stats_attack_icon\">";
+        }
+        public static string EarthIcon() {
+            return "<sprite=\"Text_Sprites\" name=\"element_earth_icon\">";
+        }
+        public static string NormalIcon() {
+            return "<sprite=\"Text_Sprites\" name=\"element_normal_icon\">";
+        }
+        public static string HealthIcon() {
+            return "<sprite=\"Text_Sprites\" name=\"stats_health_icon\">";
+        }
+        public static string SpeedIcon() {
+            return "<sprite=\"Text_Sprites\" name=\"stats_speed_icon\">";
+        }
+        public static string WaterIcon() {
+            return "<sprite=\"Text_Sprites\" name=\"element_water_icon\">";
+        }
+        public static string PoisonIcon() {
+            return "<sprite=\"Text_Sprites\" name=\"element_poison_icon\">";
+        }
+        public static string IceIcon() {
+            return "<sprite=\"Text_Sprites\" name=\"element_ice_icon\">";
+        }
+        public static string ResistanceIcon() {
+            return "<sprite=\"Text_Sprites\" name=\"resistance_icon\">";
+        }
+        public static string PiercingIcon() {
+            return "<sprite=\"Text_Sprites\" name=\"piercing_icon\">";
+        }
+        public static string WindIcon() {
+            return "<sprite=\"Text_Sprites\" name=\"element_wind_icon\">";
+        }
+        public static string FireIcon() {
+            return "<sprite=\"Text_Sprites\" name=\"element_fire_icon\">";
+        }
+        public static string ElectricIcon() {
+            return "<sprite=\"Text_Sprites\" name=\"element_electric_icon\">";
         }
         public static string RatmanIcon() {
             return "<sprite=\"Text_Sprites\" name=\"Ratman_Icon\">";
         }
+        public static string VillageIcon() {
+            return "<sprite=\"Text_Sprites\" name=\"Village_Icon\">";
+        }
+        public static string TileObjectIcon() {
+            return "<sprite=\"Text_Sprites\" name=\"Tile_Object_Icon\">";
+        }
+        public static string StructureIcon() {
+            return "<sprite=\"Text_Sprites\" name=\"Structure_Icon\">";
+        }
+        //public static string BonusChargesIcon() {
+        //    return "<sprite=\"Text_Sprites\" name=\"bonus_charges_icon\">";
+        //}
+        //public static string ObjectIcon() {
+        //    return "<sprite=\"Text_Sprites\" name=\"icon_object\">";
+        //}
+        //public static string VillageIcon() {
+        //    return "<sprite=\"Text_Sprites\" name=\"icon_village\">";
+        //}
+        //public static string StructureIcon() {
+        //    return "<sprite=\"Text_Sprites\" name=\"icon_structure\">";
+        //}
         public static string ColorizeAction(string actionString) {
             return $"<color=#f87f43>{actionString}</color>";
         }
@@ -1051,6 +1136,9 @@ namespace UtilityScripts {
         }
         public static string ColorizeInvalidText(string p_text) {
             return $"<color=#FE3E83>{p_text}</color>";
+        }
+        public static string ColorizeUpgradeText(string p_text) {
+            return $"<color=#81FF00>{p_text}</color>";
         }
         public static string ColorizeName(string name) {
             return $"<color=#f8ed43>{name}</color>";
@@ -1063,6 +1151,39 @@ namespace UtilityScripts {
         }
         public static string ColorizeAndBoldName(string name, string color) {
             return $"<b>{ColorizeName(name, color)}</b>";
+        }
+        public static string ColorizeSpellTitle(string name) {
+            return $"<color=#D7AE50>{name}</color>";
+        }
+        public static string GetRichTextIconForElement(ELEMENTAL_TYPE p_type) {
+            string formatted = string.Empty;
+            switch (p_type) {
+                case ELEMENTAL_TYPE.Normal:
+                formatted = $"{ColorizeSpellTitle($"{AttackIcon()}")}"; //NormalIcon
+                break;
+                case ELEMENTAL_TYPE.Poison:
+                formatted = $"{ColorizeSpellTitle($"{PoisonIcon()}")}";
+                break;
+                case ELEMENTAL_TYPE.Fire:
+                formatted = $"{ColorizeSpellTitle($"{FireIcon()}")}";
+                break;
+                case ELEMENTAL_TYPE.Water:
+                formatted = $"{ColorizeSpellTitle($"{WaterIcon()}")}";
+                break;
+                case ELEMENTAL_TYPE.Wind:
+                formatted = $"{ColorizeSpellTitle($"{WindIcon()}")}";
+                break;
+                case ELEMENTAL_TYPE.Ice:
+                formatted = $"{ColorizeSpellTitle($"{IceIcon()}")}";
+                break;
+                case ELEMENTAL_TYPE.Electric:
+                formatted = $"{ColorizeSpellTitle($"{ElectricIcon()}")}";
+                break;
+                case ELEMENTAL_TYPE.Earth:
+                formatted = $"{ColorizeSpellTitle($"{EarthIcon()}")}";
+                break;
+            }
+            return formatted;
         }
         public static string GetFirstFewEmotionsAndComafy(string emotionsStr, int emotionCount) {
             string[] emotions = emotionsStr.Split(' ');
@@ -1579,8 +1700,6 @@ namespace UtilityScripts {
                 int value = kvp.Value;
                 if (key is Character) {
                     actionWeightsSummary += $"\n{(key as Character).name} - {kvp.Value}";
-                } else if (key is BaseLandmark) {
-                    actionWeightsSummary += $"\n{(key as BaseLandmark).landmarkName} - {kvp.Value}";
                 } else {
                     actionWeightsSummary += $"\n{kvp.Key} - {kvp.Value}";
                 }
@@ -1595,8 +1714,6 @@ namespace UtilityScripts {
                 float value = kvp.Value;
                 if (key is Character) {
                     actionWeightsSummary += $"\n{(key as Character).name} - {kvp.Value}";
-                } else if (key is BaseLandmark) {
-                    actionWeightsSummary += $"\n{(key as BaseLandmark).landmarkName} - {kvp.Value}";
                 } else {
                     actionWeightsSummary += $"\n{kvp.Key} - {kvp.Value}";
                 }
@@ -1808,7 +1925,7 @@ namespace UtilityScripts {
             for (int i = 0; i < children.Length; i++) {
                 Transform currTransform = children[i];
                 PooledObject pooledObject = currTransform.gameObject.GetComponent<EZObjectPools.PooledObject>(); 
-                if (ReferenceEquals(pooledObject, null)) {
+                if (ObjectPoolManager.Instance == null || ReferenceEquals(pooledObject, null)) {
                     if (Application.isEditor) {
                         GameObject.DestroyImmediate(currTransform.gameObject);
                     } else {
@@ -2059,6 +2176,7 @@ namespace UtilityScripts {
         }
 
         private static RACE[,] opposingRaces = new RACE[,] { { RACE.HUMANS, RACE.ELVES }, { RACE.FAERY, RACE.GOBLIN } };
+        
         public static bool AreTwoCharactersFromOpposingRaces(Character character1, Character character2) {
             if(character1.race != character2.race) {
                 int outerLength = opposingRaces.GetLength(0);

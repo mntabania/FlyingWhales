@@ -32,56 +32,80 @@ public class MakeLove : GoapAction {
         SetState("Make Love Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
+#if DEBUG_LOG
         string costLog = $"\n{name} {target.nameWithID}:";
+#endif
         if (actor.traitContainer.HasTrait("Enslaved")) {
             if (target.gridTileLocation == null || !target.gridTileLocation.IsInHomeOf(actor)) {
+#if DEBUG_LOG
                 costLog += $" +2000(Slave, target is not in actor's home)";
                 actor.logComponent.AppendCostLog(costLog);
+#endif
                 return 2000;
             }
         }
         if (actor.partyComponent.hasParty && actor.partyComponent.currentParty.isActive) {
             if (actor.partyComponent.isActiveMember) {
+#if DEBUG_LOG
                 costLog += $" +2000(Active Party, Cannot make love)";
                 actor.logComponent.AppendCostLog(costLog);
+#endif
                 return 2000;
             }
         }
         Character targetCharacter = target as Character;
         if (targetCharacter != null && targetCharacter.partyComponent.hasParty && targetCharacter.partyComponent.currentParty.isActive) {
             if (targetCharacter.partyComponent.isActiveMember) {
+#if DEBUG_LOG
                 costLog += $" +2000(Target is in Active Party, Cannot make love)";
                 actor.logComponent.AppendCostLog(costLog);
+#endif
                 return 2000;
             }
         }
         int cost = UtilityScripts.Utilities.Rng.Next(90, 131);
+#if DEBUG_LOG
         costLog += $" +{cost}(Initial)";
-        TIME_IN_WORDS timeOfDay = GameManager.GetCurrentTimeInWordsOfTick();
-        if (actor.race.IsSapient() && timeOfDay != TIME_IN_WORDS.EARLY_NIGHT && timeOfDay != TIME_IN_WORDS.LATE_NIGHT && timeOfDay != TIME_IN_WORDS.AFTER_MIDNIGHT) {
-            cost += 2000;
-            costLog += " +2000(Actor is sapient and Time is not Early Night/Late Night/After Midnight)";
+#endif
+        if (job.jobType != JOB_TYPE.TRIGGER_FLAW) {
+            TIME_IN_WORDS timeOfDay = GameManager.Instance.GetCurrentTimeInWordsOfTick();
+            if (actor.race.IsSapient() && timeOfDay != TIME_IN_WORDS.EARLY_NIGHT && timeOfDay != TIME_IN_WORDS.LATE_NIGHT && timeOfDay != TIME_IN_WORDS.AFTER_MIDNIGHT) {
+                cost += 2000;
+#if DEBUG_LOG
+                costLog += " +2000(Actor is sapient and Time is not Early Night/Late Night/After Midnight)";
+#endif
+            }    
         }
         Angry angry = actor.traitContainer.GetTraitOrStatus<Angry>("Angry");
         if (actor.traitContainer.HasTrait("Chaste") || (angry != null && angry.IsResponsibleForTrait(targetCharacter))) {
             cost += 2000;
+#if DEBUG_LOG
             costLog += " +2000(Chaste or Angry at target)";
+#endif
         }
         if (actor.traitContainer.HasTrait("Lustful")) {
             cost -= 40;
+#if DEBUG_LOG
             costLog += " -40(Lustful)";
+#endif
         } else {
             int numOfTimesActionDone = actor.jobComponent.GetNumOfTimesActionDone(this);
             if (numOfTimesActionDone > 5) {
                 cost += 2000;
+#if DEBUG_LOG
                 costLog += " +2000(Times Made Love > 5)";
+#endif
             } else {
                 int timesCost = 10 * numOfTimesActionDone;
                 cost += timesCost;
+#if DEBUG_LOG
                 costLog += $" +{timesCost}(10 x Times Made Love)";
+#endif
             }
         }
+#if DEBUG_LOG
         actor.logComponent.AppendCostLog(costLog);
+#endif
         return cost;
     }
     public override void OnStopWhilePerforming(ActualGoapNode node) {
@@ -129,12 +153,12 @@ public class MakeLove : GoapAction {
         if (goapActionInvalidity.isInvalid == false) {
             Character targetCharacter = node.poiTarget as Character;
             Assert.IsNotNull(targetCharacter, $"Make love of {node.actor.name} is not a character! {node.poiTarget?.ToString() ?? "Null"}");
-            Bed targetBed = node.actor.gridTileLocation.objHere as Bed;
+            Bed targetBed = node.actor.gridTileLocation.tileObjectComponent.objHere as Bed;
             if (targetBed == null) {
                 //check neighbours
                 for (int i = 0; i < node.actor.gridTileLocation.neighbourList.Count; i++) {
                     LocationGridTile neighbour = node.actor.gridTileLocation.neighbourList[i];
-                    if (neighbour.objHere is Bed bed) {
+                    if (neighbour.tileObjectComponent.objHere is Bed bed) {
                         targetBed = bed;
                     }
                 }
@@ -158,8 +182,8 @@ public class MakeLove : GoapAction {
             targetCharacter.SetCurrentActionNode(null, null, null);
         }
     }
-    public override void PopulateReactionsToActor(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
-        base.PopulateReactionsToActor(reactions, actor, target, witness, node, status);
+    public override void PopulateEmotionReactionsToActor(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
+        base.PopulateEmotionReactionsToActor(reactions, actor, target, witness, node, status);
 
         if (status == REACTION_STATUS.WITNESSED) {
             //If witnessed
@@ -208,8 +232,8 @@ public class MakeLove : GoapAction {
             }
         }
     }
-    public override void PopulateReactionsToTarget(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
-        base.PopulateReactionsToTarget(reactions, actor, target, witness, node, status);
+    public override void PopulateEmotionReactionsToTarget(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
+        base.PopulateEmotionReactionsToTarget(reactions, actor, target, witness, node, status);
 
         if (status == REACTION_STATUS.WITNESSED) {
             //If witnessed
@@ -279,9 +303,9 @@ public class MakeLove : GoapAction {
     public override bool IsHappinessRecoveryAction() {
         return true;
     }
-    #endregion
+#endregion
 
-    #region Effects
+#region Effects
     public void PreMakeLoveSuccess(ActualGoapNode goapNode) {
         Character actor = goapNode.actor;
         Character targetCharacter = goapNode.poiTarget as Character;
@@ -315,8 +339,8 @@ public class MakeLove : GoapAction {
     }
     public void PerTickMakeLoveSuccess(ActualGoapNode goapNode) {
         Character targetCharacter = goapNode.poiTarget as Character;
-        goapNode.actor.needsComponent.AdjustHappiness(4.17f);
-        targetCharacter.needsComponent.AdjustHappiness(4.17f);
+        goapNode.actor.needsComponent.AdjustHappiness(6f);
+        targetCharacter.needsComponent.AdjustHappiness(6f);
         //goapNode.actor.needsComponent.AdjustStamina(1f);
         //targetCharacter.needsComponent.AdjustStamina(1f);
     }
@@ -361,22 +385,22 @@ public class MakeLove : GoapAction {
             targetCharacter.SetCurrentActionNode(null, null, null);
         }
     }
-    #endregion
+#endregion
 
-    #region Preconditions
+#region Preconditions
     private bool IsTargetInvited(Character actor, IPointOfInterest poiTarget, object[] otherData, JOB_TYPE jobType) {
         return actor.carryComponent.IsPOICarried(poiTarget);
     }
-    #endregion
+#endregion
 
-    #region Requirements
+#region Requirements
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, OtherData[] otherData, JobQueueItem job) {
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData, job);
         if (satisfied) {
             if (poiTarget.gridTileLocation != null && actor.trapStructure.IsTrappedAndTrapStructureIsNot(poiTarget.gridTileLocation.structure)) {
                 return false;
             }
-            if (poiTarget.gridTileLocation != null && poiTarget.gridTileLocation.collectionOwner.isPartOfParentRegionMap && actor.trapStructure.IsTrappedAndTrapHexIsNot(poiTarget.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner)) {
+            if (poiTarget.gridTileLocation != null && actor.trapStructure.IsTrappedAndTrapAreaIsNot(poiTarget.gridTileLocation.area)) {
                 return false;
             }
             Character target = poiTarget as Character;
@@ -410,7 +434,7 @@ public class MakeLove : GoapAction {
         }
         return false;
     }
-    #endregion
+#endregion
 
     private Bed GetValidBedForActor(Character actor, [NotNull]Character target) {
         Bed bedToUse = null;

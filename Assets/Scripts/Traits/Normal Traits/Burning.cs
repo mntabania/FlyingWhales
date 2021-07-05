@@ -7,11 +7,13 @@ using Traits;
 using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.Profiling;
+using UtilityScripts;
 using Random = UnityEngine.Random;
 namespace Traits {
-    public class Burning : Status {
+    public class Burning : Status, IElementalTrait {
         private ITraitable owner { get; set; }
         public BurningSource sourceOfBurning { get; private set; }
+        public bool isPlayerSource { get; private set; }
         public override bool isPersistent => true;
         public Character douser { get; private set; } //the character that is going to douse this fire.
         private GameObject burningEffect;
@@ -38,22 +40,24 @@ namespace Traits {
             AddTraitOverrideFunctionIdentifier(TraitManager.Execute_Pre_Effect_Trait);
             AddTraitOverrideFunctionIdentifier(TraitManager.Execute_Per_Tick_Effect_Trait);
             AddTraitOverrideFunctionIdentifier(TraitManager.Death_Trait);
+            AddTraitOverrideFunctionIdentifier(TraitManager.Villager_Reaction);
         }
 
         #region Loading
         public override void LoadFirstWaveInstancedTrait(SaveDataTrait saveDataTrait) {
             base.LoadFirstWaveInstancedTrait(saveDataTrait);
-            SaveDataBurning saveDataBurning = saveDataTrait as SaveDataBurning;
-            Assert.IsNotNull(saveDataBurning);
-            BurningSource burningSource = DatabaseManager.Instance.burningSourceDatabase.GetOrCreateBurningSourceWithID(saveDataBurning.persistentID);
+            SaveDataBurning data = saveDataTrait as SaveDataBurning;
+            Assert.IsNotNull(data);
+            BurningSource burningSource = DatabaseManager.Instance.burningSourceDatabase.GetOrCreateBurningSourceWithID(data.persistentID);
             LoadSourceOfBurning(burningSource);
+            isPlayerSource = data.isPlayerSource;
         }
         public override void LoadTraitOnLoadTraitContainer(ITraitable addTo) {
             base.LoadTraitOnLoadTraitContainer(addTo);
             owner = addTo;
             if (addTo is IPointOfInterest poi) {
                 burningEffect = GameManager.Instance.CreateParticleEffectAt(poi, PARTICLE_EFFECT.Burning, false);
-            } else if (addTo is StructureWallObject structureWallObject) {
+            } else if (addTo is ThinWall structureWallObject) {
                 burningEffect = GameManager.Instance.CreateParticleEffectAt(structureWallObject, PARTICLE_EFFECT.Burning);
             }
             sourceOfBurning?.AddObjectOnFire(owner);
@@ -85,7 +89,7 @@ namespace Traits {
                     //Will not reprocess if winter rose since it will be destroyed anyway
                     Messenger.Broadcast(CharacterSignals.REPROCESS_POI, poi);
                 }
-            } else if (addedTo is StructureWallObject structureWallObject) {
+            } else if (addedTo is ThinWall structureWallObject) {
                 burningEffect = GameManager.Instance.CreateParticleEffectAt(structureWallObject, PARTICLE_EFFECT.Burning);
             }
             if (sourceOfBurning != null && !sourceOfBurning.objectsOnFire.Contains(owner)) {
@@ -117,6 +121,7 @@ namespace Traits {
                 if (removedFrom is Character character) {
                     // character.ForceCancelAllJobsTargettingThisCharacter(JOB_TYPE.REMOVE_STATUS);
                     character.AdjustDoNotRecoverHP(-1);
+                    DisablePlayerSourceChaosOrb(character);
                 } else {
                     if(obj is Bed bed) {
                         if (bed.IsSlotAvailable()) {
@@ -130,7 +135,9 @@ namespace Traits {
         }
         public override void OnRemoveStatusBySchedule(ITraitable removedFrom) {
             base.OnRemoveStatusBySchedule(removedFrom);
-            removedFrom.traitContainer.AddTrait(removedFrom, "Burnt");
+            if (removedFrom is TileObject) {
+                removedFrom.traitContainer.AddTrait(removedFrom, "Burnt");    
+            }
         }
         public override bool OnDeath(Character character) {
             return character.traitContainer.RemoveTrait(character, this);
@@ -155,8 +162,10 @@ namespace Traits {
             base.ExecuteActionPreEffects(action, goapNode);
             if (goapNode.action.actionCategory == ACTION_CATEGORY.CONSUME || goapNode.action.actionCategory == ACTION_CATEGORY.DIRECT) {
                 if (Random.Range(0, 100) < 10) { //5
-                    goapNode.actor.traitContainer.AddTrait(goapNode.actor, "Burning", out var trait);
+                    goapNode.actor.traitContainer.AddTrait(goapNode.actor, "Burning", out var trait, bypassElementalChance: true);
                     (trait as Burning)?.SetSourceOfBurning(sourceOfBurning, goapNode.actor);
+                    Burning burning = goapNode.actor.traitContainer.GetTraitOrStatus<Burning>("Burning");
+                    burning?.SetIsPlayerSource(isPlayerSource);
                 }
             }
         }
@@ -164,8 +173,10 @@ namespace Traits {
             base.ExecuteActionPerTickEffects(action, goapNode);
             if (goapNode.action.actionCategory == ACTION_CATEGORY.CONSUME || goapNode.action.actionCategory == ACTION_CATEGORY.DIRECT) {
                 if (Random.Range(0, 100) < 10) { //5
-                    goapNode.actor.traitContainer.AddTrait(goapNode.actor, "Burning", out var trait);
+                    goapNode.actor.traitContainer.AddTrait(goapNode.actor, "Burning", out var trait, bypassElementalChance: true);
                     (trait as Burning)?.SetSourceOfBurning(sourceOfBurning, goapNode.actor);
+                    Burning burning = goapNode.actor.traitContainer.GetTraitOrStatus<Burning>("Burning");
+                    burning?.SetIsPlayerSource(isPlayerSource);
                 }
             }
         }
@@ -183,6 +194,11 @@ namespace Traits {
                 ObjectPoolManager.Instance.DestroyObject(burningEffect);
                 burningEffect = null;
             }
+        }
+        protected override string GetDescriptionInUI() {
+            string desc = base.GetDescriptionInUI();
+            desc += "\nIs Player Source: " + isPlayerSource;
+            return desc;
         }
         #endregion
 
@@ -219,8 +235,10 @@ namespace Traits {
                 //Temporary fix only, if the burning object has no longer have a tile location (presumably destroyed), spreading of fire should not trigger
                 return;
             }
+#if DEBUG_PROFILER
             Profiler.BeginSample($"Burning - Tick Ended Part 1");
-            owner.AdjustHP(-2, ELEMENTAL_TYPE.Normal, true, this, showHPBar: true);
+#endif
+            owner.AdjustHP(-2, ELEMENTAL_TYPE.Normal, true, this, showHPBar: true, isPlayerSource: isPlayerSource);
 
             //Sleeping characters in bed should also receive damage
             //https://trello.com/c/kFZAHo11/1203-sleeping-characters-in-bed-should-also-receive-damage
@@ -228,37 +246,54 @@ namespace Traits {
                 if(bed.users != null && bed.users.Length > 0) {
                     for (int i = 0; i < bed.users.Length; i++) {
                         Character user = bed.users[i];
-                        user.AdjustHP(-2, ELEMENTAL_TYPE.Normal, true, this, showHPBar: true);
+                        if (user != null) {
+                            user.AdjustHP(-2, ELEMENTAL_TYPE.Normal, true, this, showHPBar: true, isPlayerSource: isPlayerSource);
+                        }
                     }
                 }
             }
+#if DEBUG_PROFILER
             Profiler.EndSample();
+#endif
 
-            if (Random.Range(0, 100) >= 4) {
+            if (Random.Range(0, 100) >= 2) {
                 return;
             }
+#if DEBUG_PROFILER
             Profiler.BeginSample($"Burning - Tick Ended Part 2");
+#endif
             _burningSpreadChoices.Clear();
             if (ShouldSpreadFire()) {
                 LocationGridTile origin = owner.gridTileLocation;
-                List<LocationGridTile> affectedTiles = origin.GetTilesInRadius(1, includeCenterTile: true, includeTilesInDifferentStructure: true);
+                List<LocationGridTile> affectedTiles = RuinarchListPool<LocationGridTile>.Claim();
+                origin.PopulateTilesInRadius(affectedTiles, 1, includeCenterTile: true, includeTilesInDifferentStructure: true);
                 for (int i = 0; i < affectedTiles.Count; i++) {
-                    _burningSpreadChoices.AddRange(affectedTiles[i].GetTraitablesOnTile());
+                    List<ITraitable> traitablesOnTile = RuinarchListPool<ITraitable>.Claim();
+                    affectedTiles[i].PopulateTraitablesOnTileThatCanHaveElementalTrait(traitablesOnTile, "Burning", true);
+                    for (int j = 0; j < traitablesOnTile.Count; j++) {
+                        _burningSpreadChoices.Add(traitablesOnTile[j]);
+                    }
+                    RuinarchListPool<ITraitable>.Release(traitablesOnTile);
                 }
                 if (_burningSpreadChoices.Count > 0) {
                     ITraitable chosen = _burningSpreadChoices[Random.Range(0, _burningSpreadChoices.Count)];
                     if (chosen.gridTileLocation != null) {
                         chosen.traitContainer.AddTrait(chosen, "Burning", out var trait, bypassElementalChance: true);
-                        (trait as Burning)?.SetSourceOfBurning(sourceOfBurning, chosen);    
+                        (trait as Burning)?.SetSourceOfBurning(sourceOfBurning, chosen);
+                        Burning burning = chosen.traitContainer.GetTraitOrStatus<Burning>("Burning");
+                        burning?.SetIsPlayerSource(isPlayerSource);
                     }
-                }    
+                }
+                RuinarchListPool<LocationGridTile>.Release(affectedTiles);
             }
+#if DEBUG_PROFILER
             Profiler.EndSample();
+#endif
 
         }
-        #endregion
+#endregion
 
-        #region Douser
+#region Douser
         public void SetDouser(Character character) {
             douser = character;
             if (douser == null) {
@@ -272,21 +307,79 @@ namespace Traits {
                 SetDouser(null); 
             }
         }
-        #endregion
+#endregion
 
-        #region Utilities
+#region Utilities
         public void CharacterBurningProcess(Character character) {
+            if (character.isDead) {
+                //Should not process if character is dead
+                return;
+            }
             if (character.traitContainer.HasTrait("Pyrophobic")) {
                 character.traitContainer.AddTrait(character, "Traumatized");
                 character.traitContainer.AddTrait(character, "Unconscious");
 
                 Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Trait", name, "pyrophobic_burn", null, LOG_TAG.Life_Changes);
                 log.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                log.AddLogToDatabase();
+                log.AddLogToDatabase(true);
             }
         }
         private bool ShouldSpreadFire() {
             return owner is IPointOfInterest && owner.gridTileLocation != null; //only spread fire of this is owned by a POI
+        }
+#endregion
+
+        #region IElementalTrait
+        public void SetIsPlayerSource(bool p_state) {
+            if (isPlayerSource != p_state) {
+                isPlayerSource = p_state;
+                if (owner is Character character) {
+                    if (isPlayerSource) {
+                        EnablePlayerSourceChaosOrb(character);
+                    } else {
+                        DisablePlayerSourceChaosOrb(character);
+                    }
+                }
+            }
+        }
+        #endregion
+
+        #region Reactions
+        public override void VillagerReactionToTileObjectTrait(TileObject owner, Character actor, ref string debugLog) {
+            base.VillagerReactionToTileObjectTrait(owner, actor, ref debugLog);
+            Lazy lazy = actor.traitContainer.GetTraitOrStatus<Lazy>("Lazy");
+            if (!actor.combatComponent.isInActualCombat && !actor.hasSeenFire) {
+                bool hasHigherPrioJob = actor.jobQueue.jobsInQueue.Count > 0 && actor.jobQueue.jobsInQueue[0].priority > JOB_TYPE.DOUSE_FIRE.GetJobTypePriority();
+                if (!hasHigherPrioJob
+                    && owner.gridTileLocation != null
+                    && actor.homeSettlement != null
+                    && owner.gridTileLocation.IsPartOfSettlement(actor.homeSettlement)
+                    && !actor.traitContainer.HasTrait("Pyrophobic")
+                    && !actor.traitContainer.HasTrait("Dousing")
+                    && !actor.jobQueue.HasJob(JOB_TYPE.DOUSE_FIRE)) {
+#if DEBUG_LOG
+                    debugLog = $"{debugLog}\n-Target is Burning and Character is not Pyrophobic";
+#endif
+                    actor.SetHasSeenFire(true);
+                    if (lazy == null || !lazy.TryIgnoreUrgentTask(JOB_TYPE.DOUSE_FIRE)) {
+                        actor.homeSettlement.settlementJobTriggerComponent.TriggerDouseFire();
+                        if (!actor.homeSettlement.HasJob(JOB_TYPE.DOUSE_FIRE)) {
+#if DEBUG_LOG
+                            Debug.LogWarning($"{actor.name} saw a fire in a settlement but no douse fire jobs were created.");
+#endif
+                        }
+
+                        JobQueueItem douseJob = actor.homeSettlement.GetFirstJobOfTypeThatCanBeAssignedTo(JOB_TYPE.DOUSE_FIRE, actor);
+                        if (douseJob != null) {
+                            actor.jobQueue.AddJobInQueue(douseJob);
+                        } else {
+                            if (actor.combatComponent.combatMode == COMBAT_MODE.Aggressive) {
+                                actor.combatComponent.Flight(owner, "saw fire");
+                            }
+                        }
+                    }
+                }
+            }
         }
         #endregion
 
@@ -296,11 +389,13 @@ namespace Traits {
 #region Save Data
 public class SaveDataBurning : SaveDataTrait {
     public string burningSourceID;
+    public bool isPlayerSource;
     public override void Save(Trait trait) {
         base.Save(trait);
-        Burning burning = trait as Burning;
-        Assert.IsNotNull(burning);
-        burningSourceID = burning.persistentID;
+        Burning data = trait as Burning;
+        Assert.IsNotNull(data);
+        burningSourceID = data.persistentID;
+        isPlayerSource = data.isPlayerSource;
     }
 }
 #endregion

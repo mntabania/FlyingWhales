@@ -25,13 +25,15 @@ public class MonsterInvade : GoapAction {
         SetState("Invade Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
+#if DEBUG_LOG
         string costLog = $"\n{name} {target.nameWithID}: +10(Constant)";
         actor.logComponent.AppendCostLog(costLog);
+#endif
         return 10;
     }
-    #endregion
+#endregion
 
-    #region Requirements
+#region Requirements
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, OtherData[] otherData, JobQueueItem job) {
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData, job);
         if (satisfied) {
@@ -39,9 +41,9 @@ public class MonsterInvade : GoapAction {
         }
         return false;
     }
-    #endregion
+#endregion
 
-    #region State Effects
+#region State Effects
     public void AfterInvadeSuccess(ActualGoapNode goapNode) {
         OtherData[] otherData = goapNode.otherData;
         if (otherData != null && otherData.Length == 1) {
@@ -49,11 +51,11 @@ public class MonsterInvade : GoapAction {
             MonsterInvadeGathering monsterInvadeGathering = gathering as MonsterInvadeGathering;
             if(otherData[0].obj is LocationStructure targetStructure) {
                 monsterInvadeGathering.SetTargetStructure(targetStructure);
-            } else if (otherData[0].obj is HexTile hex) {
-                monsterInvadeGathering.SetTargetHex(hex);
+            } else if (otherData[0].obj is Area area) {
+                monsterInvadeGathering.SetTargetArea(area);
             }
         }
     }
-    #endregion
+#endregion
 
 }

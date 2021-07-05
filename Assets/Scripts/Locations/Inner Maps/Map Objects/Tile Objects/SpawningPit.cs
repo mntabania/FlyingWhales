@@ -2,7 +2,7 @@
     public SpawningPit() {
         Initialize(TILE_OBJECT_TYPE.SPAWNING_PIT);
     }
-    public SpawningPit(SaveDataTileObject data) {
+    public SpawningPit(SaveDataTileObject data) : base(data) {
         
     }
 }

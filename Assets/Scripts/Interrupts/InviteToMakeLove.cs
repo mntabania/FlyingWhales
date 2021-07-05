@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using Logs;
+using Object_Pools;
 using UnityEngine;
 using Traits;
 
@@ -17,7 +18,9 @@ namespace Interrupts {
         public override bool ExecuteInterruptStartEffect(InterruptHolder interruptHolder,
             ref Log overrideEffectLog, ActualGoapNode goapNode = null) {
             if(interruptHolder.target is Character targetCharacter) {
+#if DEBUG_LOG
                 string debugLog = $"{interruptHolder.actor.name} invite to make love interrupt with {targetCharacter.name}";
+#endif
                 Character actor = interruptHolder.actor;
                 if (actor.reactionComponent.disguisedCharacter != null) {
                     actor = actor.reactionComponent.disguisedCharacter;
@@ -47,35 +50,51 @@ namespace Interrupts {
                     Character targetLover = targetCharacter.relationshipContainer.GetFirstCharacterWithRelationship(RELATIONSHIP_TYPE.LOVER);
                     if (targetLover != null && targetLover != actor) {
                         //Target has a different lover
+#if DEBUG_LOG
                         debugLog += $"\n-Target has different lover";
+#endif
                         acceptWeight = 0;
                         rejectWeight = 50;
+#if DEBUG_LOG
                         debugLog += $"\n-Base accept weight: {acceptWeight}";
                         debugLog += $"\n-Base reject weight: {rejectWeight}";
+#endif
 
                         if (targetCharacter.traitContainer.HasTrait("Unfaithful")) {
                             acceptWeight += 200;
+#if DEBUG_LOG
                             debugLog += $"\n-Target is unfaithful: +200 to Accept Weight";
+#endif
                             if (targetCharacter.traitContainer.HasTrait("Drunk")) {
                                 acceptWeight += 100;
+#if DEBUG_LOG
                                 debugLog += $"\n-Target is drunk: +100 to Accept Weight";
+#endif
                             }
                         } else {
                             if (targetCharacter.traitContainer.HasTrait("Treacherous", "Psychopath")) {
                                 acceptWeight += 50;
+#if DEBUG_LOG
                                 debugLog += $"\n-Target is not unfaithful but treacherous/psychopath: +50 to Accept Weight";
+#endif
                             } else {
                                 rejectWeight += 100;
+#if DEBUG_LOG
                                 debugLog += $"\n-Target is not unfaithful/treacherous/psychopath: +100 to Reject Weight";
+#endif
                             }
                             if (targetCharacter.traitContainer.HasTrait("Drunk")) {
                                 acceptWeight += 50;
+#if DEBUG_LOG
                                 debugLog += $"\n-Target is drunk: +50 to Accept Weight";
+#endif
                             }
                         }
                     } else {
+#if DEBUG_LOG
                         debugLog += $"\n-Base accept weight: {acceptWeight}";
                         debugLog += $"\n-Base reject weight: {rejectWeight}";
+#endif
 
                         //int targetOpinionToActor = 0;
                         //if (targetCharacter.relationshipContainer.HasRelationshipWith(actor)) {
@@ -83,43 +102,61 @@ namespace Interrupts {
                         //}
                         int compatibility = RelationshipManager.Instance.GetCompatibilityBetween(targetCharacter, actor);
                         acceptWeight += (10 * compatibility);
+#if DEBUG_LOG
                         debugLog += $"\n-Target compatibility towards Actor: +(10 x {compatibility}) to Accept Weight";
+#endif
 
                         if (targetCharacter.traitContainer.HasTrait("Drunk")) {
                             acceptWeight += 100;
+#if DEBUG_LOG
                             debugLog += $"\n-Target is drunk: +100 to Accept Weight";
+#endif
                         }
                     }
 
                     if (targetCharacter.traitContainer.HasTrait("Lustful")) {
                         acceptWeight += 100;
+#if DEBUG_LOG
                         debugLog += "\n-Target is Lustful: +100 to Accept Weight";
+#endif
                     } else if (targetCharacter.traitContainer.HasTrait("Chaste")) {
                         rejectWeight += 300;
+#if DEBUG_LOG
                         debugLog += "\n-Target is Chaste: +300 to Reject Weight";
+#endif
                     }
 
                     if (targetCharacter.moodComponent.moodState == MOOD_STATE.Bad) {
                         rejectWeight += 50;
+#if DEBUG_LOG
                         debugLog += "\n-Target is Low mood: +50 to Reject Weight";
+#endif
                     } else if (targetCharacter.moodComponent.moodState == MOOD_STATE.Critical) {
                         rejectWeight += 200;
+#if DEBUG_LOG
                         debugLog += "\n-Target is Crit mood: +200 to Reject Weight";
+#endif
                     }
 
                     weights.AddElement("Accept", acceptWeight);
                     weights.AddElement("Reject", rejectWeight);
 
+#if DEBUG_LOG
                     debugLog += $"\n\n{weights.GetWeightsSummary("FINAL WEIGHTS")}";
+#endif
 
                     chosen = weights.PickRandomElementGivenWeights();
                 } else {
+#if DEBUG_LOG
                     debugLog += "\n-Target is Unconscious: SURE REJECT";
+#endif
                 }
+#if DEBUG_LOG
                 debugLog += $"\n\nCHOSEN RESPONSE: {chosen}";
                 interruptHolder.actor.logComponent.PrintLogIfActive(debugLog);
+#endif
 
-
+                if (overrideEffectLog != null) { LogPool.Release(overrideEffectLog); }
                 overrideEffectLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Interrupt", "Invite To Make Love", chosen, null, logTags);
                 overrideEffectLog.AddToFillers(interruptHolder.actor, interruptHolder.actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                 overrideEffectLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
@@ -129,7 +166,7 @@ namespace Interrupts {
                 if (chosen == "Reject") {
                     interruptHolder.actor.relationshipContainer.AdjustOpinion(interruptHolder.actor, targetCharacter, "Base", -3, "rejected sexual advances");
                     interruptHolder.actor.traitContainer.AddTrait(interruptHolder.actor, "Annoyed", targetCharacter);
-                    interruptHolder.actor.currentJob.CancelJob(false);
+                    interruptHolder.actor.currentJob.CancelJob();
                     if(interruptHolder.actor.faction?.factionType.type == FACTION_TYPE.Disguised) {
                         interruptHolder.actor.ChangeFactionTo(PlayerManager.Instance.player.playerFaction);
                         if (!targetCharacter.marker.HasUnprocessedPOI(interruptHolder.actor)) {
@@ -168,6 +205,6 @@ namespace Interrupts {
                 }
             }
         }
-        #endregion
+#endregion
     }
 }

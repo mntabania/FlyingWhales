@@ -34,7 +34,7 @@ public class Excalibur : TileObject {
         _traitsGainedByCurrentOwner = new List<string>();
         _finishedCharacters = new HashSet<int>();
     }
-    public Excalibur(SaveDataExcalibur data) {
+    public Excalibur(SaveDataExcalibur data) : base(data) {
         //SaveDataExcalibur saveDataExcalibur = data as SaveDataExcalibur;
         Assert.IsNotNull(data);
         _traitsGainedByCurrentOwner = data.traitsGainedByCurrentOwner; //new List<string>(data.traitsGainedByCurrentOwner);
@@ -71,12 +71,12 @@ public class Excalibur : TileObject {
                 inspector.traitContainer.HasTrait("Evil", "Treacherous", "Cultist") == false) {
                 Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Tile Object", "Excalibur", "on_inspect_success", providedTags: LOG_TAG.Life_Changes);
                 log.AddToFillers(inspector, inspector.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                log.AddLogToDatabase();
+                log.AddLogToDatabase(true);
                 UnlockSword(inspector);
             } else {
                 Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Tile Object", "Excalibur", "on_inspect_fail", providedTags: LOG_TAG.Work);
                 log.AddToFillers(inspector, inspector.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                log.AddLogToDatabase();
+                log.AddLogToDatabase(true);
             }
         }
     }
@@ -117,7 +117,7 @@ public class Excalibur : TileObject {
                 SetCharacterOwner(p_newOwner);
                 if (CanBecomeHero(p_newOwner)) {
                     _previousClassOfCurrentOwner = p_newOwner.characterClass.className;
-                    p_newOwner.AssignClass("Hero");    
+                    p_newOwner.classComponent.AssignClass("Hero");    
                 }
                 //add traits to new carrier
                 for (int i = 0; i < traitsToBeGainedFromOwnership.Length; i++) {
@@ -132,11 +132,11 @@ public class Excalibur : TileObject {
     }
     private void TryRevertClassOfOwner(Character p_owner) {
         if (p_owner.characterClass.className == "Hero") {
-            p_owner.AssignClass(previousClassOfCurrentOwner);
-        } else if (p_owner.characterClass.className == "Werewolf" && p_owner.previousClassName == "Hero") {
+            p_owner.classComponent.AssignClass(previousClassOfCurrentOwner);
+        } else if (p_owner.characterClass.className == "Werewolf" && p_owner.classComponent.previousClassName == "Hero") {
             //if character is currently a werewolf, then set his/her previous class to _previousClassOfCurrentOwner
             //so that when he/she reverts to normal, he/she will no longer be a Hero.
-            p_owner.OverridePreviousClassName(previousClassOfCurrentOwner); 
+            p_owner.classComponent.OverridePreviousClassName(previousClassOfCurrentOwner); 
         }
     }
     private bool CanBecomeHero(Character p_character) {
@@ -165,7 +165,7 @@ public class SaveDataExcalibur : SaveDataTileObject {
         Excalibur excalibur = tileObject as Excalibur;
         Assert.IsNotNull(excalibur);
         lockedState = excalibur.lockedState;
-        traitsGainedByCurrentOwner = excalibur.traitsGainedByCurrentOwner;
+        traitsGainedByCurrentOwner = new List<string>(excalibur.traitsGainedByCurrentOwner);
         finishedCharacters = new List<int>(excalibur.finishedCharacters);
         previousClass = excalibur.previousClassOfCurrentOwner;
     }

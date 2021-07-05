@@ -1,4 +1,5 @@
-﻿using Inner_Maps;
+﻿using System;
+using Inner_Maps;
 using Inner_Maps.Location_Structures;
 using JetBrains.Annotations;
 using UnityEngine.Assertions;
@@ -17,8 +18,10 @@ public class Mine : GoapAction {
         SetState("Mine Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
+#if DEBUG_LOG
         string costLog = $"\n{name} {target.nameWithID}: +10(Constant)";
         actor.logComponent.AppendCostLog(costLog);
+#endif
         return 10;
     }
     //public override void OnStopWhilePerforming(ActualGoapNode node) {
@@ -30,9 +33,9 @@ public class Mine : GoapAction {
     public override bool IsHappinessRecoveryAction() {
         return true;
     }
-    #endregion
+#endregion
 
-    #region State Effects
+#region State Effects
     //public void PreMineSuccess(ActualGoapNode goapNode) {
     //    if (goapNode.actor.characterClass.IsCombatant()) {
     //        goapNode.actor.needsComponent.AdjustDoNotGetBored(1);
@@ -40,7 +43,7 @@ public class Mine : GoapAction {
     //}
     public void PerTickMineSuccess(ActualGoapNode goapNode) {
         if (goapNode.actor.characterClass.IsCombatant()) {
-            goapNode.actor.needsComponent.AdjustHappiness(-2);
+            goapNode.actor.needsComponent.AdjustHappiness(-4);
         }
     }
     [UsedImplicitly]
@@ -50,23 +53,21 @@ public class Mine : GoapAction {
         //}
         Cave cave = goapNode.targetStructure as Cave;
         Assert.IsNotNull(cave, $"Cave of mine performed by {goapNode.actor.name} is null!");
-        string mineResult = cave.resourceYield.PickRandomElementGivenWeights();
+        CONCRETE_RESOURCES mineResult = cave.producedResource;
         switch (mineResult) {
-            case Cave.Yield_Diamond:
-                goapNode.actor.gridTileLocation.structure.AddPOI(InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.DIAMOND), goapNode.actor.gridTileLocation);
+            case CONCRETE_RESOURCES.Copper:
+                goapNode.actor.gridTileLocation.structure.AddPOI(InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.COPPER), goapNode.actor.gridTileLocation);
                 break;
-            case Cave.Yield_Gold:
-                goapNode.actor.gridTileLocation.structure.AddPOI(InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.GOLD), goapNode.actor.gridTileLocation);
+            case CONCRETE_RESOURCES.Iron:
+                goapNode.actor.gridTileLocation.structure.AddPOI(InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.IRON), goapNode.actor.gridTileLocation);
                 break;
-            case Cave.Yield_Metal:
-                goapNode.actor.gridTileLocation.structure.AddPOI(InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.METAL_PILE), goapNode.actor.gridTileLocation);
+            case CONCRETE_RESOURCES.Mithril:
+                goapNode.actor.gridTileLocation.structure.AddPOI(InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.MITHRIL), goapNode.actor.gridTileLocation);
                 break;
-            case Cave.Yield_Stone:
-                goapNode.actor.gridTileLocation.structure.AddPOI(InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.STONE_PILE), goapNode.actor.gridTileLocation);
-                break;
-            case Cave.Yield_Nothing:
+            case CONCRETE_RESOURCES.Orichalcum:
+                goapNode.actor.gridTileLocation.structure.AddPOI(InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.ORICHALCUM), goapNode.actor.gridTileLocation);
                 break;
         }
     }
-    #endregion
+#endregion
 }

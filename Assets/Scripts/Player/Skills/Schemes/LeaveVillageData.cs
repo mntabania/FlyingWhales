@@ -21,18 +21,39 @@ public class LeaveVillageData : SchemeData {
             UIManager.Instance.ShowSchemeUI(targetCharacter, null, this);
         }
     }
-    public override bool IsValid(IPlayerActionTarget target) {
-        if (target is Character character) {
-            return character.homeSettlement != null && !character.isConsideredRatman;
+    //public override bool IsValid(IPlayerActionTarget target) {
+    //    if (target is Character character) {
+    //        bool isValid = base.IsValid(target);
+    //        return isValid && character.homeSettlement != null && !character.isConsideredRatman;
+    //    }
+    //    return false;
+    //}
+    public override bool CanPerformAbilityTowards(Character targetCharacter) {
+        bool canPerform = base.CanPerformAbilityTowards(targetCharacter);
+        if (canPerform) {
+            if (targetCharacter.homeSettlement == null || targetCharacter.isConsideredRatman) {
+                return false;
+            }
+            return true;
         }
-        return false;
+        return canPerform;
+    }
+    public override string GetReasonsWhyCannotPerformAbilityTowards(Character targetCharacter) {
+        string reasons = base.GetReasonsWhyCannotPerformAbilityTowards(targetCharacter);
+        if (targetCharacter.homeSettlement == null) {
+            reasons += "Target is already has no home village.";
+        }
+        if (targetCharacter.isConsideredRatman) {
+            reasons += "Ratmen cannot leave home village.";
+        }
+        return reasons;
     }
     protected override void OnSuccessScheme(Character character, object target) {
         base.OnSuccessScheme(character, target);
         character.interruptComponent.TriggerInterrupt(INTERRUPT.Leave_Village, character);
-        HexTile chosenHex = character.currentRegion.GetRandomHexThatMeetCriteria(currHex => currHex.elevationType != ELEVATION.WATER && currHex.elevationType != ELEVATION.MOUNTAIN && currHex.landmarkOnTile == null && !currHex.IsNextToOrPartOfVillage() && !currHex.isCorrupted);
-        if (chosenHex != null) {
-            LocationGridTile chosenTile = chosenHex.GetRandomPassableTile();
+        Area chosenArea = character.currentRegion.GetRandomAreaThatIsUncorruptedAndNotMountainWaterAndNoStructureAndNotNextToOrPartOfVillage();
+        if (chosenArea != null) {
+            LocationGridTile chosenTile = chosenArea.gridTileComponent.GetRandomPassableTile();
             if (chosenTile != null) {
                 character.jobComponent.CreateGoToJob(chosenTile);
             }

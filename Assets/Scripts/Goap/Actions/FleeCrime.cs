@@ -16,13 +16,15 @@
         SetState("Flee Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
+#if DEBUG_LOG
         string costLog = $"\n{name} {target.nameWithID}: +10(Constant)";
         actor.logComponent.AppendCostLog(costLog);
+#endif
         return 10;
     }
-    #endregion
+#endregion
 
-    #region State Effects
+#region State Effects
     public void AfterFleeSuccess(ActualGoapNode goapNode) {
         Character actor = goapNode.actor;
         actor.traitContainer.RemoveTrait(actor, "Criminal");
@@ -37,5 +39,5 @@
         }
         actor.MigrateHomeStructureTo(null);
     }
-    #endregion
+#endregion
 }

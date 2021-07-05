@@ -9,7 +9,9 @@ public class DeMooderBehaviour : CharacterBehaviourComponent {
     }
     
     public override bool TryDoBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
+#if DEBUG_LOG
         log += $"\n{character.name} is a De-Mooder";
+#endif
         return character.jobComponent.TriggerDecreaseMood(out producedJob);
         // if (character.behaviourComponent.canDeMood) {
         //     log += $"\n-Can De-Mood";
@@ -104,15 +106,13 @@ public class DeMooderBehaviour : CharacterBehaviourComponent {
     public override void OnAddBehaviourToCharacter(Character character) {
         base.OnAddBehaviourToCharacter(character);
         character.traitContainer.AddTrait(character, "Stealthy");
-        character.behaviourComponent.OnBecomeDeMooder();
     }
     public override void OnRemoveBehaviourFromCharacter(Character character) {
         base.OnAddBehaviourToCharacter(character);
         character.traitContainer.RemoveTrait(character, "Stealthy");
-        character.behaviourComponent.OnNoLongerDeMooder();
     }
-    public override void OnLoadBehaviourToCharacter(Character character) {
-        base.OnLoadBehaviourToCharacter(character);
-        character.behaviourComponent.OnBecomeDeMooder();
-    }
+    //public override void OnLoadBehaviourToCharacter(Character character) {
+    //    base.OnLoadBehaviourToCharacter(character);
+    //    character.behaviourComponent.OnBecomeDeMooder();
+    //}
 }

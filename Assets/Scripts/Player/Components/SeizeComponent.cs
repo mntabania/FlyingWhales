@@ -13,8 +13,6 @@ public class SeizeComponent {
     private int _seizedPOIVisionTriggerVotes;
     private int _seizedCharacterVisionVotes;
     private bool _seizedPOIVisionTriggerState;
-    private Color _seizedPOIColor;
-
     private Vector3 followOffset;
     private Tween tween;
 
@@ -27,17 +25,12 @@ public class SeizeComponent {
     }
 
     public void SeizePOI(IPointOfInterest poi) {
-        // int manaCost = GetManaCost(poi);
-        // if (PlayerManager.Instance.player.mana < manaCost) {
-        //     PlayerUI.Instance.ShowGeneralConfirmation("ERROR", "Not enough mana! You need " + manaCost + " mana to seize this object.");
-        //     return;
-        // }
         if (seizedPOI == null) {
             if (poi.isBeingCarriedBy != null) {
                 if (poi.isBeingCarriedBy.carryComponent.isCarryingAnyPOI && poi.isBeingCarriedBy.carryComponent.carriedPOI == poi) {
                     poi.isBeingCarriedBy.UncarryPOI();
                 } else {
-                    poi.isBeingCarriedBy.UncarryPOI(poi);    
+                    poi.isBeingCarriedBy.UncarryPOI(poi);
                 }
             }
             // poi.isBeingCarriedBy?.UncarryPOI();
@@ -63,8 +56,9 @@ public class SeizeComponent {
                 Debug.LogError($"Cannot seize. {poi.name} has no tile");
                 return;
             }
-            
+
             PrepareToUnseize();
+            Messenger.Broadcast(PlayerSkillSignals.FORCE_RELOAD_PLAYER_ACTIONS);
             // PlayerManager.Instance.player.AdjustMana(-manaCost);
             //PlayerUI.Instance.ShowSeizedObjectUI();
         } else {
@@ -79,14 +73,16 @@ public class SeizeComponent {
     // }
     private void PrepareToUnseize() {
         isPreparingToBeUnseized = true;
+        PlayerManager.Instance.AddPlayerInputModule(PlayerManager.seizeInputModule);
         Messenger.AddListener<KeyCode>(ControlsSignals.KEY_DOWN, OnReceiveKeyCodeSignal);
     }
     private void DoneUnseize() {
         isPreparingToBeUnseized = false;
+        PlayerManager.Instance.RemovePlayerInputModule(PlayerManager.seizeInputModule);
         Messenger.RemoveListener<KeyCode>(ControlsSignals.KEY_DOWN, OnReceiveKeyCodeSignal);
     }
     private void OnReceiveKeyCodeSignal(KeyCode keyCode) {
-        if(keyCode == KeyCode.Mouse0) {
+        if (keyCode == KeyCode.Mouse0) {
             TryToUnseize();
         }
     }
@@ -103,15 +99,25 @@ public class SeizeComponent {
             return false;
         }
         // isPreparingToBeUnseized = false;
-        IPointOfInterest prevSeizedPOI = seizedPOI;
         LocationGridTile hoveredTile = InnerMapManager.Instance.GetTileFromMousePosition();
         if (!CanUnseizeHere(hoveredTile)) {
             return false;
         }
+        UnseizePOIBase(hoveredTile);
+        return true;
+    }
+    public void UnseizePOIOnDeath() {
+        if(seizedPOI != null) {
+            UnseizePOIBase(seizedPOI.gridTileLocation);
+            DoneUnseize();
+        }
+    }
+    private void UnseizePOIBase(LocationGridTile tileLocation) {
+        IPointOfInterest prevSeizedPOI = seizedPOI;
         DisableFollowMousePosition();
-        seizedPOI.OnUnseizePOI(hoveredTile);
+        seizedPOI.OnUnseizePOI(tileLocation);
         if (seizedPOI.mapObjectVisual != null) {
-            seizedPOI.mapObjectVisual.SetVisual(_seizedPOISprite);    
+            seizedPOI.mapObjectVisual.SetVisual(_seizedPOISprite);
             seizedPOI.mapObjectVisual.visionTrigger.SetFilterVotes(_seizedPOIVisionTriggerVotes);
             seizedPOI.mapObjectVisual.visionTrigger.SetVisionTriggerCollidersState(_seizedPOIVisionTriggerState);
             // seizedPOI.mapObjectVisual.SetColor(_seizedPOIColor);    
@@ -123,15 +129,14 @@ public class SeizeComponent {
         _seizedPOIVisionTriggerVotes = 0;
         _seizedCharacterVisionVotes = 0;
         _seizedPOIVisionTriggerState = false;
-        _seizedPOIColor = Color.white;
         Messenger.Broadcast(CharacterSignals.ON_UNSEIZE_POI, seizedPOI);
         seizedPOI = null;
         //PlayerUI.Instance.HideSeizedObjectUI();
         InputManager.Instance.SetCursorTo(InputManager.Cursor_Type.Default);
-        if (prevSeizedPOI is IPlayerActionTarget playerActionTarget) {
-            Messenger.Broadcast(SpellSignals.RELOAD_PLAYER_ACTIONS, playerActionTarget);
-        }
-        return true;
+        // if (prevSeizedPOI is IPlayerActionTarget playerActionTarget) {
+        //     Messenger.Broadcast(PlayerSkillSignals.RELOAD_PLAYER_ACTIONS, playerActionTarget);
+        // }
+        Messenger.Broadcast(PlayerSkillSignals.FORCE_RELOAD_PLAYER_ACTIONS);
     }
     public bool CanUnseize() {
         if (!hasSeizedPOI) {
@@ -154,23 +159,25 @@ public class SeizeComponent {
             return false;
         }
         if (seizedPOI.poiType == POINT_OF_INTEREST_TYPE.TILE_OBJECT) {
-            if (tileLocation.objHere != null) {
+            if (tileLocation.tileObjectComponent.objHere != null) {
                 return false;
             }
         }
-        if (tileLocation.structure.structureType == STRUCTURE_TYPE.KENNEL && tileLocation.structure is Kennel kennel) {
-            if (seizedPOI is Summon) {
-                return !kennel.HasReachedKennelCapacity();
+        if (tileLocation.structure is Kennel kennel) {
+            if (seizedPOI is Summon summon) {
+                return !kennel.HasReachedKennelCapacity() && (kennel.preOccupiedBy == null || kennel.preOccupiedBy == seizedPOI) && (summon.faction == null || !summon.faction.isPlayerFaction);
             }
             return false;
-        } else if (tileLocation.structure.structureType == STRUCTURE_TYPE.TORTURE_CHAMBERS || 
-                   tileLocation.structure.structureType == STRUCTURE_TYPE.DEFILER) {
+        } else if (tileLocation.structure is TortureChambers prison) {
             if (tileLocation.structure.IsTilePartOfARoom(tileLocation, out var room)) {
                 if (seizedPOI is Character character) {
-                    return room.CanUnseizeCharacterInRoom(character);
+                    return room.CanUnseizeCharacterInRoom(character) && (prison.preOccupiedBy == null || prison.preOccupiedBy == seizedPOI);
                 }
+                return true;
+            } else {
+                //in torture chamber, can only unseize inside room
+                return false;
             }
-            return true;
         }
         return true;
     }

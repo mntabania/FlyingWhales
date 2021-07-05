@@ -23,10 +23,12 @@ public class Recruit : GoapAction {
         SetState("Recruit Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
-        string costLog = $"\n{name} {target.nameWithID}:";
         int cost = 10;
+#if DEBUG_LOG
+        string costLog = $"\n{name} {target.nameWithID}:";
         costLog += $" +{cost}(Constant)";
         actor.logComponent.AppendCostLog(costLog);
+#endif
         return cost;
     }
     public override GoapActionInvalidity IsInvalid(ActualGoapNode node) {
@@ -58,15 +60,15 @@ public class Recruit : GoapAction {
         }
         return goapActionInvalidity;
     }
-    public override void PopulateReactionsToActor(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
-        base.PopulateReactionsToActor(reactions, actor, target, witness, node, status);
+    public override void PopulateEmotionReactionsToActor(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
+        base.PopulateEmotionReactionsToActor(reactions, actor, target, witness, node, status);
         if (target is Character targetCharacter) {
             if (targetCharacter.prevFaction != null && targetCharacter.prevFaction.leader == witness) {
                 reactions.Add(EMOTION.Anger);
             }
         }
     }
-    #endregion
+#endregion
 
     #region Effects
     public void AfterRecruitSuccess(ActualGoapNode goapNode) {
@@ -87,10 +89,14 @@ public class Recruit : GoapAction {
         }
         targetCharacter.traitContainer.RemoveRestrainAndImprison(targetCharacter, goapNode.actor);
         targetCharacter.traitContainer.RemoveTrait(targetCharacter, "Criminal");
+        if (targetCharacter is Summon) {
+            //Reference: https://trello.com/c/T2CnOQWD/4674-heal-newly-recruited-monsters-with-low-hp
+            targetCharacter.AdjustHP(targetCharacter.maxHP, ELEMENTAL_TYPE.Normal, showHPBar: true);
+        }
     }
     #endregion
 
-    #region Requirements
+#region Requirements
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, OtherData[] otherData, JobQueueItem job) {
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData, job);
         if (satisfied) {
@@ -98,5 +104,5 @@ public class Recruit : GoapAction {
         }
         return false;
     }
-    #endregion
+#endregion
 }

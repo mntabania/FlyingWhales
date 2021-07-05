@@ -4,7 +4,7 @@ public class TableHerbalism : TileObject{
     public TableHerbalism() {
         Initialize(TILE_OBJECT_TYPE.TABLE_HERBALISM);
     }
-    public TableHerbalism(SaveDataTileObject data) {
+    public TableHerbalism(SaveDataTileObject data) : base(data) {
         
     }
     

@@ -27,13 +27,25 @@ namespace Generator.Map_Generation.Components {
                     if (faction.leader is Character factionLeader) {
                         ApplyFactionTypeRelatedEffectToMember(faction, factionLeader);
                     }
-                    List<Character> settlementRulers = faction.characters.Where(c => c.isSettlementRuler).ToList();
+                    List<Character> settlementRulers = RuinarchListPool<Character>.Claim();
+                    for (int j = 0; j < faction.characters.Count; j++) {
+                        Character c = faction.characters[j];
+                        if (c.isSettlementRuler) {
+                            settlementRulers.Add(c);
+                        }
+                    }
                     for (int j = 0; j < settlementRulers.Count; j++) {
                         Character settlementRuler = settlementRulers[j];
                         ApplyFactionTypeRelatedEffectToMember(faction, settlementRuler);
                     }
                     
-                    List<Character> normalMembers = faction.characters.Where(c => !c.isFactionLeader && !c.isSettlementRuler).ToList();
+                    List<Character> normalMembers = RuinarchListPool<Character>.Claim();
+                    for (int j = 0; j < faction.characters.Count; j++) {
+                        Character c = faction.characters[j];
+                        if (!c.isFactionLeader && !c.isSettlementRuler) {
+                            normalMembers.Add(c);
+                        }
+                    }
                     int halfMembers = Mathf.FloorToInt(normalMembers.Count() / 2f);
                     for (int j = 0; j < normalMembers.Count; j++) {
                         Character factionMember = normalMembers[j];
@@ -41,6 +53,8 @@ namespace Generator.Map_Generation.Components {
                             ApplyFactionTypeRelatedEffectToMember(faction, factionMember);
                         }
                     }
+                    RuinarchListPool<Character>.Release(settlementRulers);
+                    RuinarchListPool<Character>.Release(normalMembers);
                 }
             }
             yield return null;
@@ -73,12 +87,19 @@ namespace Generator.Map_Generation.Components {
                     }
                 }
             } else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Icalawa) {
-                List<Character> validCharacters = CharacterManager.Instance.allCharacters.Where(x => x.isDead == false && x.isNormalCharacter).ToList();
-                validCharacters = CollectionUtilities.Shuffle(validCharacters);
+                List<Character> validCharacters = RuinarchListPool<Character>.Claim();
+                for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
+                    Character c = CharacterManager.Instance.allCharacters[i];
+                    if (c.isDead == false && c.isNormalCharacter) {
+                        validCharacters.Add(c);
+                    }
+                }
+                CollectionUtilities.Shuffle(validCharacters);
                 for (int i = 0; i < validCharacters.Count; i++) {
                     Character character = validCharacters[i];
                     IcalawaCharacterRandomInitialTraits(i, character, validCharacters.Count);
                 }
+                RuinarchListPool<Character>.Release(validCharacters);
             } else {
                 yield return MapGenerator.Instance.StartCoroutine(ExecuteRandomGeneration(data));
             }
@@ -87,26 +108,37 @@ namespace Generator.Map_Generation.Components {
 
         #region Zenko
         private void ZenkoCharacterRandomInitialTraits(Character character) {
-            List<string> buffTraits = new List<string>(TraitManager.Instance.buffTraitPool);
-            List<string> neutralTraits = new List<string>(TraitManager.Instance.neutralTraitPool);
-            List<string> flawTraits = new List<string>(TraitManager.Instance.flawTraitPool);
-            
+            List<string> buffTraits = RuinarchListPool<string>.Claim();
+            buffTraits.AddRange(TraitManager.Instance.buffTraitPool);
+            List<string> neutralTraits = RuinarchListPool<string>.Claim();
+            neutralTraits.AddRange(TraitManager.Instance.neutralTraitPool);
+            List<string> flawTraits = RuinarchListPool<string>.Claim();
+            flawTraits.AddRange(TraitManager.Instance.flawTraitPool);
+
+            List<Faction> orderedFactions = RuinarchListPool<Faction>.Claim();
+            for (int i = 0; i < DatabaseManager.Instance.factionDatabase.allFactionsList.Count; i++) {
+                Faction f = DatabaseManager.Instance.factionDatabase.allFactionsList[i];
+                if (f.isMajorNonPlayer) {
+                    orderedFactions.Add(f);
+                }
+            }
+            int index = orderedFactions.IndexOf(character.faction);
             //Up to three traits
-            if (character.homeSettlement.cityCenter.occupiedHexTile.hexTileOwner.biomeType == BIOMES.SNOW) {
+            if (index == 0) {
                 //Snow villagers starts with Cold Blooded
                 character.traitContainer.AddTrait(character, "Cold Blooded");
-            } else if (character.homeSettlement.cityCenter.occupiedHexTile.hexTileOwner.biomeType == BIOMES.DESERT) {
+            } else if (index == 1) {
                 //Desert villagers starts with Fire Proof
-                character.traitContainer.AddTrait(character, "Fireproof");
-            } else if (character.homeSettlement.cityCenter.occupiedHexTile.hexTileOwner.biomeType == BIOMES.GRASSLAND) {
+                character.traitContainer.AddTrait(character, "Fire Resistant");
+            } else if (index == 2) {
                 //Grassland villagers starts with Electric
                 character.traitContainer.AddTrait(character, "Electric");
-            } else if (character.homeSettlement.cityCenter.occupiedHexTile.hexTileOwner.biomeType == BIOMES.FOREST) {
+            } else {
                 //Forest villagers starts with Venomous
                 character.traitContainer.AddTrait(character, "Venomous");
             }
 
-            List<string> choices = new List<string>();
+            List<string> choices = RuinarchListPool<string>.Claim();
             //80% Trait 2: Buff + Neutral List
             if (GameUtilities.RollChance(80)) {
                 choices.AddRange(buffTraits);
@@ -124,9 +156,9 @@ namespace Generator.Map_Generation.Components {
                 character.traitContainer.AddTrait(character, chosenBuffOrNeutralTraitName);
                 Trait buffOrNeutralTrait = character.traitContainer.GetTraitOrStatus<Trait>(chosenBuffOrNeutralTraitName);
                 if (buffOrNeutralTrait.mutuallyExclusive != null) {
-                    buffTraits = CollectionUtilities.RemoveElements(ref buffTraits, buffOrNeutralTrait.mutuallyExclusive); //update buff traits pool to accomodate new trait
-                    neutralTraits = CollectionUtilities.RemoveElements(ref neutralTraits, buffOrNeutralTrait.mutuallyExclusive); //update neutral traits pool to accomodate new trait
-                    flawTraits = CollectionUtilities.RemoveElements(ref flawTraits, buffOrNeutralTrait.mutuallyExclusive); //update flaw traits pool to accomodate new trait
+                    CollectionUtilities.RemoveElements(buffTraits, buffOrNeutralTrait.mutuallyExclusive); //update buff traits pool to accomodate new trait
+                    CollectionUtilities.RemoveElements(neutralTraits, buffOrNeutralTrait.mutuallyExclusive); //update neutral traits pool to accomodate new trait
+                    CollectionUtilities.RemoveElements(flawTraits, buffOrNeutralTrait.mutuallyExclusive); //update flaw traits pool to accomodate new trait
                 }
             }
             
@@ -146,6 +178,11 @@ namespace Generator.Map_Generation.Components {
                 character.traitContainer.AddTrait(character, chosenTrait);
             }
 
+            RuinarchListPool<string>.Release(choices);
+            RuinarchListPool<string>.Release(buffTraits);
+            RuinarchListPool<string>.Release(neutralTraits);
+            RuinarchListPool<string>.Release(flawTraits);
+            RuinarchListPool<Faction>.Release(orderedFactions);
         }
         #endregion
 
@@ -161,16 +198,23 @@ namespace Generator.Map_Generation.Components {
             } else {
                 //all non evil characters are blessed
                 character.traitContainer.AddTrait(character, "Blessed");
-                character.traitContainer.AddTrait(character, "Robust");
+                // character.traitContainer.AddTrait(character, "Robust");
             }
-            List<string> buffTraits = new List<string>(TraitManager.Instance.buffTraitPool);
+            List<string> buffTraits = RuinarchListPool<string>.Claim();
+            buffTraits.AddRange(TraitManager.Instance.buffTraitPool);
             buffTraits.Remove("Blessed");
-            buffTraits.Remove("Robust");
-            List<string> neutralTraits = new List<string>(TraitManager.Instance.neutralTraitPool);
-            List<string> flawTraits = new List<string>(TraitManager.Instance.flawTraitPool);
+            // buffTraits.Remove("Robust");
+            List<string> neutralTraits = RuinarchListPool<string>.Claim();
+            neutralTraits.AddRange(TraitManager.Instance.neutralTraitPool);
+            List<string> flawTraits = RuinarchListPool<string>.Claim();
+            flawTraits.AddRange(TraitManager.Instance.flawTraitPool);
             flawTraits.Remove("Evil");
             
             character.CreateRandomInitialTraits(buffTraits, neutralTraits, flawTraits);
+
+            RuinarchListPool<string>.Release(buffTraits);
+            RuinarchListPool<string>.Release(neutralTraits);
+            RuinarchListPool<string>.Release(flawTraits);
         }
         #endregion
     }

@@ -13,15 +13,80 @@ MonoBehaviour:
   m_Name: Remove Flaw
   m_EditorClassIdentifier: 
   skill: 175
-  manaCost: 15
+  manaCost: 30
   charges: 1
-  cooldown: 288
-  threat: 0
+  cooldown: 320
+  threat: 3
   threatPerHour: 0
   expCost: 300
+  cheatedLevel: 0
+  pierce: 0
+  bonusChargeWhenUnlocked: 2
+  unlockChargeOnPortalUpgrade: 1
   buttonSprite: {fileID: 21300000, guid: 1de8b7335028dce4b8e2c6254181530f, type: 3}
   tooltipVideoClip: {fileID: 0}
   tooltipImage: {fileID: 0}
+  unlockCost: 50
+  tier: 3
+  baseLoadoutWeight: 250
+  resistanceType: 9
+  archetypeWeightedBonus: 3
+  canBeReleasedEvenIfLearned: 0
   contextMenuIcon: {fileID: 21300000, guid: 70a9302eac8b89042a5b9b01b68c601b, type: 3}
   contextMenuColumn: 0
   playerActionIcon: {fileID: 21300000, guid: 77e63770c7ecb474c9aa378a33e9e6ee, type: 3}
+  isNonUpgradeable: 0
+  isAffliction: 0
+  isLockedBaseOnRequirements: 0
+  canBeCastedOnMaxLevel: 0
+  requirementData:
+    requirements: 08000000
+    requiredArchetypes: 
+    requiredSkills: 
+    actionCount: 0
+    afflictionCount: 0
+    spellsCount: 0
+    tier1Count: 0
+    tier2Count: 0
+    tier3Count: 0
+    portalLevel: 2
+    isOR: 0
+  skillUpgradeData:
+    upgradeCosts: 140000003200000050000000
+    manacostPerLevel: 6400000096000000c80000002c010000
+    chargesPerLevel: 01000000010000000100000001000000
+    bonuses: 0e00000001000000
+    additionalDamagePerLevel: 
+    additionalPiercePerLevel:
+    - 0
+    - 25
+    - 50
+    - 100
+    additionalHpPercentagePerLevel: []
+    additionalAttackPercentagePerLevel: []
+    additionalHpValuePerLevel: 
+    additionalAttackValuePerLevel: 
+    applyOnLevel: 
+    additionalmanaReceivedPercentagePerLevel: []
+    statsIncreasedPercentagePerLevel: []
+    durationBonusPerLevel: 
+    additionalMaxHPPercentagePerLevel: []
+    additionalMaxHPActualPerLevel: 
+    additionalChanceBonusPercentagePerLevel: []
+    additionalTileRangeBonusPerLevel: 
+    decreaseMovementSpeedPerLevel: 
+    cooldownPerLevel: 400100002c0100001801000004010000
+    skillMovementSpeed: 
+  afflictionUpgradeData:
+    bonuses: 
+    cooldown: 
+    additionalPiercePerLevel: []
+    rateChance: 
+    crowdNumber: 
+    napsDuration: 
+    numberOfCriteria: 
+    hungerRate: 
+    duration: []
+    opinionTrigger: 
+    addedBehaviour: 
+    listOfCriteria: 

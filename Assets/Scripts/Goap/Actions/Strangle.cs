@@ -25,16 +25,18 @@ public class Strangle : GoapAction {
         base.Perform(goapNode);
         SetState("Strangle Success", goapNode);
     }
-    public override void AddFillersToLog(ref Log log, ActualGoapNode node) {
-        base.AddFillersToLog(ref log, node);
+    public override void AddFillersToLog(Log log, ActualGoapNode node) {
+        base.AddFillersToLog(log, node);
         if (node.otherData != null && node.otherData.Length == 1) {
             string reason = (string)node.otherData[0].obj;
             log.AddToFillers(null, reason, LOG_IDENTIFIER.STRING_1);    
         }
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
+#if DEBUG_LOG
         string costLog = $"\n{name} {target.nameWithID}: +10(Constant)";
         actor.logComponent.AppendCostLog(costLog);
+#endif
         return 10;
     }
     public override LocationStructure GetTargetStructure(ActualGoapNode node) {
@@ -42,11 +44,11 @@ public class Strangle : GoapAction {
         if (actor.homeStructure != null) {
             return actor.homeStructure;
         } else {
-            return actor.currentRegion.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
+            return actor.currentRegion.wilderness;
         }
     }
-    public override void PopulateReactionsToActor(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
-        base.PopulateReactionsToActor(reactions, actor, target, witness, node, status);
+    public override void PopulateEmotionReactionsToActor(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
+        base.PopulateEmotionReactionsToActor(reactions, actor, target, witness, node, status);
         if (target is Character) {
             Character targetCharacter = target as Character;
             if (actor != targetCharacter) {
@@ -75,8 +77,8 @@ public class Strangle : GoapAction {
             }
         }
     }
-    public override void PopulateReactionsToTarget(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
-        base.PopulateReactionsToTarget(reactions, actor, target, witness, node, status);
+    public override void PopulateEmotionReactionsToTarget(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
+        base.PopulateEmotionReactionsToTarget(reactions, actor, target, witness, node, status);
         if (target is Character) {
             Character targetCharacter = target as Character;
             if (actor != targetCharacter) {
@@ -89,8 +91,8 @@ public class Strangle : GoapAction {
             }
         }
     }
-    public override void PopulateReactionsOfTarget(List<EMOTION> reactions, Character actor, IPointOfInterest target, ActualGoapNode node, REACTION_STATUS status) {
-        base.PopulateReactionsOfTarget(reactions, actor, target, node, status);
+    public override void PopulateEmotionReactionsOfTarget(List<EMOTION> reactions, Character actor, IPointOfInterest target, ActualGoapNode node, REACTION_STATUS status) {
+        base.PopulateEmotionReactionsOfTarget(reactions, actor, target, node, status);
         if (target is Character) {
             Character targetCharacter = target as Character;
             if (actor != targetCharacter) {
@@ -110,9 +112,9 @@ public class Strangle : GoapAction {
         }
         return CRIME_TYPE.Murder;
     }
-    #endregion
+#endregion
 
-    #region Requirements
+#region Requirements
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, OtherData[] otherData, JobQueueItem job) { 
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData, job);
         if (satisfied) {
@@ -120,9 +122,9 @@ public class Strangle : GoapAction {
         }
         return false;
     }
-    #endregion
+#endregion
 
-    #region State Effects
+#region State Effects
     public void PerTickStrangleSuccess(ActualGoapNode goapNode) {
         goapNode.actor.AdjustHP(-(int)(goapNode.actor.maxHP * 0.18f), ELEMENTAL_TYPE.Normal, showHPBar: true);
     }
@@ -145,5 +147,5 @@ public class Strangle : GoapAction {
         goapNode.actor.Death("suicide", goapNode, responsibleCharacter: responsibleCharacter, _deathLog: goapNode.descriptionLog);
 
     }
-    #endregion
+#endregion
 }

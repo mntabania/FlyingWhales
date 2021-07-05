@@ -34,7 +34,7 @@ namespace Traits {
                     
                     Log growUpLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "Generic", "become_giant_spider", null, LOG_TAG.Life_Changes);
                     growUpLog.AddToFillers(adult, adult.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                    growUpLog.AddLogToDatabase();
+                    growUpLog.AddLogToDatabase(true);
 
                     if (babySummon.HasTerritory()) {
                         adult.SetTerritory(babySummon.territory);

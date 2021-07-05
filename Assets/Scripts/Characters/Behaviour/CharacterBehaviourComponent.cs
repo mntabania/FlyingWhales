@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Traits;
+using UtilityScripts;
 
 public abstract class CharacterBehaviourComponent {
 
@@ -62,6 +63,9 @@ public abstract class CharacterBehaviourComponent {
     public bool WillContinueProcess() {
         return HasAttribute(BEHAVIOUR_COMPONENT_ATTRIBUTE.DO_NOT_SKIP_PROCESSING);
     }
+    public bool StopsBehaviourLoop() {
+        return HasAttribute(BEHAVIOUR_COMPONENT_ATTRIBUTE.STOPS_BEHAVIOUR_LOOP);
+    }
     public void PostProcessAfterSuccessfulDoBehaviour(Character character) {
         if (HasAttribute(BEHAVIOUR_COMPONENT_ATTRIBUTE.ONCE_PER_DAY)) {
             DisableFor(character);
@@ -90,7 +94,8 @@ public abstract class CharacterBehaviourComponent {
     #region Utilities
     protected WeightedDictionary<Character> GetCharacterToVisitWeights(Character actor) {
         WeightedDictionary<Character> weights = new WeightedDictionary<Character>();
-        List<Character> positiveRelatables = actor.relationshipContainer.GetFriendCharacters();
+        List<Character> positiveRelatables = RuinarchListPool<Character>.Claim();
+        actor.relationshipContainer.PopulateFriendCharacters(positiveRelatables);
         for (int i = 0; i < positiveRelatables.Count; i++) {
             Character character = positiveRelatables[i];
             if (character.isDead || character.homeStructure == null || 
@@ -104,39 +109,28 @@ public abstract class CharacterBehaviourComponent {
             }
             weights.AddElement(character, weight);
         }
+        RuinarchListPool<Character>.Release(positiveRelatables);
         return weights;
-    }
-    protected bool CanCharacterBeRecruited(Character targetCharacter, Character recruiter) {
-        if (recruiter.faction == null || targetCharacter.faction == recruiter.faction
-            || targetCharacter.race == RACE.TRITON) {
-            //Tritons cannot be tamed/recruited
-            return false;
-        }
-        // if (targetCharacter.faction?.factionType.type == FACTION_TYPE.Undead) {
-        //     return false;
-        // }
-        if (!targetCharacter.traitContainer.HasTrait("Restrained")) {
-            return false;
-        }
-        if (targetCharacter.HasJobTargetingThis(JOB_TYPE.RECRUIT)) {
-            return false;
-        }
-        if (!recruiter.faction.ideologyComponent.DoesCharacterFitCurrentIdeologies(targetCharacter)) {
-            //Cannot recruit characters that does not fit faction ideologies
-            return false;
-        }
-        if (recruiter.faction.IsCharacterBannedFromJoining(targetCharacter)) {
-            //Cannot recruit banned characters
-            return false;
-        }
-        Prisoner prisoner = targetCharacter.traitContainer.GetTraitOrStatus<Prisoner>("Prisoner");
-        if (prisoner == null || !prisoner.IsFactionPrisonerOf(recruiter.faction)) {
-            //Only recruit characters that are prisoners of the recruiters faction.
-            //This was added because sometimes vampire lords will recruit their imprisoned blood sources
-            return false;
-        }
-        return true;
     }
     #endregion
 
+    #region Party
+    //Returns true or false if the job is produced
+    protected bool DoPartyJobsInPartyJobBoard(Character p_character, Party p_party, ref JobQueueItem producedJob) {
+        if (p_character.limiterComponent.canTakeJobs) {
+            JobQueueItem jobToAssign = p_party.jobBoard.GetFirstJobBasedOnVision(p_character);
+            if (jobToAssign != null) {
+                producedJob = jobToAssign;
+                return true;
+            } else {
+                jobToAssign = p_party.jobBoard.GetFirstUnassignedJobToCharacterJob(p_character);
+                if (jobToAssign != null) {
+                    producedJob = jobToAssign;
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    #endregion
 }

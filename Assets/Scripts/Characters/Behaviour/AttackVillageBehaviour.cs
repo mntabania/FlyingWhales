@@ -10,11 +10,13 @@ public class AttackVillageBehaviour : CharacterBehaviourComponent {
     }
     public override bool TryDoBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
         producedJob = null;
+#if DEBUG_LOG
         log += $"\n-{character.name} will attack village";
-        if (character.gridTileLocation.collectionOwner.isPartOfParentRegionMap
-            && character.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner 
-            && (character.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.settlementOnTile == character.behaviourComponent.attackVillageTarget || character.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner == character.behaviourComponent.attackHexTarget)) {
+#endif
+        if (character.gridTileLocation.area.settlementOnArea == character.behaviourComponent.attackVillageTarget || character.gridTileLocation.area == character.behaviourComponent.attackAreaTarget) {
+#if DEBUG_LOG
             log += "\n-Already in the target npcSettlement, will try to combat residents";
+#endif
             //It will only go here if the invader is not combat anymore, meaning there are no more hostiles in his vision, so we must make sure that he attacks a resident in the settlement even though he can't see it
             BaseSettlement settlement = character.behaviourComponent.attackVillageTarget;
             if(settlement != null) {
@@ -34,13 +36,19 @@ public class AttackVillageBehaviour : CharacterBehaviourComponent {
                     }
                 }
                 if (chosenCombatantTarget != null) {
+#if DEBUG_LOG
                     log += "\n-Will attack combatant resident: " + chosenCombatantTarget.name;
+#endif
                     character.combatComponent.Fight(chosenCombatantTarget, CombatManager.Hostility);
                 } else if (chosenNonCombatantTarget != null) {
+#if DEBUG_LOG
                     log += "\n-Will attack non-combatant resident: " + chosenNonCombatantTarget.name;
+#endif
                     character.combatComponent.Fight(chosenNonCombatantTarget, CombatManager.Hostility);
                 } else {
+#if DEBUG_LOG
                     log += "\n-No resident found in settlement, remove behaviour";
+#endif
                     character.behaviourComponent.SetAttackVillageTarget(null);
                     character.behaviourComponent.RemoveBehaviourComponent(typeof(AttackVillageBehaviour));
                     if (character.behaviourComponent.isAgitated) {
@@ -49,13 +57,17 @@ public class AttackVillageBehaviour : CharacterBehaviourComponent {
                     }
                 }
             } else {
-                if(character.behaviourComponent.attackHexTarget != null) {
-                    Character chosenTarget = character.behaviourComponent.attackHexTarget.GetRandomCharacterInsideHexThatMeetCriteria<Character>(c => !c.isDead && c.IsTerritory(character.behaviourComponent.attackHexTarget));
+                if(character.behaviourComponent.attackAreaTarget != null) {
+                    Character chosenTarget = character.behaviourComponent.attackAreaTarget.locationCharacterTracker.GetRandomCharacterInsideHexThatIsAliveAndConsidersAreaAsTerritory(character.behaviourComponent.attackAreaTarget);
                     if(chosenTarget != null) {
+#if DEBUG_LOG
                         log += "\n-Will attack resident: " + chosenTarget.name;
+#endif
                         character.combatComponent.Fight(chosenTarget, CombatManager.Hostility);
                     } else {
+#if DEBUG_LOG
                         log += "\n-No resident found in settlement, remove behaviour";
+#endif
                         character.behaviourComponent.SetAttackVillageTarget(null);
                         character.behaviourComponent.RemoveBehaviourComponent(typeof(AttackVillageBehaviour));
                         if (character.behaviourComponent.isAgitated) {
@@ -68,13 +80,15 @@ public class AttackVillageBehaviour : CharacterBehaviourComponent {
                 }
             }
         } else {
+#if DEBUG_LOG
             log += "\n-Is not in the target npcSettlement";
             log += "\n-Roam there";
-            HexTile targetHex = character.behaviourComponent.attackHexTarget;
+#endif
+            Area targetArea = character.behaviourComponent.attackAreaTarget;
             if (character.behaviourComponent.attackVillageTarget != null) {
-                targetHex = character.behaviourComponent.attackVillageTarget.tiles[UnityEngine.Random.Range(0, character.behaviourComponent.attackVillageTarget.tiles.Count)];
+                targetArea = character.behaviourComponent.attackVillageTarget.areas[UnityEngine.Random.Range(0, character.behaviourComponent.attackVillageTarget.areas.Count)];
             }
-            LocationGridTile targetTile = targetHex.locationGridTiles[UnityEngine.Random.Range(0, targetHex.locationGridTiles.Count)];
+            LocationGridTile targetTile = targetArea.gridTileComponent.gridTiles[UnityEngine.Random.Range(0, targetArea.gridTileComponent.gridTiles.Count)];
             character.jobComponent.CreateGoToJob(targetTile, out producedJob);
         }
         return true;

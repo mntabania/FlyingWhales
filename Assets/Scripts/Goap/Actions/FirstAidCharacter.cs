@@ -31,15 +31,21 @@ public class FirstAidCharacter : GoapAction {
         SetState("First Aid Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
-        string costLog = "";
+#if DEBUG_LOG
+        string costLog = string.Empty;
+#endif
         if (target.gridTileLocation != null && actor.movementComponent.structuresToAvoid.Contains(target.gridTileLocation.structure)) {
             //target is at structure that character is avoiding
+#if DEBUG_LOG
             costLog += $" +2000(Location of target is in avoid structure)";
             actor.logComponent.AppendCostLog(costLog);
+#endif
             return 2000;
         }
+#if DEBUG_LOG
         costLog = $"\n{name} {target.nameWithID}: +10(Constant)";
         actor.logComponent.AppendCostLog(costLog);
+#endif
         return 10;
     }
     public override GoapActionInvalidity IsInvalid(ActualGoapNode node) {
@@ -53,8 +59,8 @@ public class FirstAidCharacter : GoapAction {
         }
         return goapActionInvalidity;
     }
-    public override void PopulateReactionsToActor(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
-        base.PopulateReactionsToActor(reactions, actor, target, witness, node, status);
+    public override void PopulateEmotionReactionsToActor(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
+        base.PopulateEmotionReactionsToActor(reactions, actor, target, witness, node, status);
         if (target is Character targetCharacter) {
             string opinionOfTarget = witness.relationshipContainer.GetOpinionLabel(targetCharacter);
             FirstAidCharacterUAD data = node.GetConvertedUniqueActionData<FirstAidCharacterUAD>();
@@ -74,8 +80,8 @@ public class FirstAidCharacter : GoapAction {
             }
         }
     }
-    public override void PopulateReactionsOfTarget(List<EMOTION> reactions, Character actor, IPointOfInterest target, ActualGoapNode node, REACTION_STATUS status) {
-        base.PopulateReactionsOfTarget(reactions, actor, target, node, status);
+    public override void PopulateEmotionReactionsOfTarget(List<EMOTION> reactions, Character actor, IPointOfInterest target, ActualGoapNode node, REACTION_STATUS status) {
+        base.PopulateEmotionReactionsOfTarget(reactions, actor, target, node, status);
         if (target is Character targetCharacter) {
             FirstAidCharacterUAD data = node.GetConvertedUniqueActionData<FirstAidCharacterUAD>();
             if (data.usedPoisonedHealingPotion) {
@@ -107,9 +113,9 @@ public class FirstAidCharacter : GoapAction {
         }
         return REACTABLE_EFFECT.Positive;
     }
-    #endregion
+#endregion
 
-    #region State Effects
+#region State Effects
     public void PreFirstAidSuccess(ActualGoapNode goapNode) {
         TileObject chosenHealingPotion = goapNode.actor.GetItem(TILE_OBJECT_TYPE.HEALING_POTION);
         if (chosenHealingPotion != null && chosenHealingPotion.traitContainer.HasTrait("Poisoned")) {
@@ -158,11 +164,11 @@ public class FirstAidCharacter : GoapAction {
         // }
         // goapNode.poiTarget.traitContainer.RemoveStatusAndStacks(goapNode.poiTarget, "Injured", goapNode.actor);
     }
-    #endregion
+#endregion
 
-    #region Precondition
+#region Precondition
     private bool HasHealingPotion(Character actor, IPointOfInterest poiTarget, object[] otherData, JOB_TYPE jobType) {
         return actor.HasItem(TILE_OBJECT_TYPE.HEALING_POTION);
     }
-    #endregion
+#endregion
 }

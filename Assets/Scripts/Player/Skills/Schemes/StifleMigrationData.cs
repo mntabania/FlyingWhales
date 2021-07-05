@@ -5,11 +5,10 @@ using Inner_Maps.Location_Structures;
 using Logs;
 using Locations.Settlements;
 
-public class StifleMigrationData : SchemeData {
+public class StifleMigrationData : PlayerAction {
     public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.STIFLE_MIGRATION;
     public override string name => "Stifle Migration";
-    public override string description => "Reset the current Village's Migration Meter to zero.";
-    public override PLAYER_SKILL_CATEGORY category => PLAYER_SKILL_CATEGORY.SCHEME;
+    public override string description => "This Ability resets a Village's Migration Meter.";
 
     public StifleMigrationData() : base() {
         targetTypes = new SPELL_TARGET[] { SPELL_TARGET.SETTLEMENT, SPELL_TARGET.STRUCTURE };
@@ -25,11 +24,11 @@ public class StifleMigrationData : SchemeData {
                 log.AddToFillers(npcSettlement.owner, npcSettlement.owner.name, LOG_IDENTIFIER.FACTION_1);
             }
             log.AddLogToDatabase();
-            PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
+            PlayerManager.Instance.player.ShowNotificationFromPlayer(log, true);
 
-            LogSchemeVillage(npcSettlement);
+            //LogSchemeVillage(npcSettlement);
 
-            PlayerSkillManager.Instance.GetPlayerActionData(PLAYER_SKILL_TYPE.SCHEME).OnExecutePlayerSkill();
+            //PlayerSkillManager.Instance.GetPlayerActionData(PLAYER_SKILL_TYPE.SCHEME).OnExecutePlayerSkill();
             base.ActivateAbility(targetSettlement);
         }
     }
@@ -42,9 +41,9 @@ public class StifleMigrationData : SchemeData {
         if (targetSettlement is NPCSettlement npcSettlement && !npcSettlement.migrationComponent.IsMigrationEventAllowed()) {
             return false;
         }
-        if (PlayerSkillManager.Instance.GetPlayerSkillData(PLAYER_SKILL_TYPE.SCHEME).charges <= 0) {
-            return false;
-        }
+        //if (PlayerSkillManager.Instance.GetSkillData(PLAYER_SKILL_TYPE.SCHEME).charges <= 0) {
+        //    return false;
+        //}
         return base.CanPerformAbilityTowards(targetSettlement);
     }
     public override bool CanPerformAbilityTowards(LocationStructure targetStructure) {

@@ -23,14 +23,18 @@ public class DarkRitual : GoapAction {
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
         int cost = 10;
+#if DEBUG_LOG
         string costLog = $"\n{name} {target.nameWithID}: +10(Constant)";
         actor.logComponent.AppendCostLog(costLog);
+#endif
         if (target.gridTileLocation != null && actor.movementComponent.structuresToAvoid.Contains(target.gridTileLocation.structure)) {
             if (!actor.partyComponent.hasParty) {
                 //target is at structure that character is avoiding
                 cost = 2000;
+#if DEBUG_LOG
                 costLog += $" +{cost}(Location of target is in avoid structure)";
                 actor.logComponent.AppendCostLog(costLog);
+#endif
                 return cost;
             }
         }
@@ -39,8 +43,8 @@ public class DarkRitual : GoapAction {
     public override REACTABLE_EFFECT GetReactableEffect(ActualGoapNode node, Character witness) {
         return REACTABLE_EFFECT.Negative;
     }
-    public override void PopulateReactionsToActor(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
-        base.PopulateReactionsToActor(reactions, actor, target, witness, node, status);
+    public override void PopulateEmotionReactionsToActor(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
+        base.PopulateEmotionReactionsToActor(reactions, actor, target, witness, node, status);
         if (witness.traitContainer.HasTrait("Cultist") == false) {
             reactions.Add(EMOTION.Shock);
 
@@ -67,9 +71,9 @@ public class DarkRitual : GoapAction {
     public override CRIME_TYPE GetCrimeType(Character actor, IPointOfInterest target, ActualGoapNode crime) {
         return CRIME_TYPE.Demon_Worship;
     }
-    #endregion
+#endregion
 
-    #region Requirements
+#region Requirements
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest target, OtherData[] otherData, JobQueueItem job) {
         bool satisfied = base.AreRequirementsSatisfied(actor, target, otherData, job);
         if (satisfied) {
@@ -77,18 +81,18 @@ public class DarkRitual : GoapAction {
         }
         return false;
     }
-    #endregion
+#endregion
     
-    #region Preconditions
+#region Preconditions
     private bool HasCultistKit(Character actor, IPointOfInterest poiTarget, object[] otherData, JOB_TYPE jobType) {
         return actor.HasItem("Cultist Kit");
     }
-    #endregion
+#endregion
     
-    #region State Effects
+#region State Effects
     public void AfterRitualSuccess(ActualGoapNode goapNode) {
-        Messenger.Broadcast(PlayerSignals.CREATE_CHAOS_ORBS, goapNode.poiTarget.worldPosition, Random.Range(2, 6), goapNode.poiTarget.gridTileLocation.parentMap);
+        Messenger.Broadcast(JobSignals.ON_FINISH_PRAYING, goapNode);
         goapNode.actor.UnobtainItem(TILE_OBJECT_TYPE.CULTIST_KIT);
     }
-    #endregion
+#endregion
 }

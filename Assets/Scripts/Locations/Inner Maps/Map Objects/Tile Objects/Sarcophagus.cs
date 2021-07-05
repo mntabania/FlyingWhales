@@ -4,7 +4,7 @@ public class Sarcophagus : TileObject{
     public Sarcophagus() {
         Initialize(TILE_OBJECT_TYPE.SARCOPHAGUS);
     }
-    public Sarcophagus(SaveDataTileObject data) {
+    public Sarcophagus(SaveDataTileObject data) : base(data) {
         
     }
 }

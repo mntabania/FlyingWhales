@@ -14,7 +14,7 @@ public class WorldGenOptionsUIModel : MVCUIModel {
     public System.Action<SKILL_COOLDOWN_SPEED> onChangeSkillCooldownSpeed;
     public System.Action<SKILL_COST_AMOUNT> onChangeSkillCostAmount;
     public System.Action<SKILL_CHARGE_AMOUNT> onChangeSkillChargeAmount;
-    public System.Action<THREAT_AMOUNT> onChangeThreatAmount;
+    public System.Action<RETALIATION> onChangeThreatAmount;
     public System.Action<OMNIPOTENT_MODE> onChangeOmnipotent;
     public System.Action onClickAddBiome;
     public System.Action onClickAddFaction;
@@ -178,8 +178,8 @@ public class WorldGenOptionsUIModel : MVCUIModel {
         onChangeSkillChargeAmount?.Invoke(chargeAmount);
     }
     private void OnChangeThreatAmount(int p_index) {
-        THREAT_AMOUNT threatAmount = dropDownThreat.ConvertCurrentSelectedOption<THREAT_AMOUNT>();
-        onChangeThreatAmount?.Invoke(threatAmount);
+        RETALIATION retaliation = dropDownThreat.ConvertCurrentSelectedOption<RETALIATION>();
+        onChangeThreatAmount?.Invoke(retaliation);
     }
     private void OnChangeOmnipotent(int p_index) {
         OMNIPOTENT_MODE omnipotentMode = dropDownOmnipotent.ConvertCurrentSelectedOption<OMNIPOTENT_MODE>();

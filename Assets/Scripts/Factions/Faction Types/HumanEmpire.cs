@@ -29,11 +29,17 @@ namespace Factions.Faction_Types {
             AddCombatantClass("Mage");
             AddCombatantClass("Stalker");
             AddCombatantClass("Shaman");
-            
+
             //TODO:
-            AddCivilianClass("Peasant");
             AddCivilianClass("Miner");
-            AddCivilianClass("Craftsman");
+            AddCivilianClass("Crafter");
+            AddCivilianClass("Farmer");
+            AddCivilianClass("Fisher");
+            AddCivilianClass("Logger");
+            AddCivilianClass("Merchant");
+            AddCivilianClass("Butcher");
+            AddCivilianClass("Skinner");
+            AddCivilianClass("Trapper");
 
 
             //crimes
@@ -56,10 +62,17 @@ namespace Factions.Faction_Types {
             AddCombatantClass("Barbarian");
             AddCombatantClass("Mage");
             AddCombatantClass("Stalker");
-            
-            AddCivilianClass("Peasant");
+
+            //AddCivilianClass("Peasant");
             AddCivilianClass("Miner");
-            AddCivilianClass("Craftsman");
+            AddCivilianClass("Crafter");
+            AddCivilianClass("Farmer");
+            AddCivilianClass("Fisher");
+            AddCivilianClass("Logger");
+            AddCivilianClass("Merchant");
+            AddCivilianClass("Butcher");
+            AddCivilianClass("Skinner");
+            AddCivilianClass("Trapper");
         }
         //public override CRIME_SEVERITY GetCrimeSeverity(Character witness, Character actor, IPointOfInterest target, CRIME_TYPE crimeType, ICrimeable crime) {
         //    switch (crimeType) {

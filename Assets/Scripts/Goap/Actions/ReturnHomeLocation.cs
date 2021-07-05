@@ -27,7 +27,7 @@ public class ReturnHomeLocation : GoapAction {
     }
     public override LocationStructure GetTargetStructure(ActualGoapNode node) {
         Character actor = node.actor;
-        return actor.homeRegion.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
+        return actor.homeRegion.wilderness;
     }
     #endregion
 

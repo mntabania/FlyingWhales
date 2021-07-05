@@ -73,26 +73,32 @@ public class Carry : GoapAction {
         return goapActionInvalidity;
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
+#if DEBUG_LOG
         string costLog = $"\n{name} {target.nameWithID}:";
+#endif
         if (job.jobType == JOB_TYPE.MOVE_CHARACTER) {
             //If the job is move character and the target can move again, should not, do move character anymore
             //because when you try to carry a character that can move, it will knock it out first so that it cannot move, the character will end up attacking the other character which we do not want because we use this on paralyzed characters only
             //We do not unnecessary fighting because it will lead to criminality which we do not intended to do in this case
             if (target is Character targetCharacter) {
                 if (targetCharacter.limiterComponent.canMove) {
+#if DEBUG_LOG
                     costLog += $" +2000(Move Character, target can move again)";
                     actor.logComponent.AppendCostLog(costLog);
+#endif
                     return 2000;
                 }
             }
         }
+#if DEBUG_LOG
         costLog += $" +10(Constant)";
         actor.logComponent.AppendCostLog(costLog);
+#endif
         return 10;
     }
-    #endregion
+#endregion
 
-    #region Requirements
+#region Requirements
    protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, OtherData[] otherData, JobQueueItem job) { 
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData, job);
         if (satisfied) {
@@ -120,9 +126,9 @@ public class Carry : GoapAction {
         }
         return false;
     }
-    #endregion
+#endregion
 
-    #region State Effects
+#region State Effects
     public void AfterCarrySuccess(ActualGoapNode goapNode) {
         //Character target = goapNode.poiTarget as Character;
         // goapNode.actor.ownParty.AddPOI(goapNode.poiTarget);
@@ -146,21 +152,28 @@ public class Carry : GoapAction {
         
         goapNode.actor.CarryPOI(goapNode.poiTarget, setOwnership: setOwnership);
     }
-    #endregion
+#endregion
 
-    #region Precondition
+#region Precondition
     private bool TargetCannotMove(Character actor, IPointOfInterest target, object[] otherData, JOB_TYPE jobType) {
         if(target is Character) {
             return (target as Character).limiterComponent.canMove == false;
         }
         return true;
     }
-    #endregion
+#endregion
 
     private bool TargetMissingForCarry(ActualGoapNode node) {
         Character actor = node.actor;
         IPointOfInterest poiTarget = node.poiTarget;
-        return poiTarget.gridTileLocation == null || actor.currentRegion != poiTarget.currentRegion
-                    || !(actor.gridTileLocation == poiTarget.gridTileLocation || actor.gridTileLocation.IsNeighbour(poiTarget.gridTileLocation, true)) || !poiTarget.mapObjectVisual;
+        if (poiTarget.gridTileLocation == null || actor.currentRegion != poiTarget.currentRegion || !poiTarget.mapObjectVisual) {
+            return true;
+        } else if (actor.gridTileLocation != poiTarget.gridTileLocation && !actor.gridTileLocation.IsNeighbour(poiTarget.gridTileLocation, true)) {
+            if (actor.hasMarker && actor.marker.IsCharacterInLineOfSightWith(poiTarget)) {
+                return false;
+            }
+            return true;
+        }
+        return false;
     }
 }

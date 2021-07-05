@@ -7,7 +7,7 @@ namespace Interrupts {
     public class PulledDown : Interrupt {
 
         public PulledDown() : base(INTERRUPT.Pulled_Down) {
-            duration = 12;
+            duration = 15;
             doesStopCurrentAction = true;
             doesDropCurrentJob = true;
             shouldEndOnSeize = true;
@@ -27,7 +27,7 @@ namespace Interrupts {
         }
         public override bool PerTickInterrupt(InterruptHolder interruptHolder) {
             interruptHolder.actor.AdjustHP(-300, ELEMENTAL_TYPE.Poison);
-            if (interruptHolder.actor.currentHP <= 0) {
+            if (!interruptHolder.actor.HasHealth()) {
                 Scorpion scorpion = interruptHolder.target as Scorpion;
                 scorpion.SetHeldCharacter(null);
                 interruptHolder.actor.Death(cause: "pulled_down", responsibleCharacter: scorpion);
@@ -38,7 +38,7 @@ namespace Interrupts {
             interruptHolder.actor.traitContainer.RemoveTrait(interruptHolder.actor, "Pulled Down");
             if (!interruptHolder.actor.isDead) {
                 interruptHolder.actor.AdjustHP(-300, ELEMENTAL_TYPE.Poison);
-                if (interruptHolder.actor.currentHP <= 0) {
+                if (!interruptHolder.actor.HasHealth()) {
                     Scorpion scorpion = interruptHolder.target as Scorpion;
                     scorpion.SetHeldCharacter(null);
                     interruptHolder.actor.Death(cause: "pulled_down", responsibleCharacter: scorpion);

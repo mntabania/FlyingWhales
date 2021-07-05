@@ -4,6 +4,7 @@ using UnityEngine;
 using System;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
+using Object_Pools;
 using Traits;
 using UnityEngine.Profiling;
 
@@ -30,12 +31,12 @@ public class Minion {
         character.SetMinion(this);
         //character.StartingLevel();
         if (!keepData) {
-            character.SetFirstAndLastName(RandomNameGenerator.GenerateMinionName(), string.Empty);
+            character.SetFirstAndLastName(character.characterClass.className, string.Empty);
         }
         // RemoveInvalidPlayerActions();
-        character.needsComponent.SetFullnessForcedTick(0);
-        character.needsComponent.SetTirednessForcedTick(0);
-        character.needsComponent.SetHappinessForcedTick(0);
+        // character.needsComponent.SetFullnessForcedTick(0);
+        // character.needsComponent.SetTirednessForcedTick(0);
+        // character.needsComponent.SetHappinessForcedTick(0);
         if (character.behaviourComponent.defaultBehaviourSetName == CharacterManager.Default_Resident_Behaviour) {
             //only change default behaviour set of minion if it is currently using the default resident behaviour.
             character.behaviourComponent.ChangeDefaultBehaviourSet(CharacterManager.Default_Minion_Behaviour);    
@@ -50,12 +51,18 @@ public class Minion {
             SubscribeListeners();
         }
     }
-    public void Death(string cause = "normal", ActualGoapNode deathFromAction = null, Character responsibleCharacter = null, Log _deathLog = default, LogFillerStruct[] deathLogFillers = null) {
+    public void Death(string cause = "normal", ActualGoapNode deathFromAction = null, Character responsibleCharacter = null, Log _deathLog = null, LogFillerStruct[] deathLogFillers = null) {
         if (!character.isDead) {
             Region deathLocation = character.currentRegion;
             LocationStructure deathStructure = character.currentStructure;
             LocationGridTile deathTile = character.gridTileLocation;
 
+            //Unseize first before processing death
+            if (character.isBeingSeized) {
+                PlayerManager.Instance.player.seizeComponent.UnseizePOIOnDeath();
+            }
+            character.SetDeathLocation(character.gridTileLocation);
+            
             character.SetIsDead(true);
             character.SetPOIState(POI_STATE.INACTIVE);
 
@@ -122,16 +129,16 @@ public class Minion {
             // character.traitContainer.AddTrait(character, dead, gainedFromDoing: deathFromAction);
             // PlayerManager.Instance.player.RemoveMinion(this);
             Messenger.Broadcast(CharacterSignals.CHARACTER_DEATH, character);
+            character.eventDispatcher.ExecuteCharacterDied(character);
 
             Messenger.Broadcast(CharacterSignals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, character as IPointOfInterest, "target is already dead");
             Messenger.Broadcast(CharacterSignals.FORCE_CANCEL_ALL_ACTIONS_TARGETING_POI, character as IPointOfInterest, "target is already dead");
             character.behaviourComponent.OnDeath();
             character.jobQueue.CancelAllJobs();
             // StopInvasionProtocol(PlayerManager.Instance.player.currentNpcSettlementBeingInvaded);
-
-            Log deathLog;
-            if (!_deathLog.hasValue) {
-                deathLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "Generic", $"death_{cause}", providedTags: LOG_TAG.Life_Changes);
+            
+            if (_deathLog == null) {
+                Log deathLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "Generic", $"death_{cause}", providedTags: LOG_TAG.Life_Changes);
                 deathLog.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                 if (responsibleCharacter != null) {
                     deathLog.AddToFillers(responsibleCharacter, responsibleCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
@@ -144,10 +151,11 @@ public class Minion {
                 //will only add death log to history if no death log is provided. NOTE: This assumes that if a death log is provided, it has already been added to this characters history.
                 deathLog.AddLogToDatabase();
                 PlayerManager.Instance.player.ShowNotificationFrom(character, deathLog);
+                character.SetDeathLog(deathLog);
+                LogPool.Release(deathLog);
             } else {
-                deathLog = _deathLog;
+                character.SetDeathLog(_deathLog);
             }
-            character.SetDeathLog(deathLog);
             List<Trait> afterDeathTraitOverrideFunctions = character.traitContainer.GetTraitOverrideFunctions(TraitManager.After_Death);
             if (afterDeathTraitOverrideFunctions != null) {
                 for (int i = 0; i < afterDeathTraitOverrideFunctions.Count; i++) {
@@ -157,6 +165,7 @@ public class Minion {
             }
             Unsummon();
             GameManager.Instance.CreateParticleEffectAt(deathTile, PARTICLE_EFFECT.Minion_Dissipate);
+            Messenger.Broadcast(PlayerSkillSignals.RELOAD_PLAYER_ACTIONS, character as IPlayerActionTarget);
         }
     }
 
@@ -189,28 +198,36 @@ public class Minion {
 
     #region Invasion
     private void OnTickEnded() {
+#if DEBUG_PROFILER
         Profiler.BeginSample($"Minion On Tick Ended");
+#endif
         if (character.isDead) { return; }
         character.interruptComponent.OnTickEnded();
         character.stateComponent.OnTickEnded();
         character.ProcessTraitsOnTickEnded();
         character.TryProcessTraitsOnTickEndedWhileStationaryOrUnoccupied();
         character.EndTickPerformJobs();
+#if DEBUG_PROFILER
         Profiler.EndSample();
+#endif
     }
     private void OnTickStarted() {
+#if DEBUG_PROFILER
         Profiler.BeginSample($"Minion On Tick Started");
+#endif
         if (character.isDead) { return; }
         character.ProcessTraitsOnTickStarted();
         if (character.CanPlanGoap()) {
             character.PerStartTickActionPlanning();
         }
         // character.AdjustHP(-5, ELEMENTAL_TYPE.Normal, triggerDeath: true, showHPBar: true, source: character);
+#if DEBUG_PROFILER
         Profiler.EndSample();
+#endif
     }
-    #endregion
+#endregion
 
-    #region Utilities
+#region Utilities
     public void SetMinionPlayerSkillType(PLAYER_SKILL_TYPE skillType) {
         minionPlayerSkillType = skillType;
     }
@@ -234,9 +251,9 @@ public class Minion {
                 return "Wrath";
         }
     }
-    #endregion
+#endregion
 
-    #region Summoning
+#region Summoning
     public void Summon(LocationGridTile tile) {
         character.CreateMarker();
         character.marker.visionCollider.VoteToUnFilterVision();
@@ -248,13 +265,14 @@ public class Minion {
 
         SubscribeListeners();
         SetIsSummoned(true);
-        Messenger.Broadcast(SpellSignals.SUMMON_MINION, this);
+        Messenger.Broadcast(PlayerSkillSignals.SUMMON_MINION, this);
     }
     private void Unsummon() {
-        if(character.currentHP < 0) {
-            character.SetHP(0);
-        }
-        Messenger.AddListener(Signals.TICK_STARTED, UnsummonedHPRecovery);
+        //if(!character.HasHealth()) {
+        //    character.SetHP(0);
+        //}
+        //Messenger.AddListener(Signals.TICK_STARTED, UnsummonedCooldown);
+
         UnSubscribeListeners();
         SetIsSummoned(false);
 
@@ -266,38 +284,42 @@ public class Minion {
         character.homeRegion?.RemoveResident(character);
         //character.SetRegionLocation(deathLocation);
         //character.SetCurrentStructureLocation(deathStructure, false);
-
-        character.behaviourComponent.SetIsHarassing(false, null);
-        character.behaviourComponent.SetIsDefending(false, null);
-        character.behaviourComponent.SetIsInvading(false, null);
         character.jobQueue.CancelAllJobs();
         character.interruptComponent.ForceEndNonSimultaneousInterrupt();
         character.combatComponent.ClearAvoidInRange(false);
         character.combatComponent.ClearHostilesInRange(false);
-        
-        SkillData spellData = PlayerSkillManager.Instance.GetMinionPlayerSkillData(minionPlayerSkillType);
-        
-        int missingHealth = character.maxHP - character.currentHP;
-        int cooldown = Mathf.CeilToInt((float)missingHealth / 7);
-        spellData.SetCooldown(cooldown);
-        spellData.SetCurrentCooldownTick(0);
 
-        Messenger.Broadcast(SpellSignals.SPELL_COOLDOWN_STARTED, spellData);
-        Messenger.Broadcast(SpellSignals.UNSUMMON_MINION, this);
+        SkillData spellData = PlayerSkillManager.Instance.GetMinionPlayerSkillData(minionPlayerSkillType);
+
+        //int missingHealth = character.maxHP - character.currentHP;
+        int cooldown = GameManager.Instance.GetTicksBasedOnHour(12); //Mathf.CeilToInt((float) missingHealth / 7);
+        spellData.SetCooldown(cooldown);
+        //spellData.SetCurrentCooldownTick(0);
+        spellData.StartCooldown();
+        //SkillData spellData = PlayerSkillManager.Instance.GetMinionPlayerSkillData(minionPlayerSkillType);
+        //spellData.SetCooldown(-1);
+        //spellData.AdjustCharges(1);
+
+        //Messenger.Broadcast(SpellSignals.SPELL_COOLDOWN_STARTED, spellData);
+        Messenger.Broadcast(PlayerSkillSignals.UNSUMMON_MINION, this);
     }
-    private void UnsummonedHPRecovery() {
+    private void UnsummonedCooldown() {
+#if DEBUG_PROFILER
         Profiler.BeginSample($"Minion Unsummoned HP Recovery");
+#endif
         this.character.AdjustHP(7, ELEMENTAL_TYPE.Normal);
         SkillData spellData = PlayerSkillManager.Instance.GetMinionPlayerSkillData(minionPlayerSkillType);
         spellData.SetCurrentCooldownTick(spellData.currentCooldownTick + 1);
-        if (character.currentHP >= character.maxHP) {
+        if (character.IsHealthFull()) {
             //minion can be summoned again
             spellData.SetCooldown(-1);
             spellData.AdjustCharges(1);
-            Messenger.Broadcast(SpellSignals.SPELL_COOLDOWN_FINISHED, spellData);
-            Messenger.RemoveListener(Signals.TICK_STARTED, UnsummonedHPRecovery);
+            Messenger.Broadcast(PlayerSkillSignals.SPELL_COOLDOWN_FINISHED, spellData);
+            Messenger.RemoveListener(Signals.TICK_STARTED, UnsummonedCooldown);
         }
+#if DEBUG_PROFILER
         Profiler.EndSample();
+#endif
     }
     public void OnSeize() {
         Messenger.RemoveListener(Signals.TICK_ENDED, OnTickEnded);
@@ -310,7 +332,7 @@ public class Minion {
     public void SetIsSummoned(bool state) {
         isSummoned = state;
     }
-    #endregion
+#endregion
 
     #region Listeners
     private void SubscribeListeners() {
@@ -358,6 +380,12 @@ public class Minion {
     //        }
     //    }
     //}
+    #endregion
+
+    #region Clean Up
+    public void CleanUp() {
+        character = null;
+    }
     #endregion
 }
 

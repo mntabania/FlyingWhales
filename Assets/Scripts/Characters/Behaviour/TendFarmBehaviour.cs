@@ -14,11 +14,11 @@ public class TendFarmBehaviour : CharacterBehaviourComponent {
             producedJob = null;
             character.traitContainer.RemoveTrait(character, "Tending");
         } else {
-            List<CornCrop> crops = character.homeSettlement.PopulateTileObjectsFromStructures<CornCrop>(STRUCTURE_TYPE.FARM, IsCornCropUntended);
-            if (crops.Count > 0) {
-                CornCrop chosenCrop = crops[0];
-                ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.TEND], character, chosenCrop, null, 0);
-                GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, chosenCrop);
+            CornCrop crop = character.homeSettlement.GetFirstTileObjectFromStructuresThatIsUntended<CornCrop>(STRUCTURE_TYPE.FARM);
+            if (crop != null) {
+                CornCrop chosenCrop = crop;
+                ActualGoapNode node = ObjectPoolManager.Instance.CreateNewAction(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.TEND], character, chosenCrop, null, 0);
+                GoapPlan goapPlan = ObjectPoolManager.Instance.CreateNewGoapPlan(node, chosenCrop);
                 GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.TEND_FARM, INTERACTION_TYPE.TEND, chosenCrop, character);
                 goapPlan.SetDoNotRecalculate(true);
                 job.SetCannotBePushedBack(true);

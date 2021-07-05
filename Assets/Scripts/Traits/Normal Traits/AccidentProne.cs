@@ -32,7 +32,7 @@ namespace Traits {
                 owner = character;
             }
         }
-        public override bool PerTickWhileStationaryOrUnoccupied() {
+        public override bool PerTickWhileStationaryOrUnoccupied(Character p_character) {
             if (owner.hasMarker && owner.marker.isMoving) {
                 int stumbleChance = UnityEngine.Random.Range(0, 100);
                 if (stumbleChance < 2) {
@@ -42,16 +42,14 @@ namespace Traits {
             return false;
         }
         public override bool OnStartPerformGoapAction(ActualGoapNode node, ref bool willStillContinueAction) {
+            if (node.goapType == INTERACTION_TYPE.STAND || node.goapType == INTERACTION_TYPE.STAND_STILL || node.goapType == INTERACTION_TYPE.LONG_STAND_STILL) {
+                return false;
+            }
             int accidentChance = UnityEngine.Random.Range(0, 100);
             //bool hasCreatedJob = false;
             if (accidentChance < 10) {
                 willStillContinueAction = false;
                 return node.actor.interruptComponent.TriggerInterrupt(INTERRUPT.Accident, node.actor);
-                //if (node != null && !excludedActionsFromAccidentProneTrait.Contains(node.action.goapType)) {
-                //    DoAccident(node.action);
-                //    hasCreatedJob = true;
-                //    willStillContinueAction = false;
-                //}
             }
             return false;
         }
@@ -69,8 +67,8 @@ namespace Traits {
         #endregion
 
         //private void DoStumble() {
-        //    ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.STUMBLE], owner, owner, null, 0);
-        //    GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, owner);
+        //    ActualGoapNode node = ObjectPoolManager.Instance.CreateNewAction(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.STUMBLE], owner, owner, null, 0);
+        //    GoapPlan goapPlan = ObjectPoolManager.Instance.CreateNewGoapPlan(node, owner);
         //    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.INTERRUPTION, INTERACTION_TYPE.STUMBLE, owner, owner);
         //    goapPlan.SetDoNotRecalculate(true);
         //    job.SetCannotBePushedBack(true);
@@ -82,8 +80,8 @@ namespace Traits {
         //}
 
         //private void DoAccident(GoapAction action) {
-        //    ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.ACCIDENT], owner, owner, new object[] { action }, 0);
-        //    GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, owner);
+        //    ActualGoapNode node = ObjectPoolManager.Instance.CreateNewAction(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.ACCIDENT], owner, owner, new object[] { action }, 0);
+        //    GoapPlan goapPlan = ObjectPoolManager.Instance.CreateNewGoapPlan(node, owner);
         //    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.INTERRUPTION, INTERACTION_TYPE.ACCIDENT, owner, owner);
         //    goapPlan.SetDoNotRecalculate(true);
         //    job.SetCannotBePushedBack(true);

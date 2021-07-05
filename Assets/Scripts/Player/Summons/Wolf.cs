@@ -2,13 +2,16 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Wolf : Summon {
+public class Wolf : SkinnableAnimal {
 	
 	public override bool defaultDigMode => true;
-
-	public Wolf() : base(SUMMON_TYPE.Wolf, "Ravager", RACE.WOLF, UtilityScripts.Utilities.GetRandomGender()) { }
+    //public override COMBAT_MODE defaultCombatMode => COMBAT_MODE.Passive;
+    public override string raceClassName => "Wolf";
+    public Wolf() : base(SUMMON_TYPE.Wolf, "Ravager", RACE.WOLF, UtilityScripts.Utilities.GetRandomGender()) { }
     public Wolf(string className) : base(SUMMON_TYPE.Wolf, className, RACE.WOLF, UtilityScripts.Utilities.GetRandomGender()) { }
-    public Wolf(SaveDataSummon data) : base(data) { }
+    public Wolf(SaveDataSkinnableAnimal data) : base(data) { }
+
+    public override TILE_OBJECT_TYPE produceableMaterial => TILE_OBJECT_TYPE.WOLF_HIDE;
 
     #region Overrides
     //public override void OnPlaceSummon(LocationGridTile tile) {

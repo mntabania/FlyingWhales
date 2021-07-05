@@ -48,7 +48,7 @@ namespace Plague.Transmission {
                 if (PlagueDisease.Instance.AddPlaguedStatusOnPOIWithLifespanDuration(p_target)) {
                     Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Interrupt", "Plagued", "contract");
                     log.AddToFillers(p_target, p_target.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                    log.AddLogToDatabase();
+                    log.AddLogToDatabase(true);
                 }
             }
             _plagueTransmitted?.Invoke(p_target);   

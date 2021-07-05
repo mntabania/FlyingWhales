@@ -1,7 +1,9 @@
 ﻿using UnityEngine;
+using UtilityScripts;
 namespace Traits {
     public class Betrayed : Status {
-        public override bool isSingleton => true;
+        //Not singleton for responsible characters
+        //public override bool isSingleton => true;
 
         public Betrayed() {
             name = "Betrayed";
@@ -25,18 +27,19 @@ namespace Traits {
         }
         private void SpawnGhostOf(Character character) {
             if (character.gridTileLocation == null) {
+#if DEBUG_LOG
                 Debug.Log($"{character.name} was not placed because {character.name} no longer has a gridTileLocation.");
+#endif
                 return;
             }
             Summon ghost = CharacterManager.Instance.CreateNewSummon(SUMMON_TYPE.Ghost, FactionManager.Instance.neutralFaction, null, character.homeRegion);
             ghost.SetFirstAndLastName(character.firstName, character.surName);
             (ghost as Ghost).SetBetrayedBy(responsibleCharacter);
             CharacterManager.Instance.PlaceSummonInitially(ghost, character.gridTileLocation);
-            Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Trait", this.name, "spawn_ghost", null, LOG_TAG.Social, LOG_TAG.Life_Changes);
+            Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Trait", this.name, "spawn_ghost", null, LogUtilities.Social_Life_Changes_Tags);
             log.AddToFillers(ghost, ghost.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             log.AddToFillers(character, character.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-            // ghost.logComponent.AddHistory(log);
-            log.AddLogToDatabase();
+            log.AddLogToDatabase(true);
         }
     }
 }

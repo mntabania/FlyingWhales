@@ -18,6 +18,8 @@ public class BiolabUIController : MVCUIController, BiolabUIView.IListener
 
 	private Action onCloseBiolabUI;
 
+	public bool isShowing { get; private set; }
+
 	public void Init(Action p_onCloseBiolabUI = null) {
 		InstantiateUI();
 		HideUI();
@@ -39,12 +41,14 @@ public class BiolabUIController : MVCUIController, BiolabUIView.IListener
 	
 	public override void ShowUI() {
 		base.ShowUI();
+		isShowing = true;
 		UpdateTopMenuSummary();
 		ShowUI(transmissionUIController);
 		m_biolabUIView.SetTransmissionTabIsOnWithoutNotify(true);
 	}
 	public override void HideUI() {
 		base.HideUI();
+		isShowing = false;
 		onCloseBiolabUI?.Invoke();
 		Messenger.RemoveListener<int>(PlayerSignals.UPDATED_PLAGUE_POINTS, OnPlaguePointsUpdated);
 	}
@@ -97,11 +101,13 @@ public class BiolabUIController : MVCUIController, BiolabUIView.IListener
 		if (PlayerManager.Instance != null && PlayerManager.Instance.player != null) {
 			m_biolabUIView.SetPlaguePoints(PlayerManager.Instance.player.plagueComponent.plaguePoints.ToString());	
 		}
-		if (PlayerSkillManager.Instance != null) {
+		//remove for now
+		/*if (PlayerSkillManager.Instance != null) {
 			m_biolabUIView.SetPlagueRats(PlayerSkillManager.Instance.GetSummonPlayerSkillData(PLAYER_SKILL_TYPE.PLAGUED_RAT).charges.ToString());
-		}
+		}*/
+		//remove for now
 	}
-	
+
 	#region BiolabUIView.IListener implementation
 	public void OnTransmissionTabClicked(bool isOn) {
 		if (isOn) {
@@ -131,19 +137,22 @@ public class BiolabUIController : MVCUIController, BiolabUIView.IListener
 	public void OnCloseClicked() {
 		HideUI();
 	}
-	public void OnHoveredOverPlaguedRat(UIHoverPosition p_hoverPosition) {
-		if (UIManager.Instance != null && PlayerManager.Instance != null) {
-			if (PlayerManager.Instance.player.playerSettlement.GetFirstStructureOfType(STRUCTURE_TYPE.BIOLAB) is Biolab biolab && !biolab.HasMaxPlaguedRat()) {
-				string timeDifference = GameManager.Instance.Today().GetTimeDifferenceString(biolab.replenishDate);
-				string summary = $"The Biolab produces a Plagued Rat once every 2 days up to a maximum of \n3 charges. A new Plagued Rat charge will be produced in {UtilityScripts.Utilities.ColorizeAction(timeDifference)}.";
-				UIManager.Instance.ShowSmallInfo(summary, p_hoverPosition, "Plagued Rats");	
-			}
-		}
+	public void HideViaShortcutKey() {
+		HideUI();
 	}
-	public void OnHoveredOutPlaguedRat() {
-		if (UIManager.Instance != null && PlayerManager.Instance != null) {
-			UIManager.Instance.HideSmallInfo();
-		}
-	}
+	//public void OnHoveredOverPlaguedRat(UIHoverPosition p_hoverPosition) {
+		//if (UIManager.Instance != null && PlayerManager.Instance != null) {
+		//	if (PlayerManager.Instance.player.playerSettlement.GetFirstStructureOfType(STRUCTURE_TYPE.BIOLAB) is Biolab biolab && !biolab.HasMaxPlaguedRat()) {
+		//		string timeDifference = GameManager.Instance.Today().GetTimeDifferenceString(biolab.replenishDate);
+		//		string summary = $"The Biolab produces a Plagued Rat once every 2 days up to a maximum of \n3 charges. A new Plagued Rat charge will be produced in {UtilityScripts.Utilities.ColorizeAction(timeDifference)}.";
+		//		UIManager.Instance.ShowSmallInfo(summary, p_hoverPosition, "Plagued Rats");	
+		//	}
+		//}
+	//}
+	//public void OnHoveredOutPlaguedRat() {
+		//if (UIManager.Instance != null && PlayerManager.Instance != null) {
+		//	UIManager.Instance.HideSmallInfo();
+		//}
+	//}
 	#endregion
 }

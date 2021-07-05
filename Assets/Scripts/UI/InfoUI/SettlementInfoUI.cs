@@ -90,7 +90,7 @@ public class SettlementInfoUI : InfoUIBase {
         locationPortrait.SetLocation(activeSettlement);
         LocationStructure firstStructure = activeSettlement.allStructures.FirstOrDefault();
         if(firstStructure != null) {
-            locationPortrait.SetPortrait(firstStructure.structureType.GetLandmarkType());
+            locationPortrait.SetPortrait(firstStructure.structureType);
         }
     }
     private void UpdateInfo() {

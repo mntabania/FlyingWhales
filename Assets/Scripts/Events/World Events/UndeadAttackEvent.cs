@@ -1,4 +1,5 @@
-﻿namespace Events.World_Events {
+﻿using Object_Pools;
+namespace Events.World_Events {
     public class UndeadAttackEvent : WorldEvent {
 
         public UndeadAttackEvent() { }
@@ -24,18 +25,19 @@
             Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Tile Object", "DesertRose", "activated_village", providedTags: LOG_TAG.Player);
             log.AddLogToDatabase();
             PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
+            LogPool.Release(log);
         }
 
         #region Listeners
         private void OnDayStarted() {
             int p_currentDay = GameManager.Instance.continuousDays;
-            if (p_currentDay == PangatLooWinConditionTracker.DueDay) {
+            if (p_currentDay == WipeOutAllUntilDayWinConditionTracker.DueDay) {
                 StartUndeadAttack();
             }
         }
         private void OnCharacterAddedFaction(Character p_character, Faction p_faction) {
             int p_currentDay = GameManager.Instance.continuousDays;
-            if (p_currentDay >= PangatLooWinConditionTracker.DueDay) {
+            if (p_currentDay >= WipeOutAllUntilDayWinConditionTracker.DueDay) {
                 bool shouldBeInvader = false;
                 if (p_faction.factionType.type == FACTION_TYPE.Undead) {
                     shouldBeInvader = true;

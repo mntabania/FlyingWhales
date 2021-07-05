@@ -11,7 +11,7 @@ using UnityEngine;
 public class WorldMapSave {
     public WorldSettingsData.World_Type worldType;
     public WorldMapTemplate worldMapTemplate;
-    public List<SaveDataHextile> hextileSaves;
+    public List<SaveDataArea> areaSaves;
     public List<SaveDataRegion> regionSaves;
     public List<SaveDataBaseSettlement> settlementSaves;
     public List<SaveDataLocationStructure> structureSaves;
@@ -26,37 +26,44 @@ public class WorldMapSave {
     //     SaveSettlements(settlementDatabase.allSettlements);
     //     SaveStructures(structureDatabase.allStructures);
     // }
-    public IEnumerator SaveWorldCoroutine(WorldMapTemplate _worldMapTemplate, HexTileDatabase hexTileDatabase, RegionDatabase regionDatabase, SettlementDatabase settlementDatabase, 
+    public IEnumerator SaveWorldCoroutine(WorldMapTemplate _worldMapTemplate, AreaDatabase hexTileDatabase, RegionDatabase regionDatabase, SettlementDatabase settlementDatabase, 
         LocationStructureDatabase structureDatabase, List<WorldEvent> activeEvents) {
         UIManager.Instance.optionsMenu.UpdateSaveMessage("Saving world map...");
         //if saved world is tutorial, set world type as custom, this is so that tutorials will not spawn again when loading from a map from the tutorial
         worldType = WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Tutorial ? WorldSettingsData.World_Type.Custom : WorldSettings.Instance.worldSettingsData.worldType;
         worldMapTemplate = _worldMapTemplate;
-        yield return SaveManager.Instance.StartCoroutine(SaveHexTilesCoroutine(hexTileDatabase.allHexTiles));
+        yield return SaveManager.Instance.StartCoroutine(SaveHexTilesCoroutine(hexTileDatabase.allAreas));
         yield return SaveManager.Instance.StartCoroutine(SaveRegionsCoroutine(regionDatabase.allRegions));
         yield return SaveManager.Instance.StartCoroutine(SaveSettlementsCoroutine(settlementDatabase.allSettlements));
         yield return SaveManager.Instance.StartCoroutine(SaveStructuresCoroutine(structureDatabase.allStructures));
         yield return SaveManager.Instance.StartCoroutine(SaveWorldEventsCoroutine(activeEvents));
     }
+    public void SaveWorld(WorldMapTemplate _worldMapTemplate, AreaDatabase hexTileDatabase, RegionDatabase regionDatabase, SettlementDatabase settlementDatabase,
+    LocationStructureDatabase structureDatabase, List<WorldEvent> activeEvents) {
+        //if saved world is tutorial, set world type as custom, this is so that tutorials will not spawn again when loading from a map from the tutorial
+        worldType = WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Tutorial ? WorldSettingsData.World_Type.Custom : WorldSettings.Instance.worldSettingsData.worldType;
+        worldMapTemplate = _worldMapTemplate;
+        SaveHexTiles(hexTileDatabase.allAreas);
+        SaveRegions(regionDatabase.allRegions);
+        SaveSettlements(settlementDatabase.allSettlements);
+        SaveStructures(structureDatabase.allStructures);
+        SaveWorldEvents(activeEvents);
+        //yield return SaveManager.Instance.StartCoroutine(SaveHexTilesCoroutine(hexTileDatabase.allAreas));
+        //yield return SaveManager.Instance.StartCoroutine(SaveRegionsCoroutine(regionDatabase.allRegions));
+        //yield return SaveManager.Instance.StartCoroutine(SaveSettlementsCoroutine(settlementDatabase.allSettlements));
+        //yield return SaveManager.Instance.StartCoroutine(SaveStructuresCoroutine(structureDatabase.allStructures));
+        //yield return SaveManager.Instance.StartCoroutine(SaveWorldEventsCoroutine(activeEvents));
+    }
 
     #region Hex Tiles
-    public void SaveHexTiles(List<HexTile> tiles) {
-        hextileSaves = new List<SaveDataHextile>();
-        for (int i = 0; i < tiles.Count; i++) {
-            HexTile currTile = tiles[i];
-            SaveDataHextile newSaveData = new SaveDataHextile();
-            newSaveData.Save(currTile);
-            hextileSaves.Add(newSaveData);
-        }
-    }
-    public IEnumerator SaveHexTilesCoroutine(List<HexTile> tiles) {
+    public IEnumerator SaveHexTilesCoroutine(List<Area> tiles) {
         int batchCount = 0;
-        hextileSaves = new List<SaveDataHextile>();
+        areaSaves = new List<SaveDataArea>();
         for (int i = 0; i < tiles.Count; i++) {
-            HexTile currTile = tiles[i];
-            SaveDataHextile newSaveData = new SaveDataHextile();
+            Area currTile = tiles[i];
+            SaveDataArea newSaveData = new SaveDataArea();
             newSaveData.Save(currTile);
-            hextileSaves.Add(newSaveData);
+            areaSaves.Add(newSaveData);
             batchCount++;
             if (batchCount >= SaveManager.HexTile_Save_Batches) {
                 batchCount = 0;
@@ -64,33 +71,42 @@ public class WorldMapSave {
             }
         }
     }
-    public SaveDataHextile[,] GetSaveDataMap() {
-        SaveDataHextile[,] map = new SaveDataHextile[worldMapTemplate.worldMapWidth, worldMapTemplate.worldMapHeight];
-        for (int i = 0; i < hextileSaves.Count; i++) {
-            SaveDataHextile currTile = hextileSaves[i];
-            map[currTile.xCoordinate, currTile.yCoordinate] = currTile;
+    public void SaveHexTiles(List<Area> tiles) {
+        areaSaves = new List<SaveDataArea>();
+        for (int i = 0; i < tiles.Count; i++) {
+            Area currTile = tiles[i];
+            SaveDataArea newSaveData = new SaveDataArea();
+            newSaveData.Save(currTile);
+            areaSaves.Add(newSaveData);
+        }
+    }
+    public SaveDataArea[,] GetSaveDataMap() {
+        SaveDataArea[,] map = new SaveDataArea[worldMapTemplate.worldMapWidth, worldMapTemplate.worldMapHeight];
+        for (int i = 0; i < areaSaves.Count; i++) {
+            SaveDataArea currTile = areaSaves[i];
+            map[currTile.areaData.xCoordinate, currTile.areaData.yCoordinate] = currTile;
         }
         return map;
     }
-    public SaveDataHextile GetHexTileDataWithLandmark(LANDMARK_TYPE landmarkType) {
-        for (int i = 0; i < hextileSaves.Count; i++) {
-            SaveDataHextile saveDataHextile = hextileSaves[i];
-            if (saveDataHextile.landmarkType == landmarkType) {
-                return saveDataHextile;
-            }
-        }
-        return null;
-    }
-    public List<SaveDataHextile> GetAllTilesWithLandmarks() {
-        List<SaveDataHextile> tiles = new List<SaveDataHextile>();
-        for (int i = 0; i < hextileSaves.Count; i++) {
-            SaveDataHextile saveDataHextile = hextileSaves[i];
-            if (saveDataHextile.landmarkType != LANDMARK_TYPE.NONE) {
-                tiles.Add(saveDataHextile);
-            }
-        }
-        return tiles;
-    }
+    // public SaveDataHextile GetHexTileDataWithLandmark(LANDMARK_TYPE landmarkType) {
+    //     for (int i = 0; i < areaSaves.Count; i++) {
+    //         SaveDataHextile saveDataHextile = areaSaves[i];
+    //         if (saveDataHextile.landmarkType == landmarkType) {
+    //             return saveDataHextile;
+    //         }
+    //     }
+    //     return null;
+    // }
+    // public List<SaveDataHextile> GetAllTilesWithLandmarks() {
+    //     List<SaveDataHextile> tiles = new List<SaveDataHextile>();
+    //     for (int i = 0; i < areaSaves.Count; i++) {
+    //         SaveDataHextile saveDataHextile = areaSaves[i];
+    //         if (saveDataHextile.landmarkType != LANDMARK_TYPE.NONE) {
+    //             tiles.Add(saveDataHextile);
+    //         }
+    //     }
+    //     return tiles;
+    // }
     #endregion
 
     #region Regions
@@ -119,7 +135,7 @@ public class WorldMapSave {
         }
     }
     #endregion
-    
+
     #region Settlements
     public void SaveSettlements(List<BaseSettlement> allSettlements) {
         settlementSaves = new List<SaveDataBaseSettlement>();
@@ -197,13 +213,20 @@ public class WorldMapSave {
     #endregion
 
     #region World Events
-    public IEnumerator SaveWorldEventsCoroutine(List<WorldEvent> worldEvents) {
+    private IEnumerator SaveWorldEventsCoroutine(List<WorldEvent> worldEvents) {
         worldEventSaves = new List<SaveDataWorldEvent>();
         for (int i = 0; i < worldEvents.Count; i++) {
             WorldEvent worldEvent = worldEvents[i];
             worldEventSaves.Add(worldEvent.Save());
         }
         yield return null;
+    }
+    private void SaveWorldEvents(List<WorldEvent> worldEvents) {
+        worldEventSaves = new List<SaveDataWorldEvent>();
+        for (int i = 0; i < worldEvents.Count; i++) {
+            WorldEvent worldEvent = worldEvents[i];
+            worldEventSaves.Add(worldEvent.Save());
+        }
     }
     #endregion
 }

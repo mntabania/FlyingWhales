@@ -9,7 +9,9 @@ namespace Plague.Symptom {
 
         protected override void ActivateSymptom(Character p_character) {
             p_character.traitContainer.AddTrait(p_character, "Insomnia");
+#if DEBUG_LOG
             Debug.Log("Activated Insomnia Symptom");
+#endif
         }
         public override void CharacterStartedPerformingAction(Character p_character, ActualGoapNode p_action) {
             if (p_action.associatedJobType.IsTirednessRecoveryTypeJob()/* || p_action.goapType.IsRestingAction()*/) {

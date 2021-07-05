@@ -6,6 +6,7 @@ using Locations.Settlements;
 using Logs;
 using UnityEngine.Assertions;
 using Inner_Maps;
+using Object_Pools;
 using UtilityScripts;
 
 namespace Interrupts {
@@ -22,6 +23,7 @@ namespace Interrupts {
             Character actor = interruptHolder.actor;
             SetNewHomeStructure(actor);
             if(actor.homeStructure != null) {
+                //if (overrideEffectLog != null) { LogPool.Release(overrideEffectLog); }
                 overrideEffectLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Interrupt", name, "set_new_home", null, logTags);
                 overrideEffectLog.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                 overrideEffectLog.AddToFillers(null, actor.homeStructure.name, LOG_IDENTIFIER.STRING_1);
@@ -31,30 +33,36 @@ namespace Interrupts {
         #endregion
 
         private void SetNewHomeStructure(Character actor) {
+#if DEBUG_LOG
             string log = "Setting new home for ratman " + actor.name;
+#endif
             Region currentRegion = actor.currentRegion;
             if(currentRegion != null) {
                 List<BaseSettlement> settlementChoices = ObjectPoolManager.Instance.CreateNewSettlementList();
-                List<Region> adjacentRegions = currentRegion.neighbours;
+                //List<Region> adjacentRegions = currentRegion.neighbours;
 
                 PopulateSettlementChoices(settlementChoices, currentRegion);
 
-                for (int i = 0; i < adjacentRegions.Count; i++) {
-                    Region region = adjacentRegions[i];
-                    PopulateSettlementChoices(settlementChoices, region);
-                }
+                //for (int i = 0; i < adjacentRegions.Count; i++) {
+                //    Region region = adjacentRegions[i];
+                //    PopulateSettlementChoices(settlementChoices, region);
+                //}
                 if(settlementChoices.Count > 0) {
                     BaseSettlement chosenSettlement = CollectionUtilities.GetRandomElement(settlementChoices);
                     actor.ClearTerritoryAndMigrateHomeSettlementTo(chosenSettlement);
                 }
             } else {
+#if DEBUG_LOG
                 log += "\n-Character has no current region";
+#endif
             }
             //If all else fails, check if character has home structure and if it is already destroyed, set it to null
             if (actor.homeStructure != null && actor.homeStructure.hasBeenDestroyed) {
                 actor.MigrateHomeStructureTo(null, affectSettlement: false);
             }
+#if DEBUG_LOG
             actor.logComponent.PrintLogIfActive(log);
+#endif
         }
 
         private void PopulateSettlementChoices(List<BaseSettlement> settlementChoices, Region region) {

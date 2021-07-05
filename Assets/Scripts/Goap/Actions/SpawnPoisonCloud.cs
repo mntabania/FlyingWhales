@@ -22,11 +22,13 @@ public class SpawnPoisonCloud : GoapAction {
         SetState("Spawn Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
+#if DEBUG_LOG
         string costLog = $"\n{name} {target.nameWithID}: +10(Constant)";
         actor.logComponent.AppendCostLog(costLog);
+#endif
         return 10;
     }
-    #endregion
+#endregion
 
     //#region Requirements
     //protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, object[] otherData) {
@@ -38,10 +40,10 @@ public class SpawnPoisonCloud : GoapAction {
     //}
     //#endregion
 
-    #region State Effects
+#region State Effects
     public void AfterSpawnSuccess(ActualGoapNode goapNode) {
         InnerMapManager.Instance.SpawnPoisonCloud(goapNode.actor.gridTileLocation, GameUtilities.RandomBetweenTwoNumbers(3, 8), GameManager.Instance.Today().AddTicks(GameManager.Instance.GetTicksBasedOnHour(GameUtilities.RandomBetweenTwoNumbers(2, 5))));
     }
-    #endregion
+#endregion
 
 }

@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
+using Locations.Settlements;
 using Pathfinding.Util;
 using UnityEngine;
 using Traits;
@@ -12,11 +14,34 @@ using Debug = System.Diagnostics.Debug;
 
 public class GenericTileObject : TileObject {
     private bool hasBeenInitialized { get; set; }
+    /// <summary>
+    /// The blueprint placed on this tile.
+    /// NOTE: Only the center tile of the structure will have value.
+    /// </summary>
     public LocationStructureObject blueprintOnTile { get; private set; }
+    public string blueprintTemplateName { get; private set; } //Do not save this since this will be filled up automatically upon loading in SetStructureObject
+
+    /// <summary>
+    /// If blueprint that was placed here can expire,
+    /// this is the date that it will expire.
+    /// </summary>
     public GameDate blueprintExpiryDate { get; private set; }
+    /// <summary>
+    /// Is a villager currently building the blueprint on this tile.
+    /// </summary>
     public bool isCurrentlyBuilding { get; private set; }
+    /// <summary>
+    /// If blueprint that was placed here is self building,
+    /// this is the date that it will be finished
+    /// </summary>
+    public GameDate selfBuildingStructureDueDate { get; private set; }
+    public StructureConnector structureConnector { get; private set; }
+    
+    public BaseSettlement selfBuildingStructureSettlement { get; private set; }
     private LocationGridTile _owner;
     private string _expiryKey;
+    
+    
 
     #region getters
     public override Type serializedData => typeof(SaveDataGenericTileObject);
@@ -70,9 +95,9 @@ public class GenericTileObject : TileObject {
         }
         if (trait is Status status) {
             if(status.isTangible) {
-                //if status is wet, and this tile is not part of a settlement, then do not create a map visual, since
-                //characters do not react to wet tiles outside their settlement.
-                bool willCreateVisual = !(status is Wet && gridTileLocation.IsPartOfSettlement() == false);
+                //if status is wet, and this tile is part of an Ocean, then do not create a map visual, since
+                //characters do not react to Ocean Tiles
+                bool willCreateVisual = !(status is Wet && gridTileLocation.structure is Ocean);
                 if (willCreateVisual) {
                     GetOrCreateMapVisual();
                     SubscribeListeners();    
@@ -99,14 +124,18 @@ public class GenericTileObject : TileObject {
         //Set this tile as no longer default since a job might need it when loading
         _owner.SetIsDefault(false);
     }
-    public override void AdjustHP(int amount, ELEMENTAL_TYPE elementalDamageType, bool triggerDeath = false,
-        object source = null, CombatManager.ElementalTraitProcessor elementalTraitProcessor = null, bool showHPBar = false) {
-        if (currentHP == 0 && amount < 0) {
-            return; //hp is already at minimum, do not allow any more negative adjustments
-        }
+    public override void AdjustHP(int amount, ELEMENTAL_TYPE elementalDamageType, bool triggerDeath = false, 
+        object source = null, CombatManager.ElementalTraitProcessor elementalTraitProcessor = null, bool showHPBar = false, float piercingPower = 0f, bool isPlayerSource = false) {
+        // if (currentHP == 0 && amount < 0) {
+        //     return; //hp is already at minimum, do not allow any more negative adjustments
+        // }
+#if DEBUG_PROFILER
         Profiler.BeginSample($"GTO - Adjust HP - DamageModifierByElementsAndTraits");
-        CombatManager.Instance.DamageModifierByElementsAndTraits(ref amount, elementalDamageType, this);
+#endif
+        CombatManager.Instance.ModifyDamage(ref amount, elementalDamageType, piercingPower, this);
+#if DEBUG_PROFILER
         Profiler.EndSample();
+#endif
         
         currentHP += amount;
         currentHP = Mathf.Clamp(currentHP, 0, maxHP);
@@ -116,28 +145,48 @@ public class GenericTileObject : TileObject {
             if (source is Character character) {
                 responsibleCharacter = character;
             }
+#if DEBUG_PROFILER
             Profiler.BeginSample($"GTO - Adjust HP - ApplyElementalDamage - {elementalDamageType.ToString()}");
-            CombatManager.Instance.ApplyElementalDamage(amount, elementalDamageType, this, responsibleCharacter, elementalTraitProcessor, createHitEffect: false);
+#endif
+            CombatManager.Instance.ApplyElementalDamage(amount, elementalDamageType, this, responsibleCharacter, elementalTraitProcessor, createHitEffect: false, setAsPlayerSource: isPlayerSource);
+#if DEBUG_PROFILER
             Profiler.EndSample();
+#endif
         }
         
-        if (currentHP <= 0) {
-            Profiler.BeginSample($"GTO - Adjust HP - DetermineNextGroundTypeAfterDestruction");
-            //floor has been destroyed
-            gridTileLocation.DetermineNextGroundTypeAfterDestruction();
-            Profiler.EndSample();
-        } 
         if (amount < 0) {
+#if DEBUG_PROFILER
             Profiler.BeginSample($"GTO - Adjust HP - OnTileDamaged");
-            structureLocation.OnTileDamaged(gridTileLocation, amount);
+#endif
+            structureLocation.OnTileDamaged(gridTileLocation, amount, isPlayerSource);
+#if DEBUG_PROFILER
             Profiler.EndSample();
+#endif
         } else if (amount > 0) {
+#if DEBUG_PROFILER
             Profiler.BeginSample($"GTO - Adjust HP - OnTileRepaired");
+#endif
             structureLocation.OnTileRepaired(gridTileLocation, amount);
+#if DEBUG_PROFILER
             Profiler.EndSample();
+#endif
         }
 
         if (currentHP <= 0) {
+#if DEBUG_PROFILER
+            Profiler.BeginSample($"GTO - Adjust HP - DetermineNextGroundTypeAfterDestruction");
+#endif
+            if (gridTileLocation.structure.structureType.IsPlayerStructure()) {
+                //once tile in demonic structure is destroyed, revert tile to corrupted.
+                gridTileLocation.SetGroundTilemapVisual(InnerMapManager.Instance.assetManager.corruptedTile);
+            } else {
+                //floor has been destroyed
+                gridTileLocation.DetermineNextGroundTypeAfterDestruction();    
+            }
+
+#if DEBUG_PROFILER
+            Profiler.EndSample();
+#endif
             //reset floor hp at end of processing
             currentHP = maxHP;
         }
@@ -165,7 +214,7 @@ public class GenericTileObject : TileObject {
             isCurrentlyBuilding = false;
         }
     }
-    #endregion
+#endregion
 
     public BaseMapObjectVisual GetOrCreateMapVisual() {
         if (ReferenceEquals(mapVisual, null)) {
@@ -176,8 +225,8 @@ public class GenericTileObject : TileObject {
         return mapVisual;
     }
     public bool TryDestroyMapVisual() {
-        if (traitContainer.HasTangibleTrait() == false) {
-            if (ReferenceEquals(mapVisual, null) == false) {
+        if (!traitContainer.HasTangibleTrait() && structureConnector == null) {
+            if (!ReferenceEquals(mapVisual, null)) {
                 DestroyMapVisualGameObject();
             }
             return true;
@@ -214,8 +263,15 @@ public class GenericTileObject : TileObject {
     }
 
     #region Structure Blueprints
-    public bool PlaceBlueprintOnTile(string prefabName) {
-        GameObject structurePrefab = ObjectPoolManager.Instance.InstantiateObjectFromPool(prefabName, Vector3.zero, Quaternion.identity, gridTileLocation.parentMap.structureParent);
+    public bool PlaceExpiringBlueprintOnTile(string prefabName) {
+        if (PlaceBlueprintOnTile(prefabName, out var blueprint)) {
+            ScheduleBlueprintExpiry();
+            return true;
+        }
+        return false;
+    }
+    private bool PlaceBlueprintOnTile(string p_prefabName, out LocationStructureObject o_placedBlueprint) {
+        GameObject structurePrefab = ObjectPoolManager.Instance.InstantiateObjectFromPool(p_prefabName, Vector3.zero, Quaternion.identity, gridTileLocation.parentMap.structureParent);
         LocationStructureObject structureObject = structurePrefab.GetComponent<LocationStructureObject>();
         if (structureObject.HasEnoughSpaceIfPlacedOn(gridTileLocation)) {
             structurePrefab.transform.position = gridTileLocation.centeredWorldLocation;
@@ -226,13 +282,19 @@ public class GenericTileObject : TileObject {
                 LocationGridTile tile = occupiedTiles[j];
                 tile.SetHasBlueprint(true);
             }
-            structureObject.SetVisualMode(LocationStructureObject.Structure_Visual_Mode.Blueprint, gridTileLocation.parentMap);
+            var structureVisualMode = LocationStructureObject.Structure_Visual_Mode.Blueprint;
+            if (structureObject.structureType.IsPlayerStructure()) {
+                structureVisualMode = LocationStructureObject.Structure_Visual_Mode.Demonic_Structure_Blueprint;
+            }
+            structureObject.SetVisualMode(structureVisualMode, gridTileLocation.parentMap);
             structureObject.SetTilesInStructure(occupiedTiles.ToArray());
             blueprintOnTile = structureObject;
+            blueprintTemplateName = structureObject.name;
             gridTileLocation.SetIsDefault(false);
-            ScheduleBlueprintExpiry();
+            o_placedBlueprint = structureObject;
             return true;
         }
+        o_placedBlueprint = null;
         ObjectPoolManager.Instance.DestroyObject(structurePrefab); //destroy structure since it wasn't placed
         return false;
     }
@@ -258,77 +320,120 @@ public class GenericTileObject : TileObject {
             Messenger.Broadcast(CharacterSignals.FORCE_CANCEL_ALL_JOB_TYPES_TARGETING_POI, this as IPointOfInterest, "", JOB_TYPE.BUILD_BLUEPRINT);
             ObjectPoolManager.Instance.DestroyObject(blueprintOnTile);
             blueprintOnTile = null;
+            blueprintTemplateName = string.Empty;
             _expiryKey = string.Empty;    
         }
-        
     }
-    public LocationStructure BuildBlueprint(NPCSettlement npcSettlement, LocationGridTile p_usedConnector) {
-        Profiler.BeginSample($"Build Blueprint - Add Tile To Settlement");
-        HexTile hexTile = gridTileLocation.collectionOwner.partOfHextile.hexTileOwner;
-        npcSettlement.AddTileToSettlement(hexTile);
-        Profiler.EndSample();
+    public void BuildBlueprintOnTile(BaseSettlement p_settlement, LocationGridTile p_usedConnector) {
+        BuildBlueprint(blueprintOnTile, p_settlement, p_usedConnector);
+        CancelBlueprintExpiry();
         
-        Profiler.BeginSample($"Build Blueprint - Set Visual Mode");
-        blueprintOnTile.SetVisualMode(LocationStructureObject.Structure_Visual_Mode.Built, gridTileLocation.parentMap);
-        Profiler.EndSample();
+        isCurrentlyBuilding = false;
+    }
+    public void InstantPlaceStructure(string p_structurePrefabName, BaseSettlement p_settlement) {
+        GameObject structurePrefab = ObjectPoolManager.Instance.InstantiateObjectFromPool(p_structurePrefabName, Vector3.zero, Quaternion.identity, gridTileLocation.parentMap.structureParent);
+        LocationStructureObject blueprint = structurePrefab.GetComponent<LocationStructureObject>();
+        if (blueprint.HasEnoughSpaceIfPlacedOn(gridTileLocation)) {
+            structurePrefab.transform.position = gridTileLocation.centeredWorldLocation;
+            blueprint.RefreshAllTilemaps();
+            List<LocationGridTile> occupiedTiles = blueprint.GetTilesOccupiedByStructure(gridTileLocation.parentMap);
+            blueprint.SetTilesInStructure(occupiedTiles.ToArray());
+            gridTileLocation.SetIsDefault(false);
+            BuildBlueprint(blueprint, p_settlement, null);
+        } else {
+            throw new Exception($"Could not place {p_structurePrefabName} at {gridTileLocation}");
+        }
+    }
+    private void BuildBlueprint(LocationStructureObject p_blueprint, BaseSettlement npcSettlement, LocationGridTile p_usedConnector) {
+        Area hexTile = gridTileLocation.area;
+        npcSettlement.AddAreaToSettlement(hexTile);
+        p_blueprint.SetVisualMode(LocationStructureObject.Structure_Visual_Mode.Built, gridTileLocation.parentMap);
+        LocationStructure structure = LandmarkManager.Instance.CreateNewStructureAt(gridTileLocation.parentMap.region, p_blueprint.structureType, npcSettlement);
+        p_blueprint.ClearOutUnimportantObjectsBeforePlacement();
         
-        Profiler.BeginSample($"Build Blueprint - Create Structure Instance");
-        LocationStructure structure = LandmarkManager.Instance.CreateNewStructureAt(gridTileLocation.parentMap.region, blueprintOnTile.structureType, npcSettlement);
-        Profiler.EndSample();
-        
-        Profiler.BeginSample($"Build Blueprint - Clear Out Objects");
-        blueprintOnTile.ClearOutUnimportantObjectsBeforePlacement();
-        Profiler.EndSample();
-        
-        Profiler.BeginSample($"Build Blueprint - Transfer Tiles to new Structure");
-        for (int j = 0; j < blueprintOnTile.tiles.Length; j++) {
-            LocationGridTile tile = blueprintOnTile.tiles[j];
+        for (int j = 0; j < p_blueprint.tiles.Length; j++) {
+            LocationGridTile tile = p_blueprint.tiles[j];
             tile.SetStructure(structure);
             tile.SetHasBlueprint(false);
+            if (structure is DemonicStructure) {
+                tile.corruptionComponent.CorruptTile();
+            } else {
+                tile.corruptionComponent.UncorruptTile();
+            }
         }
-        Profiler.EndSample();
-        
-        Profiler.BeginSample($"Build Blueprint - Set Structure Object");
-        Assert.IsTrue(structure is DemonicStructure || structure is ManMadeStructure);
-        if (structure is DemonicStructure demonicStructure) {
-            demonicStructure.SetStructureObject(blueprintOnTile);    
-        } else if (structure is ManMadeStructure manMadeStructure) {
-            manMadeStructure.SetStructureObject(blueprintOnTile);    
-        }
-        Profiler.EndSample();
-        
-        structure.SetOccupiedHexTile(hexTile.innerMapHexTile);
-        
-        Profiler.BeginSample($"Build Blueprint - OnBuiltStructureObjectPlaced");
-        blueprintOnTile.OnBuiltStructureObjectPlaced(gridTileLocation.parentMap, structure, out int createdWalls, out int totalWalls);
-        Profiler.EndSample();
-        
-        Profiler.BeginSample($"Build Blueprint - Create Rooms");
-        structure.CreateRoomsBasedOnStructureObject(blueprintOnTile);
-        Profiler.EndSample();
-        
-        Profiler.BeginSample($"Build Blueprint - On Built New Structure {structure.name}");
-        structure.OnBuiltNewStructure();
-        Profiler.EndSample();
-        
-        Profiler.BeginSample($"Build Blueprint - OnBuiltNewStructureFromBlueprint");
-        structure.OnBuiltNewStructureFromBlueprint();
-        Profiler.EndSample();
-        
-        Profiler.BeginSample($"Build Blueprint - OnUseStructureConnector");
-        if (structure is ManMadeStructure mmStructure) {
-            mmStructure.OnUseStructureConnector(p_usedConnector);    
-        }
-        Profiler.EndSample();
 
-        Profiler.BeginSample($"Build Blueprint - Cancel Expiry");
-        CancelBlueprintExpiry();
-        Profiler.EndSample();
+        if (structure is DemonicStructure dStructure) {
+            //corrupt border tiles
+            for (int j = 0; j < structure.tiles.Count; j++) {
+                LocationGridTile tile = structure.tiles.ElementAt(j);
+                for (int k = 0; k < tile.neighbourList.Count; k++) {
+                    LocationGridTile neighbour = tile.neighbourList[k];
+                    if (neighbour.structure is Cave || neighbour.structure is Ocean) { continue; } //do not corrupt cave tiles.
+                    if (neighbour.structure != dStructure) {
+                        neighbour.corruptionComponent.CorruptTileAndRandomlyGenerateDemonicObject();
+                        if (structure is TortureChambers tortureChambers) {
+                            tortureChambers.AddBorderTile(neighbour);
+                        } else if (structure is Kennel kennel) {
+                            kennel.AddBorderTile(neighbour);
+                        }
+                    }
+                }
+            }
+        }
         
+        Assert.IsTrue(structure is DemonicStructure || structure is ManMadeStructure || structure is AnimalDen);
+        if (structure is DemonicStructure demonicStructure) {
+            demonicStructure.SetStructureObject(p_blueprint);    
+        } else if (structure is ManMadeStructure manMadeStructure) {
+            manMadeStructure.SetStructureObject(p_blueprint);    
+        } else if (structure is AnimalDen animalDen) {
+            animalDen.SetStructureObject(p_blueprint);    
+        }
+        
+        structure.SetOccupiedArea(hexTile);
+        
+        p_blueprint.OnBuiltStructureObjectPlaced(gridTileLocation.parentMap, structure, out int createdWalls, out int totalWalls, structure.preplacedObjectsToIgnoreWhenBuilding);
+        structure.CreateRoomsBasedOnStructureObject(p_blueprint);
+        structure.OnBuiltNewStructure();
+        structure.OnBuiltNewStructureFromBlueprint();
+
+        if (p_usedConnector != null) {
+            if (structure is ManMadeStructure mmStructure) {
+                mmStructure.OnUseStructureConnector(p_usedConnector);    
+            }    
+        }
         blueprintOnTile = null;
-        isCurrentlyBuilding = false;
-        return structure;
-        
+        blueprintTemplateName = string.Empty;
+    }
+    private BuildStructureParticleEffect _buildStructureParticles;
+    public void PlaceSelfBuildingStructure(string p_structurePrefabName, BaseSettlement p_settlement, int p_buildingTimeInTicks) {
+        Assert.IsTrue(p_buildingTimeInTicks > 0);
+        if (PlaceBlueprintOnTile(p_structurePrefabName, out var blueprint)) {
+            AudioManager.Instance.CreatePlaceDemonicStructureSound(gridTileLocation);
+            BaseParticleEffect placeEffect = GameManager.Instance.CreateParticleEffectAt(gridTileLocation, PARTICLE_EFFECT.Place_Demonic_Structure).GetComponent<BaseParticleEffect>();
+            placeEffect.SetSize(blueprint.size);
+
+
+            selfBuildingStructureSettlement = p_settlement;
+            GameDate completionDate = GameManager.Instance.Today();
+            completionDate.AddTicks(p_buildingTimeInTicks);
+            CreateBuildParticlesAndScheduleBuildingCompletion(blueprint, p_settlement, completionDate);
+        } else {
+            throw new Exception($"Could not place self building structure {p_structurePrefabName} on {gridTileLocation}!");
+        }
+    }
+    private void CreateBuildParticlesAndScheduleBuildingCompletion(LocationStructureObject p_blueprint, BaseSettlement p_settlement, GameDate p_completionDate) {
+        _buildStructureParticles = GameManager.Instance.CreateParticleEffectAt(gridTileLocation, PARTICLE_EFFECT.Build_Demonic_Structure).GetComponent<BuildStructureParticleEffect>();
+        _buildStructureParticles.SetSize(p_blueprint.size);
+        selfBuildingStructureDueDate = p_completionDate;
+        SchedulingManager.Instance.AddEntry(p_completionDate, () => DoneSelfBuildingStructure(p_settlement), this);
+    }
+    private void DoneSelfBuildingStructure(BaseSettlement p_settlement) {
+        if (_buildStructureParticles != null) {
+            ObjectPoolManager.Instance.DestroyObject(_buildStructureParticles);
+        }
+        BuildBlueprint(blueprintOnTile, p_settlement, null);
+        selfBuildingStructureSettlement = null;
     }
     #endregion
 
@@ -340,9 +445,20 @@ public class GenericTileObject : TileObject {
         if (!string.IsNullOrEmpty(saveDataGenericTileObject.blueprintOnTileName)) {
             LoadBlueprintOnTile(saveDataGenericTileObject.blueprintOnTileName);
             //schedule expiry
-            blueprintExpiryDate = saveDataGenericTileObject.blueprintExpiryDate;
-            _expiryKey = SchedulingManager.Instance.AddEntry(blueprintExpiryDate, ExpireBlueprint, this);
-            isCurrentlyBuilding = saveDataGenericTileObject.isCurrentlyBuilding;
+            if (saveDataGenericTileObject.blueprintExpiryDate.hasValue) {
+                blueprintExpiryDate = saveDataGenericTileObject.blueprintExpiryDate;
+                _expiryKey = SchedulingManager.Instance.AddEntry(blueprintExpiryDate, ExpireBlueprint, this);
+                isCurrentlyBuilding = saveDataGenericTileObject.isCurrentlyBuilding;    
+            } else if (saveDataGenericTileObject.blueprintAutoBuildDate.hasValue) {
+                if (!string.IsNullOrEmpty(saveDataGenericTileObject.selfBuildingStructureSettlement)) {
+                    selfBuildingStructureSettlement = DatabaseManager.Instance.settlementDatabase.GetSettlementByPersistentID(saveDataGenericTileObject.selfBuildingStructureSettlement);
+                    CreateBuildParticlesAndScheduleBuildingCompletion(blueprintOnTile, selfBuildingStructureSettlement, saveDataGenericTileObject.blueprintAutoBuildDate);
+                }
+            }
+            
+        }
+        if (saveDataGenericTileObject.hasStructureConnector) {
+            LoadMineShackSpotStructureConnector();
         }
     }
     private void LoadBlueprintOnTile(string prefabName) {
@@ -356,10 +472,61 @@ public class GenericTileObject : TileObject {
             LocationGridTile tile = occupiedTiles[j];
             tile.SetHasBlueprint(true);
         }
-        structureObject.SetVisualMode(LocationStructureObject.Structure_Visual_Mode.Blueprint, gridTileLocation.parentMap);
+        var structureVisualMode = LocationStructureObject.Structure_Visual_Mode.Blueprint;
+        if (structureObject.structureType.IsPlayerStructure()) {
+            structureVisualMode = LocationStructureObject.Structure_Visual_Mode.Demonic_Structure_Blueprint;
+        }
+        structureObject.SetVisualMode(structureVisualMode, gridTileLocation.parentMap);
         structureObject.SetTilesInStructure(occupiedTiles.ToArray());
         blueprintOnTile = structureObject;
+        blueprintTemplateName = structureObject.name;
     }
+    #endregion
+
+    #region Structure Connectors
+    public void CreateMineShackSpotStructureConnector() {
+        BaseMapObjectVisual objectVisual = GetOrCreateMapVisual();
+        StructureConnector connector = objectVisual.gameObject.AddComponent<StructureConnector>();
+        connector.OnPlaceConnector(gridTileLocation.parentMap);
+        structureConnector = connector;
+        //if (gridTileLocation.area.settlementOnArea != null) {
+        //    gridTileLocation.area.settlementOnArea.SettlementResources?.AddToListBasedOnRequirement(SettlementResources.StructureRequirement.MINE_SHACK_SPOT, this);
+        //}
+        if (gridTileLocation.area != null) {
+            gridTileLocation.area.tileObjectComponent.AddMineShackSpot(gridTileLocation);
+        }
+        //Messenger.AddListener<Area, BaseSettlement>(SettlementSignals.SETTLEMENT_ADDED_AREA, OnSettlementAddedArea);
+        //Messenger.AddListener<Area, BaseSettlement>(SettlementSignals.SETTLEMENT_REMOVED_AREA, OnSettlementRemovedArea);
+        gridTileLocation.SetIsDefault(false);
+    }
+    private void LoadMineShackSpotStructureConnector() {
+        BaseMapObjectVisual objectVisual = GetOrCreateMapVisual();
+        StructureConnector connector = objectVisual.gameObject.AddComponent<StructureConnector>();
+        structureConnector = connector;
+        //if (gridTileLocation.area.settlementOnArea != null) {
+        //    gridTileLocation.area.settlementOnArea.SettlementResources?.AddToListBasedOnRequirement(SettlementResources.StructureRequirement.MINE_SHACK_SPOT, this);
+        //}
+        if (gridTileLocation.area != null) {
+            gridTileLocation.area.tileObjectComponent.AddMineShackSpot(gridTileLocation);
+        }
+        //Messenger.AddListener<Area, BaseSettlement>(SettlementSignals.SETTLEMENT_ADDED_AREA, OnSettlementAddedArea);
+        //Messenger.AddListener<Area, BaseSettlement>(SettlementSignals.SETTLEMENT_REMOVED_AREA, OnSettlementRemovedArea);
+        if (structureConnector != null && gridTileLocation != null) {
+            structureConnector.LoadConnectorForTileObjects(gridTileLocation.parentMap);
+        }
+    }
+
+    //Note: No longer needed to check if area is added or removed from settlement to add or remove mine shack spot since it is now connected to the area
+    //private void OnSettlementAddedArea(Area p_area, BaseSettlement p_settlement) {
+    //    if (gridTileLocation.area == p_area && p_settlement is NPCSettlement npcSettlement) {
+    //        npcSettlement.SettlementResources?.AddToListBasedOnRequirement(SettlementResources.StructureRequirement.MINE_SHACK_SPOT, this);
+    //    }
+    //}
+    //private void OnSettlementRemovedArea(Area p_area, BaseSettlement p_settlement) {
+    //    if (gridTileLocation.area == p_area && p_settlement is NPCSettlement npcSettlement) {
+    //        npcSettlement.SettlementResources?.mineShackSpots.Remove(gridTileLocation);
+    //    }
+    //}
     #endregion
 }
 
@@ -368,17 +535,24 @@ public class SaveDataGenericTileObject : SaveDataTileObject {
 
     public string blueprintOnTileName;
     public GameDate blueprintExpiryDate;
+    public GameDate blueprintAutoBuildDate;
     public bool isCurrentlyBuilding;
-    
+    public string selfBuildingStructureSettlement;
+    public bool hasStructureConnector;
     public override void Save(TileObject data) {
         base.Save(data);
         GenericTileObject genericTileObject = data as GenericTileObject;
         Debug.Assert(genericTileObject != null, nameof(genericTileObject) + " != null");
-        if (genericTileObject.blueprintOnTile != null) {
-            blueprintOnTileName = genericTileObject.blueprintOnTile.name.Replace("(Clone)", "");
+        if (!string.IsNullOrEmpty(genericTileObject.blueprintTemplateName)) {
+            blueprintOnTileName = genericTileObject.blueprintTemplateName.Replace("(Clone)", "");
             blueprintExpiryDate = genericTileObject.blueprintExpiryDate;
             isCurrentlyBuilding = genericTileObject.isCurrentlyBuilding;
+            blueprintAutoBuildDate = genericTileObject.selfBuildingStructureDueDate;
+            if (genericTileObject.selfBuildingStructureSettlement != null) {
+                selfBuildingStructureSettlement = genericTileObject.selfBuildingStructureSettlement.persistentID;
+            }
         }
+        hasStructureConnector = genericTileObject.structureConnector != null;
     }
     public override TileObject Load() {
         GenericTileObject genericTileObject = InnerMapManager.Instance.LoadTileObject<GenericTileObject>(this);

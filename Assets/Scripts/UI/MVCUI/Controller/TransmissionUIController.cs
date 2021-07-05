@@ -76,7 +76,7 @@ public class TransmissionUIController : MVCUIController, TransmissionUIView.ILis
 		bool isMaxLevel = PlagueDisease.Instance.IsMaxLevel(p_transmissionType);
 		bool canTransmissionBeUpgraded = !isMaxLevel && (!PlagueDisease.Instance.HasMaxTransmissions() || PlagueDisease.Instance.IsTransmissionActive(p_transmissionType));
 		m_transmissionUIView.UpdateTransmissionUpgradeButtonInteractable(p_transmissionType, canTransmissionBeUpgraded && CanAffordUpgrade(p_transmissionType));
-		m_transmissionUIView.UpdateTransmissionCost(p_transmissionType, isMaxLevel ? "MAX" : $"{nextLevelCost.ToString()}{UtilityScripts.Utilities.PlagueIcon()}");
+		m_transmissionUIView.UpdateTransmissionCost(p_transmissionType, isMaxLevel ? "MAX" : $"{nextLevelCost.ToString()}{UtilityScripts.Utilities.ChaoticEnergyIcon()}");
 		// m_transmissionUIView.UpdateTransmissionCostPlagueIcon(p_transmissionType, !isMaxLevel);
 	}
 	private int GetTransmissionUpgradeCost(PLAGUE_TRANSMISSION p_transmissionType) {

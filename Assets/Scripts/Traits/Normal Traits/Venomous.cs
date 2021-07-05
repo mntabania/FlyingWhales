@@ -34,7 +34,7 @@ namespace Traits {
         private void ApplyPoisonToTile(ITraitable traitable) {
             if(traitable.gridTileLocation != null) {
                 if (UnityEngine.Random.Range(0, 100) < 10) {
-                    traitable.gridTileLocation.genericTileObject.traitContainer.AddTrait(traitable.gridTileLocation.genericTileObject, "Poisoned");
+                    traitable.gridTileLocation.tileObjectComponent.genericTileObject.traitContainer.AddTrait(traitable.gridTileLocation.tileObjectComponent.genericTileObject, "Poisoned");
                 }
             }
         }

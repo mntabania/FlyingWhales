@@ -6,6 +6,7 @@ using Inner_Maps.Location_Structures;
 using Logs;
 using UnityEngine;  
 using Traits;
+using UtilityScripts;
 
 public class DepositResourcePile : GoapAction {
     public DepositResourcePile() : base(INTERACTION_TYPE.DEPOSIT_RESOURCE_PILE) {
@@ -57,8 +58,10 @@ public class DepositResourcePile : GoapAction {
         SetState("Deposit Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
+#if DEBUG_LOG
         string costLog = $"\n{name} {target.nameWithID}: +10(Constant)";
         actor.logComponent.AppendCostLog(costLog);
+#endif
         return 10;
     }
     public override LocationStructure GetTargetStructure(ActualGoapNode node) {
@@ -72,11 +75,13 @@ public class DepositResourcePile : GoapAction {
                     //return the main storage so that the main storage will become the target structure
                     return node.actor.homeSettlement.mainStorage;
                 }
-            } else if (otherData[0].obj is HexTile hex) {
-                LocationGridTile centerTile = hex.GetCenterLocationGridTile();
+            } else if (otherData[0].obj is Area area) {
+                LocationGridTile centerTile = area.gridTileComponent.centerGridTile;
                 return centerTile.structure;
+            } else if (otherData[0].obj is LocationStructure locationStructure) {
+                return locationStructure;
             }
-            if(node.actor.homeSettlement != null) {
+            if (node.actor.homeSettlement != null) {
                 return node.actor.homeSettlement.mainStorage;
             }
         } else {
@@ -102,17 +107,21 @@ public class DepositResourcePile : GoapAction {
     }
     public override LocationGridTile GetTargetTileToGoTo(ActualGoapNode goapNode) {
         OtherData[] otherData = goapNode.otherData;
-        if (otherData != null && otherData.Length == 1 && otherData[0].obj is HexTile hex) {
-            LocationGridTile tile = hex.GetRandomPassableTile();
+        if (otherData != null && otherData.Length == 1 && otherData[0].obj is Area area) {
+            LocationGridTile tile = area.GetRandomPassableTile();
             if(tile == null) {
-                tile = hex.GetRandomTile();
+                tile = area.gridTileComponent.GetRandomTile();
             }
             return tile;
         } else {
             //if the process goes through here, this must mean that the target poi where the actor is supposed to go has no grid tile location or is destroyed or is carried by another character
             //so, just return a random unoccupied tile from the target structure
             List<LocationGridTile> unoccupiedTiles = goapNode.targetStructure.unoccupiedTiles.ToList();
-            return unoccupiedTiles[UnityEngine.Random.Range(0, unoccupiedTiles.Count)];
+            if (unoccupiedTiles.Count > 0) {
+                return unoccupiedTiles[UnityEngine.Random.Range(0, unoccupiedTiles.Count)];    
+            }
+            //assume that target structure has been destroyed or is full 
+            return null;
         }
     }
     public override void OnStopWhileStarted(ActualGoapNode node) {
@@ -129,6 +138,13 @@ public class DepositResourcePile : GoapAction {
         Character actor = node.actor;
         IPointOfInterest poiTarget = node.poiTarget;
         // actor.UncarryPOI(poiTarget);
+        if (actor.carryComponent.carriedPOI is ResourcePile resourcePile) {
+            actor.UncarryPOI(resourcePile, dropLocation: actor.gridTileLocation);
+        }
+    }
+    public override void OnInvalidAction(ActualGoapNode node) {
+        base.OnInvalidAction(node);
+        Character actor = node.actor;
         if (actor.carryComponent.carriedPOI is ResourcePile resourcePile) {
             actor.UncarryPOI(resourcePile, dropLocation: actor.gridTileLocation);
         }
@@ -150,17 +166,17 @@ public class DepositResourcePile : GoapAction {
         //}
         return goapActionInvalidity;
     }
-    public override void AddFillersToLog(ref Log log, ActualGoapNode goapNode) {
-        base.AddFillersToLog(ref log, goapNode);
+    public override void AddFillersToLog(Log log, ActualGoapNode goapNode) {
+        base.AddFillersToLog(log, goapNode);
         ResourcePile pile = goapNode.poiTarget as ResourcePile;
         log.AddToFillers(null, UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(pile.providedResource.ToString()), LOG_IDENTIFIER.STRING_1);
     }
     public override void OnActionStarted(ActualGoapNode node) {
         node.actor.ShowItemVisualCarryingPOI(node.poiTarget as TileObject);
     }
-    #endregion
+#endregion
 
-    #region Preconditions
+#region Preconditions
     //private bool IsActorWoodEnough(Character actor, IPointOfInterest poiTarget, object[] otherData) {
     //    if (actor.supply > actor.role.reservedSupply) {
     //        WoodPile supplyPile = poiTarget as WoodPile;
@@ -177,12 +193,20 @@ public class DepositResourcePile : GoapAction {
     private bool IsCarriedOrInInventory(Character actor, IPointOfInterest poiTarget, OtherData[] otherData, JOB_TYPE jobType) {
         return actor.IsPOICarriedOrInInventory(poiTarget);
     }
-    #endregion
+#endregion
 
-    #region Requirements
+#region Requirements
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, OtherData[] otherData, JobQueueItem job) { 
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData, job);
         if (satisfied) {
+            if (otherData != null && otherData.Length == 1) {
+                if(otherData[0].obj is IPointOfInterest poiToBeDeposited) {
+                    if (poiToBeDeposited.gridTileLocation == null) {
+                        //target pile to deposit to has been destroyed.
+                        return false;
+                    }
+                }
+            }
             if (actor.IsPOICarriedOrInInventory(poiTarget)) {
                 return true;
             }
@@ -211,9 +235,9 @@ public class DepositResourcePile : GoapAction {
         }
         return false;
     }
-    #endregion
+#endregion
 
-    #region State Effects
+#region State Effects
     public void PreDepositSuccess(ActualGoapNode goapNode) {
         ResourcePile pile = goapNode.poiTarget as ResourcePile;
         //GoapActionState currentState = goapNode.action.states[goapNode.currentStateName];
@@ -230,37 +254,54 @@ public class DepositResourcePile : GoapAction {
         if (otherData != null && otherData.Length == 1 && otherData[0].obj is ResourcePile) {
             pileToBeDepositedTo = otherData[0].obj as ResourcePile;
         }
-        if(pileToBeDepositedTo != null && pileToBeDepositedTo.gridTileLocation == goapNode.targetTile) {
+        if (pileToBeDepositedTo != null && pileToBeDepositedTo.gridTileLocation == goapNode.targetTile) {
             if (pileToBeDepositedTo.mapObjectState == MAP_OBJECT_STATE.UNBUILT) {
                 //remove unbuilt pile, since it is no longer needed, then place carried pile in its place
                 pileToBeDepositedTo.gridTileLocation.structure.RemovePOI(pileToBeDepositedTo);
                 actor.UncarryPOI(poiTarget, dropLocation: goapNode.targetTile);
             } else {
                 //Deposit resource pile
-                if(pileToBeDepositedTo.IsAtMaxResource(poiTarget.providedResource) == false) {
+                if (pileToBeDepositedTo.resourceStorageComponent.IsAtMaxResource(poiTarget.providedResource) == false) {
                     if (pileToBeDepositedTo.mapObjectState == MAP_OBJECT_STATE.UNBUILT) {
                         pileToBeDepositedTo.SetMapObjectState(MAP_OBJECT_STATE.BUILT);
                     }
                     pileToBeDepositedTo.AdjustResourceInPile(poiTarget.resourceInPile);
                     TraitManager.Instance.CopyStatuses(poiTarget, pileToBeDepositedTo);
                     actor.UncarryPOI(poiTarget, addToLocation: false);
+                    poiTarget.OnPileCombinedToOtherPile();
                 } else {
                     actor.UncarryPOI(poiTarget);
                 }
             }
-            
+        } else if (otherData != null && otherData.Length == 1 && otherData[0] is LocationStructureOtherData structureOtherData) {
+            LocationStructure structure = structureOtherData.locationStructure;
+            LocationGridTile targetTile = null;
+            if (structure.unoccupiedTiles.Count > 0) {
+                targetTile = CollectionUtilities.GetRandomElement(structure.unoccupiedTiles);
+            }
+            if (targetTile != null) {
+                actor.UncarryPOI(poiTarget, dropLocation: targetTile);
+            } else {
+                actor.UncarryPOI(poiTarget, addToLocation: false);
+            }
         } else {
             actor.UncarryPOI(poiTarget);
         }
 
         if (goapNode.associatedJobType == JOB_TYPE.STEAL_RAID) {
-            if (goapNode.actor.partyComponent.hasParty && goapNode.actor.partyComponent.currentParty.isActive && goapNode.actor.partyComponent.currentParty.currentQuest is RaidPartyQuest quest) {
-                quest.SetIsSuccessful(true);
-                goapNode.actor.partyComponent.currentParty.RemoveMemberThatJoinedQuest(goapNode.actor);
+            if (goapNode.actor.partyComponent.hasParty && goapNode.actor.partyComponent.currentParty.isActive) {
+                if (goapNode.actor.partyComponent.currentParty.currentQuest is RaidPartyQuest quest) {
+                    quest.SetIsSuccessful(true);
+                    if (!quest.TryTriggerRetreat("Raid is successful")) {
+                        goapNode.actor.partyComponent.currentParty.RemoveMemberThatJoinedQuest(goapNode.actor);
+                    }
+                } else {
+                    goapNode.actor.partyComponent.currentParty.RemoveMemberThatJoinedQuest(goapNode.actor);
+                }
             }
         }
     }
-    #endregion
+#endregion
 
 
     private bool IsTargetMissingOverride(ActualGoapNode node) {
@@ -272,9 +313,21 @@ public class DepositResourcePile : GoapAction {
         if (poiTarget.IsAvailable() == false || poiTarget.gridTileLocation == null || actor.currentRegion != poiTarget.currentRegion) {
             return true;
         }
+        OtherData[] otherData = node.otherData;
+        if (otherData != null && otherData.Length == 1) {
+            if(otherData[0].obj is IPointOfInterest poiToBeDeposited) {
+                if (poiToBeDeposited.gridTileLocation == null) {
+                    //target pile to deposit to has been destroyed.
+                    return true;
+                }
+            }
+        }
         if (actionLocationType == ACTION_LOCATION_TYPE.NEAR_TARGET) {
             //if the action type is NEAR_TARGET, then check if the actor is near the target, if not, this action is invalid.
             if (actor.gridTileLocation != poiTarget.gridTileLocation && actor.gridTileLocation.IsNeighbour(poiTarget.gridTileLocation, true) == false) {
+                if (actor.hasMarker && actor.marker.IsCharacterInLineOfSightWith(poiTarget)) {
+                    return false;
+                }
                 return true;
             }
         } else if (actionLocationType == ACTION_LOCATION_TYPE.NEAR_OTHER_TARGET) {

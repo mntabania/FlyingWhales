@@ -16,7 +16,7 @@ namespace Traits {
             void PerTickWhileStationaryOrUnoccupied(Character p_character);
             void CharacterGainedTrait(Character p_character, Trait p_gainedTrait);
             void CharacterStartedPerformingAction(Character p_character, ActualGoapNode p_action);
-            void CharacterDonePerformingAction(Character p_character, ActualGoapNode p_actionPerformed);
+            void CharacterDonePerformingAction(Character p_character, INTERACTION_TYPE p_actionPerformed);
             void HourStarted(Character p_character, int numberOfHours);
         }
 
@@ -28,7 +28,7 @@ namespace Traits {
         private Action<Character, Trait> _characterGainedTrait;
         private Action<Character, ActualGoapNode> _characterStartedPerformingAction;
         private Action<Character, int> _hourStarted;
-        private Action<Character, ActualGoapNode> _characterDonePerformingAction;
+        private Action<Character, INTERACTION_TYPE> _characterDonePerformingAction;
         private Action<Character> _characterDeath;
 
         public IPointOfInterest owner { get; private set; } //poi that has the poison
@@ -176,7 +176,7 @@ namespace Traits {
                 RemoveDeathEffect(PlagueDisease.Instance.activeDeathEffect);
             }
         }
-        public override bool PerTickWhileStationaryOrUnoccupied() {
+        public override bool PerTickWhileStationaryOrUnoccupied(Character p_character) {
             if (owner is Character character) {
                 _perTickWhileStationaryOrUnoccupied?.Invoke(character);
             }
@@ -251,23 +251,23 @@ namespace Traits {
                     //If character can no longer do happiness recovery and the action that is starting is a happiness recovery type job, character should no longer continue doing the job
                     if (node.associatedJobType.IsHappinessRecoveryTypeJob() && !character.limiterComponent.canDoHappinessRecovery) {
                         if (node.actor.jobQueue.jobsInQueue.Count > 0) {
-                            node.actor.jobQueue.jobsInQueue[0].CancelJob(false);
+                            node.actor.jobQueue.jobsInQueue[0].CancelJob();
                         }
                         willStillContinueAction = false;
                         if (owner.traitContainer.HasTrait("Depressed")) {
                             Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Trait", name, "depressed", null, LOG_TAG.Life_Changes);
                             log.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                            log.AddLogToDatabase();
+                            log.AddLogToDatabase(true);
                         }
                     } else if (node.associatedJobType.IsTirednessRecoveryTypeJob() && !character.limiterComponent.canDoTirednessRecovery) {
                         if (node.actor.jobQueue.jobsInQueue.Count > 0) {
-                            node.actor.jobQueue.jobsInQueue[0].CancelJob(false);
+                            node.actor.jobQueue.jobsInQueue[0].CancelJob();
                         }
                         willStillContinueAction = false;
                         if (owner.traitContainer.HasTrait("Insomnia")) {
                             Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Trait", name, "insomnia", null, LOG_TAG.Life_Changes);
                             log.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                            log.AddLogToDatabase();
+                            log.AddLogToDatabase(true);
                         }
                     }
                     return true;
@@ -275,11 +275,11 @@ namespace Traits {
             }
             return base.OnStartPerformGoapAction(node, ref willStillContinueAction);
         }
-        public override void ExecuteActionAfterEffects(INTERACTION_TYPE action, ActualGoapNode goapNode, ref bool isRemoved) {
-            if (goapNode.actor == owner && owner is Character character) {
-                _characterDonePerformingAction?.Invoke(character, goapNode);
+        public override void ExecuteActionAfterEffects(INTERACTION_TYPE action, Character actor, IPointOfInterest target, ACTION_CATEGORY category, ref bool isRemoved) {
+            if (actor == owner && owner is Character character) {
+                _characterDonePerformingAction?.Invoke(character, action);
             }
-            base.ExecuteActionAfterEffects(action, goapNode, ref isRemoved);
+            base.ExecuteActionAfterEffects(action, actor, target, category, ref isRemoved);
         }
         public override void AfterDeath(Character character) {
             _characterDeath?.Invoke(character);

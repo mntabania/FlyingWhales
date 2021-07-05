@@ -7,7 +7,7 @@ using Logs;
 public class JoinFactionData : SchemeData {
     public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.JOIN_FACTION;
     public override string name => "Join Faction";
-    public override string description => "Convince a Villager to join a target Faction.";
+    public override string description => "This Ability instructs the character to join a target Faction if possible. Only available on Cultists.";
     public override PLAYER_SKILL_CATEGORY category => PLAYER_SKILL_CATEGORY.SCHEME;
 
     public JoinFactionData() : base() {
@@ -23,7 +23,7 @@ public class JoinFactionData : SchemeData {
                 Faction faction = FactionManager.Instance.allFactions[i];
                 if (faction != sourceFaction && faction.factionType.type != FACTION_TYPE.Vagrants && faction.factionType.type != FACTION_TYPE.Demons && faction.factionType.type != FACTION_TYPE.Wild_Monsters
                     && faction.factionType.type != FACTION_TYPE.Undead
-                    && faction.HasMemberThatMeetCriteria(c => !c.isDead)
+                    && faction.HasMemberThatIsNotDead()
                     && !faction.isDisbanded) {
                     choices.Add(faction);
                 }
@@ -33,11 +33,29 @@ public class JoinFactionData : SchemeData {
             ObjectPoolManager.Instance.ReturnFactionListToPool(choices);
         }
     }
-    public override bool IsValid(IPlayerActionTarget target) {
-        if (target is Character character) {
-            return character.isVagrant;
+    //public override bool IsValid(IPlayerActionTarget target) {
+    //    if (target is Character character) {
+    //        bool isValid = base.IsValid(target);
+    //        return isValid && character.isVagrant;
+    //    }
+    //    return false;
+    //}
+    public override bool CanPerformAbilityTowards(Character targetCharacter) {
+        bool canPerform = base.CanPerformAbilityTowards(targetCharacter);
+        if (canPerform) {
+            if (!targetCharacter.isVagrant) {
+                return false;
+            }
+            return true;
         }
-        return false;
+        return canPerform;
+    }
+    public override string GetReasonsWhyCannotPerformAbilityTowards(Character targetCharacter) {
+        string reasons = base.GetReasonsWhyCannotPerformAbilityTowards(targetCharacter);
+        if (!targetCharacter.isVagrant) {
+            reasons += "Target is not a vagrant.";
+        }
+        return reasons;
     }
     protected override void OnSuccessScheme(Character character, object target) {
         base.OnSuccessScheme(character, target);

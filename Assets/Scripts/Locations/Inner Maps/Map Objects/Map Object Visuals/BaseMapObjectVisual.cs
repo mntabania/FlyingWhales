@@ -34,7 +34,7 @@ public abstract class BaseMapObjectVisual : PooledObject, IPointerEnterHandler, 
     protected System.Action onMiddleClickAction;
     public GameObject gameObjectVisual => this.gameObject;
     public Sprite usedSprite => objectVisual.sprite;
-    public Quaternion rotation => objectVisual.transform.localRotation;
+    //public Quaternion rotation => objectVisual.transform.localRotation;
     public ISelectable selectable { get; protected set; }
     public SpriteRenderer objectSpriteRenderer => objectVisual;
     public BaseVisionTrigger visionTrigger { get; protected set; }
@@ -43,14 +43,15 @@ public abstract class BaseMapObjectVisual : PooledObject, IPointerEnterHandler, 
     /// <see cref="LocationGridTileGUS.Initialize"/>,
     /// this should also destroyed when the object is removed. <see cref="LocationGridTileGUS.Destroy"/>
     private LocationGridTileGUS graphUpdateScene { get; set; } 
-    
+    public string usedSpriteName { get; private set; }
+    public Quaternion rotation { get; private set; }
+
     #region Initialization
     protected void Initialize(ISelectable selectable) {
         this.selectable = selectable;
-        UpdateClickableColliderState();
-    }
+        UpdateClickableColliderState();    }
     #endregion
-    
+
     #region Visuals
     public virtual Sprite GetSeizeSprite(IPointOfInterest poi) {
         return objectVisual.sprite;
@@ -61,16 +62,23 @@ public abstract class BaseMapObjectVisual : PooledObject, IPointerEnterHandler, 
         if (hoverObject != null) {
             hoverObject.transform.localRotation = quaternion;    
         }
+        this.rotation = quaternion;
     }
     public void SetRotation(Quaternion rotation) {
         objectVisual.transform.localRotation = rotation;
         if (hoverObject != null) {
             hoverObject.transform.localRotation = rotation;    
         }
+        this.rotation = rotation;
     }
     public virtual void SetVisual(Sprite sprite) {
         objectVisual.sprite = sprite;
         hoverObject.sprite = sprite;
+        if (sprite != null) {
+            usedSpriteName = sprite.name;
+        } else {
+            usedSpriteName = string.Empty;
+        }
     }
     private void SetColor(Color color) {
         objectVisual.color = color;
@@ -87,7 +95,7 @@ public abstract class BaseMapObjectVisual : PooledObject, IPointerEnterHandler, 
         if (isHoverObjectStateLocked) {
             return; //ignore change because hover state is locked
         }
-        if (PlayerManager.Instance.player.IsPerformingPlayerAction()) {
+        if (PlayerManager.Instance != null && PlayerManager.Instance.player != null && PlayerManager.Instance.player.IsPerformingPlayerAction()) {
             return; //player is currently performing an action, do not highlight.
         }
         if (hoverObject.gameObject.activeSelf == state) {
@@ -176,24 +184,42 @@ public abstract class BaseMapObjectVisual : PooledObject, IPointerEnterHandler, 
         if (visionTrigger) {
             visionTrigger.Reset();    
         }
-
+        if (clickCollider != null) {
+            clickCollider.enabled = true;
+        }
+        selectable = null;
+        DestroyAllStatusIcons();
+        DestroyAllParticleEffects();
+        SetMaterial(InnerMapManager.Instance.assetManager.defaultObjectMaterial);
+        DOTween.Kill(this.transform);
+    }
+    private void DestroyAllStatusIcons() {
+        if (statusIconsParent != null) {
+            Transform[] gos = GameUtilities.GetComponentsInDirectChildren<Transform>(statusIconsParent.gameObject);
+            if (gos != null) {
+                for (int i = 0; i < gos.Length; i++) {
+                    ObjectPoolManager.Instance.DestroyObject(gos[i].gameObject);
+                }
+            }
+        }
+    }
+    protected virtual void DestroyAllParticleEffects() {
         if (particleEffectParent != null) {
             //When a map visual object is object pooled, all particles must be destroyed so that when it is used again there will no residual particle effects that will linger
             Transform[] particleGOs = GameUtilities.GetComponentsInDirectChildren<Transform>(particleEffectParent.gameObject);
-            if(particleGOs != null) {
+            if (particleGOs != null) {
                 for (int i = 0; i < particleGOs.Length; i++) {
                     ObjectPoolManager.Instance.DestroyObject(particleGOs[i].gameObject);
                 }
-            }    
+            }
         }
-        SetMaterial(InnerMapManager.Instance.assetManager.defaultObjectMaterial);
     }
-    void OnEnable() {
-        Messenger.AddListener<bool>(UISignals.PAUSED, OnGamePaused);
-    }
-    void OnDisable() {
-        Messenger.RemoveListener<bool>(UISignals.PAUSED, OnGamePaused);
-    }
+    // void OnEnable() {
+    //     Messenger.AddListener<bool>(UISignals.PAUSED, OnGamePaused);
+    // }
+    // void OnDisable() {
+    //     Messenger.RemoveListener<bool>(UISignals.PAUSED, OnGamePaused);
+    // }
     public override void BeforeDestroyActions() {
         base.BeforeDestroyActions();
         DestroyExistingGUS();
@@ -201,13 +227,13 @@ public abstract class BaseMapObjectVisual : PooledObject, IPointerEnterHandler, 
     #endregion
 
     #region Tweening
-    private void OnGamePaused(bool state) {
-        if (state) {
-            transform.DOPause();
-        } else {
-            transform.DOPlay();
-        }
-    }
+    // private void OnGamePaused(bool state) {
+    //     if (state) {
+    //         transform.DOPause();
+    //     } else {
+    //         transform.DOPlay();
+    //     }
+    // }
     public bool IsTweening() {
         return DOTween.IsTweening(this.transform);
     }
@@ -232,6 +258,7 @@ public abstract class BaseMapObjectVisual : PooledObject, IPointerEnterHandler, 
         thisTransform.SetParent(tile.parentMap.structureParent);
         Vector3 worldPos = tile.centeredWorldLocation;
         thisTransform.position = worldPos;
+        this.rotation = objectVisual.transform.localRotation;
     }
     public virtual void SetWorldPosition(Vector3 worldPosition) {
         transform.position = worldPosition;

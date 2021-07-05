@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1e0fe33fc91848c68ab8d6bd0b390d79, type: 3}
+  m_Name: Mana
+  m_EditorClassIdentifier: 
+  tutorialType: 2
+  tutorialNameKey: mana
+  pages:
+  - imgTutorial: {fileID: 21300000, guid: 7debae308fb9c7549a0d7b251732b8cb, type: 3}
+    description: 'Mana is a player resource used to perform most actions in the game:
+      casting Spells, activating Abilities, applying Afflictions, building demonic
+      structures and summoning minions'
+  - imgTutorial: {fileID: 21300000, guid: 7debae308fb9c7549a0d7b251732b8cb, type: 3}
+    description: Your Mana has a low maximum capacity, which prevents you from spamming
+      actions. However, you passively regenerate Mana in a rather short amount of
+      time.
+  - imgTutorial: {fileID: 21300000, guid: 089f930f4a2c4f541bee96a447c60a05, type: 3}
+    description: Upgraded Powers may cost more Mana to cast! Build more Mana Pits
+      to expand your maximum capacity and hourly Mana regen.

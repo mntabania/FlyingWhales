@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4fe081999e2948579e671f1ff7494f4c, type: 3}
+  m_Name: Abandoned Mine Data
+  m_EditorClassIdentifier: 
+  structureSprite: {fileID: 21300000, guid: 04d161f6df0c0ea4a9a3268c50b2df70, type: 3}
+  itemGenerationSetting: {fileID: 0}
+  structurePrefabs:
+    m_keys:
+    - resource: 4
+      structureType: 23
+      hasValue: 1
+      isCorrupted: 0
+    m_values:
+    - data:
+      - {fileID: 1052932554014340, guid: 128f887a5cf7a32458e387f1a5ac6f12, type: 3}

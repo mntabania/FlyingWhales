@@ -16,6 +16,8 @@ public class Pig : Animal {
         //combatComponent.SetCombatMode(COMBAT_MODE.Passive);
     }
 
+    public override TILE_OBJECT_TYPE produceableMaterial => TILE_OBJECT_TYPE.RABBIT_CLOTH;
+
     // #region Listeners
     // public override void SubscribeToSignals() {
     //     base.SubscribeToSignals();
@@ -28,9 +30,9 @@ public class Pig : Animal {
     // private void OnCharacterFinishedAction(ActualGoapNode goapNode) {
     //     if (goapNode.actor == this && goapNode.action.goapType == INTERACTION_TYPE.STAND &&
     //         gridTileLocation.collectionOwner.isPartOfParentRegionMap && 
-    //         (gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.biomeType == BIOMES.GRASSLAND 
-    //          || gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.biomeType == BIOMES.FOREST 
-    //          || gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.biomeType == BIOMES.DESERT) && 
+    //         (gridTileLocation.hexTileOwner.biomeType == BIOMES.GRASSLAND 
+    //          || gridTileLocation.hexTileOwner.biomeType == BIOMES.FOREST 
+    //          || gridTileLocation.hexTileOwner.biomeType == BIOMES.DESERT) && 
     //         UnityEngine.Random.Range(0, 100) < 5 && gridTileLocation.structure.isInterior == false 
     //         && gridTileLocation.HasUnoccupiedNeighbour(out var tiles, true)) {
     //         LocationGridTile randomTile = CollectionUtilities.GetRandomElement(tiles);

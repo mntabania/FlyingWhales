@@ -5,14 +5,16 @@ using UnityEngine;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
 using UnityEngine.Assertions;
-
+using UtilityScripts;
 public class RavenousSpirit : TileObject {
+
+    private SkillData m_skillData;
+    private PlayerSkillData m_playerSkillData;
 
     public Character possessionTarget { get; private set; }
     private SpiritGameObject _spiritGO;
     private int _duration;
     private int _currentDuration;
-    
     #region getters
     public int currentDuration => _currentDuration;
     public override System.Type serializedData => typeof(SaveDataRavenousSpirit);
@@ -23,7 +25,7 @@ public class RavenousSpirit : TileObject {
         Initialize(TILE_OBJECT_TYPE.RAVENOUS_SPIRIT, false);
         traitContainer.AddTrait(this, "Ravenous");
     }
-    public RavenousSpirit(SaveDataRavenousSpirit data) {
+    public RavenousSpirit(SaveDataRavenousSpirit data) : base(data) {
         //SaveDataRavenousSpirit saveDataRavenousSpirit = data as SaveDataRavenousSpirit;
         Assert.IsNotNull(data);
         _currentDuration = data.currentDuration;
@@ -34,6 +36,8 @@ public class RavenousSpirit : TileObject {
         return $"Ravenous Spirit {id.ToString()}";
     }
     public override void OnPlacePOI() {
+        m_skillData = PlayerSkillManager.Instance.GetSkillData(PLAYER_SKILL_TYPE.RAVENOUS_SPIRIT);
+        m_playerSkillData = PlayerSkillManager.Instance.GetScriptableObjPlayerSkillData<PlayerSkillData>(PLAYER_SKILL_TYPE.RAVENOUS_SPIRIT);
         base.OnPlacePOI();
         Messenger.AddListener<PROGRESSION_SPEED>(UISignals.PROGRESSION_SPEED_CHANGED, OnProgressionSpeedChanged);
         Messenger.AddListener<bool>(UISignals.PAUSED, OnGamePaused);
@@ -102,10 +106,12 @@ public class RavenousSpirit : TileObject {
         }
     }
     public void GoToRandomTileInRadius() {
-        List<LocationGridTile> tilesInRadius = gridTileLocation.GetTilesInRadius(3, includeCenterTile: false, includeTilesInDifferentStructure: true);
+        List<LocationGridTile> tilesInRadius = RuinarchListPool<LocationGridTile>.Claim();
+        gridTileLocation.PopulateTilesInRadius(tilesInRadius, 3, includeCenterTile: false, includeTilesInDifferentStructure: true);
         LocationGridTile chosen = tilesInRadius[Random.Range(0, tilesInRadius.Count)];
         _spiritGO.SetDestinationTile(chosen);
         InnerMapManager.Instance.FaceTarget(this, chosen);
+        RuinarchListPool<LocationGridTile>.Release(tilesInRadius);
     }
     private void UpdateSpeed() {
         _spiritGO.SetSpeed(1f);
@@ -127,7 +133,19 @@ public class RavenousSpirit : TileObject {
     }
 
     private void RavenousEffect() {
-        possessionTarget.needsComponent.AdjustFullness(-35);
+        int baseChance = 100;
+        SkillData spiritData = PlayerSkillManager.Instance.GetSpellData(PLAYER_SKILL_TYPE.RAVENOUS_SPIRIT);
+        RESISTANCE resistanceType = PlayerSkillManager.Instance.GetScriptableObjPlayerSkillData<PlayerSkillData>(PLAYER_SKILL_TYPE.RAVENOUS_SPIRIT).resistanceType;
+        float piercing = PlayerSkillManager.Instance.GetAdditionalPiercePerLevelBaseOnLevel(spiritData);
+        float resistanceValue = possessionTarget.piercingAndResistancesComponent.GetResistanceValue(resistanceType);
+        CombatManager.ModifyValueByPiercingAndResistance(ref baseChance, piercing, resistanceValue);
+        if (GameUtilities.RollChance(baseChance)) {
+            //Triggers Effect
+            float processedEffect = -PlayerSkillManager.Instance.GetIncreaseStatsPercentagePerLevel(spiritData);
+            possessionTarget.needsComponent.AdjustFullness(processedEffect);
+        } else {
+            possessionTarget.reactionComponent.ResistRuinarchPower();
+        }
     }
 
     private void DonePossession() {

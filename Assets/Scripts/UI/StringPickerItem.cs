@@ -42,17 +42,15 @@ public class StringPickerItem : ObjectPickerItem<string>, IPointerClickHandler {
                     iconImg.gameObject.SetActive(false);
                 }
             } else if(identifier == "landmark") {
-                LandmarkData landmarkData = LandmarkManager.Instance.GetLandmarkData(str);
-                iconImg.sprite = landmarkData.defaultLandmarkPortrait;
-                iconImg.gameObject.SetActive(true);
+                iconImg.gameObject.SetActive(false);
             } else if (identifier == "intervention ability") {
                 iconImg.sprite = PlayerManager.Instance.GetJobActionSprite(str);
                 iconImg.gameObject.SetActive(true);
             } else if (identifier == "minion") {
-                iconImg.sprite = CharacterManager.Instance.GetWholeImagePortraitSprite(str);
+                iconImg.sprite = CharacterManager.Instance.GetOrCreateCharacterClassData(str).portraitSprite;
                 iconImg.gameObject.SetActive(true);
             } else if (identifier == "player skill") {
-                iconImg.sprite = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>((PLAYER_SKILL_TYPE) System.Enum.Parse(typeof(PLAYER_SKILL_TYPE), UtilityScripts.Utilities.NotNormalizedConversionStringToEnum(str).ToUpper())).buttonSprite;
+                iconImg.sprite = PlayerSkillManager.Instance.GetScriptableObjPlayerSkillData<PlayerSkillData>((PLAYER_SKILL_TYPE) System.Enum.Parse(typeof(PLAYER_SKILL_TYPE), UtilityScripts.Utilities.NotNormalizedConversionStringToEnum(str).ToUpper())).buttonSprite;
                 iconImg.gameObject.SetActive(true);
             }
             iconImg.SetNativeSize();

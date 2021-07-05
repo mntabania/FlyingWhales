@@ -6,7 +6,7 @@ public class Rug : TileObject{
         AddAdvertisedAction(INTERACTION_TYPE.PICK_UP);
         Initialize(TILE_OBJECT_TYPE.RUG);
     }
-    public Rug(SaveDataTileObject data) {
+    public Rug(SaveDataTileObject data) : base(data) {
         
     }
 

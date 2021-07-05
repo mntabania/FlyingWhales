@@ -57,8 +57,10 @@ public class DouseFireBehaviour : CharacterBehaviourComponent {
             Burning burning = nearestFire.traitContainer.GetTraitOrStatus<Burning>("Burning"); 
             Assert.IsNotNull(burning, $"Burning of {nearestFire} is null.");
             burning.SetDouser(character);
-            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.DOUSE_FIRE, INTERACTION_TYPE.DOUSE_FIRE,
-                nearestFire, character);
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.DOUSE_FIRE, INTERACTION_TYPE.DOUSE_FIRE, nearestFire, character);
+            if (character.homeSettlement != null) {
+                job.AddPriorityLocation(INTERACTION_TYPE.NONE, character.homeSettlement);    
+            }
             producedJob = job;
             return true;
         }

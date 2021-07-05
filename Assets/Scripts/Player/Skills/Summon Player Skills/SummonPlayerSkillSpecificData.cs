@@ -2,162 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SkeletonMarauderData : SummonPlayerSkill {
-    public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.SKELETON_MARAUDER;
-    public override string name => "Skeleton Marauder";
-    public override string description => "Skeleton Marauder";
-    public override string bredBehaviour => "Snatcher";
-
-    public SkeletonMarauderData() {
-        summonType = SUMMON_TYPE.Skeleton;
-        race = RACE.SKELETON;
-        className = "Marauder";
-    }
-}
-public class SkeletonArcherData : SummonPlayerSkill {
-    public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.SKELETON_ARCHER;
-    public override string name => "Skeleton Archer";
-    public override string description => "Skeleton Archer";
-    public override string bredBehaviour => "Snatcher";
-
-    public SkeletonArcherData() {
-        summonType = SUMMON_TYPE.Skeleton;
-        race = RACE.SKELETON;
-        className = "Archer";
-    }
-}
-public class SkeletonBarbarianData : SummonPlayerSkill {
-    public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.SKELETON_BARBARIAN;
-    public override string name => "Skeleton Barbarian";
-    public override string description => "Skeleton Barbarian";
-    public override string bredBehaviour => "Snatcher";
-
-    public SkeletonBarbarianData() {
-        summonType = SUMMON_TYPE.Skeleton;
-        race = RACE.SKELETON;
-        className = "Barbarian";
-    }
-}
-public class SkeletonCraftsmanData : SummonPlayerSkill {
-    public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.SKELETON_CRAFTSMAN;
-    public override string name => "Skeleton Craftsman";
-    public override string description => "Skeleton Craftsman";
-    public override string bredBehaviour => "Snatcher";
-
-    public SkeletonCraftsmanData() {
-        summonType = SUMMON_TYPE.Skeleton;
-        race = RACE.SKELETON;
-        className = "Craftsman";
-    }
-}
-public class SkeletonDruidData : SummonPlayerSkill {
-    public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.SKELETON_DRUID;
-    public override string name => "Skeleton Druid";
-    public override string description => "Skeleton Druid";
-    public override string bredBehaviour => "Snatcher";
-
-    public SkeletonDruidData() {
-        summonType = SUMMON_TYPE.Skeleton;
-        race = RACE.SKELETON;
-        className = "Druid";
-    }
-}
-public class SkeletonHunterData : SummonPlayerSkill {
-    public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.SKELETON_HUNTER;
-    public override string name => "Skeleton Hunter";
-    public override string description => "Skeleton Hunter";
-    public override string bredBehaviour => "Snatcher";
-
-    public SkeletonHunterData() {
-        summonType = SUMMON_TYPE.Skeleton;
-        race = RACE.SKELETON;
-        className = "Hunter";
-    }
-}
-public class SkeletonMageData : SummonPlayerSkill {
-    public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.SKELETON_MAGE;
-    public override string name => "Skeleton Mage";
-    public override string description => "Skeleton Mage";
-    public override string bredBehaviour => "Snatcher";
-
-    public SkeletonMageData() {
-        summonType = SUMMON_TYPE.Skeleton;
-        race = RACE.SKELETON;
-        className = "Mage";
-    }
-}
-public class SkeletonKnightData : SummonPlayerSkill {
-    public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.SKELETON_KNIGHT;
-    public override string name => "Skeleton Knight";
-    public override string description => "Skeleton Knight";
-    public override string bredBehaviour => "Snatcher";
-
-    public SkeletonKnightData() {
-        summonType = SUMMON_TYPE.Skeleton;
-        race = RACE.SKELETON;
-        className = "Knight";
-    }
-}
-public class SkeletonMinerData : SummonPlayerSkill {
-    public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.SKELETON_MINER;
-    public override string name => "Skeleton Miner";
-    public override string description => "Skeleton Miner";
-    public override string bredBehaviour => "Snatcher";
-
-    public SkeletonMinerData() {
-        summonType = SUMMON_TYPE.Skeleton;
-        race = RACE.SKELETON;
-        className = "Miner";
-    }
-}
-public class SkeletonNobleData : SummonPlayerSkill {
-    public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.SKELETON_NOBLE;
-    public override string name => "Skeleton Noble";
-    public override string description => "Skeleton Noble";
-    public override string bredBehaviour => "Snatcher";
-
-    public SkeletonNobleData() {
-        summonType = SUMMON_TYPE.Skeleton;
-        race = RACE.SKELETON;
-        className = "Noble";
-    }
-}
-public class SkeletonPeasantData : SummonPlayerSkill {
-    public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.SKELETON_PEASANT;
-    public override string name => "Skeleton Peasant";
-    public override string description => "Skeleton Peasant";
-    public override string bredBehaviour => "Snatcher";
-
-    public SkeletonPeasantData() {
-        summonType = SUMMON_TYPE.Skeleton;
-        race = RACE.SKELETON;
-        className = "Peasant";
-    }
-}
-public class SkeletonShamanData : SummonPlayerSkill {
-    public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.SKELETON_SHAMAN;
-    public override string name => "Skeleton Shaman";
-    public override string description => "Skeleton Shaman";
-    public override string bredBehaviour => "Snatcher";
-
-    public SkeletonShamanData() {
-        summonType = SUMMON_TYPE.Skeleton;
-        race = RACE.SKELETON;
-        className = "Shaman";
-    }
-}
-public class SkeletonStalkerData : SummonPlayerSkill {
-    public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.SKELETON_STALKER;
-    public override string name => "Skeleton Stalker";
-    public override string description => "Skeleton Stalker";
-    public override string bredBehaviour => "Snatcher";
-
-    public SkeletonStalkerData() {
-        summonType = SUMMON_TYPE.Skeleton;
-        race = RACE.SKELETON;
-        className = "Stalker";
-    }
-}
 public class WolfData : SummonPlayerSkill {
     public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.WOLF;
     public override string name => "Wolf";
@@ -166,6 +10,18 @@ public class WolfData : SummonPlayerSkill {
         summonType = SUMMON_TYPE.Wolf;
         race = RACE.WOLF;
         className = "Ravager";
+    }
+}
+
+public class DireWolfData : SummonPlayerSkill
+{
+    public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.DIRE_WOLF;
+    public override string name => "Dire Wolf";
+    public override string description => "Dire Wolf";
+    public DireWolfData() {
+        summonType = SUMMON_TYPE.Dire_Wolf;
+        race = RACE.WOLF;
+        className = "Dire";
     }
 }
 public class GolemData : SummonPlayerSkill {
@@ -296,16 +152,6 @@ public class SheepData : SummonPlayerSkill {
         summonType = SUMMON_TYPE.Sheep;
         race = RACE.SHEEP;
         className = "Sheep";
-    }
-}
-public class PlaguedRatData : SummonPlayerSkill {
-    public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.PLAGUED_RAT;
-    public override string name => "Plagued Rat";
-    public override string description => "Plagued Rat";
-    public PlaguedRatData() {
-        summonType = SUMMON_TYPE.Rat;
-        race = RACE.RAT;
-        className = "Rat";
     }
 }
 public class SludgeData : SummonPlayerSkill {
@@ -506,5 +352,18 @@ public class TritonData : SummonPlayerSkill {
         summonType = SUMMON_TYPE.Triton;
         race = RACE.TRITON;
         className = "Triton";
+ 
+    }
+}
+
+public class SkeletonData : SummonPlayerSkill {
+    public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.SKELETON;
+    public override string name => "Skeleton";
+    public override string description => "Skeleton";
+    public SkeletonData() {
+        summonType = SUMMON_TYPE.Skeleton;
+        race = RACE.SKELETON;
+        className = "Skeleton";
+
     }
 }

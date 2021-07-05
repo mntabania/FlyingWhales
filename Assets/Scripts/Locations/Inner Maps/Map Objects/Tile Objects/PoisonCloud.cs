@@ -3,7 +3,7 @@ using Inner_Maps;
 using Traits;
 using UnityEngine;
 using UnityEngine.Assertions;
-
+using UtilityScripts;
 public sealed class PoisonCloud : MovingTileObject {
 
     private PoisonCloudMapObjectVisual _poisonCloudVisual;
@@ -21,9 +21,10 @@ public sealed class PoisonCloud : MovingTileObject {
         AddAdvertisedAction(INTERACTION_TYPE.ASSAULT);
         AddAdvertisedAction(INTERACTION_TYPE.RESOLVE_COMBAT);
         SetExpiryDate(GameManager.Instance.Today().AddTicks(GameManager.Instance.GetTicksBasedOnHour(2)));
+        
         SetDoExpireEffect(true);
     }
-    public PoisonCloud(SaveDataPoisonCloud data) {
+    public PoisonCloud(SaveDataPoisonCloud data) : base(data) {
         //SaveDataPoisonCloud saveDataPoisonCloud = data as SaveDataPoisonCloud;
         Assert.IsNotNull(data);
         expiryDate = data.expiryDate;
@@ -122,12 +123,18 @@ public sealed class PoisonCloud : MovingTileObject {
             }
             //If the radius is less than or equal to zero this means we will only get the gridTileLocation itself
             if (radius <= 0) {
-                gridTileLocation.genericTileObject.traitContainer.AddTrait(gridTileLocation.genericTileObject, "Poisoned", bypassElementalChance: true);
+                gridTileLocation.tileObjectComponent.genericTileObject.traitContainer.AddTrait(gridTileLocation.tileObjectComponent.genericTileObject, "Poisoned", bypassElementalChance: true);
+                Poisoned poisoned = gridTileLocation.tileObjectComponent.genericTileObject.traitContainer.GetTraitOrStatus<Poisoned>("Poisoned");
+                poisoned?.SetIsPlayerSource(isPlayerSource);
             } else {
-                List<LocationGridTile> tiles = gridTileLocation.GetTilesInRadius(radius, includeCenterTile: true, includeTilesInDifferentStructure: true);
+                List<LocationGridTile> tiles = RuinarchListPool<LocationGridTile>.Claim();
+                gridTileLocation.PopulateTilesInRadius(tiles, radius, includeCenterTile: true, includeTilesInDifferentStructure: true);
                 for (int i = 0; i < tiles.Count; i++) {
-                    tiles[i].genericTileObject.traitContainer.AddTrait(tiles[i].genericTileObject, "Poisoned", bypassElementalChance: true);
+                    tiles[i].tileObjectComponent.genericTileObject.traitContainer.AddTrait(tiles[i].tileObjectComponent.genericTileObject, "Poisoned", bypassElementalChance: true);
+                    Poisoned poisoned = tiles[i].tileObjectComponent.genericTileObject.traitContainer.GetTraitOrStatus<Poisoned>("Poisoned");
+                    poisoned?.SetIsPlayerSource(isPlayerSource);
                 }
+                RuinarchListPool<LocationGridTile>.Release(tiles);
             }
         }
     }

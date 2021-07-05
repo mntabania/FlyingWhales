@@ -34,6 +34,8 @@ public class TraitManager : BaseMonoBehaviour {
     public const string After_Exiting_Combat = "After_Exiting_Combat";
     public const string Per_Tick_While_Stationary_Unoccupied = "Per_Tick_While_Stationary_Unoccupied";
     public const string After_Death = "After_Death";
+    public const string Villager_Reaction = "Villager_Reaction";
+
 
     public static string[] instancedTraitsAndStatuses = new string[] {
         "Restrained", "Injured", "Kleptomaniac", "Lycanthrope", "Vampire",
@@ -50,7 +52,10 @@ public class TraitManager : BaseMonoBehaviour {
         "Abductor", "Arsonist", "Hibernating", "Baby Infestor", "Tower", "Mighty", "Stoned", "Transforming", "Subterranean", "Petrasol",
         "Snatcher", "Agitated", "Hunting", "Chained Electric", "Prisoner", "Hemophiliac", "Hemophobic", "Burning At Stake",
         "Lycanphiliac", "Lycanphobic", "Interesting", "Pest", "Night Zombie", "Finite Zombie", "Plague Reservoir", "Quarantined", 
-        "Plague Caring", "Plague Cared", "Enslaved", "Travelling", "Walker Zombie", "Boomer Zombie", "Protection",
+        "Plague Caring", "Plague Cared", "Enslaved", "Travelling", "Walker Zombie", "Boomer Zombie", "Protection", "Being Drained", "Empowered",
+        "Monster Slayer", "Monster Ward", "Elf Slayer", "Elf Ward", "Human Slayer", "Human Ward", "Undead Slayer", "Undead Ward",
+        "Demon Slayer", "Demon Ward", "Flying", "Enhanced Power", "Corn Fed", "Potato Fed", "Pineapple Fed", "Iceberry Fed", "Stocked Up", "Dirty",
+        "Uncomfortable", "Recuperating", "Fish Fed", "Animal Fed"
     };
 
     //public static string[] unhiddenInstancedTraits = new string[] {
@@ -77,7 +82,7 @@ public class TraitManager : BaseMonoBehaviour {
     public List<string> unhiddenTraitsNotStatuses { get; private set; }
 
     public List<string> removeStatusTraits = new List<string> {
-        "Unconscious", "Injured", "Poisoned", "Freezing", "Frozen", "Burning",
+        "Unconscious", /*"Injured",*/ "Poisoned", "Freezing", "Frozen", "Burning", //Removed Injured since we expect that the Hospice worker will cure Injured statuses
         "Ensnared"
     };
 
@@ -85,6 +90,8 @@ public class TraitManager : BaseMonoBehaviour {
     //In order to save some memory all instanced traits that do not have unique data must be stored here, they are identified by isSingleton
     //If isSingleton returns true, they are stored here, and will share only 1 instance of the trait class
     private Dictionary<string, Trait> instancedSingletonTraits;
+
+    //private Dictionary<string, Status> instancedStackingStatuses;
 
     #region getters/setters
     public Dictionary<string, Trait> allTraits => _allTraits;
@@ -97,6 +104,7 @@ public class TraitManager : BaseMonoBehaviour {
 
     public void Initialize() {
         instancedSingletonTraits = new Dictionary<string, Trait>();
+        //instancedStackingStatuses = new Dictionary<string, Status>();
         _allTraits = new Dictionary<string, Trait>();
         unhiddenTraitsNotStatuses = new List<string>();
 
@@ -205,9 +213,18 @@ public class TraitManager : BaseMonoBehaviour {
             if (trait.isSingleton) {
                 instancedSingletonTraits.Add(traitName, trait);
             }
+            //if(trait is Status status && status.isStacking && !instancedStackingStatuses.ContainsKey(traitName)) {
+            //    instancedStackingStatuses.Add(traitName, status);
+            //}
             trait.InitializeInstancedTrait();
             return trait;
         }
+    }
+    public Status GetInstancedStackingStatus(string p_statusName) {
+        //if(instancedStackingStatuses.ContainsKey(p_statusName)) {
+        //    return instancedStackingStatuses[p_statusName];
+        //}
+        return null;
     }
     public Trait LoadTrait(SaveDataTrait saveDataTrait) {
         string noSpacesTraitName = UtilityScripts.Utilities.RemoveAllWhiteSpace(saveDataTrait.name);
@@ -224,25 +241,6 @@ public class TraitManager : BaseMonoBehaviour {
         }
         trait.LoadFirstWaveInstancedTrait(saveDataTrait);
         return trait;
-    }
-    public List<Trait> GetAllTraitsOfType(TRAIT_TYPE type) {
-        List<Trait> traits = new List<Trait>();
-        foreach (Trait trait in _allTraits.Values) {
-            if(trait.type == type) {
-                traits.Add(trait);
-            }
-        }
-        return traits;
-    }
-    public List<string> GetAllBuffTraitsThatCharacterCanHave(Character character) {
-        List<string> allBuffs = new List<string>(buffTraitPool);
-        for (int i = 0; i < character.traitContainer.traits.Count; i++) {
-            Trait trait = character.traitContainer.traits[i];
-            if (trait.mutuallyExclusive != null) {
-                allBuffs = CollectionUtilities.RemoveElements(ref allBuffs, trait.mutuallyExclusive);
-            }
-        }
-        return allBuffs;
     }
     /// <summary>
     /// Utility function to determine if this character's flaws can still be activated
@@ -267,9 +265,10 @@ public class TraitManager : BaseMonoBehaviour {
             //In the loop, override duration to zero so that it will not reset the trait's timer
             Trait duplicateTrait = null;
             for (int i = 0; i < numOfStacks; i++) {
-                to.traitContainer.AddTrait(to, trait.name, out duplicateTrait, characterResponsible: trait.responsibleCharacter, gainedFromDoing: trait.gainedFromDoing, overrideDuration: 0, bypassElementalChance: true);
+                to.traitContainer.AddTrait(to, trait.name, out duplicateTrait, characterResponsible: trait.responsibleCharacter, overrideDuration: 0, bypassElementalChance: true);
+                to.traitContainer.GetTraitOrStatus<Trait>(trait.name)?.SetGainedFromDoingAction(trait.gainedFromDoingType, trait.isGainedFromDoingStealth);
             }
-            if(duplicateTrait != null) {
+            if (duplicateTrait != null) {
                 if(duplicateTrait is Status statusCopy && trait is Status statusToCopy) {
                     statusCopy.OnCopyStatus(statusToCopy, from, to);
                 }
@@ -331,13 +330,13 @@ public class TraitManager : BaseMonoBehaviour {
     private string[] GetTraitPoolForWorld() {
         if (WorldConfigManager.Instance.isTutorialWorld) {
             return new[] { "Inspiring", "Diplomatic", "Fast", "Persuasive", "Optimist", "Robust", "Suspicious", "Vigilant", 
-                "Fireproof", "Music Lover", "Authoritative", "Nocturnal", "Lustful", "Chaste", "Music Hater", "Alcoholic",
+                "Fire Resistant", "Music Lover", "Authoritative", "Nocturnal", "Lustful", "Chaste", "Music Hater", "Alcoholic",
                 "Accident Prone", "Evil", "Treacherous", "Lazy", "Pessimist", "Unattractive", "Hothead", "Coward", "Hemophobic", "Hemophiliac",
                 "Lycanphobic", "Lycanphiliac", "Ruthless"
             };
         } else {
             return new[] { "Inspiring", "Blessed", "Diplomatic", "Fast", "Persuasive", "Optimist", "Robust", "Suspicious", "Vigilant", 
-                "Fireproof", "Music Lover", "Authoritative", "Nocturnal", "Lustful", "Chaste", "Music Hater", "Alcoholic",
+                "Fire Resistant", "Music Lover", "Authoritative", "Nocturnal", "Lustful", "Chaste", "Music Hater", "Alcoholic",
                 "Accident Prone", "Evil", "Treacherous", "Lazy", "Pessimist", "Unattractive", "Hothead", "Coward", "Hemophobic", "Hemophiliac",
                 "Lycanphobic", "Lycanphiliac", "Ruthless"
             };;

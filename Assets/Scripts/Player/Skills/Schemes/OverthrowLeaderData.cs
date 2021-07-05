@@ -20,11 +20,35 @@ public class OverthrowLeaderData : SchemeData {
             UIManager.Instance.ShowSchemeUI(targetCharacter, null, this);
         }
     }
-    public override bool IsValid(IPlayerActionTarget target) {
-        if (target is Character character) {
-            return character.faction != null && character.faction.leader != null && character.faction.leader is Character && character.faction.successionComponent.IsSuccessor(character);
+    //public override bool IsValid(IPlayerActionTarget target) {
+    //    if (target is Character character) {
+    //        bool isValid = base.IsValid(target);
+    //        return isValid && character.faction != null && character.faction.leader != null && character.faction.leader is Character && character.faction.successionComponent.IsSuccessor(character);
+    //    }
+    //    return false;
+    //}
+    public override bool CanPerformAbilityTowards(Character targetCharacter) {
+        bool canPerform = base.CanPerformAbilityTowards(targetCharacter);
+        if (canPerform) {
+            if (targetCharacter.faction == null || targetCharacter.faction.leader == null || !(targetCharacter.faction.leader is Character)) {
+                return false;
+            }
+            if (!targetCharacter.faction.successionComponent.IsSuccessor(targetCharacter)) {
+                return false;
+            }
+            return true;
         }
-        return false;
+        return canPerform;
+    }
+    public override string GetReasonsWhyCannotPerformAbilityTowards(Character targetCharacter) {
+        string reasons = base.GetReasonsWhyCannotPerformAbilityTowards(targetCharacter);
+        if (targetCharacter.faction == null || targetCharacter.faction.leader == null || !(targetCharacter.faction.leader is Character)) {
+            reasons += "Target has no faction or has no faction leader.";
+        }
+        if (!targetCharacter.faction.successionComponent.IsSuccessor(targetCharacter)) {
+            reasons += "Target is not a successor.";
+        }
+        return reasons;
     }
     protected override void OnSuccessScheme(Character character, object target) {
         base.OnSuccessScheme(character, target);

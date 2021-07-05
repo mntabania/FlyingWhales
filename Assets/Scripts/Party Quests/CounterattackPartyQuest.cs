@@ -4,14 +4,18 @@ using UnityEngine;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
 using Traits;
+using UtilityScripts;
 
 public class CounterattackPartyQuest : PartyQuest {
 
     public LocationStructure targetStructure { get; private set; }
+    public int currentChanceToEndQuest { get; private set; }
 
     #region getters
     public override IPartyQuestTarget target => targetStructure;
     public override System.Type serializedData => typeof(SaveDataCounterattackPartyQuest);
+    public override bool waitingToWorkingStateImmediately => true;
+    public override bool shouldAssignedPartyRetreatUponKnockoutOrKill => true;
     #endregion
 
     public CounterattackPartyQuest() : base(PARTY_QUEST_TYPE.Counterattack) {
@@ -24,9 +28,22 @@ public class CounterattackPartyQuest : PartyQuest {
     }
 
     #region Overrides
-    //public override bool IsAllowedToJoin(Character character) {
-    //    return ((character.characterClass.IsCombatant() && character.characterClass.identifier == "Normal") || character.characterClass.className == "Noble") && !character.isAlliedWithPlayer;
-    //}
+    public override void OnAcceptQuest(Party partyThatAcceptedQuest) {
+        base.OnAcceptQuest(partyThatAcceptedQuest);
+        Messenger.AddListener<Character, Trait>(CharacterSignals.CHARACTER_TRAIT_ADDED, OnCharacterGainedTrait);
+        Messenger.AddListener<LocationStructure, Character>(StructureSignals.STRUCTURE_DESTROYED_BY, OnStructureDestroyedBy);
+    }
+    public override void OnAcceptQuestFromSaveData(Party partyThatAcceptedQuest) {
+        base.OnAcceptQuestFromSaveData(partyThatAcceptedQuest);
+        Messenger.AddListener<Character, Trait>(CharacterSignals.CHARACTER_TRAIT_ADDED, OnCharacterGainedTrait);
+        Messenger.AddListener<LocationStructure, Character>(StructureSignals.STRUCTURE_DESTROYED_BY, OnStructureDestroyedBy);
+    }
+    protected override void OnEndQuest() {
+        base.OnEndQuest();
+        RemoveAllCombatToDemonicStructure();
+        Messenger.RemoveListener<Character, Trait>(CharacterSignals.CHARACTER_TRAIT_ADDED, OnCharacterGainedTrait);
+        Messenger.RemoveListener<LocationStructure, Character>(StructureSignals.STRUCTURE_DESTROYED_BY, OnStructureDestroyedBy);
+    }
     public override void OnWaitTimeOver() {
         base.OnWaitTimeOver();
         if (targetStructure is DemonicStructure demonicStructure) {
@@ -68,17 +85,11 @@ public class CounterattackPartyQuest : PartyQuest {
         base.OnRemoveMemberThatJoinedQuest(character);
         character.traitContainer.RemoveTrait(character, "Fervor");
     }
-    //protected override void OnEndQuest() {
-    //    base.OnEndQuest();
-    //    for (int i = 0; i < assignedParty.membersThatJoinedQuest.Count; i++) {
-    //        Character member = assignedParty.membersThatJoinedQuest[i];
-    //        member.traitContainer.RemoveTrait(member, "Fervor");
-    //    }
-    //}
     public override void OnAssignedPartySwitchedState(PARTY_STATE fromState, PARTY_STATE toState) {
         base.OnAssignedPartySwitchedState(fromState, toState);
         if (toState == PARTY_STATE.Working) {
-            CultistBetrayalProcessing();
+            bool hasEndQuest = false;
+            CultistBetrayalProcessing(ref hasEndQuest);
         }
     }
     #endregion
@@ -92,50 +103,75 @@ public class CounterattackPartyQuest : PartyQuest {
             //}
         }
     }
-    //private void SetWaitingArea() {
-    //    List<HexTile> hexes = targetStructure.occupiedHexTile.hexTileOwner.ValidTilesNoSettlementWithinRegion;
-    //    if(hexes != null && hexes.Count > 0) {
-    //        waitingArea = UtilityScripts.CollectionUtilities.GetRandomElement(hexes);
-    //    } else {
-    //        waitingArea = targetStructure.settlementLocation.GetAPlainAdjacentHextile();
-    //    }
-    //}
-    private void CultistBetrayalProcessing() {
-        if(assignedParty != null) {
-            List<Character> membersAlliedWithPlayer = ObjectPoolManager.Instance.CreateNewCharactersList();
-            for (int i = 0; i < assignedParty.membersThatJoinedQuest.Count; i++) {
-                Character member = assignedParty.membersThatJoinedQuest[i];
-                if (member.isAlliedWithPlayer) {
-                    membersAlliedWithPlayer.Add(member);
-                }
-            }
-            for (int i = 0; i < membersAlliedWithPlayer.Count; i++) {
-                Character memberAlliedWithPlayer = membersAlliedWithPlayer[i];
-                MembersAreBetrayedByThis(memberAlliedWithPlayer);
-                memberAlliedWithPlayer.interruptComponent.TriggerInterrupt(INTERRUPT.Leave_Party, memberAlliedWithPlayer, "Abandoned party quest");
-            }
-            ObjectPoolManager.Instance.ReturnCharactersListToPool(membersAlliedWithPlayer);
-        }
-    }
-    private void MembersAreBetrayedByThis(Character p_betrayer) {
+    private void RemoveAllCombatToDemonicStructure() {
         if (assignedParty != null) {
             for (int i = 0; i < assignedParty.membersThatJoinedQuest.Count; i++) {
                 Character member = assignedParty.membersThatJoinedQuest[i];
-                if (member != p_betrayer && !member.isAlliedWithPlayer) {
-                    CharacterManager.Instance.TriggerEmotion(EMOTION.Betrayal, member, p_betrayer, REACTION_STATUS.WITNESSED);
-                    // Betrayed betrayed = member.traitContainer.GetTraitOrStatus<Betrayed>("Betrayed");
-                    // if(betrayed != null) {
-                    //     betrayed.AddCharacterResponsibleForTrait(character);
-                    // } else {
-                    //     member.traitContainer.AddTrait(member, "Betrayed", characterResponsible: character);
-                    // }
+                if (member.combatComponent.isInCombat) {
+                    bool hasRemovedHostile = false;
+                    for (int j = 0; j < member.combatComponent.hostilesInRange.Count; j++) {
+                        IPointOfInterest hostile = member.combatComponent.hostilesInRange[j];
+                        if (hostile is TileObject obj && obj.isDamageContributorToStructure && obj.structureLocation.structureType.IsPlayerStructure()) {
+                            if (member.combatComponent.RemoveHostileInRange(hostile, false)) {
+                                hasRemovedHostile = true;
+                                j--;
+                            }
+                        }
+                    }
+                    if (hasRemovedHostile) {
+                        member.combatComponent.SetWillProcessCombat(true);
+                    }
                 }
             }
         }
     }
     #endregion
 
-    #region Loading
+    #region Listeners
+    private void OnCharacterGainedTrait(Character character, Trait trait) {
+        if (assignedParty != null && trait.name == "Unconscious") {
+            if(character.partyComponent.IsAMemberOfParty(assignedParty) && character.partyComponent.isMemberThatJoinedQuest) {
+                AdjustChanceToEndQuest(20);
+            }
+        }
+    }
+    public override void OnCharacterDeath(Character p_character) {
+        base.OnCharacterDeath(p_character);
+        if (p_character.partyComponent.IsAMemberOfParty(assignedParty) && p_character.partyComponent.isMemberThatJoinedQuest) {
+            AdjustChanceToEndQuest(20);
+        } else if (p_character.faction != null && p_character.faction.isPlayerFaction && assignedParty != null) {
+            Dead dead = p_character.traitContainer.GetTraitOrStatus<Dead>("Dead");
+            if (dead != null && dead.responsibleCharacter != null) {
+                if (dead.responsibleCharacter.partyComponent.IsAMemberOfParty(assignedParty)) {
+                    if (dead.responsibleCharacter.partyComponent.isMemberThatJoinedQuest) {
+                        AdjustChanceToEndQuest(3);
+                    }
+                }
+            }
+        }
+    }
+    private void OnStructureDestroyedBy(LocationStructure p_structure, Character p_responsibleCharacter) {
+        if (assignedParty != null && p_structure.structureType.IsPlayerStructure()) {
+            if (p_responsibleCharacter.partyComponent.IsAMemberOfParty(assignedParty) && p_responsibleCharacter.partyComponent.isMemberThatJoinedQuest) {
+                AdjustChanceToEndQuest(30);
+            }
+        }
+    }
+    #endregion
+
+    #region Chance to End Quest
+    public void AdjustChanceToEndQuest(int amount) {
+        currentChanceToEndQuest += amount;
+#if DEBUG_LOG
+        Debug.Log("CURRENT CHANCE TO END COUNTER ATTACK QUEST OF " + assignedParty.name + " IS " + currentChanceToEndQuest);
+#endif
+        if (GameUtilities.RollChance(currentChanceToEndQuest) && assignedParty != null) {
+            EndQuest("Finished quest");
+        }
+    }
+#endregion
+
+#region Loading
     public override void LoadReferences(SaveDataPartyQuest data) {
         base.LoadReferences(data);
         if(data is SaveDataCounterattackPartyQuest subData) {
@@ -144,14 +180,14 @@ public class CounterattackPartyQuest : PartyQuest {
             }
         }
     }
-    #endregion
+#endregion
 }
 
 [System.Serializable]
 public class SaveDataCounterattackPartyQuest : SaveDataPartyQuest {
     public string targetStructure;
 
-    #region Overrides
+#region Overrides
     public override void Save(PartyQuest data) {
         base.Save(data);
         if(data is CounterattackPartyQuest subData) {
@@ -160,5 +196,5 @@ public class SaveDataCounterattackPartyQuest : SaveDataPartyQuest {
             }
         }
     }
-    #endregion
+#endregion
 }

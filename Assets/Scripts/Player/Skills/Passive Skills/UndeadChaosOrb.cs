@@ -2,7 +2,8 @@
 using UtilityScripts;
 
 public class UndeadChaosOrb : PassiveSkill {
-    public override string name => "Mana Orbs on Undead Death";
+    public override string name => "Mana Orbs from Undead Death";
+    public override string description => "Mana Orbs on Undead Death";
     public override PASSIVE_SKILL passiveSkill => PASSIVE_SKILL.Undead_Chaos_Orb;
     
     public override void ActivateSkill() {

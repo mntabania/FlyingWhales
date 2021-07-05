@@ -5,69 +5,71 @@ using Locations.Settlements;
 using UnityEngine;
 
 public class OreVein : TileObject {
-    public override StructureConnector structureConnector {
-        get {
-            if (_oreVeinGameObject != null) {
-                return _oreVeinGameObject.structureConnector;
-            }
-            return null;
-        }
-    }
-    private OreVeinGameObject _oreVeinGameObject;
-    
+    // public StructureConnector structureConnector {
+    //     get {
+    //         if (_oreVeinGameObject != null) {
+    //             return _oreVeinGameObject.structureConnector;
+    //         }
+    //         return null;
+    //     }
+    // }
+    // public BaseSettlement parentSettlement { get; private set; }
+    // private OreVeinGameObject _oreVeinGameObject;
     public OreVein() {
         Initialize(TILE_OBJECT_TYPE.ORE_VEIN);
-        BaseSettlement.onSettlementBuilt += UpdateSettlementResourcesParent;
+        // BaseSettlement.onSettlementBuilt += UpdateSettlementResourcesParent;
     }
-    public OreVein(SaveDataTileObject data) { }
-    
-    public override void UpdateSettlementResourcesParent() {
-        if (gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
-            if (gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.settlementOnTile != null) {
-                gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.settlementOnTile.SettlementResources?.AddToListbaseOnRequirement(SettlementResources.StructureRequirement.ORE_VEIN, this);
-            }
-            gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.AllNeighbours.ForEach((eachNeighboringHexTile) => {
-                if (eachNeighboringHexTile.settlementOnTile != null) {
-                    eachNeighboringHexTile.settlementOnTile.SettlementResources?.AddToListbaseOnRequirement(SettlementResources.StructureRequirement.ORE_VEIN, this);
-                    parentSettlement = eachNeighboringHexTile.settlementOnTile;
-                }
-            });
-        }
-    }
-
-    public override void RemoveFromSettlementResourcesParent() {
-        if (parentSettlement != null && parentSettlement.SettlementResources != null) {
-            if (parentSettlement.SettlementResources.oreVeins.Remove(this)) {
-                parentSettlement = null;
-            }
-        }
-    }
+    public OreVein(SaveDataTileObject data) : base(data) { }
+    // protected override void UpdateSettlementResourcesParent() {
+    //     if (gridTileLocation.area.settlementOnArea != null) {
+    //         gridTileLocation.area.settlementOnArea.SettlementResources?.AddToListBasedOnRequirement(SettlementResources.StructureRequirement.MINE_SHACK_SPOT, this);
+    //     }
+    //     gridTileLocation.area.neighbourComponent.neighbours.ForEach((eachNeighbor) => {
+    //         if (eachNeighbor.settlementOnArea != null) {
+    //             eachNeighbor.settlementOnArea.SettlementResources?.AddToListBasedOnRequirement(SettlementResources.StructureRequirement.MINE_SHACK_SPOT, this);
+    //             parentSettlement = eachNeighbor.settlementOnArea;
+    //         }
+    //     });
+    // }
+    // protected override void RemoveFromSettlementResourcesParent() {
+    //     if (parentSettlement != null && parentSettlement.SettlementResources != null) {
+    //         if (parentSettlement.SettlementResources.mineShackSpots.Remove(this)) {
+    //             parentSettlement = null;
+    //         }
+    //     }
+    // }
     
     #region Overrides
-    protected override void CreateMapObjectVisual() {
-        base.CreateMapObjectVisual();
-        _oreVeinGameObject = mapVisual as OreVeinGameObject;
-    }
-    public override void DestroyMapVisualGameObject() {
-        base.DestroyMapVisualGameObject();
-        _oreVeinGameObject = null;
-    }
+    // protected override void CreateMapObjectVisual() {
+    //     base.CreateMapObjectVisual();
+    //     _oreVeinGameObject = mapVisual as OreVeinGameObject;
+    // }
+    // public override void DestroyMapVisualGameObject() {
+    //     base.DestroyMapVisualGameObject();
+    //     _oreVeinGameObject = null;
+    // }
     public override bool CanBeAffectedByElementalStatus(string traitName) {
         return false;
     }
     public override void OnRemoveTileObject(Character removedBy, LocationGridTile removedFrom, bool removeTraits = true, bool destroyTileSlots = true) {
-        removedFrom.parentMap.structureTilemap.SetTile(removedFrom.localPlace, null);
+        removedFrom.SetWallTilemapTileAsset(null);
+        //removedFrom.parentMap.structureTilemap.SetTile(removedFrom.localPlace, null);
         removedFrom.SetTileType(LocationGridTile.Tile_Type.Empty);
         mapVisual.DestroyExistingGUS();
         base.OnRemoveTileObject(removedBy, removedFrom, removeTraits, destroyTileSlots);
     }
     protected override void OnPlaceTileObjectAtTile(LocationGridTile tile) {
-        tile.parentMap.structureTilemap.SetTile(tile.localPlace, InnerMapManager.Instance.assetManager.GetWallAssetBasedOnWallType(WALL_TYPE.Stone));
+        tile.SetWallTilemapTileAsset(InnerMapManager.Instance.assetManager.GetWallAssetBasedOnWallType(WALL_TYPE.Stone));
+        //tile.parentMap.structureTilemap.SetTile(tile.localPlace, InnerMapManager.Instance.assetManager.GetWallAssetBasedOnWallType(WALL_TYPE.Stone));
         // tile.parentMap.structureTilemap.SetColor(tile.localPlace, Color.cyan);
         tile.SetTileType(LocationGridTile.Tile_Type.Wall);
         Vector2 size = new Vector2(1.15f, 1.15f);
         mapVisual.InitializeGUS(Vector2.zero, size, tile);
         mapVisual.UpdateTileObjectVisual(this);
+
+        // if (structureConnector != null) {
+        //     structureConnector.OnPlaceConnector(tile.parentMap);    
+        // }
 
         base.OnPlaceTileObjectAtTile(tile);
     }
@@ -77,14 +79,14 @@ public class OreVein : TileObject {
         RemovePlayerAction(PLAYER_SKILL_TYPE.POISON);
         RemovePlayerAction(PLAYER_SKILL_TYPE.IGNITE);
     }
-    public override void OnPlacePOI() {
-        base.OnPlacePOI();
-        UpdateSettlementResourcesParent();
-    }
-    public override void OnDestroyPOI() {
-        base.OnDestroyPOI();
-        BaseSettlement.onSettlementBuilt -= UpdateSettlementResourcesParent;
-    }
+    // public override void OnPlacePOI() {
+    //     base.OnPlacePOI();
+    //     UpdateSettlementResourcesParent();
+    // }
+    // public override void OnDestroyPOI() {
+    //     base.OnDestroyPOI();
+    //     BaseSettlement.onSettlementBuilt -= UpdateSettlementResourcesParent;
+    // }
     public override bool IsUnpassable() {
         return true;
     }

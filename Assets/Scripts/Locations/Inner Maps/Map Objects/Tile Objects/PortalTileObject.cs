@@ -13,12 +13,20 @@ public class PortalTileObject : TileObject {
     }
     public PortalTileObject() {
         Initialize(TILE_OBJECT_TYPE.PORTAL_TILE_OBJECT);
+        RemoveAdvertisedAction(INTERACTION_TYPE.STEAL_ANYTHING);
         traitContainer.AddTrait(this, "Immovable");
     }
-    public PortalTileObject(SaveDataTileObject data) {
+    public PortalTileObject(SaveDataTileObject data) : base(data) {
         
     }
-    
+    public override bool CanBeSelected() {
+        return true;
+    }
+    public override void LeftSelectAction() {
+        UIManager.Instance.ShowStructureInfo(gridTileLocation.structure);
+    }
+    public override void RightSelectAction() { }
+    public override void MiddleSelectAction() { }
     public override void ConstructDefaultActions() {
         actions = new List<PLAYER_SKILL_TYPE>();
         //portal has no actions by default

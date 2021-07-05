@@ -1,0 +1,43 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4fe081999e2948579e671f1ff7494f4c, type: 3}
+  m_Name: Barracks Data
+  m_EditorClassIdentifier: 
+  _structureSprite: {fileID: 21300000, guid: 1f3c2670e05cb234982eca885421ecb9, type: 3}
+  _itemGenerationSetting: {fileID: 0}
+  structurePrefabs:
+    m_keys:
+    - resource: 2
+      structureType: 13
+      hasValue: 1
+      isCorrupted: 1
+    - resource: 2
+      structureType: 13
+      hasValue: 1
+      isCorrupted: 0
+    - resource: 1
+      structureType: 13
+      hasValue: 1
+      isCorrupted: 0
+    - resource: 1
+      structureType: 13
+      hasValue: 1
+      isCorrupted: 1
+    m_values:
+    - data:
+      - {fileID: 7404522607788643372, guid: c50100cbf56a3a84e8c9f41e9694653b, type: 3}
+    - data:
+      - {fileID: 7404522607788643372, guid: fb8ac31e0cf6e144d97e95df1e2cd86a, type: 3}
+    - data:
+      - {fileID: 4838803719578303313, guid: 6818640eea9792a46aaa9372866bd49d, type: 3}
+    - data:
+      - {fileID: 7404522607788643372, guid: e9cfd4191aabb144fa25b245da9fe995, type: 3}

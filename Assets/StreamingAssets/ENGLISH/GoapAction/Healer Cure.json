@@ -1,0 +1,1 @@
+{"items":[{"key":"healer cure success_description","value":"%00@ healed %10@."},{"key":"healer cure fail_description","value":"%00@ failed to heal %10@."},{"key":"target_missing_description","value":"%00@ failed to heal %10@."},{"key":"thought_bubble","value":"%00@ is healing %10@."},{"key":"thought_bubble_m","value":"%00@ is going to heal %10@."}]}

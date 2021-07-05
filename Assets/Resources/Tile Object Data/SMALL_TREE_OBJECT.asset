@@ -1,0 +1,55 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb8e6d0a90de4764a5b7b75189e1ffa2, type: 3}
+  m_Name: SMALL_TREE_OBJECT
+  m_EditorClassIdentifier: 
+  defaultTileMapAsset: {fileID: 11400000, guid: 2e58fd5b2fae6c04d9113fc8182a44ae,
+    type: 2}
+  defaultSprite: {fileID: 21300000, guid: e298e16d6e4a4a345816aff73283be2a, type: 3}
+  tileObjectAssets:
+    biomeAssets:
+      m_keys: 060000000100000003000000
+      m_values:
+      - activeTile:
+        - {fileID: 21300000, guid: e298e16d6e4a4a345816aff73283be2a, type: 3}
+        - {fileID: 21300000, guid: 5d9748d7deff06443b2a493abd02760d, type: 3}
+        inactiveTile: []
+        tileBase:
+        - {fileID: 11400000, guid: 2e58fd5b2fae6c04d9113fc8182a44ae, type: 2}
+      - activeTile:
+        - {fileID: 21300000, guid: f7c768c5d5971b245bf59d7a3e1d15b7, type: 3}
+        - {fileID: 21300000, guid: 3df2cb8251a3bf34086a03df1ee59150, type: 3}
+        - {fileID: 21300000, guid: 215b5e17bbab80a459e75c53fa62b100, type: 3}
+        - {fileID: 21300000, guid: bff0089a70000954d89e4d8ec08a0d3b, type: 3}
+        inactiveTile: []
+        tileBase:
+        - {fileID: 11400000, guid: c6324ccf6a7362743a01bded88127067, type: 2}
+        - {fileID: 11400000, guid: e50e35c0373e9d4428df8d8f8f8c2a20, type: 2}
+        - {fileID: 11400000, guid: 96f9f7093374b1a46806f2668ebca8f1, type: 2}
+        - {fileID: 11400000, guid: 62cb6cd15e5bafe4b96d93fa7766c51a, type: 2}
+      - activeTile:
+        - {fileID: 21300000, guid: c46a7ee8f72f96a45930bbce3dfb5d2e, type: 3}
+        - {fileID: 21300000, guid: 47ee64a4edc293946bf7be6de8a89fac, type: 3}
+        inactiveTile: []
+        tileBase:
+        - {fileID: 11400000, guid: 4c3f23e18465fc642aeb67b855378d38, type: 2}
+        - {fileID: 11400000, guid: c19e052cad29465459da3487a1ff9ed5, type: 2}
+  corruptedTileObjectAssets:
+    biomeAssets:
+      m_keys: 06000000
+      m_values:
+      - activeTile:
+        - {fileID: 21300000, guid: f1a8a8c7d4e3844499cab5fc440effad, type: 3}
+        - {fileID: 21300000, guid: cef00f6294c550a4aa9ca7f1c95721a2, type: 3}
+        - {fileID: 21300000, guid: 0ea8ef0a2cbd1ef45875aa7603a88a9b, type: 3}
+        inactiveTile: []
+        tileBase: []

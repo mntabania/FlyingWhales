@@ -25,12 +25,14 @@ public class ShareInformation : GoapAction {
         SetState("Share Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
+#if DEBUG_LOG
         string costLog = $"\n{name} {target.nameWithID}: +10(Constant)";
         actor.logComponent.AppendCostLog(costLog);
+#endif
         return 10;
     }
-    public override void AddFillersToLog(ref Log log, ActualGoapNode node) {
-        base.AddFillersToLog(ref log, node);
+    public override void AddFillersToLog(Log log, ActualGoapNode node) {
+        base.AddFillersToLog(log, node);
         Character actor = node.actor;
         IPointOfInterest poiTarget = node.poiTarget;
 
@@ -99,8 +101,8 @@ public class ShareInformation : GoapAction {
         }
         return response;
     }
-    public override void PopulateReactionsToActor(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
-        base.PopulateReactionsToActor(reactions, actor, target, witness, node, status);
+    public override void PopulateEmotionReactionsToActor(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
+        base.PopulateEmotionReactionsToActor(reactions, actor, target, witness, node, status);
 
         OtherData[] otherData = node.otherData;
         IReactable reactable = otherData[0].obj as IReactable;
@@ -157,9 +159,9 @@ public class ShareInformation : GoapAction {
     public override CRIME_TYPE GetCrimeType(Character actor, IPointOfInterest target, ActualGoapNode crime) {
         return CRIME_TYPE.Rumormongering;
     }
-    #endregion
+#endregion
 
-    #region State Effects
+#region State Effects
     public void AfterShareSuccess(ActualGoapNode goapNode) {
         OtherData[] otherData = goapNode.otherData;
         IReactable reactable = otherData[0].obj as IReactable;
@@ -178,9 +180,11 @@ public class ShareInformation : GoapAction {
         }
 
         if (actor != recipient) {
+#if DEBUG_LOG
             string weightLog = "Share Information of " + sharer.name + " to " + recipient.name + ": " + reactable.name + " with actor " + actor.name + " and target " + target.name;
             weightLog += "\nBase Belief Weight: 50";
             weightLog += "\nBase Disbelief Weight: 50";
+#endif
 
             WeightedDictionary<string> weights = new WeightedDictionary<string>();
             int beliefWeight = 50;
@@ -194,63 +198,86 @@ public class ShareInformation : GoapAction {
 
             if ((reactable is Rumor || reactable is Assumption) && recipient.traitContainer.HasTrait("Suspicious")) {
                 disbeliefWeight += 2000;
+#if DEBUG_LOG
                 weightLog += "\nRecipient is Suspicious: Disbelief + 2000";
+#endif
             } else if (reactable is ActualGoapNode || reactable is InterruptHolder) {
                 beliefWeight += 100;
+#if DEBUG_LOG
                 weightLog += "\nIf information is a real Action or Interrupt: Believe Weight +100";
+#endif
             }
             if (opinionLabelOfRecipientToSharer == RelationshipManager.Friend) {
                 beliefWeight += 100;
+#if DEBUG_LOG
                 weightLog += "\nSource is Friend: Belief + 100";
+#endif
             } else if (opinionLabelOfRecipientToSharer == RelationshipManager.Close_Friend) {
                 beliefWeight += 250;
+#if DEBUG_LOG
                 weightLog += "\nSource is Close Friend: Belief + 250";
+#endif
             } else if (opinionLabelOfRecipientToSharer == RelationshipManager.Enemy) {
                 disbeliefWeight += 100;
+#if DEBUG_LOG
                 weightLog += "\nSource is Enemy: Disbelief + 100";
+#endif
             } else if (opinionLabelOfRecipientToSharer == RelationshipManager.Rival) {
                 disbeliefWeight += 250;
+#if DEBUG_LOG
                 weightLog += "\nSource is Rival: Disbelief + 250";
+#endif
             }
 
             REACTABLE_EFFECT reactableEffect = reactable.GetReactableEffect(recipient);
             if (reactableEffect == REACTABLE_EFFECT.Positive) {
                 if (opinionLabelOfRecipientToActor == RelationshipManager.Friend || opinionLabelOfRecipientToActor == RelationshipManager.Close_Friend) {
                     beliefWeight += 500;
+#if DEBUG_LOG
                     weightLog += "\nActor is Friend/Close Friend: Belief + 500";
+#endif
                 } else if (opinionLabelOfRecipientToActor == RelationshipManager.Enemy) {
                     disbeliefWeight += 250;
+#if DEBUG_LOG
                     weightLog += "\nSource is Enemy: Disbelief + 250";
+#endif
                 } else if (opinionLabelOfRecipientToActor == RelationshipManager.Rival) {
                     disbeliefWeight += 500;
+#if DEBUG_LOG
                     weightLog += "\nSource is Rival: Disbelief + 500";
+#endif
                 }
             } else if (reactableEffect == REACTABLE_EFFECT.Negative) {
                 if (opinionLabelOfRecipientToActor == RelationshipManager.Enemy || opinionLabelOfRecipientToActor == RelationshipManager.Rival) {
                     beliefWeight += 250;
+#if DEBUG_LOG
                     weightLog += "\nActor is Enemy/Rival: Belief + 250";
+#endif
                 } else if (opinionLabelOfRecipientToActor == RelationshipManager.Friend) {
                     disbeliefWeight += 250;
+#if DEBUG_LOG
                     weightLog += "\nSource is Friend: Disbelief + 250";
+#endif
                 } else if (opinionLabelOfRecipientToActor == RelationshipManager.Close_Friend) {
                     disbeliefWeight += 500;
+#if DEBUG_LOG
                     weightLog += "\nSource is Close Friend: Disbelief + 500";
+#endif
                 }
             }
+#if DEBUG_LOG
             weightLog += "\nTotal Belief Weight: " + beliefWeight;
             weightLog += "\nTotal Disbelief Weight: " + disbeliefWeight;
+#endif
 
             weights.AddElement("Belief", beliefWeight);
             weights.AddElement("Disbelief", disbeliefWeight);
 
             string result = weights.PickRandomElementGivenWeights();
+#if DEBUG_LOG
             weightLog += "\nResult: " + result;
             sharer.logComponent.PrintLogIfActive(weightLog);
-
-            //recipient.reactionComponent.ReactTo(reactable, REACTION_STATUS.INFORMED, false);
-
-            //CharacterManager.Instance.TriggerEmotion(EMOTION.Disappointment, recipient, sharer, REACTION_STATUS.INFORMED, reactable as ActualGoapNode);
-            //recipient.jobComponent.CreateConfirmRumorJob(reactable.actor, shareActionItself);
+#endif
 
             if (result == "Belief") {
                 //Recipient believes
@@ -266,19 +293,12 @@ public class ShareInformation : GoapAction {
             believeLog.AddToFillers(sharer, sharer.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             believeLog.AddToFillers(recipient, recipient.name, LOG_IDENTIFIER.TARGET_CHARACTER);
             believeLog.AddToFillers(null, reactable.classificationName.ToLower(), LOG_IDENTIFIER.STRING_1);
-            believeLog.AddLogToDatabase();
+            believeLog.AddLogToDatabase(true);
         }
-        //if (reactable is ActualGoapNode || reactable is InterruptHolder) {
-        //    if (reactable.actor != recipient) {
-        //        recipient.reactionComponent.ReactTo(reactable, REACTION_STATUS.INFORMED, false);
-        //    }
-        //} else if (reactable is Rumor) {
-
-        //}
     }
-    #endregion
+#endregion
 
-    #region Requirements
+#region Requirements
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, OtherData[] otherData, JobQueueItem job) {
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData, job);
         if (satisfied) {
@@ -287,5 +307,5 @@ public class ShareInformation : GoapAction {
         }
         return false;
     }
-    #endregion
+#endregion
 }

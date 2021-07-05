@@ -4,7 +4,8 @@ using System.Collections.Generic;
 
 public class WarriorAngel : Summon {
     public override string raceClassName => $"Warrior Angel";
-    
+    public override COMBAT_MODE defaultCombatMode => COMBAT_MODE.Defend;
+
     public WarriorAngel() : base(SUMMON_TYPE.Warrior_Angel, "Warrior Angel", RACE.ANGEL, UtilityScripts.Utilities.GetRandomGender()) { }
     public WarriorAngel(string className) : base(SUMMON_TYPE.Warrior_Angel, className, RACE.ANGEL, UtilityScripts.Utilities.GetRandomGender()) { }
     public WarriorAngel(SaveDataSummon data) : base(data) { }
@@ -21,6 +22,7 @@ public class WarriorAngel : Summon {
     }
     public override void Initialize() {
         base.Initialize();
+        movementComponent.SetToFlying();
         behaviourComponent.ChangeDefaultBehaviourSet(CharacterManager.Default_Angel_Behaviour);
     }
     #endregion  

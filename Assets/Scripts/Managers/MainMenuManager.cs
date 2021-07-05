@@ -6,6 +6,8 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using System.Linq;
 using BayatGames.SaveGameFree;
+using Object_Pools;
+using Ruinarch;
 using Settings;
 using TMPro;
 
@@ -42,11 +44,13 @@ public class MainMenuManager : MonoBehaviour {
         MainMenuUI.Instance.ShowMenuButtons();
         MainMenuUI.Instance.ShowEarlyAccessAnnouncement();
         LevelLoaderManager.Instance.SetLoadingState(false);
+        InputManager.Instance.SetCursorTo(InputManager.Cursor_Type.Default);
     }
     #endregion
 
     private void Initialize() {
         SaveManager.Instance.LoadSaveDataPlayer();
+        LogPool.WarmUp(10000);
     }
 
     public void LoadMainGameScene() {
@@ -62,7 +66,7 @@ public class MainMenuManager : MonoBehaviour {
     public void StartGame() {
         LevelLoaderManager.Instance.SetLoadingState(true);
         AudioManager.Instance.TransitionToLoading();
-        LevelLoaderManager.Instance.UpdateLoadingInfo("Initializing data...");
+        LevelLoaderManager.Instance.UpdateLoadingInfo("Initializing Data...");
         LevelLoaderManager.Instance.UpdateLoadingBar(0.1f, 3f);
         LoadMainGameScene();
     }

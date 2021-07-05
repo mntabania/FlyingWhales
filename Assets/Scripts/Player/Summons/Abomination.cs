@@ -16,8 +16,8 @@ public class Abomination : Summon {
     }
     public override void PerTickDuringMovement() {
         base.PerTickDuringMovement();
-        if (gridTileLocation?.objHere != null && Random.Range(0, 100) < 5) {
-            IPointOfInterest affectedObj = gridTileLocation.objHere;
+        if (gridTileLocation?.tileObjectComponent.objHere != null && Random.Range(0, 100) < 5) {
+            IPointOfInterest affectedObj = gridTileLocation.tileObjectComponent.objHere;
             affectedObj.traitContainer.AddTrait(affectedObj, "Abomination Germ", this);
         }
     }

@@ -61,7 +61,9 @@ namespace Traits {
                         owner.relationshipContainer.AdjustOpinion(owner, otherCharacter, "Anger", -30);    
                     }
                 }
-
+                if (character.HasAfflictedByPlayerWith("Hothead")) {
+                    DispenseChaosOrbsForAffliction(character, 1);
+                }
                 character.marker.visionCollider.VoteToUnFilterVision();
                 Messenger.AddListener(Signals.HOUR_STARTED, PerHourEffect);
             }
@@ -110,9 +112,13 @@ namespace Traits {
             //    }
             //} else 
             if (targetPOI is Character targetCharacter) {
+#if DEBUG_LOG
                 string log = $"{GameManager.Instance.TodayLogString()}{characterThatWillDoJob.name} saw {targetCharacter.name}";
+#endif
                 if (characterThatWillDoJob.moodComponent.moodState == MOOD_STATE.Critical) {
+#if DEBUG_LOG
                     log += "\n -In critical mood";
+#endif
                     int combatChance = 0;
                     if (characterThatWillDoJob.relationshipContainer.HasOpinionLabelWithCharacter(targetCharacter, RelationshipManager.Enemy)) {
                         combatChance = 10;
@@ -120,12 +126,16 @@ namespace Traits {
                         combatChance = 25;
                     }
                     int roll = Random.Range(0, 100);
+#if DEBUG_LOG
                     log += $"\nCombat chance is {combatChance.ToString()}. Roll is {roll.ToString()}";
+#endif
                     if (roll < combatChance) {
                         characterThatWillDoJob.combatComponent.Fight(targetCharacter, CombatManager.Anger, isLethal: true);    
                     }
                 } else if (characterThatWillDoJob.moodComponent.moodState == MOOD_STATE.Bad) {
+#if DEBUG_LOG
                     log += "\n -In low mood";
+#endif
                     int combatChance = 0;
                     if (characterThatWillDoJob.relationshipContainer.HasOpinionLabelWithCharacter(targetCharacter, RelationshipManager.Enemy)) {
                         if (targetCharacter.traitContainer.HasTrait("Unconscious") == false) {
@@ -137,22 +147,30 @@ namespace Traits {
                         }
                     }    
                     int roll = Random.Range(0, 100);
+#if DEBUG_LOG
                     log += $"\nCombat chance is {combatChance.ToString()}. Roll is {roll.ToString()}";
+#endif
                     if (roll < combatChance) {
                         characterThatWillDoJob.combatComponent.Fight(targetCharacter, CombatManager.Anger, isLethal: false);    
                     }
                 } else {
+#if DEBUG_LOG
                     log += "\n -In normal mood";
+#endif
                     int combatChance = 2;
                     int roll = Random.Range(0, 100);
+#if DEBUG_LOG
                     log += $"\nCombat chance is {combatChance.ToString()}. Roll is {roll.ToString()}";
+#endif
                     if (roll < combatChance && characterThatWillDoJob.relationshipContainer.IsEnemiesWith(targetCharacter)
                         && !targetCharacter.traitContainer.HasTrait("Unconscious")) {
                         characterThatWillDoJob.combatComponent.Fight(targetCharacter, CombatManager.Anger, isLethal: false);
                     }
                 }
-                
+
+#if DEBUG_LOG
                 Debug.Log(log);
+#endif
             }
             return base.OnSeePOI(targetPOI, characterThatWillDoJob);
         }
@@ -162,7 +180,7 @@ namespace Traits {
                 _responsibleCharactersStack.AddRange(status.responsibleCharactersStack);
             }
         }
-        #endregion
+#endregion
 
         private void PerHourEffect() {
             if (owner.limiterComponent.canPerform && owner.limiterComponent.canMove && !owner.isDead && owner != null 

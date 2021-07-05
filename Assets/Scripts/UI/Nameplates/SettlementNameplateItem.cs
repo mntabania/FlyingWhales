@@ -23,12 +23,10 @@ public class SettlementNameplateItem : NameplateItem<BaseSettlement> {
         base.SetObject(o);
         _settlement = o;
         UpdateVisuals();
-        
     }
     private void UpdateVisuals() {
-        if (_settlement.tiles.Count > 0) {
-            BaseLandmark firstLandmark = _settlement.tiles[0].landmarkOnTile;
-            portrait.SetPortrait(firstLandmark?.specificLandmarkType ?? LANDMARK_TYPE.HOUSES);    
+        if (_settlement.areas.Count > 0) {
+            portrait.SetPortrait(STRUCTURE_TYPE.CITY_CENTER);
         }
         mainLbl.text = _settlement.name;
         if (_settlement is NPCSettlement npcSettlement) {
@@ -36,7 +34,7 @@ public class SettlementNameplateItem : NameplateItem<BaseSettlement> {
                 subLbl.text = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(npcSettlement.settlementType.settlementType.ToString());    
             } else if (npcSettlement.structures.Count > 0) {
                 STRUCTURE_TYPE structureType = npcSettlement.structures.First().Key;
-                subLbl.text = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(structureType.ToString());
+                subLbl.text = structureType.StructureName();
             } else {
                 subLbl.text = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(_settlement.locationType.ToString());
             }
@@ -47,5 +45,9 @@ public class SettlementNameplateItem : NameplateItem<BaseSettlement> {
 
     private void OnRightClickItem(BaseSettlement p_settlement) {
         UIManager.Instance.ShowPlayerActionContextMenu(p_settlement, Input.mousePosition, true);
+    }
+    public override void Reset() {
+        base.Reset();
+        _settlement = null;
     }
 }

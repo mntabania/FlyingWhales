@@ -27,38 +27,40 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
     public bool isUnderSiege { get; private set; }
     public bool isPlagued { get; private set; }
     public bool hasTriedToStealCorpse { get; private set; }
-    public LocationStructure exterminateTargetStructure { get; private set; }
-
-    private SettlementResources m_settlementResources;
-    public override SettlementResources SettlementResources {
-        get {
-            if (m_settlementResources == null) {
-                m_settlementResources = new SettlementResources();
-            }
-            return m_settlementResources;
-        }
-    }
+    //public LocationStructure exterminateTargetStructure { get; private set; }
+    public override SettlementResources SettlementResources => m_settlementResources ?? (m_settlementResources = new SettlementResources());
 
     //structures
     public List<JobQueueItem> availableJobs { get; }
     public LocationEventManager eventManager { get; private set; }
-    public SettlementJobPriorityComponent jobPriorityComponent { get; }
     public SettlementType settlementType { get; private set; }
     public GameDate plaguedExpiryDate { get; private set; }
-    public SettlementJobTriggerComponent settlementJobTriggerComponent { get; }
-    public SettlementClassTracker settlementClassTracker { get; }
+    //public SettlementClassTracker settlementClassTracker { get; }//Removed this, data moved to SettlementClassComponent
     public NPCSettlementEventDispatcher npcSettlementEventDispatcher { get; }
     public bool hasPeasants { get; private set; }
     public bool hasWorkers { get; private set; }
+    /// <summary>
+    /// What village spot does this village occupy?
+    /// Note: At the time of making, this variable is only set once and is never cleared since Villages City Center cannot be destroyed.
+    /// Note: This value is only set on VILLAGE type settlements.
+    /// </summary>
+    public VillageSpot occupiedVillageSpot { get; private set; }
 
     //Components
+    public SettlementJobTriggerComponent settlementJobTriggerComponent { get; }
+    //public SettlementJobPriorityComponent jobPriorityComponent { get; }
     public SettlementVillageMigrationComponent migrationComponent { get; private set; }
+    public SettlementResourcesComponent resourcesComponent { get; private set; }
+    public SettlementClassComponent classComponent { get; private set; }
+    public SettlementPartyComponent partyComponent { get; private set; }
+    public SettlementStructureComponent structureComponent { get; private set; }
 
     private readonly Region _region;
     private readonly WeightedDictionary<Character> newRulerDesignationWeights;
     private int newRulerDesignationChance;
     private string _plaguedExpiryKey;
     private readonly List<TILE_OBJECT_TYPE> _neededObjects;
+    private SettlementResources m_settlementResources;
 
     #region getters
     public override Type serializedData => typeof(SaveDataNPCSettlement);
@@ -75,18 +77,25 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         ResetNewRulerDesignationChance();
         availableJobs = new List<JobQueueItem>();
         eventManager = new LocationEventManager(this);
-        jobPriorityComponent = new SettlementJobPriorityComponent(this);
+        //jobPriorityComponent = new SettlementJobPriorityComponent(this);
         settlementJobTriggerComponent = new SettlementJobTriggerComponent(this);
-        settlementClassTracker = new SettlementClassTracker();
+        //settlementClassTracker = new SettlementClassTracker();
         npcSettlementEventDispatcher = new NPCSettlementEventDispatcher();
         _plaguedExpiryKey = string.Empty;
         _neededObjects = new List<TILE_OBJECT_TYPE>() {
-            TILE_OBJECT_TYPE.HEALING_POTION,
-            TILE_OBJECT_TYPE.TOOL,
-            TILE_OBJECT_TYPE.ANTIDOTE
+            // TILE_OBJECT_TYPE.HEALING_POTION,
+            // TILE_OBJECT_TYPE.TOOL,
+            // TILE_OBJECT_TYPE.ANTIDOTE
         };
 
         migrationComponent = new SettlementVillageMigrationComponent(); migrationComponent.SetOwner(this);
+        resourcesComponent = new SettlementResourcesComponent(); resourcesComponent.SetOwner(this);
+        classComponent = new SettlementClassComponent(); classComponent.SetOwner(this);
+        classComponent.InitialMorningScheduleProcessingOfNeededClasses();
+        classComponent.InitialAfternoonScheduleProcessingOfNeededClasses();
+        partyComponent = new SettlementPartyComponent(); partyComponent.SetOwner(this);
+        partyComponent.InitialScheduleProcessingOfPartyQuests();
+        structureComponent = new SettlementStructureComponent(); structureComponent.SetOwner(this);
     }
     public NPCSettlement(SaveDataBaseSettlement saveDataBaseSettlement) : base (saveDataBaseSettlement) {
         SaveDataNPCSettlement saveData = saveDataBaseSettlement as SaveDataNPCSettlement;
@@ -98,14 +107,18 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         ResetNewRulerDesignationChance();
         availableJobs = new List<JobQueueItem>();
         // eventManager = new LocationEventManager(this, saveData.eventManager); //loaded event manager at LoadReferences
-        jobPriorityComponent = new SettlementJobPriorityComponent(this);
+        //jobPriorityComponent = new SettlementJobPriorityComponent(this);
         settlementJobTriggerComponent = new SettlementJobTriggerComponent(this);
-        settlementClassTracker = new SettlementClassTracker(saveData.classTracker);
+        //settlementClassTracker = new SettlementClassTracker(saveData.classTracker);
         npcSettlementEventDispatcher = new NPCSettlementEventDispatcher();
         _plaguedExpiryKey = string.Empty;
         _neededObjects = new List<TILE_OBJECT_TYPE>(saveData.neededObjects);
 
         migrationComponent = saveData.migrationComponent.Load(); migrationComponent.SetOwner(this);
+        resourcesComponent = saveData.resourcesComponent.Load(); resourcesComponent.SetOwner(this);
+        classComponent = saveData.classComponent.Load(); classComponent.SetOwner(this);
+        partyComponent = saveData.partyComponent.Load(); partyComponent.SetOwner(this);
+        structureComponent = saveData.structureComponent.Load(); structureComponent.SetOwner(this);
     }
 
     #region Loading
@@ -139,23 +152,35 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
             hasPeasants = saveDataNpcSettlement.hasPeasants;
             hasWorkers = saveDataNpcSettlement.hasWorkers;
             Initialize();
-            if (tiles.Count <= 0) {
+            if (areas.Count <= 0) {
                 UnsubscribeToSignals(); //make sure that settlements that have no more areas should no longer listen to signals.
-            } else {
-                //Update tile nameplates
-                //Fix for: https://trello.com/c/gAqpeACf/3194-loading-the-game-erases-the-faction-symbol-on-the-world-map
-                for (int i = 0; i < tiles.Count; i++) {
-                    HexTile tile = tiles[i];
-                    tile.landmarkOnTile?.nameplate.UpdateVisuals();
-                }    
+            } 
+            //else {
+            //    //Update tile nameplates
+            //    //Fix for: https://trello.com/c/gAqpeACf/3194-loading-the-game-erases-the-faction-symbol-on-the-world-map
+            //    for (int i = 0; i < areas.Count; i++) {
+            //        Area tile = areas[i];
+            //        tile.landmarkOnTile?.nameplate.UpdateVisuals();
+            //    }    
+            //}
+            migrationComponent.LoadReferences(saveDataNpcSettlement);
+            resourcesComponent.LoadReferences(saveDataNpcSettlement.resourcesComponent);
+            classComponent.LoadReferences(saveDataNpcSettlement.classComponent);
+            partyComponent.LoadReferences(saveDataNpcSettlement.partyComponent);
+            structureComponent.LoadReferences(saveDataNpcSettlement.structureComponent);
+
+            if (saveDataNpcSettlement.hasOccupiedVillageSpot) {
+                Area area = GameUtilities.GetHexTileGivenCoordinates(saveDataNpcSettlement.occupiedVillageSpot, GridMap.Instance.map);
+                Assert.IsNotNull(area, $"{name}'s save data has occupied village spot but no area is at {saveDataNpcSettlement.occupiedVillageSpot.ToString()}");
+                occupiedVillageSpot = region.GetVillageSpotOnArea(area);
+                Assert.IsNotNull(occupiedVillageSpot, $"{name}'s save data has occupied village spot but no village spot could be found on {area}");
             }
-            
         }
     }
     private void LoadJobs(SaveDataNPCSettlement data) {
         for (int i = 0; i < availableJobs.Count; i++) {
             JobQueueItem job = availableJobs[i];
-            job.ForceCancelJob(false);
+            job.ForceCancelJob();
             i--;
         }
         for (int i = 0; i < data.jobIDs.Count; i++) {
@@ -223,8 +248,9 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         } else if (locationType == LOCATION_TYPE.DUNGEON) {
             settlementJobTriggerComponent.SubscribeToDungeonListeners();
         }
-        settlementJobTriggerComponent.HookToSettlementClassTrackerEvents(settlementClassTracker);
+        //settlementJobTriggerComponent.HookToSettlementClassTrackerEvents(settlementClassTracker);
     }
+
     private void UnsubscribeToSignals() {
         Messenger.RemoveListener<Character, CharacterClass, CharacterClass>(CharacterSignals.CHARACTER_CLASS_CHANGE, OnCharacterClassChange);
         Messenger.RemoveListener<IPointOfInterest, string>(CharacterSignals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, ForceCancelAllJobsTargetingCharacter);
@@ -245,7 +271,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         } else if (locationType == LOCATION_TYPE.DUNGEON) {
             settlementJobTriggerComponent.UnsubscribeFromDungeonListeners();
         }
-        settlementJobTriggerComponent.UnHookToSettlementClassTrackerEvents(settlementClassTracker);
+        //settlementJobTriggerComponent.UnHookToSettlementClassTrackerEvents(settlementClassTracker);
     }
     private void OnCharacterAddedToFaction(Character character, Faction faction) {
         //once a resident character changes its faction, check if all the residents of this settlement share the same faction,
@@ -293,7 +319,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
     #region Utilities
     public void Initialize() {
         SubscribeToSignals();
-        onSettlementBuilt?.Invoke();
+        //onSettlementBuilt?.Invoke();
     }
     protected override void SettlementWipedOut() {
         base.SettlementWipedOut();
@@ -303,19 +329,19 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
     private void SetIsUnderSiege(bool state) {
         if(isUnderSiege != state) {
             isUnderSiege = state;
+#if DEBUG_LOG
             Debug.Log($"{GameManager.Instance.TodayLogString()}{name} Under Siege state changed to {isUnderSiege.ToString()}");
+#endif
             Messenger.Broadcast(SettlementSignals.SETTLEMENT_UNDER_SIEGE_STATE_CHANGED, this, isUnderSiege);
-            if (!isUnderSiege) {
-                if(exterminateTargetStructure != null) {
-                    if(owner != null && !owner.partyQuestBoard.HasPartyQuestWithTarget(PARTY_QUEST_TYPE.Extermination, exterminateTargetStructure)) {
-                        if(exterminateTargetStructure.settlementLocation == null || exterminateTargetStructure.settlementLocation.HasResidentThatMeetsCriteria(resident => !resident.isDead
-                    && (resident.faction == null || owner == null || owner.IsHostileWith(resident.faction)))) {
-                            owner.partyQuestBoard.CreateExterminatePartyQuest(null, this, exterminateTargetStructure, this);
-                        }
-                    }
-                    //settlementJobTriggerComponent.TriggerExterminationJob(exterminateTargetStructure);
-                }
-            }
+            //if (!isUnderSiege) {
+            //    if(exterminateTargetStructure != null) {
+            //        if(owner != null && !owner.partyQuestBoard.HasPartyQuestWithTarget(PARTY_QUEST_TYPE.Extermination, exterminateTargetStructure)) {
+            //            if(exterminateTargetStructure.settlementLocation == null || exterminateTargetStructure.settlementLocation.HasResidentThatIsNotDeadThatIsHostileWithFaction(owner)) {
+            //                owner.partyQuestBoard.CreateExterminatePartyQuest(null, this, exterminateTargetStructure, this);
+            //            }
+            //        }
+            //    }
+            //}
         }
     }
     public void SetIsPlagued(bool state) {
@@ -331,20 +357,28 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         }
 
         isPlagued = state;
+#if DEBUG_LOG
         Debug.Log($"{GameManager.Instance.TodayLogString()}{name} Plagued state changed to {isPlagued.ToString()}");
+#endif
         
     }
     private void OnTickEnded() {
+#if DEBUG_PROFILER
         Profiler.BeginSample($"Settlement On Tick Ended");
+#endif
         ProcessForcedCancelJobsOnTickEnded();
+#if DEBUG_PROFILER
         Profiler.EndSample();
+#endif
     }
     private void OnDayStarted() {
         hasTriedToStealCorpse = false;
         ClearAllBlacklistToAllExistingJobs();
     }
     private void OnHourStarted() {
+#if DEBUG_PROFILER
         Profiler.BeginSample($"{name} settlement OnHourStarted");
+#endif
         CheckSlaveResidents();
         CheckForJudgePrisoners();
         if(locationType == LOCATION_TYPE.VILLAGE) {
@@ -366,7 +400,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
                     LocationStructure cultTemple = GetFirstStructureOfType(STRUCTURE_TYPE.CULT_TEMPLE);
                     if (cultTemple != null) {
                         if (!hasTriedToStealCorpse) {
-                            TIME_IN_WORDS currentTime = GameManager.GetCurrentTimeInWordsOfTick();
+                            TIME_IN_WORDS currentTime = GameManager.Instance.GetCurrentTimeInWordsOfTick();
                             if (currentTime == TIME_IN_WORDS.MORNING) {
                                 hasTriedToStealCorpse = true;
                                 if (GameUtilities.RollChance(45)) {
@@ -380,15 +414,29 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
             }
         }
         npcSettlementEventDispatcher.ExecuteHourStartedEvent(this);
-        migrationComponent.OnHourStarted();    
+        migrationComponent.OnHourStarted();
+#if DEBUG_PROFILER
         Profiler.EndSample();
+#endif
+    }
+    private void OnSettlementAbandoned() {
+        if (!GameManager.Instance.gameHasStarted) {
+            return;
+        }
+        structureComponent.RelinkAllLinkedStructures();
+    }
+    private void OnSettlementUnabandoned() {
+        if (!GameManager.Instance.gameHasStarted) {
+            return;
+        }
+        region.LinkAllUnlinkedSpecialStructures();
     }
     #endregion
 
     #region Tiles
-    public override bool RemoveTileFromSettlement(HexTile tile) {
-        if (base.RemoveTileFromSettlement(tile)) {
-            npcSettlementEventDispatcher.ExecuteTileRemovedEvent(tile, this);
+    public override bool RemoveAreaFromSettlement(Area area) {
+        if (base.RemoveAreaFromSettlement(area)) {
+            npcSettlementEventDispatcher.ExecuteTileRemovedEvent(area, this);
             return true;
         }
         return false;
@@ -413,19 +461,22 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
     }
     private void OnCharacterClassChange(Character character, CharacterClass previousClass, CharacterClass currentClass) {
         if (character.homeSettlement == this) {
-            settlementClassTracker.OnResidentChangedClass(previousClass.className, character);
-            jobPriorityComponent.ChangeClassResidentResetPrimaryJob(character);
+            classComponent.OnResidentChangedClass(previousClass.className, character);
+            //jobPriorityComponent.ChangeClassResidentResetPrimaryJob(character);
         }
     }
     public override bool AddResident(Character character, LocationStructure chosenHome = null, bool ignoreCapacity = true) {
         if (base.AddResident(character, chosenHome, ignoreCapacity)) {
             //region.AddResident(character);
-            character.SetHomeSettlement(this);
             OnAddResident(character);
-            if (character.race == RACE.DEMON || character is Summon) { return true; }
-            if (character.isNormalCharacter && locationType == LOCATION_TYPE.VILLAGE) {
-                jobPriorityComponent.OnAddResident(character);    
+            character.SetHomeSettlement(this);
+            if (residents.Count == 1) {
+                OnSettlementUnabandoned();
             }
+            //if (character.race == RACE.DEMON || character is Summon) { return true; }
+            //if (character.isNormalCharacter && locationType == LOCATION_TYPE.VILLAGE) {
+            //    jobPriorityComponent.OnAddResident(character);    
+            //}
             return true;
         }
         return false;
@@ -435,10 +486,13 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
             //region.RemoveResident(character);
             character.SetHomeSettlement(null);
             OnRemoveResident(character);
-            if (character.isNormalCharacter && locationType == LOCATION_TYPE.VILLAGE) {
-                jobPriorityComponent.OnRemoveResident(character);
-            }
+            //if (character.isNormalCharacter && locationType == LOCATION_TYPE.VILLAGE) {
+            //    jobPriorityComponent.OnRemoveResident(character);
+            //}
             UnassignJobsTakenBy(character);
+            if (residents.Count <= 0) {
+                OnSettlementAbandoned();
+            }
             return true;
         }
         return false;
@@ -464,14 +518,14 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         if(previousRuler != null) {
             previousRuler.behaviourComponent.RemoveBehaviourComponent(typeof(SettlementRulerBehaviour));
             if (!previousRuler.isFactionLeader) {
-                previousRuler.jobComponent.RemovePriorityJob(JOB_TYPE.JUDGE_PRISONER);
-                previousRuler.jobComponent.RemovePriorityJob(JOB_TYPE.PLACE_BLUEPRINT);
+                previousRuler.jobComponent.RemoveAbleJob(JOB_TYPE.JUDGE_PRISONER);
+                previousRuler.jobComponent.RemoveAbleJob(JOB_TYPE.PLACE_BLUEPRINT);
             }
         }
         if(ruler != null) {
             ruler.behaviourComponent.AddBehaviourComponent(typeof(SettlementRulerBehaviour));
-            ruler.jobComponent.AddPriorityJob(JOB_TYPE.JUDGE_PRISONER);
-            ruler.jobComponent.AddPriorityJob(JOB_TYPE.PLACE_BLUEPRINT);
+            ruler.jobComponent.AddAbleJob(JOB_TYPE.JUDGE_PRISONER);
+            ruler.jobComponent.AddAbleJob(JOB_TYPE.PLACE_BLUEPRINT);
             //ResetNewRulerDesignationChance();
             Messenger.Broadcast(CharacterSignals.ON_SET_AS_SETTLEMENT_RULER, ruler, previousRuler);
         } else {
@@ -480,12 +534,14 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         npcSettlementEventDispatcher.ExecuteSettlementRulerChangedEvent(newRuler, this);
     }
     private void CheckForNewRulerDesignation() {
+        int chance = Random.Range(0, 100);
+#if DEBUG_LOG
         string debugLog =
             $"{GameManager.Instance.TodayLogString()}Checking for new npcSettlement ruler designation for {name}";
         debugLog += $"\n-Chance: {newRulerDesignationChance.ToString()}";
-        int chance = Random.Range(0, 100);
         debugLog += $"\n-Roll: {chance.ToString()}";
         Debug.Log(debugLog);
+#endif
         if (chance < newRulerDesignationChance) {
             DesignateNewRuler();
         } else {
@@ -496,53 +552,73 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         if(owner == null) {
             return;
         }
+#if DEBUG_LOG
         string log = $"{GameManager.Instance.TodayLogString()}Designating a new npcSettlement ruler for: {region.name}(chance it triggered: {newRulerDesignationChance})";
+#endif
         newRulerDesignationWeights.Clear();
         for (int i = 0; i < residents.Count; i++) {
             Character resident = residents[i];
             if(resident.faction != owner) {
                 continue;
             }
+#if DEBUG_LOG
             log += $"\n\n-{resident.name}";
-            if(resident.isDead /*|| resident.isMissing*/ || resident.isBeingSeized) {
+#endif
+            if (resident.isDead /*|| resident.isMissing*/ || resident.isBeingSeized) {
+#if DEBUG_LOG
                 log += "\nEither dead or missing or seized or enslaved, will not be part of candidates for ruler";
+#endif
                 continue;
             }
 
             if (owner != null && resident.crimeComponent.IsWantedBy(owner)) {
+#if DEBUG_LOG
                 log += "\nMember is wanted by the faction owner of this settlement " + owner.name + ", skipping...";
+#endif
                 continue;
             }
             bool isInsideSettlement = resident.gridTileLocation != null && resident.gridTileLocation.IsPartOfSettlement(this);
             bool isInAnActiveParty = resident.partyComponent.isMemberThatJoinedQuest;
 
             if(!isInsideSettlement && !isInAnActiveParty) {
+#if DEBUG_LOG
                 log += "\nMember is not inside settlement and not in active party, skipping...";
+#endif
                 continue;
             }
 
             int weight = 50;
+#if DEBUG_LOG
             log += "\n  -Base Weight: +50";
+#endif
             if (owner != null && owner.factionType.HasIdeology(FACTION_IDEOLOGY.Reveres_Vampires)) {
                 Vampire vampire = resident.traitContainer.GetTraitOrStatus<Vampire>("Vampire");
                 if (vampire != null && vampire.DoesFactionKnowThisVampire(owner)) {
                     weight += 100;
+#if DEBUG_LOG
                     log += "\n  -Faction reveres vampires and member is a known vampire: +100";
+#endif
                 }
             }
             if (owner != null && owner.factionType.HasIdeology(FACTION_IDEOLOGY.Reveres_Werewolves)) {
                 if (resident.isLycanthrope && resident.lycanData.DoesFactionKnowThisLycan(owner)) {
                     weight += 100;
+#if DEBUG_LOG
                     log += "\n  -Faction reveres werewolves and member is a known Lycanthrope: +100";
+#endif
                 }
             }
             if (resident.isFactionLeader) {
                 weight += 100;
+#if DEBUG_LOG
                 log += "\n  -Faction Leader: +100";
+#endif
             }
             if (resident.characterClass.className == "Noble") {
                 weight += 40;
+#if DEBUG_LOG
                 log += "\n  -Noble: +40";
+#endif
             }
             int numberOfFriends = 0;
             int numberOfEnemies = 0;
@@ -565,9 +641,11 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
                     weightToAdd = (numberOfFriends * 20);    
                 }
                 weight += weightToAdd;
+#if DEBUG_LOG
                 log += $"\n  -Num of Friend/Close Friend in the NPCSettlement: {numberOfFriends}, +{weightToAdd}";
+#endif
             }
-            
+
             // if(numberOfFriends > 0) {
             //     weight += (numberOfFriends * 20);
             //     log +=
@@ -575,49 +653,71 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
             // }
             if (resident.traitContainer.HasTrait("Inspiring")) {
                 weight += 25;
+#if DEBUG_LOG
                 log += "\n  -Inspiring: +25";
+#endif
             }
             if (resident.traitContainer.HasTrait("Authoritative")) {
                 weight += 50;
+#if DEBUG_LOG
                 log += "\n  -Authoritative: +50";
+#endif
             }
 
 
             if (numberOfEnemies > 0) {
                 weight += (numberOfEnemies * -10);
+#if DEBUG_LOG
                 log += $"\n  -Num of Enemies/Rivals in the NPCSettlement: {numberOfEnemies}, +{(numberOfEnemies * -10)}";
+#endif
             }
             if (resident.traitContainer.HasTrait("Unattractive")) {
                 weight += -20;
+#if DEBUG_LOG
                 log += "\n  -Unattractive: -20";
+#endif
             }
             if (resident.hasUnresolvedCrime) {
                 weight += -50;
+#if DEBUG_LOG
                 log += "\n  -Has Unresolved Crime: -50";
+#endif
             }
             if (resident.traitContainer.HasTrait("Worker")) {
                 weight += -40;
+#if DEBUG_LOG
                 log += "\n  -Civilian: -40";
+#endif
             }
             if (weight < 1) {
                 weight = 1;
+#if DEBUG_LOG
                 log += "\n  -Weight cannot be less than 1, setting weight to 1";
+#endif
             }
             if (resident.traitContainer.HasTrait("Ambitious")) {
                 weight = Mathf.RoundToInt(weight * 1.5f);
+#if DEBUG_LOG
                 log += "\n  -Ambitious: x1.5";
+#endif
             }
             if (resident is Summon || resident.characterClass.IsZombie()) {
-                if(HasResidentThatMeetsCriteria(c => c.race.IsSapient() && ((c.gridTileLocation != null && c.gridTileLocation.IsPartOfSettlement(this)) || c.partyComponent.isMemberThatJoinedQuest))) {
+                if(HasResidentThatIsSapientAndInsideSettlementOrHasJoinedQuest()) {
                     weight *= 0;
+#if DEBUG_LOG
                     log += "\n  -Resident is a Summon and there is atleast 1 Sapient resident inside settlement or in active party: x0";
+#endif
                 }
             }
             if (resident.traitContainer.HasTrait("Enslaved")) {
                 weight *= 0;
+#if DEBUG_LOG
                 log += "\n  -Enslaved: x0";
+#endif
             }
+#if DEBUG_LOG
             log += $"\n  -TOTAL WEIGHT: {weight}";
+#endif
             if (weight > 0) {
                 newRulerDesignationWeights.AddElement(resident, weight);
             }
@@ -625,26 +725,33 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         if(newRulerDesignationWeights.Count > 0) {
             Character chosenRuler = newRulerDesignationWeights.PickRandomElementGivenWeights();
             if (chosenRuler != null) {
+#if DEBUG_LOG
                 log += $"\nCHOSEN RULER: {chosenRuler.name}";
+#endif
                 if (willLog) {
                     chosenRuler.interruptComponent.TriggerInterrupt(INTERRUPT.Become_Settlement_Ruler, chosenRuler);
                 } else {
                     SetRuler(chosenRuler);
                 }
             } else {
+#if DEBUG_LOG
                 log += "\nCHOSEN RULER: NONE";
+#endif
             }
         } else {
+#if DEBUG_LOG
             log += "\nCHOSEN RULER: NONE";
+#endif
         }
         ResetNewRulerDesignationChance();
+#if DEBUG_LOG
         Debug.Log(log);
+#endif
     }
     private void ResetNewRulerDesignationChance() {
         newRulerDesignationChance = 5;
     }
-    public List<Character> GetHostileCharactersInSettlement() {
-        List<Character> hostileCharacters = new List<Character>();
+    public Character GetFirstHostileCharacterInSettlement() {
         for (int i = 0; i < region.charactersAtLocation.Count; i++) {
             Character character = region.charactersAtLocation[i];
             if(character.reactionComponent.disguisedCharacter != null) {
@@ -652,12 +759,13 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
             }
             if (!character.isDead && character.gridTileLocation != null && character.gridTileLocation.IsPartOfSettlement(this)
             && owner.IsHostileWith(character.faction) 
-            && character.traitContainer.HasTrait("Restrained") == false
-            && character.combatComponent.combatMode != COMBAT_MODE.Passive) {
-                hostileCharacters.Add(character);
+            && !character.traitContainer.HasTrait("Restrained")
+            && character.combatComponent.combatMode != COMBAT_MODE.Passive
+            && !character.traitContainer.HasTrait("Enslaved")) {
+                return character;
             }
         }
-        return hostileCharacters;
+        return null;
     }
     public void GenerateInitialOpinionBetweenResidents() {
         for (int i = 0; i < residents.Count; i++) {
@@ -698,8 +806,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
             Character resident = residents[i];
             if(resident.limiterComponent.canPerform && !resident.isDead 
                 && !resident.isBeingSeized
-                && resident.gridTileLocation != null 
-                && resident.gridTileLocation.collectionOwner.isPartOfParentRegionMap
+                && resident.gridTileLocation != null
                 && resident.gridTileLocation.IsPartOfSettlement(this)) {
                 return true;
             }
@@ -755,35 +862,35 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
     }
     private void OnAddResident(Character character) {
         eventManager.OnResidentAdded(character);
-        settlementClassTracker.OnResidentAdded(character);
-        if(residents.Count == 1 && locationType == LOCATION_TYPE.VILLAGE && GameManager.Instance.gameHasStarted) {
+        classComponent.OnResidentAdded(character);
+        if (residents.Count == 1 && locationType == LOCATION_TYPE.VILLAGE && GameManager.Instance.gameHasStarted) {
             //First resident
             ChangeSettlementTypeAccordingTo(character);
         }
-        bool hasUpdatedPeasantSwitch = false;
-        if (character.characterClass.className == "Peasant") {
-            hasUpdatedPeasantSwitch = UpdateHasPeasants();
-        }
-        bool hasUpdatedWorkerSwitch = false;
-        if (character.traitContainer.HasTrait("Worker")) {
-            hasUpdatedWorkerSwitch = UpdateHasWorkers();
-        }
-        if (!hasUpdatedPeasantSwitch && !hasUpdatedWorkerSwitch) {
-            //if neither the switches was updated, manually call the update resident able jobs since it is possible that one of the switches are already off
-            //and not calling it will result in the new residents able jobs not being updated.
-            UpdateAbleJobsOfResident(character);
-        }
+        //bool hasUpdatedPeasantSwitch = false;
+        //if (character.characterClass.className == "Peasant") {
+        //    hasUpdatedPeasantSwitch = UpdateHasPeasants();
+        //}
+        //bool hasUpdatedWorkerSwitch = false;
+        //if (character.traitContainer.HasTrait("Worker")) {
+        //    hasUpdatedWorkerSwitch = UpdateHasWorkers();
+        //}
+        //if (!hasUpdatedPeasantSwitch && !hasUpdatedWorkerSwitch) {
+        //    //if neither the switches was updated, manually call the update resident able jobs since it is possible that one of the switches are already off
+        //    //and not calling it will result in the new residents able jobs not being updated.
+        //    UpdateAbleJobsOfResident(character);
+        //}
     }
     private void OnRemoveResident(Character character) {
         eventManager.OnResidentRemoved(character);
-        settlementClassTracker.OnResidentRemoved(character);
-        UnapplyAbleJobsFromSettlement(character);
-        if (character.characterClass.className == "Peasant") {
-            UpdateHasPeasants();
-        }
-        if (character.traitContainer.HasTrait("Worker")) {
-            UpdateHasWorkers();
-        }
+        classComponent.OnResidentRemoved(character);
+        //UnapplyAbleJobsFromSettlement(character);
+        //if (character.characterClass.className == "Peasant") {
+        //    UpdateHasPeasants();
+        //}
+        //if (character.traitContainer.HasTrait("Worker")) {
+        //    UpdateHasWorkers();
+        //}
     }
     private void CheckSlaveResidents() {
         if (AreAllResidentsSlaves()) {
@@ -805,6 +912,35 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         }
         return true;
     }
+    public bool HasResidentThatIsOrCanBecomeClass(string p_className) {
+        for (int i = 0; i < residents.Count; i++) {
+            Character character = residents[i];
+            if (character.characterClass.className == p_className || character.classComponent.HasAbleClass(p_className)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void PopulateResidentsCurrentlyInsideVillage(List<Character> p_characters) {
+        for (int i = 0; i < residents.Count; i++) {
+            Character resident = residents[i];
+            if (resident.currentSettlement == this) {
+                p_characters.Add(resident);
+            }
+        }
+    }
+    public void PopulateAbleClassesOfAllResidents(List<string> p_ableClasses) {
+        for (int i = 0; i < residents.Count; i++) {
+            Character resident = residents[i];
+            for (int j = 0; j < resident.classComponent.ableClasses.Count; j++) {
+                string ableClass = resident.classComponent.ableClasses[j];
+                if (!p_ableClasses.Contains(ableClass)) {
+                    p_ableClasses.Add(ableClass);
+                }
+            }
+        }
+    }
     #endregion
 
     #region Tile Objects
@@ -818,14 +954,16 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
     }
     private void CheckIfInventoryJobsAreStillValid(TileObject item, LocationStructure structure) {
         if (structure == mainStorage && neededObjects.Contains(item.tileObjectType)) {
-            if (mainStorage.GetNumberOfTileObjectsThatMeetCriteria(item.tileObjectType, t => t.mapObjectState == MAP_OBJECT_STATE.BUILT) >= 2) {
-                List<JobQueueItem> jobs = GetJobs(JOB_TYPE.CRAFT_OBJECT);
+            if (mainStorage.GetNumberOfBuiltTileObjects(item.tileObjectType) >= 2) {
+                List<JobQueueItem> jobs = RuinarchListPool<JobQueueItem>.Claim();
+                PopulateJobsOfType(jobs, JOB_TYPE.CRAFT_OBJECT);
                 for (int i = 0; i < jobs.Count; i++) {
                     JobQueueItem jqi = jobs[i];
                     if (jqi is GoapPlanJob goapPlanJob && goapPlanJob.targetPOI is TileObject tileObject && tileObject.tileObjectType == item.tileObjectType) {
-                        jqi.ForceCancelJob(false, "Settlement has enough");    
+                        jqi.ForceCancelJob("Settlement has enough");    
                     }
                 }
+                RuinarchListPool<JobQueueItem>.Release(jobs);
             }
             // if (item.tileObjectType == TILE_OBJECT_TYPE.HEALING_POTION) {
             //     if (mainStorage.GetBuiltTileObjectsOfType<TileObject>(TILE_OBJECT_TYPE.HEALING_POTION).Count >= 2) {
@@ -878,12 +1016,12 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
                 if(owner != null && target.gridTileLocation != null && target.gridTileLocation.IsNextToSettlementAreaOrPartOfSettlement(this)) {
                     if (ShouldBeUnderSiegeIfCharacterEntersSettlement(target)) {
                         SetIsUnderSiege(true);
-                        if(target.homeStructure != null 
-                           && target.homeStructure.settlementLocation != null 
-                           && target.homeStructure.settlementLocation.locationType == LOCATION_TYPE.DUNGEON
-                           && exterminateTargetStructure == null) {
-                            exterminateTargetStructure = target.homeStructure;
-                        }
+                        //if(target.homeStructure != null 
+                        //   && target.homeStructure.settlementLocation != null 
+                        //   && target.homeStructure.settlementLocation.locationType == LOCATION_TYPE.DUNGEON
+                        //   && exterminateTargetStructure == null) {
+                        //    exterminateTargetStructure = target.homeStructure;
+                        //}
                     }
                 }
             }	
@@ -918,16 +1056,16 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
             SetIsUnderSiege(false);
         }
     }
-    public void SetExterminateTarget(LocationStructure target) {
-        exterminateTargetStructure = target;
-    }
+    //public void SetExterminateTarget(LocationStructure target) {
+    //    exterminateTargetStructure = target;
+    //}
     public StructureSetting GetMissingFacilityToBuildBasedOnWeights() {
         WeightedDictionary<StructureSetting> facilityWeights = new WeightedDictionary<StructureSetting>(settlementType.facilityWeights.dictionary);
         foreach (var kvp in settlementType.facilityWeights.dictionary) {
             int cap = settlementType.GetFacilityCap(kvp.Key);
             int currentAmount = GetStructureCount(kvp.Key.structureType);
             SettlementResources.StructureRequirement required = kvp.Key.structureType.GetRequiredObjectForBuilding();
-            if (currentAmount >= cap || !m_settlementResources.IsRequirementAvailable(required)) {
+            if (currentAmount >= cap || !m_settlementResources.IsRequirementAvailable(required, this)) {
                 facilityWeights.SetElementWeight(kvp.Key, 0); //remove weight of object since it is already at max.
             }
         }
@@ -950,27 +1088,364 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         return count;
     }
     public bool HasFoodProducingStructure() {
-        return HasStructure(STRUCTURE_TYPE.HUNTER_LODGE) || HasStructure(STRUCTURE_TYPE.FARM) || HasStructure(STRUCTURE_TYPE.FISHING_SHACK);
+        return HasStructure(STRUCTURE_TYPE.HUNTER_LODGE, STRUCTURE_TYPE.FARM, STRUCTURE_TYPE.FISHERY);
     }
-    public StructureSetting GetValidFoodProducingStructure() {
-        Assert.IsNotNull(owner);
-        List<HexTile> surroundingAreas = GetSurroundingAreas();
-        WeightedDictionary<StructureSetting> choices = new WeightedDictionary<StructureSetting>();
-        if (surroundingAreas.Count(t => t.elevationType == ELEVATION.WATER) > 0) {
-            choices.AddElement(new StructureSetting(STRUCTURE_TYPE.FISHING_SHACK, owner.factionType.mainResource), 100);
+    public bool HasBasicResourceProducingStructure() {
+        if (owner != null) {
+            if (owner.factionType.type == FACTION_TYPE.Human_Empire) {
+                return HasStructure(STRUCTURE_TYPE.MINE);
+            } else if (owner.factionType.type == FACTION_TYPE.Elven_Kingdom) {
+                return HasStructure(STRUCTURE_TYPE.LUMBERYARD);
+            } else if (owner.factionType.type == FACTION_TYPE.Demon_Cult || owner.factionType.type == FACTION_TYPE.Lycan_Clan || owner.factionType.type == FACTION_TYPE.Vampire_Clan) {
+                return HasStructure(STRUCTURE_TYPE.MINE) || HasStructure(STRUCTURE_TYPE.LUMBERYARD);
+            }
         }
-        if (HasAvailableStructureConnectorsBasedOnGameFeature()) {
-            choices.AddElement(new StructureSetting(STRUCTURE_TYPE.HUNTER_LODGE, owner.factionType.mainResource), 20);    
-        }
-        choices.AddElement(new StructureSetting(STRUCTURE_TYPE.FARM, owner.factionType.mainResource), 20);
+        return false;
+    }
 
-        return choices.PickRandomElementGivenWeights();
+    public void PopulateStructureConnectorsForStructureType(List<StructureConnector> p_connectors, STRUCTURE_TYPE p_structureType) {
+        switch (p_structureType) {
+            case STRUCTURE_TYPE.FISHERY:
+                PopulateAvailableFishingSpotConnectors(p_connectors);
+                break;
+            case STRUCTURE_TYPE.LUMBERYARD:
+                PopulateAvailableTreeConnectors(p_connectors);
+                break;
+            case STRUCTURE_TYPE.MINE:
+                PopulateAvailableMineShackConnectors(p_connectors);
+                break;
+            default:
+                PopulateAvailableStructureConnectors(p_connectors);
+                break;
+        } 
+    }
+    private void PopulateAvailableStructureConnectors(List<StructureConnector> connectors) {
+        for (int i = 0; i < allStructures.Count; i++) {
+            LocationStructure structure = allStructures[i];
+            if (structure is ManMadeStructure manMadeStructure && manMadeStructure.structureObj != null) {
+                for (int j = 0; j < manMadeStructure.structureObj.connectors.Length; j++) {
+                    StructureConnector connector = manMadeStructure.structureObj.connectors[j];
+                    //Limit village expansion to within reserved spots
+                    //Reference: https://trello.com/c/qBvoisWj/4699-world-gen-updates
+                    if (connector.isOpen) {
+                        bool shouldAddConnector;
+                        if (connector.tileLocation != null) {
+                            shouldAddConnector = occupiedVillageSpot.reservedAreas.Contains(connector.tileLocation.area);
+                        } else {
+                            LocationGridTile tileLocation = connector.GetLocationGridTileGivenCurrentPosition(region.innerMap);
+                            shouldAddConnector = tileLocation != null && occupiedVillageSpot.reservedAreas.Contains(tileLocation.area);
+                        }
+                        if (shouldAddConnector) {
+                            connectors.Add(connector);    
+                        }
+                    }
+                }
+            }
+        }
+    }
+    private void PopulateAvailableTreeConnectors(List<StructureConnector> connectors) {
+        List<TileObject> allTrees = RuinarchListPool<TileObject>.Claim();
+        SettlementResources.PopulateAllTrees(allTrees, this);
+        for (int i = 0; i < allTrees.Count; i++) {
+            TreeObject treeObject = allTrees[i] as TreeObject;
+            if (treeObject.structureConnector != null && treeObject.structureConnector.isOpen) {
+                connectors.Add(treeObject.structureConnector);
+            }
+        }
+        for (int i = 0; i < occupiedVillageSpot.reservedAreas.Count; i++) {
+            Area area = occupiedVillageSpot.reservedAreas[i];
+            for (int j = 0; j < area.tileObjectComponent.trees.Count; j++) {
+                TreeObject treeObject = area.tileObjectComponent.trees[j];
+                if (treeObject.structureConnector != null && treeObject.structureConnector.isOpen &&
+                    !connectors.Contains(treeObject.structureConnector)) {
+                    connectors.Add(treeObject.structureConnector);
+                }
+            }
+        }
+        RuinarchListPool<TileObject>.Release(allTrees);
+    }
+    private void PopulateAvailableFishingSpotConnectors(List<StructureConnector> connectors) {
+        List<TileObject> allFishingSpots = RuinarchListPool<TileObject>.Claim();
+        SettlementResources.PopulateAllFishingSpots(allFishingSpots, this);
+        for (int i = 0; i < allFishingSpots.Count; i++) {
+            FishingSpot fishingSpot = allFishingSpots[i] as FishingSpot;
+            if (fishingSpot.structureConnector != null && fishingSpot.structureConnector.isOpen) {
+                connectors.Add(fishingSpot.structureConnector);
+            }
+        }
+        for (int i = 0; i < occupiedVillageSpot.reservedAreas.Count; i++) {
+            Area area = occupiedVillageSpot.reservedAreas[i];
+            for (int j = 0; j < area.tileObjectComponent.fishingSpots.Count; j++) {
+                FishingSpot fishingSpot = area.tileObjectComponent.fishingSpots[j];
+                if (fishingSpot.structureConnector != null && fishingSpot.structureConnector.isOpen &&
+                    !connectors.Contains(fishingSpot.structureConnector)) {
+                    connectors.Add(fishingSpot.structureConnector);
+                }
+            }
+        }
+        RuinarchListPool<TileObject>.Release(allFishingSpots);
+    }
+    private void PopulateAvailableMineShackConnectors(List<StructureConnector> connectors) {
+        List<LocationGridTile> allMineShackSpots = RuinarchListPool<LocationGridTile>.Claim();
+        SettlementResources.PopulateAllMineShackSpots(allMineShackSpots, this);
+        for (int i = 0; i < allMineShackSpots.Count; i++) {
+            LocationGridTile oreVein = allMineShackSpots[i];
+            if (oreVein.structure is Cave cave && oreVein.tileObjectComponent.genericTileObject.structureConnector != null && 
+                oreVein.tileObjectComponent.genericTileObject.structureConnector.isOpen && !cave.IsConnectedToSettlement(this)) {
+                connectors.Add(oreVein.tileObjectComponent.genericTileObject.structureConnector);
+            }
+        }
+        for (int i = 0; i < occupiedVillageSpot.reservedAreas.Count; i++) {
+            Area area = occupiedVillageSpot.reservedAreas[i];
+            for (int j = 0; j < area.structureComponent.structureConnectors.Count; j++) {
+                StructureConnector connector = area.structureComponent.structureConnectors[j];
+                if (connector.tileLocation != null && connector.isOpen && !connectors.Contains(connector) && 
+                    connector.tileLocation.structure is Cave cave && !cave.IsConnectedToSettlement(this)) {
+                    connectors.Add(connector);
+                }
+            }
+        }
+        RuinarchListPool<LocationGridTile>.Release(allMineShackSpots);
+    }
+    public bool HasReservedSpotWithFeature(string p_feature) {
+        for (int i = 0; i < occupiedVillageSpot.reservedAreas.Count; i++) {
+            Area area = occupiedVillageSpot.reservedAreas[i];
+            if (area.featureComponent.HasFeature(p_feature)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public bool HasStructureOfTypeThatIsAssigned(STRUCTURE_TYPE p_type) {
+        List<LocationStructure> s = GetStructuresOfType(p_type);
+        if (s != null) {
+            for (int i = 0; i < s.Count; i++) {
+                LocationStructure structure = s[i];
+                if (structure is ManMadeStructure manMadeStructure && manMadeStructure.HasAssignedWorker()) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+    public LocationStructure GetFirstStructureOfTypeThatCanAcceptWorkerAndIsNotReserved(STRUCTURE_TYPE type) {
+        if (HasStructure(type)) {
+            List<LocationStructure> structuresOfType = structures[type];
+            if (structuresOfType != null && structuresOfType.Count > 0) {
+                for (int i = 0; i < structuresOfType.Count; i++) {
+                    ManMadeStructure s = structuresOfType[i] as ManMadeStructure;
+                    if (s.CanHireAWorker()) {
+                        if (!availableJobs.HasJobWithOtherData(JOB_TYPE.CHANGE_CLASS, INTERACTION_TYPE.CHANGE_CLASS, s)) {
+                            return s;
+                        }
+                    }
+                }
+            }
+        }
+        return null;
+    }
+    public LocationStructure GetFirstStructureOfTypeThatHasNoWorkerAndIsNotReserved(STRUCTURE_TYPE type) {
+        if (HasStructure(type)) {
+            List<LocationStructure> structuresOfType = structures[type];
+            if (structuresOfType != null && structuresOfType.Count > 0) {
+                for (int i = 0; i < structuresOfType.Count; i++) {
+                    ManMadeStructure s = structuresOfType[i] as ManMadeStructure;
+                    if (!s.HasAssignedWorker()) {
+                        if (!availableJobs.HasJobWithOtherData(JOB_TYPE.CHANGE_CLASS, INTERACTION_TYPE.CHANGE_CLASS, s)) {
+                            return s;
+                        }
+                    }
+                }
+            }
+        }
+        return null;
+    }
+    public LocationStructure GetFirstStructureOfTypeThatHasWorkerOrIsReserved(STRUCTURE_TYPE type) {
+        if (HasStructure(type)) {
+            List<LocationStructure> structuresOfType = structures[type];
+            if (structuresOfType != null && structuresOfType.Count > 0) {
+                for (int i = 0; i < structuresOfType.Count; i++) {
+                    ManMadeStructure s = structuresOfType[i] as ManMadeStructure;
+                    if (s.HasAssignedWorker() || availableJobs.HasJobWithOtherData(JOB_TYPE.CHANGE_CLASS, INTERACTION_TYPE.CHANGE_CLASS, s)) {
+                        return s;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+    public LocationStructure GetRandomStructureOfTypeThatCanAcceptWorkerAndIsNotReserved(STRUCTURE_TYPE type) {
+        if (HasStructure(type)) {
+            List<LocationStructure> structuresOfType = structures[type];
+            if (structuresOfType != null && structuresOfType.Count > 0) {
+                List<LocationStructure> assignedStructures = RuinarchListPool<LocationStructure>.Claim();
+                List<LocationStructure> unAssignedStructures = RuinarchListPool<LocationStructure>.Claim();
+                for (int i = 0; i < structuresOfType.Count; i++) {
+                    ManMadeStructure s = structuresOfType[i] as ManMadeStructure;
+                    if (s.CanHireAWorker()) {
+                        if (!availableJobs.HasJobWithOtherData(JOB_TYPE.CHANGE_CLASS, INTERACTION_TYPE.CHANGE_CLASS, s)) {
+                            if (s.HasAssignedWorker()) {
+                                assignedStructures.Add(s);    
+                            } else {
+                                unAssignedStructures.Add(s);
+                            }
+                        }
+                    }
+                }
+                if (unAssignedStructures.Count > 0) {
+                    LocationStructure chosenStructure = CollectionUtilities.GetRandomElement(unAssignedStructures);
+                    RuinarchListPool<LocationStructure>.Release(assignedStructures);
+                    RuinarchListPool<LocationStructure>.Release(unAssignedStructures);
+                    return chosenStructure;
+                }
+                if (assignedStructures.Count > 0) {
+                    LocationStructure chosenStructure = CollectionUtilities.GetRandomElement(assignedStructures);
+                    RuinarchListPool<LocationStructure>.Release(assignedStructures);
+                    RuinarchListPool<LocationStructure>.Release(unAssignedStructures);
+                    return chosenStructure;
+                }
+                RuinarchListPool<LocationStructure>.Release(assignedStructures);
+                RuinarchListPool<LocationStructure>.Release(unAssignedStructures);
+            }
+            
+        }
+        return null;
+    }
+    public bool HasBlueprintOnTileForStructure(STRUCTURE_TYPE p_type) {
+        for (int i = 0; i < availableJobs.Count; i++) {
+            GoapPlanJob job = availableJobs[i] as GoapPlanJob;
+            if (job != null && job.jobType == JOB_TYPE.BUILD_BLUEPRINT) {
+                GenericTileObject jobTarget = job.poiTarget as GenericTileObject;
+                if (jobTarget != null && jobTarget.blueprintOnTile != null && jobTarget.blueprintOnTile.structureType == p_type) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    public int GetNumberOfBlueprintOnTileForStructure(STRUCTURE_TYPE p_type) {
+        int count = 0;
+        for (int i = 0; i < availableJobs.Count; i++) {
+            GoapPlanJob job = availableJobs[i] as GoapPlanJob;
+            if (job != null && job.jobType == JOB_TYPE.BUILD_BLUEPRINT) {
+                GenericTileObject jobTarget = job.poiTarget as GenericTileObject;
+                if (jobTarget != null && jobTarget.blueprintOnTile != null && jobTarget.blueprintOnTile.structureType == p_type) {
+                    count++;
+                }
+            }
+        }
+        return count;
     }
     #endregion
 
     #region Inner Map
-    public IEnumerator PlaceInitialObjectsCoroutine() {
-        PlaceResourcePiles();
+    public IEnumerator PlaceInitialObjectsForWorldGenCoroutine() {
+        if (HasStructure(STRUCTURE_TYPE.LUMBERYARD)) {
+            List<LocationStructure> lumberyards = GetStructuresOfType(STRUCTURE_TYPE.LUMBERYARD);
+            for (int i = 0; i < lumberyards.Count; i++) {
+                LocationStructure lumberyard = lumberyards[i];
+                WoodPile woodPile = InnerMapManager.Instance.CreateNewTileObject<WoodPile>(TILE_OBJECT_TYPE.WOOD_PILE);
+                woodPile.SetResourceInPile(GameUtilities.RandomBetweenTwoNumbers(50, 100));
+                lumberyard.AddPOI(woodPile);
+            }
+        }
+        if (HasStructure(STRUCTURE_TYPE.MINE)) {
+            List<LocationStructure> mines = GetStructuresOfType(STRUCTURE_TYPE.MINE);
+            for (int i = 0; i < mines.Count; i++) {
+                LocationStructure lumberyard = mines[i];
+                StonePile stonePile = InnerMapManager.Instance.CreateNewTileObject<StonePile>(TILE_OBJECT_TYPE.STONE_PILE);
+                stonePile.SetResourceInPile(GameUtilities.RandomBetweenTwoNumbers(50, 100));
+                lumberyard.AddPOI(stonePile);
+            }
+        }
+        List<TILE_OBJECT_TYPE> spawnedFoodTypes = RuinarchListPool<TILE_OBJECT_TYPE>.Claim();
+        if (HasStructure(STRUCTURE_TYPE.FARM)) {
+            List<LocationStructure> farms = GetStructuresOfType(STRUCTURE_TYPE.FARM);
+            for (int i = 0; i < farms.Count; i++) {
+                Farm farm = farms[i] as Farm;
+                List<TILE_OBJECT_TYPE> cropChoices = RuinarchListPool<TILE_OBJECT_TYPE>.Claim();
+                for (int j = 0; j < farm.farmTiles.Count; j++) {
+                    LocationGridTile farmTile = farm.farmTiles[j];
+                    if (farmTile.tileObjectComponent.objHere is Crops crops && 
+                        !cropChoices.Contains(crops.producedObjectOnHarvest)) {
+                        cropChoices.Add(crops.producedObjectOnHarvest);
+                    }
+                }
+                TILE_OBJECT_TYPE chosenCrop = CollectionUtilities.GetRandomElement(cropChoices);
+                if (!spawnedFoodTypes.Contains(chosenCrop)) {
+                    spawnedFoodTypes.Add(chosenCrop);
+                }
+                RuinarchListPool<TILE_OBJECT_TYPE>.Release(cropChoices);
+                FoodPile foodPile = InnerMapManager.Instance.CreateNewTileObject<FoodPile>(chosenCrop);
+                foodPile.SetResourceInPile(GameUtilities.RandomBetweenTwoNumbers(50, 100));
+                farm.AddPOI(foodPile);
+            }
+        }
+        if (HasStructure(STRUCTURE_TYPE.FISHERY)) {
+            spawnedFoodTypes.Add(TILE_OBJECT_TYPE.FISH_PILE);
+            List<LocationStructure> fisheries = GetStructuresOfType(STRUCTURE_TYPE.FISHERY);
+            for (int i = 0; i < fisheries.Count; i++) {
+                LocationStructure fishery = fisheries[i];
+                FishPile stonePile = InnerMapManager.Instance.CreateNewTileObject<FishPile>(TILE_OBJECT_TYPE.FISH_PILE);
+                stonePile.SetResourceInPile(GameUtilities.RandomBetweenTwoNumbers(50, 100));
+                fishery.AddPOI(stonePile);
+            }
+        }
+        if (HasStructure(STRUCTURE_TYPE.BUTCHERS_SHOP)) {
+            spawnedFoodTypes.Add(TILE_OBJECT_TYPE.ANIMAL_MEAT);
+            List<LocationStructure> butcherShops = GetStructuresOfType(STRUCTURE_TYPE.BUTCHERS_SHOP);
+            for (int i = 0; i < butcherShops.Count; i++) {
+                LocationStructure butcherShop = butcherShops[i];
+                AnimalMeat animalMeat = InnerMapManager.Instance.CreateNewTileObject<AnimalMeat>(TILE_OBJECT_TYPE.ANIMAL_MEAT);
+                animalMeat.SetResourceInPile(GameUtilities.RandomBetweenTwoNumbers(50, 100));
+                butcherShop.AddPOI(animalMeat);
+            }
+        }
+        if (HasStructure(STRUCTURE_TYPE.DWELLING) && spawnedFoodTypes.Count > 0) {
+            List<LocationStructure> dwellings = GetStructuresOfType(STRUCTURE_TYPE.DWELLING);
+            for (int i = 0; i < dwellings.Count; i++) {
+                LocationStructure dwelling = dwellings[i];
+                TILE_OBJECT_TYPE randomFood = CollectionUtilities.GetRandomElement(spawnedFoodTypes);
+                if (GameUtilities.RollChance(50)) {
+                    FoodPile foodPile = InnerMapManager.Instance.CreateNewTileObject<FoodPile>(randomFood);
+                    foodPile.SetResourceInPile(GameUtilities.RandomBetweenTwoNumbers(20, 60));
+                    dwelling.AddPOI(foodPile);    
+                }
+                Table tableInDwelling = dwelling.GetTileObjectOfType<Table>();
+                if (tableInDwelling != null) {
+                    tableInDwelling.resourceStorageComponent.SetResource(CONCRETE_RESOURCES.Animal_Meat, 0);
+                    CONCRETE_RESOURCES chosenFoodType = CONCRETE_RESOURCES.Animal_Meat;
+                    switch (randomFood) {
+                        case TILE_OBJECT_TYPE.CORN:
+                            chosenFoodType = CONCRETE_RESOURCES.Corn;
+                            break;
+                        case TILE_OBJECT_TYPE.FISH_PILE:
+                            chosenFoodType = CONCRETE_RESOURCES.Fish;
+                            break;
+                        case TILE_OBJECT_TYPE.HYPNO_HERB:
+                            chosenFoodType = CONCRETE_RESOURCES.Hypno_Herb;
+                            break;
+                        case TILE_OBJECT_TYPE.ICEBERRY:
+                            chosenFoodType = CONCRETE_RESOURCES.Iceberry;
+                            break;
+                        case TILE_OBJECT_TYPE.PINEAPPLE:
+                            chosenFoodType = CONCRETE_RESOURCES.Pineapple;
+                            break;
+                        case TILE_OBJECT_TYPE.POTATO:
+                            chosenFoodType = CONCRETE_RESOURCES.Potato;
+                            break;
+                        case TILE_OBJECT_TYPE.VEGETABLES:
+                            chosenFoodType = CONCRETE_RESOURCES.Vegetables;
+                            break;
+                    }
+                    tableInDwelling.SetFood(chosenFoodType, UnityEngine.Random.Range(20, 81));
+                }
+            }
+        }
+        RuinarchListPool<TILE_OBJECT_TYPE>.Release(spawnedFoodTypes);
+        // PlaceResourcePiles();
         yield return null;
     }
     public void PlaceInitialObjects() {
@@ -979,15 +1454,11 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
     private void PlaceResourcePiles() {
         WoodPile woodPile = InnerMapManager.Instance.CreateNewTileObject<WoodPile>(TILE_OBJECT_TYPE.WOOD_PILE);
         mainStorage.AddPOI(woodPile);
-        woodPile.SetResourceInPile(500);
+        woodPile.SetResourceInPile(180);
 
         StonePile stonePile = InnerMapManager.Instance.CreateNewTileObject<StonePile>(TILE_OBJECT_TYPE.STONE_PILE);
         mainStorage.AddPOI(stonePile);
-        stonePile.SetResourceInPile(500);
-
-        MetalPile metalPile = InnerMapManager.Instance.CreateNewTileObject<MetalPile>(TILE_OBJECT_TYPE.METAL_PILE);
-        mainStorage.AddPOI(metalPile);
-        metalPile.SetResourceInPile(500);
+        stonePile.SetResourceInPile(180);
 
         FoodPile foodPile = InnerMapManager.Instance.CreateNewTileObject<FoodPile>(TILE_OBJECT_TYPE.ANIMAL_MEAT);
         mainStorage.AddPOI(foodPile);
@@ -1001,12 +1472,13 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
             if (chosenPrison != null) {
                 SetPrison(chosenPrison);
             } else {
-                foreach (var kvp in structures) {
-                    if (kvp.Key != STRUCTURE_TYPE.WILDERNESS) {
-                        SetPrison(kvp.Value[0]);
+                for (int i = 0; i < allStructures.Count; i++) {
+                    LocationStructure s = allStructures[i];
+                    if (s.structureType != STRUCTURE_TYPE.WILDERNESS) {
+                        SetPrison(s);
                         break;
                     }
-                } 
+                }
             }
         }
     }
@@ -1021,9 +1493,10 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         } else if (HasStructure(STRUCTURE_TYPE.CITY_CENTER)) {
             newStorage = GetRandomStructureOfType(STRUCTURE_TYPE.CITY_CENTER);
         } else {
-            foreach (var kvp in structures) {
-                if (kvp.Key != STRUCTURE_TYPE.WILDERNESS) {
-                    newStorage = kvp.Value[0];
+            for (int i = 0; i < allStructures.Count; i++) {
+                LocationStructure s = allStructures[i];
+                if (s.structureType != STRUCTURE_TYPE.WILDERNESS) {
+                    newStorage = s;
                     break;
                 }
             }
@@ -1049,29 +1522,25 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
     #endregion
 
     #region POI
-    public List<IPointOfInterest> GetPointOfInterestsOfType(POINT_OF_INTEREST_TYPE type) {
-        List<IPointOfInterest> pois = new List<IPointOfInterest>();
-        foreach (KeyValuePair<STRUCTURE_TYPE, List<LocationStructure>> keyValuePair in structures) {
-            for (int i = 0; i < keyValuePair.Value.Count; i++) {
-                pois.AddRange(keyValuePair.Value[i].GetPOIsOfType(type));
-            }
-        }
-        return pois;
-    }
-    public void GetTileObjectsThatAdvertise(List<TileObject> p_objectList, params INTERACTION_TYPE[] types) {
-        for (int i = 0; i < allStructures.Count; i++) {
-            allStructures[i].PopulateTileObjectsThatAdvertise(p_objectList, types);
-        }
-    }
-    public List<T> PopulateTileObjectsFromStructures<T>(STRUCTURE_TYPE structureType, Func<T, bool> validityChecker = null) where T : TileObject {
-        List<T> objs = new List<T>();
+    public void PopulateTileObjectsFromStructures<T>(List<TileObject> objs, STRUCTURE_TYPE structureType) where T : TileObject {
         if (HasStructure(structureType)) {
             List<LocationStructure> structureList = structures[structureType];
             for (int i = 0; i < structureList.Count; i++) {
-                objs.AddRange(structureList[i].GetTileObjectsOfType<T>(validityChecker));
+                structureList[i].PopulateTileObjectsOfType<T>(objs);
             }
         }
-        return objs;
+    }
+    public T GetFirstTileObjectFromStructuresThatIsUntended<T>(STRUCTURE_TYPE structureType) where T : TileObject {
+        if (HasStructure(structureType)) {
+            List<LocationStructure> structureList = structures[structureType];
+            for (int i = 0; i < structureList.Count; i++) {
+                T obj = structureList[i].GetFirstTileObjectsOfTypeThatIsUntended<T>();
+                if (obj != null) {
+                    return obj;
+                }
+            }
+        }
+        return null;
     }
     #endregion
 
@@ -1082,19 +1551,25 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         } else {
             availableJobs.Insert(position, job);
         }
+#if DEBUG_LOG
         if (job is GoapPlanJob goapJob) {
             Debug.Log($"{GameManager.Instance.TodayLogString()}{goapJob} targeting {goapJob.targetPOI} was added to {name}'s available jobs");
         } else {
             Debug.Log($"{GameManager.Instance.TodayLogString()}{job} was added to {name}'s available jobs");
         }
+#endif
     }
     public bool RemoveFromAvailableJobs(JobQueueItem job) {
         if (availableJobs.Remove(job)) {
             if (job is GoapPlanJob) {
                 GoapPlanJob goapJob = job as GoapPlanJob;
+#if DEBUG_LOG
                 Debug.Log($"{GameManager.Instance.TodayLogString()}{goapJob} targeting {goapJob.targetPOI?.name} was removed from {name}'s available jobs");
+#endif
             } else {
+#if DEBUG_LOG
                 Debug.Log($"{GameManager.Instance.TodayLogString()}{job} was removed from {name}'s available jobs");
+#endif
             }
             OnJobRemovedFromAvailableJobs(job);
             return true;
@@ -1110,11 +1585,11 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         }
         return count;
     }
-    public int GetNumberOfJobsThatMeetCriteria(Func<GoapPlanJob, bool> criteria) {
+    public int GetNumberOfJobsThatTargetsTileObjectOfType(TILE_OBJECT_TYPE p_type) {
         int count = 0;
         for (int i = 0; i < availableJobs.Count; i++) {
             JobQueueItem job = availableJobs[i];
-            if (job is GoapPlanJob goapJob && (criteria == null || criteria.Invoke(goapJob))) {
+            if (job is GoapPlanJob goapJob && goapJob.poiTarget is TileObject to && to.tileObjectType == p_type) {
                 count++;
             }
         }
@@ -1168,15 +1643,30 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         }
         return null;
     }
-    public List<JobQueueItem> GetJobs(params JOB_TYPE[] jobTypes) {
-        List<JobQueueItem> jobs = new List<JobQueueItem>();
+    public void PopulateJobsOfType(List<JobQueueItem> jobs, JOB_TYPE jobType) {
         for (int i = 0; i < availableJobs.Count; i++) {
             JobQueueItem job = availableJobs[i];
-            if (jobTypes.Contains(job.jobType)) {
+            if (job.jobType == jobType) {
                 jobs.Add(job);
             }
         }
-        return jobs;
+    }
+    public void PopulateJobsOfType(List<JobQueueItem> jobs, JOB_TYPE jobType1, JOB_TYPE jobType2) {
+        for (int i = 0; i < availableJobs.Count; i++) {
+            JobQueueItem job = availableJobs[i];
+            if (job.jobType == jobType1 || job.jobType == jobType2) {
+                jobs.Add(job);
+            }
+        }
+    }
+    public JobQueueItem GetFirstJobOfTypeThatCanBeAssignedTo(JOB_TYPE jobType, Character p_character) {
+        for (int i = 0; i < availableJobs.Count; i++) {
+            JobQueueItem job = availableJobs[i];
+            if (job.jobType == jobType && job.assignedCharacter == null && p_character.jobQueue.CanJobBeAddedToQueue(job)) {
+                return job;
+            }
+        }
+        return null;
     }
     public JobQueueItem GetJob(JOB_TYPE job, IPointOfInterest target) {
         for (int i = 0; i < availableJobs.Count; i++) {
@@ -1200,39 +1690,45 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         return false;
     }
     public JobQueueItem GetFirstUnassignedJobToCharacterJob(Character character) {
-        JobQueueItem chosenPriorityJob = null;
-        JobQueueItem chosenSecondaryJob = null;
-        JobQueueItem chosenAbleJob = null;
+        //JobQueueItem chosenPriorityJob = null;
+        //JobQueueItem chosenSecondaryJob = null;
+        //JobQueueItem chosenAbleJob = null;
 
         for (int i = 0; i < availableJobs.Count; i++) {
             JobQueueItem job = availableJobs[i];
             if (job.assignedCharacter == null && character.jobQueue.CanJobBeAddedToQueue(job)) {
-                if (job.jobType == character.jobComponent.primaryJob) {
+                ////if (job.jobType == character.jobComponent.primaryJob) {
+                ////    return job;
+                ////} else 
+                //if (chosenPriorityJob == null && (character.jobComponent.ableJobs.Contains(job.jobType) || character.jobComponent.additionalPriorityJobs.Contains(job.jobType))) {
+                //    chosenPriorityJob = job;
+                //} 
+                ////else if (chosenSecondaryJob == null && character.characterClass.secondaryJobs != null && character.characterClass.secondaryJobs.Contains(job.jobType)) {
+                ////    chosenSecondaryJob = job;
+                ////} 
+                //else if (chosenAbleJob == null) {
+                //    bool isAble = character.characterClass.ableJobs != null && character.characterClass.ableJobs.Contains(job.jobType);
+                //    if (isAble) {
+                //        chosenAbleJob = job;    
+                //    }
+                //}
+
+                if (character.characterClass.CanDoJob(job.jobType) || character.jobComponent.ableJobs.Contains(job.jobType)) {
                     return job;
-                } else if (chosenPriorityJob == null && character.characterClass.priorityJobs != null
-                    && (character.characterClass.priorityJobs.Contains(job.jobType) || character.jobComponent.priorityJobs.Contains(job.jobType) || character.jobComponent.additionalPriorityJobs.Contains(job.jobType))) {
-                    chosenPriorityJob = job;
-                } else if (chosenSecondaryJob == null && character.characterClass.secondaryJobs != null && character.characterClass.secondaryJobs.Contains(job.jobType)) {
-                    chosenSecondaryJob = job;
-                } else if (chosenAbleJob == null) {
-                    bool isAble = character.characterClass.ableJobs != null && character.characterClass.ableJobs.Contains(job.jobType);
-                    if (isAble) {
-                        chosenAbleJob = job;    
-                    }
                 }
             }
         }
-        if (chosenPriorityJob != null) {
-            return chosenPriorityJob;
-        } else if (chosenSecondaryJob != null) {
-            return chosenSecondaryJob;
-        } else if (chosenAbleJob != null) {
-            return chosenAbleJob;
-        }
+        //if (chosenPriorityJob != null) {
+        //    return chosenPriorityJob;
+        //} else if (chosenSecondaryJob != null) {
+        //    return chosenSecondaryJob;
+        //} else if (chosenAbleJob != null) {
+        //    return chosenAbleJob;
+        //}
         return null;
     }
     public bool AssignCharacterToJobBasedOnVision(Character character) {
-        List<JobQueueItem> choices = new List<JobQueueItem>();
+        List<JobQueueItem> choices = RuinarchListPool<JobQueueItem>.Claim();
         for (int i = 0; i < availableJobs.Count; i++) {
             JobQueueItem job = availableJobs[i];
             if (job.assignedCharacter == null && job is GoapPlanJob) {
@@ -1243,11 +1739,12 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
                 }
             }
         }
+        JobQueueItem chosenJob = null;
         if (choices.Count > 0) {
-            JobQueueItem job = CollectionUtilities.GetRandomElement(choices);
-            return character.jobQueue.AddJobInQueue(job);
+            chosenJob = CollectionUtilities.GetRandomElement(choices);
         }
-        return false;
+        RuinarchListPool<JobQueueItem>.Release(choices);
+        return chosenJob != null && character.jobQueue.AddJobInQueue(chosenJob);
     }
     public JobQueueItem GetFirstJobBasedOnVision(Character character) {
         for (int i = 0; i < availableJobs.Count; i++) {
@@ -1274,11 +1771,23 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         }
         return null;
     }
+    public JobQueueItem GetFirstJobBasedOnVisionExcept(Character character, JOB_TYPE except) {
+            for (int i = 0; i < availableJobs.Count; i++) {
+                JobQueueItem job = availableJobs[i];
+                if (job.assignedCharacter == null && job is GoapPlanJob goapJob && except != goapJob.jobType) {
+                    if (goapJob.targetPOI != null && character.marker.IsPOIInVision(goapJob.targetPOI) &&
+                        character.jobQueue.CanJobBeAddedToQueue(goapJob)) {
+                        return goapJob;
+                    }
+                }
+            }
+            return null;
+        }
     private void CheckAreaInventoryJobs(LocationStructure affectedStructure, TileObject objectThatTriggeredChange) {
         if (affectedStructure == mainStorage && (objectThatTriggeredChange == null || neededObjects.Contains(objectThatTriggeredChange.tileObjectType))) {
             for (int i = 0; i < neededObjects.Count; i++) {
                 TILE_OBJECT_TYPE neededObject = neededObjects[i];
-                int objectsCount = affectedStructure.GetNumberOfTileObjectsThatMeetCriteria(neededObject, null); //This includes unbuilt objects 
+                int objectsCount = affectedStructure.GetNumberOfTileObjects(neededObject); //This includes unbuilt objects 
                 int neededCount = 2;
                 if (objectsCount < neededCount) {
                     int missing = neededCount - objectsCount;
@@ -1382,7 +1891,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
             if (job is GoapPlanJob) {
                 GoapPlanJob goapJob = job as GoapPlanJob;
                 if (goapJob.targetPOI == target) {
-                    if (goapJob.ForceCancelJob(false, reason)) {
+                    if (goapJob.ForceCancelJob(reason)) {
                         i--;
                     }
                 }
@@ -1394,7 +1903,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
             JobQueueItem job = availableJobs[i];
             if (!job.hasBeenReset && job.jobType == jobType && job is GoapPlanJob goapJob) {
                 if (goapJob.targetPOI == target) {
-                    if (goapJob.ForceCancelJob(false, reason)) {
+                    if (goapJob.ForceCancelJob(reason)) {
                         i--;
                     }
                 }
@@ -1412,6 +1921,26 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
             }
         }
     }
+    public void ForceCancelJobTypes(JOB_TYPE jobType) {
+        for (int i = 0; i < availableJobs.Count; i++) {
+            JobQueueItem job = availableJobs[i];
+            if (job.jobType == jobType && job is GoapPlanJob) {
+                GoapPlanJob goapJob = job as GoapPlanJob;
+                AddForcedCancelJobsOnTickEnded(goapJob);
+            }
+        }
+    }
+    public void ForceCancelJobTypesImmediately(JOB_TYPE jobType) {
+        for (int i = 0; i < availableJobs.Count; i++) {
+            JobQueueItem job = availableJobs[i];
+            if (job.jobType == jobType && job is GoapPlanJob) {
+                GoapPlanJob goapJob = job as GoapPlanJob;
+                if (goapJob.ForceCancelJob()) {
+                    i--;
+                }
+            }
+        }
+    }
     private void ClearAllBlacklistToAllExistingJobs() {
         for (int i = 0; i < availableJobs.Count; i++) {
             availableJobs[i].ClearBlacklist();
@@ -1421,134 +1950,136 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         for (int i = 0; i < availableJobs.Count; i++) {
             JobQueueItem job = availableJobs[i];
             if (job.assignedCharacter == character && job is GoapPlanJob goapJob) {
-                goapJob.CancelJob(false, string.Empty);
+                goapJob.CancelJob(string.Empty);
             }
         }
     }
+
+    //NOTE: Removed this section since the design has changed, the one that will handles this is now the Change To Needed Class processings
     /// <summary>
     /// Whenever a resident updates its class also update the
     /// hasPeasants and hasWorkers switch
     /// </summary>
-    public void OnResidentUpdatedClass() {
-        UpdateHasPeasants();
-        UpdateHasWorkers();
-    }
+    //public void OnResidentUpdatedClass() {
+    //    UpdateHasPeasants();
+    //    UpdateHasWorkers();
+    //}
     /// <summary>
     /// Update the hasPeasants switch.
     /// </summary>
     /// <returns>Whether or not a change happened</returns>
-    private bool UpdateHasPeasants() {
-        for (int i = 0; i < residents.Count; i++) {
-            Character resident = residents[i];
-            if (resident.characterClass.className == "Peasant") {
-                return SetHasPeasants(true);
-            }
-        }
-        return SetHasPeasants(false);
-    }
+    //private bool UpdateHasPeasants() {
+    //    for (int i = 0; i < residents.Count; i++) {
+    //        Character resident = residents[i];
+    //        if (resident.characterClass.className == "Peasant") {
+    //            return SetHasPeasants(true);
+    //        }
+    //    }
+    //    return SetHasPeasants(false);
+    //}
     /// <summary>
     /// Update the hasWorkers switch.
     /// </summary>
     /// <returns>Whether or not a change happened</returns>
-    private bool UpdateHasWorkers() {
-        for (int i = 0; i < residents.Count; i++) {
-            Character resident = residents[i];
-            if (resident.traitContainer.HasTrait("Worker")) {
-                return SetHasWorkers(true);
-            }
-        }
-        return SetHasWorkers(false);
-    }
+    //private bool UpdateHasWorkers() {
+    //    for (int i = 0; i < residents.Count; i++) {
+    //        Character resident = residents[i];
+    //        if (resident.traitContainer.HasTrait("Worker")) {
+    //            return SetHasWorkers(true);
+    //        }
+    //    }
+    //    return SetHasWorkers(false);
+    //}
     /// <summary>
     /// Switch the has peasants switch on/off
     /// </summary>
     /// <param name="state">The state to switch to</param>
     /// <returns>Whether or not the switched was toggled</returns>
-    private bool SetHasPeasants(bool state) {
-        if (hasPeasants != state) {
-            hasPeasants = state;
-            UpdateAbleJobsOfAllResidents();
-            return true;
-        }
-        return false;
-    }
+    //private bool SetHasPeasants(bool state) {
+    //    if (hasPeasants != state) {
+    //        hasPeasants = state;
+    //        UpdateAbleJobsOfAllResidents();
+    //        return true;
+    //    }
+    //    return false;
+    //}
     /// <summary>
     /// Switch the has workers switch on/off
     /// </summary>
     /// <param name="state">The state to switch to</param>
     /// <returns>Whether or not the switched was toggled</returns>
-    private bool SetHasWorkers(bool state) {
-        if (hasWorkers != state) {
-            hasWorkers = state;
-            UpdateAbleJobsOfAllResidents();
-            return true;
-        }
-        return false;
-    }
-    private void UpdateAbleJobsOfAllResidents() {
-        if (owner != null && owner.factionType.type == FACTION_TYPE.Ratmen) { return; }
-        for (int i = 0; i < residents.Count; i++) {
-            Character character = residents[i];
-            UpdateAbleJobsOfResident(character);
-        }
-    }
-    public void UpdateAbleJobsOfResident(Character character) {
-        if (owner != null && owner.factionType.type == FACTION_TYPE.Ratmen) { return; }
-        if (!character.race.IsSapient() && character.minion == null) { return; }
-        //update jobs based on hasPeasants switch
-        if (!hasPeasants) {
-            if (character.characterClass.className != "Noble") {
-                CharacterClass peasantClass = CharacterManager.Instance.GetCharacterClass("Peasant");
-                character.jobComponent.AddAdditionalPriorityJob(peasantClass.priorityJobs);
-                character.jobComponent.AddAdditionalPriorityJob(peasantClass.secondaryJobs);
-                character.jobComponent.AddAdditionalPriorityJob(peasantClass.ableJobs);
-            }
-        } else {
-            if (character.characterClass.className != "Noble") {
-                CharacterClass peasantClass = CharacterManager.Instance.GetCharacterClass("Peasant");
-                character.jobComponent.RemoveAdditionalPriorityJob(peasantClass.priorityJobs);
-                character.jobComponent.RemoveAdditionalPriorityJob(peasantClass.secondaryJobs);
-                character.jobComponent.RemoveAdditionalPriorityJob(peasantClass.ableJobs);
-            }
-        }
+    //private bool SetHasWorkers(bool state) {
+    //    if (hasWorkers != state) {
+    //        hasWorkers = state;
+    //        UpdateAbleJobsOfAllResidents();
+    //        return true;
+    //    }
+    //    return false;
+    //}
+    //private void UpdateAbleJobsOfAllResidents() {
+    //    if (owner != null && owner.factionType.type == FACTION_TYPE.Ratmen) { return; }
+    //    for (int i = 0; i < residents.Count; i++) {
+    //        Character character = residents[i];
+    //        UpdateAbleJobsOfResident(character);
+    //    }
+    //}
+    //public void UpdateAbleJobsOfResident(Character character) {
+    //    if (owner != null && owner.factionType.type == FACTION_TYPE.Ratmen) { return; }
+    //    if (!character.race.IsSapient() && character.minion == null) { return; }
+    //    //update jobs based on hasPeasants switch
+    //    if (!hasPeasants) {
+    //        if (character.characterClass.className != "Noble") {
+    //            CharacterClass peasantClass = CharacterManager.Instance.GetCharacterClass("Peasant");
+    //            //character.jobComponent.AddAdditionalPriorityJob(peasantClass.priorityJobs);
+    //            //character.jobComponent.AddAdditionalPriorityJob(peasantClass.secondaryJobs);
+    //            character.jobComponent.AddAdditionalPriorityJob(peasantClass.ableJobs);
+    //        }
+    //    } else {
+    //        if (character.characterClass.className != "Noble") {
+    //            CharacterClass peasantClass = CharacterManager.Instance.GetCharacterClass("Peasant");
+    //            //character.jobComponent.RemoveAdditionalPriorityJob(peasantClass.priorityJobs);
+    //            //character.jobComponent.RemoveAdditionalPriorityJob(peasantClass.secondaryJobs);
+    //            character.jobComponent.RemoveAdditionalPriorityJob(peasantClass.ableJobs);
+    //        }
+    //    }
         
-        //update jobs based on hasWorkers switch
-        if (!hasWorkers) {
-            if (character.characterClass.className == "Noble") {
-                CharacterClass peasantClass = CharacterManager.Instance.GetCharacterClass("Peasant");
-                character.jobComponent.AddAdditionalPriorityJob(peasantClass.priorityJobs);
-                character.jobComponent.AddAdditionalPriorityJob(peasantClass.secondaryJobs);
-                character.jobComponent.AddAdditionalPriorityJob(peasantClass.ableJobs);
-            }
-        } else {
-            if (character.characterClass.className == "Noble") {
-                CharacterClass peasantClass = CharacterManager.Instance.GetCharacterClass("Peasant");
-                character.jobComponent.RemoveAdditionalPriorityJob(peasantClass.priorityJobs);
-                character.jobComponent.RemoveAdditionalPriorityJob(peasantClass.secondaryJobs);
-                character.jobComponent.RemoveAdditionalPriorityJob(peasantClass.ableJobs);
-            }
-        }
-    }
-    public void UnapplyAbleJobsFromSettlement(Character character) {
-        if (!character.race.IsSapient() && character.minion == null) { return; }
-        if (!hasPeasants) {
-            if (character.characterClass.className != "Noble") {
-                CharacterClass peasantClass = CharacterManager.Instance.GetCharacterClass("Peasant");
-                character.jobComponent.RemoveAdditionalPriorityJob(peasantClass.priorityJobs);
-                character.jobComponent.RemoveAdditionalPriorityJob(peasantClass.secondaryJobs);
-                character.jobComponent.RemoveAdditionalPriorityJob(peasantClass.ableJobs);
-            }
-        }
+    //    //update jobs based on hasWorkers switch
+    //    if (!hasWorkers) {
+    //        if (character.characterClass.className == "Noble") {
+    //            CharacterClass peasantClass = CharacterManager.Instance.GetCharacterClass("Peasant");
+    //            //character.jobComponent.AddAdditionalPriorityJob(peasantClass.priorityJobs);
+    //            //character.jobComponent.AddAdditionalPriorityJob(peasantClass.secondaryJobs);
+    //            character.jobComponent.AddAdditionalPriorityJob(peasantClass.ableJobs);
+    //        }
+    //    } else {
+    //        if (character.characterClass.className == "Noble") {
+    //            CharacterClass peasantClass = CharacterManager.Instance.GetCharacterClass("Peasant");
+    //            //character.jobComponent.RemoveAdditionalPriorityJob(peasantClass.priorityJobs);
+    //            //character.jobComponent.RemoveAdditionalPriorityJob(peasantClass.secondaryJobs);
+    //            character.jobComponent.RemoveAdditionalPriorityJob(peasantClass.ableJobs);
+    //        }
+    //    }
+    //}
+    //public void UnapplyAbleJobsFromSettlement(Character character) {
+    //    if (!character.race.IsSapient() && character.minion == null) { return; }
+    //    if (!hasPeasants) {
+    //        if (character.characterClass.className != "Noble") {
+    //            CharacterClass peasantClass = CharacterManager.Instance.GetCharacterClass("Peasant");
+    //            //character.jobComponent.RemoveAdditionalPriorityJob(peasantClass.priorityJobs);
+    //            //character.jobComponent.RemoveAdditionalPriorityJob(peasantClass.secondaryJobs);
+    //            character.jobComponent.RemoveAdditionalPriorityJob(peasantClass.ableJobs);
+    //        }
+    //    }
         
-        if (!hasWorkers) {
-            if (character.characterClass.className == "Noble") {
-                CharacterClass peasantClass = CharacterManager.Instance.GetCharacterClass("Peasant");
-                character.jobComponent.RemoveAdditionalPriorityJob(peasantClass.priorityJobs);
-                character.jobComponent.RemoveAdditionalPriorityJob(peasantClass.secondaryJobs);
-                character.jobComponent.RemoveAdditionalPriorityJob(peasantClass.ableJobs);
-            }
-        }
-    }
+    //    if (!hasWorkers) {
+    //        if (character.characterClass.className == "Noble") {
+    //            CharacterClass peasantClass = CharacterManager.Instance.GetCharacterClass("Peasant");
+    //            //character.jobComponent.RemoveAdditionalPriorityJob(peasantClass.priorityJobs);
+    //            //character.jobComponent.RemoveAdditionalPriorityJob(peasantClass.secondaryJobs);
+    //            character.jobComponent.RemoveAdditionalPriorityJob(peasantClass.ableJobs);
+    //        }
+    //    }
+    //}
     #endregion
 
     #region IJobOwner
@@ -1565,14 +2096,16 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
     }
     public void AddForcedCancelJobsOnTickEnded(JobQueueItem job) {
         if (!forcedCancelJobsOnTickEnded.Contains(job)) {
+#if DEBUG_LOG
             Debug.Log(GameManager.Instance.TodayLogString() + " " + name + " added to forced cancel job " + job.name);
+#endif
             forcedCancelJobsOnTickEnded.Add(job);
         }
     }
     public void ProcessForcedCancelJobsOnTickEnded() {
         if (forcedCancelJobsOnTickEnded.Count > 0) {
             for (int i = 0; i < forcedCancelJobsOnTickEnded.Count; i++) {
-                forcedCancelJobsOnTickEnded[i].ForceCancelJob(false);
+                forcedCancelJobsOnTickEnded[i].ForceCancelJob();
             }
             forcedCancelJobsOnTickEnded.Clear();
         }
@@ -1642,9 +2175,15 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
     #region IPlayerActionTarget
     public override void ConstructDefaultActions() {
         base.ConstructDefaultActions();
-        AddPlayerAction(PLAYER_SKILL_TYPE.SCHEME);
-        // AddPlayerAction(PLAYER_SKILL_TYPE.INDUCE_MIGRATION);
-        // AddPlayerAction(PLAYER_SKILL_TYPE.STIFLE_MIGRATION);
+        AddPlayerAction(PLAYER_SKILL_TYPE.INDUCE_MIGRATION);
+        AddPlayerAction(PLAYER_SKILL_TYPE.STIFLE_MIGRATION);
+        //AddPlayerAction(PLAYER_SKILL_TYPE.SCHEME);
+    }
+    #endregion
+
+    #region Village Spot
+    public void SetOccupiedVillageSpot(VillageSpot p_spot) {
+        occupiedVillageSpot = p_spot;
     }
     #endregion
 

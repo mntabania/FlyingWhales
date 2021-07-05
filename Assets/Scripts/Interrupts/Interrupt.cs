@@ -4,6 +4,7 @@ using UnityEngine;
 using Inner_Maps;
 using Interrupts;
 using Logs;
+using Object_Pools;
 namespace Interrupts {
     public class Interrupt {
         public INTERRUPT type { get; protected set; }
@@ -137,6 +138,7 @@ namespace Interrupts {
         public string reason { get; private set; }
         public CRIME_TYPE crimeType { get; private set; }
         public bool shouldNotBeObjectPooled { get; private set; }
+        public List<LOG_TAG> logTags { get; private set; }
 
         #region getters
         public string name => interrupt.name;
@@ -148,15 +150,19 @@ namespace Interrupts {
         public CRIMABLE_TYPE crimableType => CRIMABLE_TYPE.Interrupt;
         public OBJECT_TYPE objectType => OBJECT_TYPE.Interrupt;
         public System.Type serializedData => typeof(SaveDataInterruptHolder);
-        public LOG_TAG[] logTags => interrupt.logTags;
         #endregion
 
         public InterruptHolder() {
             persistentID = UtilityScripts.Utilities.GetNewUniqueID();
             identifier = string.Empty;
             awareCharacters = new List<Character>();
+            logTags = new List<LOG_TAG>();
         }
         public InterruptHolder(SaveDataInterruptHolder data) {
+            logTags = data.logTags;
+            if (logTags == null) {
+                logTags = new List<LOG_TAG>();
+            }
             awareCharacters = new List<Character>();
             persistentID = data.persistentID;
             interrupt = InteractionManager.Instance.GetInterruptData(data.interruptType);
@@ -167,8 +173,12 @@ namespace Interrupts {
         }
 
         #region General
-        public void SetEffectLog(Log effectLog) {
-            this.effectLog = effectLog;
+        public void SetEffectLog(Log p_effectLog) {
+            if (effectLog != null) {
+                //release previous effect log.
+                LogPool.Release(p_effectLog);
+            }
+            effectLog = p_effectLog;
         }
         public void SetIdentifier(string identifier) {
             this.identifier = identifier;
@@ -253,6 +263,7 @@ namespace Interrupts {
 
             SetIdentifier(identifier);
             SetReason(reason);
+            SetDefaultLogTags();
         }
         public void Reset() {
             interrupt = null;
@@ -260,11 +271,15 @@ namespace Interrupts {
             target = null;
             disguisedActor = null;
             disguisedTarget = null;
-            effectLog = default;
+            if (effectLog != null) {
+                LogPool.Release(effectLog);
+            }
+            effectLog = null;
             rumor = null;
             identifier = string.Empty;
             crimeType = CRIME_TYPE.Unset;
             awareCharacters.Clear();
+            logTags.Clear();
         }
         public void SetShouldNotBeObjectPooled(bool state) {
             shouldNotBeObjectPooled = state;
@@ -277,15 +292,33 @@ namespace Interrupts {
         }
         #endregion
 
+        #region Log Tags
+        private void SetDefaultLogTags() {
+            logTags.Clear();
+            if (interrupt.logTags != null) {
+                for (int i = 0; i < interrupt.logTags.Length; i++) {
+                    logTags.Add(interrupt.logTags[i]);
+                }
+            }
+        }
+        #endregion
+
         #region Loading
-        public void LoadReferences(SaveDataInterruptHolder data) {
+        public bool LoadReferences(SaveDataInterruptHolder data) {
+            bool isViable = true;
             actor = CharacterManager.Instance.GetCharacterByPersistentID(data.actorID);
+            if (actor == null) {
+                isViable = false;
+            }
             if (!string.IsNullOrEmpty(data.targetID)) {
                 if (data.targetPOIType == POINT_OF_INTEREST_TYPE.CHARACTER) {
                     target = CharacterManager.Instance.GetCharacterByPersistentID(data.targetID);
                 } else if (data.targetPOIType == POINT_OF_INTEREST_TYPE.TILE_OBJECT) {
                     target = InnerMapManager.Instance.GetTileObjectByPersistentID(data.targetID);
-                }    
+                }
+                if (target == null) {
+                    isViable = false;
+                }
             }
             disguisedActor = null;
             disguisedTarget = null;
@@ -297,7 +330,7 @@ namespace Interrupts {
             }
 
             effectLog = default;
-            if (data.effectLog.hasValue) {
+            if (data.effectLog != null) {
                 effectLog = data.effectLog;
             }
 
@@ -305,7 +338,9 @@ namespace Interrupts {
                 if (data.awareCharacterIDs.Count > 0) {
                     for (int i = 0; i < data.awareCharacterIDs.Count; i++) {
                         Character character = CharacterManager.Instance.GetCharacterByPersistentID(data.awareCharacterIDs[i]);
-                        awareCharacters.Add(character);
+                        if (character != null) {
+                            awareCharacters.Add(character);
+                        }
                     }
                 }    
             }
@@ -314,6 +349,7 @@ namespace Interrupts {
                 rumor = data.rumor.Load();
                 rumor.SetRumorable(this);
             }
+            return isViable;
         }
         #endregion
     }
@@ -337,6 +373,7 @@ public class SaveDataInterruptHolder : SaveData<InterruptHolder>, ISavableCounte
     public string reason;
     public CRIME_TYPE crimeType;
     public bool shouldNotBeObjectPooled;
+    public List<LOG_TAG> logTags;
 
     #region getters
     public OBJECT_TYPE objectType => OBJECT_TYPE.Interrupt;
@@ -366,7 +403,7 @@ public class SaveDataInterruptHolder : SaveData<InterruptHolder>, ISavableCounte
         }
 
         effectLog = default;
-        if (data.effectLog.hasValue) {
+        if (data.effectLog != null) {
             effectLog = data.effectLog;
         }
         // if (data.effectLog != null) {
@@ -383,9 +420,17 @@ public class SaveDataInterruptHolder : SaveData<InterruptHolder>, ISavableCounte
         awareCharacterIDs = new List<string>();
         if (data.awareCharacters != null && data.awareCharacters.Count > 0) {
             for (int i = 0; i < data.awareCharacters.Count; i++) {
-                awareCharacterIDs.Add(data.awareCharacters[i].persistentID);
+                Character character = data.awareCharacters[i];
+                if (character == null) {
+                    //If character is null remove it from the list
+                    data.awareCharacters.RemoveAt(i);
+                    i--;
+                    continue;
+                }
+                awareCharacterIDs.Add(character.persistentID);
             }
         }
+        logTags = new List<LOG_TAG>(data.logTags);
     }
 
     public override InterruptHolder Load() {

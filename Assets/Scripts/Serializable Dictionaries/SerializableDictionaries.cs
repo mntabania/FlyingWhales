@@ -9,6 +9,8 @@ using UnityEngine.Tilemaps;
 [System.Serializable]
 public class StringIntDictionary : SerializableDictionary<string, int> { }
 [System.Serializable]
+public class StringFloatDictionary : SerializableDictionary<string, float> { }
+[System.Serializable]
 public class BiomeLandmarkSpriteListDictionary : SerializableDictionary<BIOMES, List<LandmarkStructureSprite>, LandmarkSpriteListStorage> { }
 [System.Serializable]
 public class TileSpriteCorruptionListDictionary : SerializableDictionary<Sprite, List<GameObject>, CorruptionObjectsListStorage> { }
@@ -45,6 +47,8 @@ public class AreaTypeSpriteDictionary : SerializableDictionary<LOCATION_TYPE, Sp
 [System.Serializable]
 public class SummonSettingDictionary : SerializableDictionary<SUMMON_TYPE, SummonSettings> { }
 [System.Serializable]
+public class MinionSettingDictionary : SerializableDictionary<MINION_TYPE, MinionSettings> { }
+[System.Serializable]
 public class ArtifactSettingDictionary : SerializableDictionary<ARTIFACT_TYPE, ArtifactSettings> { }
 [System.Serializable]
 public class SeamlessEdgeAssetsDictionary : SerializableDictionary<LocationGridTile.Ground_Type, List<TileBase>, TileBaseListStorage> { }
@@ -62,6 +66,8 @@ public class WallResourceAssetDictionary : SerializableDictionary<RESOURCE, Wall
 public class WallAssetDictionary : SerializableDictionary<string, WallAsset> { }
 [System.Serializable]
 public class ParticleEffectAssetDictionary : SerializableDictionary<PARTICLE_EFFECT, GameObject> { }
+[System.Serializable]
+public class SoundEffectDictionary : SerializableDictionary<SOUND_EFFECT, List<AudioClip>, AudioClipListStorage> { }
 [System.Serializable]
 public class ProjectileDictionary : SerializableDictionary<ELEMENTAL_TYPE, GameObject> { }
 [System.Serializable]
@@ -94,6 +100,18 @@ public class RaceDataDictionary : SerializableDictionary<RACE, RaceData> { }
 public class MonsterMigrationBiomeDictionary : SerializableDictionary<BIOMES, MonsterMigrationBiomeData> { }
 [System.Serializable]
 public class ScenarioSettingsDataDictionary : SerializableDictionary<WorldSettingsData.World_Type, ScenarioData> { }
+[System.Serializable]
+public class StructureDataDictionary : SerializableDictionary<STRUCTURE_TYPE, StructureData> { }
+[System.Serializable]
+public class IntChancesDictionary : SerializableDictionary<CHANCE_TYPE, int> { }
+[System.Serializable]
+public class PowerAndLevelDictionary : SerializableDictionary<PLAYER_SKILL_TYPE, int> { }
+[System.Serializable]
+public class TileTypeAssetDictionary : SerializableDictionary<Biome_Tile_Type, TileBase> { }
+[System.Serializable]
+public class TemperatureTypeDictionary : SerializableDictionary<Temperature_Type, Range> { }
+[System.Serializable]
+public class PrecipitationTypeDictionary : SerializableDictionary<Precipitation_Type, Range> { }
 
 //List storage
 [System.Serializable]
@@ -112,3 +130,5 @@ public class GameObjectListStorage : SerializableDictionary.Storage<List<GameObj
 public class MonsterSettingListStorage : SerializableDictionary.Storage<List<MonsterSetting>> { }
 [System.Serializable]
 public class TileObjectSettingListStorage : SerializableDictionary.Storage<List<ItemSetting>> { }
+[System.Serializable]
+public class AudioClipListStorage : SerializableDictionary.Storage<List<AudioClip>> { }

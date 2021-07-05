@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using Logs;
+using Object_Pools;
 using UnityEngine;
 
 namespace Interrupts {
@@ -19,20 +20,22 @@ namespace Interrupts {
             ActualGoapNode node = null) {
             bool executed = base.ExecuteInterruptStartEffect(interruptHolder, ref overrideEffectLog, node);
             Character targetCharacter = interruptHolder.target as Character;
+            GoapAction p_action = node.action;
             if (node != null) {
-                node.action.OnStoppedInterrupt(node);
-                if(node.associatedJob != null && !node.associatedJob.hasBeenReset && node.associatedJob.originalOwner != null) {
-                    node.associatedJob.CancelJob(false);
+                p_action.OnStoppedInterrupt(node);
+                if (node.associatedJob != null && !node.associatedJob.hasBeenReset && node.associatedJob.originalOwner != null) {
+                    node.associatedJob.CancelJob();
                 }
                 executed = true;
             }
-            targetCharacter.currentJob?.CancelJob(false);
+            targetCharacter.currentJob?.CancelJob();
             targetCharacter.currentJob?.StopJobNotDrop();
-            if(interruptHolder.actor != targetCharacter && node != null) {
+            if (interruptHolder.actor != targetCharacter && p_action != null) {
+                //if (overrideEffectLog != null) { LogPool.Release(overrideEffectLog); }
                 overrideEffectLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Interrupt", name, "effect_with_action", null, logTags);
                 overrideEffectLog.AddToFillers(interruptHolder.actor, interruptHolder.actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                 overrideEffectLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-                overrideEffectLog.AddToFillers(null, node.action.name, LOG_IDENTIFIER.STRING_1);
+                overrideEffectLog.AddToFillers(null, p_action.name, LOG_IDENTIFIER.STRING_1);
             }
             return executed;
         }

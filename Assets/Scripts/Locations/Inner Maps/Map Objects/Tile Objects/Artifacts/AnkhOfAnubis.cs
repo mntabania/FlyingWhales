@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Inner_Maps;
+using Object_Pools;
 using UnityEngine.Assertions;
 
 public class AnkhOfAnubis : Artifact {
@@ -60,9 +61,8 @@ public class AnkhOfAnubis : Artifact {
                 log.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                 log.AddToFillers(null, characterThatDied.name, LOG_IDENTIFIER.TARGET_CHARACTER);
                 log.AddLogToDatabase();
-                if(gridTileLocation != null) {
-                    PlayerManager.Instance.player.ShowNotificationFrom(gridTileLocation.structure.region, log);
-                }
+                PlayerManager.Instance.player.ShowNotificationFrom(gridTileLocation, log);
+                LogPool.Release(log);
             }
         }
     }

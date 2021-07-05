@@ -43,38 +43,76 @@ SpriteAtlas:
     variantMultiplier: 1
     packables:
     - {fileID: 102900000, guid: 4b18ba5513d55364284cd64228896343, type: 3}
-    totalSpriteSurfaceArea: 3554539
+    totalSpriteSurfaceArea: 8402864
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
+  - {fileID: 21300000, guid: baaca0a0715a3844183d8fadb56ded82, type: 3}
   - {fileID: 21300000, guid: ae43244188953b94ca4bfbb6e53e17b1, type: 3}
+  - {fileID: 21300000, guid: aee89f91e27b7ea4fb6082333a3ed6ee, type: 3}
+  - {fileID: 21300000, guid: 210cb0a2957d55444964ebaecb2d2ecf, type: 3}
   - {fileID: 21300000, guid: ad0ba403edcb24941bfe8c77517193b9, type: 3}
+  - {fileID: 21300000, guid: 3a17d623ca130c644a1e81eac1474f7d, type: 3}
   - {fileID: 21300000, guid: 86897a3345403f240a98a45707546524, type: 3}
-  - {fileID: 21300000, guid: 84a8b484387d6314e8a900ded3746834, type: 3}
+  - {fileID: 21300000, guid: 488a4da384bb75c47a50881df2203771, type: 3}
   - {fileID: 21300000, guid: 89d6a3c4d4377b44bb70a0f25aaedb7c, type: 3}
   - {fileID: 21300000, guid: 04a7bd3537fad7f45b0401c30872d926, type: 3}
   - {fileID: 21300000, guid: 67ebbc854a9df3c4e858dd63c5bf03f3, type: 3}
+  - {fileID: 21300000, guid: f854f3f68adb1894aa813fe829720bd9, type: 3}
+  - {fileID: 21300000, guid: 9f2b0c071bedc5245b06d39df9bc539e, type: 3}
+  - {fileID: 21300000, guid: bea33587360e8ef48b476997603207ad, type: 3}
+  - {fileID: 21300000, guid: df0ef0a758a443748978f2fd68df6dfc, type: 3}
   - {fileID: 21300000, guid: 4ad043e7f6d9df24d91e3edcd0385832, type: 3}
   - {fileID: 21300000, guid: c01396480b0e11e48aec5b89a59ded67, type: 3}
+  - {fileID: 21300000, guid: 3b16d98854a7e4f4ba62f50ef6271f50, type: 3}
+  - {fileID: 21300000, guid: 961f63a8786743c4b9e5d59e513f938c, type: 3}
+  - {fileID: 21300000, guid: 53ad7d09c765f9e49879049dd5e279a1, type: 3}
+  - {fileID: 21300000, guid: aeacff293460a1a4ab5cf13c2c554f21, type: 3}
+  - {fileID: 21300000, guid: c9fdb0f9e0b890f4689808f0a6ac4ca9, type: 3}
+  - {fileID: 21300000, guid: b936612ad53a0ce45a8c628ef99de996, type: 3}
   - {fileID: 21300000, guid: ef581cca56aaa3544add2b31eba6cba9, type: 3}
+  - {fileID: 21300000, guid: 7014c75b779e87d43b6a3125ddbdce34, type: 3}
+  - {fileID: 21300000, guid: c754473c2eee1ab49b75485827ea75ac, type: 3}
   - {fileID: 21300000, guid: dbe0987dc8cc34441938f371b77893c1, type: 3}
   - {fileID: 21300000, guid: 0433fbfd2f7080943a094b3ca558c0f2, type: 3}
+  - {fileID: 21300000, guid: d04c9c0e3be0b6741b590b976005a3b8, type: 3}
   - {fileID: 21300000, guid: 6ae7e28e53de7564f9cd5da42b57c804, type: 3}
   - {fileID: 21300000, guid: f844eeee9e0b19c4f989583fdd94b719, type: 3}
+  - {fileID: 21300000, guid: 78d7128fb67a18046823b7e2cf9a08fa, type: 3}
+  - {fileID: 21300000, guid: 478b1fcfe075071498952f16a2d70068, type: 3}
   m_PackedSpriteNamesToIndex:
+  - Skill_Portrait_Border
   - demonic_structure_popup_container
+  - maraud_second_column
+  - maraud_container
   - skill_details_tooltip_container
+  - actions_list_container
   - Tabs Container
-  - topbar_container
+  - world_options_container
   - subtab_container
   - share_intel_container_big
   - intel_container
+  - loadout_panel
+  - unlockContainer_white_border
+  - maraud_container_old
+  - scheme_container
   - minion_info_tooltip_container
   - corrupt_rile_up_container
+  - minion_selector_disabled
+  - two_columns_list_container
+  - PopUp-List
+  - unlockContainer_no_border
+  - unlockContainer
+  - world_options_empty_container
   - spell_list_container
+  - minion_selector_menu
+  - prism_container
   - share_intel_container
   - subtab_container_charging
+  - faction_overview_container
   - log_panel
   - minion_list_container
+  - faction_panel
+  - mood_container
   m_Tag: UI Windows
   m_IsVariant: 0

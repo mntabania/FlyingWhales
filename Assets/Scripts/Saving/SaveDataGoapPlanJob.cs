@@ -9,6 +9,7 @@ public class SaveDataGoapPlanJob : SaveDataJobQueueItem {
     public INTERACTION_TYPE targetInteractionType;
     public Dictionary<INTERACTION_TYPE, SaveDataOtherData[]> otherData;
     public bool shouldBeCancelledOnDeath;
+    public bool isAssigned;
     public SaveDataGoapPlan saveDataGoapPlan;
     public Dictionary<INTERACTION_TYPE, List<ILocationSaveData>> priorityLocations { get; private set; }
 
@@ -20,6 +21,7 @@ public class SaveDataGoapPlanJob : SaveDataJobQueueItem {
         targetPOIID = goapJob.targetPOI == null ? string.Empty : goapJob.targetPOI.persistentID;
         targetPOIObjectType = goapJob.targetPOI == null ? OBJECT_TYPE.Character : goapJob.targetPOI.objectType;
         targetInteractionType = goapJob.targetInteractionType;
+        isAssigned = goapJob.isAssigned;
 
         otherData = new Dictionary<INTERACTION_TYPE, SaveDataOtherData[]>();
         foreach (var data in goapJob.otherData) {

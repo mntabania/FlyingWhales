@@ -12,17 +12,19 @@
         SetState("Place Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
+#if DEBUG_LOG
         string costLog = $"\n{name} {target.nameWithID}: +10(Constant)";
         actor.logComponent.AppendCostLog(costLog);
+#endif
         return 10;
     }
-    #endregion
+#endregion
     
-    #region State Effects
+#region State Effects
     public void AfterPlaceSuccess(ActualGoapNode goapNode) {
         if (goapNode.poiTarget is GenericTileObject genericTileObject) {
-            genericTileObject.gridTileLocation.SetHasFreezingTrap(true, RACE.KOBOLD);
+            genericTileObject.gridTileLocation.tileObjectComponent.SetHasFreezingTrap(true, false, RACE.KOBOLD);
         }
     }
-    #endregion
+#endregion
 }

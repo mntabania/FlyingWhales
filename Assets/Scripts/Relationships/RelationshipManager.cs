@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Traits;
 using UnityEngine;
 using UnityEngine.Assertions;
+using UtilityScripts;
 using Random = UnityEngine.Random;
 
 public class RelationshipManager : BaseMonoBehaviour {
@@ -75,19 +76,26 @@ public class RelationshipManager : BaseMonoBehaviour {
                 return RELATIONSHIP_TYPE.LOVER;
             case RELATIONSHIP_TYPE.AFFAIR:
                 return RELATIONSHIP_TYPE.AFFAIR;
-            case RELATIONSHIP_TYPE.MASTER:
-                return RELATIONSHIP_TYPE.SERVANT;
-            case RELATIONSHIP_TYPE.SERVANT:
-                return RELATIONSHIP_TYPE.MASTER;
-            case RELATIONSHIP_TYPE.SAVER:
-                return RELATIONSHIP_TYPE.SAVE_TARGET;
-            case RELATIONSHIP_TYPE.SAVE_TARGET:
-                return RELATIONSHIP_TYPE.SAVER;
             case RELATIONSHIP_TYPE.EX_LOVER:
                 return RELATIONSHIP_TYPE.EX_LOVER;
             default:
                 return RELATIONSHIP_TYPE.NONE;
         }
+    }
+    public bool IsCompatibleBasedOnSexualityAndOpinion(Character p_character1, Character p_character2) {
+        Unfaithful unfaithful = p_character1.traitContainer.GetTraitOrStatus<Unfaithful>("Unfaithful");
+        if (unfaithful == null) {
+            return IsSexuallyCompatible(p_character1, p_character2);
+        } else {
+            return unfaithful.IsCompatibleBasedOnSexualityAndOpinions(p_character1, p_character2);
+        }
+    }
+    public bool CanHaveRelationship(Character p_character1, Character p_character2, RELATIONSHIP_TYPE p_rel) {
+        if (GetValidator(p_character1).CanHaveRelationship(p_character2, p_character1, p_rel) &&
+            GetValidator(p_character2).CanHaveRelationship(p_character1, p_character2, p_rel)) {
+            return true;
+        }
+        return false;
     }
     /// <summary>
     /// Check whether or not 2 characters are sexually compatible.
@@ -175,10 +183,10 @@ public class RelationshipManager : BaseMonoBehaviour {
             rel2.relationshipProcessor?.OnRelationshipAdded(rel2, rel1, pair);
         }
         if (rel == RELATIONSHIP_TYPE.AFFAIR) {
-            Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "Generic", "Affair", null, LOG_TAG.Social, LOG_TAG.Life_Changes);
+            Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "Generic", "Affair", null, LogUtilities.Social_Life_Changes_Tags);
             log.AddToFillers(rel1 as Character, rel1.relatableName, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             log.AddToFillers(rel2 as Character, rel2.relatableName, LOG_IDENTIFIER.TARGET_CHARACTER);
-            log.AddLogToDatabase();
+            log.AddLogToDatabase(true);
         }
         return rel1.relationshipContainer.GetRelationshipDataWith(rel2);
     }

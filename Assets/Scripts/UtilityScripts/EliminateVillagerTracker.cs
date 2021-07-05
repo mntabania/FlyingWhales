@@ -29,7 +29,7 @@ public class EliminateVillagerTracker {
         Messenger.AddListener<Character>(CharacterSignals.CHARACTER_BECOME_CULTIST, CheckIfCharacterIsEliminated);
         Messenger.AddListener<Character>(WorldEventSignals.NEW_VILLAGER_ARRIVED, OnNewVillagerArrived);
         Messenger.AddListener<Character>(CharacterSignals.CHARACTER_NO_LONGER_CULTIST, OnCharacterNoLongerCultist);
-        Messenger.AddListener<KeyCode>(ControlsSignals.KEY_DOWN, OnKeyPressed);
+        // Messenger.AddListener<KeyCode>(ControlsSignals.KEY_DOWN, OnKeyPressed);
         
         List<Character> charactersToTrack = GetAllCharactersToBeEliminated(p_allCharacters);
         villagersToEliminate.Clear();
@@ -66,11 +66,11 @@ public class EliminateVillagerTracker {
     }
     
     #region Listeners
-    private void OnKeyPressed(KeyCode keyCode) {
-        if (keyCode == KeyCode.Tab) {
-            CenterCycle();
-        }
-    }
+    // private void OnKeyPressed(KeyCode keyCode) {
+    //     if (keyCode == KeyCode.Tab) {
+    //         CenterCycle();
+    //     }
+    // }
     private void CheckIfCharacterIsEliminated(Character p_character) {
         if (ShouldConsiderCharacterAsEliminated(p_character)) {
             EliminateVillager(p_character);
@@ -115,29 +115,29 @@ public class EliminateVillagerTracker {
         }
         return false;
     }
-    private void CenterCycle() {
-        if (villagersToEliminate != null && villagersToEliminate.Count > 0) {
-            //normal objects to center
-            ISelectable objToSelect = GetNextObjectToCenter(villagersToEliminate.Select(c => c as ISelectable).ToList());
-            if (objToSelect != null) {
-                InputManager.Instance.Select(objToSelect);
-            }    
-        }
-    }
-    private ISelectable GetNextObjectToCenter(List<ISelectable> selectables) {
-        ISelectable objToSelect = null;
-        for (int i = 0; i < selectables.Count; i++) {
-            ISelectable currentSelectable = selectables[i];
-            if (currentSelectable.IsCurrentlySelected()) {
-                //set next selectable in list to be selected.
-                objToSelect = CollectionUtilities.GetNextElementCyclic(selectables, i);
-                break;
-            }
-        }
-        if (objToSelect == null) {
-            objToSelect = selectables[0];
-        }
-        return objToSelect;
-    }
+    // private void CenterCycle() {
+    //     if (villagersToEliminate != null && villagersToEliminate.Count > 0) {
+    //         //normal objects to center
+    //         ISelectable objToSelect = GetNextObjectToCenter(villagersToEliminate.Select(c => c as ISelectable).ToList());
+    //         if (objToSelect != null) {
+    //             InputManager.Instance.Select(objToSelect);
+    //         }    
+    //     }
+    // }
+    // private ISelectable GetNextObjectToCenter(List<ISelectable> selectables) {
+    //     ISelectable objToSelect = null;
+    //     for (int i = 0; i < selectables.Count; i++) {
+    //         ISelectable currentSelectable = selectables[i];
+    //         if (currentSelectable.IsCurrentlySelected()) {
+    //             //set next selectable in list to be selected.
+    //             objToSelect = CollectionUtilities.GetNextElementCyclic(selectables, i);
+    //             break;
+    //         }
+    //     }
+    //     if (objToSelect == null) {
+    //         objToSelect = selectables[0];
+    //     }
+    //     return objToSelect;
+    // }
     #endregion
 }

@@ -15,6 +15,7 @@ public class RaidPartyQuest : PartyQuest {
     public override IPartyQuestTarget target => targetSettlement;
     //public override HexTile waitingHexArea => waitingArea;
     public override System.Type serializedData => typeof(SaveDataRaidPartyQuest);
+    public override bool shouldAssignedPartyRetreatUponKnockoutOrKill => true;
     #endregion
 
     public RaidPartyQuest() : base(PARTY_QUEST_TYPE.Raid) {
@@ -34,6 +35,7 @@ public class RaidPartyQuest : PartyQuest {
     public override void OnAssignedPartySwitchedState(PARTY_STATE fromState, PARTY_STATE toState) {
         base.OnAssignedPartySwitchedState(fromState, toState);
         if(toState == PARTY_STATE.Working) {
+            SetIsSuccessful(true);
             StartRaidTimer();
             Messenger.AddListener<Character>(CharacterSignals.CHARACTER_CAN_NO_LONGER_MOVE, OnCharacterCanNoLongerMove);
         } else if (fromState == PARTY_STATE.Working) {
@@ -43,38 +45,11 @@ public class RaidPartyQuest : PartyQuest {
     public override string GetPartyQuestTextInLog() {
         return "Raid " + targetSettlement.name;
     }
-    //public override bool IsAllowedToJoin(Character character) {
-    //    return (character.characterClass.IsCombatant() && character.characterClass.identifier == "Normal") || character.characterClass.className == "Noble";
-    //}
-    //protected override void OnWaitTimeOver() {
-    //    base.OnWaitTimeOver();
-    //    for (int i = 0; i < members.Count; i++) {
-    //        members[i].traitContainer.AddTrait(members[i], "Travelling");
-    //    }
-    //    StartRaidTimer();
-    //}
-    //protected override void OnAddMember(Character member) {
-    //    base.OnAddMember(member);
-    //    member.movementComponent.SetEnableDigging(true);
-    //}
-    //protected override void OnRemoveMember(Character member) {
-    //    base.OnRemoveMember(member);
-    //    member.movementComponent.SetEnableDigging(false);
-    //    member.traitContainer.RemoveTrait(member, "Travelling");
-    //}
-    //protected override void OnRemoveMemberOnDisband(Character member) {
-    //    base.OnRemoveMemberOnDisband(member);
-    //    member.movementComponent.SetEnableDigging(false);
-    //    member.traitContainer.RemoveTrait(member, "Travelling");
-    //}
-    //protected override void OnDisbandParty() {
-    //    base.OnDisbandParty();
-    //    //TODO: notif reason why raid party disbanded
-    //}
     #endregion
 
     #region General
     private void OnCharacterCanNoLongerMove(Character character) {
+        //This is so that when a resident of the settlement being raided can no longer move, the raiders will evaluate the character again, so they can kidnap them
         if(assignedParty != null && assignedParty.isActive && assignedParty.currentQuest == this) {
             if (character.homeSettlement == targetSettlement) {
                 if (character.marker) {
@@ -121,7 +96,6 @@ public class RaidPartyQuest : PartyQuest {
             if (!resident.isDead
                 && !resident.isBeingSeized
                 && resident.gridTileLocation != null
-                && resident.gridTileLocation.collectionOwner.isPartOfParentRegionMap
                 && resident.gridTileLocation.IsPartOfSettlement(settlement)
                 && (resident.faction == null || faction == null || faction.IsHostileWith(resident.faction))) {
                 return true;

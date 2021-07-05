@@ -6,10 +6,12 @@ namespace Inner_Maps.Location_Structures {
 
         private bool _isOpen;
         private LocationGridTile _tileLocation;
+        private bool _isPartOfLocationStructureObject;
         
         #region getters
         public bool isOpen => _isOpen;
         public LocationGridTile tileLocation => _tileLocation;
+        public bool isPartOfLocationStructureObject => _isPartOfLocationStructureObject;
         #endregion
 
         #region Monobehaviours
@@ -24,8 +26,11 @@ namespace Inner_Maps.Location_Structures {
 #endif
         #endregion
         
-        private void SetOpenState(bool state) {
+        public void SetOpenState(bool state) {
             _isOpen = state;
+        }
+        public void SetIsPartOfLocationStructureObject(bool p_state) {
+            _isPartOfLocationStructureObject = p_state;
         }
         public LocationGridTile GetLocationGridTileGivenCurrentPosition(InnerTileMap innerTileMap) {
             Vector3Int coordinates = innerTileMap.groundTilemap.WorldToCell(transform.position);
@@ -35,7 +40,7 @@ namespace Inner_Maps.Location_Structures {
         public void OnPlaceConnector(InnerTileMap innerTileMap) {
             _tileLocation = GetLocationGridTileGivenCurrentPosition(innerTileMap);
             if (_tileLocation != null) {
-                _tileLocation.AddConnector();
+                _tileLocation.AddConnector(this);
                 Messenger.AddListener<LocationGridTile>(StructureSignals.STRUCTURE_CONNECTOR_PLACED, OnStructureConnectorPlaced);
                 Messenger.AddListener<LocationGridTile>(StructureSignals.STRUCTURE_CONNECTOR_REMOVED, OnStructureConnectorRemoved);
                 Messenger.Broadcast(StructureSignals.STRUCTURE_CONNECTOR_PLACED, _tileLocation);
@@ -60,9 +65,23 @@ namespace Inner_Maps.Location_Structures {
         #endregion
 
         #region Loading
-        public void LoadReferences(SaveDataStructureConnector saveData, InnerTileMap innerTileMap) {
+        public void LoadReferencesForStructureObjects(SaveDataStructureConnector saveData, InnerTileMap innerTileMap) {
             _isOpen = saveData.isOpen;
+            _isPartOfLocationStructureObject = saveData.isPartOfLocationStructureObject;
             _tileLocation = GetLocationGridTileGivenCurrentPosition(innerTileMap); //no need too add connector to tile, since that number is saved on SaveDataLocationGridTile.
+            if (_tileLocation != null) {
+                _tileLocation.area.structureComponent.AddStructureConnector(this);
+            }
+            Messenger.AddListener<LocationGridTile>(StructureSignals.STRUCTURE_CONNECTOR_PLACED, OnStructureConnectorPlaced);
+            Messenger.AddListener<LocationGridTile>(StructureSignals.STRUCTURE_CONNECTOR_REMOVED, OnStructureConnectorRemoved);
+        }
+        public void LoadConnectorForTileObjects(InnerTileMap innerTileMap) {
+            _tileLocation = GetLocationGridTileGivenCurrentPosition(innerTileMap);
+            if (_tileLocation != null) {
+                _tileLocation.area.structureComponent.AddStructureConnector(this);
+                Messenger.AddListener<LocationGridTile>(StructureSignals.STRUCTURE_CONNECTOR_PLACED, OnStructureConnectorPlaced);
+                Messenger.AddListener<LocationGridTile>(StructureSignals.STRUCTURE_CONNECTOR_REMOVED, OnStructureConnectorRemoved);
+            }
         }
         #endregion
         
@@ -71,24 +90,27 @@ namespace Inner_Maps.Location_Structures {
             if (_tileLocation != null) {
                 Messenger.RemoveListener<LocationGridTile>(StructureSignals.STRUCTURE_CONNECTOR_PLACED, OnStructureConnectorPlaced);
                 Messenger.RemoveListener<LocationGridTile>(StructureSignals.STRUCTURE_CONNECTOR_REMOVED, OnStructureConnectorRemoved);
-                _tileLocation.RemoveConnector();
+                _tileLocation.RemoveConnector(this);
                 Messenger.Broadcast(StructureSignals.STRUCTURE_CONNECTOR_REMOVED, _tileLocation);    
             }
             _isOpen = true;
+            _tileLocation = null;
         }
         #endregion
 
         public override string ToString() {
-            return $"Connector at {transform.position.ToString()}";
+            return $"Connector at {_tileLocation}";
         }
     }
 }
 
 public class SaveDataStructureConnector : SaveData<StructureConnector> {
     public bool isOpen;
+    public bool isPartOfLocationStructureObject;
     
     public override void Save(StructureConnector data) {
         base.Save(data);
         isOpen = data.isOpen;
+        isPartOfLocationStructureObject = data.isPartOfLocationStructureObject;
     }
 }

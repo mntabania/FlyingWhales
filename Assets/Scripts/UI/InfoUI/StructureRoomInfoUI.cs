@@ -59,7 +59,7 @@ public class StructureRoomInfoUI : InfoUIBase {
     private void UpdateBasicInfo() {
         nameLbl.text = $"{activeRoom.name}";
         if (activeRoom.parentStructure != null) {
-            locationPortrait.SetPortrait(activeRoom.parentStructure.structureType.GetLandmarkType());    
+            locationPortrait.SetPortrait(activeRoom.parentStructure.structureType);    
         }
     }
 }

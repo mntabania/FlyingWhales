@@ -4,5 +4,11 @@ namespace Inner_Maps.Map_Objects.Map_Object_Visuals {
     public class TreeGameObject : TileObjectGameObject {
         [SerializeField] private StructureConnector _structureConnector;
         public StructureConnector structureConnector => _structureConnector;
+        public override void Reset() {
+            base.Reset();
+            if (_structureConnector != null) {
+                _structureConnector.Reset();
+            }
+        }
     }
 }

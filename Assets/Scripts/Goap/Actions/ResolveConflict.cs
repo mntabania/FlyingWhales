@@ -47,7 +47,7 @@ public class ResolveConflict : GoapAction {
             bool hasEnemy = false;
             if (poiTarget is Character) {
                 Character targetCharacter = poiTarget as Character;
-                hasEnemy = targetCharacter.relationshipContainer.GetEnemyCharacters().Count > 0;
+                hasEnemy = targetCharacter.relationshipContainer.GetFirstEnemyCharacter() != null;
             }
             return actor != poiTarget && hasEnemy && actor.traitContainer.HasTrait("Diplomatic");
         }
@@ -60,7 +60,7 @@ public class ResolveConflict : GoapAction {
         if (goapNode.poiTarget is Character) {
             Character targetCharacter = goapNode.poiTarget as Character;
             //List<Relatable> allEnemyTraits = targetCharacter.relationshipContainer.GetRelatablesWithRelationship(RELATIONSHIP_TRAIT.ENEMY);
-            Character target = targetCharacter.relationshipContainer.GetEnemyCharacters().First();
+            Character target = targetCharacter.relationshipContainer.GetFirstEnemyCharacter();
             if (target != null) {
                 goapNode.descriptionLog.AddToFillers(target, target.name, LOG_IDENTIFIER.CHARACTER_3);
             } else {

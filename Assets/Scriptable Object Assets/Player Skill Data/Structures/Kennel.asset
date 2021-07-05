@@ -13,12 +13,74 @@ MonoBehaviour:
   m_Name: Kennel
   m_EditorClassIdentifier: 
   skill: 74
-  manaCost: -1
+  manaCost: 200
   charges: 1
-  cooldown: 576
+  cooldown: 480
   threat: 0
   threatPerHour: 0
   expCost: 0
+  cheatedLevel: 0
+  pierce: 0
+  bonusChargeWhenUnlocked: 2
+  unlockChargeOnPortalUpgrade: 2
   buttonSprite: {fileID: 21300000, guid: e82f28130057b894cb52771c34d33c2d, type: 3}
   tooltipVideoClip: {fileID: 0}
-  tooltipImage: {fileID: 2800000, guid: bedf94a57c4466a4cb5fee2b0be7aeb8, type: 3}
+  tooltipImage: {fileID: 0}
+  unlockCost: 100
+  tier: 1
+  baseLoadoutWeight: 50
+  resistanceType: 0
+  archetypeWeightedBonus: 0
+  canBeReleasedEvenIfLearned: 1
+  contextMenuIcon: {fileID: 0}
+  contextMenuColumn: 0
+  playerActionIcon: {fileID: 0}
+  isNonUpgradeable: 1
+  isAffliction: 0
+  isLockedBaseOnRequirements: 0
+  requirementData:
+    requirements: 08000000
+    requiredArchetype: 0
+    requiredSkills: 
+    actionCount: 0
+    afflictionCount: 0
+    spellsCount: 0
+    tier1Count: 0
+    tier2Count: 0
+    tier3Count: 0
+    portalLevel: 3
+    isOR: 0
+  skillUpgradeData:
+    upgradeCosts: 01000000
+    manacostPerLevel: c8000000
+    chargesPerLevel: 02000000
+    bonuses: 0e000000
+    additionalDamagePerLevel: 
+    additionalPiercePerLevel: []
+    additionalHpPercentagePerLevel: []
+    additionalAttackPercentagePerLevel: []
+    additionalHpValuePerLevel: 
+    additionalAttackValuePerLevel: 
+    additionalmanaReceivedPercentagePerLevel: []
+    statsIncreasedPercentagePerLevel: []
+    durationBonusPerLevel: 
+    additionalMaxHPPercentagePerLevel: []
+    additionalMaxHPActualPerLevel: 
+    additionalChanceBonusPercentagePerLevel: []
+    additionalTileRangeBonusPerLevel: 
+    decreaseMovementSpeedPerLevel: 
+    cooldownPerLevel: ffffffff
+    skillMovementSpeed: 
+  afflictionUpgradeData:
+    bonuses: 
+    cooldown: 
+    additionalPiercePerLevel: []
+    rateChance: 
+    crowdNumber: 
+    napsDuration: 
+    numberOfCriteria: 
+    hungerRate: 
+    duration: []
+    opinionTrigger: 
+    addedBehaviour: 
+    listOfCriteria: 

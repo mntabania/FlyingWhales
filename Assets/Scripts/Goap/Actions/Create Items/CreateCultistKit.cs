@@ -39,13 +39,15 @@ public class CreateCultistKit : GoapAction {
         SetState("Create Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
+#if DEBUG_LOG
         string costLog = $"\n{name} {target.nameWithID}: +10(Constant)";
         actor.logComponent.AppendCostLog(costLog);
+#endif
         return 0;
     }
-    #endregion
+#endregion
 
-    #region Preconditions
+#region Preconditions
     private bool HasWood(Character actor, IPointOfInterest poiTarget, OtherData[] otherData, JOB_TYPE jobType) {
         return actor.GetItem(TILE_OBJECT_TYPE.WOOD_PILE) is ResourcePile pile && 
                pile.resourceInPile >= TileObjectDB.GetTileObjectData(TILE_OBJECT_TYPE.CULTIST_KIT).mainRecipe.GetNeededAmountForIngredient(TILE_OBJECT_TYPE.WOOD_PILE); 
@@ -54,9 +56,9 @@ public class CreateCultistKit : GoapAction {
         return actor.GetItem(TILE_OBJECT_TYPE.STONE_PILE) is ResourcePile pile && 
                pile.resourceInPile >= TileObjectDB.GetTileObjectData(TILE_OBJECT_TYPE.CULTIST_KIT).mainRecipe.GetNeededAmountForIngredient(TILE_OBJECT_TYPE.STONE_PILE); 
     }
-    #endregion
+#endregion
     
-    #region State Effects
+#region State Effects
     public void AfterCreateSuccess(ActualGoapNode goapNode) {
         Character actor = goapNode.actor;
         if (actor.race == RACE.HUMANS) {
@@ -65,7 +67,9 @@ public class CreateCultistKit : GoapAction {
                 actor.ObtainItem(InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.CULTIST_KIT));
                 stonePile.AdjustResourceInPile(-10);
             } else {
+#if DEBUG_LOG
                 actor.logComponent.PrintLogErrorIfActive(actor.name + " is trying to create a Cultist Kit but lacks requirements");
+#endif
             }    
         }
         else {
@@ -74,9 +78,11 @@ public class CreateCultistKit : GoapAction {
                 actor.ObtainItem(InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.CULTIST_KIT));
                 woodPile.AdjustResourceInPile(-10);
             } else {
+#if DEBUG_LOG
                 actor.logComponent.PrintLogErrorIfActive(actor.name + " is trying to create a Cultist Kit but lacks requirements");
+#endif
             }
         }
     }
-    #endregion
+#endregion
 }

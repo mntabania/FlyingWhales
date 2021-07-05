@@ -23,4 +23,8 @@ public abstract class ProjectileReceiver : MonoBehaviour {
     }
     
     public abstract void OnTriggerEnter2D(Collider2D collision);
+
+    public void Reset() {
+        owner = null;
+    }
 }

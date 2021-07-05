@@ -72,6 +72,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4683614060808382}
+  - {fileID: 6529179060144418034}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -88,6 +89,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   classManager: {fileID: 114444464489526964}
+  talentManager: {fileID: 4299273015490349446}
   characterIconPrefab: {fileID: 1000012712350628, guid: 5372250d22a51bc40a200236eee58ac2,
     type: 3}
   characterIconsParent: {fileID: 0}
@@ -132,6 +134,72 @@ MonoBehaviour:
     race: 32
     neutralAssets:
       head: []
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+      ears: []
+    maleAssets:
+      head: []
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+      ears: []
+    femaleAssets:
+      head: []
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+      ears: []
+  - raceName: BEAR
+    race: 45
+    neutralAssets:
+      head:
+      - {fileID: 21300000, guid: 1f091a52e510f904494092f807302d3f, type: 3}
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+      ears: []
+    maleAssets:
+      head: []
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+      ears: []
+    femaleAssets:
+      head: []
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+      ears: []
+  - raceName: BOAR
+    race: 46
+    neutralAssets:
+      head:
+      - {fileID: 21300000, guid: f179fb37e98fd2b4da205be9dd85ba06, type: 3}
       brows: []
       eyes: []
       mouth: []
@@ -622,6 +690,39 @@ MonoBehaviour:
       mustache: []
       beard: []
       ears: []
+  - raceName: IMP
+    race: 40
+    neutralAssets:
+      head:
+      - {fileID: 21300000, guid: cbb07a794c232b944a5fb53de05ce5aa, type: 3}
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+      ears: []
+    maleAssets:
+      head: []
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+      ears: []
+    femaleAssets:
+      head: []
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+      ears: []
   - raceName: KOBOLD
     race: 20
     neutralAssets:
@@ -688,6 +789,72 @@ MonoBehaviour:
       mustache: []
       beard: []
       ears: []
+  - raceName: MINK
+    race: 48
+    neutralAssets:
+      head:
+      - {fileID: 21300000, guid: 7b489e9822bf9f54ab4f3252182a3525, type: 3}
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+      ears: []
+    maleAssets:
+      head: []
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+      ears: []
+    femaleAssets:
+      head: []
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+      ears: []
+  - raceName: MOONWALKER
+    race: 47
+    neutralAssets:
+      head:
+      - {fileID: 21300000, guid: b022e0c2e3b5fcb45b1a1582c0552002, type: 3}
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+      ears: []
+    maleAssets:
+      head: []
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+      ears: []
+    femaleAssets:
+      head: []
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+      ears: []
   - raceName: NYMPH
     race: 28
     neutralAssets:
@@ -725,6 +892,39 @@ MonoBehaviour:
     neutralAssets:
       head:
       - {fileID: 21300000, guid: 40507c8f8647b26409f2f9d92b28fb70, type: 3}
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+      ears: []
+    maleAssets:
+      head: []
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+      ears: []
+    femaleAssets:
+      head: []
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+      ears: []
+  - raceName: RABBIT
+    race: 49
+    neutralAssets:
+      head:
+      - {fileID: 21300000, guid: d13beeed7c501b34cacd818376c21620, type: 3}
       brows: []
       eyes: []
       mouth: []
@@ -1193,69 +1393,6 @@ MonoBehaviour:
     - baseBG: {fileID: 21300000, guid: 94079e3476351c243b5ce1bc5dfdd56c, type: 3}
     - baseBG: {fileID: 21300000, guid: b1facc086f831d64990f9d4056411274, type: 3}
     - baseBG: {fileID: 21300000, guid: 51cc2170d7bb77744b58e9a139303d2d, type: 3}
-  classPortraits:
-    m_keys:
-    - Envy
-    - Greed
-    - Lust
-    - Pride
-    - Sloth
-    - Wrath
-    - Gluttony
-    - Necromancer
-    - Incubus
-    - Succubus
-    - Corrupt Ent
-    - Desert Ent
-    - Forest Ent
-    - Grass Ent
-    - Earthen Wisp
-    - Electric Wisp
-    - Fire Wisp
-    - Ice Nymph
-    - Water Nymph
-    - Wind Nymph
-    - Magical Angel
-    - Warrior Angel
-    - Snow Ent
-    - Bone Golem
-    - Walker Zombie
-    - Night Zombie
-    - Boomer Zombie
-    - Tank Zombie
-    - Fast Zombie
-    - Vengeful Ghost
-    m_values:
-    - {fileID: 21300000, guid: 12f193c25cad8824a978c1a8d9d8377f, type: 3}
-    - {fileID: 21300000, guid: f261d9fe21365c246a0f3849c9c58ca8, type: 3}
-    - {fileID: 21300000, guid: a2a9035f5a469f34299c98fa2ab01083, type: 3}
-    - {fileID: 21300000, guid: 04ef7d1d8eae8034ea5fca1b1cfaf3ea, type: 3}
-    - {fileID: 21300000, guid: d0bab72205ba05c46a58108cb567e4ed, type: 3}
-    - {fileID: 21300000, guid: a34aeae4a70d5274db9c2f551390673f, type: 3}
-    - {fileID: 21300000, guid: 4fbebd3819f55ca47a56d25a0a84d46e, type: 3}
-    - {fileID: 21300000, guid: c13636746116b374bab64e03d481aaa5, type: 3}
-    - {fileID: 21300000, guid: 7acfc5bc61f73a141ad190bb96a66cea, type: 3}
-    - {fileID: 21300000, guid: b01760fa846b3474eac6f467194029d0, type: 3}
-    - {fileID: 21300000, guid: 98d557a1c3fa4a74fb348a35421e9b98, type: 3}
-    - {fileID: 21300000, guid: 68cd1ff0454ef1e4cb4ebea1f50e6be3, type: 3}
-    - {fileID: 21300000, guid: 69cd6ef15db19ba4db8dffbbba9c93b9, type: 3}
-    - {fileID: 21300000, guid: 69cd6ef15db19ba4db8dffbbba9c93b9, type: 3}
-    - {fileID: 21300000, guid: 2922f110bc541a44998a3c638c284f78, type: 3}
-    - {fileID: 21300000, guid: e7a2781c7d87254478da24e883eb4144, type: 3}
-    - {fileID: 21300000, guid: 7de9bb4993f04944fa5f7b7e5b2c9a5a, type: 3}
-    - {fileID: 21300000, guid: c758c0d0c1ffb0344ae5cc5f2ee78197, type: 3}
-    - {fileID: 21300000, guid: ec424fd5a02dea54b825c08a5a5e2b9a, type: 3}
-    - {fileID: 21300000, guid: 1181dd6621aeee2458f1b80f7103dff5, type: 3}
-    - {fileID: 21300000, guid: d4a2b85f04c8ab648b7a67249d128e4e, type: 3}
-    - {fileID: 21300000, guid: 815519bddcb4aad47ab2af8b83324dfb, type: 3}
-    - {fileID: 21300000, guid: 69cd6ef15db19ba4db8dffbbba9c93b9, type: 3}
-    - {fileID: 21300000, guid: 3187860cdb845ff4a8fe10bb432bd421, type: 3}
-    - {fileID: 21300000, guid: 0637b97171b11ce4db147dadb7962a93, type: 3}
-    - {fileID: 21300000, guid: cf485e1dfc3b8d84b97e2e6eceaed4f5, type: 3}
-    - {fileID: 21300000, guid: 80b6fcb2b7b287a4297e7b15c0e256a7, type: 3}
-    - {fileID: 21300000, guid: 0c701f4a29f2ef044bbbefc8067a1cfd, type: 3}
-    - {fileID: 21300000, guid: 42a41a8a384b71f48bdfef91a5786d1f, type: 3}
-    - {fileID: 21300000, guid: 8e3f91766d658f94d9459a4f8369c875, type: 3}
   hairColors:
   - {x: 0, y: 0, z: 0}
   - {x: 0, y: 0.5, z: 0}
@@ -1300,15 +1437,64 @@ MonoBehaviour:
       - {fileID: 21300000, guid: 2c02cfd9ad40a474298f29d1f6fd8fda, type: 3}
       - {fileID: 21300000, guid: 6987d8f375e6a494c91f9c60dac1a1b7, type: 3}
   summonSettings:
+    m_keys: 0100000002000000030000000400000005000000060000000700000008000000090000000a0000000b0000000c0000000d0000000e0000000f000000100000001100000012000000130000001400000015000000160000001700000018000000190000001a0000001b0000001c0000001d0000001e0000001f000000200000002100000022000000230000002400000025000000260000002700000028000000290000002a0000002b0000002c0000002d0000002e000000
+    m_values:
+    - className: Ravager
+    - className: Skeleton
+    - className: Golem
+    - className: Succubus
+    - className: Incubus
+    - className: Fire Elemental
+    - className: Kobold
+    - className: Giant Spider
+    - className: Mimic
+    - className: Small Spider
+    - className: Abomination
+    - className: Pig
+    - className: Sheep
+    - className: Chicken
+    - className: Desert Ent
+    - className: Forest Ent
+    - className: Snow Ent
+    - className: Grass Ent
+    - className: Corrupt Ent
+    - className: Ice Nymph
+    - className: Water Nymph
+    - className: Wind Nymph
+    - className: Electric Wisp
+    - className: Fire Wisp
+    - className: Earthen Wisp
+    - className: Sludge
+    - className: Ghost
+    - className: Warrior Angel
+    - className: Magical Angel
+    - className: Vengeful Ghost
+    - className: Wurm
+    - className: Revenant
+    - className: Dragon
+    - className: Troll
+    - className: Bone Golem
+    - className: Rat
+    - className: Scorpion
+    - className: Harpy
+    - className: Triton
+    - className: Imp
+    - className: Dire
+    - className: Bear
+    - className: Boar
+    - className: Moonwalker
+    - className: Mink
+    - className: Rabbit
+  minionSettings:
     m_keys: 00000000010000000200000003000000040000000500000006000000
     m_values:
-    - summonPortrait: {fileID: 21300000, guid: 9446df3c48b01e7409f52c0e260f7f62, type: 3}
-    - summonPortrait: {fileID: 21300000, guid: de2218b3503e67748a7bb0a94e722a5b, type: 3}
-    - summonPortrait: {fileID: 21300000, guid: 3ea140c9cdcc60b46a257c943a010d0c, type: 3}
-    - summonPortrait: {fileID: 21300000, guid: e41ec74344b1b3b44899f7ed500eeeff, type: 3}
-    - summonPortrait: {fileID: 21300000, guid: 4f117727fece67040a6c3082f72b0111, type: 3}
-    - summonPortrait: {fileID: 21300000, guid: 8b69e1c43d456b1479f998800d8a6f31, type: 3}
-    - summonPortrait: {fileID: 21300000, guid: 4ceb2b47beb2817498a263252bf1e68f, type: 3}
+    - className: Lust
+    - className: Envy
+    - className: Greed
+    - className: Gluttony
+    - className: Pride
+    - className: Sloth
+    - className: Wrath
   artifactSettings:
     m_keys: 000000000100000002000000030000000400000005000000
     m_values:
@@ -1330,3 +1516,47 @@ MonoBehaviour:
   demonNameColor: {r: 0.972549, g: 0.6627451, b: 0.96862745, a: 1}
   undeadNameColor: {r: 0.5372549, g: 0.5372549, b: 0.5372549, a: 1}
   normalNameColor: {r: 0.972549, g: 0.92941177, b: 0.2627451, a: 1}
+--- !u!1 &3878321995466235956
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6529179060144418034}
+  - component: {fileID: 4299273015490349446}
+  m_Layer: 0
+  m_Name: TalentManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6529179060144418034
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3878321995466235956}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 4506135321327042}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4299273015490349446
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3878321995466235956}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 21bddfd2549e68948b5cee07e9dd96de, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  allTalentEnums: 01000000020000000300000004000000050000000600000007000000

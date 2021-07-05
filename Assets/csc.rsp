@@ -1,2 +1,4 @@
 -r:System.IO.Compression.FileSystem.dll
 -r:System.IO.Compression.dll
+-define:DEBUG_LOG
+-define:DEBUG_PROFILER

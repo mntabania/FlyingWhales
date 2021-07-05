@@ -9,7 +9,7 @@ namespace Goap.Job_Checkers {
             Character target = goapPlanJob.targetPOI as Character;
             Assert.IsNotNull(target);
 
-            bool isApplicable = !target.traitContainer.HasTrait("Restrained") || !(target.currentStructure is Prison);
+            bool isApplicable = !target.traitContainer.HasTrait("Restrained") || !target.IsInPrison();
             return target.gridTileLocation != null && target.gridTileLocation.IsNextToOrPartOfSettlement() && isApplicable;
         }
     }

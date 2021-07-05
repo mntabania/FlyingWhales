@@ -11,9 +11,9 @@ public class Heirloom : TileObject{
         AddAdvertisedAction(INTERACTION_TYPE.DROP_ITEM);
         AddAdvertisedAction(INTERACTION_TYPE.PICK_UP);
         traitContainer.AddTrait(this, "Indestructible");
-        traitContainer.AddTrait(this, "Fireproof");
+        traitContainer.AddTrait(this, "Fire Resistant");
     }
-    public Heirloom(SaveDataTileObject data) { }
+    public Heirloom(SaveDataTileObject data) : base(data) { }
 
     public void SetStructureSpot(LocationStructure structure) {
         structureSpot = structure;

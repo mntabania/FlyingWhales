@@ -11,9 +11,10 @@ public class StructureTileObject : TileObject {
     public StructureTileObject() {
         Initialize(TILE_OBJECT_TYPE.STRUCTURE_TILE_OBJECT, false);
         AddAdvertisedAction(INTERACTION_TYPE.BUILD_BLUEPRINT);
+        RemoveAdvertisedAction(INTERACTION_TYPE.STEAL_ANYTHING);
         traitContainer.RemoveTrait(this, "Flammable");
     }
-    public StructureTileObject(SaveDataTileObject data) { }
+    public StructureTileObject(SaveDataTileObject data) : base(data) { }
 
     #region Overrides
     public override string ToString() {

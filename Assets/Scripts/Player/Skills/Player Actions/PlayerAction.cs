@@ -2,14 +2,14 @@
 using Inner_Maps.Location_Structures;
 using Locations.Settlements;
 using UnityEngine;
+using UtilityScripts;
 
 public class PlayerAction : SkillData, IContextMenuItem {
-
     public virtual bool canBeCastOnBlessed => false;
-
-    public virtual Sprite contextMenuIcon => PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(type)?.contextMenuIcon;
+    public virtual bool shouldShowOnContextMenu => true;
+    public virtual Sprite contextMenuIcon => PlayerSkillManager.Instance.GetScriptableObjPlayerSkillData<PlayerSkillData>(type)?.contextMenuIcon;
     public string contextMenuName => name;
-    public virtual int contextMenuColumn  => PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(type)?.contextMenuColumn ?? 0;
+    public virtual int contextMenuColumn  => PlayerSkillManager.Instance.GetScriptableObjPlayerSkillData<PlayerSkillData>(type)?.contextMenuColumn ?? 0;
     public List<IContextMenuItem> subMenus => GetSubMenus(_contextMenuItems);
     private List<IContextMenuItem> _contextMenuItems;
     
@@ -17,6 +17,15 @@ public class PlayerAction : SkillData, IContextMenuItem {
 
     public PlayerAction() {
         _contextMenuItems = new List<IContextMenuItem>();
+    }
+
+    public bool GetCanBeCastOnBlessed() {
+        if (PlayerSkillManager.Instance.GetScriptableObjPlayerSkillData<PlayerSkillData>(type).canBeCastedOnMaxLevel) {
+            if (currentLevel >= 3) {
+                return true;
+            }
+        }
+        return canBeCastOnBlessed;
     }
     
     #region Virtuals
@@ -38,33 +47,43 @@ public class PlayerAction : SkillData, IContextMenuItem {
 
     #region Overrides
     public override void ActivateAbility(IPointOfInterest targetPOI) {
-        if(targetPOI is TileObject tileObject) {
+        if(targetPOI is TileObject) {
             IncreaseThreatForEveryCharacterThatSeesPOI(targetPOI, 5);
         }
         base.ActivateAbility(targetPOI);
-        Messenger.Broadcast(SpellSignals.PLAYER_ACTION_EXECUTED_TOWARDS_POI, this, targetPOI);
+        Messenger.Broadcast(PlayerSkillSignals.PLAYER_ACTION_EXECUTED_TOWARDS_POI, this, targetPOI);
     }
     #endregion  
 
-    public void Activate(IPlayerActionTarget target) {
-        if(target is IPointOfInterest targetPOI) {
-            ActivateAbility(targetPOI);
-        } else if (target is HexTile targetHex) {
-            ActivateAbility(targetHex);
-        } else if (target is LocationStructure targetStructure) {
-            ActivateAbility(targetStructure);
-        } else if (target is StructureRoom room) {
-            ActivateAbility(room);
-        } else if (target is BaseSettlement settlement) {
-            ActivateAbility(settlement);
+    public virtual void Activate(IPlayerActionTarget target) {
+        if (RollSuccessChance(target) || category == PLAYER_SKILL_CATEGORY.SCHEME || type == PLAYER_SKILL_TYPE.AFFLICT) {
+            //Schemes should always be activated regardless of piercing and resistances because the success calculation for it upon activation of actual scheme in the Scheme UI Controller
+            if (target is IPointOfInterest targetPOI) {
+                ActivateAbility(targetPOI);
+            } else if (target is Area targetArea) {
+                ActivateAbility(targetArea);
+            } else if (target is LocationStructure targetStructure) {
+                ActivateAbility(targetStructure);
+            } else if (target is StructureRoom room) {
+                ActivateAbility(room);
+            } else if (target is BaseSettlement settlement) {
+                ActivateAbility(settlement);
+            }
+            Messenger.Broadcast(PlayerSkillSignals.PLAYER_ACTION_ACTIVATED, this);
+        } else {
+            //Go into cooldown but do not activate ability
+            OnExecutePlayerSkill();
+            //PlayerUI.Instance.ShowGeneralConfirmation("Action Failed", target.name + " resisted the power of the Ruinarch!");
+            if (target is Character character) {
+                character.reactionComponent.ResistRuinarchPower();
+            }
         }
-        Messenger.Broadcast(SpellSignals.PLAYER_ACTION_ACTIVATED, this);
 	}
     public bool CanPerformAbilityTo(IPlayerActionTarget target) {
         if (target is IPointOfInterest targetPOI) {
             return CanPerformAbilityTowards(targetPOI);
-        } else if (target is HexTile targetHex) {
-            return CanPerformAbilityTowards(targetHex);
+        } else if (target is Area targetArea) {
+            return CanPerformAbilityTowards(targetArea);
         } else if (target is LocationStructure targetStructure) {
             return CanPerformAbilityTowards(targetStructure);
         } else if (target is StructureRoom room) {
@@ -86,6 +105,31 @@ public class PlayerAction : SkillData, IContextMenuItem {
             reasons += $"Cannot target Blessed characters,";
         }
         return reasons;
+    }
+
+    //Calculate chance based on piercing and resistance if the player action would be a success if activated
+    protected bool RollSuccessChance(IPlayerActionTarget p_target) {
+        int baseChance = 100;
+        //added checking for is dead because of this:
+        //https://trello.com/c/y8KCVTqN/4923-resistance-update
+        //Because we expect that only alive characters should be able to resist player abilities 
+        if(p_target is Character targetCharacter && !targetCharacter.isDead) {
+            PlayerSkillData data = PlayerSkillManager.Instance.GetScriptableObjPlayerSkillData<PlayerSkillData>(type);
+            if(data.resistanceType != RESISTANCE.None) {
+                float resistanceValue = targetCharacter.piercingAndResistancesComponent.GetResistanceValue(data.resistanceType);
+                float piercing = PlayerSkillManager.Instance.GetAdditionalPiercePerLevelBaseOnLevel(type);
+                CombatManager.ModifyValueByPiercingAndResistance(ref baseChance, piercing, resistanceValue);
+            }
+        }
+        string log = string.Empty;
+#if DEBUG_LOG
+        log = $"Rolling chance to succeed for skill {name} against {p_target.name}";
+#endif
+        bool didRollSucceed = GameUtilities.RollChance(baseChance, ref log);
+#if DEBUG_LOG
+        Debug.Log(log);        
+#endif
+        return didRollSucceed;
     }
 
     #region IContextMenuItem Implementation

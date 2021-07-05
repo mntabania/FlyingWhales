@@ -1,1 +1,1 @@
-{"items":[{"key":"flaw_effect","value":"%00@ will steal something."},{"key":"no_target","value":"%00@ could not find anything to steal."}]}
+{"items":[{"key":"flaw_effect","value":"%00@ will pickpocket something from someone nearby."},{"key":"no_target","value":"%00@ could not find anyone nearby to pickpocket."}]}

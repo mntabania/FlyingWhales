@@ -6,5 +6,5 @@ public class Flower : TileObject{
         AddAdvertisedAction(INTERACTION_TYPE.ASSAULT);
         AddAdvertisedAction(INTERACTION_TYPE.RESOLVE_COMBAT);
     }
-    public Flower(SaveDataTileObject data) { }
+    public Flower(SaveDataTileObject data) : base(data) { }
 }

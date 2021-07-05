@@ -2,24 +2,20 @@
 using System.Collections.Generic;
 
 namespace Quests.Steps {
-    public class WipeElvenKingdomAndSurviveHumanStep : QuestStep, AffattWinConditionTracker.Listener {
+    public class WipeElvenKingdomAndSurviveHumanStep : QuestStep {
         private readonly Func<List<Character>, int, string> _descriptionGetter;
 
         public WipeElvenKingdomAndSurviveHumanStep(Func<List<Character>, int, string> descriptionGetter) : base(string.Empty) {
             _descriptionGetter = descriptionGetter;
         }
 
-        protected override void SubscribeListeners() {
-            QuestManager.Instance.GetWinConditionTracker<AffattWinConditionTracker>().Subscribe(this);
-        }
-        protected override void UnSubscribeListeners() {
-            QuestManager.Instance.GetWinConditionTracker<AffattWinConditionTracker>().Unsubscribe(this);
-        }
+        protected override void SubscribeListeners() { }
+        protected override void UnSubscribeListeners() { }
 
         private void CheckForCompletion(int p_elvenCount, int p_humanCount) {
             if (p_elvenCount <= 0) {
                 Complete();
-                Messenger.Broadcast(PlayerSignals.WIN_GAME, $"You managed to wipe out {QuestManager.Instance.GetWinConditionTracker<AffattWinConditionTracker>().GetMainElvenFaction().name}. Congratulations!");
+                Messenger.Broadcast(PlayerSignals.WIN_GAME, $"You managed to wipe out {QuestManager.Instance.GetWinConditionTracker<HumansSurviveAndElvesWipedOutWinConditionTracker>().GetMainElvenFaction().name}. Congratulations!");
             }
         }
 
@@ -40,7 +36,7 @@ namespace Quests.Steps {
         #region Description
         protected override string GetStepDescription() {
             if (_descriptionGetter != null) {
-                return _descriptionGetter.Invoke((QuestManager.Instance.winConditionTracker as AffattWinConditionTracker).elvenToEliminate, (QuestManager.Instance.winConditionTracker as AffattWinConditionTracker).elvenToEliminate.Count);
+                return _descriptionGetter.Invoke((QuestManager.Instance.winConditionTracker as HumansSurviveAndElvesWipedOutWinConditionTracker).elvenToEliminate, (QuestManager.Instance.winConditionTracker as HumansSurviveAndElvesWipedOutWinConditionTracker).elvenToEliminate.Count);
             }
             return base.GetStepDescription();
         }

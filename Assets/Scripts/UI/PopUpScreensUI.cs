@@ -32,14 +32,16 @@ public class PopUpScreensUI : MonoBehaviour {
     [SerializeField] private Image ruinarchLogo;
     [SerializeField] private RectTransform thankYouWindow;
     [SerializeField] private CanvasGroup endScreenCanvasGroup;
+    [SerializeField] private Button btnJoinDiscord;
+    [SerializeField] private Button btnSurvey;
+    [SerializeField] private Button btnContinue;
 
     #region Start Screen
     public void ShowStartScreen(string message) {
         UIManager.Instance.Pause();
         UIManager.Instance.SetSpeedTogglesState(false);
-        WorldMapCameraMove.Instance.DisableMovement();
         InnerMapCameraMove.Instance.DisableMovement();
-        InputManager.Instance.AllowHotkeys(false);
+        InputManager.Instance.SetAllHotkeysEnabledState(false);
         startScreen.gameObject.SetActive(true);
         startMessageWindow.gameObject.SetActive(true);
         
@@ -69,15 +71,14 @@ public class PopUpScreensUI : MonoBehaviour {
     private void HideStartDemoScreen() {
         startScreen.gameObject.SetActive(false);
         UIManager.Instance.SetSpeedTogglesState(true);
-        WorldMapCameraMove.Instance.EnableMovement();
         InnerMapCameraMove.Instance.EnableMovement();
-        InputManager.Instance.AllowHotkeys(true);
+        InputManager.Instance.SetAllHotkeysEnabledState(true);
 
-        if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Tutorial) {
-            TutorialManager.Instance.InstantiateImportantTutorials();
-            TutorialManager.Instance.InstantiatePendingBonusTutorials();
-            QuestManager.Instance.InitializeAfterStartTutorial();    
-        }
+        // if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Tutorial) {
+        //     TutorialManager.Instance.InstantiateImportantTutorials();
+        //     // TutorialManager.Instance.InstantiatePendingBonusTutorials();
+        //     QuestManager.Instance.InitializeAfterStartTutorial();    
+        // }
     }
     public void OnToggleSkipTutorials(bool state) {
         SettingsManager.Instance.OnToggleSkipTutorials(state);
@@ -111,16 +112,30 @@ public class PopUpScreensUI : MonoBehaviour {
     }
     
     private void ShowEndScreen() {
+        InputManager.Instance.SetCursorTo(InputManager.Cursor_Type.Default);
         endScreen.SetActive(true);
-
         // //bg image
         // Color fromColor = bgImage.color;
         // fromColor.a = 0f;
         // bgImage.color = fromColor;
         // bgImage.DOFade(1f, 2f).SetEase(Ease.InQuint).OnComplete(ShowLogoAndThankYou);
         endScreenCanvasGroup.alpha = 0f;
+        ShowButtonBaseOnGameResult();
         endScreenCanvasGroup.DOFade(1f, 2f).SetEase(Ease.InQuint).OnComplete(ShowLogoAndThankYou);
+    }
 
+    private void ShowButtonBaseOnGameResult() {
+        if (!PlayerManager.Instance.player.hasAlreadyWon) {
+            Vector3 pos = btnJoinDiscord.transform.position;
+            pos.y += 80f;
+            btnJoinDiscord.transform.position = pos;
+            pos = btnSurvey.transform.position;
+            pos.y += 80f;
+            btnSurvey.transform.position = pos;
+            btnContinue.gameObject.SetActive(false);
+        } else {
+            btnContinue.gameObject.SetActive(true);
+        }
     }
 
     private void ShowLogoAndThankYou() {
@@ -137,7 +152,19 @@ public class PopUpScreensUI : MonoBehaviour {
         thankYouWindow.anchoredPosition = new Vector2(0f, -300f);
         thankYouWindow.DOAnchorPosY(360f, 1f).SetEase(Ease.OutQuad);
     }
-    
+
+    public void OnClickContinuePlaying() {
+        GameManager.Instance.SetPausedState(false);
+        UIManager.Instance.SetSpeedTogglesState(true);
+        DOTween.Clear(true);
+        HideScreens();
+    }
+
+    void HideScreens() {
+        summaryScreen.gameObject.SetActive(false);
+        endScreen.SetActive(false);
+    }
+
     public void OnClickReturnToMainMenu() {
         DOTween.Clear(true);
         LevelLoaderManager.Instance.UpdateLoadingInfo(string.Empty);

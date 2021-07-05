@@ -14,15 +14,84 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   skill: 44
   manaCost: 20
-  charges: 3
-  cooldown: 144
+  charges: 1
+  cooldown: 160
   threat: 8
   threatPerHour: 0
   expCost: 300
+  cheatedLevel: 0
+  pierce: 0
+  bonusChargeWhenUnlocked: 3
+  unlockChargeOnPortalUpgrade: 1
   buttonSprite: {fileID: 21300000, guid: 9cd696d31c2c8534b8a5ec2a949c43fa, type: 3}
   tooltipVideoClip: {fileID: 32900000, guid: b123165bb9b9c484fb83dd83c3153ee3, type: 3}
   tooltipImage: {fileID: 0}
+  unlockCost: 50
+  tier: 1
+  baseLoadoutWeight: 250
+  resistanceType: 8
+  archetypeWeightedBonus: 1
+  canBeReleasedEvenIfLearned: 0
   contextMenuIcon: {fileID: 0}
   contextMenuColumn: 0
   playerActionIcon: {fileID: 0}
+  isNonUpgradeable: 0
+  isAffliction: 0
+  isLockedBaseOnRequirements: 0
+  canBeCastedOnMaxLevel: 0
+  requirementData:
+    requirements: 08000000
+    requiredArchetypes: 
+    requiredSkills: 
+    actionCount: 0
+    afflictionCount: 0
+    spellsCount: 0
+    tier1Count: 0
+    tier2Count: 0
+    tier3Count: 0
+    portalLevel: 2
+    isOR: 0
+  skillUpgradeData:
+    upgradeCosts: 140000003200000050000000
+    manacostPerLevel: 6400000096000000c8000000fa000000
+    chargesPerLevel: 01000000010000000200000003000000
+    bonuses: 00000000010000000e0000000c000000
+    additionalDamagePerLevel: 0e01000063010000bd01000080020000
+    additionalPiercePerLevel:
+    - 0
+    - 25
+    - 50
+    - 100
+    additionalHpPercentagePerLevel: []
+    additionalAttackPercentagePerLevel:
+    - 0
+    - 25
+    - 50
+    - 75
+    additionalHpValuePerLevel: 
+    additionalAttackValuePerLevel: 
+    applyOnLevel: 
+    additionalmanaReceivedPercentagePerLevel: []
+    statsIncreasedPercentagePerLevel: []
+    durationBonusPerLevel: 
+    additionalMaxHPPercentagePerLevel: []
+    additionalMaxHPActualPerLevel: 
+    additionalChanceBonusPercentagePerLevel: []
+    additionalTileRangeBonusPerLevel: 01000000010000000100000001000000
+    decreaseMovementSpeedPerLevel: 
+    cooldownPerLevel: 500000003c0000003c0000003c000000
+    skillMovementSpeed: 
+  afflictionUpgradeData:
+    bonuses: 
+    cooldown: 
+    additionalPiercePerLevel: []
+    rateChance: 
+    crowdNumber: 
+    napsDuration: 
+    numberOfCriteria: 
+    hungerRate: 
+    duration: []
+    opinionTrigger: 
+    addedBehaviour: 
+    listOfCriteria: 
   blastSound: {fileID: 8300000, guid: 9fc4b4de02e399c4fa4471f2ee024e6b, type: 3}

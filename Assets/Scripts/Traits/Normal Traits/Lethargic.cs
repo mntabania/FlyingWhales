@@ -4,7 +4,8 @@ using UnityEngine;
 using UtilityScripts;
 namespace Traits {
     public class Lethargic : Status {
-        public override bool isSingleton => true;
+        //Not singleton for responsible characters
+        //public override bool isSingleton => true;
 
         public Lethargic() {
             name = "Lethargic";

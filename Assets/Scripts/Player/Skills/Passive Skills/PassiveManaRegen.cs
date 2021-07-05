@@ -2,6 +2,7 @@
 
 public class PassiveManaRegen : PassiveSkill {
     public override string name => "Passive Mana Regeneration";
+    public override string description => "Passive Mana Regeneration";
     public override PASSIVE_SKILL passiveSkill => PASSIVE_SKILL.Passive_Mana_Regen;
     
     public override void ActivateSkill() {

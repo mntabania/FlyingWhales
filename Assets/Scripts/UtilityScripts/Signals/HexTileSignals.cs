@@ -1,11 +1,11 @@
-﻿public static class HexTileSignals {
-    public static string HEXTILE_LEFT_CLICKED = "OnHexTileLeftClicked"; //Parameters (HexTile clickedTile)
-    public static string HEXTILE_RIGHT_CLICKED = "OnHexTileRightClicked"; //Parameters (HexTile clickedTile)
-    public static string HEXTILE_HOVERED_OVER = "OnHexTileHoveredOver"; //Parameters (HexTile hoveredTile)
-    public static string HEXTILE_HOVERED_OUT = "OnHexTileHoveredOut"; //Parameters (HexTile hoveredTile)
-    public static string HEXTILE_DOUBLE_CLICKED = "OnHexTileDoubleClicked"; //Parameters (HexTile clickedTile)
+﻿public static class AreaSignals {
+    public static string AREA_LEFT_CLICKED = "OnAreaLeftClicked"; //Parameters (Area clickedTile)
+    public static string AREA_RIGHT_CLICKED = "OnAreaRightClicked"; //Parameters (Area clickedTile)
+    public static string AREA_HOVERED_OVER = "OnAreaHoveredOver"; //Parameters (Area hoveredTile)
+    public static string AREA_HOVERED_OUT = "OnAreaHoveredOut"; //Parameters (Area hoveredTile)
+    public static string AREA_DOUBLE_CLICKED = "OnAreaDoubleClicked"; //Parameters (Area clickedTile)
     /// <summary>
-    /// Parameters (HexTile)
+    /// Parameters (Area)
     /// </summary>
-    public static string FREEZE_WET_OBJECTS_IN_TILE = "FreezeObjectsInTile";
+    public static string FREEZE_WET_OBJECTS = "FreezeObjects";
 }

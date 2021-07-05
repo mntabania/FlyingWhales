@@ -34,11 +34,11 @@ namespace Traits {
         public override void ExecuteActionPerTickEffects(INTERACTION_TYPE action, ActualGoapNode goapNode) {
             base.ExecuteActionPerTickEffects(action, goapNode);
             if (action == INTERACTION_TYPE.EAT) {
-                goapNode.actor.needsComponent.AdjustFullness(8.5f);
+                goapNode.actor.needsComponent.AdjustFullness(5f);
                 //goapNode.actor.needsComponent.AdjustStamina(2f);
                 if(owner is Table) {
                     goapNode.actor.needsComponent.AdjustHappiness(0.83f);
-                    owner.AdjustResource(RESOURCE.FOOD, -1);
+                    owner.resourceStorageComponent.ReduceMainResourceUsingRandomSpecificResources(RESOURCE.FOOD, 1);
                 } else if (owner is FoodPile foodPile) {
                     goapNode.actor.needsComponent.AdjustHappiness(-0.415f);
                     foodPile.AdjustResourceInPile(-1);
@@ -79,8 +79,8 @@ namespace Traits {
                 }
             }
         }
-        public override void ExecuteActionAfterEffects(INTERACTION_TYPE action, ActualGoapNode goapNode, ref bool isRemoved) {
-            base.ExecuteActionAfterEffects(action, goapNode, ref isRemoved);
+        public override void ExecuteActionAfterEffects(INTERACTION_TYPE action, Character actor, IPointOfInterest target, ACTION_CATEGORY category, ref bool isRemoved) {
+            base.ExecuteActionAfterEffects(action, actor, target, category, ref isRemoved);
             if (action == INTERACTION_TYPE.EAT) {
                 if (owner is Crops crops) {
                     crops.SetGrowthState(Crops.Growth_State.Growing);

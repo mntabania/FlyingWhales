@@ -19,25 +19,27 @@ public class EatAlive : GoapAction {
         SetState("Eat Alive Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
+#if DEBUG_LOG
         string costLog = $"\n{name} {target.nameWithID}: +10(Constant)";
         actor.logComponent.AppendCostLog(costLog);
+#endif
         return 10;
     }
-    public override string ReactionToActor(Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
-        string reaction = base.ReactionToActor(actor, target, witness, node, status);
-        if (!actor.isNormalCharacter && witness.homeSettlement != null && witness.faction != null && actor.homeStructure != null && target is Character targetCharacter) {
-            Prisoner prisoner = targetCharacter.traitContainer.GetTraitOrStatus<Prisoner>("Prisoner");
-            if (node.targetStructure == actor.homeStructure || (prisoner != null && prisoner.IsConsideredPrisonerOf(actor))) {
-                string relationshipName = witness.relationshipContainer.GetRelationshipNameWith(targetCharacter);
-                if (relationshipName == RelationshipManager.Acquaintance || witness.relationshipContainer.IsFriendsWith(targetCharacter)) {
-                    witness.faction.partyQuestBoard.CreateExterminatePartyQuest(witness, witness.homeSettlement, actor.homeStructure, witness.homeSettlement);    
-                }    
-            }
-        }
-        return reaction;
-    }
-    public override void PopulateReactionsToTarget(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
-        base.PopulateReactionsToTarget(reactions, actor, target, witness, node, status);
+    //public override string ReactionToActor(Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
+    //    string reaction = base.ReactionToActor(actor, target, witness, node, status);
+    //    if (!actor.isNormalCharacter && witness.homeSettlement != null && witness.faction != null && actor.homeStructure != null && target is Character targetCharacter) {
+    //        Prisoner prisoner = targetCharacter.traitContainer.GetTraitOrStatus<Prisoner>("Prisoner");
+    //        if (node.targetStructure == actor.homeStructure || (prisoner != null && prisoner.IsConsideredPrisonerOf(actor))) {
+    //            string relationshipName = witness.relationshipContainer.GetRelationshipNameWith(targetCharacter);
+    //            if (relationshipName == RelationshipManager.Acquaintance || witness.relationshipContainer.IsFriendsWith(targetCharacter)) {
+    //                witness.faction.partyQuestBoard.CreateExterminatePartyQuest(witness, witness.homeSettlement, actor.homeStructure, witness.homeSettlement);    
+    //            }    
+    //        }
+    //    }
+    //    return reaction;
+    //}
+    public override void PopulateEmotionReactionsToTarget(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
+        base.PopulateEmotionReactionsToTarget(reactions, actor, target, witness, node, status);
         if (target is Character targetCharacter) {
             if (witness.relationshipContainer.IsFriendsWith(targetCharacter)) {
                 if (!witness.traitContainer.HasTrait("Psychopath")) {
@@ -55,20 +57,20 @@ public class EatAlive : GoapAction {
     public override bool ShouldActionBeAnIntel(ActualGoapNode node) {
         return !node.actor.isNormalCharacter && node.target is Character targetCharacter && targetCharacter.isNormalCharacter;
     }
-    #endregion
+#endregion
     
-    #region State Effects
+#region State Effects
     public void PerTickEatAliveSuccess(ActualGoapNode goapNode) {
-        goapNode.poiTarget.AdjustHP(-10, ELEMENTAL_TYPE.Normal, true, goapNode.actor, showHPBar: true);
-
         if (goapNode.actor.race == RACE.ELVES && goapNode.poiTarget is RatMeat) {
             goapNode.actor.traitContainer.AddTrait(goapNode.actor, "Poor Meal");
         }
+        //Moved adjust hp here because when the target dies, the cancel jobs targeting the target of this action will trigger and it will force this action to be object pooled, resetting all values
+        goapNode.poiTarget.AdjustHP(-10, ELEMENTAL_TYPE.Normal, true, goapNode.actor, showHPBar: true);
     }
     public void AfterEatAliveSuccess(ActualGoapNode goapNode) {
         if (goapNode.actor.race == RACE.ELVES && goapNode.poiTarget is Character targetCharacter && (targetCharacter.race == RACE.RAT || targetCharacter.race == RACE.RATMAN)) {
             goapNode.actor.traitContainer.AddTrait(goapNode.actor, "Poor Meal");
         }
     }
-    #endregion
+#endregion
 }

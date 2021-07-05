@@ -12,9 +12,28 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f2a5990311e0b094f8e466747668822b, type: 3}
   m_Name: Icalawa
   m_EditorClassIdentifier: 
-  scenarioSettings: {fileID: 4900000, guid: 5d1c1a6eea360fb45b5f85176d6c171d, type: 3}
+  scenarioSettings: {fileID: 4900000, guid: d788a4b0d6efc0d4cb011f3800ca4fc1, type: 3}
   faunaList:
   - monsterType: 31
     minRange: 3
     maxRange: 5
     weight: 100
+  spells:
+    m_keys: 
+    m_values: 
+  afflictions:
+    m_keys: 
+    m_values: 
+  minions:
+    m_keys: 
+    m_values: 
+  structures:
+    m_keys: 
+    m_values: 
+  skills:
+    m_keys: 
+    m_values: 
+  loadoutData: []
+  puppetmasterOverride: {fileID: 0}
+  lichOverride: {fileID: 0}
+  ravagerOverride: {fileID: 0}

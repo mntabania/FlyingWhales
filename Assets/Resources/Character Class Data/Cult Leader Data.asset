@@ -12,6 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 88e6d539796c490aa0efea676d6fae59, type: 3}
   m_Name: Cult Leader Data
   m_EditorClassIdentifier: 
+  combatBehaviourType: 0
+  combatSpecialSkillType: 0
+  workStructureType: 21
+  summonCost: 50
+  portraitSprite: {fileID: 0}
   defaultSprites:
     stillSprite: {fileID: 21300000, guid: 457ca2d0a8fd9414ab7a77709ade59d0, type: 3}
     animationSprites:
@@ -35,3 +40,29 @@ MonoBehaviour:
   raceSprites:
     m_keys: 
     m_values: []
+  initialVillagerPiercing: 0
+  initialVillagerPhysicalResistances: []
+  initialVillagerMentalResistances: []
+  initialVillagerElementalResistances: []
+  initialVillagerSecondaryResistances: []
+  characterSkillUpdateData:
+    m_fireResistanceBonus: 0
+    m_earthResistanceBonus: 0
+    m_windResistanceBonus: 0
+    m_waterResistanceBonus: 0
+    m_allElementalresistanceBonus: 12
+    m_poisonResistanceBonus: 0
+    m_iceResistanceBonus: 0
+    m_electricResistanceBonus: 0
+    m_allSecondaryresistanceBonus: 18
+    m_piercingBonus: 16
+    m_mentalResistanceBonus: 30
+    m_physicalResistanceBonus: 10
+  craftableWeapons: 02010000c0000000c1000000c2000000c3000000
+  craftableArmors: 05010000d0000000bc000000d1000000d3000000d4000000d6000000d5000000d7000000d8000000
+  craftableAccessories: ba000000de000000
+  droppableItems:
+  - item: 13
+    weight: 100
+  - item: 189
+    weight: 10

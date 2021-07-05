@@ -15,14 +15,14 @@ public class BreedMonsterData : PlayerAction {
     #region Overrides
     public override void ActivateAbility(IPointOfInterest targetPOI) {
         if(targetPOI is Summon summon) {
-            PLAYER_SKILL_TYPE summonPlayerSkillType = PLAYER_SKILL_TYPE.NONE;
-            if(summon is Rat) {
-                summonPlayerSkillType = PLAYER_SKILL_TYPE.PLAGUED_RAT;
-            } else {
-                SummonPlayerSkill summonPlayerSkill = PlayerSkillManager.Instance.GetSummonPlayerSkillData(summon.race, summon.characterClass.className);
-                summonPlayerSkillType = summonPlayerSkill.type;
-            }
-            PlayerManager.Instance.player.playerSkillComponent.AddCharges(summonPlayerSkillType, 1);
+            //PLAYER_SKILL_TYPE summonPlayerSkillType = PLAYER_SKILL_TYPE.NONE;
+            //if (summon is Rat) {
+            //    summonPlayerSkillType = PLAYER_SKILL_TYPE.PLAGUED_RAT;
+            //} else {
+            //    SummonPlayerSkill summonPlayerSkill = PlayerSkillManager.Instance.GetSummonPlayerSkillData(summon.race, summon.characterClass.className);
+            //    summonPlayerSkillType = summonPlayerSkill.type;
+            //}
+            //PlayerManager.Instance.player.playerSkillComponent.AddCharges(summonPlayerSkillType, 1);
 
             GameObject effect = ObjectPoolManager.Instance.InstantiateObjectFromPool("Breed Effect",
                 summon.worldPosition, Quaternion.identity, summon.currentRegion.innerMap.objectsParent, true);
@@ -41,8 +41,9 @@ public class BreedMonsterData : PlayerAction {
         return false;
     }
     public override bool IsValid(IPlayerActionTarget target) {
-        if(target is Summon targetCharacter) {
-            return targetCharacter.gridTileLocation != null && targetCharacter.gridTileLocation.structure != null && 
+        if (target is Summon targetCharacter) {
+            bool isValid = base.IsValid(target);
+            return isValid && targetCharacter.gridTileLocation != null && targetCharacter.gridTileLocation.structure != null && 
                    targetCharacter.gridTileLocation.structure.structureType == STRUCTURE_TYPE.KENNEL && !(targetCharacter is Dragon) && 
                    PlayerSkillManager.Instance.GetSummonPlayerSkillData(targetCharacter.race, targetCharacter.characterClass.className) != null;
         }

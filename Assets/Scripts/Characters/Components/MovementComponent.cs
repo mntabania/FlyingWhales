@@ -21,7 +21,7 @@ public class MovementComponent : CharacterComponent {
     public bool isStationary { get; private set; }
     public bool cameFromWurmHole { get; private set; }
     public bool isTravellingInWorld { get; private set; }
-    public bool isFlying { get; private set; }
+    public bool isFlying => owner.traitContainer.HasTrait("Flying");
     public Region targetRegionToTravelInWorld { get; private set; }
     public List<LocationStructure> structuresToAvoid { get; }
     public int enableDiggingCounter { get; private set; }
@@ -41,6 +41,7 @@ public class MovementComponent : CharacterComponent {
         tagPenalties = new int[32];
         traversableTags = InnerMapManager.All_Tags; //enable all tags for now
         SetTagAsUnTraversable(InnerMapManager.Obstacle_Tag); //by default all units cannot traverse obstacle tag
+        //SetEnableDigging(true);
     }
     public MovementComponent(SaveDataMovementComponent data) {
         structuresToAvoid = new List<LocationStructure>();
@@ -56,7 +57,7 @@ public class MovementComponent : CharacterComponent {
         isStationary = data.isStationary;
         cameFromWurmHole = data.cameFromWurmHole;
         isTravellingInWorld = data.isTravellingInWorld;
-        isFlying = data.isFlying;
+        //isFlying = data.isFlying;
         enableDiggingCounter = data.enableDiggingCounter;
         avoidSettlementsCounter = data.avoidSettlementsCounter;
         traversableTags = data.traversableTags;
@@ -65,9 +66,11 @@ public class MovementComponent : CharacterComponent {
 
     public void SubscribeToSignals() {
         Messenger.AddListener<Character>(CharacterSignals.STARTED_TRAVELLING, OnStartedTravelling);
+        Messenger.AddListener<Faction>(FactionSignals.FACTION_DISBANDED, OnFactionDisbanded);
     }
     public void UnsubscribeFromSignals() {
         Messenger.RemoveListener<Character>(CharacterSignals.STARTED_TRAVELLING, OnStartedTravelling);
+        Messenger.RemoveListener<Faction>(FactionSignals.FACTION_DISBANDED, OnFactionDisbanded);
     }
 
     public void UpdateSpeed() {
@@ -99,12 +102,20 @@ public class MovementComponent : CharacterComponent {
     }
     private float GetSpeed() {
         float speed = runSpeed;
+        bool isPartOfActiveParty = owner.partyComponent.isMemberThatJoinedQuest && owner.partyComponent.currentParty.isPlayerParty; //Party Walk Speed applies only on demon parties for now
+        if (owner.partyComponent.hasParty && owner.partyComponent.currentParty.isActive && owner.partyComponent.currentParty.currentQuest is DemonDefendPartyQuest) {
+            //Do not use party walk speed on demon defend quest
+            isPartOfActiveParty = false;
+        }
         if (!isRunning) {
             speed = walkSpeed;
         }
         speed += (speed * speedModifier);
         if (speed <= 0f) {
             speed = 0.5f;
+        }
+        if (isPartOfActiveParty && !isRunning) {
+            speed = Mathf.Min(owner.partyComponent.currentParty.partyWalkSpeed, speed);
         }
         if (owner.marker) {
             speed *= owner.marker.progressionSpeedMultiplier;
@@ -148,6 +159,9 @@ public class MovementComponent : CharacterComponent {
                     SetIsRunning(true);
                     return;
                 }
+            } else if (owner.partyComponent.isFollowingBeacon) {
+                SetIsRunning(true);
+                return;
             }
         }
     }
@@ -178,15 +192,14 @@ public class MovementComponent : CharacterComponent {
     public void SetCameFromWurmHole(bool state) {
         cameFromWurmHole = state;
     }
-    public void SetIsFlying(bool state) {
-        if(isFlying != state) {
-            isFlying = state;
-            if (isFlying) {
-                SetTagAsTraversable(InnerMapManager.Obstacle_Tag); //flying characters can traverse the obstacles tag
-            } else {
-                SetTagAsUnTraversable(InnerMapManager.Obstacle_Tag);
-            }
-        }
+    public void SetToFlying() {
+        owner.traitContainer.AddTrait(owner, "Flying");
+        SetTagAsTraversable(InnerMapManager.Obstacle_Tag);
+    }
+
+    public void SetToNonFlying() {
+        owner.traitContainer.RemoveTrait(owner, "Flying");
+        SetTagAsUnTraversable(InnerMapManager.Obstacle_Tag);
     }
 
     #region Listeners
@@ -197,6 +210,14 @@ public class MovementComponent : CharacterComponent {
         if (characterClass.className == "Ratman") {
             AvoidAllFactions();
         }
+    }
+    public void OnChangeFactionTo(Faction newFaction) {
+        if (newFaction != null) {
+            DoNotAvoidFaction(newFaction);
+        }
+    }
+    private void OnFactionDisbanded(Faction p_faction) {
+        DoNotAvoidFaction(p_faction); //clear out any avoidance of the faction, this is to ensure no conflicts will arise if a new faction will use the disbanded factions tags
     }
     #endregion
 
@@ -224,7 +245,9 @@ public class MovementComponent : CharacterComponent {
     }
     private void StartTravellingToRegion(Region targetRegion, Action doneAction = null) {
         if (isTravellingInWorld) {
+#if DEBUG_LOG
             owner.logComponent.PrintLogErrorIfActive(owner.name + " cannot travel to " + targetRegion.name + " because it is already travelling in the world");
+#endif
             return;
         }
         isTravellingInWorld = true;
@@ -237,7 +260,7 @@ public class MovementComponent : CharacterComponent {
         Log leftLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "Generic", "left_location", providedTags: LOG_TAG.Life_Changes);
         leftLog.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER, false);
         leftLog.AddToFillers(owner.currentRegion, owner.currentRegion.name, LOG_IDENTIFIER.LANDMARK_1);
-        leftLog.AddLogToDatabase();
+        leftLog.AddLogToDatabase(true);
         owner.DisableMarker();
 
         owner.combatComponent.ClearHostilesInRange();
@@ -255,7 +278,9 @@ public class MovementComponent : CharacterComponent {
     }
     private void FinishTravellingToRegion(Action doneAction = null) {
         if (!isTravellingInWorld) {
+#if DEBUG_LOG
             owner.logComponent.PrintLogErrorIfActive(owner.name + " cannot finish travel to " + targetRegionToTravelInWorld?.name + " because it is already not travelling in the world");
+#endif
             return;
         }
         isTravellingInWorld = false;
@@ -278,10 +303,10 @@ public class MovementComponent : CharacterComponent {
         Log arriveLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "Generic", "arrive_location", providedTags: LOG_TAG.Life_Changes);
         arriveLog.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER, false);
         arriveLog.AddToFillers(targetRegionToTravelInWorld, targetRegionToTravelInWorld.name, LOG_IDENTIFIER.LANDMARK_1);
-        arriveLog.AddLogToDatabase();
+        arriveLog.AddLogToDatabase(true);
 
         if (owner.isNormalCharacter) {
-            PlayerManager.Instance.player.ShowNotificationFrom(targetRegionToTravelInWorld, arriveLog);
+            PlayerManager.Instance.player.ShowNotificationFrom(entrance, arriveLog);
         }
 
         owner.EnableMarker();
@@ -289,16 +314,14 @@ public class MovementComponent : CharacterComponent {
 
         Messenger.Broadcast(CharacterSignals.FINISHED_TRAVELLING_IN_WORLD, owner);
 
-        if (doneAction != null) {
-            doneAction();
-        }
+        doneAction?.Invoke();
     }
     public void SetTargetRegionToTravelInWorld(Region region) {
         targetRegionToTravelInWorld = region;
     }
-    #endregion
+#endregion
 
-    #region Pathfinding
+#region Pathfinding
     /// <summary>
     /// Does this character have a path towards the target tile?
     /// Note: This factors in digging capabilities. If need to query without
@@ -330,8 +353,8 @@ public class MovementComponent : CharacterComponent {
             return true;
         }
     }
-    public bool HasPathTo(HexTile toTile) {
-        LocationGridTile targetTile = CollectionUtilities.GetRandomElement(toTile.locationGridTiles);
+    public bool HasPathTo(Area toArea) {
+        LocationGridTile targetTile = CollectionUtilities.GetRandomElement(toArea.gridTileComponent.gridTiles);
         return HasPathTo(targetTile);
     }
     /// <summary>
@@ -364,6 +387,17 @@ public class MovementComponent : CharacterComponent {
                 //}
             }
             return PathfindingManager.Instance.HasPathEvenDiffRegion(fromTile, toTile);
+        }
+    }
+    public bool HasPathToEvenIfDiffRegion(LocationStructure locationStructure) {
+        if (locationStructure.passableTiles.Count > 0) {
+            LocationGridTile randomTile = CollectionUtilities.GetRandomElement(locationStructure.passableTiles);
+            return HasPathToEvenIfDiffRegion(randomTile);
+        } else if (locationStructure.tiles.Count > 0) {
+            LocationGridTile randomTile = CollectionUtilities.GetRandomElement(locationStructure.tiles);
+            return HasPathToEvenIfDiffRegion(randomTile);
+        } else {
+            return false;
         }
     }
     /// <summary>
@@ -415,10 +449,20 @@ public class MovementComponent : CharacterComponent {
         }
         return false;
     }
-    #endregion
+#endregion
 
-    #region Dig
+#region Dig
     public bool CanDig() {
+        if (owner.currentJob != null) {
+            if (owner.currentJob.jobType == JOB_TYPE.RESCUE_MOVE_CHARACTER) {
+                //Rescuing paralyzed characters should be able to dig
+                return true;
+            } else if (owner.currentJob.jobType == JOB_TYPE.RESTRAIN && owner.currentJob.originalOwner is NPCSettlement) {
+                //Allowed characters restraining for village to dig
+                //Reference: https://trello.com/c/hT6r95jb/4845-villagers-restraining-harpy-inside-cave-issue
+                return true;
+            }
+        }
         //Must not dig out of Kennel
         //https://trello.com/c/Yyj9DFry/1582-some-monsters-can-dig-out-of-kennel
         if (enableDigging && owner.currentStructure != null && owner.currentStructure.structureType != STRUCTURE_TYPE.KENNEL) {
@@ -446,7 +490,7 @@ public class MovementComponent : CharacterComponent {
         }
 
         LocationGridTile tile = lastGridTileInPath;// owner.currentRegion.innerMap.GetTile(lastPositionInPath);
-        if (tile.objHere is BlockWall || actualDestinationTile.centeredWorldLocation == tile.centeredWorldLocation) {
+        if (tile.tileObjectComponent.HasWalls() || actualDestinationTile.centeredWorldLocation == tile.centeredWorldLocation) {
             targetTile = tile;
         } else {
             Vector2 direction = actualDestinationTile.centeredWorldLocation - tile.centeredWorldLocation; //character.behaviourComponent.currentAbductTarget.worldPosition - tile.centeredWorldLocation;
@@ -465,11 +509,11 @@ public class MovementComponent : CharacterComponent {
             }
         }
         //We must not check the neighbours of neighbours
-        if (targetTile != null && (targetTile.objHere == null || !(targetTile.objHere is BlockWall))) {
+        if (targetTile != null && !targetTile.tileObjectComponent.HasWalls()) {
             LocationGridTile newTargetTile = null;
             for (int i = 0; i < tile.neighbourList.Count; i++) {
                 LocationGridTile neighbour = tile.neighbourList[i];
-                if (neighbour.objHere is BlockWall) {
+                if (neighbour.tileObjectComponent.HasWalls()) {
                     newTargetTile = neighbour;
                     break;
                 }
@@ -487,11 +531,11 @@ public class MovementComponent : CharacterComponent {
 
 
         //Debug.Log($"No Path found for {owner.name} towards {owner.behaviourComponent.currentAbductTarget?.name ?? "null"}! Last position in path is {lastPositionInPath.ToString()}. Wall to dig is at {targetTile}");
-        //Assert.IsNotNull(targetTile.objHere, $"Object at {targetTile} is null, but {owner.name} wants to dig it.");
+        //Assert.IsNotNull(targetTile.tileObjectComponent.objHere, $"Object at {targetTile} is null, but {owner.name} wants to dig it.");
 
-        if (targetTile != null && targetTile.objHere != null && targetTile.objHere is BlockWall) {
+        if (targetTile != null && targetTile.tileObjectComponent.HasWalls()) {
             if (!owner.jobQueue.HasJob(JOB_TYPE.DIG_THROUGH)) {
-                GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.DIG_THROUGH, INTERACTION_TYPE.DIG, targetTile.objHere, owner);
+                GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.DIG_THROUGH, INTERACTION_TYPE.DIG, targetTile.tileObjectComponent.GetFirstWall(), owner);
                 job.SetCannotBePushedBack(true);
                 owner.jobQueue.AddJobInQueue(job);
                 return true;
@@ -503,30 +547,35 @@ public class MovementComponent : CharacterComponent {
     public bool AttackBlockersOnReachEndPath(Path path, LocationGridTile lastGridTileInPath, LocationGridTile actualDestinationTile) {
         LocationGridTile targetTile = GetBlockerTargetTileOnReachEndPath(path, lastGridTileInPath, actualDestinationTile);
 
-        if (targetTile != null && targetTile.objHere != null && targetTile.objHere is BlockWall) {
-            if (owner.combatComponent.hostilesInRange.Contains(targetTile.objHere)) {
+        if (targetTile != null && targetTile.tileObjectComponent.HasWalls()) {
+            TileObject wall = targetTile.tileObjectComponent.GetFirstWall();
+            if (owner.combatComponent.IsHostileInRange(wall)) {
                 owner.combatComponent.SetWillProcessCombat(true);
             } else {
-                owner.combatComponent.Fight(targetTile.objHere, CombatManager.Dig);
+                owner.combatComponent.Fight(wall, CombatManager.Dig);
             }
             return true;
         }
         return false;
     }
-    #endregion
+#endregion
 
-    #region Avoid Structures
+#region Avoid Structures
     private bool AddStructureToAvoid(LocationStructure locationStructure) {
         if (!structuresToAvoid.Contains(locationStructure)) {
             structuresToAvoid.Add(locationStructure);
+#if DEBUG_LOG
             owner.logComponent.PrintLogIfActive($"{owner.name} has added {locationStructure} to its structure avoid list!");
+#endif
             return true;
         }
         return false;
     }
     public void RemoveStructureToAvoid(LocationStructure locationStructure) {
         if (structuresToAvoid.Remove(locationStructure)) {
+#if DEBUG_LOG
             owner.logComponent.PrintLogIfActive($"{owner.name} has removed {locationStructure} from its structure avoid list!");
+#endif
         }
     }
     public void AddStructureToAvoidAndScheduleRemoval(LocationStructure locationStructure) {
@@ -534,18 +583,16 @@ public class MovementComponent : CharacterComponent {
             GameDate expiryDate = GameManager.Instance.Today();
             expiryDate.AddDays(1);
             SchedulingManager.Instance.AddEntry(expiryDate, () => RemoveStructureToAvoid(locationStructure), this);
-            if (owner.homeSettlement != null && owner.faction != null && !owner.faction.partyQuestBoard.HasPartyQuestWithTarget(PARTY_QUEST_TYPE.Extermination, locationStructure)) {
-                if (locationStructure.settlementLocation == null || locationStructure.settlementLocation.HasResidentThatMeetsCriteria(resident => resident != owner && !resident.isDead
-                    && (resident.faction == null || owner.faction == null || owner.faction.IsHostileWith(resident.faction)))) {
-                    owner.faction.partyQuestBoard.CreateExterminatePartyQuest(owner, owner.homeSettlement, locationStructure, owner.homeSettlement);
-                }
-                //owner.homeSettlement.settlementJobTriggerComponent.TriggerExterminationJob(locationStructure);
-            }
+            //if (owner.homeSettlement != null && owner.faction != null && !owner.faction.partyQuestBoard.HasPartyQuestWithTarget(PARTY_QUEST_TYPE.Extermination, locationStructure)) {
+            //    if (locationStructure.settlementLocation == null || locationStructure.settlementLocation.HasResidentThatIsNotDeadThatIsHostileWithFaction(owner.faction, owner)) {
+            //        owner.faction.partyQuestBoard.CreateExterminatePartyQuest(owner, owner.homeSettlement, locationStructure, owner.homeSettlement);
+            //    }
+            //}
         }
     }
-    #endregion
+#endregion
 
-    #region Tags
+#region Tags
     public void SetTagAsTraversable(int tag) {
         traversableTags = traversableTags | tag;
         if (owner != null && owner.hasMarker) {
@@ -559,9 +606,12 @@ public class MovementComponent : CharacterComponent {
         }
     }
     public void SetPenaltyForTag(int tag, int penalty) {
-        tagPenalties[tag] = penalty;
-        if (owner != null && owner.hasMarker) {
-            owner.marker.UpdateTagPenalties();
+        tag -= 1; //had to subtract 1 since faction tags do not start at 0, but instead start at 1, causing a 1 index difference if they are in an array
+        if (tag > 0) {
+            tagPenalties[tag] = penalty;
+            if (owner != null && owner.hasMarker) {
+                owner.marker.UpdateTagPenalties();
+            }    
         }
     }
     private void AvoidAllFactions() {
@@ -600,9 +650,9 @@ public class MovementComponent : CharacterComponent {
         }
         return true; //All Major factions use pathfinding tags.
     }
-    #endregion
+#endregion
 
-    #region Travelling Status
+#region Travelling Status
     private void OnCharacterStartedTravelling(Character character) {
         if(owner != character) {
             if(owner.currentActionNode != null && owner.currentActionNode.poiTarget == character) {
@@ -610,15 +660,58 @@ public class MovementComponent : CharacterComponent {
                     if(owner.currentActionNode.associatedJobType == JOB_TYPE.RITUAL_KILLING
                         || owner.currentActionNode.goapType == INTERACTION_TYPE.SHARE_INFORMATION
                         || owner.currentActionNode.goapType == INTERACTION_TYPE.REPORT_CRIME) {
-                        owner.currentActionNode.associatedJob?.ForceCancelJob(false);
+                        owner.currentActionNode.associatedJob?.ForceCancelJob();
                     }
                 }
             }
         }
     }
-    #endregion
+#endregion
 
-    #region Loading
+#region Combat Repositioning
+    public bool IsCurrentGridNodeOccupiedByOtherNonRepositioningActiveCharacter() {
+        LocationGridTile currentGridTile = owner.gridTileLocation;
+        if (currentGridTile != null) {
+            return currentGridTile.IsGridNodeOccupiedByNonRepositioningActiveCharacterOtherThan(owner);
+        }
+        return false;
+    }
+#endregion
+
+#region Let Go
+    public void LetGo(bool becomeDazed = false) {
+        LocationStructure letGoFrom = owner.currentStructure;
+        //Make character dazed (if not summon) and teleport him/her on a random spot outside
+        List<LocationGridTile> allTilesOutside = RuinarchListPool<LocationGridTile>.Claim();
+        List<LocationGridTile> passableTilesOutside = RuinarchListPool<LocationGridTile>.Claim();
+        for (int i = 0; i < letGoFrom.tiles.Count; i++) {
+            LocationGridTile tileInStructure = letGoFrom.tiles.ElementAt(i);
+            for (int j = 0; j < tileInStructure.neighbourList.Count; j++) {
+                LocationGridTile neighbour = tileInStructure.neighbourList[j];
+                if (neighbour.structure is Wilderness && !allTilesOutside.Contains(neighbour)) {
+                    allTilesOutside.Add(neighbour);
+                    if (neighbour.IsPassable()) {
+                        passableTilesOutside.Add(neighbour);
+                    }
+                }
+            }
+        }
+        Assert.IsTrue(allTilesOutside.Count > 0);
+        var targetTile = CollectionUtilities.GetRandomElement(passableTilesOutside.Count > 0 ? passableTilesOutside : allTilesOutside);
+        if (becomeDazed) {
+            if (owner is Summon == false) {
+                owner.traitContainer.AddTrait(owner, "Dazed");
+            }
+        }
+        CharacterManager.Instance.Teleport(owner, targetTile);
+        GameManager.Instance.CreateParticleEffectAt(targetTile, PARTICLE_EFFECT.Minion_Dissipate);
+        owner.traitContainer.RemoveRestrainAndImprison(owner);
+        RuinarchListPool<LocationGridTile>.Release(allTilesOutside);
+        RuinarchListPool<LocationGridTile>.Release(passableTilesOutside);
+    }
+#endregion
+
+#region Loading
     public void LoadReferences(SaveDataMovementComponent data) {
         if (!string.IsNullOrEmpty(data.targetRegionToTravelInWorld)) {
             targetRegionToTravelInWorld = DatabaseManager.Instance.regionDatabase.GetRegionByPersistentID(data.targetRegionToTravelInWorld);
@@ -630,13 +723,7 @@ public class MovementComponent : CharacterComponent {
         }
 
     }
-    #endregion
-
-    public void OnChangeFactionTo(Faction newFaction) {
-        if (newFaction != null) {
-            DoNotAvoidFaction(newFaction);    
-        }
-    }
+#endregion
 }
 
 [System.Serializable]
@@ -652,7 +739,7 @@ public class SaveDataMovementComponent : SaveData<MovementComponent> {
     public bool isStationary;
     public bool cameFromWurmHole;
     public bool isTravellingInWorld;
-    public bool isFlying;
+    //public bool isFlying;
     public string targetRegionToTravelInWorld;
     public List<string> structuresToAvoid;
 
@@ -661,7 +748,7 @@ public class SaveDataMovementComponent : SaveData<MovementComponent> {
     public int traversableTags;
     public int[] tagPenalties;
 
-    #region Overrides
+#region Overrides
     public override void Save(MovementComponent data) {
         isRunning = data.isRunning;
         noRunExceptCombat = data.noRunExceptCombat;
@@ -674,7 +761,7 @@ public class SaveDataMovementComponent : SaveData<MovementComponent> {
         isStationary = data.isStationary;
         cameFromWurmHole = data.cameFromWurmHole;
         isTravellingInWorld = data.isTravellingInWorld;
-        isFlying = data.isFlying;
+        //isFlying = data.isFlying;
 
         if(data.targetRegionToTravelInWorld != null) {
             targetRegionToTravelInWorld = data.targetRegionToTravelInWorld.persistentID;
@@ -695,5 +782,5 @@ public class SaveDataMovementComponent : SaveData<MovementComponent> {
         MovementComponent component = new MovementComponent(this);
         return component;
     }
-    #endregion
+#endregion
 }

@@ -3,11 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 using Inner_Maps.Location_Structures;
 using Logs;
+using Object_Pools;
+using UtilityScripts;
 
 public class AgitateData : PlayerAction {
     public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.AGITATE;
     public override string name => "Agitate";
-    public override string description => "This Action can be used on a monster. The target will enter a state of frenzy and will terrorize nearby Residents.";
+    public override string description => "This Ability may be used on a wild monster to force it to enter a state of frenzy. It will terrorize nearby Villagers if possible." +
+        "\nAgitating a monster produces 1 Chaos Orb. Additional 2 Chaos Orbs are produced each time the monster kills a Villager.";
     public AgitateData() : base() {
         targetTypes = new SPELL_TARGET[] { SPELL_TARGET.CHARACTER };
     }
@@ -22,11 +25,12 @@ public class AgitateData : PlayerAction {
                 targetCharacter.behaviourComponent.SetAttackVillageTarget(targetStructure.settlementLocation as NPCSettlement);
                 targetCharacter.behaviourComponent.AddBehaviourComponent(typeof(AttackVillageBehaviour));
                 targetCharacter.behaviourComponent.SetIsAgitated(true);
-
-                Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "NonIntel", "agitated", null, LOG_TAG.Player, LOG_TAG.Combat);
+                Messenger.Broadcast(PlayerSkillSignals.AGITATE_ACTIVATED, targetPOI);
+                Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "NonIntel", "agitated", null, LogUtilities.Agitate_Tags);
                 log.AddToFillers(targetPOI, targetPOI.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                 log.AddLogToDatabase();
                 PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
+                LogPool.Release(log);
             } else {
                 targetCharacter.movementComponent.SetEnableDigging(false);
                 PlayerUI.Instance.ShowGeneralConfirmation("AGITATE FAILED", "Cannot find a valid village target.");
@@ -53,7 +57,8 @@ public class AgitateData : PlayerAction {
     }
     public override bool IsValid(IPlayerActionTarget target) {
         if (target is Character targetCharacter) {
-            return !(targetCharacter is Dragon) && (targetCharacter.faction == null || !targetCharacter.faction.isPlayerFaction) && !targetCharacter.movementComponent.isStationary;
+            bool isValid = base.IsValid(target);
+            return isValid && !(targetCharacter is Dragon) && (targetCharacter.faction == null || !targetCharacter.faction.isPlayerFaction) && !targetCharacter.movementComponent.isStationary;
         }
         return false;
     }

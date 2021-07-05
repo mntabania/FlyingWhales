@@ -1,21 +1,26 @@
 ﻿using EZObjectPools;
 using Pathfinding;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Remoting.Contexts;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
+using Locations.Settlements;
+#if UNITY_EDITOR
+using UnityEditor;
+using UnityEditor.Experimental.SceneManagement;
+using UnityEditor.SceneManagement;
+#endif
 using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.EventSystems;
 using UnityEngine.Serialization;
 using UnityEngine.Tilemaps;
 
-public class LocationStructureObject : PooledObject {
+public class LocationStructureObject : PooledObject, ISelectable {
 
-    public enum Structure_Visual_Mode { Blueprint, Built }
+    public enum Structure_Visual_Mode { Blueprint, Built, Demonic_Structure_Blueprint, Demonic_Structure_Placement }
 
     public STRUCTURE_TYPE structureType;
     
@@ -29,7 +34,6 @@ public class LocationStructureObject : PooledObject {
     [Header("Template Data")]
     [SerializeField] private Vector2Int _size;
     [SerializeField] private Vector3Int _center;
-    [SerializeField] private int _craftCost = 50;
     [SerializeField] private int _repairCost = 5;
 
     [Header("Objects")]
@@ -50,6 +54,9 @@ public class LocationStructureObject : PooledObject {
     [FormerlySerializedAs("rooms")] [Header("Rooms")] 
     public RoomTemplate[] roomTemplates; //if this is null then it means that this structure object has no rooms.
 
+    [Header("Interaction")]
+    [SerializeField] private LocationStructureObjectClickCollider _clickCollider;
+
     public bool wallsContributeToDamage = true;
     private StructureTemplate _parentTemplate;
     private StructureTemplateObjectData[] _preplacedObjs;
@@ -57,8 +64,10 @@ public class LocationStructureObject : PooledObject {
 
     #region Properties
     private Tilemap[] allTilemaps;
-    private WallVisual[] wallVisuals;
+    private ThinWallGameObject[] wallVisuals;
+    private TilemapCollider2D _blockWallsTilemapCollider;
     public LocationGridTile[] tiles { get; private set; }
+    public Structure_Visual_Mode currentVisualMode { get; private set; }
     #endregion
 
     #region Getters
@@ -74,15 +83,19 @@ public class LocationStructureObject : PooledObject {
         }
     }
     public RESOURCE thinWallResource => _thinWallResource;
-    public int craftCost => _craftCost;
+    public int craftCost => structureType.GetResourceBuildCost();
     public int repairCost => _repairCost;
     #endregion
 
     #region Monobehaviours
     void Awake() {
+        currentVisualMode = Structure_Visual_Mode.Built;
         allTilemaps = transform.GetComponentsInChildren<Tilemap>();
-        wallVisuals = transform.GetComponentsInChildren<WallVisual>();
+        wallVisuals = transform.GetComponentsInChildren<ThinWallGameObject>();
         _parentTemplate = GetComponentInParent<StructureTemplate>();
+        if (_blockWallsTilemap != null) {
+            _blockWallsTilemapCollider = _blockWallsTilemap.GetComponent<TilemapCollider2D>();    
+        }
         DetermineOccupiedTileCoordinates();
     }
     #endregion
@@ -97,8 +110,18 @@ public class LocationStructureObject : PooledObject {
         _groundTileMapRenderer.sortingOrder = InnerMapManager.GroundTilemapSortingOrder + 5;
         _detailTileMapRenderer.sortingOrder = InnerMapManager.DetailsTilemapSortingOrder;
         for (int i = 0; i < wallVisuals.Length; i++) {
-            WallVisual wallVisual = wallVisuals[i];
-            wallVisual.UpdateSortingOrders(_groundTileMapRenderer.sortingOrder + 2);
+            ThinWallGameObject wallVisual = wallVisuals[i];
+            wallVisual.UpdateSortingOrders(InnerMapManager.DetailsTilemapSortingOrder + 1);
+        }
+    }
+    public void OverrideDefaultSortingOrder(int p_sortingOrder) {
+        _groundTileMapRenderer.sortingOrder = p_sortingOrder;
+        _blockWallsTilemap.GetComponent<TilemapRenderer>().sortingOrder = p_sortingOrder + 1;
+        _detailTileMapRenderer.sortingOrder = p_sortingOrder + 2;
+        StructureTemplateObjectData[] templateObjectData = GetPreplacedObjects();
+        for (int i = 0; i < templateObjectData.Length; i++) {
+            StructureTemplateObjectData templateData = templateObjectData[i];
+            templateData.SetSortingOrder(p_sortingOrder + 2);
         }
     }
     private void SetStructureColor(Color color) {
@@ -106,7 +129,7 @@ public class LocationStructureObject : PooledObject {
             allTilemaps[i].color = color;
         }
         for (int i = 0; i < wallVisuals.Length; i++) {
-            WallVisual wallVisual = wallVisuals[i];
+            ThinWallGameObject wallVisual = wallVisuals[i];
             wallVisual.SetWallColor(color);
         }
     }
@@ -137,14 +160,24 @@ public class LocationStructureObject : PooledObject {
     #endregion
 
     #region Tile Objects
-    private void RegisterPreplacedObjectsOfType(LocationStructure structure, InnerTileMap innerMap, params TILE_OBJECT_TYPE[] validTileObjectTypes) {
+    private void RegisterPreplacedObjects(LocationStructure structure, InnerTileMap innerMap, TILE_OBJECT_TYPE[] typesToIgnore = null) {
         StructureTemplateObjectData[] preplacedObjs = GetPreplacedObjects();
         for (int i = 0; i < preplacedObjs.Length; i++) {
             StructureTemplateObjectData preplacedObj = preplacedObjs[i];
-            if (validTileObjectTypes.Contains(preplacedObj.tileObjectType)) {
-                Vector3Int tileCoords = innerMap.groundTilemap.WorldToCell(preplacedObj.transform.position);
-                LocationGridTile tile = innerMap.map[tileCoords.x, tileCoords.y];
-                TileObject newTileObject = InnerMapManager.Instance.CreateNewTileObject<TileObject>(preplacedObj.tileObjectType);
+            Vector3Int tileCoords = innerMap.groundTilemap.WorldToCell(preplacedObj.transform.position);
+            LocationGridTile tile = innerMap.map[tileCoords.x, tileCoords.y];
+            if (tile.tileObjectComponent.objHere != null) {
+                if (tile.tileObjectComponent.objHere.traitContainer.HasTrait("Indestructible")) {
+                    //skip placement if current object there is indestructible
+                    continue;
+                } else {
+                    tile.structure.RemovePOI(tile.tileObjectComponent.objHere);    
+                }
+            }
+
+            bool buildPreplacedObject = !(typesToIgnore != null && typesToIgnore.Contains(preplacedObj.tileObjectType));
+            if (buildPreplacedObject) {
+                TileObject newTileObject = InstantiatePreplacedObject(preplacedObj.tileObjectType, tile);
                 newTileObject.SetIsPreplaced(true);
             
                 PreplacedObjectProcessing(preplacedObj, tile, structure, newTileObject);    
@@ -152,35 +185,16 @@ public class LocationStructureObject : PooledObject {
         }
         SetPreplacedObjectsState(false);
     }
-    private void RegisterPreplacedObjects(LocationStructure structure, InnerTileMap innerMap) {
-        StructureTemplateObjectData[] preplacedObjs = GetPreplacedObjects();
-        for (int i = 0; i < preplacedObjs.Length; i++) {
-            StructureTemplateObjectData preplacedObj = preplacedObjs[i];
-            Vector3Int tileCoords = innerMap.groundTilemap.WorldToCell(preplacedObj.transform.position);
-            LocationGridTile tile = innerMap.map[tileCoords.x, tileCoords.y];
-            if (tile.objHere != null) {
-                if (tile.objHere.traitContainer.HasTrait("Indestructible")) {
-                    //skip placement if current object there is indestructible
-                    continue;
-                } else {
-                    tile.structure.RemovePOI(tile.objHere);    
-                }
-            }
-            TileObject newTileObject = InnerMapManager.Instance.CreateNewTileObject<TileObject>(preplacedObj.tileObjectType);
-            newTileObject.SetIsPreplaced(true);
-            
-            PreplacedObjectProcessing(preplacedObj, tile, structure, newTileObject);
-        }
-        SetPreplacedObjectsState(false);
+    protected virtual TileObject InstantiatePreplacedObject(TILE_OBJECT_TYPE p_type, LocationGridTile p_tile) {
+        return InnerMapManager.Instance.CreateNewTileObject<TileObject>(p_type);
     }
-    protected virtual void PreplacedObjectProcessing(StructureTemplateObjectData preplacedObj,
-        LocationGridTile tile, LocationStructure structure, TileObject newTileObject) {
+    protected virtual void PreplacedObjectProcessing(StructureTemplateObjectData preplacedObj, LocationGridTile tile, LocationStructure structure, TileObject newTileObject) {
         tile.structure.AddPOI(newTileObject, tile);
         newTileObject.mapVisual.SetVisual(preplacedObj.spriteRenderer.sprite);
         newTileObject.mapVisual.SetRotation(preplacedObj.transform.localEulerAngles.z);
         newTileObject.RevalidateTileObjectSlots();
     }
-    public void PlacePreplacedObjectsAsBlueprints(LocationStructure structure, InnerTileMap areaMap, NPCSettlement npcSettlement) {
+    public void BuildSpecificObjects(LocationStructure structure, InnerTileMap areaMap, NPCSettlement npcSettlement) {
         StructureTemplateObjectData[] preplacedObjs = GetPreplacedObjects();
         for (int i = 0; i < preplacedObjs.Length; i++) {
             StructureTemplateObjectData preplacedObj = preplacedObjs[i];
@@ -236,8 +250,42 @@ public class LocationStructureObject : PooledObject {
         }
         return false;
     }
-    internal void ReceiveMapObject<T>(MapObjectVisual<T> mapGameObject) where T : IDamageable {
-        mapGameObject.transform.SetParent(objectsParent);
+    public void PopulateMissingPreplacedObjectsOfTypeThatIsOnUnoccupiedTile(List<StructureTemplateObjectData> p_objects, TILE_OBJECT_TYPE p_tileObjectType, InnerTileMap innerMap) {
+        StructureTemplateObjectData[] prePlacedObjects = GetPreplacedObjects();
+        if (prePlacedObjects != null) {
+            for (int i = 0; i < prePlacedObjects.Length; i++) {
+                StructureTemplateObjectData preplacedObj = prePlacedObjects[i];
+                if (preplacedObj.tileObjectType == p_tileObjectType) {
+                    Vector3Int tileCoords = innerMap.groundTilemap.WorldToCell(preplacedObj.transform.position);
+                    LocationGridTile tile = innerMap.map[tileCoords.x, tileCoords.y];
+                    if (tile.tileObjectComponent.objHere == null) {
+                        //tile location of preplaced object is unoccupied.
+                        p_objects.Add(preplacedObj);
+                    }
+                }
+            }
+        }
+    }
+    public void PopulateMissingPreplacedObjectsOfType(List<StructureTemplateObjectData> p_objects, TILE_OBJECT_TYPE p_tileObjectType, InnerTileMap innerMap) {
+        StructureTemplateObjectData[] prePlacedObjects = GetPreplacedObjects();
+        if (prePlacedObjects != null) {
+            for (int i = 0; i < prePlacedObjects.Length; i++) {
+                StructureTemplateObjectData preplacedObj = prePlacedObjects[i];
+                if (preplacedObj.tileObjectType == p_tileObjectType) {
+                    Vector3Int tileCoords = innerMap.groundTilemap.WorldToCell(preplacedObj.transform.position);
+                    LocationGridTile tile = innerMap.map[tileCoords.x, tileCoords.y];
+                    if (tile.tileObjectComponent.objHere == null || tile.tileObjectComponent.objHere.tileObjectType != p_tileObjectType) {
+                        p_objects.Add(preplacedObj);
+                    }
+                }
+            }
+        }
+    }
+    
+    public LocationGridTile GetTileLocationOfPreplacedObject(StructureTemplateObjectData p_templateObject, InnerTileMap innerTileMap) {
+        Vector3Int tileCoords = innerTileMap.groundTilemap.WorldToCell(p_templateObject.transform.position);
+        LocationGridTile tile = innerTileMap.map[tileCoords.x, tileCoords.y];
+        return tile;
     }
     private void SetPreplacedObjectsState(bool state) {
         StructureTemplateObjectData[] preplacedObjs = GetPreplacedObjects();
@@ -247,24 +295,38 @@ public class LocationStructureObject : PooledObject {
             }
         }
     }
+    private void SetPreplacedObjectsColor(Color p_color) {
+        StructureTemplateObjectData[] preplacedObjs = GetPreplacedObjects();
+        if (preplacedObjs != null) {
+            for (int i = 0; i < preplacedObjs.Length; i++) {
+                preplacedObjs[i].SetVisualColor(p_color);
+            }
+        }
+    }
     public void ClearOutUnimportantObjectsBeforePlacement() {
         bool isDemonicStructure = structureType.GetLandmarkType().IsPlayerLandmark();
         for (int i = 0; i < tiles.Length; i++) {
             LocationGridTile tile = tiles[i];
             StructureTemplateObjectData preplacedObj = GetStructureTemplateObjectData(tile, tile.parentMap);
-            if (tile.objHere != null && tile.objHere is TileObject tileObject && (tileObject is StructureTileObject) == false) { //TODO: Remove tight coupling with Build Spot Tile object
+            TileObject tileObject = tile.tileObjectComponent.objHere;
+            if (tileObject != null && (tileObject is StructureTileObject) == false) { //TODO: Remove tight coupling with Build Spot Tile object
                 if (tileObject.traitContainer.HasTrait("Indestructible")) {
                     tile.structure.OnlyRemovePOIFromList(tileObject);
                 } else {
-                    if (isDemonicStructure && tile.objHere is Tombstone tombstone) {
+                    if (isDemonicStructure && tileObject is Tombstone tombstone) {
                         tombstone.SetRespawnCorpseOnDestroy(false);
                     }
                     bool hasBlockWall = _blockWallsTilemap == null ? false : _blockWallsTilemap.GetTile(_blockWallsTilemap.WorldToCell(tile.worldLocation));
                     if (!tileObject.tileObjectType.IsTileObjectImportant() || preplacedObj != null || hasBlockWall || structureType == STRUCTURE_TYPE.THE_PORTAL) {
-                        tile.structure.RemovePOI(tile.objHere);    
+                        tile.structure.RemovePOI(tileObject);    
                     }    
                 }
                 
+            }
+
+            if (!GameManager.Instance.gameHasStarted) {
+                MapGenerationData mapGenerationData = WorldConfigManager.Instance.mapGenerationData;
+                if (mapGenerationData != null) { mapGenerationData.SetGeneratedMapPerlinDetails(tile, TILE_OBJECT_TYPE.NONE); }
             }
             
             tile.parentMap.detailsTilemap.SetTile(tile.localPlace, null);
@@ -277,17 +339,21 @@ public class LocationStructureObject : PooledObject {
             List<LocationGridTile> differentStructureTiles = tile.neighbourList.Where(x => !tiles.Contains(x)).ToList();
             for (int j = 0; j < differentStructureTiles.Count; j++) {
                 LocationGridTile diffTile = differentStructureTiles[j];
-                // if (diffTile.objHere != null && (diffTile.objHere is StructureTileObject) == false) { //TODO: Remove tight coupling with Build Spot Tile object
-                //     if (diffTile.objHere.traitContainer.HasTrait("Indestructible")) {
-                //         diffTile.structure.OnlyRemovePOIFromList(diffTile.objHere);
+                // if (diffTile.tileObjectComponent.objHere != null && (diffTile.tileObjectComponent.objHere is StructureTileObject) == false) { //TODO: Remove tight coupling with Build Spot Tile object
+                //     if (diffTile.tileObjectComponent.objHere.traitContainer.HasTrait("Indestructible")) {
+                //         diffTile.structure.OnlyRemovePOIFromList(diffTile.tileObjectComponent.objHere);
                 //     } else {
-                //         if (isDemonicStructure && diffTile.objHere is Tombstone tombstone) {
+                //         if (isDemonicStructure && diffTile.tileObjectComponent.objHere is Tombstone tombstone) {
                 //             tombstone.SetRespawnCorpseOnDestroy(false);
                 //         }
-                //         diffTile.structure.RemovePOI(diffTile.objHere);    
+                //         diffTile.structure.RemovePOI(diffTile.tileObjectComponent.objHere);    
                 //     }
                 //     
                 // }
+                if (!GameManager.Instance.gameHasStarted) {
+                    MapGenerationData mapGenerationData = WorldConfigManager.Instance.mapGenerationData;
+                    if (mapGenerationData != null) { mapGenerationData.SetGeneratedMapPerlinDetails(diffTile, TILE_OBJECT_TYPE.NONE); }
+                }
                 diffTile.parentMap.detailsTilemap.SetTile(diffTile.localPlace, null);
 
                 GridNeighbourDirection dir;
@@ -322,7 +388,7 @@ public class LocationStructureObject : PooledObject {
     /// <param name="innerMap">The map where the structure was placed.</param>
     /// <param name="structure">The structure that was placed.</param>
     /// <param name="buildAllTileObjects">Should all preplaced objects be built</param>
-    public void OnBuiltStructureObjectPlaced(InnerTileMap innerMap, LocationStructure structure, out int createdWalls, out int totalWalls, bool buildAllTileObjects = true) {
+    public void OnBuiltStructureObjectPlaced(InnerTileMap innerMap, LocationStructure structure, out int createdWalls, out int totalWalls, TILE_OBJECT_TYPE[] objectTypesToNotBuild = null) {
         // bool isDemonicStructure = structure is DemonicStructure;
         for (int i = 0; i < tiles.Length; i++) {
             LocationGridTile tile = tiles[i];
@@ -334,13 +400,15 @@ public class LocationStructureObject : PooledObject {
         ProcessConnectors(structure);
         RegisterWalls(innerMap, structure, out createdWalls, out totalWalls);
         _groundTileMap.gameObject.SetActive(false);
-        if (buildAllTileObjects) {
-            RegisterPreplacedObjects(structure, innerMap);    
-        } else {
-            if (structure.settlementLocation is NPCSettlement npcSettlement) {
-                PlacePreplacedObjectsAsBlueprints(structure, innerMap, npcSettlement);    
-            }
-        }
+        RegisterPreplacedObjects(structure, innerMap, objectTypesToNotBuild);
+        // if (objectTypesToNotBuild == null) {
+        //     RegisterPreplacedObjects(structure, innerMap);    
+        // } 
+        // else {
+        //     if (structure.settlementLocation is NPCSettlement npcSettlement) {
+        //         BuildSpecificObjects(structure, innerMap, npcSettlement);    
+        //     }
+        // }
         
         RescanPathfindingGridOfStructure(innerMap);
         UpdateSortingOrders();
@@ -361,6 +429,7 @@ public class LocationStructureObject : PooledObject {
         RescanPathfindingGridOfStructure(innerMap);
         UpdateSortingOrders();
         SetPreplacedObjectsState(false);
+        SetClickColliderState(false);
         Messenger.Broadcast(StructureSignals.STRUCTURE_OBJECT_PLACED, structure);
     }
     public void OnOwnerStructureDestroyed(InnerTileMap innerTileMap) {
@@ -450,18 +519,39 @@ public class LocationStructureObject : PooledObject {
     #region Visuals
     public void SetVisualMode(Structure_Visual_Mode mode, InnerTileMap innerTileMap) {
         Color color = Color.white;
+        currentVisualMode = mode;
         switch (mode) {
             case Structure_Visual_Mode.Blueprint:
                 color.a = 128f / 255f;
                 SetStructureColor(color);
                 SetPreplacedObjectsState(false);
                 SetWallCollidersState(false);
+                SetClickColliderState(true);
+                break;
+            case Structure_Visual_Mode.Demonic_Structure_Blueprint:
+                color.a = 128f / 255f;
+                SetStructureColor(color);
+                SetPreplacedObjectsState(true);
+                SetPreplacedObjectsColor(color);
+                SetWallCollidersState(false);
+                OverrideDefaultSortingOrder(InnerMapManager.GroundTilemapSortingOrder + 50);
+                SetClickColliderState(true);
+                break;
+            case Structure_Visual_Mode.Demonic_Structure_Placement:
+                color.a = 128f / 255f;
+                SetStructureColor(color);
+                SetPreplacedObjectsState(true);
+                SetPreplacedObjectsColor(color);
+                SetWallCollidersState(false);
+                OverrideDefaultSortingOrder(InnerMapManager.GroundTilemapSortingOrder + 50);
+                SetClickColliderState(false);
                 break;
             default:
                 color = Color.white;
                 SetStructureColor(color);
                 SetWallCollidersState(true);
                 RescanPathfindingGridOfStructure(innerTileMap);
+                SetClickColliderState(false);
                 break;
         }
     }
@@ -479,6 +569,7 @@ public class LocationStructureObject : PooledObject {
     #region Object Pool
     public override void Reset() {
         base.Reset();
+        currentVisualMode = Structure_Visual_Mode.Built;
         SetPreplacedObjectsState(true);
         if (_groundTileMap != null) {
             _groundTileMap.gameObject.SetActive(true);    
@@ -493,7 +584,7 @@ public class LocationStructureObject : PooledObject {
             connectors[i].Reset();
         }
         for (int i = 0; i < wallVisuals.Length; i++) {
-            WallVisual wallVisual = wallVisuals[i];
+            ThinWallGameObject wallVisual = wallVisuals[i];
             wallVisual.ResetWallAssets(_thinWallResource);
             wallVisual.Reset();
         }    
@@ -519,12 +610,12 @@ public class LocationStructureObject : PooledObject {
                 if (blockWallAsset != null) {
                     if (blockWallAsset.name.Contains("Wall")) {
                         bool shouldBuildBlockWall = true;
-                        if (tile.objHere != null) {
-                            if (tile.objHere.traitContainer.HasTrait("Indestructible")) {
+                        if (tile.tileObjectComponent.objHere != null) {
+                            if (tile.tileObjectComponent.objHere.traitContainer.HasTrait("Indestructible")) {
                                 shouldBuildBlockWall = false;
-                                tile.structure.OnlyAddPOIToList(tile.objHere);
+                                tile.structure.OnlyAddPOIToList(tile.tileObjectComponent.objHere);
                             } else {
-                                tile.structure.RemovePOI(tile.objHere);    
+                                tile.structure.RemovePOI(tile.tileObjectComponent.objHere);    
                             }
                         }
                         if (shouldBuildBlockWall) {
@@ -546,21 +637,25 @@ public class LocationStructureObject : PooledObject {
             _blockWallsTilemap.gameObject.SetActive(false);
         } else if (wallVisuals != null && wallVisuals.Length > 0 && structure is ManMadeStructure manMadeStructure) {
             //structure walls
-            List<StructureWallObject> wallObjects = new List<StructureWallObject>();
+            List<ThinWall> wallObjects = new List<ThinWall>();
             for (int i = 0; i < wallVisuals.Length; i++) {
-                WallVisual wallVisual = wallVisuals[i];
-                StructureWallObject structureWallObject = new StructureWallObject(structure, wallVisual, _thinWallResource);
+                ThinWallGameObject wallVisual = wallVisuals[i];
+                //ThinWall structureWallObject = new ThinWall(structure, wallVisual, _thinWallResource);
+                ThinWall thinWall = InnerMapManager.Instance.CreateNewTileObject<ThinWall>(TILE_OBJECT_TYPE.THIN_WALL);
+                thinWall.SetVisualGO(wallVisual);
+                thinWall.SetResourceMadeOf(_thinWallResource);
+                thinWall.InitializeThinWall();
                 Vector3Int tileLocation = map.groundTilemap.WorldToCell(wallVisual.transform.position);
                 LocationGridTile tile = map.map[tileLocation.x, tileLocation.y];
                 tile.SetTileType(LocationGridTile.Tile_Type.Wall);
-                structureWallObject.SetGridTileLocation(tile);
-                tile.AddWallObject(structureWallObject);
+                thinWall.SetGridTileLocation(tile);
+                tile.tileObjectComponent.AddWallObject(thinWall);
                 createdWalls++;
                 totalWalls++;
-                if (wallsContributeToDamage) {
-                    structure.AddObjectAsDamageContributor(structureWallObject);    
-                }
-                wallObjects.Add(structureWallObject);
+                // if (wallsContributeToDamage) {
+                //     structure.AddObjectAsDamageContributor(thinWall);    
+                // }
+                wallObjects.Add(thinWall);
             }    
             manMadeStructure.SetWallObjects(wallObjects, _thinWallResource);
         }
@@ -582,12 +677,12 @@ public class LocationStructureObject : PooledObject {
                 if (blockWallAsset != null) {
                     if (blockWallAsset.name.Contains("Wall")) {
                         bool shouldBuildBlockWall = true;
-                        if (tile.objHere != null) {
-                            if (tile.objHere.traitContainer.HasTrait("Indestructible")) {
+                        if (tile.tileObjectComponent.objHere != null) {
+                            if (tile.tileObjectComponent.objHere.traitContainer.HasTrait("Indestructible")) {
                                 shouldBuildBlockWall = false;
-                                tile.structure.OnlyAddPOIToList(tile.objHere);
+                                tile.structure.OnlyAddPOIToList(tile.tileObjectComponent.objHere);
                             } else {
-                                tile.structure.RemovePOI(tile.objHere);    
+                                tile.structure.RemovePOI(tile.tileObjectComponent.objHere);    
                             }
                         }
 
@@ -618,21 +713,25 @@ public class LocationStructureObject : PooledObject {
                     tile.parentMap.detailsTilemap.SetTile(tile.localPlace, null);
                 }
                 //structure walls
-                List<StructureWallObject> wallObjects = new List<StructureWallObject>();
+                List<ThinWall> wallObjects = new List<ThinWall>();
                 for (int i = 0; i < wallVisuals.Length; i++) {
-                    WallVisual wallVisual = wallVisuals[i];
-                    StructureWallObject structureWallObject = new StructureWallObject(structure, wallVisual, _thinWallResource);
+                    ThinWallGameObject wallVisual = wallVisuals[i];
+                    //ThinWall structureWallObject = new ThinWall(structure, wallVisual, _thinWallResource);
+                    ThinWall thinWall = InnerMapManager.Instance.CreateNewTileObject<ThinWall>(TILE_OBJECT_TYPE.THIN_WALL);
+                    thinWall.SetVisualGO(wallVisual);
+                    thinWall.SetResourceMadeOf(_thinWallResource);
+                    thinWall.InitializeThinWall();
                     Vector3Int tileLocation = map.groundTilemap.WorldToCell(wallVisual.transform.position);
                     LocationGridTile tile = map.map[tileLocation.x, tileLocation.y];
                     tile.SetTileType(LocationGridTile.Tile_Type.Wall);
-                    structureWallObject.SetGridTileLocation(tile);
-                    tile.AddWallObject(structureWallObject);
+                    thinWall.SetGridTileLocation(tile);
+                    tile.tileObjectComponent.AddWallObject(thinWall);
                     createdWalls++;
                     totalWalls++;
-                    if (wallsContributeToDamage) {
-                        structure.AddObjectAsDamageContributor(structureWallObject);
-                    }
-                    wallObjects.Add(structureWallObject);
+                    // if (wallsContributeToDamage) {
+                    //     structure.AddObjectAsDamageContributor(thinWall);
+                    // }
+                    wallObjects.Add(thinWall);
                 }
                 manMadeStructure.SetWallObjects(wallObjects, _thinWallResource);
             }
@@ -640,8 +739,11 @@ public class LocationStructureObject : PooledObject {
         
     }
     private void SetWallCollidersState(bool state) {
+        if (_blockWallsTilemapCollider != null) {
+            _blockWallsTilemapCollider.enabled = state;    
+        }
         for (int i = 0; i < wallVisuals.Length; i++) {
-            WallVisual wallVisual = wallVisuals[i];
+            ThinWallGameObject wallVisual = wallVisuals[i];
             wallVisual.SetUnpassableColliderState(state);
         }
     }
@@ -658,12 +760,6 @@ public class LocationStructureObject : PooledObject {
     }
     #endregion
 
-    #region Interaction
-    public void OnPointerClick(BaseEventData data) {
-        Debug.Log($"Player clicked {name}");
-    }
-    #endregion
-
     #region Connectors
     /// <summary>
     /// Get first valid connector given a list of choices.
@@ -671,46 +767,161 @@ public class LocationStructureObject : PooledObject {
     /// </summary>
     /// <param name="connectionChoices">A list of all OPEN connector choices.</param>
     /// <param name="innerTileMap">The inner map that this structure will be placed on.</param>
+    /// <param name="p_settlement">The settlement that this structure will be part of. Can be null.</param>
     /// <param name="usedConnectorIndex">The index of the connector that was used by this structure object.</param>
     /// <param name="tileToPlaceStructure">The LocationGridTile to place the structure at. This is the computed center of the structure.</param>
     /// <param name="connectorTile">The LocationGridTile that the chosen connector is placed at.</param>
     /// <param name="p_structureSetting">The structure setting to place.</param>
+    /// <param name="functionLog">The output log of what happened inside this function. used for determining why this template could not be placed.</param>
     /// <returns>The first valid connector from the list of choices.</returns>
-    public StructureConnector GetFirstValidConnector(List<StructureConnector> connectionChoices, InnerTileMap innerTileMap, out int usedConnectorIndex, out LocationGridTile tileToPlaceStructure, out LocationGridTile connectorTile, StructureSetting p_structureSetting) {
+    public StructureConnector GetFirstValidConnector(List<StructureConnector> connectionChoices, InnerTileMap innerTileMap, BaseSettlement p_settlement, out int usedConnectorIndex, 
+        out LocationGridTile tileToPlaceStructure, out LocationGridTile connectorTile, StructureSetting p_structureSetting, out string functionLog) {
+        string cannotPlaceSummary = string.Empty;
         //loop through connection choices
         for (int i = 0; i < connectionChoices.Count; i++) {
             StructureConnector connectorA = connectionChoices[i];
-            LocationGridTile connectorATileLocation = connectorA.GetLocationGridTileGivenCurrentPosition(innerTileMap);
-            if (connectorATileLocation == null) {
-                continue;
+            if (IsConnectorValid(connectorA, innerTileMap, p_settlement, out usedConnectorIndex, out tileToPlaceStructure, out connectorTile, p_structureSetting, out functionLog)) {
+                return connectorA;
             }
-            //for each choice check each connector that I own, and check if that connector can connect to the other connector
-            for (int j = 0; j < connectors.Length; j++) {
-                //To check if connectorA and connectorB can connect, get the center tile that this object will occupy given the location of connectorA
-                //and from that, get the tiles, that this object will occupy if placed on the computed center tile.
-                //If it will occupy a tile that is NOT part of the Wilderness, then connectorA is invalid.
-                StructureConnector connectorB = connectors[j];
-                var connectorBLocalPos = connectorB.transform.localPosition;
-                Vector2Int connectorBLocalPosition = new Vector2Int(Mathf.FloorToInt(connectorBLocalPos.x), Mathf.FloorToInt(connectorBLocalPos.y));
-                Vector2Int distanceFromCenter = new Vector2Int(center.x - connectorBLocalPosition.x, center.y - connectorBLocalPosition.y);
-                Vector2Int computedCenterLocation = new Vector2Int(connectorATileLocation.localPlace.x + distanceFromCenter.x, connectorATileLocation.localPlace.y + distanceFromCenter.y);
-                
-                LocationGridTile centerTile = innerTileMap.GetTileFromMapCoordinates(computedCenterLocation.x, computedCenterLocation.y);
-                if (centerTile != null && p_structureSetting.structureType.IsValidCenterTileForStructure(centerTile) && HasEnoughSpaceIfPlacedOn(centerTile)) {
-                    tileToPlaceStructure = centerTile;
-                    usedConnectorIndex = j;
-                    connectorTile = connectorA.GetLocationGridTileGivenCurrentPosition(innerTileMap);
-                    return connectorA;
-                }
-            }
+            // LocationGridTile connectorATileLocation = connectorA.GetLocationGridTileGivenCurrentPosition(innerTileMap);
+            // if (connectorATileLocation == null) {
+            //     continue;
+            // }
+            // //for each choice check each connector that I own, and check if that connector can connect to the other connector
+            // for (int j = 0; j < connectors.Length; j++) {
+            //     //To check if connectorA and connectorB can connect, get the center tile that this object will occupy given the location of connectorA
+            //     //and from that, get the tiles, that this object will occupy if placed on the computed center tile.
+            //     //If it will occupy a tile that is NOT part of the Wilderness, then connectorA is invalid.
+            //     StructureConnector connectorB = connectors[j];
+            //     var connectorBLocalPos = connectorB.transform.localPosition;
+            //     Vector2Int connectorBLocalPosition = new Vector2Int(Mathf.FloorToInt(connectorBLocalPos.x), Mathf.FloorToInt(connectorBLocalPos.y));
+            //     Vector2Int distanceFromCenter = new Vector2Int(center.x - connectorBLocalPosition.x, center.y - connectorBLocalPosition.y);
+            //     Vector2Int computedCenterLocation = new Vector2Int(connectorATileLocation.localPlace.x + distanceFromCenter.x, connectorATileLocation.localPlace.y + distanceFromCenter.y);
+            //     
+            //     LocationGridTile centerTile = innerTileMap.GetTileFromMapCoordinates(computedCenterLocation.x, computedCenterLocation.y);
+            //     if (centerTile != null) {
+            //         bool isValidCenterTileForStructure = p_structureSetting.structureType.IsValidCenterTileForStructure(centerTile, p_settlement);
+            //         string reason = string.Empty;
+            //         if (isValidCenterTileForStructure && HasEnoughSpaceIfPlacedOn(centerTile, out reason)) {
+            //             tileToPlaceStructure = centerTile;
+            //             usedConnectorIndex = j;
+            //             connectorTile = connectorA.GetLocationGridTileGivenCurrentPosition(innerTileMap);
+            //             functionLog = cannotPlaceSummary;
+            //             return connectorA;
+            //         } else {
+            //             cannotPlaceSummary = $"{cannotPlaceSummary}\n\t- Cannot place {name} connector {j} on {connectorA}. isValidCenterTileForStructure: {isValidCenterTileForStructure.ToString()} Reason: {reason}";
+            //         }    
+            //     }
+            // }
         }
+        functionLog = cannotPlaceSummary;
         tileToPlaceStructure = null;
         usedConnectorIndex = -1;
         connectorTile = null;
         return null;
     }
+    public bool IsConnectorValid(StructureConnector connectorA, InnerTileMap innerTileMap, BaseSettlement p_settlement, out int usedConnectorIndex,
+        out LocationGridTile tileToPlaceStructure, out LocationGridTile connectorTile, StructureSetting p_structureSetting, out string functionLog) {
+        string cannotPlaceSummary = string.Empty;
+        LocationGridTile connectorATileLocation = connectorA.GetLocationGridTileGivenCurrentPosition(innerTileMap);
+        if (connectorATileLocation == null) {
+            functionLog = cannotPlaceSummary;
+            tileToPlaceStructure = null;
+            usedConnectorIndex = -1;
+            connectorTile = null;
+            return false;
+        }
+        //for each choice check each connector that I own, and check if that connector can connect to the other connector
+        for (int j = 0; j < connectors.Length; j++) {
+            //To check if connectorA and connectorB can connect, get the center tile that this object will occupy given the location of connectorA
+            //and from that, get the tiles, that this object will occupy if placed on the computed center tile.
+            //If it will occupy a tile that is NOT part of the Wilderness, then connectorA is invalid.
+            StructureConnector connectorB = connectors[j];
+            var connectorBLocalPos = connectorB.transform.localPosition;
+            Vector2Int connectorBLocalPosition = new Vector2Int(Mathf.FloorToInt(connectorBLocalPos.x), Mathf.FloorToInt(connectorBLocalPos.y));
+            Vector2Int distanceFromCenter = new Vector2Int(center.x - connectorBLocalPosition.x, center.y - connectorBLocalPosition.y);
+            Vector2Int computedCenterLocation = new Vector2Int(connectorATileLocation.localPlace.x + distanceFromCenter.x, connectorATileLocation.localPlace.y + distanceFromCenter.y);
+            
+            LocationGridTile centerTile = innerTileMap.GetTileFromMapCoordinates(computedCenterLocation.x, computedCenterLocation.y);
+            if (centerTile != null) {
+                bool isValidCenterTileForStructure = p_structureSetting.structureType.IsValidCenterTileForStructure(centerTile, p_settlement);
+                string reason = string.Empty;
+                if (isValidCenterTileForStructure && HasEnoughSpaceIfPlacedOn(centerTile, out reason)) {
+                    tileToPlaceStructure = centerTile;
+                    usedConnectorIndex = j;
+                    connectorTile = connectorA.GetLocationGridTileGivenCurrentPosition(innerTileMap);
+                    functionLog = cannotPlaceSummary;
+                    return true;
+                } else {
+                    cannotPlaceSummary = $"{cannotPlaceSummary}\n\t- Cannot place {name} connector {j} on {connectorA}. isValidCenterTileForStructure: {isValidCenterTileForStructure.ToString()} Reason: {reason}";
+                }    
+            }
+        }
+        functionLog = cannotPlaceSummary;
+        tileToPlaceStructure = null;
+        usedConnectorIndex = -1;
+        connectorTile = null;
+        return false;
+    }
+    public bool HasAffectedCorruptedTilesIfPlacedOn(LocationGridTile centerTile) {
+        if (centerTile.corruptionComponent.isCorrupted || centerTile.corruptionComponent.isCurrentlyBeingCorrupted) {
+            return true;
+        }
+        InnerTileMap map = centerTile.parentMap;
+        for (int i = 0; i < localOccupiedCoordinates.Count; i++) {
+            Vector3Int currCoordinate = localOccupiedCoordinates[i];
+
+            Vector3Int gridTileLocation = centerTile.localPlace;
+
+            //get difference from center
+            int xDiffFromCenter = currCoordinate.x - center.x;
+            int yDiffFromCenter = currCoordinate.y - center.y;
+            gridTileLocation.x += xDiffFromCenter;
+            gridTileLocation.y += yDiffFromCenter;
+
+            if (UtilityScripts.Utilities.IsInRange(gridTileLocation.x, 0, map.width)
+                && UtilityScripts.Utilities.IsInRange(gridTileLocation.y, 0, map.height)) {
+                LocationGridTile tile = map.map[gridTileLocation.x, gridTileLocation.y];
+                if (tile.corruptionComponent.isCorrupted || tile.corruptionComponent.isCurrentlyBeingCorrupted) {
+                    return true;
+                }
+            } 
+            //else {
+            //    return false; //returned coordinates are out of the map
+            //}
+        }
+        return false;
+    }
     public bool HasEnoughSpaceIfPlacedOn(LocationGridTile centerTile) {
-        if (!CanPlaceStructureOnTile(centerTile)) {
+        if (!CanPlaceStructureOnTile(centerTile, out _)) {
+            return false;
+        }
+        InnerTileMap map = centerTile.parentMap;
+       for (int i = 0; i < localOccupiedCoordinates.Count; i++) {
+            Vector3Int currCoordinate = localOccupiedCoordinates[i];
+
+            Vector3Int gridTileLocation = centerTile.localPlace;
+
+            //get difference from center
+            int xDiffFromCenter = currCoordinate.x - center.x;
+            int yDiffFromCenter = currCoordinate.y - center.y;
+            gridTileLocation.x += xDiffFromCenter;
+            gridTileLocation.y += yDiffFromCenter;
+
+            if (UtilityScripts.Utilities.IsInRange(gridTileLocation.x, 0, map.width) 
+                && UtilityScripts.Utilities.IsInRange(gridTileLocation.y, 0, map.height)) {
+                LocationGridTile tile = map.map[gridTileLocation.x, gridTileLocation.y];
+                if (!CanPlaceStructureOnTile(tile, out _)) {
+                    return false;
+                }
+            } else {
+                return false; //returned coordinates are out of the map
+            }
+        }
+        return true;
+    }
+    public bool HasEnoughSpaceIfPlacedOn(LocationGridTile centerTile, out string o_cannotPlaceReason) {
+        if (!CanPlaceStructureOnTile(centerTile, out o_cannotPlaceReason)) {
             return false;
         }
         InnerTileMap map = centerTile.parentMap;
@@ -728,7 +939,7 @@ public class LocationStructureObject : PooledObject {
             if (UtilityScripts.Utilities.IsInRange(gridTileLocation.x, 0, map.width) 
                 && UtilityScripts.Utilities.IsInRange(gridTileLocation.y, 0, map.height)) {
                 LocationGridTile tile = map.map[gridTileLocation.x, gridTileLocation.y];
-                if (!CanPlaceStructureOnTile(tile)) {
+                if (!CanPlaceStructureOnTile(tile, out o_cannotPlaceReason)) {
                     return false;
                 }
             } else {
@@ -737,59 +948,126 @@ public class LocationStructureObject : PooledObject {
         }
         return true;
     }
-    private bool CanPlaceStructureOnTile(LocationGridTile tile) {
+    private bool CanPlaceStructureOnTile(LocationGridTile tile, out string o_cannotPlaceReason) {
         if (tile.structure.structureType != STRUCTURE_TYPE.WILDERNESS) {
+            // Debug.Log($"Could not place {structureType} because {tile} is not part of wilderness!");
+            o_cannotPlaceReason = LocalizationManager.Instance.GetLocalizedValue("Locations", "Structures", "invalid_build_not_wilderness");
             return false; //if calculated tile that will be occupied, is not part of wilderness, then this structure object cannot be placed on given center.
         }
-
+        if (tile.elevationType == ELEVATION.WATER || tile.elevationType == ELEVATION.MOUNTAIN) {
+            o_cannotPlaceReason = LocalizationManager.Instance.GetLocalizedValue("Locations", "Structures", "invalid_build_neighbour_not_wilderness");
+            return false;
+        }
         if (tile.hasBlueprint) {
+            // Debug.Log($"Could not place {structureType} because {tile} has blueprint!");
+            o_cannotPlaceReason = LocalizationManager.Instance.GetLocalizedValue("Locations", "Structures", "invalid_build_has_blueprint");
             return false; //This is to prevent overlapping blueprints. If any tile that will be occupied by this has a blueprint, then do not allow
         }
         if (tile.IsAtEdgeOfMap()) {
+            // Debug.Log($"Could not place {structureType} because {tile} is at edge of map!");
+            o_cannotPlaceReason = LocalizationManager.Instance.GetLocalizedValue("Locations", "Structures", "invalid_build_edge");
             return false;
         }
-        if (GameManager.Instance.gameHasStarted) {
-            if (!tile.collectionOwner.isPartOfParentRegionMap) {
-                return false; //prevent structure placement on tiles that aren't linked to any hextile. This is to prevent errors when trying to check if a tile IsPartOfSettlement
-            }    
-        } else {
-            //need to check this before game starts since mountains and oceans are generated after settlements, this is so structures will not be built on Mountain/Ocean tiles
-            //since we expect that they will be generated later
-            if (tile.collectionOwner.isPartOfParentRegionMap) {
-                HexTile hexTileOwner = tile.collectionOwner.partOfHextile.hexTileOwner;
-                if (hexTileOwner.elevationType == ELEVATION.WATER || hexTileOwner.elevationType == ELEVATION.MOUNTAIN) {
-                    return false;
-                }
-                if (hexTileOwner.landmarkOnTile != null && hexTileOwner.landmarkOnTile.specificLandmarkType.GetStructureType().IsSpecialStructure()) {
-                    return false;
-                }
-            } else {
-                return false; //prevent structure placement on tiles that aren't linked to any hextile. This is to prevent errors when trying to check if a tile IsPartOfSettlement 
-            }    
-        }
-        
-        
+        // if (!GameManager.Instance.gameHasStarted && !structureType.IsPlayerStructure()) {
+        //     //need to check this before game starts since mountains and oceans are generated after settlements, this is so structures will not be built on Mountain/Ocean tiles
+        //     //since we expect that they will be generated later
+        //     Area areaOwner = tile.area;
+        //     if (areaOwner.elevationType == ELEVATION.WATER || areaOwner.elevationType == ELEVATION.MOUNTAIN) {
+        //         o_cannotPlaceReason = string.Empty;
+        //         return false;
+        //     }
+        //     // LocationStructure mostImportantStructure = areaOwner.structureComponent.GetMostImportantStructureOnTile();
+        //     // if (mostImportantStructure != null && mostImportantStructure.structureType.IsSpecialStructure()) {
+        //     //     o_cannotPlaceReason = string.Empty;
+        //     //     return false;
+        //     // }
+        // }
+        //Note: Demonic structure can now be built if there is one tile that is on or beside a corrupted tile, so the checker for it is now moved to DemonicStructurePlayerSkill - CanBuildDemonicStructureOn
+        //if (structureType != STRUCTURE_TYPE.THE_PORTAL && structureType.IsPlayerStructure() && !tile.corruptionComponent.isCorrupted) {
+        //    //Note: Demonic structures must be placed on or beside corruption! Except for the portal, since it is the structure that will start the corruption
+        //    Debug.Log($"Could not place {structureType} because {tile} is not corrupted!!");
+        //    o_cannotPlaceReason = LocalizationManager.Instance.GetLocalizedValue("Locations", "Structures", "invalid_build_not_corrupted");
+        //    return false;
+        //}
+
+
         //limit so that structures will not be directly adjacent with each other
-        for (int j = 0; j < tile.neighbourList.Count; j++) {
-            LocationGridTile neighbour = tile.neighbourList[j];
+        List<LocationGridTile> tilesInRadius = null;
+        List<LocationGridTile> tilesToCheck;
+        if (structureType.IsPlayerStructure()) {
+            tilesToCheck = tile.neighbourList;
+        } else {
+            tilesInRadius = ObjectPoolManager.Instance.CreateNewGridTileList();
+            int radiusToCheck = 2;
+            tile.PopulateTilesInRadius(tilesInRadius, radiusToCheck, includeCenterTile: true, includeTilesInDifferentStructure: true);
+            tilesToCheck = tilesInRadius;
+        }
+
+        for (int j = 0; j < tilesToCheck.Count; j++) {
+            LocationGridTile neighbour = tilesToCheck[j];
             if (neighbour.hasBlueprint) {
+                // Debug.Log($"Could not place {structureType} because {tile} has neighbour {neighbour} that has blueprint!");
+                o_cannotPlaceReason = LocalizationManager.Instance.GetLocalizedValue("Locations", "Structures", "invalid_build_has_blueprint");
                 return false; //if bordering tile has a blueprint, then do not allow this structure to be placed. This is to prevent structures from being directly adjacent with each other, while they are still blueprints.
             }
-            if (structureType == STRUCTURE_TYPE.MINE_SHACK) {
+            if (structureType == STRUCTURE_TYPE.MINE) {
                 if (neighbour.structure.structureType != STRUCTURE_TYPE.WILDERNESS && neighbour.structure.structureType != STRUCTURE_TYPE.CITY_CENTER && neighbour.structure.structureType != STRUCTURE_TYPE.CAVE) {
+                    // Debug.Log($"Could not place {structureType} because {tile} has neighbour {neighbour} that is not Wilderness, City CEnter and Cave!");
+                    o_cannotPlaceReason = string.Empty;
                     return false;
                 }    
-            } else if (structureType == STRUCTURE_TYPE.FISHING_SHACK) {
+            } else if (structureType == STRUCTURE_TYPE.FISHERY) {
                 if (neighbour.structure.structureType != STRUCTURE_TYPE.WILDERNESS && neighbour.structure.structureType != STRUCTURE_TYPE.CITY_CENTER && neighbour.structure.structureType != STRUCTURE_TYPE.OCEAN) {
+                    // Debug.Log($"Could not place {structureType} because {tile} has neighbour {neighbour} that is not Wilderness, City CEnter and Ocean!");
+                    o_cannotPlaceReason = string.Empty;
+                    return false;
+                }
+            } else if (structureType.IsPlayerStructure()) {
+                if (neighbour.structure.structureType.IsPlayerStructure()) {
+                    //Do not allow Demonic structures to be placed next to each other.
+                    // Debug.Log($"Could not place {structureType} because {tile} has neighbour {neighbour} that is a Player Structure!");
+                    o_cannotPlaceReason = LocalizationManager.Instance.GetLocalizedValue("Locations", "Structures", "invalid_build_demonic_adjacent");
+                    return false;
+                }
+                if (neighbour.structure.structureType != STRUCTURE_TYPE.WILDERNESS && neighbour.structure.structureType != STRUCTURE_TYPE.CAVE && neighbour.structure.structureType != STRUCTURE_TYPE.OCEAN) {
+                    // Debug.Log($"Could not place {structureType} because {tile} has neighbour {neighbour} that is not Wilderness!");
+                    o_cannotPlaceReason = LocalizationManager.Instance.GetLocalizedValue("Locations", "Structures", "invalid_build_neighbour_not_wilderness");
                     return false;
                 }
             } else {
                 //only limit adjacency if adjacent tile is not wilderness and not city center (Allow adjacency with city center since it has no walls, and looks better when structures are close to it.)
                 if (neighbour.structure.structureType != STRUCTURE_TYPE.WILDERNESS && neighbour.structure.structureType != STRUCTURE_TYPE.CITY_CENTER) {
+                    // Debug.Log($"Could not place {structureType} because {tile} has neighbour {neighbour} that is not Wilderness and City CEnter!");
+                    o_cannotPlaceReason = string.Empty;
                     return false;
                 }    
             }
         }
+        if(tilesInRadius != null) {
+            ObjectPoolManager.Instance.ReturnGridTileListToPool(tilesInRadius);
+        }
+
+        //reserve tiles near oceans and caves
+        if (structureType != STRUCTURE_TYPE.CITY_CENTER && structureType != STRUCTURE_TYPE.MINE && structureType != STRUCTURE_TYPE.FISHERY && !structureType.IsPlayerStructure()) {
+            tilesInRadius = ObjectPoolManager.Instance.CreateNewGridTileList();
+            int radiusToCheck = 5;
+            tile.PopulateTilesInRadius(tilesInRadius, radiusToCheck, includeCenterTile: true, includeTilesInDifferentStructure: true);
+            tilesToCheck = tilesInRadius;
+            for (int j = 0; j < tilesToCheck.Count; j++) {
+                LocationGridTile neighbour = tilesToCheck[j];
+                if (neighbour.tileObjectComponent.objHere is FishingSpot || 
+                    neighbour.tileObjectComponent.objHere is OreVein || 
+                    neighbour.tileObjectComponent.genericTileObject.structureConnector != null) {
+                    o_cannotPlaceReason = $"{tile} is near OreVein or Fishing Spot and structure is not a Mine, Fishery, City Center or Demonic Structure";
+                    return false;
+                }
+            }
+            if(tilesInRadius != null) {
+                ObjectPoolManager.Instance.ReturnGridTileListToPool(tilesInRadius);
+            }
+        }
+        
+        o_cannotPlaceReason = string.Empty;
         return true;
     }
     private List<LocationGridTile> GetTilesThatWillBeOccupiedGivenCenter(InnerTileMap map, LocationGridTile centerTile) {
@@ -837,6 +1115,7 @@ public class LocationStructureObject : PooledObject {
         for (int i = 0; i < _connectors.Length; i++) {
             StructureConnector connector = _connectors[i];
             connector.OnPlaceConnector(structure.region.innerMap);
+            connector.SetIsPartOfLocationStructureObject(true);
         }
     }
     private void LoadConnectors(SaveDataStructureConnector[] connectorSaves, InnerTileMap innerTileMap) {
@@ -844,7 +1123,7 @@ public class LocationStructureObject : PooledObject {
         for (int i = 0; i < _connectors.Length; i++) {
             StructureConnector connector = _connectors[i];
             SaveDataStructureConnector saveData = connectorSaves[i];
-            connector.LoadReferences(saveData, innerTileMap);
+            connector.LoadReferencesForStructureObjects(saveData, innerTileMap);
         }
     }
     #endregion
@@ -859,6 +1138,7 @@ public class LocationStructureObject : PooledObject {
     [SerializeField] private GameObject cornerPrefab;
     [ContextMenu("Convert Walls")]
     public void ConvertWalls() {
+        UtilityScripts.Utilities.DestroyChildren(wallTileMap.transform);
         wallTileMap.CompressBounds();
         BoundsInt bounds = wallTileMap.cellBounds;
         for (int x = bounds.xMin; x < bounds.xMax; x++) {
@@ -873,7 +1153,7 @@ public class LocationStructureObject : PooledObject {
                     if (tile.name.Contains("Door")) {
                         continue; //skip
                     }
-                    WallVisual wallVisual = null;
+                    ThinWallGameObject wallVisual = null;
                     if (tile.name.Contains("Left")) {
                         wallVisual = InstantiateWall(leftWall, centeredPos, wallTileMap.transform, _thinWallResource != RESOURCE.WOOD);
                     } 
@@ -892,19 +1172,146 @@ public class LocationStructureObject : PooledObject {
                         if (tile.name.Contains("BotLeft")) {
                             cornerPos.x -= 0.5f;
                             cornerPos.y -= 0.5f;
-                            Instantiate(cornerPrefab, cornerPos, Quaternion.identity, wallVisual.transform);
+                            InstantiateCorner(cornerPos, wallVisual.transform);
+                            
+                            Vector3Int topNeighbourPos = new Vector3Int(x, y + 1, 0);
+                            TileBase top = wallTileMap.GetTile(topNeighbourPos);
+                            if (top == null) {
+                                //add corner to top
+                                cornerPos = centeredPos;
+                                cornerPos.x -= 0.5f;
+                                cornerPos.y += 0.5f;
+                                InstantiateCorner(cornerPos, wallVisual.transform);
+                            }
+                            
+                            Vector3Int rightNeighbourPos = new Vector3Int(x + 1, y, 0);
+                            TileBase right = wallTileMap.GetTile(rightNeighbourPos);
+                            if (right == null) {
+                                //add corner to right
+                                cornerPos = centeredPos;
+                                cornerPos.x += 0.5f;
+                                cornerPos.y -= 0.5f;
+                                InstantiateCorner(cornerPos, wallVisual.transform);
+                            }
+                            
                         } else if (tile.name.Contains("BotRight")) {
                             cornerPos.x += 0.5f;
                             cornerPos.y -= 0.5f;
-                            Instantiate(cornerPrefab, cornerPos, Quaternion.identity, wallVisual.transform);
+                            InstantiateCorner(cornerPos, wallVisual.transform);
+                            
+                            Vector3Int topNeighbourPos = new Vector3Int(x, y + 1, 0);
+                            TileBase top = wallTileMap.GetTile(topNeighbourPos);
+                            if (top == null) {
+                                //add corner to top
+                                cornerPos = centeredPos;
+                                cornerPos.x += 0.5f;
+                                cornerPos.y += 0.5f;
+                                InstantiateCorner(cornerPos, wallVisual.transform);
+                            }
+                            Vector3Int leftNeighbourPos = new Vector3Int(x - 1, y, 0);
+                            TileBase left = wallTileMap.GetTile(leftNeighbourPos);
+                            if (left == null) {
+                                //add corner to left
+                                cornerPos = centeredPos;
+                                cornerPos.x -= 0.5f;
+                                cornerPos.y -= 0.5f;
+                                InstantiateCorner(cornerPos, wallVisual.transform);
+                            }
+                            
                         } else if (tile.name.Contains("TopLeft")) {
                             cornerPos.x -= 0.5f;
                             cornerPos.y += 0.5f;
-                            Instantiate(cornerPrefab, cornerPos, Quaternion.identity, wallVisual.transform);
+                            InstantiateCorner(cornerPos, wallVisual.transform);
+                            
+                            Vector3Int bottomNeighbourPos = new Vector3Int(x, y - 1, 0);
+                            TileBase bottom = wallTileMap.GetTile(bottomNeighbourPos);
+                            if (bottom == null) {
+                                //add corner to bottom
+                                cornerPos = centeredPos;
+                                cornerPos.x -= 0.5f;
+                                cornerPos.y -= 0.5f;
+                                InstantiateCorner(cornerPos, wallVisual.transform);
+                            }
+                            
+                            Vector3Int rightNeighbourPos = new Vector3Int(x + 1, y, 0);
+                            TileBase right = wallTileMap.GetTile(rightNeighbourPos);
+                            if (right == null) {
+                                //add corner to right
+                                cornerPos = centeredPos;
+                                cornerPos.x += 0.5f;
+                                cornerPos.y += 0.5f;
+                                InstantiateCorner(cornerPos, wallVisual.transform);
+                            }
                         } else if (tile.name.Contains("TopRight")) {
                             cornerPos.x += 0.5f;
                             cornerPos.y += 0.5f;
-                            Instantiate(cornerPrefab, cornerPos, Quaternion.identity, wallVisual.transform);
+                            InstantiateCorner(cornerPos, wallVisual.transform);
+                            
+                            Vector3Int bottomNeighbourPos = new Vector3Int(x, y - 1, 0);
+                            TileBase bottom = wallTileMap.GetTile(bottomNeighbourPos);
+                            if (bottom == null) {
+                                //add corner to bottom
+                                cornerPos = centeredPos;
+                                cornerPos.x += 0.5f;
+                                cornerPos.y -= 0.5f;
+                                InstantiateCorner(cornerPos, wallVisual.transform);
+                            }
+                            
+                            Vector3Int leftNeighbourPos = new Vector3Int(x - 1, y, 0);
+                            TileBase left = wallTileMap.GetTile(leftNeighbourPos);
+                            if (left == null) {
+                                //add corner to left
+                                cornerPos = centeredPos;
+                                cornerPos.x -= 0.5f;
+                                cornerPos.y += 0.5f;
+                                InstantiateCorner(cornerPos, wallVisual.transform);
+                            }
+                            
+                        } else if (tile.name.Contains("Left") || tile.name.Contains("Right")) {
+                            bool isRight = tile.name.Contains("Right");
+                            if (isRight) {
+                                cornerPos.x = centeredPos.x + 0.5f;    
+                            } else {
+                                cornerPos.x = centeredPos.x - 0.5f;
+                            }
+                            //check top and bottom tiles, if no asset was found, add corner to corresponding direction
+                            Vector3Int topNeighbourPos = new Vector3Int(x, y + 1, 0);
+                            TileBase top = wallTileMap.GetTile(topNeighbourPos);
+                            if (top == null) {
+                                //add corner to top
+                                cornerPos.y = centeredPos.y + 0.5f;
+                                InstantiateCorner(cornerPos, wallVisual.transform);
+                            }
+                            
+                            Vector3Int bottomNeighbourPos = new Vector3Int(x, y - 1, 0);
+                            TileBase bottom = wallTileMap.GetTile(bottomNeighbourPos);
+                            if (bottom == null) {
+                                //add corner to bottom
+                                cornerPos.y = centeredPos.y - 0.5f;
+                                InstantiateCorner(cornerPos, wallVisual.transform);
+                            }
+                        } else if (tile.name.Contains("Top") || tile.name.Contains("Bot")) {
+                            bool isTop = tile.name.Contains("Top");
+                            if (isTop) {
+                                cornerPos.y = centeredPos.y + 0.5f;    
+                            } else {
+                                cornerPos.y = centeredPos.y - 0.5f;
+                            }
+                            //check left and right tiles, if no asset was found, add corner to corresponding direction
+                            Vector3Int rightNeighbourPos = new Vector3Int(x + 1, y, 0);
+                            TileBase right = wallTileMap.GetTile(rightNeighbourPos);
+                            if (right == null) {
+                                //add corner to right
+                                cornerPos.x = centeredPos.x + 0.5f;
+                                InstantiateCorner(cornerPos, wallVisual.transform); }
+                            
+                            Vector3Int leftNeighbourPos = new Vector3Int(x - 1, y, 0);
+                            TileBase left = wallTileMap.GetTile(leftNeighbourPos);
+                            if (left == null) {
+                                //add corner to left
+                                cornerPos.x = centeredPos.x - 0.5f;
+                                InstantiateCorner(cornerPos, wallVisual.transform);
+                            }
                         }
                         if (_thinWallResource != RESOURCE.WOOD) {
                             //only update asset if wall resource is not wood.
@@ -914,6 +1321,15 @@ public class LocationStructureObject : PooledObject {
                 }
             }
         }
+        wallTileMap.enabled = false;
+        wallTileMap.GetComponent<TilemapRenderer>().enabled = false;
+        
+#if UNITY_EDITOR
+        var prefabStage = PrefabStageUtility.GetCurrentPrefabStage();
+        if (prefabStage != null) {
+            EditorSceneManager.MarkSceneDirty(prefabStage.scene);
+        }
+#endif
     }
 
     [ContextMenu("Set Pivot Point")]
@@ -921,14 +1337,23 @@ public class LocationStructureObject : PooledObject {
         transform.Find("Content").transform.position = new Vector3((center.x + .5f) * -1f, (center.y + .5f) * -1f, 0f);
     }
     
-    private WallVisual InstantiateWall(GameObject wallPrefab, Vector3 centeredPos, Transform parent, bool updateWallAsset) {
-        GameObject wallGO = Instantiate(wallPrefab, parent);
+    private ThinWallGameObject InstantiateWall(GameObject wallPrefab, Vector3 centeredPos, Transform parent, bool updateWallAsset) {
+#if UNITY_EDITOR
+        GameObject wallGO = PrefabUtility.InstantiatePrefab(wallPrefab, parent) as GameObject;
         wallGO.transform.position = centeredPos;
-        WallVisual wallVisual = wallGO.GetComponent<WallVisual>();
+        ThinWallGameObject wallVisual = wallGO.GetComponent<ThinWallGameObject>();
         if (updateWallAsset) {
             wallVisual.UpdateWallAssets(_thinWallResource);    
         }
         return wallVisual;
+#endif
+        return null;
+    }
+    private void InstantiateCorner(Vector3 p_pos, Transform parent) {
+#if UNITY_EDITOR
+        GameObject wallGO = PrefabUtility.InstantiatePrefab(cornerPrefab, parent) as GameObject;
+        wallGO.transform.position = p_pos;
+#endif
     }
 
     [ContextMenu("Convert Objects")]
@@ -975,6 +1400,12 @@ public class LocationStructureObject : PooledObject {
         }
         _detailTileMap.enabled = false;
         _detailTileMapRenderer.enabled = false;
+#if UNITY_EDITOR
+        var prefabStage = PrefabStageUtility.GetCurrentPrefabStage();
+        if (prefabStage != null) {
+            EditorSceneManager.MarkSceneDirty(prefabStage.scene);
+        }
+#endif
     }
 
     [Header("Predetermine Structure Tiles")] 
@@ -1002,14 +1433,49 @@ public class LocationStructureObject : PooledObject {
             for (int y = bounds.yMin; y < bounds.yMax; y++) {
                 Vector3Int pos = new Vector3Int(x, y, 0);
                 TileBase tb = _groundTileMap.GetTile(pos);
+#if DEBUG_LOG
                 if (tb != null) {
                     Debug.Log($"{pos.ToString()} - {tb.name}");
                 }
+#endif
             }
         }
     }
-    #endregion
+#endregion
 
+#region Interaction
+    private void SetClickColliderState(bool p_state) {
+        if (_clickCollider != null) {
+            if (p_state) {
+                _clickCollider.Enable();    
+            } else {
+                _clickCollider.Disable();
+            }    
+        }
+    }
+#endregion
+
+    public Vector3 worldPosition {
+        get {
+            Vector3 position = transform.position;
+            position.x -= 0.5f;
+            position.y -= 0.5f;
+            return position;
+        }
+    }
+    public Vector2 selectableSize => size;
+    public bool IsCurrentlySelected() {
+        return UIManager.Instance.unbuiltStructureInfoUI.isShowing 
+               && UIManager.Instance.unbuiltStructureInfoUI.activeStructureObject == this;
+    }
+    public void LeftSelectAction() {
+        UIManager.Instance.ShowUnbuiltStructureInfo(this);
+    }
+    public void RightSelectAction() { }
+    public void MiddleSelectAction() { }
+    public bool CanBeSelected() {
+        return currentVisualMode != Structure_Visual_Mode.Built;
+    }
 }
 
 [System.Serializable]

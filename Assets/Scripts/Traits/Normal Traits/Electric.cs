@@ -13,6 +13,8 @@ namespace Traits {
             effect = TRAIT_EFFECT.NEUTRAL;
             ticksDuration = 0;
             elementalType = ELEMENTAL_TYPE.Electric;
+            resistancesType = new List<RESISTANCE>() { RESISTANCE.Electric };
+            resistancesValue = new List<float>() { 85f };
         }
     }
 }

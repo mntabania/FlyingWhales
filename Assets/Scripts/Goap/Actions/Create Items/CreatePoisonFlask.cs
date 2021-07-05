@@ -29,15 +29,17 @@ public class CreatePoisonFlask : GoapAction {
     //    log.AddToFillers(null, UtilityScripts.Utilities.GetArticleForWord(obj.tileObjectType.ToString()), LOG_IDENTIFIER.STRING_1);
     //}
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
-        string costLog = $"\n{name} {target.nameWithID}:";
         int cost = 250;
+#if DEBUG_LOG
+        string costLog = $"\n{name} {target.nameWithID}:";
         costLog += $" +{cost}(Initial)";
         actor.logComponent.AppendCostLog(costLog);
+#endif
         return cost;
     }
-    #endregion
+#endregion
 
-    #region State Effects
+#region State Effects
     public void AfterCreateSuccess(ActualGoapNode goapNode) {
         Character actor = goapNode.actor;
         if(actor.HasItem(TILE_OBJECT_TYPE.HERB_PLANT) && actor.HasItem(TILE_OBJECT_TYPE.WATER_FLASK)) {
@@ -45,21 +47,23 @@ public class CreatePoisonFlask : GoapAction {
             actor.UnobtainItem(TILE_OBJECT_TYPE.HERB_PLANT);
             actor.UnobtainItem(TILE_OBJECT_TYPE.WATER_FLASK);
         } else {
+#if DEBUG_LOG
             actor.logComponent.PrintLogErrorIfActive(actor.name + " is trying to create a Healing Potion but lacks requirements");
+#endif
         }
     }
-    #endregion
+#endregion
 
-    #region Preconditions
+#region Preconditions
     private bool HasHerbPlant (Character actor, IPointOfInterest poiTarget, object[] otherData, JOB_TYPE jobType) {
         return actor.HasItem("Herb Plant");
     }
     private bool HasWaterFlask(Character actor, IPointOfInterest poiTarget, object[] otherData, JOB_TYPE jobType) {
         return actor.HasItem("Water Flask");
     }
-    #endregion
+#endregion
 
-    #region Requirement
+#region Requirement
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, OtherData[] otherData, JobQueueItem job) {
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData, job);
         if (satisfied) {
@@ -67,5 +71,5 @@ public class CreatePoisonFlask : GoapAction {
         }
         return false;
     }
-    #endregion
+#endregion
 }

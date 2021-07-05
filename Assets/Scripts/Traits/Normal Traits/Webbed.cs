@@ -22,25 +22,33 @@
         public override void OnAddTrait(ITraitable addedTo) {
             base.OnAddTrait(addedTo);
             if (addedTo is Character character) {
-                //add webbed visual to character
-                character.marker.ShowAdditionalEffect(CharacterManager.Instance.webbedEffect);
+                if (character.hasMarker) {
+                    //add webbed visual to character
+                    character.marker.ShowAdditionalEffect(CharacterManager.Instance.webbedEffect);    
+                }
             }
         }
         public override void OnRemoveTrait(ITraitable removedFrom, Character removedBy) {
             base.OnRemoveTrait(removedFrom, removedBy);
             if (removedFrom is Character character) {
-                //removed webbed visual from character
-                character.marker.HideAdditionalEffect();
+                if (character.hasMarker) {
+                    //removed webbed visual from character
+                    character.marker.HideAdditionalEffect();    
+                }
             }
         }
         public override void OnInitiateMapObjectVisual(ITraitable traitable) {
             if (traitable is Character character) {
-                character.marker.ShowAdditionalEffect(CharacterManager.Instance.webbedEffect);
+                if (character.hasMarker) {
+                    character.marker.ShowAdditionalEffect(CharacterManager.Instance.webbedEffect);    
+                }
             }
         }
         public override void OnDestroyMapObjectVisual(ITraitable traitable) {
             if (traitable is Character character) {
-                character.marker.HideAdditionalEffect();
+                if (character.hasMarker) {
+                    character.marker.HideAdditionalEffect();    
+                }
             }
         }
     }

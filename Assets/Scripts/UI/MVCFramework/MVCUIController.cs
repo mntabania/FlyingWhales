@@ -13,6 +13,8 @@ namespace Ruinarch.MVCFramework
 		[SerializeField]
 		protected Canvas _canvas;
 
+		[SerializeField] protected int siblingIndex = -1;
+
 		public virtual void InstantiateUI()
 		{
 
@@ -21,14 +23,18 @@ namespace Ruinarch.MVCFramework
 		public void InitUI(MVCUIModel p_newModel, MVCUIView p_newView) {
 			m_mvcUIView = p_newView;
 			m_mvcUIModel = p_newModel;
-			m_mvcUIView.transform.SetParent(GameObject.Find("Main Camera").transform);
+			m_mvcUIView.transform.SetParent(GameObject.FindObjectOfType<Camera>().transform);
 			onUIINstantiated?.Invoke();
 		}
 
 		public virtual void ShowUI() 
 		{
 			m_mvcUIView.ShowUI();
-			m_mvcUIModel.transform.SetAsLastSibling();
+			if (siblingIndex == -1) {
+				m_mvcUIModel.transform.SetAsLastSibling();	
+			} else {
+				m_mvcUIModel.transform.SetSiblingIndex(siblingIndex);
+			}
 		}
 
 		public virtual void HideUI()

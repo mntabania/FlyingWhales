@@ -20,7 +20,8 @@ public class CombatManager : BaseMonoBehaviour {
     public const string Hostility = "Hostility", Retaliation = "Retaliation", Berserked = "Berserked", Action = "Action",
         Threatened = "Threatened", Anger = "Anger", Join_Combat = "Join Combat", Drunk = "Drunk", Rage = "Rage", Demon_Kill = "Demon Kill", Dig = "Dig",
         Avoiding_Witnesses = "Avoiding Witnesses", Encountered_Hostile = "Encountered Hostile", Clear_Demonic_Intrusion = "Clear_Demonic_Intrusion", Abduct = "Abduct", Apprehend = "Apprehend",
-        Monster_Scent = "Monster_Scent", Fullness_Recovery = "Fullness_Recovery";
+        Monster_Scent = "Monster_Scent", Fullness_Recovery = "Fullness_Recovery", Taunted = "Taunted", Tanking = "Tanking", Snatch = "Snatch", Music_Hater_Knockout = "Music_Hater_Knockout", 
+        Music_Hater_Murder = "Music_Hater_Murder";
 
     //Hostility reasons
     public const string Raid = "Raid", Warring_Factions = "Warring_Factions",
@@ -32,15 +33,17 @@ public class CombatManager : BaseMonoBehaviour {
     //Retaliation reasons
     public const string Resisting_Arrest = "Resisting_Arrest", Resisting_Abduction = "Resisting_Abduction", Defending_Self = "Defending_Self";
 
-
-
+    //Flee reasons
+    public const string Vulnerable = "Vulnerable when alone", Coward = "character is a coward";
 
     [SerializeField] private ProjectileDictionary _projectileDictionary;
     [SerializeField] private GameObject _dragonProjectile;
 
-
     public delegate void ElementalTraitProcessor(ITraitable target, Trait trait);
-    
+
+    public Dictionary<CHARACTER_COMBAT_BEHAVIOUR, CharacterCombatBehaviour> characterCombatBehaviours { get; private set; }
+    public Dictionary<COMBAT_SPECIAL_SKILL, CombatSpecialSkill> combatSpecialSkills { get; private set; }
+
     private void Awake() {
         Instance = this;
     }
@@ -48,19 +51,33 @@ public class CombatManager : BaseMonoBehaviour {
         base.OnDestroy();
         Instance = null;
     }
+    public void Initialize() {
+        ConstructAllCharacterCombatBehaviours();
+        ConstructAllCombatSpecialSkills();
+    }
 
-    public void ApplyElementalDamage(int damage, ELEMENTAL_TYPE elementalType, ITraitable target, Character characterResponsible = null, ElementalTraitProcessor elementalTraitProcessor = null, bool createHitEffect = true) {
+    public void ApplyElementalDamage(int damage, ELEMENTAL_TYPE elementalType, ITraitable target, Character characterResponsible = null, ElementalTraitProcessor elementalTraitProcessor = null, bool createHitEffect = true, bool setAsPlayerSource = false) {
+#if DEBUG_PROFILER
         Profiler.BeginSample("Apply Elemental Damage - Get Data");
+#endif
         ElementalDamageData elementalDamage = ScriptableObjectsManager.Instance.GetElementalDamageData(elementalType);
+#if DEBUG_PROFILER
         Profiler.EndSample();
-        
+#endif
+
+#if DEBUG_PROFILER
         Profiler.BeginSample("Apply Elemental Damage - Create Hit Effect");
+#endif
         if (target != null && createHitEffect) {
             CreateHitEffectAt(target, elementalType);
         }
+#if DEBUG_PROFILER
         Profiler.EndSample();
-        
+#endif
+
+#if DEBUG_PROFILER
         Profiler.BeginSample("Apply Elemental Damage - Wake Sleeping");
+#endif
         if (damage < 0) {
             //Damage should awaken sleeping characters
             if (target.traitContainer.HasTrait("Resting")) {
@@ -74,90 +91,141 @@ public class CombatManager : BaseMonoBehaviour {
                 targetCharacter.reactionComponent.SetDisguisedCharacter(null);
             }
         }
+#if DEBUG_PROFILER
         Profiler.EndSample();
-        
+#endif
+
         if (!string.IsNullOrEmpty(elementalDamage.addedTraitName)) {
+#if DEBUG_PROFILER
             Profiler.BeginSample("Apply Elemental Damage - Add Elemental Trait");
+#endif
             bool hasSuccessfullyAdded = target.traitContainer.AddTrait(target, elementalDamage.addedTraitName, 
                 out Trait trait, characterResponsible); //, out trait
+#if DEBUG_PROFILER
             Profiler.EndSample();
+#endif
             if (hasSuccessfullyAdded) {
-                Profiler.BeginSample("Apply Elemental Damage - Chain Electric");
-                if (elementalType == ELEMENTAL_TYPE.Electric) {
-                    ChainElectricDamage(target, damage, characterResponsible, target);
+                Trait elementalTrait = target.traitContainer.GetTraitOrStatus<Trait>(elementalDamage.addedTraitName);
+                if(elementalTrait is IElementalTrait ielementalTrait && setAsPlayerSource) {
+                    ielementalTrait.SetIsPlayerSource(true);
                 }
+#if DEBUG_PROFILER
+                Profiler.BeginSample("Apply Elemental Damage - Chain Electric");
+#endif
+                if (elementalType == ELEMENTAL_TYPE.Electric) {
+                    ChainElectricDamage(target, damage, characterResponsible, target, setAsPlayerSource);
+                }
+#if DEBUG_PROFILER
                 Profiler.EndSample();
-                
+#endif
+
+#if DEBUG_PROFILER
                 Profiler.BeginSample("Apply Elemental Damage - Elemental Trait Processor");
+#endif
                 if (elementalTraitProcessor != null) {
                     elementalTraitProcessor.Invoke(target, trait);    
                 } else {
                     DefaultElementalTraitProcessor(target, trait);
                 }
+#if DEBUG_PROFILER
                 Profiler.EndSample();
-                
+#endif
+
             }
         }
+#if DEBUG_PROFILER
         Profiler.BeginSample("Apply Elemental Damage - General Element Process");
+#endif
         GeneralElementProcess(target, characterResponsible);
+#if DEBUG_PROFILER
         Profiler.EndSample();
-        
-        if(elementalType == ELEMENTAL_TYPE.Earth) {
+#endif
+
+        if (elementalType == ELEMENTAL_TYPE.Earth) {
+#if DEBUG_PROFILER
             Profiler.BeginSample("Apply Elemental Damage - Earth Process");
+#endif
             EarthElementProcess(target);
+#if DEBUG_PROFILER
             Profiler.EndSample();
+#endif
         } else if (elementalType == ELEMENTAL_TYPE.Wind) {
+#if DEBUG_PROFILER
             Profiler.BeginSample("Apply Elemental Damage - Wind Process");
+#endif
             WindElementProcess(target, characterResponsible);
+#if DEBUG_PROFILER
             Profiler.EndSample();
+#endif
         } else if (elementalType == ELEMENTAL_TYPE.Fire) {
+#if DEBUG_PROFILER
             Profiler.BeginSample("Apply Elemental Damage - Fire Process");
+#endif
             FireElementProcess(target);
+#if DEBUG_PROFILER
             Profiler.EndSample();
+#endif
         } else if (elementalType == ELEMENTAL_TYPE.Water) {
+#if DEBUG_PROFILER
             Profiler.BeginSample("Apply Elemental Damage - Water Process");
+#endif
             WaterElementProcess(target);
+#if DEBUG_PROFILER
             Profiler.EndSample();
+#endif
         } else if (elementalType == ELEMENTAL_TYPE.Electric) {
+#if DEBUG_PROFILER
             Profiler.BeginSample("Apply Elemental Damage - Electric Process");
+#endif
             ElectricElementProcess(target);
+#if DEBUG_PROFILER
             Profiler.EndSample();
+#endif
         } else if (elementalType == ELEMENTAL_TYPE.Normal) {
+#if DEBUG_PROFILER
             Profiler.BeginSample("Apply Elemental Damage - Normal Process");
+#endif
             NormalElementProcess(target);
+#if DEBUG_PROFILER
             Profiler.EndSample();
+#endif
         }
     }
-    public void DamageModifierByElementsAndTraits(ref int damage, ELEMENTAL_TYPE elementalType, ITraitable target) {
+    public void ModifyDamage(ref int damage, ELEMENTAL_TYPE elementalType, float piercingPower, ITraitable target) {
         if(damage < 0) {
             if (target.traitContainer.HasTrait("Immune")) {
                 damage = 0;
-            } else {
-                if (target.traitContainer.HasTrait("Protection")) {
-                    //Protected - less 85% damage
-                    damage = Mathf.RoundToInt(damage * 0.5f);
+                return;
+            }
+            if (target.traitContainer.HasTrait("Protection")) {
+                damage = Mathf.RoundToInt(damage * 0.5f);
+                if (damage >= 0) {
+                    damage = -1;
+                }
+            }
+            if (HasSpecialImmunityToElement(target, elementalType)) {
+                if (target is Vapor) {
+                    damage = 0;
+                    return;
+                } else {
+                    //Immunity - less 85% damage
+                    damage = Mathf.RoundToInt(damage * 0.15f);
                     if (damage >= 0) {
                         damage = -1;
                     }
                 }
-                if (IsImmuneToElement(target, elementalType)) {
-                    if (target is Vapor) {
-                        damage = 0;
-                    } else {
-                        //Immunity - less 85% damage
-                        damage = Mathf.RoundToInt(damage * 0.15f);
-                        if (damage >= 0) {
-                            damage = -1;
-                        }
-                    }
-                    return;
+            }
+            if (elementalType == ELEMENTAL_TYPE.Fire) {
+                if (target.traitContainer.HasTrait("Fire Prone")) {
+                    damage *= 2;
                 }
-                if (elementalType == ELEMENTAL_TYPE.Fire) {
-                    if (target.traitContainer.HasTrait("Fire Prone")) {
-                        damage *= 2;
-                    }
-                } else if(elementalType == ELEMENTAL_TYPE.Electric) {
-                    if ((target is TileObject || target is StructureWallObject) && !(target is GenericTileObject)) {
+            }
+            if (target is Character targetCharacter) {
+                //Piercing and Resistances
+                targetCharacter.piercingAndResistancesComponent.ModifyValueByResistance(ref damage, elementalType, piercingPower);
+            } else {
+                if (elementalType == ELEMENTAL_TYPE.Electric) {
+                    if (target is TileObject && !(target is GenericTileObject)) {
                         damage = Mathf.RoundToInt(damage * 0.25f);
                         if (damage >= 0) {
                             damage = -1;
@@ -165,15 +233,50 @@ public class CombatManager : BaseMonoBehaviour {
                     }
                 }
             }
+            //if (target.traitContainer.HasTrait("Immune")) {
+            //    damage = 0;
+            //} else {
+            //    if (target.traitContainer.HasTrait("Protection")) {
+            //        //Protected - less 85% damage
+            //        damage = Mathf.RoundToInt(damage * 0.5f);
+            //        if (damage >= 0) {
+            //            damage = -1;
+            //        }
+            //    }
+            //    if (IsImmuneToElement(target, elementalType)) {
+            //        if (target is Vapor) {
+            //            damage = 0;
+            //        } else {
+            //            //Immunity - less 85% damage
+            //            damage = Mathf.RoundToInt(damage * 0.15f);
+            //            if (damage >= 0) {
+            //                damage = -1;
+            //            }
+            //        }
+            //        return;
+            //    }
+            //    if (elementalType == ELEMENTAL_TYPE.Fire) {
+            //        if (target.traitContainer.HasTrait("Fire Prone")) {
+            //            damage *= 2;
+            //        }
+            //    } else if(elementalType == ELEMENTAL_TYPE.Electric) {
+            //        if ((target is TileObject || target is StructureWallObject) && !(target is GenericTileObject)) {
+            //            damage = Mathf.RoundToInt(damage * 0.25f);
+            //            if (damage >= 0) {
+            //                damage = -1;
+            //            }
+            //        }
+            //    }
+            //}
         }
     }
-    public bool IsImmuneToElement(ITraitable target, ELEMENTAL_TYPE elementalType) {
-        if(target is Vapor && elementalType != ELEMENTAL_TYPE.Ice && elementalType != ELEMENTAL_TYPE.Poison && elementalType != ELEMENTAL_TYPE.Fire) {
+    public bool HasSpecialImmunityToElement(ITraitable target, ELEMENTAL_TYPE elementalType) {
+        if (target is Vapor && elementalType != ELEMENTAL_TYPE.Ice && elementalType != ELEMENTAL_TYPE.Poison && elementalType != ELEMENTAL_TYPE.Fire) {
             //Vapors are immune to all other damage types except Ice
             return true;
         }
-        if(elementalType != ELEMENTAL_TYPE.Fire) {
-            if(target is WinterRose) {
+        if (elementalType != ELEMENTAL_TYPE.Fire) {
+            if (target is WinterRose) {
                 //Immunity - less 85% damage
                 return true;
             }
@@ -184,10 +287,16 @@ public class CombatManager : BaseMonoBehaviour {
                 return true;
             }
         }
+        return false;
+    }
+    public bool IsImmuneToElement(ITraitable target, ELEMENTAL_TYPE elementalType) {
+        if (HasSpecialImmunityToElement(target, elementalType)) {
+            return true;
+        }
         if (elementalType == ELEMENTAL_TYPE.Fire) {
             if (target.traitContainer.HasTrait("Fire Prone")) {
                 return false;
-            } else if (target.traitContainer.HasTrait("Fireproof")) {
+            } else if (target.traitContainer.HasTrait("Fire Resistant")) {
                 //Immunity - less 85% damage
                 return true;
             }
@@ -220,14 +329,14 @@ public class CombatManager : BaseMonoBehaviour {
 
     }
     
-    #region Explosion
-    public void PoisonExplosion(IPointOfInterest target, LocationGridTile targetTile, int stacks, Character characterResponsible, int radius) {
-        StartCoroutine(PoisonExplosionCoroutine(target, targetTile, stacks, characterResponsible, radius));
+#region Explosion
+    public void PoisonExplosion(IPointOfInterest target, LocationGridTile targetTile, int stacks, Character characterResponsible, int radius, bool isPlayerSource) {
+        StartCoroutine(PoisonExplosionCoroutine(target, targetTile, stacks, characterResponsible, radius, isPlayerSource));
         if (characterResponsible == null) {
             Messenger.Broadcast(PlayerSignals.POISON_EXPLOSION_TRIGGERED_BY_PLAYER, target);    
         }
     }
-    private IEnumerator PoisonExplosionCoroutine(IPointOfInterest target, LocationGridTile targetTile, int stacks, Character characterResponsible, int radius) {
+    private IEnumerator PoisonExplosionCoroutine(IPointOfInterest target, LocationGridTile targetTile, int stacks, Character characterResponsible, int radius, bool isPlayerSource) {
         while (GameManager.Instance.isPaused) {
             //Pause coroutine while game is paused
             //Might be performance heavy, needs testing
@@ -236,9 +345,10 @@ public class CombatManager : BaseMonoBehaviour {
         yield return new WaitForSeconds(0.2f);
         AudioManager.Instance.CreatePoisonExplosionAudio(targetTile);
         GameManager.Instance.CreateParticleEffectAt(targetTile, PARTICLE_EFFECT.Poison_Explosion);
-        List<ITraitable> traitables = new List<ITraitable>();
-        List<LocationGridTile> affectedTiles = targetTile.GetTilesInRadius(radius, includeCenterTile: true, includeTilesInDifferentStructure: true);
-        float damagePercentage = 0.1f * stacks;
+        //List<ITraitable> traitables = new List<ITraitable>();
+        List<LocationGridTile> affectedTiles = RuinarchListPool<LocationGridTile>.Claim();
+        targetTile.PopulateTilesInRadius(affectedTiles, radius, includeCenterTile: true, includeTilesInDifferentStructure: true);
+        float damagePercentage = 0.05f * stacks;
         if (damagePercentage > 1) {
             damagePercentage = 1;
         }
@@ -246,8 +356,9 @@ public class CombatManager : BaseMonoBehaviour {
         for (int i = 0; i < affectedTiles.Count; i++) {
             LocationGridTile tile = affectedTiles[i];
             // traitables.AddRange(tile.GetTraitablesOnTile());
-            tile.PerformActionOnTraitables((traitable) => PoisonExplosionEffect(traitable, damagePercentage, characterResponsible, ref bs));
+            tile.PerformActionOnTraitables((traitable) => PoisonExplosionEffect(traitable, damagePercentage, characterResponsible, ref bs, isPlayerSource));
         }
+        RuinarchListPool<LocationGridTile>.Release(affectedTiles);
         // if(!(target is GenericTileObject)) {
         //     Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Interrupt", "Poison Explosion", "effect");
         //     log.AddToFillers(target, target.name, LOG_IDENTIFIER.TARGET_CHARACTER);
@@ -255,9 +366,9 @@ public class CombatManager : BaseMonoBehaviour {
         //     log.AddLogToInvolvedObjects();
         // }
     }
-    private void PoisonExplosionEffect(ITraitable traitable, float damagePercentage, Character characterResponsible, ref BurningSource bs) {
+    private void PoisonExplosionEffect(ITraitable traitable, float damagePercentage, Character characterResponsible, ref BurningSource bs, bool isPlayerSource) {
         int damage = Mathf.RoundToInt(traitable.maxHP * damagePercentage);
-        traitable.AdjustHP(-damage, ELEMENTAL_TYPE.Fire, true, characterResponsible, showHPBar: true);
+        traitable.AdjustHP(-damage, ELEMENTAL_TYPE.Fire, true, characterResponsible, showHPBar: true, isPlayerSource: isPlayerSource);
         if (traitable.traitContainer.HasTrait("Burning")) {
             Burning burningTrait = traitable.traitContainer.GetTraitOrStatus<Burning>("Burning");
             if (burningTrait != null && burningTrait.sourceOfBurning == null) {
@@ -269,10 +380,10 @@ public class CombatManager : BaseMonoBehaviour {
             }
         }
     }
-    public void FrozenExplosion(IPointOfInterest target, LocationGridTile targetTile, int stacks) {
-        StartCoroutine(FrozenExplosionCoroutine(target, targetTile, stacks));
+    public void FrozenExplosion(IPointOfInterest target, LocationGridTile targetTile, int stacks, bool isPlayerSource) {
+        StartCoroutine(FrozenExplosionCoroutine(target, targetTile, stacks, isPlayerSource));
     }
-    private IEnumerator FrozenExplosionCoroutine(IPointOfInterest target, LocationGridTile targetTile, int stacks) {
+    private IEnumerator FrozenExplosionCoroutine(IPointOfInterest target, LocationGridTile targetTile, int stacks, bool isPlayerSource) {
         while (GameManager.Instance.isPaused) {
             //Pause coroutine while game is paused
             //Might be performance heavy, needs testing
@@ -281,8 +392,9 @@ public class CombatManager : BaseMonoBehaviour {
         yield return new WaitForSeconds(0.2f);
         AudioManager.Instance.CreateFrozenExplosionAudio(targetTile);
         GameManager.Instance.CreateParticleEffectAt(targetTile, PARTICLE_EFFECT.Frozen_Explosion);
-        List<ITraitable> traitables = new List<ITraitable>();
-        List<LocationGridTile> affectedTiles = targetTile.GetTilesInRadius(2, includeTilesInDifferentStructure: true);
+        //List<ITraitable> traitables = new List<ITraitable>();
+        List<LocationGridTile> affectedTiles = RuinarchListPool<LocationGridTile>.Claim();
+        targetTile.PopulateTilesInRadius(affectedTiles, 2, includeTilesInDifferentStructure: true);
         float damagePercentage = 0.2f * stacks;
         if (damagePercentage > 1) {
             damagePercentage = 1;
@@ -290,9 +402,9 @@ public class CombatManager : BaseMonoBehaviour {
         for (int i = 0; i < affectedTiles.Count; i++) {
             LocationGridTile tile = affectedTiles[i];
             // traitables.AddRange(tile.GetTraitablesOnTile());
-            tile.PerformActionOnTraitables((traitable) => FrozenExplosionEffect(traitable, damagePercentage));
+            tile.PerformActionOnTraitables((traitable) => FrozenExplosionEffect(traitable, damagePercentage, isPlayerSource));
         }
-
+        RuinarchListPool<LocationGridTile>.Release(affectedTiles);
         // if (!(target is GenericTileObject)) {
         //     Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Interrupt", "Frozen Explosion", "effect");
         //     log.AddToFillers(target, target.name, LOG_IDENTIFIER.TARGET_CHARACTER);
@@ -300,24 +412,24 @@ public class CombatManager : BaseMonoBehaviour {
         //     log.AddLogToInvolvedObjects();
         // }
     }
-    private void FrozenExplosionEffect(ITraitable traitable, float damagePercentage) {
+    private void FrozenExplosionEffect(ITraitable traitable, float damagePercentage, bool isPlayerSource) {
         int damage = Mathf.RoundToInt(traitable.maxHP * damagePercentage);
-        traitable.AdjustHP(-damage, ELEMENTAL_TYPE.Water, true, showHPBar: true);
+        traitable.AdjustHP(-damage, ELEMENTAL_TYPE.Water, true, showHPBar: true, isPlayerSource: isPlayerSource);
     }
-    public void ChainElectricDamage(ITraitable traitable, int damage, Character characterResponsible, ITraitable origin) {
+    public void ChainElectricDamage(ITraitable traitable, int damage, Character characterResponsible, ITraitable origin, bool setAsPlayerSource = false) {
         if (characterResponsible == null) {
             Messenger.Broadcast(PlayerSignals.ELECTRIC_CHAIN_TRIGGERED_BY_PLAYER);
         }
 
-        if (traitable.gridTileLocation != null && !traitable.gridTileLocation.genericTileObject.traitContainer.HasTrait("Chained Electric")) {
-            Trait trait = null;
-            traitable.gridTileLocation.genericTileObject.traitContainer.AddTrait(traitable, "Chained Electric", out trait, characterResponsible: characterResponsible);
-            ChainedElectric chainedElectric = trait as ChainedElectric;
+        if (traitable.gridTileLocation != null && !traitable.gridTileLocation.tileObjectComponent.genericTileObject.traitContainer.HasTrait("Chained Electric")) {
+            traitable.gridTileLocation.tileObjectComponent.genericTileObject.traitContainer.AddTrait(traitable, "Chained Electric", characterResponsible: characterResponsible);
+            ChainedElectric chainedElectric = traitable.gridTileLocation.tileObjectComponent.genericTileObject.traitContainer.GetTraitOrStatus<ChainedElectric>("Chained Electric");
             chainedElectric.SetDamage(damage);
+            chainedElectric?.SetIsPlayerSource(setAsPlayerSource);
         }
 
-        //if (traitable.gridTileLocation != null && !traitable.gridTileLocation.genericTileObject.traitContainer.HasTrait("Chained Electric")) {
-        //    traitable.gridTileLocation.genericTileObject.traitContainer.AddTrait(traitable, "Chained Electric");
+        //if (traitable.gridTileLocation != null && !traitable.gridTileLocation.tileObjectComponent.genericTileObject.traitContainer.HasTrait("Chained Electric")) {
+        //    traitable.gridTileLocation.tileObjectComponent.genericTileObject.traitContainer.AddTrait(traitable, "Chained Electric");
         //    StartCoroutine(ChainElectricDamageCoroutine(traitable.gridTileLocation.neighbourList, damage, characterResponsible, origin));
         //}
     }
@@ -328,7 +440,7 @@ public class CombatManager : BaseMonoBehaviour {
     private IEnumerator ChainElectricDamageCoroutine(List<LocationGridTile> tiles, int damage, Character characterResponsible, ITraitable origin) {
         for (int i = 0; i < tiles.Count; i++) {
             LocationGridTile tile = tiles[i];
-            if (tile.genericTileObject.traitContainer.HasTrait("Wet") && !tile.genericTileObject.traitContainer.HasTrait("Zapped", "Chained Electric")) {
+            if (tile.tileObjectComponent.genericTileObject.traitContainer.HasTrait("Wet") && !tile.tileObjectComponent.genericTileObject.traitContainer.HasTrait("Zapped", "Chained Electric")) {
                 while (GameManager.Instance.isPaused) {
                     //Pause coroutine while game is paused
                     //Might be performance heavy, needs testing
@@ -344,11 +456,11 @@ public class CombatManager : BaseMonoBehaviour {
     }
 
     //public void StartChainElectricDamage(ITraitable traitable, int damage, Character characterResponsible, ITraitable origin) {
-    //    if (traitable.gridTileLocation != null && !traitable.gridTileLocation.genericTileObject.traitContainer.HasTrait("Chained Electric")) {
+    //    if (traitable.gridTileLocation != null && !traitable.gridTileLocation.tileObjectComponent.genericTileObject.traitContainer.HasTrait("Chained Electric")) {
     //        if (characterResponsible == null) {
     //            Messenger.Broadcast(Signals.ELECTRIC_CHAIN_TRIGGERED_BY_PLAYER);
     //        }
-    //        traitable.gridTileLocation.genericTileObject.traitContainer.AddTrait(traitable, "Chained Electric");
+    //        traitable.gridTileLocation.tileObjectComponent.genericTileObject.traitContainer.AddTrait(traitable, "Chained Electric");
     //        List<LocationGridTile> affectedTiles = new List<LocationGridTile>();
     //        List<LocationGridTile> tileHolder = new List<LocationGridTile>();
     //        tileHolder.AddRange(traitable.gridTileLocation.neighbourList);
@@ -363,7 +475,7 @@ public class CombatManager : BaseMonoBehaviour {
     //    affectedTiles.Clear();
     //    for (int i = 0; i < tileHolder.Count; i++) {
     //        LocationGridTile tile = tileHolder[i];
-    //        if (tile.genericTileObject.traitContainer.HasTrait("Wet") && !tile.genericTileObject.traitContainer.HasTrait("Zapped") && !tile.genericTileObject.traitContainer.HasTrait("Chained Electric")) {
+    //        if (tile.tileObjectComponent.genericTileObject.traitContainer.HasTrait("Wet") && !tile.tileObjectComponent.genericTileObject.traitContainer.HasTrait("Zapped") && !tile.tileObjectComponent.genericTileObject.traitContainer.HasTrait("Chained Electric")) {
     //            affectedTiles.Add(tile);
     //        }
     //    }
@@ -408,9 +520,9 @@ public class CombatManager : BaseMonoBehaviour {
     //        }
     //    }
     //}
-    #endregion
+#endregion
 
-    #region Elemental Type Processes
+#region Elemental Type Processes
     private void EarthElementProcess(ITraitable target) {
         string elements = string.Empty;
         if (target.traitContainer.HasTrait("Zapped")) {
@@ -501,9 +613,9 @@ public class CombatManager : BaseMonoBehaviour {
             burning.SetSourceOfBurning(burningSource, traitable);
         }
     }
-    #endregion
+#endregion
 
-    #region Projectiles
+#region Projectiles
     public Projectile CreateNewProjectile(Character actor, ELEMENTAL_TYPE elementalType, Transform parent, Vector3 worldPos) {
         GameObject projectileGO = null;
         if (actor != null && actor is Dragon) {
@@ -513,6 +625,90 @@ public class CombatManager : BaseMonoBehaviour {
         }
         return projectileGO.GetComponent<Projectile>();
     }
-    #endregion
+#endregion
+
+#region Piercing
+    public static void ModifyValueByPiercingAndResistance(ref int p_value, float p_piercingPower, float p_resistance) {
+        float percentMultiplier = (100f - (p_resistance - p_piercingPower)) / 100f;
+        if(percentMultiplier > 1f) {
+            //Capped at x1 multiplier
+            //The reason is that piercing should not amplify initial damage (which is p_value)
+            //Its purpose is only to reduce the resistance so if piercing is higher than the resistance, the affected character will take the full amount of damage (p_value) but it will not be doubled or increased any further
+            //This means that its resistance is neglected when piercing is higher
+            percentMultiplier = 1f;
+        } else if (percentMultiplier < 0f) {
+            percentMultiplier = 0f;
+        }
+        float rawComputedValue = p_value * percentMultiplier;
+        p_value = Mathf.RoundToInt(rawComputedValue);
+    }
+    public static void ModifyValueByPiercingAndResistance(ref float p_value, float p_piercingPower, float p_resistance) {
+        float percentMultiplier = (100f - (p_resistance - p_piercingPower)) / 100f;
+        if (percentMultiplier > 1f) {
+            percentMultiplier = 1f;
+        } else if (percentMultiplier < 0f) {
+            percentMultiplier = 0f;
+        }
+        float rawComputedValue = p_value * percentMultiplier;
+        p_value = rawComputedValue;
+    }
+#endregion
+
+#region Combat Behaviour
+    private void ConstructAllCharacterCombatBehaviours() {
+        CHARACTER_COMBAT_BEHAVIOUR[] behaviourTypes = CollectionUtilities.GetEnumValues<CHARACTER_COMBAT_BEHAVIOUR>();
+        characterCombatBehaviours = new Dictionary<CHARACTER_COMBAT_BEHAVIOUR, CharacterCombatBehaviour>();
+        for (int i = 0; i < behaviourTypes.Length; i++) {
+            CHARACTER_COMBAT_BEHAVIOUR type = behaviourTypes[i];
+            if (type != CHARACTER_COMBAT_BEHAVIOUR.None) {
+                string typeName = $"{UtilityScripts.Utilities.NotNormalizedConversionEnumToStringNoSpaces(type.ToString())}CombatBehaviour, Assembly-CSharp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
+                CharacterCombatBehaviour behaviour = System.Activator.CreateInstance(System.Type.GetType(typeName) ??
+                   throw new Exception($"Problem with creating character combat behaviour for {typeName}")) as CharacterCombatBehaviour;
+                characterCombatBehaviours.Add(type, behaviour);
+            }
+        }
+    }
+    public CharacterCombatBehaviour GetCombatBehaviour(CHARACTER_COMBAT_BEHAVIOUR p_behaviourType) {
+        if (characterCombatBehaviours.ContainsKey(p_behaviourType)) {
+            return characterCombatBehaviours[p_behaviourType];
+        }
+        return null;
+    }
+#endregion
+
+#region Combat Special Skill
+    private void ConstructAllCombatSpecialSkills() {
+        COMBAT_SPECIAL_SKILL[] skillTypes = CollectionUtilities.GetEnumValues<COMBAT_SPECIAL_SKILL>();
+        combatSpecialSkills = new Dictionary<COMBAT_SPECIAL_SKILL, CombatSpecialSkill>();
+        for (int i = 0; i < skillTypes.Length; i++) {
+            COMBAT_SPECIAL_SKILL type = skillTypes[i];
+            if(type != COMBAT_SPECIAL_SKILL.None) {
+                string typeName = $"{UtilityScripts.Utilities.NotNormalizedConversionEnumToStringNoSpaces(type.ToString())}SpecialSkill, Assembly-CSharp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
+                CombatSpecialSkill skill = System.Activator.CreateInstance(System.Type.GetType(typeName) ??
+                   throw new Exception($"Problem with creating combat special skill for {typeName}")) as CombatSpecialSkill;
+                combatSpecialSkills.Add(type, skill);
+            }
+        }
+    }
+    public CombatSpecialSkill GetCombatSpecialSkill(COMBAT_SPECIAL_SKILL p_skillType) {
+        if (combatSpecialSkills.ContainsKey(p_skillType)) {
+            return combatSpecialSkills[p_skillType];
+        }
+        return null;
+    }
+#endregion
+
+    public bool IsDamageSourceFromPlayerSpell(object source) {
+        if (source != null) {
+            if (source is SkillData skill && skill.category == PLAYER_SKILL_CATEGORY.SPELL) {
+                return true;
+            } else if (source is LocustSwarm locustSwarm && locustSwarm.isPlayerSource) {
+                return true;
+            } else if (source is Tornado tornado && tornado.isPlayerSource) {
+                return true;
+            }
+        }
+        return false;
+    }
 }
 

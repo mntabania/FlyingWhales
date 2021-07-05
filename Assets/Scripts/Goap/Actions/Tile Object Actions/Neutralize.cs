@@ -7,7 +7,7 @@
         //advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.TILE_OBJECT };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.RATMAN };
         actionLocationType = ACTION_LOCATION_TYPE.TARGET_IN_VISION;
-        logTags = new[] {LOG_TAG.Work};
+        logTags = new[] {LOG_TAG.Work, LOG_TAG.Major};
     }
 
 
@@ -21,13 +21,15 @@
            
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
+#if DEBUG_LOG
         string costLog = $"\n{name} {target.nameWithID}: +10(Constant)";
         actor.logComponent.AppendCostLog(costLog);
+#endif
         return 10;
     }
-    #endregion
+#endregion
 
-    #region Requirements
+#region Requirements
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, OtherData[] otherData, JobQueueItem job) {
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData, job);
         if (satisfied) {
@@ -38,9 +40,9 @@
         }
         return false;
     }
-    #endregion
+#endregion
 
-    #region State Effects
+#region State Effects
     public void AfterNeutralizeSuccess(ActualGoapNode goapNode) {
         TileObject dangerousTileObject = goapNode.poiTarget as TileObject;
         if (dangerousTileObject is PoisonCloud poisonCloud) {
@@ -48,5 +50,5 @@
         }
         dangerousTileObject.Neutralize();
     }
-    #endregion
+#endregion
 }

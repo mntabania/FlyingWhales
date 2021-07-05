@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-public class ZenkoWinConditionTracker : WinconditionTracker {
+public class ZenkoWinConditionTracker : WinConditionTracker {
 
     public const int ActiveWarRequirement = 3;
 
@@ -39,7 +39,9 @@ public class ZenkoWinConditionTracker : WinconditionTracker {
         Messenger.AddListener<Character, Faction>(FactionSignals.CHARACTER_REMOVED_FROM_FACTION, OnCharacterRemovedFromFaction);
         Messenger.AddListener<Faction, Faction, FACTION_RELATIONSHIP_STATUS, FACTION_RELATIONSHIP_STATUS>(FactionSignals.CHANGE_FACTION_RELATIONSHIP, OnFactionRelationshipChanged);
     }
-
+    protected override IBookmarkable[] CreateWinConditionSteps() {
+        throw new NotImplementedException();
+    }
     private void OnFactionRelationshipChanged(Faction p_callerFaction, Faction p_subjectFaction, FACTION_RELATIONSHIP_STATUS p_newRelationship, FACTION_RELATIONSHIP_STATUS p_oldRelationship) {
         if (GameManager.Instance.gameHasStarted && p_callerFaction.isMajorNonPlayer && p_subjectFaction.isMajorNonPlayer) {
             if (p_newRelationship == FACTION_RELATIONSHIP_STATUS.Hostile) {
@@ -54,13 +56,16 @@ public class ZenkoWinConditionTracker : WinconditionTracker {
 
     private void CheckFailCondition() {
         if (remainingFactions.Count < 3) {
+            if (PlayerManager.Instance.player.hasAlreadyWon) {
+                return;
+            }
             PlayerUI.Instance.LoseGameOver("Mission failed, war declaration requirement not met");
         }
     }
 
     #region List Maintenance
     private void AddVillagerToEliminate(Character p_character) {
-        AddCharacterToTrackList(p_character);
+        // AddCharacterToTrackList(p_character);
     }
     #endregion
 
@@ -88,7 +93,7 @@ public class ZenkoWinConditionTracker : WinconditionTracker {
     }
     private void CheckIfCharacterIsEliminated(Character p_character) {
         if (ShouldConsiderCharacterAsEliminated(p_character)) {
-            RemoveCharacterFromTrackList(p_character);
+            // RemoveCharacterFromTrackList(p_character);
         }
         CheckFailCondition();
 
@@ -114,7 +119,7 @@ public class ZenkoWinConditionTracker : WinconditionTracker {
 public class SaveDataZenkoWinConditionTracker : SaveDataWinConditionTracker {
     public List<string> remainingFactions;
     public int activeWars;
-    public override void Save(WinconditionTracker data) {
+    public override void Save(WinConditionTracker data) {
         base.Save(data);
         ZenkoWinConditionTracker tracker = data as ZenkoWinConditionTracker;
         remainingFactions = SaveUtilities.ConvertSavableListToIDs(tracker.remainingFactions);

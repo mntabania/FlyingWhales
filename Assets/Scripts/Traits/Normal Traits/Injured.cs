@@ -33,20 +33,14 @@ namespace Traits {
             if (traitable is Character character) {
                 character.UpdateCanCombatState();
                 character.movementComponent.AdjustSpeedModifier(-0.15f);
-                //_sourceCharacter.CreateRemoveTraitJob(name);
                 character.AddTraitNeededToBeRemoved(this);
-                //_sourceCharacter.needsComponent.AdjustStaminaDecreaseRate(5);
 
-                if (gainedFromDoing == null || gainedFromDoing.goapType != INTERACTION_TYPE.ASSAULT) {
-                    Log addLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "NonIntel", "add_trait", gainedFromDoing, LOG_TAG.Life_Changes);
-                    // if(gainedFromDoing != null) {
-                    //     addLog.SetLogType(LOG_TYPE.Action);
-                    // }
+                if (gainedFromDoingType != INTERACTION_TYPE.ASSAULT) {
+                    Log addLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "NonIntel", "add_trait", null, LOG_TAG.Life_Changes);
                     addLog.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                     addLog.AddToFillers(null, this.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-                    addLog.AddLogToDatabase();
+                    addLog.AddLogToDatabase(true);
                 }
-                //Messenger.Broadcast(Signals.TRANSFER_ENGAGE_TO_FLEE_LIST, _sourceCharacter);
             }
         }
         public override void OnRemoveTrait(ITraitable traitable, Character removedBy) {
@@ -54,11 +48,10 @@ namespace Traits {
                 character.UpdateCanCombatState();
                 character.movementComponent.AdjustSpeedModifier(0.15f);
                 character.RemoveTraitNeededToBeRemoved(this);
-                //_sourceCharacter.needsComponent.AdjustStaminaDecreaseRate(-5);
                 Log addLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "NonIntel", "remove_trait", null, LOG_TAG.Life_Changes);
                 addLog.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                 addLog.AddToFillers(null, this.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-                addLog.AddLogToDatabase();
+                addLog.AddLogToDatabase(true);
             }
             base.OnRemoveTrait(traitable, removedBy);
         }

@@ -17,10 +17,6 @@ public class Succubus : SeducerSummon {
     public Succubus(SaveDataSummon data) : base(data) {
         //combatComponent.SetElementalType(ELEMENTAL_TYPE.Ice);
     }
-    
-    public override string GetClassForRole(CharacterRole role) {
-        return ClassName;
-    }
 
     #region Overrides
     public override void Initialize() {

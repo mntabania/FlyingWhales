@@ -14,23 +14,77 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   archetype: 2
   spells:
-    extraSlots: 3
-    fixedSkills: 160000001e0000002d0000001f000000
+    extraSlots: 0
+    fixedSkills: 2a000000
   afflictions:
-    extraSlots: 2
-    fixedSkills: 0e0000000300000001000000
+    extraSlots: 0
+    fixedSkills: 45000000
   minions:
     extraSlots: 0
-    fixedSkills: 540000005300000052000000
+    fixedSkills: 53000000
   structures:
-    extraSlots: 2
-    fixedSkills: 4c0000009b000000
+    extraSlots: 0
+    fixedSkills: 490000004c000000be000000
   miscs:
-    extraSlots: 1
-    fixedSkills: 3300000094000000590000000800000021000000
-  passiveSkills: 010000000300000004000000
-  availableSpells: 090000002c000000130000001400000015000000190000002a00000018000000200000002900000017000000ad000000
-  availableAfflictions: 6300000045000000020000000c0000004400000043000000
-  availableMinions: 4e0000004f0000005000000051000000520000005300000054000000
-  availableStructures: 480000004a0000006000000047000000
-  availableMiscs: 32000000060000008c00000007000000aa0000005c000000ac000000ae000000af000000
+    extraSlots: 0
+    fixedSkills: 
+  passiveSkills: 04000000060000000700000008000000090000000b0000000c0000000d0000000e0000000f000000100000001100000012000000
+  availableSpells: 
+  availableAfflictions: 
+  availableMinions: 
+  availableStructures: 
+  availableMiscs: 
+  portalUpgradeTiers:
+  - name: Level 1
+    skillTypesToUnlock: 
+    upgradeCost: []
+    upgradeTime: 0
+  - name: Level 2
+    skillTypesToUnlock: b50000004a000000030000002100000014000000
+    upgradeCost:
+    - name: 10 Spirit_Energy
+      currency: 2
+      amount: 10
+    upgradeTime: 240
+  - name: Level 3
+    skillTypesToUnlock: b8000000be0000006300000034000000cc0000001e000000
+    upgradeCost:
+    - name: 30 Spirit_Energy
+      currency: 2
+      amount: 30
+    upgradeTime: 240
+  - name: Level 4
+    skillTypesToUnlock: 480000004900000029000000c000000008000000af000000
+    upgradeCost:
+    - name: 60 Spirit_Energy
+      currency: 2
+      amount: 60
+    upgradeTime: 480
+  - name: Level 5
+    skillTypesToUnlock: b8000000be0000009b0000004e00000016000000
+    upgradeCost:
+    - name: 100 Spirit_Energy
+      currency: 2
+      amount: 100
+    upgradeTime: 480
+  - name: Level 6
+    skillTypesToUnlock: 480000004a0000004c000000b90000001f00000033000000
+    upgradeCost:
+    - name: 120 Spirit_Energy
+      currency: 2
+      amount: 120
+    upgradeTime: 960
+  - name: Level 7
+    skillTypesToUnlock: b8000000be0000004c000000520000002d00000009000000
+    upgradeCost:
+    - name: 150 Spirit_Energy
+      currency: 2
+      amount: 150
+    upgradeTime: 960
+  - name: Level 8
+    skillTypesToUnlock: 
+    upgradeCost:
+    - name: 200 Spirit_Energy
+      currency: 2
+      amount: 200
+    upgradeTime: 1440

@@ -9,9 +9,9 @@ namespace Inner_Maps.Location_Structures {
         public string name { get; }
         public List<LocationGridTile> tilesInRoom { get; }
         public List<PLAYER_SKILL_TYPE> actions { get; }
-        public Vector3 worldPosition { get; }
+        public Vector3 worldPosition { get; protected set; }
         public Vector2 selectableSize { get; protected set; }
-        public List<Character> charactersInRoom => GetCharactersInRoom();
+        //public List<Character> charactersInRoom => GetCharactersInRoom();
         public LocationStructure parentStructure => tilesInRoom?[0].structure;
         
         protected StructureRoom(string name, List<LocationGridTile> tilesInRoom) {
@@ -77,26 +77,55 @@ namespace Inner_Maps.Location_Structures {
             UIManager.Instance.ShowPlayerActionContextMenu(this, worldPos, false);
         }
         public void MiddleSelectAction() { }
-        public bool CanBeSelected() {
+        public virtual bool CanBeSelected() {
             return true;
         }
         #endregion
         
         #region Characters
-        private List<Character> GetCharactersInRoom() {
-            List<Character> characters = new List<Character>();
+        //private List<Character> GetCharactersInRoom() {
+        //    List<Character> characters = new List<Character>();
+        //    for (int i = 0; i < tilesInRoom.Count; i++) {
+        //        characters.AddRange(tilesInRoom[i].charactersHere);
+        //    }
+        //    return characters;
+        //}
+        public void PopulateCharactersInRoom(List<Character> p_characters) {
             for (int i = 0; i < tilesInRoom.Count; i++) {
-                characters.AddRange(tilesInRoom[i].charactersHere);
+                p_characters.AddRange(tilesInRoom[i].charactersHere);
             }
-            return characters;
-        } 
+        }
+        public Character GetFirstAliveCharacterInRoom() {
+            for (int i = 0; i < tilesInRoom.Count; i++) {
+                LocationGridTile t = tilesInRoom[i];
+                for (int j = 0; j < t.charactersHere.Count; j++) {
+                    Character c = t.charactersHere[j];
+                    if (!c.isDead) {
+                        return c;
+                    }
+                }
+            }
+            return null;
+        }
+        public bool HasCharacterInRoom() {
+            for (int i = 0; i < tilesInRoom.Count; i++) {
+                LocationGridTile t = tilesInRoom[i];
+                for (int j = 0; j < t.charactersHere.Count; j++) {
+                    Character c = t.charactersHere[j];
+                    if (!c.isDead) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
         #endregion
 
         #region Tile Objects
         public T GetTileObjectInRoom<T>() where T : TileObject{
             for (int i = 0; i < tilesInRoom.Count; i++) {
                 LocationGridTile tile = tilesInRoom[i];
-                if (tile.objHere != null && tile.objHere is T obj) {
+                if (tile.tileObjectComponent.objHere != null && tile.tileObjectComponent.objHere is T obj) {
                     return obj;
                 }
             }
@@ -105,11 +134,12 @@ namespace Inner_Maps.Location_Structures {
         #endregion
 
         #region Utilities
-        protected LocationGridTile GetCenterTile() {
+        public LocationGridTile GetCenterTile() {
             return GameUtilities.GetCenterTile(tilesInRoom, tilesInRoom[0].parentMap.map);
         }
         public bool HasAnyAliveCharacterInRoom() {
-            return charactersInRoom.Any(c => !c.isDead);
+            //return charactersInRoom.Any(c => !c.isDead);
+            return GetFirstAliveCharacterInRoom() != null;
         }
         #endregion
 

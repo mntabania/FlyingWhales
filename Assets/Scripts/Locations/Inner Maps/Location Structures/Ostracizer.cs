@@ -5,17 +5,12 @@ using UtilityScripts;
 using Random = UnityEngine.Random;
 namespace Inner_Maps.Location_Structures {
     public class Ostracizer : DemonicStructure {
-        public override Vector2 selectableSize { get; }
 
         private bool _isLearnSpellInCooldown;
         private string _cooldownScheduleKey;
         
-        public Ostracizer(Region location) : base(STRUCTURE_TYPE.OSTRACIZER, location){
-            selectableSize = new Vector2(10f, 10f);
-        }
-        public Ostracizer(Region location, SaveDataDemonicStructure data) : base(location, data) {
-            selectableSize = new Vector2(10f, 10f);
-        }
+        public Ostracizer(Region location) : base(STRUCTURE_TYPE.OSTRACIZER, location){ }
+        public Ostracizer(Region location, SaveDataDemonicStructure data) : base(location, data) { }
 
         //#region Overrides
         //public override void Initialize() {

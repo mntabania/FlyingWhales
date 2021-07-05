@@ -1,9 +1,10 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
-
+using UtilityScripts;
 public class BuildLair : GoapAction {
 
     public override ACTION_CATEGORY actionCategory { get { return ACTION_CATEGORY.INDIRECT; } }
@@ -22,8 +23,10 @@ public class BuildLair : GoapAction {
 
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
+#if DEBUG_LOG
         string costLog = $"\n{name} {target.nameWithID}: +10(Constant)";
         actor.logComponent.AppendCostLog(costLog);
+#endif
         return 10;
     }
     public override LocationStructure GetTargetStructure(ActualGoapNode node) {
@@ -59,9 +62,9 @@ public class BuildLair : GoapAction {
         }
         return false;
     }
-    #endregion
+#endregion
 
-    #region Effects
+#region Effects
     public void AfterBuildSuccess(ActualGoapNode goapNode) {
         OtherData[] otherData = goapNode.otherData;
         Character actor = goapNode.actor;
@@ -75,32 +78,34 @@ public class BuildLair : GoapAction {
         }
         
         LocationGridTile targetTile = otherData[0].obj as LocationGridTile;
-        HexTile targetHex = targetTile.collectionOwner.partOfHextile.hexTileOwner;
-        LandmarkManager.Instance.CreateNewLandmarkOnTile(targetHex, LANDMARK_TYPE.MONSTER_LAIR);
-        NPCSettlement settlement = LandmarkManager.Instance.CreateNewSettlement(targetHex.region, LOCATION_TYPE.DUNGEON, targetHex);
+        Area targetArea = targetTile.area;
+        //LandmarkManager.Instance.CreateNewLandmarkOnTile(targetArea, LANDMARK_TYPE.MONSTER_LAIR);
+        NPCSettlement settlement = LandmarkManager.Instance.CreateNewSettlement(targetArea.region, LOCATION_TYPE.DUNGEON, targetArea);
 
-        LocationStructure structure = LandmarkManager.Instance.CreateNewStructureAt(targetHex.region, STRUCTURE_TYPE.MONSTER_LAIR);
+        LocationStructure structure = LandmarkManager.Instance.CreateNewStructureAt(targetArea.region, STRUCTURE_TYPE.MONSTER_LAIR);
         settlement.GenerateStructures(structure);
 
-        List<LocationGridTile> locationGridTiles = targetHex.locationGridTiles; // new List<LocationGridTile>(targetHex.locationGridTiles);
+        List<LocationGridTile> locationGridTiles = targetArea.gridTileComponent.gridTiles; //.ToList()// new List<LocationGridTile>(targetHex.locationGridTiles);
 
-        LocationStructure wilderness = targetHex.region.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
-        InnerMapManager.Instance.MonsterLairCellAutomata(locationGridTiles, structure, targetHex.region, wilderness);
+        LocationStructure wilderness = targetArea.region.wilderness;
+        InnerMapManager.Instance.MonsterLairCellAutomata(locationGridTiles, structure, targetArea.region, wilderness);
 
-        structure.SetOccupiedHexTile(targetHex.innerMapHexTile);
-        targetHex.innerMapHexTile.Occupy();
-        
-        List<BlockWall> walls = structure.GetTileObjectsOfType<BlockWall>();
+        structure.SetOccupiedArea(targetArea);
+
+        List<TileObject> walls = RuinarchListPool<TileObject>.Claim();
+        structure.PopulateTileObjectsOfType(walls, TILE_OBJECT_TYPE.BLOCK_WALL);
         for (int i = 0; i < walls.Count; i++) {
-            BlockWall blockWall = walls[i];
+            TileObject blockWall = walls[i];
             blockWall.baseMapObjectVisual.ApplyGraphUpdate();
         }
-        targetHex.UpdatePathfindingGraphCoroutine();
+        RuinarchListPool<TileObject>.Release(walls);
+        targetArea.areaItem.UpdatePathfindingGraph();
+        //targetHex.UpdatePathfindingGraphCoroutine();
 
         goapNode.actor.necromancerTrait.SetLairStructure(structure);
         goapNode.actor.MigrateHomeStructureTo(structure);
     }
-    #endregion
+#endregion
 
     //#region Requirement
     //protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, object[] otherData) {

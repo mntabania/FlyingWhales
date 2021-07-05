@@ -40,8 +40,8 @@ public class PlagueLifespan {
         SetTileObjectInfectionTimeInHours(24);
         SetMonsterInfectionTimeInHours(-1);
         SetUndeadInfectionTimeInHours(-1);
-        SetSapientInfectionTimeInHours(RACE.HUMANS, 72);
-        SetSapientInfectionTimeInHours(RACE.ELVES, 72);
+        SetSapientInfectionTimeInHours(RACE.HUMANS, 48);
+        SetSapientInfectionTimeInHours(RACE.ELVES, 48);
     }
 
     #region Tile Object Lifespan
@@ -86,7 +86,7 @@ public class PlagueLifespan {
             case 1: return 24;
             case 2: return 48;
             case 3: return 72;
-            case 4: return 120;
+            case 4: return 96;
             default: return 24;
         }
     }
@@ -95,7 +95,7 @@ public class PlagueLifespan {
             case 24: return 1;
             case 48: return 2;
             case 72: return 3;
-            case 120: return 4;
+            case 96: return 4;
             default: return 1;
         }
     }
@@ -267,20 +267,20 @@ public class PlagueLifespan {
     private int GetSapientLifespanInHoursByLevel(RACE p_race, int p_level) {
         //Note: Since Elves and Humans have the same lifespan right now, do not separate them
         switch (p_level) {
-            case 1: return 72;
-            case 2: return 144;
-            case 3: return 216;
-            case 4: return 288;
-            default: return 72;
+            case 1: return 48;
+            case 2: return 96;
+            case 3: return 144;
+            case 4: return 192;
+            default: return 48;
         }
     }
     private int GetSapientLifespanLevelByHours(RACE p_race, int p_hours) {
         //Note: Since Elves and Humans have the same lifespan right now, do not separate them
         switch (p_hours) {
-            case 72: return 1;
-            case 144: return 2;
-            case 216: return 3;
-            case 288: return 4;
+            case 48: return 1;
+            case 96: return 2;
+            case 144: return 3;
+            case 192: return 4;
             default: return 1;
         }
     }
@@ -340,7 +340,10 @@ public class SaveDataPlagueLifespan : SaveData<PlagueLifespan> {
         tileObjectInfectionTimeInHours = p_data.tileObjectInfectionTimeInHours;
         monsterInfectionTimeInHours = p_data.monsterInfectionTimeInHours;
         undeadInfectionTimeInHours = p_data.undeadInfectionTimeInHours;
-        sapientInfectionTimeInHours = p_data.sapientInfectionTimeInHours;
+        sapientInfectionTimeInHours = new Dictionary<RACE, int>();
+        foreach (var kvp in p_data.sapientInfectionTimeInHours) {
+            sapientInfectionTimeInHours.Add(kvp.Key, kvp.Value);
+        }
     }
     public override PlagueLifespan Load() {
         PlagueLifespan component = new PlagueLifespan(this);

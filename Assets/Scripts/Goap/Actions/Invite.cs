@@ -35,13 +35,16 @@ public class Invite : GoapAction {
                     || targetCharacter.combatComponent.isInCombat
                     || (targetCharacter.stateComponent.currentState != null && targetCharacter.stateComponent.currentState.characterState == CHARACTER_STATE.DOUSE_FIRE)
                     || (targetCharacter.interruptComponent.isInterrupted && targetCharacter.interruptComponent.currentInterrupt.interrupt.type == INTERRUPT.Cowering)) {
+#if DEBUG_LOG
                 string debugLog = $"{targetCharacter.name} is unconscious/in combat/in douse fire state/cowering. Invite fail.";
                 actor.logComponent.PrintLogIfActive(debugLog);
-
+#endif
                 goapActionInvalidity.isInvalid = true;
                 goapActionInvalidity.stateName = "Invite Fail";
             } else {
+#if DEBUG_LOG
                 string debugLog = $"{actor.name} invite to make love with {targetCharacter.name}";
+#endif
                 if (actor.reactionComponent.disguisedCharacter != null) {
                     actor = actor.reactionComponent.disguisedCharacter;
                 }
@@ -56,35 +59,51 @@ public class Invite : GoapAction {
                     Character targetLover = targetCharacter.relationshipContainer.GetFirstCharacterWithRelationship(RELATIONSHIP_TYPE.LOVER);
                     if (targetLover != null && targetLover != actor) {
                         //Target has a different lover
+#if DEBUG_LOG
                         debugLog += $"\n-Target has different lover";
+#endif
                         acceptWeight = 0;
                         rejectWeight = 50;
+#if DEBUG_LOG
                         debugLog += $"\n-Base accept weight: {acceptWeight}";
                         debugLog += $"\n-Base reject weight: {rejectWeight}";
+#endif
 
                         if (targetCharacter.traitContainer.HasTrait("Unfaithful")) {
                             acceptWeight += 200;
+#if DEBUG_LOG
                             debugLog += $"\n-Target is unfaithful: +200 to Accept Weight";
+#endif
                             if (targetCharacter.traitContainer.HasTrait("Drunk")) {
                                 acceptWeight += 100;
+#if DEBUG_LOG
                                 debugLog += $"\n-Target is drunk: +100 to Accept Weight";
+#endif
                             }
                         } else {
                             if (targetCharacter.traitContainer.HasTrait("Treacherous", "Psychopath")) {
                                 acceptWeight += 50;
+#if DEBUG_LOG
                                 debugLog += $"\n-Target is not unfaithful but treacherous/psychopath: +50 to Accept Weight";
+#endif
                             } else {
                                 rejectWeight += 100;
+#if DEBUG_LOG
                                 debugLog += $"\n-Target is not unfaithful/treacherous/psychopath: +100 to Reject Weight";
+#endif
                             }
                             if (targetCharacter.traitContainer.HasTrait("Drunk")) {
                                 acceptWeight += 50;
+#if DEBUG_LOG
                                 debugLog += $"\n-Target is drunk: +50 to Accept Weight";
+#endif
                             }
                         }
                     } else {
+#if DEBUG_LOG
                         debugLog += $"\n-Base accept weight: {acceptWeight}";
                         debugLog += $"\n-Base reject weight: {rejectWeight}";
+#endif
 
                         //int targetOpinionToActor = 0;
                         //if (targetCharacter.relationshipContainer.HasRelationshipWith(actor)) {
@@ -92,41 +111,58 @@ public class Invite : GoapAction {
                         //}
                         int compatibility = RelationshipManager.Instance.GetCompatibilityBetween(targetCharacter, actor);
                         acceptWeight += (10 * compatibility);
+#if DEBUG_LOG
                         debugLog += $"\n-Target compatibility towards Actor: +(10 x {compatibility}) to Accept Weight";
+#endif
 
                         if (targetCharacter.traitContainer.HasTrait("Drunk")) {
                             acceptWeight += 100;
+#if DEBUG_LOG
                             debugLog += $"\n-Target is drunk: +100 to Accept Weight";
+#endif
                         }
                     }
 
                     if (targetCharacter.traitContainer.HasTrait("Lustful")) {
                         acceptWeight += 100;
+#if DEBUG_LOG
                         debugLog += "\n-Target is Lustful: +100 to Accept Weight";
+#endif
                     } else if (targetCharacter.traitContainer.HasTrait("Chaste")) {
                         rejectWeight += 300;
+#if DEBUG_LOG
                         debugLog += "\n-Target is Chaste: +300 to Reject Weight";
+#endif
                     }
 
                     if (targetCharacter.moodComponent.moodState == MOOD_STATE.Bad) {
                         rejectWeight += 50;
+#if DEBUG_LOG
                         debugLog += "\n-Target is Low mood: +50 to Reject Weight";
+#endif
                     } else if (targetCharacter.moodComponent.moodState == MOOD_STATE.Critical) {
                         rejectWeight += 200;
+#if DEBUG_LOG
                         debugLog += "\n-Target is Crit mood: +200 to Reject Weight";
+#endif
                     }
 
                     weights.AddElement("Accept", acceptWeight);
                     weights.AddElement("Reject", rejectWeight);
-
+#if DEBUG_LOG
                     debugLog += $"\n\n{weights.GetWeightsSummary("FINAL WEIGHTS")}";
+#endif
 
                     chosen = weights.PickRandomElementGivenWeights();
                 } else {
+#if DEBUG_LOG
                     debugLog += "\n-Target is Unconscious: SURE REJECT";
+#endif
                 }
+#if DEBUG_LOG
                 debugLog += $"\n\nCHOSEN RESPONSE: {chosen}";
-
+                actor.logComponent.PrintLogIfActive(debugLog);
+#endif
                 if (chosen == "Reject") {
                     goapActionInvalidity.isInvalid = true;
                     goapActionInvalidity.stateName = "Invite Rejected";
@@ -151,8 +187,8 @@ public class Invite : GoapAction {
             target.combatComponent.Fight(node.actor, CombatManager.Hostility);
         }
     }
-    public override void PopulateReactionsToActor(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
-        base.PopulateReactionsToActor(reactions, actor, target, witness, node, status);
+    public override void PopulateEmotionReactionsToActor(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
+        base.PopulateEmotionReactionsToActor(reactions, actor, target, witness, node, status);
         if (target != witness && target is Character targetCharacter) {
             bool isActorLoverOrAffairOfWitness = witness.relationshipContainer.HasRelationshipWith(actor, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.AFFAIR);
             bool isTargetLoverOrAffairOfWitness = witness.relationshipContainer.HasRelationshipWith(targetCharacter, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.AFFAIR);
@@ -177,9 +213,9 @@ public class Invite : GoapAction {
             }
         }
     }
-    #endregion
+#endregion
 
-    #region Effects
+#region Effects
     public void PreInviteSuccess(ActualGoapNode goapNode) {
         goapNode.actor.CarryPOI(goapNode.poiTarget);
     }
@@ -193,16 +229,16 @@ public class Invite : GoapAction {
             goapNode.actor.traitContainer.AddTrait(goapNode.actor, "Annoyed", goapNode.poiTarget as Character);
         }
     }
-    #endregion
+#endregion
 
-    #region Requirements
+#region Requirements
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, OtherData[] otherData, JobQueueItem job) { 
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData, job);
         if (satisfied) {
             if (poiTarget.gridTileLocation != null && actor.trapStructure.IsTrappedAndTrapStructureIsNot(poiTarget.gridTileLocation.structure)) {
                 return false;
             }
-            if (poiTarget.gridTileLocation != null && poiTarget.gridTileLocation.collectionOwner.isPartOfParentRegionMap && actor.trapStructure.IsTrappedAndTrapHexIsNot(poiTarget.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner)) {
+            if (poiTarget.gridTileLocation != null && actor.trapStructure.IsTrappedAndTrapAreaIsNot(poiTarget.gridTileLocation.area)) {
                 return false;
             }
             Character target = poiTarget as Character;
@@ -228,5 +264,5 @@ public class Invite : GoapAction {
         }
         return false;
     }
-    #endregion
+#endregion
 }

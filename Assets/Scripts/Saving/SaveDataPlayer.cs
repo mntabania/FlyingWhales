@@ -8,6 +8,13 @@ using Tutorial;
 
 [System.Serializable]
 public class SaveDataPlayer {
+    private TutorialManager.Tutorial_Type[] defaultUnlockedTutorials = new[] {
+        TutorialManager.Tutorial_Type.Unlocking_Bonus_Powers, TutorialManager.Tutorial_Type.Upgrading_The_Portal, TutorialManager.Tutorial_Type.Mana, TutorialManager.Tutorial_Type.Chaotic_Energy,
+        TutorialManager.Tutorial_Type.Storing_Targets, TutorialManager.Tutorial_Type.Prism, TutorialManager.Tutorial_Type.Maraud, TutorialManager.Tutorial_Type.Intel,
+        TutorialManager.Tutorial_Type.Spirit_Energy, TutorialManager.Tutorial_Type.Migration_Controls, TutorialManager.Tutorial_Type.Base_Building, TutorialManager.Tutorial_Type.Abilities,
+        TutorialManager.Tutorial_Type.Resistances, TutorialManager.Tutorial_Type.Time_Management, TutorialManager.Tutorial_Type.Target_Menu,
+    };
+    
     public string gameVersion;
     public int exp;
     //public List<PlayerSkillDataCopy> learnedSkills;
@@ -19,10 +26,18 @@ public class SaveDataPlayer {
     public List<QuestManager.Special_Popup> completedSpecialPopups;
     public List<WorldSettingsData.World_Type> unlockedWorlds;
 
+    public List<TutorialManager.Tutorial_Type> unlockedTutorials;
+    public List<TutorialManager.Tutorial_Type> readTutorials;
+    public List<TIPS> unlockedTips;
+    
     //Loadouts
     public LoadoutSaveData ravagerLoadoutSaveData;
     public LoadoutSaveData puppetmasterLoadoutSaveData;
     public LoadoutSaveData lichLoadoutSaveData;
+    
+    public LoadoutSaveData oldRavagerLoadoutSaveData;
+    public LoadoutSaveData oldPuppetmasterLoadoutSaveData;
+    public LoadoutSaveData oldLichLoadoutSaveData;
 
     public bool moreLoadoutOptions;
 
@@ -32,11 +47,12 @@ public class SaveDataPlayer {
         //learnedSkills = new List<PlayerSkillDataCopy>();
         learnedSkills = new List<PLAYER_SKILL_TYPE>();
         unlockedSkills = new List<PLAYER_SKILL_TYPE>();
+        unlockedTips = new List<TIPS>();
         for (int i = 0; i < PlayerSkillManager.Instance.allSkillTrees.Length; i++) {
             PlayerSkillTree currSkillTree = PlayerSkillManager.Instance.allSkillTrees[i];
             for (int j = 0; j < currSkillTree.initialLearnedSkills.Length; j++) {
                 PLAYER_SKILL_TYPE node = currSkillTree.initialLearnedSkills[j];
-                if (PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(node) != null) {
+                if (PlayerSkillManager.Instance.GetScriptableObjPlayerSkillData<PlayerSkillData>(node) != null) {
                     LearnSkill(node, currSkillTree.nodes[node]);    
                 }
             }
@@ -45,12 +61,17 @@ public class SaveDataPlayer {
         ravagerLoadoutSaveData = new LoadoutSaveData();
         puppetmasterLoadoutSaveData = new LoadoutSaveData();
         lichLoadoutSaveData = new LoadoutSaveData();
+        oldRavagerLoadoutSaveData = new LoadoutSaveData();
+        oldPuppetmasterLoadoutSaveData = new LoadoutSaveData();
+        oldLichLoadoutSaveData = new LoadoutSaveData();
         //PlayerSkillTreeNodeData afflict = new PlayerSkillTreeNodeData() { skill = SPELL_TYPE.AFFLICT, charges = -1, cooldown = -1, manaCost = -1 };
         //learnedSkills.Add(afflict);
         //PlayerSkillTreeNodeData buildDemonicStructure = new PlayerSkillTreeNodeData() { skill = SPELL_TYPE.BUILD_DEMONIC_STRUCTURE, charges = -1, cooldown = -1, manaCost = -1 };
         //learnedSkills.Add(buildDemonicStructure);
         //PlayerSkillTreeNodeData breedMonster = new PlayerSkillTreeNodeData() { skill = SPELL_TYPE.BREED_MONSTER, charges = -1, cooldown = 48, manaCost = 10 };
         //learnedSkills.Add(breedMonster);
+        CreateInitialUnlockedTutorials();
+        readTutorials = new List<TutorialManager.Tutorial_Type>();
         InitializeTutorialData();
         completedSpecialPopups = new List<QuestManager.Special_Popup>();
         InitializeUnlockedWorlds();
@@ -88,7 +109,7 @@ public class SaveDataPlayer {
 
     #region Skills
     public void LearnSkill(PLAYER_SKILL_TYPE skillType, PlayerSkillTreeNode node) {
-        PlayerSkillData skillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(skillType);
+        PlayerSkillData skillData = PlayerSkillManager.Instance.GetScriptableObjPlayerSkillData<PlayerSkillData>(skillType);
         AdjustExp(-skillData.expCost);
         learnedSkills.Add(skillType);
         //PlayerSkillDataCopy learnedSkill = new PlayerSkillDataCopy() { skill = skillType, charges = node.charges, cooldown = node.cooldown, manaCost = node.manaCost, threat = node.threat, threatPerHour = node.threatPerHour };
@@ -181,6 +202,24 @@ public class SaveDataPlayer {
         }
         
     }
+    private void CreateInitialUnlockedTutorials() {
+        unlockedTutorials = new List<TutorialManager.Tutorial_Type>(defaultUnlockedTutorials);
+    }
+    public void UnlockTutorial(TutorialManager.Tutorial_Type p_type) {
+        if (!unlockedTutorials.Contains(p_type)) {
+            unlockedTutorials.Add(p_type);
+            Messenger.Broadcast(TutorialSignals.TUTORIAL_UNLOCKED, p_type);    
+        }
+    }
+    public void SetTutorialAsRead(TutorialManager.Tutorial_Type p_type) {
+        if (!readTutorials.Contains(p_type)) {
+            readTutorials.Add(p_type);
+            Messenger.Broadcast(TutorialSignals.TUTORIAL_READ, p_type);    
+        }
+    }
+    public bool HasTutorialBeenRead(TutorialManager.Tutorial_Type p_type) {
+        return readTutorials.Contains(p_type);
+    }
     #endregion
 
     #region Loadout
@@ -191,6 +230,12 @@ public class SaveDataPlayer {
             return puppetmasterLoadoutSaveData;
         } else if (archetype == PLAYER_ARCHETYPE.Lich) {
             return lichLoadoutSaveData;
+        } else if(archetype == PLAYER_ARCHETYPE.Old_Ravager) {
+            return oldRavagerLoadoutSaveData;
+        } else if (archetype == PLAYER_ARCHETYPE.Old_Puppet_Master) {
+            return oldPuppetmasterLoadoutSaveData;
+        } else if (archetype == PLAYER_ARCHETYPE.Old_Lich) {
+            return oldLichLoadoutSaveData;
         }
         return null;
     }
@@ -214,6 +259,27 @@ public class SaveDataPlayer {
                 SkillSlotItem slotItem = slotItems[i];
                 if (slotItem.skillData != null) {
                     lichLoadoutSaveData.AddExtraSpell(slotItem.skillData.skill);
+                }
+            }
+        } else if (archetype == PLAYER_ARCHETYPE.Old_Lich) {
+            for (int i = 0; i < slotItems.Count; i++) {
+                SkillSlotItem slotItem = slotItems[i];
+                if (slotItem.skillData != null) {
+                    oldLichLoadoutSaveData?.AddExtraSpell(slotItem.skillData.skill);
+                }
+            }
+        } else if (archetype == PLAYER_ARCHETYPE.Old_Puppet_Master) {
+            for (int i = 0; i < slotItems.Count; i++) {
+                SkillSlotItem slotItem = slotItems[i];
+                if (slotItem.skillData != null) {
+                    oldPuppetmasterLoadoutSaveData?.AddExtraSpell(slotItem.skillData.skill);
+                }
+            }
+        } else if (archetype == PLAYER_ARCHETYPE.Old_Ravager) {
+            for (int i = 0; i < slotItems.Count; i++) {
+                SkillSlotItem slotItem = slotItems[i];
+                if (slotItem.skillData != null) {
+                    oldRavagerLoadoutSaveData?.AddExtraSpell(slotItem.skillData.skill);
                 }
             }
         }
@@ -240,6 +306,27 @@ public class SaveDataPlayer {
                     lichLoadoutSaveData.AddExtraAffliction(slotItem.skillData.skill);
                 }
             }
+        } else if (archetype == PLAYER_ARCHETYPE.Old_Lich) {
+            for (int i = 0; i < slotItems.Count; i++) {
+                SkillSlotItem slotItem = slotItems[i];
+                if (slotItem.skillData != null) {
+                    oldLichLoadoutSaveData?.AddExtraAffliction(slotItem.skillData.skill);
+                }
+            }
+        } else if (archetype == PLAYER_ARCHETYPE.Old_Puppet_Master) {
+            for (int i = 0; i < slotItems.Count; i++) {
+                SkillSlotItem slotItem = slotItems[i];
+                if (slotItem.skillData != null) {
+                    oldPuppetmasterLoadoutSaveData?.AddExtraAffliction(slotItem.skillData.skill);
+                }
+            }
+        } else if (archetype == PLAYER_ARCHETYPE.Old_Ravager) {
+            for (int i = 0; i < slotItems.Count; i++) {
+                SkillSlotItem slotItem = slotItems[i];
+                if (slotItem.skillData != null) {
+                    oldRavagerLoadoutSaveData?.AddExtraAffliction(slotItem.skillData.skill);
+                }
+            }
         }
     }
     public void SaveLoadoutExtraMinions(PLAYER_ARCHETYPE archetype, List<SkillSlotItem> slotItems) {
@@ -262,6 +349,27 @@ public class SaveDataPlayer {
                 SkillSlotItem slotItem = slotItems[i];
                 if (slotItem.skillData != null) {
                     lichLoadoutSaveData.AddExtraMinion(slotItem.skillData.skill);
+                }
+            }
+        } else if (archetype == PLAYER_ARCHETYPE.Old_Lich) {
+            for (int i = 0; i < slotItems.Count; i++) {
+                SkillSlotItem slotItem = slotItems[i];
+                if (slotItem.skillData != null) {
+                    oldLichLoadoutSaveData?.AddExtraMinion(slotItem.skillData.skill);
+                }
+            }
+        } else if (archetype == PLAYER_ARCHETYPE.Old_Puppet_Master) {
+            for (int i = 0; i < slotItems.Count; i++) {
+                SkillSlotItem slotItem = slotItems[i];
+                if (slotItem.skillData != null) {
+                    oldPuppetmasterLoadoutSaveData?.AddExtraMinion(slotItem.skillData.skill);
+                }
+            }
+        } else if (archetype == PLAYER_ARCHETYPE.Old_Ravager) {
+            for (int i = 0; i < slotItems.Count; i++) {
+                SkillSlotItem slotItem = slotItems[i];
+                if (slotItem.skillData != null) {
+                    oldRavagerLoadoutSaveData?.AddExtraMinion(slotItem.skillData.skill);
                 }
             }
         }
@@ -288,6 +396,27 @@ public class SaveDataPlayer {
                     lichLoadoutSaveData.AddExtraStructure(slotItem.skillData.skill);
                 }
             }
+        } else if (archetype == PLAYER_ARCHETYPE.Old_Lich) {
+            for (int i = 0; i < slotItems.Count; i++) {
+                SkillSlotItem slotItem = slotItems[i];
+                if (slotItem.skillData != null) {
+                    oldLichLoadoutSaveData?.AddExtraStructure(slotItem.skillData.skill);
+                }
+            }
+        } else if (archetype == PLAYER_ARCHETYPE.Old_Puppet_Master) {
+            for (int i = 0; i < slotItems.Count; i++) {
+                SkillSlotItem slotItem = slotItems[i];
+                if (slotItem.skillData != null) {
+                    oldPuppetmasterLoadoutSaveData?.AddExtraStructure(slotItem.skillData.skill);
+                }
+            }
+        } else if (archetype == PLAYER_ARCHETYPE.Old_Ravager) {
+            for (int i = 0; i < slotItems.Count; i++) {
+                SkillSlotItem slotItem = slotItems[i];
+                if (slotItem.skillData != null) {
+                    oldRavagerLoadoutSaveData?.AddExtraStructure(slotItem.skillData.skill);
+                }
+            }
         }
     }
     public void SaveLoadoutExtraMiscs(PLAYER_ARCHETYPE archetype, List<SkillSlotItem> slotItems) {
@@ -312,6 +441,27 @@ public class SaveDataPlayer {
                     lichLoadoutSaveData.AddExtraMisc(slotItem.skillData.skill);
                 }
             }
+        } else if (archetype == PLAYER_ARCHETYPE.Old_Lich) {
+            for (int i = 0; i < slotItems.Count; i++) {
+                SkillSlotItem slotItem = slotItems[i];
+                if (slotItem.skillData != null) {
+                    oldLichLoadoutSaveData?.AddExtraMisc(slotItem.skillData.skill);
+                }
+            }
+        } else if (archetype == PLAYER_ARCHETYPE.Old_Puppet_Master) {
+            for (int i = 0; i < slotItems.Count; i++) {
+                SkillSlotItem slotItem = slotItems[i];
+                if (slotItem.skillData != null) {
+                    oldPuppetmasterLoadoutSaveData?.AddExtraMisc(slotItem.skillData.skill);
+                }
+            }
+        } else if (archetype == PLAYER_ARCHETYPE.Old_Ravager) {
+            for (int i = 0; i < slotItems.Count; i++) {
+                SkillSlotItem slotItem = slotItems[i];
+                if (slotItem.skillData != null) {
+                    oldRavagerLoadoutSaveData?.AddExtraMisc(slotItem.skillData.skill);
+                }
+            }
         }
     }
     public List<PLAYER_SKILL_TYPE> GetLoadoutExtraSpells(PLAYER_ARCHETYPE archetype) {
@@ -321,6 +471,12 @@ public class SaveDataPlayer {
             return puppetmasterLoadoutSaveData.extraSpells;
         } else if (archetype == PLAYER_ARCHETYPE.Lich) {
             return lichLoadoutSaveData.extraSpells;
+        } else if (archetype == PLAYER_ARCHETYPE.Old_Ravager) {
+            return oldRavagerLoadoutSaveData?.extraSpells;
+        } else if (archetype == PLAYER_ARCHETYPE.Old_Puppet_Master) {
+            return oldPuppetmasterLoadoutSaveData?.extraSpells;
+        } else if (archetype == PLAYER_ARCHETYPE.Old_Lich) {
+            return oldLichLoadoutSaveData?.extraSpells;
         }
         return null;
     }
@@ -331,6 +487,12 @@ public class SaveDataPlayer {
             return puppetmasterLoadoutSaveData.extraAfflictions;
         } else if (archetype == PLAYER_ARCHETYPE.Lich) {
             return lichLoadoutSaveData.extraAfflictions;
+        } else if (archetype == PLAYER_ARCHETYPE.Old_Ravager) {
+            return oldRavagerLoadoutSaveData?.extraAfflictions;
+        } else if (archetype == PLAYER_ARCHETYPE.Old_Puppet_Master) {
+            return oldPuppetmasterLoadoutSaveData?.extraAfflictions;
+        } else if (archetype == PLAYER_ARCHETYPE.Old_Lich) {
+            return oldLichLoadoutSaveData?.extraAfflictions;
         }
         return null;
     }
@@ -341,6 +503,12 @@ public class SaveDataPlayer {
             return puppetmasterLoadoutSaveData.extraMinions;
         } else if (archetype == PLAYER_ARCHETYPE.Lich) {
             return lichLoadoutSaveData.extraMinions;
+        } else if (archetype == PLAYER_ARCHETYPE.Old_Ravager) {
+            return oldRavagerLoadoutSaveData?.extraMinions;
+        } else if (archetype == PLAYER_ARCHETYPE.Old_Puppet_Master) {
+            return oldPuppetmasterLoadoutSaveData?.extraMinions;
+        } else if (archetype == PLAYER_ARCHETYPE.Old_Lich) {
+            return oldLichLoadoutSaveData?.extraMinions;
         }
         return null;
     }
@@ -351,6 +519,12 @@ public class SaveDataPlayer {
             return puppetmasterLoadoutSaveData.extraStructures;
         } else if (archetype == PLAYER_ARCHETYPE.Lich) {
             return lichLoadoutSaveData.extraStructures;
+        } else if (archetype == PLAYER_ARCHETYPE.Old_Ravager) {
+            return oldRavagerLoadoutSaveData?.extraStructures;
+        } else if (archetype == PLAYER_ARCHETYPE.Old_Puppet_Master) {
+            return oldPuppetmasterLoadoutSaveData?.extraStructures;
+        } else if (archetype == PLAYER_ARCHETYPE.Old_Lich) {
+            return oldLichLoadoutSaveData?.extraStructures;
         }
         return null;
     }
@@ -361,6 +535,12 @@ public class SaveDataPlayer {
             return puppetmasterLoadoutSaveData.extraMiscs;
         } else if (archetype == PLAYER_ARCHETYPE.Lich) {
             return lichLoadoutSaveData.extraMiscs;
+        } else if (archetype == PLAYER_ARCHETYPE.Old_Ravager) {
+            return oldRavagerLoadoutSaveData?.extraMiscs;
+        } else if (archetype == PLAYER_ARCHETYPE.Old_Puppet_Master) {
+            return oldPuppetmasterLoadoutSaveData?.extraMiscs;
+        } else if (archetype == PLAYER_ARCHETYPE.Old_Lich) {
+            return oldLichLoadoutSaveData?.extraMiscs;
         }
         return null;
     }
@@ -383,6 +563,24 @@ public class SaveDataPlayer {
             lichLoadoutSaveData.ClearExtraMinions();
             lichLoadoutSaveData.ClearExtraStructures();
             lichLoadoutSaveData.ClearExtraMiscs();
+        } else if (archetype == PLAYER_ARCHETYPE.Old_Ravager) {
+            oldRavagerLoadoutSaveData?.ClearExtraSpells();
+            oldRavagerLoadoutSaveData?.ClearExtraAfflictions();
+            oldRavagerLoadoutSaveData?.ClearExtraMinions();
+            oldRavagerLoadoutSaveData?.ClearExtraStructures();
+            oldRavagerLoadoutSaveData?.ClearExtraMiscs();
+        } else if (archetype == PLAYER_ARCHETYPE.Old_Puppet_Master) {
+            oldPuppetmasterLoadoutSaveData?.ClearExtraSpells();
+            oldPuppetmasterLoadoutSaveData?.ClearExtraAfflictions();
+            oldPuppetmasterLoadoutSaveData?.ClearExtraMinions();
+            oldPuppetmasterLoadoutSaveData?.ClearExtraStructures();
+            oldPuppetmasterLoadoutSaveData?.ClearExtraMiscs();
+        } else if (archetype == PLAYER_ARCHETYPE.Old_Lich) {
+            oldLichLoadoutSaveData?.ClearExtraSpells();
+            oldLichLoadoutSaveData?.ClearExtraAfflictions();
+            oldLichLoadoutSaveData?.ClearExtraMinions();
+            oldLichLoadoutSaveData?.ClearExtraStructures();
+            oldLichLoadoutSaveData?.ClearExtraMiscs();
         }
     }
     public void SetMoreLoadoutOptions(bool state) {
@@ -459,6 +657,32 @@ public class SaveDataPlayer {
             if (IsWorldUnlocked(WorldSettingsData.World_Type.Icalawa) || IsWorldUnlocked(WorldSettingsData.World_Type.Pangat_Loo) ) {
                 UnlockWorld(WorldSettingsData.World_Type.Custom);
             }
+        }
+        if (oldLichLoadoutSaveData == null) {
+            oldLichLoadoutSaveData = new LoadoutSaveData();
+        }
+        if (oldPuppetmasterLoadoutSaveData == null) {
+            oldPuppetmasterLoadoutSaveData = new LoadoutSaveData();
+        } 
+        if (oldRavagerLoadoutSaveData == null) {
+            oldRavagerLoadoutSaveData = new LoadoutSaveData();
+        }
+        if (unlockedTutorials == null) {
+            CreateInitialUnlockedTutorials();
+        } else {
+            //check if there are any new default tutorials that need to be unlocked. 
+            for (int i = 0; i < defaultUnlockedTutorials.Length; i++) {
+                TutorialManager.Tutorial_Type type = defaultUnlockedTutorials[i];
+                if (!unlockedTutorials.Contains(type)) {
+                    unlockedTutorials.Add(type);
+                }
+            }
+        }
+        if (readTutorials == null) {
+            readTutorials = new List<TutorialManager.Tutorial_Type>();
+        }
+        if (unlockedTips == null) {
+            unlockedTips = new List<TIPS>();
         }
     }
     #endregion

@@ -35,14 +35,14 @@ public class StringNameplateItem : NameplateItem<string> {
             _locationPortrait.gameObject.SetActive(true);
             string landmarkName = str.Replace(' ', '_');
             LANDMARK_TYPE landmark = (LANDMARK_TYPE)Enum.Parse(typeof(LANDMARK_TYPE), landmarkName.ToUpper());
-            _locationPortrait.SetPortrait(landmark);
+            _locationPortrait.SetPortrait(landmark.GetStructureType());
             _locationPortrait.disableInteraction = true;
         } else if (identifier == "Intervention Ability") {
             img.gameObject.SetActive(true);
             img.sprite = PlayerManager.Instance.GetJobActionSprite(str);
         } else if (identifier == "player skill") {
             img.gameObject.SetActive(true);
-            img.sprite = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>((PLAYER_SKILL_TYPE) System.Enum.Parse(typeof(PLAYER_SKILL_TYPE), UtilityScripts.Utilities.NotNormalizedConversionStringToEnum(str).ToUpper())).buttonSprite;
+            img.sprite = PlayerSkillManager.Instance.GetScriptableObjPlayerSkillData<PlayerSkillData>((PLAYER_SKILL_TYPE) System.Enum.Parse(typeof(PLAYER_SKILL_TYPE), UtilityScripts.Utilities.NotNormalizedConversionStringToEnum(str).ToUpper())).buttonSprite;
         } 
         // else if (identifier == "Trigger Flaw") {
         //     additionalText.text = $"{PlayerSkillManager.Instance.GetPlayerActionData(SPELL_TYPE.TRIGGER_FLAW).manaCost.ToString()} {UtilityScripts.Utilities.ManaIcon()}";

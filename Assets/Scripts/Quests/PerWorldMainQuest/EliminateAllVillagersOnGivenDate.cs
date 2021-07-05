@@ -10,10 +10,10 @@ namespace Quests {
         public override Type serializedData => typeof(SaveEliminateAllVillagersOnGivenDate);
         #endregion
 
-        public EliminateAllVillagersOnGivenDate() : base($"Eliminate All Villagers by Day {PangatLooWinConditionTracker.DueDay.ToString()}") { }
+        public EliminateAllVillagersOnGivenDate() : base($"Eliminate All Villagers by Day {WipeOutAllUntilDayWinConditionTracker.DueDay.ToString()}") { }
         protected override void ConstructSteps() {
-            var pangatLooWinConditionTracker = QuestManager.Instance.GetWinConditionTracker<PangatLooWinConditionTracker>();
-            var reachDayStep = new ReachDayStep(GetReachDayDescription, PangatLooWinConditionTracker.DueDay);
+            var pangatLooWinConditionTracker = QuestManager.Instance.GetWinConditionTracker<WipeOutAllUntilDayWinConditionTracker>();
+            var reachDayStep = new ReachDayStep(GetReachDayDescription, WipeOutAllUntilDayWinConditionTracker.DueDay);
             var eliminateVillagerStep = new EliminateAllVillagersOnGivenDateStep(GetEliminateAllVillagersDescription);
             eliminateVillagerStep.SetObjectsToCenter(pangatLooWinConditionTracker.villagersToEliminate.Count > 0
                 ? pangatLooWinConditionTracker.villagersToEliminate.Select(x => x as ISelectable).ToList()

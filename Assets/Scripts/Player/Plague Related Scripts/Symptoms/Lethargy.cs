@@ -9,11 +9,13 @@ namespace Plague.Symptom {
 
         protected override void ActivateSymptom(Character p_character) {
             p_character.traitContainer.AddTrait(p_character, "Lethargic");
+#if DEBUG_LOG
             Debug.Log("Activated Lethargy Symptom");
+#endif
         }
-        public override void CharacterDonePerformingAction(Character p_character, ActualGoapNode p_actionPerformed) {
+        public override void CharacterDonePerformingAction(Character p_character, INTERACTION_TYPE p_actionPerformed) {
             base.CharacterDonePerformingAction(p_character, p_actionPerformed);
-            if (p_actionPerformed.goapType.IsRestingAction() || p_actionPerformed.goapType == INTERACTION_TYPE.SIT) {
+            if (p_actionPerformed.IsRestingAction() || p_actionPerformed == INTERACTION_TYPE.SIT) {
                 ActivateSymptomOn(p_character);
             }
         }

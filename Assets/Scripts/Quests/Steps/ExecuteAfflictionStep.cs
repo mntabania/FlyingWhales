@@ -10,10 +10,10 @@ namespace Quests.Steps {
             _onAfflictCallback = onAfflictCallback;
         }
         protected override void SubscribeListeners() {
-            Messenger.AddListener<SkillData>(SpellSignals.ON_EXECUTE_AFFLICTION, CheckForCompletion);
+            Messenger.AddListener<SkillData>(PlayerSkillSignals.ON_EXECUTE_AFFLICTION, CheckForCompletion);
         }
         protected override void UnSubscribeListeners() {
-            Messenger.RemoveListener<SkillData>(SpellSignals.ON_EXECUTE_AFFLICTION, CheckForCompletion);
+            Messenger.RemoveListener<SkillData>(PlayerSkillSignals.ON_EXECUTE_AFFLICTION, CheckForCompletion);
         }
 
         #region Listeners

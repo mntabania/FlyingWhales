@@ -47,9 +47,9 @@ namespace Traits {
             if (sourceCharacter is Character character) {
                 _owner = character;
                 character.jobQueue.CancelAllJobs(JOB_TYPE.FULLNESS_RECOVERY_NORMAL, JOB_TYPE.FULLNESS_RECOVERY_URGENT, JOB_TYPE.ENERGY_RECOVERY_NORMAL, JOB_TYPE.ENERGY_RECOVERY_URGENT);
-                character.needsComponent.SetTirednessForcedTick(0);
+                // character.needsComponent.SetTirednessForcedTick(0);
                 //character.needsComponent.SetForcedFullnessRecoveryTimeInWords(TIME_IN_WORDS.AFTER_MIDNIGHT);
-                character.needsComponent.SetFullnessForcedTick(0);
+                // character.needsComponent.SetFullnessForcedTick(0);
                 character.needsComponent.AdjustDoNotGetTired(1);
                 character.needsComponent.ResetTirednessMeter();
                 DetermineIfDesireOrDislike(character);
@@ -60,16 +60,16 @@ namespace Traits {
             if (sourceCharacter is Character) {
                 Character character = sourceCharacter as Character;
                 character.jobQueue.CancelAllJobs(JOB_TYPE.FULLNESS_RECOVERY_NORMAL, JOB_TYPE.FULLNESS_RECOVERY_URGENT);
-                character.needsComponent.SetTirednessForcedTick();
+                // character.needsComponent.SetTirednessForcedTick();
                 //character.needsComponent.SetForcedFullnessRecoveryTimeInWords(TIME_IN_WORDS.LUNCH_TIME);
-                character.needsComponent.SetFullnessForcedTick();
+                // character.needsComponent.SetFullnessForcedTick();
                 character.needsComponent.AdjustDoNotGetTired(-1);
                 character.behaviourComponent.RemoveBehaviourComponent(typeof(VampireBehaviour));
                 character.RevertFromVampireBatForm();
                 if (character.characterClass.className == "Vampire Lord") {
                     //make character a peasant when he/she loses Vampire trait while they are a Vampire Lord
                     //This is to ensure that anytime this trait is removed from a Vampire Lord that its class will be changed.
-                    character.AssignClass("Peasant");
+                    character.classComponent.AssignClass("Farmer");
                 }
             }
             base.OnRemoveTrait(sourceCharacter, removedBy);
@@ -111,10 +111,12 @@ namespace Traits {
                 // }
                 WeightedDictionary<Character> embraceChoices = VampireBehaviour.GetVampiricEmbraceTargetWeights(character);
                 if (embraceChoices.GetTotalOfWeights() > 0) {
-                    string log = embraceChoices.GetWeightsSummary($"{character.name} embrace choices:");
                     Character target = embraceChoices.PickRandomElementGivenWeights();
+#if DEBUG_LOG
+                    string log = embraceChoices.GetWeightsSummary($"{character.name} embrace choices:");
                     log = $"{log}\n- Chosen target is {target.name}";
                     Debug.Log(log);
+#endif
                     character.jobComponent.CreateVampiricEmbraceJob(JOB_TYPE.TRIGGER_FLAW, target);
                 } else {
                     return "no_victim";
@@ -143,9 +145,11 @@ namespace Traits {
             base.OnBeforeStartFlee(traitable);
             if(traitable is Character character) {
                 if (!isInVampireBatForm) {
-                    if (!character.crimeComponent.HasNonHostileVillagerInRangeThatConsidersCrimeTypeACrime(CRIME_TYPE.Vampire)) {
-                        //TransformToBat(character);
-                        character.interruptComponent.TriggerInterrupt(INTERRUPT.Transform_To_Bat, character);
+                    if (CanTransformIntoBat()) {
+                        if (!character.crimeComponent.HasNonHostileVillagerInRangeThatConsidersCrimeTypeACrime(CRIME_TYPE.Vampire)) {
+                            //TransformToBat(character);
+                            character.interruptComponent.TriggerInterrupt(INTERRUPT.Transform_To_Bat, character);
+                        }
                     }
                 }
             }
@@ -206,20 +210,20 @@ namespace Traits {
             }
             return data;
         }
-        public override bool PerTickWhileStationaryOrUnoccupied() {
+        public override bool PerTickWhileStationaryOrUnoccupied(Character p_character) {
             if (dislikedBeingVampire && GameUtilities.RollChance(1) && _owner.currentJob != null && _owner.currentJob.jobType.IsFullnessRecoveryTypeJob()) { //1
-                _owner.currentJob.ForceCancelJob(false, "Resisted Hunger");
+                _owner.currentJob.ForceCancelJob("Resisted Hunger");
                 _owner.traitContainer.AddTrait(_owner, "Ashamed");
                 _owner.traitContainer.AddTrait(_owner, "Abstain Fullness");
                 Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Trait", "Vampire", "resist_hunger", null, LOG_TAG.Needs);
                 log.AddToFillers(_owner, _owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                log.AddLogToDatabase();
+                log.AddLogToDatabase(true);
             }
             return false;
         }
-        #endregion
+#endregion
         
-        #region Loading
+#region Loading
         public override void LoadFirstWaveInstancedTrait(SaveDataTrait saveDataTrait) {
             base.LoadFirstWaveInstancedTrait(saveDataTrait);
             SaveDataVampire saveDataVampire = saveDataTrait as SaveDataVampire;
@@ -242,8 +246,11 @@ namespace Traits {
                 _owner = character;
             }
         }
-        #endregion
+#endregion
 
+        public bool CanTransformIntoBat() {
+            return PlayerSkillManager.Instance.GetAfflictionData(PLAYER_SKILL_TYPE.VAMPIRISM).currentLevel >= 1;
+        }
         public void SetIsInVampireBatForm(bool state) {
             isInVampireBatForm = state;
             SetIsTraversingUnwalkableAsBat(state);

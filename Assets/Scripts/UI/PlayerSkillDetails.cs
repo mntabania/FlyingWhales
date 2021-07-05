@@ -42,7 +42,7 @@ public class PlayerSkillDetails : MonoBehaviour {
         expText.text = skillData.expCost + " XP";
 
         int charges = skillData.charges;
-        int manaCost = skillData.manaCost;
+        int manaCost = skillData.GetManaCostBaseOnLevel(spellData.currentLevel);
         int cooldown = skillData.cooldown;
 
         //int charges = skillData.charges;

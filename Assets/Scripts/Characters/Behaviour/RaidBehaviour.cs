@@ -11,12 +11,18 @@ public class RaidBehaviour : CharacterBehaviourComponent {
     public override bool TryDoBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
         producedJob = null;
         bool hasJob = false;
+#if DEBUG_LOG
         log += $"\n-Character is raiding";
+#endif
         Party party = character.partyComponent.currentParty;
         if (party.isActive && party.partyState == PARTY_STATE.Working) {
+#if DEBUG_LOG
             log += $"\n-Party is working";
+#endif
             if (party.targetDestination.IsAtTargetDestination(character)) {
+#if DEBUG_LOG
                 log += $"\n-Character is at target destination, do work";
+#endif
                 RaidPartyQuest quest = party.currentQuest as RaidPartyQuest;
                 if (quest.target == null) {
                     party.GoBackHomeAndEndQuest();
@@ -38,12 +44,14 @@ public class RaidBehaviour : CharacterBehaviourComponent {
                 //    return true;
                 //} else {
                 if(party.targetDestination is BaseSettlement settlement) {
+#if DEBUG_LOG
                     log += $"\n-Roam around";
-                    LocationStructure structure = settlement.GetRandomStructure();
+#endif
+                    LocationStructure structure = settlement.GetRandomDwellingOrResourceProducingStructure();
                     if(structure != null) {
                         LocationGridTile tile = structure.GetRandomPassableTile();
                         if(tile != null) {
-                            hasJob = character.jobComponent.CreatePartyGoToJob(tile, out producedJob);
+                            hasJob = character.jobComponent.CreateGoToSpecificTileJob(tile, out producedJob);
                         } else {
                             hasJob = character.jobComponent.TriggerRoamAroundStructure(out producedJob);
                         }
@@ -77,7 +85,7 @@ public class RaidBehaviour : CharacterBehaviourComponent {
         //    if(party.waitingHexArea != null) {
         //        log += $"\n-Party has waiting area";
         //        if (character.gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
-        //            if (character.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner == party.waitingHexArea) {
+        //            if (character.gridTileLocation.hexTileOwner == party.waitingHexArea) {
         //                log += $"\n-Character is in waiting area, roam";
         //                character.jobComponent.TriggerRoamAroundTile(out producedJob);
         //            } else {
@@ -123,7 +131,6 @@ public class RaidBehaviour : CharacterBehaviourComponent {
                 && !resident.isDead
                 && !resident.isBeingSeized
                 && resident.gridTileLocation != null
-                && resident.gridTileLocation.collectionOwner.isPartOfParentRegionMap
                 && resident.gridTileLocation.IsPartOfSettlement(settlement)
                 && (resident.faction == null || character.faction == null || character.faction.IsHostileWith(resident.faction))) {
                 if (choices == null) { choices = new List<Character>(); }

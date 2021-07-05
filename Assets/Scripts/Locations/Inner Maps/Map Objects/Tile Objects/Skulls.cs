@@ -4,7 +4,7 @@ public class Skulls : TileObject{
     public Skulls() {
         Initialize(TILE_OBJECT_TYPE.SKULLS);
     }
-    public Skulls(SaveDataTileObject data) {
+    public Skulls(SaveDataTileObject data) : base(data) {
         
     }
 }

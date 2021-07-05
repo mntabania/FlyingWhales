@@ -10,8 +10,8 @@ using Traits;
 using UnityEngine.Assertions;
 namespace Traits {
     public class Psychopath : Trait {
-
         public SerialVictim victim1Requirement { get; private set; }
+        public SerialVictim victim2Requirement { get; private set; }
         public Character character { get; private set; }
         public Character targetVictim { get; private set; }
         public Dictionary<int, OpinionData> opinionCopy { get; private set; }
@@ -38,6 +38,11 @@ namespace Traits {
             SaveDataPsychopath saveDataPsychopath = saveDataTrait as SaveDataPsychopath;
             Assert.IsNotNull(saveDataPsychopath);
             victim1Requirement = saveDataPsychopath.victim1Requirement;
+            if(saveDataPsychopath.victim2Requirement == null || saveDataPsychopath.victim2Requirement.isEmpty) {
+                victim2Requirement = null;
+            } else {
+                victim2Requirement = saveDataPsychopath.victim2Requirement;
+            }
             opinionCopy = saveDataPsychopath.opinionCopy;
         }
         public override void LoadSecondWaveInstancedTrait(SaveDataTrait p_saveDataTrait) {
@@ -94,8 +99,9 @@ namespace Traits {
                         Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "NonIntel", "serial_killer_new_victim", null, LOG_TAG.Crimes);
                         log.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                         log.AddToFillers(targetVictim, targetVictim.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-                        character.logComponent.RegisterLog(log, onlyClickedCharacter: false);
-                        PlayerManager.Instance.player.ShowNotificationFrom(character.currentRegion, log);
+                        log.AddLogToDatabase();
+                        //character.logComponent.RegisterLog(log);
+                        PlayerManager.Instance.player.ShowNotificationFrom(character.gridTileLocation, log, true);
                         return true;
                     }
                 }
@@ -127,8 +133,9 @@ namespace Traits {
                     Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "NonIntel", "serial_killer_new_victim", null, LOG_TAG.Crimes);
                     log.AddToFillers(this.character, this.character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                     log.AddToFillers(targetVictim, targetVictim.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-                    this.character.logComponent.RegisterLog(log, onlyClickedCharacter: false);
-                    PlayerManager.Instance.player.ShowNotificationFrom(character.currentRegion, log);
+                    log.AddLogToDatabase();
+                    //this.character.logComponent.RegisterLog(log);
+                    PlayerManager.Instance.player.ShowNotificationFrom(character.gridTileLocation, log, true);
                 }
                 if(targetVictim == null) {
                     return "no_target";
@@ -139,27 +146,30 @@ namespace Traits {
             }
             return base.TriggerFlaw(character);
         }
-        //public override void OnTickStarted() {
-        //    base.OnTickStarted();
-        //    CheckPsychopath();
-        //}
         #endregion
 
-        public void SetVictimRequirements(SerialVictim serialVictim) {
-            victim1Requirement = serialVictim;
+        private void SetVictimRequirements(SerialVictim serialVictim1, SerialVictim serialVictim2) {
+            victim1Requirement = serialVictim1;
+            victim2Requirement = serialVictim2;
+
+            string reqText = victim1Requirement.text;
+            if(victim2Requirement != null) {
+                reqText += " and " + victim2Requirement.text;
+            }
+
             Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "NonIntel", "became_serial_killer", null, LOG_TAG.Crimes);
             log.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-            log.AddToFillers(null, victim1Requirement.text, LOG_IDENTIFIER.STRING_1);
+            log.AddToFillers(null, reqText, LOG_IDENTIFIER.STRING_1);
             log.AddLogToDatabase();
-            PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
+            PlayerManager.Instance.player.ShowNotificationFromPlayer(log, true);
         }
-        public void SetVictimRequirements(SERIAL_VICTIM_TYPE victimFirstType, string victimFirstDesc, SERIAL_VICTIM_TYPE victimSecondType, string victimSecondDesc) {
-            SetVictimRequirements(new SerialVictim(victimFirstType, victimFirstDesc, victimSecondType, victimSecondDesc));
-
+        public void SetVictimRequirements(SERIAL_VICTIM_TYPE victimFirstType, string victimFirstDesc, SERIAL_VICTIM_TYPE victimSecondType, string victimSecondDesc, string conjunction) {
+            if(conjunction == "And" || victimFirstType == SERIAL_VICTIM_TYPE.None || victimSecondType == SERIAL_VICTIM_TYPE.None) {
+                SetVictimRequirements(new SerialVictim(victimFirstType, victimFirstDesc, victimSecondType, victimSecondDesc), null);
+            } else {
+                SetVictimRequirements(new SerialVictim(victimFirstType, victimFirstDesc, SERIAL_VICTIM_TYPE.None, string.Empty), new SerialVictim(victimSecondType, victimSecondDesc, SERIAL_VICTIM_TYPE.None, string.Empty));
+            }
         }
-        //public void SetVictim2Requirement(SerialVictim serialVictim) {
-        //    victim2Requirement = serialVictim;
-        //}
         public void SetTargetVictim(Character victim) {
             if (targetVictim != null) {
                 //TODO: Add checking if character is the target of any other psychopaths
@@ -234,20 +244,20 @@ namespace Traits {
                 LocationGridTile outsideSettlementTile = null;
                 BaseSettlement settlement = null;
                 if(character.gridTileLocation.IsPartOfSettlement(out settlement)) {
-                    outsideSettlementTile = settlement.GetAPlainAdjacentHextile()?.GetRandomTile();
+                    outsideSettlementTile = settlement.GetAPlainAdjacentArea()?.gridTileComponent.GetRandomPassableTile();
                 }
                 if (outsideSettlementTile != null) {
                     job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { outsideSettlementTile.structure, outsideSettlementTile });
                     job.AddOtherData(INTERACTION_TYPE.DROP_RESTRAINED, new object[] { outsideSettlementTile.structure, outsideSettlementTile });
-                    job.AddOtherData(INTERACTION_TYPE.RITUAL_KILLING, new object[] { outsideSettlementTile.collectionOwner.partOfHextile.hexTileOwner });
+                    job.AddOtherData(INTERACTION_TYPE.RITUAL_KILLING, new object[] { outsideSettlementTile.area });
                 } else if (character.homeStructure != null) {
                     job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { character.homeStructure });
                     job.AddOtherData(INTERACTION_TYPE.DROP_RESTRAINED, new object[] { character.homeStructure });
                     job.AddOtherData(INTERACTION_TYPE.RITUAL_KILLING, new object[] { character.homeStructure });
                 } else {
-                    HexTile hex = character.gridTileLocation.GetNearestHexTileWithinRegionThatMeetCriteria(h => h.elevationType != ELEVATION.MOUNTAIN && h.elevationType != ELEVATION.WATER && h.settlementOnTile == null);
-                    if(hex != null) {
-                        LocationGridTile chosenTile = hex.GetRandomTile();
+                    Area area = character.gridTileLocation.GetNearestAreaWithinRegionThatIsNotMountainAndWaterAndHasNoSettlement();
+                    if(area != null) {
+                        LocationGridTile chosenTile = area.gridTileComponent.GetRandomPassableTile();
                         job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { chosenTile.structure, chosenTile });
                         job.AddOtherData(INTERACTION_TYPE.DROP_RESTRAINED, new object[] { chosenTile.structure, chosenTile });
                         job.AddOtherData(INTERACTION_TYPE.RITUAL_KILLING, new object[] { chosenTile });
@@ -263,7 +273,8 @@ namespace Traits {
                 job.AddOtherData(INTERACTION_TYPE.DROP_RESTRAINED, new object[] { character.homeStructure });
                 job.AddOtherData(INTERACTION_TYPE.RITUAL_KILLING, new object[] { character.homeStructure });
             }
-            //job.SetIsStealth(true);
+            //job.SetIsStealth(true
+            job.isTriggeredFlaw = true;
             character.jobQueue.AddJobInQueue(job);
             return true;
         }
@@ -278,20 +289,20 @@ namespace Traits {
                 LocationGridTile outsideSettlementTile = null;
                 BaseSettlement settlement = null;
                 if (targetVictim.gridTileLocation.IsPartOfSettlement(out settlement)) {
-                    outsideSettlementTile = settlement.GetAPlainAdjacentHextile()?.GetRandomTile();
+                    outsideSettlementTile = settlement.GetAPlainAdjacentArea()?.gridTileComponent.GetRandomPassableTile();
                 }
                 if (outsideSettlementTile != null) {
                     job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { outsideSettlementTile.structure, outsideSettlementTile });
                     job.AddOtherData(INTERACTION_TYPE.DROP_RESTRAINED, new object[] { outsideSettlementTile.structure, outsideSettlementTile });
-                    job.AddOtherData(INTERACTION_TYPE.RITUAL_KILLING, new object[] { outsideSettlementTile.collectionOwner.partOfHextile.hexTileOwner });
+                    job.AddOtherData(INTERACTION_TYPE.RITUAL_KILLING, new object[] { outsideSettlementTile.area });
                 } else if (character.homeStructure != null) {
                     job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { character.homeStructure });
                     job.AddOtherData(INTERACTION_TYPE.DROP_RESTRAINED, new object[] { character.homeStructure });
                     job.AddOtherData(INTERACTION_TYPE.RITUAL_KILLING, new object[] { character.homeStructure });
                 } else {
-                    HexTile hex = targetVictim.gridTileLocation.GetNearestHexTileWithinRegionThatMeetCriteria(h => h.elevationType != ELEVATION.MOUNTAIN && h.elevationType != ELEVATION.WATER && h.settlementOnTile == null);
-                    if (hex != null) {
-                        LocationGridTile chosenTile = hex.GetRandomTile();
+                    Area area = targetVictim.gridTileLocation.GetNearestAreaWithinRegionThatIsNotMountainAndWaterAndHasNoSettlement();
+                    if (area != null) {
+                        LocationGridTile chosenTile = area.gridTileComponent.GetRandomPassableTile();
                         job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { chosenTile.structure, chosenTile });
                         job.AddOtherData(INTERACTION_TYPE.DROP_RESTRAINED, new object[] { chosenTile.structure, chosenTile });
                         job.AddOtherData(INTERACTION_TYPE.RITUAL_KILLING, new object[] { chosenTile });
@@ -311,60 +322,16 @@ namespace Traits {
             producedJob = job;
             return true;
         }
-        //private void GenerateSerialVictims() {
-        //    SetVictim1Requirement(new SerialVictim(RandomizeVictimType(true), RandomizeVictimType(false)));
-
-        //    //bool hasCreatedRequirement = false;
-        //    //while (!hasCreatedRequirement) {
-        //    //    SERIAL_VICTIM_TYPE victim2FirstType = RandomizeVictimType(true);
-        //    //    SERIAL_VICTIM_TYPE victim2SecondType = RandomizeVictimType(false);
-
-        //    //    string victim2FirstDesc = victim1Requirement.GenerateVictimDescription(victim2FirstType);
-        //    //    string victim2SecondDesc = victim1Requirement.GenerateVictimDescription(victim2SecondType);
-
-        //    //    if(victim1Requirement.victimFirstType == victim2FirstType && victim1Requirement.victimSecondType == victim2SecondType
-        //    //        && victim1Requirement.victimFirstDescription == victim2FirstDesc && victim1Requirement.victimSecondDescription == victim2SecondDesc) {
-        //    //        continue;
-        //    //    } else {
-        //    //        SetVictim2Requirement(new SerialVictim(victim2FirstType, victim2FirstDesc, victim2SecondType, victim2SecondDesc));
-        //    //        hasCreatedRequirement = true;
-        //    //        break;
-        //    //    }
-        //    //}
-
-        //    Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "NonIntel", "became_serial_killer");
-        //    log.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-        //    log.AddToFillers(null, victim1Requirement.text, LOG_IDENTIFIER.STRING_1);
-        //    //log.AddToFillers(null, victim2Requirement.text, LOG_IDENTIFIER.STRING_2);
-        //    log.AddLogToInvolvedObjects();
-        //    PlayerManager.Instance.player.ShowNotification(log);
-        //}
-
-        //private SERIAL_VICTIM_TYPE RandomizeVictimType(bool isPrefix) {
-        //    int chance = UnityEngine.Random.Range(0, 2);
-        //    if (isPrefix) {
-        //        if (chance == 0) {
-        //            return SERIAL_VICTIM_TYPE.GENDER;
-        //        }
-        //        return SERIAL_VICTIM_TYPE.ROLE;
-        //    } else {
-        //        //if (chance == 0) {
-        //        //    return SERIAL_VICTIM_TYPE.TRAIT;
-        //        //}
-        //        return SERIAL_VICTIM_TYPE.STATUS;
-        //    }
-        //}
-
         private bool DoesCharacterFitAnyVictimRequirements(Character target) {
-            return victim1Requirement.DoesCharacterFitVictimRequirements(target); //|| victim2Requirement.DoesCharacterFitVictimRequirements(target)
-        }
-
-        public void PsychopathSawButWillNotAssist(Character targetCharacter, Trait negativeTrait) {
-            Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "NonIntel", "psychopath_saw_no_assist", null, LOG_TAG.Crimes);
-            log.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-            log.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-            log.AddToFillers(null, negativeTrait.name, LOG_IDENTIFIER.STRING_1);
-            character.logComponent.RegisterLog(log, onlyClickedCharacter: false);
+            bool doesFitVictim1 = victim1Requirement.DoesCharacterFitVictimRequirements(target);
+            if (doesFitVictim1) {
+                return true;
+            } else if (victim2Requirement == null) {
+                return doesFitVictim1;
+            } else if (victim2Requirement.DoesCharacterFitVictimRequirements(target)) {
+                return true;
+            }
+            return false;
         }
 
         #region Opinion
@@ -422,6 +389,8 @@ namespace Traits {
         public string victimSecondDescription;
 
         public string text { get; private set; }
+
+        public bool isEmpty => victimFirstType == SERIAL_VICTIM_TYPE.None && victimSecondType == SERIAL_VICTIM_TYPE.None;
 
         //public SerialVictim(SERIAL_VICTIM_TYPE victimFirstType, SERIAL_VICTIM_TYPE victimSecondType) {
         //    this.victimFirstType = victimFirstType;
@@ -604,6 +573,7 @@ namespace Traits {
 #region Save Data
 public class SaveDataPsychopath : SaveDataTrait {
     public SerialVictim victim1Requirement;
+    public SerialVictim victim2Requirement;
     public string targetVictimID;
     public Dictionary<int, OpinionData> opinionCopy;
 
@@ -612,6 +582,7 @@ public class SaveDataPsychopath : SaveDataTrait {
         Psychopath psychopath = trait as Psychopath;
         Assert.IsNotNull(psychopath);
         victim1Requirement = psychopath.victim1Requirement;
+        victim2Requirement = psychopath.victim2Requirement;
         targetVictimID = psychopath.targetVictim != null ? psychopath.targetVictim.persistentID : string.Empty;
         opinionCopy = psychopath.opinionCopy;
     }

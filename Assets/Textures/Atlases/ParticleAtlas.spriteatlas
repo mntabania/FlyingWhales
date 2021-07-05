@@ -43,10 +43,11 @@ SpriteAtlas:
     variantMultiplier: 1
     packables:
     - {fileID: 102900000, guid: c56691e3000aa5f46b6b0f833f973a16, type: 3}
-    totalSpriteSurfaceArea: 2133200
+    totalSpriteSurfaceArea: 2137296
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
+  - {fileID: 21300000, guid: 4f3a9e80d06217e459457eb69c035973, type: 3}
   - {fileID: 21300000, guid: 41beafc0ab4f76b48bf395aa6c32ba8b, type: 3}
   - {fileID: 8228913293342031306, guid: fd622cd036237fe46ad70a29a10e1966, type: 3}
   - {fileID: -2655667206138245945, guid: fd622cd036237fe46ad70a29a10e1966, type: 3}
@@ -134,6 +135,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: b42249ef1048f724198420df923ffe23, type: 3}
   - {fileID: 21300000, guid: f5f00bef1890e3e4893001f8ceb8b1e4, type: 3}
   m_PackedSpriteNamesToIndex:
+  - dead_icon
   - freezing_trap
   - Smoke_Only_Spritesheet_2
   - Smoke_Only_Spritesheet_1

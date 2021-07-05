@@ -18,6 +18,7 @@ public class TakeResource : GoapAction {
     #region Overrides
     protected override void ConstructBasePreconditionsAndEffects() {
         AddPossibleExpectedEffectForTypeAndTargetMatching(new GoapEffectConditionTypeAndTargetType(GOAP_EFFECT_CONDITION.TAKE_POI, GOAP_EFFECT_TARGET.ACTOR));
+        AddExpectedEffect(new GoapEffect(GOAP_EFFECT_CONDITION.FEED, "Food Pile", false, GOAP_EFFECT_TARGET.ACTOR));
     }
     protected override List<GoapEffect> GetExpectedEffects(Character actor, IPointOfInterest target, OtherData[] otherData, out bool isOverridden) {
         if (target is ResourcePile) {
@@ -42,14 +43,18 @@ public class TakeResource : GoapAction {
         SetState("Take Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
+#if DEBUG_LOG
         string costLog = $"\n{name} {target.nameWithID}:";
+#endif
         int cost = 0;
         if (target.gridTileLocation != null && actor.movementComponent.structuresToAvoid.Contains(target.gridTileLocation.structure)) {
             if (!actor.partyComponent.hasParty) {
                 //target is at structure that character is avoiding
                 cost = 2000;
+#if DEBUG_LOG
                 costLog += $" +{cost}(Location of target is in avoid structure)";
                 actor.logComponent.AppendCostLog(costLog);
+#endif
                 return cost;
             }
         }
@@ -58,8 +63,10 @@ public class TakeResource : GoapAction {
             if (target.gridTileLocation.IsPartOfSettlement(out settlement)) {
                 if (settlement.owner != null && actor.homeSettlement != settlement) {
                     //If target is in a claimed settlement and actor's home settlement is not the target's settlement, do not harvest, even if the faction owner of the target's settlement is also the faciton of the actor
+#if DEBUG_LOG
                     costLog += $" +2000(Target's settlement is not the actor's home settlement)";
                     actor.logComponent.AppendCostLog(costLog);
+#endif
                     return 2000;
                 }
             }
@@ -69,41 +76,61 @@ public class TakeResource : GoapAction {
                 if (actor.traitContainer.HasTrait("Cannibal") && !actor.traitContainer.HasTrait("Vampire")) {
                     int currCost = 450; //UtilityScripts.Utilities.Rng.Next(450, 501);
                     cost += currCost;
+#if DEBUG_LOG
                     costLog += $" +{currCost}(Obtain Personal Food, Elf/Human Meat, Cannibal)";
+#endif
                 } else if (actor.needsComponent.isStarving) {
                     int currCost = 700; //UtilityScripts.Utilities.Rng.Next(700, 751);
                     cost += currCost;
+#if DEBUG_LOG
                     costLog += $" +{currCost}(Obtain Personal Food, Elf/Human Meat, Starving)";
+#endif
                 } else {
                     cost += 2000;
+#if DEBUG_LOG
                     costLog += $" +2000(Obtain Personal Food, Elf/Human Meat, not Starving/Cannibal)";
+#endif
                 }
             } else {
                 // int currCost = UtilityScripts.Utilities.Rng.Next(400, 431);
                 cost = 400;
+#if DEBUG_LOG
                 costLog += $" +{cost}(Obtain Personal Food, not Elf/Human Meat)";
+#endif
             }
         } else {
             if (target.gridTileLocation != null && target.gridTileLocation.IsPartOfSettlement(out var settlement) && 
                 settlement.locationType == LOCATION_TYPE.VILLAGE && settlement != actor.homeSettlement) {
                 cost = 2000;
+#if DEBUG_LOG
                 costLog += $" +{cost}(Resource pile is at another village)";
+#endif
             } else {
                 cost = 400;
-                costLog += $" +{cost}(not Obtain Personal Food)";    
+#if DEBUG_LOG
+                costLog += $" +{cost}(not Obtain Personal Food)";
+#endif
             }
-            if (job.jobType == JOB_TYPE.BUILD_BLUEPRINT && target is ResourcePile resourcePile) {
+            if ((job.jobType == JOB_TYPE.BUILD_BLUEPRINT || job.jobType == JOB_TYPE.HAUL) && target is ResourcePile resourcePile) {
                 int neededResource = GetNeededResource(job, otherData, resourcePile);
                 if (actor.homeSettlement != null) {
-                    int availableResources = actor.homeSettlement.settlementJobTriggerComponent.GetTotalResource(resourcePile.providedResource);
-                    if (availableResources < neededResource) {
+                    if (resourcePile.resourceInPile < neededResource) {
                         cost = 2000;
-                        costLog += $" +{cost}(Settlement does not have enough resources for building)";    
+#if DEBUG_LOG
+                        costLog += $" +{cost}(Resource Pile does not have enough resources for building)";
+#endif
+                    } else if (!actor.homeSettlement.settlementJobTriggerComponent.HasTotalResource(resourcePile.providedResource, neededResource)) {
+                        cost = 2000;
+#if DEBUG_LOG
+                        costLog += $" +{cost}(Settlement does not have enough resources for building)";
+#endif
                     }
                 }
             }
         }
+#if DEBUG_LOG
         actor.logComponent.AppendCostLog(costLog);
+#endif
         return cost;
     }
     public override GoapActionInvalidity IsInvalid(ActualGoapNode node) {
@@ -111,24 +138,34 @@ public class TakeResource : GoapAction {
         IPointOfInterest poiTarget = node.poiTarget;
         if (goapActionInvalidity.isInvalid == false) {
             ResourcePile pile = poiTarget as ResourcePile;
-            if (pile.resourceInPile <= 0) {
+            if (node.associatedJobType == JOB_TYPE.BUILD_BLUEPRINT && pile.resourceInPile < 60) {
+                //only checked 100 since at the time of coding, all structures either cost no resource or 100 resource.
+                goapActionInvalidity.isInvalid = true;
+                goapActionInvalidity.reason = "not_enough_resource";
+            } else if (pile.resourceInPile <= 0) {
                 goapActionInvalidity.isInvalid = true;
                 goapActionInvalidity.stateName = "Take Fail";
             }
         }
         return goapActionInvalidity;
     }
-    public override void AddFillersToLog(ref Log log, ActualGoapNode node) {
-        base.AddFillersToLog(ref log, node);
+    public override void AddFillersToLog(Log log, ActualGoapNode node) {
+        base.AddFillersToLog(log, node);
         ResourcePile resourcePile = node.poiTarget as ResourcePile;
-        log.AddToFillers(null, UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetterOnly(resourcePile.providedResource.ToString()), LOG_IDENTIFIER.STRING_2);
+        log.AddToFillers(null, UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetterOnly(resourcePile.specificProvidedResource.ToString()), LOG_IDENTIFIER.STRING_2);
     }
-    #endregion
+#endregion
 
-    #region Requirements
+#region Requirements
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, OtherData[] otherData, JobQueueItem job) { 
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData, job);
         if (satisfied) {
+            if (job.jobType == JOB_TYPE.FEED) {
+                //If feed, only take food pile from the home of the actor, if food pile is not in the home of actor, return false so that it will not be targeted
+                if (!(poiTarget.gridTileLocation != null && poiTarget.gridTileLocation.structure == actor.homeStructure)) {
+                    return false;
+                }
+            }
             if (poiTarget.gridTileLocation == null && poiTarget.isBeingCarriedBy != actor) {
                 return false;
             }
@@ -136,9 +173,9 @@ public class TakeResource : GoapAction {
         }
         return false;
     }
-    #endregion
+#endregion
 
-    #region State Effects
+#region State Effects
     public void PreTakeSuccess(ActualGoapNode goapNode) {
         ResourcePile resourcePile = goapNode.poiTarget as ResourcePile;
         Assert.IsNotNull(resourcePile);
@@ -185,26 +222,33 @@ public class TakeResource : GoapAction {
         //goapNode.descriptionLog.AddToFillers(null, takenResource.ToString(), LOG_IDENTIFIER.STRING_1);
         //goapNode.descriptionLog.AddToFillers(null, Utilities.NormalizeString(resourcePile.providedResource.ToString()), LOG_IDENTIFIER.STRING_2);
     }
-    #endregion
+#endregion
 
     private void CarryResourcePile(Character carrier, ResourcePile pile, int amount, bool setOwnership) {
         if (pile.isBeingCarriedBy == null || pile.isBeingCarriedBy != carrier) {
-            ResourcePile newPile = InnerMapManager.Instance.CreateNewTileObject<ResourcePile>(pile.tileObjectType);
-            newPile.SetResourceInPile(amount);
+            if (pile.resourceInPile > amount) {
+                //create new pile and transfer amount to that pile
+                ResourcePile newPile = InnerMapManager.Instance.CreateNewTileObject<ResourcePile>(pile.tileObjectType);
+                newPile.SetResourceInPile(amount);
 
-            //This can be made into a function in the IPointOfInterest interface
-            newPile.SetGridTileLocation(pile.gridTileLocation);
-            newPile.InitializeMapObject(newPile);
-            newPile.SetPOIState(POI_STATE.ACTIVE);
-            UtilityScripts.LocationAwarenessUtility.AddToAwarenessList(newPile, newPile.gridTileLocation);
-            //removed by aaron for awareness update newPile.gridTileLocation.structure.region.AddPendingAwareness(newPile);
-            newPile.SetGridTileLocation(null);
+                //This can be made into a function in the IPointOfInterest interface
+                newPile.SetGridTileLocation(pile.gridTileLocation);
+                newPile.InitializeMapObject(newPile);
+                newPile.SetPOIState(POI_STATE.ACTIVE);
+                UtilityScripts.LocationAwarenessUtility.AddToAwarenessList(newPile, newPile.gridTileLocation);
+                //removed by aaron for awareness update newPile.gridTileLocation.structure.region.AddPendingAwareness(newPile);
+                newPile.SetGridTileLocation(null);
 
-            // carrier.ownParty.AddPOI(newPile);
-            carrier.CarryPOI(newPile, setOwnership: setOwnership);
-            carrier.ShowItemVisualCarryingPOI(newPile);
-            TraitManager.Instance.CopyStatuses(pile, newPile);
-            pile.AdjustResourceInPile(-amount);
+                // carrier.ownParty.AddPOI(newPile);
+                carrier.CarryPOI(newPile, setOwnership: setOwnership);
+                carrier.ShowItemVisualCarryingPOI(newPile);
+                TraitManager.Instance.CopyStatuses(pile, newPile);
+                pile.AdjustResourceInPile(-amount);
+            } else {
+                //just carry the target pile.
+                carrier.CarryPOI(pile, setOwnership: setOwnership);
+                carrier.ShowItemVisualCarryingPOI(pile);
+            }
         } else {
             carrier.ShowItemVisualCarryingPOI(pile);
         }

@@ -15,10 +15,10 @@ public class DesertRose : TileObject {
     public void DesertRoseWaterEffect() {
         if(gridTileLocation != null) {
             // _particleEffect = GameManager.Instance.CreateParticleEffectAt(
-            //     gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.GetCenterLocationGridTile(),
+            //     gridTileLocation.hexTileOwner.GetCenterLocationGridTile(),
             //     PARTICLE_EFFECT.Desert_Rose).GetComponent<AutoDestroyParticle>();
-            // // gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.ChangeBiomeType(BIOMES.DESERT);
-            // gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.GradualChangeBiomeType(BIOMES.DESERT, OnDoneChangingBiome);
+            // // gridTileLocation.hexTileOwner.ChangeBiomeType(BIOMES.DESERT);
+            // gridTileLocation.hexTileOwner.GradualChangeBiomeType(BIOMES.DESERT, OnDoneChangingBiome);
             // gridTileLocation.structure.RemovePOI(this);
             for (int i = 0; i < FactionManager.Instance.undeadFaction.characters.Count; i++) {
                 Character character = FactionManager.Instance.undeadFaction.characters[i];
@@ -30,7 +30,7 @@ public class DesertRose : TileObject {
             
             Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Tile Object", "DesertRose", "activated_village", providedTags: LOG_TAG.Player);
             log.AddLogToDatabase();
-            PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
+            PlayerManager.Instance.player.ShowNotificationFromPlayer(log, true);
             gridTileLocation.structure.RemovePOI(this);
         }
     }
@@ -46,7 +46,7 @@ public class DesertRose : TileObject {
             
             Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Tile Object", "DesertRose", "activated_portal", providedTags: LOG_TAG.Player);
             log.AddLogToDatabase();
-            PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
+            PlayerManager.Instance.player.ShowNotificationFromPlayer(log, true);
             gridTileLocation.structure.RemovePOI(this);
         }
     }

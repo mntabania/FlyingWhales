@@ -35,7 +35,7 @@ public class CleanseTileBehaviour : CharacterBehaviourComponent {
 
         for (int i = 0; i < character.behaviourComponent.cleansingTilesForSettlement.settlementJobTriggerComponent.poisonedTiles.Count; i++) {
             LocationGridTile tile = character.behaviourComponent.cleansingTilesForSettlement.settlementJobTriggerComponent.poisonedTiles[i];
-            Poisoned poisoned = tile.genericTileObject.traitContainer.GetTraitOrStatus<Poisoned>("Poisoned");
+            Poisoned poisoned = tile.tileObjectComponent.genericTileObject.traitContainer.GetTraitOrStatus<Poisoned>("Poisoned");
             if (poisoned != null) {
                 if (poisoned.cleanser == null) {
                     float dist = Vector2.Distance(character.worldObject.transform.position, tile.worldLocation);
@@ -51,11 +51,11 @@ public class CleanseTileBehaviour : CharacterBehaviourComponent {
             }
         }
         if (nearestTile != null) {
-            Poisoned poisoned = nearestTile.genericTileObject.traitContainer.GetTraitOrStatus<Poisoned>("Poisoned"); 
+            Poisoned poisoned = nearestTile.tileObjectComponent.genericTileObject.traitContainer.GetTraitOrStatus<Poisoned>("Poisoned"); 
             Assert.IsNotNull(poisoned, $"Poisoned of {nearestTile} is null.");
             poisoned.SetCleanser(character);
             GoapPlanJob goapPlanJob = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.CLEANSE_TILES,
-                INTERACTION_TYPE.CLEANSE_TILE, nearestTile.genericTileObject, character);
+                INTERACTION_TYPE.CLEANSE_TILE, nearestTile.tileObjectComponent.genericTileObject, character);
             // character.jobQueue.AddJobInQueue(goapPlanJob);
             return goapPlanJob;
         }

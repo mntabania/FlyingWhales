@@ -57,7 +57,7 @@ public class Bed : BaseBed {
                 break;
         }
     }
-    public override bool AddUser(Character character) {
+    protected override bool AddUser(Character character) {
         if (base.AddUser(character)) {
             if (!IsSlotAvailable()) {
                 SetPOIState(POI_STATE.INACTIVE); //if all slots in the bed are occupied, set it as inactive
@@ -77,6 +77,16 @@ public class Bed : BaseBed {
             return true;
         }
         return false;
+    }
+    protected override void OnSetObjectAsUnbuilt() {
+        base.OnSetObjectAsUnbuilt();
+        AddAdvertisedAction(INTERACTION_TYPE.CRAFT_FURNITURE_STONE);
+        AddAdvertisedAction(INTERACTION_TYPE.CRAFT_FURNITURE_WOOD);
+    }
+    protected override void OnSetObjectAsBuilt() {
+        base.OnSetObjectAsBuilt();
+        RemoveAdvertisedAction(INTERACTION_TYPE.CRAFT_FURNITURE_STONE);
+        RemoveAdvertisedAction(INTERACTION_TYPE.CRAFT_FURNITURE_WOOD);
     }
     #endregion
 

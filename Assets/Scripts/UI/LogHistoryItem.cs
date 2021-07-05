@@ -15,7 +15,11 @@ public class LogHistoryItem : LogItem {
     [SerializeField] private LogsTagButton logsTagButton;
     private UIHoverPosition _hoverPosition;
     
-    public void SetLog(in Log log) {
+    private void OnEnable() {
+        EnvelopContentExecute();
+    }
+    
+    public void SetLog(Log log) {
         name = log.persistentID;
         dateLbl.text = log.gameDate.ConvertToTime();
         logLbl.text = log.logText;
@@ -31,7 +35,6 @@ public class LogHistoryItem : LogItem {
     public void SetHoverPosition(UIHoverPosition hoverPosition) {
         _hoverPosition = hoverPosition;
     }
-
     private void OnLeftClickObjectInLog(object obj) {
         IPointOfInterest pointOfInterest = UIManager.Instance.GetCurrentlySelectedPOI();
         if (pointOfInterest != null) {

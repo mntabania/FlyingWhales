@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f2a5990311e0b094f8e466747668822b, type: 3}
   m_Name: Tutorial
   m_EditorClassIdentifier: 
-  scenarioSettings: {fileID: 4900000, guid: 7961ac218bdcff3479fa939e34867298, type: 3}
+  scenarioSettings: {fileID: 4900000, guid: dbd9f60f23efa494bbb18df327c6c253, type: 3}
   faunaList:
   - monsterType: 8
     minRange: 1

@@ -1,10 +1,12 @@
 ﻿using System.Collections.Generic;
 using Logs;
+using Object_Pools;
+using UtilityScripts;
 
 public class EvangelizeData : PlayerAction {
     public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.EVANGELIZE;
     public override string name => "Preach";
-    public override string description => GetDescription();
+    public override string description => "This Ability instructs the character to preach about Demon Worship to someone they know. Only available on Cultists."; //GetDescription();
     public override PLAYER_SKILL_CATEGORY category => PLAYER_SKILL_CATEGORY.PLAYER_ACTION;
     public override bool canBeCastOnBlessed => true;
     
@@ -124,18 +126,18 @@ public class EvangelizeData : PlayerAction {
         if (obj is Character targetCharacter) {
             UIManager.Instance.HideObjectPicker();
             
-            Log instructedLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "NonIntel", "instructed_evangelize", null, LOG_TAG.Player, LOG_TAG.Crimes);
+            Log instructedLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "NonIntel", "instructed_evangelize", null, LogUtilities.Cultist_Instruct_Tags);
             instructedLog.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             instructedLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
             instructedLog.AddLogToDatabase();
-            PlayerManager.Instance.player.ShowNotificationFromPlayer(instructedLog);
+            PlayerManager.Instance.player.ShowNotificationFromPlayer(instructedLog, true);
             
             if (actor.jobComponent.TryCreateEvangelizeJob(targetCharacter) == false) {
                 Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "NonIntel", "evangelize_fail", null, LOG_TAG.Player);
                 log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                 log.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
                 log.AddLogToDatabase();
-                PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
+                PlayerManager.Instance.player.ShowNotificationFromPlayer(log, true);
             } else {
                 base.ActivateAbility(actor);
             }

@@ -46,10 +46,9 @@ public class DefendBehaviour : CharacterBehaviourComponent {
                 }
             }
         } else {
-            HexTile hex = actor.hexTileLocation;
-            if(hex != null) {
-                Character chosenTarget = hex.GetFirstCharacterInsideHexThatMeetCriteria<Character>(target => actor != target && actor.IsHostileWith(target) && !target.isDead && !target.isAlliedWithPlayer
-                    && target.marker && target.marker.isMainVisualActive && actor.movementComponent.HasPathTo(target.gridTileLocation) && !target.isInLimbo && !target.isBeingSeized && target.carryComponent.IsNotBeingCarried());
+            Area area = actor.areaLocation;
+            if(area != null) {
+                Character chosenTarget = area.locationCharacterTracker.GetFirstCharacterInsideHexThatIsAliveHostileNotAlliedWithPlayerThatHasPathTo(actor);
                 if(chosenTarget != null) {
                     return chosenTarget;
                 }
@@ -73,11 +72,11 @@ public class DefendBehaviour : CharacterBehaviourComponent {
     //         return true;
     //     }
     //     return false;
-    //     //if (character.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner && character.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.settlementOnTile == character.behaviourComponent.assignedTargetSettlement) {
+    //     //if (character.gridTileLocation.hexTileOwner && character.gridTileLocation.hexTileOwner.settlementOnTile == character.behaviourComponent.assignedTargetSettlement) {
     //     //    log += "\n-Already in the target npcSettlement";
     //     //    TileObject targetTileObject = null;
-    //     //    Assert.IsTrue(character.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.settlementOnTile is NPCSettlement, $"{character.name} is trying to raid a settlement that is not an NPC Settlement");
-    //     //    NPCSettlement npcSettlement = character.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.settlementOnTile as NPCSettlement;
+    //     //    Assert.IsTrue(character.gridTileLocation.hexTileOwner.settlementOnTile is NPCSettlement, $"{character.name} is trying to raid a settlement that is not an NPC Settlement");
+    //     //    NPCSettlement npcSettlement = character.gridTileLocation.hexTileOwner.settlementOnTile as NPCSettlement;
     //     //    for (int i = 0; i < npcSettlement.mainStorage.pointsOfInterest.Count; i++) {
     //     //        IPointOfInterest poi = npcSettlement.mainStorage.pointsOfInterest.ElementAt(i);
     //     //        if (poi is Artifact || poi is ResourcePile) {

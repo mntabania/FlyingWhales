@@ -53,6 +53,69 @@ TextureImporter:
   - first:
       213: 1531121323253262507
     second: icon_ratvillager
+  - first:
+      213: 4293407070905854547
+    second: element_earth_icon
+  - first:
+      213: -3602715541958335077
+    second: element_electric_icon
+  - first:
+      213: 8527901218538839502
+    second: element_fire_icon
+  - first:
+      213: 4827937903965344179
+    second: element_ice_icon
+  - first:
+      213: -9215279008727855101
+    second: element_normal_icon
+  - first:
+      213: -7536090202175102610
+    second: element_poison_icon
+  - first:
+      213: -4574964752767626041
+    second: element_water_icon
+  - first:
+      213: 5418670006307940872
+    second: element_wind_icon
+  - first:
+      213: 749631002031189387
+    second: piercing_icon
+  - first:
+      213: -48485338325469877
+    second: resistance_icon
+  - first:
+      213: -6210221001400506702
+    second: stats_attack_icon
+  - first:
+      213: -639575249176307655
+    second: stats_health_icon
+  - first:
+      213: -330086751256627328
+    second: stats_speed_icon
+  - first:
+      213: -2149108924096473933
+    second: spirit_energy_icon
+  - first:
+      213: 4377157959891871483
+    second: upgrade_arrow_icon
+  - first:
+      213: 5128765376105686326
+    second: bonus_charges_icon
+  - first:
+      213: 8331790326296830240
+    second: icon_object
+  - first:
+      213: 5671965764122512287
+    second: icon_target
+  - first:
+      213: -4969417178778282018
+    second: icon_village
+  - first:
+      213: -2520808341190306995
+    second: icon_structure
+  - first:
+      213: -4048909695388612998
+    second: traveller_hover
   externalObjects: {}
   serializedVersion: 11
   mipmaps:
@@ -82,7 +145,7 @@ TextureImporter:
   maxTextureSize: 2048
   textureSettings:
     serializedVersion: 2
-    filterMode: -1
+    filterMode: 1
     aniso: -1
     mipBias: -100
     wrapU: -1
@@ -93,7 +156,7 @@ TextureImporter:
   compressionQuality: 50
   spriteMode: 2
   spriteExtrude: 1
-  spriteMeshType: 1
+  spriteMeshType: 0
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
   spritePixelsToUnits: 100
@@ -122,15 +185,228 @@ TextureImporter:
     overridden: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 3
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 3
+    buildTarget: Windows Store Apps
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
+      name: bonus_charges_icon
+      rect:
+        serializedVersion: 2
+        x: 127
+        y: 223
+        width: 31
+        height: 31
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6352a1bafe80d2740800000000000000
+      internalID: 5128765376105686326
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: element_earth_icon
+      rect:
+        serializedVersion: 2
+        x: 38
+        y: 126
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 35a6e79cbfe359b30800000000000000
+      internalID: 4293407070905854547
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: element_electric_icon
+      rect:
+        serializedVersion: 2
+        x: 44
+        y: 168
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b956bc67d45900ec0800000000000000
+      internalID: -3602715541958335077
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: element_fire_icon
+      rect:
+        serializedVersion: 2
+        x: 55
+        y: 222
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ecdd0aab9f0395670800000000000000
+      internalID: 8527901218538839502
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: element_ice_icon
+      rect:
+        serializedVersion: 2
+        x: 38
+        y: 90
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3b19f73b1f7400340800000000000000
+      internalID: 4827937903965344179
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: element_normal_icon
+      rect:
+        serializedVersion: 2
+        x: 38
+        y: 54
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 30099a2f090cc1080800000000000000
+      internalID: -9215279008727855101
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: element_poison_icon
+      rect:
+        serializedVersion: 2
+        x: 38
+        y: 18
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e612d0893ed6a6790800000000000000
+      internalID: -7536090202175102610
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: element_water_icon
+      rect:
+        serializedVersion: 2
+        x: 74
+        y: 132
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7c45a5bebc57280c0800000000000000
+      internalID: -4574964752767626041
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: element_wind_icon
+      rect:
+        serializedVersion: 2
+        x: 80
+        y: 186
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 80a6c0159abf23b40800000000000000
+      internalID: 5418670006307940872
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
       name: icon_chargesB
       rect:
         serializedVersion: 2
-        x: 104
-        y: 97
+        x: 213
+        y: 111
         width: 21
         height: 31
       alignment: 0
@@ -150,8 +426,8 @@ TextureImporter:
       name: icon_cooldown
       rect:
         serializedVersion: 2
-        x: 68
-        y: 70
+        x: 110
+        y: 135
         width: 23
         height: 26
       alignment: 0
@@ -171,8 +447,8 @@ TextureImporter:
       name: icon_cultist
       rect:
         serializedVersion: 2
-        x: 60
-        y: 20
+        x: 230
+        y: 230
         width: 24
         height: 24
       alignment: 0
@@ -192,8 +468,8 @@ TextureImporter:
       name: icon_demon
       rect:
         serializedVersion: 2
-        x: 84
-        y: 44
+        x: 230
+        y: 202
         width: 24
         height: 24
       alignment: 0
@@ -213,8 +489,8 @@ TextureImporter:
       name: icon_ideology
       rect:
         serializedVersion: 2
-        x: 24
-        y: 2
+        x: 55
+        y: 204
         width: 17
         height: 14
       alignment: 0
@@ -234,8 +510,8 @@ TextureImporter:
       name: icon_leader
       rect:
         serializedVersion: 2
-        x: 84
-        y: 22
+        x: 144
+        y: 140
         width: 24
         height: 22
       alignment: 0
@@ -255,8 +531,8 @@ TextureImporter:
       name: icon_mana
       rect:
         serializedVersion: 2
-        x: 32
-        y: 42
+        x: 127
+        y: 193
         width: 26
         height: 26
       alignment: 0
@@ -276,8 +552,8 @@ TextureImporter:
       name: icon_monster
       rect:
         serializedVersion: 2
-        x: 32
-        y: 16
+        x: 194
+        y: 196
         width: 24
         height: 24
       alignment: 0
@@ -294,11 +570,32 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
+      name: icon_object
+      rect:
+        serializedVersion: 2
+        x: 222
+        y: 174
+        width: 24
+        height: 24
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 02165f5782770a370800000000000000
+      internalID: 8331790326296830240
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
       name: icon_plague
       rect:
         serializedVersion: 2
-        x: 0
-        y: 90
+        x: 2
+        y: 162
         width: 38
         height: 38
       alignment: 0
@@ -318,8 +615,8 @@ TextureImporter:
       name: icon_ratvillager
       rect:
         serializedVersion: 2
-        x: 60
-        y: 44
+        x: 194
+        y: 168
         width: 24
         height: 24
       alignment: 0
@@ -336,11 +633,32 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
+      name: icon_structure
+      rect:
+        serializedVersion: 2
+        x: 222
+        y: 146
+        width: 24
+        height: 24
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d4392846b2a440dd0800000000000000
+      internalID: -2520808341190306995
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
       name: icon_threat
       rect:
         serializedVersion: 2
-        x: 40
-        y: 70
+        x: 162
+        y: 194
         width: 28
         height: 26
       alignment: 0
@@ -360,8 +678,8 @@ TextureImporter:
       name: icon_undead
       rect:
         serializedVersion: 2
-        x: 92
-        y: 72
+        x: 157
+        y: 166
         width: 24
         height: 24
       alignment: 0
@@ -378,11 +696,32 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
+      name: icon_village
+      rect:
+        serializedVersion: 2
+        x: 185
+        y: 140
+        width: 24
+        height: 24
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ed7523ea765190bb0800000000000000
+      internalID: -4969417178778282018
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
       name: icon_villager
       rect:
         serializedVersion: 2
-        x: 0
-        y: 0
+        x: 116
+        y: 165
         width: 24
         height: 24
       alignment: 0
@@ -402,8 +741,8 @@ TextureImporter:
       name: Key_A
       rect:
         serializedVersion: 2
-        x: 72
-        y: 96
+        x: 2
+        y: 126
         width: 32
         height: 32
       alignment: 0
@@ -423,8 +762,8 @@ TextureImporter:
       name: Key_D
       rect:
         serializedVersion: 2
-        x: 0
-        y: 24
+        x: 2
+        y: 90
         width: 32
         height: 32
       alignment: 0
@@ -444,8 +783,8 @@ TextureImporter:
       name: Key_S
       rect:
         serializedVersion: 2
-        x: 0
-        y: 56
+        x: 2
+        y: 54
         width: 32
         height: 32
       alignment: 0
@@ -465,8 +804,8 @@ TextureImporter:
       name: Key_W
       rect:
         serializedVersion: 2
-        x: 40
-        y: 96
+        x: 2
+        y: 18
         width: 32
         height: 32
       alignment: 0
@@ -478,6 +817,174 @@ TextureImporter:
       bones: []
       spriteID: 4a51c22c6d70c72e0800000000000000
       internalID: -2126816305063651932
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: piercing_icon
+      rect:
+        serializedVersion: 2
+        x: 162
+        y: 224
+        width: 30
+        height: 30
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b8d60b4bc69376a00800000000000000
+      internalID: 749631002031189387
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: resistance_icon
+      rect:
+        serializedVersion: 2
+        x: 196
+        y: 224
+        width: 30
+        height: 30
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b45bb4877deb35ff0800000000000000
+      internalID: -48485338325469877
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: spirit_energy_icon
+      rect:
+        serializedVersion: 2
+        x: 91
+        y: 222
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3b49b9be1d4dc22e0800000000000000
+      internalID: -2149108924096473933
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: stats_attack_icon
+      rect:
+        serializedVersion: 2
+        x: 74
+        y: 96
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2b62ad207ecd0d9a0800000000000000
+      internalID: -6210221001400506702
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: stats_health_icon
+      rect:
+        serializedVersion: 2
+        x: 74
+        y: 60
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 938d6b113b5cf17f0800000000000000
+      internalID: -639575249176307655
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: stats_speed_icon
+      rect:
+        serializedVersion: 2
+        x: 74
+        y: 24
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 087394e39db4b6bf0800000000000000
+      internalID: -330086751256627328
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: traveller_hover
+      rect:
+        serializedVersion: 2
+        x: 2
+        y: 204
+        width: 49
+        height: 50
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a760ab685126fc7c0800000000000000
+      internalID: -4048909695388612998
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: upgrade_arrow_icon
+      rect:
+        serializedVersion: 2
+        x: 2
+        y: 4
+        width: 15
+        height: 10
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bf6e02d29f9cebc30800000000000000
+      internalID: 4377157959891871483
       vertices: []
       indices: 
       edges: []

@@ -8,6 +8,7 @@ using Interrupts;
 using Crime_System;
 using UtilityScripts;
 using Locations.Settlements;
+using Object_Pools;
 
 public class CrimeManager : BaseMonoBehaviour {
     public static CrimeManager Instance;
@@ -84,13 +85,13 @@ public class CrimeManager : BaseMonoBehaviour {
             if(crime is ActualGoapNode action && action.isAssumption) {
                 //Do not log accuse text
             } else {
-                Log addLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "CrimeSystem", "become_criminal", null, LOG_TAG.Life_Changes, LOG_TAG.Crimes);
+                Log addLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "CrimeSystem", "become_criminal", null, LogUtilities.Criminal_Tags);
                 addLog.AddToFillers(criminal, criminal.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                 addLog.AddToFillers(null, crimeTypeObj.accuseText, LOG_IDENTIFIER.STRING_1);
                 addLog.AddToFillers(witness, witness.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-                //addLog.AddToFillers(null, crimeTypeObj.name, LOG_IDENTIFIER.STRING_2);
                 addLog.AddLogToDatabase();
                 PlayerManager.Instance.player.ShowNotificationFrom(criminal, addLog);
+                LogPool.Release(addLog);
             }
             Messenger.Broadcast(CharacterSignals.CHARACTER_ACCUSED_OF_CRIME, criminal, crimeType, witness);
         }
@@ -155,12 +156,13 @@ public class CrimeManager : BaseMonoBehaviour {
         }
 
         if (key != string.Empty) {
-            Log addLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "CrimeSystem", key, null, LOG_TAG.Life_Changes, LOG_TAG.Crimes, LOG_TAG.Major);
+            Log addLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "CrimeSystem", key, null, LogUtilities.Declare_Wanted_Tags);
             addLog.AddToFillers(authority, authority.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             addLog.AddToFillers(criminal, criminal.name, LOG_IDENTIFIER.TARGET_CHARACTER);
             addLog.AddToFillers(null, crimeData.crimeTypeObj.name, LOG_IDENTIFIER.STRING_1);
             addLog.AddLogToDatabase();
             PlayerManager.Instance.player.ShowNotificationFrom(criminal, addLog);
+            LogPool.Release(addLog);
         }
         return key == "wanted";
     }
@@ -190,8 +192,10 @@ public class CrimeManager : BaseMonoBehaviour {
         } else if (consideredAction.associatedJobType == JOB_TYPE.SPREAD_RUMOR) {
             return CRIME_SEVERITY.Infraction;
         } else if (actionType == INTERACTION_TYPE.STEAL
+            || actionType == INTERACTION_TYPE.STEAL_ANYTHING
             || actionType == INTERACTION_TYPE.POISON
-            || actionType == INTERACTION_TYPE.PICKPOCKET) {
+            || actionType == INTERACTION_TYPE.PICKPOCKET
+            || actionType == INTERACTION_TYPE.STEAL_COINS) {
             return CRIME_SEVERITY.Misdemeanor;
         } else if (actionType == INTERACTION_TYPE.PICK_UP) {
             if(consideredAction.poiTarget is TileObject targetTileObject) {
@@ -270,15 +274,17 @@ public class CrimeManager : BaseMonoBehaviour {
                     string emotions = crimeSeverityObj.EffectAndReaction(witness, actor, target, crimeTypeObj, crime, reactionStatus);
                     if (emotions != string.Empty) {
                         if (!CharacterManager.Instance.EmotionsChecker(emotions)) {
+#if DEBUG_LOG
                             string error = "Action Error in Witness Reaction To Actor (Duplicate/Incompatible Emotions Triggered)";
                             error += $"\n-Witness: {witness}";
                             error += $"\n-Action: {crime.name}";
                             error += $"\n-Actor: {actor.name}";
                             error += $"\n-Target: {target.nameWithID}";
                             witness.logComponent.PrintLogErrorIfActive(error);
+#endif
                         } else {
                             //add log of emotions felt
-                            Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "CrimeSystem", "emotions_crime_" + reactionStatus.ToString().ToLower(), null, LOG_TAG.Life_Changes, LOG_TAG.Crimes);
+                            Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "CrimeSystem", "emotions_crime_" + reactionStatus.ToString().ToLower(), null, LogUtilities.Life_Changes_Crimes_Tags);
                             if (reactionStatus == REACTION_STATUS.INFORMED) {
                                 log.AddTag(LOG_TAG.Informed);
                             } else if (reactionStatus == REACTION_STATUS.WITNESSED) {
@@ -287,7 +293,7 @@ public class CrimeManager : BaseMonoBehaviour {
                             log.AddToFillers(witness, witness.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                             log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.TARGET_CHARACTER);
                             log.AddToFillers(null, UtilityScripts.Utilities.GetFirstFewEmotionsAndComafy(emotions, 2), LOG_IDENTIFIER.STRING_1);
-                            log.AddLogToDatabase();
+                            log.AddLogToDatabase(true);
                         }
                     }
 
@@ -423,9 +429,9 @@ public class CrimeManager : BaseMonoBehaviour {
     //    reactor.relationshipContainer.AdjustOpinion(reactor, actor, "Heinous Crime", -40);
     //    MakeCharacterACriminal(actor, null, CRIME_SEVERITY.Heinous, interrupt);
     //}
-    #endregion
+#endregion
 
-    #region Crime Severity
+#region Crime Severity
     public CrimeSeverity GetCrimeSeverity(CRIME_SEVERITY severityType) {
         if (_crimeSeverities.ContainsKey(severityType)) {
             return _crimeSeverities[severityType];
@@ -438,7 +444,7 @@ public class CrimeManager : BaseMonoBehaviour {
         }
         return null;
     }
-    #endregion
+#endregion
 }
 
 public class CrimeData : ISavable {
@@ -456,11 +462,11 @@ public class CrimeData : ISavable {
     public List<Faction> factionsThatConsidersWanted { get; private set; }
     public bool isRemoved { get; private set; }
 
-    #region getters
+#region getters
     public CrimeType crimeTypeObj => CrimeManager.Instance.GetCrimeType(crimeType);
     public OBJECT_TYPE objectType => OBJECT_TYPE.Crime;
     public System.Type serializedData => typeof(SaveDataCrimeData);
-    #endregion
+#endregion
 
     public CrimeData(CRIME_TYPE crimeType, CRIME_SEVERITY crimeSeverity, ICrimeable crime, Character criminal, IPointOfInterest target, Faction targetFaction) {
         persistentID = UtilityScripts.Utilities.GetNewUniqueID();
@@ -508,7 +514,7 @@ public class CrimeData : ISavable {
     }
 
 
-    #region Listeners
+#region Listeners
     private void SubscribeToListeners() {
         Messenger.AddListener<Character>(CharacterSignals.CHARACTER_DEATH, OnCharacterDied);
     }
@@ -524,17 +530,17 @@ public class CrimeData : ISavable {
                 if (AreAllWitnessesDead()) {
                     criminal.crimeComponent.RemoveCrime(this);
 
-                    Log addLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "CrimeSystem", "dead_witnesses", null, LOG_TAG.Life_Changes, LOG_TAG.Crimes);
+                    Log addLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "CrimeSystem", "dead_witnesses", null, LogUtilities.Life_Changes_Crimes_Tags);
                     addLog.AddToFillers(criminal, criminal.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                     addLog.AddToFillers(null, crimeTypeObj.name, LOG_IDENTIFIER.STRING_1);
-                    addLog.AddLogToDatabase();
+                    addLog.AddLogToDatabase(true);
                 }
             }
         }
     }
-    #endregion
+#endregion
 
-    #region General
+#region General
     public void SetCrimeStatus(CRIME_STATUS status) {
         if(crimeStatus != status) {
             crimeStatus = status;
@@ -593,9 +599,9 @@ public class CrimeData : ISavable {
         //    witnesses[i].crimeComponent.RemoveWitnessedCrime(this);
         //}
     }
-    #endregion
+#endregion
 
-    #region Witnesses
+#region Witnesses
     public bool IsWitness(Character character) {
         return witnesses.Contains(character);
     }
@@ -615,9 +621,9 @@ public class CrimeData : ISavable {
         //If there are no witnesses do not consider this true
         return false;
     }
-    #endregion
+#endregion
 
-    #region Faction
+#region Faction
     public void AddFactionThatConsidersWanted(Faction faction) {
         if (!factionsThatConsidersWanted.Contains(faction)) {
             factionsThatConsidersWanted.Add(faction);
@@ -629,17 +635,17 @@ public class CrimeData : ISavable {
             if (criminal.isSettlementRuler) {
                 if(criminal.homeSettlement.owner == faction) {
                     criminal.homeSettlement.SetRuler(null);
-                    Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "NonIntel", "no_longer_settlement_ruler", null, LOG_TAG.Life_Changes, LOG_TAG.Crimes);
+                    Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "NonIntel", "no_longer_settlement_ruler", null, LogUtilities.Life_Changes_Crimes_Tags);
                     log.AddToFillers(criminal, criminal.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                    criminal.logComponent.RegisterLog(log, onlyClickedCharacter: false);
+                    criminal.logComponent.RegisterLog(log, true);
                 }
             }
 
             if (faction.leader == criminal) {
                 faction.SetLeader(null);
-                Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "NonIntel", "no_longer_faction_leader", null, LOG_TAG.Life_Changes, LOG_TAG.Crimes);
+                Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "NonIntel", "no_longer_faction_leader", null, LogUtilities.Life_Changes_Crimes_Tags);
                 log.AddToFillers(criminal, criminal.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                criminal.logComponent.RegisterLog(log, onlyClickedCharacter: false);
+                criminal.logComponent.RegisterLog(log, true);
             }
             if (target is Character targetCharacter && crime is ActualGoapNode crimeAction) {
                 CRIME_SEVERITY severityOfCrime = faction.GetCrimeSeverity(criminal, target, crimeType);
@@ -678,9 +684,9 @@ public class CrimeData : ISavable {
     public bool HasWanted() {
         return factionsThatConsidersWanted.Count > 0;
     }
-    #endregion
+#endregion
 
-    #region Loading
+#region Loading
     public void LoadReferences(SaveDataCrimeData data) {
         if (!string.IsNullOrEmpty(data.crime)) {
             if(data.crimableType == CRIMABLE_TYPE.Action) {
@@ -707,14 +713,16 @@ public class CrimeData : ISavable {
         }
         for (int i = 0; i < data.witnesses.Count; i++) {
             Character character = CharacterManager.Instance.GetCharacterByPersistentID(data.witnesses[i]);
-            witnesses.Add(character);
+            if (character != null) {
+                witnesses.Add(character);
+            }
         }
         for (int i = 0; i < data.factionsThatConsidersWanted.Count; i++) {
             Faction targetFaction = FactionManager.Instance.GetFactionByPersistentID(data.factionsThatConsidersWanted[i]);
             factionsThatConsidersWanted.Add(targetFaction);
         }
     }
-    #endregion
+#endregion
 }
 
 [System.Serializable]
@@ -736,11 +744,11 @@ public class SaveDataCrimeData : SaveData<CrimeData>, ISavableCounterpart {
     public List<string> witnesses;
     public List<string> factionsThatConsidersWanted;
 
-    #region getters
+#region getters
     public OBJECT_TYPE objectType => OBJECT_TYPE.Crime;
-    #endregion
+#endregion
 
-    #region Overrides
+#region Overrides
     public override void Save(CrimeData data) {
         persistentID = data.persistentID;
         crimeSeverity = data.crimeSeverity;
@@ -784,5 +792,5 @@ public class SaveDataCrimeData : SaveData<CrimeData>, ISavableCounterpart {
         CrimeData interrupt = new CrimeData(this);
         return interrupt;
     }
-    #endregion
+#endregion
 }

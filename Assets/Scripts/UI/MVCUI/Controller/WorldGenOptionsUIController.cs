@@ -99,7 +99,7 @@ public class WorldGenOptionsUIController : MVCUIController, WorldGenOptionsUIVie
 	}
 	public void ApplyCurrentSettingsToData() {
 		//apply chosen biomes to actual data
-		ApplyBiomeSettings();
+		// ApplyBiomeSettings();
 		WorldSettings.Instance.worldSettingsData.factionSettings.FinalizeFactionTemplates();
 	}
 	private void UpdateUIBasedOnCurrentSettings(WorldSettingsData p_settings) {
@@ -111,7 +111,7 @@ public class WorldGenOptionsUIController : MVCUIController, WorldGenOptionsUIVie
 		m_worldGenOptionsUIView.SetCooldownDropdownValue(UtilityScripts.Utilities.NotNormalizedConversionEnumToString(p_settings.playerSkillSettings.cooldownSpeed.ToString()));
 		m_worldGenOptionsUIView.SetCostsDropdownValue(UtilityScripts.Utilities.NotNormalizedConversionEnumToString(p_settings.playerSkillSettings.costAmount.ToString()));
 		m_worldGenOptionsUIView.SetChargesDropdownValue(UtilityScripts.Utilities.NotNormalizedConversionEnumToString(p_settings.playerSkillSettings.chargeAmount.ToString()));
-		m_worldGenOptionsUIView.SetThreatDropdownValue(UtilityScripts.Utilities.NotNormalizedConversionEnumToString(p_settings.playerSkillSettings.threatAmount.ToString()));
+		m_worldGenOptionsUIView.SetThreatDropdownValue(UtilityScripts.Utilities.NotNormalizedConversionEnumToString(p_settings.playerSkillSettings.retaliation.ToString()));
 		m_worldGenOptionsUIView.SetOmnipotentDropdownValue(UtilityScripts.Utilities.NotNormalizedConversionEnumToString(p_settings.playerSkillSettings.omnipotentMode.ToString()));
 	}
 
@@ -207,7 +207,7 @@ public class WorldGenOptionsUIController : MVCUIController, WorldGenOptionsUIVie
 	}
 	private void AddDefaultFactionSetting() {
 		int maxFactions = WorldSettings.Instance.worldSettingsData.mapSettings.GetMaxFactions();
-		int maxVillages = WorldSettings.Instance.worldSettingsData.mapSettings.GetMaxVillages();
+		int maxVillages = WorldSettings.Instance.worldSettingsData.mapSettings.GetMaxStartingVillages();
 		int dividedVillages = maxVillages / maxFactions;
 		FactionTemplate factionTemplate = WorldSettings.Instance.worldSettingsData.factionSettings.AddFactionSetting(dividedVillages);
 		Sprite factionEmblem = FactionEmblemRandomizer.GetUnusedFactionEmblem();
@@ -218,7 +218,7 @@ public class WorldGenOptionsUIController : MVCUIController, WorldGenOptionsUIVie
 		UpdateVillageCount();
 	}
 	private void UpdateVillageCount() {
-		int maxVillages = WorldSettings.Instance.worldSettingsData.mapSettings.GetMaxVillages();
+		int maxVillages = WorldSettings.Instance.worldSettingsData.mapSettings.GetMaxStartingVillages();
 		int currentVillageCount = WorldSettings.Instance.worldSettingsData.factionSettings.GetCurrentTotalVillageCountBasedOnFactions();
 		m_worldGenOptionsUIView.UpdateVillageCount(currentVillageCount, maxVillages);
 		onUpdateVillageCountAction?.Invoke();
@@ -263,8 +263,8 @@ public class WorldGenOptionsUIController : MVCUIController, WorldGenOptionsUIVie
 	public void OnChangeSkillChargeAmount(SKILL_CHARGE_AMOUNT p_value) {
 		WorldSettings.Instance.worldSettingsData.playerSkillSettings.SetChargeAmount(p_value);
 	}
-	public void OnChangeThreatAmount(THREAT_AMOUNT p_value) {
-		WorldSettings.Instance.worldSettingsData.playerSkillSettings.SetThreatAmount(p_value);
+	public void OnChangeThreatAmount(RETALIATION p_value) {
+		WorldSettings.Instance.worldSettingsData.playerSkillSettings.SetRetaliationState(p_value);
 	}
 	public void OnChangeOmnipotentMode(OMNIPOTENT_MODE p_value) {
 		WorldSettings.Instance.worldSettingsData.playerSkillSettings.SetOmnipotentMode(p_value);
@@ -279,10 +279,10 @@ public class WorldGenOptionsUIController : MVCUIController, WorldGenOptionsUIVie
 
 	#region Tooltips
 	public void OnHoverOverMapSize(UIHoverPosition p_pos) {
-		string summary = "<b>Small</b> - Can accommodate 1 small region and 1 village only." +
-		                 "\n<b>Medium</b> - Can accommodate 2 regions with up to 4 villages." +
-		                 "\n<b>Large</b> - Can accommodate 3 regions with up to 6 villages." +
-		                 "\n<b>Extra Large</b> - Can accommodate 4 regions with up to 8 villages.";
+		string summary = "<b>Small</b> - Can accommodate 1 faction and 1 village only." +
+		                 "\n<b>Medium</b> - Can accommodate 1 faction with up to 2 villages." +
+		                 "\n<b>Large</b> - Can accommodate 2 factions with up to 4 villages." +
+		                 "\n<b>Extra Large</b> - Can accommodate 3 factions with up to 6 villages.";
 		Tooltip.Instance.ShowSmallInfo(summary, pos: p_pos, "Map Size", autoReplaceText: false);
 	}
 	public void OnHoverOutMapSize() {
@@ -300,7 +300,7 @@ public class WorldGenOptionsUIController : MVCUIController, WorldGenOptionsUIVie
 	}
 	public void OnHoverOverVictory(UIHoverPosition p_pos) {
 		string summary = "Set the game's victory condition.\n" +
-		                 "\n<b>Eliminate All</b> - Wipe out or recruit all Villagers to win the game." +
+		                 "\n<b>Summon Ruinarch</b> - Upgrade Portal to Level 8 to win the game." +
 		                 "\n<b>Sandbox</b> - No victory conditions. Play to your heart's content.";
 		Tooltip.Instance.ShowSmallInfo(summary, pos: p_pos, "Victory Condition", autoReplaceText: false);
 	}
@@ -319,12 +319,11 @@ public class WorldGenOptionsUIController : MVCUIController, WorldGenOptionsUIVie
 		Tooltip.Instance.HideSmallInfo();
 	}
 	public void OnHoverOverCosts(UIHoverPosition p_pos) {
-		string summary = "Set the mana cost of your abilities.\n" +
-		                 "\n<b>None</b> - All actions have zero mana cost." +
-		                 "\n<b>Half</b> - Mana cost reduced to half of normal (rounded up)." +
-		                 "\n<b>Normal</b> - Normal mana cost." +
-		                 "\n<b>Double</b> - Mana cost double of normal.";
-		Tooltip.Instance.ShowSmallInfo(summary, pos: p_pos, $"{UtilityScripts.Utilities.ManaIcon()} Costs", autoReplaceText: false);
+		string summary = "Set the costs of your abilities.\n" +
+						 "\n<b>None</b> - All actions have zero cost." +
+						 "\n<b>Half</b> - Costs are reduced to half of normal (rounded up)." +
+						 "\n<b>Normal</b> - Normal cost.";
+		Tooltip.Instance.ShowSmallInfo(summary, pos: p_pos, $"Costs", autoReplaceText: false);
 	}
 	public void OnHoverOutCosts() {
 		Tooltip.Instance.HideSmallInfo();
@@ -341,11 +340,8 @@ public class WorldGenOptionsUIController : MVCUIController, WorldGenOptionsUIVie
 		Tooltip.Instance.HideSmallInfo();
 	}
 	public void OnHoverOverThreat(UIHoverPosition p_pos) {
-		string summary = "Set the threat amount normally produced by your abilities.\n" +
-		                 "\n<b>None</b> - All your actions do not produce Threat." +
-		                 "\n<b>Half</b> - Threat amount decreased by half." +
-		                 "\n<b>Normal</b> - Normal threat amount.";
-		Tooltip.Instance.ShowSmallInfo(summary, pos: p_pos, $"{UtilityScripts.Utilities.ThreatIcon()} Threat", autoReplaceText: false);
+		string summary = "Enable or Disable Retaliation. If Disabled, Angels will no longer spawn and attack your base.";
+		Tooltip.Instance.ShowSmallInfo(summary, pos: p_pos, $"Retaliation", autoReplaceText: false);
 	}
 	public void OnHoverOutThreat() {
 		Tooltip.Instance.HideSmallInfo();

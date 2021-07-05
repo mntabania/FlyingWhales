@@ -6,6 +6,7 @@ using Interrupts;
 using UnityEngine.Assertions;
 using Crime_System;
 using Logs;
+using Object_Pools;
 
 public class ReportCrime : GoapAction {
     public override ACTION_CATEGORY actionCategory => ACTION_CATEGORY.VERBAL;
@@ -25,12 +26,14 @@ public class ReportCrime : GoapAction {
         SetState("Report Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
+#if DEBUG_LOG
         string costLog = $"\n{name} {target.nameWithID}: +10(Constant)";
         actor.logComponent.AppendCostLog(costLog);
+#endif
         return 10;
     }
-    public override void AddFillersToLog(ref Log log, ActualGoapNode node) {
-        base.AddFillersToLog(ref log, node);
+    public override void AddFillersToLog(Log log, ActualGoapNode node) {
+        base.AddFillersToLog(log, node);
         Character actor = node.actor;
         IPointOfInterest poiTarget = node.poiTarget;
         OtherData[] otherData = node.otherData;
@@ -72,8 +75,8 @@ public class ReportCrime : GoapAction {
         }
         return response;
     }
-    public override void PopulateReactionsToActor(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
-        base.PopulateReactionsToActor(reactions, actor, target, witness, node, status);
+    public override void PopulateEmotionReactionsToActor(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
+        base.PopulateEmotionReactionsToActor(reactions, actor, target, witness, node, status);
         OtherData[] otherData = node.otherData;
 
         if (otherData[0].obj is ICrimeable reactable) {
@@ -102,9 +105,9 @@ public class ReportCrime : GoapAction {
     //    }
     //    return REACTABLE_EFFECT.Neutral;
     //}
-    #endregion
+#endregion
 
-    #region State Effects
+#region State Effects
     public void AfterReportSuccess(ActualGoapNode goapNode) {
         OtherData[] otherData = goapNode.otherData;
         ICrimeable crime = otherData[0].obj as ICrimeable;
@@ -130,14 +133,16 @@ public class ReportCrime : GoapAction {
             log.AddToFillers(sharer, sharer.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             log.AddToFillers(recipient, recipient.name, LOG_IDENTIFIER.TARGET_CHARACTER);
             log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.CHARACTER_3);
-            log.AddLogToDatabase();
+            log.AddLogToDatabase(true);
             return;
         }
 
         if (actor != recipient) {
+#if DEBUG_LOG
             string weightLog = "Report crime of " + sharer.name + " to " + recipient.name + ": " + crime.name + " with actor " + actor.name + " and target " + target.name;
             weightLog += "\nBase Belief Weight: 50";
             weightLog += "\nBase Disbelief Weight: 50";
+#endif
 
             WeightedDictionary<string> weights = new WeightedDictionary<string>();
             int beliefWeight = 150;
@@ -155,51 +160,75 @@ public class ReportCrime : GoapAction {
             // }
             if (opinionLabelOfRecipientToSharer == RelationshipManager.Friend) {
                 beliefWeight += 100;
+#if DEBUG_LOG
                 weightLog += "\nSource is Friend: Belief + 100";
+#endif
             } else if (opinionLabelOfRecipientToSharer == RelationshipManager.Close_Friend) {
                 beliefWeight += 250;
+#if DEBUG_LOG
                 weightLog += "\nSource is Close Friend: Belief + 250";
+#endif
             } else if (opinionLabelOfRecipientToSharer == RelationshipManager.Enemy) {
                 disbeliefWeight += 100;
+#if DEBUG_LOG
                 weightLog += "\nSource is Enemy: Disbelief + 100";
+#endif
             } else if (opinionLabelOfRecipientToSharer == RelationshipManager.Rival) {
                 disbeliefWeight += 250;
+#if DEBUG_LOG
                 weightLog += "\nSource is Rival: Disbelief + 250";
+#endif
             }
 
             REACTABLE_EFFECT reactableEffect = crime.GetReactableEffect(recipient);
             if (reactableEffect == REACTABLE_EFFECT.Positive) {
                 if (opinionLabelOfRecipientToActor == RelationshipManager.Friend || opinionLabelOfRecipientToActor == RelationshipManager.Close_Friend) {
                     beliefWeight += 500;
+#if DEBUG_LOG
                     weightLog += "\nActor is Friend/Close Friend: Belief + 500";
+#endif
                 } else if (opinionLabelOfRecipientToActor == RelationshipManager.Enemy) {
                     disbeliefWeight += 250;
+#if DEBUG_LOG
                     weightLog += "\nSource is Enemy: Disbelief + 250";
+#endif
                 } else if (opinionLabelOfRecipientToActor == RelationshipManager.Rival) {
                     disbeliefWeight += 500;
+#if DEBUG_LOG
                     weightLog += "\nSource is Rival: Disbelief + 500";
+#endif
                 }
             } else if (reactableEffect == REACTABLE_EFFECT.Negative) {
                 if (opinionLabelOfRecipientToActor == RelationshipManager.Enemy || opinionLabelOfRecipientToActor == RelationshipManager.Rival) {
                     beliefWeight += 250;
+#if DEBUG_LOG
                     weightLog += "\nActor is Enemy/Rival: Belief + 250";
+#endif
                 } else if (opinionLabelOfRecipientToActor == RelationshipManager.Friend) {
                     disbeliefWeight += 250;
+#if DEBUG_LOG
                     weightLog += "\nSource is Friend: Disbelief + 250";
+#endif
                 } else if (opinionLabelOfRecipientToActor == RelationshipManager.Close_Friend) {
                     disbeliefWeight += 500;
+#if DEBUG_LOG
                     weightLog += "\nSource is Close Friend: Disbelief + 500";
+#endif
                 }
             }
+#if DEBUG_LOG
             weightLog += "\nTotal Belief Weight: " + beliefWeight;
             weightLog += "\nTotal Disbelief Weight: " + disbeliefWeight;
+#endif
 
             weights.AddElement("Belief", beliefWeight);
             weights.AddElement("Disbelief", disbeliefWeight);
 
             string result = weights.PickRandomElementGivenWeights();
+#if DEBUG_LOG
             weightLog += "\nResult: " + result;
             sharer.logComponent.PrintLogIfActive(weightLog);
+#endif
 
             if (result == "Belief") {
                 //Recipient believes
@@ -213,25 +242,26 @@ public class ReportCrime : GoapAction {
                 } else {
                     Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "GoapAction", name, "not_crime", providedTags: LOG_TAG.Crimes);
                     log.AddToFillers(recipient, recipient.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                    log.AddLogToDatabase();
+                    log.AddLogToDatabase(true);
                 }
             } else {
                 //Recipient does not believe
                 CharacterManager.Instance.TriggerEmotion(EMOTION.Disappointment, recipient, sharer, REACTION_STATUS.INFORMED, crime as ActualGoapNode);
 
                 //Will only log on not believe because the log for believe report crime is already in the crime system
-                Log believeLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "GoapAction", name, result, shareActionItself, LOG_TAG.Crimes, LOG_TAG.Major);
+                Log believeLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "GoapAction", name, result, shareActionItself, logTags);
                 believeLog.AddToFillers(sharer, sharer.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                 believeLog.AddToFillers(recipient, recipient.name, LOG_IDENTIFIER.TARGET_CHARACTER);
                 believeLog.AddToFillers(null, "crime", LOG_IDENTIFIER.STRING_1);
                 believeLog.AddLogToDatabase();
                 PlayerManager.Instance.player.ShowNotificationFrom(actor, believeLog);
+                LogPool.Release(believeLog);
             }
         }
     }
-    #endregion
+#endregion
 
-    #region Requirements
+#region Requirements
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, OtherData[] otherData, JobQueueItem job) {
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData, job);
         if (satisfied) {
@@ -240,5 +270,5 @@ public class ReportCrime : GoapAction {
         }
         return false;
     }
-    #endregion
+#endregion
 }

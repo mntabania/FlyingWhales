@@ -12,7 +12,7 @@ public class SaveDataNPCSettlement : SaveDataBaseSettlement {
     public string rulerID;
     public SaveDataSettlementType settlementType;
     public SaveDataLocationEventManager eventManager;
-    public SaveDataSettlementClassTracker classTracker;
+    //public SaveDataSettlementClassTracker classTracker;
     public List<TILE_OBJECT_TYPE> neededObjects;
     public bool hasTriedToStealCorpse;
     public bool isUnderSiege;
@@ -20,9 +20,15 @@ public class SaveDataNPCSettlement : SaveDataBaseSettlement {
     public GameDate plaguedExpiry;
     public bool hasPeasants;
     public bool hasWorkers;
+    public bool hasOccupiedVillageSpot;
+    public Point occupiedVillageSpot;
 
     //Components
     public SaveDataSettlementVillageMigrationComponent migrationComponent;
+    public SaveDataSettlementResourcesComponent resourcesComponent;
+    public SaveDataSettlementClassComponent classComponent;
+    public SaveDataSettlementPartyComponent partyComponent;
+    public SaveDataSettlementStructureComponent structureComponent;
 
     public override void Save(BaseSettlement baseSettlement) {
         base.Save(baseSettlement);
@@ -56,8 +62,8 @@ public class SaveDataNPCSettlement : SaveDataBaseSettlement {
         eventManager = new SaveDataLocationEventManager();
         eventManager.Save(npcSettlement.eventManager);
         
-        classTracker = new SaveDataSettlementClassTracker();
-        classTracker.Save(npcSettlement.settlementClassTracker);
+        //classTracker = new SaveDataSettlementClassTracker();
+        //classTracker.Save(npcSettlement.settlementClassTracker);
         
         neededObjects = new List<TILE_OBJECT_TYPE>(npcSettlement.neededObjects);
 
@@ -70,6 +76,15 @@ public class SaveDataNPCSettlement : SaveDataBaseSettlement {
         hasWorkers = npcSettlement.hasWorkers;
 
         migrationComponent = new SaveDataSettlementVillageMigrationComponent(); migrationComponent.Save(npcSettlement.migrationComponent);
+        resourcesComponent = new SaveDataSettlementResourcesComponent(); resourcesComponent.Save(npcSettlement.resourcesComponent);
+        classComponent = new SaveDataSettlementClassComponent(); classComponent.Save(npcSettlement.classComponent);
+        partyComponent = new SaveDataSettlementPartyComponent(); partyComponent.Save(npcSettlement.partyComponent);
+        structureComponent = new SaveDataSettlementStructureComponent(); structureComponent.Save(npcSettlement.structureComponent);
+
+        hasOccupiedVillageSpot = npcSettlement.occupiedVillageSpot != null;
+        if (npcSettlement.occupiedVillageSpot != null) {
+            occupiedVillageSpot = new Point(npcSettlement.occupiedVillageSpot.mainSpot.areaData.xCoordinate, npcSettlement.occupiedVillageSpot.mainSpot.areaData.yCoordinate);
+        }
     }
     public override BaseSettlement Load() {
         return LandmarkManager.Instance.LoadNPCSettlement(this);

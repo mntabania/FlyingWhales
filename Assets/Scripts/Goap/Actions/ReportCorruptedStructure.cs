@@ -23,8 +23,10 @@ public class ReportCorruptedStructure : GoapAction {
         SetState("Report Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
+#if DEBUG_LOG
         string costLog = $"\n{name} {target.nameWithID}: +10(Constant)";
         actor.logComponent.AppendCostLog(costLog);
+#endif
         return 10;
     }
     public override LocationStructure GetTargetStructure(ActualGoapNode node) {
@@ -41,14 +43,14 @@ public class ReportCorruptedStructure : GoapAction {
     public override IPointOfInterest GetTargetToGoTo(ActualGoapNode goapNode) {
         return null;
     }
-    public override void AddFillersToLog(ref Log log, ActualGoapNode node) {
-        base.AddFillersToLog(ref log, node);
+    public override void AddFillersToLog(Log log, ActualGoapNode node) {
+        base.AddFillersToLog(log, node);
         LocationStructure structureToReport = node.otherData[0].obj as LocationStructure;
         log.AddToFillers(structureToReport, structureToReport.GetNameRelativeTo(node.actor), LOG_IDENTIFIER.LANDMARK_2);
     }
-    #endregion
+#endregion
 
-    #region Requirements
+#region Requirements
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, OtherData[] otherData, JobQueueItem job) { 
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData, job);
         if (satisfied) {
@@ -56,9 +58,9 @@ public class ReportCorruptedStructure : GoapAction {
         }
         return false;
     }
-    #endregion
+#endregion
 
-    #region State Effects
+#region State Effects
     //public void PreReportSuccess(ActualGoapNode goapNode) {
     //    object[] otherData = goapNode.otherData;
     //    LocationStructure structureToReport = otherData[0] as LocationStructure;
@@ -75,24 +77,32 @@ public class ReportCorruptedStructure : GoapAction {
             //     showCover:true, pauseAndResume: true);
             // PlayerUI.Instance.ShowGeneralConfirmation("Demonic Structure Reported", "Your demonic structure " + structureToReport.name + " has been reported! They can now attack this structure!");
         }
+        PlayerManager.Instance.player.AddCharacterThatHasReported(goapNode.actor);
         PlayerManager.Instance.player.threatComponent.AdjustThreatAndApplyModification(20); //15
-        TriggerCounterattack(goapNode.actor, structureToReport);
+        PlayerManager.Instance.player.retaliationComponent.ReportDemonicStructureRetaliation(goapNode.actor);
+
+        //Remove counter attack temporarily, since we now have retaliation
+        //TriggerCounterattack(goapNode.actor, structureToReport);
     }
-    #endregion
+#endregion
     
      private void TriggerCounterattack(Character character, LocationStructure targetDemonicStructure) {
+#if DEBUG_LOG
         string debugLog = GameManager.Instance.TodayLogString() + "Counterattack!";
+#endif
 
         //LocationStructure targetDemonicStructure = InnerMapManager.Instance.HasExistingWorldKnownDemonicStructure() ? 
         //    CollectionUtilities.GetRandomElement(InnerMapManager.Instance.worldKnownDemonicStructures): 
         //    PlayerManager.Instance.player.playerSettlement.GetRandomStructure();
-        
+        targetDemonicStructure = PlayerManager.Instance.player.playerSettlement.GetFirstStructureOfType(STRUCTURE_TYPE.THE_PORTAL);
         if (targetDemonicStructure == null) {
             //it is assumed that this only happens if the player casts a spell that is seen by another character,
             //but results in the destruction of the portal
             return;
         }
+#if DEBUG_LOG
         debugLog += "\n-TARGET: " + targetDemonicStructure.name;
+#endif
 
         if(character.faction != null && !character.faction.partyQuestBoard.HasPartyQuestWithTarget(PARTY_QUEST_TYPE.Counterattack, targetDemonicStructure)) {
             character.faction.partyQuestBoard.CreateCounterattackPartyQuest(character, character.homeSettlement, targetDemonicStructure);
@@ -110,9 +120,11 @@ public class ReportCorruptedStructure : GoapAction {
         //        Debug.LogError("No faction for counterattack!");
         //    }    
         //}
-        
-        
+
+
+#if DEBUG_LOG
         Debug.Log(debugLog);
+#endif
         //List<Character> characters = new List<Character>();
         //int count = 0;
         //for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {

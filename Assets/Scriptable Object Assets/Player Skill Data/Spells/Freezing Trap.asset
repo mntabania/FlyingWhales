@@ -13,16 +13,86 @@ MonoBehaviour:
   m_Name: Freezing Trap
   m_EditorClassIdentifier: 
   skill: 42
-  manaCost: 10
-  charges: 2
-  cooldown: 144
+  manaCost: 20
+  charges: 1
+  cooldown: 80
   threat: 0
   threatPerHour: 0
   expCost: 300
+  cheatedLevel: 0
+  pierce: 0
+  bonusChargeWhenUnlocked: 2
+  unlockChargeOnPortalUpgrade: 1
   buttonSprite: {fileID: 21300000, guid: dd9654e584df8c445b6bc2411c7b6c47, type: 3}
   tooltipVideoClip: {fileID: 32900000, guid: 2a59907804a32e9469e0d8125ec3a388, type: 3}
   tooltipImage: {fileID: 0}
+  unlockCost: 30
+  tier: 1
+  baseLoadoutWeight: 150
+  resistanceType: 5
+  archetypeWeightedBonus: 2
+  canBeReleasedEvenIfLearned: 0
   contextMenuIcon: {fileID: 0}
   contextMenuColumn: 0
+  playerActionIcon: {fileID: 0}
+  isNonUpgradeable: 0
+  isAffliction: 0
+  isLockedBaseOnRequirements: 0
+  canBeCastedOnMaxLevel: 0
+  requirementData:
+    requirements: 08000000
+    requiredArchetypes: 
+    requiredSkills: 
+    actionCount: 0
+    afflictionCount: 0
+    spellsCount: 0
+    tier1Count: 0
+    tier2Count: 0
+    tier3Count: 0
+    portalLevel: 1
+    isOR: 0
+  skillUpgradeData:
+    upgradeCosts: 140000003200000050000000
+    manacostPerLevel: 96000000fa0000005e010000c2010000
+    chargesPerLevel: 01000000010000000200000002000000
+    bonuses: 010000000a0000000e000000
+    additionalDamagePerLevel: 
+    additionalPiercePerLevel:
+    - 0
+    - 25
+    - 50
+    - 100
+    additionalHpPercentagePerLevel: []
+    additionalAttackPercentagePerLevel: []
+    additionalHpValuePerLevel: 
+    additionalAttackValuePerLevel: 
+    applyOnLevel: 
+    additionalmanaReceivedPercentagePerLevel: []
+    statsIncreasedPercentagePerLevel:
+    - 0
+    - 20
+    - 40
+    - 60
+    durationBonusPerLevel: 28000000320000003c00000050000000
+    additionalMaxHPPercentagePerLevel: []
+    additionalMaxHPActualPerLevel: 
+    additionalChanceBonusPercentagePerLevel: []
+    additionalTileRangeBonusPerLevel: 
+    decreaseMovementSpeedPerLevel: 
+    cooldownPerLevel: 50000000500000005000000050000000
+    skillMovementSpeed: 
+  afflictionUpgradeData:
+    bonuses: 
+    cooldown: 
+    additionalPiercePerLevel: []
+    rateChance: 
+    crowdNumber: 
+    napsDuration: 
+    numberOfCriteria: 
+    hungerRate: 
+    duration: []
+    opinionTrigger: 
+    addedBehaviour: 
+    listOfCriteria: 
   placeTrapSound: {fileID: 8300000, guid: 2d556fcc1b66d7642b3a70ce2f525bbb, type: 3}
   trapExplosionSound: {fileID: 8300000, guid: fadc2acc3308b3646bdc57f6d3b4546e, type: 3}

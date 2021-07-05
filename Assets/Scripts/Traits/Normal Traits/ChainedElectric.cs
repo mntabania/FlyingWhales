@@ -5,11 +5,12 @@ using Inner_Maps;
 using Traits;
 
 namespace Traits {
-    public class ChainedElectric : Trait {
+    public class ChainedElectric : Trait, IElementalTrait {
 
         public int damage { get; private set; }
         public bool hasInflictedDamage { get; private set; }
         public ITraitable traitable { get; private set; }
+        public bool isPlayerSource { get; private set; }
 
         public override System.Type serializedData => typeof(SaveDataChainedElectric);
 
@@ -34,18 +35,24 @@ namespace Traits {
             base.OnRemoveTrait(removedFrom, removedBy);
             traitable = null;
         }
+        protected override string GetDescriptionInUI() {
+            string desc = base.GetDescriptionInUI();
+            desc += "\nIs Player Source: " + isPlayerSource;
+            return desc;
+        }
         #endregion
 
         #region Loading
-        public override void LoadTraitOnLoadTraitContainer(ITraitable addTo) {
-            base.LoadTraitOnLoadTraitContainer(addTo);
-            traitable = addTo;
-        }
         public override void LoadFirstWaveInstancedTrait(SaveDataTrait saveDataTrait) {
             base.LoadFirstWaveInstancedTrait(saveDataTrait);
             SaveDataChainedElectric data = saveDataTrait as SaveDataChainedElectric;
             damage = data.damage;
             hasInflictedDamage = data.hasInflictedDamage;
+            isPlayerSource = data.isPlayerSource;
+        }
+        public override void LoadTraitOnLoadTraitContainer(ITraitable addTo) {
+            base.LoadTraitOnLoadTraitContainer(addTo);
+            traitable = addTo;
         }
         public override void LoadSecondWaveInstancedTrait(SaveDataTrait p_saveDataTrait) {
             base.LoadSecondWaveInstancedTrait(p_saveDataTrait);
@@ -86,15 +93,21 @@ namespace Traits {
                 List<LocationGridTile> neighbours = currentTile.neighbourList;
                 for (int i = 0; i < neighbours.Count; i++) {
                     LocationGridTile tile = neighbours[i];
-                    if (tile.genericTileObject.traitContainer.HasTrait("Wet") && !tile.genericTileObject.traitContainer.HasTrait("Zapped", "Chained Electric")) {
+                    if (tile.tileObjectComponent.genericTileObject.traitContainer.HasTrait("Wet") && !tile.tileObjectComponent.genericTileObject.traitContainer.HasTrait("Zapped", "Chained Electric")) {
                         tile.PerformActionOnTraitables((t) => ChainElectricEffect(t, chainDamage, responsibleCharacter));
                     }
                 }
             }
         }
         private void ChainElectricEffect(ITraitable traitable, int damage, Character responsibleCharacter) {
-            traitable.AdjustHP(damage, ELEMENTAL_TYPE.Electric, true, source: responsibleCharacter, showHPBar: true);
+            traitable.AdjustHP(damage, ELEMENTAL_TYPE.Electric, true, source: responsibleCharacter, showHPBar: true, isPlayerSource: isPlayerSource);
         }
+
+        #region IElementalTrait
+        public void SetIsPlayerSource(bool p_state) {
+            isPlayerSource = p_state;
+        }
+        #endregion
     }
 }
 
@@ -104,11 +117,13 @@ namespace Traits {
 public class SaveDataChainedElectric : SaveDataTrait {
     public int damage;
     public bool hasInflictedDamage;
+    public bool isPlayerSource;
     public override void Save(Trait trait) {
         base.Save(trait);
-        ChainedElectric chainedElectric = trait as ChainedElectric;
-        damage = chainedElectric.damage;
-        hasInflictedDamage = chainedElectric.hasInflictedDamage;
+        ChainedElectric data = trait as ChainedElectric;
+        damage = data.damage;
+        hasInflictedDamage = data.hasInflictedDamage;
+        isPlayerSource = data.isPlayerSource;
     }
 }
 #endregion

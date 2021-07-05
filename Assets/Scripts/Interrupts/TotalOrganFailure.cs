@@ -6,7 +6,7 @@ using UtilityScripts;
 namespace Interrupts {
     public class TotalOrganFailure : Interrupt {
         public TotalOrganFailure() : base(INTERRUPT.Total_Organ_Failure) {
-            duration = 4;
+            duration = 5;
             doesStopCurrentAction = true;
             doesDropCurrentJob = true;
             interruptIconString = GoapActionStateDB.Death_Icon;
@@ -21,7 +21,7 @@ namespace Interrupts {
                 !interruptHolder.actor.homeSettlement.eventManager.HasActiveEvent(SETTLEMENT_EVENT.Plagued_Event) && interruptHolder.actor.homeSettlement.eventManager.CanHaveEvents()) {
                 interruptHolder.actor.homeSettlement.eventManager.AddNewActiveEvent(SETTLEMENT_EVENT.Plagued_Event);
             }
-            interruptHolder.actor.Death("Total Organ Failure", _deathLog: interruptHolder.effectLog, interrupt: this);
+            interruptHolder.actor.Death("Total Organ Failure", _deathLog: interruptHolder.effectLog, interrupt: this, isPlayerSource: true);
             return true;
         }
         public override string ReactionToActor(Character actor, IPointOfInterest target,

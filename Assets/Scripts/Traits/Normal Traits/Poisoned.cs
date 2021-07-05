@@ -7,13 +7,14 @@ using UnityEngine;
 using UnityEngine.Assertions;
 using Debug = System.Diagnostics.Debug;
 namespace Traits {
-    public class Poisoned : Status {
+    public class Poisoned : Status, IElementalTrait {
 
         public List<Character> awareCharacters { get; } //characters that know about this trait
         private ITraitable traitable { get; set; } //poi that has the poison
         public Character cleanser { get; private set; }
         public bool isVenomous { get; private set; }
-        
+        public bool isPlayerSource { get; private set; }
+
         private Character characterOwner;
         private GameObject _poisonedEffect;
         
@@ -40,14 +41,16 @@ namespace Traits {
             AddTraitOverrideFunctionIdentifier(TraitManager.Destroy_Map_Visual_Trait);
             AddTraitOverrideFunctionIdentifier(TraitManager.Execute_After_Effect_Trait);
             AddTraitOverrideFunctionIdentifier(TraitManager.Tick_Started_Trait);
+            AddTraitOverrideFunctionIdentifier(TraitManager.Villager_Reaction);
         }
 
         #region Loading
         public override void LoadFirstWaveInstancedTrait(SaveDataTrait saveDataTrait) {
             base.LoadFirstWaveInstancedTrait(saveDataTrait);
-            SaveDataPoisoned saveDataPoisoned = saveDataTrait as SaveDataPoisoned;
-            Debug.Assert(saveDataPoisoned != null, nameof(saveDataPoisoned) + " != null");
-            isVenomous = saveDataPoisoned.isVenomous;
+            SaveDataPoisoned data = saveDataTrait as SaveDataPoisoned;
+            Debug.Assert(data != null, nameof(data) + " != null");
+            isVenomous = data.isVenomous;
+            isPlayerSource = data.isPlayerSource;
         }
         public override void LoadSecondWaveInstancedTrait(SaveDataTrait p_saveDataTrait) {
             base.LoadSecondWaveInstancedTrait(p_saveDataTrait);
@@ -105,18 +108,20 @@ namespace Traits {
             }
             if (traitable is GenericTileObject genericTileObject) {
                 genericTileObject.RemoveAdvertisedAction(INTERACTION_TYPE.CLEANSE_TILE);
+            } else if (traitable is Character character) {
+                DisablePlayerSourceChaosOrb(character);
             }
             awareCharacters.Clear();
             responsibleCharacters?.Clear(); //Cleared list, for garbage collection
         }
-        public override void ExecuteActionAfterEffects(INTERACTION_TYPE action, ActualGoapNode goapNode, ref bool isRemoved) {
-            base.ExecuteActionAfterEffects(action, goapNode, ref isRemoved);
-            if (goapNode.action.actionCategory == ACTION_CATEGORY.CONSUME) {
-                if(traitable is IPointOfInterest poi && goapNode.poiTarget == poi) {
-                    Assert.IsFalse(goapNode.actor == poi, $"Consume action ({goapNode.action.name}) " +
-                        $"performed on {goapNode.poiTarget.name} by {goapNode.actor.name} is trying to remove poisoned " +
+        public override void ExecuteActionAfterEffects(INTERACTION_TYPE action, Character actor, IPointOfInterest target, ACTION_CATEGORY category, ref bool isRemoved) {
+            base.ExecuteActionAfterEffects(action, actor, target, category, ref isRemoved);
+            if (category == ACTION_CATEGORY.CONSUME) {
+                if(traitable is IPointOfInterest poi && target == poi) {
+                    Assert.IsFalse(actor == poi, $"Consume action ({action}) " +
+                        $"performed on {target.name} by {actor.name} is trying to remove poisoned " +
                         $"stacks from the actor rather than the target!");
-                    goapNode.actor.interruptComponent.TriggerInterrupt(INTERRUPT.Ingested_Poison, poi);
+                    actor.interruptComponent.TriggerInterrupt(INTERRUPT.Ingested_Poison, poi);
                     poi.traitContainer.RemoveStatusAndStacks(poi, this.name);
                     isRemoved = true;
                 }
@@ -126,7 +131,7 @@ namespace Traits {
             base.OnTickStarted(traitable);
             if (!isVenomous) {
                 characterOwner?.AdjustHP(-Mathf.RoundToInt(1 * characterOwner.traitContainer.stacks[name]),
-                ELEMENTAL_TYPE.Normal, true, showHPBar: true);
+                ELEMENTAL_TYPE.Normal, true, showHPBar: true, isPlayerSource: isPlayerSource);
             }
         }
         public override void OnInitiateMapObjectVisual(ITraitable traitable) {
@@ -161,6 +166,11 @@ namespace Traits {
                 cleanser = status.cleanser;
                 isVenomous = status.isVenomous;
             }
+        }
+        protected override string GetDescriptionInUI() {
+            string desc = base.GetDescriptionInUI();
+            desc += "\nIs Player Source: " + isPlayerSource;
+            return desc;
         }
         #endregion
 
@@ -234,7 +244,49 @@ namespace Traits {
             }
         }
         #endregion
-        
+
+        #region IElementalTrait
+        public void SetIsPlayerSource(bool p_state) {
+            if (isPlayerSource != p_state) {
+                isPlayerSource = p_state;
+                if (traitable is Character character) {
+                    if (isPlayerSource) {
+                        EnablePlayerSourceChaosOrb(character);
+                    } else {
+                        DisablePlayerSourceChaosOrb(character);
+                    }
+                }
+            }
+        }
+        #endregion
+
+        #region Reactions
+        public override void VillagerReactionToTileObjectTrait(TileObject owner, Character actor, ref string debugLog) {
+            base.VillagerReactionToTileObjectTrait(owner, actor, ref debugLog);
+            Lazy lazy = actor.traitContainer.GetTraitOrStatus<Lazy>("Lazy");
+            if (!actor.combatComponent.isInActualCombat && !actor.hasSeenPoisoned) {
+                if ((lazy == null || !lazy.TryIgnoreUrgentTask(JOB_TYPE.CLEANSE_TILES))
+                    && owner.gridTileLocation != null
+                    && actor.homeSettlement != null
+                    && owner.gridTileLocation.IsPartOfSettlement(actor.homeSettlement)
+                    && !actor.jobQueue.HasJob(JOB_TYPE.CLEANSE_TILES)) {
+#if DEBUG_LOG
+                    debugLog = $"{debugLog}\n-Target is Poisoned";
+#endif
+                    actor.SetHasSeenPoisoned(true);
+                    actor.homeSettlement.settlementJobTriggerComponent.TriggerCleanseTiles();
+                    for (int i = 0; i < actor.homeSettlement.availableJobs.Count; i++) {
+                        JobQueueItem job = actor.homeSettlement.availableJobs[i];
+                        if (job.jobType == JOB_TYPE.CLEANSE_TILES) {
+                            if (job.assignedCharacter == null && actor.jobQueue.CanJobBeAddedToQueue(job)) {
+                                actor.jobQueue.AddJobInQueue(job);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        #endregion
     }
 }
 
@@ -242,13 +294,15 @@ namespace Traits {
 public class SaveDataPoisoned : SaveDataTrait {
     public List<string> awareCharacterIDs;
     public bool isVenomous;
+    public bool isPlayerSource;
 
     public override void Save(Trait trait) {
         base.Save(trait);
-        Poisoned poisoned = trait as Poisoned;
-        Assert.IsNotNull(poisoned);
-        awareCharacterIDs = SaveUtilities.ConvertSavableListToIDs(poisoned.awareCharacters);
-        isVenomous = poisoned.isVenomous;
+        Poisoned data = trait as Poisoned;
+        Assert.IsNotNull(data);
+        awareCharacterIDs = SaveUtilities.ConvertSavableListToIDs(data.awareCharacters);
+        isVenomous = data.isVenomous;
+        isPlayerSource = data.isPlayerSource;
     }
 }
 #endregion

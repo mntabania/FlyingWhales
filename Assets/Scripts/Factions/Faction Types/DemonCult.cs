@@ -1,4 +1,5 @@
-﻿namespace Factions.Faction_Types {
+﻿using Inner_Maps.Location_Structures;
+namespace Factions.Faction_Types {
     public class DemonCult : FactionType {
         public override RESOURCE mainResource => RESOURCE.STONE;
         public override bool usesCorruptedStructures => true;
@@ -30,10 +31,17 @@
             AddCombatantClass("Hunter");
             AddCombatantClass("Druid");
             AddCombatantClass("Shaman");
-            
-            AddCivilianClass("Peasant");
+
+            //AddCivilianClass("Peasant");
             AddCivilianClass("Miner");
-            AddCivilianClass("Craftsman");
+            AddCivilianClass("Crafter");
+            AddCivilianClass("Farmer");
+            AddCivilianClass("Fisher");
+            AddCivilianClass("Logger");
+            AddCivilianClass("Merchant");
+            AddCivilianClass("Butcher");
+            AddCivilianClass("Skinner");
+            AddCivilianClass("Trapper");
 
             //crimes
             hasCrimes = true;
@@ -50,10 +58,17 @@
             AddCombatantClass("Hunter");
             AddCombatantClass("Druid");
             AddCombatantClass("Shaman");
-            
-            AddCivilianClass("Peasant");
+
+            //AddCivilianClass("Peasant");
             AddCivilianClass("Miner");
-            AddCivilianClass("Craftsman");
+            AddCivilianClass("Crafter");
+            AddCivilianClass("Farmer");
+            AddCivilianClass("Fisher");
+            AddCivilianClass("Logger");
+            AddCivilianClass("Merchant");
+            AddCivilianClass("Butcher");
+            AddCivilianClass("Skinner");
+            AddCivilianClass("Trapper");
         }
         
         public override CRIME_SEVERITY GetDefaultSeverity(CRIME_TYPE crimeType) {
@@ -77,6 +92,31 @@
             if (character.isNormalCharacter && !character.traitContainer.HasTrait("Cultist")) {
                 //https://trello.com/c/au0rNNT6/3219-non-cultist-in-demon-cult
                 character.traitContainer.AddTrait(character, "Cultist");
+            }
+        }
+        
+        public override StructureSetting ProcessStructureSetting(StructureSetting p_setting, NPCSettlement p_settlement) {
+            if (p_settlement.settlementJobTriggerComponent.HasTotalResource(p_setting.resource, p_setting.structureType.GetResourceBuildCost())) {
+                //if settlement has that resource amount then use default setting
+                return p_setting;
+            } else {
+                //if settlement doesn't have that resource amount then check if other resource is available.
+                RESOURCE otherResource = p_setting.resource == RESOURCE.WOOD ? RESOURCE.STONE : RESOURCE.WOOD;
+                if (p_settlement.settlementJobTriggerComponent.HasTotalResource(otherResource, p_setting.structureType.GetResourceBuildCost())) {
+                    return new StructureSetting(p_setting.structureType, otherResource, p_setting.isCorrupted);
+                } else {
+                    return p_setting;    
+                }
+            }
+        }
+        public override StructureSetting CreateStructureSettingForStructure(STRUCTURE_TYPE structureType, NPCSettlement p_settlement) {
+            if (!structureType.RequiresResourceToBuild()) { return new StructureSetting(structureType, RESOURCE.NONE, true); }
+            if (structureType == STRUCTURE_TYPE.FISHERY) { return new StructureSetting(structureType, RESOURCE.WOOD, true); }
+            if (structureType == STRUCTURE_TYPE.BUTCHERS_SHOP) { return new StructureSetting(structureType, RESOURCE.STONE, true); }
+            if (p_settlement.settlementJobTriggerComponent.HasTotalResource(RESOURCE.WOOD, structureType.GetResourceBuildCost())) {
+                return new StructureSetting(structureType, RESOURCE.WOOD, true);
+            } else {
+                return new StructureSetting(structureType, RESOURCE.STONE, true);
             }
         }
     }

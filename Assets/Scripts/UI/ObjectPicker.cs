@@ -75,11 +75,11 @@ public class ObjectPicker : PopupMenuBase {
             ShowRegionItems(validItems.Cast<Region>().ToList(), invalidItems.Cast<Region>().ToList(), onHoverItemAction, onHoverExitItemAction, asButton);
         } else if (type == typeof(string)) {
             ShowStringItems(validItems.Cast<string>().ToList(), invalidItems.Cast<string>().ToList(), onHoverItemAction, onHoverExitItemAction, identifier, asButton);
-        } else if (type == typeof(SummonSlot)) {
-            ShowSummonItems(validItems.Cast<SummonSlot>().ToList(), invalidItems.Cast<SummonSlot>().ToList(), onHoverItemAction, onHoverExitItemAction, identifier, asButton);
-        } else if (type == typeof(Artifact)) {
-            ShowArtifactItems(validItems.Cast<Artifact>().ToList(), invalidItems.Cast<Artifact>().ToList(), onHoverItemAction, onHoverExitItemAction, identifier, asButton);
-        } else if (type == typeof(SkillData)) {
+        } 
+        //else if (type == typeof(Artifact)) {
+        //    ShowArtifactItems(validItems.Cast<Artifact>().ToList(), invalidItems.Cast<Artifact>().ToList(), onHoverItemAction, onHoverExitItemAction, identifier, asButton);
+        //} 
+        else if (type == typeof(SkillData)) {
             ShowSpellItems(validItems.Cast<SkillData>().ToList(), invalidItems.Cast<SkillData>().ToList(), onHoverItemAction, onHoverExitItemAction, identifier, portraitGetter, asButton);
         } else if (type.IsEnum) {
             ShowEnumItems(validItems.Cast<Enum>().ToList(), invalidItems.Cast<Enum>().ToList(), onHoverItemAction, onHoverExitItemAction, identifier, portraitGetter, asButton);
@@ -393,125 +393,65 @@ public class ObjectPicker : PopupMenuBase {
             stringItem.SetInteractableState(false);
         }
     }
-    private void ShowSummonItems<T>(List<SummonSlot> validItems, List<SummonSlot> invalidItems, Action<T> onHoverItemAction, Action<T> onHoverExitItemAction, string identifier, bool asButton) {
-        Action<SummonSlot> convertedHoverAction = null;
-        if (onHoverItemAction != null) {
-            convertedHoverAction = ConvertToSummonSlot(onHoverItemAction);
-        }
-        Action<SummonSlot> convertedHoverExitAction = null;
-        if (onHoverExitItemAction != null) {
-            convertedHoverExitAction = ConvertToSummonSlot(onHoverExitItemAction);
-        }
-        for (int i = 0; i < validItems.Count; i++) {
-            SummonSlot currSummonSlot = validItems[i];
-            GameObject summonSlotItemGO = UIManager.Instance.InstantiateUIObject(objectPickerSummonSlotItemPrefab.name, objectPickerScrollView.content);
-            SummonSlotPickerItem item = summonSlotItemGO.GetComponent<SummonSlotPickerItem>();
-            item.SetObject(currSummonSlot);
+    //private void ShowArtifactItems<T>(List<Artifact> validItems, List<Artifact> invalidItems, Action<T> onHoverItemAction, Action<T> onHoverExitItemAction, string identifier, bool asButton) {
+    //    Action<Artifact> convertedHoverAction = null;
+    //    if (onHoverItemAction != null) {
+    //        convertedHoverAction = ConvertToArtifact(onHoverItemAction);
+    //    }
+    //    Action<Artifact> convertedHoverExitAction = null;
+    //    if (onHoverExitItemAction != null) {
+    //        convertedHoverExitAction = ConvertToArtifact(onHoverExitItemAction);
+    //    }
+    //    for (int i = 0; i < validItems.Count; i++) {
+    //        Artifact currSlot = validItems[i];
+    //        GameObject slotItemGO = UIManager.Instance.InstantiateUIObject(objectPickerArtifactItemPrefab.name, objectPickerScrollView.content);
+    //        TileObjectNameplateItem item = slotItemGO.GetComponent<TileObjectNameplateItem>();
+    //        item.SetObject(currSlot);
 
-            item.ClearAllOnClickActions();
+    //        item.ClearAllOnClickActions();
 
-            item.ClearAllHoverEnterActions();
-            if (convertedHoverAction != null) {
-                item.AddHoverEnterAction(convertedHoverAction.Invoke);
-            }
+    //        item.ClearAllHoverEnterActions();
+    //        if (convertedHoverAction != null) {
+    //            item.AddHoverEnterAction(convertedHoverAction.Invoke);
+    //        }
 
-            item.ClearAllHoverExitActions();
-            if (convertedHoverExitAction != null) {
-                item.AddHoverExitAction(convertedHoverExitAction.Invoke);
-            }
-            if (asButton) {
-                item.AddOnClickAction(OnPickObject);
-                item.SetAsButton();
-            } else {
-                item.AddOnToggleAction(OnPickObject);
-                item.SetAsToggle();
-                item.SetToggleGroup(toggleGroup);
-            }
+    //        item.ClearAllHoverExitActions();
+    //        if (convertedHoverExitAction != null) {
+    //            item.AddHoverExitAction(convertedHoverExitAction.Invoke);
+    //        }
+    //        if (asButton) {
+    //            item.AddOnClickAction(OnPickObject);
+    //            item.SetAsButton();
+    //        } else {
+    //            item.AddOnToggleAction(OnPickObject);
+    //            item.SetAsToggle();
+    //            item.SetToggleGroup(toggleGroup);
+    //        }
+    //    }
+    //    for (int i = 0; i < invalidItems.Count; i++) {
+    //        Artifact currSlot = invalidItems[i];
+    //        GameObject slotItemGO = UIManager.Instance.InstantiateUIObject(objectPickerArtifactItemPrefab.name, objectPickerScrollView.content);
+    //        TileObjectNameplateItem item = slotItemGO.GetComponent<TileObjectNameplateItem>();
+    //        item.SetObject(currSlot);
+    //        item.ClearAllOnClickActions();
 
-        }
-        for (int i = 0; i < invalidItems.Count; i++) {
-            SummonSlot currSummonSlot = invalidItems[i];
-            GameObject summonSlotItemGO = UIManager.Instance.InstantiateUIObject(objectPickerSummonSlotItemPrefab.name, objectPickerScrollView.content);
-            SummonSlotPickerItem item = summonSlotItemGO.GetComponent<SummonSlotPickerItem>();
-            item.SetObject(currSummonSlot);
-            item.ClearAllOnClickActions();
+    //        item.ClearAllHoverEnterActions();
+    //        if (convertedHoverAction != null) {
+    //            item.AddHoverEnterAction(convertedHoverAction.Invoke);
+    //        }
 
-            item.ClearAllHoverEnterActions();
-            if (convertedHoverAction != null) {
-                item.AddHoverEnterAction(convertedHoverAction.Invoke);
-            }
-
-            item.ClearAllHoverExitActions();
-            if (convertedHoverExitAction != null) {
-                item.AddHoverExitAction(convertedHoverExitAction.Invoke);
-            }
-            if (asButton) {
-                item.SetAsButton();
-            } else {
-                item.SetAsToggle();
-            }
-            item.SetInteractableState(false);
-        }
-    }
-    private void ShowArtifactItems<T>(List<Artifact> validItems, List<Artifact> invalidItems, Action<T> onHoverItemAction, Action<T> onHoverExitItemAction, string identifier, bool asButton) {
-        Action<Artifact> convertedHoverAction = null;
-        if (onHoverItemAction != null) {
-            convertedHoverAction = ConvertToArtifact(onHoverItemAction);
-        }
-        Action<Artifact> convertedHoverExitAction = null;
-        if (onHoverExitItemAction != null) {
-            convertedHoverExitAction = ConvertToArtifact(onHoverExitItemAction);
-        }
-        for (int i = 0; i < validItems.Count; i++) {
-            Artifact currSlot = validItems[i];
-            GameObject slotItemGO = UIManager.Instance.InstantiateUIObject(objectPickerArtifactItemPrefab.name, objectPickerScrollView.content);
-            ArtifactPickerItem item = slotItemGO.GetComponent<ArtifactPickerItem>();
-            item.SetObject(currSlot);
-
-            item.ClearAllOnClickActions();
-
-            item.ClearAllHoverEnterActions();
-            if (convertedHoverAction != null) {
-                item.AddHoverEnterAction(convertedHoverAction.Invoke);
-            }
-
-            item.ClearAllHoverExitActions();
-            if (convertedHoverExitAction != null) {
-                item.AddHoverExitAction(convertedHoverExitAction.Invoke);
-            }
-            if (asButton) {
-                item.AddOnClickAction(OnPickObject);
-                item.SetAsButton();
-            } else {
-                item.AddOnToggleAction(OnPickObject);
-                item.SetAsToggle();
-                item.SetToggleGroup(toggleGroup);
-            }
-        }
-        for (int i = 0; i < invalidItems.Count; i++) {
-            Artifact currSlot = invalidItems[i];
-            GameObject slotItemGO = UIManager.Instance.InstantiateUIObject(objectPickerArtifactItemPrefab.name, objectPickerScrollView.content);
-            ArtifactPickerItem item = slotItemGO.GetComponent<ArtifactPickerItem>();
-            item.SetObject(currSlot);
-            item.ClearAllOnClickActions();
-
-            item.ClearAllHoverEnterActions();
-            if (convertedHoverAction != null) {
-                item.AddHoverEnterAction(convertedHoverAction.Invoke);
-            }
-
-            item.ClearAllHoverExitActions();
-            if (convertedHoverExitAction != null) {
-                item.AddHoverExitAction(convertedHoverExitAction.Invoke);
-            }
-            if (asButton) {
-                item.SetAsButton();
-            } else {
-                item.SetAsToggle();
-            }
-            item.SetInteractableState(false);
-        }
-    }
+    //        item.ClearAllHoverExitActions();
+    //        if (convertedHoverExitAction != null) {
+    //            item.AddHoverExitAction(convertedHoverExitAction.Invoke);
+    //        }
+    //        if (asButton) {
+    //            item.SetAsButton();
+    //        } else {
+    //            item.SetAsToggle();
+    //        }
+    //        item.SetInteractableState(false);
+    //    }
+    //}
     private void ShowEnumItems<T>(List<Enum> validItems, List<Enum> invalidItems, Action<T> onHoverItemAction, Action<T> onHoverExitItemAction, string identifier, Func<string, Sprite> portraitGetter, bool asButton) {
         Action<Enum> convertedHoverAction = null;
         if (onHoverItemAction != null) {
@@ -875,10 +815,6 @@ public class ObjectPicker : PopupMenuBase {
     private Action<Character> Convert<T>(Action<T> myActionT) {
         if (myActionT == null) return null;
         else return new Action<Character>(o => myActionT((T)(object)o));
-    }
-    private Action<SummonSlot> ConvertToSummonSlot<T>(Action<T> myActionT) {
-        if (myActionT == null) return null;
-        else return new Action<SummonSlot>(o => myActionT((T)(object)o));
     }
     private Action<Artifact> ConvertToArtifact<T>(Action<T> myActionT) {
         if (myActionT == null) return null;

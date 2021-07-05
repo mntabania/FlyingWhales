@@ -5,7 +5,7 @@ using UnityEngine;
 namespace Interrupts {
     public class FeelingBrokenhearted : Interrupt {
         public FeelingBrokenhearted() : base(INTERRUPT.Feeling_Brokenhearted) {
-            duration = 4;
+            duration = 5;
             doesStopCurrentAction = true;
             doesDropCurrentJob = true;
             interruptIconString = GoapActionStateDB.Heartbroken_Icon;
@@ -15,7 +15,7 @@ namespace Interrupts {
         #region Overrides
         public override bool ExecuteInterruptEndEffect(InterruptHolder interruptHolder) {
             interruptHolder.actor.jobQueue.CancelAllJobs(JOB_TYPE.HAPPINESS_RECOVERY);
-            Messenger.Broadcast(PlayerSignals.CREATE_CHAOS_ORBS, interruptHolder.actor.marker.transform.position, 2, interruptHolder.actor.currentRegion.innerMap);
+            //Messenger.Broadcast(PlayerSignals.CREATE_CHAOS_ORBS, interruptHolder.actor.marker.transform.position, 2, interruptHolder.actor.currentRegion.innerMap);
             return true;
         }
         #endregion

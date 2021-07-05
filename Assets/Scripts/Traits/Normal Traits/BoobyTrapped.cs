@@ -5,6 +5,8 @@ using UnityEngine;
 using Inner_Maps;
 using Traits;
 using UnityEngine.Assertions;
+using UtilityScripts;
+
 namespace Traits {
     public class BoobyTrapped : Status {
         private ELEMENTAL_TYPE _element;
@@ -108,7 +110,7 @@ namespace Traits {
                 Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Trait", this.name, "trap_activated", null, LOG_TAG.Life_Changes);
                 log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                 log.AddToFillers(target, target.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-                log.AddLogToDatabase();
+                log.AddLogToDatabase(true);
                 DamageTargetByTrap(actor, target);
                 willStillContinueAction = false;
                 return true;
@@ -116,17 +118,21 @@ namespace Traits {
             return false;
         }
         public void DamageTargetByTrap(Character actor, IPointOfInterest target) {
-            List<LocationGridTile> tiles = target.gridTileLocation.GetTilesInRadius(1, includeCenterTile: true, includeTilesInDifferentStructure: true);
+            List<LocationGridTile> tiles = RuinarchListPool<LocationGridTile>.Claim();
+            target.gridTileLocation.PopulateTilesInRadius(tiles, 1, includeCenterTile: true, includeTilesInDifferentStructure: true);
             for (int i = 0; i < tiles.Count; i++) {
                 LocationGridTile currTile = tiles[i];
-                List<IPointOfInterest> pois = currTile.GetPOIsOnTile();
+                List<IPointOfInterest> pois = RuinarchListPool<IPointOfInterest>.Claim();
+                currTile.PopulatePOIsOnTile(pois);
                 for (int j = 0; j < pois.Count; j++) {
                     IPointOfInterest currPOI = pois[j];
                     currPOI.AdjustHP(-800, element, true);
                 }
+                RuinarchListPool<IPointOfInterest>.Release(pois);
             }
             target.traitContainer.RemoveTrait(target, this);
-            actor.traitContainer.AddTrait(actor, "Unconscious");    
+            actor.traitContainer.AddTrait(actor, "Unconscious");
+            RuinarchListPool<LocationGridTile>.Release(tiles);
         }
 
         public void SetElementType(ELEMENTAL_TYPE element) {

@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb8e6d0a90de4764a5b7b75189e1ffa2, type: 3}
+  m_Name: PLINTH_BOOK
+  m_EditorClassIdentifier: 
+  defaultTileMapAsset: {fileID: 11400000, guid: dae3df37554bfeb45b3a6ee878ba5b27,
+    type: 2}
+  defaultSprite: {fileID: 21300000, guid: 3588670d8cf989844a8e6148d0269703, type: 3}
+  tileObjectAssets:
+    biomeAssets:
+      m_keys: 06000000
+      m_values:
+      - activeTile:
+        - {fileID: 21300000, guid: 3588670d8cf989844a8e6148d0269703, type: 3}
+        - {fileID: 21300000, guid: 5739df68820aaf44db588444cc9eba20, type: 3}
+        inactiveTile: []
+        tileBase:
+        - {fileID: 11400000, guid: dae3df37554bfeb45b3a6ee878ba5b27, type: 2}
+  corruptedTileObjectAssets:
+    biomeAssets:
+      m_keys: 
+      m_values: []

@@ -22,7 +22,7 @@ public class Gathering : ISavable {
 
     #region getters
     public virtual IGatheringTarget target => null;
-    public virtual HexTile waitingHexArea => null;
+    public virtual Area waitingHexArea => null;
     public virtual System.Type serializedData => typeof(SaveDataGathering);
     public OBJECT_TYPE objectType => OBJECT_TYPE.Gathering;
     #endregion
@@ -78,12 +78,14 @@ public class Gathering : ISavable {
 
     }
     protected virtual void OnDisbandGathering() {
-        Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Party", "General", "disband", null, LOG_TAG.Party);
-        log.AddToFillers(host, host.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-        log.AddToFillers(null, gatheringName, LOG_IDENTIFIER.STRING_1);
+        // Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Party", "General", "disband", null, LOG_TAG.Party);
+        // log.AddToFillers(host, host.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+        // log.AddToFillers(null, gatheringName, LOG_IDENTIFIER.STRING_1);
         //log.AddLogToDatabase();
 
+#if DEBUG_LOG
         host.logComponent.PrintLogIfActive("Disbanded " + gatheringName + " Gathering of " + host.name);
+#endif
         isDisbanded = true;
         CancelAllJoinPartyJobs();
     }
@@ -101,9 +103,9 @@ public class Gathering : ISavable {
             AddAttendee(host);
         }
     }
-    #endregion
+#endregion
 
-    #region General
+#region General
     public void SetHost(Character newHost) {
         if (host != newHost) {
             if (host != null) {
@@ -146,9 +148,9 @@ public class Gathering : ISavable {
     public bool IsAttendee(Character character) {
         return attendees.Contains(character);
     }
-    #endregion
+#endregion
 
-    #region Wait Time
+#region Wait Time
     public void StartWaitTime() {
         if (!isWaitTimeOver && !isAlreadyWaiting) {
             isAlreadyWaiting = true;
@@ -169,9 +171,9 @@ public class Gathering : ISavable {
             isWaitTimeOver = true;
         }
     }
-    #endregion
+#endregion
 
-    #region Join Gathering
+#region Join Gathering
     private void ProcessAdditionOfJoinGatheringJobs() {
         if (attendees.Count < (minimumGatheringSize + 2) && !isWaitTimeOver) {
             CreateJoinGatheringJob();
@@ -192,9 +194,9 @@ public class Gathering : ISavable {
             jobOwner.ForceCancelJobTypesTargetingPOI(JOB_TYPE.JOIN_GATHERING, host);
         }
     }
-    #endregion
+#endregion
 
-    #region Loading
+#region Loading
     public virtual void LoadReferences(SaveDataGathering data) {
         host = CharacterManager.Instance.GetCharacterByPersistentID(data.host);
         if (jobQueueOwnerType == JOB_OWNER.CHARACTER) {
@@ -208,10 +210,12 @@ public class Gathering : ISavable {
         }
         for (int i = 0; i < data.attendees.Count; i++) {
             Character character = CharacterManager.Instance.GetCharacterByPersistentID(data.attendees[i]);
-            attendees.Add(character);
+            if (character != null) {
+                attendees.Add(character);
+            }
         }
     }
-    #endregion
+#endregion
 }
 
 [System.Serializable]
@@ -232,11 +236,11 @@ public class SaveDataGathering : SaveData<Gathering>, ISavableCounterpart {
     public bool isDisbanded;
     public bool isAlreadyWaiting;
 
-    #region getters
+#region getters
     public OBJECT_TYPE objectType => OBJECT_TYPE.Party;
-    #endregion
+#endregion
 
-    #region Overrides
+#region Overrides
     public override void Save(Gathering data) {
         persistentID = data.persistentID;
         host = data.host.persistentID;
@@ -261,5 +265,5 @@ public class SaveDataGathering : SaveData<Gathering>, ISavableCounterpart {
         Gathering gathering = CharacterManager.Instance.CreateNewGathering(this);
         return gathering;
     }
-    #endregion
+#endregion
 }

@@ -1,0 +1,54 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 88e6d539796c490aa0efea676d6fae59, type: 3}
+  m_Name: Rabbit Data
+  m_EditorClassIdentifier: 
+  combatBehaviourType: 2
+  combatSpecialSkillType: 0
+  workStructureType: 21
+  summonCost: 50
+  portraitSprite: {fileID: 21300000, guid: 33d2873ea2f596a4298e334f0988f2f2, type: 3}
+  defaultSprites:
+    stillSprite: {fileID: 21300000, guid: ec1e8f2be1591744aa42e8c862b91d7a, type: 3}
+    animationSprites:
+    - {fileID: 21300000, guid: f3009d6ad8774e94fa4edc386e6fd0b7, type: 3}
+    - {fileID: 21300000, guid: ec1e8f2be1591744aa42e8c862b91d7a, type: 3}
+    - {fileID: 21300000, guid: b09a170a7c4ade642b58da2a81e2abb7, type: 3}
+  raceSprites:
+    m_keys: 
+    m_values: []
+  initialVillagerPiercing: 0
+  initialVillagerPhysicalResistances: []
+  initialVillagerMentalResistances: []
+  initialVillagerElementalResistances: []
+  initialVillagerSecondaryResistances: []
+  characterSkillUpdateData:
+    m_fireResistanceBonus: 0
+    m_earthResistanceBonus: 0
+    m_windResistanceBonus: 0
+    m_waterResistanceBonus: 0
+    m_allElementalresistanceBonus: 0
+    m_poisonResistanceBonus: 0
+    m_iceResistanceBonus: 0
+    m_electricResistanceBonus: 0
+    m_allSecondaryresistanceBonus: 0
+    m_piercingBonus: 0
+    m_mentalResistanceBonus: 0
+    m_physicalResistanceBonus: 0
+  craftableWeapons: 
+  craftableArmors: 
+  craftableAccessories: 
+  droppableItems:
+  - item: 13
+    weight: 100
+  - item: 189
+    weight: 10

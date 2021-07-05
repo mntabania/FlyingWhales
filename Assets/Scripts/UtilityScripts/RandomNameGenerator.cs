@@ -47,8 +47,8 @@ public static class RandomNameGenerator {
 		"Hazel", "Hannah", "Holly", "Ingrid", "Ivy", "Kenley", "Kelby", "Karen", "Kate", "Laila", "Letha", "Lily", "Lindsey", "Madison", "Maggie", "Mildred", "Misty",
 		"Norma", "Nyx", "Nana", "Nerissa", "Olga", "Oletha", "Posy", "Patsy", "Piper", "Precious", "Raissa", "Rhiannon", "Rose", "Roxanne", "Sable", "Shea", "Shelby",
 		"Susan", "Suzette", "Tanya", "Tatiana", "Taylor", "Velma", "Vanessa", "Violet", "Whitney", "Willow", "Windy", "Hillary", "Arya", "Leia", "Buffy", "Light",
-		"Prue", "Marica", "Shannelle"
-	};
+		"Prue", "Marica", "Shannelle", "Jennie"
+    };
 
 	private static string[] baseElvenKingdomNames = new[]{
 		"Aglarond", "Alqualonde", "Avallone", "Astalen", "Aerwyn", "Arfinal", "Arundel", "Beleriand", "Brithombar", "Berefin", "Bataryn", "Brindelwa", "Curamar", "Celirith", "Cendralien",
@@ -192,82 +192,82 @@ public static class RandomNameGenerator {
 
         humanKingdomNames = new List<string>();
         for (int i = 5; i <= 8; i++) {
-            humanKingdomNames.AddRange(generatedHumanKingdomNames.AllRaw(i).Take(50000).ToList());
+            humanKingdomNames.AddRange(generatedHumanKingdomNames.AllRaw(i).Take(50000));
         }
-        humanKingdomNames.AddRange(generatedHumanKingdomNames.AllRaw(9).Take(20000).ToList());
-        humanKingdomNames.AddRange(generatedHumanKingdomNames.AllRaw(10).Take(20000).ToList());
-        humanKingdomNames.AddRange(generatedHumanKingdomNames.AllRaw(11).Take(10000).ToList());
-        humanKingdomNames.AddRange(generatedHumanKingdomNames.AllRaw(12).Take(10000).ToList());
-        humanKingdomNames = CollectionUtilities.Shuffle(humanKingdomNames);
+        humanKingdomNames.AddRange(generatedHumanKingdomNames.AllRaw(9).Take(20000));
+        humanKingdomNames.AddRange(generatedHumanKingdomNames.AllRaw(10).Take(20000));
+        humanKingdomNames.AddRange(generatedHumanKingdomNames.AllRaw(11).Take(10000));
+        humanKingdomNames.AddRange(generatedHumanKingdomNames.AllRaw(12).Take(10000));
+        CollectionUtilities.Shuffle(humanKingdomNames);
 
 
         humanSurnames = new List<string>();
         for (int i = 5; i <= 6; i++) {
-            humanSurnames.AddRange(generatedHumanSurnames.AllRaw(i).Take(50000).ToList());
+            humanSurnames.AddRange(generatedHumanSurnames.AllRaw(i).Take(50000));
         }
-        humanSurnames.AddRange(generatedHumanSurnames.AllRaw(4).Take(20000).ToList());
-        humanSurnames.AddRange(generatedHumanSurnames.AllRaw(5).Take(20000).ToList());
-        humanSurnames.AddRange(generatedHumanSurnames.AllRaw(6).Take(10000).ToList());
-        humanSurnames = CollectionUtilities.Shuffle(humanSurnames);
+        humanSurnames.AddRange(generatedHumanSurnames.AllRaw(4).Take(20000));
+        humanSurnames.AddRange(generatedHumanSurnames.AllRaw(5).Take(20000));
+        humanSurnames.AddRange(generatedHumanSurnames.AllRaw(6).Take(10000));
+        CollectionUtilities.Shuffle(humanSurnames);
         
         elvenSurnames = new List<string>();
         for (int i = 5; i <= 6; i++) {
-	        elvenSurnames.AddRange(generatedElvenSurnames.AllRaw(i).Take(50000).ToList());
+	        elvenSurnames.AddRange(generatedElvenSurnames.AllRaw(i).Take(50000));
         }
-        elvenSurnames.AddRange(generatedElvenSurnames.AllRaw(4).Take(20000).ToList());
-        elvenSurnames.AddRange(generatedElvenSurnames.AllRaw(5).Take(20000).ToList());
-        elvenSurnames.AddRange(generatedElvenSurnames.AllRaw(6).Take(10000).ToList());
-        elvenSurnames = CollectionUtilities.Shuffle(elvenSurnames);
+        elvenSurnames.AddRange(generatedElvenSurnames.AllRaw(4).Take(20000));
+        elvenSurnames.AddRange(generatedElvenSurnames.AllRaw(5).Take(20000));
+        elvenSurnames.AddRange(generatedElvenSurnames.AllRaw(6).Take(10000));
+        CollectionUtilities.Shuffle(elvenSurnames);
 
         elvenKingdomNames = new List<string>();
         for (int i = 5; i <= 8; i++) {
-            elvenKingdomNames.AddRange(generatedElvenKingdomNames.AllRaw(i).Take(50000).ToList());
+            elvenKingdomNames.AddRange(generatedElvenKingdomNames.AllRaw(i).Take(50000));
         }
-        elvenKingdomNames.AddRange(generatedElvenKingdomNames.AllRaw(9).Take(20000).ToList());
-        elvenKingdomNames.AddRange(generatedElvenKingdomNames.AllRaw(10).Take(20000).ToList());
-        elvenKingdomNames.AddRange(generatedElvenKingdomNames.AllRaw(11).Take(10000).ToList());
-        elvenKingdomNames.AddRange(generatedElvenKingdomNames.AllRaw(12).Take(10000).ToList());
-        elvenKingdomNames = CollectionUtilities.Shuffle(elvenKingdomNames);
+        elvenKingdomNames.AddRange(generatedElvenKingdomNames.AllRaw(9).Take(20000));
+        elvenKingdomNames.AddRange(generatedElvenKingdomNames.AllRaw(10).Take(20000));
+        elvenKingdomNames.AddRange(generatedElvenKingdomNames.AllRaw(11).Take(10000));
+        elvenKingdomNames.AddRange(generatedElvenKingdomNames.AllRaw(12).Take(10000));
+        CollectionUtilities.Shuffle(elvenKingdomNames);
 
         elvenFemaleNames = new List<string>();
         for (int i = 5; i <= 7; i++) {
-            elvenFemaleNames.AddRange(generatedElvenFemaleNames.AllRaw(i).Take(50000).ToList());
+            elvenFemaleNames.AddRange(generatedElvenFemaleNames.AllRaw(i).Take(50000));
         }
-        elvenFemaleNames.AddRange(generatedElvenFemaleNames.AllRaw(8).Take(20000).ToList());
-        elvenFemaleNames.AddRange(generatedElvenFemaleNames.AllRaw(9).Take(20000).ToList());
-        elvenFemaleNames.AddRange(generatedElvenFemaleNames.AllRaw(10).Take(20000).ToList());
-        elvenFemaleNames.AddRange(generatedElvenFemaleNames.AllRaw(11).Take(10000).ToList());
-        elvenFemaleNames.AddRange(generatedElvenFemaleNames.AllRaw(12).Take(10000).ToList());
-        elvenFemaleNames = CollectionUtilities.Shuffle(elvenFemaleNames);
+        elvenFemaleNames.AddRange(generatedElvenFemaleNames.AllRaw(8).Take(20000));
+        elvenFemaleNames.AddRange(generatedElvenFemaleNames.AllRaw(9).Take(20000));
+        elvenFemaleNames.AddRange(generatedElvenFemaleNames.AllRaw(10).Take(20000));
+        elvenFemaleNames.AddRange(generatedElvenFemaleNames.AllRaw(11).Take(10000));
+        elvenFemaleNames.AddRange(generatedElvenFemaleNames.AllRaw(12).Take(10000));
+        CollectionUtilities.Shuffle(elvenFemaleNames);
 
         elvenMaleNames = new List<string>();
         for (int i = 5; i <= 7; i++) {
-            elvenMaleNames.AddRange(generatedElvenMaleNames.AllRaw(i).Take(50000).ToList());
+            elvenMaleNames.AddRange(generatedElvenMaleNames.AllRaw(i).Take(50000));
         }
-        elvenMaleNames.AddRange(generatedElvenMaleNames.AllRaw(8).Take(20000).ToList());
-        elvenMaleNames.AddRange(generatedElvenMaleNames.AllRaw(9).Take(20000).ToList());
-        elvenMaleNames.AddRange(generatedElvenMaleNames.AllRaw(10).Take(20000).ToList());
-        elvenMaleNames.AddRange(generatedElvenMaleNames.AllRaw(11).Take(10000).ToList());
-        elvenMaleNames.AddRange(generatedElvenMaleNames.AllRaw(12).Take(10000).ToList());
-        elvenMaleNames = CollectionUtilities.Shuffle(elvenMaleNames);
+        elvenMaleNames.AddRange(generatedElvenMaleNames.AllRaw(8).Take(20000));
+        elvenMaleNames.AddRange(generatedElvenMaleNames.AllRaw(9).Take(20000));
+        elvenMaleNames.AddRange(generatedElvenMaleNames.AllRaw(10).Take(20000));
+        elvenMaleNames.AddRange(generatedElvenMaleNames.AllRaw(11).Take(10000));
+        elvenMaleNames.AddRange(generatedElvenMaleNames.AllRaw(12).Take(10000));
+        CollectionUtilities.Shuffle(elvenMaleNames);
 
 		ancientRuinNames = new List<string>();
 		for (int i = 4; i <= 6; i++) {
-			ancientRuinNames.AddRange(generatedAncientRuinNames.AllRaw(i).Take(50000).ToList());
+			ancientRuinNames.AddRange(generatedAncientRuinNames.AllRaw(i).Take(50000));
 		}
-		ancientRuinNames = CollectionUtilities.Shuffle(ancientRuinNames);
+		CollectionUtilities.Shuffle(ancientRuinNames);
 
 		tileNames = new List<string>();
 		for (int i = 6; i <= 9; i++) {
-			tileNames.AddRange(generatedTileNames.AllRaw(i).Take(20000).ToList());
+			tileNames.AddRange(generatedTileNames.AllRaw(i).Take(20000));
 		}
-		tileNames = CollectionUtilities.Shuffle(tileNames);
+		CollectionUtilities.Shuffle(tileNames);
 
         regionNames = new List<string>();
         for (int i = 6; i <= 9; i++) {
-            regionNames.AddRange(generatedRegionNames.AllRaw(i).Take(20000).ToList());
+            regionNames.AddRange(generatedRegionNames.AllRaw(i).Take(20000));
         }
-        regionNames = CollectionUtilities.Shuffle(regionNames);
+        CollectionUtilities.Shuffle(regionNames);
 
         availableMinionNames = new List<string>(minionNames);
         availableSpiderNames = new List<string>(spiderNames);

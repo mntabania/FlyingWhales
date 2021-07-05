@@ -5,7 +5,7 @@ using Inner_Maps;
 
 public class FollowState : CharacterState {
 
-    private MovingMapObjectVisual<TileObject> _targetMapVisual;
+    private MovingMapObjectVisual _targetMapVisual;
 
     public FollowState(CharacterStateComponent characterComp) : base(characterComp) {
         stateName = "Follow State";
@@ -16,7 +16,7 @@ public class FollowState : CharacterState {
     #region Overrides
     protected override void StartState() {
         base.StartState();
-        _targetMapVisual = targetPOI.mapObjectVisual as MovingMapObjectVisual<TileObject>;
+        _targetMapVisual = targetPOI.mapObjectVisual as MovingMapObjectVisual;
     }
     protected override void DoMovementBehavior() {
         base.DoMovementBehavior();

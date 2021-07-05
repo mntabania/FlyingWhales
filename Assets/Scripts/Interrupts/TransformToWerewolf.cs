@@ -19,7 +19,7 @@ namespace Interrupts {
         public override bool ExecuteInterruptStartEffect(InterruptHolder interruptHolder,
             ref Log overrideEffectLog, ActualGoapNode goapNode = null) {
             Character actor = interruptHolder.actor;
-            Messenger.Broadcast(PlayerSignals.CREATE_CHAOS_ORBS, actor.marker.transform.position, 2, actor.currentRegion.innerMap);
+            //Messenger.Broadcast(PlayerSignals.CREATE_CHAOS_ORBS, actor.marker.transform.position, 2, actor.currentRegion.innerMap);
             actor.RevertFromVampireBatForm();
             actor.TransformToWerewolfForm();
             return true;

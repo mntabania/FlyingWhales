@@ -15,7 +15,9 @@ public class SchemeData : PlayerAction {
     
     public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.SCHEME;
     public override string name => "Scheme";
-    public override string description => $"This Action can be used to manipulate events.";
+    public override string description => $"This Action can be used to start various different schemes to manipulate world events.";
+
+    public virtual string verbName => name;
 
     public SchemeData() : base() {
         targetTypes = new SPELL_TARGET[] { SPELL_TARGET.CHARACTER };
@@ -95,7 +97,7 @@ public class SchemeData : PlayerAction {
             List<PLAYER_SKILL_TYPE> schemeTypes = PlayerManager.Instance.player.playerSkillComponent.schemes;
             for (int i = 0; i < schemeTypes.Count; i++) {
                 PLAYER_SKILL_TYPE spellType = schemeTypes[i];
-                PlayerAction spellData = PlayerSkillManager.Instance.GetPlayerSkillData(spellType) as PlayerAction;
+                PlayerAction spellData = PlayerSkillManager.Instance.GetSkillData(spellType) as PlayerAction;
                 if (spellData != null && spellData.IsValid(PlayerManager.Instance.player.currentlySelectedPlayerActionTarget)) {
                     p_contextMenuItems.Add(spellData);
                 }
@@ -126,8 +128,7 @@ public class SchemeData : PlayerAction {
         PlayerSkillManager.Instance.GetPlayerActionData(PLAYER_SKILL_TYPE.SCHEME).OnExecutePlayerSkill();
         return isSuccessful;
     }
-
-    protected void ShowSchemeConversation(List<ConversationData> conversationList, string titleText) {
+    private void ShowSchemeConversation(List<ConversationData> conversationList, string titleText) {
         UIManager.Instance.OpenConversationMenu(conversationList, titleText);
 
         for (int i = 0; i < conversationList.Count; i++) {
@@ -135,8 +136,7 @@ public class SchemeData : PlayerAction {
         }
         ObjectPoolManager.Instance.ReturnConversationDataListToPool(conversationList);
     }
-
-    protected void LogSchemeCharacter(Character p_targetCharacter, bool isSuccessful) {
+    private void LogSchemeCharacter(Character p_targetCharacter, bool isSuccessful) {
         string key = "success_scheme_character";
         if (!isSuccessful) {
             key = "fail_scheme_character";
@@ -146,7 +146,7 @@ public class SchemeData : PlayerAction {
         log.AddToFillers(null, UtilityScripts.Utilities.GetArticleForWord(name), LOG_IDENTIFIER.STRING_1);
         log.AddToFillers(null, name, LOG_IDENTIFIER.STRING_2);
         log.AddLogToDatabase();
-        PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
+        PlayerManager.Instance.player.ShowNotificationFromPlayer(log, true);
     }
     protected void LogSchemeVillage(BaseSettlement p_targetSettlement) {
         Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "General", "Player", "player_scheme_village", null, LOG_TAG.Player);
@@ -154,6 +154,6 @@ public class SchemeData : PlayerAction {
         log.AddToFillers(null, UtilityScripts.Utilities.GetArticleForWord(name), LOG_IDENTIFIER.STRING_1);
         log.AddToFillers(null, name, LOG_IDENTIFIER.STRING_2);
         log.AddLogToDatabase();
-        PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
+        PlayerManager.Instance.player.ShowNotificationFromPlayer(log, true);
     }
 }

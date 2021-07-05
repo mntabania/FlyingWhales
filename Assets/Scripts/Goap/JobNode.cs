@@ -1,8 +1,6 @@
 ﻿public abstract class JobNode {
     public string persistentID { get; } 
     public abstract ActualGoapNode singleNode { get; }
-    public abstract int currentNodeIndex { get; }
-
     public JobNode() { 
         persistentID = UtilityScripts.Utilities.GetNewUniqueID();
     }
@@ -14,6 +12,7 @@
     public abstract void OnUnattachPlanToJob(GoapPlanJob job);
     public abstract void SetNextActualNode();
     public abstract bool IsCurrentActionNode(ActualGoapNode node);
+    public abstract void Reset();
 }
 
 #region Save Data

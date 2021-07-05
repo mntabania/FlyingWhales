@@ -8,7 +8,9 @@ public class DazedBehaviour : CharacterBehaviourComponent {
         //attributes = new[] { BEHAVIOUR_COMPONENT_ATTRIBUTE.WITHIN_HOME_SETTLEMENT_ONLY };
     }
     public override bool TryDoBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
+#if DEBUG_LOG
         log += $"\n-{character.name} is dazed, will only return home";
+#endif
         return character.jobComponent.PlanReturnHome(JOB_TYPE.IDLE_RETURN_HOME, out producedJob);
     }
     public override void OnAddBehaviourToCharacter(Character character) {

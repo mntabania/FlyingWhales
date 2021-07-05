@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;  
 using Traits;
+using UtilityScripts;
 
 public class PickUp : GoapAction {
 
@@ -46,12 +47,16 @@ public class PickUp : GoapAction {
         SetState("Take Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
-        string costLog = "";
+#if DEBUG_LOG
+        string costLog = string.Empty;
+#endif
         if (target.gridTileLocation != null && actor.movementComponent.structuresToAvoid.Contains(target.gridTileLocation.structure)) {
             if (!actor.partyComponent.hasParty) {
                 //target is at structure that character is avoiding
+#if DEBUG_LOG
                 costLog += $" +2000(Location of target is in avoid structure)";
                 actor.logComponent.AppendCostLog(costLog);
+#endif
                 return 2000;
             }
         }
@@ -60,19 +65,24 @@ public class PickUp : GoapAction {
             if (settlement.owner != actor.faction && actor.faction != null) {
                 FactionRelationship rel = actor.faction.GetRelationshipWith(settlement.owner);
                 if (rel != null && rel.relationshipStatus != FACTION_RELATIONSHIP_STATUS.Hostile) {
+#if DEBUG_LOG
                     costLog += $" +2000(Job is take item and Location of target is in settlement that is NOT hostile with actor)";
                     actor.logComponent.AppendCostLog(costLog);
+#endif
                     return 2000;
                 }
             }
-
         }
+#if DEBUG_LOG
         costLog = $"\n{name} {target.nameWithID}:";
+#endif
         int cost = 0;
         if (job != null && job.jobType == JOB_TYPE.OBTAIN_PERSONAL_ITEM) {
             if (!target.gridTileLocation.IsPartOfSettlement(actor.homeSettlement)) {
                 cost += 2000;
+#if DEBUG_LOG
                 costLog = $"{costLog} +2000(Object is not part of home settlement and job is Obtain Personal Item)";
+#endif
             }
             
             //else if (target.IsOwnedBy(actor) && target.gridTileLocation.structure == actor.homeStructure) {
@@ -83,15 +93,21 @@ public class PickUp : GoapAction {
         if(target is TileObject targetTileObject) {
             if(targetTileObject is Heirloom && job != null && job.jobType == JOB_TYPE.DROP_ITEM_PARTY) { //|| job.jobType == JOB_TYPE.DROP_ITEM
                 cost += 10;
+#if DEBUG_LOG
                 costLog = $"{costLog} +10(Heirloom)";
+#endif
             } else if(targetTileObject is FoodPile && job != null && job.jobType == JOB_TYPE.DISPOSE_FOOD_PILE) { //|| job.jobType == JOB_TYPE.DROP_ITEM
                 cost += 10;
+#if DEBUG_LOG
                 costLog = $"{costLog} +10(Dispose Food Pile)";
+#endif
             } else {
                 if (targetTileObject.characterOwner == null) {
-                    if (job != null && (job.jobType == JOB_TYPE.TAKE_ITEM || job.jobType == JOB_TYPE.HAUL)) {
+                    if (job != null && (job.jobType == JOB_TYPE.TAKE_ITEM || job.jobType == JOB_TYPE.HAUL || job.jobType == JOB_TYPE.COMBINE_STOCKPILE || job.jobType == JOB_TYPE.STOCKPILE_FOOD || job.jobType == JOB_TYPE.OBTAIN_WANTED_ITEM)) {
                         cost += 10;
-                        costLog = $"{costLog} +10(No personal owner, Take Item/Haul)";
+#if DEBUG_LOG
+                        costLog = $"{costLog} +10(No personal owner, Take Item/Haul/Combine Stockpile/Stockpile Food)";
+#endif
                     } else if (job != null && job.jobType == JOB_TYPE.REMOVE_STATUS) {
                         if (target.gridTileLocation != null && actor.homeSettlement != null &&
                             actor.movementComponent.HasPathTo(targetTileObject.gridTileLocation) &&
@@ -99,38 +115,52 @@ public class PickUp : GoapAction {
                               targetTileObject.gridTileLocation.IsNextToSettlementArea(actor.homeSettlement))) {
                             int randomCost = UtilityScripts.Utilities.Rng.Next(40, 81);
                             cost += randomCost;
+#if DEBUG_LOG
                             costLog = $"{costLog} +{randomCost.ToString()}(Job is remove status and object is reachable or is next to or part of actor's home settlement)";
+#endif
                         } else {
                             cost += 2000;
+#if DEBUG_LOG
                             costLog = $"{costLog} +2000(Job is remove status and object is NOT reachable and is NOT next to or part of actor's home settlement)";
+#endif
                         }
-                    } else if (actor.homeSettlement != null && targetTileObject.gridTileLocation != null && targetTileObject.gridTileLocation.collectionOwner.isPartOfParentRegionMap
-                               && targetTileObject.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.settlementOnTile == actor.homeSettlement) {
+                    } else if (actor.homeSettlement != null && targetTileObject.gridTileLocation != null && targetTileObject.gridTileLocation.area.settlementOnArea == actor.homeSettlement) {
                         int randomCost = UtilityScripts.Utilities.Rng.Next(80, 91);
                         cost += randomCost;
+#if DEBUG_LOG
                         costLog = $"{costLog} +{randomCost.ToString()}(No personal owner, object inside actor home settlement)";
-                    } else if (!actor.isFactionless && !actor.isVagrantOrFactionless && targetTileObject.gridTileLocation != null && targetTileObject.gridTileLocation.collectionOwner.isPartOfParentRegionMap
-                         && targetTileObject.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.settlementOnTile != null
-                         && targetTileObject.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.settlementOnTile.owner == actor.faction) {
+#endif
+                    } else if (!actor.isFactionless && !actor.isVagrantOrFactionless && targetTileObject.gridTileLocation != null && targetTileObject.gridTileLocation.area.settlementOnArea != null
+                         && targetTileObject.gridTileLocation.area.settlementOnArea.owner == actor.faction) {
                         int randomCost = UtilityScripts.Utilities.Rng.Next(100, 121);
                         cost += randomCost;
+#if DEBUG_LOG
                         costLog = $"{costLog} +{randomCost.ToString()}(No personal owner, object inside actor's faction owned settlement)";
+#endif
                     } else {
                         cost += 2000;
+#if DEBUG_LOG
                         costLog = $"{costLog} +2000(No personal owner)";
+#endif
                     }
                 } else {
                     if (targetTileObject.IsOwnedBy(actor)) {
                         if (targetTileObject.gridTileLocation != null && targetTileObject.gridTileLocation.structure == actor.homeStructure) {
                             cost += UtilityScripts.Utilities.Rng.Next(10, 31);
+#if DEBUG_LOG
                             costLog = $"{costLog} +{cost}(Personal owner is actor and object is inside home structure of actor)";
+#endif
                         } else {
                             cost += UtilityScripts.Utilities.Rng.Next(40, 81);
+#if DEBUG_LOG
                             costLog = $"{costLog} +{cost}(Personal owner is actor)";
+#endif
                         }
                     } else {
                         cost += 2000;
+#if DEBUG_LOG
                         costLog = $"{costLog} +2000(Has owner)";
+#endif
                         //if (actor.traitContainer.HasTrait("Kleptomaniac") || !actor.relationshipContainer.HasRelationshipWith(targetTileObject.characterOwner) || (job != null && job.jobType == JOB_TYPE.HAUL)) {
                         //    cost += UtilityScripts.Utilities.Rng.Next(80, 91);
                         //    costLog += $" +{cost}(Kleptomaniac/No rel with owner)";
@@ -144,9 +174,13 @@ public class PickUp : GoapAction {
         }
         if(actor is Troll && job != null && job.jobType == JOB_TYPE.DROP_ITEM) {
             cost = 10;
+#if DEBUG_LOG
             costLog = $"{costLog} 10(Troll, Drop Item Job)";
+#endif
         }
+#if DEBUG_LOG
         actor.logComponent.AppendCostLog(costLog);
+#endif
         return cost;
     }
     public override REACTABLE_EFFECT GetReactableEffect(ActualGoapNode node, Character witness) {
@@ -157,8 +191,8 @@ public class PickUp : GoapAction {
         }
         return REACTABLE_EFFECT.Neutral;
     }
-    public override void PopulateReactionsToActor(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
-        base.PopulateReactionsToActor(reactions, actor, target, witness, node, status);
+    public override void PopulateEmotionReactionsToActor(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
+        base.PopulateEmotionReactionsToActor(reactions, actor, target, witness, node, status);
         if (target is TileObject targetTileObject) {
             if (targetTileObject.characterOwner != null && !targetTileObject.IsOwnedBy(node.actor)) {
                 reactions.Add(EMOTION.Disapproval);
@@ -185,9 +219,25 @@ public class PickUp : GoapAction {
         }
         return base.GetCrimeType(actor, target, crime);
     }
+    public override void OnStopWhileStarted(ActualGoapNode node) {
+        base.OnStopWhileStarted(node);
+        if (node.associatedJobType == JOB_TYPE.COMBINE_STOCKPILE) {
+            //if this action was stopped and the associated job was combine stockpile, make sure to drop the resource pile that the character just picked up
+            Character actor = node.actor;
+            if (actor.HasItem<ResourcePile>()) {
+                List<ResourcePile> resourcePiles = RuinarchListPool<ResourcePile>.Claim();
+                actor.PopulateItemsOfType<ResourcePile>(resourcePiles);
+                for (int i = 0; i < resourcePiles.Count; i++) {
+                    ResourcePile resourcePile = resourcePiles[i];
+                    actor.DropItem(resourcePile);
+                }
+                RuinarchListPool<ResourcePile>.Release(resourcePiles);
+            }
+        }
+    }
     #endregion
 
-    #region Requirements
+#region Requirements
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, OtherData[] otherData, JobQueueItem job) { 
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData, job);
         if (satisfied) {
@@ -197,9 +247,9 @@ public class PickUp : GoapAction {
         return false;
         
     }
-    #endregion
+#endregion
 
-    #region State Effects
+#region State Effects
     public void PreTakeSuccess(ActualGoapNode goapNode) {
         //GoapActionState currentState = goapNode.action.states[goapNode.currentStateName];
         goapNode.descriptionLog.AddToFillers(goapNode.poiTarget, goapNode.poiTarget.name, LOG_IDENTIFIER.ITEM_1);
@@ -214,5 +264,5 @@ public class PickUp : GoapAction {
                               || goapNode.associatedJobType == JOB_TYPE.OBTAIN_PERSONAL_FOOD);
         goapNode.actor.PickUpItem(goapNode.poiTarget as TileObject, setOwnership: setOwnership);
     }
-    #endregion
+#endregion
 }

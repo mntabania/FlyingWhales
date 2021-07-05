@@ -9,7 +9,7 @@ public class PlayGuitar : GoapAction {
 
     public override ACTION_CATEGORY actionCategory => ACTION_CATEGORY.DIRECT;
     public PlayGuitar() : base(INTERACTION_TYPE.PLAY_GUITAR) {
-        validTimeOfDays = new TIME_IN_WORDS[] { TIME_IN_WORDS.MORNING, TIME_IN_WORDS.AFTERNOON, TIME_IN_WORDS.EARLY_NIGHT, };
+        //validTimeOfDays = new TIME_IN_WORDS[] { TIME_IN_WORDS.MORNING, TIME_IN_WORDS.LUNCH_TIME, TIME_IN_WORDS.AFTERNOON, TIME_IN_WORDS.EARLY_NIGHT, };
         actionIconString = GoapActionStateDB.Entertain_Icon;
         // showNotification = false;
         //advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.TILE_OBJECT };
@@ -29,63 +29,80 @@ public class PlayGuitar : GoapAction {
         SetState("Play Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
+#if DEBUG_LOG
         string costLog = $"\n{name} {target.nameWithID}:";
+#endif
         if (actor.traitContainer.HasTrait("Enslaved")) {
             if (target.gridTileLocation == null || !target.gridTileLocation.IsInHomeOf(actor)) {
+#if DEBUG_LOG
                 costLog += $" +2000(Slave, target is not in actor's home)";
                 actor.logComponent.AppendCostLog(costLog);
+#endif
                 return 2000;
             }
         }
         if (actor.partyComponent.hasParty && actor.partyComponent.currentParty.isActive) {
             if (actor.partyComponent.isActiveMember) {
-                if (target.gridTileLocation != null && target.gridTileLocation.collectionOwner.isPartOfParentRegionMap && actor.gridTileLocation != null
-                && actor.gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
-                    LocationGridTile centerGridTileOfTarget = target.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.GetCenterLocationGridTile();
-                    LocationGridTile centerGridTileOfActor = actor.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.GetCenterLocationGridTile();
+                if (target.gridTileLocation != null && actor.gridTileLocation != null) {
+                    LocationGridTile centerGridTileOfTarget = target.gridTileLocation.area.gridTileComponent.centerGridTile;
+                    LocationGridTile centerGridTileOfActor = actor.gridTileLocation.area.gridTileComponent.centerGridTile;
                     float distance = centerGridTileOfActor.GetDistanceTo(centerGridTileOfTarget);
-                    int distanceToCheck = (InnerMapManager.BuildingSpotSize.x * 2) * 3;
+                    int distanceToCheck = InnerMapManager.AreaLocationGridTileSize.x * 3;
 
                     if (distance > distanceToCheck) {
                         //target is at structure that character is avoiding
+#if DEBUG_LOG
                         costLog += $" +2000(Active Party, Location of target too far from actor)";
                         actor.logComponent.AppendCostLog(costLog);
+#endif
                         return 2000;
                     }
                 }
             }
         }
         int cost = UtilityScripts.Utilities.Rng.Next(80, 121);
+#if DEBUG_LOG
         costLog += $" +{cost}(Initial)";
+#endif
         int numOfTimesActionDone = actor.jobComponent.GetNumOfTimesActionDone(this);
         if (numOfTimesActionDone > 5) {
             cost += 2000;
+#if DEBUG_LOG
             costLog += " +2000(Times Played > 5)";
+#endif
         }
 
         if (target.gridTileLocation != null) {
             if (actor.trapStructure.IsTrapped()) {
                 if (actor.trapStructure.IsTrapStructure(target.gridTileLocation.structure)) {
                     cost += 2000;
+#if DEBUG_LOG
                     costLog += " +2000(Actor trapped and guitar is not at trap structure)";
+#endif
                 }
             } else {
                 if (target.gridTileLocation.structure != actor.homeStructure) {
                     cost += 2000;
-                    costLog += " +2000(Actor is not trapped and guitar is not at home)";    
+#if DEBUG_LOG
+                    costLog += " +2000(Actor is not trapped and guitar is not at home)";
+#endif
                 }
             }
         }
 
         if (actor.traitContainer.HasTrait("Music Lover")) {
             cost += -25;
+#if DEBUG_LOG
             costLog += " -25(Music Lover)";
+#endif
         }
         int timesCost = 10 * numOfTimesActionDone;
         cost += timesCost;
+#if DEBUG_LOG
         costLog += $" +{timesCost}(10 x Times Played)";
-        
+
         actor.logComponent.AppendCostLog(costLog);
+#endif
         return cost;
     }
     public override void OnStopWhilePerforming(ActualGoapNode node) {
@@ -106,13 +123,25 @@ public class PlayGuitar : GoapAction {
         }
         return goapActionInvalidity;
     }
-    public override void PopulateReactionsToActor(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
-        base.PopulateReactionsToActor(reactions, actor, target, witness, node, status);
+    public override void PopulateEmotionReactionsToActor(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
+        base.PopulateEmotionReactionsToActor(reactions, actor, target, witness, node, status);
         Trait trait = witness.traitContainer.GetTraitOrStatus<Trait>("Music Hater", "Music Lover");
         if (trait != null) {
             if (trait.name == "Music Hater") {
+                if (witness.HasAfflictedByPlayerWith(trait)) {
+                    PLAYER_SKILL_TYPE playerSkillType = trait.GetAfflictionSkillType();
+                    if (playerSkillType != PLAYER_SKILL_TYPE.NONE) {
+                        PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetScriptableObjPlayerSkillData<PlayerSkillData>(playerSkillType);
+                        SkillData skillData = PlayerSkillManager.Instance.GetSkillData(playerSkillType);
+                        if (playerSkillData.afflictionUpgradeData.HasAddedBehaviourForLevel(AFFLICTION_SPECIFIC_BEHAVIOUR.Angry_Upon_Hear_Music, skillData.currentLevel)) {
+                            reactions.Add(EMOTION.Anger);
+                        }
+                    }
+                }
                 if (witness.moodComponent.moodState == MOOD_STATE.Bad) {
-                    reactions.Add(EMOTION.Anger);
+                    if (!reactions.Contains(EMOTION.Anger)) {
+                        reactions.Add(EMOTION.Anger);    
+                    }
                 } else if (witness.moodComponent.moodState == MOOD_STATE.Critical) {
                     reactions.Add(EMOTION.Rage);
                 } else {
@@ -133,6 +162,11 @@ public class PlayGuitar : GoapAction {
             }
         }
     }
+    public override string ReactionToActor(Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
+        MusicHater musicHater = witness.traitContainer.GetTraitOrStatus<MusicHater>("Music Hater");
+        musicHater?.ReactToMusicPerformer(witness, actor);
+        return base.ReactionToActor(actor, target, witness, node, status);
+    }
     public override REACTABLE_EFFECT GetReactableEffect(ActualGoapNode node, Character witness) {
         if (witness.traitContainer.HasTrait("Music Hater")) {
             return REACTABLE_EFFECT.Negative;
@@ -144,9 +178,9 @@ public class PlayGuitar : GoapAction {
     public override bool IsHappinessRecoveryAction() {
         return true;
     }
-    #endregion
+#endregion
 
-    #region State Effects
+#region State Effects
     public void PrePlaySuccess(ActualGoapNode goapNode) {
         //goapNode.actor.needsComponent.AdjustDoNotGetBored(1);
         goapNode.actor.jobComponent.IncreaseNumOfTimesActionDone(this);
@@ -162,9 +196,9 @@ public class PlayGuitar : GoapAction {
     //public void PreTargetMissing() {
     //    actor.RemoveAwareness(poiTarget);
     //}
-    #endregion
+#endregion
 
-    #region Requirement
+#region Requirement
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, OtherData[] otherData, JobQueueItem job) {
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData, job);
         if (satisfied) {
@@ -174,7 +208,7 @@ public class PlayGuitar : GoapAction {
             if (poiTarget.gridTileLocation != null && actor.trapStructure.IsTrappedAndTrapStructureIsNot(poiTarget.gridTileLocation.structure)) {
                 return false;
             }
-            if (poiTarget.gridTileLocation != null && poiTarget.gridTileLocation.collectionOwner.isPartOfParentRegionMap && actor.trapStructure.IsTrappedAndTrapHexIsNot(poiTarget.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner)) {
+            if (poiTarget.gridTileLocation != null && actor.trapStructure.IsTrappedAndTrapAreaIsNot(poiTarget.gridTileLocation.area)) {
                 return false;
             }
             if (actor.traitContainer.HasTrait("Music Hater")) {
@@ -212,33 +246,5 @@ public class PlayGuitar : GoapAction {
         } 
         return false;
     }
-    #endregion
-
-    //#region Intel Reactions
-    //private List<string> PlaySuccessIntelReaction(Character recipient, Intel sharedIntel, SHARE_INTEL_STATUS status) {
-    //    List<string> reactions = new List<string>();
-
-    //    if(status == SHARE_INTEL_STATUS.WITNESSED && recipient.traitContainer.GetNormalTrait<Trait>("Music Hater") != null) {
-    //        recipient.traitContainer.AddTrait(recipient, "Annoyed");
-    //        if (recipient.relationshipContainer.HasRelationshipWith(actor.currentAlterEgo, RELATIONSHIP_TRAIT.LOVER) || recipient.relationshipContainer.HasRelationshipWith(actor.currentAlterEgo, RELATIONSHIP_TRAIT.AFFAIR)) {
-    //            if (recipient.CreateBreakupJob(actor) != null) {
-    //                Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Trait", "MusicHater", "break_up");
-    //                log.AddToFillers(recipient, recipient.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-    //                log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-    //                log.AddLogToInvolvedObjects();
-    //                PlayerManager.Instance.player.ShowNotificationFrom(recipient, log);
-    //            }
-    //        } else if (!recipient.relationshipContainer.HasRelationshipWith(actor.currentAlterEgo, RELATIONSHIP_TRAIT.ENEMY)) {
-    //            //Otherwise, if the Actor does not yet consider the Target an Enemy, relationship degradation will occur, log:
-    //            Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Trait", "MusicHater", "degradation");
-    //            log.AddToFillers(recipient, recipient.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-    //            log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-    //            log.AddLogToInvolvedObjects();
-    //            PlayerManager.Instance.player.ShowNotificationFrom(recipient, log);
-    //            RelationshipManager.Instance.RelationshipDegradation(actor, recipient);
-    //        }
-    //    }
-    //    return reactions;
-    //}
-    //#endregion
+#endregion
 }

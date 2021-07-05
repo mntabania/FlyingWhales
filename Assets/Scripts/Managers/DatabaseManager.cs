@@ -11,7 +11,7 @@ using UnityEngine.SceneManagement;
 public class DatabaseManager : MonoBehaviour {
     public static DatabaseManager Instance;
 
-    public HexTileDatabase hexTileDatabase { get; private set; }
+    public AreaDatabase areaDatabase { get; private set; }
     public RegionDatabase regionDatabase { get; private set; }
     public CharacterDatabase characterDatabase { get; private set; }
     public FactionDatabase factionDatabase { get; private set; }
@@ -49,7 +49,7 @@ public class DatabaseManager : MonoBehaviour {
     //Use this for initialization
     public void Initialize() {
         //Called in InitializeDataBeforeWorldCreation
-        hexTileDatabase = new HexTileDatabase();
+        areaDatabase = new AreaDatabase();
         regionDatabase = new RegionDatabase();
         characterDatabase = new CharacterDatabase();
         factionDatabase = new FactionDatabase();
@@ -76,7 +76,7 @@ public class DatabaseManager : MonoBehaviour {
         if (type == typeof(Character) || type.IsSubclassOf(typeof(Character))) {
             return characterDatabase.GetCharacterByPersistentID(persistentID);
         } else if (type == typeof(TileObject) || type.IsSubclassOf(typeof(TileObject))) {
-            return tileObjectDatabase.GetTileObjectByPersistentID(persistentID);
+            return tileObjectDatabase.GetTileObjectByPersistentIDSafe(persistentID);
         } else if (type == typeof(LocationStructure) || type.IsSubclassOf(typeof(LocationStructure))) {
             return structureDatabase.GetStructureByPersistentID(persistentID);
         } else if (type == typeof(Region)) {
@@ -87,6 +87,8 @@ public class DatabaseManager : MonoBehaviour {
             return factionDatabase.GetFactionBasedOnPersistentID(persistentID);
         } else if (type == typeof(Party)) {
             return partyDatabase.GetPartyByPersistentIDSafe(persistentID);
+        } else if (type == typeof(Area)) {
+            return areaDatabase.GetAreaByPersistentID(persistentID);
         }
         return null;
     }
@@ -106,7 +108,9 @@ public class DatabaseManager : MonoBehaviour {
     }
 
     private void OnSceneUnloaded(Scene unloaded) {
+#if DEBUG_LOG
         Debug.Log($"Scene {unloaded.name} was unloaded.");
+#endif
         if (unloaded.name == "Game") {
             //TODO: Dispose of old databases.
             DisposeDatabases();

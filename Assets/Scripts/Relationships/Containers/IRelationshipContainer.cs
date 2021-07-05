@@ -22,24 +22,28 @@ public interface IRelationshipContainer {
     bool HasRelationshipWith(int id);
     bool HasRelationshipWith(Relatable relatable);
     bool HasRelationshipWith(Relatable relatable, RELATIONSHIP_TYPE relType);
-    bool HasRelationshipWith(Relatable relatable, params RELATIONSHIP_TYPE[] relType);
+    bool HasRelationshipWith(Relatable relatable, RELATIONSHIP_TYPE relType1, RELATIONSHIP_TYPE relType2);
+    bool HasRelationshipWith(Relatable relatable, RELATIONSHIP_TYPE relType1, RELATIONSHIP_TYPE relType2, RELATIONSHIP_TYPE relType3);
+    bool HasRelationshipWith(Relatable relatable, RELATIONSHIP_TYPE relType1, RELATIONSHIP_TYPE relType2, RELATIONSHIP_TYPE relType3, RELATIONSHIP_TYPE relType4, RELATIONSHIP_TYPE relType5);
     bool HasSpecialRelationshipWith(Relatable relatable);
-    bool HasRelationship(params RELATIONSHIP_TYPE[] type);
-    bool HasActiveRelationship(params RELATIONSHIP_TYPE[] type);
+    bool HasRelationship(RELATIONSHIP_TYPE type);
+    bool HasActiveRelationship(RELATIONSHIP_TYPE type1, RELATIONSHIP_TYPE type2);
     #endregion
 
     #region Getting
-    List<int> GetAllRelatableIDWithRelationship(params RELATIONSHIP_TYPE[] type);
-    int GetFirstRelatableIDWithRelationship(params RELATIONSHIP_TYPE[] type);
-    int GetRelatablesWithRelationshipCount(params RELATIONSHIP_TYPE[] type);
+    void PopulateAllRelatableIDWithRelationship(List<int> ids, RELATIONSHIP_TYPE type);
+    int GetFirstRelatableIDWithRelationship(RELATIONSHIP_TYPE type);
+    int GetRelatablesWithRelationshipCount(RELATIONSHIP_TYPE type);
+    int GetRelatablesWithRelationshipCount(RELATIONSHIP_TYPE type1, RELATIONSHIP_TYPE type2);
     IRelationshipData GetRelationshipDataWith(Relatable relatable);
     //Returns the relationship where the choices are the relationships that are passed to the function
     //Example: If we want to know if the character is lover or affair of another character we will use this function because this will return if their relationship is lover or affair
-    RELATIONSHIP_TYPE GetRelationshipFromParametersWith(Relatable relatable, params RELATIONSHIP_TYPE[] relType);
+    RELATIONSHIP_TYPE GetRelationshipFromParametersWith(Relatable relatable, RELATIONSHIP_TYPE relType1, RELATIONSHIP_TYPE relType2);
     bool IsFamilyMember(Character target);
-    Character GetMissingCharacterWithOpinion(string opinionLabel);
-    Character GetMissingCharacterThatMeetCriteria(Func<Character, bool> checker);
-    Character GetFirstCharacterWithRelationship(params RELATIONSHIP_TYPE[] type);
+    Character GetRandomMissingCharacterWithOpinion(string opinionLabel);
+    Character GetRandomMissingCharacterThatIsFamilyMemberOrLoverAffairOf(Character p_character);
+    Character GetFirstCharacterWithRelationship(RELATIONSHIP_TYPE type1, RELATIONSHIP_TYPE type2);
+    Character GetFirstCharacterWithRelationship(RELATIONSHIP_TYPE type);
     bool IsRelativeLoverOrAffairAndNotRival(Character character);
     #endregion
 
@@ -48,6 +52,8 @@ public interface IRelationshipContainer {
     void SetOpinion(Character owner, Character target, string opinionText, int opinionValue, string lastStrawReason = "");
     void SetOpinion(Character owner, int targetID, string targetName, GENDER gender, string opinionText, int opinionValue, bool isInitial, string lastStrawReason = "");
     void RemoveOpinion(Character target, string opinionText);
+    void PopulateEnemyCharacters(List<Character> characters);
+    void PopulateFriendCharacters(List<Character> characters);
     bool HasOpinion(Character target, string opinionText);
     bool HasOpinion(int id, string opinionText);
     int GetTotalOpinion(Character target);
@@ -57,14 +63,11 @@ public interface IRelationshipContainer {
     bool IsEnemiesWith(Character character);
     Character GetFirstEnemyCharacter();
     Character GetRandomEnemyCharacter();
-    List<Character> GetCharactersWithPositiveOpinion();
-    List<Character> GetCharactersWithNeutralOpinion();
-    List<Character> GetCharactersWithNegativeOpinion();
-    List<Character> GetEnemyCharacters();
-    List<Character> GetFriendCharacters();
-    List<Character> GetCharactersWithOpinionLabel(params string[] labels);
-    bool HasCharacterWithOpinionLabel(params string[] labels);
-    bool HasOpinionLabelWithCharacter(Character character, params string[] labels);
+    bool HasOpinionLabelWithCharacter(Character character, string opinion);
+    bool HasOpinionLabelWithCharacter(Character character, string opinion1, string opinion2);
+    bool HasOpinionLabelWithCharacter(Character character, string opinion1, string opinion2, string opinion3);
+    bool HasOpinionLabelWithCharacter(Character character, List<OPINIONS> opinions);
+
     bool HasEnemyCharacter();
     int GetNumberOfFriendCharacters();
     RELATIONSHIP_EFFECT GetRelationshipEffectWith(Character character);

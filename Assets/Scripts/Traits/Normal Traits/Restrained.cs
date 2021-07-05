@@ -50,6 +50,7 @@ namespace Traits {
                 owner = sourceCharacter as Character;
                 owner.AddTraitNeededToBeRemoved(this);
                 //owner.traitContainer.AddTrait(owner, "Prisoner");
+                PlayerManager.Instance?.player?.retaliationComponent.OnCharacterRestrained(owner);
             }
         }
         public override void OnRemoveTrait(ITraitable sourceCharacter, Character removedBy) {

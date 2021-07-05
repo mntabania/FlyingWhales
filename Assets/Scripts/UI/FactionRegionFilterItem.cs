@@ -5,29 +5,30 @@ using UnityEngine.UI;
 using TMPro;
 using EZObjectPools;
 using Ruinarch.Custom_UI;
+using Locations.Settlements;
 
 public class FactionRegionFilterItem : PooledObject {
     public TextMeshProUGUI nameLbl;
     public RuinarchToggle toggle;
 
-    public Region region { get; private set; }
+    public BaseSettlement village { get; private set; }
 
-    public void SetRegion(Region region) {
-        this.region = region;
-        nameLbl.text = this.region.name;
+    public void SetVillage(BaseSettlement village) {
+        this.village = village;
+        nameLbl.text = village.name;
     }
     public void OnToggle(bool state) {
         if (state) {
-            FactionInfoHubUI.Instance.FilterRegion(region);
+            FactionInfoHubUI.Instance.FilterRegion(village);
         } else {
-            FactionInfoHubUI.Instance.UnFilterRegion(region);
+            FactionInfoHubUI.Instance.UnFilterRegion(village);
         }
     }
 
     #region Object Pool
     public override void Reset() {
         base.Reset();
-        region = null;
+        village = null;
     }
     #endregion
 }

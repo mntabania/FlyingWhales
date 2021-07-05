@@ -29,16 +29,16 @@ public class StructureItemGenerator : MonoBehaviour {
     [Header("Objects")]
     [FormerlySerializedAs("_objectsParent")] public Transform objectsParent;
 
-    private WallVisual[] wallVisuals;
+    private ThinWallGameObject[] wallVisuals;
 
-    private void UpdateSortingOrders() {
-        _groundTileMapRenderer.sortingOrder = InnerMapManager.GroundTilemapSortingOrder + 5;
-        _detailTileMapRenderer.sortingOrder = InnerMapManager.DetailsTilemapSortingOrder;
-        for (int i = 0; i < wallVisuals.Length; i++) {
-            WallVisual wallVisual = wallVisuals[i];
-            wallVisual.UpdateSortingOrders(_groundTileMapRenderer.sortingOrder + 2);
-        }
-    }
+    //private void UpdateSortingOrders() {
+    //    _groundTileMapRenderer.sortingOrder = InnerMapManager.GroundTilemapSortingOrder + 5;
+    //    _detailTileMapRenderer.sortingOrder = InnerMapManager.DetailsTilemapSortingOrder;
+    //    for (int i = 0; i < wallVisuals.Length; i++) {
+    //        ThinWallGameObject wallVisual = wallVisuals[i];
+    //        wallVisual.UpdateSortingOrders(_groundTileMapRenderer.sortingOrder + 2);
+    //    }
+    //}
 
     [ContextMenu("Convert Walls")]
     public void ConvertWalls() {
@@ -56,7 +56,7 @@ public class StructureItemGenerator : MonoBehaviour {
                     if (tile.name.Contains("Door")) {
                         continue; //skip
                     }
-                    WallVisual wallVisual = null;
+                    ThinWallGameObject wallVisual = null;
                     if (tile.name.Contains("Left")) {
                         wallVisual = InstantiateWall(leftWall, centeredPos, wallTileMap.transform, _thinWallResource != RESOURCE.WOOD);
                     }
@@ -98,10 +98,10 @@ public class StructureItemGenerator : MonoBehaviour {
             }
         }
     }
-    private WallVisual InstantiateWall(GameObject wallPrefab, Vector3 centeredPos, Transform parent, bool updateWallAsset) {
+    private ThinWallGameObject InstantiateWall(GameObject wallPrefab, Vector3 centeredPos, Transform parent, bool updateWallAsset) {
         GameObject wallGO = Instantiate(wallPrefab, parent);
         wallGO.transform.position = centeredPos;
-        WallVisual wallVisual = wallGO.GetComponent<WallVisual>();
+        ThinWallGameObject wallVisual = wallGO.GetComponent<ThinWallGameObject>();
         if (updateWallAsset) {
             wallVisual.UpdateWallAssets(_thinWallResource);
         }

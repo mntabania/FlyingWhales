@@ -20,17 +20,19 @@ public class LightningData : SkillData {
 
     public override void ActivateAbility(LocationGridTile targetTile) {
         AudioManager.Instance.TryCreateAudioObject(
-            CollectionUtilities.GetRandomElement(PlayerSkillManager.Instance.GetPlayerSkillData<LightningSkillData>(PLAYER_SKILL_TYPE.LIGHTNING).thunderAudioClips), 
+            CollectionUtilities.GetRandomElement(PlayerSkillManager.Instance.GetScriptableObjPlayerSkillData<LightningSkillData>(PLAYER_SKILL_TYPE.LIGHTNING).thunderAudioClips), 
             targetTile, 1, false
         );
+        int processedDamage = -PlayerSkillManager.Instance.GetDamageBaseOnLevel(this);
+        float piercing = PlayerSkillManager.Instance.GetAdditionalPiercePerLevelBaseOnLevel(this);
         GameManager.Instance.CreateParticleEffectAt(targetTile, PARTICLE_EFFECT.Lightning_Strike);
-        targetTile.PerformActionOnTraitables(LightningDamage);
-        targetTile.genericTileObject.traitContainer.AddTrait(targetTile.genericTileObject, "Lightning Remnant");
+        targetTile.PerformActionOnTraitables((t) => LightningDamage(t, processedDamage, piercing));
+        targetTile.tileObjectComponent.genericTileObject.traitContainer.AddTrait(targetTile.tileObjectComponent.genericTileObject, "Lightning Remnant");
 
-        List<LocationGridTile> crossNeighbours = targetTile.GetCrossNeighbours();
+        List<LocationGridTile> crossNeighbours = targetTile.FourNeighbours();
         for (int i = 0; i < crossNeighbours.Count; i++) {
             LocationGridTile neighbour = crossNeighbours[i];
-            neighbour.PerformActionOnTraitables(LightningDamage);
+            neighbour.PerformActionOnTraitables((t) => LightningDamage(t, processedDamage, piercing));
         }
         // List<IPointOfInterest> pois = targetTile.GetPOIsOnTile();
         // for (int i = 0; i < pois.Count; i++) {
@@ -39,12 +41,18 @@ public class LightningData : SkillData {
         //IncreaseThreatThatSeesTile(targetTile, 10);
         base.ActivateAbility(targetTile);
     }
-    private void LightningDamage(ITraitable traitable) {
+    private void LightningDamage(ITraitable traitable, int processedDamage, float piercing) {
         if (traitable is IPointOfInterest poi) {
-            poi.AdjustHP(-600, ELEMENTAL_TYPE.Electric, triggerDeath: true, showHPBar: true);
+            poi.AdjustHP(processedDamage, ELEMENTAL_TYPE.Electric, triggerDeath: true, showHPBar: true, piercingPower: piercing, isPlayerSource: true, source: this);
+            Messenger.Broadcast(PlayerSignals.PLAYER_HIT_CHARACTER_VIA_SPELL, traitable as Character, processedDamage);
+            if (traitable is Character character && character.isDead && character.skillCauseOfDeath == PLAYER_SKILL_TYPE.NONE) {
+                character.skillCauseOfDeath = PLAYER_SKILL_TYPE.LIGHTNING;
+                //Messenger.Broadcast(PlayerSignals.CREATE_SPIRIT_ENERGY, character.deathTilePosition.centeredWorldLocation, 1, character.deathTilePosition.parentMap);
+                //Messenger.Broadcast(PlayerSignals.CREATE_CHAOS_ORBS, character.deathTilePosition.centeredWorldLocation, 1, character.deathTilePosition.parentMap);
+            }
         }
     }
-    public override void HighlightAffectedTiles(LocationGridTile tile) {
+    public override void ShowValidHighlight(LocationGridTile tile) {
         TileHighlighter.Instance.PositionHighlight(0, tile);
     }
 }

@@ -12,6 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 88e6d539796c490aa0efea676d6fae59, type: 3}
   m_Name: Marauder Data
   m_EditorClassIdentifier: 
+  combatBehaviourType: 0
+  combatSpecialSkillType: 0
+  workStructureType: 21
+  summonCost: 50
+  portraitSprite: {fileID: 0}
   defaultSprites:
     stillSprite: {fileID: 0}
     animationSprites: []
@@ -58,3 +63,41 @@ MonoBehaviour:
       - {fileID: 21300000, guid: 79a489a9a746c89438c7377c3f017f3a, type: 3}
       - {fileID: 21300000, guid: 32754edb33eebfe4a934020cb2f4ee64, type: 3}
       - {fileID: 21300000, guid: 5015e765bfccc3b42a62d1ff0b4affe5, type: 3}
+  initialVillagerPiercing: 5
+  initialVillagerPhysicalResistances:
+  - 5
+  - 10
+  - 15
+  initialVillagerMentalResistances:
+  - 5
+  - 10
+  - 15
+  initialVillagerElementalResistances:
+  - 5
+  - 10
+  - 15
+  initialVillagerSecondaryResistances:
+  - 5
+  - 10
+  - 15
+  characterSkillUpdateData:
+    m_fireResistanceBonus: 0
+    m_earthResistanceBonus: 0
+    m_windResistanceBonus: 0
+    m_waterResistanceBonus: 0
+    m_allElementalresistanceBonus: 8
+    m_poisonResistanceBonus: 0
+    m_iceResistanceBonus: 0
+    m_electricResistanceBonus: 0
+    m_allSecondaryresistanceBonus: 5
+    m_piercingBonus: 10
+    m_mentalResistanceBonus: 5
+    m_physicalResistanceBonus: 15
+  craftableWeapons: 02010000c0000000c1000000c2000000c3000000
+  craftableArmors: 05010000d0000000bc000000d1000000d3000000d9000000da000000db000000dc000000
+  craftableAccessories: ba000000
+  droppableItems:
+  - item: 13
+    weight: 100
+  - item: 189
+    weight: 10

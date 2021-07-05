@@ -12,8 +12,9 @@ public class EntBehaviour : BaseMonsterBehaviour {
         _actionWeights.AddElement("Revert", 5); //5
 	}
 	protected override bool WildBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
+#if DEBUG_LOG
         log += $"\n-{character.name} is Ent";
-
+#endif
         string chosenAction = _actionWeights.PickRandomElementGivenWeights();
         if (character.currentStructure is Kennel && chosenAction == "Revert") {
             chosenAction = "Stand";
@@ -29,8 +30,7 @@ public class EntBehaviour : BaseMonsterBehaviour {
             ent.SetIsTree(true);
             LocationGridTile tile = character.gridTileLocation;
             character.marker.SetVisualState(false);
-            TreeObject treeObject =
-                InnerMapManager.Instance.CreateNewTileObject<TreeObject>(TILE_OBJECT_TYPE.BIG_TREE_OBJECT); 
+            TreeObject treeObject = InnerMapManager.Instance.CreateNewTileObject<TreeObject>(TILE_OBJECT_TYPE.BIG_TREE_OBJECT); 
             tile.structure.AddPOI(treeObject, tile);
             treeObject.SetOccupyingEnt(ent);
             return true;

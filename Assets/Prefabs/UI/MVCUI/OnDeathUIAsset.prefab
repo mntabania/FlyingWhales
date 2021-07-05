@@ -398,7 +398,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Mana Generator
+  m_text: Chaos Generator
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 44b0e75cf1a2d2246a2de46e846fa57d, type: 2}
   m_sharedMaterial: {fileID: 21554341954933024, guid: 44b0e75cf1a2d2246a2de46e846fa57d,
@@ -2578,7 +2578,7 @@ GameObject:
   - component: {fileID: 740598966494973468}
   - component: {fileID: 8320054127626028590}
   m_Layer: 5
-  m_Name: Mana Generator
+  m_Name: Chaos Generator
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using Inner_Maps;
 using UnityEngine;  
@@ -25,13 +26,15 @@ public class MineMetal : GoapAction {
         SetState("Mine Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
+#if DEBUG_LOG
         string costLog = $"\n{name} {target.nameWithID}: +10(Constant)";
         actor.logComponent.AppendCostLog(costLog);
+#endif
         return 10;
     }
-    #endregion
+#endregion
 
-    #region Requirements
+#region Requirements
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, OtherData[] otherData, JobQueueItem job) { 
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData, job);
         if (satisfied) {
@@ -39,9 +42,9 @@ public class MineMetal : GoapAction {
         }
         return false;
     }
-    #endregion
+#endregion
 
-    #region State Effects
+#region State Effects
     public void PreMineSuccess(ActualGoapNode goapNode) {
         Ore ore = goapNode.poiTarget as Ore;
         goapNode.descriptionLog.AddToFillers(null, ore.yield.ToString(), LOG_IDENTIFIER.STRING_1);
@@ -52,12 +55,10 @@ public class MineMetal : GoapAction {
         LocationGridTile tile = ore.gridTileLocation;
         ore.AdjustYield(-metal);
 
-        // MetalPile metalPile = InnerMapManager.Instance.CreateNewTileObject<MetalPile>(TILE_OBJECT_TYPE.METAL_PILE);
-        // metalPile.SetResourceInPile(metal);
-        // tile.structure.AddPOI(metalPile, tile);
+        throw new NotImplementedException("Randomize metal produced by mine metal not yet implemented");
         
-        InnerMapManager.Instance.CreateNewResourcePileAndTryCreateHaulJob<MetalPile>(TILE_OBJECT_TYPE.METAL_PILE, metal,
+        InnerMapManager.Instance.CreateNewResourcePileAndTryCreateHaulJob<MetalPile>(TILE_OBJECT_TYPE.IRON, metal,
             goapNode.actor, tile);
     }
-    #endregion
+#endregion
 }

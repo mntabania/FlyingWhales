@@ -13,7 +13,7 @@ public class FireElemental : Summon {
 
     public override void Initialize() {
         base.Initialize();
-        traitContainer.AddTrait(this, "Fireproof");
+        traitContainer.AddTrait(this, "Fire Resistant");
         behaviourComponent.ChangeDefaultBehaviourSet(CharacterManager.Fire_Elemental_Behaviour);
     }
     public override void SubscribeToSignals() {
@@ -21,21 +21,20 @@ public class FireElemental : Summon {
             return;
         }
         base.SubscribeToSignals();
-        Messenger.AddListener<ActualGoapNode>(JobSignals.CHARACTER_FINISHED_ACTION, OnCharacterFinishedAction);
+        Messenger.AddListener<Character, IPointOfInterest, INTERACTION_TYPE, ACTION_STATUS>(JobSignals.CHARACTER_FINISHED_ACTION, OnCharacterFinishedAction);
     }
     public override void UnsubscribeSignals() {
         if (!hasSubscribedToSignals) {
             return;
         }
         base.UnsubscribeSignals();
-        Messenger.RemoveListener<ActualGoapNode>(JobSignals.CHARACTER_FINISHED_ACTION, OnCharacterFinishedAction);
+        Messenger.RemoveListener<Character, IPointOfInterest, INTERACTION_TYPE, ACTION_STATUS>(JobSignals.CHARACTER_FINISHED_ACTION, OnCharacterFinishedAction);
     }
-    private void OnCharacterFinishedAction(ActualGoapNode goapNode) {
-        if (goapNode.actor == this && goapNode.action.goapType == INTERACTION_TYPE.STAND) {
-            Burning burning = new Burning();
-            burning.InitializeInstancedTrait();
-            burning.SetSourceOfBurning(new BurningSource(), gridTileLocation.genericTileObject);
-            gridTileLocation.genericTileObject.traitContainer.AddTrait(gridTileLocation.genericTileObject, burning, this, bypassElementalChance: true);
+    private void OnCharacterFinishedAction(Character p_actor, IPointOfInterest p_target, INTERACTION_TYPE p_type, ACTION_STATUS p_status) {
+        if (p_actor == this && p_type == INTERACTION_TYPE.STAND) {
+            Burning burning = TraitManager.Instance.CreateNewInstancedTraitClass<Burning>("Burning");
+            burning.SetSourceOfBurning(new BurningSource(), gridTileLocation.tileObjectComponent.genericTileObject);
+            gridTileLocation.tileObjectComponent.genericTileObject.traitContainer.AddTrait(gridTileLocation.tileObjectComponent.genericTileObject, burning, this, bypassElementalChance: true);
         }
     }
 }

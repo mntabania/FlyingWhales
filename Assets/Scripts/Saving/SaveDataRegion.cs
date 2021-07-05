@@ -15,12 +15,14 @@ public class SaveDataRegion : SaveData<Region> {
     public string[] residentIDs;
     public string[] charactersAtLocationIDs;
     public SaveDataInnerMap innerMapSave;
-    public Dictionary<GridNeighbourDirection, string> neighboursWithDirection;
-    public List<string> neighbours;
+    public SaveDataVillageSpot[] villageSpots;
+    //public Dictionary<GridNeighbourDirection, string> neighboursWithDirection;
+    //public List<string> neighbours;
     public string[] factionsHereIDs;
 
     //Components
     public SaveDataRegionDivisionComponent regionDivisionComponent;
+    public SaveDataGridTileFeatureComponent gridTileFeatureComponent;
 
     public override void Save(Region region) {
         persistentID = region.persistentID;
@@ -43,15 +45,15 @@ public class SaveDataRegion : SaveData<Region> {
             charactersAtLocationIDs[i] = character.persistentID;
         }
 
-        neighboursWithDirection = new Dictionary<GridNeighbourDirection, string>();
-        foreach (KeyValuePair<GridNeighbourDirection, Region> item in region.neighboursWithDirection) {
-            neighboursWithDirection.Add(item.Key, item.Value.persistentID);
-        }
+        //neighboursWithDirection = new Dictionary<GridNeighbourDirection, string>();
+        //foreach (KeyValuePair<GridNeighbourDirection, Region> item in region.neighboursWithDirection) {
+        //    neighboursWithDirection.Add(item.Key, item.Value.persistentID);
+        //}
 
-        neighbours = new List<string>();
-        for (int i = 0; i < region.neighbours.Count; i++) {
-            neighbours.Add(region.neighbours[i].persistentID);
-        }
+        //neighbours = new List<string>();
+        //for (int i = 0; i < region.neighbours.Count; i++) {
+        //    neighbours.Add(region.neighbours[i].persistentID);
+        //}
 
         innerMapSave = new SaveDataInnerMap();
         innerMapSave.Save(region.innerMap);
@@ -62,7 +64,16 @@ public class SaveDataRegion : SaveData<Region> {
             factionsHereIDs[i] = factionHere.persistentID;
         }
 
+        villageSpots = new SaveDataVillageSpot[region.villageSpots.Count];
+        for (int i = 0; i < region.villageSpots.Count; i++) {
+            VillageSpot villageSpot = region.villageSpots[i];
+            SaveDataVillageSpot saveDataVillageSpot = new SaveDataVillageSpot();
+            saveDataVillageSpot.Save(villageSpot);
+            villageSpots[i] = saveDataVillageSpot;
+        }
+
         //Components
-        regionDivisionComponent = new SaveDataRegionDivisionComponent(); regionDivisionComponent.Save(region.regionDivisionComponent);
+        regionDivisionComponent = new SaveDataRegionDivisionComponent(); regionDivisionComponent.Save(region.biomeDivisionComponent);
+        gridTileFeatureComponent = new SaveDataGridTileFeatureComponent(); gridTileFeatureComponent.Save(region.gridTileFeatureComponent);
     }
 }

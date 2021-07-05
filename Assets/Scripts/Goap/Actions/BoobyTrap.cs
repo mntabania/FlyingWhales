@@ -25,16 +25,24 @@ public class BoobyTrap : GoapAction {
         SetState("Trap Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
+#if DEBUG_LOG
         string costLog = $"\n{name} {target.nameWithID}:";
+#endif
         int cost = 10;
+#if DEBUG_LOG
         costLog += $" +{cost}(Initial)";
         actor.logComponent.AppendCostLog(costLog);
+#endif
         return cost;
     }
-    public override void PopulateReactionsToActor(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
-        base.PopulateReactionsToActor(reactions, actor, target, witness, node, status);
+    public override string ReactionToActor(Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
+        string response = base.ReactionToActor(actor, target, witness, node, status);
         BoobyTrapped boobyTrapped = target.traitContainer.GetTraitOrStatus<BoobyTrapped>("Booby Trapped");
         boobyTrapped?.AddAwareCharacter(witness);
+        return response;
+    }
+    public override void PopulateEmotionReactionsToActor(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
+        base.PopulateEmotionReactionsToActor(reactions, actor, target, witness, node, status);
 
         if (target is TileObject tileObject) {
             if (tileObject.IsOwnedBy(witness)) {
@@ -113,9 +121,9 @@ public class BoobyTrap : GoapAction {
     public override CRIME_TYPE GetCrimeType(Character actor, IPointOfInterest target, ActualGoapNode crime) {
         return CRIME_TYPE.Assault;
     }
-    #endregion
+#endregion
 
-    #region State Effects
+#region State Effects
     public void PreTrapSuccess(ActualGoapNode goapNode) {
         //NOTE: Booby trapped trait added in pre effect so that anyone that witnesses this action, can access that trait,
         //even if this action has not been finished yet. Booby trap will not be activated by this action, since, booby traps
@@ -129,9 +137,9 @@ public class BoobyTrap : GoapAction {
             (trait as BoobyTrapped).SetElementType(actor.combatComponent.elementalDamage.type);
         }
     }
-    #endregion
+#endregion
 
-    #region Requirement
+#region Requirement
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, OtherData[] otherData, JobQueueItem job) {
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData, job);
         if (satisfied) {
@@ -139,5 +147,5 @@ public class BoobyTrap : GoapAction {
         }
         return false;
     }
-    #endregion
+#endregion
 }

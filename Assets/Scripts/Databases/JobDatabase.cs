@@ -14,9 +14,12 @@ namespace Databases {
             jobsByGUID.Add(job.persistentID, job);
             allJobs.Add(job);
         }
-        public void UnRegister(JobQueueItem job) {
-            jobsByGUID.Remove(job.persistentID);
+        public bool UnRegister(JobQueueItem job) {
             allJobs.Remove(job);
+            if (jobsByGUID.Remove(job.persistentID)) {
+                return true;
+            }
+            return false;
         }
 
         public JobQueueItem GetJobWithPersistentID(string id) {
@@ -24,6 +27,12 @@ namespace Databases {
                 return jobsByGUID[id];
             }
             throw new Exception($"Could not find job with id {id}");
+        }
+        public JobQueueItem GetJobWithPersistentIDSafe(string id) {
+            if (jobsByGUID.ContainsKey(id)) {
+                return jobsByGUID[id];
+            }
+            return null;
         }
     }
 }

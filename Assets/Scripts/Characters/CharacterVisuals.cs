@@ -32,8 +32,8 @@ public class CharacterVisuals {
             } else if (_owner.minion != null && _owner.minion.minionPlayerSkillType != PLAYER_SKILL_TYPE.NONE) {
                 return _owner.minion.GetMinionClassName(_owner.minion.minionPlayerSkillType);
             } else if (_usePreviousClassAsset) {
-                if (!string.IsNullOrEmpty(_owner.previousClassName)) {
-                    return _owner.previousClassName;    
+                if (!string.IsNullOrEmpty(_owner.classComponent.previousClassName)) {
+                    return _owner.classComponent.previousClassName;    
                 }
             }
             return _owner.characterClass.className;
@@ -119,7 +119,7 @@ public class CharacterVisuals {
 
         if (_owner.characterClass.IsZombie()) {
             if (_usePreviousClassAsset) {
-                if (_owner.previousClassName == "Mage" || _owner.previousClassName == "Necromancer" || _owner.characterClass.className == "Cult Leader") {
+                if (_owner.classComponent.previousClassName == "Mage" || _owner.classComponent.previousClassName == "Necromancer" || _owner.characterClass.className == "Cult Leader") {
                     return false;
                 }
             }
@@ -223,14 +223,14 @@ public class CharacterVisuals {
     #region UI
     public string GetThoughtBubble() {
         if (_owner.isDead) {
-            if (_owner.deathLog.hasValue) {
+            if (_owner.deathLog != null) {
                 return _owner.deathLog.logText;
             } else {
                 return $"<b>{GetCharacterNameWithIconAndColor()}</b> has died.";    
             }
         }
         //Interrupt
-        if (_owner.interruptComponent.isInterrupted && _owner.interruptComponent.thoughtBubbleLog.hasValue) {
+        if (_owner.interruptComponent.isInterrupted && _owner.interruptComponent.thoughtBubbleLog != null) {
             return _owner.interruptComponent.thoughtBubbleLog.logText;
         }
 
@@ -242,7 +242,11 @@ public class CharacterVisuals {
 
         //Character State
         if (_owner.stateComponent.currentState != null) {
-            return _owner.stateComponent.currentState.thoughtBubbleLog.logText;
+            if (_owner.stateComponent.currentState.thoughtBubbleLog != null) {
+                return _owner.stateComponent.currentState.thoughtBubbleLog.logText;    
+            } else {
+                Debug.LogWarning($"Thought Bubble Log of {_owner.name}'s state {_owner.stateComponent.currentState.stateName} is null!");
+            }
         }
         //fleeing
         if (_owner.marker && _owner.marker.hasFleePath) {
@@ -255,14 +259,18 @@ public class CharacterVisuals {
             return $"<b>{GetCharacterNameWithIconAndColor()}</b> is going to {_owner.carryComponent.masterCharacter.marker.destinationTile.structure.GetNameRelativeTo(_owner)}.";
         }
 
+        if (_owner.traitContainer.HasTrait("Quarantined")) {
+            return $"<b>{GetCharacterNameWithIconAndColor()}</b> is Quarantined.";
+        } else if (_owner.traitContainer.HasTrait("Being Drained")) {
+            return $"<b>{GetCharacterNameWithIconAndColor()}</b>'s Spirit is Being Drained.";
+        }
+        
         //Default - Do nothing/Idle
         if (_owner.currentStructure != null) {
             return $"<b>{GetCharacterNameWithIconAndColor()}</b> is in {_owner.currentStructure.GetNameRelativeTo(_owner)}.";
         }
 
-        if (_owner.traitContainer.HasTrait("Quarantined")) {
-            return $"<b>{GetCharacterNameWithIconAndColor()}</b> is Quarantined.";
-        }
+        
 
         if(_owner.minion != null && !_owner.minion.isSummoned) {
             return $"<b>{GetCharacterNameWithIconAndColor()}</b> is unsummoned.";
@@ -271,10 +279,10 @@ public class CharacterVisuals {
         
     }
     public string GetCharacterStringIcon() {
-        if (!_owner.isNormalCharacter) {
-            if (_owner.characterClass.className == "Necromancer") {
-                return UtilityScripts.Utilities.UndeadIcon();        
-            } else if (_owner.minion != null || (_owner.faction != null && _owner.faction.isPlayerFaction)) {
+        if (_owner.characterClass.className == "Necromancer") {
+            return UtilityScripts.Utilities.UndeadIcon();        
+        } else if (!_owner.isNormalCharacter) {
+            if (_owner.minion != null || (_owner.faction != null && _owner.faction.isPlayerFaction)) {
                 return UtilityScripts.Utilities.DemonIcon();
             } else if (_owner.faction?.factionType.type == FACTION_TYPE.Undead) {
                 return UtilityScripts.Utilities.UndeadIcon();

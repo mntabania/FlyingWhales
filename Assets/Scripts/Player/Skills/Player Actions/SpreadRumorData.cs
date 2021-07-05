@@ -1,10 +1,12 @@
 ﻿using System.Collections.Generic;
 using Logs;
+using Object_Pools;
+using UtilityScripts;
 
 public class SpreadRumorData : PlayerAction {
     public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.SPREAD_RUMOR;
     public override string name => "Spread Rumor";
-    public override string description => "This Action instructs the character to Spread a Rumor about someone they know.";
+    public override string description => "This Action instructs the character to spread a negative rumor about someone they know. Only available on Cultists.";
     public override PLAYER_SKILL_CATEGORY category => PLAYER_SKILL_CATEGORY.PLAYER_ACTION;
     public override bool canBeCastOnBlessed => true;
 
@@ -54,7 +56,7 @@ public class SpreadRumorData : PlayerAction {
         return reasons;
     }
     public override bool IsValid(IPlayerActionTarget target) {
-        if(PlayerSkillManager.Instance.selectedArchetype != PLAYER_ARCHETYPE.Puppet_Master) {
+        if(PlayerSkillManager.Instance.selectedArchetype != PLAYER_ARCHETYPE.Puppet_Master && !PlayerSkillManager.Instance.unlockAllSkills) {
             return false;
         }
         return base.IsValid(target);
@@ -91,11 +93,12 @@ public class SpreadRumorData : PlayerAction {
         if (obj is Character targetCharacter) {
             UIManager.Instance.HideObjectPicker();
 
-            Log instructedLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "NonIntel", "instructed_spread_rumor", null, LOG_TAG.Player, LOG_TAG.Crimes);
+            Log instructedLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "NonIntel", "instructed_spread_rumor", null, LogUtilities.Cultist_Instruct_Tags);
             instructedLog.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             instructedLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
             instructedLog.AddLogToDatabase();
             PlayerManager.Instance.player.ShowNotificationFromPlayer(instructedLog);
+            LogPool.Release(instructedLog);
 
             Character spreadRumorOrNegativeInfoTarget = actor.rumorComponent.GetRandomSpreadRumorOrNegativeInfoTarget(targetCharacter);
             if (spreadRumorOrNegativeInfoTarget != null) {
@@ -106,7 +109,7 @@ public class SpreadRumorData : PlayerAction {
                         log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                         log.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
                         log.AddLogToDatabase();
-                        PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
+                        PlayerManager.Instance.player.ShowNotificationFromPlayer(log, true);
                         base.ActivateAbility(actor);
                     }
                 } else {
@@ -114,16 +117,16 @@ public class SpreadRumorData : PlayerAction {
                     log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                     log.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
                     log.AddLogToDatabase();
-                    PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
+                    PlayerManager.Instance.player.ShowNotificationFromPlayer(log, true);
                 }
             } else {
                 Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "NonIntel", "no_target_spread_rumor", null, LOG_TAG.Player);
                 log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                 log.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
                 log.AddLogToDatabase();
-                PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
+                PlayerManager.Instance.player.ShowNotificationFromPlayer(log, true);
             }
-            Messenger.Broadcast(SpellSignals.RELOAD_PLAYER_ACTIONS, actor as IPlayerActionTarget);
+            Messenger.Broadcast(PlayerSkillSignals.RELOAD_PLAYER_ACTIONS, actor as IPlayerActionTarget);
         }
     }
 }

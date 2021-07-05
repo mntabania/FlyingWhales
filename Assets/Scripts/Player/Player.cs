@@ -1,19 +1,13 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using System.Linq;
 using Inner_Maps;
-using Traits;
-using Archetype;
 using Locations.Settlements;
 using Ruinarch;
 using UtilityScripts;
-using Random = UnityEngine.Random;
-using Inner_Maps.Location_Structures;
 using UnityEngine.Assertions;
 using Interrupts;
-using Logs;
+using Object_Pools;
 // ReSharper disable Unity.NoNullPropagation
 
 public class Player : ILeader, IObjectManipulator {
@@ -21,22 +15,34 @@ public class Player : ILeader, IObjectManipulator {
     public Faction playerFaction { get; private set; }
     public PlayerSettlement playerSettlement { get; private set; }
     public int mana { get; private set; }
+
+    public int spiritEnergy { get; private set; }
     public int experience { get; private set; }
     public List<IIntel> allIntel { get; private set; }
-    public List<Minion> minions { get; private set; }
-    public List<Summon> summons { get; private set; }
     public CombatAbility currentActiveCombatAbility { get; private set; }
     public IIntel currentActiveIntel { get; private set; }
-    public HexTile portalTile { get; private set; }
+    //public HexTile portalTile { get; private set; }
+    public Area portalArea { get; private set; }
     public TILE_OBJECT_TYPE currentActiveItem { get; private set; }
     public bool isCurrentlyBuildingDemonicStructure { get; private set; }
     public IPlayerActionTarget currentlySelectedPlayerActionTarget { get; private set; }
-    
+    public List<string> charactersThatHaveReportedDemonicStructure { get; private set; }
+
     //Components
     public SeizeComponent seizeComponent { get; }
     public ThreatComponent threatComponent { get; }
     public PlayerSkillComponent playerSkillComponent { get; }
     public PlagueComponent plagueComponent { get; }
+    public PlayerUnderlingsComponent underlingsComponent { get; private set; }
+    public PlayerTileObjectComponent tileObjectComponent { get; private set; }
+    public StoredTargetsComponent storedTargetsComponent { get; }
+    public BookmarkComponent bookmarkComponent { get; }
+    public SummonMeterComponent summonMeterComponent { get; private set; }
+    public ManaRegenComponent manaRegenComponent { get; set; }
+    public PlayerDamageAccumulator damageAccumulator { get; private set; }
+    public PlayerRetaliationComponent retaliationComponent { get; private set; }
+
+    public bool hasAlreadyWon { get; set; }
 
     #region getters/setters
     public int id => -645;
@@ -48,34 +54,66 @@ public class Player : ILeader, IObjectManipulator {
     public string persistentID => string.Empty;
     public OBJECT_TYPE objectType => OBJECT_TYPE.Player;
     public System.Type serializedData => typeof(SaveDataPlayer);
+    public int chaoticEnergy => plagueComponent.plaguePoints;
     #endregion
 
     public Player() {
         allIntel = new List<IIntel>();
-        minions = new List<Minion>();
-        summons = new List<Summon>();
+        charactersThatHaveReportedDemonicStructure = new List<string>();
         mana = EditableValuesManager.Instance.startingMana;
+        currentActiveItem = TILE_OBJECT_TYPE.NONE;
+
+        //Components
         seizeComponent = new SeizeComponent();
         threatComponent = new ThreatComponent(this);
-        playerSkillComponent = new PlayerSkillComponent(this);
+        playerSkillComponent = new PlayerSkillComponent();
         plagueComponent = new PlagueComponent();
-        currentActiveItem = TILE_OBJECT_TYPE.NONE;
-        AddListeners();
+        underlingsComponent = new PlayerUnderlingsComponent();
+        storedTargetsComponent = new StoredTargetsComponent();
+        manaRegenComponent = new ManaRegenComponent(this);
+        tileObjectComponent = new PlayerTileObjectComponent();
+        summonMeterComponent = new SummonMeterComponent();
+        bookmarkComponent = new BookmarkComponent();
+        damageAccumulator = new PlayerDamageAccumulator();
+        retaliationComponent = new PlayerRetaliationComponent();
+        summonMeterComponent.Initialize();
+
+        hasAlreadyWon = false;
+        if (WorldSettings.Instance.worldSettingsData.IsRetaliationAllowed()) {
+            bookmarkComponent.AddBookmark(retaliationComponent.retaliationProgress, BOOKMARK_CATEGORY.Major_Events);    
+        }
+        // bookmarkComponent.AddBookmark(summonMeterComponent.progress, BOOKMARK_CATEGORY.Portal);
+
+        SubscribeListeners();
+        
     }
     public Player(SaveDataPlayerGame data) {
         allIntel = new List<IIntel>();
-        minions = new List<Minion>();
-        summons = new List<Summon>();
         seizeComponent = data.seizeComponent.Load();
         threatComponent = data.threatComponent.Load();
         playerSkillComponent = data.playerSkillComponent.Load();
+        underlingsComponent = data.underlingsComponent.Load();
+        tileObjectComponent = data.tileObjectComponent.Load();
+        summonMeterComponent = data.summonMeterComponent.Load();
+        damageAccumulator = data.damageAccumulator.Load();
+        retaliationComponent = data.retaliationComponent.Load();
+        bookmarkComponent = new BookmarkComponent();
         plagueComponent = new PlagueComponent(data.plagueComponent);
-
         threatComponent.SetPlayer(this);
-        playerSkillComponent.SetPlayer(this);
 
         currentActiveItem = TILE_OBJECT_TYPE.NONE;
-        AddListeners();
+        storedTargetsComponent = new StoredTargetsComponent();
+        manaRegenComponent = new ManaRegenComponent(this, data.manaRegenComponent);
+        summonMeterComponent.Initialize();
+
+        // bookmarkComponent.AddBookmark(summonMeterComponent.progress, BOOKMARK_CATEGORY.Portal);
+        if (WorldSettings.Instance.worldSettingsData.IsRetaliationAllowed()) {
+            bookmarkComponent.AddBookmark(retaliationComponent.retaliationProgress, BOOKMARK_CATEGORY.Major_Events);
+        }
+        hasAlreadyWon = data.hasAlreadyWon;
+        
+        charactersThatHaveReportedDemonicStructure = new List<string>(data.charactersThatHaveReportedDemonicStructure);
+        SubscribeListeners();
     }
 
     public void LoadPlayerData(SaveDataPlayer save) {
@@ -86,42 +124,30 @@ public class Player : ILeader, IObjectManipulator {
         }
     }
 
-    public void SetPortalTile(HexTile tile) {
-        portalTile = tile;
+    public void SetPortalTile(Area tile) {
+        portalArea = tile;
     }
 
     #region Listeners
-    private void AddListeners() {
-        //goap
-        // Messenger.AddListener<string, ActualGoapNode>(Signals.AFTER_ACTION_STATE_SET, OnAfterActionStateSet);
-        // Messenger.AddListener<Character, ActualGoapNode>(Signals.CHARACTER_DOING_ACTION, OnCharacterDoingAction);
-        Messenger.AddListener<Region>(RegionSignals.REGION_MAP_OPENED, OnInnerMapOpened);
-        Messenger.AddListener<Region>(RegionSignals.REGION_MAP_CLOSED, OnInnerMapClosed);
-
-        //minions
-        Messenger.AddListener<Minion, BaseLandmark>(PlayerSignals.MINION_ASSIGNED_PLAYER_LANDMARK, OnMinionAssignedToPlayerLandmark);
-        Messenger.AddListener<Minion, BaseLandmark>(PlayerSignals.MINION_UNASSIGNED_PLAYER_LANDMARK, OnMinionUnassignedFromPlayerLandmark);
-        Messenger.AddListener<Minion>(SpellSignals.SUMMON_MINION, OnSummonMinion);
-        Messenger.AddListener<Minion>(SpellSignals.UNSUMMON_MINION, OnUnsummonMinion);
-
+    private void SubscribeListeners() {
         Messenger.AddListener<Character, Faction>(FactionSignals.CHARACTER_ADDED_TO_FACTION, OnCharacterAddedToFaction);
         Messenger.AddListener<Character, Faction>(FactionSignals.CHARACTER_REMOVED_FROM_FACTION, OnCharacterRemovedFromFaction);
         Messenger.AddListener<Character>(CharacterSignals.CHARACTER_DEATH, OnCharacterDied);
+        
+        underlingsComponent.SubscribeListeners();
+        bookmarkComponent.SubscribeListeners();
+        storedTargetsComponent.SubscribeListeners();
     }
-    #endregion
-
-    #region ILeader
-    //public void LevelUp() { }
     #endregion
 
     #region Settlement
-    public PlayerSettlement CreatePlayerSettlement(BaseLandmark portal) {
-        PlayerSettlement npcSettlement = LandmarkManager.Instance.CreateNewPlayerSettlement(portal.tileLocation);
-        npcSettlement.SetName("Demonic Intrusion");
-        SetPlayerArea(npcSettlement);
-        // portal.tileLocation.InstantlyCorruptAllOwnedInnerMapTiles();
-        return npcSettlement;
-    }
+    //public PlayerSettlement CreatePlayerSettlement(BaseLandmark portal) {
+    //    PlayerSettlement npcSettlement = LandmarkManager.Instance.CreateNewPlayerSettlement(portal.tileLocation);
+    //    npcSettlement.SetName("Demonic Intrusion");
+    //    SetPlayerArea(npcSettlement);
+    //    // portal.tileLocation.InstantlyCorruptAllOwnedInnerMapTiles();
+    //    return npcSettlement;
+    //}
     public void LoadPlayerArea(SaveDataPlayerGame saveDataPlayerGame) {
         BaseSettlement settlement = DatabaseManager.Instance.settlementDatabase.GetSettlementByPersistentID(saveDataPlayerGame.settlementID);
         PlayerSettlement pSettlement = settlement as PlayerSettlement;
@@ -130,16 +156,6 @@ public class Player : ILeader, IObjectManipulator {
     }
     public void SetPlayerArea(PlayerSettlement npcSettlement) {
         playerSettlement = npcSettlement;
-    }
-    private void OnInnerMapOpened(Region area) {
-        //for (int i = 0; i < minions.Count; i++) {
-        //    minions[i].ResetCombatAbilityCD();
-        //}
-        //ResetInterventionAbilitiesCD();
-        //currentTargetFaction = npcSettlement.owner;
-    }
-    private void OnInnerMapClosed(Region area) {
-        //currentTargetFaction = null;
     }
     #endregion
 
@@ -157,86 +173,6 @@ public class Player : ILeader, IObjectManipulator {
     private void SetPlayerFaction(Faction faction) {
         playerFaction = faction;
     }
-    //public void SetPlayerTargetFaction(Faction faction) {
-    //    currentTargetFaction = faction;
-    //}
-    private void OnCharacterAddedToFaction(Character character, Faction faction) {
-        if(faction == playerFaction) {
-            //if(character.minion != null) {
-            //    AddMinion(character.minion);
-            //} 
-            //else if(character is Summon summon) {
-            //    AddSummon(summon);
-            //}
-            string bredBehaviour;
-            if (character is Summon summon) {
-                bredBehaviour = summon.bredBehaviour;
-            } else {
-                bredBehaviour = character.characterClass.traitNameOnTamedByPlayer;
-            }
-            if (!string.IsNullOrEmpty(bredBehaviour)) {
-                character.traitContainer.AddTrait(character, bredBehaviour);
-            }
-        }
-    }
-    private void OnCharacterRemovedFromFaction(Character character, Faction faction) {
-        if (faction == playerFaction) {
-            //if (character.minion != null) {
-            //    RemoveMinion(character.minion);
-            //} 
-            //else if (character is Summon summon) {
-            //    RemoveSummon(summon);
-            //}
-            string bredBehaviour;
-            if (character is Summon summon) {
-                bredBehaviour = summon.bredBehaviour;
-            } else {
-                bredBehaviour = character.characterClass.traitNameOnTamedByPlayer;
-            }
-            if (!string.IsNullOrEmpty(bredBehaviour)) {
-                character.traitContainer.RemoveTrait(character, bredBehaviour);
-            }
-        }
-    }
-    #endregion
-
-    #region Minions
-    public void AddMinion(Minion minion) {
-        if (!minions.Contains(minion)) {
-            minions.Add(minion);
-            Messenger.Broadcast(PlayerSignals.PLAYER_GAINED_MINION, minion);
-        }
-    }
-    public void RemoveMinion(Minion minion) {
-        if (minions.Remove(minion)) {
-            Messenger.Broadcast(PlayerSignals.PLAYER_LOST_MINION, minion);
-        }
-    }
-    private void OnSummonMinion(Minion minion) {
-        AddMinion(minion);
-    }
-    private void OnUnsummonMinion(Minion minion) {
-        RemoveMinion(minion);
-    }
-    //public void SetMinionLeader(Minion minion) {
-    //    currentMinionLeader = minion;
-    //}
-    //private void ReplaceMinion(object objToReplace, object objToAdd) {
-    //    Minion minionToBeReplaced = objToReplace as Minion;
-    //    Minion minionToBeAdded = objToAdd as Minion;
-
-    //    for (int i = 0; i < minions.Count; i++) {
-    //        if(minions[i] == minionToBeReplaced) {
-    //            minionToBeAdded.SetIndexDefaultSort(i);
-    //            minions[i] = minionToBeAdded;
-    //            if(currentMinionLeader == minionToBeReplaced) {
-    //                SetMinionLeader(minionToBeAdded);
-    //            }
-    //            break;
-    //        }
-    //    }
-    //}
-    private void RejectMinion(object obj) { }
     #endregion
 
     #region Role Actions
@@ -246,16 +182,20 @@ public class Player : ILeader, IObjectManipulator {
             SkillData previousActiveAction = currentActivePlayerSpell;
             currentActivePlayerSpell = action;
             if (currentActivePlayerSpell == null) {
+                previousActiveAction.OnNoLongerCurrentActiveSpell();
+                PlayerManager.Instance.RemovePlayerInputModule(PlayerManager.spellInputModule);
                 UIManager.Instance.SetTempDisableShowInfoUI(false); //allow UI clicks again after active spell has been set to null
                 Messenger.RemoveListener<KeyCode>(ControlsSignals.KEY_DOWN, OnSpellCast);
             	InputManager.Instance.SetCursorTo(InputManager.Cursor_Type.Default);
                 previousActiveAction.UnhighlightAffectedTiles();
                 UIManager.Instance.HideSmallInfo(); //This is to hide the invalid messages.
-                Messenger.Broadcast(SpellSignals.PLAYER_NO_ACTIVE_SPELL, previousActiveAction);
+                Messenger.Broadcast(PlayerSkillSignals.PLAYER_NO_ACTIVE_SPELL, previousActiveAction);
             } else {
+                action.OnSetAsCurrentActiveSpell();
+                PlayerManager.Instance.AddPlayerInputModule(PlayerManager.spellInputModule);
             	InputManager.Instance.SetCursorTo(InputManager.Cursor_Type.Cross);
                 Messenger.AddListener<KeyCode>(ControlsSignals.KEY_DOWN, OnSpellCast);
-                Messenger.Broadcast(SpellSignals.PLAYER_SET_ACTIVE_SPELL, currentActivePlayerSpell);
+                Messenger.Broadcast(PlayerSkillSignals.PLAYER_SET_ACTIVE_SPELL, currentActivePlayerSpell);
             }
         }
     }
@@ -297,18 +237,22 @@ public class Player : ILeader, IObjectManipulator {
                 case SPELL_TARGET.TILE:
                     hoveredTile = InnerMapManager.Instance.GetTileFromMousePosition();
                     if (hoveredTile != null) {
-                        if (currentActivePlayerSpell.CanPerformAbilityTowards(hoveredTile)) {
+                        if (currentActivePlayerSpell.CanPerformAbilityTowards(hoveredTile, out var cannotPerformReason)) {
                             currentActivePlayerSpell.ActivateAbility(hoveredTile);
                             activatedAction = true;
+                        } else {
+                            if (!string.IsNullOrEmpty(cannotPerformReason)) {
+                                InnerMapManager.Instance.ShowAreaMapTextPopup(cannotPerformReason, hoveredTile.centeredWorldLocation, Color.white);
+                            }
                         } 
                         UIManager.Instance.SetTempDisableShowInfoUI(true);
                     }
                     break;
-                case SPELL_TARGET.HEX:
+                case SPELL_TARGET.AREA:
                     hoveredTile = InnerMapManager.Instance.GetTileFromMousePosition();
-                    if (hoveredTile != null && hoveredTile.collectionOwner.isPartOfParentRegionMap && hoveredTile.collectionOwner.partOfHextile.hexTileOwner) {
-                        if (currentActivePlayerSpell.CanPerformAbilityTowards(hoveredTile.collectionOwner.partOfHextile.hexTileOwner)) {
-                            currentActivePlayerSpell.ActivateAbility(hoveredTile.collectionOwner.partOfHextile.hexTileOwner);
+                    if (hoveredTile != null) {
+                        if (currentActivePlayerSpell.CanPerformAbilityTowards(hoveredTile.area)) {
+                            currentActivePlayerSpell.ActivateAbility(hoveredTile.area);
                             activatedAction = true;
                         } 
                         UIManager.Instance.SetTempDisableShowInfoUI(true);
@@ -341,6 +285,9 @@ public class Player : ILeader, IObjectManipulator {
         }
         //Debug.Log(GameManager.Instance.TodayLogString() + summary);
     }
+    public bool IsCurrentActiveSpell(PLAYER_SKILL_TYPE p_skillType) {
+        return currentActivePlayerSpell != null && currentActivePlayerSpell.type == p_skillType;
+    }
     #endregion
 
     #region Intel
@@ -359,16 +306,12 @@ public class Player : ILeader, IObjectManipulator {
             intel.OnIntelRemoved();
         }
     }
-    public void LoadIntels(SaveDataPlayer data) {
-        //for (int i = 0; i < data.allIntel.Count; i++) {
-        //    AddIntel(data.allIntel[i].Load());
-        //}
-    }
     public void SetCurrentActiveIntel(IIntel intel) {
         if (currentActiveIntel == intel) {
             //Do not process when setting the same intel
             return;
         }
+        Debug.Log($"Will set current active intel to {intel?.log.logText ?? "null"}");
         IIntel previousIntel = currentActiveIntel;
         currentActiveIntel = intel;
         if(previousIntel != null) {
@@ -378,12 +321,14 @@ public class Player : ILeader, IObjectManipulator {
             InputManager.Instance.SetCursorTo(InputManager.Cursor_Type.Default);
         }
         if (currentActiveIntel != null) {
+            PlayerManager.Instance.AddPlayerInputModule(PlayerManager.intelInputModule);
             Messenger.Broadcast(PlayerSignals.ACTIVE_INTEL_SET, currentActiveIntel);
             IntelItem intelItem = PlayerUI.Instance.GetIntelItemWithIntel(currentActiveIntel);
             intelItem?.SetClickedState(true);
             InputManager.Instance.SetCursorTo(InputManager.Cursor_Type.Cross);
             Messenger.AddListener<KeyCode>(ControlsSignals.KEY_DOWN, OnIntelCast);
         } else {
+            PlayerManager.Instance.RemovePlayerInputModule(PlayerManager.intelInputModule);
             Messenger.Broadcast(PlayerSignals.ACTIVE_INTEL_REMOVED);
         }
     }
@@ -394,7 +339,7 @@ public class Player : ILeader, IObjectManipulator {
     }
     private void TryExecuteCurrentActiveIntel() {
         string hoverText = string.Empty;
-        if (CanShareIntel(InnerMapManager.Instance.currentlyHoveredPoi, ref hoverText)) {
+        if (CanShareIntelTo(InnerMapManager.Instance.currentlyHoveredPoi, ref hoverText, currentActiveIntel)) {
             Character targetCharacter = InnerMapManager.Instance.currentlyHoveredPoi as Character;
             List<ConversationData> conversationList = ObjectPoolManager.Instance.CreateNewConversationDataList();
             ConversationData targetOpeningLine = ObjectPoolManager.Instance.CreateNewConversationData("What do you want from me?", targetCharacter, DialogItem.Position.Left);
@@ -420,7 +365,7 @@ public class Player : ILeader, IObjectManipulator {
             ObjectPoolManager.Instance.ReturnConversationDataListToPool(conversationList);
         }
     }
-    public bool CanShareIntel(IPointOfInterest poi, ref string hoverText) {
+    public bool CanShareIntelTo(IPointOfInterest poi, ref string hoverText, IIntel p_intel) {
         if(poi is Character character) {
             if (!character.isNormalCharacter) {
                 return false;
@@ -437,13 +382,16 @@ public class Player : ILeader, IObjectManipulator {
             if (!character.limiterComponent.canWitness) {
                 return false;
             }
+            if (!p_intel.CanShareIntelTo(character)) {
+                return false;
+            }
             if (!character.faction.isPlayerFaction && !GameUtilities.IsRaceBeast(character.race)) { //character.role.roleType != CHARACTER_ROLE.BEAST && character.role.roleType != CHARACTER_ROLE.PLAYER
                 return true;
             }
         }
         return false;
     }
-    public bool CanShareIntel(IPointOfInterest poi) {
+    public bool CanShareIntelTo(IPointOfInterest poi, IIntel p_intel) {
         if(poi is Character character) {
             if (!character.isNormalCharacter) {
                 return false;
@@ -457,7 +405,19 @@ public class Player : ILeader, IObjectManipulator {
             if (!character.limiterComponent.canWitness) {
                 return false;
             }
+            if (!p_intel.CanShareIntelTo(character)) {
+                return false;
+            }
             if (!character.faction.isPlayerFaction && !GameUtilities.IsRaceBeast(character.race)) { //character.role.roleType != CHARACTER_ROLE.BEAST && character.role.roleType != CHARACTER_ROLE.PLAYER
+                return true;
+            }
+        }
+        return false;
+    }
+    public bool HasHostageIntel(Character p_hostage) {
+        for (int i = 0; i < allIntel.Count; i++) {
+            IIntel intel = allIntel[i];
+            if (intel is ActionIntel actionIntel && actionIntel.reactable is ActualGoapNode action && action.actor == p_hostage && action.goapType == INTERACTION_TYPE.IS_IMPRISONED) {
                 return true;
             }
         }
@@ -466,63 +426,82 @@ public class Player : ILeader, IObjectManipulator {
     #endregion
 
     #region Player Notifications
-    private bool ShouldShowNotificationFrom(Region location) {
-        return location.canShowNotifications;
+    private bool ShouldShowNotificationFrom(LocationGridTile location) {
+        return location != null && location.tileObjectComponent.isSeenByEyeWard;
     }
     private bool ShouldShowNotificationFrom(Character character) {
-        return character.currentRegion != null && ShouldShowNotificationFrom(character.currentRegion);
+        return ShouldShowNotificationFrom(character.gridTileLocation);
     }
     private bool ShouldShowNotificationFrom(Character character, in Log log) {
         if (ShouldShowNotificationFrom(character)) {
             return true;
         } else {
-            return ShouldShowNotificationFrom(log.fillers.Where(x => x.GetObjectForFiller() is Character).Select(x => x.GetObjectForFiller() as Character).ToArray())
-                || ShouldShowNotificationFrom(log.fillers.Where(x => x.GetObjectForFiller() is Region).Select(x => x.GetObjectForFiller() as Region).ToArray());
+            for (int i = 0; i < log.fillers.Count; i++) {
+                object fillerObject = log.fillers[i].GetObjectForFiller();
+                if (fillerObject is Character fillerCharacter) {
+                    if (ShouldShowNotificationFrom(fillerCharacter)) {
+                        return true;
+                    }
+                } else if (fillerObject is LocationGridTile fillerGridTile) {
+                    if (ShouldShowNotificationFrom(fillerGridTile)) {
+                        return true;
+                    }
+                }
+            }
+            //NOTE: Replaced with the loop above to avoid garbage
+            //return ShouldShowNotificationFrom(log.fillers.Where(x => x.GetObjectForFiller() is Character).Select(x => x.GetObjectForFiller() as Character).ToArray())
+            //    || ShouldShowNotificationFrom(log.fillers.Where(x => x.GetObjectForFiller() is Region).Select(x => x.GetObjectForFiller() as Region).ToArray());
         }
+        return false;
     }
-    private bool ShouldShowNotificationFrom(Region location, in Log log) {
+    private bool ShouldShowNotificationFrom(LocationGridTile location, in Log log) {
         if (ShouldShowNotificationFrom(location)) {
             return true;
         } else {
-            return ShouldShowNotificationFrom(log.fillers.Where(x => x.GetObjectForFiller() is Character).Select(x => x.GetObjectForFiller() as Character).ToArray())
-                   || ShouldShowNotificationFrom(log.fillers.Where(x => x.GetObjectForFiller() is Region).Select(x => x.GetObjectForFiller() as Region).ToArray());
-        }
-    }
-    private bool ShouldShowNotificationFrom(Character[] characters) {
-        for (int i = 0; i < characters.Length; i++) {
-            if (ShouldShowNotificationFrom(characters[i])) {
-                return true;
+            for (int i = 0; i < log.fillers.Count; i++) {
+                object fillerObject = log.fillers[i].GetObjectForFiller();
+                if (fillerObject is Character fillerCharacter) {
+                    if (ShouldShowNotificationFrom(fillerCharacter)) {
+                        return true;
+                    }
+                } else if (fillerObject is LocationGridTile fillerGridTile) {
+                    if (ShouldShowNotificationFrom(fillerGridTile)) {
+                        return true;
+                    }
+                }
             }
+            //NOTE: Replaced with the loop above to avoid garbage
+            //return ShouldShowNotificationFrom(log.fillers.Where(x => x.GetObjectForFiller() is Character).Select(x => x.GetObjectForFiller() as Character).ToArray())
+            //       || ShouldShowNotificationFrom(log.fillers.Where(x => x.GetObjectForFiller() is Region).Select(x => x.GetObjectForFiller() as Region).ToArray());
         }
         return false;
     }
-    private bool ShouldShowNotificationFrom(Region[] locations) {
-        for (int i = 0; i < locations.Length; i++) {
-            if (ShouldShowNotificationFrom(locations[i])) {
-                return true;
-            }
-        }
-        return false;
-    }
-    private bool ShouldShowNotificationFrom(Character[] characters, in Log log) {
-        for (int i = 0; i < characters.Length; i++) {
-            if (ShouldShowNotificationFrom(characters[i], log)) {
-                return true;
-            }
-        }
-        return false;
-    }
-    
-    public bool ShowNotificationFrom(Region location, Log log) {
+    //private bool ShouldShowNotificationFrom(Character[] characters) {
+    //    for (int i = 0; i < characters.Length; i++) {
+    //        if (ShouldShowNotificationFrom(characters[i])) {
+    //            return true;
+    //        }
+    //    }
+    //    return false;
+    //}
+    //private bool ShouldShowNotificationFrom(LocationGridTile[] locations) {
+    //    for (int i = 0; i < locations.Length; i++) {
+    //        if (ShouldShowNotificationFrom(locations[i])) {
+    //            return true;
+    //        }
+    //    }
+    //    return false;
+    //}
+    public bool ShowNotificationFrom(LocationGridTile location, Log log, bool releaseLogAfter = false) {
         if (ShouldShowNotificationFrom(location, log)) {
-            ShowNotification(log);
+            ShowNotification(log, releaseLogAfter);
             return true;
         }
         return false;
     }
-    public bool ShowNotificationFrom(Character character, Log log) {
+    public bool ShowNotificationFrom(Character character, Log log, bool releaseLogAfter = false) {
         if (ShouldShowNotificationFrom(character, log)) {
-            ShowNotification(log);
+            ShowNotification(log, releaseLogAfter);
             return true;
         }
         return false;
@@ -534,43 +513,21 @@ public class Player : ILeader, IObjectManipulator {
         }
         return false;
     }
-    public void ShowNotificationFrom(Log log, params Character[] characters) {
-        if (ShouldShowNotificationFrom(characters, log)) {
-            ShowNotification(log);
-        }
-    }
-    public void ShowNotificationFromPlayer(Log log) {
+    public void ShowNotificationFromPlayer(Log log, bool releaseLogAfter = false) {
         //Removed adding to database here because this function should only be for showing notification, if we want to add it to database, it should be called outside this function
         //This is also redundant because all the outside calls of ShowNotificationFromPlayer already calls AddLogToDatabase
         //log.AddLogToDatabase();
-        ShowNotification(log);
+        ShowNotification(log, releaseLogAfter);
     }
     
-    private void ShowNotification(Log log) {
+    private void ShowNotification(Log log, bool releaseLogAfter = false) {
         Messenger.Broadcast(UISignals.SHOW_PLAYER_NOTIFICATION, log);
+        if (releaseLogAfter) {
+            LogPool.Release(log);
+        }
     }
     private void ShowNotification(IIntel intel) {
         Messenger.Broadcast(UISignals.SHOW_INTEL_NOTIFICATION, intel);
-    }
-    #endregion
-
-    #region Summons
-    private void AddSummon(Summon summon) {
-        if (!summons.Contains(summon)) {
-            summons.Add(summon);
-            Messenger.Broadcast(PlayerSignals.PLAYER_GAINED_SUMMON, summon);
-        }
-    }
-    private void RemoveSummon(Summon summon) {
-        if (summons.Remove(summon)) {
-            Messenger.Broadcast(PlayerSignals.PLAYER_LOST_SUMMON, summon);
-        }
-    }
-    private void OnCharacterDied(Character character) {
-        if (character.faction == playerFaction && character is Summon summon) {
-            // RemoveSummon(summon);
-            Messenger.Broadcast(PlayerSignals.PLAYER_LOST_SUMMON, summon);
-        }
     }
     #endregion
 
@@ -600,7 +557,7 @@ public class Player : ILeader, IObjectManipulator {
             return; //clicked on UI;
         }
         LocationGridTile hoveredTile = InnerMapManager.Instance.GetTileFromMousePosition();
-        if (hoveredTile != null && hoveredTile.objHere == null) {
+        if (hoveredTile != null && hoveredTile.tileObjectComponent.objHere == null) {
             Artifact artifact = InnerMapManager.Instance.CreateNewArtifact(currentActiveArtifact);
             hoveredTile.structure.AddPOI(artifact, hoveredTile);
         }
@@ -662,8 +619,8 @@ public class Player : ILeader, IObjectManipulator {
                     }
                 }
                 for (int i = 0; i < highlightedTiles.Count; i++) {
-                    if(highlightedTiles[i].objHere != null) {
-                        poisInHighlightedTiles.Add(highlightedTiles[i].objHere);
+                    if(highlightedTiles[i].tileObjectComponent.objHere != null) {
+                        poisInHighlightedTiles.Add(highlightedTiles[i].tileObjectComponent.objHere);
                     }
                 }
                 currentActiveCombatAbility.ActivateAbility(poisInHighlightedTiles);
@@ -673,45 +630,33 @@ public class Player : ILeader, IObjectManipulator {
     }
     #endregion
 
-    #region The Eye
-    private void OnMinionAssignedToPlayerLandmark(Minion minion, BaseLandmark landmark) { }
-    private void OnMinionUnassignedFromPlayerLandmark(Minion minion, BaseLandmark landmark) { }
+    #region spirit energy
+    public void AdjustSpiritEnergy(int amount) {
+        spiritEnergy += amount;
+        spiritEnergy = Mathf.Clamp(spiritEnergy, 0, 100000);
+        Messenger.Broadcast(PlayerSignals.PLAYER_ADJUSTED_SPIRIT_ENERGY, amount, spiritEnergy);
+        Messenger.Broadcast(PlayerSkillSignals.FORCE_RELOAD_PLAYER_ACTIONS);
+    }
     #endregion
-
+    
     #region Mana
     public void AdjustMana(int amount) {
         mana += amount;
         mana = Mathf.Clamp(mana, 0, EditableValuesManager.Instance.maximumMana);
         Messenger.Broadcast(PlayerSignals.PLAYER_ADJUSTED_MANA, amount, mana);
-        Messenger.Broadcast(SpellSignals.FORCE_RELOAD_PLAYER_ACTIONS);
+        Messenger.Broadcast(PlayerSkillSignals.FORCE_RELOAD_PLAYER_ACTIONS);
+    }
+    public void AdjustManaNoLimit(int amount) {
+        mana += amount;
+        mana = Mathf.Max(0, mana);
+        Messenger.Broadcast(PlayerSignals.PLAYER_ADJUSTED_MANA, amount, mana);
+        Messenger.Broadcast(PlayerSkillSignals.FORCE_RELOAD_PLAYER_ACTIONS);
     }
     public int GetManaCostForInterventionAbility(PLAYER_SKILL_TYPE ability) {
         int tier = PlayerManager.Instance.GetSpellTier(ability);
         return PlayerManager.Instance.GetManaCostForSpell(tier);
     }
     #endregion
-
-    //#region Archetype
-    //public void SetArchetype(PLAYER_ARCHETYPE type) {
-    //    if(archetype == null || archetype.type != type) {
-    //        archetype = PlayerManager.CreateNewArchetype(type);
-    //        for (int i = 0; i < archetype.spells.Count; i++) {
-    //            unlearnedSpells.Remove(archetype.spells[i]);
-    //        }
-    //        for (int i = 0; i < archetype.afflictions.Count; i++) {
-    //            unlearnedAfflictions.Remove(archetype.afflictions[i]);
-    //        }
-    //    }
-    //}
-    //public void LearnSpell(SPELL_TYPE type) {
-    //    archetype.AddSpell(type);
-    //    unlearnedSpells.Remove(type);
-    //}
-    //public void LearnAffliction(SPELL_TYPE affliction) {
-    //    archetype.AddAffliction(affliction);
-    //    unlearnedAfflictions.Remove(affliction);
-    //}
-    //#endregion
 
     #region Utilities
     /// <summary>
@@ -728,6 +673,59 @@ public class Player : ILeader, IObjectManipulator {
     }
     public void SetCurrentPlayerActionTarget(IPlayerActionTarget p_target) {
         currentlySelectedPlayerActionTarget = p_target;
+    }
+    #endregion
+
+    #region Characters
+    private void OnCharacterAddedToFaction(Character character, Faction faction) {
+        if (faction == playerFaction) {
+            //if(character.minion != null) {
+            //    AddMinion(character.minion);
+            //} 
+            //else if(character is Summon summon) {
+            //    AddSummon(summon);
+            //}
+            string bredBehaviour;
+            if (character is Summon summon) {
+                //Note: only Disabled bred behaviour for now, will remove it completely when change has been confirmed
+                bredBehaviour = string.Empty;
+                // bredBehaviour = summon.bredBehaviour;
+            } else {
+                bredBehaviour = character.characterClass.traitNameOnTamedByPlayer;
+            }
+            if (!string.IsNullOrEmpty(bredBehaviour)) {
+                character.traitContainer.AddTrait(character, bredBehaviour);
+            }
+            underlingsComponent.OnCharacterAddedToPlayerFaction(character);
+        }
+    }
+    private void OnCharacterRemovedFromFaction(Character character, Faction faction) {
+        if (faction == playerFaction) {
+            //if (character.minion != null) {
+            //    RemoveMinion(character.minion);
+            //} 
+            //else if (character is Summon summon) {
+            //    RemoveSummon(summon);
+            //}
+            string bredBehaviour;
+            if (character is Summon summon) {
+                //Note: only Disabled bred behaviour for now, will remove it completely when change has been confirmed
+                bredBehaviour = string.Empty;
+                // bredBehaviour = summon.bredBehaviour;
+            } else {
+                bredBehaviour = character.characterClass.traitNameOnTamedByPlayer;
+            }
+            if (!string.IsNullOrEmpty(bredBehaviour)) {
+                character.traitContainer.RemoveTrait(character, bredBehaviour);
+            }
+            underlingsComponent.OnCharacterRemovedFromPlayerFaction(character);
+        }
+    }
+    private void OnCharacterDied(Character p_character) {
+        if(p_character.faction == playerFaction) {
+            underlingsComponent.OnFactionMemberDied(p_character);
+        }
+        retaliationComponent.OnCharacterDeath(p_character);
     }
     #endregion
 
@@ -756,9 +754,13 @@ public class Player : ILeader, IObjectManipulator {
             return; //clicked on UI;
         }
         LocationGridTile hoveredTile = InnerMapManager.Instance.GetTileFromMousePosition();
-        if (hoveredTile != null && hoveredTile.objHere == null) {
+        if (hoveredTile != null && hoveredTile.tileObjectComponent.objHere == null) {
+            //DatabaseManager.Instance.tileObjectDatabase.destroyedTileObjects.Clear();
+            //TileObject ex = new FireCrystal();
+            //DatabaseManager.Instance.tileObjectDatabase.UnRegisterTileObject(ex);
             TileObject item = InnerMapManager.Instance.CreateNewTileObject<TileObject>(currentActiveItem);
             hoveredTile.structure.AddPOI(item, hoveredTile);
+            //hoveredTile.structure.RemovePOI(item);
         }
     }
     #endregion
@@ -784,71 +786,21 @@ public class Player : ILeader, IObjectManipulator {
     private void SaveExp() {
         SaveManager.Instance.currentSaveDataPlayer.SetExp(experience);
     }
-    //public void SaveSummons() {
-    //    List<LocationStructure> kennels = playerSettlement.GetStructuresOfType(STRUCTURE_TYPE.KENNEL);
-    //    List<Summon> kennelSummons = null;
-    //    if(kennels != null) {
-    //        for (int i = 0; i < kennels.Count; i++) {
-    //            LocationStructure currKennel = kennels[i];
-    //            for (int j = 0; j < currKennel.charactersHere.Count; j++) {
-    //                Character character = currKennel.charactersHere[j];
-    //                if(character is Summon summon) {
-    //                    if(summon.gridTileLocation != null && summon.marker) {
-    //                        if(kennelSummons == null) {
-    //                            kennelSummons = new List<Summon>();
-    //                        }
-    //                        kennelSummons.Add(summon);
-    //                    }
-    //                }
-    //            }
-    //        }
-    //    }
-    //    if(kennelSummons != null) {
-    //        SaveManager.Instance.currentSaveDataPlayer.SaveSummons(kennelSummons);
-    //    }
-    //}
-    // public void SaveTileObjects() {
-    //     List<LocationStructure> crypts = playerSettlement.GetStructuresOfType(STRUCTURE_TYPE.CRYPT);
-    //     List<TileObject> cryptTileObjects = null;
-    //     if (crypts != null) {
-    //         for (int i = 0; i < crypts.Count; i++) {
-    //             LocationStructure currCrypt = crypts[i];
-    //             foreach (TileObjectsAndCount tileObjectsAndCount in currCrypt.groupedTileObjects.Values) {
-    //                 if(tileObjectsAndCount.tileObjects != null && tileObjectsAndCount.tileObjects.Count > 0) {
-    //                     for (int j = 0; j < tileObjectsAndCount.tileObjects.Count; j++) {
-    //                         TileObject tileObject = tileObjectsAndCount.tileObjects[j];
-    //                         if(tileObject.gridTileLocation != null 
-    //                             && tileObject.tileObjectType != TILE_OBJECT_TYPE.BLOCK_WALL
-    //                             && tileObject.preplacedLocationStructure != currCrypt
-    //                             && !tileObject.isSaved) {
-    //                             if (cryptTileObjects == null) {
-    //                                 cryptTileObjects = new List<TileObject>();
-    //                             }
-    //                             cryptTileObjects.Add(tileObject);
-    //                         }
-    //                     }
-    //                 }
-    //             }
-    //         }
-    //     }
-    //     if (cryptTileObjects != null) {
-    //         SaveManager.Instance.currentSaveDataPlayer.SaveTileObjects(cryptTileObjects);
-    //     }
-    // }
     #endregion
 
     #region Loading
     public void LoadReferences(SaveDataPlayerGame data) {
-        for (int i = 0; i < data.minionIDs.Count; i++) {
-            Character character = CharacterManager.Instance.GetCharacterByPersistentID(data.minionIDs[i]);
-            minions.Add(character.minion);
-        }
-        for (int i = 0; i < data.summonIDs.Count; i++) {
-            Summon summon = CharacterManager.Instance.GetCharacterByPersistentID(data.summonIDs[i]) as Summon;
-            summons.Add(summon);
-        }
+        //for (int i = 0; i < data.minionIDs.Count; i++) {
+        //    Character character = CharacterManager.Instance.GetCharacterByPersistentID(data.minionIDs[i]);
+        //    minions.Add(character.minion);
+        //}
+        //for (int i = 0; i < data.summonIDs.Count; i++) {
+        //    Summon summon = CharacterManager.Instance.GetCharacterByPersistentID(data.summonIDs[i]) as Summon;
+        //    summons.Add(summon);
+        //}
 
         AdjustMana(data.mana);
+        AdjustSpiritEnergy(data.spiritEnergy);
         SetPortalTile(GridMap.Instance.map[data.portalTileXCoordinate, data.portalTileYCoordinate]);
 
         Faction faction = FactionManager.Instance.GetFactionByPersistentID(data.factionID);
@@ -874,6 +826,11 @@ public class Player : ILeader, IObjectManipulator {
         for (int i = 0; i < data.allChaosOrbs.Count; i++) {
             data.allChaosOrbs[i].Load();
         }
+        playerSkillComponent.LoadReferences(data.playerSkillComponent);
+        storedTargetsComponent.LoadReferences(data.storedTargetsComponent);
+        summonMeterComponent.LoadReferences(data.summonMeterComponent);
+        underlingsComponent.LoadReferences(data.underlingsComponent);
+        retaliationComponent.LoadReferences(data.retaliationComponent);
         PlayerUI.Instance.UpdateUI();
     }
     #endregion
@@ -883,18 +840,68 @@ public class Player : ILeader, IObjectManipulator {
         isCurrentlyBuildingDemonicStructure = state;
     }
     #endregion
-}
 
-[System.Serializable]
-public struct DemonicLandmarkBuildingData {
-    public LANDMARK_TYPE landmarkType;
-    public string landmarkName;
-    public int buildDuration;
-    public int currentDuration;
-}
+    #region Currencies
+    private void AdjustCurrency(CURRENCY p_currency, int p_amount, bool affectSpiritEnergy = true) {
+        switch (p_currency) {
+            case CURRENCY.Mana:
+                AdjustMana(p_amount);
+                break;
+            case CURRENCY.Chaotic_Energy:
+                plagueComponent.AdjustPlaguePoints(p_amount);
+                break;
+            case CURRENCY.Spirit_Energy:
+                AdjustSpiritEnergy(p_amount);
+                break;
+            default:
+                throw new ArgumentOutOfRangeException(nameof(p_currency), p_currency, null);
+        }
+    }
+    public void AddCurrency(Cost p_cost) {
+        AdjustCurrency(p_cost.currency, p_cost.processedAmount);
+    }
+    public void ReduceCurrency(Cost p_cost) {
+        AdjustCurrency(p_cost.currency, -p_cost.processedAmount);
+    }
+    public bool CanAfford(CURRENCY p_currency, int p_amount) {
+        switch (p_currency) {
+            case CURRENCY.Mana:
+                return mana >= p_amount;
+            case CURRENCY.Chaotic_Energy:
+                return plagueComponent.plaguePoints >= p_amount;
+            case CURRENCY.Spirit_Energy:
+                return spiritEnergy >= p_amount;
+            default:
+                throw new ArgumentOutOfRangeException(nameof(p_currency), p_currency, null);
+        }
+    }
+    public bool CanAfford(Cost p_cost) {
+        return CanAfford(p_cost.currency, p_cost.processedAmount);
+    }
+    public bool CanAfford(Cost[] p_cost) {
+        bool canAfford = true;
+        for (int i = 0; i < p_cost.Length; i++) {
+            Cost cost = p_cost[i];
+            if (!CanAfford(cost)) {
+                canAfford = false;
+                break;
+            }
+        }
+        return canAfford;
+    }
+    #endregion
 
-[System.Serializable]
-public struct DemonicLandmarkInvasionData {
-    public bool beingInvaded;
-    public int currentDuration;
+    #region Reporting
+    public void AddCharacterThatHasReported(Character p_character) {
+        if (!charactersThatHaveReportedDemonicStructure.Contains(p_character.persistentID)) {
+            charactersThatHaveReportedDemonicStructure.Add(p_character.persistentID);
+        }
+    }
+    public void ClearCharactersThatHaveReported() {
+        charactersThatHaveReportedDemonicStructure.Clear();
+    }
+    public bool HasAlreadyReportedADemonicStructure(Character p_character) {
+        return charactersThatHaveReportedDemonicStructure.Contains(p_character.persistentID);
+    }
+    #endregion
 }

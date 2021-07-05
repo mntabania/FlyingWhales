@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Inner_Maps;
 using UnityEngine;
 using UnityEngine.Assertions;
-
+using UtilityScripts;
 public class FrostyFog : MovingTileObject {
 
     private FrostyFogMapObjectVisual _frostyFogMapVisual;
@@ -21,7 +21,7 @@ public class FrostyFog : MovingTileObject {
         traitContainer.RemoveTrait(this, "Flammable");
         expiryDate = GameManager.Instance.Today().AddTicks(GameManager.Instance.GetTicksBasedOnHour(2));
     }
-    public FrostyFog(SaveDataFrostyFog data) {
+    public FrostyFog(SaveDataFrostyFog data) : base(data) {
         //SaveDataFrostyFog saveDataFrostyFog = data as SaveDataFrostyFog;
         Assert.IsNotNull(data);
         expiryDate = data.expiryDate;
@@ -43,12 +43,12 @@ public class FrostyFog : MovingTileObject {
         return "Frosty Fog";
     }
     public override void AdjustHP(int amount, ELEMENTAL_TYPE elementalDamageType, bool triggerDeath = false,
-        object source = null, CombatManager.ElementalTraitProcessor elementalTraitProcessor = null, bool showHPBar = false) {
+        object source = null, CombatManager.ElementalTraitProcessor elementalTraitProcessor = null, bool showHPBar = false, float piercingPower = 0f, bool isPlayerSource = false) {
         if (currentHP == 0 && amount < 0) {
             return; //hp is already at minimum, do not allow any more negative adjustments
         }
         LocationGridTile tileLocation = gridTileLocation;
-        CombatManager.Instance.DamageModifierByElementsAndTraits(ref amount, elementalDamageType, this);
+        CombatManager.Instance.ModifyDamage(ref amount, elementalDamageType, piercingPower, this);
         currentHP += amount;
         currentHP = Mathf.Clamp(currentHP, 0, maxHP);
         if (amount < 0) { //&& source != null
@@ -57,14 +57,16 @@ public class FrostyFog : MovingTileObject {
             if (source is Character character) {
                 responsibleCharacter = character;
             }
-            CombatManager.Instance.ApplyElementalDamage(amount, elementalDamageType, this, responsibleCharacter, elementalTraitProcessor);
+            CombatManager.Instance.ApplyElementalDamage(amount, elementalDamageType, this, responsibleCharacter, elementalTraitProcessor, setAsPlayerSource: isPlayerSource);
         }
         if (elementalDamageType == ELEMENTAL_TYPE.Fire) {
             //Wet
-            List<LocationGridTile> tiles = tileLocation.GetTilesInRadius(1, includeCenterTile: true, includeTilesInDifferentStructure: true);
+            List<LocationGridTile> tiles = RuinarchListPool<LocationGridTile>.Claim();
+            tileLocation.PopulateTilesInRadius(tiles, 1, includeCenterTile: true, includeTilesInDifferentStructure: true);
             for (int i = 0; i < tiles.Count; i++) {
                 tiles[i].AddTraitToAllPOIsOnTile("Wet");
             }
+            RuinarchListPool<LocationGridTile>.Release(tiles);
             _frostyFogMapVisual.Expire();
         } else if (elementalDamageType == ELEMENTAL_TYPE.Electric) {
             //2 Ball Lightnings
@@ -82,10 +84,12 @@ public class FrostyFog : MovingTileObject {
             //object has been destroyed
             _frostyFogMapVisual.Expire();
         }
+#if DEBUG_LOG
         Debug.Log($"{GameManager.Instance.TodayLogString()}HP of {this} was adjusted by {amount}. New HP is {currentHP}.");
+#endif
     }
 
-    #region Moving Tile Object
+#region Moving Tile Object
     protected override bool TryGetGridTileLocation(out LocationGridTile tile) {
         if (_frostyFogMapVisual != null) {
             if (_frostyFogMapVisual.isSpawned) {
@@ -96,9 +100,9 @@ public class FrostyFog : MovingTileObject {
         tile = null;
         return false;
     }
-    #endregion
+#endregion
 
-    #region Size and Stacks
+#region Size and Stacks
     public void SetStacks(int stacks) {
         this.stacks = stacks;
         UpdateSizeBasedOnStacks();
@@ -124,7 +128,7 @@ public class FrostyFog : MovingTileObject {
             SetSize(6);
         }
     }
-    #endregion
+#endregion
 }
 
 #region Save Data

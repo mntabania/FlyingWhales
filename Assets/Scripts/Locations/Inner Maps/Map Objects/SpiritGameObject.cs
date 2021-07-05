@@ -21,11 +21,10 @@ public class SpiritGameObject : MapObjectVisual<TileObject> {
     public override void Initialize(TileObject tileObject) {
         base.Initialize(tileObject);
         this.name = tileObject.ToString();
-        bool isCorrupted = tileObject.gridTileLocation.isCorrupted;
-        HexTile hex = tileObject.gridTileLocation.collectionOwner.GetConnectedHextileOrNearestHextile();
+        bool isCorrupted = tileObject.gridTileLocation.corruptionComponent.isCorrupted;
         SetVisual(InnerMapManager.Instance.GetTileObjectAsset(tileObject, 
-            tileObject.state, 
-            hex.biomeType,
+            tileObject.state,
+            tileObject.gridTileLocation.mainBiomeType,
             isCorrupted));  
         visionTrigger = this.transform.GetComponentInChildren<TileObjectVisionTrigger>();
         _isMenuShowing = () => IsMenuShowing(tileObject);
@@ -65,11 +64,10 @@ public class SpiritGameObject : MapObjectVisual<TileObject> {
     
     
     public override void UpdateTileObjectVisual(TileObject tileObject) {
-        HexTile hex = tileObject.gridTileLocation.collectionOwner.GetConnectedHextileOrNearestHextile();
         SetVisual(InnerMapManager.Instance.GetTileObjectAsset(tileObject,
             tileObject.state,
-            hex.biomeType,
-            tileObject.gridTileLocation?.isCorrupted ?? false));
+            tileObject.gridTileLocation.mainBiomeType,
+            tileObject.gridTileLocation?.corruptionComponent.isCorrupted ?? false));
     }
 
     #region Inquiry
@@ -95,13 +93,16 @@ public class SpiritGameObject : MapObjectVisual<TileObject> {
         base.OnPointerMiddleClick(poi);
         Character activeCharacter = UIManager.Instance.characterInfoUI.activeCharacter ?? UIManager.Instance.monsterInfoUI.activeMonster;
         if (activeCharacter != null) {
-            if(activeCharacter.minion == null) {
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
-                UIManager.Instance.poiTestingUI.ShowUI(poi, activeCharacter);
+            UIManager.Instance.poiTestingUI.ShowUI(poi, activeCharacter);
 #endif
-            } else {
-                UIManager.Instance.minionCommandsUI.ShowUI(poi);
-            }
+//            if (activeCharacter.minion == null) {
+//#if UNITY_EDITOR || DEVELOPMENT_BUILD
+//                UIManager.Instance.poiTestingUI.ShowUI(poi, activeCharacter);
+//#endif
+//            } else {
+//                UIManager.Instance.minionCommandsUI.ShowUI(poi);
+//            }
         }
     }
     protected override void OnPointerEnter(TileObject character) {

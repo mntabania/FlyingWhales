@@ -8,10 +8,10 @@
             this.actionType = actionType;
         }
         protected override void SubscribeListeners() {
-            Messenger.AddListener<PlayerAction>(SpellSignals.ON_EXECUTE_PLAYER_ACTION, CheckForCompletion);
+            Messenger.AddListener<PlayerAction>(PlayerSkillSignals.ON_EXECUTE_PLAYER_ACTION, CheckForCompletion);
         }
         protected override void UnSubscribeListeners() {
-            Messenger.RemoveListener<PlayerAction>(SpellSignals.ON_EXECUTE_PLAYER_ACTION, CheckForCompletion);
+            Messenger.RemoveListener<PlayerAction>(PlayerSkillSignals.ON_EXECUTE_PLAYER_ACTION, CheckForCompletion);
         }
 
         #region Listeners

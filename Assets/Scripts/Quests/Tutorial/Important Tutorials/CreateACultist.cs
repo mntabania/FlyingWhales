@@ -17,7 +17,7 @@ namespace Tutorial {
         protected override bool HasMetAllCriteria() {
             bool hasMetCriteria = base.HasMetAllCriteria();
             if (hasMetCriteria) {
-                return PlayerSkillManager.Instance.GetPlayerSkillData(PLAYER_SKILL_TYPE.SEIZE_CHARACTER).isInUse;
+                return PlayerSkillManager.Instance.GetSkillData(PLAYER_SKILL_TYPE.SEIZE_CHARACTER).isInUse;
             }
             return false;
         }
@@ -26,7 +26,7 @@ namespace Tutorial {
         protected override void ConstructSteps() {
             steps = new List<QuestStepCollection>() {
                 new QuestStepCollection(
-                    new ClickOnRoomStep("Click on the Chamber", room => room is DefilerRoom)
+                    new ClickOnRoomStep("Click on the Chamber", room => room is PrisonCell)
                         .SetHoverOverAction(OnHoverChamber)
                         .SetHoverOutAction(UIManager.Instance.HideSmallInfo),
                     new PlayerActionContextMenuShown(target => target is Character character && character.isNormalCharacter, $"Right click on a Villager"),
@@ -34,7 +34,7 @@ namespace Tutorial {
                         .SetHoverOverAction(OnHoverSeizeCharacter)
                         .SetHoverOutAction(UIManager.Instance.HideSmallInfo)
                         .SetOnTopmostActions(OnTopMostSeizeVillager, OnNoLongerTopMostSeizeVillager),
-                    new DropCharacterAtStructureRoomStep<DefilerRoom>("Drop at the Chamber"),
+                    new DropCharacterAtStructureRoomStep<PrisonCell>("Drop at the Chamber"),
                     new PlayerActionContextMenuShown(IsClickedTargetValid, $"Right click on Character or Chamber"),
                     new ExecutedPlayerActionStep(PLAYER_SKILL_TYPE.BRAINWASH, "Click on Brainwash option")
                         .SetHoverOverAction(OnHoverBrainwash)
@@ -59,8 +59,8 @@ namespace Tutorial {
         #region Step Helpers
         private bool IsClickedTargetValid(IPlayerActionTarget p_target) {
             if (p_target is Character character) {
-                return character.gridTileLocation != null && character.gridTileLocation.structure.IsTilePartOfARoom(character.gridTileLocation, out var room) && room is DefilerRoom;    
-            } else if (p_target is DefilerRoom defilerRoom) {
+                return character.gridTileLocation != null && character.gridTileLocation.structure.IsTilePartOfARoom(character.gridTileLocation, out var room) && room is PrisonCell;    
+            } else if (p_target is PrisonCell defilerRoom) {
                 return defilerRoom.HasValidBrainwashTarget();    
             }
             return false;

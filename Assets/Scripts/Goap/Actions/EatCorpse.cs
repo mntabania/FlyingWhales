@@ -19,8 +19,10 @@
         SetState("Eat Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
+#if DEBUG_LOG
         string costLog = $"\n{name} {target.nameWithID}: +10(Constant)";
         actor.logComponent.AppendCostLog(costLog);
+#endif
         return 10;
     }
     //public override void OnStopWhilePerforming(ActualGoapNode node) {
@@ -42,18 +44,18 @@
     public override bool IsFullnessRecoveryAction() {
         return true;
     }
-    #endregion
+#endregion
 
-    #region Preconditions
+#region Preconditions
     private bool IsTargetDead(Character actor, IPointOfInterest poiTarget, object[] otherData, JOB_TYPE jobType) {
         if (poiTarget is Character character) {
             return character.isDead;
         }
         return false;
     }
-    #endregion
+#endregion
     
-    #region State Effects
+#region State Effects
     public void PreEatSuccess(ActualGoapNode goapNode) {
         //goapNode.actor.needsComponent.AdjustDoNotGetHungry(1);
         if(goapNode.associatedJobType == JOB_TYPE.MONSTER_EAT_CORPSE || goapNode.associatedJobType == JOB_TYPE.HUNT_PREY) {
@@ -61,7 +63,7 @@
         }
     }
     public void PerTickEatSuccess(ActualGoapNode goapNode) {
-        goapNode.actor.needsComponent.AdjustFullness(8.5f);
+        goapNode.actor.needsComponent.AdjustFullness(10f);
     }
     public void AfterEatSuccess(ActualGoapNode goapNode) {
         //goapNode.actor.needsComponent.AdjustDoNotGetHungry(-1);
@@ -77,5 +79,5 @@
             Messenger.Broadcast(CharacterSignals.FORCE_CANCEL_ALL_ACTIONS_TARGETING_POI, goapNode.poiTarget, "target is already dead");
         }
     }
-    #endregion
+#endregion
 }

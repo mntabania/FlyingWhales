@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using Logs;
+using Object_Pools;
 using UnityEngine;
 
 namespace Interrupts {
@@ -15,9 +16,9 @@ namespace Interrupts {
 		#region Overrides
 		public override bool ExecuteInterruptStartEffect(InterruptHolder interruptHolder, ref Log overrideEffectLog, ActualGoapNode goapNode = null) {
 			if (PlagueDisease.Instance.AddPlaguedStatusOnPOIWithLifespanDuration(interruptHolder.actor)) {
+				//if (overrideEffectLog != null) { LogPool.Release(overrideEffectLog); }
 				overrideEffectLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Interrupt", "Plagued", "contract", null, logTags);
 				overrideEffectLog.AddToFillers(interruptHolder.actor, interruptHolder.actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-				//log.AddLogToInvolvedObjects();
 				return true;
 			}
 			return base.ExecuteInterruptStartEffect(interruptHolder, ref overrideEffectLog, goapNode);

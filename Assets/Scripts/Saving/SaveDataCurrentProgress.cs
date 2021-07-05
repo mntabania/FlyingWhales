@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Inner_Maps;
@@ -6,8 +7,10 @@ using Locations.Settlements;
 using Traits;
 using UnityEngine;
 using Interrupts;
+using Object_Pools;
 using Quests;
 using UnityEngine.Assertions;
+using UtilityScripts;
 
 public class SaveDataCurrentProgress {
     public System.DateTime timeStamp;
@@ -129,6 +132,14 @@ public class SaveDataCurrentProgress {
             yield return null;
         }
     }
+    public void SaveFactions() {
+        for (int i = 0; i < FactionManager.Instance.allFactions.Count; i++) {
+            Faction faction = FactionManager.Instance.allFactions[i];
+            SaveDataFaction saveData = new SaveDataFaction();
+            saveData.Save(faction);
+            AddToSaveHub(saveData, saveData.objectType);
+        }
+    }
     public IEnumerator SaveCharactersCoroutine() {
         UIManager.Instance.optionsMenu.UpdateSaveMessage("Saving characters...");
         int batchCount = 0;
@@ -155,6 +166,19 @@ public class SaveDataCurrentProgress {
             }
         }
     }
+    public void SaveCharacters() {
+        for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
+            Character character = CharacterManager.Instance.allCharacters[i];
+            SaveDataCharacter saveData = CharacterManager.Instance.CreateNewSaveDataCharacter(character);
+            AddToSaveHub(saveData, saveData.objectType);
+        }
+
+        for (int i = 0; i < CharacterManager.Instance.limboCharacters.Count; i++) {
+            Character character = CharacterManager.Instance.limboCharacters[i];
+            SaveDataCharacter saveData = CharacterManager.Instance.CreateNewSaveDataCharacter(character);
+            AddToSaveHub(saveData, saveData.objectType);
+        }
+    }
     public IEnumerator SaveJobsCoroutine() {
         UIManager.Instance.optionsMenu.UpdateSaveMessage("Saving jobs...");
         int batchCount = 0;
@@ -169,6 +193,15 @@ public class SaveDataCurrentProgress {
                 batchCount = 0;
                 yield return null;    
             }
+        }
+    }
+    public void SaveJobs() {
+        for (int i = 0; i < DatabaseManager.Instance.jobDatabase.allJobs.Count; i++) {
+            JobQueueItem jobQueueItem = DatabaseManager.Instance.jobDatabase.allJobs[i];
+            if (jobQueueItem.jobType == JOB_TYPE.NONE) {
+                continue; //skip
+            }
+            AddToSaveHub(jobQueueItem);
         }
     }
     public IEnumerator SaveReactionQuestsCoroutine() {
@@ -186,6 +219,14 @@ public class SaveDataCurrentProgress {
             }
         }
     }
+    public void SaveReactionQuests() {
+        for (int i = 0; i < QuestManager.Instance.activeQuests.Count; i++) {
+            Quest quest = QuestManager.Instance.activeQuests[i];
+            if (quest is ReactionQuest reactionQuest) {
+                AddToSaveHub(reactionQuest);
+            }
+        }
+    }
     public void SavePlagueDisease() {
         hasPlagueDisease = PlagueDisease.HasInstance();
         if (hasPlagueDisease) {
@@ -194,43 +235,129 @@ public class SaveDataCurrentProgress {
         }
     }
     public void SaveWinConditionTracker() {
-        UIManager.Instance.optionsMenu.UpdateSaveMessage("Saving Win Conditions...");
-        saveDataWinConditionTracker = CreateNewSaveDataForWinConditionTracker(QuestManager.Instance.winConditionTracker);
-        saveDataWinConditionTracker.Save(QuestManager.Instance.winConditionTracker);
+        if (QuestManager.Instance.winConditionTracker != null) {
+            saveDataWinConditionTracker = CreateNewSaveDataForWinConditionTracker(QuestManager.Instance.winConditionTracker);
+            saveDataWinConditionTracker.Save(QuestManager.Instance.winConditionTracker);    
+        }
     }
-    private SaveDataWinConditionTracker CreateNewSaveDataForWinConditionTracker(WinconditionTracker winconditionTracker) {
-        SaveDataWinConditionTracker obj = System.Activator.CreateInstance(winconditionTracker.serializedData) as SaveDataWinConditionTracker;
+    private SaveDataWinConditionTracker CreateNewSaveDataForWinConditionTracker(WinConditionTracker winConditionTracker) {
+        SaveDataWinConditionTracker obj = System.Activator.CreateInstance(winConditionTracker.serializedData) as SaveDataWinConditionTracker;
         return obj;
     }
     #endregion
 
     #region Tile Objects
     public IEnumerator SaveTileObjectsCoroutine() {
-        UIManager.Instance.optionsMenu.UpdateSaveMessage("Saving Objects...");
-        int batchCount = 0;
+        yield return null;
+        //UIManager.Instance.optionsMenu.UpdateSaveMessage("Saving Objects...");
+        //int batchCount = 0;
 
-        TileObject[] allTileObjects = DatabaseManager.Instance.tileObjectDatabase.allTileObjectsList.ToArray();
-        for (int i = 0; i < allTileObjects.Length; i++) {
+        //HashSet<TileObject> allTileObjects = DatabaseManager.Instance.tileObjectDatabase.allTileObjectsList;
+        //for (int i = 0; i < allTileObjects.Count; i++) {
+        //    TileObject tileObject = allTileObjects.ElementAt(i);
+        //    if (!SaveTileObject(tileObject)) {
+        //        continue;
+        //    }
+        //    batchCount++;
+        //    if (batchCount >= SaveManager.TileObject_Save_Batches) {
+        //        batchCount = 0;
+        //        yield return null;    
+        //    }
+        //}
+
+        ////We copy the destroyedTileObjects in a separate list so that we wont have race conditions if it is still processing in the multithread
+        //List<WeakReference> copyOfDestroyedTileObjects = RuinarchListPool<WeakReference>.Claim();
+        //copyOfDestroyedTileObjects.AddRange(DatabaseManager.Instance.tileObjectDatabase.destroyedTileObjects);
+        //for (int i = 0; i < copyOfDestroyedTileObjects.Count; i++) {
+        //    WeakReference wr = copyOfDestroyedTileObjects[i];
+        //    if (!wr.IsAlive) {
+        //        continue;
+        //    }
+        //    TileObject t = wr.Target as TileObject;
+        //    if (t != null) {
+        //        if (!SaveTileObject(t)) {
+        //            continue;
+        //        }
+        //    }
+        //    batchCount++;
+        //    if (batchCount >= SaveManager.TileObject_Save_Batches) {
+        //        batchCount = 0;
+        //        yield return null;
+        //    }
+        //}
+        //RuinarchListPool<WeakReference>.Release(copyOfDestroyedTileObjects);
+    }
+    public void SaveTileObjects(List<TileObject> allTileObjects) {
+        for (int i = 0; i < allTileObjects.Count; i++) {
             TileObject tileObject = allTileObjects[i];
-            if (tileObject is GenericTileObject genericTileObject && genericTileObject.gridTileLocation.isDefault) {
-                //if tile object is a Generic Tile Object and its parent tile is set as default then do not save it.
+            SaveTileObject(tileObject);
+        }
+    }
+    public void SaveGenericTileObjects(List<TileObject> allTileObjects) {
+        for (int i = 0; i < allTileObjects.Count; i++) {
+            GenericTileObject tileObject = allTileObjects[i] as GenericTileObject;
+            if (!SaveGenericTileObject(tileObject)) {
                 continue;
             }
+        }
+    }
+
+    public void SaveDestroyedTileObjects() {
+        //We copy the destroyedTileObjects in a separate list so that we wont have race conditions if it is still processing in the multithread
+        List<WeakReference> copyOfDestroyedTileObjects = RuinarchListPool<WeakReference>.Claim();
+        copyOfDestroyedTileObjects.AddRange(DatabaseManager.Instance.tileObjectDatabase.destroyedTileObjects);
+        for (int i = 0; i < copyOfDestroyedTileObjects.Count; i++) {
+            WeakReference wr = copyOfDestroyedTileObjects[i];
+            if (!wr.IsAlive) {
+                continue;
+            }
+            TileObject t = wr.Target as TileObject;
+            if (t != null) {
+                if (!SaveDestroyedTileObject(t)) {
+                    continue;
+                }
+            }
+        }
+        RuinarchListPool<WeakReference>.Release(copyOfDestroyedTileObjects);
+    }
+    private void SaveTileObject(TileObject tileObject) {
+        lock (SaveCurrentProgressManager.THREAD_LOCKER) {
             SaveDataTileObject saveDataTileObject = CreateNewSaveDataForTileObject(tileObject);
             saveDataTileObject.Save(tileObject);
             AddToSaveHub(saveDataTileObject, saveDataTileObject.objectType);
-            if (tileObject is WurmHole wurmHole) {
-                //special case for wurm hole because connected wurm hole cannot be saved inside other wurm hole because it will produce a stack overflow exception
-                SaveDataTileObject otherWurmHoleSaveData = CreateNewSaveDataForTileObject(wurmHole.wurmHoleConnection);
-                otherWurmHoleSaveData.Save(wurmHole.wurmHoleConnection);
-                SaveManager.Instance.saveCurrentProgressManager.currentSaveDataProgress.AddToSaveHub(otherWurmHoleSaveData, otherWurmHoleSaveData.objectType);
-            }
-            batchCount++;
-            if (batchCount >= SaveManager.TileObject_Save_Batches) {
-                batchCount = 0;
-                yield return null;    
-            }
         }
+
+        //Wag na isave dito yung kapartner na wurm hole kasi dadaanan din yun since nasa database din naman sya
+        //if (tileObject is WurmHole wurmHole) {
+        //    //special case for wurm hole because connected wurm hole cannot be saved inside other wurm hole because it will produce a stack overflow exception
+        //    SaveDataTileObject otherWurmHoleSaveData = CreateNewSaveDataForTileObject(wurmHole.wurmHoleConnection);
+        //    otherWurmHoleSaveData.Save(wurmHole.wurmHoleConnection);
+        //    SaveManager.Instance.saveCurrentProgressManager.currentSaveDataProgress.AddToSaveHub(otherWurmHoleSaveData, otherWurmHoleSaveData.objectType);
+        //}
+    }
+    private bool SaveGenericTileObject(GenericTileObject tileObject) {
+        if (tileObject.gridTileLocation.isDefault) {
+            //if tile object is a Generic Tile Object and its parent tile is set as default then do not save it.
+            return false;
+        }
+        lock (SaveCurrentProgressManager.THREAD_LOCKER) {
+            SaveDataTileObject saveDataTileObject = CreateNewSaveDataForTileObject(tileObject);
+            saveDataTileObject.Save(tileObject);
+            AddToSaveHub(saveDataTileObject, saveDataTileObject.objectType);
+        }
+        return true;
+    }
+    private bool SaveDestroyedTileObject(TileObject tileObject) {
+        if (tileObject is GenericTileObject genericTileObject && genericTileObject.gridTileLocation.isDefault) {
+            //if tile object is a Generic Tile Object and its parent tile is set as default then do not save it.
+            return false;
+        }
+        lock (SaveCurrentProgressManager.THREAD_LOCKER) {
+            SaveDataTileObject saveDataTileObject = CreateNewSaveDataForTileObject(tileObject);
+            saveDataTileObject.Save(tileObject);
+            AddToSaveHub(saveDataTileObject, saveDataTileObject.objectType);
+        }
+        return true;
     }
     private static SaveDataTileObject CreateNewSaveDataForTileObject(TileObject tileObject) {
         SaveDataTileObject obj = System.Activator.CreateInstance(tileObject.serializedData) as SaveDataTileObject;
@@ -267,7 +394,7 @@ public class SaveDataCurrentProgress {
                 foreach (SaveDataTileObject data in saveDataTileObjects.Values) {
                     //Special Case: Do not load generic tile objects here, since they were already loaded during region inner map generation.
                     if (data.tileObjectType != TILE_OBJECT_TYPE.GENERIC_TILE_OBJECT) {
-                        data.Load();    
+                        data.Load();
                     }
                 }
             }
@@ -286,8 +413,8 @@ public class SaveDataCurrentProgress {
     public void LoadJobs() {
         if (objectHub.ContainsKey(OBJECT_TYPE.Job)){
             if(objectHub[OBJECT_TYPE.Job] is SaveDataJobHub hub) {
-                Dictionary<string, SaveDataJobQueueItem> saveDataTraits = hub.hub;
-                foreach (SaveDataJobQueueItem data in saveDataTraits.Values) {
+                Dictionary<string, SaveDataJobQueueItem> saveData = hub.hub;
+                foreach (SaveDataJobQueueItem data in saveData.Values) {
                     data.Load();
                 }
             }
@@ -296,8 +423,8 @@ public class SaveDataCurrentProgress {
     public void LoadActions() {
         if (objectHub.ContainsKey(OBJECT_TYPE.Action)) {
             if (objectHub[OBJECT_TYPE.Action] is SaveDataActionHub hub) {
-                Dictionary<string, SaveDataActualGoapNode> saved = hub.hub;
-                foreach (SaveDataActualGoapNode data in saved.Values) {
+                Dictionary<string, SaveDataActualGoapNode> saveData = hub.hub;
+                foreach (SaveDataActualGoapNode data in saveData.Values) {
                     ActualGoapNode action = data.Load();
                     DatabaseManager.Instance.actionDatabase.AddAction(action);
                 }
@@ -416,10 +543,17 @@ public class SaveDataCurrentProgress {
         }
     }
     public void LoadActionReferences() {
+        //List<string> allCorruptedActions = RuinarchListPool<string>.Claim();
         foreach (KeyValuePair<string, ActualGoapNode> item in DatabaseManager.Instance.actionDatabase.allActions) {
             SaveDataActualGoapNode saveData = GetFromSaveHub<SaveDataActualGoapNode>(OBJECT_TYPE.Action, item.Key);
-            item.Value.LoadReferences(saveData);
+            if (!item.Value.LoadReferences(saveData)) {
+                //allCorruptedActions.Add(item.Key);
+            }
         }
+        //for (int i = 0; i < allCorruptedActions.Count; i++) {
+        //    DatabaseManager.Instance.actionDatabase.RemoveAction(allCorruptedActions[i]);
+        //}
+        //RuinarchListPool<string>.Release(allCorruptedActions);
     }
     public void LoadAdditionalActionReferences() {
         foreach (KeyValuePair<string, ActualGoapNode> item in DatabaseManager.Instance.actionDatabase.allActions) {
@@ -428,10 +562,17 @@ public class SaveDataCurrentProgress {
         }
     }
     public void LoadInterruptReferences() {
+        //List<string> allCorruptedInterrupts = RuinarchListPool<string>.Claim();
         foreach (KeyValuePair<string, InterruptHolder> item in DatabaseManager.Instance.interruptDatabase.allInterrupts) {
             SaveDataInterruptHolder saveData = GetFromSaveHub<SaveDataInterruptHolder>(OBJECT_TYPE.Interrupt, item.Key);
-            item.Value.LoadReferences(saveData);
+            if (!item.Value.LoadReferences(saveData)) {
+                //allCorruptedInterrupts.Add(item.Key);
+            }
         }
+        //for (int i = 0; i < allCorruptedInterrupts.Count; i++) {
+        //    DatabaseManager.Instance.interruptDatabase.RemoveInterrupt(allCorruptedInterrupts[i]);
+        //}
+        //RuinarchListPool<string>.Release(allCorruptedInterrupts);
     }
     // public void LoadLogReferences() {
     //     foreach (KeyValuePair<string, Log> item in DatabaseManager.Instance.logDatabase.allLogs) {
@@ -515,6 +656,12 @@ public class SaveDataNotification {
 
     public void Save(PlayerNotificationItem notif) {
         logID = notif.logPersistentID;
+        
+        Log log = DatabaseManager.Instance.mainSQLDatabase.GetLogWithPersistentID(logID);
+        if (log == null) {
+            Debug.LogError($"Log with id {logID} is not present in database. Log is {notif.currentTextDisplayed}");
+            return;
+        }
         // logID = notif.shownLog.persistentID;
         // tickShown = notif.tickShown;
         // SaveManager.Instance.saveCurrentProgressManager.AddToSaveHub(notif.shownLog);
@@ -551,6 +698,9 @@ public class SaveDataNotification {
             UIManager.Instance.ShowPlayerNotification(intel, log, tickShown);
         } else {
             UIManager.Instance.ShowPlayerNotification(log, tickShown);
+        }
+        if (log != null) {
+            LogPool.Release(log);
         }
     }
 }

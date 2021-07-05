@@ -7,12 +7,14 @@ using Inner_Maps.Location_Structures;
 using UnityEngine.Assertions;
 using UnityEngine.Profiling;
 using UtilityScripts;
+using Pathfinding;
 
 public class CombatState : CharacterState {
 
     private int _currentAttackTimer; //When this timer reaches max, remove currently hostile target from hostile list
     private bool _hasTimerStarted;
     private const float Wall_Attack_Range_Tolerance = 0.4f;
+    private const float Moving_Target_Tolerance = 0.9f;
 
     public bool isAttacking { get; private set; } //if not attacking, it is assumed that the character is fleeing
     public IPointOfInterest currentClosestHostile { get; private set; }
@@ -40,6 +42,11 @@ public class CombatState : CharacterState {
     /// The number of times this character has hit his/her current target
     /// </summary>
     private int _timesHitCurrentTarget;
+
+    public bool isExecutingAttack;
+    public GridNodeBase repositioningTo { get; private set; }
+
+    public bool isRepositioning => repositioningTo != null;
 
     public CombatState(CharacterStateComponent characterComp) : base(characterComp) {
         stateName = "Combat State";
@@ -86,8 +93,10 @@ public class CombatState : CharacterState {
     //    }
     //}
     protected override void StartState() {
-        stateComponent.owner.logComponent.PrintLogIfActive(
-            $"Starting combat state for {stateComponent.owner.name}");
+        stateComponent.owner.isBeingCarriedBy?.StopCurrentActionNode();
+#if DEBUG_LOG
+        stateComponent.owner.logComponent.PrintLogIfActive($"Starting combat state for {stateComponent.owner.name}");
+#endif
         //stateComponent.character.DecreaseCanWitness();
         stateComponent.owner.marker.ShowHPBar(stateComponent.owner);
         stateComponent.owner.marker.SetAnimationBool("InCombat", true);
@@ -122,8 +131,10 @@ public class CombatState : CharacterState {
         stateComponent.owner.marker.HideHPBar();
         stateComponent.owner.marker.SetAnimationBool("InCombat", false);
         stateComponent.owner.marker.visionCollider.VoteToFilterVision();
+#if DEBUG_LOG
         stateComponent.owner.logComponent.PrintLogIfActive(
             $"Ending combat state for {stateComponent.owner.name}");
+#endif
         Messenger.RemoveListener<Character>(CharacterSignals.DETERMINE_COMBAT_REACTION, DetermineReaction);
         Messenger.RemoveListener<Character>(CharacterSignals.UPDATE_MOVEMENT_STATE, OnUpdateMovementState);
         Messenger.RemoveListener<Character>(CharacterSignals.START_FLEE, OnCharacterStartFleeing);
@@ -161,9 +172,9 @@ public class CombatState : CharacterState {
             //TEMPORARILY REMOVED THIS UNTIL FURTHER NOTICE
             if (isBeingApprehended && stateComponent.owner.traitContainer.HasTrait("Criminal") && stateComponent.owner.limiterComponent.canPerform && stateComponent.owner.limiterComponent.canMove) { //!stateComponent.character.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)
                 if (!stateComponent.owner.traitContainer.HasTrait("Berserked")) {
-                    HexTile chosenHex = stateComponent.owner.currentRegion.GetRandomHexThatMeetCriteria(currHex => currHex.elevationType != ELEVATION.WATER && currHex.elevationType != ELEVATION.MOUNTAIN && currHex.landmarkOnTile == null && !currHex.IsNextToOrPartOfVillage() && !currHex.isCorrupted);
-                    if (chosenHex != null) {
-                        LocationGridTile chosenTile = chosenHex.GetRandomPassableTile();
+                    Area chosenArea = stateComponent.owner.currentRegion.GetRandomAreaThatIsUncorruptedAndNotMountainWaterAndNoStructureAndNotNextToOrPartOfVillage();
+                    if (chosenArea != null) {
+                        LocationGridTile chosenTile = chosenArea.gridTileComponent.GetRandomPassableTile();
                         stateComponent.owner.jobComponent.CreateFleeCrimeJob(chosenTile);
                         return;
                     }
@@ -187,7 +198,7 @@ public class CombatState : CharacterState {
             stateComponent.owner.behaviourComponent.SetSubterraneanJustExitedCombat(true);
         }
     }
-    #endregion
+#endregion
 
     /// <summary>
     /// Function that determines what a character should do in a certain point in time.
@@ -197,121 +208,176 @@ public class CombatState : CharacterState {
     private void DetermineReaction(Character character) {
         if (stateComponent.owner == character && stateComponent.currentState == this && !isPaused && !isDone) {
             DetermineIsBeingApprehended();
-            string summary = $"{character.name} will determine a combat reaction";
+            string summary = string.Empty;
+#if DEBUG_LOG
+            summary = $"{character.name} will determine a combat reaction";
+#endif
             if (character.marker.hasFleePath) {
+#if DEBUG_LOG
                 summary = $"{summary}\n-Has flee path";
+#endif
                 //Character is already fleeing
                 CheckFlee(ref summary);
             } else {
                 //NOTE: If avoid reason is Vampire Bat, the character should always flee and must not trigger cowering, 
                 //the reason is we need to let him go to a place where he can transform back to human safely, that is also the reason why we put him in a flee state in the first place
+#if DEBUG_LOG
                 summary = $"{summary}\n-Has no flee path";
+#endif
                 if (HasStillAvoidPOIThatIsInRange()) {
-                    IPointOfInterest avoidedPOI = stateComponent.owner.combatComponent.avoidInRange[0];
+                    IPointOfInterest avoidedPOI = stateComponent.owner.combatComponent.avoidInRange[stateComponent.owner.combatComponent.avoidInRange.Count - 1];
                     string avoidReason = GetAvoidReason(avoidedPOI);
-                    bool doNotCower = avoidReason == CombatManager.Avoiding_Witnesses || avoidReason == CombatManager.Encountered_Hostile;
+                    bool doNotCower = avoidReason == CombatManager.Avoiding_Witnesses || avoidReason == CombatManager.Encountered_Hostile || avoidReason == CombatManager.Vulnerable;
+#if DEBUG_LOG
                     summary = $"{summary}\n-Has avoid that is still in range";
-                    if(avoidedPOI is Character avoidedCharacter && avoidedCharacter.isNormalCharacter && stateComponent.owner.traitContainer.HasTrait("Enslaved") && stateComponent.owner.isNormalCharacter) {
+#endif
+                    if (avoidedPOI is Character avoidedCharacter && avoidedCharacter.isNormalCharacter && stateComponent.owner.traitContainer.HasTrait("Enslaved") && stateComponent.owner.isNormalCharacter) {
                         //If character is a slave and the target being avoided is a villager, always cower, so that the target will be able to reach this slave
+#if DEBUG_LOG
                         summary = $"{summary}\n-Character is a slave and avoided character is a villageer, will only cower";
                         summary = $"{summary}\n-Triggered Cowering";
                         character.logComponent.PrintLogIfActive(summary);
+#endif
                         character.interruptComponent.TriggerInterrupt(INTERRUPT.Cowering, character, reason: avoidReason);
                         return;
                     }
                     if (character.homeStructure != null) {
+#if DEBUG_LOG
                         summary = $"{summary}\n-Has home dwelling";
+#endif
                         if (character.homeStructure == character.currentStructure) {
+#if DEBUG_LOG
                             summary = $"{summary}\n-Is in Home Dwelling";
+#endif
                             if (UnityEngine.Random.Range(0, 2) == 0 && !doNotCower) {
+#if DEBUG_LOG
                                 summary = $"{summary}\n-Triggered Cowering";
+#endif
                                 character.interruptComponent.TriggerInterrupt(INTERRUPT.Cowering, character, reason: avoidReason);
                                 //SetIsFleeToHome(false);
                                 //SetIsAttacking(false);
                             } else {
+#if DEBUG_LOG
                                 summary = $"{summary}\n-Triggered Flee";
+#endif
                                 SetIsFleeToHome(false);
                                 SetIsAttacking(false);
                             }
                         } else {
-                            summary = $"{summary}\n-Is not in Home Dwelling, 40%: Flee to Home, 40%: Flee, 20%: Cowering";
                             int roll = UnityEngine.Random.Range(0, 100);
+#if DEBUG_LOG
+                            summary = $"{summary}\n-Is not in Home Dwelling, 40%: Flee to Home, 40%: Flee, 20%: Cowering";
                             summary = $"{summary}\n-Roll: {roll}";
+#endif
                             if (roll < 40) {
+#if DEBUG_LOG
                                 summary = $"{summary}\n-Triggered Flee to Home";
+#endif
                                 SetIsFleeToHome(true);
                                 SetIsAttacking(false);
                             } else if ((roll >= 40 && roll < 80) || doNotCower) {
+#if DEBUG_LOG
                                 summary = $"{summary}\n-Triggered Flee";
+#endif
                                 SetIsFleeToHome(false);
                                 SetIsAttacking(false);
                             } else {
+#if DEBUG_LOG
                                 summary = $"{summary}\n-Triggered Cowering";
+#endif
                                 character.interruptComponent.TriggerInterrupt(INTERRUPT.Cowering, character, reason: avoidReason);
                                 //SetIsFleeToHome(false);
                                 //SetIsAttacking(false);
                             }
                         }
                     } else if (character is Summon summon && summon.HasTerritory()) {
+#if DEBUG_LOG
                         summary = $"{summary}\n-Has territory";
+#endif
                         if (summon.IsInTerritory()) {
+#if DEBUG_LOG
                             summary = $"{summary}\n-Is in territory";
+#endif
                             if (UnityEngine.Random.Range(0, 2) == 0 && !doNotCower) {
+#if DEBUG_LOG
                                 summary = $"{summary}\n-Triggered Cowering";
+#endif
                                 character.interruptComponent.TriggerInterrupt(INTERRUPT.Cowering, character, reason: avoidReason);
                                 //SetIsFleeToHome(false);
                                 //SetIsAttacking(false);
                             } else {
+#if DEBUG_LOG
                                 summary = $"{summary}\n-Triggered Flee";
+#endif
                                 SetIsFleeToHome(false);
                                 SetIsAttacking(false);
                             }
                         } else {
-                            summary = $"{summary}\n-Is not in territory, 40%: Flee to territory, 40%: Flee, 20%: Cowering";
                             int roll = UnityEngine.Random.Range(0, 100);
+#if DEBUG_LOG
+                            summary = $"{summary}\n-Is not in territory, 40%: Flee to territory, 40%: Flee, 20%: Cowering";
                             summary = $"{summary}\n-Roll: {roll}";
+#endif
                             if (roll < 40) {
+#if DEBUG_LOG
                                 summary = $"{summary}\n-Triggered Flee to territory";
+#endif
                                 SetIsFleeToHome(true);
                                 SetIsAttacking(false);
                             } else if ((roll >= 40 && roll < 80) || doNotCower) {
+#if DEBUG_LOG
                                 summary = $"{summary}\n-Triggered Flee";
+#endif
                                 SetIsFleeToHome(false);
                                 SetIsAttacking(false);
                             } else {
+#if DEBUG_LOG
                                 summary = $"{summary}\n-Triggered Cowering";
+#endif
                                 character.interruptComponent.TriggerInterrupt(INTERRUPT.Cowering, character, reason: avoidReason);
                                 //SetIsFleeToHome(false);
                                 //SetIsAttacking(false);
                             }
                         }
                     } else {
+#if DEBUG_LOG
                         summary = $"{summary}\n-Has no home dwelling nor territory";
+#endif
                         if (UnityEngine.Random.Range(0, 2) == 0 && !doNotCower) {
+#if DEBUG_LOG
                             summary = $"{summary}\n-Triggered Cowering";
+#endif
                             character.interruptComponent.TriggerInterrupt(INTERRUPT.Cowering, character, reason: avoidReason);
                             //SetIsFleeToHome(false);
                             //SetIsAttacking(false);
                         } else {
+#if DEBUG_LOG
                             summary = $"{summary}\n-Triggered Flee";
+#endif
                             SetIsFleeToHome(false);
                             SetIsAttacking(false);
                         }
                     }
                 } else if (character.combatComponent.hostilesInRange.Count > 0) {
+#if DEBUG_LOG
                     summary = $"{summary}\n-Has hostile in list";
                     summary = $"{summary}\n-Attack nereast one";
+#endif
                     //SetClosestHostile(null);
                     SetIsAttacking(true);
                 } else {
+#if DEBUG_LOG
                     summary = $"{summary}\n-Has no hostile or avoid in list";
                     summary = $"{summary}\n-Exiting combat state";
+#endif
                     character.combatComponent.ClearAvoidInRange(false);
                     endedInternally = true;
                     character.stateComponent.ExitCurrentState();
                 }
             }
+#if DEBUG_LOG
             character.logComponent.PrintLogIfActive(summary);
+#endif
             //if (stateComponent.character.combatComponent.hostilesInRange.Count > 0) {
             //    summary += "\nStill has hostiles, will attack...";
             //    stateComponent.character.logComponent.PrintLogIfActive(summary);
@@ -362,7 +428,7 @@ public class CombatState : CharacterState {
     private void OnCharacterStartFleeing(Character characterThatFlee) {
         Character owner = stateComponent.owner;
         //Will stop pursuing only if current closest hostile is character, if current closest hostile is an object, whether or not the source can run, he/she will still pursue
-        if (stateComponent.currentState == this && !isPaused && !isDone && owner.combatComponent.hostilesInRange.Contains(characterThatFlee)) {
+        if (stateComponent.currentState == this && !isPaused && !isDone && owner.combatComponent.IsHostileInRange(characterThatFlee)) {
             if (!owner.movementComponent.CanStillPursueTarget(characterThatFlee)) {
                 if (owner.behaviourComponent.HasBehaviour(typeof(DefendBehaviour))) {
                     //if character is defending, always remove hostile that is already fleeing.
@@ -381,16 +447,22 @@ public class CombatState : CharacterState {
     }
     public void CheckFlee(ref string debugLog) {
         if (!HasStillAvoidPOIThatIsInRange()) {
+#if DEBUG_LOG
             debugLog = $"{debugLog}\n-Has no avoid that is still in range";
+#endif
             if (HasStillHostilePOIThatIsInRange()) {
+#if DEBUG_LOG
                 debugLog = $"{debugLog}\n-Has hostile that is still in range";
                 debugLog = $"{debugLog}\n-Attack nearest one";
+#endif
                 //SetClosestHostile(null);
                 SetIsAttacking(true);
             } else {
                 //No more flee chance, in the new system, instead of having flee chance, if there are no more characters in flee list, exit flee immediately, no need to finish flee path
                 //https://trello.com/c/rNoVtMDD/2457-flee-movement-updates
+#if DEBUG_LOG
                 debugLog = $"{debugLog}\n-Has no hostile that is still in range, exit flee";
+#endif
                 FinishedTravellingFleePath();
 
                 //debugLog = $"{debugLog}\n-{fleeChance.ToString()}% chance to flee";
@@ -447,30 +519,54 @@ public class CombatState : CharacterState {
             //When attacking, a Mastered Lycanthrope will transform to werewolf first
             if (stateComponent.owner.isLycanthrope && stateComponent.owner.lycanData.isMaster) {
                 if (!stateComponent.owner.isInWerewolfForm) {
-                    if (!stateComponent.owner.crimeComponent.HasNonHostileVillagerInRangeThatConsidersCrimeTypeACrime(CRIME_TYPE.Werewolf)) {
-                        stateComponent.owner.interruptComponent.TriggerInterrupt(INTERRUPT.Transform_To_Werewolf, stateComponent.owner);
+                    if (!stateComponent.owner.crimeComponent.HasNonHostileVillagerInRangeThatConsidersCrimeTypeACrime(CRIME_TYPE.Werewolf, currentClosestHostile as Character)) {
+                        if(stateComponent.owner.interruptComponent.TriggerInterrupt(INTERRUPT.Transform_To_Werewolf, stateComponent.owner)) {
+                            stateComponent.owner.combatComponent.SetWillProcessCombat(true);
+                            return;
+                        }
+                    } else {
+                        bool shouldProcess = true;
+                        string log = string.Empty;
+                        SetClosestHostileProcessing(ref shouldProcess, ref log);
+                        if (currentClosestHostile is Character hostileCharacter) {
+                            CombatData data = stateComponent.owner.combatComponent.GetCombatData(hostileCharacter);
+                            if (data != null && data.connectedAction != null && data.connectedAction.associatedJobType == JOB_TYPE.LYCAN_HUNT_PREY) {
+                                //If hostile character is the target of lycan hunt, always transform to wolf when attacking it, do not check criminilaty of werewolf anymore
+                                if (stateComponent.owner.interruptComponent.TriggerInterrupt(INTERRUPT.Transform_To_Werewolf, stateComponent.owner)) {
+                                    stateComponent.owner.combatComponent.SetWillProcessCombat(true);
+                                    return;
+                                }
+                            }
+                        }
                     }
                 }
             }
         }
-        
-        DoCombatBehavior();
 
+        if(stateComponent.owner.combatComponent.combatBehaviourParent.TryDoCombatBehaviour(stateComponent.owner, this)) {
+            //Do not further process combat if the TryDoCombatBehaviour returns true because the aspects of the combat probably has changed
+            //Instead, process the combat again
+            stateComponent.owner.combatComponent.SetWillProcessCombat(true);
+            return;
+        }
+
+        DoCombatBehavior();
         if (isAttacking) {
             actionIconString = stateComponent.owner.combatComponent.GetCombatStateIconString(currentClosestHostile);
             string reasonKey = stateComponent.owner.combatComponent.GetCombatLogKeyReason(currentClosestHostile);
 
             if (string.IsNullOrEmpty(reasonKey)) {
-                thoughtBubbleLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "CharacterState", "Combat State", "thought_bubble_no_reason", providedTags: LOG_TAG.Combat);
-                thoughtBubbleLog.AddToFillers(stateComponent.owner, stateComponent.owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "CharacterState", "Combat State", "thought_bubble_no_reason", providedTags: LOG_TAG.Combat);
+                log.AddToFillers(stateComponent.owner, stateComponent.owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                SetThoughtBubbleLog(log);
             } else {
-                thoughtBubbleLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "CharacterState", "Combat State", "thought_bubble_with_reason", providedTags: LOG_TAG.Combat);
-                thoughtBubbleLog.AddToFillers(stateComponent.owner, stateComponent.owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-
+                Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "CharacterState", "Combat State", "thought_bubble_with_reason", providedTags: LOG_TAG.Combat);
+                log.AddToFillers(stateComponent.owner, stateComponent.owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                 if (LocalizationManager.Instance.HasLocalizedValue("Character", "Combat", reasonKey)) {
                     string reason = LocalizationManager.Instance.GetLocalizedValue("Character", "Combat", reasonKey);
-                    thoughtBubbleLog.AddToFillers(null, reason, LOG_IDENTIFIER.STRING_1);
+                    log.AddToFillers(null, reason, LOG_IDENTIFIER.STRING_1);
                 }
+                SetThoughtBubbleLog(log);
             }
         } else {
             actionIconString = GoapActionStateDB.Flee_Icon;
@@ -523,100 +619,150 @@ public class CombatState : CharacterState {
     //    DoCombatBehavior();
     //}
     //Returns true if there is a hostile left, otherwise, returns false
-    private void DoCombatBehavior(Character newTarget = null) {
+    private void SetClosestHostileProcessing(ref bool shouldStillProcessAfterwards, ref string log) {
+        shouldStillProcessAfterwards = true;
+        if (forcedTarget != null) {
+#if DEBUG_LOG
+            log = $"{log}\n{stateComponent.owner.name} has a forced target. Setting {forcedTarget.name} as target.";
+#endif
+            SetClosestHostile(forcedTarget);
+            SetForcedTarget(null);
+        } else if (currentClosestHostile != null && !stateComponent.owner.combatComponent.IsHostileInRange(currentClosestHostile)) {
+#if DEBUG_LOG
+            log = $"{log}\nCurrent closest hostile: {currentClosestHostile.name} is no longer in hostile list, setting another closest hostile...";
+#endif
+            SetClosestHostile();
+        } else if (currentClosestHostile != null && currentClosestHostile.isDead) {
+#if DEBUG_LOG
+            log = $"{log}\nCurrent closest hostile: {currentClosestHostile.name} is no longer in hostile list, setting another closest hostile...";
+#endif
+            stateComponent.owner.combatComponent.RemoveHostileInRange(currentClosestHostile, false);
+            SetClosestHostile();
+        } else if (currentClosestHostile != null && (!currentClosestHostile.mapObjectVisual || !currentClosestHostile.mapObjectVisual.gameObject)) {
+#if DEBUG_LOG
+            log = $"{log}\nCurrent closest hostile: {currentClosestHostile.name} no longer has a map object visual, setting another closest hostile...";
+#endif
+            stateComponent.owner.combatComponent.RemoveHostileInRange(currentClosestHostile, false);
+            SetClosestHostile();
+        } else if (currentClosestHostile != null && currentClosestHostile is Character targetCharacter && targetCharacter.combatComponent.isInCombat &&
+                (targetCharacter.stateComponent.currentState as CombatState).isAttacking == false) {
+            if (stateComponent.owner.behaviourComponent.HasBehaviour(typeof(DefendBehaviour))) {
+#if DEBUG_LOG
+                log = $"{log}\nCurrent closest hostile: {targetCharacter.name} is already fleeing, and character is defending, remove character from hostile range, and set new target";
+#endif
+                stateComponent.owner.combatComponent.RemoveHostileInRange(targetCharacter, false);
+                SetClosestHostile();
+            } else {
+#if DEBUG_LOG
+                log = $"{log}\nCurrent closest hostile: {currentClosestHostile.name} is already fleeing, will try to set another hostile character that is not fleeing...";
+#endif
+                SetClosestHostilePriorityNotFleeing();
+            }
+        } else if (currentClosestHostile == null) {
+#if DEBUG_LOG
+            log = $"{log}\nNo current closest hostile, setting one...";
+#endif
+            SetClosestHostile();
+        } else {
+#if DEBUG_LOG
+            log = $"{log}\nChecking if the current closest hostile is still the closest hostile, if not, set new closest hostile...";
+#endif
+            IPointOfInterest newClosestHostile = stateComponent.owner.combatComponent.GetNearestValidHostile();
+            if (newClosestHostile != null && currentClosestHostile != newClosestHostile) {
+                SetClosestHostile(newClosestHostile);
+            } else if (stateComponent.owner.marker && stateComponent.owner.marker.isMoving && currentClosestHostile != null && stateComponent.owner.marker.targetPOI == currentClosestHostile) {
+#if DEBUG_LOG
+                log = $"{log}\nAlready in pursuit of current closest hostile: {currentClosestHostile.name}";
+                stateComponent.owner.logComponent.PrintLogIfActive(log);
+#endif
+                shouldStillProcessAfterwards = false;
+            }
+        }
+    }
+    private void DoCombatBehavior() {
         if(stateComponent.currentState != this) {
             return;
         }
-        string log = $"Reevaluating combat behavior of {stateComponent.owner.name}";
+        string log = string.Empty;
+#if DEBUG_LOG
+        log = $"Reevaluating combat behavior of {stateComponent.owner.name}";
+#endif
         if (isAttacking) {
             //stateComponent.character.marker.StopPerTickFlee();
+#if DEBUG_LOG
             log = $"{log}\n{stateComponent.owner.name} is attacking!";
+#endif
             if (stateComponent.owner.marker && stateComponent.owner.marker.hasFleePath) {
+#if DEBUG_LOG
                 log = $"{log}\n-Still has flee path, force finish flee path";
+#endif
                 stateComponent.owner.marker.SetHasFleePath(false);
                 //fleeChance = 10;
             } else if (!stateComponent.owner.marker) {
+#if DEBUG_LOG
                 log = $"{log}\n-Has no marker!";
+#endif
             }
-            Trait taunted = stateComponent.owner.traitContainer.GetTraitOrStatus<Trait>("Taunted");
-            if (forcedTarget != null) {
-                log = $"{log}\n{stateComponent.owner.name} has a forced target. Setting {forcedTarget.name} as target.";
-                SetClosestHostile(forcedTarget);
-                SetForcedTarget(null);
-            } else if (taunted != null) {
-                log = $"{log}\n{stateComponent.owner.name} is taunted. Setting {taunted.responsibleCharacter.name} as target.";
-                SetClosestHostile(taunted.responsibleCharacter);
-            } else if (currentClosestHostile != null && !stateComponent.owner.combatComponent.hostilesInRange.Contains(currentClosestHostile)) {
-                log = $"{log}\nCurrent closest hostile: {currentClosestHostile.name} is no longer in hostile list, setting another closest hostile...";
-                SetClosestHostile();
-            } else if (currentClosestHostile != null && currentClosestHostile.isDead) {
-                log = $"{log}\nCurrent closest hostile: {currentClosestHostile.name} is no longer in hostile list, setting another closest hostile...";
-                stateComponent.owner.combatComponent.RemoveHostileInRange(currentClosestHostile, false);
-                SetClosestHostile();
-            } else if (currentClosestHostile != null && (!currentClosestHostile.mapObjectVisual || !currentClosestHostile.mapObjectVisual.gameObject)) {
-                log = $"{log}\nCurrent closest hostile: {currentClosestHostile.name} no longer has a map object visual, setting another closest hostile...";
-                stateComponent.owner.combatComponent.RemoveHostileInRange(currentClosestHostile, false);
-                SetClosestHostile();
-            } else if (currentClosestHostile != null && currentClosestHostile is Character targetCharacter && targetCharacter.combatComponent.isInCombat &&
-                    (targetCharacter.stateComponent.currentState as CombatState).isAttacking == false) {
-                if (stateComponent.owner.behaviourComponent.HasBehaviour(typeof(DefendBehaviour))) {
-                    log = $"{log}\nCurrent closest hostile: {targetCharacter.name} is already fleeing, and character is defending, remove character from hostile range, and set new target";
-                    stateComponent.owner.combatComponent.RemoveHostileInRange(targetCharacter, false);
-                    SetClosestHostile();
-                } else {
-                    log = $"{log}\nCurrent closest hostile: {currentClosestHostile.name} is already fleeing, will try to set another hostile character that is not fleeing...";
-                    SetClosestHostilePriorityNotFleeing();
-                }
-            } else if (currentClosestHostile == null) {
-                log = $"{log}\nNo current closest hostile, setting one...";
-                SetClosestHostile();
-            } else {
-                log = $"{log}\nChecking if the current closest hostile is still the closest hostile, if not, set new closest hostile...";
-                IPointOfInterest newClosestHostile = stateComponent.owner.combatComponent.GetNearestValidHostile();
-                if(newClosestHostile != null && currentClosestHostile != newClosestHostile) {
-                    SetClosestHostile(newClosestHostile);
-                } else if (stateComponent.owner.marker && stateComponent.owner.marker.isMoving && currentClosestHostile != null && stateComponent.owner.marker.targetPOI == currentClosestHostile) {
-                    log = $"{log}\nAlready in pursuit of current closest hostile: {currentClosestHostile.name}";
-                    stateComponent.owner.logComponent.PrintLogIfActive(log);
-                    return;
-                }
+            bool shouldProcessAfterwards = true;
+            SetClosestHostileProcessing(ref shouldProcessAfterwards, ref log);
+            if (!shouldProcessAfterwards) {
+#if DEBUG_LOG
+                stateComponent.owner.logComponent.PrintLogIfActive(log);
+#endif
+                return;
             }
             if (currentClosestHostile == null) {
+#if DEBUG_LOG
                 log = $"{log}\nNo more hostile characters, exiting combat state...";
+#endif
                 endedInternally = true;
                 stateComponent.ExitCurrentState();
             } else {
                 float distance = Vector2.Distance(stateComponent.owner.marker.transform.position, currentClosestHostile.worldPosition);
                 if (distance > stateComponent.owner.characterClass.attackRange || !stateComponent.owner.marker.IsCharacterInLineOfSightWith(currentClosestHostile)) {
+#if DEBUG_LOG
                     log = $"{log}\nPursuing closest hostile target: {currentClosestHostile.name}";
+#endif
                     PursueClosestHostile();
                 } else {
+#if DEBUG_LOG
                     log = $"{log}\nAlready within range of: {currentClosestHostile.name}. Skipping pursuit...";
+#endif
                 }
             }
+#if DEBUG_LOG
             stateComponent.owner.logComponent.PrintLogIfActive(log);
+#endif
         } else {
             //Character closestHostile = stateComponent.character.marker.GetNearestValidAvoid();
             List<IPointOfInterest> avoidInRange = stateComponent.owner.combatComponent.avoidInRange;
             if (avoidInRange.Count <= 0) {
+#if DEBUG_LOG
                 log = $"{log}\nNo more avoid characters, exiting combat state...";
                 stateComponent.owner.logComponent.PrintLogIfActive(log);
+#endif
                 endedInternally = true;
                 stateComponent.ExitCurrentState();
                 return;
             }
             if (stateComponent.owner.marker.hasFleePath) {
+#if DEBUG_LOG
                 log = $"{log}\nAlready in flee mode";
                 stateComponent.owner.logComponent.PrintLogIfActive(log);
+#endif
                 return;
             }
             if (stateComponent.owner.limiterComponent.canMove == false) {
+#if DEBUG_LOG
                 log = $"{log}\nCannot move, not fleeing";
                 stateComponent.owner.logComponent.PrintLogIfActive(log);
+#endif
                 return;
             }
+#if DEBUG_LOG
             log = $"{log}\n{stateComponent.owner.name} is fleeing!";
             stateComponent.owner.logComponent.PrintLogIfActive(log);
+#endif
 
             StartFlee();
 
@@ -650,7 +796,7 @@ public class CombatState : CharacterState {
         return avoidReason;
     }
 
-    #region Attacking
+#region Attacking
     private void PursueClosestHostile() {
         if (stateComponent.owner.movementComponent.isStationary) {
             return;
@@ -710,7 +856,7 @@ public class CombatState : CharacterState {
             }
             log.AddToFillers(stateComponent.owner, stateComponent.owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             log.AddToFillers(currentClosestHostile, currentClosestHostile.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-            stateComponent.owner.logComponent.RegisterLog(log, null, false);
+            stateComponent.owner.logComponent.RegisterLog(log, true);
         }
     }
     private float timeElapsed;
@@ -719,33 +865,47 @@ public class CombatState : CharacterState {
         //timeElapsed += Time.deltaTime;
         //if (timeElapsed >= 0.3f) {
         //    timeElapsed = 0;
-            //Profiler.BeginSample($"{stateComponent.character.name} Combat State Late Update");
-        if (currentClosestHostile != null) {
+        //Profiler.BeginSample($"{stateComponent.character.name} Combat State Late Update");
+        bool specialSkillExecuted = ExecuteSpecialSkill();
+        if (!specialSkillExecuted && currentClosestHostile != null) {
             if (currentClosestHostile.isDead || currentClosestHostile.currentHP <= 0) {
                 stateComponent.owner.combatComponent.RemoveHostileInRange(currentClosestHostile);
             } else if (currentClosestHostile.currentRegion != stateComponent.owner.currentRegion) {
                 stateComponent.owner.combatComponent.RemoveHostileInRange(currentClosestHostile);
-            } else if (isAttacking && isExecutingAttack == false) {
+            } else if (isAttacking && isExecutingAttack == false && isRepositioning == false) {
                 //If character is attacking and distance is within the attack range of this character, attack
                 //else, pursue again
                 // Profiler.BeginSample($"{stateComponent.character.name} Distance Computation");
                 // float distance = Vector2.Distance(stateComponent.character.marker.transform.position, currentClosestHostile.worldPosition);
                 // Profiler.EndSample();
-                float distance = Vector2.Distance(stateComponent.owner.marker.transform.position, currentClosestHostile.worldPosition);
-                if (stateComponent.owner.characterClass.rangeType == RANGE_TYPE.MELEE && currentClosestHostile.IsUnpassable()) {
-                    distance -= Wall_Attack_Range_Tolerance; //because sometimes melee characters cannot reach wall/door
+
+                //We use attackRangePosition instead of worldPosition when calculating distance if attacker can already reach target with his attack range
+                //because there are now differences between the two
+                //One major difference is the demonic structure tile object, see GetAttackRangePosForDemonicStructureTileObject in TileObject
+                float distance = Vector2.Distance(stateComponent.owner.worldPosition, currentClosestHostile.attackRangePosition);
+                if (stateComponent.owner.characterClass.rangeType == RANGE_TYPE.MELEE) {
+                    if (currentClosestHostile.IsUnpassable()) {
+                        distance -= Wall_Attack_Range_Tolerance; //because sometimes melee characters cannot reach wall/door    
+                    } else if (currentClosestHostile is Character character && character.hasMarker && character.marker.isMoving) {
+                        distance -= Moving_Target_Tolerance;
+                    }
                 }
+                // Debug.Log($"{stateComponent.owner.name} current attack distance {distance.ToString()}");
                 if (stateComponent.owner.characterClass.attackRange >= distance) {
                     if (stateComponent.owner.movementComponent.isStationary) {
-                        Attack();
+                        AttackOrReposition();
                     } else {
+#if DEBUG_PROFILER
                         Profiler.BeginSample($"{stateComponent.owner.name} Line of Sight Check");
+#endif
                         bool isInLineOfSight =
                             stateComponent.owner.marker.IsCharacterInLineOfSightWith(currentClosestHostile, stateComponent.owner.characterClass.attackRange);
+#if DEBUG_PROFILER
                         Profiler.EndSample();
-                        // if (distance < stateComponent.character.characterClass.attackRange) {
+#endif
+                        // if (distance < stateComponent.character.characterClass.attackRange) {5
                         if (isInLineOfSight || stateComponent.owner.movementComponent.isStationary) {
-                            Attack();
+                            AttackOrReposition();
                         } else {
                             PursueClosestHostile();
                         }
@@ -759,13 +919,165 @@ public class CombatState : CharacterState {
         //}
     }
     
+    //Will be checked constantly
+    private bool ExecuteSpecialSkill() {
+        if (!stateComponent.owner.combatComponent.specialSkillParent.HasSpecialSkill()) {
+            return false;
+        }
+        if (!stateComponent.owner.marker.CanAttackByAttackSpeed()) {
+            return false;
+        }
+        if (stateComponent.owner.combatComponent.specialSkillParent.TryActivateSpecialSkill(stateComponent.owner)) {
+            if (stateComponent.owner.marker.isMoving) {
+                stateComponent.owner.marker.StopMovement();
+            }
+            InnerMapManager.Instance.FaceTarget(stateComponent.owner, currentClosestHostile);
+            stateComponent.owner.marker.ResetAttackSpeed();
+            return true;
+        }
+        return false;
+    }
+
     //Will be constantly checked every frame
+    private void AttackOrReposition() {
+        if (stateComponent.owner.movementComponent.IsCurrentGridNodeOccupiedByOtherNonRepositioningActiveCharacter()) {
+            if (!TryReposition()) {
+                stateComponent.owner.combatComponent.RemoveHostileInRange(currentClosestHostile);
+            }
+        } else {
+            Attack();
+        }
+    }
+
+#region Reposition
+    private void SetGridNodeToReposition(GridNodeBase p_gridNode) {
+        if (repositioningTo != p_gridNode) {
+            repositioningTo = p_gridNode;
+            if (isRepositioning) {
+                if (stateComponent.owner.hasMarker) {
+                    stateComponent.owner.marker.pathfindingAI.SetEndReachedDistance(0.05f);
+                }
+            } else {
+                if (stateComponent.owner.hasMarker) {
+                    stateComponent.owner.marker.pathfindingAI.ResetEndReachedDistance();
+                }
+            }
+        }
+    }
+    private bool TryReposition() {
+        string summary = string.Empty;
+#if DEBUG_LOG
+        summary = $"{stateComponent.owner.name} will reposition relative to {currentClosestHostile?.name}";
+#endif
+        bool hasRepositioned = RepositionToAnotherUnoccupiedNodeWithinDistance(stateComponent.owner.characterClass.attackRange, currentClosestHostile, ref summary);
+#if DEBUG_LOG
+        stateComponent.owner.logComponent.PrintLogIfActive(summary);
+#endif
+        return hasRepositioned;
+    }
+    private bool RepositionToAnotherUnoccupiedNodeWithinDistance(float p_distanceLimit, IPointOfInterest p_relativePOI, ref string summary) {
+        if (stateComponent.owner.hasMarker && !isRepositioning) {
+            LocationGridTile initialTile = stateComponent.owner.gridTileLocation;
+            LocationGridTile relativeTile = p_relativePOI.gridTileLocation;
+            if (initialTile != null && relativeTile != null) {
+                LocationGridTile chosenGridTile = null;
+                //List<LocationGridTile> alreadyCheckedTiles = RuinarchListPool<LocationGridTile>.Claim();
+                Vector3 position = GetPositionToReposition(initialTile, p_distanceLimit, p_relativePOI.worldPosition, ref chosenGridTile); //alreadyCheckedTiles
+                //RuinarchListPool<LocationGridTile>.Release(alreadyCheckedTiles);
+                if (!position.Equals(Vector3.positiveInfinity)) {
+                    GridNodeBase gridNode = chosenGridTile.GetGridNodeByWorldPosition(position);
+                    SetGridNodeToReposition(gridNode);
+                    stateComponent.owner.marker.GoTo(position, OnArriveAfterCombatRepositioning);
+#if DEBUG_LOG
+                    summary += "\nWill reposition to " + position;
+#endif
+                } else {
+#if DEBUG_LOG
+                    summary += "\nCannot find position";
+#endif
+                    return false;
+                }
+            } else {
+#if DEBUG_LOG
+                summary += "\nNo initial/relative tile, skipping";
+#endif
+            }
+        } else {
+#if DEBUG_LOG
+            summary += "\nNo marker or is already repositioning, skipping";
+#endif
+        }
+        return true;
+    }
+    private Vector3 GetPositionToReposition(LocationGridTile p_gridTile, float p_distanceLimit, Vector3 p_relativeToPos, ref LocationGridTile p_chosenPositionGridTile) {
+        List<LocationGridTile> tilesToCheck = RuinarchListPool<LocationGridTile>.Claim();
+        p_gridTile.PopulateTilesInRadius(tilesToCheck, Mathf.CeilToInt(p_distanceLimit), includeCenterTile: true, includeTilesInDifferentStructure: true);
+        Vector3 chosenPosition = Vector3.positiveInfinity;
+        if (tilesToCheck.Count > 0) {
+            for (int i = tilesToCheck.Count - 1; i >= 0; i--) {
+                LocationGridTile tile = tilesToCheck[i];
+                Vector3 pos = tile.GetUnoccupiedWalkablePositionInTileWithDistanceLimitOf(p_distanceLimit, p_relativeToPos);
+                if (!pos.Equals(Vector3.positiveInfinity)) {
+                    p_chosenPositionGridTile = tile;
+                    chosenPosition = pos;
+                    break;
+                }
+            }
+        }
+        RuinarchListPool<LocationGridTile>.Release(tilesToCheck);
+        return chosenPosition;
+    }
+    private Vector3 GetPositionToRepositionRecursively(LocationGridTile p_gridTile, float p_distanceLimit, Vector3 p_relativeToPos, List<LocationGridTile> checkedTiles, ref LocationGridTile p_chosenPositionGridTile) {
+        if (!checkedTiles.Contains(p_gridTile)) {
+            checkedTiles.Add(p_gridTile);
+            Vector3 pos = p_gridTile.GetUnoccupiedWalkablePositionInTileWithDistanceLimitOf(p_distanceLimit, p_relativeToPos);
+            if (!pos.Equals(Vector3.positiveInfinity)) {
+                p_chosenPositionGridTile = p_gridTile;
+                return pos;
+            }
+        }
+        for (int i = 0; i < p_gridTile.neighbourList.Count; i++) {
+            LocationGridTile neighbourTile = p_gridTile.neighbourList[i];
+            if (!checkedTiles.Contains(neighbourTile)) {
+                checkedTiles.Add(neighbourTile);
+                Vector3 pos = neighbourTile.GetUnoccupiedWalkablePositionInTileWithDistanceLimitOf(p_distanceLimit, p_relativeToPos);
+                if (!pos.Equals(Vector3.positiveInfinity)) {
+                    p_chosenPositionGridTile = neighbourTile;
+                    return pos;
+                }
+            }
+        }
+        for (int i = 0; i < p_gridTile.neighbourList.Count; i++) {
+            LocationGridTile neighbourTile = p_gridTile.neighbourList[i];
+            Vector3 pos = GetPositionToRepositionRecursively(neighbourTile, p_distanceLimit, p_relativeToPos, checkedTiles, ref p_chosenPositionGridTile);
+            if (!pos.Equals(Vector3.positiveInfinity)) {
+                return pos;
+            }
+        }
+        return Vector3.positiveInfinity;
+    }
+    private void OnArriveAfterCombatRepositioning() {
+        SetGridNodeToReposition(null);
+    }
+#endregion
+
+#region Attack
     private void Attack() {
         string summary = $"{stateComponent.owner.name} will attack {currentClosestHostile?.name}";
 
         if (stateComponent.owner.marker.isMoving) {
-            //When in range and in line of sight, stop movement
-            stateComponent.owner.marker.StopMovement();
+            if (currentClosestHostile is Character character) {
+                if (character.hasMarker) {
+                    if (!character.marker.isMoving) {
+                        //When in range and in line of sight, and target is not moving, stop movement
+                        stateComponent.owner.marker.StopMovement();    
+                    }
+                } else {
+                    stateComponent.owner.marker.StopMovement();
+                }
+            }else {
+                stateComponent.owner.marker.StopMovement();
+            }
             //clear the marker's target poi when it reaches the target, so that the pursue closest hostile will still execute when the other character chooses to flee
             stateComponent.owner.marker.SetTargetPOI(null);
         }
@@ -793,24 +1105,32 @@ public class CombatState : CharacterState {
         // stateComponent.character.logComponent.PrintLogIfActive(summary);
         //Debug.Log(summary);
     }
-    public bool isExecutingAttack;
+#endregion
+
     public void OnAttackHit(IDamageable damageable) {
-        string attackSummary =
+        string attackSummary = string.Empty;
+#if DEBUG_LOG
+        attackSummary =
             $"{GameManager.Instance.TodayLogString()}{stateComponent.owner.name} hit {damageable?.name ?? "Nothing"}";
+#endif
 
         if (damageable != null && currentClosestHostile != null) {
             if (damageable != currentClosestHostile) {
+#if DEBUG_LOG
                 attackSummary =
                     $"{stateComponent.owner.name} hit {damageable.name} instead of {currentClosestHostile.name}!";
+#endif
             }
-            
+
             damageable.OnHitByAttackFrom(stateComponent.owner, this, ref attackSummary);
 
             if (damageable.currentHP > 0) {
+#if DEBUG_LOG
                 attackSummary += $"\n{damageable.name} still has remaining hp {damageable.currentHP.ToString()}/{damageable.maxHP.ToString()}";
+#endif
                 if (damageable is Character hitCharacter) {
                     //if the character that attacked is not in the hostile/avoid list of the character that was hit, this means that it is not a retaliation, so the character that was hit must reduce its opinion of the character that attacked
-                    if(!hitCharacter.combatComponent.hostilesInRange.Contains(stateComponent.owner) && !hitCharacter.combatComponent.avoidInRange.Contains(stateComponent.owner)) {
+                    if(!hitCharacter.combatComponent.IsHostileInRange(stateComponent.owner) && !hitCharacter.combatComponent.IsAvoidInRange(stateComponent.owner)) {
                         if (!allCharactersThatDegradedRel.Contains(hitCharacter)) {
                             hitCharacter.relationshipContainer.AdjustOpinion(hitCharacter, stateComponent.owner, "Base", -15);
                             AddCharacterThatDegradedRel(hitCharacter);
@@ -821,7 +1141,8 @@ public class CombatState : CharacterState {
                     //if the character that was hit is not the actual target of this combat, do not make him/her enter combat state
                     if (damageable == currentClosestHostile) {
                         //When the target is hit and it is still alive, add hostile
-                        if ((hitCharacter.combatComponent.combatMode == COMBAT_MODE.Defend ||
+                        bool isAnAngelAttackingDemonicStructure = hitCharacter.race == RACE.ANGEL && hitCharacter.behaviourComponent.isAttackingDemonicStructure;
+                        if (((hitCharacter.combatComponent.combatMode == COMBAT_MODE.Defend && !isAnAngelAttackingDemonicStructure) ||
                             hitCharacter.combatComponent.combatMode == COMBAT_MODE.Aggressive) && hitCharacter.limiterComponent.canPerform) {
                             hitCharacter.combatComponent.FightOrFlight(stateComponent.owner, CombatManager.Retaliation, isLethal: stateComponent.owner.combatComponent.IsLethalCombatForTarget(hitCharacter));
                         }
@@ -846,8 +1167,9 @@ public class CombatState : CharacterState {
                 }
             }
         }
-
+#if DEBUG_LOG
         stateComponent.owner.logComponent.PrintLogIfActive(attackSummary);
+#endif
         // if (stateComponent.currentState == this) { //so that if the combat state has been exited, this no longer executes that results in endless execution of this coroutine.
         //     attackSummary += $"\n{stateComponent.character.name}'s state is still this, running check coroutine.";
         //     stateComponent.character.marker.StartCoroutine(CheckIfCurrentHostileIsInRange());
@@ -873,11 +1195,15 @@ public class CombatState : CharacterState {
     //        _currentAttackTimer = 0;
     //    }
     //}
-    #endregion
+#endregion
 
-    #region Flee
+#region Flee
     public void FinishedTravellingFleePath() {
+#if DEBUG_LOG
         string log = $"Finished travelling flee path of {stateComponent.owner.name}";
+        log += "\nFinished travelling flee path, determining action...";
+        stateComponent.owner.logComponent.PrintLogIfActive(log);
+#endif
         //After travelling flee path, check hostile characters if they are still in vision, every hostile character that is not in vision must be removed form hostile list
         //Consequently, the removed character must also remove this character from his/her hostile list
         //Then check if hostile list is empty
@@ -885,15 +1211,16 @@ public class CombatState : CharacterState {
         //If not, flee again
         stateComponent.owner.marker.SetHasFleePath(false);
         //fleeChance = 10;
-        log += "\nFinished travelling flee path, determining action...";
-        stateComponent.owner.logComponent.PrintLogIfActive(log);
+        EvaluateFleeingBecauseOfVulnerability(false);
         DetermineReaction(stateComponent.owner);
         stateComponent.owner.marker.UpdateAnimation();
         stateComponent.owner.marker.UpdateActionIcon();
     }
     private void UpdateFleePath() {
+#if DEBUG_LOG
         string log = $"Updating flee path of {stateComponent.owner.name}";
         stateComponent.owner.logComponent.PrintLogIfActive(log);
+#endif
         StartFlee(false);
     }
     private void StartFlee(bool shouldLog = true) {
@@ -923,16 +1250,16 @@ public class CombatState : CharacterState {
             }
         }
         string reason = GetAvoidReason(objToAvoid);
-        if (reason == "critically low health") {
-            if (stateComponent.owner.partyComponent.hasParty) {
-                Party party = stateComponent.owner.partyComponent.currentParty;
-                if (party.isActive && party.partyState == PARTY_STATE.Working && party.currentQuest.partyQuestType == PARTY_QUEST_TYPE.Raid) {
-                    stateComponent.owner.partyComponent.currentParty.RemoveMemberThatJoinedQuest(stateComponent.owner);
-                }
+        if (reason == CombatManager.Coward) {
+            if (stateComponent.owner.HasAfflictedByPlayerWith("Coward")) {
+                Coward coward = stateComponent.owner.traitContainer.GetTraitOrStatus<Coward>("Coward");
+                coward.DispenseChaosOrbsForAffliction(stateComponent.owner, 1);
             }
         }
-        //stateComponent.owner.marker.OnStartFlee();
-        if (stateComponent.owner.currentStructure != null && stateComponent.owner.currentStructure.structureType.IsSpecialStructure()) {
+        if (reason == CombatManager.Vulnerable) {
+            //Will go to party mate
+            stateComponent.owner.marker.OnStartFleeToPartyMate();
+        } else if (stateComponent.owner.currentStructure != null && stateComponent.owner.currentStructure.structureType.IsSpecialStructure()) {
             stateComponent.owner.marker.OnStartFleeToOutside();
         } else {
             stateComponent.owner.marker.OnStartFlee();
@@ -944,19 +1271,29 @@ public class CombatState : CharacterState {
             //}
         }
 
+        if (reason == "critically low health") {
+            if (stateComponent.owner.partyComponent.hasParty) {
+                Party party = stateComponent.owner.partyComponent.currentParty;
+                if (party.isActive && party.partyState == PARTY_STATE.Working && party.currentQuest.partyQuestType == PARTY_QUEST_TYPE.Raid) {
+                    stateComponent.owner.partyComponent.currentParty.RemoveMemberThatJoinedQuest(stateComponent.owner);
+                }
+            }
+        }
+
         if (shouldLog) {
             Log fleeLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "NonIntel", "start_flee", providedTags: LOG_TAG.Combat);
             fleeLog.AddToFillers(stateComponent.owner, stateComponent.owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-            fleeLog.AddToFillers(objToAvoid, objToAvoid is GenericTileObject ? "something" : objToAvoid.name,
-                LOG_IDENTIFIER.TARGET_CHARACTER);
+            fleeLog.AddToFillers(objToAvoid, objToAvoid is GenericTileObject ? "something" : objToAvoid.name, LOG_IDENTIFIER.TARGET_CHARACTER);
             fleeLog.AddToFillers(null, reason, LOG_IDENTIFIER.STRING_1);
-            stateComponent.owner.logComponent.RegisterLog(fleeLog, null, false);
-            thoughtBubbleLog = fleeLog;
+            stateComponent.owner.logComponent.RegisterLog(fleeLog);
+            SetThoughtBubbleLog(fleeLog);
         }
     }
     public void OnReachLowFleeSpeedThreshold() {
+#if DEBUG_LOG
         string log = $"{stateComponent.owner.name} has reached low flee speed threshold, determining action...";
         stateComponent.owner.logComponent.PrintLogIfActive(log);
+#endif
         DetermineReaction(stateComponent.owner);
     }
     private void OnFinishedFleeingFrom(IPointOfInterest fledFrom) {
@@ -967,9 +1304,28 @@ public class CombatState : CharacterState {
         //    }
         //}
     }
-    #endregion
+    private void EvaluateFleeingBecauseOfVulnerability(bool processCombatBehaviour) {
+        bool hasPartymateInVision = stateComponent.owner.partyComponent.HasPartymateInVision();
+        bool hasRemovedAvoidInRange = false;
+        if (hasPartymateInVision) {
+            for (int i = 0; i < stateComponent.owner.combatComponent.avoidInRange.Count; i++) {
+                IPointOfInterest poi = stateComponent.owner.combatComponent.avoidInRange[i];
+                CombatData data = stateComponent.owner.combatComponent.GetCombatData(poi);
+                if(data.avoidReason == CombatManager.Vulnerable) {
+                    if(stateComponent.owner.combatComponent.RemoveAvoidInRange(poi, false)) {
+                        hasRemovedAvoidInRange = true;
+                        i--;
+                    }
+                }
+            }
+        }
+        if(hasRemovedAvoidInRange && processCombatBehaviour) {
+            stateComponent.owner.combatComponent.SetWillProcessCombat(true);
+        }
+    }
+#endregion
 
-    #region Utilities
+#region Utilities
     public void ResetClosestHostile() {
         IPointOfInterest prevHostile = currentClosestHostile;
         currentClosestHostile = null;
@@ -1005,7 +1361,7 @@ public class CombatState : CharacterState {
     //public void SetActionThatTriggeredThisState(ActualGoapNode action) {
     //    actionThatTriggeredThisState = action;
     //}
-    #endregion
+#endregion
 
     public override void Reset() {
         base.Reset();
@@ -1023,5 +1379,6 @@ public class CombatState : CharacterState {
         isFleeToHome = false;
         _timesHitCurrentTarget = 0;
         isExecutingAttack = false;
+        repositioningTo = null;
     }
 }

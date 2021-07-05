@@ -34,10 +34,10 @@ public class CharacterMarkerNameplate : PooledObject {
         UpdateName();
         UpdateSizeBasedOnZoom();
         Messenger.AddListener<Camera, float>(ControlsSignals.CAMERA_ZOOM_CHANGED, OnCameraZoomChanged);
-        Messenger.AddListener<Region>(RegionSignals.REGION_MAP_OPENED, OnLocationMapOpened);
-        Messenger.AddListener<Region>(RegionSignals.REGION_MAP_CLOSED, OnLocationMapClosed);
-        Messenger.AddListener<Character, Region>(RegionSignals.CHARACTER_ENTERED_REGION, OnCharacterEnteredRegion);
-        Messenger.AddListener<Character, Region>(RegionSignals.CHARACTER_EXITED_REGION, OnCharacterExitedRegion);
+        //Messenger.AddListener<Region>(RegionSignals.REGION_MAP_OPENED, OnLocationMapOpened);
+        //Messenger.AddListener<Region>(RegionSignals.REGION_MAP_CLOSED, OnLocationMapClosed);
+        //Messenger.AddListener<Character, Region>(RegionSignals.CHARACTER_ENTERED_REGION, OnCharacterEnteredRegion);
+        //Messenger.AddListener<Character, Region>(RegionSignals.CHARACTER_EXITED_REGION, OnCharacterExitedRegion);
         Messenger.AddListener(UISignals.UI_STATE_SET, UpdateElementsStateBasedOnActiveCharacter);
         Messenger.AddListener<Character>(FactionSignals.FACTION_SET, OnCharacterSetFaction);
     }
@@ -53,26 +53,26 @@ public class CharacterMarkerNameplate : PooledObject {
             UpdateSizeBasedOnZoom();
         }
     }
-    private void OnLocationMapClosed(Region location) {
-        if (location == _parentMarker.character.currentRegion) {
-            SetGameObjectActiveState(false);
-        }        
-    }
-    private void OnLocationMapOpened(Region location) {
-        if (location == _parentMarker.character.currentRegion) {
-            SetGameObjectActiveState(true);
-        }        
-    }
-    private void OnCharacterExitedRegion(Character character, Region region) {
-        if (character == _parentMarker.character && character.isDead == false) { //added checking for isDead so nameplate is not deactivated when a character dies.
-            SetGameObjectActiveState(false);
-        }
-    }
-    private void OnCharacterEnteredRegion(Character character, Region region) {
-        if (character == _parentMarker.character && InnerMapManager.Instance.currentlyShowingLocation == region) {
-            SetGameObjectActiveState(true);
-        }
-    }
+    //private void OnLocationMapClosed(Region location) {
+    //    if (location == _parentMarker.character.currentRegion) {
+    //        SetGameObjectActiveState(false);
+    //    }        
+    //}
+    //private void OnLocationMapOpened(Region location) {
+    //    if (location == _parentMarker.character.currentRegion) {
+    //        UpdateActiveState();
+    //    }        
+    //}
+    //private void OnCharacterExitedRegion(Character character, Region region) {
+    //    if (character == _parentMarker.character && character.isDead == false) { //added checking for isDead so nameplate is not deactivated when a character dies.
+    //        SetGameObjectActiveState(false);
+    //    }
+    //}
+    //private void OnCharacterEnteredRegion(Character character, Region region) {
+    //    if (character == _parentMarker.character && InnerMapManager.Instance.currentlyShowingLocation == region) {
+    //        UpdateActiveState();
+    //    }
+    //}
     #endregion
 
     #region Monobehaviours
@@ -103,23 +103,29 @@ public class CharacterMarkerNameplate : PooledObject {
     #region Object Pool
     public override void Reset() {
         base.Reset();
-        HideThoughtsAndNameplate();
+        HideThoughts();
         HideIntelHelper();
         SetHighlighterState(false);
         _parentMarker = null;
         Messenger.RemoveListener<Camera, float>(ControlsSignals.CAMERA_ZOOM_CHANGED, OnCameraZoomChanged);
-        Messenger.RemoveListener<Region>(RegionSignals.REGION_MAP_OPENED, OnLocationMapOpened);
-        Messenger.RemoveListener<Region>(RegionSignals.REGION_MAP_CLOSED, OnLocationMapClosed);
-        Messenger.RemoveListener<Character, Region>(RegionSignals.CHARACTER_ENTERED_REGION, OnCharacterEnteredRegion);
-        Messenger.RemoveListener<Character, Region>(RegionSignals.CHARACTER_EXITED_REGION, OnCharacterExitedRegion);
+        //Messenger.RemoveListener<Region>(RegionSignals.REGION_MAP_OPENED, OnLocationMapOpened);
+        //Messenger.RemoveListener<Region>(RegionSignals.REGION_MAP_CLOSED, OnLocationMapClosed);
+        //Messenger.RemoveListener<Character, Region>(RegionSignals.CHARACTER_ENTERED_REGION, OnCharacterEnteredRegion);
+        //Messenger.RemoveListener<Character, Region>(RegionSignals.CHARACTER_EXITED_REGION, OnCharacterExitedRegion);
         Messenger.RemoveListener(UISignals.UI_STATE_SET, UpdateElementsStateBasedOnActiveCharacter);
         Messenger.RemoveListener<Character>(FactionSignals.FACTION_SET, OnCharacterSetFaction);
     }
     #endregion
 
     #region Utilities
-    public void UpdateActiveState() {
-        SetGameObjectActiveState(InnerMapManager.Instance.currentlyShowingLocation == _parentMarker.character.currentRegion);
+    public void UpdateNameActiveState() {
+        if (_parentMarker != null && _parentMarker.character != null && CharacterManager.Instance != null && InnerMapManager.Instance != null) {
+            SetNameActiveState(CharacterManager.Instance.toggleCharacterMarkerName
+                               || (_parentMarker != null && _parentMarker.character != null && (_parentMarker.character.isStoredAsTarget || InnerMapManager.Instance.IsPOIConsideredTheCurrentHoveredPOI(_parentMarker.character))));    
+        }
+    }
+    public void SetNameActiveState(bool state) {
+        nameLbl.gameObject.SetActive(state);
     }
     /// <summary>
     /// Set the active state of this game object.
@@ -132,9 +138,6 @@ public class CharacterMarkerNameplate : PooledObject {
     /// </summary>
     public void SetVisualsState(bool state) {
         visualsParent.gameObject.SetActive(state);
-    }
-    public void SetNameState(bool state) {
-        nameLbl.gameObject.SetActive(state);
     }
     private void UpdateSizeBasedOnZoom() {
         float fovDiff = InnerMapCameraMove.Instance.currentFOV - InnerMapCameraMove.Instance.minFOV;
@@ -156,20 +159,21 @@ public class CharacterMarkerNameplate : PooledObject {
         if (UIManager.Instance.gameObject.activeSelf) {
             //if UI is shown
             if (shownCharacter == _parentMarker.character) {
-                SetNameState(true);
-                ShowThoughtsAndNameplate();
+                //Removed this because nameplate state is now controlled by pressing Left Alt button
+                //SetNameState(true);
+                ShowThoughts();
             } else {
-                SetNameState(true);
-                HideThoughtsAndNameplate();
+                //SetNameState(true);
+                HideThoughts();
             }
         } else {
             //if UI is not shown
             if (shownCharacter == _parentMarker.character) {
-                SetNameState(true);
-                ShowThoughtsAndNameplate();
+                //SetNameState(true);
+                ShowThoughts();
             } else {
-                SetNameState(false);
-                HideThoughtsAndNameplate();
+                //SetNameState(false);
+                HideThoughts();
             }    
         }
         
@@ -214,17 +218,9 @@ public class CharacterMarkerNameplate : PooledObject {
         } else {
             SetActionIconState(false);
         }
-        
+
         if (character.currentActionNode != null) {
             string actionIconString = character.currentActionNode.action.GetActionIconString(character.currentActionNode);
-            if (actionIconString != GoapActionStateDB.No_Icon) {
-                actionIcon.sprite = InteractionManager.Instance.actionIconDictionary[actionIconString];
-                SetActionIconState(true);
-            } else {
-                SetActionIconState(false);
-            }
-        } else if (character.stateComponent.currentState != null) {
-            string actionIconString = character.stateComponent.currentState.actionIconString;
             if (actionIconString != GoapActionStateDB.No_Icon) {
                 actionIcon.sprite = InteractionManager.Instance.actionIconDictionary[actionIconString];
                 SetActionIconState(true);
@@ -234,6 +230,17 @@ public class CharacterMarkerNameplate : PooledObject {
         } else if (_parentMarker.hasFleePath) {
             actionIcon.sprite = InteractionManager.Instance.actionIconDictionary[GoapActionStateDB.Flee_Icon];
             SetActionIconState(true);
+        } else if (character.combatComponent.isInActualCombat) {
+            //Once the character is actually in combat, do not show thought bubble action icon so that the damage numbers can be seen
+            SetActionIconState(false);
+        } else if (character.stateComponent.currentState != null) {
+            string actionIconString = character.stateComponent.currentState.actionIconString;
+            if (actionIconString != GoapActionStateDB.No_Icon) {
+                actionIcon.sprite = InteractionManager.Instance.actionIconDictionary[actionIconString];
+                SetActionIconState(true);
+            } else {
+                SetActionIconState(false);
+            }
         } else {
             //no action or state
             SetActionIconState(false);
@@ -247,12 +254,12 @@ public class CharacterMarkerNameplate : PooledObject {
     #endregion
 
     #region Thoughts
-    public void ShowThoughtsAndNameplate() {
+    public void ShowThoughts() {
         //nameLbl.gameObject.SetActive(true);
         thoughtGO.SetActive(true);
         UpdateThoughtText();
     }
-    public void HideThoughtsAndNameplate() {
+    public void HideThoughts() {
         //nameLbl.gameObject.SetActive(false);
         thoughtGO.SetActive(false);
         thoughtLbl.text = string.Empty;

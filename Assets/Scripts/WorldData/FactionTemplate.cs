@@ -40,14 +40,4 @@ public class FactionTemplate {
         Debug.Log($"Changed name of {name} to {p_newName}");
         name = p_newName;
     }
-    public bool IsTilePreferredByFaction(HexTile p_tile) {
-        switch (factionType) {
-            case FACTION_TYPE.Human_Empire:
-                return p_tile.biomeType == BIOMES.GRASSLAND || p_tile.biomeType == BIOMES.DESERT;
-            case FACTION_TYPE.Elven_Kingdom:
-                return p_tile.biomeType == BIOMES.FOREST || p_tile.biomeType == BIOMES.SNOW;
-            default:
-                return true;
-        }
-    }
 }

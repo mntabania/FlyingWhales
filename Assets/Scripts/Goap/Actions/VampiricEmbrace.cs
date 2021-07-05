@@ -1,12 +1,14 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Object_Pools;
 using UnityEngine;  
 using Traits;
 using UtilityScripts;
 
 public class VampiricEmbrace : GoapAction {
 
-    public override ACTION_CATEGORY actionCategory { get { return ACTION_CATEGORY.CONSUME; } }
+    //Why is vampiric embrace consume category?
+    //public override ACTION_CATEGORY actionCategory { get { return ACTION_CATEGORY.CONSUME; } }
 
     public VampiricEmbrace() : base(INTERACTION_TYPE.VAMPIRIC_EMBRACE) {
         actionLocationType = ACTION_LOCATION_TYPE.NEAR_TARGET;
@@ -25,12 +27,14 @@ public class VampiricEmbrace : GoapAction {
         SetState("Embrace Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
+#if DEBUG_LOG
         string costLog = $"\n{name} {target.nameWithID}: +10(Constant)";
         actor.logComponent.AppendCostLog(costLog);
+#endif
         return 10;
     }
-    public override void PopulateReactionsToActor(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
-        base.PopulateReactionsToActor(reactions, actor, target, witness, node, status);
+    public override void PopulateEmotionReactionsToActor(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
+        base.PopulateEmotionReactionsToActor(reactions, actor, target, witness, node, status);
 
         CRIME_SEVERITY severity = CrimeManager.Instance.GetCrimeSeverity(witness, actor, target, CRIME_TYPE.Vampire);
         if (severity != CRIME_SEVERITY.None && severity != CRIME_SEVERITY.Unapplicable) {
@@ -69,8 +73,8 @@ public class VampiricEmbrace : GoapAction {
             }
         }
     }
-    public override void PopulateReactionsOfTarget(List<EMOTION> reactions, Character actor, IPointOfInterest target, ActualGoapNode node, REACTION_STATUS status) {
-        base.PopulateReactionsOfTarget(reactions, actor, target, node, status);
+    public override void PopulateEmotionReactionsOfTarget(List<EMOTION> reactions, Character actor, IPointOfInterest target, ActualGoapNode node, REACTION_STATUS status) {
+        base.PopulateEmotionReactionsOfTarget(reactions, actor, target, node, status);
         if (target is Character targetCharacter) {
             CRIME_SEVERITY severity = CrimeManager.Instance.GetCrimeSeverity(targetCharacter, actor, target, CRIME_TYPE.Vampire);
             if (severity != CRIME_SEVERITY.None && severity != CRIME_SEVERITY.Unapplicable) {
@@ -120,9 +124,9 @@ public class VampiricEmbrace : GoapAction {
     public override CRIME_TYPE GetCrimeType(Character actor, IPointOfInterest target, ActualGoapNode crime) {
         return CRIME_TYPE.Vampire;
     }
-    #endregion
+#endregion
 
-    #region Requirements
+#region Requirements
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, OtherData[] otherData, JobQueueItem job) { 
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData, job);
         if (satisfied) {
@@ -133,9 +137,9 @@ public class VampiricEmbrace : GoapAction {
         }
         return false;
     }
-    #endregion
+#endregion
 
-    #region Effects
+#region Effects
     public void AfterEmbraceSuccess(ActualGoapNode goapNode) {
         Character actor = goapNode.actor;
         if (goapNode.poiTarget is Character targetCharacter) {
@@ -147,11 +151,13 @@ public class VampiricEmbrace : GoapAction {
 
                 targetCharacter.UnobtainItem("Phylactery");
                 actor.AdjustHP(-500, ELEMENTAL_TYPE.Normal);
-                if(actor.currentHP <= 0) {
+                if(!actor.HasHealth()) {
                     actor.Death(deathFromAction: goapNode, responsibleCharacter: targetCharacter, _deathLog: log);
                 } else {
-                    actor.traitContainer.AddTrait(actor, "Unconscious", targetCharacter, goapNode);
+                    actor.traitContainer.AddTrait(actor, "Unconscious", targetCharacter);
+                    actor.traitContainer.GetTraitOrStatus<Trait>("Unconscious")?.SetGainedFromDoingAction(goapNode.action.goapType, goapNode.isStealth);
                 }
+                LogPool.Release(log);
             } else {
                 if (targetCharacter.isDead) {
                     targetCharacter.ReturnToLife();
@@ -161,11 +167,12 @@ public class VampiricEmbrace : GoapAction {
                 targetCharacter.traitContainer.RemoveStatusAndStacks(targetCharacter, "Plagued");
 
                 if (targetCharacter.traitContainer.AddTrait(targetCharacter, "Vampire", actor)) {
+                    Messenger.Broadcast(CharacterSignals.CHARACTER_BECAME_VAMPIRE, targetCharacter);
                     Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "GoapAction", goapName, "contracted", goapNode, LOG_TAG.Life_Changes);
                     log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.TARGET_CHARACTER);
                     log.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                     log.AddLogToDatabase();
-                    PlayerManager.Instance.player.ShowNotificationFrom(actor, log);
+                    PlayerManager.Instance.player.ShowNotificationFrom(actor, log, true);
                 }
 
                 if (targetCharacter.isNormalCharacter) {
@@ -180,5 +187,5 @@ public class VampiricEmbrace : GoapAction {
         //Infected infected = goapNode.poiTarget.traitContainer.GetTraitOrStatus<Infected>("Infected");
         //infected?.InfectTarget(actor);
     }
-    #endregion
+#endregion
 }

@@ -1,25 +1,26 @@
 ﻿using System;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 [System.Serializable]
 public class PlayerSkillSettings {
     public SKILL_COOLDOWN_SPEED cooldownSpeed;
     public SKILL_COST_AMOUNT costAmount;
     public SKILL_CHARGE_AMOUNT chargeAmount;
-    public THREAT_AMOUNT threatAmount;
+    [FormerlySerializedAs("threatAmount")] public RETALIATION retaliation;
     /// <summary>
     /// The forced archetype setting.
     /// If this is set to Normal, it means that the player can choose between the Pre-set archetypes. 
     /// </summary>
-    public PLAYER_ARCHETYPE forcedArchetype;
+    public PLAYER_ARCHETYPE[] forcedArchetypes;
     public OMNIPOTENT_MODE omnipotentMode;
     
     public PlayerSkillSettings() {
         cooldownSpeed = SKILL_COOLDOWN_SPEED.Normal;
         costAmount = SKILL_COST_AMOUNT.Normal;
         chargeAmount = SKILL_CHARGE_AMOUNT.Normal;
-        threatAmount = THREAT_AMOUNT.Normal;
-        forcedArchetype = PLAYER_ARCHETYPE.Normal;
+        retaliation = RETALIATION.Enabled;
+        forcedArchetypes = null;
         omnipotentMode = OMNIPOTENT_MODE.Disabled;
     }
     public void SetCooldownSpeed(SKILL_COOLDOWN_SPEED p_value) {
@@ -52,8 +53,10 @@ public class PlayerSkillSettings {
                 return 0.5f;
             case SKILL_COST_AMOUNT.Normal:
                 return 1f;
+            /*
             case SKILL_COST_AMOUNT.Double:
-                return 2f;
+                return 2f; //remove for now
+            */
             default:
                 throw new ArgumentOutOfRangeException();
         }
@@ -75,26 +78,14 @@ public class PlayerSkillSettings {
                 throw new ArgumentOutOfRangeException();
         }
     }
-    public void SetThreatAmount(THREAT_AMOUNT p_value) {
-        threatAmount = p_value;
+    public void SetRetaliationState(RETALIATION p_value) {
+        retaliation = p_value;
         Debug.Log($"Set Threat Amount {p_value.ToString()}");
-    }
-    public float GetThreatModification() {
-        switch (threatAmount) {
-            case THREAT_AMOUNT.None:
-                return 0f;
-            case THREAT_AMOUNT.Half:
-                return 0.5f;
-            case THREAT_AMOUNT.Normal:
-                return 1f;
-            default:
-                throw new ArgumentOutOfRangeException();
-        }
     }
 
     #region Forced Archetype
-    public void SetForcedArchetype(PLAYER_ARCHETYPE p_archetype) {
-        forcedArchetype = p_archetype;
+    public void SetForcedArchetype(params PLAYER_ARCHETYPE[] p_archetype) {
+        forcedArchetypes = p_archetype;
     }
     #endregion
 

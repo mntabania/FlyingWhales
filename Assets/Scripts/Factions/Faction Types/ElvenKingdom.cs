@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Inner_Maps.Location_Structures;
+using UnityEngine;
 namespace Factions.Faction_Types {
     public class ElvenKingdom : FactionType {
         
@@ -28,10 +29,17 @@ namespace Factions.Faction_Types {
             AddCombatantClass("Hunter");
             AddCombatantClass("Druid");
             AddCombatantClass("Shaman");
-            
-            AddCivilianClass("Peasant");
+
+            //AddCivilianClass("Peasant");
             AddCivilianClass("Miner");
-            AddCivilianClass("Craftsman");
+            AddCivilianClass("Crafter");
+            AddCivilianClass("Farmer");
+            AddCivilianClass("Fisher");
+            AddCivilianClass("Logger");
+            AddCivilianClass("Merchant");
+            AddCivilianClass("Butcher");
+            AddCivilianClass("Skinner");
+            AddCivilianClass("Trapper");
 
             //crimes
             hasCrimes = true;
@@ -53,11 +61,18 @@ namespace Factions.Faction_Types {
             AddCombatantClass("Hunter");
             AddCombatantClass("Druid");
             AddCombatantClass("Shaman");
-            
-            AddCivilianClass("Peasant");
+
+            //AddCivilianClass("Peasant");
             AddCivilianClass("Miner");
-            AddCivilianClass("Craftsman");
-            
+            AddCivilianClass("Crafter");
+            AddCivilianClass("Farmer");
+            AddCivilianClass("Fisher");
+            AddCivilianClass("Logger");
+            AddCivilianClass("Merchant");
+            AddCivilianClass("Butcher");
+            AddCivilianClass("Skinner");
+            AddCivilianClass("Trapper");
+
         }
         //public override CRIME_SEVERITY GetCrimeSeverity(Character witness, Character actor, IPointOfInterest target, CRIME_TYPE crimeType, ICrimeable crime) {
         //    switch (crimeType) {
@@ -107,8 +122,14 @@ namespace Factions.Faction_Types {
             return CRIME_SEVERITY.None;
         }
         public override int GetAdditionalMigrationMeterGain(NPCSettlement p_settlement) {
-            int nobleAmount = p_settlement.settlementClassTracker.GetCurrentResidentClassAmount("Noble");
+            int nobleAmount = p_settlement.classComponent.GetCurrentResidentClassAmount("Noble");
             return Mathf.Min(nobleAmount, 3);
+        }
+        public override StructureSetting CreateStructureSettingForStructure(STRUCTURE_TYPE structureType, NPCSettlement p_settlement) {
+            RESOURCE resource = structureType.RequiresResourceToBuild() ? RESOURCE.WOOD : RESOURCE.NONE;
+            if (structureType == STRUCTURE_TYPE.FISHERY) { resource = RESOURCE.WOOD; }
+            if (structureType == STRUCTURE_TYPE.BUTCHERS_SHOP) { resource = RESOURCE.STONE; }
+            return new StructureSetting(structureType, resource, false);
         }
     }
 }

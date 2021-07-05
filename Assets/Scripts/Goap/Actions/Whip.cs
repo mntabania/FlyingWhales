@@ -20,8 +20,10 @@ public class Whip : GoapAction {
         SetState("Whip Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
+#if DEBUG_LOG
         string costLog = $"\n{name} {target.nameWithID}: +10(Constant)";
         actor.logComponent.AppendCostLog(costLog);
+#endif
         return 10;
     }
     public override REACTABLE_EFFECT GetReactableEffect(ActualGoapNode node, Character witness) {
@@ -30,8 +32,8 @@ public class Whip : GoapAction {
         }
         return REACTABLE_EFFECT.Positive;
     }
-    public override void PopulateReactionsToActor(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
-        base.PopulateReactionsToActor(reactions, actor, target, witness, node, status);
+    public override void PopulateEmotionReactionsToActor(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
+        base.PopulateEmotionReactionsToActor(reactions, actor, target, witness, node, status);
         Character targetCharacter = target as Character;
         if (targetCharacter.crimeComponent.HasWantedCrime() && targetCharacter.crimeComponent.IsTargetOfACrime(witness)) {
             reactions.Add(EMOTION.Approval);
@@ -48,8 +50,8 @@ public class Whip : GoapAction {
             }
         }
     }
-    public override void PopulateReactionsToTarget(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
-        base.PopulateReactionsToTarget(reactions, actor, target, witness, node, status);
+    public override void PopulateEmotionReactionsToTarget(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
+        base.PopulateEmotionReactionsToTarget(reactions, actor, target, witness, node, status);
         Character targetCharacter = target as Character;
         if (witness.relationshipContainer.HasOpinionLabelWithCharacter(targetCharacter, RelationshipManager.Acquaintance)) {
             if (witness.traitContainer.HasTrait("Psychopath") == false && Random.Range(0, 100) < 50) {
@@ -65,8 +67,8 @@ public class Whip : GoapAction {
             }
         }
     }
-    public override void PopulateReactionsOfTarget(List<EMOTION> reactions, Character actor, IPointOfInterest target, ActualGoapNode node, REACTION_STATUS status) {
-        base.PopulateReactionsOfTarget(reactions, actor, target, node, status);
+    public override void PopulateEmotionReactionsOfTarget(List<EMOTION> reactions, Character actor, IPointOfInterest target, ActualGoapNode node, REACTION_STATUS status) {
+        base.PopulateEmotionReactionsOfTarget(reactions, actor, target, node, status);
         Character targetCharacter = target as Character;
         if (Random.Range(0, 100) < 20) {
             reactions.Add(EMOTION.Resentment);
@@ -75,9 +77,9 @@ public class Whip : GoapAction {
             reactions.Add(EMOTION.Anger);
         }
     }
-    #endregion
+#endregion
 
-    #region State Effects
+#region State Effects
     public void AfterWhipSuccess(ActualGoapNode goapNode) {
         Character target = goapNode.target as Character;
         if (target.traitContainer.HasTrait("Criminal")) {
@@ -88,7 +90,8 @@ public class Whip : GoapAction {
         target.crimeComponent.RemoveAllCrimesWantedBy(goapNode.actor.faction);
         //target.traitContainer.RemoveTrait(target, "Criminal", goapNode.actor);
         target.traitContainer.RemoveRestrainAndImprison(target, goapNode.actor);
-        target.traitContainer.AddTrait(target, "Injured", goapNode.actor, goapNode);
+        target.traitContainer.AddTrait(target, "Injured", goapNode.actor);
+        target.traitContainer.GetTraitOrStatus<Trait>("Injured")?.SetGainedFromDoingAction(goapNode.action.goapType, goapNode.isStealth);
     }
     #endregion
 }

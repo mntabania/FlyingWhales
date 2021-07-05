@@ -8,7 +8,7 @@ using Inner_Maps.Location_Structures;
 public class CarryComponent : CharacterComponent {
     public IPointOfInterest carriedPOI { get; private set; }
     public Character isBeingCarriedBy { get; private set; }
-    public Character justGotCarriedBy { get; private set; }
+    public Character prevCarriedBy { get; private set; }
 
     #region getters
     public bool isCarryingAnyPOI => carriedPOI != null;
@@ -23,7 +23,7 @@ public class CarryComponent : CharacterComponent {
     #region General
     public void SetIsBeingCarriedBy(Character carrier) {
         if(isBeingCarriedBy != carrier) {
-            justGotCarriedBy = isBeingCarriedBy;
+            prevCarriedBy = isBeingCarriedBy;
             isBeingCarriedBy = carrier;
             if (owner.marker) {
                 if (isBeingCarriedBy != null) {
@@ -60,7 +60,7 @@ public class CarryComponent : CharacterComponent {
             mapVisualTransform.localPosition = new Vector3(0f, 0.5f, 0f);
             mapVisualTransform.eulerAngles = Vector3.zero;
             tileObject.mapVisual.UpdateSortingOrders(tileObject);
-            Messenger.Broadcast(SpellSignals.RELOAD_PLAYER_ACTIONS, tileObject as IPlayerActionTarget);
+            Messenger.Broadcast(PlayerSkillSignals.RELOAD_PLAYER_ACTIONS, tileObject as IPlayerActionTarget);
             return true;
         }
         return false;
@@ -163,10 +163,18 @@ public class CarryComponent : CharacterComponent {
                 character.marker.PlaceMarkerAt(dropLocation);
             }
             character.marker.transform.eulerAngles = Vector3.zero;
+            character.carryComponent.OnCharacterUncarried();
         }
         // character.marker.SetNameState(true);
         // Messenger.Broadcast(Signals.CHARACTER_LEFT_PARTY, character, this);
     }
+
+    private void OnCharacterUncarried() {
+        if (owner is Dragon dragon) {
+            dragon.Awaken();
+        }
+    }
+
     public bool IsPOICarried(IPointOfInterest poi) {
         return carriedPOI != null && carriedPOI == poi;
     }
@@ -179,8 +187,8 @@ public class CarryComponent : CharacterComponent {
     public bool IsCurrentlyPartOf(Character character) {
         return character != null && (owner == character || isBeingCarriedBy == character);
     }
-    public void SetJustGotCarriedBy(Character character) {
-        justGotCarriedBy = character;
+    public void SetPrevCarriedBy(Character character) {
+        prevCarriedBy = character;
     }
     #endregion
 
@@ -189,8 +197,8 @@ public class CarryComponent : CharacterComponent {
         if (!string.IsNullOrEmpty(data.isBeingCarriedBy)) {
             isBeingCarriedBy = CharacterManager.Instance.GetCharacterByPersistentID(data.isBeingCarriedBy);
         }
-        if (!string.IsNullOrEmpty(data.justGotCarriedBy)) {
-            justGotCarriedBy = CharacterManager.Instance.GetCharacterByPersistentID(data.justGotCarriedBy);
+        if (!string.IsNullOrEmpty(data.prevCarriedBy)) {
+            prevCarriedBy = CharacterManager.Instance.GetCharacterByPersistentID(data.prevCarriedBy);
         }
     }
     public void LoadCarryReference(SaveDataCarryComponent data) {
@@ -213,7 +221,7 @@ public class SaveDataCarryComponent : SaveData<CarryComponent> {
     public string carriedPOI;
     public POINT_OF_INTEREST_TYPE carriedPOIType;
     public string isBeingCarriedBy;
-    public string justGotCarriedBy;
+    public string prevCarriedBy;
 
     #region Overrides
     public override void Save(CarryComponent data) {
@@ -229,8 +237,8 @@ public class SaveDataCarryComponent : SaveData<CarryComponent> {
         if (data.isBeingCarriedBy != null) {
             isBeingCarriedBy = data.isBeingCarriedBy.persistentID;
         }
-        if (data.justGotCarriedBy != null) {
-            justGotCarriedBy = data.justGotCarriedBy.persistentID;
+        if (data.prevCarriedBy != null) {
+            prevCarriedBy = data.prevCarriedBy.persistentID;
         }
     }
 

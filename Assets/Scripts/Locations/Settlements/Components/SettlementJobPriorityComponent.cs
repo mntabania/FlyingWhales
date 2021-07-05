@@ -29,61 +29,61 @@ public class SettlementJobPriorityComponent
             { JOB_TYPE.BUILD_BLUEPRINT, 0 },
         };
     }
-    public void OnAddResident(Character character) {
-        AssignResidentToPrimaryJob(character);
-    }
-    public void OnRemoveResident(Character character) {
-        UnassignResidentToPrimaryJob(character);
-    }
-    public void ChangeClassResidentResetPrimaryJob(Character character) {
-        UnassignResidentToPrimaryJob(character);
-        AssignResidentToPrimaryJob(character);
-    }
-    private void AssignResidentToPrimaryJob(Character character) {
-        JOB_TYPE[] priorityJobs = character.characterClass.priorityJobs;
-        if (priorityJobs != null && priorityJobs.Length > 0) {
-            bool hasSetPrimaryJob = false;
-            character.jobComponent.primaryJobCandidates.Clear();
-            for (int i = 0; i < priorityJobs.Length; i++) {
-                JOB_TYPE currPrioJob = priorityJobs[i];
-                if (primaryJobTracker.ContainsKey(currPrioJob)) {
-                    character.jobComponent.primaryJobCandidates.Add(currPrioJob);
-                    if (primaryJobTracker[currPrioJob] == 0) {
-                        character.jobComponent.SetPrimaryJob(currPrioJob);
-                        primaryJobTracker[currPrioJob]++;
-                        hasSetPrimaryJob = true;
-                        break;
-                    }
-                }
-            }
-            if (!hasSetPrimaryJob) {
-                for (int i = 0; i < character.jobComponent.priorityJobs.Count; i++) {
-                    JOB_TYPE currPrioJob = character.jobComponent.priorityJobs[i];
-                    if (primaryJobTracker.ContainsKey(currPrioJob)) {
-                        character.jobComponent.primaryJobCandidates.Add(currPrioJob);
-                        if (primaryJobTracker[currPrioJob] == 0) {
-                            character.jobComponent.SetPrimaryJob(currPrioJob);
-                            primaryJobTracker[currPrioJob]++;
-                            hasSetPrimaryJob = true;
-                            break;
-                        }
-                    }
-                }
-            }
-            if (!hasSetPrimaryJob && character.jobComponent.primaryJobCandidates.Count > 0) {
-                JOB_TYPE chosenJob = character.jobComponent.primaryJobCandidates[UnityEngine.Random.Range(0, character.jobComponent.primaryJobCandidates.Count)];
-                character.jobComponent.SetPrimaryJob(chosenJob);
-                primaryJobTracker[chosenJob]++;
-            }
-        }
-    }
-    public void UnassignResidentToPrimaryJob(Character character) {
-        JOB_TYPE characterPrimaryJob = character.jobComponent.primaryJob;
-        if (primaryJobTracker.ContainsKey(characterPrimaryJob)) {
-            character.jobComponent.SetPrimaryJob(JOB_TYPE.NONE);
-            primaryJobTracker[characterPrimaryJob]--;
-        }
-    }
+    //public void OnAddResident(Character character) {
+    //    AssignResidentToPrimaryJob(character);
+    //}
+    //public void OnRemoveResident(Character character) {
+    //    UnassignResidentToPrimaryJob(character);
+    //}
+    //public void ChangeClassResidentResetPrimaryJob(Character character) {
+    //    UnassignResidentToPrimaryJob(character);
+    //    AssignResidentToPrimaryJob(character);
+    //}
+    //private void AssignResidentToPrimaryJob(Character character) {
+    //    JOB_TYPE[] priorityJobs = character.characterClass.priorityJobs;
+    //    if (priorityJobs != null && priorityJobs.Length > 0) {
+    //        bool hasSetPrimaryJob = false;
+    //        character.jobComponent.primaryJobCandidates.Clear();
+    //        for (int i = 0; i < priorityJobs.Length; i++) {
+    //            JOB_TYPE currPrioJob = priorityJobs[i];
+    //            if (primaryJobTracker.ContainsKey(currPrioJob)) {
+    //                character.jobComponent.primaryJobCandidates.Add(currPrioJob);
+    //                if (primaryJobTracker[currPrioJob] == 0) {
+    //                    character.jobComponent.SetPrimaryJob(currPrioJob);
+    //                    primaryJobTracker[currPrioJob]++;
+    //                    hasSetPrimaryJob = true;
+    //                    break;
+    //                }
+    //            }
+    //        }
+    //        if (!hasSetPrimaryJob) {
+    //            for (int i = 0; i < character.jobComponent.priorityJobs.Count; i++) {
+    //                JOB_TYPE currPrioJob = character.jobComponent.priorityJobs[i];
+    //                if (primaryJobTracker.ContainsKey(currPrioJob)) {
+    //                    character.jobComponent.primaryJobCandidates.Add(currPrioJob);
+    //                    if (primaryJobTracker[currPrioJob] == 0) {
+    //                        character.jobComponent.SetPrimaryJob(currPrioJob);
+    //                        primaryJobTracker[currPrioJob]++;
+    //                        hasSetPrimaryJob = true;
+    //                        break;
+    //                    }
+    //                }
+    //            }
+    //        }
+    //        if (!hasSetPrimaryJob && character.jobComponent.primaryJobCandidates.Count > 0) {
+    //            JOB_TYPE chosenJob = character.jobComponent.primaryJobCandidates[UnityEngine.Random.Range(0, character.jobComponent.primaryJobCandidates.Count)];
+    //            character.jobComponent.SetPrimaryJob(chosenJob);
+    //            primaryJobTracker[chosenJob]++;
+    //        }
+    //    }
+    //}
+    //public void UnassignResidentToPrimaryJob(Character character) {
+    //    JOB_TYPE characterPrimaryJob = character.jobComponent.primaryJob;
+    //    if (primaryJobTracker.ContainsKey(characterPrimaryJob)) {
+    //        character.jobComponent.SetPrimaryJob(JOB_TYPE.NONE);
+    //        primaryJobTracker[characterPrimaryJob]--;
+    //    }
+    //}
     public string GetJobAssignments() {
         string assignments = string.Empty;
         if(primaryJobTracker != null) {

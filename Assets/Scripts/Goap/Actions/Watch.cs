@@ -40,8 +40,8 @@ public class Watch : GoapAction {
         }
         return goapActionInvalidity;
     }
-    public override void AddFillersToLog(ref Log log, ActualGoapNode node) {
-        base.AddFillersToLog(ref log, node);
+    public override void AddFillersToLog(Log log, ActualGoapNode node) {
+        base.AddFillersToLog(log, node);
         OtherData[] otherData = node.otherData;
         // if (otherData.Length == 1) {
         //     if (otherData[0].obj is GoapAction) {

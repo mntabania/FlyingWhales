@@ -23,9 +23,11 @@ public class Rat : Animal {
         //combatComponent.SetCombatMode(COMBAT_MODE.Defend);
         behaviourComponent.ChangeDefaultBehaviourSet(CharacterManager.Rat_Behaviour);
     }
-    public override void OnSummonAsPlayerMonster() {
-        base.OnSummonAsPlayerMonster();
-        combatComponent.SetCombatMode(COMBAT_MODE.Defend);
-    }
+
+    //This no longer applies, since we changed the summoning of monsters from bred behaviour to per structure, all monsters summoned by player should be aggressive
+    //public override void OnSummonAsPlayerMonster() {
+    //    base.OnSummonAsPlayerMonster();
+    //    combatComponent.SetCombatMode(COMBAT_MODE.Defend);
+    //}
     #endregion
 }

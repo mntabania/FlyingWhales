@@ -17,12 +17,20 @@ public class Patrol : GoapAction {
         SetState("Patrol Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
+#if DEBUG_LOG
         string costLog = $"\n{name} {target.nameWithID}: +10(Constant)";
         actor.logComponent.AppendCostLog(costLog);
+#endif
         return 10;
     }
     public override LocationGridTile GetOverrideTargetTile(ActualGoapNode goapNode) {
         return goapNode.otherData[0].obj as LocationGridTile;
     }
-    #endregion
+    public override GoapActionInvalidity IsInvalid(ActualGoapNode node) {
+        string stateName = "Target Missing";
+        GoapActionInvalidity goapActionInvalidity = new GoapActionInvalidity(false, stateName, "target_unavailable");
+        //patrol action should never be invalid
+        return goapActionInvalidity;
+    }
+#endregion
 }

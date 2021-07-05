@@ -13,15 +13,77 @@ MonoBehaviour:
   m_Name: Plague
   m_EditorClassIdentifier: 
   skill: 14
-  manaCost: 30
+  manaCost: 50
   charges: 1
-  cooldown: 576
-  threat: 0
+  cooldown: 320
+  threat: 3
   threatPerHour: 0
   expCost: 300
+  cheatedLevel: 0
+  pierce: 0
+  bonusChargeWhenUnlocked: 0
+  unlockChargeOnPortalUpgrade: 1
   buttonSprite: {fileID: 21300000, guid: e82f28130057b894cb52771c34d33c2d, type: 3}
   tooltipVideoClip: {fileID: 0}
   tooltipImage: {fileID: 0}
+  unlockCost: 300
+  tier: 0
+  baseLoadoutWeight: 0
+  resistanceType: 0
+  archetypeWeightedBonus: 2
+  canBeReleasedEvenIfLearned: 0
   contextMenuIcon: {fileID: 21300000, guid: 3aa12ad36bc6d1d479696c177317a09a, type: 3}
   contextMenuColumn: 1
   playerActionIcon: {fileID: 0}
+  isNonUpgradeable: 1
+  isAffliction: 0
+  isLockedBaseOnRequirements: 1
+  canBeCastedOnMaxLevel: 0
+  requirementData:
+    requirements: 
+    requiredArchetypes: 
+    requiredSkills: 
+    actionCount: 0
+    afflictionCount: 0
+    spellsCount: 0
+    tier1Count: 0
+    tier2Count: 0
+    tier3Count: 0
+    portalLevel: 0
+    isOR: 0
+  skillUpgradeData:
+    upgradeCosts: 140000003200000050000000
+    manacostPerLevel: 96000000
+    chargesPerLevel: 01000000010000000100000001000000
+    bonuses: 0e000000
+    additionalDamagePerLevel: 
+    additionalPiercePerLevel:
+    - 0
+    additionalHpPercentagePerLevel: []
+    additionalAttackPercentagePerLevel: []
+    additionalHpValuePerLevel: 
+    additionalAttackValuePerLevel: 
+    applyOnLevel: 
+    additionalmanaReceivedPercentagePerLevel: []
+    statsIncreasedPercentagePerLevel: []
+    durationBonusPerLevel: 
+    additionalMaxHPPercentagePerLevel: []
+    additionalMaxHPActualPerLevel: 
+    additionalChanceBonusPercentagePerLevel: []
+    additionalTileRangeBonusPerLevel: 
+    decreaseMovementSpeedPerLevel: 
+    cooldownPerLevel: 40010000
+    skillMovementSpeed: 
+  afflictionUpgradeData:
+    bonuses: 
+    cooldown: 
+    additionalPiercePerLevel: []
+    rateChance: 
+    crowdNumber: 
+    napsDuration: 
+    numberOfCriteria: 
+    hungerRate: 
+    duration: []
+    opinionTrigger: 
+    addedBehaviour: 
+    listOfCriteria: 

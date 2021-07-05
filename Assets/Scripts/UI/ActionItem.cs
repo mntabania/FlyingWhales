@@ -28,11 +28,11 @@ public class ActionItem : PooledObject {
         this.playerAction = playerAction;
         this.playerActionTarget = playerActionTarget;
         UnToggleHighlight();
-        actionImg.sprite = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(playerAction.type).playerActionIcon;
+        actionImg.sprite = PlayerSkillManager.Instance.GetScriptableObjPlayerSkillData<PlayerSkillData>(playerAction.type).playerActionIcon;
         actionLbl.text = playerAction.GetLabelName(playerActionTarget);
         gameObject.SetActive(true);
-        Messenger.AddListener<SkillData>(SpellSignals.SPELL_COOLDOWN_STARTED, OnSpellCooldownStarted);
-        Messenger.AddListener<SkillData>(SpellSignals.SPELL_COOLDOWN_FINISHED, OnSpellCooldownFinished);
+        Messenger.AddListener<SkillData>(PlayerSkillSignals.SPELL_COOLDOWN_STARTED, OnSpellCooldownStarted);
+        Messenger.AddListener<SkillData>(PlayerSkillSignals.SPELL_COOLDOWN_FINISHED, OnSpellCooldownFinished);
         Messenger.AddListener<int, int>(PlayerSignals.PLAYER_ADJUSTED_MANA, OnPlayerAdjustedMana);
     }
     public void SetInteractable(bool state) {
@@ -51,15 +51,25 @@ public class ActionItem : PooledObject {
     }
     public void ToggleHighlight() {
         if (button.interactable) {
-	        highlightImg.gameObject.SetActive(true);    
+            SetHighlightState(true);    
         }
         OnHover();
     }
     public void UnToggleHighlight() {
         if (button.interactable) {
-	        highlightImg.gameObject.SetActive(false);    
+            bool toggle = false;
+            if (playerAction != null && PlayerManager.Instance != null) {
+                if (playerAction.type == PLAYER_SKILL_TYPE.SPAWN_EYE_WARD || playerAction.type == PLAYER_SKILL_TYPE.UPGRADE_BEHOLDER_EYE_LEVEL
+                    || playerAction.type == PLAYER_SKILL_TYPE.UPGRADE_BEHOLDER_RADIUS_LEVEL) {
+                    toggle = PlayerManager.Instance.player.currentActivePlayerSpell == playerAction;
+                }
+            }
+            SetHighlightState(toggle);    
         }
         OnHoverOut();
+    }
+    public void SetHighlightState(bool p_state) {
+        highlightImg.gameObject.SetActive(p_state);
     }
     public void OnClickThis() {
         if (playerAction != null) {
@@ -113,10 +123,14 @@ public class ActionItem : PooledObject {
 	    Messenger.AddListener(Signals.TICK_STARTED, PerTickCooldown);
     }
     private void PerTickCooldown() {
+#if DEBUG_PROFILER
 	    Profiler.BeginSample($"Action Item Per Tick Cooldown");
+#endif
 	    float fillAmount = ((float)playerAction.currentCooldownTick / playerAction.cooldown);
         cooldownCoverImg.DOFillAmount(fillAmount, 0.4f);
+#if DEBUG_PROFILER
         Profiler.EndSample();
+#endif
     }
     private void StopCooldownFill() {
         SetCooldownState(false);
@@ -126,7 +140,7 @@ public class ActionItem : PooledObject {
     private void OnPlayerAdjustedMana(int adjusted, int mana) {
         UpdateInteractableState();
     }
-    #endregion
+#endregion
 
     public override void Reset() {
 		base.Reset();
@@ -135,14 +149,15 @@ public class ActionItem : PooledObject {
 		if (string.IsNullOrEmpty(expiryKey) == false) {
 			SchedulingManager.Instance.RemoveSpecificEntry(expiryKey);
 		}
+        playerAction = null;
 		DOTween.Kill(this);
         cooldownCoverImg.fillAmount = 0f;
 		expiryKey = string.Empty;
-		SetCooldownState(false);
+		cooldownCoverImg.gameObject.SetActive(false);
 		SetInteractable(true);
 		Messenger.RemoveListener(Signals.TICK_STARTED, PerTickCooldown);
-		Messenger.RemoveListener<SkillData>(SpellSignals.SPELL_COOLDOWN_STARTED, OnSpellCooldownStarted);
-		Messenger.RemoveListener<SkillData>(SpellSignals.SPELL_COOLDOWN_FINISHED, OnSpellCooldownFinished);
+		Messenger.RemoveListener<SkillData>(PlayerSkillSignals.SPELL_COOLDOWN_STARTED, OnSpellCooldownStarted);
+		Messenger.RemoveListener<SkillData>(PlayerSkillSignals.SPELL_COOLDOWN_FINISHED, OnSpellCooldownFinished);
         Messenger.RemoveListener<int, int>(PlayerSignals.PLAYER_ADJUSTED_MANA, OnPlayerAdjustedMana);
     }
 }

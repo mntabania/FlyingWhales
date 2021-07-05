@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UtilityScripts;
 
 public class TerrifyingHowlCollisionListener : ParticleCollisionListener {
 
@@ -18,10 +19,22 @@ public class TerrifyingHowlCollisionListener : ParticleCollisionListener {
             CharacterMarker characterMarker = other.GetComponent<CharacterMarker>();
             //do not allow minions to be affected by terrifying howl.
             if (affectedCharacters.Contains(characterMarker.character) == false && characterMarker.character.minion == null) {
-                CombatManager.Instance.CreateHitEffectAt(characterMarker.character, ELEMENTAL_TYPE.Normal);
-                characterMarker.character.traitContainer.AddTrait(characterMarker.character, "Spooked");
-                characterMarker.character.marker.AddPOIAsInVisionRange(_baseParticleEffect.targetTile.genericTileObject);
-                characterMarker.character.combatComponent.Flight(_baseParticleEffect.targetTile.genericTileObject, "heard a terrifying howl");
+                int baseChance = 100;
+                SkillData howlData = PlayerSkillManager.Instance.GetSpellData(PLAYER_SKILL_TYPE.TERRIFYING_HOWL);
+                RESISTANCE resistanceType = PlayerSkillManager.Instance.GetScriptableObjPlayerSkillData<PlayerSkillData>(PLAYER_SKILL_TYPE.TERRIFYING_HOWL).resistanceType;
+                float piercing = PlayerSkillManager.Instance.GetAdditionalPiercePerLevelBaseOnLevel(howlData);
+                float resistanceValue = characterMarker.character.piercingAndResistancesComponent.GetResistanceValue(resistanceType);
+                CombatManager.ModifyValueByPiercingAndResistance(ref baseChance, piercing, resistanceValue);
+                if (GameUtilities.RollChance(baseChance)) {
+                    CombatManager.Instance.CreateHitEffectAt(characterMarker.character, ELEMENTAL_TYPE.Normal);
+                    //int duration = TraitManager.Instance.allTraits["Spooked"].ticksDuration + PlayerSkillManager.Instance.GetDurationBonusPerLevel(PLAYER_SKILL_TYPE.TERRIFYING_HOWL);
+                    int duration = PlayerSkillManager.Instance.GetDurationBonusPerLevel(howlData);
+                    characterMarker.character.traitContainer.AddTrait(characterMarker.character, "Spooked", overrideDuration: duration);
+                    characterMarker.character.marker.AddPOIAsInVisionRange(_baseParticleEffect.targetTile.tileObjectComponent.genericTileObject);
+                    characterMarker.character.combatComponent.Flight(_baseParticleEffect.targetTile.tileObjectComponent.genericTileObject, "heard a terrifying howl");
+                } else {
+                    characterMarker.character.reactionComponent.ResistRuinarchPower();
+                }
                 affectedCharacters.Add(characterMarker.character);
             }
         }

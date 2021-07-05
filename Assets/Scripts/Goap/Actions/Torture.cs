@@ -15,13 +15,15 @@ public class Torture : GoapAction {
         SetState("Torture Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
+#if DEBUG_LOG
         string costLog = $"\n{name} {target.nameWithID}: +10(Constant)";
         actor.logComponent.AppendCostLog(costLog);
+#endif
         return 10;
     }
-    #endregion
+#endregion
     
-    #region State Effects
+#region State Effects
     public void PerTickTortureSuccess(ActualGoapNode goapNode) {
         int maxHP = goapNode.poiTarget.maxHP;
         int damage = Mathf.RoundToInt(0.03f * maxHP);
@@ -31,7 +33,7 @@ public class Torture : GoapAction {
         Character actor = goapNode.actor;
         IPointOfInterest targetPOI = goapNode.poiTarget;
         if(targetPOI is Character targetCharacter) {
-            if(targetCharacter.currentHP <= 0) {
+            if(!targetCharacter.HasHealth()) {
                 targetCharacter.Death(deathFromAction: goapNode, responsibleCharacter: goapNode.actor);
             } else {
                 string logKey = string.Empty;
@@ -49,10 +51,10 @@ public class Torture : GoapAction {
                     Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "GoapAction", goapName, logKey, goapNode, LOG_TAG.Life_Changes);
                     log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                     log.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-                    log.AddLogToDatabase();
+                    log.AddLogToDatabase(true);
                 }
             }
         }
     }
-    #endregion
+#endregion
 }

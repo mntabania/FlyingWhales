@@ -12,6 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 88e6d539796c490aa0efea676d6fae59, type: 3}
   m_Name: Miner Data
   m_EditorClassIdentifier: 
+  combatBehaviourType: 0
+  combatSpecialSkillType: 0
+  workStructureType: 41
+  summonCost: 50
+  portraitSprite: {fileID: 0}
   defaultSprites:
     stillSprite: {fileID: 0}
     animationSprites: []
@@ -58,3 +63,41 @@ MonoBehaviour:
       - {fileID: 21300000, guid: 2b378e10fbf186c40b3692863b0e5dd0, type: 3}
       - {fileID: 21300000, guid: fd21286882ae66d41b200d14642c15a3, type: 3}
       - {fileID: 21300000, guid: df32bff98d127ee44b9d7e84521a10ff, type: 3}
+  initialVillagerPiercing: 0
+  initialVillagerPhysicalResistances:
+  - 0
+  - 5
+  - 10
+  initialVillagerMentalResistances:
+  - 0
+  - 5
+  - 10
+  initialVillagerElementalResistances:
+  - 0
+  - 5
+  - 10
+  initialVillagerSecondaryResistances:
+  - 0
+  - 5
+  - 10
+  characterSkillUpdateData:
+    m_fireResistanceBonus: 0
+    m_earthResistanceBonus: 0
+    m_windResistanceBonus: 0
+    m_waterResistanceBonus: 0
+    m_allElementalresistanceBonus: 3
+    m_poisonResistanceBonus: 0
+    m_iceResistanceBonus: 0
+    m_electricResistanceBonus: 0
+    m_allSecondaryresistanceBonus: 12
+    m_piercingBonus: 12
+    m_mentalResistanceBonus: 5
+    m_physicalResistanceBonus: 12
+  craftableWeapons: 03010000cc000000cd000000ce000000cf000000
+  craftableArmors: 05010000d0000000bc000000d1000000d3000000
+  craftableAccessories: dd000000
+  droppableItems:
+  - item: 13
+    weight: 100
+  - item: 189
+    weight: 10

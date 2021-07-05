@@ -14,10 +14,11 @@ namespace UtilityScripts {
          * */
         public static void AddToAwarenessList(IPointOfInterest poi, LocationGridTile gridTileLocation) {
             ILocationAwareness locationAwareness = null;
+            if (gridTileLocation == null) { return; }
             if (gridTileLocation.structure.structureType != STRUCTURE_TYPE.WILDERNESS && gridTileLocation.structure.structureType != STRUCTURE_TYPE.OCEAN) {
                 locationAwareness = gridTileLocation.structure.locationAwareness;
-            } else if (gridTileLocation.collectionOwner != null && gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
-                locationAwareness = gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.locationAwareness;
+            } else {
+                locationAwareness = gridTileLocation.area.locationAwareness;
             }
             if (locationAwareness != null) {
                 //locationAwareness.RemoveAwarenessFromPendingRemoveList(poi);
@@ -51,8 +52,8 @@ namespace UtilityScripts {
                     ILocationAwareness locationAwareness = null;
                     if (gridTileLocation.structure.structureType != STRUCTURE_TYPE.WILDERNESS && gridTileLocation.structure.structureType != STRUCTURE_TYPE.OCEAN) {
                         locationAwareness = gridTileLocation.structure.locationAwareness;
-                    } else if (gridTileLocation.collectionOwner != null && gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
-                        locationAwareness = gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.locationAwareness;
+                    } else {
+                        locationAwareness = gridTileLocation.area.locationAwareness;
                     }
                     if (locationAwareness != null) {
                         locationAwareness.RemoveAwarenessFromMainList(poi);

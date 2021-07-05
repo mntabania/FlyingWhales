@@ -1,16 +1,17 @@
 ﻿using UnityEngine.Assertions;
+using UnityEngine;
 
 public class SingleJobNode : JobNode {
     public override ActualGoapNode singleNode { get { return node; } }
-    public override int currentNodeIndex { get { return -1; } }
-    public ActualGoapNode node { get; }
+    public ActualGoapNode node { get; private set; }
     
-    public SingleJobNode(ActualGoapNode node) : base (){
-        this.node = node;
-        
-    }
+    public SingleJobNode() : base() { }
     public SingleJobNode(SaveDataSingleJobNode saveDataJobNode) : base (saveDataJobNode) {
         this.node = DatabaseManager.Instance.actionDatabase.GetActionByPersistentID(saveDataJobNode.nodeID);
+    }
+
+    public void SetActionNode(ActualGoapNode p_action) {
+        node = p_action;
     }
 
     #region Overrides
@@ -25,6 +26,14 @@ public class SingleJobNode : JobNode {
     }
     public override bool IsCurrentActionNode(ActualGoapNode node) {
         return this.node == node;
+    }
+    public override void Reset() {
+        if (node != null) {
+            if (!node.ProcessReturnToPool()) {
+                node.SetIsSupposedToBeInPool(true);
+            }
+        }
+        node = null;
     }
     #endregion
 }

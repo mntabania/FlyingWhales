@@ -14,28 +14,40 @@ public class CultistBehaviour : CharacterBehaviourComponent {
     public override bool TryDoBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
         if (character.homeSettlement == null && !WorldSettings.Instance.worldSettingsData.villageSettings.disableNewVillages && !character.currentRegion.IsRegionVillageCapacityReached() && character.faction != null && 
             character.faction.factionType.type == FACTION_TYPE.Demon_Cult && character.characterClass.className == "Cult Leader") {
-            HexTile targetTile = character.currentRegion.GetRandomHexThatMeetCriteria(currHex => currHex.elevationType != ELEVATION.WATER && currHex.elevationType != ELEVATION.MOUNTAIN && currHex.landmarkOnTile == null && !currHex.IsNextToOrPartOfVillage() && !currHex.isCorrupted);
-            if (targetTile != null) {
+            // Area targetArea = character.currentRegion.GetRandomHexThatMeetCriteria(currArea => currArea.elevationType != ELEVATION.WATER && currArea.elevationType != ELEVATION.MOUNTAIN && !currArea.structureComponent.HasStructureInArea() && !currArea.IsNextToOrPartOfVillage() && !currArea.gridTileComponent.HasCorruption());
+            VillageSpot villageSpot = character.currentRegion.GetRandomUnoccupiedVillageSpot();
+            if (villageSpot != null) {
+                Area targetArea = villageSpot.mainSpot;
                 StructureSetting structureSetting = new StructureSetting(STRUCTURE_TYPE.CITY_CENTER, character.faction.factionType.mainResource, true);
-                List<GameObject> choices = InnerMapManager.Instance.GetIndividualStructurePrefabsForStructure(structureSetting);
+                List<GameObject> choices = InnerMapManager.Instance.GetStructurePrefabsForStructure(structureSetting);
                 GameObject chosenStructurePrefab = CollectionUtilities.GetRandomElement(choices);
-                return character.jobComponent.TriggerFindNewVillage(targetTile.GetCenterLocationGridTile(), out producedJob, chosenStructurePrefab.name);
+                if (LandmarkManager.Instance.HasEnoughSpaceForStructure(chosenStructurePrefab.name, targetArea.gridTileComponent.centerGridTile)) {
+                    return character.jobComponent.TriggerFindNewVillage(targetArea.gridTileComponent.centerGridTile, out producedJob, chosenStructurePrefab.name);    
+                }
             }    
         }
         
-        TIME_IN_WORDS timeInWords = GameManager.GetCurrentTimeInWordsOfTick();
+        TIME_IN_WORDS timeInWords = GameManager.Instance.GetCurrentTimeInWordsOfTick();
         int chance = 0;
         if (timeInWords == TIME_IN_WORDS.EARLY_NIGHT) {
-            chance = 6;
-        } else if (timeInWords == TIME_IN_WORDS.LATE_NIGHT || timeInWords == TIME_IN_WORDS.AFTER_MIDNIGHT) {
             chance = 12;
+            if (character.HasItem(TILE_OBJECT_TYPE.CULTIST_KIT)) {
+                chance = 50;
+            }
+        } else if (timeInWords == TIME_IN_WORDS.LATE_NIGHT || timeInWords == TIME_IN_WORDS.AFTER_MIDNIGHT) {
+            chance = 20;
+            if (character.HasItem(TILE_OBJECT_TYPE.CULTIST_KIT)) {
+                chance = 50;
+            }
         }
 
         // chance = 100;
         
         int roll = UnityEngine.Random.Range(0, 100);
+#if DEBUG_LOG
         log += $"\nWill try to do cultist action. Chance is {chance.ToString()}. Roll is {roll.ToString()}";
-        
+#endif
+
         if (roll < chance) {
             return TryCreateCultistJob(character, ref log, out producedJob);
         }
@@ -60,7 +72,28 @@ public class CultistBehaviour : CharacterBehaviourComponent {
             log += $"\n{character.name} has no cultist kit available. Will create obtain personal item job.";
             bool success = character.jobComponent.TryCreateObtainPersonalItemJob("Cultist Kit", out producedJob);
             if (success) {
-                producedJob.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] { TileObjectDB.GetTileObjectData(TILE_OBJECT_TYPE.CULTIST_KIT).mainRecipe });
+                GoapPlanJob gJob = producedJob as GoapPlanJob;
+                if (character.homeSettlement != null) {
+                    JobUtilities.PopulatePriorityLocationsForTakingPersonalItem(character, gJob, INTERACTION_TYPE.NONE);
+                    List<LocationStructure> mines = character.homeSettlement.GetStructuresOfType(STRUCTURE_TYPE.MINE);
+                    if (mines != null) {
+                        for (int i = 0; i < mines.Count; i++) {
+                            LocationStructure mine = mines[i];
+                            gJob.AddPriorityLocation(INTERACTION_TYPE.NONE, mine);
+                        }
+                    }
+                    List<LocationStructure> lumberyards = character.homeSettlement.GetStructuresOfType(STRUCTURE_TYPE.LUMBERYARD);
+                    if (lumberyards != null) {
+                        for (int i = 0; i < lumberyards.Count; i++) {
+                            LocationStructure lumberyard = lumberyards[i];
+                            gJob.AddPriorityLocation(INTERACTION_TYPE.NONE, lumberyard);
+                        }
+                    }
+                }
+                //Should pass only the amount needed, not the mainRecipe because the cultist's main recipe is the stone pile which will not work if he decided to get a wood pile
+                //It will result in getting 0 wood from the pile.
+                producedJob.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] { TileObjectDB.GetTileObjectData(TILE_OBJECT_TYPE.CULTIST_KIT).mainRecipe.ingredient.amount });
+                //producedJob.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] { TileObjectDB.GetTileObjectData(TILE_OBJECT_TYPE.CULTIST_KIT).mainRecipe });
             }
             return success;
         } else {

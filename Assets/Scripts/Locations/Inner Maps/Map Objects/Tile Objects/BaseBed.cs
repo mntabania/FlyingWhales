@@ -1,12 +1,12 @@
 ﻿using System.Linq;
 using Inner_Maps;
 using Traits;
-
+using UnityEngine;
 public abstract class BaseBed : TileObject {
     private Character[] bedUsers; //array of characters, currently using the bed
 
     public override Character[] users {
-        get { return bedUsers.Where(x => x != null).ToArray(); }
+        get { return bedUsers; } //.Where(x => x != null).ToArray() //Remove use of ToArray
     }
     public BaseBed(int slots) {
         AddAdvertisedAction(INTERACTION_TYPE.DROP_ITEM);
@@ -50,13 +50,19 @@ public abstract class BaseBed : TileObject {
         }
         return false;
     }
-    public override bool AddUser(Character character) {
+     protected override bool AddUser(Character character) {
         for (int i = 0; i < bedUsers.Length; i++) {
             if (bedUsers[i] == null) {
                 bedUsers[i] = character;
                 character.SetTileObjectLocation(this);
                 UpdateUsedBedAsset();
                 //disable the character's marker
+
+                //Put character marker on a walkable node when he enters a bed so that when another character targets the character it will always be reachable
+                //https://trello.com/c/pLXVewRw/4162-combat-not-starting-when-character-is-targeting-someone-on-bed-near-wall-corner
+                Vector3 pos = gridTileLocation.GetPositionWithinTileThatIsOnAWalkableNode();
+                character.marker.pathfindingAI.Teleport(pos);
+                // character.marker.PlaceMarkerAt(gridTileLocation);
                 character.marker.SetVisualState(false);
                 character.tileObjectComponent.SetBedBeingUsed(this);
                 Messenger.Broadcast(TileObjectSignals.ADD_TILE_OBJECT_USER, GetBase(), character);
@@ -84,7 +90,7 @@ public abstract class BaseBed : TileObject {
                 character.tileObjectComponent.SetBedBeingUsed(null);
                 if (character.gridTileLocation != null && character.traitContainer.HasTrait("Paralyzed")) {
                     //When a paralyzed character awakens, place it on an adjacent tile in the same Structure
-                    LocationGridTile gridTile = character.gridTileLocation.GetFirstNeighborThatMeetCriteria(x => x.structure == character.gridTileLocation.structure && x.IsPassable());
+                    LocationGridTile gridTile = character.gridTileLocation.GetFirstNeighborThatIsPassableAndSameStructureAs(character.gridTileLocation.structure);
                     if(gridTile != null) {
                         character.marker.PlaceMarkerAt(gridTile);
                     } else {
@@ -94,6 +100,13 @@ public abstract class BaseBed : TileObject {
                     character.marker.UpdateAnimation();
                 }
                 Messenger.Broadcast(TileObjectSignals.REMOVE_TILE_OBJECT_USER, GetBase(), character);
+                if (UIManager.Instance.characterInfoUI.isShowing && UIManager.Instance.characterInfoUI.activeCharacter == character) {
+                    //https://trello.com/c/A2IPtNEN/3907-unity-v034290318-camera-follow-bug
+                    if (character.hasMarker) {
+                        Selector.Instance.Select(character, character.marker.transform);
+                        character.CenterOnCharacter();
+                    }
+                }
                 return true;
             }
         }

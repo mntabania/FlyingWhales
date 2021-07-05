@@ -18,7 +18,7 @@ public class PoisonVent : TileObject {
         Initialize(TILE_OBJECT_TYPE.POISON_VENT);
         _activityCycle = Random.Range(12, 61);
     }
-    public PoisonVent(SaveDataPoisonVent data) {
+    public PoisonVent(SaveDataPoisonVent data) : base(data) {
         //SaveDataPoisonVent saveDataPoisonVent = data as SaveDataPoisonVent;
         Assert.IsNotNull(data);
         _activityCycle = data.activityCycle;

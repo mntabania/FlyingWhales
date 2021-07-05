@@ -1,4 +1,4 @@
-﻿using System;
+﻿using System.Collections.Generic;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
 using UnityEngine;
@@ -7,36 +7,79 @@ using UnityEngine.Profiling;
 using UtilityScripts;
 
 public class SkillData : IPlayerSkill {
+    public const int MAX_SPELL_LEVEL = 3;
+    //public virtual INTERVENTION_ABILITY_TYPE type => INTERVENTION_ABILITY_TYPE.NONE;
+    public SPELL_TARGET[] targetTypes { get; protected set; }
+    //public int radius { get; protected set; }
+    public int charges { get; private set; }
+    public int threatPerHour { get; private set; }
+    public bool isInUse { get; private set; } //This means that this skill is unlocked by the player permanently
+    public bool isTemporarilyInUse { get; private set; } //This means that this skill is not unlocked in 
+    public int currentCooldownTick { get; private set; }
+    public int baseMaxCharges { get; private set; }
+    public int baseManaCost { get; private set; }
+    public float basePierce { get; private set; }
+    public int baseCooldown { get; private set; }
+    public int baseThreat { get; private set; }
+    public int bonusCharges { get; private set; }
+    /// <summary>
+    /// Current level of this spell. This starts at 0.
+    /// 0 = Level 1, 1 = Level 2, etc.
+    /// </summary>
+    public int currentLevel { get; set; }
+    public bool isUnlockedBaseOnRequirements { get; set; }
+    
+    public int unlockCost { get; set; }
+    public SkillEventDispatcher skillEventDispatcher { get; }
+
+    #region getters
     public virtual PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.NONE;
     public virtual string name { get { return string.Empty; } }
     public virtual string description { get { return string.Empty; } }
     public virtual PLAYER_SKILL_CATEGORY category { get { return PLAYER_SKILL_CATEGORY.NONE; } }
-    //public virtual INTERVENTION_ABILITY_TYPE type => INTERVENTION_ABILITY_TYPE.NONE;
-    public SPELL_TARGET[] targetTypes { get; protected set; }
-    //public int radius { get; protected set; }
-    public int maxCharges => SpellUtilities.GetModifiedSpellCost(baseMaxCharges, WorldSettings.Instance.worldSettingsData.playerSkillSettings.GetChargeCostsModification());
-    public int charges { get; private set; }
-    public int manaCost => SpellUtilities.GetModifiedSpellCost(baseManaCost, WorldSettings.Instance.worldSettingsData.playerSkillSettings.GetCostsModification());
-    public int cooldown => SpellUtilities.GetModifiedSpellCost(baseCooldown, WorldSettings.Instance.worldSettingsData.playerSkillSettings.GetCooldownSpeedModification());
-    public int threat => SpellUtilities.GetModifiedSpellCost(baseThreat, WorldSettings.Instance.worldSettingsData.playerSkillSettings.GetThreatModification());
-    public int threatPerHour { get; private set; }
-    public bool isInUse { get; private set; }
-    public int currentCooldownTick { get; private set; }
+    public int maxCharges => SpellUtilities.GetModifiedSpellCost(baseMaxCharges, 1);
+    public int manaCost => SpellUtilities.GetModifiedSpellCost(baseManaCost, 1);
+    public int cooldown => SpellUtilities.GetModifiedSpellCost(baseCooldown, 1);
+    public int threat => 0;// SpellUtilities.GetModifiedSpellCost(baseThreat, 1f); comment out for now so no threat will be passed
+
+    /// <summary>
+    /// The level that should be displayed on UI. This getter is only for convenience.
+    /// </summary>
+    public int levelForDisplay => currentLevel + 1;
+    public bool isMaxLevel => currentLevel >= MAX_SPELL_LEVEL;
     public bool hasCharges => baseMaxCharges != -1;
     public bool hasCooldown => baseCooldown != -1;
     public bool hasManaCost => baseManaCost != -1;
+    public bool hasBonusCharges => bonusCharges > 0;
+    public int totalCharges => charges + bonusCharges;
     public virtual bool isInCooldown => hasCooldown && currentCooldownTick < cooldown;
+    public string displayOfCurrentChargesWithBonusChargesNotCombined => GetDisplayOfCurrentChargesWithBonusChargesNotCombined();
+    public string displayOfCurrentChargesWithBonusChargesCombined => GetDisplayOfCurrentChargesWithBonusChargesCombined();
+    public string displayOfCurrentChargesWithBonusChargesCombinedIconFirst => GetDisplayOfCurrentChargesWithBonusChargesCombinedIconFirst();
+    #endregion
 
-    public int baseMaxCharges { get; private set; }
-    public int baseManaCost { get; private set; }
-    public int baseCooldown { get; private set; }
-    public int baseThreat { get; private set; }
-    
+    public void LevelUp() {
+        PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetScriptableObjPlayerSkillData<PlayerSkillData>(type);
+        currentLevel = Mathf.Clamp(++currentLevel, 0, MAX_SPELL_LEVEL);
+        SetManaCost(WorldSettings.Instance.worldSettingsData.IsScenarioMap() ? playerSkillData.GetManaCostForScenarios() : playerSkillData.GetManaCostBaseOnLevel(currentLevel)); // playerSkillData.GetManaCostBaseOnLevel(currentLevel)
+        SetMaxCharges(playerSkillData.GetMaxChargesBaseOnLevel(currentLevel));
+        SetPierce(PlayerSkillManager.Instance.GetAdditionalPiercePerLevelBaseOnLevel(type));
+        SetCooldown(playerSkillData.GetCoolDownBaseOnLevel(currentLevel));
+        SetCharges(maxCharges);
+        FinishCooldown();
+        if (category == PLAYER_SKILL_CATEGORY.AFFLICTION) {
+            Messenger.Broadcast($"{name}LevelUp", this);
+        }
+        Messenger.Broadcast(PlayerSkillSignals.PLAYER_SKILL_LEVEL_UP, this);
+    }
+
     protected SkillData() {
         ResetData();
     }
 
     #region Virtuals
+    public virtual void OnSetAsCurrentActiveSpell(){}
+    public virtual void OnNoLongerCurrentActiveSpell(){}
     public virtual void ActivateAbility(IPointOfInterest targetPOI) {
         OnExecutePlayerSkill();
     }
@@ -46,7 +89,7 @@ public class SkillData : IPlayerSkill {
     public virtual void ActivateAbility(LocationGridTile targetTile, ref Character spawnedCharacter) {
         OnExecutePlayerSkill();
     }
-    public virtual void ActivateAbility(HexTile targetHex) {
+    public virtual void ActivateAbility(Area targetArea) {
         //if(targetHex.settlementOnTile != null) {
         //    if(targetHex.settlementOnTile.HasResidentInsideSettlement()){
         //        PlayerManager.Instance.player.threatComponent.AdjustThreat(20);
@@ -75,8 +118,11 @@ public class SkillData : IPlayerSkill {
         return CanPerformAbility();
     }
     public virtual bool CanPerformAbilityTowards(TileObject tileObject) { return CanPerformAbility(); }
-    public virtual bool CanPerformAbilityTowards(LocationGridTile targetTile) { return CanPerformAbility(); }
-    public virtual bool CanPerformAbilityTowards(HexTile targetHex) { return CanPerformAbility(); }
+    public virtual bool CanPerformAbilityTowards(LocationGridTile targetTile, out string o_cannotPerformReason) {
+        o_cannotPerformReason = string.Empty;
+        return CanPerformAbility();
+    }
+    public virtual bool CanPerformAbilityTowards(Area targetArea) { return CanPerformAbility(); }
     public virtual bool CanPerformAbilityTowards(LocationStructure targetStructure) { return CanPerformAbility(); }
     public virtual bool CanPerformAbilityTowards(StructureRoom room) { return CanPerformAbility(); }
     public virtual bool CanPerformAbilityTowards(BaseSettlement targetSettlement) { return CanPerformAbility(); }
@@ -84,7 +130,7 @@ public class SkillData : IPlayerSkill {
     /// Highlight the affected area of this spell given a tile.
     /// </summary>
     /// <param name="tile">The tile to take into consideration.</param>
-    public virtual void HighlightAffectedTiles(LocationGridTile tile) { }
+    public virtual void ShowValidHighlight(LocationGridTile tile) { }
     public virtual void UnhighlightAffectedTiles() {
         TileHighlighter.Instance.HideHighlight();
     }
@@ -94,7 +140,7 @@ public class SkillData : IPlayerSkill {
     /// <param name="tile"></param>
     /// <param name="invalidText"></param>
     /// <returns>True or false (Whether or not this spell showed an invalid highlight)</returns>
-    public virtual bool InvalidHighlight(LocationGridTile tile, ref string invalidText) { return false; }
+    public virtual bool ShowInvalidHighlight(LocationGridTile tile, ref string invalidText) { return false; }
     #endregion
 
     #region General
@@ -106,7 +152,9 @@ public class SkillData : IPlayerSkill {
         baseThreat = 0;
         threatPerHour = 0;
         currentCooldownTick = cooldown;
-        isInUse = false;
+        currentLevel = 0;
+        ResetIsInUse();
+        isTemporarilyInUse = false;
     }
     public bool CanPerformAbilityTowards(IPointOfInterest poi) {
         if(poi.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
@@ -117,7 +165,7 @@ public class SkillData : IPlayerSkill {
         return CanPerformAbility();
     }
     public bool CanPerformAbility() {
-        bool canBePerformed = (!hasCharges || charges > 0) && (!hasManaCost || PlayerManager.Instance.player.mana >= manaCost); // && (!hasCooldown || currentCooldownTick >= cooldown);
+        bool canBePerformed = (((!hasCharges || charges > 0) && isInUse) || hasBonusCharges) && (!hasManaCost || PlayerManager.Instance.player.mana >= manaCost); // && (!hasCooldown || currentCooldownTick >= cooldown);
         if (!canBePerformed) {
             if (type == PLAYER_SKILL_TYPE.SCHEME) {
                 //This is the scheme parent, even if there are no charges, it can be performed so that the player can see the second column
@@ -159,10 +207,10 @@ public class SkillData : IPlayerSkill {
         return CanPerformAbilityTowards(poi);
     }
     public bool CanTarget(LocationGridTile tile) {
-        return CanPerformAbilityTowards(tile);
+        return CanPerformAbilityTowards(tile, out _);
     }
-    public bool CanTarget(HexTile hex) {
-        return CanPerformAbilityTowards(hex);
+    public bool CanTarget(Area p_area) {
+        return CanPerformAbilityTowards(p_area);
     }
     public bool CanTarget(BaseSettlement p_targetSettlement) {
         return CanPerformAbilityTowards(p_targetSettlement);
@@ -174,17 +222,20 @@ public class SkillData : IPlayerSkill {
     //    Messenger.Broadcast(Signals.INCREASE_THREAT_THAT_SEES_TILE, targetTile, amount);
     //}
     public void OnLoadSpell() {
-        Messenger.Broadcast(PlayerSignals.CHARGES_ADJUSTED, this);
+        Messenger.Broadcast(PlayerSkillSignals.CHARGES_ADJUSTED, this);
         if (hasCooldown) {
             if((hasCharges && charges < maxCharges) || currentCooldownTick < cooldown) {
-                Messenger.Broadcast(SpellSignals.SPELL_COOLDOWN_STARTED, this);
+                Messenger.Broadcast(PlayerSkillSignals.SPELL_COOLDOWN_STARTED, this);
                 Messenger.AddListener(Signals.TICK_STARTED, PerTickCooldown);
             }
         }
     }
     public void OnExecutePlayerSkill() {
         if (!PlayerSkillManager.Instance.unlimitedCast) {
-            if(hasCharges) {
+            //If there are bonus charges, decrease that first
+            if (hasBonusCharges) {
+                AdjustBonusCharges(-1);
+            } else if (hasCharges) {
                 if(charges > 0 && WorldSettings.Instance.worldSettingsData.playerSkillSettings.chargeAmount != SKILL_CHARGE_AMOUNT.Unlimited) {
                     AdjustCharges(-1);
                 }
@@ -206,27 +257,36 @@ public class SkillData : IPlayerSkill {
         //PlayerManager.Instance.player.threatComponent.AdjustThreat(20);
 
         if (category == PLAYER_SKILL_CATEGORY.PLAYER_ACTION) {
-            Messenger.Broadcast(SpellSignals.ON_EXECUTE_PLAYER_ACTION, this as PlayerAction);
+            Messenger.Broadcast(PlayerSkillSignals.ON_EXECUTE_PLAYER_ACTION, this as PlayerAction);
         } else if (category == PLAYER_SKILL_CATEGORY.AFFLICTION) {
-            Messenger.Broadcast(SpellSignals.ON_EXECUTE_AFFLICTION, this);
+            Messenger.Broadcast(PlayerSkillSignals.ON_EXECUTE_AFFLICTION, this);
         } else {
-            Messenger.Broadcast(SpellSignals.ON_EXECUTE_PLAYER_SKILL, this);
+            Messenger.Broadcast(PlayerSkillSignals.ON_EXECUTE_PLAYER_SKILL, this);
         }
     }
-    private void StartCooldown() {
+    public void StartCooldown() {
         if (hasCooldown && currentCooldownTick == cooldown) {
             SetCurrentCooldownTick(0);
-            Messenger.Broadcast(SpellSignals.SPELL_COOLDOWN_STARTED, this);
-            Messenger.AddListener(Signals.TICK_STARTED, PerTickCooldown);
+            Messenger.Broadcast(PlayerSkillSignals.SPELL_COOLDOWN_STARTED, this);
+            if(cooldown > 0) {
+                Messenger.AddListener(Signals.TICK_STARTED, PerTickCooldown);
+            } else {
+                PerTickCooldown();
+            }
         }
     }
-    private void PerTickCooldown() {
+    protected virtual void PerTickCooldown() {
+#if DEBUG_PROFILER
         Profiler.BeginSample($"{name} Per Tick Cooldown");
+#endif
         currentCooldownTick++;
         // Assert.IsFalse(currentCooldownTick > cooldown, $"Cooldown tick became higher than cooldown in {name}. Cooldown is {cooldown.ToString()}. Cooldown Tick is {currentCooldownTick.ToString()}");
         if(currentCooldownTick >= cooldown) {
             //SetCharges(maxCharges);
-            if(hasCharges && charges < maxCharges) {
+            currentCooldownTick = cooldown;
+            FinishCooldown();
+
+            if (hasCharges && charges < maxCharges) {
                 AdjustCharges(1);
             } else {
                 //Special Case for Schemes
@@ -238,15 +298,21 @@ public class SkillData : IPlayerSkill {
                     }
                 }
             }
-            Messenger.RemoveListener(Signals.TICK_STARTED, PerTickCooldown);
-            Messenger.Broadcast(SpellSignals.SPELL_COOLDOWN_FINISHED, this);
-            Messenger.Broadcast(SpellSignals.FORCE_RELOAD_PLAYER_ACTIONS);
-
-            if(hasCharges && charges < maxCharges) {
-                StartCooldown();
-            }
+            Messenger.Broadcast(PlayerSkillSignals.FORCE_RELOAD_PLAYER_ACTIONS);
+            //Cooldown is started already in AdjustCharges
+            //if (hasCharges && charges < maxCharges) {
+            //    StartCooldown();
+            //}
         }
+#if DEBUG_PROFILER
         Profiler.EndSample();
+#endif
+    }
+    public virtual void FinishCooldown() {
+        if (Messenger.eventTable.ContainsKey(Signals.TICK_STARTED)) {
+            Messenger.RemoveListener(Signals.TICK_STARTED, PerTickCooldown);
+        }
+        Messenger.Broadcast(PlayerSkillSignals.SPELL_COOLDOWN_FINISHED, this);
     }
     public string GetManaCostChargesCooldownStr() {
         string str = "Mana Cost: " + manaCost;
@@ -254,23 +320,63 @@ public class SkillData : IPlayerSkill {
         str += "\nCooldown: " + cooldown;
         return str;
     }
-    #endregion
+    private string GetDisplayOfCurrentChargesWithBonusChargesNotCombined() {
+        return SpellUtilities.GetDisplayOfCurrentChargesWithBonusChargesNotCombined(charges, maxCharges, bonusCharges, hasCharges && isInUse);
+    }
+    private string GetDisplayOfCurrentChargesWithBonusChargesCombined() {
+        string str = string.Empty;
+        if (hasCharges || hasBonusCharges) {
+            str += $"{(isInUse ? totalCharges : bonusCharges)}{(hasBonusCharges ? UtilityScripts.Utilities.BonusChargesIcon() : UtilityScripts.Utilities.ChargesIcon())}";
+        }
+        return str;
+    }
+    private string GetDisplayOfCurrentChargesWithBonusChargesCombinedIconFirst() {
+        string str = string.Empty;
+        if (hasCharges || hasBonusCharges) {
+            str += $"{(hasBonusCharges ? UtilityScripts.Utilities.BonusChargesIcon() : UtilityScripts.Utilities.ChargesIcon())}{(isInUse ? totalCharges : bonusCharges)}";
+        }
+        return str;
+    }
+#endregion
 
-    #region Attributes
+#region Attributes
+    public void SetIsUnlockBaseOnRequirements(bool p_isUnlocked) {
+        isUnlockedBaseOnRequirements = p_isUnlocked;
+    }
     public void SetMaxCharges(int amount) {
         baseMaxCharges = amount;
+    }
+    public void AdjustMaxCharges(int amount) {
+        baseMaxCharges += amount;
     }
     public void SetCharges(int amount) {
         charges = amount;
     }
+    public void SetBonusCharges(int amount) {
+        bonusCharges = amount;
+    }
     public void AdjustCharges(int amount) {
         charges += amount;
-        Messenger.Broadcast(PlayerSignals.CHARGES_ADJUSTED, this);
+        Messenger.Broadcast(PlayerSkillSignals.CHARGES_ADJUSTED, this);
 
         if(charges < maxCharges) {
             StartCooldown();
         }
     }
+    public void AdjustBonusCharges(int amount) {
+        bonusCharges += amount;
+        bonusCharges = Mathf.Max(bonusCharges, 0);
+        Messenger.Broadcast(PlayerSkillSignals.BONUS_CHARGES_ADJUSTED, this);
+    }
+
+    public void SetPierce(float amount) {
+        basePierce = amount;
+    }
+
+    public void SetUnlockCost(int amount) {
+        unlockCost = amount;
+    }
+
     public void SetManaCost(int amount) {
         baseManaCost = amount;
     }
@@ -288,8 +394,30 @@ public class SkillData : IPlayerSkill {
         threatPerHour = amount;
     }
     public void SetIsInUse(bool state) {
-        isInUse = state;
+        if (isInUse != state) {
+            isInUse = state;
+            PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetScriptableObjPlayerSkillData<PlayerSkillData>(type);
+            if (isInUse) {
+                SetIsTemporarilyInUse(false);
+                if (playerSkillData != null) {
+                    PlayerManager.Instance.player.playerSkillComponent.AddTierCount(playerSkillData);
+                }
+            } else {
+                if (playerSkillData != null) {
+                    PlayerManager.Instance.player.playerSkillComponent.RemoveTierCount(playerSkillData);
+                }
+            }
+        }
         // Debug.Log($"Set spell {name} in use to {isInUse.ToString()}");
     }
-    #endregion
+    public void ResetIsInUse() {
+        isInUse = false;
+    }
+    public void SetIsTemporarilyInUse(bool p_state) {
+        isTemporarilyInUse = p_state;
+    }
+    public void SetCurrentLevel(int amount) {
+        currentLevel = amount;
+    }
+#endregion
 }

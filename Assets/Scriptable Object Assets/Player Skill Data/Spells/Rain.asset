@@ -13,15 +13,81 @@ MonoBehaviour:
   m_Name: Rain
   m_EditorClassIdentifier: 
   skill: 32
-  manaCost: 5
-  charges: 3
-  cooldown: 96
+  manaCost: 25
+  charges: 1
+  cooldown: 240
   threat: 0
   threatPerHour: 0
   expCost: 0
+  cheatedLevel: 0
+  pierce: 0
+  bonusChargeWhenUnlocked: 3
+  unlockChargeOnPortalUpgrade: 1
   buttonSprite: {fileID: 21300000, guid: dfbece8ed8611b042b4b4ffafe7b09e3, type: 3}
   tooltipVideoClip: {fileID: 0}
   tooltipImage: {fileID: 0}
+  unlockCost: 30
+  tier: 2
+  baseLoadoutWeight: 150
+  resistanceType: 0
+  archetypeWeightedBonus: 2
+  canBeReleasedEvenIfLearned: 0
   contextMenuIcon: {fileID: 0}
   contextMenuColumn: 0
+  playerActionIcon: {fileID: 0}
+  isNonUpgradeable: 0
+  isAffliction: 0
+  isLockedBaseOnRequirements: 0
+  canBeCastedOnMaxLevel: 0
+  requirementData:
+    requirements: 08000000
+    requiredArchetypes: 
+    requiredSkills: 
+    actionCount: 0
+    afflictionCount: 0
+    spellsCount: 0
+    tier1Count: 0
+    tier2Count: 0
+    tier3Count: 0
+    portalLevel: 1
+    isOR: 0
+  skillUpgradeData:
+    upgradeCosts: 140000003200000050000000
+    manacostPerLevel: 320000004b000000640000007d000000
+    chargesPerLevel: 01000000010000000200000003000000
+    bonuses: 0e0000000a000000
+    additionalDamagePerLevel: 
+    additionalPiercePerLevel: []
+    additionalHpPercentagePerLevel: []
+    additionalAttackPercentagePerLevel: []
+    additionalHpValuePerLevel: 
+    additionalAttackValuePerLevel: 
+    applyOnLevel: 
+    additionalmanaReceivedPercentagePerLevel: []
+    statsIncreasedPercentagePerLevel:
+    - 0
+    - 40
+    - 80
+    - 120
+    durationBonusPerLevel: 28000000280000002800000028000000
+    additionalMaxHPPercentagePerLevel: []
+    additionalMaxHPActualPerLevel: 
+    additionalChanceBonusPercentagePerLevel: []
+    additionalTileRangeBonusPerLevel: 
+    decreaseMovementSpeedPerLevel: 
+    cooldownPerLevel: 500000003c0000003c0000003c000000
+    skillMovementSpeed: 
+  afflictionUpgradeData:
+    bonuses: 
+    cooldown: 
+    additionalPiercePerLevel: []
+    rateChance: 
+    crowdNumber: 
+    napsDuration: 
+    numberOfCriteria: 
+    hungerRate: 
+    duration: []
+    opinionTrigger: 
+    addedBehaviour: 
+    listOfCriteria: 
   rainSoundEffect: {fileID: 8300000, guid: a512f029a3def8646857bf320b125283, type: 3}

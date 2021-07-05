@@ -7,7 +7,7 @@ using Inner_Maps.Location_Structures;
 public class RepairData : PlayerAction {
     public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.REPAIR;
     public override string name => "Repair";
-    public override string description => "This Action can be used to fully repair all damages to a demonic structure.";
+    public override string description => "This Ability can be used to repair Demonic Structure damage.";
     public RepairData() : base() {
         targetTypes = new SPELL_TARGET[] { SPELL_TARGET.STRUCTURE };
     }
@@ -32,8 +32,12 @@ public class RepairData : PlayerAction {
         return canPerform;
     }
     public override bool IsValid(IPlayerActionTarget target) {
+        if (target is ThePortal) {
+            //Portal has high hp but cannot be repaired
+            return false;
+        }
         if (target is LocationStructure structure) {
-            if (structure.hasBeenDestroyed || structure.tiles.Count <= 0) {
+            if (structure.hasBeenDestroyed || structure.tiles.Count <= 0 || structure.currentHP >= structure.maxHP) {
                 return false;
             }
         }

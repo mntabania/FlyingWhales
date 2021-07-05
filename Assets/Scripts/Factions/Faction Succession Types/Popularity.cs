@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UtilityScripts;
 using Traits;
+using Character_Talents;
 
 namespace Factions.Faction_Succession {
     public class Popularity : FactionSuccession {
@@ -63,8 +64,10 @@ namespace Factions.Faction_Succession {
                 if (faction.factionType.IsCivilian(member.characterClass.className)) {
                     weight += -40;
                 }
+                weight += AdditionalWeightBasedOnSocialTalent(member);
+
                 if (member is Summon || member.characterClass.IsZombie()) {
-                    if (faction.HasMemberThatMeetCriteria(c => c.race.IsSapient() && (c.IsAtHome() || c.partyComponent.isMemberThatJoinedQuest))) {
+                    if (faction.HasMemberThatIsSapientAndIsAtHomeOrHasJoinedQuest()) {
                         weight *= 0;
                     }
                 }
@@ -105,5 +108,27 @@ namespace Factions.Faction_Succession {
             }
         }
         #endregion
+
+        private int AdditionalWeightBasedOnSocialTalent(Character p_character) {
+            if (p_character.HasTalents()) {
+                CharacterTalent talent = p_character.talentComponent.GetTalent(CHARACTER_TALENT.Social);
+                int level = talent.level;
+                switch (level) {
+                    case 1:
+                        return 0;
+                    case 2:
+                        return 50;
+                    case 3:
+                        return 100;
+                    case 4:
+                        return 250;
+                    case 5:
+                        return 250;
+                    default:
+                        return 0;
+                }
+            }
+            return 0;
+        }
     }
 }

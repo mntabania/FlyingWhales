@@ -3,12 +3,14 @@ using Inner_Maps;
 using Traits;
 using UnityEngine;
 
-public class GiantSpider : Summon {
+public class GiantSpider : SkinnableAnimal {
 
     public const string ClassName = "Giant Spider";
     
     public override string raceClassName => $"Giant Spider";
     public override bool defaultDigMode => true;
+
+    public override TILE_OBJECT_TYPE produceableMaterial => TILE_OBJECT_TYPE.SPIDER_SILK;
 
     public GiantSpider() : base(SUMMON_TYPE.Giant_Spider, ClassName, RACE.SPIDER, UtilityScripts.Utilities.GetRandomGender()) {
         //combatComponent.SetCombatMode(COMBAT_MODE.Aggressive);
@@ -16,7 +18,7 @@ public class GiantSpider : Summon {
     public GiantSpider(string className) : base(SUMMON_TYPE.Giant_Spider, className, RACE.SPIDER, UtilityScripts.Utilities.GetRandomGender()) {
         //combatComponent.SetCombatMode(COMBAT_MODE.Aggressive);
     }
-    public GiantSpider(SaveDataSummon data) : base(data) {
+    public GiantSpider(SaveDataSkinnableAnimal data) : base(data) {
         //combatComponent.SetCombatMode(COMBAT_MODE.Aggressive);
     }
 
@@ -38,7 +40,7 @@ public class GiantSpider : Summon {
             return;
         }
         base.SubscribeToSignals();
-        Messenger.AddListener<Character, GoapPlanJob>(CharacterSignals.CHARACTER_FINISHED_JOB_SUCCESSFULLY, OnCharacterFinishedJobSuccessfully);
+        //Messenger.AddListener<Character, GoapPlanJob>(CharacterSignals.CHARACTER_FINISHED_JOB_SUCCESSFULLY, OnCharacterFinishedJobSuccessfully);
         Messenger.AddListener<JobQueueItem, Character>(JobSignals.JOB_ADDED_TO_QUEUE, OnAddedJobToQueue);
         Messenger.AddListener<JobQueueItem, Character>(JobSignals.JOB_REMOVED_FROM_QUEUE, OnRemovedJobFromQueue);
     }
@@ -47,19 +49,19 @@ public class GiantSpider : Summon {
             return;
         }
         base.UnsubscribeSignals();
-        Messenger.RemoveListener<Character, GoapPlanJob>(CharacterSignals.CHARACTER_FINISHED_JOB_SUCCESSFULLY, OnCharacterFinishedJobSuccessfully);
+        //Messenger.RemoveListener<Character, GoapPlanJob>(CharacterSignals.CHARACTER_FINISHED_JOB_SUCCESSFULLY, OnCharacterFinishedJobSuccessfully);
         Messenger.RemoveListener<JobQueueItem, Character>(JobSignals.JOB_ADDED_TO_QUEUE, OnAddedJobToQueue);
         Messenger.RemoveListener<JobQueueItem, Character>(JobSignals.JOB_REMOVED_FROM_QUEUE, OnRemovedJobFromQueue);
     }
     #endregion
 
     #region Listeners
-    private void OnCharacterFinishedJobSuccessfully(Character character, GoapPlanJob job) {
-        if (character == this && job.jobType == JOB_TYPE.MONSTER_ABDUCT && job.targetPOI is Character targetCharacter) {
-            job.targetPOI.traitContainer.AddTrait(targetCharacter, "Webbed", this);
-            targetCharacter.defaultCharacterTrait.SetHasBeenAbductedByWildMonster(true);
-        }
-    }
+    //private void OnCharacterFinishedJobSuccessfully(Character character, GoapPlanJob job) {
+    //    if (character == this && job.jobType == JOB_TYPE.MONSTER_ABDUCT && job.targetPOI is Character targetCharacter) {
+    //        job.targetPOI.traitContainer.AddTrait(targetCharacter, "Webbed", this);
+    //        targetCharacter.defaultCharacterTrait.SetHasBeenAbductedByWildMonster(true);
+    //    }
+    //}
     private void OnRemovedJobFromQueue(JobQueueItem job, Character character) {
         if (character == this && job.jobType == JOB_TYPE.MONSTER_ABDUCT) {
             if (character is Summon summon) {

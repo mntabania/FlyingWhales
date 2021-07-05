@@ -19,6 +19,66 @@ MonoBehaviour:
   threat: 0
   threatPerHour: 0
   expCost: 0
+  cheatedLevel: 0
+  pierce: 0
+  bonusChargeWhenUnlocked: 0
   buttonSprite: {fileID: 0}
   tooltipVideoClip: {fileID: 0}
   tooltipImage: {fileID: 0}
+  unlockCost: 10
+  tier: 1
+  baseLoadoutWeight: 50
+  resistanceType: 0
+  archetypeWeightedBonus: 0
+  contextMenuIcon: {fileID: 0}
+  contextMenuColumn: 0
+  playerActionIcon: {fileID: 0}
+  isNonUpgradeable: 1
+  isAffliction: 0
+  isLockedBaseOnRequirements: 0
+  requirementData:
+    requirements: 
+    requiredArchetype: 0
+    requiredSkills: 
+    actionCount: 0
+    afflictionCount: 0
+    spellsCount: 0
+    tier1Count: 0
+    tier2Count: 0
+    tier3Count: 0
+    portalLevel: 0
+    isOR: 0
+  skillUpgradeData:
+    upgradeCosts: 
+    manacostPerLevel: c8000000
+    chargesPerLevel: 
+    bonuses: 
+    additionalDamagePerLevel: 
+    additionalPiercePerLevel: []
+    additionalHpPercentagePerLevel: []
+    additionalAttackPercentagePerLevel: []
+    additionalHpValuePerLevel: 
+    additionalAttackValuePerLevel: 
+    additionalmanaReceivedPercentagePerLevel: []
+    statsIncreasedPercentagePerLevel: []
+    durationBonusPerLevel: 
+    additionalMaxHPPercentagePerLevel: []
+    additionalMaxHPActualPerLevel: 
+    additionalChanceBonusPercentagePerLevel: []
+    additionalTileRangeBonusPerLevel: 
+    decreaseMovementSpeedPerLevel: 
+    cooldownPerLevel: 
+    skillMovementSpeed: 
+  afflictionUpgradeData:
+    bonuses: 
+    cooldown: 
+    additionalPiercePerLevel: []
+    rateChance: 
+    crowdNumber: 
+    napsDuration: 
+    numberOfCriteria: 
+    hungerRate: 
+    duration: []
+    opinionTrigger: 
+    addedBehaviour: 
+    listOfCriteria: 

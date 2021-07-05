@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1e0fe33fc91848c68ab8d6bd0b390d79, type: 3}
+  m_Name: Time_Management
+  m_EditorClassIdentifier: 
+  tutorialType: 13
+  tutorialNameKey: Time_Management
+  pages:
+  - imgTutorial: {fileID: 21300000, guid: 6cbaccdee8b800049a9ad6e93b550464, type: 3}
+    description: Click on the various Speed buttons to change game speed. You may
+      also press Spacebar to Pause or Unpause the game. You can also use the + and
+      - keys to change game speed.

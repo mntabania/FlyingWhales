@@ -16,17 +16,18 @@ public class FrostyFogData : SkillData {
         frostyFog.SetGridTileLocation(targetTile);
         frostyFog.OnPlacePOI();
         frostyFog.SetStacks(EditableValuesManager.Instance.frostyFogStacks);
+        frostyFog.SetIsPlayerSource(true);
         //IncreaseThreatThatSeesTile(targetTile, 10);
         base.ActivateAbility(targetTile);
     }
-    public override bool CanPerformAbilityTowards(LocationGridTile targetTile) {
-        bool canPerform = base.CanPerformAbilityTowards(targetTile);
+    public override bool CanPerformAbilityTowards(LocationGridTile targetTile, out string o_cannotPerformReason) {
+        bool canPerform = base.CanPerformAbilityTowards(targetTile, out o_cannotPerformReason);
         if (canPerform) {
             return targetTile.structure != null;
         }
         return canPerform;
     }
-    public override void HighlightAffectedTiles(LocationGridTile tile) {
+    public override void ShowValidHighlight(LocationGridTile tile) {
         TileHighlighter.Instance.PositionHighlight(1, tile);
     }
 }

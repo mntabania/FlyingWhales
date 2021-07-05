@@ -22,13 +22,15 @@ public class ReadNecronomicon : GoapAction {
         SetState("Read Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
+#if DEBUG_LOG
         string costLog = $"\n{name} {target.nameWithID}: +10(Constant)";
         actor.logComponent.AppendCostLog(costLog);
+#endif
         return 10;
     }
-    #endregion
+#endregion
 
-    #region Requirements
+#region Requirements
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, OtherData[] otherData, JobQueueItem job) {
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData, job);
         if (satisfied) {
@@ -36,9 +38,9 @@ public class ReadNecronomicon : GoapAction {
         }
         return false;
     }
-    #endregion
+#endregion
 
-    #region State Effects
+#region State Effects
     public void PreReadSuccess(ActualGoapNode goapNode) {
         TileObject item = goapNode.actor.GetItem("Necronomicon");
         if(item != null) {
@@ -51,6 +53,6 @@ public class ReadNecronomicon : GoapAction {
             goapNode.actor.UncarryPOI(item, bringBackToInventory: true);
         }
     }
-    #endregion
+#endregion
 
 }

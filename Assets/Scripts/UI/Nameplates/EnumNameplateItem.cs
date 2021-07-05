@@ -25,7 +25,7 @@ public class EnumNameplateItem : NameplateItem<Enum> {
             // if (WorldConfigManager.Instance.isTutorialWorld) {
             //     SetLockedState(WorldConfigManager.Instance.availableSpellsInTutorial.Contains(spellType) == false);
             // }
-            SkillData spellData = PlayerSkillManager.Instance.GetPlayerSkillData(spellType);
+            SkillData spellData = PlayerSkillManager.Instance.GetSkillData(spellType);
             //if (PlayerSkillManager.Instance.IsAffliction(spellType)) {
             //    spellData = PlayerSkillManager.Instance.GetAfflictionData(spellType);
             //} else if (PlayerSkillManager.Instance.IsPlayerAction(spellType)) {

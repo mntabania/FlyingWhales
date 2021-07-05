@@ -20,11 +20,12 @@ public class SaveDataLocationStructure : SaveData<LocationStructure> {
     public int currentHP;
     public List<string> residentIDs;
     public List<string> charactersHereIDs;
-    public string occupiedHexTileID;
+    public string occupiedAreaID;
     public string settlementLocationID;
     public bool isInterior;
     public SaveDataStructureRoom[] structureRoomSaveData;
     public bool hasBeenDestroyed;
+    public bool isStoredAsTarget;
     public List<string> tileObjectDamageContributors;
 
     public override void Save(LocationStructure structure) {
@@ -35,7 +36,8 @@ public class SaveDataLocationStructure : SaveData<LocationStructure> {
         structureType = structure.structureType;
         regionLocationID = structure.region.persistentID;
         settlementLocationID = structure.settlementLocation?.persistentID ?? string.Empty;
-        
+        isStoredAsTarget = structure.isStoredAsTarget;
+
         //structure tags
         structureTags = new STRUCTURE_TAG[structure.structureTags.Count];
         for (int i = 0; i < structure.structureTags.Count; i++) {
@@ -63,11 +65,11 @@ public class SaveDataLocationStructure : SaveData<LocationStructure> {
         charactersHereIDs = SaveUtilities.ConvertSavableListToIDs(structure.charactersHere);
         
         //occupied hex tile
-        if (structure.occupiedHexTile != null) {
-            occupiedHexTileID = structure.occupiedHexTile.hexTileOwner.persistentID;    
+        if (structure.occupiedArea != null) {
+            occupiedAreaID = structure.occupiedArea.persistentID;    
         } else {
-            occupiedHexTileID = string.Empty;
-            Debug.Log($"{structure.name} has no occupied hextile!");
+            occupiedAreaID = string.Empty;
+            Debug.Log($"{structure.name} has no occupied area!");
         }
         
         isInterior = structure.isInterior;
@@ -101,29 +103,47 @@ public class SaveDataLocationStructure : SaveData<LocationStructure> {
 public class SaveDataNaturalStructure : SaveDataLocationStructure {
     //No Unique data for now
 }
+public class SaveDataAnimalDen : SaveDataNaturalStructure {
+    public string structureTemplateName;
+    public Vector3Save structureObjectWorldPosition;
+    public override void Save(LocationStructure structure) {
+        base.Save(structure);
+        AnimalDen animalDen = structure as AnimalDen;
+        Assert.IsNotNull(animalDen);
+        string templateName = animalDen.templateName;
+        templateName = templateName.Replace("(Clone)", "");
+        structureTemplateName = templateName;
+        structureObjectWorldPosition = animalDen.structureObjectWorldPos;
+    }
+}
 
 public class SaveDataManMadeStructure : SaveDataLocationStructure {
 
     public string structureTemplateName;
-    public SaveDataStructureWallObject[] structureWallObjects;
+    public SaveDataTileObject[] structureWallObjects;
     public RESOURCE wallsMadeOf;
     public Vector3Save structureObjectWorldPosition;
     public SaveDataStructureConnector[] structureConnectors;
-    
+    public string[] assignedWorkerIDs;
+
+    public string[] dirtyObjects;
+    public GameDate scheduledDirtProduction;
+
     public override void Save(LocationStructure locationStructure) {
         base.Save(locationStructure);
         ManMadeStructure manMadeStructure = locationStructure as ManMadeStructure;
         Assert.IsNotNull(manMadeStructure);
 
+        assignedWorkerIDs = manMadeStructure.assignedWorkerIDs.ToArray();
         if (manMadeStructure.hasBeenDestroyed) {
             structureTemplateName = string.Empty;
             structureObjectWorldPosition = Vector3.zero;
         } else {
             //structure object
-            string templateName = manMadeStructure.structureObj.name;
+            string templateName = manMadeStructure.templateName;
             templateName = templateName.Replace("(Clone)", "");
             structureTemplateName = templateName;
-            structureObjectWorldPosition = manMadeStructure.structureObj.transform.position;    
+            structureObjectWorldPosition = manMadeStructure.structureObjectWorldPos;    
             structureConnectors = new SaveDataStructureConnector[manMadeStructure.structureObj.connectors.Length];
             for (int i = 0; i < structureConnectors.Length; i++) {
                 StructureConnector connector = manMadeStructure.structureObj.connectors[i];
@@ -135,40 +155,25 @@ public class SaveDataManMadeStructure : SaveDataLocationStructure {
         
         //walls
         if (manMadeStructure.structureWalls != null) {
-            structureWallObjects = new SaveDataStructureWallObject[manMadeStructure.structureWalls.Count];
+            structureWallObjects = new SaveDataTileObject[manMadeStructure.structureWalls.Count];
             for (int i = 0; i < manMadeStructure.structureWalls.Count; i++) {
-                StructureWallObject structureWallObject = manMadeStructure.structureWalls[i];
-                SaveDataStructureWallObject saveDataStructureWallObject = new SaveDataStructureWallObject();
+                ThinWall structureWallObject = manMadeStructure.structureWalls[i];
+                SaveDataTileObject saveDataStructureWallObject = new SaveDataTileObject();
                 saveDataStructureWallObject.Save(structureWallObject);
                 structureWallObjects[i] = saveDataStructureWallObject;
             }
             wallsMadeOf = manMadeStructure.wallsAreMadeOf;
         }
-    }
-}
 
-public class SaveDataDemonicStructure : SaveDataLocationStructure {
-    
-    public string structureTemplateName;
-    public Vector3Save structureObjectWorldPosition;
-    // public int activeSnatchJobs;
-
-    public override void Save(LocationStructure locationStructure) {
-        base.Save(locationStructure);
-        DemonicStructure demonicStructure = locationStructure as DemonicStructure;
-        Assert.IsNotNull(demonicStructure);
-
-        if (demonicStructure.hasBeenDestroyed) {
-            structureTemplateName = string.Empty;
-            structureObjectWorldPosition = Vector3.zero;
-        } else {
-            //structure object
-            string templateName = demonicStructure.structureObj.name;
-            templateName = templateName.Replace("(Clone)", "");
-            structureTemplateName = templateName;
-            structureObjectWorldPosition = demonicStructure.structureObj.transform.position;
+        if (manMadeStructure.dirtyObjects.Count > 0) {
+            dirtyObjects = new string[manMadeStructure.dirtyObjects.Count];
+            for (int i = 0; i < manMadeStructure.dirtyObjects.Count; i++) {
+                TileObject dirtyObject = manMadeStructure.dirtyObjects[i];
+                dirtyObjects[i] = dirtyObject.persistentID;
+            }
         }
-
-        // activeSnatchJobs = demonicStructure.activeSnatchJobs;
+        if (manMadeStructure.scheduledDirtProduction.hasValue) {
+            scheduledDirtProduction = manMadeStructure.scheduledDirtProduction;
+        }
     }
 }

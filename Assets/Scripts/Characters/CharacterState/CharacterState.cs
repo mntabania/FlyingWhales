@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Object_Pools;
 using UnityEngine;
 
 public class CharacterState {
@@ -141,8 +142,10 @@ public class CharacterState {
         if (isPaused) {
             return;
         }
+#if DEBUG_LOG
         stateComponent.owner.logComponent.PrintLogIfActive(
             $"Pausing {stateName} for {stateComponent.owner.name}");
+#endif
         isPaused = true;
         if(stateComponent.currentState == this) {
             stateComponent.SetCurrentState(null);
@@ -163,7 +166,9 @@ public class CharacterState {
         if (!isPaused) {
             return; //if this state is not paused then do not resume.
         }
+#if DEBUG_LOG
         stateComponent.owner.logComponent.PrintLogIfActive($"Resuming {stateName} for {stateComponent.owner.name}");
+#endif
         isPaused = false;
         if (stateComponent.currentState != this) {
             stateComponent.SetCurrentState(this);
@@ -175,15 +180,21 @@ public class CharacterState {
         //StartStatePerTick();
         DoMovementBehavior();
     }
-    protected virtual void OnJobSet() { }
-    protected virtual void CreateThoughtBubbleLog() {
+    private void CreateThoughtBubbleLog() {
         if (LocalizationManager.Instance.HasLocalizedValue("CharacterState", stateName, "thought_bubble")) {
-            thoughtBubbleLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "CharacterState", stateName, "thought_bubble", providedTags: characterState == CHARACTER_STATE.COMBAT ? LOG_TAG.Combat : LOG_TAG.Work);
-            thoughtBubbleLog.AddToFillers(stateComponent.owner, stateComponent.owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "CharacterState", stateName, "thought_bubble", providedTags: characterState == CHARACTER_STATE.COMBAT ? LOG_TAG.Combat : LOG_TAG.Work);
+            log.AddToFillers(stateComponent.owner, stateComponent.owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             if (targetPOI != null) {
-                thoughtBubbleLog.AddToFillers(targetPOI, targetPOI.name, LOG_IDENTIFIER.TARGET_CHARACTER); //Target character is only the identifier but it doesn't mean that this is a character, it can be item, etc.
+                log.AddToFillers(targetPOI, targetPOI.name, LOG_IDENTIFIER.TARGET_CHARACTER); //Target character is only the identifier but it doesn't mean that this is a character, it can be item, etc.
             }
+            SetThoughtBubbleLog(log);
         }
+    }
+    protected void SetThoughtBubbleLog(Log p_log) {
+        if (thoughtBubbleLog != null) {
+            LogPool.Release(thoughtBubbleLog);
+        }
+        thoughtBubbleLog = p_log;
     }
     public virtual void Reset() {
         currentDuration = 0;
@@ -193,7 +204,7 @@ public class CharacterState {
         job = null;
         targetPOI = null;
     }
-    #endregion
+#endregion
 
     //private void FakeEndAction(string str, GoapAction action) {
     //    //This is just a fake holder end action so that the currently doing action will not go to its actual end action (ex. PatrolAgain)
@@ -291,19 +302,7 @@ public class CharacterState {
             if (targetPOI != null) {
                 log.AddToFillers(targetPOI, targetPOI.name, LOG_IDENTIFIER.TARGET_CHARACTER); //Target character is only the identifier but it doesn't mean that this is a character, it can be item, etc.
             }
-            //if(targetNpcSettlement != null) {
-            //    log.AddToFillers(targetNpcSettlement, targetNpcSettlement.name, LOG_IDENTIFIER.LANDMARK_1);
-            //}
-            log.AddLogToDatabase();
-
-            // PlayerManager.Instance.player.ShowNotificationFrom(log, stateComponent.character, false);
-        }
-    }
-    private void CreateTravellingThoughtBubbleLog(NPCSettlement targetLocation) {
-        if (LocalizationManager.Instance.HasLocalizedValue("CharacterState", stateName, "thought_bubble_m")) {
-            thoughtBubbleLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "CharacterState", stateName, "thought_bubble_m", providedTags: characterState == CHARACTER_STATE.COMBAT ? LOG_TAG.Combat : LOG_TAG.Work);
-            thoughtBubbleLog.AddToFillers(stateComponent.owner, stateComponent.owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-            thoughtBubbleLog.AddToFillers(targetLocation, targetLocation.name, LOG_IDENTIFIER.LANDMARK_1);
+            log.AddLogToDatabase(true);
         }
     }
     public void SetTargetPOI(IPointOfInterest poi) {
@@ -332,7 +331,7 @@ public class CharacterState {
     //}
     //#endregion
 
-    #region Utilities
+#region Utilities
     internal void ChangeDuration(int newDuration) {
         duration = newDuration;
     }
@@ -349,7 +348,7 @@ public class CharacterState {
     public override string ToString() {
         return $"{stateName} by {stateComponent.owner.name} with job : {(job?.name ?? "None")}";
     }
-    #endregion
+#endregion
 }
 
 //Combat and Character State with Jobs must not be saved since they have separate process for that

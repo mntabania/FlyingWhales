@@ -1,4 +1,5 @@
 ﻿using Inner_Maps;
+using Inner_Maps.Location_Structures;
 using UnityEngine;
 using UnityEngine.Assertions;
 
@@ -43,32 +44,54 @@ public class BlockWall : TileObject {
         return false;
     }
     public override void OnRemoveTileObject(Character removedBy, LocationGridTile removedFrom, bool removeTraits = true, bool destroyTileSlots = true) {
-        removedFrom.parentMap.structureTilemap.SetTile(removedFrom.localPlace, null);
+        removedFrom.SetWallTilemapTileAsset(null);
+        //removedFrom.parentMap.structureTilemap.SetTile(removedFrom.localPlace, null);
         removedFrom.SetTileType(LocationGridTile.Tile_Type.Empty);
         mapVisual.DestroyExistingGUS();
         if (!string.IsNullOrEmpty(_expiryScheduleKey)) {
             SchedulingManager.Instance.RemoveSpecificEntry(_expiryScheduleKey);
         }
         base.OnRemoveTileObject(removedBy, removedFrom, removeTraits, destroyTileSlots);
+        EvaluateAllBlockWallNeighboursForDiagonalImpassables(removedFrom, false);
     }
     protected override void OnPlaceTileObjectAtTile(LocationGridTile tile) {
-        tile.parentMap.structureTilemap.SetTile(tile.localPlace, InnerMapManager.Instance.assetManager.GetWallAssetBasedOnWallType(wallType));
+        tile.SetWallTilemapTileAsset(InnerMapManager.Instance.assetManager.GetWallAssetBasedOnWallType(wallType));
+        //tile.parentMap.structureTilemap.SetTile(tile.localPlace, InnerMapManager.Instance.assetManager.GetWallAssetBasedOnWallType(wallType));
         tile.SetTileType(LocationGridTile.Tile_Type.Wall);
-        Vector2 size = new Vector2(1f, 1f);
-        if (wallType == WALL_TYPE.Flesh) {
-            size = new Vector2(0.5f, 0.5f);
-        } else if (wallType == WALL_TYPE.Demon_Stone) {
-            size = new Vector2(1f, 1f);
-        }
+        //Vector2 size = new Vector2(1f, 1f);
+        //if (wallType == WALL_TYPE.Flesh) {
+        //    size = new Vector2(0.5f, 0.5f);
+        //} else if (wallType == WALL_TYPE.Demon_Stone) {
+        //    size = new Vector2(1f, 1f);
+        //}
+        Vector2 size = new Vector2(0.5f, 0.5f);
         mapVisual.InitializeGUS(Vector2.zero, size, tile);
-
+        // Debug.Log($"Placed {name} on {tile}");
+        ////Thin walls cannot co-exist with block walls, so if a block wall is placed, all thin walls must be destroyed
+        //if(tile.tileObjectComponent.walls.Count > 0) {
+        //    for (int i = 0; i < tile.tileObjectComponent.walls.Count; i++) {
+        //        ThinWall wall = tile.tileObjectComponent.walls[i];
+        //        wall.AdjustHP(-wall.maxHP, ELEMENTAL_TYPE.Normal, true);
+        //    }
+        //}
         base.OnPlaceTileObjectAtTile(tile);
+        EvaluateAllBlockWallNeighboursForDiagonalImpassables(tile, true);
     }
     public override void ConstructDefaultActions() {
         base.ConstructDefaultActions();
         RemovePlayerAction(PLAYER_SKILL_TYPE.SEIZE_OBJECT);
         RemovePlayerAction(PLAYER_SKILL_TYPE.POISON);
         RemovePlayerAction(PLAYER_SKILL_TYPE.IGNITE);
+    }
+    public override bool CanBeSelected() {
+        if (wallType == WALL_TYPE.Demon_Stone && gridTileLocation?.structure is DemonicStructure) {
+            if (!expiryDate.hasValue) {
+                //do not allow walls that are part of demonic structure to be selected. This is so that when a tile on the demonic structure is clicked, it will select the structure instead of this.
+                //Important Note: Added checking for expiry date so that walls from wall spell can still be selected, regardless of their location. 
+                return false;  
+            }
+        }
+        return true;
     }
     #endregion
 
@@ -85,7 +108,26 @@ public class BlockWall : TileObject {
     #endregion
     
     public void UpdateVisual(LocationGridTile tile) {
-        tile.parentMap.structureTilemap.SetTile(tile.localPlace, InnerMapManager.Instance.assetManager.GetWallAssetBasedOnWallType(wallType));
+        tile.SetWallTilemapTileAsset(InnerMapManager.Instance.assetManager.GetWallAssetBasedOnWallType(wallType));
+        //tile.parentMap.structureTilemap.SetTile(tile.localPlace, InnerMapManager.Instance.assetManager.GetWallAssetBasedOnWallType(wallType));
+    }
+    private void EvaluateAllBlockWallNeighboursForDiagonalImpassables(LocationGridTile p_centerTile, bool p_includeCenterTile) {
+        if (!GameManager.Instance.gameHasStarted) {
+            //Do not evaluate impassables if the game has not yet started because it is not needed in world generation
+            return;
+        }
+        if (p_includeCenterTile) {
+            (mapVisual as BlockWallGameObject).EvaluateImpassables();
+        }
+        for (int i = 0; i < p_centerTile.neighbourList.Count; i++) {
+            LocationGridTile neighbour = p_centerTile.neighbourList[i];
+            EvaluateBlockWallNeighbour(neighbour);
+        }
+    }
+    private void EvaluateBlockWallNeighbour(LocationGridTile p_neighbourTile) {
+        if(p_neighbourTile.tileObjectComponent.objHere is BlockWall blockWall) {
+            (blockWall.mapVisual as BlockWallGameObject).EvaluateImpassables();
+        }
     }
 }
 

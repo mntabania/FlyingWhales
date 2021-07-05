@@ -9,12 +9,13 @@ public class MovementProcessing : CharacterBehaviourComponent {
     }
 
     public override bool TryDoBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
-        if(character.gridTileLocation != null && character.gridTileLocation.collectionOwner.isPartOfParentRegionMap == false) {
+        if(character.gridTileLocation != null && character.areaLocation == null) {
+#if DEBUG_LOG
             log += $"\n-{character.name} is in a grid tile location with no hex tile, must go to nearest hex tile";
-
-            HexTile nearestHex = character.gridTileLocation.GetNearestHexTileWithinRegionThatMeetCriteria(h => character.movementComponent.HasPathTo(h));
+#endif
+            Area nearestArea = character.gridTileLocation.GetNearestAreaWithinRegionThatCharacterHasPathTo(character);
             //HexTile nearestHex = character.gridTileLocation.collectionOwner.GetNearestHexTileWithinRegion();
-            character.jobComponent.TriggerMoveToHex(out producedJob, nearestHex);
+            character.jobComponent.TriggerMoveToArea(out producedJob, nearestArea);
             return true;
         }
         producedJob = null;

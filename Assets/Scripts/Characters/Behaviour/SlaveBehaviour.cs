@@ -18,7 +18,7 @@ public class SlaveBehaviour : CharacterBehaviourComponent {
         producedJob = null;
         bool isInHome = character.IsAtHome();
         if (isInHome) {
-            if (character.behaviourComponent.PlanWorkActions(out producedJob)) {
+            if (character.behaviourComponent.PlanSettlementOrFactionWorkActions(out producedJob)) {
                 //Slaves can do work actions
                 return true;
             }

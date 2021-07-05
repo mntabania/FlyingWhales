@@ -20,8 +20,8 @@ public class PlayerSkillLoadoutNameplateItem : MonoBehaviour {
     private PlayerSkillData skillData;
 
     public void SetObject(PLAYER_SKILL_TYPE o) {
-        skillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(o);
-        SkillData data = PlayerSkillManager.Instance.GetPlayerSkillData(o);
+        skillData = PlayerSkillManager.Instance.GetScriptableObjPlayerSkillData<PlayerSkillData>(o);
+        SkillData data = PlayerSkillManager.Instance.GetSkillData(o);
         string gameObjectName = data.name;
         name = gameObjectName;
         mainLbl.text = gameObjectName;

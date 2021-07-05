@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f2a5990311e0b094f8e466747668822b, type: 3}
   m_Name: Oona
   m_EditorClassIdentifier: 
-  scenarioSettings: {fileID: 4900000, guid: f9498ede98dc0e74bbc9e16d24bda818, type: 3}
+  scenarioSettings: {fileID: 4900000, guid: 4965cb429d376014fa35b8f0faf34512, type: 3}
   faunaList:
   - monsterType: 6
     minRange: 3
@@ -34,3 +34,30 @@ MonoBehaviour:
     minRange: 1
     maxRange: 2
     weight: 80
+  spells:
+    m_keys: 
+    m_values: 
+  afflictions:
+    m_keys: 
+    m_values: 
+  minions:
+    m_keys: 
+    m_values: 
+  structures:
+    m_keys: 
+    m_values: 
+  skills:
+    m_keys: 
+    m_values: 
+  loadoutData:
+  - archetype: 3
+    spellExtraSlots: 4
+    spellAvailableSkills: ad00000009000000150000005d0000005e000000290000002800000020000000170000001c000000190000002b000000
+    afflictionExtraSlots: 2
+    afflictionAvailableSkills: 450000005f0000005b0000000c0000006300000003000000
+    minionExtraSlots: 0
+    minionAvailableSkills: 
+    structureExtraSlots: 2
+    structureAvailableSkills: 600000009b0000004c0000004a000000
+    miscExtraSlots: 1
+    miscAvailableSkills: af000000ae0000005c000000aa0000000a000000080000005900000034000000

@@ -2,7 +2,7 @@
 using UnityEngine;
 
 public abstract class MapObjectVisual<T> : BaseMapObjectVisual where T : IDamageable {
-    protected T obj { get; private set; }
+    protected T obj { get; set; }
     
     public virtual void Initialize(T obj) {
         base.Initialize(obj as ISelectable);
@@ -43,6 +43,18 @@ public abstract class MapObjectVisual<T> : BaseMapObjectVisual where T : IDamage
     #region General
     public bool IsNear(Vector3 pos) {
         return Vector3.Distance(transform.position, pos) <= 0.75f;
+    }
+    #endregion
+
+    #region Object Pools
+    public override void Reset() {
+        base.Reset();
+        obj = default;
+        onHoverOverAction = null;
+        onHoverExitAction = null;
+        onLeftClickAction = null;
+        onRightClickAction = null;
+        onMiddleClickAction = null;
     }
     #endregion
 }

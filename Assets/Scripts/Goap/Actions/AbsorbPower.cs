@@ -23,13 +23,15 @@ public class AbsorbPower : GoapAction {
         SetState("Absorb Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
+#if DEBUG_LOG
         string costLog = $"\n{name} {target.nameWithID}: +10(Constant)";
         actor.logComponent.AppendCostLog(costLog);
+#endif
         return 10;
     }
-    #endregion
+#endregion
 
-    #region Requirements
+#region Requirements
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, OtherData[] otherData, JobQueueItem job) {
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData, job);
         if (satisfied) {
@@ -41,7 +43,7 @@ public class AbsorbPower : GoapAction {
         }
         return false;
     }
-    #endregion
+#endregion
 
     //#region Preconditions
     //private bool IsTargetDead(Character actor, IPointOfInterest poiTarget, object[] otherData) {
@@ -52,7 +54,7 @@ public class AbsorbPower : GoapAction {
     //}
     //#endregion
 
-    #region State Effects
+#region State Effects
     public void PreAbsorbSuccess(ActualGoapNode goapNode) {
         Character targetCharacter = goapNode.poiTarget as Character;
         goapNode.descriptionLog.AddToFillers(null, targetCharacter.characterClass.elementalType.ToString(), LOG_IDENTIFIER.STRING_1);
@@ -62,15 +64,19 @@ public class AbsorbPower : GoapAction {
         //(goapNode.poiTarget as Character).Death(deathFromAction: goapNode);
 
         Character targetCharacter = goapNode.poiTarget as Character;
-        goapNode.actor.traitContainer.AddTrait(goapNode.actor, targetCharacter.characterClass.elementalType.ToString() + " Attacker");
+        //goapNode.actor.traitContainer.AddTrait(goapNode.actor, "Enhanced Power");
+        goapNode.actor.combatComponent.AdjustIntelligenceModifier(2);
+        goapNode.actor.piercingAndResistancesComponent.AdjustBasePiercing(5);
+        goapNode.actor.piercingAndResistancesComponent.AdjustAllResistances(5);
 
-        if (targetCharacter.marker) {
+
+        if (targetCharacter.hasMarker) {
+            targetCharacter.DestroyMarker();
             if (targetCharacter.currentRegion != null) {
                 targetCharacter.currentRegion.RemoveCharacterFromLocation(targetCharacter);
             }
-            targetCharacter.DestroyMarker();
         }
     }
-    #endregion
+#endregion
 
 }

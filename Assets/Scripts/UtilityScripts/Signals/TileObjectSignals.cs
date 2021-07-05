@@ -19,6 +19,10 @@
     /// </summary>
     public static string TILE_OBJECT_DAMAGED = "OnTileObjectDamaged";
     /// <summary>
+    /// Parameters (TileObject damagedObj, int damageAmount, Character p_responsibleCharacter)
+    /// </summary>
+    public static string TILE_OBJECT_DAMAGED_BY = "OnTileObjectDamagedBy";
+    /// <summary>
     /// Parameters (TileObject repairedObj, int repairAmount)
     /// </summary>
     public static string TILE_OBJECT_REPAIRED = "OnTileObjectRepaired";
@@ -26,4 +30,9 @@
     /// Parameters (TileObject repairedObj)
     /// </summary>
     public static string TILE_OBJECT_FULLY_REPAIRED = "OnTileObjectFullyRepaired";
+    public static string DESTROY_TILE_OBJECT = "OnDestroyTileObject";
+    /// <summary>
+    /// Parameters (MovingTileObject)
+    /// </summary>
+    public static string MOVING_TILE_OBJECT_EXPIRED = "OnMovingTileObjectExpired";
 }

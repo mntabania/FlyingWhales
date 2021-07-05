@@ -4,94 +4,34 @@ using Inner_Maps;
 
 namespace Inner_Maps.Location_Structures {
     public class Crypt : DemonicStructure {
-        public override Vector2 selectableSize { get; }
-        private Artifact _activatedArtifact;
-        
+
+        public override string scenarioDescription => "Each Crypt can produce up to 3 Skeleton minions. You may use these Skeletons to spawn monster parties using your Maraud, Prism, Kennel or Prison.";
+
+        public override SUMMON_TYPE housedMonsterType => SUMMON_TYPE.Skeleton;
         public Crypt(Region location) : base(STRUCTURE_TYPE.CRYPT, location){
-            selectableSize = new Vector2(10f, 10f);
+            SetMaxHPAndReset(1500);
         }
-        public Crypt(Region location, SaveDataDemonicStructure data) : base(location, data) {
-            selectableSize = new Vector2(10f, 10f);
+        public Crypt(Region location, SaveDataDemonicStructure data) : base(location, data) { }
+
+        #region Overrides
+        public override void OnBuiltNewStructure() {
+            base.OnBuiltNewStructure();
+            PlayerManager.Instance.player.underlingsComponent.AdjustMonsterUnderlingMaxCharge(SUMMON_TYPE.Skeleton, 3);
         }
+        protected override void DestroyStructure(Character p_responsibleCharacter = null, bool isPlayerSource = false) {
+            base.DestroyStructure(p_responsibleCharacter, isPlayerSource);
+            PlayerManager.Instance.player.underlingsComponent.AdjustMonsterUnderlingMaxCharge(SUMMON_TYPE.Skeleton, -3);
+        }
+        #endregion
 
-        //#region Overrides
-        //public override void Initialize() {
-        //    base.Initialize();
-        //    AddActivateAction();
-        //}
-        //protected override void DestroyStructure() {
-        //    base.DestroyStructure();
-        //    RemoveActivateAction();
-        //}
-        //// public override void OnBuiltStructure() {
-        ////     base.OnBuiltStructure();
-        ////     List<SaveDataTileObject> tileobjectsData = SaveManager.Instance.currentSaveDataPlayer.cryptTileObjects;
-        ////     if(tileobjectsData != null && tileobjectsData.Count > 0) {
-        ////         for (int i = 0; i < tileobjectsData.Count; i++) {
-        ////             SaveDataTileObject data = tileobjectsData[i];
-        ////             TileObject obj = null;
-        ////             if (data.isArtifact) {
-        ////                 obj = InnerMapManager.Instance.CreateNewArtifact(data.artifactType);
-        ////             } else {
-        ////                 obj = InnerMapManager.Instance.CreateNewTileObject<TileObject>(data.tileObjectType);
-        ////             }
-        ////             obj.SetIsSaved(true);
-        ////             obj.traitContainer.RemoveAllTraits(obj);
-        ////             if (data.traitNames != null && data.traitNames.Length > 0) {
-        ////                 for (int j = 0; j < data.traitNames.Length; j++) {
-        ////                     obj.traitContainer.AddTrait(obj, data.traitNames[j]);
-        ////                 }
-        ////             }
-        ////             //if (data.statusNames != null && data.statusNames.Length > 0) {
-        ////             //    for (int j = 0; j < data.statusNames.Length; j++) {
-        ////             //        int stacks = data.statusStacks[j];
-        ////             //        for (int k = 0; k < stacks; k++) {
-        ////             //            obj.traitContainer.AddTrait(obj, data.statusNames[j]);
-        ////             //        }
-        ////             //    }
-        ////             //}
-        ////             if (data.storedResourcesTypes != null && data.storedResourcesTypes.Length > 0) {
-        ////                 for (int j = 0; j < data.storedResourcesTypes.Length; j++) {
-        ////                     obj.SetResource(data.storedResourcesTypes[j], data.storedResourcesAmount[j]);
-        ////                 }
-        ////             }
-        ////             LocationGridTile tileLocation = GetRandomUnoccupiedTile();
-        ////             if(tileLocation != null) {
-        ////                 AddPOI(obj, tileLocation);
-        ////             }
-        ////         }
-        ////     }
-        //// }
-        //#endregion
-
-        //#region Activate
-        //private void AddActivateAction() {
-        //    //PlayerAction activate = new PlayerAction(PlayerDB.Activate_Artifact_Action, CanDoActivateArtifactAction, null, OnClickActivateArtifact);
-        //    AddPlayerAction(PLAYER_SKILL_TYPE.ACTIVATE);
-        //}
-        //private void RemoveActivateAction() {
-        //    //RemovePlayerAction(GetPlayerAction(PlayerDB.Activate_Artifact_Action));
-        //    RemovePlayerAction(PLAYER_SKILL_TYPE.ACTIVATE);
-        //}
-        //private bool CanDoActivateArtifactAction() {
-        //    return PlayerManager.Instance.player.mana >= 50;
-        //}
-        //private void OnClickActivateArtifact() {
-        //    // List<Artifact> artifacts = PlayerManager.Instance.player.artifacts;
-        //    // UIManager.Instance.ShowClickableObjectPicker(artifacts, ActivateArtifact, null, CanActivateArtifact, "Activate an Artifact");
-        //}
-        //private void ActivateArtifact(object obj) {
-        //    //_activatedArtifact?.Deactivate();
-        //    //Artifact artifact = obj as Artifact;
-        //    //artifact.Activate();
-        //    //_activatedArtifact = artifact;
-        //    //PlayerManager.Instance.player.AdjustMana(-50);
-        //    //UIManager.Instance.HideObjectPicker();
-        //}
-        //private bool CanActivateArtifact(Artifact artifact) {
-        //    //return artifact.hasBeenActivated == false && artifact.CanGainSomethingNewByActivating();
-        //    return false;
-        //}
-        //#endregion
+        #region Structure Object
+        public override void SetStructureObject(LocationStructureObject structureObj) {
+            base.SetStructureObject(structureObj);
+            Vector3 position = structureObj.transform.position;
+            position.x -= 0.5f;
+            position.y -= 0.5f;
+            worldPosition = position;
+        }
+        #endregion
     }
 }

@@ -15,20 +15,15 @@ public class SaveDataCharacter : SaveData<Character>, ISavableCounterpart {
     public bool isDead;
     public GENDER gender;
     public SEXUALITY sexuality;
-    public string className;
+    //public string className; //Moved to CharacterClassComponent
     public RACE race;
-    public string previousClassName;
+    //public string previousClassName; //Moved to CharacterClassComponent
 
     public int currentHP;
     public int doNotRecoverHP;
-    public int attackPowerMod;
-    public int speedMod;
-    public int maxHPMod;
-    public int attackPowerPercentMod;
-    public int speedPercentMod;
-    public int maxHPPercentMod;
 
     public Vector3 worldPos;
+    public TileLocationSave deathTileLocation;
     public Quaternion rotation;
     public bool hasMarker;
     public bool hasExpiry;
@@ -41,7 +36,6 @@ public class SaveDataCharacter : SaveData<Character>, ISavableCounterpart {
     public List<INTERACTION_TYPE> advertisedActions;
     public bool canCombat;
     public string deathStr;
-    public Dictionary<RESOURCE, int> storedResources;
     public bool hasUnresolvedCrime;
     public bool isInLimbo;
     public bool isLimboCharacter;
@@ -49,17 +43,21 @@ public class SaveDataCharacter : SaveData<Character>, ISavableCounterpart {
     public bool isWanderer;
     public bool hasBeenRaisedFromDead;
     public bool isPreplaced;
+    public bool isStoredAsTarget;
+    public bool isDeadReference;
     public List<string> interestedItemNames;
+
+    public bool isRaisedByNecro;
 
     public POI_STATE state;
     public INTERACTION_TYPE causeOfDeath;
-
+    public List<PLAYER_SKILL_TYPE> afflictionsSkillsInflictedByPlayer;
+    
     public SaveDataLycanthropeData lycanData;
     public bool hasLycan;
 
     //References
     public string grave;
-    public string connectedFoodPile;
     public Log deathLog;
     public string homeRegion;
     public string homeSettlement;
@@ -70,20 +68,24 @@ public class SaveDataCharacter : SaveData<Character>, ISavableCounterpart {
 
     public string currentJob;
     public string currentActionNode;
-    public string previousCurrentActionNode;
 
     public string territory;
     public List<string> items;
+    public List<string> equipmentInventory;
     public List<string> ownedItems;
     public List<string> jobs;
     public List<string> forceCancelJobsOnTickEnded;
-    
+
+    public bool isInfoUnlocked;
+    public string deployedAtStructure;
+
     public SaveDataTraitContainer saveDataTraitContainer;
     public SaveDataBaseRelationshipContainer saveDataBaseRelationshipContainer;
 
     public SaveDataTrapStructure trapStructure;
+    public SaveDataCharacterClassComponent classComponent;
     public SaveDataCharacterNeedsComponent needsComponent;
-    public SaveDataBuildStructureComponent buildStructureComponent;
+    public SaveDataCharacterStructureComponent structureComponent;
     public SaveDataCharacterStateComponent stateComponent;
     public SaveDataNonActionEventsComponent nonActionEventsComponent;
     public SaveDataInterruptComponent interruptComponent;
@@ -98,16 +100,24 @@ public class SaveDataCharacter : SaveData<Character>, ISavableCounterpart {
     public SaveDataMovementComponent movementComponent;
     public SaveDataStateAwarenessComponent stateAwarenessComponent;
     public SaveDataCarryComponent carryComponent;
-    public SaveDataPartyComponent partyComponent;
+    public SaveDataCharacterPartyComponent partyComponent;
     public SaveDataGatheringComponent gatheringComponent;
-    public SaveDataTileObjectComponent tileObjectComponent;
+    public SaveDataCharacterTileObjectComponent tileObjectComponent;
     public SaveDataCrimeComponent crimeComponent;
     public SaveDataReligionComponent religionComponent;
     public SaveDataLimiterComponent limiterComponent;
+    public SaveDataPiercingAndResistancesComponent piercingAndResistancesComponent;
     public SaveDataPreviousCharacterDataComponent previousCharacterDataComponent;
-
+    public SaveDataCharacterTraitComponent traitComponent;
+    public SaveDataCharacterMoneyComponent moneyComponent;
+    //public SaveDataBuffStatsBonus buffStatusBonus;
+    public SaveDataCharacterTalentComponent talentComponent;
+    public SaveDataResourceStorageComponent resourceStorageComponent;
+    public SaveDataDailyScheduleComponent dailyScheduleComponent;
+    //public SaveDataEquipmentComponent equipmentComponent;
     #region getters
     public OBJECT_TYPE objectType => OBJECT_TYPE.Character;
+    public SaveDataVillagerWantsComponent villagerWantsComponent { get; set; }
     #endregion
 
     public override void Save(Character data) {
@@ -118,22 +128,15 @@ public class SaveDataCharacter : SaveData<Character>, ISavableCounterpart {
         isDead = data.isDead;
         gender = data.gender;
         sexuality = data.sexuality;
-        className = data.characterClass.className;
+        //className = data.characterClass.className;//Moved to CharacterClassComponent
         race = data.race;
         //isAlliedWithPlayer = data.isAlliedWithPlayer;
         currentHP = data.currentHP;
         doNotRecoverHP = data.doNotRecoverHP;
-        attackPowerMod = data.attackPowerMod;
-        speedMod = data.speedMod;
-        maxHPMod = data.maxHPMod;
-        attackPowerPercentMod = data.attackPowerPercentMod;
-        speedPercentMod = data.speedPercentMod;
-        maxHPPercentMod = data.maxHPPercentMod;
         portraitSettings = data.visuals.portraitSettings;
         advertisedActions = data.advertisedActions;
         canCombat = data.canCombat;
         deathStr = data.deathStr;
-        storedResources = data.storedResources;
         hasUnresolvedCrime = data.hasUnresolvedCrime;
         isInLimbo = data.isInLimbo;
         isLimboCharacter = data.isLimboCharacter;
@@ -143,23 +146,29 @@ public class SaveDataCharacter : SaveData<Character>, ISavableCounterpart {
         interestedItemNames = data.interestedItemNames;
         state = data.state;
         causeOfDeath = data.causeOfDeath;
-        previousClassName = data.previousClassName;
+        //previousClassName = data.classComponent.previousClassName; //Moved to CharacterClassComponent
         isPreplaced = data.isPreplaced;
+        afflictionsSkillsInflictedByPlayer = data.afflictionsSkillsInflictedByPlayer;
+        isStoredAsTarget = data.isStoredAsTarget;
+        isDeadReference = data.isDeadReference;
 
         if (data.marker) {
             hasMarker = true;
-            worldPos = data.marker.transform.position;
-            rotation = data.marker.visualsParent.transform.localRotation;
+            worldPos = data.gridTileWorldPosition;
+            //rotation = data.marker.visualsParent.transform.localRotation;
 
             if (data.marker.hasExpiry) {
                 hasExpiry = true;
                 markerExpiryDate = data.marker.destroyDate;
             }
         }
+        
+        deathTileLocation = data.deathTilePosition != null ? new TileLocationSave(data.deathTilePosition) : new TileLocationSave();
 
         trapStructure = new SaveDataTrapStructure(); trapStructure.Save(data.trapStructure);
+        classComponent = new SaveDataCharacterClassComponent(); classComponent.Save(data.classComponent);
         needsComponent = new SaveDataCharacterNeedsComponent(); needsComponent.Save(data.needsComponent);
-        buildStructureComponent = new SaveDataBuildStructureComponent(); buildStructureComponent.Save(data.buildStructureComponent);
+        structureComponent = new SaveDataCharacterStructureComponent(); structureComponent.Save(data.structureComponent);
         stateComponent = new SaveDataCharacterStateComponent(); stateComponent.Save(data.stateComponent);
         nonActionEventsComponent = new SaveDataNonActionEventsComponent(); nonActionEventsComponent.Save(data.nonActionEventsComponent);
         interruptComponent = new SaveDataInterruptComponent(); interruptComponent.Save(data.interruptComponent);
@@ -174,13 +183,29 @@ public class SaveDataCharacter : SaveData<Character>, ISavableCounterpart {
         movementComponent = new SaveDataMovementComponent(); movementComponent.Save(data.movementComponent);
         stateAwarenessComponent = new SaveDataStateAwarenessComponent(); stateAwarenessComponent.Save(data.stateAwarenessComponent);
         carryComponent = new SaveDataCarryComponent(); carryComponent.Save(data.carryComponent);
-        partyComponent = new SaveDataPartyComponent(); partyComponent.Save(data.partyComponent);
+        partyComponent = new SaveDataCharacterPartyComponent(); partyComponent.Save(data.partyComponent);
         gatheringComponent = new SaveDataGatheringComponent(); gatheringComponent.Save(data.gatheringComponent);
-        tileObjectComponent = new SaveDataTileObjectComponent(); tileObjectComponent.Save(data.tileObjectComponent);
+        tileObjectComponent = new SaveDataCharacterTileObjectComponent(); tileObjectComponent.Save(data.tileObjectComponent);
         crimeComponent = new SaveDataCrimeComponent(); crimeComponent.Save(data.crimeComponent);
         religionComponent = new SaveDataReligionComponent(); religionComponent.Save(data.religionComponent);
         limiterComponent = new SaveDataLimiterComponent(); limiterComponent.Save(data.limiterComponent);
+        piercingAndResistancesComponent = new SaveDataPiercingAndResistancesComponent(); piercingAndResistancesComponent.Save(data.piercingAndResistancesComponent);
         previousCharacterDataComponent = new SaveDataPreviousCharacterDataComponent(); previousCharacterDataComponent.Save(data.previousCharacterDataComponent);
+        traitComponent = new SaveDataCharacterTraitComponent(); traitComponent.Save(data.traitComponent);
+        //buffStatusBonus = new SaveDataBuffStatsBonus(); buffStatusBonus.Save(data.buffStatsBonus);
+        moneyComponent = new SaveDataCharacterMoneyComponent(); moneyComponent.Save(data.moneyComponent);
+        resourceStorageComponent = new SaveDataResourceStorageComponent(); resourceStorageComponent.Save(data.resourceStorageComponent);
+        dailyScheduleComponent = new SaveDataDailyScheduleComponent(); dailyScheduleComponent.Save(data.dailyScheduleComponent);
+
+        if (data.talentComponent != null) {
+            talentComponent = new SaveDataCharacterTalentComponent(); talentComponent.Save(data.talentComponent);
+        }
+        if (data.villagerWantsComponent != null) {
+            villagerWantsComponent = new SaveDataVillagerWantsComponent(); villagerWantsComponent.Save(data.villagerWantsComponent);
+        }
+        //equipmentComponent = new SaveDataEquipmentComponent(); equipmentComponent.Save(data.equipmentComponent);
+
+        isInfoUnlocked = data.isInfoUnlocked;
 
         if (data.currentJob != null && data.currentJob.jobType != JOB_TYPE.NONE) {
             currentJob = data.currentJob.persistentID;
@@ -190,11 +215,6 @@ public class SaveDataCharacter : SaveData<Character>, ISavableCounterpart {
         if (data.currentActionNode != null) {
             currentActionNode = data.currentActionNode.persistentID;
             SaveManager.Instance.saveCurrentProgressManager.AddToSaveHub(data.currentActionNode);
-        }
-
-        if (data.previousCurrentActionNode != null) {
-            previousCurrentActionNode = data.previousCurrentActionNode.persistentID;
-            SaveManager.Instance.saveCurrentProgressManager.AddToSaveHub(data.previousCurrentActionNode);
         }
 
         if (data.minion != null) {
@@ -212,10 +232,7 @@ public class SaveDataCharacter : SaveData<Character>, ISavableCounterpart {
         if(data.grave != null) {
             grave = data.grave.persistentID;
         }
-        if (data.connectedFoodPile != null) {
-            connectedFoodPile = data.connectedFoodPile.persistentID;
-        }
-        if (data.deathLog.hasValue) {
+        if (data.deathLog != null) {
             deathLog = data.deathLog;
             // SaveManager.Instance.saveCurrentProgressManager.AddToSaveHub(data.deathLog);
         }
@@ -247,6 +264,10 @@ public class SaveDataCharacter : SaveData<Character>, ISavableCounterpart {
         for (int i = 0; i < data.items.Count; i++) {
             items.Add(data.items[i].persistentID);
         }
+        equipmentInventory = new List<string>();
+        for (int i = 0; i < data.equipmentInventory.Count; i++) {
+            equipmentInventory.Add(data.equipmentInventory[i].persistentID);
+        }
         ownedItems = new List<string>();
         for (int i = 0; i < data.ownedItems.Count; i++) {
             ownedItems.Add(data.ownedItems[i].persistentID);
@@ -266,7 +287,11 @@ public class SaveDataCharacter : SaveData<Character>, ISavableCounterpart {
                 SaveManager.Instance.saveCurrentProgressManager.AddToSaveHub(jobQueueItem);
             }
         }
-        
+
+        if (data.deployedAtStructure != null) {
+            deployedAtStructure = data.deployedAtStructure.persistentID;
+        }
+
         saveDataTraitContainer = new SaveDataTraitContainer();
         saveDataTraitContainer.Save(data.traitContainer);
         

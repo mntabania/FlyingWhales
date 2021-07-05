@@ -23,13 +23,15 @@ public class SummonBoneGolem : GoapAction {
         SetState("Summon Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
+#if DEBUG_LOG
         string costLog = $"\n{name} {target.nameWithID}: +10(Constant)";
         actor.logComponent.AppendCostLog(costLog);
+#endif
         return 10;
     }
-    #endregion
+#endregion
 
-    #region Requirements
+#region Requirements
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, OtherData[] otherData, JobQueueItem job) {
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData, job);
         if (satisfied) {
@@ -81,9 +83,9 @@ public class SummonBoneGolem : GoapAction {
         }
         return invalidity;
     }
-    #endregion
+#endregion
 
-    #region State Effects
+#region State Effects
     public void AfterSummonSuccess(ActualGoapNode goapNode) {
         OtherData[] otherData = goapNode.otherData;
         if (otherData != null && otherData.Length == 3) {
@@ -103,10 +105,10 @@ public class SummonBoneGolem : GoapAction {
                                 targetCorpse.grave.SetRespawnCorpseOnDestroy(false);
                                 targetCorpse.grave.gridTileLocation.structure.RemovePOI(targetCorpse.grave);
                             } else {
+                                targetCorpse.DestroyMarker();
                                 if (targetCorpse.currentRegion != null) {
                                     targetCorpse.currentRegion.RemoveCharacterFromLocation(targetCorpse);
                                 }
-                                targetCorpse.DestroyMarker();
                             }
                         }
                     }
@@ -121,6 +123,6 @@ public class SummonBoneGolem : GoapAction {
         Summon boneGolem = CharacterManager.Instance.CreateNewSummon(SUMMON_TYPE.Bone_Golem, goapNode.actor.faction, homeLocation: goapNode.actor.homeSettlement, homeRegion: gridTile.parentMap.region, bypassIdeologyChecking: true);
         CharacterManager.Instance.PlaceSummonInitially(boneGolem, gridTile);
     }
-    #endregion
+#endregion
 
 }

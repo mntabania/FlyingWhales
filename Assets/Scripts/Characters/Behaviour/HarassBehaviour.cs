@@ -9,10 +9,12 @@ public class HarassBehaviour : CharacterBehaviourComponent {
     }
     public override bool TryDoBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
         producedJob = null;
+#if DEBUG_LOG
         log += $"\n-{character.name} will harass";
+#endif
         //if (character.gridTileLocation.collectionOwner.partOfHextile != null
-        //    && character.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner 
-        //    && character.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.settlementOnTile == character.behaviourComponent.assignedTargetSettlement) {
+        //    && character.gridTileLocation.hexTileOwner 
+        //    && character.gridTileLocation.hexTileOwner.settlementOnTile == character.behaviourComponent.assignedTargetSettlement) {
         //    log += "\n-Already in the target npcSettlement";
         //    if(character.marker.inVisionTileObjects.Count > 0) {
         //        log += "\n-Has tile object in vision";

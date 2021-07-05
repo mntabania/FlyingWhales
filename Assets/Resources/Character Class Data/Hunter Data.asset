@@ -12,6 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 88e6d539796c490aa0efea676d6fae59, type: 3}
   m_Name: Hunter Data
   m_EditorClassIdentifier: 
+  combatBehaviourType: 0
+  combatSpecialSkillType: 0
+  workStructureType: 21
+  summonCost: 50
+  portraitSprite: {fileID: 0}
   defaultSprites:
     stillSprite: {fileID: 0}
     animationSprites: []
@@ -58,3 +63,24 @@ MonoBehaviour:
       - {fileID: 21300000, guid: 426c5f5e17ddb9341b22996a1fe407a4, type: 3}
       - {fileID: 21300000, guid: 7c8bf286451f71f42bc222b7d59888f2, type: 3}
       - {fileID: 21300000, guid: ea5fae633571eee4abd9daaccaaaad4c, type: 3}
+  characterSkillUpdateData:
+    m_fireResistanceBonus: 0
+    m_earthResistanceBonus: 0
+    m_windResistanceBonus: 0
+    m_waterResistanceBonus: 0
+    m_allElementalresistanceBonus: 8
+    m_poisonResistanceBonus: 0
+    m_iceResistanceBonus: 0
+    m_electricResistanceBonus: 0
+    m_allSecondaryresistanceBonus: 15
+    m_piercingBonus: 20
+    m_mentalResistanceBonus: 15
+    m_physicalResistanceBonus: 8
+  craftableWeapons: 06010000c4000000c5000000c6000000c7000000
+  craftableArmors: 05010000d0000000bc000000d1000000d3000000d4000000d6000000d5000000d7000000d8000000
+  craftableAccessories: de000000
+  droppableItems:
+  - item: 13
+    weight: 100
+  - item: 189
+    weight: 10

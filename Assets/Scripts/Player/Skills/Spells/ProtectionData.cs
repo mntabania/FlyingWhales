@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Inner_Maps;
 using Traits;
-
+using UtilityScripts;
 public class ProtectionData : SkillData {
     public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.PROTECTION;
     public override string name => "Protection";
@@ -12,13 +12,14 @@ public class ProtectionData : SkillData {
         targetTypes = new SPELL_TARGET[] { SPELL_TARGET.TILE };
     }
     public override void ActivateAbility(LocationGridTile targetTile) {
-        List<LocationGridTile> tiles = targetTile.GetTilesInRadius(1, includeCenterTile: true, includeTilesInDifferentStructure: true);
+        List<LocationGridTile> tiles = RuinarchListPool<LocationGridTile>.Claim();
+        targetTile.PopulateTilesInRadius(tiles, 1, includeCenterTile: true, includeTilesInDifferentStructure: true);
         GameManager.Instance.CreateParticleEffectAtWithScale(targetTile, PARTICLE_EFFECT.Protection, 4f);
         for (int i = 0; i < tiles.Count; i++) {
             LocationGridTile tile = tiles[i];
             for (int j = 0; j < tile.charactersHere.Count; j++) {
                 Character character = tile.charactersHere[j];
-                if (tile.objHere is Tombstone tombstone && tombstone.character == character) {
+                if (tile.tileObjectComponent.objHere is Tombstone tombstone && tombstone.character == character) {
                     //NOTE: Skip characters in tombstone when damaging character's here. //TODO: This is a quick fix
                     continue;
                 }
@@ -27,19 +28,20 @@ public class ProtectionData : SkillData {
                 }
             }
         }
+        RuinarchListPool<LocationGridTile>.Release(tiles);
 
         //TODO: Create Particle Effect
         //GameManager.Instance.CreateParticleEffectAt(targetTile, PARTICLE_EFFECT.Water_Bomb);
         base.ActivateAbility(targetTile);
     }
-    public override bool CanPerformAbilityTowards(LocationGridTile targetTile) {
-        bool canPerform = base.CanPerformAbilityTowards(targetTile);
+    public override bool CanPerformAbilityTowards(LocationGridTile targetTile, out string o_cannotPerformReason) {
+        bool canPerform = base.CanPerformAbilityTowards(targetTile, out o_cannotPerformReason);
         if (canPerform) {
             return targetTile.structure != null;
         }
         return canPerform;
     }
-    public override void HighlightAffectedTiles(LocationGridTile tile) {
+    public override void ShowValidHighlight(LocationGridTile tile) {
         TileHighlighter.Instance.PositionHighlight(1, tile);
     }
 }

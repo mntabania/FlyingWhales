@@ -31,8 +31,10 @@ public class RestrainCharacter : GoapAction {
         SetState("Restrain Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
+#if DEBUG_LOG
         string costLog = $"\n{name} {target.nameWithID}: +10(Constant)";
         actor.logComponent.AppendCostLog(costLog);
+#endif
         return 10;
     }
     public override GoapActionInvalidity IsInvalid(ActualGoapNode node) {
@@ -47,8 +49,8 @@ public class RestrainCharacter : GoapAction {
         }
         return goapActionInvalidity;
     }
-    public override void PopulateReactionsToActor(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
-        base.PopulateReactionsToActor(reactions, actor, target, witness, node, status);
+    public override void PopulateEmotionReactionsToActor(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
+        base.PopulateEmotionReactionsToActor(reactions, actor, target, witness, node, status);
         if (target is Character targetCharacter) {
             if (targetCharacter.traitContainer.HasTrait("Criminal")) {
                 if (witness.relationshipContainer.IsFriendsWith(targetCharacter)) {
@@ -87,8 +89,8 @@ public class RestrainCharacter : GoapAction {
             }
         }
     }
-    public override void PopulateReactionsToTarget(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
-        base.PopulateReactionsToTarget(reactions, actor, target, witness, node, status);
+    public override void PopulateEmotionReactionsToTarget(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
+        base.PopulateEmotionReactionsToTarget(reactions, actor, target, witness, node, status);
         if (target is Character targetCharacter) {
             if (node.associatedJobType == JOB_TYPE.APPREHEND) {
                 if (witness.relationshipContainer.IsFriendsWith(targetCharacter)) {
@@ -137,8 +139,8 @@ public class RestrainCharacter : GoapAction {
             }
         }
     }
-    public override void PopulateReactionsOfTarget(List<EMOTION> reactions, Character actor, IPointOfInterest target, ActualGoapNode node, REACTION_STATUS status) {
-        base.PopulateReactionsOfTarget(reactions, actor, target, node, status);
+    public override void PopulateEmotionReactionsOfTarget(List<EMOTION> reactions, Character actor, IPointOfInterest target, ActualGoapNode node, REACTION_STATUS status) {
+        base.PopulateEmotionReactionsOfTarget(reactions, actor, target, node, status);
         if (target is Character targetCharacter) {
             if (!targetCharacter.IsHostileWith(actor)) {
                 reactions.Add(EMOTION.Resentment);
@@ -156,38 +158,69 @@ public class RestrainCharacter : GoapAction {
         }
         return REACTABLE_EFFECT.Negative;
     }
-    #endregion
+#endregion
 
-    #region Requirements
+#region Requirements
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, OtherData[] otherData, JobQueueItem job) { 
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData, job);
         if (satisfied) {
             if (actor != poiTarget) {
                 if(poiTarget is Character target) {
-                    return !target.isDead && !target.traitContainer.HasTrait("Restrained"); //&& !(target is Dragon);
+                    if (!target.isDead) {
+                        if (target.traitContainer.HasTrait("Restrained")) {
+                            //If character is already restrained we need to check if we can override the existing one
+                            //To override, target must not be already a personal prisoner of the actor if the actor wants it to be a personal prisoner. This also applies to faction prisoner
+                            Prisoner prisoner = target.traitContainer.GetTraitOrStatus<Prisoner>("Prisoner");
+                            if (prisoner != null) {
+                                if (ShouldBePersonalPrisoner(job.jobType, actor)) {
+                                    if (!prisoner.IsPersonalPrisonerOf(actor)) {
+                                        return true;
+                                    }
+                                } else {
+                                    if (actor.faction != null && !prisoner.IsFactionPrisonerOf(actor.faction)) {
+                                        return true;
+                                    }
+                                }
+                            }
+                            return false;
+                        } else {
+                            return true;
+                        }
+                    }
+                    return false;
+                    //return !target.isDead && !target.traitContainer.HasTrait("Restrained"); //&& !(target is Dragon);
                 }
             }
             return false;
         }
         return false;
     }
-    #endregion
+#endregion
 
     #region State Effects
     public void AfterRestrainSuccess(ActualGoapNode goapNode) {
         //**Effect 1**: Target gains Restrained trait.
         Faction factionThatImprisoned = null;
         Character characterThatImprisoned = null;
-        if (goapNode.associatedJobType == JOB_TYPE.APPREHEND
-               || goapNode.associatedJobType == JOB_TYPE.KIDNAP_RAID
-               || (goapNode.actor.faction?.factionType.type == FACTION_TYPE.Ratmen && goapNode.associatedJobType == JOB_TYPE.MONSTER_ABDUCT)
-               || goapNode.associatedJobType == JOB_TYPE.RESTRAIN) {
-            factionThatImprisoned = goapNode.actor.faction;
-        } else if (goapNode.associatedJobType == JOB_TYPE.SNATCH) {
-            factionThatImprisoned = PlayerManager.Instance.player.playerFaction;
-        } else {
+        if (ShouldBePersonalPrisoner(goapNode.associatedJobType, goapNode.actor)) {
             characterThatImprisoned = goapNode.actor;
+        } else {
+            if (goapNode.associatedJobType == JOB_TYPE.SNATCH || goapNode.associatedJobType == JOB_TYPE.SNATCH_RESTRAIN) {
+                factionThatImprisoned = PlayerManager.Instance.player.playerFaction;
+            } else {
+                factionThatImprisoned = goapNode.actor.faction;
+            }
         }
+        //if (goapNode.associatedJobType == JOB_TYPE.APPREHEND
+        //       || goapNode.associatedJobType == JOB_TYPE.KIDNAP_RAID
+        //       || (goapNode.actor.faction?.factionType.type == FACTION_TYPE.Ratmen && goapNode.associatedJobType == JOB_TYPE.MONSTER_ABDUCT)
+        //       || goapNode.associatedJobType == JOB_TYPE.RESTRAIN) {
+        //    factionThatImprisoned = goapNode.actor.faction;
+        //} else if (goapNode.associatedJobType == JOB_TYPE.SNATCH || goapNode.associatedJobType == JOB_TYPE.SNATCH_RESTRAIN) {
+        //    factionThatImprisoned = PlayerManager.Instance.player.playerFaction;
+        //} else {
+        //    characterThatImprisoned = goapNode.actor;
+        //}
 
         goapNode.poiTarget.traitContainer.RestrainAndImprison(goapNode.poiTarget, goapNode.actor, factionThatImprisoned, characterThatImprisoned);
     }
@@ -199,144 +232,15 @@ public class RestrainCharacter : GoapAction {
     }
     #endregion
 
-    //#region Intel Reactions
-    //private List<string> SuccessReactions(Character recipient, Intel sharedIntel, SHARE_INTEL_STATUS status) {
-    //    List<string> reactions = new List<string>();
-    //    Character target = poiTarget as Character;
-
-    //    //If to imprison a criminal:
-    //    if (isForCriminal) {
-    //        if (recipient == actor) {
-    //            //-Is Actor
-    //            if (status == SHARE_INTEL_STATUS.INFORMED) {
-    //                //- If Informed: "[Target Name] did something wrong."
-    //                reactions.Add(string.Format("{0} did something wrong.", target.name));
-    //            }
-    //        } else if (recipient == target) {
-    //            //- Is Target
-    //            if (status == SHARE_INTEL_STATUS.INFORMED) {
-    //                //- If Informed: "I got caught."
-    //                reactions.Add("I got caught.");
-    //            }
-    //        } else {
-    //            //- Otherwise:
-    //            if (status == SHARE_INTEL_STATUS.INFORMED) {
-    //                //-If Informed: "If you do something bad here, you get imprisoned. That's the law."
-    //                reactions.Add("If you do something bad here, you get imprisoned. That's the law.");
-    //            }
-    //        }
-    //    }
-    //    //Otherwise (usually criminal stuff like Serial Killing):
-    //    else {
-    //        RELATIONSHIP_EFFECT relWithActor = recipient.relationshipContainer.GetRelationshipEffectWith(actor.currentAlterEgo);
-    //        RELATIONSHIP_EFFECT relWithTarget = recipient.relationshipContainer.GetRelationshipEffectWith(target.currentAlterEgo);
-    //        if (recipient == actor) {
-    //            if (status == SHARE_INTEL_STATUS.INFORMED) {
-    //                //- If Informed: "Do not tell anybody, please!"
-    //                reactions.Add("Do not tell anybody, please!");
-    //            }
-    //        } else if (recipient == target) {
-    //            if (status == SHARE_INTEL_STATUS.INFORMED) {
-    //                // - If Informed: "That was a traumatic experience."
-    //                reactions.Add("That was a traumatic experience.");
-    //            }
-    //        } else if (relWithActor == RELATIONSHIP_EFFECT.POSITIVE) {
-    //            if (relWithTarget == RELATIONSHIP_EFFECT.POSITIVE) {
-    //                RelationshipManager.Instance.RelationshipDegradation(actor, recipient, this);
-    //                //- Considers it an Assault
-    //                recipient.ReactToCrime(CRIME.ASSAULT, this, actorAlterEgo, status);
-    //                if (status == SHARE_INTEL_STATUS.WITNESSED && actor.currentAction != null && actor.currentAction.parentPlan != null && actor.currentAction.parentPlan.job != null) {
-    //                    //-If witnessed: Add Attempt to Stop Job targeting Actor
-    //                    recipient.CreateAttemptToStopCurrentActionAndJob(target, actor.currentAction.parentPlan.job);
-    //                }
-    //                if (status == SHARE_INTEL_STATUS.INFORMED) {
-    //                    //- If informed: "[Actor Name] shouldn't have done that to [Target Name]!"
-    //                    reactions.Add(string.Format("{0} shouldn't have done that to {1}!", actor.name, target.name));
-    //                }
-    //            } else if (relWithTarget == RELATIONSHIP_EFFECT.NONE) {
-    //                if (status == SHARE_INTEL_STATUS.INFORMED) {
-    //                    // - If informed: "I'm sure there's a reason [Actor Name] did that."
-    //                    reactions.Add(string.Format("I'm sure there's a reason {0} did that.", actor.name));
-    //                }
-    //            } else if (relWithTarget == RELATIONSHIP_EFFECT.NEGATIVE) {
-    //                if (status == SHARE_INTEL_STATUS.INFORMED) {
-    //                    // - If informed: "I'm sure there's a reason [Actor Name] did that."
-    //                    reactions.Add(string.Format("I'm sure there's a reason {0} did that.", actor.name));
-    //                }
-    //            }
-    //        } else if (relWithActor == RELATIONSHIP_EFFECT.NONE) {
-    //            if (relWithTarget == RELATIONSHIP_EFFECT.POSITIVE) {
-    //                RelationshipManager.Instance.RelationshipDegradation(actor, recipient, this);
-    //                //- Considers it an Assault
-    //                recipient.ReactToCrime(CRIME.ASSAULT, this, actorAlterEgo, status);
-    //                if (status == SHARE_INTEL_STATUS.WITNESSED) {
-    //                    //- If witnessed: Add Assault Job targeting Actor
-    //                    recipient.CreateKnockoutJob(actor);
-    //                } else if (status == SHARE_INTEL_STATUS.INFORMED) {
-    //                    //- If informed: "[Actor Name] shouldn't have done that to [Target Name]!"
-    //                    reactions.Add(string.Format("{0} shouldn't have done that to {1}!", actor.name, target.name));
-    //                }
-    //            } else if (relWithTarget == RELATIONSHIP_EFFECT.NONE) {
-    //                RelationshipManager.Instance.RelationshipDegradation(actor, recipient, this);
-    //                //- Considers it an Assault
-    //                recipient.ReactToCrime(CRIME.ASSAULT, this, actorAlterEgo, status);
-    //                if (status == SHARE_INTEL_STATUS.WITNESSED) {
-    //                    //- If witnessed: Temporarily add Actor to Avoid List
-    //                    recipient.combatComponent.AddAvoidInRange(actor, reason: "saw something shameful");
-    //                } else if (status == SHARE_INTEL_STATUS.INFORMED) {
-    //                    //- If informed: "[Actor Name] shouldn't have done that to [Target Name]!"
-    //                    reactions.Add(string.Format("{0} shouldn't have done that to {1}!", actor.name, target.name));
-    //                }
-    //            } else if (relWithTarget == RELATIONSHIP_EFFECT.NEGATIVE) {
-    //                if (status == SHARE_INTEL_STATUS.WITNESSED) {
-    //                    //- If witnessed: Temporarily add Actor to Avoid List
-    //                    recipient.combatComponent.AddAvoidInRange(actor, reason: "saw something shameful");
-    //                } else if (status == SHARE_INTEL_STATUS.INFORMED) {
-    //                    //- If informed: "I am not fond of [Target Name] at all so I don't care what happens to [him/her]."
-    //                    reactions.Add(string.Format("I am not fond of {0} at all so I don't care what happens to {1}.", target.name, Utilities.GetPronounString(target.gender, PRONOUN_TYPE.OBJECTIVE, false)));
-    //                }
-    //            }
-    //        } else if (relWithActor == RELATIONSHIP_EFFECT.NEGATIVE) {
-    //            if (relWithTarget == RELATIONSHIP_EFFECT.POSITIVE) {
-    //                RelationshipManager.Instance.RelationshipDegradation(actor, recipient, this);
-    //                //- Considers it an Assault
-    //                recipient.ReactToCrime(CRIME.ASSAULT, this, actorAlterEgo, status);
-    //                if (status == SHARE_INTEL_STATUS.WITNESSED) {
-    //                    //- If witnessed: Add Assault Job targeting Actor
-    //                    recipient.CreateKnockoutJob(actor);
-    //                } else if (status == SHARE_INTEL_STATUS.INFORMED) {
-    //                    // - If informed:  Add Undermine Job targeting Actor
-    //                    recipient.CreateUndermineJobOnly(actor, "informed");
-    //                    //- If informed: "[Actor Name] is such a vile creature!"
-    //                    reactions.Add(string.Format("{0} is such a vile creature!", actor.name));
-    //                }
-    //            } else if (relWithTarget == RELATIONSHIP_EFFECT.NONE) {
-    //                RelationshipManager.Instance.RelationshipDegradation(actor, recipient, this);
-    //                //- Considers it Aberration
-    //                recipient.ReactToCrime(CRIME.ABERRATION, this, actorAlterEgo, status);
-    //                if (status == SHARE_INTEL_STATUS.WITNESSED) {
-    //                    //- If witnessed: Add Assault Job targeting Actor
-    //                    recipient.CreateKnockoutJob(actor);
-    //                } else if (status == SHARE_INTEL_STATUS.INFORMED) {
-    //                    // - If informed:  Add Undermine Job targeting Actor
-    //                    recipient.CreateUndermineJobOnly(actor, "informed");
-    //                    //- If informed: "[Actor Name] is such a vile creature!"
-    //                    reactions.Add(string.Format("{0} is such a vile creature!", actor.name));
-    //                }
-    //            } else if (relWithTarget == RELATIONSHIP_EFFECT.NEGATIVE) {
-    //                //- Considers it an Assault
-    //                recipient.ReactToCrime(CRIME.ASSAULT, this, actorAlterEgo, status);
-    //                if (status == SHARE_INTEL_STATUS.WITNESSED) {
-    //                    //- If witnessed: Temporarily add Actor to Avoid List
-    //                    recipient.combatComponent.AddAvoidInRange(actor, reason: "saw something shameful");
-    //                } else if (status == SHARE_INTEL_STATUS.INFORMED) {
-    //                    //- If informed: "My enemies fighting each other. What a happy day!"
-    //                    reactions.Add("My enemies fighting each other. What a happy day!");
-    //                }
-    //            }
-    //        }
-    //    }
-    //    return reactions;
-    //}
-    //#endregion
+    private bool ShouldBePersonalPrisoner(JOB_TYPE jobType, Character p_actor) {
+        if (jobType == JOB_TYPE.APPREHEND
+              || jobType == JOB_TYPE.KIDNAP_RAID
+              || (p_actor.faction?.factionType.type == FACTION_TYPE.Ratmen && jobType == JOB_TYPE.MONSTER_ABDUCT)
+              || jobType == JOB_TYPE.RESTRAIN
+              || jobType == JOB_TYPE.SNATCH 
+              || jobType == JOB_TYPE.SNATCH_RESTRAIN) {
+            return false;
+        }
+        return true;
+    }
 }

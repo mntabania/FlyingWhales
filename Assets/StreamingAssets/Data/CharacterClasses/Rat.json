@@ -1,11 +1,11 @@
 {
   "_className": "Rat",
   "_baseAttackPower": 5,
-  "_baseHP": 335,
+  "_baseHP": 300,
   "_baseAttackSpeed": 500,
   "_inventoryCapacity": 5,
   "_attackRange": 1.0,
-  "_staminaReduction": 7.0,
+  "_staminaReduction": 5.0,
   "_identifier": "Beast",
   "_traitNameOnTamedByPlayer": "Pest",
   "_traitNames": ["Beast", "Coward"],

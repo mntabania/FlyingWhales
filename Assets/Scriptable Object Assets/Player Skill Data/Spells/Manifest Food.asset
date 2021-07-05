@@ -13,14 +13,78 @@ MonoBehaviour:
   m_Name: Manifest Food
   m_EditorClassIdentifier: 
   skill: 28
-  manaCost: 5
+  manaCost: 20
   charges: 1
-  cooldown: 144
+  cooldown: 160
   threat: 0
   threatPerHour: 0
   expCost: 300
+  cheatedLevel: 0
+  pierce: 0
+  bonusChargeWhenUnlocked: 3
+  unlockChargeOnPortalUpgrade: 1
   buttonSprite: {fileID: 21300000, guid: 1721f25e3f54f78489f9a120a49a68f7, type: 3}
   tooltipVideoClip: {fileID: 32900000, guid: 5c71a5f9a309fbd41abbbc0858f349f5, type: 3}
   tooltipImage: {fileID: 0}
+  unlockCost: 50
+  tier: 1
+  baseLoadoutWeight: 150
+  resistanceType: 0
+  archetypeWeightedBonus: 3
+  canBeReleasedEvenIfLearned: 0
   contextMenuIcon: {fileID: 0}
   contextMenuColumn: 0
+  playerActionIcon: {fileID: 0}
+  isNonUpgradeable: 0
+  isAffliction: 0
+  isLockedBaseOnRequirements: 0
+  requirementData:
+    requirements: 08000000
+    requiredArchetype: 0
+    requiredSkills: 
+    actionCount: 0
+    afflictionCount: 0
+    spellsCount: 0
+    tier1Count: 0
+    tier2Count: 0
+    tier3Count: 0
+    portalLevel: 2
+    isOR: 0
+  skillUpgradeData:
+    upgradeCosts: 140000003200000050000000
+    manacostPerLevel: 6400000096000000c8000000fa000000
+    chargesPerLevel: 01000000010000000200000003000000
+    bonuses: 0e00000009000000
+    additionalDamagePerLevel: 
+    additionalPiercePerLevel: []
+    additionalHpPercentagePerLevel: []
+    additionalAttackPercentagePerLevel: []
+    additionalHpValuePerLevel: 
+    additionalAttackValuePerLevel: 
+    additionalmanaReceivedPercentagePerLevel: []
+    statsIncreasedPercentagePerLevel:
+    - 30
+    - 60
+    - 90
+    - 120
+    durationBonusPerLevel: 
+    additionalMaxHPPercentagePerLevel: []
+    additionalMaxHPActualPerLevel: 
+    additionalChanceBonusPercentagePerLevel: []
+    additionalTileRangeBonusPerLevel: 
+    decreaseMovementSpeedPerLevel: 
+    cooldownPerLevel: 500000003c0000003c0000003c000000
+    skillMovementSpeed: 
+  afflictionUpgradeData:
+    bonuses: 
+    cooldown: 
+    additionalPiercePerLevel: []
+    rateChance: 
+    crowdNumber: 
+    napsDuration: 
+    numberOfCriteria: 
+    hungerRate: 
+    duration: []
+    opinionTrigger: 
+    addedBehaviour: 
+    listOfCriteria: 

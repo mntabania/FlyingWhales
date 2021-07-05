@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Inner_Maps.Location_Structures;
 using Logs;
+using Object_Pools;
 namespace Interrupts {
     public class DeclareWar : Interrupt {
         public DeclareWar() : base(INTERRUPT.Declare_War) {
@@ -13,8 +14,7 @@ namespace Interrupts {
         }
 
         #region Overrides
-        public override bool ExecuteInterruptStartEffect(InterruptHolder interruptHolder,
-            ref Log overrideEffectLog, ActualGoapNode goapNode = null) {
+        public override bool ExecuteInterruptStartEffect(InterruptHolder interruptHolder, ref Log overrideEffectLog, ActualGoapNode goapNode = null) {
             Character actor = interruptHolder.actor;
             Character targetCharacter = interruptHolder.target as Character;
             if (actor.faction != null && targetCharacter != null) {

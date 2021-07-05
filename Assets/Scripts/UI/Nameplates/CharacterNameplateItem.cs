@@ -15,6 +15,10 @@ public class CharacterNameplateItem : NameplateItem<Character> {
     [SerializeField] private GameObject restrainedIcon;
     [SerializeField] private GameObject leaderIcon;
     [SerializeField] private Image raceIcon;
+    
+    [Space(10)]
+    [Header("Store Target")] 
+    [SerializeField] private StoreTargetButton btnStoreTarget;
 
     public bool isActive { get; private set; }
 
@@ -24,6 +28,7 @@ public class CharacterNameplateItem : NameplateItem<Character> {
         Messenger.AddListener(Signals.TICK_ENDED, UpdateAllTextsAndIcon);
         if (character != null) {
             UpdateAllTextsAndIcon();
+            btnStoreTarget.UpdateInteractableState();
         }
     }
     private void OnDisable() {
@@ -31,11 +36,16 @@ public class CharacterNameplateItem : NameplateItem<Character> {
     }
     
     #region Overrides
-    public override void SetObject(Character character) {
-        base.SetObject(character);
-        this.character = character;
-        portrait.GeneratePortrait(character);
+    public override void SetObject(Character p_character) {
+        if (p_character.isInLimbo && p_character.isLycanthrope) {
+            p_character = p_character.lycanData.activeForm;
+        }
+        base.SetObject(p_character);
+        this.character = p_character;
+        portrait.GeneratePortrait(p_character);
+        btnStoreTarget.SetTarget(p_character);
         UpdateAllTextsAndIcon();
+        Messenger.AddListener<Character, Character>(CharacterSignals.ON_SWITCH_FROM_LIMBO, OnCharacterSwitchFromLimbo);
     }
     public override void UpdateObject(Character character) {
         base.UpdateObject(character);
@@ -53,7 +63,11 @@ public class CharacterNameplateItem : NameplateItem<Character> {
     }
     public override void Reset() {
         base.Reset();
+        if (Messenger.eventTable.ContainsKey(CharacterSignals.ON_SWITCH_FROM_LIMBO)) {
+            Messenger.RemoveListener<Character, Character>(CharacterSignals.ON_SWITCH_FROM_LIMBO, OnCharacterSwitchFromLimbo);
+        }
         SetPortraitInteractableState(true);
+        character = null;
     }
     #endregion
 
@@ -63,6 +77,16 @@ public class CharacterNameplateItem : NameplateItem<Character> {
 
     public void SetIsActive(bool state) {
         isActive = state;
+    }
+    private void OnCharacterSwitchFromLimbo(Character toLimbo, Character fromLimbo) {
+        if (toLimbo == character) {
+            if (toLimbo.isLycanthrope) {
+                UpdateObject(fromLimbo);
+            } else {
+                //TODO: Which faction should be followed the one from the limbo or the one going to limbo?
+                //If both forms are from diff factions, the nameplate of each one will be shown at each faction UI, this will cause problems because only one must exist in the world at the same time
+            }
+        }
     }
 
     /// <summary>
@@ -81,10 +105,14 @@ public class CharacterNameplateItem : NameplateItem<Character> {
 
     #region Sub Text
     private void UpdateAllTextsAndIcon() {
+#if DEBUG_PROFILER
         Profiler.BeginSample($"Character Nameplate - Update All Texts and Icon");
+#endif
         UpdateMainAndActionText();
         UpdateSubTextAndIcon();
+#if DEBUG_PROFILER
         Profiler.EndSample();
+#endif
     }
     private void UpdateMainAndActionText() {
         mainLbl.text = $"<b>{character.firstNameWithColor}</b>";
@@ -101,9 +129,9 @@ public class CharacterNameplateItem : NameplateItem<Character> {
             subLbl.gameObject.SetActive(true);
         }
     }
-    #endregion
+#endregion
 
-    #region Leader Icon
+#region Leader Icon
     public void OnHoverLeaderIcon() {
         string message = string.Empty;
         if (character.isSettlementRuler) {
@@ -117,11 +145,14 @@ public class CharacterNameplateItem : NameplateItem<Character> {
     public void OnHoverExitLeaderIcon() {
         UIManager.Instance.HideSmallInfo();
     }
-    #endregion
+#endregion
 
-    #region Race Icon
+#region Race Icon
     public void OnHoverRaceIcon() {
         string message = GameUtilities.GetNormalizedSingularRace(character.race);
+        if (character.talentComponent != null) {
+            message += "\n" + character.talentComponent.GetTalentSummary();
+        }
         UIManager.Instance.ShowSmallInfo(message);
     }
     public void OnHoverExitRaceIcon() {

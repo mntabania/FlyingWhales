@@ -30,19 +30,18 @@ public class WorldSettingsData {
     #endregion
 
     #region Utilities
-    private void SetDefaultSpellSettings(VICTORY_CONDITION p_victoryCondition = VICTORY_CONDITION.Eliminate_All) {
+    private void SetDefaultSpellSettings() {
         villageSettings.SetMigrationSpeed(MIGRATION_SPEED.Normal);
-        SetVictoryCondition(p_victoryCondition);
         playerSkillSettings.SetCooldownSpeed(SKILL_COOLDOWN_SPEED.Normal);
         playerSkillSettings.SetManaCostAmount(SKILL_COST_AMOUNT.Normal);
         playerSkillSettings.SetChargeAmount(SKILL_CHARGE_AMOUNT.Normal);
-        playerSkillSettings.SetThreatAmount(THREAT_AMOUNT.Normal);
+        playerSkillSettings.SetRetaliationState(RETALIATION.Enabled);
         playerSkillSettings.SetOmnipotentMode(OMNIPOTENT_MODE.Disabled);
     }
 
     public bool AreSettingsValid(out string invalidityReason) {
-        if (factionSettings.GetCurrentTotalVillageCountBasedOnFactions() > mapSettings.GetMaxVillages()) {
-            invalidityReason = $"{UtilityScripts.Utilities.NotNormalizedConversionEnumToString(mapSettings.mapSize.ToString())} maps can only have up to {mapSettings.GetMaxVillages().ToString()} Village/s!";
+        if (factionSettings.GetCurrentTotalVillageCountBasedOnFactions() > mapSettings.GetMaxStartingVillages()) {
+            invalidityReason = $"{UtilityScripts.Utilities.NotNormalizedConversionEnumToString(mapSettings.mapSize.ToString())} maps can only have up to {mapSettings.GetMaxStartingVillages().ToString()} Village/s!";
             return false;
         }
         invalidityReason = string.Empty;
@@ -93,7 +92,7 @@ public class WorldSettingsData {
     private void SetTutorialWorldSettings() {
         Debug.Log("Set world settings as Tutorial");
         worldType = World_Type.Tutorial;
-        victoryCondition = VICTORY_CONDITION.Eliminate_All;
+        SetVictoryCondition(VICTORY_CONDITION.Summon_Ruinarch);
         SetDefaultSpellSettings();
         mapSettings.AllowMonsterMigrations();
         villageSettings.BlockAllFactionMigrations();
@@ -101,26 +100,28 @@ public class WorldSettingsData {
         factionSettings.BlockNewFactions();
         villageSettings.SetBlessedMigrantsState(false);
         factionSettings.AllowFactionIdeologyChanges();
-        playerSkillSettings.SetForcedArchetype(PLAYER_ARCHETYPE.Normal);
+        playerSkillSettings.SetForcedArchetype(PLAYER_ARCHETYPE.Old_Puppet_Master, PLAYER_ARCHETYPE.Old_Lich, PLAYER_ARCHETYPE.Old_Ravager);
     }
     private void SetOonaWorldSettings() {
         Debug.Log("Set world settings as Second World");
         worldType = World_Type.Oona;
-        victoryCondition = VICTORY_CONDITION.Eliminate_All;
-        SetDefaultSpellSettings(victoryCondition);
+        SetVictoryCondition(VICTORY_CONDITION.Eliminate_All);
+        SetDefaultSpellSettings();
+        mapSettings.SetMapSize(MAP_SIZE.Small);
         mapSettings.AllowMonsterMigrations();
         villageSettings.AllowAllFactionMigrations();
         villageSettings.AllowNewVillages();
         factionSettings.AllowNewFactions();
         villageSettings.SetBlessedMigrantsState(false);
         factionSettings.AllowFactionIdeologyChanges();
-        playerSkillSettings.SetForcedArchetype(PLAYER_ARCHETYPE.Normal);
+        playerSkillSettings.SetForcedArchetype(PLAYER_ARCHETYPE.Old_Puppet_Master, PLAYER_ARCHETYPE.Old_Lich, PLAYER_ARCHETYPE.Old_Ravager);
     }
     private void SetIcalawaWorldSettings() {
         Debug.Log("Set world settings as Icalawa");
         worldType = World_Type.Icalawa;
-        victoryCondition = VICTORY_CONDITION.Eliminate_All;
-        SetDefaultSpellSettings(victoryCondition);
+        SetVictoryCondition(VICTORY_CONDITION.Eliminate_All);
+        SetDefaultSpellSettings();
+        mapSettings.SetMapSize(MAP_SIZE.Small);
         mapSettings.BlockMonsterMigrations();
         villageSettings.AllowAllFactionMigrations();
         villageSettings.AllowNewVillages();
@@ -132,22 +133,24 @@ public class WorldSettingsData {
     private void SetPangatLooWorldSettings() {
         Debug.Log("Set world settings as Pangat Loo");
         worldType = World_Type.Pangat_Loo;
-        victoryCondition = VICTORY_CONDITION.Wiped_Village_On_Day8;
-        SetDefaultSpellSettings(victoryCondition);
+        SetVictoryCondition(VICTORY_CONDITION.Wipe_Out_Village_On_Day);
+        SetDefaultSpellSettings();
+        mapSettings.SetMapSize(MAP_SIZE.Medium);
         mapSettings.AllowMonsterMigrations();
         villageSettings.AllowAllFactionMigrations();
         villageSettings.BlockNewVillages();
         factionSettings.BlockNewFactions();
         villageSettings.SetBlessedMigrantsState(false);
         factionSettings.AllowFactionIdeologyChanges();
-        playerSkillSettings.SetForcedArchetype(PLAYER_ARCHETYPE.Lich);
+        playerSkillSettings.SetForcedArchetype(PLAYER_ARCHETYPE.Old_Lich);
     }
     private void SetAffattWorldSettings() {
         Debug.Log("Set world settings as Affatt");
         worldType = World_Type.Affatt;
-        victoryCondition = VICTORY_CONDITION.Wipe_Elven_Kingdom_Survive_Humans;
-        SetDefaultSpellSettings(victoryCondition);
+        SetVictoryCondition(VICTORY_CONDITION.Wipe_Elven_Kingdom_Survive_Humans);
+        SetDefaultSpellSettings();
         villageSettings.SetMigrationSpeed(MIGRATION_SPEED.Slow);
+        mapSettings.SetMapSize(MAP_SIZE.Large);
         mapSettings.AllowMonsterMigrations();
         villageSettings.AllowAllFactionMigrations();
         villageSettings.BlockVillagerMigrationForFactionType(FACTION_TYPE.Human_Empire);
@@ -160,41 +163,43 @@ public class WorldSettingsData {
     private void SetZenkoWorldSettings() {
         Debug.Log("Set world settings as Zenko");
         worldType = World_Type.Zenko;
-        victoryCondition = VICTORY_CONDITION.Eliminate_All;
-        SetDefaultSpellSettings(victoryCondition);
+        SetVictoryCondition(VICTORY_CONDITION.Eliminate_All);
+        SetDefaultSpellSettings();
+        mapSettings.SetMapSize(MAP_SIZE.Large);
         mapSettings.AllowMonsterMigrations();
         villageSettings.AllowAllFactionMigrations();
         villageSettings.BlockNewVillages();
         factionSettings.BlockNewFactions();
         villageSettings.SetBlessedMigrantsState(false);
         factionSettings.AllowFactionIdeologyChanges();
-        playerSkillSettings.SetForcedArchetype(PLAYER_ARCHETYPE.Normal);
+        playerSkillSettings.SetForcedArchetype(PLAYER_ARCHETYPE.Old_Puppet_Master, PLAYER_ARCHETYPE.Old_Lich, PLAYER_ARCHETYPE.Old_Ravager);
     }
     private void SetAneemWorldSettings() {
         Debug.Log("Set world settings as Aneem");
         worldType = World_Type.Aneem;
-        victoryCondition = VICTORY_CONDITION.Kill_By_Plague;
-        SetDefaultSpellSettings(victoryCondition);
+        SetVictoryCondition(VICTORY_CONDITION.Kill_By_Plague);
+        SetDefaultSpellSettings();
+        mapSettings.SetMapSize(MAP_SIZE.Large);
         mapSettings.AllowMonsterMigrations();
         villageSettings.AllowAllFactionMigrations();
         villageSettings.AllowNewVillages();
         factionSettings.AllowNewFactions();
         villageSettings.SetBlessedMigrantsState(false);
         factionSettings.AllowFactionIdeologyChanges();
-        playerSkillSettings.SetForcedArchetype(PLAYER_ARCHETYPE.Lich);
+        playerSkillSettings.SetForcedArchetype(PLAYER_ARCHETYPE.Old_Lich);
     }
     private void SetPittoWorldSettings() {
         Debug.Log("Set world settings as Pitto");
         worldType = World_Type.Pitto;
-        victoryCondition = VICTORY_CONDITION.Create_Demon_Cult;
-        SetDefaultSpellSettings(victoryCondition);
+        SetVictoryCondition(VICTORY_CONDITION.Create_Demon_Cult);
+        SetDefaultSpellSettings();
         mapSettings.AllowMonsterMigrations();
         villageSettings.AllowAllFactionMigrations();
         villageSettings.AllowNewVillages();
         factionSettings.AllowNewFactions();
         villageSettings.SetBlessedMigrantsState(false);
         factionSettings.AllowFactionIdeologyChanges();
-        playerSkillSettings.SetForcedArchetype(PLAYER_ARCHETYPE.Normal);
+        playerSkillSettings.SetForcedArchetype(PLAYER_ARCHETYPE.Old_Puppet_Master, PLAYER_ARCHETYPE.Old_Lich, PLAYER_ARCHETYPE.Old_Ravager);
     }
     public void ApplyCustomWorldSettings() {
         mapSettings.AllowMonsterMigrations();
@@ -203,7 +208,7 @@ public class WorldSettingsData {
         factionSettings.AllowNewFactions();
         villageSettings.SetBlessedMigrantsState(false);
         factionSettings.AllowFactionIdeologyChanges();
-        playerSkillSettings.SetForcedArchetype(PLAYER_ARCHETYPE.Normal);
+        playerSkillSettings.SetForcedArchetype(null);
     }
     #endregion
 
@@ -219,5 +224,10 @@ public class WorldSettingsData {
         Debug.Log($"Set Victory Condition {p_value.ToString()}");
     }
     #endregion
-    
+
+    #region Retaliation
+    public bool IsRetaliationAllowed() {
+        return playerSkillSettings.retaliation == RETALIATION.Enabled;
+    }
+    #endregion
 }

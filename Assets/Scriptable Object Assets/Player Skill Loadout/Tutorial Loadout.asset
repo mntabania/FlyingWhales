@@ -15,7 +15,7 @@ MonoBehaviour:
   archetype: 4
   spells:
     extraSlots: 0
-    fixedSkills: 200000002a0000002d000000160000001e0000002c0000001700000009000000
+    fixedSkills: 200000002a0000002d000000160000001e0000002c00000017000000090000009c000000
   afflictions:
     extraSlots: 0
     fixedSkills: 040000000300000002000000
@@ -24,13 +24,42 @@ MonoBehaviour:
     fixedSkills: 4e0000004f00000052000000
   structures:
     extraSlots: 0
-    fixedSkills: 4a0000004800000060000000
+    fixedSkills: 4a00000048000000
   miscs:
     extraSlots: 0
-    fixedSkills: 0a00000034000000070000000600000033000000320000008c000000080000002100000094000000
-  passiveSkills: 04000000
+    fixedSkills: 0a00000034000000070000000600000033000000320000008c0000000800000021000000
+  passiveSkills: 
   availableSpells: 09000000120000001300000014000000150000001700000016000000180000001b0000001c0000001d0000001e000000190000001f000000200000002300000028000000290000002a0000002b0000002c0000002d0000002e0000005d0000005e000000
   availableAfflictions: 05000000010000000300000002000000040000000d0000000c0000000f0000000e000000110000004300000044000000450000005a0000005b0000005f00000063000000
   availableMinions: 4e0000004f0000005000000051000000520000005300000054000000
-  availableStructures: 480000004a0000004c0000004d00000060000000
+  availableStructures: 480000004a0000004c0000004d000000
   availableMiscs: 0600000008000000070000000a00000021000000320000003300000034000000590000008c000000
+  portalUpgradeTiers:
+  - name: Level 1
+    skillTypesToUnlock: 
+    upgradeCost: []
+    upgradeTime: 0
+  - name: Level 2
+    skillTypesToUnlock: 
+    upgradeCost: []
+    upgradeTime: 0
+  - name: Level 3
+    skillTypesToUnlock: 
+    upgradeCost: []
+    upgradeTime: 0
+  - name: Level 4
+    skillTypesToUnlock: 
+    upgradeCost: []
+    upgradeTime: 0
+  - name: Level 5
+    skillTypesToUnlock: 
+    upgradeCost: []
+    upgradeTime: 0
+  - name: Level 6
+    skillTypesToUnlock: 
+    upgradeCost: []
+    upgradeTime: 0
+  - name: Level 7
+    skillTypesToUnlock: 
+    upgradeCost: []
+    upgradeTime: 0

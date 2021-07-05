@@ -20,6 +20,7 @@ public class ActionIntel : IIntel, IDisposable {
         this.node = node;
         DatabaseManager.Instance.mainSQLDatabase.SetLogIntelState(log.persistentID, true);
         Messenger.AddListener<Character>(CharacterSignals.CHARACTER_CHANGED_NAME, OnCharacterChangedName);
+        node.SetIsIntel(true);
     }
     public ActionIntel(SaveDataActionIntel data) {
         node = DatabaseManager.Instance.actionDatabase.GetActionByPersistentID(data.node);
@@ -113,7 +114,11 @@ public class ActionIntel : IIntel, IDisposable {
         List<EMOTION> emotions = ObjectPoolManager.Instance.CreateNewEmotionList();
         if (witness1 != null) {
             emotions.Clear();
-            node.PopulateReactionsToActor(emotions, actor, target, witness1, REACTION_STATUS.INFORMED);
+            if(witness1 == target) {
+                node.PopulateReactionsOfTarget(emotions, actor, target, REACTION_STATUS.INFORMED);
+            } else {
+                node.PopulateReactionsToActor(emotions, actor, target, witness1, REACTION_STATUS.INFORMED);
+            }
             string response = GetFeelingTextInIntelInfoRelationshipText(emotions, witness1, actor);
             if (!string.IsNullOrEmpty(response)) {
                 if (!string.IsNullOrEmpty(text)) {
@@ -124,7 +129,11 @@ public class ActionIntel : IIntel, IDisposable {
         }
         if (witness2 != null) {
             emotions.Clear();
-            node.PopulateReactionsToActor(emotions, actor, target, witness2, REACTION_STATUS.INFORMED);
+            if (witness2 == target) {
+                node.PopulateReactionsOfTarget(emotions, actor, target, REACTION_STATUS.INFORMED);
+            } else {
+                node.PopulateReactionsToActor(emotions, actor, target, witness2, REACTION_STATUS.INFORMED);
+            }
             string response = GetFeelingTextInIntelInfoRelationshipText(emotions, witness2, actor);
             if (!string.IsNullOrEmpty(response)) {
                 if (!string.IsNullOrEmpty(text)) {
@@ -135,7 +144,11 @@ public class ActionIntel : IIntel, IDisposable {
         }
         if (witness3 != null) {
             emotions.Clear();
-            node.PopulateReactionsToActor(emotions, actor, target, witness3, REACTION_STATUS.INFORMED);
+            if (witness3 == target) {
+                node.PopulateReactionsOfTarget(emotions, actor, target, REACTION_STATUS.INFORMED);
+            } else {
+                node.PopulateReactionsToActor(emotions, actor, target, witness3, REACTION_STATUS.INFORMED);
+            }
             string response = GetFeelingTextInIntelInfoRelationshipText(emotions, witness3, actor);
             if (!string.IsNullOrEmpty(response)) {
                 if (!string.IsNullOrEmpty(text)) {
@@ -225,6 +238,14 @@ public class ActionIntel : IIntel, IDisposable {
         } else {
             return "Doesn't seem very useful, but...";   
         }
+    }
+    public bool CanShareIntelTo(Character p_target) {
+        if (node.action.goapType == INTERACTION_TYPE.IS_IMPRISONED) {
+            //Do not allow share on imprisoned target
+            //Reference: https://trello.com/c/92nDGdD6/4019-blackmail-intel-recipient-issue
+            return p_target != target;
+        }
+        return true;
     }
     #endregion
 
@@ -471,6 +492,9 @@ public class InterruptIntel : IIntel, IDisposable {
             return "Doesn't seem very useful, but...";   
         }
     }
+    public bool CanShareIntelTo(Character p_target) {
+        return true;
+    }
     #endregion
 
     #region Listeners
@@ -511,6 +535,7 @@ public interface IIntel {
     bool CanBeUsedToBlackmailCharacter(Character p_target);
     BLACKMAIL_TYPE GetBlackMailTypeConsideringTarget(Character p_target);
     string GetFullIntelTooltip();
+    bool CanShareIntelTo(Character p_target);
 }
 
 [System.Serializable]

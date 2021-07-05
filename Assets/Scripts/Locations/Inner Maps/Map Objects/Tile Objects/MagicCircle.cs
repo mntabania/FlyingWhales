@@ -10,7 +10,7 @@ public class MagicCircle : TileObject {
         AddAdvertisedAction(INTERACTION_TYPE.RESOLVE_COMBAT);
         AddAdvertisedAction(INTERACTION_TYPE.DARK_RITUAL);
     }
-    public MagicCircle(SaveDataTileObject data) { }
+    public MagicCircle(SaveDataTileObject data) : base(data) { }
 
     #region Overrides
     protected override void OnSetObjectAsUnbuilt() {

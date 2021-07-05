@@ -4,7 +4,7 @@
         <key>fileFormatVersion</key>
         <int>4</int>
         <key>texturePackerVersion</key>
-        <string>5.4.0</string>
+        <string>5.5.0</string>
         <key>autoSDSettings</key>
         <array>
             <struct type="AutoSDSettings">
@@ -102,13 +102,13 @@
         <key>algorithmSettings</key>
         <struct type="AlgorithmSettings">
             <key>algorithm</key>
-            <enum type="AlgorithmSettings::AlgorithmId">Polygon</enum>
+            <enum type="AlgorithmSettings::AlgorithmId">MaxRects</enum>
             <key>freeSizeMode</key>
             <enum type="AlgorithmSettings::AlgorithmFreeSizeMode">Best</enum>
             <key>sizeConstraints</key>
             <enum type="AlgorithmSettings::SizeConstraints">POT</enum>
             <key>forceSquared</key>
-            <true/>
+            <false/>
             <key>maxRects</key>
             <struct type="AlgorithmMaxRectsSettings">
                 <key>heuristic</key>
@@ -163,153 +163,40 @@
             <key>scaleMode</key>
             <enum type="ScaleMode">Smooth</enum>
             <key>extrude</key>
-            <uint>0</uint>
+            <uint>2</uint>
             <key>trimThreshold</key>
             <uint>1</uint>
             <key>trimMargin</key>
-            <uint>3</uint>
+            <uint>15</uint>
             <key>trimMode</key>
-            <enum type="SpriteSettings::TrimMode">Polygon</enum>
+            <enum type="SpriteSettings::TrimMode">None</enum>
             <key>tracerTolerance</key>
             <int>200</int>
             <key>heuristicMask</key>
             <false/>
             <key>defaultPivotPoint</key>
-            <point_f>0.5,0.5</point_f>
+            <point_f>0.55102,0.5</point_f>
             <key>writePivotPoints</key>
             <true/>
         </struct>
         <key>individualSpriteSettings</key>
         <map type="IndividualSpriteSettingsMap">
-            <key type="filename">C:/Users/12myk/Downloads/icon_chargesB.png</key>
-            <struct type="IndividualSpriteSettings">
-                <key>pivotPoint</key>
-                <point_f>0.5,0.5</point_f>
-                <key>spriteScale</key>
-                <double>1</double>
-                <key>scale9Enabled</key>
-                <false/>
-                <key>scale9Borders</key>
-                <rect>5,8,11,15</rect>
-                <key>scale9Paddings</key>
-                <rect>5,8,11,15</rect>
-                <key>scale9FromFile</key>
-                <false/>
-            </struct>
-            <key type="filename">C:/Users/12myk/Downloads/icon_cooldown.png</key>
-            <struct type="IndividualSpriteSettings">
-                <key>pivotPoint</key>
-                <point_f>0.5,0.5</point_f>
-                <key>spriteScale</key>
-                <double>1</double>
-                <key>scale9Enabled</key>
-                <false/>
-                <key>scale9Borders</key>
-                <rect>6,7,11,13</rect>
-                <key>scale9Paddings</key>
-                <rect>6,7,11,13</rect>
-                <key>scale9FromFile</key>
-                <false/>
-            </struct>
-            <key type="filename">C:/Users/12myk/Downloads/icon_cultist.png</key>
-            <key type="filename">C:/Users/12myk/Downloads/icon_demon.png</key>
-            <key type="filename">C:/Users/12myk/Downloads/icon_monster.png</key>
-            <key type="filename">C:/Users/12myk/Downloads/icon_ratvillager.png</key>
-            <key type="filename">C:/Users/12myk/Downloads/icon_undead.png</key>
-            <key type="filename">C:/Users/12myk/Downloads/icon_villager.png</key>
-            <struct type="IndividualSpriteSettings">
-                <key>pivotPoint</key>
-                <point_f>0.5,0.5</point_f>
-                <key>spriteScale</key>
-                <double>1</double>
-                <key>scale9Enabled</key>
-                <false/>
-                <key>scale9Borders</key>
-                <rect>6,6,12,12</rect>
-                <key>scale9Paddings</key>
-                <rect>6,6,12,12</rect>
-                <key>scale9FromFile</key>
-                <false/>
-            </struct>
-            <key type="filename">C:/Users/12myk/Downloads/icon_ideology.png</key>
-            <struct type="IndividualSpriteSettings">
-                <key>pivotPoint</key>
-                <point_f>0.5,0.5</point_f>
-                <key>spriteScale</key>
-                <double>1</double>
-                <key>scale9Enabled</key>
-                <false/>
-                <key>scale9Borders</key>
-                <rect>4,4,9,7</rect>
-                <key>scale9Paddings</key>
-                <rect>4,4,9,7</rect>
-                <key>scale9FromFile</key>
-                <false/>
-            </struct>
-            <key type="filename">C:/Users/12myk/Downloads/icon_leader.png</key>
-            <struct type="IndividualSpriteSettings">
-                <key>pivotPoint</key>
-                <point_f>0.5,0.5</point_f>
-                <key>spriteScale</key>
-                <double>1</double>
-                <key>scale9Enabled</key>
-                <false/>
-                <key>scale9Borders</key>
-                <rect>6,6,12,11</rect>
-                <key>scale9Paddings</key>
-                <rect>6,6,12,11</rect>
-                <key>scale9FromFile</key>
-                <false/>
-            </struct>
-            <key type="filename">C:/Users/12myk/Downloads/icon_mana.png</key>
-            <struct type="IndividualSpriteSettings">
-                <key>pivotPoint</key>
-                <point_f>0.5,0.5</point_f>
-                <key>spriteScale</key>
-                <double>1</double>
-                <key>scale9Enabled</key>
-                <false/>
-                <key>scale9Borders</key>
-                <rect>7,7,13,13</rect>
-                <key>scale9Paddings</key>
-                <rect>7,7,13,13</rect>
-                <key>scale9FromFile</key>
-                <false/>
-            </struct>
-            <key type="filename">C:/Users/12myk/Downloads/icon_plague.png</key>
-            <struct type="IndividualSpriteSettings">
-                <key>pivotPoint</key>
-                <point_f>0.5,0.5</point_f>
-                <key>spriteScale</key>
-                <double>1</double>
-                <key>scale9Enabled</key>
-                <false/>
-                <key>scale9Borders</key>
-                <rect>10,10,19,19</rect>
-                <key>scale9Paddings</key>
-                <rect>10,10,19,19</rect>
-                <key>scale9FromFile</key>
-                <false/>
-            </struct>
-            <key type="filename">C:/Users/12myk/Downloads/icon_threat.png</key>
-            <struct type="IndividualSpriteSettings">
-                <key>pivotPoint</key>
-                <point_f>0.5,0.5</point_f>
-                <key>spriteScale</key>
-                <double>1</double>
-                <key>scale9Enabled</key>
-                <false/>
-                <key>scale9Borders</key>
-                <rect>7,7,14,13</rect>
-                <key>scale9Paddings</key>
-                <rect>7,7,14,13</rect>
-                <key>scale9FromFile</key>
-                <false/>
-            </struct>
             <key type="filename">../../../../../12myk/Photoshop Files/Key_A.png</key>
             <key type="filename">../../../../../12myk/Photoshop Files/Key_D.png</key>
             <key type="filename">../../../../../12myk/Photoshop Files/Key_S.png</key>
             <key type="filename">../../../../../12myk/Photoshop Files/Key_W.png</key>
+            <key type="filename">All Icons/element_earth_icon.png</key>
+            <key type="filename">All Icons/element_electric_icon.png</key>
+            <key type="filename">All Icons/element_fire_icon.png</key>
+            <key type="filename">All Icons/element_ice_icon.png</key>
+            <key type="filename">All Icons/element_normal_icon.png</key>
+            <key type="filename">All Icons/element_poison_icon.png</key>
+            <key type="filename">All Icons/element_water_icon.png</key>
+            <key type="filename">All Icons/element_wind_icon.png</key>
+            <key type="filename">All Icons/spirit_energy_icon.png</key>
+            <key type="filename">All Icons/stats_attack_icon.png</key>
+            <key type="filename">All Icons/stats_health_icon.png</key>
+            <key type="filename">All Icons/stats_speed_icon.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
                 <point_f>0.5,0.5</point_f>
@@ -321,29 +208,192 @@
                 <rect>8,8,16,16</rect>
                 <key>scale9Paddings</key>
                 <rect>8,8,16,16</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
+            <key type="filename">All Icons/bonus_charges_icon.png</key>
+            <key type="filename">All Icons/icon_chargesB.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>spriteScale</key>
+                <double>1</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>5,8,11,15</rect>
+                <key>scale9Paddings</key>
+                <rect>5,8,11,15</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
+            <key type="filename">All Icons/icon_cooldown.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>spriteScale</key>
+                <double>1</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>6,7,11,13</rect>
+                <key>scale9Paddings</key>
+                <rect>6,7,11,13</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
+            <key type="filename">All Icons/icon_cultist.png</key>
+            <key type="filename">All Icons/icon_demon.png</key>
+            <key type="filename">All Icons/icon_monster.png</key>
+            <key type="filename">All Icons/icon_object.png</key>
+            <key type="filename">All Icons/icon_ratvillager.png</key>
+            <key type="filename">All Icons/icon_structure.png</key>
+            <key type="filename">All Icons/icon_undead.png</key>
+            <key type="filename">All Icons/icon_village.png</key>
+            <key type="filename">All Icons/icon_villager.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>spriteScale</key>
+                <double>1</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>6,6,12,12</rect>
+                <key>scale9Paddings</key>
+                <rect>6,6,12,12</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
+            <key type="filename">All Icons/icon_ideology.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>spriteScale</key>
+                <double>1</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>4,4,9,7</rect>
+                <key>scale9Paddings</key>
+                <rect>4,4,9,7</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
+            <key type="filename">All Icons/icon_leader.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>spriteScale</key>
+                <double>1</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>6,6,12,11</rect>
+                <key>scale9Paddings</key>
+                <rect>6,6,12,11</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
+            <key type="filename">All Icons/icon_mana.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>spriteScale</key>
+                <double>1</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>7,7,13,13</rect>
+                <key>scale9Paddings</key>
+                <rect>7,7,13,13</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
+            <key type="filename">All Icons/icon_plague.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>spriteScale</key>
+                <double>1</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>10,10,19,19</rect>
+                <key>scale9Paddings</key>
+                <rect>10,10,19,19</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
+            <key type="filename">All Icons/icon_threat.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>spriteScale</key>
+                <double>1</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>7,7,14,13</rect>
+                <key>scale9Paddings</key>
+                <rect>7,7,14,13</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
+            <key type="filename">All Icons/piercing_icon.png</key>
+            <key type="filename">All Icons/resistance_icon.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>spriteScale</key>
+                <double>1</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>8,8,15,15</rect>
+                <key>scale9Paddings</key>
+                <rect>8,8,15,15</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
+            <key type="filename">All Icons/traveller_hover.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>spriteScale</key>
+                <double>1</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>12,13,25,25</rect>
+                <key>scale9Paddings</key>
+                <rect>12,13,25,25</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
+            <key type="filename">All Icons/upgrade_arrow_icon.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>spriteScale</key>
+                <double>1</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>4,3,7,5</rect>
+                <key>scale9Paddings</key>
+                <rect>4,3,7,5</rect>
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
         </map>
         <key>fileList</key>
         <array>
-            <filename>C:/Users/12myk/Downloads/icon_cultist.png</filename>
-            <filename>C:/Users/12myk/Downloads/icon_monster.png</filename>
-            <filename>C:/Users/12myk/Downloads/icon_villager.png</filename>
-            <filename>C:/Users/12myk/Downloads/icon_chargesB.png</filename>
-            <filename>C:/Users/12myk/Downloads/icon_cooldown.png</filename>
-            <filename>C:/Users/12myk/Downloads/icon_mana.png</filename>
-            <filename>C:/Users/12myk/Downloads/icon_threat.png</filename>
-            <filename>C:/Users/12myk/Downloads/icon_ideology.png</filename>
-            <filename>C:/Users/12myk/Downloads/icon_leader.png</filename>
             <filename>../../../../../12myk/Photoshop Files/Key_A.png</filename>
             <filename>../../../../../12myk/Photoshop Files/Key_D.png</filename>
             <filename>../../../../../12myk/Photoshop Files/Key_S.png</filename>
             <filename>../../../../../12myk/Photoshop Files/Key_W.png</filename>
-            <filename>C:/Users/12myk/Downloads/icon_demon.png</filename>
-            <filename>C:/Users/12myk/Downloads/icon_undead.png</filename>
-            <filename>C:/Users/12myk/Downloads/icon_plague.png</filename>
-            <filename>C:/Users/12myk/Downloads/icon_ratvillager.png</filename>
+            <filename>All Icons</filename>
         </array>
         <key>ignoreFileList</key>
         <array/>

@@ -11,9 +11,9 @@ public class WurmHole : TileObject{
     public WurmHole() {
         Initialize(TILE_OBJECT_TYPE.WURM_HOLE);
         traitContainer.AddTrait(this, "Indestructible");
-        traitContainer.AddTrait(this, "Fireproof");
+        traitContainer.AddTrait(this, "Fire Resistant");
     }
-    public WurmHole(SaveDataWurmHole data) { }
+    public WurmHole(SaveDataWurmHole data) : base(data) { }
 
     public void SetWurmHoleConnection(WurmHole wurmHole) {
         wurmHoleConnection = wurmHole;
@@ -32,7 +32,7 @@ public class WurmHole : TileObject{
         log.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         log.AddToFillers(this, this.name, LOG_IDENTIFIER.TARGET_CHARACTER);
         log.AddToFillers(wurmHoleConnection, wurmHoleConnection.name, LOG_IDENTIFIER.CHARACTER_3);
-        log.AddLogToDatabase();
+        log.AddLogToDatabase(true);
         if (gridTileLocation != null) {
             GameManager.Instance.CreateParticleEffectAt(gridTileLocation, PARTICLE_EFFECT.Teleport);    
         }

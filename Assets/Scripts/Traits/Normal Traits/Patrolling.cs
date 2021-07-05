@@ -44,7 +44,7 @@ namespace Traits {
                 _owner = null;
                 Log endLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Behaviour", "PatrolBehaviour", "end", null, LOG_TAG.Work);
                 endLog.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                endLog.AddLogToDatabase();    
+                endLog.AddLogToDatabase(true);    
                 
                 character.behaviourComponent.RemoveBehaviourComponent(typeof(PatrolBehaviour));
                 Messenger.RemoveListener<Character>(CharacterSignals.CHARACTER_CAN_NO_LONGER_PERFORM, OnCharacterCanNoLongerPerform);

@@ -46,7 +46,6 @@ public abstract class BaseCameraMove : BaseMonoBehaviour{
     [Header("Threat")]
     [SerializeField] protected ThreatParticleEffect threatEffect;
 
-
     public Transform lastCenteredTarget { get; private set; }
     protected bool isMovementDisabled;
 
@@ -156,7 +155,6 @@ public abstract class BaseCameraMove : BaseMonoBehaviour{
                     }
                 }
             }
-            
         }
 
         if (isDragging) {
@@ -294,19 +292,6 @@ public abstract class BaseCameraMove : BaseMonoBehaviour{
     #endregion
     
     #region Bounds
-    protected void CalculateCameraBounds(Camera camera) {
-        if (GridMap.Instance.map == null) {
-            return;
-        }
-        HexTile topRightTile = GridMap.Instance.map[GridMap.Instance.width - 1, GridMap.Instance.height - 1];
-        Vector3 topRightTilePosition = topRightTile.transform.position;
-        
-        Bounds newBounds = new Bounds {
-            extents = new Vector3(Mathf.Abs(topRightTilePosition.x),
-                Mathf.Abs(topRightTilePosition.y), 0f)
-        };
-        SetCameraBounds(newBounds);
-    }
     protected void ConstrainCameraBounds(Camera camera) {
         float xLowerBound = MIN_X;
         float xUpperBound = MAX_X;
@@ -392,7 +377,7 @@ public abstract class BaseCameraMove : BaseMonoBehaviour{
         }
         return false;
     }
-    private void SetCameraBounds(Bounds bounds) {
+    public void SetCameraBounds(Bounds bounds) {
         float halfOfHexagon = 256f / 100f;
         // MIN_X = bounds.min.x + horzExtent - (halfOfHexagon * 1.5f);
         // MAX_X = bounds.max.x - horzExtent + (halfOfHexagon * 1.5f); //removed -1 because of UI

@@ -5,7 +5,7 @@ using UnityEngine;
 namespace Interrupts {
     public class FeelingSpooked : Interrupt {
         public FeelingSpooked() : base(INTERRUPT.Feeling_Spooked) {
-            duration = 4;
+            duration = 5;
             doesStopCurrentAction = true;
             doesDropCurrentJob = true;
             interruptIconString = GoapActionStateDB.Cowering_Icon;

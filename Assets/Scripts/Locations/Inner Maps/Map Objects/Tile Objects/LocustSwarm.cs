@@ -12,12 +12,13 @@ public class LocustSwarm : MovingTileObject {
     public override System.Type serializedData => typeof(SaveDataLocustSwarm);
     
     public LocustSwarm() {
+        int processedTick = PlayerSkillManager.Instance.GetDurationBonusPerLevel(PLAYER_SKILL_TYPE.LOCUST_SWARM);
         Initialize(TILE_OBJECT_TYPE.LOCUST_SWARM, false);
         AddAdvertisedAction(INTERACTION_TYPE.ASSAULT);
         AddAdvertisedAction(INTERACTION_TYPE.RESOLVE_COMBAT);
-        expiryDate = GameManager.Instance.Today().AddTicks(GameManager.Instance.GetTicksBasedOnHour(6));
+        expiryDate = GameManager.Instance.Today().AddTicks(processedTick);
     }
-    public LocustSwarm(SaveDataLocustSwarm data) {
+    public LocustSwarm(SaveDataLocustSwarm data) : base(data) {
         //SaveDataLocustSwarm saveDataLocustSwarm = data as SaveDataLocustSwarm;
         Assert.IsNotNull(data);
         expiryDate = data.expiryDate;
@@ -33,11 +34,11 @@ public class LocustSwarm : MovingTileObject {
         traitContainer.AddTrait(this, "Dangerous");
     }
     public override void AdjustHP(int amount, ELEMENTAL_TYPE elementalDamageType, bool triggerDeath = false,
-        object source = null, CombatManager.ElementalTraitProcessor elementalTraitProcessor = null, bool showHPBar = false) {
+        object source = null, CombatManager.ElementalTraitProcessor elementalTraitProcessor = null, bool showHPBar = false, float piercingPower = 0f, bool isPlayerSource = false) {
         if (currentHP == 0 && amount < 0) {
             return; //hp is already at minimum, do not allow any more negative adjustments
         }
-        CombatManager.Instance.DamageModifierByElementsAndTraits(ref amount, elementalDamageType, this);
+        CombatManager.Instance.ModifyDamage(ref amount, elementalDamageType, piercingPower, this);
         currentHP += amount;
         currentHP = Mathf.Clamp(currentHP, 0, maxHP);
         if (amount < 0 && source != null) {
@@ -46,14 +47,18 @@ public class LocustSwarm : MovingTileObject {
             if (source is Character character) {
                 responsibleCharacter = character;
             }
-            CombatManager.Instance.ApplyElementalDamage(amount, elementalDamageType, this, responsibleCharacter, elementalTraitProcessor);
+            CombatManager.Instance.ApplyElementalDamage(amount, elementalDamageType, this, responsibleCharacter, elementalTraitProcessor, setAsPlayerSource: isPlayerSource);
         }
         if (currentHP == 0) {
             //object has been destroyed
             _locustSwarmMapObjectVisual.Expire();
         }
         if (amount < 0) {
-            Messenger.Broadcast(TileObjectSignals.TILE_OBJECT_DAMAGED, this as TileObject, amount);
+            if (source is Character responsibleCharacter) {
+                Messenger.Broadcast(TileObjectSignals.TILE_OBJECT_DAMAGED_BY, this as TileObject, amount, responsibleCharacter, isPlayerSource);
+            } else {
+                Messenger.Broadcast(TileObjectSignals.TILE_OBJECT_DAMAGED, this as TileObject, amount, isPlayerSource);
+            }
         } else if (amount > 0) {
             if (currentHP == maxHP) {
                 Messenger.Broadcast(TileObjectSignals.TILE_OBJECT_FULLY_REPAIRED, this as TileObject);
@@ -61,7 +66,9 @@ public class LocustSwarm : MovingTileObject {
                 Messenger.Broadcast(TileObjectSignals.TILE_OBJECT_REPAIRED, this as TileObject, amount);
             }
         }
+#if DEBUG_LOG
         Debug.Log($"{GameManager.Instance.TodayLogString()}HP of {this} was adjusted by {amount}. New HP is {currentHP}.");
+#endif
     }
     public override void Neutralize() {
         _locustSwarmMapObjectVisual.Expire();

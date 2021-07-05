@@ -4,7 +4,7 @@
 
 using UnityEngine.EventSystems;
 using System.Collections;
-
+using System.Globalization;
 namespace UnityEngine.UI.Extensions
 {
 
@@ -37,7 +37,7 @@ namespace UnityEngine.UI.Extensions
             else if (_lerp)
             {
                 _screensContainer.localPosition = Vector3.Lerp(_screensContainer.localPosition, _lerp_target, transitionSpeed * Time.deltaTime);
-                if (Vector3.Distance(_screensContainer.localPosition, _lerp_target) < 0.1f)
+                if (Vector3.Distance(_screensContainer.localPosition, _lerp_target) <= 0.1f)
                 {
                     _screensContainer.localPosition = _lerp_target;
                     _lerp = false;
@@ -45,7 +45,7 @@ namespace UnityEngine.UI.Extensions
                 }
             }
 
-            CurrentPage = GetPageforPosition(_screensContainer.localPosition);
+            // CurrentPage = GetPageforPosition(_screensContainer.localPosition);
 
             //If the container is moving check if it needs to settle on a page
             if (!_pointerDown)
@@ -205,7 +205,11 @@ namespace UnityEngine.UI.Extensions
         private void SetScrollContainerPosition()
         {
             _scrollStartPosition = _screensContainer.localPosition.x;
-            _scroll_rect.horizontalNormalizedPosition = (float)(_currentPage) / (_screens - 1);
+            float result = (float) (_currentPage) / (_screens - 1);
+            // string summary = $"Will set scroll rect position to {result.ToString(CultureInfo.InvariantCulture)}. Current Page: {_currentPage.ToString()}. Screens {_screens.ToString()}";
+            // Debug.Log(summary);
+            if (float.IsInfinity(result)) { result = 0; }
+            _scroll_rect.horizontalNormalizedPosition = result;
             OnCurrentScreenChange(_currentPage);
         }
 

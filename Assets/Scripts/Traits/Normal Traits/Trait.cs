@@ -3,8 +3,11 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Interrupts;
+using Object_Pools;
 using UnityEngine;
 using UnityEngine.Assertions;
+using Inner_Maps;
+
 namespace Traits {
     [System.Serializable]
     public class Trait : IMoodModifier, ISavable, IContextMenuItem {
@@ -21,15 +24,19 @@ namespace Traits {
         public string[] mutuallyExclusive; //list of traits that this trait cannot be with.
         public bool canBeTriggered;
         public ELEMENTAL_TYPE elementalType;
-
+        public List<RESISTANCE> resistancesType;
+        public List<float> resistancesValue;
+        public List<string> traitOverrideFunctionIdentifiers { get; protected set; }
         /// <summary>
         /// Persistent ID of this trait. NOTE: Only instanced traits use this.
         /// </summary>
         public string persistentID { get; private set; }
         public OBJECT_TYPE objectType => OBJECT_TYPE.Trait;
         public List<Character> responsibleCharacters { get; protected set; }
-        public ActualGoapNode gainedFromDoing { get; protected set; } //what action was this poi involved in that gave it this trait.
-        public List<string> traitOverrideFunctionIdentifiers { get; protected set; }
+        //public ActualGoapNode gainedFromDoing { get; protected set; } //what action was this poi involved in that gave it this trait.
+        public INTERACTION_TYPE gainedFromDoingType { get; protected set; }
+        public bool isGainedFromDoingStealth { get; protected set; }
+        //public PlayerDamageAccumulator playerDamageAccumulator { get; private set; }
 
         #region Getters
         public virtual Type serializedData => typeof(SaveDataTrait);
@@ -43,6 +50,12 @@ namespace Traits {
         public string contextMenuName => name;
         public int contextMenuColumn => 1;
         public List<IContextMenuItem> subMenus => null;
+        /// <summary>
+        /// Does this trait affect the characters name icon?
+        /// Examples: Cultist, Necromancer
+        /// </summary>
+        public virtual bool affectsNameIcon => false;
+        //public bool isPlayerDamage => playerDamageAccumulator != null;
         #endregion
         
         #region Initialization
@@ -52,12 +65,17 @@ namespace Traits {
         }
         public virtual void LoadFirstWaveInstancedTrait(SaveDataTrait saveDataTrait) {
             persistentID = saveDataTrait.persistentID;
+            gainedFromDoingType = saveDataTrait.gainedFromDoingType;
+            isGainedFromDoingStealth = saveDataTrait.isGainedFromDoingStealth;
             Assert.IsFalse(string.IsNullOrEmpty(persistentID), $"Trait {saveDataTrait.name} does not have a persistent ID!");
             DatabaseManager.Instance.traitDatabase.RegisterTrait(this);
         }
         public virtual void LoadSecondWaveInstancedTrait(SaveDataTrait p_saveDataTrait) {
-            if (!string.IsNullOrEmpty(p_saveDataTrait.gainedFromDoing)) {
-                gainedFromDoing = DatabaseManager.Instance.actionDatabase.GetActionByPersistentID(p_saveDataTrait.gainedFromDoing);    
+            //if (!string.IsNullOrEmpty(p_saveDataTrait.gainedFromDoing)) {
+            //    gainedFromDoing = DatabaseManager.Instance.actionDatabase.GetActionByPersistentID(p_saveDataTrait.gainedFromDoing);    
+            //}
+            if (p_saveDataTrait.responsibleCharacters != null) {
+                responsibleCharacters = SaveUtilities.ConvertIDListToCharacters(p_saveDataTrait.responsibleCharacters);    
             }
         }
         #endregion
@@ -85,7 +103,10 @@ namespace Traits {
                 Character character = addedTo as Character;
                 // character.moodComponent.AddMoodEffect(moodEffect, this);
                 if (elementalType != ELEMENTAL_TYPE.Normal) {
-                    character.combatComponent.SetElementalType(elementalType);
+                    if (!character.equipmentComponent.HasEquips()) {
+                        character.combatComponent.SetElementalType(elementalType);
+                    }
+                    character.combatComponent.elementalStatusWaitingList.Add(elementalType);
                 }
             }
         }
@@ -94,6 +115,7 @@ namespace Traits {
                 Character character = removedFrom as Character;
                 // character.moodComponent.RemoveMoodEffect(-moodEffect, this);
                 if (elementalType != ELEMENTAL_TYPE.Normal) {
+                    character.combatComponent.elementalStatusWaitingList.Remove(elementalType);
                     character.combatComponent.UpdateElementalType();
                 }
             }
@@ -125,7 +147,11 @@ namespace Traits {
         /// <param name="character">The character that returned to life.</param>
         //public virtual void OnReturnToLife(Character character) { } //Removed temporarily since this is not being used
         public virtual string GetTestingData(ITraitable traitable = null) {
-            return string.Empty;
+            string data = string.Empty;
+            if (responsibleCharacters != null) {
+                data = $"Responsible Characters: {responsibleCharacters.ComafyList()}\n";
+            }
+            return data;
         }
         public virtual bool CreateJobsOnEnterVisionBasedOnTrait(IPointOfInterest traitOwner, Character characterThatWillDoJob) { return false; } //What jobs a character can create based on the target's traits?
         public virtual bool OnCollideWith(IPointOfInterest collidedWith, IPointOfInterest owner) { return false; }
@@ -134,9 +160,8 @@ namespace Traits {
         public virtual void OnDestroyMapObjectVisual(ITraitable traitable) { }
         public virtual bool OnSeePOI(IPointOfInterest targetPOI, Character characterThatWillDoJob) { return false; } //What jobs a character can create based on the his/her own traits, considering the target?
         public virtual void OnSeePOIEvenCannotWitness(IPointOfInterest targetPOI, Character character) { }
-        protected virtual void OnChangeLevel() { }
         public virtual void OnOwnerInitiallyPlaced(Character owner) { }
-        public virtual bool PerTickWhileStationaryOrUnoccupied() { return false; } //returns true or false if it created a job/action, once a job/action is created must not check others anymore to avoid conflicts
+        public virtual bool PerTickWhileStationaryOrUnoccupied(Character p_character) { return false; } //returns true or false if it created a job/action, once a job/action is created must not check others anymore to avoid conflicts
         public virtual bool OnStartPerformGoapAction(ActualGoapNode node, ref bool willStillContinueAction) { return false; } //returns true or false if it created a job/action, once a job/action is created must not check others anymore to avoid conflicts
         public virtual void OnBeforeStartFlee(ITraitable traitable) { }
         public virtual void OnAfterExitingCombat(ITraitable traitable) { }
@@ -146,8 +171,8 @@ namespace Traits {
                 //clear all trap structures when triggering flaw
                 character.trapStructure.ResetAllTrapStructures();
             }
-            if (character.trapStructure.IsTrappedInHex()) {
-                character.trapStructure.ResetAllTrapHexes();
+            if (character.trapStructure.IsTrappedInArea()) {
+                character.trapStructure.ResetTrapArea();
             }
             return "flaw_effect";
         }
@@ -202,12 +227,15 @@ namespace Traits {
                 Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Trait", name, key, null, LOG_TAG.Player);
                 log.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                 log.FinalizeText();
-                return log.logText;
+                string logText = log.logText;
+                LogPool.Release(log);
+                return logText;
             }
             return string.Empty;
         }
-        public void SetGainedFromDoing(ActualGoapNode action) {
-            gainedFromDoing = action;
+        public void SetGainedFromDoingAction(INTERACTION_TYPE p_actionType, bool p_actionStealth) {
+            gainedFromDoingType = p_actionType;
+            isGainedFromDoingStealth = p_actionStealth;
         }
         public virtual void AddCharacterResponsibleForTrait(Character character) {
             if (character != null) {
@@ -217,6 +245,11 @@ namespace Traits {
                 if (!responsibleCharacters.Contains(character)) {
                     responsibleCharacters.Add(character);
                 }
+            }
+        }
+        public void ClearResponsibleCharacters() {
+            if (responsibleCharacters != null) {
+                responsibleCharacters.Clear();
             }
         }
         public bool IsResponsibleForTrait(Character character) {
@@ -244,7 +277,7 @@ namespace Traits {
                     canBeTransfered = true;
                 }
                 if (canBeTransfered && characterThatWillDoJob.CanCurrentJobBeOverriddenByJob(currentJob)) {
-                    currentJob.CancelJob(shouldDoAfterEffect: false);
+                    currentJob.CancelJob();
                     characterThatWillDoJob.jobQueue.AddJobInQueue(currentJob);
                     return true;
                 }
@@ -268,6 +301,9 @@ namespace Traits {
                 || name == "Full" || name == "Hungry" || name == "Starving"
                 || name == "Sprightly" || name == "Spent" || name == "Drained";
         }
+        public PLAYER_SKILL_TYPE GetAfflictionSkillType() {
+            return PlayerSkillManager.Instance.GetAfflictionTypeByTraitName(name);
+        }
         #endregion
 
         #region Actions
@@ -283,7 +319,7 @@ namespace Traits {
         //public virtual void ExecuteExpectedEffectModification(INTERACTION_TYPE action, Character actor, IPointOfInterest poiTarget, OtherData[] otherData, ref List<GoapEffect> effects) { }
         public virtual void ExecuteActionPreEffects(INTERACTION_TYPE action, ActualGoapNode goapNode) { }
         public virtual void ExecuteActionPerTickEffects(INTERACTION_TYPE action, ActualGoapNode goapNode) { }
-        public virtual void ExecuteActionAfterEffects(INTERACTION_TYPE action, ActualGoapNode goapNode, ref bool isRemoved) { }
+        public virtual void ExecuteActionAfterEffects(INTERACTION_TYPE action, Character actor, IPointOfInterest target, ACTION_CATEGORY category, ref bool isRemoved) { }
         #endregion
 
         #region IContextMenuItem Implementation
@@ -324,8 +360,16 @@ namespace Traits {
         private void ActivateTriggerFlawConfirmation(Character p_character) {
             string traitName = name;
             Trait trait = p_character.traitContainer.GetTraitOrStatus<Trait>(traitName);
-            string question = "Are you sure you want to trigger " + traitName + "?";
-            string effect = $"<b>Effect</b>: {trait.GetTriggerFlawEffectDescription(p_character, "flaw_effect")}";
+            string question;
+            string effect;
+            if (p_character.isInfoUnlocked) {
+                question = "Are you sure you want to trigger " + traitName + "?";
+                effect = $"<b>Effect</b>: {trait.GetTriggerFlawEffectDescription(p_character, "flaw_effect")}";
+            } else {
+                question = "Are you sure you want to trigger ?????" + "?";
+                effect = $"<b>Effect</b>: ?????";
+            }
+            
             string manaCost = $"{PlayerSkillManager.Instance.GetPlayerActionData(PLAYER_SKILL_TYPE.TRIGGER_FLAW).manaCost.ToString()} {UtilityScripts.Utilities.ManaIcon()}";
 
             UIManager.Instance.ShowTriggerFlawConfirmation(question, effect, manaCost, () => TriggerFlawData.ActivateTriggerFlaw(trait, p_character), layer: 26, showCover: true, pauseAndResume: true);
@@ -343,7 +387,7 @@ namespace Traits {
         #region IMoodModifier Implementation
         public Log GetMoodEffectFlavorText(Character p_characterResponsible) {
             if (LocalizationManager.Instance.HasLocalizedValue("Trait", name, "mood_effect")) {
-                Log log = new Log(GameManager.Instance.Today(), "Trait", name, "mood_effect");
+                Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Trait", name, "mood_effect");
                 if (p_characterResponsible != null) {
                     log.AddToFillers(p_characterResponsible, p_characterResponsible.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);    
                 } else {
@@ -354,6 +398,25 @@ namespace Traits {
             }
             return default;
         }
+        #endregion
+
+        #region Chaos Orbs
+        public void DispenseChaosOrbsForAffliction(Character p_character, int amount) {
+            LocationGridTile gridTile = p_character.gridTileLocation;
+            if (p_character.isDead) {
+                gridTile = p_character.deathTilePosition;
+            }
+            if (gridTile != null) {
+#if DEBUG_LOG
+                Debug.Log("Chaos Orb Produced - [" + p_character.name + "] - [" + name + "/Affliction] - [" + amount + "]");
+#endif
+                Messenger.Broadcast(PlayerSignals.CREATE_CHAOS_ORBS, gridTile.centeredWorldLocation, amount, gridTile.parentMap);
+            }
+        }
+        #endregion
+
+        #region Reactions
+        public virtual void VillagerReactionToTileObjectTrait(TileObject owner, Character actor, ref string debugLog) { }
         #endregion
     }
 }

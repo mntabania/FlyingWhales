@@ -43,11 +43,11 @@ namespace Traits {
                 character.interruptComponent.TriggerInterrupt(INTERRUPT.Abomination_Death, character);
             }
         }
-        public override void ExecuteActionAfterEffects(INTERACTION_TYPE action, ActualGoapNode goapNode, ref bool isRemoved) {
-            base.ExecuteActionAfterEffects(action, goapNode, ref isRemoved);
-            if (goapNode.action.actionCategory == ACTION_CATEGORY.CONSUME && goapNode.poiTarget == _owner) {
-                goapNode.actor.traitContainer.AddTrait(goapNode.actor, "Abomination Germ", gainedFromDoing: goapNode);
-                goapNode.poiTarget.traitContainer.RemoveTrait(goapNode.poiTarget, "Abomination Germ");
+        public override void ExecuteActionAfterEffects(INTERACTION_TYPE action, Character actor, IPointOfInterest target, ACTION_CATEGORY category, ref bool isRemoved) {
+            base.ExecuteActionAfterEffects(action, actor, target, category, ref isRemoved);
+            if (category == ACTION_CATEGORY.CONSUME && target == _owner) {
+                actor.traitContainer.AddTrait(actor, "Abomination Germ");
+                target.traitContainer.RemoveTrait(target, "Abomination Germ");
             }
         }
         #endregion

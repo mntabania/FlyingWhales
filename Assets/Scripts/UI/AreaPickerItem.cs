@@ -40,12 +40,6 @@ public class AreaPickerItem : ObjectPickerItem<NPCSettlement>, IPointerClickHand
     }
 
     public void OnPointerClick(PointerEventData eventData) {
-        if (eventData.button == PointerEventData.InputButton.Right) {
-            //Debug.Log("Right clicked character portrait!");
-            //portrait.OnClick();
-            UIManager.Instance.ShowRegionInfo(_npcSettlement.region);
-        } else {
-            OnClick();
-        }
+        OnClick();
     }
 }

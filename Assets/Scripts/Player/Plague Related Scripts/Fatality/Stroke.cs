@@ -9,7 +9,7 @@ namespace Plague.Fatality {
             p_character.interruptComponent.TriggerInterrupt(INTERRUPT.Stroke, p_character);
             PlagueDisease.Instance.UpdateDeathsOnCharacterDied(p_character);
         }
-        
+
         public override void CharacterGainedTrait(Character p_character, Trait p_gainedTrait) {
             if (p_gainedTrait.name == "Tired") {
                 if (GameUtilities.RollChance(15)) {

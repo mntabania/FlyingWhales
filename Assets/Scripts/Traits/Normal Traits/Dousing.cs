@@ -59,7 +59,7 @@
             }
         }
         private void OnJobRemovedFromQueue(JobQueueItem job, Character character) {
-            if (_owner == character && job.jobType == JOB_TYPE.DOUSE_FIRE && !job.finishedSuccessfully) {
+            if (_owner == character && job.jobType == JOB_TYPE.DOUSE_FIRE && !job.finishedSuccessfully && !character.isBeingSeized) {
                 bool hasFireInVision = false;
                 if (character.hasMarker) {
                     for (int i = 0; i < character.marker.inVisionPOIs.Count; i++) {

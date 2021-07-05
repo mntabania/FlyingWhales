@@ -10,37 +10,33 @@ public class AbominationBehaviour : BaseMonsterBehaviour {
     protected override bool WildBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
         if (character.behaviourComponent.abominationTarget == null) {
             //determine new abomination target
-            List<HexTile> targetChoices = GetTargetChoices(character);
+            List<Area> targetChoices = ObjectPoolManager.Instance.CreateNewAreaList();
+            PopulateTargetChoices(targetChoices, character);
             if (targetChoices != null) {
-                HexTile chosenTarget = CollectionUtilities.GetRandomElement(targetChoices);
+                Area chosenTarget = CollectionUtilities.GetRandomElement(targetChoices);
                 character.behaviourComponent.SetAbominationTarget(chosenTarget);
             }
+            ObjectPoolManager.Instance.ReturnAreaListToPool(targetChoices);
         }
 
         if (character.behaviourComponent.abominationTarget == null) {
             //if still no target tile, then just roam around current one
             return character.jobComponent.TriggerRoamAroundTile(out producedJob);
         } else {
-            LocationGridTile targetTile =
-                CollectionUtilities.GetRandomElement(character.behaviourComponent.abominationTarget.locationGridTiles);
+            LocationGridTile targetTile = character.behaviourComponent.abominationTarget.gridTileComponent.GetRandomPassableTile();
             return character.jobComponent.TriggerRoamAroundTile(out producedJob, targetTile);
         }
     }
 
-    private List<HexTile> GetTargetChoices(Character actor) {
-        List<HexTile> choices = null;
-        if (actor.hexTileLocation != null) {
-            for (int i = 0; i < actor.hexTileLocation.AllNeighbours.Count; i++) {
-                HexTile neighbour = actor.hexTileLocation.AllNeighbours[i];
+    private void PopulateTargetChoices(List<Area> areas, Character actor) {
+        Area areaLocation = actor.areaLocation;
+        if (areaLocation != null) {
+            for (int i = 0; i < actor.areaLocation.neighbourComponent.neighbours.Count; i++) {
+                Area neighbour = actor.areaLocation.neighbourComponent.neighbours[i];
                 if (neighbour.elevationType != ELEVATION.WATER && neighbour.region == actor.currentRegion && actor.movementComponent.HasPathTo(neighbour)) {
-                    if (choices == null) {
-                        choices = new List<HexTile>();
-                    }
-                    choices.Add(neighbour);
+                    areas.Add(neighbour);
                 }
             }
         }
-        return choices;
     }
-   
 }

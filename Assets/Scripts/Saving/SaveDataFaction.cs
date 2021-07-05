@@ -37,6 +37,9 @@ public class SaveDataFaction : SaveData<Faction>, ISavableCounterpart {
     public SaveDataFactionIdeologyComponent ideologyComponent;
     public SaveDataFactionSuccessionComponent successionComponent;
 
+    public bool isInfoUnlocked;
+    public bool isDisbanded;
+
     #region getters
     public OBJECT_TYPE objectType => OBJECT_TYPE.Faction;
     #endregion
@@ -48,7 +51,7 @@ public class SaveDataFaction : SaveData<Faction>, ISavableCounterpart {
         name = data.name;
         description = data.description;
         isMajorFaction = data.isMajorFaction;
-        emblemName = data.emblem.name;
+        emblemName = data.emblemName;
         factionColor = data.factionColor;
         isActive = data.isActive;
         race = data.race;
@@ -105,7 +108,9 @@ public class SaveDataFaction : SaveData<Faction>, ISavableCounterpart {
         // }
         newLeaderDesignationChance = data.newLeaderDesignationChance;
         pathfindingTag = data.pathfindingTag;
+        isInfoUnlocked = data.isInfoUnlocked;
         pathfindingDoorTag = data.pathfindingDoorTag;
+        isDisbanded = data.isDisbanded;
     }
 
     public override Faction Load() {

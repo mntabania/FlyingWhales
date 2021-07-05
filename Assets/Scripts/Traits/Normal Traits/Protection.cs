@@ -14,7 +14,8 @@ namespace Traits {
             description = "Surrounded by a magical barrier that reduces damage.";
             type = TRAIT_TYPE.STATUS;
             effect = TRAIT_EFFECT.NEUTRAL;
-            ticksDuration = GameManager.Instance.GetTicksBasedOnHour(8); //if this trait is only temporary, then it should not advertise GET_WATER
+            //ticksDuration = GameManager.Instance.GetTicksBasedOnHour(8); //if this trait is only temporary, then it should not advertise GET_WATER
+            ticksDuration = PlayerSkillManager.Instance.GetDurationBonusPerLevel(PLAYER_SKILL_TYPE.PROTECTION);
         }
 
         #region Loading

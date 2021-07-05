@@ -9,7 +9,7 @@ public class GoddessStatue : TileObject {
         AddAdvertisedAction(INTERACTION_TYPE.PRAY_TILE_OBJECT);
         traitContainer.RemoveTrait(this, "Flammable");
     }
-    public GoddessStatue(SaveDataTileObject data) {
+    public GoddessStatue(SaveDataTileObject data) : base(data) {
     }
 
     public override void SetPOIState(POI_STATE state) {
@@ -24,6 +24,6 @@ public class GoddessStatue : TileObject {
     //    SetPOIState(POI_STATE.INACTIVE);
     //}
     public override string ToString() {
-        return $"Goddess Statue {id}";
+        return $"Goddess Statue {id.ToString()}";
     }
 }

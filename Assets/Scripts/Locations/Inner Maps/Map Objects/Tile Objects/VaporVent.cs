@@ -16,7 +16,7 @@ public class VaporVent : TileObject {
         Initialize(TILE_OBJECT_TYPE.VAPOR_VENT);
         _activityCycle = Random.Range(12, 61);
     }
-    public VaporVent(SaveDataVaporVent data) {
+    public VaporVent(SaveDataVaporVent data) : base(data) {
         //SaveDataVaporVent saveDataVaporVent = data as SaveDataVaporVent;
         Assert.IsNotNull(data);
         _activityCycle = data.activityCycle;

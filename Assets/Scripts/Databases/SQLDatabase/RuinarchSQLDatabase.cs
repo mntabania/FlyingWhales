@@ -8,6 +8,8 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
+using Object_Pools;
+using Threads;
 using UnityEngine;
 using UtilityScripts;
 using Debug = UnityEngine.Debug;
@@ -56,15 +58,17 @@ namespace Databases.SQLDatabase {
                 //release managed resources here
                 Messenger.RemoveListener<Character>(CharacterSignals.CHARACTER_CHANGED_NAME, OnCharacterNameUpdated);
             }
+#if DEBUG_LOG
             Debug.Log("Ruinarch SQL database has been disposed.");
+#endif
         }
         public void Dispose() {
             Dispose(true);
             GC.SuppressFinalize(this);
         }
-        #endregion
+#endregion
 
-        #region Initialization
+#region Initialization
         public void InitializeDatabase() {
             //This will either create or get the current gameDB database located at the Temp folder
             //so it is essential that if game came from save data, that it's relevant data be placed inside the Temp folder.
@@ -126,9 +130,9 @@ namespace Databases.SQLDatabase {
                 }
             }
         }
-        #endregion
+#endregion
 
-        #region Connection
+#region Connection
         public void CloseConnection() {
             _dbConnection?.Close();
             _dbConnection?.Dispose();
@@ -145,13 +149,16 @@ namespace Databases.SQLDatabase {
         // public ConnectionState GetConnectionState() {
         //     return dbConnection.isD dbConnection.State;
         // }
-        #endregion
+#endregion
 
-        #region Logs
-        public void InsertLog(Log log) {
-            Stopwatch timer = new Stopwatch();
-            timer.Start();
-            log.FinalizeText();
+#region Logs
+        public void InsertLogUsingMultiThread(Log log) {
+            SQLLogInsertThread thread = ObjectPoolManager.Instance.CreateNewSQLInsertThread();
+            thread.Initialize(log);
+            MultiThreadPool.Instance.AddToThreadPool(thread);
+        }
+        public void InsertLog(Log log, out Log deletedLog) {
+             log.FinalizeText();
             SQLiteCommand command = _dbConnection.CreateCommand();
             //Need to replace single quotes in log message to two single quotes to prevent SQL command errors
             //Reference: https://stackoverflow.com/questions/603572/escape-single-quote-character-for-use-in-an-sqlite-query
@@ -193,13 +200,7 @@ namespace Databases.SQLDatabase {
             } else {
                 valuesStr = $"{valuesStr})"; //closing parenthesis if no tags were provided
             }
-            
-           
-            
             string commandStr = $"{insertStr} {valuesStr}";
-            // Debug.Log($"Insert command was {commandStr}");
-            
-            // DatabaseThreadPool.Instance.AddToThreadPool(commandStr);
             
             command.CommandType = CommandType.Text;
             command.CommandText = commandStr;
@@ -213,38 +214,12 @@ namespace Databases.SQLDatabase {
                 rowCount = dataReader.GetInt32(0);
             }
             dataReader.Close();
-            
+            deletedLog = null;
             if (rowCount > LogRowLimit) {
                 //row limit has been reached, will delete oldest entry
-                DeleteOldestLog();
+                deletedLog = DeleteOldestLog();
             }
             command.Dispose();
-
-            timer.Stop();
-            // Debug.Log($"Total log insert time was {timer.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)} seconds");
-        }
-        public void ExecuteInsertCommand(string commandStr) {
-            if (_dbConnection != null) {
-                SQLiteCommand command = _dbConnection.CreateCommand();
-                command.CommandType = CommandType.Text;
-                command.CommandText = commandStr;
-                command.ExecuteNonQuery();
-            
-                //check if row limit has been reached, if so then delete oldest log that is not an intel.
-                command.CommandText = $"SELECT COUNT(*) FROM 'Logs'";
-                IDataReader dataReader = command.ExecuteReader();
-                int rowCount = 0;
-                while (dataReader.Read()) {
-                    rowCount = dataReader.GetInt32(0);
-                }
-                dataReader.Close();
-            
-                if (rowCount > LogRowLimit) {
-                    //row limit has been reached, will delete oldest entry
-                    DeleteOldestLog();
-                }
-                command.Dispose();
-            }
         }
         public List<Log> GetLogsThatMatchCriteria(string persistentID, string textLike, List<LOG_TAG> tags, int limit = -1) {
 #if UNITY_EDITOR
@@ -286,7 +261,7 @@ namespace Databases.SQLDatabase {
             // Debug.Log($"Trying to get logs that match criteria, full query command is {commandStr}");
             command.CommandText = commandStr;
             IDataReader dataReader = command.ExecuteReader();
-            List<Log> logs = new List<Log>();
+            List<Log> logs = RuinarchListPool<Log>.Claim();
             while (dataReader.Read()) {
                 Log log = ConvertToBareBonesLog(dataReader);
                 logs.Add(log);
@@ -399,7 +374,7 @@ namespace Databases.SQLDatabase {
             Messenger.Broadcast(UISignals.LOG_IN_DATABASE_UPDATED, log);
             // Debug.Log($"Set involved objects of log {log.persistentID} to {log.allInvolvedObjectIDs}");
         }
-        private void DeleteOldestLog() {
+        private Log DeleteOldestLog() {
             SQLiteCommand command = _dbConnection.CreateCommand();
             command.CommandType = CommandType.Text;
             command.CommandText = "SELECT persistentID FROM Logs ORDER BY rowid LIMIT 1"; //WHERE isIntel = 0
@@ -411,10 +386,11 @@ namespace Databases.SQLDatabase {
             dataReader.Close();
             command.Dispose();
             if (!string.IsNullOrEmpty(logIDToDelete)) {
-                DeleteLog(logIDToDelete);
+                return DeleteLog(logIDToDelete);
             }
+            return null;
         }
-        private void DeleteLog(string persistentID) {
+        private Log DeleteLog(string persistentID) {
             Log deletedLog = GetLogWithPersistentID(persistentID);
             // Debug.Log($"Will delete log with ID: {persistentID}");
             SQLiteCommand command = _dbConnection.CreateCommand();
@@ -422,9 +398,8 @@ namespace Databases.SQLDatabase {
             command.CommandText = $"DELETE FROM Logs WHERE persistentID = '{persistentID}'";
             command.ExecuteNonQuery();
             command.Dispose();
-            //Fire signal that log was deleted.
-            Messenger.Broadcast(UISignals.LOG_REMOVED_FROM_DATABASE, deletedLog);
-            
+            // LogPool.Release(deletedLog);
+            return deletedLog;
         }
         public List<Log> GetFullLogsMentioning(string persistentID) {
             SQLiteCommand command = _dbConnection.CreateCommand();
@@ -432,7 +407,7 @@ namespace Databases.SQLDatabase {
             string commandStr = $"SELECT {_fullLogsFields} FROM Logs WHERE involvedObjects LIKE '%{persistentID}%'";
             command.CommandText = commandStr;
             IDataReader dataReader = command.ExecuteReader();
-            List<Log> logs = new List<Log>();
+            List<Log> logs = RuinarchListPool<Log>.Claim();
             while (dataReader.Read()) {
                 Log log = ConvertToFullLog(dataReader);
                 logs.Add(log);
@@ -440,13 +415,13 @@ namespace Databases.SQLDatabase {
             return logs;
         }
         private void OnCharacterNameUpdated(Character character) {
-            LogDatabaseThread databaseThread = ObjectPoolManager.Instance.CreateNewLogDatabaseThread();
+            UpdateCharacterNameThread databaseThread = ObjectPoolManager.Instance.CreateNewLogDatabaseThread();
             databaseThread.Initialize(character);
-            DatabaseThreadPool.Instance.AddToThreadPool(databaseThread);
+            MultiThreadPool.Instance.AddToThreadPool(databaseThread);
         }
-        #endregion
+#endregion
 
-        #region Utilities
+#region Utilities
         private Log ConvertToBareBonesLog(IDataReader dataReader) {
             string id = dataReader.GetString(0);
             int tick = dataReader.GetInt32(1);
@@ -536,9 +511,9 @@ namespace Databases.SQLDatabase {
                 databaseInFile.BackupDatabase(_dbConnection, "main", "main", -1, null, -1);
             }
         }
-        #endregion
+#endregion
 
-        #region Plugins
+#region Plugins
         // static Constructor
         static RuinarchSQLDatabase() {
             var currentPath = Environment.GetEnvironmentVariable("PATH", EnvironmentVariableTarget.Process);
@@ -552,6 +527,6 @@ namespace Databases.SQLDatabase {
             if (currentPath != null && currentPath.Contains(dllPath) == false)
                 Environment.SetEnvironmentVariable("PATH", currentPath + "/" + dllPath, EnvironmentVariableTarget.Process); //Path.PathSeparator
         }
-        #endregion
+#endregion
     }
 }

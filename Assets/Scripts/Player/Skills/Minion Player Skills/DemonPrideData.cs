@@ -5,9 +5,10 @@ using UnityEngine;
 public class DemonPrideData : MinionPlayerSkill {
     public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.DEMON_PRIDE;
     public override string name => "Pride Demon";
-    public override string description => "This Demon is a strong ranged magic-user that deals Electric damage. Can be summoned to invade villages in the region it was spawned.";
+    public override string description => "This Lesser Demon is a Magic Combatant that deals Water damage. It can also heal allies.";
 
     public DemonPrideData() {
+        minionType = MINION_TYPE.Pride;
         className = "Pride";
     }
 }

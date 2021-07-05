@@ -11,6 +11,7 @@ public class Feed : GoapAction {
     public override Type uniqueActionDataType => typeof(FeedUAD);
     public Feed() : base(INTERACTION_TYPE.FEED) {
         actionIconString = GoapActionStateDB.FirstAid_Icon;
+        doesNotStopTargetCharacter = true;
         //advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.RATMAN };
         logTags = new[] {LOG_TAG.Needs};
@@ -21,7 +22,8 @@ public class Feed : GoapAction {
         return true;
     }
     protected override void ConstructBasePreconditionsAndEffects() {
-        SetPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.TAKE_POI, conditionKey = "Food Pile", isKeyANumber = false, target = GOAP_EFFECT_TARGET.ACTOR }, ActorHasFood);
+        SetPrecondition(new GoapEffect(GOAP_EFFECT_CONDITION.FEED, "Food Pile", false, GOAP_EFFECT_TARGET.ACTOR), ActorHasFood);
+        //SetPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.TAKE_POI, conditionKey = "Food Pile", isKeyANumber = false, target = GOAP_EFFECT_TARGET.ACTOR }, ActorHasFood);
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = string.Empty, isKeyANumber = false, target = GOAP_EFFECT_TARGET.TARGET });
     }
     public override void Perform(ActualGoapNode goapNode) {
@@ -29,14 +31,18 @@ public class Feed : GoapAction {
         SetState("Feed Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
+#if DEBUG_LOG
         string costLog = $"\n{name} {target.nameWithID}: +10(Constant)";
         actor.logComponent.AppendCostLog(costLog);
+#endif
         return 10;
     }
     public override void OnStopWhileStarted(ActualGoapNode node) {
         base.OnStopWhileStarted(node);
         Character actor = node.actor;
+        IPointOfInterest poiTarget = node.poiTarget;
         actor.UncarryPOI();
+        poiTarget.traitContainer.RemoveTrait(poiTarget, "Eating");
     }
     public override void OnStopWhilePerforming(ActualGoapNode node) {
         base.OnStopWhilePerforming(node);
@@ -56,8 +62,8 @@ public class Feed : GoapAction {
         }
         return goapActionInvalidity;
     }
-    public override void PopulateReactionsToActor(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
-        base.PopulateReactionsToActor(reactions, actor, target, witness, node, status);
+    public override void PopulateEmotionReactionsToActor(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
+        base.PopulateEmotionReactionsToActor(reactions, actor, target, witness, node, status);
         if (target is Character targetCharacter) {
             FeedUAD uniqueData = node.GetConvertedUniqueActionData<FeedUAD>();
             string opinionOfTarget = witness.relationshipContainer.GetOpinionLabel(targetCharacter);
@@ -77,8 +83,8 @@ public class Feed : GoapAction {
             }
         }
     }
-    public override void PopulateReactionsOfTarget(List<EMOTION> reactions, Character actor, IPointOfInterest target, ActualGoapNode node, REACTION_STATUS status) {
-        base.PopulateReactionsOfTarget(reactions, actor, target, node, status);
+    public override void PopulateEmotionReactionsOfTarget(List<EMOTION> reactions, Character actor, IPointOfInterest target, ActualGoapNode node, REACTION_STATUS status) {
+        base.PopulateEmotionReactionsOfTarget(reactions, actor, target, node, status);
         if (target is Character targetCharacter) {
             FeedUAD uniqueData = node.GetConvertedUniqueActionData<FeedUAD>();
             if (uniqueData.usedPoisonedFood) {
@@ -103,8 +109,9 @@ public class Feed : GoapAction {
     public override void OnActionStarted(ActualGoapNode node) {
         base.OnActionStarted(node);
         for (int i = 0; i < node.actor.items.Count; i++) {
-            if(node.actor.items[i].HasResourceAmount(RESOURCE.FOOD, 12)) {
-                node.actor.ShowItemVisualCarryingPOI(node.actor.items[i]);
+            TileObject tileObject = node.actor.items[i];
+            if(tileObject.resourceStorageComponent.HasResourceAmount(RESOURCE.FOOD, 10)) {
+                node.actor.ShowItemVisualCarryingPOI(tileObject);
                 break;
             }
         }
@@ -116,9 +123,9 @@ public class Feed : GoapAction {
         }
         return REACTABLE_EFFECT.Positive;
     }
-    #endregion
+#endregion
 
-    #region Effects
+#region Effects
     public void PreFeedSuccess(ActualGoapNode goapNode) {
         if (goapNode.poiTarget is Character targetCharacter) {
             targetCharacter.traitContainer.AddTrait(targetCharacter, "Eating");
@@ -131,8 +138,8 @@ public class Feed : GoapAction {
                     log.AddToFillers(goapNode.poiTarget, goapNode.poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
                     goapNode.OverrideDescriptionLog(log);
                 }
-                carriedPile.AdjustResourceInPile(-12);
-                targetCharacter.AdjustResource(RESOURCE.FOOD, 12);
+                carriedPile.AdjustResourceInPile(-20);
+                // targetCharacter.resourceStorageComponent.AdjustResource(RESOURCE.FOOD, 12);
             }    
         }
     }
@@ -142,8 +149,8 @@ public class Feed : GoapAction {
             if (uniqueData.usedPoisonedFood) {
                 targetCharacter.AdjustHP(-100, ELEMENTAL_TYPE.Normal, triggerDeath: true);  
             }
-            targetCharacter.needsComponent.AdjustFullness(8.5f);
-            targetCharacter.AdjustResource(RESOURCE.FOOD, -1);
+            targetCharacter.needsComponent.AdjustFullness(5f);
+            // targetCharacter.resourceStorageComponent.AdjustResource(RESOURCE.FOOD, -1);
         }
         
         
@@ -163,6 +170,7 @@ public class Feed : GoapAction {
                 targetCharacter.traitContainer.AddTrait(targetCharacter, "Poisoned", goapNode.actor, bypassElementalChance: true);
             }
         }
+        goapNode.actor.UncarryPOI();
     }
     #endregion
 
@@ -176,16 +184,16 @@ public class Feed : GoapAction {
         }
         return false;
     }
-    #endregion
+#endregion
 
-    #region Preconditions
+#region Preconditions
     private bool ActorHasFood(Character actor, IPointOfInterest poiTarget, object[] otherData, JOB_TYPE jobType) {
-        if (poiTarget.HasResourceAmount(RESOURCE.FOOD, 12)) {
+        if (poiTarget.resourceStorageComponent.HasResourceAmount(RESOURCE.FOOD, 10)) {
             return true;
         }
         if(actor.items.Count > 0) {
             for (int i = 0; i < actor.items.Count; i++) {
-                if(actor.items[i].HasResourceAmount(RESOURCE.FOOD, 12)) {
+                if(actor.items[i].resourceStorageComponent.HasResourceAmount(RESOURCE.FOOD, 10)) {
                     return true;
                 }
             }
@@ -198,5 +206,5 @@ public class Feed : GoapAction {
         return false;
         //return actor.supply >= 20;
     }
-    #endregion
+#endregion
 }

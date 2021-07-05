@@ -1,4 +1,5 @@
-﻿using Pathfinding;
+﻿using System;
+using Pathfinding;
 using System.Collections;
 using System.Collections.Generic;
 using Inner_Maps;
@@ -9,7 +10,7 @@ using UnityEngine.Profiling;
 public class PathfindingManager : BaseMonoBehaviour {
 
     public static PathfindingManager Instance = null;
-    private const float nodeSize = 0.3f; //0.4
+    private const float nodeSize = 0.5f; //0.4
 
     [SerializeField] private AstarPath aStarPath;
 
@@ -59,6 +60,14 @@ public class PathfindingManager : BaseMonoBehaviour {
     public bool HasPathEvenDiffRegion(LocationGridTile fromTile, LocationGridTile toTile) {
         if (fromTile == null || toTile == null) { return false; }
         if (fromTile == toTile) { return true; }
+        if (fromTile.structure == null) {
+            Debug.LogError($"Structure of {fromTile.ToString()} is null");
+            return false;
+        }
+        if (toTile.structure == null) {
+            Debug.LogError($"Structure of {toTile.ToString()} is null");
+            return false;
+        }
         if(fromTile.structure.region == toTile.structure.region) {
             return PathUtilities.IsPathPossible(AstarPath.active.GetNearest(fromTile.centeredWorldLocation, fromTile.parentMap.onlyUnwalkableGraph).node,
                     AstarPath.active.GetNearest(toTile.centeredWorldLocation, toTile.parentMap.onlyUnwalkableGraph).node);
@@ -100,7 +109,7 @@ public class PathfindingManager : BaseMonoBehaviour {
     public void CreatePathfindingGraphForLocation(InnerTileMap newMap) {
         var pathfindingGraph = CreatePathfindingGraph(newMap, typeof(RuinarchGridGraph), $"{newMap.region.name} Main Map");
         newMap.pathfindingGraph = pathfindingGraph;
-        
+
         var unwalkableGraph = CreatePathfindingGraph(newMap, typeof(GridGraph), $"{newMap.region.name} UnWalkable Map");
         newMap.unwalkableGraph = unwalkableGraph;
     }
@@ -111,10 +120,10 @@ public class PathfindingManager : BaseMonoBehaviour {
         gg.rotation = new Vector3(-90f, 0f, 0f);
         gg.nodeSize = nodeSize;
 
-        int reducedWidth = newMap.width - (InnerTileMap.WestEdge + InnerTileMap.EastEdge);
-        int reducedHeight = newMap.height - (InnerTileMap.NorthEdge + InnerTileMap.SouthEdge);
+        int mapWidth = newMap.width;
+        int mapHeight = newMap.height;
 
-        gg.SetDimensions(Mathf.FloorToInt(reducedWidth / gg.nodeSize), Mathf.FloorToInt(reducedHeight / gg.nodeSize), nodeSize);
+        gg.SetDimensions(Mathf.FloorToInt(mapWidth / gg.nodeSize), Mathf.FloorToInt(mapHeight / gg.nodeSize), nodeSize);
         Vector3 pos = InnerMapManager.Instance.transform.position;
         pos.x += (newMap.width / 2f);
         pos.y += (newMap.height / 2f) + newMap.transform.localPosition.y;
@@ -122,7 +131,7 @@ public class PathfindingManager : BaseMonoBehaviour {
         gg.center = pos;
         gg.collision.use2D = true;
         gg.collision.type = ColliderType.Sphere;
-        gg.collision.diameter = 0.8f;
+        gg.collision.diameter = 1f; //0.8f - Switched to 1f so that both sides of thin walls are unwalkable
         gg.collision.mask = LayerMask.GetMask("Unpassable");
         return gg;
     }
@@ -146,9 +155,13 @@ public class PathfindingManager : BaseMonoBehaviour {
     private void Update() {
         for (int i = 0; i < _allAgents.Count; i++) {
             CharacterAIPath currentAI = _allAgents[i];
+#if DEBUG_PROFILER
             Profiler.BeginSample($"{currentAI.marker.character.name} - Pathfinding Update");
+#endif
             currentAI.marker.ManualUpdate();
+#if DEBUG_PROFILER
             Profiler.EndSample();
+#endif
         }
     }
     protected override void OnDestroy() {
@@ -158,9 +171,9 @@ public class PathfindingManager : BaseMonoBehaviour {
         base.OnDestroy();
         Instance = null;
     }
-    #endregion
+#endregion
 
-    #region Graph Updates
+#region Graph Updates
     public void ApplyGraphUpdateSceneCoroutine(GraphUpdateScene gus) {
         StartCoroutine(UpdateGraph(gus));
     }
@@ -168,5 +181,5 @@ public class PathfindingManager : BaseMonoBehaviour {
         yield return null;
         gus.Apply();
     }
-    #endregion
+#endregion
 }

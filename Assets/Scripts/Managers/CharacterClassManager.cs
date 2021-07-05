@@ -9,6 +9,7 @@ public class CharacterClassManager : BaseMonoBehaviour {
     public Dictionary<string, CharacterClass> classesDictionary { get; private set; }
     public Dictionary<string, List<CharacterClass>> identifierClasses { get; private set; }
     public List<CharacterClass> normalCombatantClasses { get; private set; }
+    public List<CharacterClass> lowTierNormalCombatantClasses { get; private set; }
     public List<CharacterClass> allClasses { get; private set; }
 
 
@@ -48,6 +49,7 @@ public class CharacterClassManager : BaseMonoBehaviour {
         //beastClasses = new Dictionary<string, CharacterClass>();
         //demonClasses = new Dictionary<string, CharacterClass>();
         normalCombatantClasses = new List<CharacterClass>();
+        lowTierNormalCombatantClasses = new List<CharacterClass>();
         identifierClasses = new Dictionary<string, List<CharacterClass>>();
         identifierClasses.Add("All", new List<CharacterClass>());
         string path = $"{UtilityScripts.Utilities.dataPath}CharacterClasses/";
@@ -87,18 +89,24 @@ public class CharacterClassManager : BaseMonoBehaviour {
 
             if (currentClass.IsCombatant() && currentClass.identifier == "Normal" && currentClass.className != "Hero") { //TODO: Change checking of Hero, cannot change identifier since hero might be expected to join parties.
                 normalCombatantClasses.Add(currentClass);
+                if (currentClass.className == "Archer" || currentClass.className == "Marauder" || currentClass.className == "Druid") {
+                    lowTierNormalCombatantClasses.Add(currentClass);
+                }
             }
         }
 
     }
-    public CharacterClass CreateNewCharacterClass(string className) {
+    public CharacterClass GetCharacterClass(string className) {
         if (classesDictionary.ContainsKey(className)) {
-            return classesDictionary[className].CreateNewCopy();
+            return classesDictionary[className];
         }
         return null;
     }
     public CharacterClass GetRandomCombatant() {
         return normalCombatantClasses[UnityEngine.Random.Range(0, normalCombatantClasses.Count)];
+    }
+    public CharacterClass GetRandomLowTierCombatant() {
+        return lowTierNormalCombatantClasses[UnityEngine.Random.Range(0, lowTierNormalCombatantClasses.Count)];
     }
     //public string GetRandomClassByIdentifier(string identifier) {
     //    if (identifierClasses.ContainsKey(identifier)) {

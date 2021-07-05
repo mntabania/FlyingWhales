@@ -12,6 +12,9 @@ public static class Signals {
     public static string GAME_LOADED = "OnGameLoaded";
     public static string CLEAN_UP_MEMORY = "OnCleanUpMemory";
     public static string CHECK_SCHEDULES = "CheckSchedules";
+    public static string GAME_STARTED = "GameStarted";
+    public static string TILE_OBJECT_GENERATION_FINISHED = "OnTileObjectGenerationFinished";
+    public static string PROGRESSION_LOADED = "OnProgressionLoaded";
 
     // public static readonly Dictionary<string, SignalMethod[]> orderedSignalExecution = new Dictionary<string, SignalMethod[]>() {
     //     // { TICK_STARTED, new[] {

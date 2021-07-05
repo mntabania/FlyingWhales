@@ -45,7 +45,7 @@ namespace Traits {
             if (addTo is Character character) {
                 owner = character;
                 Messenger.AddListener(Signals.HOUR_STARTED, CheckRemovalChance);
-                Messenger.AddListener<ActualGoapNode>(JobSignals.CHARACTER_FINISHED_ACTION, OnCharacterFinishedAction);
+                Messenger.AddListener<Character, IPointOfInterest, INTERACTION_TYPE, ACTION_STATUS>(JobSignals.CHARACTER_FINISHED_ACTION, OnCharacterFinishedAction);
             }
         }
         #endregion
@@ -58,14 +58,14 @@ namespace Traits {
                 //owner.AdjustMoodValue(-15, this);
                 // owner.needsComponent.AdjustDoNotGetBored(1);
                 Messenger.AddListener(Signals.HOUR_STARTED, CheckRemovalChance);
-                Messenger.AddListener<ActualGoapNode>(JobSignals.CHARACTER_FINISHED_ACTION, OnCharacterFinishedAction);
+                Messenger.AddListener<Character, IPointOfInterest, INTERACTION_TYPE, ACTION_STATUS>(JobSignals.CHARACTER_FINISHED_ACTION, OnCharacterFinishedAction);
             }
         }
         public override void OnRemoveTrait(ITraitable sourceCharacter, Character removedBy) {
             if (sourceCharacter is Character) {
                 // owner.needsComponent.AdjustDoNotGetBored(-1);
                 Messenger.RemoveListener(Signals.HOUR_STARTED, CheckRemovalChance);
-                Messenger.RemoveListener<ActualGoapNode>(JobSignals.CHARACTER_FINISHED_ACTION, OnCharacterFinishedAction);
+                Messenger.RemoveListener<Character, IPointOfInterest, INTERACTION_TYPE, ACTION_STATUS>(JobSignals.CHARACTER_FINISHED_ACTION, OnCharacterFinishedAction);
             }
             base.OnRemoveTrait(sourceCharacter, removedBy);
         }
@@ -106,10 +106,10 @@ namespace Traits {
         }
 
         #region Carry/Drop
-        private void OnCharacterFinishedAction(ActualGoapNode node) {
-            if (node.action.goapType == INTERACTION_TYPE.DROP && node.poiTarget == owner) {
-                if (owner.gridTileLocation.objHere != null && owner.gridTileLocation.objHere is Bed) {
-                    CreateActualSleepJob(owner.gridTileLocation.objHere as Bed);
+        private void OnCharacterFinishedAction(Character p_actor, IPointOfInterest p_target, INTERACTION_TYPE p_type, ACTION_STATUS p_status) {
+            if (p_type == INTERACTION_TYPE.DROP && p_target == owner) {
+                if (owner.gridTileLocation.tileObjectComponent.objHere != null && owner.gridTileLocation.tileObjectComponent.objHere is Bed) {
+                    CreateActualSleepJob(owner.gridTileLocation.tileObjectComponent.objHere as Bed);
                 }
             }
         }
@@ -124,8 +124,8 @@ namespace Traits {
         }
         private bool CreateSleepJob() {
             if (owner.homeStructure != null) {
-                if (owner.gridTileLocation.objHere != null && owner.gridTileLocation.objHere is Bed) {
-                    CreateActualSleepJob(owner.gridTileLocation.objHere as Bed);
+                if (owner.gridTileLocation.tileObjectComponent.objHere != null && owner.gridTileLocation.tileObjectComponent.objHere is Bed) {
+                    CreateActualSleepJob(owner.gridTileLocation.tileObjectComponent.objHere as Bed);
                     return true;
                 }
                 //else {
@@ -161,8 +161,10 @@ namespace Traits {
         private void CheckRemovalChance() {
             _chanceToRemove = chanceToRemove + GetChanceIncreasePerHour();
             float roll = Random.Range(0f, 100f);
+#if DEBUG_LOG
             Debug.Log(
                 $"{GameManager.Instance.TodayLogString()} {owner.name} is rolling for chance to remove catatonic. Roll is {roll.ToString()}. Chance is {chanceToRemove.ToString()}");
+#endif
             if (roll <= chanceToRemove) {
                 owner.traitContainer.RemoveTrait(owner, this);
             }
@@ -170,7 +172,7 @@ namespace Traits {
         private float GetChanceIncreasePerHour() {
             return 100f / (MaxDays * 24f);
         }
-        #endregion
+#endregion
     }
 }
 

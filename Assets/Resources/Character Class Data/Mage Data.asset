@@ -12,6 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 88e6d539796c490aa0efea676d6fae59, type: 3}
   m_Name: Mage Data
   m_EditorClassIdentifier: 
+  combatBehaviourType: 0
+  combatSpecialSkillType: 0
+  workStructureType: 14
+  summonCost: 50
+  portraitSprite: {fileID: 0}
   defaultSprites:
     stillSprite: {fileID: 0}
     animationSprites: []
@@ -58,3 +63,24 @@ MonoBehaviour:
       - {fileID: 21300000, guid: d37408666f8835342bc5996cee32cf44, type: 3}
       - {fileID: 21300000, guid: 2639da8e6d6fc6c4c84a69b78e2d3a55, type: 3}
       - {fileID: 21300000, guid: 4bbeecdff42ada34eb49a453bf26825c, type: 3}
+  characterSkillUpdateData:
+    m_fireResistanceBonus: 0
+    m_earthResistanceBonus: 0
+    m_windResistanceBonus: 0
+    m_waterResistanceBonus: 0
+    m_allElementalresistanceBonus: 25
+    m_poisonResistanceBonus: 0
+    m_iceResistanceBonus: 0
+    m_electricResistanceBonus: 0
+    m_allSecondaryresistanceBonus: 15
+    m_piercingBonus: 25
+    m_mentalResistanceBonus: 15
+    m_physicalResistanceBonus: 5
+  craftableWeapons: 04010000c8000000c9000000ca000000cb000000
+  craftableArmors: 05010000d0000000bc000000d1000000d3000000
+  craftableAccessories: b9000000df000000
+  droppableItems:
+  - item: 13
+    weight: 100
+  - item: 189
+    weight: 10

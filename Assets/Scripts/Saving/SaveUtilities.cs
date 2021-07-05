@@ -13,7 +13,7 @@ public static class SaveUtilities {
 
 
     public static List<string> compatibleSaveFileVersions = new List<string>() {
-        "0.35", "0.35.01", "0.35.02", "0.35.03"
+        "0.5"
     };
     
     #region Character States
@@ -51,6 +51,17 @@ public static class SaveUtilities {
             Character character = DatabaseManager.Instance.characterDatabase.GetCharacterByPersistentID(pid);
             if (character != null) {
                 objects.Add(character);    
+            }
+        }
+        return objects;
+    }
+    public static List<Summon> ConvertIDListToMonsters(List<string> ids) {
+        List<Summon> objects = new List<Summon>();
+        for (int i = 0; i < ids.Count; i++) {
+            string pid = ids[i];
+            Character character = DatabaseManager.Instance.characterDatabase.GetCharacterByPersistentID(pid);
+            if (character is Summon summon) {
+                objects.Add(summon);    
             }
         }
         return objects;
@@ -118,9 +129,7 @@ public static class SaveUtilities {
     #endregion
     
     public static SaveDataStructureRoom CreateSaveDataForRoom(StructureRoom structureRoom) {
-        if (structureRoom is DefilerRoom) {
-            return new SaveDataDefilerRoom();
-        } else if (structureRoom is PrisonCell) {
+        if (structureRoom is PrisonCell) {
             return new SaveDataPrisonCell();
         }
         return new SaveDataStructureRoom();

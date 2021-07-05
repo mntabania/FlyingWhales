@@ -9,6 +9,7 @@ public class WaterWell : TileObject {
 
     public WaterWell() {
         Initialize(TILE_OBJECT_TYPE.WATER_WELL);
+        RemoveAdvertisedAction(INTERACTION_TYPE.STEAL_ANYTHING);
         traitContainer.RemoveTrait(this, "Flammable");
         traitContainer.AddTrait(this, "Immovable");
         traitContainer.AddTrait(this, "Frozen Immune");
@@ -17,12 +18,12 @@ public class WaterWell : TileObject {
         }
         // BaseSettlement.onSettlementBuilt += UpdateSettlementResourcesParent;
     }
-    public WaterWell(SaveDataTileObject data) { }
+    public WaterWell(SaveDataTileObject data) : base(data) { }
 
     // public override void UpdateSettlementResourcesParent() {
     //     BaseSettlement.onSettlementBuilt -= UpdateSettlementResourcesParent;
     //     if (gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
-    //         gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.AllNeighbours.ForEach((eachNeighboringHexTile) => {
+    //         gridTileLocation.hexTileOwner.neighbourComponent.neighbours.ForEach((eachNeighboringHexTile) => {
     //             if (eachNeighboringHexTile.settlementOnTile != null) {
     //                 if (!eachNeighboringHexTile.settlementOnTile.SettlementResources.fishingSpots.Contains(this)) {
     //                     eachNeighboringHexTile.settlementOnTile.SettlementResources.fishingSpots.Add(this);
@@ -39,16 +40,17 @@ public class WaterWell : TileObject {
 
     public override void OnPlacePOI() {
         base.OnPlacePOI();
-        if(structureLocation.structureType == STRUCTURE_TYPE.POND || structureLocation.structureType == STRUCTURE_TYPE.OCEAN) {
+        if(structureLocation.structureType == STRUCTURE_TYPE.OCEAN) {
             // traitContainer.AddTrait(this, "Indestructible");
             // name = "a Lake";
             // AddAdvertisedAction(INTERACTION_TYPE.FISH);
         } else {
             AddAdvertisedAction(INTERACTION_TYPE.WELL_JUMP);
             AddAdvertisedAction(INTERACTION_TYPE.REPAIR);
+            AddAdvertisedAction(INTERACTION_TYPE.DRINK_WATER);
         }
         Messenger.AddListener(Signals.HOUR_STARTED, HourStarted);
-        UpdateSettlementResourcesParent();
+        //UpdateSettlementResourcesParent();
     }
     public override void OnDestroyPOI() {
         base.OnDestroyPOI();
@@ -58,13 +60,13 @@ public class WaterWell : TileObject {
         if (traitName == "Wet") {
             return true; //allow water well to be wet.
         }
-        return structureLocation.structureType != STRUCTURE_TYPE.POND && structureLocation.structureType != STRUCTURE_TYPE.OCEAN;
+        return structureLocation.structureType != STRUCTURE_TYPE.OCEAN;
     }
     public override bool CanBeDamaged() {
-        return structureLocation.structureType != STRUCTURE_TYPE.POND && structureLocation.structureType != STRUCTURE_TYPE.OCEAN;
+        return structureLocation.structureType != STRUCTURE_TYPE.OCEAN;
     }
     public override bool CanBeSelected() {
-        return structureLocation != null && structureLocation.structureType != STRUCTURE_TYPE.POND && structureLocation.structureType != STRUCTURE_TYPE.OCEAN;
+        return structureLocation != null && structureLocation.structureType != STRUCTURE_TYPE.OCEAN;
     }
     public override string ToString() {
         return $"Well {id.ToString()}";

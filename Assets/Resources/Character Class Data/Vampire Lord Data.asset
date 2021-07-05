@@ -12,6 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 88e6d539796c490aa0efea676d6fae59, type: 3}
   m_Name: Vampire Lord Data
   m_EditorClassIdentifier: 
+  combatBehaviourType: 0
+  combatSpecialSkillType: 0
+  workStructureType: 21
+  summonCost: 50
+  portraitSprite: {fileID: 0}
   defaultSprites:
     stillSprite: {fileID: 21300000, guid: 796e84b6f35f34d439bff96fb398a811, type: 3}
     animationSprites:
@@ -36,3 +41,29 @@ MonoBehaviour:
   raceSprites:
     m_keys: 
     m_values: []
+  initialVillagerPiercing: 0
+  initialVillagerPhysicalResistances: []
+  initialVillagerMentalResistances: []
+  initialVillagerElementalResistances: []
+  initialVillagerSecondaryResistances: []
+  characterSkillUpdateData:
+    m_fireResistanceBonus: 0
+    m_earthResistanceBonus: 0
+    m_windResistanceBonus: 0
+    m_waterResistanceBonus: 0
+    m_allElementalresistanceBonus: 14
+    m_poisonResistanceBonus: 0
+    m_iceResistanceBonus: 0
+    m_electricResistanceBonus: 0
+    m_allSecondaryresistanceBonus: 14
+    m_piercingBonus: 20
+    m_mentalResistanceBonus: 16
+    m_physicalResistanceBonus: 20
+  craftableWeapons: 01010000b7000000b8000000be000000bf000000
+  craftableArmors: 
+  craftableAccessories: 
+  droppableItems:
+  - item: 13
+    weight: 100
+  - item: 189
+    weight: 10

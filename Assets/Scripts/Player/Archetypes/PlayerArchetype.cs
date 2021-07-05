@@ -55,20 +55,24 @@ namespace Archetype {
             if(playerActions == null) { return; }
             if (!playerActions.Contains(action)) {
                 playerActions.Add(action);
+#if DEBUG_LOG
                 Debug.Log($"Action was added to player {action.ToString()}");
+#endif
             }
         }
         public bool RemoveAction(PLAYER_SKILL_TYPE action) {
             if (playerActions == null) { return false; }
             bool wasRemoved = playerActions.Remove(action);
+#if DEBUG_LOG
             if (wasRemoved) {
                 Debug.Log($"Action was removed from player {action.ToString()}");
             }
+#endif
             return wasRemoved;
         }
-        #endregion
+#endregion
 
-        #region Minions
+#region Minions
         public void AddMinion(string className) {
             if (minionClasses == null) { return; }
             if (!minionClasses.Contains(className)) {
@@ -79,9 +83,9 @@ namespace Archetype {
             if (minionClasses == null) { return false; }
             return minionClasses.Remove(className);
         }
-        #endregion
+#endregion
 
-        #region Afflictions
+#region Afflictions
         public void AddAffliction(PLAYER_SKILL_TYPE type) {
             if (afflictions == null) { return; }
             if (!afflictions.Contains(type)) {
@@ -92,27 +96,27 @@ namespace Archetype {
             if (afflictions == null) { return false; }
             return afflictions.Remove(type);
         }
-        #endregion
+#endregion
 
-        #region Spells
+#region Spells
         public void AddSpell(PLAYER_SKILL_TYPE type) {
             if (spells == null) { return; }
             if (!spells.Contains(type)) {
                 spells.Add(type);
-                Messenger.Broadcast(SpellSignals.PLAYER_GAINED_SPELL, type);
+                Messenger.Broadcast(PlayerSkillSignals.PLAYER_GAINED_SPELL, type);
             }
         }
         public bool RemoveSpell(PLAYER_SKILL_TYPE type) {
             if (spells == null) { return false; }
             if (spells.Remove(type)) {
-                Messenger.Broadcast(SpellSignals.PLAYER_LOST_SPELL, type);
+                Messenger.Broadcast(PlayerSkillSignals.PLAYER_LOST_SPELL, type);
                 return true;
             }
             return false;
         }
-        #endregion
+#endregion
 
-        #region Monsters
+#region Monsters
         public void AddMonster(RaceClass raceClass) {
             if (monsters == null) { return; }
             if (!monsters.Contains(raceClass)) {
@@ -138,25 +142,29 @@ namespace Archetype {
             }
             return false;
         }
-        #endregion
+#endregion
 
-        #region Demonic Structures
+#region Demonic Structures
         public void AddDemonicStructure(PLAYER_SKILL_TYPE type) {
             if (demonicStructuresSkills == null) { return; }
             if (!demonicStructuresSkills.Contains(type)) {
                 demonicStructuresSkills.Add(type);
+#if DEBUG_LOG
                 Debug.Log($"Demonic structure was added to player {type.ToString()}");
+#endif
             }
         }
         public bool RemoveDemonicStructure(PLAYER_SKILL_TYPE type) {
             if (demonicStructuresSkills == null) { return false; }
             bool wasRemoved = demonicStructuresSkills.Remove(type);
+#if DEBUG_LOG
             if (wasRemoved) {
                 Debug.Log($"Demonic structure was removed from player {type.ToString()}");
             }
+#endif
             return wasRemoved;
         }
-        #endregion
+#endregion
     }
 }
 

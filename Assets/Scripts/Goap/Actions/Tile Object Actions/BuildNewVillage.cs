@@ -18,8 +18,10 @@ public class BuildNewVillage : GoapAction {
         SetState("Build Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
+#if DEBUG_LOG
         string costLog = $"\n{name} {target.nameWithID}: +10(Constant)";
         actor.logComponent.AppendCostLog(costLog);
+#endif
         return 10;
     }
     public override GoapActionInvalidity IsInvalid(ActualGoapNode node) {
@@ -35,9 +37,9 @@ public class BuildNewVillage : GoapAction {
         }
         return invalidity;
     }
-    #endregion
+#endregion
 
-    #region Requirements
+#region Requirements
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, OtherData[] otherData, JobQueueItem job) {
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData, job);
         if (satisfied) {
@@ -46,9 +48,6 @@ public class BuildNewVillage : GoapAction {
             }
             if (poiTarget is GenericTileObject genericTileObject) {
                 if (genericTileObject.blueprintOnTile != null) {
-                    return false;
-                }
-                if (!genericTileObject.gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
                     return false;
                 }
                 if (genericTileObject.gridTileLocation.structure.structureType != STRUCTURE_TYPE.WILDERNESS) {
@@ -64,9 +63,9 @@ public class BuildNewVillage : GoapAction {
         }
         return false;
     }
-    #endregion
+#endregion
 
-    #region State Effects
+#region State Effects
     public void AfterBuildSuccess(ActualGoapNode goapNode) {
         if (goapNode.poiTarget is GenericTileObject genericTileObject) {
             string prefabName = (string)goapNode.otherData[0].obj;
@@ -76,9 +75,11 @@ public class BuildNewVillage : GoapAction {
                     LandmarkManager.Instance.OwnSettlement(goapNode.actor.faction, settlement);
                 }
 
-                if (genericTileObject.gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
-                    settlement.AddTileToSettlement(genericTileObject.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner);
-                }
+                Area area = genericTileObject.gridTileLocation.area;
+                settlement.AddAreaToSettlement(area);
+                VillageSpot villageSpot = goapNode.actor.currentRegion.GetVillageSpotOnArea(area);
+                Assert.IsNotNull(villageSpot, $"New village {settlement} founded by {goapNode.actor.name} is being placed on area without a village spot! Area is {area}");
+                settlement.SetOccupiedVillageSpot(villageSpot);
                 
                 List<LocationStructure> createdStructures = new List<LocationStructure>();
                 createdStructures.Add(LandmarkManager.Instance.PlaceIndividualBuiltStructureForSettlement(settlement, goapNode.actor.currentRegion.innerMap, genericTileObject.gridTileLocation, prefabName));
@@ -102,10 +103,10 @@ public class BuildNewVillage : GoapAction {
 
                 //This is added since the character will be the first character in the settlement, it should learn how to build structures, so that when he place blueprints to build houses, etc, he can also build them
                 //If we do not add this, the character will just place blueprints and will not build them if his class does not know how to build, so he will end up waiting for another character to join the settlement that can build structures
-                goapNode.actor.jobComponent.AddPriorityJob(JOB_TYPE.BUILD_BLUEPRINT);
+                goapNode.actor.jobComponent.AddAbleJob(JOB_TYPE.BUILD_BLUEPRINT);
             }
         }
     }
-    #endregion
+#endregion
 }
 

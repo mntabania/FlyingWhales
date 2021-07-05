@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Characters.Behaviour;
+using Characters.Villager_Wants;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
 using Locations.Settlements;
@@ -11,6 +12,7 @@ using Settings;
 using UnityEngine;
 using UnityEngine.Assertions;
 using UtilityScripts;
+using Traits;
 using Random = UnityEngine.Random;
 
 public class CharacterManager : BaseMonoBehaviour {
@@ -19,6 +21,7 @@ public class CharacterManager : BaseMonoBehaviour {
 
     [Header("Sub Managers")]
     [SerializeField] private CharacterClassManager classManager;
+    public CharacterTalentManager talentManager;
 
     public static readonly string[] sevenDeadlySinsClassNames = { "Lust", "Gluttony", "Greed", "Sloth", "Wrath", "Envy", "Pride" };
     public const string Make_Love = "Make Love", Steal = "Steal", Poison_Food = "Poison Food",
@@ -30,6 +33,7 @@ public class CharacterManager : BaseMonoBehaviour {
         Default_Wanderer_Behaviour = "Default Wanderer Behaviour",
         Default_Angel_Behaviour = "Default Angel Behaviour",
         Ravager_Behaviour = "Ravager Behaviour",
+        Dire_Wolf_Behaviour = "Dire Wolf Behaviour",
         Kobold_Behaviour = "Kobold Behaviour",
         Giant_Spider_Behaviour = "Giant Spider Behaviour",
         Noxious_Wanderer_Behaviour = "Noxious Wanderer Behaviour",
@@ -66,20 +70,15 @@ public class CharacterManager : BaseMonoBehaviour {
         Harpy_Behaviour = "Harpy Behaviour",
         Triton_Behaviour = "Triton Behaviour";
 
-    
+    public static readonly string[] resistRuinarchPowerText = { "How dare you!", "Nope!", "Fuck off bitch!", "Huh?!", "Who's there?!", "What's this feeling?", "I feel violated!" };
+
     public const int VISION_RANGE = 8;
     public const int AVOID_COMBAT_VISION_RANGE = 12;
-
-    public GameObject characterIconPrefab;
-    public Transform characterIconsParent;
     public bool lessenCharacterLogs;
-    //private List<CharacterAvatar> _allCharacterAvatars;
-    
+
     [Header("Character Portrait Assets")]
-    [SerializeField] private GameObject _characterPortraitPrefab;
     [SerializeField] private List<RacePortraitAssets> portraitAssets;
     [SerializeField] private RolePortraitFramesDictionary portraitFrames;
-    [SerializeField] private StringSpriteDictionary classPortraits;
     [SerializeField] private Vector3[] hairColors;
     public Material hsvMaterial;
     public Material hairUIMaterial;
@@ -94,6 +93,8 @@ public class CharacterManager : BaseMonoBehaviour {
 
     [Header("Summon Settings")]
     [SerializeField] private SummonSettingDictionary summonSettings;
+    [Header("Minion Settings")]
+    [SerializeField] private MinionSettingDictionary minionSettings;
     [Header("Artifact Settings")]
     [SerializeField] private ArtifactSettingDictionary artifactSettings;
     [Header("Character Marker Effects")] 
@@ -112,7 +113,6 @@ public class CharacterManager : BaseMonoBehaviour {
     private string _normalNameColorHex;
     
     private Dictionary<string, CharacterClassData> _loadedClassData;
-
     private Dictionary<string, DeadlySin> deadlySins { get; set; }
     private Dictionary<EMOTION, Emotion> emotionData { get; set; }
     private List<Emotion> allEmotions { get; set; }
@@ -120,11 +120,13 @@ public class CharacterManager : BaseMonoBehaviour {
     public SUMMON_TYPE[] summonsPool { get; private set; }
     public COMBAT_MODE[] combatModes { get; private set; }
     public List<string> rumorWorthyActions { get; private set; }
-    public DemonicStructure currentDemonicStructureTargetOfAngels { get; private set; }
+    //public DemonicStructure currentDemonicStructureTargetOfAngels { get; private set; }
     public Character necromancerInTheWorld { get; private set; }
     public bool hasSpawnedNecromancerOnce { get; private set; }
+    public bool toggleCharacterMarkerName { get; private set; }
     public int CHARACTER_MISSING_THRESHOLD { get; private set; }
     public int CHARACTER_PRESUMED_DEAD_THRESHOLD { get; private set; }
+
     private Dictionary<Type, CharacterBehaviourComponent> behaviourComponents;
     private readonly Dictionary<string, Type[]> defaultBehaviourSets = new Dictionary<string, Type[]>() {
         { Default_Resident_Behaviour,
@@ -132,7 +134,9 @@ public class CharacterManager : BaseMonoBehaviour {
                 typeof(DefaultFactionRelated),
                 typeof(DefaultHomeless),
                 typeof(WorkBehaviour),
-                typeof(DefaultAtHome),
+                // typeof(DefaultAtHome),
+                typeof(SleepBehaviour),
+                typeof(FreeTimeBehaviour),
                 typeof(DefaultOutside),
                 typeof(DefaultBaseStructure),
                 typeof(DefaultOtherStructure),
@@ -171,6 +175,14 @@ public class CharacterManager : BaseMonoBehaviour {
             }
         },
         { Ravager_Behaviour,
+            new []{
+                typeof(WolfBehaviour),
+                typeof(MovementProcessing),
+                typeof(DefaultMonster),
+                typeof(DefaultExtraCatcher),
+            }
+        },
+        { Dire_Wolf_Behaviour,
             new []{
                 typeof(WolfBehaviour),
                 typeof(MovementProcessing),
@@ -421,15 +433,14 @@ public class CharacterManager : BaseMonoBehaviour {
     #region getters/setters
     public List<Character> allCharacters => DatabaseManager.Instance.characterDatabase.allCharactersList;
     public List<Character> limboCharacters => DatabaseManager.Instance.characterDatabase.limboCharactersList;
-    public GameObject characterPortraitPrefab => _characterPortraitPrefab;
     #endregion
 
     private void Awake() {
         Instance = this;
-        //_allCharacterAvatars = new List<CharacterAvatar>();
     }
 
-    public void Initialize() { 
+    public void Initialize() {
+        toggleCharacterMarkerName = true;
         _summonNameColorHex = ColorUtility.ToHtmlStringRGB(summonNameColor);
         _demonNameColorHex = ColorUtility.ToHtmlStringRGB(demonNameColor);
         _undeadNameColorHex = ColorUtility.ToHtmlStringRGB(undeadNameColor);
@@ -437,16 +448,19 @@ public class CharacterManager : BaseMonoBehaviour {
         _loadedClassData = new Dictionary<string, CharacterClassData>();
 
         classManager.Initialize();
+        talentManager.Initialize();
         CreateDeadlySinsData();
-        defaultSleepTicks = GameManager.Instance.GetTicksBasedOnHour(8);
+        defaultSleepTicks = GameManager.Instance.GetTicksBasedOnHour(6);
         CHARACTER_MISSING_THRESHOLD = GameManager.Instance.GetTicksBasedOnHour(24); //72
-        CHARACTER_PRESUMED_DEAD_THRESHOLD = GameManager.Instance.GetTicksBasedOnHour(24); //72
+        CHARACTER_PRESUMED_DEAD_THRESHOLD = GameManager.Instance.GetTicksBasedOnHour(24); //72    
         summonsPool = new[] { SUMMON_TYPE.Wolf, SUMMON_TYPE.Golem, SUMMON_TYPE.Incubus, SUMMON_TYPE.Succubus };
         combatModes = new COMBAT_MODE[] { COMBAT_MODE.Aggressive, COMBAT_MODE.Passive, COMBAT_MODE.Defend };
         rumorWorthyActions = new List<string>() { Make_Love, Steal, Poison_Food, Place_Trap, Flirt, Transform_To_Wolf, Drink_Blood };
         ConstructEmotionData();
         ConstructCharacterBehaviours();
-        Messenger.AddListener<ActualGoapNode>(JobSignals.CHARACTER_FINISHED_ACTION, OnCharacterFinishedAction);
+        ConstructDailySchedules();
+        CreateVillagerWantInstances();
+        Messenger.AddListener<Character, IPointOfInterest, INTERACTION_TYPE, ACTION_STATUS>(JobSignals.CHARACTER_FINISHED_ACTION, OnCharacterFinishedAction);
         Messenger.AddListener<string, string>(CharacterSignals.RENAME_CHARACTER, OnRenameCharacter);
     }
 
@@ -583,14 +597,14 @@ public class CharacterManager : BaseMonoBehaviour {
         saveCharacter.Save(character);
         return saveCharacter;
     }
-    public void AddNewCharacter(Character character, bool broadcastSignal = true) {
-        DatabaseManager.Instance.characterDatabase.AddCharacter(character);
+    public void AddNewCharacter(Character character, bool broadcastSignal = true, bool addToAliveVillagersList = true) {
+        DatabaseManager.Instance.characterDatabase.AddCharacter(character, addToAliveVillagersList);
         if (broadcastSignal) {
             Messenger.Broadcast(CharacterSignals.CHARACTER_CREATED, character);
         }
     }
-    public void RemoveCharacter(Character character, bool broadcastSignal = true) {
-        if (DatabaseManager.Instance.characterDatabase.RemoveCharacter(character)) {
+    public void RemoveCharacter(Character character, bool broadcastSignal = true, bool removeFromAliveVillagersList = true) {
+        if (DatabaseManager.Instance.characterDatabase.RemoveCharacter(character, removeFromAliveVillagersList)) {
             if (broadcastSignal) {
                 Messenger.Broadcast(CharacterSignals.CHARACTER_REMOVED, character);
             }
@@ -623,14 +637,12 @@ public class CharacterManager : BaseMonoBehaviour {
             }
             if (character.homeStructure != null && character.homeStructure.settlementLocation == npcSettlement) {
                 //place the character at a random unoccupied tile in his/her home
-                List<LocationGridTile> choices = character.homeStructure.unoccupiedTiles.Where(x => x.charactersHere.Count == 0).ToList();
-                LocationGridTile chosenTile = choices[UnityEngine.Random.Range(0, choices.Count)];
+                LocationGridTile chosenTile = character.homeStructure.GetRandomUnoccupiedTileThatHasNoCharacters();
                 character.InitialCharacterPlacement(chosenTile);
             } else {
                 //place the character at a random unoccupied tile in the npcSettlement's wilderness
-                LocationStructure wilderness = npcSettlement.region.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
-                List<LocationGridTile> choices = wilderness.unoccupiedTiles.Where(x => x.charactersHere.Count == 0).ToList();
-                LocationGridTile chosenTile = choices[UnityEngine.Random.Range(0, choices.Count)];
+                LocationStructure wilderness = npcSettlement.region.wilderness;
+                LocationGridTile chosenTile = wilderness.GetRandomUnoccupiedTileThatHasNoCharacters();
                 character.InitialCharacterPlacement(chosenTile);
             }
         }
@@ -662,7 +674,7 @@ public class CharacterManager : BaseMonoBehaviour {
         if(targetTile == null) {
             targetTile = poi.gridTileLocation;
         }
-        if (targetTile != null && targetTile.objHere != null) {
+        if (targetTile != null && targetTile.tileObjectComponent.objHere != null) {
             targetTile = targetTile.GetFirstNearestTileFromThisWithNoObject();
         }
         if(targetTile != null) {
@@ -687,7 +699,11 @@ public class CharacterManager : BaseMonoBehaviour {
                         break;
                 }
             } else {
-                tileObjectType = poi is Crops ? TILE_OBJECT_TYPE.VEGETABLES : TILE_OBJECT_TYPE.ANIMAL_MEAT;
+                if (poi is Crops crops) {
+                    tileObjectType = crops.producedObjectOnHarvest;
+                } else {
+                    tileObjectType = TILE_OBJECT_TYPE.ANIMAL_MEAT;
+                }
             }
 
             if(poi != null) {
@@ -702,13 +718,12 @@ public class CharacterManager : BaseMonoBehaviour {
                 }
 
                 if (deadCharacter != null) {
-                    deadCharacter.SetConnectedFoodPile(foodPile);
                     if (createLog) {
                         //add log if food pile came from character
                         Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "Generic", "became_food_pile", providedTags: LOG_TAG.Life_Changes);
                         log.AddToFillers(deadCharacter, deadCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                         log.AddToFillers(foodPile, foodPile.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-                        log.AddLogToDatabase();
+                        log.AddLogToDatabase(true);
                     }
                 }
 
@@ -720,13 +735,14 @@ public class CharacterManager : BaseMonoBehaviour {
         return null;
     }
     //This raise dead will replace the dead character with a new character 
-    public void RaiseFromDeadReplaceCharacterWithSkeleton(Character target, Faction faction, string className = "", Action<Character> onRaisedFromDeadAction = null) {
+    public Summon RaiseFromDeadReplaceCharacterWithSkeleton(Character target, Faction faction, string className = "", Action<Character> onRaisedFromDeadAction = null) {
         //Since we no longer see the raise dead animation putting raise dead in a coroutine might have some problems like:
         //https://trello.com/c/Qu1VHS2A/3044-dev-03355-null-reference-charactermanagerraised
         target.SetHasBeenRaisedFromDead(true);
         //target.marker.PlayAnimation("Raise Dead");
         //yield return new WaitForSeconds(0.7f);
         LocationGridTile tile = target.gridTileLocation;
+        Summon summon = null;
         if (target.grave != null) {
             tile = target.grave.gridTileLocation;
         }
@@ -735,20 +751,21 @@ public class CharacterManager : BaseMonoBehaviour {
                 tile.structure.RemovePOI(target.grave);
                 target.SetGrave(null);
             }
-            Summon summon = CreateNewSummon(SUMMON_TYPE.Skeleton, faction, homeRegion: target.homeRegion, className: target.characterClass.className, bypassIdeologyChecking: true);
+            summon = CreateNewSummon(SUMMON_TYPE.Skeleton, faction, homeRegion: target.homeRegion, bypassIdeologyChecking: true);
             summon.SetFirstAndLastName(target.firstName, target.surName);
             summon.SetHasBeenRaisedFromDead(true);
             PlaceSummonInitially(summon, tile);
             //summon.CreateMarker();
             //summon.InitialCharacterPlacement(tile);
+            target.DestroyMarker();
             if (target.currentRegion != null) {
                 target.currentRegion.RemoveCharacterFromLocation(target);
             }
-            target.DestroyMarker();
             onRaisedFromDeadAction?.Invoke(target);
             AddNewLimboCharacter(target);
             RemoveCharacter(target);
         }
+        return summon;
         // RemoveCharacter(target);
     }
 
@@ -774,9 +791,9 @@ public class CharacterManager : BaseMonoBehaviour {
             target.ReturnToLife(faction, chosenRace, chosenClassName);
             target.traitContainer.RemoveTrait(target, "Transitioning"); //Remove transitioning status if the character turns into a zombie so that they will attack characters immediately
             target.MigrateHomeStructureTo(null);
-            target.needsComponent.SetTirednessForcedTick(0);
-            target.needsComponent.SetFullnessForcedTick(0);
-            target.needsComponent.SetHappinessForcedTick(0);
+            // target.needsComponent.SetTirednessForcedTick(0);
+            // target.needsComponent.SetFullnessForcedTick(0);
+            // target.needsComponent.SetHappinessForcedTick(0);
             if (!target.behaviourComponent.HasBehaviour(typeof(ZombieBehaviour))) {
                 target.behaviourComponent.AddBehaviourComponent(typeof(ZombieBehaviour));
             }
@@ -816,17 +833,29 @@ public class CharacterManager : BaseMonoBehaviour {
         }
         return _normalNameColorHex;
     }
+    public void ToggleCharacterMarkerNameplate() {
+        SetToggleCharacterMarkerNameplate(!toggleCharacterMarkerName);
+    }
+    private void SetToggleCharacterMarkerNameplate(bool p_state) {
+        if (toggleCharacterMarkerName != p_state) {
+            toggleCharacterMarkerName = p_state;
+            Messenger.Broadcast<bool>(CharacterSignals.TOGGLE_CHARACTER_MARKER_NAMEPLATE, toggleCharacterMarkerName);
+        }
+    }
     #endregion
 
     #region Character Class Manager
-    public CharacterClass CreateNewCharacterClass(string className) {
-        return classManager.CreateNewCharacterClass(className);
-    }
+    //public CharacterClass CreateNewCharacterClass(string className) {
+    //    return classManager.GetCharacterClass(className);
+    //}
     //public string GetRandomClassByIdentifier(string identifier) {
     //    return classManager.GetRandomClassByIdentifier(identifier);
     //}
     public string GetRandomCombatant() {
         return classManager.GetRandomCombatant().className;
+    }
+    public string GetRandomLowTierCombatant() {
+        return classManager.GetRandomLowTierCombatant().className;
     }
     public bool HasCharacterClass(string className) {
         return classManager.classesDictionary.ContainsKey(className);
@@ -975,6 +1004,10 @@ public class CharacterManager : BaseMonoBehaviour {
     public SummonSettings GetSummonSettings(SUMMON_TYPE type) {
         return summonSettings[type];
     }
+
+    public MinionSettings GetMinionSettings(MINION_TYPE type) {
+        return minionSettings[type];
+    }
     public ArtifactSettings GetArtifactSettings(ARTIFACT_TYPE type) {
         return artifactSettings[type];
     }
@@ -1008,22 +1041,22 @@ public class CharacterManager : BaseMonoBehaviour {
             character.CenterOnCharacter();
         }
     }
-    public void SetCurrentDemonicStructureTargetOfAngels(DemonicStructure demonicStructure) {
-        currentDemonicStructureTargetOfAngels = demonicStructure;
-    }
-    public void SetNewCurrentDemonicStructureTargetOfAngels() {
-        LocationStructure targetDemonicStructure = null;
-        if (InnerMapManager.Instance.HasExistingWorldKnownDemonicStructure()) {
-            targetDemonicStructure = InnerMapManager.Instance.worldKnownDemonicStructures[UnityEngine.Random.Range(0, InnerMapManager.Instance.worldKnownDemonicStructures.Count)];
-        } else {
-            targetDemonicStructure = PlayerManager.Instance.player.playerSettlement.GetRandomStructure();
-        }
-        if(targetDemonicStructure != null) {
-            SetCurrentDemonicStructureTargetOfAngels(targetDemonicStructure as DemonicStructure);
-        } else {
-            SetCurrentDemonicStructureTargetOfAngels(null);
-        }
-    }
+    //public void SetCurrentDemonicStructureTargetOfAngels(DemonicStructure demonicStructure) {
+    //    currentDemonicStructureTargetOfAngels = demonicStructure;
+    //}
+    //public void SetNewCurrentDemonicStructureTargetOfAngels() {
+    //    LocationStructure targetDemonicStructure = null;
+    //    if (InnerMapManager.Instance.HasExistingWorldKnownDemonicStructure()) {
+    //        targetDemonicStructure = InnerMapManager.Instance.worldKnownDemonicStructures[UnityEngine.Random.Range(0, InnerMapManager.Instance.worldKnownDemonicStructures.Count)];
+    //    } else {
+    //        targetDemonicStructure = PlayerManager.Instance.player.playerSettlement.GetRandomStructure();
+    //    }
+    //    if(targetDemonicStructure != null) {
+    //        SetCurrentDemonicStructureTargetOfAngels(targetDemonicStructure as DemonicStructure);
+    //    } else {
+    //        SetCurrentDemonicStructureTargetOfAngels(null);
+    //    }
+    //}
     public TILE_OBJECT_TYPE GetEggType(SUMMON_TYPE summonType) {
         switch (summonType) {
             case SUMMON_TYPE.Giant_Spider:
@@ -1072,6 +1105,56 @@ public class CharacterManager : BaseMonoBehaviour {
         }
         return false;
     }
+    public bool HasCharacterNotConversedInMinutes(Character character, int minutes) {
+        GameDate lastConversationDate = character.nonActionEventsComponent.lastConversationDate;
+        //add ticks (based on given minutes) to last conversation date. If resulting date is before today, then character
+        //has not conversed for the given amount of time.
+        return lastConversationDate.AddTicks(GameManager.Instance.GetTicksBasedOnMinutes(minutes))
+            .IsBefore(GameManager.Instance.Today());
+    }
+    public bool IsCharacterTheSameLycan(Character character1, Character character2) {
+        LycanthropeData lycanData = null;
+        if (character1.isLycanthrope) {
+            lycanData = character1.lycanData;
+        } else if (character2.isLycanthrope) {
+            lycanData = character2.lycanData;
+        }
+        if (lycanData != null) {
+            return (lycanData.originalForm == character1 || lycanData.lycanthropeForm == character1) && (lycanData.originalForm == character2 || lycanData.lycanthropeForm == character2);
+        }
+        return false;
+    }
+    public bool IsCharacterConsideredTargetOfBoneGolem(Character p_considerer, Character p_targetCharacter) {
+        if (p_considerer != p_targetCharacter
+            && p_targetCharacter.gridTileLocation != null
+            && !p_targetCharacter.isDead
+            && !p_targetCharacter.isAlliedWithPlayer
+            && p_targetCharacter.marker
+            && p_targetCharacter.marker.isMainVisualActive
+            && p_considerer.movementComponent.HasPathTo(p_targetCharacter.gridTileLocation)
+            && !p_targetCharacter.isInLimbo
+            && !p_targetCharacter.isBeingSeized
+            && p_targetCharacter.carryComponent.IsNotBeingCarried()) {
+            if (!p_targetCharacter.traitContainer.HasTrait("Hibernating", "Indestructible")) {
+                if (p_considerer.IsHostileWith(p_targetCharacter)) {
+                    if (!IsCharacterConsideredPrisonerOf(p_considerer, p_targetCharacter)) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+    public bool IsCharacterConsideredPrisonerOf(Character p_considerer, Character p_targetCharacter) {
+        Prisoner prisoner = p_targetCharacter.traitContainer.GetTraitOrStatus<Prisoner>("Prisoner");
+        if (prisoner != null) {
+            return prisoner.IsConsideredPrisonerOf(p_considerer);
+        }
+        return false;
+    }
+    public string GetRandomResistRuinarchPowerText() {
+        return resistRuinarchPowerText[GameUtilities.RandomBetweenTwoNumbers(0, resistRuinarchPowerText.Length - 1)];
+    }
     #endregion
 
     #region Character Portraits
@@ -1103,8 +1186,8 @@ public class CharacterManager : BaseMonoBehaviour {
     /// <returns>The updated portrait settings.</returns>
     public PortraitSettings UpdatePortraitSettings(Character character) {
         PortraitSettings portraitSettings = GeneratePortrait(character);
-        
-        if (string.IsNullOrEmpty(portraitSettings.wholeImage)) {
+        Sprite sprite = GetOrCreateCharacterClassData(portraitSettings.className).portraitSprite;
+        if (sprite == null) {
             //keep the following settings from the original face.
             portraitSettings.head = character.visuals.portraitSettings.head;
             portraitSettings.brows = character.visuals.portraitSettings.brows;
@@ -1132,7 +1215,7 @@ public class CharacterManager : BaseMonoBehaviour {
         PortraitSettings ps = new PortraitSettings {
             race = race,
             gender = gender,
-            wholeImage = classPortraits.ContainsKey(characterClass) ? characterClass : string.Empty
+            className = characterClass
         };
         if (race == RACE.DEMON) {
             ps.head = -1;
@@ -1195,12 +1278,6 @@ public class CharacterManager : BaseMonoBehaviour {
             return portraitFrames[role];
         }
         throw new Exception($"There is no frame for role {role.ToString()}");
-    }
-    public Sprite GetWholeImagePortraitSprite(string className) {
-        if (classPortraits.ContainsKey(className)) {
-            return classPortraits[className];
-        }
-        return null;
     }
     public bool TryGetPortraitSprite(string identifier, int index, RACE race, GENDER gender, out Sprite sprite) {
         if (index < 0) {
@@ -1310,7 +1387,7 @@ public class CharacterManager : BaseMonoBehaviour {
         CharacterClassData loadedData = GetOrCreateCharacterClassData(race == RACE.SKELETON ? "Skeleton" : characterClassName);
         return loadedData.GetAssets(race);
     }
-    private CharacterClassData GetOrCreateCharacterClassData(string p_className) {
+    public CharacterClassData GetOrCreateCharacterClassData(string p_className) {
         if (_loadedClassData.ContainsKey(p_className)) {
             return _loadedClassData[p_className];
         }
@@ -1353,10 +1430,10 @@ public class CharacterManager : BaseMonoBehaviour {
     #endregion
 
     #region Listeners
-    private void OnCharacterFinishedAction(ActualGoapNode node) {
-        if (node.actor.marker) {
+    private void OnCharacterFinishedAction(Character p_actor, IPointOfInterest p_target, INTERACTION_TYPE p_type, ACTION_STATUS p_status) {
+        if (p_actor.marker) {
             //node.actor.marker.UpdateActionIcon();
-            node.actor.marker.UpdateAnimation();
+            p_actor.marker.UpdateAnimation();
         }
         //for (int i = 0; i < actor.marker.inVisionCharacters.Count; i++) {
         //    Character otherCharacter = actor.marker.inVisionCharacters[i];
@@ -1496,7 +1573,7 @@ public class CharacterManager : BaseMonoBehaviour {
     }
     public Minion CreateNewMinion(string className, RACE race, bool initialize = true) {
         Player player = PlayerManager.Instance.player;
-        Minion minion = new Minion(CreateNewCharacter(className, race, GENDER.MALE, player.playerFaction, player.playerSettlement, player.portalTile.region), false);
+        Minion minion = new Minion(CreateNewCharacter(className, race, GENDER.MALE, player.playerFaction, player.playerSettlement, player.portalArea.region), false);
         if (initialize) {
             InitializeMinion(minion);
         }
@@ -1537,6 +1614,95 @@ public class CharacterManager : BaseMonoBehaviour {
     }
     #endregion
 
+    #region Ratmen
+    public bool GenerateRatmen(LocationStructure structure, int amount, int chance = 10) {
+        if (GameUtilities.RollChance(chance)) {
+            if (FactionManager.Instance.ratmenFaction == null) {
+                //Only create ratmen faction if ratmen are spawned
+                FactionManager.Instance.CreateRatmenFaction();
+            }
+            int numOfRatmen = amount;
+            for (int k = 0; k < numOfRatmen; k++) {
+                Character character = CreateNewCharacter("Ratman", RACE.RATMAN, GENDER.MALE, FactionManager.Instance.ratmenFaction ?? FactionManager.Instance.neutralFaction, structure.settlementLocation, structure.settlementLocation.region, structure);
+                LocationGridTile targetTile = CollectionUtilities.GetRandomElement(structure.passableTiles) ?? CollectionUtilities.GetRandomElement(structure.tiles);
+                character.CreateMarker();
+                character.InitialCharacterPlacement(targetTile);
+            }
+            return true;
+        }
+        return false;
+    }
+
+    public bool GenerateRatmen(LocationGridTile p_gridTile, int p_amount) {
+        if (FactionManager.Instance.ratmenFaction == null) {
+            //Only create ratmen faction if ratmen are spawned
+            FactionManager.Instance.CreateRatmenFaction();
+        }
+        int numOfRatmen = p_amount;
+        for (int k = 0; k < numOfRatmen; k++) {
+            Character character = CreateNewCharacter("Ratman", RACE.RATMAN, GENDER.MALE, FactionManager.Instance.ratmenFaction);
+            character.CreateMarker();
+            character.InitialCharacterPlacement(p_gridTile);
+        }
+        return true;
+    }
+    #endregion
+
+    #region Daily Schedules
+    public List<DailySchedule> allDailySchedules { get; private set; }
+    private void ConstructDailySchedules() {
+        allDailySchedules = ReflectiveEnumerator.GetEnumerableOfType<DailySchedule>().ToList();
+    }
+    public DailySchedule GetDailySchedule<T>() {
+        for (int i = 0; i < allDailySchedules.Count; i++) {
+            DailySchedule schedule = allDailySchedules[i];
+            if (schedule is T) {
+                return schedule;
+            }
+        }
+        return null;
+    }
+    public DailySchedule GetDailySchedule(System.Type p_type) {
+        for (int i = 0; i < allDailySchedules.Count; i++) {
+            DailySchedule schedule = allDailySchedules[i];
+            if (schedule.GetType() == p_type) {
+                return schedule;
+            }
+        }
+        return null;
+    }
+    #endregion
+
+    #region Wants
+    private Dictionary<Type, VillagerWant> _allWants;
+    public Dictionary<Type, VillagerWant> allWants => _allWants;
+    private void CreateVillagerWantInstances() {
+        List<VillagerWant> wants = ReflectiveEnumerator.GetEnumerableOfType<VillagerWant>().ToList();
+        _allWants = new Dictionary<Type, VillagerWant>();
+        for (int i = 0; i < wants.Count; i++) {
+            VillagerWant want = wants[i];
+            allWants.Add(want.GetType(), want);
+        }
+    }
+    public T GetVillagerWantInstance<T>(System.Type p_type) where T: VillagerWant{
+        if (allWants.ContainsKey(p_type)) {
+            if (allWants[p_type] is T converted) {
+                return converted;
+            }
+        }
+        return null;
+    }
+    public T GetVillagerWantInstance<T>() where T: VillagerWant {
+        System.Type type = typeof(T);
+        if (allWants.ContainsKey(type)) {
+            if (allWants[type] is T converted) {
+                return converted;
+            }
+        }
+        return null;
+    }
+    #endregion
+
 }
 
 [Serializable]
@@ -1546,7 +1712,12 @@ public class PortraitFrame {
 
 [Serializable]
 public struct SummonSettings {
-    public Sprite summonPortrait;
+    public string className;
+}
+
+[Serializable]
+public struct MinionSettings {
+    public string className;
 }
 
 [Serializable]

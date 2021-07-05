@@ -8,24 +8,36 @@ public class UndeadBehaviour : CharacterBehaviourComponent {
 		priority = 9;
 	}
 	public override bool TryDoBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
+#if DEBUG_LOG
         log += $"\n-{character.name} is an undead";
+#endif
         if (character.race == RACE.SKELETON) {
+#if DEBUG_LOG
             log += $"\n-Character is a skeleton";
+#endif
             Faction undeadFaction = FactionManager.Instance.undeadFaction;
             if(undeadFaction.leader != null && undeadFaction.leader is Character undeadFactionLeader) {
+#if DEBUG_LOG
                 log += $"\n-Undead faction has a character leader";
-                if(undeadFactionLeader.homeStructure != null) {
+#endif
+                if (undeadFactionLeader.homeStructure != null) {
                     LocationStructure lair = undeadFactionLeader.homeStructure;
+#if DEBUG_LOG
                     log += $"\n-Undead faction leader has a lair";
                     log += $"\n-Character must migrate there if the lair is not yet his home";
+#endif
                     if (character.homeStructure != lair) {
+#if DEBUG_LOG
                         log += $"\n-Character migrated to the lair";
+#endif
                         character.MigrateHomeStructureTo(lair);
                         character.ClearTerritory();
                     }
                     if (character.currentStructure == lair && undeadFactionLeader.currentStructure == lair) {
                         if (undeadFactionLeader.combatComponent.isInCombat) {
+#if DEBUG_LOG
                             log += $"\n-Faction leader in combat, will try to combat also";
+#endif
                             bool hasFought = false;
                             CombatState combatState = undeadFactionLeader.stateComponent.currentState as CombatState;
                             if (combatState.currentClosestHostile != null) {
@@ -47,16 +59,22 @@ public class UndeadBehaviour : CharacterBehaviourComponent {
                                 return true;
                             }
                         }
+#if DEBUG_LOG
                         log += $"\n-Character and faction leader is in lair, roam";
+#endif
                         character.jobComponent.TriggerRoamAroundTile(out producedJob);
                         return true;
                     } else {
                         if (!undeadFactionLeader.isBeingSeized && undeadFactionLeader.marker && undeadFactionLeader.gridTileLocation != null && !undeadFactionLeader.isDead
                             && character.gridTileLocation != null && character.movementComponent.HasPathToEvenIfDiffRegion(undeadFactionLeader.gridTileLocation)) {
                             if (character.marker.IsPOIInVision(undeadFactionLeader)) {
+#if DEBUG_LOG
                                 log += $"\n-Character can see faction leader";
+#endif
                                 if (undeadFactionLeader.combatComponent.isInCombat) {
+#if DEBUG_LOG
                                     log += $"\n-Faction leader in combat, will try to combat also";
+#endif
                                     CombatState combatState = undeadFactionLeader.stateComponent.currentState as CombatState;
                                     if (combatState.currentClosestHostile != null) {
                                         CombatData combatData = undeadFactionLeader.combatComponent.GetCombatData(combatState.currentClosestHostile);
@@ -71,12 +89,16 @@ public class UndeadBehaviour : CharacterBehaviourComponent {
                                         }
                                     }
                                 } else {
+#if DEBUG_LOG
                                     log += $"\n-Do nothing";
+#endif
                                 }
                                 producedJob = null;
                                 return true;
                             } else {
+#if DEBUG_LOG
                                 log += $"\n-Character cannot see faction leader, go to him";
+#endif
                                 if (character.jobComponent.CreateGoToJob(undeadFactionLeader)) {
                                     producedJob = null;
                                     return true;

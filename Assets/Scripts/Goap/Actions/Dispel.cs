@@ -17,22 +17,24 @@ public class Dispel : GoapAction {
         SetState("Dispel Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
+#if DEBUG_LOG
         string costLog = $"\n{name} {target.nameWithID}: +10(Constant)";
         actor.logComponent.AppendCostLog(costLog);
+#endif
         return 10;
     }
     public override REACTABLE_EFFECT GetReactableEffect(ActualGoapNode node, Character witness) {
         return REACTABLE_EFFECT.Positive;
     }
-    public override void AddFillersToLog(ref Log log, ActualGoapNode node) {
-        base.AddFillersToLog(ref log, node);
+    public override void AddFillersToLog(Log log, ActualGoapNode node) {
+        base.AddFillersToLog(log, node);
         string traitToRemove = (string)node.otherData[0].obj;
         string logString = GetTraitLogString(traitToRemove);
         log.AddToFillers(null, logString, LOG_IDENTIFIER.STRING_1);
     }
-    #endregion
+#endregion
     
-    #region State Effects
+#region State Effects
     public void PreDispelSuccess(ActualGoapNode goapNode) {
         string traitToRemove = (string)goapNode.otherData[0].obj;
         if (goapNode.poiTarget.traitContainer.HasTrait(traitToRemove)) {
@@ -60,6 +62,7 @@ public class Dispel : GoapAction {
         }
     }
     public void AfterDispelSuccess(ActualGoapNode goapNode) {
+        goapNode.actor.moneyComponent.AdjustCoins(83);
         string traitToRemove = (string)goapNode.otherData[0].obj;
         if (goapNode.poiTarget.traitContainer.HasTrait(traitToRemove)) {
             Character targetCharacter = goapNode.poiTarget as Character;
@@ -111,8 +114,9 @@ public class Dispel : GoapAction {
                 }
             }    
         }
+        goapNode.actor.talentComponent?.GetTalent(CHARACTER_TALENT.Healing_Magic).AdjustExperience(10, goapNode.actor);
     }
-    #endregion
+#endregion
 
     private string GetTraitLogString(string traitName) {
         if (traitName == "Lycanthrope") {

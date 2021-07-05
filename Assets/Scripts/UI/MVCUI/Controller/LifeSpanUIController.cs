@@ -138,35 +138,35 @@ public class LifeSpanUIController : MVCUIController, LifeSpanUIView.IListener
 		m_lifeSpanUIView.UpdateTileObjectInfectionTime(PlagueDisease.Instance.lifespan.GetInfectionTimeString(PlagueDisease.Instance.lifespan.tileObjectInfectionTimeInHours));
 		int nextUpgradeCost = PlagueDisease.Instance.lifespan.GetTileObjectInfectionTimeUpgradeCost();
 		bool isAtMaxLevel = PlagueDisease.Instance.lifespan.IsTileObjectAtMaxLevel();
-		m_lifeSpanUIView.UpdateTileObjectUpgradePrice(isAtMaxLevel ? "MAX" : $"{nextUpgradeCost.ToString()}{UtilityScripts.Utilities.PlagueIcon()}");
+		m_lifeSpanUIView.UpdateTileObjectUpgradePrice(isAtMaxLevel ? "MAX" : $"{nextUpgradeCost.ToString()}{UtilityScripts.Utilities.ChaoticEnergyIcon()}");
 		m_lifeSpanUIView.UpdateTileObjectUpgradeButtonInteractable(!isAtMaxLevel && CanAffordUpgrade(nextUpgradeCost));
 	}
 	private void UpdateElvesInfectionTimeData() {
 		m_lifeSpanUIView.UpdateElvesInfectionTime(PlagueDisease.Instance.lifespan.GetInfectionTimeString(PlagueDisease.Instance.lifespan.GetSapientLifespanOfPlagueInHours(RACE.ELVES)));
 		int nextUpgradeCost = PlagueDisease.Instance.lifespan.GetSapientInfectionTimeUpgradeCost(RACE.ELVES);
 		bool isAtMaxLevel = PlagueDisease.Instance.lifespan.IsSapientAtMaxLevel(RACE.ELVES);
-		m_lifeSpanUIView.UpdateElvesUpgradePrice(isAtMaxLevel ? "MAX" : $"{nextUpgradeCost.ToString()}{UtilityScripts.Utilities.PlagueIcon()}");
+		m_lifeSpanUIView.UpdateElvesUpgradePrice(isAtMaxLevel ? "MAX" : $"{nextUpgradeCost.ToString()}{UtilityScripts.Utilities.ChaoticEnergyIcon()}");
 		m_lifeSpanUIView.UpdateElvesUpgradeButtonInteractable(!isAtMaxLevel && CanAffordUpgrade(nextUpgradeCost));
 	}
 	private void UpdateHumansInfectionTimeData() {
 		m_lifeSpanUIView.UpdateHumansInfectionTime(PlagueDisease.Instance.lifespan.GetInfectionTimeString(PlagueDisease.Instance.lifespan.GetSapientLifespanOfPlagueInHours(RACE.HUMANS)));
 		int nextUpgradeCost = PlagueDisease.Instance.lifespan.GetSapientInfectionTimeUpgradeCost(RACE.HUMANS);
 		bool isAtMaxLevel = PlagueDisease.Instance.lifespan.IsSapientAtMaxLevel(RACE.HUMANS);
-		m_lifeSpanUIView.UpdateHumansUpgradePrice(isAtMaxLevel ? "MAX" : $"{nextUpgradeCost.ToString()}{UtilityScripts.Utilities.PlagueIcon()}");
+		m_lifeSpanUIView.UpdateHumansUpgradePrice(isAtMaxLevel ? "MAX" : $"{nextUpgradeCost.ToString()}{UtilityScripts.Utilities.ChaoticEnergyIcon()}");
 		m_lifeSpanUIView.UpdateHumansUpgradeButtonInteractable(!isAtMaxLevel && CanAffordUpgrade(nextUpgradeCost));
 	}
 	private void UpdateMonstersInfectionTimeData() {
 		m_lifeSpanUIView.UpdateMonstersInfectionTime(PlagueDisease.Instance.lifespan.GetInfectionTimeString(PlagueDisease.Instance.lifespan.monsterInfectionTimeInHours));
 		int nextUpgradeCost = PlagueDisease.Instance.lifespan.GetMonsterInfectionTimeUpgradeCost();
 		bool isAtMaxLevel = PlagueDisease.Instance.lifespan.IsMonstersAtMaxLevel();
-		m_lifeSpanUIView.UpdateMonstersUpgradePrice(isAtMaxLevel ? "MAX" : $"{nextUpgradeCost.ToString()}{UtilityScripts.Utilities.PlagueIcon()}");
+		m_lifeSpanUIView.UpdateMonstersUpgradePrice(isAtMaxLevel ? "MAX" : $"{nextUpgradeCost.ToString()}{UtilityScripts.Utilities.ChaoticEnergyIcon()}");
 		m_lifeSpanUIView.UpdateMonstersUpgradeButtonInteractable(!isAtMaxLevel && CanAffordUpgrade(nextUpgradeCost));
 	}
 	private void UpdateUndeadInfectionTimeData() {
 		m_lifeSpanUIView.UpdateUndeadInfectionTime(PlagueDisease.Instance.lifespan.GetInfectionTimeString(PlagueDisease.Instance.lifespan.undeadInfectionTimeInHours));
 		int nextUpgradeCost = PlagueDisease.Instance.lifespan.GetUndeadInfectionTimeUpgradeCost();
 		bool isAtMaxLevel = PlagueDisease.Instance.lifespan.IsUndeadAtMaxLevel();
-		m_lifeSpanUIView.UpdateUndeadUpgradePrice(isAtMaxLevel ? "MAX" : $"{nextUpgradeCost.ToString()}{UtilityScripts.Utilities.PlagueIcon()}");
+		m_lifeSpanUIView.UpdateUndeadUpgradePrice(isAtMaxLevel ? "MAX" : $"{nextUpgradeCost.ToString()}{UtilityScripts.Utilities.ChaoticEnergyIcon()}");
 		m_lifeSpanUIView.UpdateUndeadUpgradeButtonInteractable(!isAtMaxLevel && CanAffordUpgrade(nextUpgradeCost));
 	}
 }

@@ -13,14 +13,92 @@ MonoBehaviour:
   m_Name: Agoraphobia
   m_EditorClassIdentifier: 
   skill: 12
-  manaCost: 4
+  manaCost: 50
   charges: 1
-  cooldown: 288
+  cooldown: 160
   threat: 0
   threatPerHour: 0
   expCost: 300
+  cheatedLevel: 0
+  pierce: 0
+  bonusChargeWhenUnlocked: 1
+  unlockChargeOnPortalUpgrade: 1
   buttonSprite: {fileID: 21300000, guid: e82f28130057b894cb52771c34d33c2d, type: 3}
   tooltipVideoClip: {fileID: 0}
   tooltipImage: {fileID: 0}
+  unlockCost: 50
+  tier: 1
+  baseLoadoutWeight: 250
+  resistanceType: 9
+  archetypeWeightedBonus: 3
+  canBeReleasedEvenIfLearned: 0
   contextMenuIcon: {fileID: 21300000, guid: 624d21fad2d73924cbb59610b3cff660, type: 3}
   contextMenuColumn: 1
+  playerActionIcon: {fileID: 0}
+  isNonUpgradeable: 0
+  isAffliction: 1
+  isLockedBaseOnRequirements: 0
+  canBeCastedOnMaxLevel: 0
+  requirementData:
+    requirements: 08000000
+    requiredArchetypes: 
+    requiredSkills: 
+    actionCount: 0
+    afflictionCount: 0
+    spellsCount: 0
+    tier1Count: 0
+    tier2Count: 0
+    tier3Count: 0
+    portalLevel: 2
+    isOR: 0
+  skillUpgradeData:
+    upgradeCosts: 140000003200000050000000
+    manacostPerLevel: 96000000c8000000fa0000005e010000
+    chargesPerLevel: 01000000010000000100000001000000
+    bonuses: 0e0000000100000009000000
+    additionalDamagePerLevel: 
+    additionalPiercePerLevel:
+    - 0
+    - 50
+    - 100
+    - 150
+    additionalHpPercentagePerLevel: []
+    additionalAttackPercentagePerLevel: []
+    additionalHpValuePerLevel: 
+    additionalAttackValuePerLevel: 
+    applyOnLevel: 
+    additionalmanaReceivedPercentagePerLevel: []
+    statsIncreasedPercentagePerLevel:
+    - 15
+    - 0
+    - 0
+    - 0
+    durationBonusPerLevel: 
+    additionalMaxHPPercentagePerLevel: []
+    additionalMaxHPActualPerLevel: 
+    additionalChanceBonusPercentagePerLevel:
+    - 0
+    - 0
+    - 0
+    - 0
+    additionalTileRangeBonusPerLevel: 
+    decreaseMovementSpeedPerLevel: 
+    cooldownPerLevel: a0000000800000008000000070000000
+    skillMovementSpeed: 
+  afflictionUpgradeData:
+    bonuses: 01000000080000000000000002000000
+    cooldown: f0000000f0000000f0000000f0000000
+    additionalPiercePerLevel:
+    - 0
+    - 25
+    - 50
+    - 100
+    rateChance: 
+    crowdNumber: 04000000030000000300000002000000
+    napsDuration: 
+    numberOfCriteria: 
+    hungerRate: 
+    duration: []
+    opinionTrigger: 
+    addedBehaviour: 00000000010000000100000002000000
+    listOfCriteria: 

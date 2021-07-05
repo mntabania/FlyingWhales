@@ -1,0 +1,43 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4fe081999e2948579e671f1ff7494f4c, type: 3}
+  m_Name: Workshop Data
+  m_EditorClassIdentifier: 
+  _structureSprite: {fileID: 21300000, guid: 8f57444b93359594096b1dd546244094, type: 3}
+  _itemGenerationSetting: {fileID: 0}
+  structurePrefabs:
+    m_keys:
+    - resource: 2
+      structureType: 49
+      hasValue: 1
+      isCorrupted: 0
+    - resource: 1
+      structureType: 49
+      hasValue: 1
+      isCorrupted: 0
+    - resource: 2
+      structureType: 49
+      hasValue: 1
+      isCorrupted: 1
+    - resource: 1
+      structureType: 49
+      hasValue: 1
+      isCorrupted: 1
+    m_values:
+    - data:
+      - {fileID: 1108815045661547315, guid: 5818c15c055aba248b25f01312e321c8, type: 3}
+    - data:
+      - {fileID: 1000888098339341673, guid: 44c8bf07b1de4fb429ee2f2c84c3fc41, type: 3}
+    - data:
+      - {fileID: 1108815045661547315, guid: 529cc016f80c4034498c574e16a8d45f, type: 3}
+    - data:
+      - {fileID: 1108815045661547315, guid: 50f74956ceb9cfc44803224bcac40344, type: 3}

@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 49d866ce53a3fb34887a699eb039ad3a, type: 3}
+  m_Name: Bear Hide Armor
+  m_EditorClassIdentifier: 
+  resourceType: 4
+  specificResource: 19000000
+  resourceAmount: 20
+  purchaseCost: 20
+  tier: 1
+  description: This is Bearhide Armor
+  imgIcon: {fileID: 21300000, guid: 7cbd88047dcee054f9b977eb7537f580, type: 3}
+  equipmentUpgradeData:
+    bonuses: 05000000
+    AdditionalPiercing: 12.5
+    AdditionalMaxHPPercentage: 0
+    AdditionalMaxHPActual: 320
+    AdditionalAttackPercentage: 0
+    AdditionalAttackActual: 0
+    AdditionalIntPercentage: 0
+    AdditionalIntActual: 0
+    AdditionalCritRate: 0
+    additionalResistanceBonus: 20
+    elementAttackBonus: 0
+    slayerBonus: 0
+    wardBonus: 0

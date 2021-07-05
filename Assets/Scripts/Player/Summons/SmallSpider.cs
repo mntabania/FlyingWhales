@@ -2,13 +2,16 @@
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
 using Traits;
+using UnityEngine;
 
-public class SmallSpider : Summon {
+public class SmallSpider : SkinnableAnimal {
 
     public const string ClassName = "Small Spider";
     public override string raceClassName => $"Small Spider";
     public override SUMMON_TYPE adultSummonType => SUMMON_TYPE.Giant_Spider;
     public override System.Type serializedData => typeof(SaveDataSmallSpider);
+
+    public override TILE_OBJECT_TYPE produceableMaterial => TILE_OBJECT_TYPE.SPIDER_SILK;
 
     public GameDate growUpDate { get; private set; }
     public bool shouldGrowUpOnUnSeize { get; private set; }
@@ -43,9 +46,14 @@ public class SmallSpider : Summon {
         ScheduleGrowUp();    
     }
     private void ScheduleGrowUp() {
-        if (traitContainer.HasTrait("Baby Infestor") == false) {
+        if (!traitContainer.HasTrait("Baby Infestor") && faction != null && faction != null && faction.factionType.type != FACTION_TYPE.Demons) {
             //only grow up if spider is not a baby infestor
             //because growing up is handled by Baby Infestor trait
+            //also don't grow up if small spider is part of the player faction because of this issue:
+            //https://trello.com/c/ArYdxExc/4739-live-v040-the-baby-spiders-you-capture-still-grow-up-into-giant-spiders-snatcher
+#if DEBUG_LOG
+            Debug.Log($"{name} scheduled grow up date on {growUpDate.ToString()}");
+#endif
             SchedulingManager.Instance.AddEntry(growUpDate, GrowUp, this);
         }
     }
@@ -73,6 +81,10 @@ public class SmallSpider : Summon {
     /// </summary>
     private void GrowUp() {
         if (isDead) { return; }
+        if (faction != null && faction.factionType.type == FACTION_TYPE.Demons) {
+            //Reference: https://trello.com/c/ArYdxExc/4739-live-v040-the-baby-spiders-you-capture-still-grow-up-into-giant-spiders-snatcher
+            return;
+        }
         if (isBeingSeized && PlayerManager.Instance.player.seizeComponent.isPreparingToBeUnseized) {
             //if spider is currently seized and is not being unseized when it should grow up,
             //set it to grow up when it is unseized.
@@ -81,7 +93,7 @@ public class SmallSpider : Summon {
         }
         if (IsPOICurrentlyTargetedByAPerformingAction()) {
             //If target is currently targeted by an action, do not grow up, instead, comeback after 1 hour
-            SchedulingManager.Instance.AddEntry(GameManager.Instance.Today().AddTicks(12), GrowUp, this);
+            SchedulingManager.Instance.AddEntry(GameManager.Instance.Today().AddTicks(GameManager.ticksPerHour), GrowUp, this);
             return;
         }
         SetDestroyMarkerOnDeath(true);
@@ -91,7 +103,7 @@ public class SmallSpider : Summon {
         LocationStructure home = homeStructure;
         NPCSettlement settlement = homeSettlement;
         Region region = homeRegion;
-        HexTile ogTerritory = territory;
+        Area ogTerritory = territory;
         
         SetShowNotificationOnDeath(false);
         
@@ -106,7 +118,7 @@ public class SmallSpider : Summon {
 
         Log growUpLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "Generic", "become_giant_spider", null, LOG_TAG.Life_Changes);
         growUpLog.AddToFillers(summon, summon.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-        growUpLog.AddLogToDatabase();
+        growUpLog.AddLogToDatabase(true);
         
         CharacterManager.Instance.PlaceSummonInitially(summon, tile);
         TraitManager.Instance.CopyStatuses(this, summon);
@@ -123,7 +135,7 @@ public class SmallSpider : Summon {
 }
 
 [System.Serializable]
-public class SaveDataSmallSpider : SaveDataSummon {
+public class SaveDataSmallSpider : SaveDataSkinnableAnimal {
     public GameDate growUpDate;
     public bool shouldGrowUpOnUnSeize;
 

@@ -132,7 +132,7 @@ namespace Factions.Faction_Types {
             }
             return CRIME_SEVERITY.Unapplicable;
         }
-        public void AddCrime(CRIME_TYPE type, CRIME_SEVERITY severity) {
+        public void AddCrime(CRIME_TYPE type, CRIME_SEVERITY severity, bool shouldBroadcastSignal = false) {
             if (!crimes.ContainsKey(type)) {
                 crimes.Add(type, severity);
             } else {
@@ -157,26 +157,22 @@ namespace Factions.Faction_Types {
             }
             return CRIME_TYPE.None;
         }
+        public bool IsActionConsideredACrime(CRIME_TYPE p_crimeType) {
+            CRIME_SEVERITY severity = GetCrimeSeverity(p_crimeType);
+            return severity != CRIME_SEVERITY.Unapplicable && severity != CRIME_SEVERITY.None;
+        }
         #endregion
 
         #region Structures
-        // public void AddNeededStructure(StructureSetting structureSetting) {
-        //     neededStructures.Add(structureSetting);
-        // }
-        // public void AddNeededStructure(STRUCTURE_TYPE structureType, RESOURCE resource) {
-        //     StructureSetting structureSetting = new StructureSetting(structureType, resource);
-        //     neededStructures.Add(structureSetting);
-        // }
-        // public StructureSetting GetStructureSettingFor(STRUCTURE_TYPE structureType) {
-        //     for (int i = 0; i < neededStructures.Count; i++) {
-        //         StructureSetting structureSetting = neededStructures[i];
-        //         if (structureSetting.structureType == structureType) {
-        //             return structureSetting;
-        //         }
-        //     }
-        //     Debug.LogWarning($"{type} has no structure setting for {structureType}");
-        //     return default;
-        // }
+        public virtual StructureSetting ProcessStructureSetting(StructureSetting p_setting, NPCSettlement p_settlement) {
+            return p_setting;
+        }
+        public virtual StructureSetting CreateStructureSettingForStructure(STRUCTURE_TYPE structureType, NPCSettlement p_settlement) {
+            RESOURCE resource = structureType.RequiresResourceToBuild() ? RESOURCE.STONE : RESOURCE.NONE;
+            if (structureType == STRUCTURE_TYPE.FISHERY) { resource = RESOURCE.WOOD; }
+            if (structureType == STRUCTURE_TYPE.BUTCHERS_SHOP) { resource = RESOURCE.STONE; }
+            return new StructureSetting(structureType, resource, false);
+        }
         #endregion
 
         #region Combatants

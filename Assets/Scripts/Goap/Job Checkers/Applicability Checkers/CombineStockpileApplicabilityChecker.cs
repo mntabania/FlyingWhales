@@ -23,7 +23,7 @@ namespace Goap.Job_Checkers {
                    && pileToDeposit.gridTileLocation != null
                    && pileToDeposit.gridTileLocation.IsPartOfSettlement(npcSettlement)
                    && pileToDeposit.structureLocation == npcSettlement.mainStorage
-                   && targetPile.HasEnoughSpaceFor(pileToDeposit.providedResource, pileToDeposit.resourceInPile);
+                   && targetPile.resourceStorageComponent.HasEnoughSpaceFor(pileToDeposit.providedResource, pileToDeposit.resourceInPile);
         }
     }
 }

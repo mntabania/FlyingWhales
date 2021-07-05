@@ -94,7 +94,9 @@ public class CharacterMarkerVisionCollider : BaseVisionCollider {
         parentMarker.AddPOIAsInVisionRange(poi);
     }
     public void TransferAllDifferentStructureCharacters() {
+#if DEBUG_LOG
         Debug.Log($"{GameManager.Instance.TodayLogString()} {parentMarker.character.name} is transferring all objects in different structures to its normal vision");
+#endif
         for (int i = 0; i < parentMarker.inVisionPOIsButDiffStructure.Count; i++) {
             IPointOfInterest poi = parentMarker.inVisionPOIsButDiffStructure[i];
             if (poi.gridTileLocation == null) { continue; }
@@ -106,7 +108,9 @@ public class CharacterMarkerVisionCollider : BaseVisionCollider {
         }
     }
     public void ReCategorizeVision() {
+#if DEBUG_LOG
         Debug.Log($"{GameManager.Instance.TodayLogString()} {parentMarker.character.name} Re categorizing objects in its normal vision");
+#endif
         //List<IPointOfInterest> poisInVision = new List<IPointOfInterest>(parentMarker.inVisionPOIs);
         for (int i = 0; i < parentMarker.inVisionPOIs.Count; i++) {
             IPointOfInterest pointOfInterest = parentMarker.inVisionPOIs[i];
@@ -135,7 +139,8 @@ public class CharacterMarkerVisionCollider : BaseVisionCollider {
                 if (ShouldBeConsideredInVision(poi) ||
                     (poi.mapObjectVisual != null && poi.mapObjectVisual.visionTrigger != null && poi.mapObjectVisual.visionTrigger is POIVisionTrigger poiVisionTrigger && poiVisionTrigger.IgnoresStructureDifference())) {
                     bool shouldAddToVisionBasedOnRoom = ShouldAddToVisionBasedOnRoom(poi);
-                    if (shouldAddToVisionBasedOnRoom) {
+                    if (shouldAddToVisionBasedOnRoom || 
+                        (poi.mapObjectVisual != null && poi.mapObjectVisual.visionTrigger != null && poi.mapObjectVisual.visionTrigger is POIVisionTrigger visionTrigger && visionTrigger.IgnoresRoomDifference())) {
                         NormalEnterHandling(poi);
                         return true;
                     }
@@ -171,7 +176,7 @@ public class CharacterMarkerVisionCollider : BaseVisionCollider {
         return shouldAddToVision;
     }
 
-    #region Different Structure Handling
+#region Different Structure Handling
     private void OnCharacterArrivedAtStructure(Character character, LocationStructure structure) {
         //if (parentMarker.character.combatComponent.isInCombat) { return; } //if character is in combat, ignore this
         //if the character that arrived at the new structure is in this character different structure list
@@ -236,9 +241,17 @@ public class CharacterMarkerVisionCollider : BaseVisionCollider {
                 }
             }
 
-            if (character.currentActionNode != null && character.currentActionNode.action.actionLocationType == ACTION_LOCATION_TYPE.UPON_STRUCTURE_ARRIVAL && character.currentActionNode.targetStructure == structure && structure.structureType != STRUCTURE_TYPE.WILDERNESS) {
-                parentMarker.pathfindingAI.ClearAllCurrentPathData();
-                character.PerformGoapAction();
+            if (character.currentActionNode != null && character.currentActionNode.action.actionLocationType == ACTION_LOCATION_TYPE.UPON_STRUCTURE_ARRIVAL && structure.structureType != STRUCTURE_TYPE.WILDERNESS) {
+                bool isAtLocation = false;
+                if (character.currentActionNode.targetStructure == structure) {
+                    isAtLocation = true;
+                } else if (character.currentActionNode.targetStructure is DemonicStructure demonicStructure) {
+                    isAtLocation = demonicStructure.CanSeeObjectLocatedHere(character);
+                }
+                if (isAtLocation) {
+                    parentMarker.pathfindingAI.ClearAllCurrentPathData();
+                    character.PerformGoapAction();    
+                }
             }
         }
     }
@@ -261,21 +274,23 @@ public class CharacterMarkerVisionCollider : BaseVisionCollider {
     private bool IsTheSameStructureOrSameOpenSpace(LocationStructure structure1, LocationStructure structure2) {
         return structure1 != null && structure2 != null && (structure1 == structure2 || (structure1.structureType.IsOpenSpace() && structure2.structureType.IsOpenSpace()));
     }
-    #endregion
+#endregion
 
     [ContextMenu("Log Diff Struct")]
     public void LogCharactersInDifferentStructures() {
+#if DEBUG_LOG
         string summary = $"{parentMarker.character.name}'s diff structure pois";
         for (int i = 0; i < parentMarker.inVisionPOIsButDiffStructure.Count; i++) {
             summary += $"\n{parentMarker.inVisionPOIsButDiffStructure[i].name}";
         }
         Debug.Log(summary);
+#endif
     }
 
-    #region Utilities
+#region Utilities
     public void OnDeath() {
         parentMarker.inVisionPOIsButDiffStructure.Clear();
         OnDisable();
     }
-    #endregion
+#endregion
 }

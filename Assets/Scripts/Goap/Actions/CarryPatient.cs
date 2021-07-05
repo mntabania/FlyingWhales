@@ -32,9 +32,10 @@ public class CarryPatient : GoapAction {
             if (targetCharacter.combatComponent.isInCombat
                 || (targetCharacter.stateComponent.currentState != null && targetCharacter.stateComponent.currentState.characterState == CHARACTER_STATE.DOUSE_FIRE)
                 || (targetCharacter.interruptComponent.isInterrupted && targetCharacter.interruptComponent.currentInterrupt.interrupt.type == INTERRUPT.Cowering)) {
+#if DEBUG_LOG
                 string debugLog = $"{targetCharacter.name}in combat/in douse fire state/cowering. Carry fail.";
                 actor.logComponent.PrintLogIfActive(debugLog);
-
+#endif
                 goapActionInvalidity.isInvalid = true;
                 goapActionInvalidity.reason = "target_unavailable";
             }

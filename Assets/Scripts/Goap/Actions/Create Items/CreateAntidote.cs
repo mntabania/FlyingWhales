@@ -28,33 +28,37 @@ public class CreateAntidote : GoapAction {
     //    log.AddToFillers(null, UtilityScripts.Utilities.GetArticleForWord(obj.tileObjectType.ToString()), LOG_IDENTIFIER.STRING_1);
     //}
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
-        string costLog = $"\n{name} {target.nameWithID}:";
         int cost = 250;
+#if DEBUG_LOG
+        string costLog = $"\n{name} {target.nameWithID}:";
         costLog += $" +{cost}(Initial)";
         actor.logComponent.AppendCostLog(costLog);
+#endif
         return cost;
     }
-    #endregion
+#endregion
 
-    #region State Effects
+#region State Effects
     public void AfterCreateSuccess(ActualGoapNode goapNode) {
         Character actor = goapNode.actor;
         if(actor.HasItem(TILE_OBJECT_TYPE.POISON_FLASK)) {
             actor.ObtainItem(InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.ANTIDOTE));
             actor.UnobtainItem(TILE_OBJECT_TYPE.POISON_FLASK);
         } else {
+#if DEBUG_LOG
             actor.logComponent.PrintLogErrorIfActive(actor.name + " is trying to create a Healing Potion but lacks requirements");
+#endif
         }
     }
-    #endregion
+#endregion
 
-    #region Preconditions
+#region Preconditions
     private bool HasPoisonFlask(Character actor, IPointOfInterest poiTarget, object[] otherData, JOB_TYPE jobType) {
         return actor.HasItem("Poison Flask");
     }
-    #endregion
+#endregion
 
-    #region Requirement
+#region Requirement
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, OtherData[] otherData, JobQueueItem job) {
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData, job);
         if (satisfied) {
@@ -62,5 +66,5 @@ public class CreateAntidote : GoapAction {
         }
         return false;
     }
-    #endregion
+#endregion
 }

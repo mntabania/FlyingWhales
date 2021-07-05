@@ -36,8 +36,10 @@ public class RitualKilling : GoapAction {
         SetState("Killing Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
+#if DEBUG_LOG
         string costLog = $"\n{name} {target.nameWithID}: +10(Constant)";
         actor.logComponent.AppendCostLog(costLog);
+#endif
         return 10;
     }
     public override Precondition GetPrecondition(Character actor, IPointOfInterest target, OtherData[] otherData, JOB_TYPE jobType, out bool isOverridden) {
@@ -71,8 +73,8 @@ public class RitualKilling : GoapAction {
     //    }
     //    return goapActionInvalidity;
     //}
-    public override void PopulateReactionsToActor(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
-        base.PopulateReactionsToActor(reactions, actor, target, witness, node, status);
+    public override void PopulateEmotionReactionsToActor(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
+        base.PopulateEmotionReactionsToActor(reactions, actor, target, witness, node, status);
         if (target is Character) {
             if (witness.traitContainer.HasTrait("Coward")) {
                 reactions.Add(EMOTION.Fear);
@@ -92,8 +94,8 @@ public class RitualKilling : GoapAction {
             }
         }
     }
-    public override void PopulateReactionsToTarget(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
-        base.PopulateReactionsToTarget(reactions, actor, target, witness, node, status);
+    public override void PopulateEmotionReactionsToTarget(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
+        base.PopulateEmotionReactionsToTarget(reactions, actor, target, witness, node, status);
         if (target is Character) {
             Character targetCharacter = target as Character;
             if (!witness.traitContainer.HasTrait("Psychopath")) {
@@ -104,8 +106,8 @@ public class RitualKilling : GoapAction {
             }
         }
     }
-    public override void PopulateReactionsOfTarget(List<EMOTION> reactions, Character actor, IPointOfInterest target, ActualGoapNode node, REACTION_STATUS status) {
-        base.PopulateReactionsOfTarget(reactions, actor, target, node, status);
+    public override void PopulateEmotionReactionsOfTarget(List<EMOTION> reactions, Character actor, IPointOfInterest target, ActualGoapNode node, REACTION_STATUS status) {
+        base.PopulateEmotionReactionsOfTarget(reactions, actor, target, node, status);
         if (target is Character) {
             Character targetCharacter = target as Character;
             if (targetCharacter.traitContainer.HasTrait("Coward")) {
@@ -126,9 +128,9 @@ public class RitualKilling : GoapAction {
     public override CRIME_TYPE GetCrimeType(Character actor, IPointOfInterest target, ActualGoapNode crime) {
         return CRIME_TYPE.Murder;
     }
-    #endregion
+#endregion
 
-    #region Requirements
+#region Requirements
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, OtherData[] otherData, JobQueueItem job) {
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData, job);
         if (satisfied) {
@@ -141,8 +143,8 @@ public class RitualKilling : GoapAction {
             Character targetCharacter = target as Character;
             bool isSatisfied = false;
             if(otherData.Length == 1) {
-                if(otherData[0] is HexTileOtherData hex) {
-                    isSatisfied = targetCharacter.gridTileLocation.collectionOwner.isPartOfParentRegionMap && target.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner == hex.hexTile;
+                if(otherData[0] is AreaOtherData hex) {
+                    isSatisfied = target.gridTileLocation.area == hex.area;
                 } else if (otherData[0] is LocationStructureOtherData structure) {
                     isSatisfied = targetCharacter.currentStructure == structure.locationStructure;
                 } else if (otherData[0] is LocationGridTileOtherData gridTile) {
@@ -156,9 +158,9 @@ public class RitualKilling : GoapAction {
     private bool HasRestrained(Character actor, IPointOfInterest target, OtherData[] otherData, JOB_TYPE jobType) {
         return target.traitContainer.HasTrait("Restrained");
     }
-    #endregion
+#endregion
 
-    #region State Effects
+#region State Effects
     public void PreKillingSuccess(ActualGoapNode goapNode) {
         
     }
@@ -172,5 +174,5 @@ public class RitualKilling : GoapAction {
             targetCharacter.reactionComponent.AddCharacterThatSawThisDead(goapNode.actor);
         }
     }
-    #endregion
+#endregion
 }

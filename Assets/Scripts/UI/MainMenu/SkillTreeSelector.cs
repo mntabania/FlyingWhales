@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Inner_Maps;
+using Inner_Maps.Location_Structures;
 using Quests;
 using Ruinarch.Custom_UI;
 using UnityEngine;
@@ -22,22 +23,21 @@ public class SkillTreeSelector : MonoBehaviour {
         _horizontalScrollSnap.Awake();
         for (int i = 0; i < playerLoadoutUI.Length; i++) {
             playerLoadoutUI[i].Initialize();
-            playerLoadoutUI[i].SetMoreLoadoutOptions(SaveManager.Instance.currentSaveDataPlayer.moreLoadoutOptions, false);
+            playerLoadoutUI[i].SetMoreLoadoutOptions(false, false); //SaveManager.Instance.currentSaveDataPlayer.moreLoadoutOptions
         }
-        if (WorldSettings.Instance.worldSettingsData.playerSkillSettings.forcedArchetype != PLAYER_ARCHETYPE.Normal) {
+        if (WorldSettings.Instance.worldSettingsData.playerSkillSettings.forcedArchetypes != null) {
             //world settings has a forced archetype, disable all other archetypes except forced archetype
             for (int i = 0; i < archetypeToggles.Length; i++) {
                 Toggle toggle = archetypeToggles[i];
                 PlayerSkillLoadoutUI loadoutUI = playerLoadoutUI[i];
-                if (loadoutUI.loadout.archetype != WorldSettings.Instance.worldSettingsData.playerSkillSettings.forcedArchetype) {
+                if (!WorldSettings.Instance.worldSettingsData.playerSkillSettings.forcedArchetypes.Contains(loadoutUI.loadout.archetype)) {
                     toggle.gameObject.SetActive(false);
                     loadoutUI.gameObject.SetActive(false);
                     _horizontalScrollSnap.RemoveChild(loadoutUI.transform.GetSiblingIndex(), out var removed);
                     toggle.SetIsOnWithoutNotify(false);
                 }
             }
-        }
-        else {
+        } else {
             //only enable the main archetypes
             for (int i = 0; i < archetypeToggles.Length; i++) {
                 Toggle toggle = archetypeToggles[i];
@@ -50,7 +50,7 @@ public class SkillTreeSelector : MonoBehaviour {
                 }
             }
         }
-        moreLoadoutOptionsToggle.SetIsOnWithoutNotify(SaveManager.Instance.currentSaveDataPlayer.moreLoadoutOptions);
+        moreLoadoutOptionsToggle.SetIsOnWithoutNotify(false);//
         this.gameObject.SetActive(false);
     }
     public void Show() {
@@ -77,21 +77,26 @@ public class SkillTreeSelector : MonoBehaviour {
         PLAYER_ARCHETYPE selectedArchetype = GetSelectedArchetype();
         PlayerSkillManager.Instance.SetSelectedArchetype(selectedArchetype);
         if (selectedArchetype == PLAYER_ARCHETYPE.Lich) {
-            //add 1 charge of skeleton marauder to lich
-            SummonPlayerSkill summonPlayerSkill = PlayerSkillManager.Instance.GetSummonPlayerSkillData(RACE.SKELETON, "Marauder");
-            PlayerManager.Instance.player.playerSkillComponent.AddCharges(summonPlayerSkill.type, 1);
+            // //add 1 charge of skeleton marauder to lich
+            // SummonPlayerSkill summonPlayerSkill = PlayerSkillManager.Instance.GetSummonPlayerSkillData(RACE.SKELETON, "Marauder");
+            // PlayerManager.Instance.player.playerSkillComponent.AddCharges(summonPlayerSkill.type, 1);
             //Set undead faction as friendly with player faction
             PlayerManager.Instance.player.playerFaction.SetRelationshipFor(FactionManager.Instance.undeadFaction, FACTION_RELATIONSHIP_STATUS.Friendly);
         }
         SaveManager.Instance.currentSaveDataPlayer.SetMoreLoadoutOptions(moreLoadoutOptionsToggle.isOn);
         BroadcastLoadoutSelectedSignals();
-        PlagueDisease.Instance.OnLoadoutPicked();
-        GameManager.Instance.StartProgression();
+        // PlagueDisease.Instance.OnLoadoutPicked();
         UIManager.Instance.initialWorldSetupMenu.Hide();
+        InnerMapManager.Instance.TryShowLocationMap(GridMap.Instance.mainRegion);
+        ThePortal portal = PlayerManager.Instance.player.playerSettlement.GetRandomStructureOfType(STRUCTURE_TYPE.THE_PORTAL) as ThePortal;
+        portal.CenterOnStructure();
         
-        WorldMapCameraMove.Instance.CenterCameraOn(WorldConfigManager.Instance.mapGenerationData.portal.gameObject);
-        InnerMapManager.Instance.TryShowLocationMap(WorldConfigManager.Instance.mapGenerationData.portal.region);
-        InnerMapCameraMove.Instance.CenterCameraOnTile(WorldConfigManager.Instance.mapGenerationData.portal);
+        if (WorldConfigManager.Instance.mapGenerationData.isGeneratingTileObjects) {
+            //tile object generation has not finished yet. Wait for it to finish, then start progression
+            UIManager.Instance.ShowWaitForTileObjectGenerationToFinishWindow();
+        } else {
+            GameManager.Instance.StartProgression();
+        }
     }
     public void LoadLoadout(PLAYER_ARCHETYPE archetype) {
         PlayerSkillManager.Instance.SetSelectedArchetype(archetype);
@@ -99,9 +104,9 @@ public class SkillTreeSelector : MonoBehaviour {
         GameManager.Instance.LoadProgression();
         UIManager.Instance.initialWorldSetupMenu.Hide();
 
-        WorldMapCameraMove.Instance.CenterCameraOn(WorldConfigManager.Instance.mapGenerationData.portal.gameObject);
-        InnerMapManager.Instance.TryShowLocationMap(WorldConfigManager.Instance.mapGenerationData.portal.region);
-        InnerMapCameraMove.Instance.CenterCameraOnTile(WorldConfigManager.Instance.mapGenerationData.portal);
+        InnerMapManager.Instance.TryShowLocationMap(GridMap.Instance.mainRegion);
+        ThePortal portal = PlayerManager.Instance.player.playerSettlement.GetRandomStructureOfType(STRUCTURE_TYPE.THE_PORTAL) as ThePortal;
+        portal.CenterOnStructure();
     }
     private void BroadcastLoadoutSelectedSignals() {
         Messenger.Broadcast(UISignals.SAVE_LOADOUTS);

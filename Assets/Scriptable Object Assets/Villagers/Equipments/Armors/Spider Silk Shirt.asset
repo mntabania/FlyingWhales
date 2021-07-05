@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 49d866ce53a3fb34887a699eb039ad3a, type: 3}
+  m_Name: Spider Silk Shirt
+  m_EditorClassIdentifier: 
+  resourceType: 4
+  specificResource: 07000000
+  resourceAmount: 20
+  purchaseCost: 20
+  tier: 1
+  description: This is Spidersilk Shirt
+  imgIcon: {fileID: 21300000, guid: 7b4b0b58f4040704f9dffa3a4b1cdaf2, type: 3}
+  equipmentUpgradeData:
+    bonuses: 05000000
+    AdditionalPiercing: 12.5
+    AdditionalMaxHPPercentage: 10
+    AdditionalMaxHPActual: 300
+    AdditionalAttackPercentage: 25
+    AdditionalAttackActual: 0
+    AdditionalIntPercentage: 0
+    AdditionalIntActual: 0
+    AdditionalCritRate: 0
+    additionalResistanceBonus: 125
+    elementAttackBonus: 0
+    slayerBonus: 0
+    wardBonus: 3

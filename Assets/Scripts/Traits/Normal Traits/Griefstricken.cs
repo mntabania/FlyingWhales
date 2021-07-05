@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using UtilityScripts;
 namespace Traits {
     public class Griefstricken : Status {
         public Character owner { get; private set; }
@@ -39,11 +39,11 @@ namespace Traits {
                     if (!responsibleCharacter.isDead) {
                         description = "presumed death";
                     }
-                    Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Trait", name, "gain", null, LOG_TAG.Social, LOG_TAG.Life_Changes);
+                    Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Trait", name, "gain", null, LogUtilities.Social_Life_Changes_Tags);
                     log.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                     log.AddToFillers(responsibleCharacter, responsibleCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
                     log.AddToFillers(null, description, LOG_IDENTIFIER.STRING_1);
-                    log.AddLogToDatabase();
+                    log.AddLogToDatabase(true);
                 }
             }
             base.OnAddTrait(sourcePOI);

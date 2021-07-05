@@ -25,8 +25,10 @@ public class DouseFire : GoapAction {
         SetState("Douse Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
+#if DEBUG_LOG
         string costLog = $"\n{name} {target.nameWithID}: +10(Constant)";
         actor.logComponent.AppendCostLog(costLog);
+#endif
         return 10;
     }
     public override GoapActionInvalidity IsInvalid(ActualGoapNode node) {
@@ -56,33 +58,39 @@ public class DouseFire : GoapAction {
         if (actionLocationType == ACTION_LOCATION_TYPE.NEAR_TARGET) {
             //if the action type is NEAR_TARGET, then check if the actor is near the target, if not, this action is invalid.
             if (actor.gridTileLocation != poiTarget.gridTileLocation && actor.gridTileLocation.IsNeighbour(poiTarget.gridTileLocation, true) == false) {
+                if (actor.hasMarker && actor.marker.IsCharacterInLineOfSightWith(poiTarget)) {
+                    return false;
+                }
                 return true;
             }
         } else if (actionLocationType == ACTION_LOCATION_TYPE.NEAR_OTHER_TARGET) {
             //if the action type is NEAR_TARGET, then check if the actor is near the target, if not, this action is invalid.
             if (actor.gridTileLocation != node.targetTile && actor.gridTileLocation.IsNeighbour(node.targetTile, true) == false) {
+                if (actor.hasMarker && actor.marker.IsCharacterInLineOfSightWith(poiTarget)) {
+                    return false;
+                }
                 return true;
             }
         }
         return false;
     }
-    #endregion
+#endregion
 
-    #region State Effects
+#region State Effects
     public void AfterDouseSuccess(ActualGoapNode goapNode) {
         goapNode.poiTarget.traitContainer.RemoveStatusAndStacks(goapNode.poiTarget, "Burning", goapNode.actor);
         goapNode.poiTarget.traitContainer.AddTrait(goapNode.poiTarget, "Wet", goapNode.actor);
         goapNode.actor.UnobtainItem(TILE_OBJECT_TYPE.WATER_FLASK);
     }
-    #endregion
+#endregion
 
-    #region Preconditions
+#region Preconditions
     private bool HasItemInInventory(Character actor, IPointOfInterest poiTarget, object[] otherData, JOB_TYPE jobType) {
         return actor.HasItem(TILE_OBJECT_TYPE.WATER_FLASK);
     }
-    #endregion
+#endregion
 
-    #region Requirements
+#region Requirements
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, OtherData[] otherData, JobQueueItem job) {
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData, job);
         if (satisfied) {
@@ -90,5 +98,5 @@ public class DouseFire : GoapAction {
         }
         return false;
     }
-    #endregion
+#endregion
 }

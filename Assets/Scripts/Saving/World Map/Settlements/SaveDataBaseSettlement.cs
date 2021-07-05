@@ -12,6 +12,7 @@ public class SaveDataBaseSettlement : SaveData<BaseSettlement>, ISavableCounterp
     public int id;
     public LOCATION_TYPE locationType;
     public string name;
+    public bool isStoredAsTarget;
     public List<Point> tileCoordinates;
     public string factionOwnerID;
     public List<string> residents;
@@ -20,25 +21,26 @@ public class SaveDataBaseSettlement : SaveData<BaseSettlement>, ISavableCounterp
     public string persistentID => _persistentID;
     public OBJECT_TYPE objectType => OBJECT_TYPE.Settlement;
 
-    public override void Save(BaseSettlement baseSettlement) {
-        _persistentID = baseSettlement.persistentID;
-        id = baseSettlement.id;
-        locationType = baseSettlement.locationType;
-        name = baseSettlement.name;
+    public override void Save(BaseSettlement data) {
+        _persistentID = data.persistentID;
+        id = data.id;
+        locationType = data.locationType;
+        name = data.name;
+        isStoredAsTarget = data.isStoredAsTarget;
 
-        residents = SaveUtilities.ConvertSavableListToIDs(baseSettlement.residents); 
+        residents = SaveUtilities.ConvertSavableListToIDs(data.residents); 
 
-        factionOwnerID = baseSettlement.owner != null ? baseSettlement.owner.persistentID : string.Empty;
+        factionOwnerID = data.owner != null ? data.owner.persistentID : string.Empty;
         
         tileCoordinates = new List<Point>();
-        for (int i = 0; i < baseSettlement.tiles.Count; i++) {
-            HexTile tile = baseSettlement.tiles[i];
-            tileCoordinates.Add(new Point(tile.xCoordinate, tile.yCoordinate));
+        for (int i = 0; i < data.areas.Count; i++) {
+            Area area = data.areas[i];
+            tileCoordinates.Add(new Point(area.areaData.xCoordinate, area.areaData.yCoordinate));
         }
 
         parties = new List<string>();
-        for (int i = 0; i < baseSettlement.parties.Count; i++) {
-            Party party = baseSettlement.parties[i];
+        for (int i = 0; i < data.parties.Count; i++) {
+            Party party = data.parties[i];
             parties.Add(party.persistentID);
             SaveManager.Instance.saveCurrentProgressManager.AddToSaveHub(party);
         }

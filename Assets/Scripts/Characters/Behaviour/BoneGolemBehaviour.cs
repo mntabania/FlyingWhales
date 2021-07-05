@@ -33,54 +33,26 @@ public class BoneGolemBehaviour : CharacterBehaviourComponent {
         if(actor.homeSettlement != null && actor.homeSettlement.region != null) {
             for (int i = 0; i < actor.homeSettlement.region.charactersAtLocation.Count; i++) {
                 Character target = actor.homeSettlement.region.charactersAtLocation[i];
-                if (IsCharacterConsideredTargetOf(actor, target) && target.gridTileLocation.IsPartOfSettlement(actor.homeSettlement)) {
+                if (CharacterManager.Instance.IsCharacterConsideredTargetOfBoneGolem(actor, target) && target.gridTileLocation.IsPartOfSettlement(actor.homeSettlement)) {
                     return target;
                 }
             }
         } else if(actor.homeStructure != null) {
             for (int i = 0; i < actor.homeStructure.charactersHere.Count; i++) {
                 Character target = actor.homeStructure.charactersHere[i];
-                if(IsCharacterConsideredTargetOf(actor, target)) {
+                if(CharacterManager.Instance.IsCharacterConsideredTargetOfBoneGolem(actor, target)) {
                     return target;
                 }
             }
         } else {
-            HexTile hex = actor.hexTileLocation;
-            if(hex != null) {
-                Character chosenTarget = hex.GetFirstCharacterInsideHexThatMeetCriteria<Character>(target => IsCharacterConsideredTargetOf(actor, target));
+            Area area = actor.areaLocation;
+            if(area != null) {
+                Character chosenTarget = area.locationCharacterTracker.GetFirstCharacterInsideHexForBoneGolemBehaviour(actor);
                 if(chosenTarget != null) {
                     return chosenTarget;
                 }
             }
         }
         return null;
-    }
-    private bool IsCharacterConsideredTargetOf(Character p_considerer, Character p_targetCharacter) {
-        if (p_considerer != p_targetCharacter
-            && p_targetCharacter.gridTileLocation != null
-            && !p_targetCharacter.isDead 
-            && !p_targetCharacter.isAlliedWithPlayer
-            && p_targetCharacter.marker 
-            && p_targetCharacter.marker.isMainVisualActive
-            && p_considerer.movementComponent.HasPathTo(p_targetCharacter.gridTileLocation)
-            && !p_targetCharacter.isInLimbo 
-            && !p_targetCharacter.isBeingSeized 
-            && p_targetCharacter.carryComponent.IsNotBeingCarried()) {
-            if(!p_targetCharacter.traitContainer.HasTrait("Hibernating", "Indestructible")) {
-                if (p_considerer.IsHostileWith(p_targetCharacter)) {
-                    if (!IsCharacterConsideredPrisonerOf(p_considerer, p_targetCharacter)) {
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
-    }
-    private bool IsCharacterConsideredPrisonerOf(Character p_considerer, Character p_targetCharacter) {
-        Prisoner prisoner = p_targetCharacter.traitContainer.GetTraitOrStatus<Prisoner>("Prisoner");
-        if(prisoner != null) {
-            return prisoner.IsConsideredPrisonerOf(p_considerer);
-        }
-        return false;
     }
 }

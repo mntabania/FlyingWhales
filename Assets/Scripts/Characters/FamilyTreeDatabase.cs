@@ -40,8 +40,7 @@ public class FamilyTreeDatabase {
     /// <param name="race">Race to check.</param>
     /// <param name="faction">Faction to check</param>
     /// <returns>List of character data.</returns>
-    public List<PreCharacterData> ForceGetAllUnspawnedCharactersThatFitFaction(RACE race, Faction faction) {
-        List<PreCharacterData> availableCharacters = new List<PreCharacterData>();
+    public void ForcePopulateAllUnspawnedCharactersThatFitFaction(List<PreCharacterData> availableCharacters, RACE race, Faction faction) {
         List<FamilyTree> familyTrees = allFamilyTreesDictionary[race];
         for (int i = 0; i < familyTrees.Count; i++) {
             FamilyTree familyTree = familyTrees[i];
@@ -52,9 +51,7 @@ public class FamilyTreeDatabase {
                 }
             }
         }
-        if (availableCharacters.Count > 0) {
-            return availableCharacters;
-        } else {
+        if (availableCharacters.Count <= 0) {
             FamilyTree newFamily = FamilyTreeGenerator.GenerateFamilyTree(race);
             AddFamilyTree(newFamily);
             for (int i = 0; i < newFamily.allFamilyMembers.Count; i++) {
@@ -63,7 +60,26 @@ public class FamilyTreeDatabase {
                     availableCharacters.Add(familyMember);
                 }
             }
-            return availableCharacters;
+        }
+    }
+    public void ForcePopulateAllUnspawnedCharactersThatFitRace(List<PreCharacterData> availableCharacters, RACE race) {
+        List<FamilyTree> familyTrees = allFamilyTreesDictionary[race];
+        for (int i = 0; i < familyTrees.Count; i++) {
+            FamilyTree familyTree = familyTrees[i];
+            for (int j = 0; j < familyTree.allFamilyMembers.Count; j++) {
+                PreCharacterData familyMember = familyTree.allFamilyMembers[j];
+                if (familyMember.hasBeenSpawned == false) {
+                    availableCharacters.Add(familyMember);
+                }
+            }
+        }
+        if (availableCharacters.Count <= 0) {
+            FamilyTree newFamily = FamilyTreeGenerator.GenerateFamilyTree(race);
+            AddFamilyTree(newFamily);
+            for (int i = 0; i < newFamily.allFamilyMembers.Count; i++) {
+                PreCharacterData familyMember = newFamily.allFamilyMembers[i];
+                availableCharacters.Add(familyMember);
+            }
         }
     }
 

@@ -42,7 +42,7 @@ namespace Traits {
                 character.marker.PauseAnimation();
                 Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Trait", name, "effect", null, LOG_TAG.Life_Changes);
                 log.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                log.AddLogToDatabase();
+                log.AddLogToDatabase(true);
                 _stonedGO = GameManager.Instance.CreateParticleEffectAt(character, PARTICLE_EFFECT.Stoned);
                 _stonedGO.GetComponent<StonedEffect>().PlayEffect(character.marker.usedSprite);
             }

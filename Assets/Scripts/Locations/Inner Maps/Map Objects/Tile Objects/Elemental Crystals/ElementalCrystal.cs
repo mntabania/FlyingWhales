@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using Inner_Maps;
 using Traits;
+using UtilityScripts;
 
 public abstract class ElementalCrystal : TileObject {
     protected ELEMENTAL_TYPE elementalType;
@@ -14,12 +15,16 @@ public abstract class ElementalCrystal : TileObject {
 
     #region Overrides
     public override void OnDestroyPOI() {
-        List<LocationGridTile> affectedTiles = new List<LocationGridTile>() {previousTile};
+        List<LocationGridTile> affectedTiles = RuinarchListPool<LocationGridTile>.Claim();
+        if (previousTile != null) {
+            affectedTiles.Add(previousTile);
+        }
         affectedTiles.AddRange(previousTile.neighbourList);
         for (int i = 0; i < affectedTiles.Count; i++) {
             LocationGridTile tile = affectedTiles[i];
             tile.PerformActionOnTraitables(DealElementalDamage);
         }
+        RuinarchListPool<LocationGridTile>.Release(affectedTiles);
         base.OnDestroyPOI();
     }
     #endregion

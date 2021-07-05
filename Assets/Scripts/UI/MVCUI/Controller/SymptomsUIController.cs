@@ -38,7 +38,7 @@ public class SymptomsUIController : MVCUIController, SymptomsUIView.IListener
 	
 	private void UpdateSymptomData(PLAGUE_SYMPTOM p_symptomType) {
 		bool hasUnlockedSymptom = PlagueDisease.Instance.IsSymptomActive(p_symptomType);
-		m_symptomsUIView.UpdateSymptomCost(p_symptomType, $"{p_symptomType.GetSymptomCost().ToString()}{UtilityScripts.Utilities.PlagueIcon()}");
+		m_symptomsUIView.UpdateSymptomCost(p_symptomType, $"{p_symptomType.GetSymptomCost().ToString()}{UtilityScripts.Utilities.ChaoticEnergyIcon()}");
 		m_symptomsUIView.UpdateSymptomCostState(p_symptomType, !hasUnlockedSymptom);
 		m_symptomsUIView.UpdateSymptomUpgradeButtonInteractable(p_symptomType, !hasUnlockedSymptom && !PlagueDisease.Instance.HasActivatedMaxSymptoms() && CanAffordSymptom(p_symptomType));
 		m_symptomsUIView.UpdateSymptomCheckmarkState(p_symptomType, hasUnlockedSymptom);

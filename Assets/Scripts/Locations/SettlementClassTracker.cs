@@ -10,7 +10,7 @@ namespace Locations {
         }
         #endregion
         
-        private static readonly string[] _characterClassOrder = new[] { "Peasant", "Combatant", "Civilian", "Combatant", "Combatant", "Noble", "Combatant" };
+        private static readonly string[] _characterClassOrder = new[] { "Civilian", "Combatant", "Civilian", "Combatant", "Combatant", "Noble", "Combatant" };
         private readonly List<string> _neededClasses;
         private readonly List<string> _currentResidentClasses;
         private int _currentClassOrderIndex;
@@ -109,8 +109,8 @@ namespace Locations {
         public override void Save(SettlementClassTracker data) {
             base.Save(data);
             currentClassOrderIndex = data.currentClassOrderIndex;
-            neededClasses = data.neededClasses;
-            currentResidentClasses = data.currentResidentClasses;
+            neededClasses = new List<string>(data.neededClasses);
+            currentResidentClasses = new List<string>(data.currentResidentClasses);
         }
     }
 }

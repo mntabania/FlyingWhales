@@ -6,7 +6,7 @@ using UnityEngine;
 using Random = UnityEngine.Random;
 using System.Collections;
 
-public class LocustSwarmMapObjectVisual : MovingMapObjectVisual<TileObject> {
+public class LocustSwarmMapObjectVisual : MovingMapObjectVisual {
 
     private string _expiryKey;
     private string _movementKey;
@@ -44,7 +44,7 @@ public class LocustSwarmMapObjectVisual : MovingMapObjectVisual<TileObject> {
         Messenger.AddListener<bool>(UISignals.PAUSED, OnGamePaused);
         Messenger.AddListener<PROGRESSION_SPEED>(UISignals.PROGRESSION_SPEED_CHANGED, OnProgressionSpeedChanged);
         Messenger.AddListener<ITraitable, Trait>(TraitSignals.TRAITABLE_GAINED_TRAIT, OnTraitableGainedTrait);
-        if (GameManager.Instance.isPaused) {
+        if (GameManager.Instance.isPaused || !GameManager.Instance.gameHasStarted) {
             _movement.Pause();
             StartCoroutine(PlayParticleCoroutineWhenGameIsPaused());
         } else {
@@ -85,10 +85,12 @@ public class LocustSwarmMapObjectVisual : MovingMapObjectVisual<TileObject> {
         }
     }
     private void RandomizeDirection() {
+        float processedSpeed = PlayerSkillManager.Instance.GetSkillMovementSpeedPerLevel(PLAYER_SKILL_TYPE.LOCUST_SWARM) / 100f;
         Vector3 position = transform.position;
         Vector3 direction = (new Vector3(Random.Range(-1.0f, 1.0f), Random.Range(-1.0f, 1.0f), 0f)).normalized * 50f;
         direction += position;
-        _movement = transform.DOMove(direction, 0.3f).SetSpeedBased(true);
+        if (_movement != null) { _movement.Kill(); }
+        _movement = transform.DOMove(direction, processedSpeed).SetSpeedBased(true);
         OnGamePaused(GameManager.Instance.isPaused);
         //schedule change direction after 1 hour
         _movementKey = SchedulingManager.Instance.AddEntry(GameManager.Instance.Today().AddTicks(GameManager.ticksPerHour), RandomizeDirection, this);
@@ -149,7 +151,7 @@ public class LocustSwarmMapObjectVisual : MovingMapObjectVisual<TileObject> {
     }
     private void CheckObjectForEffects(ITraitable obj) {
         if (obj.traitContainer.GetTraitOrStatus<Trait>("Edible") != null || obj is Crops) {
-            obj.AdjustHP(-obj.currentHP, ELEMENTAL_TYPE.Normal, true, _locustSwarm, showHPBar: true);
+            obj.AdjustHP(-obj.currentHP, ELEMENTAL_TYPE.Normal, true, _locustSwarm, showHPBar: true, isPlayerSource: true);
         }
         if (obj.traitContainer.GetTraitOrStatus<Trait>("Burning") != null) {
             _locustSwarm.AdjustHP(-Mathf.FloorToInt(_locustSwarm.maxHP * 0.2f), ELEMENTAL_TYPE.Fire, true, obj);

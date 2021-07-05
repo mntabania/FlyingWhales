@@ -1,31 +1,41 @@
 ﻿using System.Linq;
+using UtilityScripts;
 
 namespace Traits {
     public class Agoraphobic : Trait {
         public override bool isSingleton => true;
 
-        public bool hasReactedThisTick;
-        
         public Agoraphobic() {
             name = "Agoraphobic";
-            description = "Crowds? Oh no!";
+            description = "Crowds? Oh no! If afflicted by the player, will produce a Chaos Orb each time it sees a crowd.";
             type = TRAIT_TYPE.FLAW;
             effect = TRAIT_EFFECT.NEUTRAL;
             ticksDuration = 0;
             canBeTriggered = true;
-            hasReactedThisTick = false;
             AddTraitOverrideFunctionIdentifier(TraitManager.See_Poi_Trait);
         }
 
         #region Overrides
+        public override void LoadTraitOnLoadTraitContainer(ITraitable addTo) {
+            base.LoadTraitOnLoadTraitContainer(addTo);
+            if (addTo is Character character) {
+                character.traitComponent.SubscribeToAgoraphobiaLevelUpSignal();
+            }
+        }
         public override void OnAddTrait(ITraitable addedTo) {
             base.OnAddTrait(addedTo);
-            if (addedTo is Character) {
-                Character character = addedTo as Character;
+            if (addedTo is Character character) {
+                ApplyLeavePartyEffect(character);
                 ApplyAgoraphobicEffect(character);
-                //if (character.marker.inVisionCharacters.Count >= 3) {
-                //    ApplyAgoraphobicEffect(character, true);
-                //}
+                //CheckIfShouldListenToLevelUpEvent(character);
+                character.traitComponent.SubscribeToAgoraphobiaLevelUpSignal();
+            }
+        }
+        public override void OnRemoveTrait(ITraitable removedFrom, Character removedBy) {
+            base.OnRemoveTrait(removedFrom, removedBy);
+            if (removedFrom is Character character) {
+                //UnsubscribeToLevelUpEvent(character);
+                character.traitComponent.UnsubscribeToAgoraphobiaLevelUpSignal();
             }
         }
         public override bool OnSeePOI(IPointOfInterest targetPOI, Character characterThatWillDoJob) {
@@ -35,106 +45,110 @@ namespace Traits {
                 //     return false;
                 // }
                 // ApplyAgoraphobicEffect(characterThatWillDoJob);
-                if (hasReactedThisTick) {
+                if (characterThatWillDoJob.traitComponent.hasAgoraphobicReactedThisTick) {
                     return false;
                 }
-                if (characterThatWillDoJob.limiterComponent.canWitness && characterThatWillDoJob.marker.inVisionCharacters.Count(x => x.isNormalCharacter && x.isDead == false) >= 3) {
-                    string debugLog = $"{characterThatWillDoJob.name} Is agoraphobic and has 3+ alive villagers in vision. Character became anxious.";
-                    characterThatWillDoJob.traitContainer.AddTrait(characterThatWillDoJob, "Anxious");
-                    int roll = UnityEngine.Random.Range(0, 100);
-                    if (roll < 10) {
-                        debugLog += $"{characterThatWillDoJob.name} became catatonic";
-                        characterThatWillDoJob.traitContainer.AddTrait(characterThatWillDoJob, "Catatonic");
-                    } else if (roll < 25) {
-                        debugLog += $"{characterThatWillDoJob.name} became berserked";
-                        characterThatWillDoJob.traitContainer.AddTrait(characterThatWillDoJob, "Berserked");
-                    } else if (roll < 40) {
-                        debugLog += $"{characterThatWillDoJob.name} Had a seizure";
-                        characterThatWillDoJob.interruptComponent.TriggerInterrupt(INTERRUPT.Seizure, characterThatWillDoJob);
-                    } else if (roll < 50 && (characterThatWillDoJob.characterClass.className == "Druid" || characterThatWillDoJob.characterClass.className == "Shaman" || characterThatWillDoJob.characterClass.className == "Mage")) {
-                        debugLog += $"{characterThatWillDoJob.name} Had a loss of control";
-                        characterThatWillDoJob.interruptComponent.TriggerInterrupt(INTERRUPT.Loss_Of_Control, characterThatWillDoJob);
-                    } else {
-                        debugLog += $"{characterThatWillDoJob.name} became anxious and is cowering.";
-                        characterThatWillDoJob.interruptComponent.TriggerInterrupt(INTERRUPT.Cowering, characterThatWillDoJob, reason: "Agoraphobic");
-                    }
-                    characterThatWillDoJob.logComponent.PrintLogIfActive(debugLog);
-                    Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Trait", "Agoraphobic", "on_see_first", null, LOG_TAG.Social);
-                    log.AddToFillers(characterThatWillDoJob, characterThatWillDoJob.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                    log.AddLogToDatabase();
-                    hasReactedThisTick = true;
-
-                    GameDate date = GameManager.Instance.Today();
-                    date.AddTicks(1);
-                    SchedulingManager.Instance.AddEntry(date, () => hasReactedThisTick = false, this);
+                if (ApplyAgoraphobicEffect(characterThatWillDoJob)) {
+                    characterThatWillDoJob.traitComponent.SetHasAgoraphobicReactedThisTick(true);
                 }
+
                 return true;
             }
             return base.OnSeePOI(targetPOI, characterThatWillDoJob);
         }
         public override string TriggerFlaw(Character character) {
-            //If outside and the character lives in a house, the character will flee and go back home.
-            //string successLogKey = base.TriggerFlaw(character);
-            //if (character.homeStructure != null) {
-            //    if (character.currentStructure != character.homeStructure) {
-            //        if (character.currentActionNode != null) {
-            //            character.StopCurrentActionNode(false);
-            //        }
-            //        if (character.stateComponent.currentState != null) {
-            //            character.stateComponent.ExitCurrentState();
-            //        }
-            //        ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.RETURN_HOME], character, character, null, 0);
-            //        GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, character);
-            //        GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.TRIGGER_FLAW, INTERACTION_TYPE.RETURN_HOME, character, character);
-            //        goapPlan.SetDoNotRecalculate(true);
-            //        job.SetCannotBePushedBack(true);
-            //        job.SetAssignedPlan(goapPlan);
-            //        character.jobQueue.AddJobInQueue(job);
-            //        return successLogKey;
-            //    } else {
-            //        return "fail_at_home";
-            //    }
-            //} else {
-            //    return "fail_no_home";
-            //}
-            ApplyAgoraphobicEffect(character, JOB_TYPE.TRIGGER_FLAW);
+            ApplyAgoraphobicEffect(character);
             return base.TriggerFlaw(character);
-
         }
         #endregion
-
-        private bool ApplyAgoraphobicEffect(Character character, JOB_TYPE jobType = JOB_TYPE.FLEE_TO_HOME/*, bool processCombat*/) {
-            if (!character.limiterComponent.canPerform || !character.limiterComponent.canWitness) {
+        private void ApplyLeavePartyEffect(Character character) {
+            if (character.HasAfflictedByPlayerWith(name)) {
+                int level = PlayerSkillManager.Instance.GetAfflictionData(PLAYER_SKILL_TYPE.AGORAPHOBIA).currentLevel;
+                if (level >= 3) {
+                    if (character.partyComponent.hasParty) {
+                        character.interruptComponent.TriggerInterrupt(INTERRUPT.Leave_Party, character, "Agoraphobic");
+                    }
+                }
+            }
+        }
+        private bool ApplyAgoraphobicEffect(Character character) {
+            if (!character.limiterComponent.canWitness) { //!character.limiterComponent.canPerform || 
                 return false;
             }
             if(!WillTriggerAgoraphobia(character)) {
                 return false;
             }
-            character.StopCurrentActionNode(false);
             character.jobQueue.CancelAllJobs();
-            character.traitContainer.AddTrait(character, "Anxious");
-            if(character.homeStructure != null && character.currentStructure != character.homeStructure) {
-                if (!character.jobComponent.TriggerFleeHome(jobType)) {
-                    character.interruptComponent.TriggerInterrupt(INTERRUPT.Cowering, character, reason: "Agoraphobic");
+#if DEBUG_LOG
+            string debugLog = $"{character.name} is agoraphobic and has a crowd in vision.";
+#endif
+
+            bool shouldAddAnxiousTrait = true;
+            if (character.HasAfflictedByPlayerWith(name)) {
+                int level = PlayerSkillManager.Instance.GetAfflictionData(PLAYER_SKILL_TYPE.AGORAPHOBIA).currentLevel;
+                shouldAddAnxiousTrait = level >= 1;
+                if(level >= 3) {
+                    if (character.partyComponent.hasParty) {
+                        character.interruptComponent.TriggerInterrupt(INTERRUPT.Leave_Party, character, "Agoraphobic");
+                    }
                 }
+                DispenseChaosOrbsForAffliction(character, 1);
+            }
+            if (shouldAddAnxiousTrait) {
+#if DEBUG_LOG
+                debugLog += $"\n{character.name} became anxious";
+#endif
+                character.traitContainer.AddTrait(character, "Anxious");
+            }
+            if (GameUtilities.RollChance(10)) {
+#if DEBUG_LOG
+                debugLog += $"\n{character.name} became catatonic";
+#endif
+                character.traitContainer.AddTrait(character, "Catatonic");
+            } else if (GameUtilities.RollChance(15)) {
+#if DEBUG_LOG
+                debugLog += $"\n{character.name} became berserked";
+#endif
+                character.traitContainer.AddTrait(character, "Berserked");
+            } else if (GameUtilities.RollChance(15)) {
+#if DEBUG_LOG
+                debugLog += $"\n{character.name} Had a seizure";
+#endif
+                character.interruptComponent.TriggerInterrupt(INTERRUPT.Seizure, character);
+            } else if (GameUtilities.RollChance(10) && (character.characterClass.className == "Druid" || character.characterClass.className == "Shaman" || character.characterClass.className == "Mage")) {
+#if DEBUG_LOG
+                debugLog += $"\n{character.name} Had a loss of control";
+#endif
+                character.interruptComponent.TriggerInterrupt(INTERRUPT.Loss_Of_Control, character);
             } else {
+#if DEBUG_LOG
+                debugLog += $"\n{character.name} is cowering.";
+#endif
                 character.interruptComponent.TriggerInterrupt(INTERRUPT.Cowering, character, reason: "Agoraphobic");
             }
+#if DEBUG_LOG
+            character.logComponent.PrintLogIfActive(debugLog);
+#endif
+            Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Trait", "Agoraphobic", "on_see_first", null, LOG_TAG.Social);
+            log.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            log.AddLogToDatabase(true);
             return true;
-            //character.marker.AddAvoidsInRange(character.marker.inVisionCharacters, processCombat, "agoraphobia");
-            //character.needsComponent.AdjustHappiness(-50);
-            //character.needsComponent.AdjustTiredness(-150);
         }
         private bool WillTriggerAgoraphobia(Character character) {
+            int crowd = 3;
+            if (character.HasAfflictedByPlayerWith(PLAYER_SKILL_TYPE.AGORAPHOBIA)) {
+                crowd = PlayerSkillManager.Instance.GetAfflictionCrowdNumberPerLevel(PLAYER_SKILL_TYPE.AGORAPHOBIA);
+            }
+
             int count = 0;
-            if (character.marker.inVisionCharacters.Count >= 3) {
+            if (character.marker.inVisionCharacters.Count >= crowd) {
                 for (int i = 0; i < character.marker.inVisionCharacters.Count; i++) {
                     if (!character.marker.inVisionCharacters[i].isDead) {
                         count++;
                     }
                 }
             }
-            return count >= 3;
+            return count >= crowd;
         }
     }
 }

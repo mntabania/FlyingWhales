@@ -17,10 +17,12 @@ namespace Interrupts {
             int randomHpToLose = UnityEngine.Random.Range(1, 6);
             float percentMaxHPToLose = randomHpToLose / 100f;
             int actualHPToLose = Mathf.CeilToInt(interruptHolder.actor.maxHP * percentMaxHPToLose);
+#if DEBUG_LOG
             Debug.Log(
                 $"Stumble of {interruptHolder.actor.name} percent: {percentMaxHPToLose}, max hp: {interruptHolder.actor.maxHP}, lost hp: {actualHPToLose}");
+#endif
             interruptHolder.actor.AdjustHP(-actualHPToLose, ELEMENTAL_TYPE.Normal, showHPBar: true);
-            if (interruptHolder.actor.currentHP <= 0) {
+            if (!interruptHolder.actor.HasHealth()) {
                 interruptHolder.actor.Death("Stumble");
             }
             return true;
@@ -33,6 +35,6 @@ namespace Interrupts {
                 reactions.Add(EMOTION.Scorn);
             }
         }
-        #endregion
+#endregion
     }
 }

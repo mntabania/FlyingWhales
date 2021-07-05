@@ -5,18 +5,29 @@ using UnityEngine;
 using Traits;
 
 public class CarryRestrained : GoapAction {
-
+    
+    private readonly Precondition _carryPrecondition;
+    
     public CarryRestrained() : base(INTERACTION_TYPE.CARRY_RESTRAINED) {
         actionIconString = GoapActionStateDB.Work_Icon;
         canBeAdvertisedEvenIfTargetIsUnavailable = true;
         //advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
         logTags = new[] {LOG_TAG.Work};
+        _carryPrecondition = new Precondition(new GoapEffect(GOAP_EFFECT_CONDITION.HAS_TRAIT, "Restrained", false, GOAP_EFFECT_TARGET.TARGET), TargetIsRestrainedOrDead);
     }
 
     #region Overrides
     protected override void ConstructBasePreconditionsAndEffects() {
-        SetPrecondition(new GoapEffect(GOAP_EFFECT_CONDITION.HAS_TRAIT, "Restrained", false, GOAP_EFFECT_TARGET.TARGET), TargetIsRestrainedOrDead);
+        // SetPrecondition(new GoapEffect(GOAP_EFFECT_CONDITION.HAS_TRAIT, "Restrained", false, GOAP_EFFECT_TARGET.TARGET), TargetIsRestrainedOrDead);
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_POI, conditionKey = "Carry Restrained", isKeyANumber = false, target = GOAP_EFFECT_TARGET.TARGET });
+    }
+    public override Precondition GetPrecondition(Character actor, IPointOfInterest target, OtherData[] otherData, JOB_TYPE jobType, out bool isOverridden) {
+        if (!target.traitContainer.HasTrait("Hibernating")) {
+            Precondition p = _carryPrecondition;
+            isOverridden = true;
+            return p;
+        }
+        return base.GetPrecondition(actor, target, otherData, jobType, out isOverridden);
     }
     public override void Perform(ActualGoapNode goapNode) {
         base.Perform(goapNode);
@@ -48,6 +59,7 @@ public class CarryRestrained : GoapAction {
         return goapActionInvalidity;
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
+#if DEBUG_LOG
         string costLog = $"\n{name} {target.nameWithID}:";
         //if (job.jobType == JOB_TYPE.MOVE_CHARACTER) {
         //    //If the job is move character and the target can move again, should not, do move character anymore
@@ -63,11 +75,12 @@ public class CarryRestrained : GoapAction {
         //}
         costLog += $" +10(Constant)";
         actor.logComponent.AppendCostLog(costLog);
+#endif
         return 10;
     }
-    #endregion
+#endregion
 
-    #region Requirements
+#region Requirements
    protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, OtherData[] otherData, JobQueueItem job) { 
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData, job);
         if (satisfied) {
@@ -83,27 +96,34 @@ public class CarryRestrained : GoapAction {
         }
         return false;
     }
-    #endregion
+#endregion
 
-    #region State Effects
+#region State Effects
     public void AfterCarrySuccess(ActualGoapNode goapNode) {
         goapNode.actor.CarryPOI(goapNode.poiTarget, setOwnership: false);
     }
-    #endregion
+#endregion
 
-    #region Precondition
+#region Precondition
     private bool TargetIsRestrainedOrDead(Character actor, IPointOfInterest target, object[] otherData, JOB_TYPE jobType) {
         if(target is Character) {
             return target.traitContainer.HasTrait("Restrained") || target.isDead;
         }
         return true;
     }
-    #endregion
+#endregion
 
     private bool TargetMissingForCarry(ActualGoapNode node) {
         Character actor = node.actor;
         IPointOfInterest poiTarget = node.poiTarget;
-        return poiTarget.gridTileLocation == null || actor.currentRegion != poiTarget.currentRegion
-                    || !(actor.gridTileLocation == poiTarget.gridTileLocation || actor.gridTileLocation.IsNeighbour(poiTarget.gridTileLocation, true)) || !poiTarget.mapObjectVisual;
+        if (poiTarget.gridTileLocation == null || actor.currentRegion != poiTarget.currentRegion || !poiTarget.mapObjectVisual) {
+            return true;
+        } else if (actor.gridTileLocation != poiTarget.gridTileLocation && !actor.gridTileLocation.IsNeighbour(poiTarget.gridTileLocation, true)) {
+            if (actor.hasMarker && actor.marker.IsCharacterInLineOfSightWith(poiTarget)) {
+                return false;
+            }
+            return true;
+        }
+        return false;
     }
 }

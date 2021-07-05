@@ -5,7 +5,7 @@ using UnityEngine;
 namespace Interrupts {
     public class BurningAtStake : Interrupt {
         public BurningAtStake() : base(INTERRUPT.Burning_At_Stake) {
-            duration = 36;
+            duration = 20;
             doesStopCurrentAction = true;
             doesDropCurrentJob = true;
             shouldEndOnSeize = true;
@@ -25,7 +25,7 @@ namespace Interrupts {
         }
         public override bool PerTickInterrupt(InterruptHolder interruptHolder) {
             interruptHolder.actor.AdjustHP(-500, ELEMENTAL_TYPE.Fire);
-            if(interruptHolder.actor.currentHP <= 0) {
+            if(!interruptHolder.actor.HasHealth()) {
                 interruptHolder.actor.Death(cause: "burn_at_stake", responsibleCharacter: interruptHolder.target as Character);
             }
             return true;
@@ -34,7 +34,7 @@ namespace Interrupts {
             interruptHolder.actor.traitContainer.RemoveTrait(interruptHolder.actor, "Burning At Stake");
             if (!interruptHolder.actor.isDead) {
                 interruptHolder.actor.AdjustHP(-500, ELEMENTAL_TYPE.Fire);
-                if (interruptHolder.actor.currentHP <= 0) {
+                if (!interruptHolder.actor.HasHealth()) {
                     interruptHolder.actor.Death(cause: "burn_at_stake", responsibleCharacter: interruptHolder.target as Character);
                 }
             }

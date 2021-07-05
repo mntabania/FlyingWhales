@@ -18,7 +18,7 @@ public class Tornado : MovingTileObject {
         AddAdvertisedAction(INTERACTION_TYPE.RESOLVE_COMBAT);
         SetRadius(2);
     }
-    public Tornado(SaveDataTornado data) {
+    public Tornado(SaveDataTornado data) : base(data) {
         //SaveDataTornado saveDataTornado = data as SaveDataTornado;
         Assert.IsNotNull(data);
         expiryDate = data.expiryDate;
@@ -40,6 +40,9 @@ public class Tornado : MovingTileObject {
         expiryDate = expiry;
     }
     public override void Expire() {
+        if (hasExpired) {
+            return;
+        }
         base.Expire();
         Messenger.Broadcast<TileObject, Character, LocationGridTile>(GridTileSignals.TILE_OBJECT_REMOVED, this, null, base.gridTileLocation);
     }

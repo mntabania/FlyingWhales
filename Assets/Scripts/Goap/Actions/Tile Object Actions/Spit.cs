@@ -34,72 +34,93 @@ public class Spit : GoapAction {
     //    node.actor.needsComponent.AdjustDoNotGetBored(-1);
     //}
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
+#if DEBUG_LOG
         string costLog = $"\n{name} {target.nameWithID}:";
+#endif
         if (actor.traitContainer.HasTrait("Enslaved")) {
             if (target.gridTileLocation == null || !target.gridTileLocation.IsInHomeOf(actor)) {
+#if DEBUG_LOG
                 costLog += $" +2000(Slave, target is not in actor's home)";
                 actor.logComponent.AppendCostLog(costLog);
+#endif
                 return 2000;
             }
         }
         if (actor.partyComponent.hasParty && actor.partyComponent.currentParty.isActive) {
             if (actor.partyComponent.isActiveMember) {
-                if (target.gridTileLocation != null && target.gridTileLocation.collectionOwner.isPartOfParentRegionMap && actor.gridTileLocation != null
-                && actor.gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
-                    LocationGridTile centerGridTileOfTarget = target.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.GetCenterLocationGridTile();
-                    LocationGridTile centerGridTileOfActor = actor.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.GetCenterLocationGridTile();
+                if (target.gridTileLocation != null && actor.gridTileLocation != null) {
+                    LocationGridTile centerGridTileOfTarget = target.gridTileLocation.area.gridTileComponent.centerGridTile;
+                    LocationGridTile centerGridTileOfActor = actor.gridTileLocation.area.gridTileComponent.centerGridTile;
                     float distance = centerGridTileOfActor.GetDistanceTo(centerGridTileOfTarget);
-                    int distanceToCheck = (InnerMapManager.BuildingSpotSize.x * 2) * 3;
+                    int distanceToCheck = InnerMapManager.AreaLocationGridTileSize.x * 3;
 
                     if (distance > distanceToCheck) {
                         //target is at structure that character is avoiding
+#if DEBUG_LOG
                         costLog += $" +2000(Active Party, Location of target too far from actor)";
                         actor.logComponent.AppendCostLog(costLog);
+#endif
                         return 2000;
                     }
                 }
             }
         }
         int cost = UtilityScripts.Utilities.Rng.Next(80, 131);
+#if DEBUG_LOG
         costLog += $" +{cost}(Initial)";
+#endif
         int numOfTimesActionDone = actor.jobComponent.GetNumOfTimesActionDone(this);
         if (numOfTimesActionDone > 5) {
             cost += 2000;
+#if DEBUG_LOG
             costLog += " +2000(Times Spat > 5)";
+#endif
         }
         if (!actor.partyComponent.isActiveMember) {
             cost += 2000;
+#if DEBUG_LOG
             costLog += " +2000(Is not in active party quest)";
+#endif
         }
         if (!actor.traitContainer.HasTrait("Angry", "Annoyed", "Drunk")) {
             cost += 2000;
+#if DEBUG_LOG
             costLog += " +2000(Not angry, annoyed or drunk)";
+#endif
         }
         Betrayed betrayed = actor.traitContainer.GetTraitOrStatus<Betrayed>("Betrayed");
         if (target is Tombstone tombstone) {
             if (betrayed != null && betrayed.IsResponsibleForTrait(tombstone.character)) {
                 cost -= 25;
+#if DEBUG_LOG
                 costLog += " -25(Actor is betrayed by target)";
-            }    
+#endif
+            }
         }
         if (actor.traitContainer.HasTrait("Evil")) {
             cost -= 10;
+#if DEBUG_LOG
             costLog += " -10(Evil)";
+#endif
         }
         if (actor.traitContainer.HasTrait("Treacherous")) {
             cost -= 10;
+#if DEBUG_LOG
             costLog += " -10(Treacherous)";
+#endif
         }
 
         int timesCost = 10 * numOfTimesActionDone;
         cost += timesCost;
+#if DEBUG_LOG
         costLog += $" +{timesCost.ToString()}(10 x Times Spat)";
 
         actor.logComponent.AppendCostLog(costLog);
+#endif
         return cost;
     }
-    public override void PopulateReactionsToActor(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
-        base.PopulateReactionsToActor(reactions, actor, target, witness, node, status);
+    public override void PopulateEmotionReactionsToActor(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
+        base.PopulateEmotionReactionsToActor(reactions, actor, target, witness, node, status);
         if (target is Tombstone) {
             Character targetCharacter = (target as Tombstone).character;
             string witnessOpinionLabelToDead = witness.relationshipContainer.GetOpinionLabel(targetCharacter);
@@ -116,8 +137,8 @@ public class Spit : GoapAction {
     public override REACTABLE_EFFECT GetReactableEffect(ActualGoapNode node, Character witness) {
         return REACTABLE_EFFECT.Negative;
     }
-    public override void AddFillersToLog(ref Log log, ActualGoapNode node) {
-        base.AddFillersToLog(ref log, node);
+    public override void AddFillersToLog(Log log, ActualGoapNode node) {
+        base.AddFillersToLog(log, node);
         if(node.poiTarget is Tombstone tombstone) {
             log.AddToFillers(tombstone.character, tombstone.character.name, LOG_IDENTIFIER.TARGET_CHARACTER);
         }
@@ -125,9 +146,9 @@ public class Spit : GoapAction {
     public override bool IsHappinessRecoveryAction() {
         return true;
     }
-    #endregion
+#endregion
 
-    #region Requirement
+#region Requirement
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, OtherData[] otherData, JobQueueItem job) {
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData, job);
         if (satisfied) {
@@ -137,7 +158,7 @@ public class Spit : GoapAction {
             if (poiTarget.gridTileLocation != null && actor.trapStructure.IsTrappedAndTrapStructureIsNot(poiTarget.gridTileLocation.structure)) {
                 return false;
             }
-            if (poiTarget.gridTileLocation != null && poiTarget.gridTileLocation.collectionOwner.isPartOfParentRegionMap && actor.trapStructure.IsTrappedAndTrapHexIsNot(poiTarget.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner)) {
+            if (poiTarget.gridTileLocation != null && actor.trapStructure.IsTrappedAndTrapAreaIsNot(poiTarget.gridTileLocation.area)) {
                 return false;
             }
             if (poiTarget is Tombstone tombstone) {
@@ -149,20 +170,20 @@ public class Spit : GoapAction {
         }
         return false;
     }
-    #endregion
+#endregion
 
-    #region Effects
+#region Effects
     public void PreSpitSuccess(ActualGoapNode goapNode) {
         goapNode.actor.jobComponent.IncreaseNumOfTimesActionDone(this);
         //goapNode.actor.needsComponent.AdjustDoNotGetBored(1);
     }
     public void PerTickSpitSuccess(ActualGoapNode goapNode) {
-        goapNode.actor.needsComponent.AdjustHappiness(18f);
+        goapNode.actor.needsComponent.AdjustHappiness(50f);
     }
     //public void AfterSpitSuccess(ActualGoapNode goapNode) {
     //    goapNode.actor.needsComponent.AdjustDoNotGetBored(-1);
     //}
-    #endregion
+#endregion
 
     //#region Intel Reactions
     //private List<string> SpitSuccessReactions(Character recipient, Intel sharedIntel, SHARE_INTEL_STATUS status) {

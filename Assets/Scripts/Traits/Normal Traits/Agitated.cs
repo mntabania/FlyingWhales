@@ -2,10 +2,14 @@
 using System.Collections;
 using System.Collections.Generic;
 using Random = UnityEngine.Random;
+using UnityEngine;
 
 namespace Traits {
     public class Agitated : Status {
-        public override bool isSingleton => true;
+        //public override bool isSingleton => true;
+
+        private float _addedAttackPercent;
+        private float _addedHPPercent;
         
         public Agitated() {
             name = "Agitated";
@@ -21,9 +25,21 @@ namespace Traits {
         public override void OnAddTrait(ITraitable addedTo) {
             base.OnAddTrait(addedTo);
             if (addedTo is Character character) {
+                if (character is Ent ent) {
+                    ent.EntAgitatedHandling();
+                } else if (character is Mimic mimic) {
+                    mimic.MimicAgitatedHandling();
+                }
                 if (character.marker) {
                     character.marker.BerserkedMarker();
                 }
+                //character.buffStatsBonus.originalAttack = Mathf.RoundToInt(character.combatComponent.unModifiedAttack * (PlayerSkillManager.Instance.GetAdditionalAttackPercentagePerLevelBaseOnLevel(PLAYER_SKILL_TYPE.AGITATE) / 100f));
+                _addedAttackPercent = PlayerSkillManager.Instance.GetAdditionalAttackPercentagePerLevelBaseOnLevel(PLAYER_SKILL_TYPE.AGITATE);
+                character.combatComponent.AdjustAttackPercentModifier(_addedAttackPercent);
+
+                //character.buffStatsBonus.originalHP = Mathf.RoundToInt(character.combatComponent.unModifiedMaxHP * (PlayerSkillManager.Instance.GetAdditionalMaxHpPercentagePerLevelBaseOnLevel(PLAYER_SKILL_TYPE.AGITATE) / 100f));
+                _addedHPPercent = PlayerSkillManager.Instance.GetAdditionalMaxHpPercentagePerLevelBaseOnLevel(PLAYER_SKILL_TYPE.AGITATE);
+                character.combatComponent.AdjustMaxHPPercentModifier(_addedHPPercent);
             }
         }
         public override void LoadTraitOnLoadTraitContainer(ITraitable addTo) {
@@ -42,6 +58,9 @@ namespace Traits {
                         character.marker.UnberserkedMarker();
                     }
                 }
+                character.combatComponent.AdjustAttackPercentModifier(-_addedAttackPercent);
+                character.combatComponent.AdjustMaxHPPercentModifier(-_addedHPPercent);
+                //character.buffStatsBonus.Reset();
             }
         }
         public override void OnInitiateMapObjectVisual(ITraitable traitable) {
@@ -63,4 +82,3 @@ namespace Traits {
         #endregion
     }
 }
-

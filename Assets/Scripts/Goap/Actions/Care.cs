@@ -16,13 +16,15 @@ public class Care : GoapAction {
         SetState("Care Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
+#if DEBUG_LOG
         string costLog = $"\n{name} {target.nameWithID}: +10(Constant)";
         actor.logComponent.AppendCostLog(costLog);
+#endif
         return 10;
     }
-    #endregion
+#endregion
     
-    #region State Effects
+#region State Effects
     public void PerTickCareSuccess(ActualGoapNode goapNode) {
         Plagued plagued = goapNode.target.traitContainer.GetTraitOrStatus<Plagued>("Plagued");
         if (plagued != null) {
@@ -37,14 +39,20 @@ public class Care : GoapAction {
                         newExpiryDate = GameManager.Instance.Today();
                         newExpiryDate.AddTicks(1);
                     }
+#if DEBUG_LOG
                     Debug.Log($"{goapNode.target.name} Will reschedule Plagued removal to {newExpiryDate.ToString()} from {originalRemovalDate.ToString()}");
+#endif
                     goapNode.target.traitContainer.RescheduleLatestTraitRemoval(goapNode.target, plagued, newExpiryDate);    
                 }
             }
         }
     }
     public void AfterCareSuccess(ActualGoapNode goapNode) {
-        goapNode.target.traitContainer.AddTrait(goapNode.target, "Plague Cared", goapNode.actor, goapNode);
+        goapNode.target.traitContainer.AddTrait(goapNode.target, "Plague Cared", goapNode.actor);
+        Trait trait = goapNode.actor.traitContainer.GetTraitOrStatus<Trait>("Plague Cared");
+        if (trait != null) {
+            trait.SetGainedFromDoingAction(goapNode.action.goapType, goapNode.isStealth);
+        }
     }
-    #endregion
+#endregion
 }

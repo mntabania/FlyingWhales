@@ -21,13 +21,15 @@ public class RegainEnergy : GoapAction {
         SetState("Regain Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
+#if DEBUG_LOG
         string costLog = $"\n{name} {target.nameWithID}: +10(Constant)";
         actor.logComponent.AppendCostLog(costLog);
+#endif
         return 10;
     }
-    #endregion
+#endregion
 
-    #region Requirements
+#region Requirements
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, OtherData[] otherData, JobQueueItem job) {
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData, job);
         if (satisfied) {
@@ -35,12 +37,17 @@ public class RegainEnergy : GoapAction {
         }
         return false;
     }
-    #endregion
+#endregion
 
-    #region State Effects
-    public void PerTickRegainSuccess(ActualGoapNode goapNode) {
-        if(goapNode.actor.necromancerTrait != null && goapNode.actor.necromancerTrait.energy < 5) {
-            goapNode.actor.necromancerTrait.AdjustEnergy(1);
+#region State Effects
+    //public void PerTickRegainSuccess(ActualGoapNode goapNode) {
+    //    if(goapNode.actor.necromancerTrait != null && goapNode.actor.necromancerTrait.energy < 5) {
+    //        goapNode.actor.necromancerTrait.AdjustEnergy(1);
+    //    }
+    //}
+    public void AfterRegainSuccess(ActualGoapNode goapNode) {
+        if (goapNode.actor.necromancerTrait != null) {
+            goapNode.actor.necromancerTrait.AdjustEnergy(2);
         }
     }
     #endregion

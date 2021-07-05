@@ -15,7 +15,7 @@ public class Desk : TileObject {
 
     #region Overrides
     public override string ToString() {
-        return $"Desk {id}";
+        return $"Desk {id.ToString()}";
     }
     public override void SetPOIState(POI_STATE state) {
         base.SetPOIState(state);

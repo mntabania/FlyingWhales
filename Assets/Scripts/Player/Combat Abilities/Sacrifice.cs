@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Inner_Maps;
 using UnityEngine;
-
+using UtilityScripts;
 public class Sacrifice : CombatAbility {
 
     private int _explosionRadius;
@@ -38,7 +38,8 @@ public class Sacrifice : CombatAbility {
 
             GameManager.Instance.CreateAOEEffectAt(character.gridTileLocation, _explosionRadius, true);
 
-            List<LocationGridTile> tilesInRadius = character.gridTileLocation.GetTilesInRadius(_explosionRadius, includeCenterTile: true, includeTilesInDifferentStructure: true);
+            List<LocationGridTile> tilesInRadius = RuinarchListPool<LocationGridTile>.Claim();
+            character.gridTileLocation.PopulateTilesInRadius(tilesInRadius, _explosionRadius, includeCenterTile: true, includeTilesInDifferentStructure: true);
             List<Character> affectedByExplosion = new List<Character>();
             for (int i = 0; i < character.currentRegion.charactersAtLocation.Count; i++) {
                 Character currCharacter = character.currentRegion.charactersAtLocation[i];
@@ -54,6 +55,8 @@ public class Sacrifice : CombatAbility {
             }
 
             character.Death("sacrifice");
+
+            RuinarchListPool<LocationGridTile>.Release(tilesInRadius);
         }
         base.ActivateAbility(targetPOI);
     }

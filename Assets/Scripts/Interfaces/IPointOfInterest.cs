@@ -6,7 +6,7 @@ using UnityEngine;
 using Traits;
 using Locations;
 
-public interface IPointOfInterest : ITraitable, ISelectable, ILogFiller {
+public interface IPointOfInterest : ITraitable, ISelectable, ILogFiller, IGCollectable {
     string persistentID { get; }
     OBJECT_TYPE objectType { get; }
     new string name { get; }
@@ -18,6 +18,7 @@ public interface IPointOfInterest : ITraitable, ISelectable, ILogFiller {
     bool isBeingSeized { get; }
     //bool isInPendingAwarenessList { get; }
     int numOfActionsBeingPerformedOnThis { get; } //this is increased, when the action of another character stops this characters movement
+    Vector3 attackRangePosition { get; } //used for checking distance if poi is in attack range of the attacker, see CombatState's LateUpdate
     ILocationAwareness currentLocationAwareness { get; }
     POINT_OF_INTEREST_TYPE poiType { get; }
     POI_STATE state { get; }
@@ -30,13 +31,17 @@ public interface IPointOfInterest : ITraitable, ISelectable, ILogFiller {
     new LocationGridTile gridTileLocation { get; }
     //List<INTERACTION_TYPE> advertisedActions { get; }
     List<JobQueueItem> allJobsTargetingThis { get; }
-    Dictionary<RESOURCE, int> storedResources { get; }
+    ResourceStorageComponent resourceStorageComponent { get; }
+    // Dictionary<RESOURCE, int> storedResources { get; }
+    // Dictionary<CONCRETE_RESOURCES, int> specificStoredResources { get; }
 
 
     void SetGridTileLocation(LocationGridTile tile);
     void AddJobTargetingThis(JobQueueItem job);
     bool RemoveJobTargetingThis(JobQueueItem job);
-    bool HasJobTargetingThis(params JOB_TYPE[] jobType);
+    bool HasJobTargetingThis(JOB_TYPE jobType);
+    bool HasJobTargetingThis(JOB_TYPE jobType1, JOB_TYPE jobType2);
+    bool HasJobTargetingThis(JOB_TYPE jobType1, JOB_TYPE jobType2, JOB_TYPE jobType3);
     void SetPOIState(POI_STATE state);
     bool IsAvailable();
     LocationGridTile GetNearestUnoccupiedTileFromThis();
@@ -48,10 +53,11 @@ public interface IPointOfInterest : ITraitable, ISelectable, ILogFiller {
     void OnPlacePOI();
     void OnLoadPlacePOI();
     void OnDestroyPOI();
-    void ConstructResources();
-    void SetResource(RESOURCE resourceType, int amount);
-    void AdjustResource(RESOURCE resourceType, int amount);
-    bool HasResourceAmount(RESOURCE resourceType, int amount);
+    // void ConstructResources();
+    // void ConstructSpecificResourcesStorage();
+    // void SetResource(RESOURCE resourceType, int amount);
+    // void AdjustResource(RESOURCE resourceType, int amount);
+    // bool HasResourceAmount(RESOURCE resourceType, int amount);
     void OnSeizePOI();
     void OnUnseizePOI(LocationGridTile tileLocation);
     void CancelRemoveStatusFeedAndRepairJobsTargetingThis();
@@ -62,6 +68,7 @@ public interface IPointOfInterest : ITraitable, ISelectable, ILogFiller {
     void SetCurrentLocationAwareness(ILocationAwareness locationAwareness);
     //void SetIsInPendingAwarenessList(bool state);
     bool IsUnpassable();
+    bool CanBeSeenBy(Character p_character);
 }
 
 /// <summary>

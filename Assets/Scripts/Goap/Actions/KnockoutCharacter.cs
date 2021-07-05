@@ -31,30 +31,42 @@ public class KnockoutCharacter : GoapAction {
         SetState("Knockout Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
+#if DEBUG_LOG
         string costLog = $"\n{name} {target.nameWithID}:";
+#endif
         int cost = 0;
         if (target is Character) {
             Character targetCharacter = target as Character;
             string opinionLabel = actor.relationshipContainer.GetOpinionLabel(targetCharacter);
             if (opinionLabel == RelationshipManager.Friend || opinionLabel == RelationshipManager.Close_Friend) {
                 cost += 35;
+#if DEBUG_LOG
                 costLog += " +35(Friend/Close Friend)";
+#endif
             } else if (opinionLabel == RelationshipManager.Enemy || opinionLabel == RelationshipManager.Rival) {
                 cost += 0;
+#if DEBUG_LOG
                 costLog += $" +0(Enemy/Rival)";
+#endif
             } else if (opinionLabel == RelationshipManager.Acquaintance || actor.faction == targetCharacter.faction) {
                 cost += 20;
+#if DEBUG_LOG
                 costLog += $" +20(Acquaintance/Same Faction)";
+#endif
             } else {
                 cost += 10;
+#if DEBUG_LOG
                 costLog += " +10(Else)";
+#endif
             }
         }
+#if DEBUG_LOG
         actor.logComponent.AppendCostLog(costLog);
+#endif
         return cost;
     }
-    public override void PopulateReactionsToActor(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
-        base.PopulateReactionsToActor(reactions, actor, target, witness, node, status);
+    public override void PopulateEmotionReactionsToActor(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
+        base.PopulateEmotionReactionsToActor(reactions, actor, target, witness, node, status);
         if (target is Character targetCharacter) {
             string opinionOfTarget = witness.relationshipContainer.GetOpinionLabel(targetCharacter);
             if (node.crimeType == CRIME_TYPE.Vampire) {
@@ -122,8 +134,8 @@ public class KnockoutCharacter : GoapAction {
             }
         }
     }
-    public override void PopulateReactionsOfTarget(List<EMOTION> reactions, Character actor, IPointOfInterest target, ActualGoapNode node, REACTION_STATUS status) {
-        base.PopulateReactionsOfTarget(reactions, actor, target, node, status);
+    public override void PopulateEmotionReactionsOfTarget(List<EMOTION> reactions, Character actor, IPointOfInterest target, ActualGoapNode node, REACTION_STATUS status) {
+        base.PopulateEmotionReactionsOfTarget(reactions, actor, target, node, status);
         if (target is Character targetCharacter) {
             reactions.Add(EMOTION.Threatened);
             if (targetCharacter.traitContainer.HasTrait("Hothead")) {
@@ -158,9 +170,9 @@ public class KnockoutCharacter : GoapAction {
         }
         return base.GetCrimeType(actor, target, crime);
     }
-    #endregion
+#endregion
 
-    #region Requirements
+#region Requirements
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, OtherData[] otherData, JobQueueItem job) { 
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData, job);
         if (satisfied) {
@@ -171,9 +183,9 @@ public class KnockoutCharacter : GoapAction {
                 //Cannot knock out sturdy characters
                 return false;
             }
-            if (job != null && job.jobType == JOB_TYPE.SNATCH) { //&& actor.traitContainer.HasTrait("Cultist")
-                return true; //only allow cultists to use knock out if it is for snatching 
-            }
+            //if (job != null && job.jobType == JOB_TYPE.SNATCH) { //&& actor.traitContainer.HasTrait("Cultist")
+            //    return true; //only allow cultists to use knock out if it is for snatching 
+            //}
             if (actor.race == RACE.TRITON) {
                 return true;
             }
@@ -185,11 +197,12 @@ public class KnockoutCharacter : GoapAction {
         }
         return false;
     }
-    #endregion
+#endregion
 
-    #region State Effects
+#region State Effects
     public void AfterKnockoutSuccess(ActualGoapNode goapNode) {
-        goapNode.poiTarget.traitContainer.AddTrait(goapNode.poiTarget, "Unconscious", goapNode.actor, gainedFromDoing: goapNode);
+        goapNode.poiTarget.traitContainer.AddTrait(goapNode.poiTarget, "Unconscious", goapNode.actor);
+        goapNode.poiTarget.traitContainer.GetTraitOrStatus<Trait>("Unconscious")?.SetGainedFromDoingAction(goapNode.action.goapType, goapNode.isStealth);
     }
     //public void PreKnockoutFail() {
     //    SetCommittedCrime(CRIME.ASSAULT, new Character[] { actor });

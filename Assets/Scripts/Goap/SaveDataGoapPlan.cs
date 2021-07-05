@@ -15,6 +15,7 @@ public class SaveDataGoapPlan : SaveData<GoapPlan> {
     public bool isEnd;
     public bool isPersonalPlan;
     public bool doNotRecalculate;
+    public bool isAssigned;
     public GOAP_PLAN_STATE state;
     public override void Save(GoapPlan data) {
         base.Save(data);
@@ -47,6 +48,7 @@ public class SaveDataGoapPlan : SaveData<GoapPlan> {
         isPersonalPlan = data.isPersonalPlan;
         doNotRecalculate = data.doNotRecalculate;
         state = data.state;
+        isAssigned = data.isAssigned;
     }
     public override GoapPlan Load() {
         return new GoapPlan(this);

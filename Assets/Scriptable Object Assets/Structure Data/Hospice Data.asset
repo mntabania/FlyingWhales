@@ -1,0 +1,43 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4fe081999e2948579e671f1ff7494f4c, type: 3}
+  m_Name: Hospice Data
+  m_EditorClassIdentifier: 
+  _structureSprite: {fileID: 21300000, guid: 8f57444b93359594096b1dd546244094, type: 3}
+  _itemGenerationSetting: {fileID: 0}
+  structurePrefabs:
+    m_keys:
+    - resource: 2
+      structureType: 14
+      hasValue: 1
+      isCorrupted: 1
+    - resource: 2
+      structureType: 14
+      hasValue: 1
+      isCorrupted: 0
+    - resource: 1
+      structureType: 14
+      hasValue: 1
+      isCorrupted: 0
+    - resource: 1
+      structureType: 14
+      hasValue: 1
+      isCorrupted: 1
+    m_values:
+    - data:
+      - {fileID: 1961635413776408567, guid: 391ed83381576ca499d9b50d63a5cf41, type: 3}
+    - data:
+      - {fileID: 1961635413776408567, guid: ef4bd84d533038243bed6140dfcacdcb, type: 3}
+    - data:
+      - {fileID: 570548150421663453, guid: 3de2bb8e183624148943603e9a08663d, type: 3}
+    - data:
+      - {fileID: 1961635413776408567, guid: e91a1051d5016514284ff80f1d0aff2f, type: 3}

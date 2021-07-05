@@ -51,12 +51,14 @@ public class Assault : GoapAction {
         SetState("Combat Start", actionNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
+#if DEBUG_LOG
         string costLog = $"\n{name} {target.nameWithID}: +50(Constant)";
         actor.logComponent.AppendCostLog(costLog);
+#endif
         return 50;
     }
-    public override void PopulateReactionsToActor(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
-        base.PopulateReactionsToActor(reactions, actor, target, witness, node, status);
+    public override void PopulateEmotionReactionsToActor(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
+        base.PopulateEmotionReactionsToActor(reactions, actor, target, witness, node, status);
         if (node.crimeType == CRIME_TYPE.Vampire) {
             if (target is Character targetCharacter) {
                 string opinionOfTarget = witness.relationshipContainer.GetOpinionLabel(targetCharacter);
@@ -204,8 +206,8 @@ public class Assault : GoapAction {
             }
         }
     }
-    public override void PopulateReactionsToTarget(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
-        base.PopulateReactionsToTarget(reactions, actor, target, witness, node, status);
+    public override void PopulateEmotionReactionsToTarget(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
+        base.PopulateEmotionReactionsToTarget(reactions, actor, target, witness, node, status);
         if (target is Character targetCharacter && targetCharacter.faction != null && targetCharacter.faction.isMajorNonPlayer && !witness.IsHostileWith(targetCharacter)) {
             if (node.associatedJobType == JOB_TYPE.APPREHEND) {
                 string opinionLabel = witness.relationshipContainer.GetOpinionLabel(targetCharacter);
@@ -241,8 +243,8 @@ public class Assault : GoapAction {
             }
         }
     }
-    public override void PopulateReactionsOfTarget(List<EMOTION> reactions, Character actor, IPointOfInterest target, ActualGoapNode node, REACTION_STATUS status) {
-        base.PopulateReactionsOfTarget(reactions, actor, target, node, status);
+    public override void PopulateEmotionReactionsOfTarget(List<EMOTION> reactions, Character actor, IPointOfInterest target, ActualGoapNode node, REACTION_STATUS status) {
+        base.PopulateEmotionReactionsOfTarget(reactions, actor, target, node, status);
         if (target is Character targetCharacter) {
             if (node.crimeType != CRIME_TYPE.None && node.crimeType != CRIME_TYPE.Unset) {
                 CRIME_SEVERITY severity = CrimeManager.Instance.GetCrimeSeverity(targetCharacter, actor, target, node.crimeType);
@@ -310,17 +312,21 @@ public class Assault : GoapAction {
         IPointOfInterest target = node.poiTarget;
         return actor.combatComponent.GetCombatStateIconString(target, node);
     }
-    public override void AddFillersToLog(ref Log log, ActualGoapNode node) {
-        base.AddFillersToLog(ref log, node);
+    public override void AddFillersToLog(Log log, ActualGoapNode node) {
+        base.AddFillersToLog(log, node);
         string reason = GetReason(node);
         log.AddToFillers(null, reason, LOG_IDENTIFIER.STRING_1);
     }
-    #endregion
+#endregion
 
-    #region Requirements
+#region Requirements
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, OtherData[] otherData, JobQueueItem job) {
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData, job);
         if (satisfied) {
+            if (poiTarget == null || poiTarget.mapObjectVisual == null) {
+                //Cannot assault characters/objects that has no visual object
+                return false;
+            }
             if (poiTarget is TileObject tileObject) {
                 return tileObject.gridTileLocation != null && !actor.IsHealthCriticallyLow();
             }
@@ -328,11 +334,13 @@ public class Assault : GoapAction {
         }
         return false;
     }
-    #endregion
+#endregion
 
-    #region Effects
+#region Effects
     public void PreCombatStart(ActualGoapNode goapNode) {
+#if DEBUG_LOG
         Debug.Log($"{goapNode.actor} will start combat towards {goapNode.poiTarget.name}");
+#endif
         string combatReason = CombatManager.Action;
         bool isLethal = goapNode.associatedJobType.IsJobLethal();
         if(goapNode.associatedJobType == JOB_TYPE.DEMON_KILL) {
@@ -350,7 +358,7 @@ public class Assault : GoapAction {
         //     }
         // }
     }
-    #endregion
+#endregion
 
     private string GetReason(ActualGoapNode action) {
         string key = action.actor.combatComponent.GetCombatActionReason(action, action.poiTarget);

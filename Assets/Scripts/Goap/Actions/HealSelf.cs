@@ -24,13 +24,15 @@ public class HealSelf : GoapAction {
         SetState("Heal Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
+#if DEBUG_LOG
         string costLog = $"\n{name} {target.nameWithID}: +10(Constant)";
         actor.logComponent.AppendCostLog(costLog);
+#endif
         return 10;
     }
-    #endregion
+#endregion
 
-    #region State Effects
+#region State Effects
     public void PreHealSuccess(ActualGoapNode goapNode) {
         TileObject chosenHealingPotion = goapNode.actor.GetItem(TILE_OBJECT_TYPE.HEALING_POTION);
         if (chosenHealingPotion != null && chosenHealingPotion.traitContainer.HasTrait("Poisoned")) {
@@ -74,15 +76,15 @@ public class HealSelf : GoapAction {
         }
         
     }
-    #endregion
+#endregion
 
-    #region Preconditions
+#region Preconditions
     private bool HasItemInInventory(Character actor, IPointOfInterest poiTarget, object[] otherData, JOB_TYPE jobType) {
         return actor.HasItem(TILE_OBJECT_TYPE.HEALING_POTION);
     }
-    #endregion
+#endregion
 
-    #region Requirements
+#region Requirements
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, OtherData[] otherData, JobQueueItem job) {
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData, job);
         if (satisfied) {
@@ -90,6 +92,6 @@ public class HealSelf : GoapAction {
         }
         return false;
     }
-    #endregion
+#endregion
     
 }

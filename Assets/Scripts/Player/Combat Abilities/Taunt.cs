@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Inner_Maps;
 using UnityEngine;
-
+using UtilityScripts;
 public class Taunt : CombatAbility {
 
     //private int _hpGain;
@@ -36,7 +36,8 @@ public class Taunt : CombatAbility {
             Character character = targetPOI as Character;
 
             character.AdjustHP(1000, ELEMENTAL_TYPE.Normal);
-            List<LocationGridTile> tilesInRadius = character.gridTileLocation.GetTilesInRadius(3, includeCenterTile: true, includeTilesInDifferentStructure: true);
+            List<LocationGridTile> tilesInRadius = RuinarchListPool<LocationGridTile>.Claim();
+            character.gridTileLocation.PopulateTilesInRadius(tilesInRadius, 3, includeCenterTile: true, includeTilesInDifferentStructure: true);
             List<Character> affectedByTaunt = new List<Character>();
             for (int i = 0; i < character.currentRegion.charactersAtLocation.Count; i++) {
                 Character currCharacter = character.currentRegion.charactersAtLocation[i];
@@ -46,7 +47,7 @@ public class Taunt : CombatAbility {
                     }
                 }
             }
-
+            RuinarchListPool<LocationGridTile>.Release(tilesInRadius);
             //for (int i = 0; i < affectedByTaunt.Count; i++) {
             //    Character affected = affectedByTaunt[i];
             //    if(affected.combatComponent.isInCombat) {

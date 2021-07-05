@@ -18,11 +18,14 @@ public class TileObjectInfoUI : InfoUIBase {
     [Header("Info")]
     [SerializeField] private TextMeshProUGUI hpLbl;
     [SerializeField] private TextMeshProUGUI quantityLbl;
+    [SerializeField] private TextMeshProUGUI generalDescription;
     [SerializeField] private TextMeshProUGUI ownerLbl;
     [SerializeField] private EventLabel ownerEventLbl;
     [SerializeField] private TextMeshProUGUI carriedByLbl;
     [SerializeField] private EventLabel carriedByEventLbl;
     [SerializeField] private TextMeshProUGUI statusTraitsLbl;
+    [SerializeField] private GameObject equipBonusGO;
+    [SerializeField] private TextMeshProUGUI equipBonusLbl;
     [SerializeField] private TextMeshProUGUI normalTraitsLbl;
     [SerializeField] private EventLabel statusTraitsEventLbl;
     [SerializeField] private EventLabel normalTraitsEventLbl;
@@ -34,10 +37,18 @@ public class TileObjectInfoUI : InfoUIBase {
     [SerializeField] private TextMeshProUGUI charactersToggleLbl;
     [SerializeField] private GameObject characterItemPrefab;
     [SerializeField] private ScrollRect charactersScrollView;
-    [SerializeField] private GameObject charactersGO;
+
+    [Space(10)]
+    [Header("Item Effects")]
+    [SerializeField] private GameObject itemEffectParent;
+    [SerializeField] private TextMeshProUGUI itemEffectsLbl;
 
     [Space(10)] [Header("Logs")] 
     [SerializeField] private LogsWindow logsWindow;
+    
+    [Space(10)]
+    [Header("Store Target")] 
+    [SerializeField] private StoreTargetButton btnStoreTarget;
 
     public TileObject activeTileObject { get; private set; }
 
@@ -53,6 +64,7 @@ public class TileObjectInfoUI : InfoUIBase {
         Messenger.AddListener<TileObject, Trait>(TileObjectSignals.TILE_OBJECT_TRAIT_REMOVED, UpdateTraitsFromSignal);
         Messenger.AddListener<TileObject, Trait>(TileObjectSignals.TILE_OBJECT_TRAIT_STACKED, UpdateTraitsFromSignal);
         Messenger.AddListener<TileObject, Trait>(TileObjectSignals.TILE_OBJECT_TRAIT_UNSTACKED, UpdateTraitsFromSignal);
+        Messenger.AddListener<KeyCode>(ControlsSignals.KEY_DOWN_EMPTY_SPACE, OnReceiveKeyCodeSignal);
 
         ownerEventLbl.SetOnLeftClickAction(OnLeftClickOwner);
         ownerEventLbl.SetOnRightClickAction(OnRightClickOwner);
@@ -66,15 +78,22 @@ public class TileObjectInfoUI : InfoUIBase {
     public override void CloseMenu() {
         base.CloseMenu();
         Selector.Instance.Deselect();
-        if(activeTileObject != null && activeTileObject.mapVisual != null) {
-            // activeTileObject.mapVisual.UnlockHoverObject();
-            // activeTileObject.mapVisual.SetHoverObjectState(false);
-            activeTileObject.mapVisual.UpdateSortingOrders(activeTileObject);
-            if (InnerMapCameraMove.Instance.target == activeTileObject.mapObjectVisual.transform) {
-                InnerMapCameraMove.Instance.CenterCameraOn(null);
+        if(activeTileObject != null) {
+            if (activeTileObject.mapVisual != null) {
+                // activeTileObject.mapVisual.UnlockHoverObject();
+                // activeTileObject.mapVisual.SetHoverObjectState(false);
+                activeTileObject.mapVisual.UpdateSortingOrders(activeTileObject);
+                if (InnerMapCameraMove.Instance.target == activeTileObject.mapObjectVisual.transform) {
+                    InnerMapCameraMove.Instance.CenterCameraOn(null);
+                }
+            }
+            if (activeTileObject is DemonEye eyeWard) {
+                //Show eye ward highlight of current eye ward
+                eyeWard.HideEyeWardHighlight();
             }
         }
         activeTileObject = null;
+        btnStoreTarget.SetTarget(null);
     }
     public override void OpenMenu() {
         TileObject previousTileObject = activeTileObject;
@@ -85,8 +104,14 @@ public class TileObjectInfoUI : InfoUIBase {
         // }
         
         activeTileObject = _data as TileObject;
-        if (previousTileObject != null && previousTileObject.mapVisual != null) {
-            previousTileObject.mapVisual.UpdateSortingOrders(previousTileObject);
+        if (previousTileObject != null) {
+            if(previousTileObject.mapVisual != null) {
+                previousTileObject.mapVisual.UpdateSortingOrders(previousTileObject);
+            }
+            if(previousTileObject is DemonEye previousEyeWard) {
+                //Hide eye ward highlight of previous eye ward
+                previousEyeWard.HideEyeWardHighlight();
+            }
         }
         if(activeTileObject.gridTileLocation != null && activeTileObject.mapObjectVisual != null) {
             bool instantCenter = !InnerMapManager.Instance.IsShowingInnerMap(activeTileObject.currentRegion);
@@ -99,6 +124,11 @@ public class TileObjectInfoUI : InfoUIBase {
             Selector.Instance.Select(activeTileObject, activeTileObject.mapObjectVisual.transform);    
             activeTileObject.mapVisual.UpdateSortingOrders(activeTileObject);
         }
+        if (activeTileObject is DemonEye eyeWard) {
+            //Show eye ward highlight of current eye ward
+            eyeWard.ShowEyeWardHighlight();
+        }
+        btnStoreTarget.SetTarget(activeTileObject);
         UIManager.Instance.HideObjectPicker();
         UpdateTabs();
         UpdateBasicInfo();
@@ -107,8 +137,30 @@ public class TileObjectInfoUI : InfoUIBase {
         UpdateUsers();
         logsWindow.OnParentMenuOpened(activeTileObject.persistentID);
         UpdateLogs();
+        LoadActions(activeTileObject);
+    }
+    protected override void LoadActions(IPlayerActionTarget target) {
+        UtilityScripts.Utilities.DestroyChildren(actionsTransform);
+        activeActionItems.Clear();
+        for (int i = 0; i < target.actions.Count; i++) {
+            PLAYER_SKILL_TYPE skillType = target.actions[i];
+            if(skillType == PLAYER_SKILL_TYPE.DESTROY_EYE_WARD) {
+                PlayerAction action = PlayerSkillManager.Instance.GetPlayerActionData(skillType);
+                if (action.IsValid(target) && PlayerManager.Instance.player.playerSkillComponent.CanDoPlayerAction(action.type)) {
+                    ActionItem actionItem = AddNewAction(action, target);
+                    actionItem.SetInteractable(action.CanPerformAbilityTo(target) && !PlayerManager.Instance.player.seizeComponent.hasSeizedPOI);
+                    actionItem.ForceUpdateCooldown();
+                }
+            }
+        }
     }
     #endregion
+
+    private void OnReceiveKeyCodeSignal(KeyCode p_key) {
+        if (p_key == KeyCode.Mouse1) {
+            CloseMenu();
+        }
+    }
 
     #region General
     public void UpdateTileObjectInfo() {
@@ -140,13 +192,31 @@ public class TileObjectInfoUI : InfoUIBase {
         if(activeTileObject is ResourcePile) {
             quantity = (activeTileObject as ResourcePile).resourceInPile;
         } else if (activeTileObject is Table) {
-            quantity = activeTileObject.storedResources[RESOURCE.FOOD];
+            quantity = activeTileObject.resourceStorageComponent.GetResourceValue(RESOURCE.FOOD);
         }
         quantityLbl.text = $"{quantity}";
-
+        if (activeTileObject.tileObjectType.IsTileObjectWithCount()) {
+            quantityLbl.text = GetCountQuantityBaseOnType(activeTileObject).ToString();
+        }
+        //if(activeTileObject.tileObjectType.)
+        generalDescription.text = activeTileObject.description;
         ownerLbl.text = activeTileObject.characterOwner != null ? $"<link=\"1\">{UtilityScripts.Utilities.ColorizeAndBoldName(activeTileObject.characterOwner.name)}</link>" : "None";
         UpdateLocationInfo();
         tileObjectPortrait.SetTileObject(activeTileObject);
+    }
+
+    public int GetCountQuantityBaseOnType(TileObject p_object) {
+        switch (p_object.tileObjectType) {
+            case TILE_OBJECT_TYPE.ROCK:
+            return (p_object as Rock).count;
+            case TILE_OBJECT_TYPE.ORE:
+            return (p_object as Ore).count;
+            case TILE_OBJECT_TYPE.SMALL_TREE_OBJECT:
+            case TILE_OBJECT_TYPE.BIG_TREE_OBJECT:
+            return (p_object as TreeObject).count;
+        }
+
+        return 1;
     }
     private void OnRightClickPortrait(TileObject p_tileObject) {
         UIManager.Instance.ShowPlayerActionContextMenu(p_tileObject, Input.mousePosition, true);
@@ -168,6 +238,7 @@ public class TileObjectInfoUI : InfoUIBase {
     private void UpdateTraits() {
         string statusTraits = string.Empty;
         string normalTraits = string.Empty;
+        string equipTraits = string.Empty;
 
         for (int i = 0; i < activeTileObject.traitContainer.statuses.Count; i++) {
             Status currStatus = activeTileObject.traitContainer.statuses[i];
@@ -198,6 +269,20 @@ public class TileObjectInfoUI : InfoUIBase {
         }
 
         statusTraitsLbl.text = string.Empty;
+        if (activeTileObject is EquipmentItem equip) {
+            itemEffectParent.gameObject.SetActive(true);
+            equipBonusGO.gameObject.SetActive(false);
+            equipTraits += "\n" + equip.GetBonusDescription();
+            if (string.IsNullOrEmpty(equipTraits) == false) {
+                //character has status traits
+                equipBonusLbl.text = equipTraits;
+            }
+            
+            itemEffectsLbl.text = equip.GetBonusDescription();
+        } else {
+            itemEffectParent.gameObject.SetActive(false);
+            equipBonusGO.gameObject.SetActive(false);
+        }
         if (string.IsNullOrEmpty(statusTraits) == false) {
             //character has status traits
             statusTraitsLbl.text = statusTraits;

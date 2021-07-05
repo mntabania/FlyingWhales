@@ -3,10 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.Assertions;
+using Inner_Maps.Location_Structures;
+using Locations.Settlements;
 
 public abstract class MonsterEgg : TileObject {
     public SUMMON_TYPE summonType { get; protected set; }
-    public Character characterThatLay { get; protected set; }
+    public Faction faction { get; protected set; }
+    public BaseSettlement settlement { get; protected set; }
+    public LocationStructure structure { get; protected set; }
     public GameDate hatchDate { get; private set; }
     public bool isSupposedToHatch { get; private set; }
     public bool hasHatched { get; private set; }
@@ -45,12 +49,22 @@ public abstract class MonsterEgg : TileObject {
         base.LoadSecondWave(data);
         SaveDataMonsterEgg saveData = data as SaveDataMonsterEgg;
         Assert.IsNotNull(saveData);
-        characterThatLay = DatabaseManager.Instance.characterDatabase.GetCharacterByPersistentID(saveData.characterThatLayID);
+        if (!string.IsNullOrEmpty(saveData.faction)) {
+            faction = DatabaseManager.Instance.factionDatabase.GetFactionByPersistentID(saveData.faction);
+        }
+        if (!string.IsNullOrEmpty(saveData.settlement)) {
+            settlement = DatabaseManager.Instance.settlementDatabase.GetSettlementByPersistentIDSafe(saveData.settlement);
+        }
+        if (!string.IsNullOrEmpty(saveData.structure)) {
+            structure = DatabaseManager.Instance.structureDatabase.GetStructureByPersistentIDSafe(saveData.structure);
+        }
     }
     #endregion
     
     public void SetCharacterThatLay(Character character) {
-        characterThatLay = character;
+        faction = character.faction;
+        settlement = character.homeSettlement;
+        structure = character.homeStructure;
     }
     public override void OnPlacePOI() {
         base.OnPlacePOI();
@@ -82,15 +96,54 @@ public abstract class MonsterEgg : TileObject {
         }
     }
     protected virtual void Hatch() {
-        if(characterThatLay != null) {
-            Summon monster = CharacterManager.Instance.CreateNewSummon(summonType, faction: characterThatLay.faction, homeLocation: characterThatLay.homeSettlement, homeRegion: characterThatLay.homeRegion, homeStructure: characterThatLay.homeStructure, bypassIdeologyChecking: true);
-            CharacterManager.Instance.PlaceSummonInitially(monster, gridTileLocation);
-            if (!monster.HasHome() && gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
-                monster.ClearTerritory();
-                monster.SetTerritory(gridTileLocation.collectionOwner.partOfHextile.hexTileOwner);
+        BaseSettlement homeSettlement = settlement;
+        LocationStructure homeStructure = structure;
+        Region homeRegion = gridTileLocation.area.region;
+        if (settlement != null) {
+            homeRegion = settlement.region;
+        }
+        ProcessHomeOfHatchedEggs(ref homeSettlement, ref homeStructure, ref homeRegion);
+        //BaseSettlement currentSettlement;
+        //if (gridTileLocation.IsPartOfSettlement(out currentSettlement)) {
+        //    if (currentSettlement.owner == null) {
+        //        homeSettlement = currentSettlement;
+        //        homeStructure = null;
+        //        homeRegion = currentSettlement.region;
+        //    } else if (currentSettlement.owner == faction) {
+        //        homeSettlement = currentSettlement;
+        //        if (structure.settlementLocation == currentSettlement) {
+        //            homeStructure = structure;
+        //        } else {
+        //            homeStructure = null;
+        //        }
+        //        homeRegion = currentSettlement.region;
+        //    }
+        //}
+
+        Summon monster = CharacterManager.Instance.CreateNewSummon(summonType, faction: faction, homeLocation: homeSettlement, homeRegion: homeRegion, homeStructure: homeStructure, bypassIdeologyChecking: true);
+        CharacterManager.Instance.PlaceSummonInitially(monster, gridTileLocation);
+        if (!monster.HasHome()) {
+            monster.ClearTerritory();
+            monster.SetTerritory(gridTileLocation.area);
+        }
+    }
+    protected void ProcessHomeOfHatchedEggs(ref BaseSettlement homeSettlement, ref LocationStructure homeStructure, ref Region homeRegion) {
+        BaseSettlement currentSettlement;
+        if (gridTileLocation.IsPartOfSettlement(out currentSettlement)) {
+            if (currentSettlement.owner == null) {
+                homeSettlement = currentSettlement;
+                homeStructure = null;
+                homeRegion = currentSettlement.region;
+            } else if (currentSettlement.owner == faction) {
+                homeSettlement = currentSettlement;
+                if (structure != null && structure.settlementLocation == currentSettlement) {
+                    homeStructure = structure;
+                } else {
+                    homeStructure = null;
+                }
+                homeRegion = currentSettlement.region;
             }
         }
-
     }
 
     #region Overrides
@@ -102,7 +155,9 @@ public abstract class MonsterEgg : TileObject {
 
 public class SaveDataMonsterEgg : SaveDataTileObject {
     public SUMMON_TYPE summonType;
-    public string characterThatLayID;
+    public string faction;
+    public string settlement;
+    public string structure;
     public GameDate hatchDate;
     public bool isSupposedToHatch;
     public bool hasHatched;
@@ -112,7 +167,9 @@ public class SaveDataMonsterEgg : SaveDataTileObject {
         MonsterEgg monsterEgg = tileObject as MonsterEgg;
         Assert.IsNotNull(monsterEgg);
         summonType = monsterEgg.summonType;
-        characterThatLayID = monsterEgg.characterThatLay.persistentID;
+        faction = monsterEgg.faction?.persistentID;
+        settlement = monsterEgg.settlement?.persistentID;
+        structure = monsterEgg.structure?.persistentID;
         hatchDate = monsterEgg.hatchDate;
         isSupposedToHatch = monsterEgg.isSupposedToHatch;
         hasHatched = monsterEgg.hasHatched;

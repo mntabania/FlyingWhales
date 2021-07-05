@@ -9,6 +9,7 @@ public class RebellionData : SchemeData {
     public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.REBELLION;
     public override string name => "Rebellion";
     public override string description => "Convince a Settlement Ruler to split off their entire Village from current Faction.";
+    public override string verbName => "Rebel";
     public override PLAYER_SKILL_CATEGORY category => PLAYER_SKILL_CATEGORY.SCHEME;
 
     public RebellionData() : base() {
@@ -25,10 +26,37 @@ public class RebellionData : SchemeData {
         if (WorldSettings.Instance.worldSettingsData.factionSettings.disableNewFactions) {
             return false;
         }
-        if (target is Character character) {
-            return character.faction != null && !character.isFactionLeader && character.isSettlementRuler && character.faction.HasOwnedSettlementThatMeetCriteria(s => s != character.homeSettlement && s.HasResidentThatMeetsCriteria(c => !c.isDead));
+        return base.IsValid(target);
+    }
+    public override bool CanPerformAbilityTowards(Character targetCharacter) {
+        bool canPerform = base.CanPerformAbilityTowards(targetCharacter);
+        if (canPerform) {
+            int villagerFactionCount = FactionManager.Instance.GetActiveVillagerFactionCount();
+            if (villagerFactionCount >= FactionManager.MaxActiveVillagerFactions) {
+                return false;
+            }
+            if (targetCharacter.faction != null && !targetCharacter.isFactionLeader && targetCharacter.isSettlementRuler) {
+                if (targetCharacter.faction.HasOwnedSettlementThatHasAliveResidentAndIsNotHomeOf(targetCharacter)) {
+                    return true;
+                }
+            }
+            return false;
         }
-        return false;
+        return canPerform;
+    }
+    public override string GetReasonsWhyCannotPerformAbilityTowards(Character targetCharacter) {
+        string reasons = base.GetReasonsWhyCannotPerformAbilityTowards(targetCharacter);
+        if (!(!targetCharacter.isFactionLeader && targetCharacter.isSettlementRuler)) {
+            reasons += "Target should be a settlement ruler but not a faction leader.";
+        }
+        if (targetCharacter.faction == null || !targetCharacter.faction.HasOwnedSettlementThatHasAliveResidentAndIsNotHomeOf(targetCharacter)) {
+            reasons += "Target is has no faction or simply cannot rebel.";
+        }
+        int villagerFactionCount = FactionManager.Instance.GetActiveVillagerFactionCount();
+        if (villagerFactionCount >= FactionManager.MaxActiveVillagerFactions) {
+            reasons += "Maximum number of active factions have been reached,";
+        }
+        return reasons;
     }
     protected override void OnSuccessScheme(Character character, object target) {
         base.OnSuccessScheme(character, target);

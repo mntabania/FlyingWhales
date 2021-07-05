@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Inner_Maps;
+using Inner_Maps.Location_Structures;
 using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.Tilemaps;
@@ -131,8 +132,8 @@ namespace Cellular_Automata {
 		/// <param name="groundAsset">Asset to use if tile is set as ground</param>
 		/// <param name="wallAction">Action to perform to the tile when it is set as a wall.</param>
 		/// <param name="groundAction">Action to perform to the tile when it is set as ground.</param>
-		public static IEnumerator DrawMapCoroutine(LocationGridTile[,] tileMap, int[,] cellAutomata, TileBase wallAsset,
-			TileBase groundAsset, System.Action<LocationGridTile> wallAction, System.Action<LocationGridTile> groundAction) {
+		public static IEnumerator DrawElevationMapCoroutine(LocationGridTile[,] tileMap, int[,] cellAutomata, TileBase wallAsset, TileBase groundAsset, 
+			ELEVATION elevation, LocationStructure elevationStructure, MapGenerationData mapGenerationData) {
 			Assert.IsTrue(tileMap.GetUpperBound(0) == cellAutomata.GetUpperBound(0),
 				$"Provided tile map and cell map have inconsistent first dimension bounds. {tileMap.GetUpperBound(0).ToString()}/{cellAutomata.GetUpperBound(0).ToString()}");
 			Assert.IsTrue(tileMap.GetUpperBound(1) == cellAutomata.GetUpperBound(1),
@@ -149,11 +150,19 @@ namespace Cellular_Automata {
 						if (cellMapValue == 1) {
 							//wall
 							tile.SetStructureTilemapVisual(wallAsset);
-							wallAction?.Invoke(tile);
+							if (elevation == ELEVATION.WATER) {
+								throw new NotImplementedException(); //Did no implement water since oceans do not use Cell Automata
+							} else if (elevation == ELEVATION.MOUNTAIN) {
+								tile.parentMap.SetAsMountainWall(tile, elevationStructure, mapGenerationData);
+							}
 						} else {
 							//ground	
 							tile.SetStructureTilemapVisual(groundAsset);
-							groundAction?.Invoke(tile);
+							// if (elevation == ELEVATION.WATER) {
+							// 	throw new NotImplementedException(); //Did no implement water since oceans do not use Cell Automata
+							// } else if (elevation == ELEVATION.MOUNTAIN) {
+							// 	tile.parentMap.SetAsMountainGround(tile, elevationStructure, mapGenerationData);
+							// }
 						}
 						
 						batchCount++;
@@ -166,8 +175,7 @@ namespace Cellular_Automata {
 			}
 		}
 		
-		public static void DrawMap(LocationGridTile[,] tileMap, int[,] cellAutomata, TileBase wallAsset,
-			TileBase groundAsset, System.Action<LocationGridTile> wallAction, System.Action<LocationGridTile> groundAction) {
+		public static void DrawMap(LocationGridTile[,] tileMap, int[,] cellAutomata, TileBase wallAsset, TileBase groundAsset, System.Action<LocationGridTile> wallAction, System.Action<LocationGridTile> groundAction) {
 			Assert.IsTrue(tileMap.GetUpperBound(0) == cellAutomata.GetUpperBound(0),
 				$"Provided tile map and cell map have inconsistent first dimension bounds. {tileMap.GetUpperBound(0).ToString()}/{cellAutomata.GetUpperBound(0).ToString()}");
 			Assert.IsTrue(tileMap.GetUpperBound(1) == cellAutomata.GetUpperBound(1),

@@ -7,6 +7,8 @@ using UnityEngine;
 
 [CustomPropertyDrawer(typeof(StringIntDictionary))]
 public class StringIntDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
+[CustomPropertyDrawer(typeof(StringFloatDictionary))]
+public class StringFloatDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
 [CustomPropertyDrawer(typeof(BiomeLandmarkSpriteListDictionary))]
 public class BiomeLandmarkSpriteListDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
 [CustomPropertyDrawer(typeof(TileSpriteCorruptionListDictionary))]
@@ -38,6 +40,8 @@ public class AreaTypeSpriteDictionaryPropertyDrawer : SerializableDictionaryProp
 [CustomPropertyDrawer(typeof(SummonSettingDictionary))]
 public class SummonSettingDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
 [CustomPropertyDrawer(typeof(ArtifactSettingDictionary))]
+public class MinionSettingDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
+[CustomPropertyDrawer(typeof(MinionSettingDictionary))]
 public class ArtifactSettingDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
 [CustomPropertyDrawer(typeof(SeamlessEdgeAssetsDictionary))]
 public class SeamlessEdgeAssetsDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
@@ -55,6 +59,8 @@ public class WallResourceAssetDictionaryPropertyDrawer : SerializableDictionaryP
 public class WallAssetDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
 [CustomPropertyDrawer(typeof(ParticleEffectAssetDictionary))]
 public class ParticleEffectAssetDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
+[CustomPropertyDrawer(typeof(SoundEffectDictionary))]
+public class SoundEffectDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
 [CustomPropertyDrawer(typeof(ProjectileDictionary))]
 public class ProjectileDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
 [CustomPropertyDrawer(typeof(TimeOfDayLightDictionary))]
@@ -85,6 +91,18 @@ public class RaceDataDictionaryPropertyDrawer : SerializableDictionaryPropertyDr
 public class MonsterMigrationBiomeDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
 [CustomPropertyDrawer(typeof(ScenarioSettingsDataDictionary))]
 public class ScenarioSettingsDataDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
+[CustomPropertyDrawer(typeof(StructureDataDictionary))]
+public class StructureDataDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
+[CustomPropertyDrawer(typeof(IntChancesDictionary))]
+public class IntChancesDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
+[CustomPropertyDrawer(typeof(PowerAndLevelDictionary))]
+public class PowerAndLevelDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
+[CustomPropertyDrawer(typeof(TileTypeAssetDictionary))]
+public class TileTypeAssetDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
+[CustomPropertyDrawer(typeof(TemperatureTypeDictionary))]
+public class TemperatureTypeDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
+[CustomPropertyDrawer(typeof(PrecipitationTypeDictionary))]
+public class PrecipitationTypeDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
 
 //list storage
 [CustomPropertyDrawer(typeof(LandmarkSpriteListStorage))]
@@ -107,3 +125,5 @@ public class ElementalDamageDataDictionaryPropertyDrawer : SerializableDictionar
 public class MonsterTypeListStoragePropertyDrawer : SerializableDictionaryStoragePropertyDrawer { }
 [CustomPropertyDrawer(typeof(TileObjectSettingListStorage))]
 public class TileObjectTypeListStoragePropertyDrawer : SerializableDictionaryStoragePropertyDrawer { }
+[CustomPropertyDrawer(typeof(AudioClipListStorage))]
+public class AudioClipListStoragePropertyDrawer : SerializableDictionaryStoragePropertyDrawer { }

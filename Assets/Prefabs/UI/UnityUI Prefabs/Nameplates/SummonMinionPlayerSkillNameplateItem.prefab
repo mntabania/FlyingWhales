@@ -303,6 +303,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  executeHoverEnterActionPerFrame: 1
 --- !u!222 &222211759559695132
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -557,6 +558,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  executeHoverEnterActionPerFrame: 1
 --- !u!114 &114242423902785702
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -577,7 +579,6 @@ MonoBehaviour:
   button: {fileID: 114387382381707698}
   _toggle: {fileID: 114083715291760778}
   coverGO: {fileID: 1061446549601208}
-  lockedImage: {fileID: 8673834470866975080}
   cooldownImage: {fileID: 980003501996198068}
   cooldownCoverImage: {fileID: 6136896251125638363}
   currencyLbl: {fileID: 4589385225329978697}

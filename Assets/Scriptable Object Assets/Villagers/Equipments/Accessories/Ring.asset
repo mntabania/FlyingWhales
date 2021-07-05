@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 49d866ce53a3fb34887a699eb039ad3a, type: 3}
+  m_Name: Ring
+  m_EditorClassIdentifier: 
+  resourceType: 3
+  specificResource: 
+  resourceAmount: 20
+  purchaseCost: 20
+  tier: 2
+  description: This is ring
+  imgIcon: {fileID: 21300000, guid: 11539cea24b72df4682c57a99db1ddce, type: 3}
+  equipmentUpgradeData:
+    bonuses: 08000000
+    AdditionalPiercing: 0
+    AdditionalMaxHPPercentage: 10
+    AdditionalMaxHPActual: 10
+    AdditionalAttackPercentage: 0
+    AdditionalAttackActual: 30
+    AdditionalIntPercentage: 0
+    AdditionalIntActual: 0
+    AdditionalCritRate: 0
+    additionalResistanceBonus: 0
+    elementAttackBonus: 0
+    slayerBonus: 0
+    wardBonus: 1

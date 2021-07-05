@@ -5,7 +5,7 @@ using UnityEngine;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
 using UnityEngine.Assertions;
-
+using UtilityScripts;
 public class ForlornSpirit : TileObject {
 
     public Character possessionTarget { get; private set; }
@@ -23,7 +23,7 @@ public class ForlornSpirit : TileObject {
         Initialize(TILE_OBJECT_TYPE.FORLORN_SPIRIT, false);
         traitContainer.AddTrait(this, "Forlorn");
     }
-    public ForlornSpirit(SaveDataForlornSpirit data) {
+    public ForlornSpirit(SaveDataForlornSpirit data) : base(data) {
         _duration = GameManager.Instance.GetTicksBasedOnHour(1);
         //SaveDataForlornSpirit saveDataForlornSpirit = data as SaveDataForlornSpirit;
         Assert.IsNotNull(data);
@@ -104,10 +104,12 @@ public class ForlornSpirit : TileObject {
         }
     }
     public void GoToRandomTileInRadius() {
-        List<LocationGridTile> tilesInRadius = gridTileLocation.GetTilesInRadius(3, includeCenterTile: false, includeTilesInDifferentStructure: true);
+        List<LocationGridTile> tilesInRadius = RuinarchListPool<LocationGridTile>.Claim();
+        gridTileLocation.PopulateTilesInRadius(tilesInRadius, 3, includeCenterTile: false, includeTilesInDifferentStructure: true);
         LocationGridTile chosen = tilesInRadius[Random.Range(0, tilesInRadius.Count)];
         _spiritGO.SetDestinationTile(chosen);
         InnerMapManager.Instance.FaceTarget(this, chosen);
+        RuinarchListPool<LocationGridTile>.Release(tilesInRadius);
     }
     private void UpdateSpeed() {
         _spiritGO.SetSpeed(1f);
@@ -129,7 +131,19 @@ public class ForlornSpirit : TileObject {
     }
 
     private void ForlornEffect() {
-        possessionTarget.needsComponent.AdjustHappiness(-35);
+        int baseChance = 100;
+        SkillData spiritData = PlayerSkillManager.Instance.GetSpellData(PLAYER_SKILL_TYPE.FORLORN_SPIRIT);
+        RESISTANCE resistanceType = PlayerSkillManager.Instance.GetScriptableObjPlayerSkillData<PlayerSkillData>(PLAYER_SKILL_TYPE.FORLORN_SPIRIT).resistanceType;
+        float piercing = PlayerSkillManager.Instance.GetAdditionalPiercePerLevelBaseOnLevel(spiritData);
+        float resistanceValue = possessionTarget.piercingAndResistancesComponent.GetResistanceValue(resistanceType);
+        CombatManager.ModifyValueByPiercingAndResistance(ref baseChance, piercing, resistanceValue);
+        if (GameUtilities.RollChance(baseChance)) {
+            //Triggers Effect
+            float processedHappinessDrain = -PlayerSkillManager.Instance.GetIncreaseStatsPercentagePerLevel(spiritData);
+            possessionTarget.needsComponent.AdjustHappiness(processedHappinessDrain);
+        } else {
+            possessionTarget.reactionComponent.ResistRuinarchPower();
+        }
     }
     private void DonePossession() {
         GameManager.Instance.CreateParticleEffectAt(possessionTarget.gridTileLocation, PARTICLE_EFFECT.Minion_Dissipate);

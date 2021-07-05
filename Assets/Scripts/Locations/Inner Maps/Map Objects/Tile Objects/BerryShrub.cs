@@ -6,6 +6,7 @@ using UnityEngine;
 public class BerryShrub : Crops {
 
     public override System.Type serializedData => typeof(SaveDataBerryShrub);
+    public override TILE_OBJECT_TYPE producedObjectOnHarvest => TILE_OBJECT_TYPE.VEGETABLES;
     
     public BerryShrub() : base() {
         Initialize(TILE_OBJECT_TYPE.BERRY_SHRUB);

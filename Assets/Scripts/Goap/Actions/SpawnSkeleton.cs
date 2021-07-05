@@ -24,11 +24,13 @@ public class SpawnSkeleton : GoapAction {
         SetState("Spawn Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
+#if DEBUG_LOG
         string costLog = $"\n{name} {target.nameWithID}: +10(Constant)";
         actor.logComponent.AppendCostLog(costLog);
+#endif
         return 10;
     }
-    #endregion
+#endregion
 
    // #region Requirements
    //protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, object[] otherData) { 
@@ -40,10 +42,10 @@ public class SpawnSkeleton : GoapAction {
    // }
    // #endregion
 
-    #region State Effects
+#region State Effects
     public void AfterSpawnSuccess(ActualGoapNode goapNode) {
         //goapNode.actor.necromancerTrait.AdjustLifeAbsorbed(-1);
-        goapNode.actor.necromancerTrait.AdjustEnergy(-1);
+        goapNode.actor.necromancerTrait.AdjustEnergy(-5);
         LocationGridTile gridTile = goapNode.actor.gridTileLocation.GetRandomUnoccupiedNeighbor();
         if(gridTile == null) {
             gridTile = goapNode.actor.gridTileLocation;
@@ -51,6 +53,6 @@ public class SpawnSkeleton : GoapAction {
         Summon skeleton = CharacterManager.Instance.CreateNewSummon(SUMMON_TYPE.Skeleton, goapNode.actor.faction, homeRegion: gridTile.parentMap.region, bypassIdeologyChecking: true);
         CharacterManager.Instance.PlaceSummonInitially(skeleton, gridTile);
     }
-    #endregion
+#endregion
 
 }

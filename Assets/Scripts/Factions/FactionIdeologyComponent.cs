@@ -67,11 +67,11 @@ public class FactionIdeologyComponent : FactionComponent {
 
         Log changeIdeologyLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Faction", "Generic", "ideology_change", providedTags: LOG_TAG.Life_Changes);
         changeIdeologyLog.AddToFillers(owner, owner.name, LOG_IDENTIFIER.FACTION_1);
-        changeIdeologyLog.AddLogToDatabase();
+        changeIdeologyLog.AddLogToDatabase(true);
 
         Log changeRelationsLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Faction", "Generic", "relation_change", providedTags: LOG_TAG.Life_Changes);
         changeRelationsLog.AddToFillers(owner, owner.name, LOG_IDENTIFIER.FACTION_1);
-        changeRelationsLog.AddLogToDatabase();
+        changeRelationsLog.AddLogToDatabase(true);
         
         Messenger.Broadcast(FactionSignals.FACTION_IDEOLOGIES_CHANGED, owner);
         Messenger.Broadcast(FactionSignals.FACTION_CRIMES_CHANGED, owner);

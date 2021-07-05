@@ -20,13 +20,15 @@ public class HuntHeirloom : GoapAction {
         SetState("Hunt Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
+#if DEBUG_LOG
         string costLog = $"\n{name} {target.nameWithID}: +10(Constant)";
         actor.logComponent.AppendCostLog(costLog);
+#endif
         return 10;
     }
-    #endregion
+#endregion
 
-    #region Requirements
+#region Requirements
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, OtherData[] otherData, JobQueueItem job) {
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData, job);
         if (satisfied) {
@@ -34,15 +36,15 @@ public class HuntHeirloom : GoapAction {
         }
         return false;
     }
-    #endregion
+#endregion
 
-    #region State Effects
+#region State Effects
     public void AfterHuntSuccess(ActualGoapNode goapNode) {
         //Party party = CharacterManager.Instance.CreateNewParty(PARTY_QUEST_TYPE.Heirloom_Hunt, goapNode.actor);
         //HeirloomHuntParty heirloomParty = party as HeirloomHuntParty;
         //heirloomParty.SetTargetHeirloom(goapNode.poiTarget as Heirloom);
         //heirloomParty.SetRegionToSearch(goapNode.otherData[0].obj as Region);
     }
-    #endregion
+#endregion
 
 }

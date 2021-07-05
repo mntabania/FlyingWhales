@@ -13,8 +13,8 @@ public class BiolabUIView : MVCUIView
 		void OnSymptomsTabClicked(bool isOn);
 		void OnOnDeathClicked(bool isOn);
 		void OnCloseClicked();
-		void OnHoveredOverPlaguedRat(UIHoverPosition p_hoverPosition);
-		void OnHoveredOutPlaguedRat();
+		//void OnHoveredOverPlaguedRat(UIHoverPosition p_hoverPosition);
+		//void OnHoveredOutPlaguedRat();
 	}
 	#endregion
 	#region MVC Properties and functions to override
@@ -83,8 +83,8 @@ public class BiolabUIView : MVCUIView
 		UIModel.onSymptomsTabClicked += p_listener.OnSymptomsTabClicked;
 		UIModel.onOnDeathClicked += p_listener.OnOnDeathClicked;
 		UIModel.onCloseClicked += p_listener.OnCloseClicked;
-		UIModel.onPlaguedRatsHoveredOver += p_listener.OnHoveredOverPlaguedRat;
-		UIModel.onPlaguedRatsHoveredOut += p_listener.OnHoveredOutPlaguedRat;
+		//UIModel.onPlaguedRatsHoveredOver += p_listener.OnHoveredOverPlaguedRat;
+		//UIModel.onPlaguedRatsHoveredOut += p_listener.OnHoveredOutPlaguedRat;
 	}
 
 	public void Unsubscribe(IListener p_listener)
@@ -95,8 +95,8 @@ public class BiolabUIView : MVCUIView
 		UIModel.onSymptomsTabClicked -= p_listener.OnSymptomsTabClicked;
 		UIModel.onOnDeathClicked -= p_listener.OnOnDeathClicked;
 		UIModel.onCloseClicked -= p_listener.OnCloseClicked;
-		UIModel.onPlaguedRatsHoveredOver -= p_listener.OnHoveredOverPlaguedRat;
-		UIModel.onPlaguedRatsHoveredOut -= p_listener.OnHoveredOutPlaguedRat;
+		//UIModel.onPlaguedRatsHoveredOver -= p_listener.OnHoveredOverPlaguedRat;
+		//UIModel.onPlaguedRatsHoveredOut -= p_listener.OnHoveredOutPlaguedRat;
 	}
 	#endregion
 }

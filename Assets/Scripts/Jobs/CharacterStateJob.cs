@@ -36,16 +36,41 @@ public class CharacterStateJob : JobQueueItem {
     //Returns true if we don't want to perform top prio, false if we want the character to perform top prio job after this
     public override bool ProcessJob() {
         if (hasBeenReset) { return true; }
-        if (targetState == CHARACTER_STATE.COMBAT && assignedCharacter.combatComponent.hostilesInRange.Count <= 0 && assignedCharacter.combatComponent.avoidInRange.Count <= 0) {
-            //Added a checker here because there are times that the combat job still persist even though the hostile/avoid list is empty
-            //So if this happens, we must cancel job
-            CancelJob(false);
-            return true;
+        if (targetState == CHARACTER_STATE.COMBAT) {
+            if (assignedCharacter.combatComponent.hostilesInRange.Count > 0) {
+                //https://trello.com/c/A3OZKxcl/4088-combat-loop-issue
+                //When a character sees a hostile but he has no path to take, the combat goes into a loop because the character will process that hostile and that hostile will be added to the hostile list.
+                //Once the character added the hostile to the list a combat job will be created.
+                //Then upon processing the combat job, the character will enter combat state.
+                //After, he will evaluate the first hostile that he will attack (see GetNearestValidHostile).
+                //Upon doing so, he will remove all invalid hostiles this includes the ones he has no path to, and since the only hostile in the list is invalid, he will remove the hostile in the list, and will exit the combat.
+                //The loop happens in the AfterExitingState.
+                //After exiting combat, the character will process all pois in vision again, thus, processing the same hostile, thus creating the loop.
+                //So we put this here so that if a hostile is not valid anymore remove it before switch to state
+                for (int i = 0; i < assignedCharacter.combatComponent.hostilesInRange.Count; i++) {
+                    IPointOfInterest poi = assignedCharacter.combatComponent.hostilesInRange[i];
+                    if (!poi.IsValidCombatTargetFor(assignedCharacter)) {
+                        if (assignedCharacter.combatComponent.RemoveHostileInRange(poi, false)) {
+                            i--;
+                        }
+                    }
+                }
+            }
+            if (assignedCharacter.combatComponent.hostilesInRange.Count <= 0 && assignedCharacter.combatComponent.avoidInRange.Count <= 0) {
+                //Added a checker here because there are times that the combat job still persist even though the hostile/avoid list is empty
+                //So if this happens, we must cancel job
+                CancelJob();
+                return true;
+            }
         }
         if (assignedState == null) {
+#if DEBUG_PROFILER
             Profiler.BeginSample($"Character State Job - Process Job - Switch To State - {targetState.ToString()}");
+#endif
             CharacterState newState = assignedCharacter.stateComponent.SwitchToState(targetState, targetPOI);
+#if DEBUG_PROFILER
             Profiler.EndSample();
+#endif
             if (hasBeenReset) { return true; } //Need to check since job can be reset when the assignedCharacter switches states.
             //check if the new state is the assigned character's state, before assigning the state to this job.
             if (newState != null && assignedCharacter.stateComponent.currentState == newState) {
@@ -64,14 +89,22 @@ public class CharacterStateJob : JobQueueItem {
             }
         } else {
             if (assignedState.isDone) {
+#if DEBUG_PROFILER
                 Profiler.BeginSample($"Character State Job - Process Job - Cancel Job - isDone");
-                CancelJob(false);
+#endif
+                CancelJob();
+#if DEBUG_PROFILER
                 Profiler.EndSample();
+#endif
                 return true;
             } else if(assignedState.isPaused) {
+#if DEBUG_PROFILER
                 Profiler.BeginSample($"Character State Job - Process Job - Resume State - {assignedState.stateName}");
+#endif
                 assignedState.ResumeState();
+#if DEBUG_PROFILER
                 Profiler.EndSample();
+#endif
                 if (assignedState != null) {
                     if (assignedState.isDone && assignedCharacter.currentJob == this) {
                         assignedCharacter.SetCurrentJob(null);
@@ -90,20 +123,20 @@ public class CharacterStateJob : JobQueueItem {
             }
         } else {
             //If job is cannot be pushed back and it is pushed back, cancel it instead
-            CancelJob(false);
+            CancelJob();
         }
     }
     public override void StopJobNotDrop() {
         if (cannotBePushedBack) {
             //If job is cannot be pushed back and it is stopped, cancel it
-            CancelJob(false);
+            CancelJob();
         } else if (assignedState != null) {
             assignedState.PauseState();
             //assignedCharacter.stateComponent.SetCurrentState(null);
         }
     }
-    public override void UnassignJob(bool shouldDoAfterEffect, string reason) {
-        base.UnassignJob(shouldDoAfterEffect, reason);
+    public override void UnassignJob(string reason) {
+        base.UnassignJob(reason);
         if(assignedCharacter != null) {
             //if(assignedCharacter.stateComponent.stateToDo == assignedState) {
             //    assignedCharacter.stateComponent.SetStateToDo(null);
@@ -128,7 +161,7 @@ public class CharacterStateJob : JobQueueItem {
             //}
         }
     }
-    public override bool CancelJob(bool shouldDoAfterEffect = true, string reason = "") {
+    public override bool CancelJob(string reason = "") {
         if(assignedState != null && assignedState.characterState == CHARACTER_STATE.COMBAT) {
             if(assignedCharacter != null) {
                 if(assignedState.isPaused && !assignedState.isDone) {
@@ -139,7 +172,7 @@ public class CharacterStateJob : JobQueueItem {
                 assignedCharacter?.combatComponent.ClearAvoidInRange();
             }
         }
-        return base.CancelJob(shouldDoAfterEffect, reason);
+        return base.CancelJob(reason);
     }
     //protected override bool CanTakeJob(Character character) {
     //    if(targetState == CHARACTER_STATE.PATROL) {
@@ -156,7 +189,7 @@ public class CharacterStateJob : JobQueueItem {
         assignedState = null;
         targetPOI = null;
     }
-    #endregion
+#endregion
 
     public void SetAssignedState(CharacterState state) {
         if (state != null) {

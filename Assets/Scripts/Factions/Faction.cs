@@ -5,12 +5,15 @@ using Factions.Faction_Components;
 using UnityEngine;
 using Factions.Faction_Types;
 using Factions.Faction_Succession;
+using Inner_Maps;
 using Locations.Settlements;
 using Traits;
 using Inner_Maps.Location_Structures;
 using Logs;
+using Object_Pools;
 using UnityEngine.Assertions;
 using UnityEngine.Profiling;
+using UtilityScripts;
 using Random = UnityEngine.Random;
 
 public class Faction : IJobOwner, ISavable, ILogFiller {
@@ -22,6 +25,7 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
     public bool isMajorFaction { get; private set; }
     public ILeader leader { get; private set; }
     public Sprite emblem { get; private set; }
+    public string emblemName { get; private set; }
     public Color factionColor { get; private set; }
     public List<JobQueueItem> forcedCancelJobsOnTickEnded { get; }
     public List<Character> characters { get; }//List of characters that are part of the faction
@@ -39,6 +43,7 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
     public uint pathfindingDoorTag { get; private set; }
     public Heirloom factionHeirloom { get; private set; }
     public FactionEventDispatcher factionEventDispatcher { get; private set; }
+    public bool isDisbanded { get; private set; }
 
     //Components
     public FactionIdeologyComponent ideologyComponent { get; private set; }
@@ -46,9 +51,10 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
 
     //private readonly WeightedDictionary<Character> newLeaderDesignationWeights;
 
+    public bool isInfoUnlocked = true;
+
 
     #region getters/setters
-    public bool isDisbanded => characters.Count <= 0;
     public bool isMajorOrVagrant => isMajorFaction || this.factionType.type == FACTION_TYPE.Vagrants;
     public bool isMajorNonPlayerOrVagrant => isMajorNonPlayer || this.factionType.type == FACTION_TYPE.Vagrants;
     public bool isMajorNonPlayer => isMajorFaction && !isPlayerFaction;
@@ -69,6 +75,7 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
         SetFactionColor(UtilityScripts.Utilities.GetColorForFaction());
         SetFactionActiveState(true);
         SetFactionType(p_factionType);
+        isInfoUnlocked = true;
         race = p_race == RACE.NONE ? p_factionType.GetRaceForFactionType() : p_race;
         characters = new List<Character>();
         relationships = new Dictionary<Faction, FactionRelationship>();
@@ -102,7 +109,7 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
         name = data.name;
         description = data.description;
         emblem = FactionManager.Instance.GetFactionEmblem(data);
-        FactionManager.Instance.SetEmblemAsUsed(emblem);
+        emblemName = emblem.name;
         factionColor = data.factionColor;
         race = data.race;
         isActive = data.isActive;
@@ -119,7 +126,8 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
         //newLeaderDesignationWeights = new WeightedDictionary<Character>();
         forcedCancelJobsOnTickEnded = new List<JobQueueItem>();
         factionEventDispatcher = new FactionEventDispatcher();
-
+        isInfoUnlocked = data.isInfoUnlocked;
+        isDisbanded = data.isDisbanded;
         AddListeners();
     }
 
@@ -148,6 +156,21 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
                     character.behaviourComponent.UpdateDefaultBehaviourSet();
                 }
 
+                if (factionType.type == FACTION_TYPE.Undead && character.necromancerTrait != null) {
+                    //Every time a necromancer is added to the Undead Faction, check if it can be the faction leader
+                    if (!HasAliveNecromancerLeaderExcept(character)) {
+                        FactionManager.Instance.undeadFaction.OnlySetLeader(character);
+                        //We only call the Become Faction Leader Log so that there will be a log if necromancer becomes the faction leader of undead
+                        //So since the log is our only purpose, we just need to log it, not call another interrupt, because calling another interrupt for the sole purpose of log is bad and might cause problems
+                        //actor.interruptComponent.TriggerInterrupt(INTERRUPT.Become_Faction_Leader, actor);
+                        Log becomeLeaderLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Interrupt", "Become Faction Leader", "became_leader", null, LOG_TAG.Major);
+                        becomeLeaderLog.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                        becomeLeaderLog.AddToFillers(this, name, LOG_IDENTIFIER.FACTION_1);
+                        becomeLeaderLog.AddLogToDatabase();
+                        PlayerManager.Instance.player.ShowNotificationFrom(character, becomeLeaderLog, true);
+                    }
+                }
+
                 if (broadcastSignal) {
                     Messenger.Broadcast(FactionSignals.CHARACTER_ADDED_TO_FACTION, character, this);
                 }
@@ -163,13 +186,30 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
             }
             character.SetFaction(null);
             Messenger.Broadcast(FactionSignals.CHARACTER_REMOVED_FROM_FACTION, character, this);
-            if (isDisbanded && factionType.type != FACTION_TYPE.Undead && factionType.type != FACTION_TYPE.Vagrants && factionType.type != FACTION_TYPE.Demons) {
+            if (characters.All(c => c.isDead) && factionType.type != FACTION_TYPE.Undead && factionType.type != FACTION_TYPE.Vagrants && factionType.type != FACTION_TYPE.Demons) {
                 Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Faction", "Generic", "disband", providedTags: LOG_TAG.Major);
                 log.AddToFillers(this, name, LOG_IDENTIFIER.FACTION_1);
                 log.AddLogToDatabase();
-                PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
-                Messenger.Broadcast(FactionSignals.FACTION_DISBANDED, this);
+                PlayerManager.Instance.player.ShowNotificationFromPlayer(log, true);
+                // Messenger.Broadcast(FactionSignals.FACTION_DISBANDED, this);
+                DisbandFaction();
             }
+            return true;
+        }
+        return false;
+    }
+    /// <summary>
+    /// Function used for making a character leave this faction because we want to disband it
+    /// aka. Removing all characters from the faction. Usually because all members are dead.
+    /// </summary>
+    /// <param name="character">The character to remove.</param>
+    public bool LeaveFactionForDisband(Character character) {
+        if (characters.Remove(character)) {
+            if (leader == character) {
+                SetLeader(null); //so a new leader can be set if the leader is ever removed from the list of characters of this faction
+            }
+            character.SetFaction(null);
+            Messenger.Broadcast(FactionSignals.CHARACTER_REMOVED_FROM_FACTION, character, this);
             return true;
         }
         return false;
@@ -179,9 +219,9 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
             characters.Add(character);
             character.SetFaction(this);
             factionType.ProcessNewMember(character);
-            if (isPlayerFaction && character is Summon summon) {
-                Messenger.Broadcast(PlayerSignals.PLAYER_GAINED_SUMMON, summon);
-            }
+            //if (isPlayerFaction && character is Summon summon) {
+            //    Messenger.Broadcast(PlayerSignals.PLAYER_GAINED_SUMMON, summon);
+            //}
             return true;
         }
         return false;
@@ -194,8 +234,8 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
                 if (isMajorNonPlayer) {
                     prevCharacterLeader.behaviourComponent.RemoveBehaviourComponent(typeof(FactionLeaderBehaviour));
                     if (!prevCharacterLeader.isSettlementRuler) {
-                        prevCharacterLeader.jobComponent.RemovePriorityJob(JOB_TYPE.JUDGE_PRISONER);
-                        prevCharacterLeader.jobComponent.RemovePriorityJob(JOB_TYPE.PLACE_BLUEPRINT);
+                        prevCharacterLeader.jobComponent.RemoveAbleJob(JOB_TYPE.JUDGE_PRISONER);
+                        prevCharacterLeader.jobComponent.RemoveAbleJob(JOB_TYPE.PLACE_BLUEPRINT);
                     }
                 }
             }
@@ -204,8 +244,8 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
                 if (newCharacterLeader != null) {
                     if (isMajorNonPlayer) {
                         newCharacterLeader.behaviourComponent.AddBehaviourComponent(typeof(FactionLeaderBehaviour));
-                        newCharacterLeader.jobComponent.AddPriorityJob(JOB_TYPE.JUDGE_PRISONER);
-                        newCharacterLeader.jobComponent.AddPriorityJob(JOB_TYPE.PLACE_BLUEPRINT);
+                        newCharacterLeader.jobComponent.AddAbleJob(JOB_TYPE.JUDGE_PRISONER);
+                        newCharacterLeader.jobComponent.AddAbleJob(JOB_TYPE.PLACE_BLUEPRINT);
                     }
                 }
             }
@@ -238,7 +278,7 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
                             log.AddToFillers(newCharacterLeader, newCharacterLeader.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                             log.AddToFillers(previousRuler, previousRuler.name, LOG_IDENTIFIER.TARGET_CHARACTER);
                             log.AddToFillers(homeSettlement, homeSettlement.name, LOG_IDENTIFIER.LANDMARK_1);
-                            log.AddLogToDatabase();
+                            log.AddLogToDatabase(true);
                         }
                     } else {
                         //If the game has not yet started yet, just set the ruler and do not log it because this is the first state of the world/game
@@ -314,9 +354,10 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
         }
     }
     private void OnCharacterPresumedDead(Character missingCharacter) {
-        if (leader != null && missingCharacter == leader) {
-            SetLeader(null);
-        }
+        //Per Marvin, remove this, so it means that when a leader becomes presumed dead, he will still be the faction leader of the faction
+        //if (leader != null && missingCharacter == leader) {
+        //    SetLeader(null);
+        //}
     }
     private void OnCharacterDied(Character deadCharacter) {
         if (leader != null && deadCharacter == leader) {
@@ -324,6 +365,38 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
         }
         successionComponent.OnCharacterDied(deadCharacter);
         UpdateFactionCount();
+        if (!isDisbanded && isMajorNonPlayer) {
+            if (characters.All(c => c.isDead)) {
+                //all characters are dead
+                DisbandFaction();
+            }    
+        }
+    }
+    /// <summary>
+    /// Disband this faction. This is used to clear out all faction data,
+    /// and remove all current members of the faction.
+    /// </summary>
+    private void DisbandFaction() {
+#if DEBUG_LOG
+        Debug.Log($"Disbanded faction {name} because it has no more living members");
+#endif
+        isDisbanded = true;
+        SetFactionActiveState(false);
+        ClearOutReservedFactionData();
+        List<Character> currentMembers = RuinarchListPool<Character>.Claim();
+        currentMembers.AddRange(characters);
+        for (int i = 0; i < currentMembers.Count; i++) {
+            Character character = currentMembers[i];
+            LeaveFactionForDisband(character);
+        }
+        RuinarchListPool<Character>.Release(currentMembers);
+        RemoveListeners();
+        FactionManager.Instance.RemoveRelationshipsWith(this);
+        Messenger.Broadcast(FactionSignals.FACTION_DISBANDED, this);
+    }
+    private void ClearOutReservedFactionData() {
+        FactionEmblemRandomizer.SetEmblemAsUnUsed(emblem);
+        InnerMapManager.Instance.ReturnPathfindingPair(this);
     }
 
     private void OnCharacterReturnToLife(Character deadCharacter) {
@@ -359,12 +432,14 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
         }
     }
     private void CheckForNewLeaderDesignation() {
+        int chance = Random.Range(0, 100);
+#if DEBUG_LOG
         string debugLog =
             $"{GameManager.Instance.TodayLogString()}Checking for new faction leader designation for {name}";
         debugLog += $"\n-Chance: {newLeaderDesignationChance.ToString()}";
-        int chance = Random.Range(0, 100);
         debugLog += $"\n-Roll: {chance.ToString()}";
         Debug.Log(debugLog);
+#endif
         // chance = 0;
         if (chance < newLeaderDesignationChance) {
             DesignateNewLeader();
@@ -373,11 +448,15 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
         }
     }
     public void DesignateNewLeader(bool willLog = true) {
+#if DEBUG_LOG
         string log = $"Designating a new npcSettlement faction leader for: {name}(chance it triggered: {newLeaderDesignationChance.ToString()})";
+#endif
 
         Character chosenLeader = successionComponent.PickSuccessor();
         if (chosenLeader != null) {
+#if DEBUG_LOG
             log += $"\nCHOSEN LEADER: {chosenLeader.name}";
+#endif
             if (willLog) {
                 chosenLeader.interruptComponent.TriggerInterrupt(INTERRUPT.Become_Faction_Leader, chosenLeader);
             } else {
@@ -519,7 +598,9 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
         //    log += "\nCHOSEN LEADER: NONE";
         //}
         ResetNewLeaderDesignationChance();
+#if DEBUG_LOG
         Debug.Log(GameManager.Instance.TodayLogString() + log);
+#endif
     }
     private void ResetNewLeaderDesignationChance() {
         newLeaderDesignationChance = 5;
@@ -538,31 +619,86 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
             }
         }
     }
-    public bool HasMemberThatMeetCriteria(Func<Character, bool> criteria) {
+    public bool HasMemberThatIsNotDeadHasHomeSettlementUnoccupiedDwelling() {
         for (int i = 0; i < characters.Count; i++) {
-            if (criteria.Invoke(characters[i])) {
+            Character m = characters[i];
+            if (!m.isDead && m.homeSettlement != null && m.homeSettlement.GetFirstStructureThatIsUnoccupiedDwelling() != null) {
                 return true;
             }
         }
         return false;
     }
-    public int GetMemberCountThatMeetCriteria(Func<Character, bool> criteria) {
+    public bool HasMemberThatIsNotDeadCultLeader() {
+        for (int i = 0; i < characters.Count; i++) {
+            Character m = characters[i];
+            if (!m.isDead && m.characterClass.className == "Cult Leader") {
+                return true;
+            }
+        }
+        return false;
+    }
+    public bool HasMemberThatIsNotDeadAndIsFamilyOrLoverAndNotEnemyRivalWith(Character p_character) {
+        for (int i = 0; i < characters.Count; i++) {
+            Character m = characters[i];
+            if (!m.isDead && (p_character.relationshipContainer.IsFamilyMember(m) || p_character.relationshipContainer.HasRelationshipWith(m, RELATIONSHIP_TYPE.LOVER)) && !p_character.relationshipContainer.IsEnemiesWith(m)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    public bool HasMemberThatIsNotDeadAndIsCloseFriendWith(Character p_character) {
+        for (int i = 0; i < characters.Count; i++) {
+            Character m = characters[i];
+            if (!m.isDead && p_character.relationshipContainer.GetOpinionLabel(m) == RelationshipManager.Close_Friend) {
+                return true;
+            }
+        }
+        return false;
+    }
+    public bool HasMemberThatIsNotDeadAndIsRivalWith(Character p_character) {
+        for (int i = 0; i < characters.Count; i++) {
+            Character m = characters[i];
+            if (!m.isDead && p_character.relationshipContainer.GetOpinionLabel(m) == RelationshipManager.Rival) {
+                return true;
+            }
+        }
+        return false;
+    }
+    public bool HasMemberThatIsNotDeadAndIsFriendWith(Character p_character) {
+        for (int i = 0; i < characters.Count; i++) {
+            Character m = characters[i];
+            if (!m.isDead && p_character.relationshipContainer.GetOpinionLabel(m) == RelationshipManager.Friend) {
+                return true;
+            }
+        }
+        return false;
+    }
+    public bool HasMemberThatIsSapientAndIsAtHomeOrHasJoinedQuest() {
+        for (int i = 0; i < characters.Count; i++) {
+            Character m = characters[i];
+            if (m.race.IsSapient() && (m.IsAtHome() || m.partyComponent.isMemberThatJoinedQuest)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    public bool HasMemberThatIsNotDead() {
+        for (int i = 0; i < characters.Count; i++) {
+            Character m = characters[i];
+            if (!m.isDead) {
+                return true;
+            }
+        }
+        return false;
+    }
+    public int GetAliveMembersCount() {
         int count = 0;
         for (int i = 0; i < characters.Count; i++) {
-            if (criteria.Invoke(characters[i])) {
+            Character m = characters[i];
+            if (!m.isDead) {
                 count++;
             }
         }
-        return count;
-    }
-
-    public int GetAliveMembersCount() {
-        int count = 0;
-        characters.ForEach((eachCharacter) => {
-            if (!eachCharacter.isDead) {
-                count++;
-            }
-        });
         return count;
     }
 
@@ -575,9 +711,18 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
         }
         return false;
     }
-    #endregion
+    public bool HasAliveNecromancerLeaderExcept(Character p_character) {
+        for (int i = 0; i < characters.Count; i++) {
+            Character character = characters[i];
+            if (character != p_character && !character.isDead && character.necromancerTrait != null && leader == character) {
+                return true;
+            }
+        }
+        return false;
+    }
+#endregion
 
-    #region Utilities
+#region Utilities
     private void AddListeners() {
         Messenger.AddListener<Character>(CharacterSignals.CHARACTER_REMOVED, OnCharacterRemoved);
         Messenger.AddListener<Character>(CharacterSignals.CHARACTER_CHANGED_RACE, OnCharacterRaceChange);
@@ -628,8 +773,11 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
         return rel.relationshipStatus == FACTION_RELATIONSHIP_STATUS.Hostile;
     }
     public bool IsFriendlyWith(Faction faction) {
-        if (faction == this) {
+        if (faction == null) {
             return false;
+        }
+        if (faction == this) {
+            return true;
         }
         FactionRelationship rel = GetRelationshipWith(faction);
         return rel.relationshipStatus == FACTION_RELATIONSHIP_STATUS.Friendly;
@@ -648,9 +796,13 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
         return $"{UtilityScripts.GameUtilities.GetNormalizedRaceAdjective(race)} Faction";
     }
     private void OnTickEnded() {
+#if DEBUG_PROFILER
         Profiler.BeginSample($"Faction On Tick Ended");
+#endif
         ProcessForcedCancelJobsOnTickEnded();
+#if DEBUG_PROFILER
         Profiler.EndSample();
+#endif
     }
     private void OnDayStarted() {
         ClearAllBlacklistToAllExistingJobs();
@@ -663,9 +815,9 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
         }
         return name;
     }
-    #endregion
+#endregion
 
-    #region Relationships
+#region Relationships
     public void AddNewRelationship(Faction relWith, FactionRelationship relationship) {
         if (!relationships.ContainsKey(relWith)) {
             relationships.Add(relWith, relationship);
@@ -703,29 +855,6 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
         }
         return false;
     }
-    public Faction GetFactionWithRelationship(FACTION_RELATIONSHIP_STATUS stat, bool excludePlayer = true) {
-        foreach (KeyValuePair<Faction, FactionRelationship> kvp in relationships) {
-            if (excludePlayer && kvp.Key.isPlayerFaction) {
-                continue; //exclude player faction
-            }
-            if (kvp.Value.relationshipStatus == stat) {
-                return kvp.Key;
-            }
-        }
-        return null;
-    }
-    public List<Faction> GetFactionsWithRelationship(FACTION_RELATIONSHIP_STATUS stat, bool excludePlayer = true) {
-        List<Faction> factions = new List<Faction>();
-        foreach (KeyValuePair<Faction, FactionRelationship> kvp in relationships) {
-            if (excludePlayer && kvp.Key.isPlayerFaction) {
-                continue; //exclude player faction
-            }
-            if (kvp.Value.relationshipStatus == stat) {
-                factions.Add(kvp.Key);
-            }
-        }
-        return factions;
-    }
     public bool SetRelationshipFor(Faction otherFaction, FACTION_RELATIONSHIP_STATUS status) {
         if (relationships.ContainsKey(otherFaction)) {
             return relationships[otherFaction].SetRelationshipStatus(status);
@@ -743,28 +872,29 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
         return false;
     }
     public Faction GetRandomAtWarFaction() {
-        List<Faction> factions = null;
+        Faction chosenFaction = null;
+        List<Faction> factions = RuinarchListPool<Faction>.Claim();
         foreach (KeyValuePair<Faction, FactionRelationship> kvp in relationships) {
             if (kvp.Key.isActive && kvp.Key.isMajorNonPlayer && kvp.Value.relationshipStatus == FACTION_RELATIONSHIP_STATUS.Hostile) {
-                if(factions == null) { factions = new List<Faction>(); }
                 factions.Add(kvp.Key);
             }
         }
-        if(factions != null && factions.Count > 0) {
-            return factions[UnityEngine.Random.Range(0, factions.Count)];
+        if(factions.Count > 0) {
+            chosenFaction = factions[GameUtilities.RandomBetweenTwoNumbers(0, factions.Count - 1)];
         }
-        return null;
+        RuinarchListPool<Faction>.Release(factions);
+        return chosenFaction;
     }
-    #endregion
+#endregion
 
-    #region Death
+#region Death
     public void Death() {
         RemoveListeners();
         FactionManager.Instance.RemoveRelationshipsWith(this);
     }
-    #endregion
+#endregion
 
-    #region Areas
+#region Areas
     public void AddToOwnedSettlements(BaseSettlement settlement) {
         if (!ownedSettlements.Contains(settlement)) {
             ownedSettlements.Add(settlement);
@@ -802,6 +932,14 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
     public bool HasOwnedSettlement() {
         return ownedSettlements.Count > 0;
     }
+    public bool HasOwnedVillages() {
+        for (int i = 0; i < ownedSettlements.Count; i++) {
+            if (ownedSettlements[i].locationType == LOCATION_TYPE.VILLAGE) {
+                return true;
+            }
+        }
+        return false;
+    }
     public bool HasOwnedSettlementExcept(NPCSettlement settlementException) {
         for (int i = 0; i < ownedSettlements.Count; i++) {
             if (ownedSettlements[i] is NPCSettlement settlement) {
@@ -812,9 +950,10 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
         }
         return false;
     }
-    public bool HasOwnedSettlementThatMeetCriteria(Func<BaseSettlement, bool> criteria) {
+    public bool HasOwnedSettlementThatHasAliveResidentAndIsNotHomeOf(Character p_character) {
         for (int i = 0; i < ownedSettlements.Count; i++) {
-            if (criteria.Invoke(ownedSettlements[i])) {
+            BaseSettlement s = ownedSettlements[i];
+            if (s != p_character.homeSettlement && s.HasResidentThatIsNotDead()) {
                 return true;
             }
         }
@@ -826,14 +965,20 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
         }
         return null;
     }
-    public BaseSettlement GetFirstOwnedSettlementThatMeetCriteria(Func<BaseSettlement, bool> criteria) {
+    public BaseSettlement GetRandomOwnedVillage() {
+        BaseSettlement chosenVillage = null;
+        List<BaseSettlement> villages = RuinarchListPool<BaseSettlement>.Claim();
         for (int i = 0; i < ownedSettlements.Count; i++) {
-            BaseSettlement settlement = ownedSettlements[i];
-            if (criteria.Invoke(settlement)) {
-                return settlement;
+            BaseSettlement s = ownedSettlements[i];
+            if (s.locationType == LOCATION_TYPE.VILLAGE) {
+                villages.Add(s);
             }
         }
-        return null;
+        if (villages.Count > 0) {
+            chosenVillage = villages[GameUtilities.RandomBetweenTwoNumbers(0, villages.Count - 1)];
+        }
+        RuinarchListPool<BaseSettlement>.Release(villages);
+        return chosenVillage;
     }
     //public bool HasOwnedStructures() {
     //    return ownedStructures.Count > 0;
@@ -851,6 +996,11 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
     #region Emblems
     public void SetEmblem(Sprite sprite) {
         emblem = sprite;
+        if (emblem != null) {
+            emblemName = emblem.name;
+        } else {
+            emblemName = string.Empty;
+        }
     }
     #endregion
 
@@ -861,20 +1011,26 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
         } else {
             availableJobs.Insert(position, job);
         }
+#if DEBUG_LOG
         if (job is GoapPlanJob goapJob) {
             Debug.Log($"{GameManager.Instance.TodayLogString()}{goapJob} targeting {goapJob.targetPOI} was added to {name}'s available jobs");
         } else {
             Debug.Log($"{GameManager.Instance.TodayLogString()}{job} was added to {name}'s available jobs");    
         }
+#endif
         
     }
     public bool RemoveFromAvailableJobs(JobQueueItem job) {
         if (availableJobs.Remove(job)) {
             if (job is GoapPlanJob) {
                 GoapPlanJob goapJob = job as GoapPlanJob;
+#if DEBUG_LOG
                 Debug.Log($"{GameManager.Instance.TodayLogString()}{goapJob} targeting {goapJob.targetPOI?.name} was removed from {name}'s available jobs");
+#endif
             } else {
-                Debug.Log($"{GameManager.Instance.TodayLogString()}{job} was removed from {name}'s available jobs");    
+#if DEBUG_LOG
+                Debug.Log($"{GameManager.Instance.TodayLogString()}{job} was removed from {name}'s available jobs");
+#endif
             }
             OnJobRemovedFromAvailableJobs(job);
             return true;
@@ -911,54 +1067,6 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
             }
         }
         return false;
-    }
-    public bool HasJob(GoapEffect effect, IPointOfInterest target) {
-        for (int i = 0; i < availableJobs.Count; i++) {
-            JobQueueItem jqi = availableJobs[i];
-            if (jqi is GoapPlanJob) {
-                GoapPlanJob gpj = jqi as GoapPlanJob;
-                if (effect.conditionType == gpj.goal.conditionType
-                    && effect.conditionKey == gpj.goal.conditionKey
-                    && effect.target == gpj.goal.target
-                    && target == gpj.targetPOI) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-    public JobQueueItem GetJob(params JOB_TYPE[] jobTypes) {
-        for (int i = 0; i < availableJobs.Count; i++) {
-            for (int j = 0; j < jobTypes.Length; j++) {
-                JobQueueItem job = availableJobs[i];
-                if (job.jobType == jobTypes[j]) {
-                    return job;
-                }
-            }
-        }
-        return null;
-    }
-    public List<JobQueueItem> GetJobs(params JOB_TYPE[] jobTypes) {
-        List<JobQueueItem> jobs = new List<JobQueueItem>();
-        for (int i = 0; i < availableJobs.Count; i++) {
-            JobQueueItem job = availableJobs[i];
-            if (jobTypes.Contains(job.jobType)) {
-                jobs.Add(job);
-            }
-        }
-        return jobs;
-    }
-    public JobQueueItem GetJob(JOB_TYPE job, IPointOfInterest target) {
-        for (int i = 0; i < availableJobs.Count; i++) {
-            JobQueueItem jqi = availableJobs[i];
-            if (jqi is GoapPlanJob) {
-                GoapPlanJob gpj = jqi as GoapPlanJob;
-                if (job == gpj.jobType && target == gpj.targetPOI) {
-                    return gpj;
-                }
-            }
-        }
-        return null;
     }
     public JobQueueItem GetFirstUnassignedJobToCharacterJob(Character character) {
         for (int i = 0; i < availableJobs.Count; i++) {
@@ -1001,9 +1109,9 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
         }
         return false;
     }
-    #endregion
+#endregion
 
-    #region IJobOwner
+#region IJobOwner
     public void OnJobAddedToCharacterJobQueue(JobQueueItem job, Character character) { }
     public void OnJobRemovedFromCharacterJobQueue(JobQueueItem job, Character character) {
         if (!job.IsJobStillApplicable()) {
@@ -1021,22 +1129,28 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
     public void ProcessForcedCancelJobsOnTickEnded() {
         if (forcedCancelJobsOnTickEnded.Count > 0) {
             for (int i = 0; i < forcedCancelJobsOnTickEnded.Count; i++) {
-                forcedCancelJobsOnTickEnded[i].ForceCancelJob(false);
+                forcedCancelJobsOnTickEnded[i].ForceCancelJob();
             }
             forcedCancelJobsOnTickEnded.Clear();
         }
     }
-    #endregion
+#endregion
 
-    #region War Declaration
+#region War Declaration
     public void CheckForWar(Faction targetFaction, CRIME_SEVERITY crimeSeverity, Character crimeCommitter, Character crimeTarget, ActualGoapNode crime) {
         if (targetFaction != this && targetFaction != null) {
+#if DEBUG_LOG
             string debugLog = $"Checking for war {name} against {targetFaction.name}";
+#endif
             if (!factionType.HasIdeology(FACTION_IDEOLOGY.Peaceful)) {
+#if DEBUG_LOG
                 debugLog += $"\n{name} is not a peaceful faction.";
+#endif
                 bool isTargetPartOfFaction = crimeTarget != null && crimeTarget.faction == this;
+#if DEBUG_LOG
                 debugLog += $"\nTarget of committed crime is part of faction {name}: {isTargetPartOfFaction.ToString()}";
                 debugLog += $"\nSeverity of committed crime is {crimeSeverity.ToString()}.";
+#endif
                 float chance = 0f;
                 if (isTargetPartOfFaction) {
                     switch (crimeSeverity) {
@@ -1069,54 +1183,74 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
                             break;
                     }
                     if (factionType.HasIdeology(FACTION_IDEOLOGY.Warmonger)) {
+#if DEBUG_LOG
                         debugLog += $"\n{name} is a warmonger faction.";
+#endif
                         chance *= 1.5f;
                     }
                 } else {
+#if DEBUG_LOG
                     debugLog += $"\nTarget is not part of faction.";
+#endif
                     //target is not part of faction
                     if (crimeSeverity == CRIME_SEVERITY.Heinous && (crimeCommitter.isFactionLeader || crimeCommitter.isSettlementRuler)) {
-                        debugLog += $"\nCrime severity   Heinous and {crimeCommitter.name} is Faction Leader or Settlement Ruler";
+#if DEBUG_LOG
+                        debugLog += $"\nCrime severity Heinous and {crimeCommitter.name} is Faction Leader or Settlement Ruler";
+#endif
                         chance = 50f;
                     }
                     if (factionType.HasIdeology(FACTION_IDEOLOGY.Warmonger)) {
+#if DEBUG_LOG
                         debugLog += $"\n{name} is a warmonger faction.";
+#endif
                         chance *= 1.5f;
                     }
                 }
 
                 float roll = Random.Range(0f, 100f);
+#if DEBUG_LOG
                 debugLog += $"\nChance for war is {chance.ToString()}. Roll is {roll.ToString()}";
+#endif
                 if (roll < chance) {
+#if DEBUG_LOG
                     debugLog += $"\nChance for war met, setting {name} and {targetFaction.name} as Hostile.";
+#endif
                     if (SetRelationshipFor(targetFaction, FACTION_RELATIONSHIP_STATUS.Hostile)) {
+#if DEBUG_LOG
                         debugLog += $"\nSuccessfully set {name} and {targetFaction.name} as Hostile.";
+#endif
                         Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Faction", "Generic", "declare_war", providedTags: LOG_TAG.Life_Changes);
                         log.AddToFillers(this, name, LOG_IDENTIFIER.FACTION_1);
                         log.AddToFillers(targetFaction, targetFaction.name, LOG_IDENTIFIER.FACTION_2);
                         log.AddToFillers(crime.descriptionLog.fillers);
                         log.AddToFillers(null, crime.descriptionLog.unReplacedText, LOG_IDENTIFIER.APPEND);
                         log.AddLogToDatabase();    
-                        PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
+                        PlayerManager.Instance.player.ShowNotificationFromPlayer(log, true);
                     } else {
+#if DEBUG_LOG
                         debugLog += $"\nCould not set {name} and {targetFaction.name} as Hostile.";
+#endif
                     }
                 }
             } else {
+#if DEBUG_LOG
                 debugLog += $"\n{name} is a peaceful faction.";
+#endif
             }
+#if DEBUG_LOG
             Debug.Log(debugLog);
+#endif
         }
     }
-    #endregion
+#endregion
 
-    #region Crime
+#region Crime
     public CRIME_SEVERITY GetCrimeSeverity(Character actor, IPointOfInterest target, CRIME_TYPE crimeType) {
         return factionType.GetCrimeSeverity(actor, target, crimeType);
     }
-    #endregion
+#endregion
 
-    #region Heirloom
+#region Heirloom
     public void SetFactionHeirloom(TileObject heirloom) {
         if(factionHeirloom != heirloom) {
             factionHeirloom = heirloom as Heirloom;
@@ -1136,25 +1270,25 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
     }
     private void DoneHeirloomSearch() {
         if(factionHeirloom != null) {
-            if(factionHeirloom.gridTileLocation != null && !factionHeirloom.IsInStructureSpot() && factionHeirloom.gridTileLocation.collectionOwner.isPartOfParentRegionMap
-                && factionHeirloom.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.biomeType == BIOMES.DESERT && !partyQuestBoard.HasPartyQuest(PARTY_QUEST_TYPE.Heirloom_Hunt) && !HasJob(JOB_TYPE.HUNT_HEIRLOOM)) {
+            if(factionHeirloom.gridTileLocation != null && !factionHeirloom.IsInStructureSpot() && 
+               !partyQuestBoard.HasPartyQuest(PARTY_QUEST_TYPE.Heirloom_Hunt) && !HasJob(JOB_TYPE.HUNT_HEIRLOOM)) {
                 factionJobTriggerComponent.TriggerHeirloomHuntJob(factionHeirloom.gridTileLocation.structure.region);
             }
             HeirloomSearch();
         }
     }
-    #endregion
+#endregion
 
-    #region Pathfinding
+#region Pathfinding
     public void SetPathfindingTag(uint tag) {
         pathfindingTag = tag;
     }
     public void SetPathfindingDoorTag(uint tag) {
         pathfindingDoorTag = tag;
     }
-    #endregion
+#endregion
 
-    #region Faction Type
+#region Faction Type
     public bool SetFactionType(FactionType factionType) {
         if(this.factionType == null || this.factionType.type != factionType.type) {
             this.factionType = factionType;
@@ -1175,9 +1309,9 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
             FactionInfoHubUI.Instance.UpdateFactionItem(this);
         }
     }
-    #endregion
+#endregion
 
-    #region Loading
+#region Loading
     public void LoadReferences(SaveDataFaction data) {
         if (!data.isLeaderPlayer) {
             if (!string.IsNullOrEmpty(data.leaderID)) {
@@ -1195,28 +1329,36 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
         }
         for (int i = 0; i < data.bannedCharacterIDs.Count; i++) {
             Character character = CharacterManager.Instance.GetCharacterByPersistentID(data.bannedCharacterIDs[i]);
-            bannedCharacters.Add(character);
+            if (character != null) {
+                bannedCharacters.Add(character);
+            }
         }
 
-        foreach (KeyValuePair<string, SaveDataFactionRelationship> item in data.relationships) {
-            Faction faction2 = FactionManager.Instance.GetFactionByPersistentID(item.Key);
-            FactionRelationship rel = GetRelationshipWith(faction2); //check first if this faction has reference to relationship with faction 2
-            if (rel == null) {
-                rel = faction2.GetRelationshipWith(this); //if none, check if faction 2 has reference to relationship with faction 1
+        if (!isDisbanded) {
+            //only load relationships if this faction is not yet disbanded since we remove relations with disbanded factions, 
+            //this is currently a problem because we still load disbanded factions, since some things might still reference it.
+            //And it is currently unsafe to completely remove disbanded factions from the all factions list. Change added June 29, 2021
+            foreach (KeyValuePair<string, SaveDataFactionRelationship> item in data.relationships) {
+                Faction faction2 = FactionManager.Instance.GetFactionByPersistentID(item.Key);
+                FactionRelationship rel = GetRelationshipWith(faction2); //check first if this faction has reference to relationship with faction 2
                 if (rel == null) {
-                    rel = item.Value.Load(); //if still none, then load new instance of relationship between the 2 factions
+                    rel = faction2.GetRelationshipWith(this); //if none, check if faction 2 has reference to relationship with faction 1
+                    if (rel == null) {
+                        rel = item.Value.Load(); //if still none, then load new instance of relationship between the 2 factions
+                    }
                 }
-            }
-            Assert.IsNotNull(rel, $"Relationship between {name} and {faction2.name} is null!");
-            AddNewRelationship(faction2, rel);
-            faction2.AddNewRelationship(this, rel);
+                Assert.IsNotNull(rel, $"Relationship between {name} and {faction2.name} is null!");
+                AddNewRelationship(faction2, rel);
+                faction2.AddNewRelationship(this, rel);
             
-            // rel = faction2.GetRelationshipWith(this);
-            // if (rel == null) {
-            //     rel = item.Value.Load();
-            // }
-            // faction2.AddNewRelationship(this, rel);
+                // rel = faction2.GetRelationshipWith(this);
+                // if (rel == null) {
+                //     rel = item.Value.Load();
+                // }
+                // faction2.AddNewRelationship(this, rel);
+            }    
         }
+        
 
         // for (int i = 0; i < data.history.Count; i++) {
         //     Log log = DatabaseManager.Instance.logDatabase.GetLogByPersistentID(data.history[i]);
@@ -1227,12 +1369,18 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
             BaseSettlement settlement = DatabaseManager.Instance.settlementDatabase.GetSettlementByPersistentID(data.ownedSettlementIDs[i]);
             ownedSettlements.Add(settlement);
         }
-
+        if (isMajorNonPlayer && isActive && !isDisbanded) {
+            PathfindingTagPair pair = new PathfindingTagPair(data.pathfindingTag, data.pathfindingDoorTag);
+            InnerMapManager.Instance.SetPathfindingTagPairAsClaimed(pair); 
+        }
+        if (isActive && !isDisbanded) {
+            FactionEmblemRandomizer.SetEmblemAsUsed(emblem);
+        }
         partyQuestBoard.LoadReferences(data.partyQuestBoard);
         successionComponent.LoadReferences(data.successionComponent);
 
     }
-    #endregion
+#endregion
 
     
 }

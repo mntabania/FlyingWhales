@@ -7,17 +7,25 @@ using Traits;
 using UnityEngine.Assertions;
 namespace Traits {
     public class Necromancer : Trait {
+
+        public const int MaxSkeletonFollowers = 25;
+        
         public Character owner { get; private set; }
         public LocationStructure lairStructure { get; private set; }
         public NPCSettlement attackVillageTarget { get; private set; }
         public string prevClassName { get; private set; }
         public int lifeAbsorbed { get; private set; }
         public int energy { get; private set; }
+        public bool doNotSpawnLair { get; private set; }
+        public GameDate spawnLairDate { get; private set; }
 
         #region getters
-        public int numOfSkeletonFollowers => GetNumOfSkeletonFollowers();
-        public int numOfSkeletonFollowersInSameRegion => GetNumOfSkeletonFollowersInSameRegion();
+        //Commented this out since nothing uses it anymore, and technically GetNumOfSkeletonFollowersInSameRegion()
+        //is same as number of skeleton followers since we only have 1 region now
+        // public int numOfSkeletonFollowers => GetNumOfSkeletonFollowers(); 
+        public int numOfSkeletonFollowers => GetNumOfSkeletonFollowersInSameRegion();
         public override Type serializedData => typeof(SaveDataNecromancer);
+        public override bool affectsNameIcon => true;
         #endregion
 
         public Necromancer() {
@@ -27,6 +35,7 @@ namespace Traits {
             effect = TRAIT_EFFECT.NEUTRAL;
             ticksDuration = 0;
             advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.BUILD_LAIR, INTERACTION_TYPE.SPAWN_SKELETON, INTERACTION_TYPE.READ_NECRONOMICON, INTERACTION_TYPE.MEDITATE, INTERACTION_TYPE.REGAIN_ENERGY };
+            AddTraitOverrideFunctionIdentifier(TraitManager.See_Poi_Trait);
         }
 
         #region Loading
@@ -43,6 +52,14 @@ namespace Traits {
             prevClassName = saveDataNecromancer.prevClassName;
             lifeAbsorbed = saveDataNecromancer.lifeAbsorbed;
             energy = saveDataNecromancer.energy;
+            doNotSpawnLair = saveDataNecromancer.doNotSpawnLair;
+            spawnLairDate = saveDataNecromancer.spawnLairDate;
+        }
+        public override void LoadSecondWaveInstancedTrait(SaveDataTrait p_saveDataTrait) {
+            base.LoadSecondWaveInstancedTrait(p_saveDataTrait);
+            if (doNotSpawnLair) {
+                SchedulingManager.Instance.AddEntry(spawnLairDate, () => SetDoNotSpawnLair(false), null);
+            }
         }
         #endregion
 
@@ -57,11 +74,11 @@ namespace Traits {
             owner.SetNecromancerTrait(this);
             //NOTE: The changing of faction and clearing out home is moved in Necromantic Transformation interrupt, the reason is the necromancer must not change faction every time he changes classes because he can be a master lycan
             //The creation of lair must also be done only once
-            AdjustEnergy(5);
+            AdjustEnergy(10);
             owner.jobQueue.CancelAllJobs();
             owner.movementComponent.SetEnableDigging(true);
             owner.movementComponent.SetAvoidSettlements(true);
-            Messenger.Broadcast(SpellSignals.RELOAD_PLAYER_ACTIONS, owner as IPlayerActionTarget);
+            Messenger.Broadcast(PlayerSkillSignals.RELOAD_PLAYER_ACTIONS, owner as IPlayerActionTarget);
         }
         public override void LoadTraitOnLoadTraitContainer(ITraitable addTo) {
             base.LoadTraitOnLoadTraitContainer(addTo);
@@ -76,11 +93,33 @@ namespace Traits {
             owner.behaviourComponent.RemoveBehaviourComponent(typeof(NecromancerBehaviour));
             owner.SetNecromancerTrait(null);
             //owner.ChangeFactionTo(FactionManager.Instance.vagrantFaction);
-            FactionManager.Instance.undeadFaction.OnlySetLeader(null);
+            if (FactionManager.Instance.undeadFaction.leader == owner) {
+                FactionManager.Instance.undeadFaction.OnlySetLeader(null);
+            }
             CharacterManager.Instance.SetNecromancerInTheWorld(null);
             owner.movementComponent.SetEnableDigging(false);
             owner.movementComponent.SetAvoidSettlements(false);
-            Messenger.Broadcast(SpellSignals.RELOAD_PLAYER_ACTIONS, owner as IPlayerActionTarget);
+            Messenger.Broadcast(PlayerSkillSignals.RELOAD_PLAYER_ACTIONS, owner as IPlayerActionTarget);
+        }
+        public override bool OnSeePOI(IPointOfInterest targetPOI, Character characterThatWillDoJob) {
+            if (targetPOI is Character || targetPOI is Tombstone) {
+                Character targetCharacter = null;
+                if (targetPOI is Character character) {
+                    if (character is Summon summon) {
+                        if (!summon.hasBeenRaisedFromDead) {
+                            targetCharacter = character;        
+                        }
+                    } else {
+                        targetCharacter = character;
+                    }
+                } else if (targetPOI is Tombstone tombstone) {
+                    targetCharacter = tombstone.character;
+                }
+                if (targetCharacter != null && targetCharacter.isDead && targetCharacter.hasMarker && numOfSkeletonFollowers < MaxSkeletonFollowers) {
+                    return characterThatWillDoJob.jobComponent.TriggerRaiseCorpse(targetCharacter);
+                }
+            }
+            return false;
         }
         #endregion
 
@@ -93,16 +132,17 @@ namespace Traits {
         }
         public void AdjustEnergy(int amount) {
             energy += amount;
+            energy = Mathf.Clamp(energy, 0, 10);
         }
-        private int GetNumOfSkeletonFollowers() {
-            int count = 0;
-            for (int i = 0; i < owner.faction.characters.Count; i++) {
-                if(owner.faction.characters[i].race == RACE.SKELETON) {
-                    count++;
-                }
-            }
-            return count;
-        }
+        // private int GetNumOfSkeletonFollowers() {
+        //     int count = 0;
+        //     for (int i = 0; i < owner.faction.characters.Count; i++) {
+        //         if(owner.faction.characters[i].race == RACE.SKELETON) {
+        //             count++;
+        //         }
+        //     }
+        //     return count;
+        // }
         private int GetNumOfSkeletonFollowersInSameRegion() {
             int count = 0;
             for (int i = 0; i < owner.faction.characters.Count; i++) {
@@ -126,6 +166,18 @@ namespace Traits {
         public void SetAttackVillageTarget(NPCSettlement npcSettlement) {
             attackVillageTarget = npcSettlement;
         }
+        public void SetDoNotSpawnLair(bool p_state) {
+            if (doNotSpawnLair != p_state) {
+                doNotSpawnLair = p_state;
+                if (owner.isDead) {
+                    return;
+                }
+                if (doNotSpawnLair) {
+                    spawnLairDate = GameManager.Instance.Today().AddTicks(GameManager.Instance.GetTicksBasedOnHour(4));
+                    SchedulingManager.Instance.AddEntry(spawnLairDate, () => SetDoNotSpawnLair(false), null);
+                }
+            }
+        }
         #endregion
     }
 }
@@ -137,6 +189,8 @@ public class SaveDataNecromancer : SaveDataTrait {
     public string prevClassName;
     public int lifeAbsorbed;
     public int energy;
+    public bool doNotSpawnLair;
+    public GameDate spawnLairDate;
     public override void Save(Trait trait) {
         base.Save(trait);
         Necromancer necromancer = trait as Necromancer;
@@ -146,6 +200,8 @@ public class SaveDataNecromancer : SaveDataTrait {
         prevClassName = necromancer.prevClassName;
         lifeAbsorbed = necromancer.lifeAbsorbed;
         energy = necromancer.energy;
+        doNotSpawnLair = necromancer.doNotSpawnLair;
+        spawnLairDate = necromancer.spawnLairDate;
     }
 }
 #endregion

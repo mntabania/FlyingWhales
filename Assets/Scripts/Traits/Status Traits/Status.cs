@@ -54,10 +54,11 @@ namespace Traits {
 
         #region Overrides
         public override string GetTestingData(ITraitable traitable = null) {
+            string data = base.GetTestingData(traitable);
             if (traitable != null && traitable.traitContainer.stacks.ContainsKey(this.name)) {
-                return $"Stacks: {traitable.traitContainer.stacks[this.name].ToString()}/{stackLimit.ToString()}";
+                return $"{data}Stacks: {traitable.traitContainer.stacks[this.name].ToString()}/{stackLimit.ToString()}";
             }
-            return string.Empty;
+            return data;
         }
         public override string GetNameInUI(ITraitable traitable) {
             Dictionary<string, int> stacks = traitable.traitContainer.stacks;
@@ -69,6 +70,39 @@ namespace Traits {
                 }
             }
             return name;
+        }
+        #endregion
+
+        #region Player Source Chaos Orb
+        protected void EnablePlayerSourceChaosOrb(Character p_owner) {
+            p_owner.traitComponent.SetWillProcessPlayerSourceChaosOrb(true);
+        }
+        protected void DisablePlayerSourceChaosOrb(Character p_owner) {
+            bool shouldDisable = true;
+            if (p_owner.traitContainer.HasTrait("Burning", "Frozen", "Poisoned", "Ensnared")) {
+                Burning burning = p_owner.traitContainer.GetTraitOrStatus<Burning>("Burning");
+                if (burning != null && burning.isPlayerSource) {
+                    shouldDisable = false;
+                } else {
+                    Frozen frozen = p_owner.traitContainer.GetTraitOrStatus<Frozen>("Frozen");
+                    if (frozen != null && frozen.isPlayerSource) {
+                        shouldDisable = false;
+                    } else {
+                        Poisoned poisoned = p_owner.traitContainer.GetTraitOrStatus<Poisoned>("Poisoned");
+                        if (poisoned != null && poisoned.isPlayerSource) {
+                            shouldDisable = false;
+                        } else {
+                            Ensnared ensnared = p_owner.traitContainer.GetTraitOrStatus<Ensnared>("Ensnared");
+                            if (ensnared != null && ensnared.isPlayerSource) {
+                                shouldDisable = false;
+                            }
+                        }
+                    }
+                }
+            }
+            if (shouldDisable) {
+                p_owner.traitComponent.SetWillProcessPlayerSourceChaosOrb(false);
+            }
         }
         #endregion
     }

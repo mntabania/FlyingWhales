@@ -12,5 +12,12 @@
     /// Parameters: KeyCode (Pressed Key)
     /// </summary>
     public static string KEY_DOWN = "OnKeyDown";
+    public static string KEY_DOWN_EMPTY_SPACE = "OnKeyDownEmptySpace";
     public static string ZOOM_WORLD_MAP_CAMERA = "OnZoomWorldMapCamera";
+    /// <summary>
+    /// Parameters: KeyCode (Pressed Key)
+    /// </summary>
+    public static string KEY_UP = "OnKeyUp";
+    public static string LEFT_SHIFT_DOWN = "OnLeftShiftPressed";
+    public static string LEFT_SHIFT_UP = "OnLeftShiftUp";
 }

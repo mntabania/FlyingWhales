@@ -21,14 +21,16 @@ namespace Plague.Death_Effect {
                     VarietyZombie(p_character);
                     break;
             }
+#if DEBUG_LOG
             Debug.Log("Activated Zombie Effect");
+#endif
         }
         protected override int GetNextLevelUpgradeCost() {
             switch (_level) {
                 case 1:
-                    return 30;
-                case 2:
                     return 50;
+                case 2:
+                    return 75;
                 default:
                     return -1; //Max Level
             }
@@ -52,13 +54,13 @@ namespace Plague.Death_Effect {
         private void WalkerZombie(Character p_character) {
             if (!p_character.characterClass.IsZombie()) {
                 p_character.visuals.UsePreviousClassAsset(true);
-                p_character.AssignClass("Walker Zombie");
+                p_character.classComponent.AssignClass("Walker Zombie");
             }
         }
         private void NightZombie(Character p_character) {
             if (!p_character.characterClass.IsZombie()) {
                 p_character.visuals.UsePreviousClassAsset(true);
-                p_character.AssignClass("Night Zombie");
+                p_character.classComponent.AssignClass("Night Zombie");
             }
         }
         private void VarietyZombie(Character p_character) {
@@ -77,7 +79,7 @@ namespace Plague.Death_Effect {
                 } else if (roll >= 85 && roll < 100) {
                     className = "Tank Zombie";
                 }
-                p_character.AssignClass(className);
+                p_character.classComponent.AssignClass(className);
             }
         }
     }

@@ -9,7 +9,7 @@ using UnityEngine;
 
 public class Initializer : MonoBehaviour {
     public IEnumerator InitializeDataBeforeWorldCreation() {
-        BaseSettlement.onSettlementBuilt = null; //TODO: Make this better
+        //BaseSettlement.onSettlementBuilt = null; //TODO: Make this better
         LocalizationManager.Instance.Initialize();
         GameManager.Instance.Initialize();
         SaveManager.Instance.PrepareTempDirectory();
@@ -23,11 +23,10 @@ public class Initializer : MonoBehaviour {
         PlayerManager.Instance.Initialize();
         CrimeManager.Instance.Initialize();
         yield return null;
-        TimerHubUI.Instance.Initialize();
-        WorldMapCameraMove.Instance.Initialize();
+        //TimerHubUI.Instance.Initialize();
         InnerMapManager.Instance.Initialize();
         yield return null;
-        ObjectPoolManager.Instance.InitializeObjectPools();
+        // ObjectPoolManager.Instance.InitializeObjectPools();
         UIManager.Instance.InitializeUI();
         InteractionManager.Instance.Initialize();
         yield return null;
@@ -38,6 +37,8 @@ public class Initializer : MonoBehaviour {
         PlayerSkillManager.Instance.ResetSpellsInUse();
         yield return null;
         PlayerSkillManager.Instance.ResetSummonPlayerSkills();
+        yield return null;
+        CombatManager.Instance.Initialize();
     }
 
     public void InitializeDataAfterWorldCreation() {
@@ -52,6 +53,7 @@ public class Initializer : MonoBehaviour {
             //Do not load player data if save data is used because we will use the data of the saved one
             PlayerManager.Instance.player.LoadPlayerData(SaveManager.Instance.currentSaveDataPlayer);
         }
+        UIManager.Instance.InitializeAfterLoadOutPicked();
         PlayerUI.Instance.InitializeAfterLoadOutPicked();
         if (SaveManager.Instance.useSaveData) {
             PlayerManager.Instance.player.playerSkillComponent.OnLoadSaveData();

@@ -21,19 +21,25 @@ public class WarmUp : GoapAction {
         SetState("Warm Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
-        string costLog = $"\n{name} {target.nameWithID}:";
         int cost = 20;
+#if DEBUG_LOG
+        string costLog = $"\n{name} {target.nameWithID}:";
         costLog += $" +20(Initial)";
+#endif
         if (target is TileObject tileObject) {
             if (tileObject.characterOwner != null && actor.relationshipContainer.IsEnemiesWith(tileObject.characterOwner)) {
                 cost += 2000;
+#if DEBUG_LOG
                 costLog += $" +2000(Owner is Enemy/Rival)";
+#endif
             }
         }
+#if DEBUG_LOG
         actor.logComponent.AppendCostLog(costLog);
+#endif
         return cost;
     }
-    #endregion
+#endregion
 
     //#region Requirement
     //protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, object[] otherData) {
@@ -45,7 +51,7 @@ public class WarmUp : GoapAction {
     //}
     //#endregion
 
-    #region Effects
+#region Effects
     public void AfterWarmSuccess(ActualGoapNode goapNode) {
         goapNode.actor.traitContainer.RemoveStatusAndStacks(goapNode.actor, "Freezing");
         goapNode.actor.traitContainer.RemoveStatusAndStacks(goapNode.actor, "Frozen");
@@ -55,5 +61,5 @@ public class WarmUp : GoapAction {
             }
         }
     }
-    #endregion
+#endregion
 }

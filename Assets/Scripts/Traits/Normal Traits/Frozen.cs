@@ -1,11 +1,19 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System;
 using Inner_Maps;
 using UnityEngine;
+using Traits;
 
 namespace Traits {
-    public class Frozen : Status {
+    public class Frozen : Status, IElementalTrait {
         private GameObject _frozenEffect;
+        public ITraitable traitable { get; private set; }
+        public bool isPlayerSource { get; private set; }
+
+        #region getters
+        public override Type serializedData => typeof(SaveDataFrozen);
+        #endregion
 
         public Frozen() {
             name = "Frozen";
@@ -26,8 +34,14 @@ namespace Traits {
         }
 
         #region Loading
+        public override void LoadFirstWaveInstancedTrait(SaveDataTrait saveDataTrait) {
+            base.LoadFirstWaveInstancedTrait(saveDataTrait);
+            SaveDataFrozen data = saveDataTrait as SaveDataFrozen;
+            isPlayerSource = data.isPlayerSource;
+        }
         public override void LoadTraitOnLoadTraitContainer(ITraitable addTo) {
             base.LoadTraitOnLoadTraitContainer(addTo);
+            traitable = addTo;
             if (addTo.gridTileLocation == null) {
                 return;
             }
@@ -40,6 +54,7 @@ namespace Traits {
         #region Overrides
         public override void OnAddTrait(ITraitable addedTo) {
             base.OnAddTrait(addedTo);
+            traitable = addedTo;
             if (addedTo.gridTileLocation == null) {
                 return;
             }
@@ -57,12 +72,13 @@ namespace Traits {
                 addedTo.gridTileLocation.groundType == LocationGridTile.Ground_Type.Desert_Stone || 
                 addedTo.gridTileLocation.groundType == LocationGridTile.Ground_Type.Sand) {
                 //Desert Biomes should immediately remove freezing and frozen status
-                ticksDuration = GameManager.Instance.GetTicksBasedOnMinutes(5);
+                ticksDuration = GameManager.Instance.GetTicksBasedOnMinutes(3);
             }
         }
         public override void OnRemoveTrait(ITraitable removedFrom, Character removedBy) {
             base.OnRemoveTrait(removedFrom, removedBy);
-            if(_frozenEffect) {
+            traitable = null;
+            if (_frozenEffect) {
                 ObjectPoolManager.Instance.DestroyObject(_frozenEffect);
                 _frozenEffect = null;
             }
@@ -72,6 +88,7 @@ namespace Traits {
                 character.needsComponent.AdjustDoNotGetHungry(-1);
                 character.needsComponent.AdjustDoNotGetTired(-1);
                 character.needsComponent.AdjustDoNotGetDrained(-1);
+                DisablePlayerSourceChaosOrb(character);
             }
         }
         public override void OnInitiateMapObjectVisual(ITraitable traitable) {
@@ -91,6 +108,37 @@ namespace Traits {
                 _frozenEffect = null;
             }
         }
+        protected override string GetDescriptionInUI() {
+            string desc = base.GetDescriptionInUI();
+            desc += "\nIs Player Source: " + isPlayerSource;
+            return desc;
+        }
+        #endregion
+
+        #region IElementalTrait
+        public void SetIsPlayerSource(bool p_state) {
+            if (isPlayerSource != p_state) {
+                isPlayerSource = p_state;
+                if (traitable is Character character) {
+                    if (isPlayerSource) {
+                        EnablePlayerSourceChaosOrb(character);
+                    } else {
+                        DisablePlayerSourceChaosOrb(character);
+                    }
+                }
+            }
+        }
         #endregion
     }
 }
+#region Save Data
+public class SaveDataFrozen : SaveDataTrait {
+    public bool isPlayerSource;
+
+    public override void Save(Trait trait) {
+        base.Save(trait);
+        Frozen data = trait as Frozen;
+        isPlayerSource = data.isPlayerSource;
+    }
+}
+#endregion

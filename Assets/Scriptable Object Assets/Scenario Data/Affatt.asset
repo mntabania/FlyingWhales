@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f2a5990311e0b094f8e466747668822b, type: 3}
   m_Name: Affatt
   m_EditorClassIdentifier: 
-  scenarioSettings: {fileID: 4900000, guid: 836db2db33004794298212aa45c96aa5, type: 3}
+  scenarioSettings: {fileID: 4900000, guid: 4a05e75ab80352f43b25c669d344de9e, type: 3}
   faunaList: []

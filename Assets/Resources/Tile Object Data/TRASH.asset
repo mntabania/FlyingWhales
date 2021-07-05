@@ -1,0 +1,47 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb8e6d0a90de4764a5b7b75189e1ffa2, type: 3}
+  m_Name: TRASH
+  m_EditorClassIdentifier: 
+  defaultTileMapAsset: {fileID: 11400000, guid: cee67249483cc5a4da5f09362892da1b,
+    type: 2}
+  defaultSprite: {fileID: 21300000, guid: 291bfa9fd8074fd4ab175e761de3b55d, type: 3}
+  tileObjectAssets:
+    biomeAssets:
+      m_keys: 0600000001000000
+      m_values:
+      - activeTile:
+        - {fileID: 21300000, guid: 291bfa9fd8074fd4ab175e761de3b55d, type: 3}
+        - {fileID: 21300000, guid: 4063392f9ace263439214fbf01821fbc, type: 3}
+        - {fileID: 21300000, guid: 955cd41edecb1504ba459a1eadd6f249, type: 3}
+        - {fileID: 21300000, guid: e7cb9cc005b90ff4983e27624abba694, type: 3}
+        - {fileID: 21300000, guid: a0b503c47c2f8df42b43008c5cd7df2c, type: 3}
+        - {fileID: 21300000, guid: e6ef733ac5500434f94bfb1bfd7039fc, type: 3}
+        - {fileID: 21300000, guid: d683e16aba213c34eb7f2e96f53215eb, type: 3}
+        - {fileID: 21300000, guid: e89f5cff1455e174abd5eb390f279111, type: 3}
+        - {fileID: 21300000, guid: ddec1b0559332aa49a8cfc9108737868, type: 3}
+        inactiveTile: []
+        tileBase:
+        - {fileID: 11400000, guid: cee67249483cc5a4da5f09362892da1b, type: 2}
+      - activeTile:
+        - {fileID: 21300000, guid: ba4d9f76d9900704fa5809a30c204a91, type: 3}
+        - {fileID: 21300000, guid: 3e450938b85ae154ba26d1d712a0de2d, type: 3}
+        - {fileID: 21300000, guid: 1572937726e25fc48b5316b837c3a653, type: 3}
+        - {fileID: 21300000, guid: d97edaaaf3eb825479c110e7070a9696, type: 3}
+        - {fileID: 21300000, guid: ffd7ab79c60f4bd48a80b50626c56326, type: 3}
+        inactiveTile: []
+        tileBase:
+        - {fileID: 11400000, guid: 4b20b942de2e6d34c9ae4a89a5b887e9, type: 2}
+  corruptedTileObjectAssets:
+    biomeAssets:
+      m_keys: 
+      m_values: []

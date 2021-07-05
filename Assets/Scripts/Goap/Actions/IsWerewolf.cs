@@ -15,8 +15,10 @@ public class IsWerewolf : GoapAction {
         SetState("Werewolf Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
+#if DEBUG_LOG
         string costLog = $"\n{name} {target.nameWithID}: +10(Constant)";
         actor.logComponent.AppendCostLog(costLog);
+#endif
         return 10;
     }
   public override string ReactionToActor(Character actor, IPointOfInterest target, Character witness,
@@ -27,8 +29,8 @@ public class IsWerewolf : GoapAction {
         }
         return response;
     }
-    public override void PopulateReactionsToActor(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
-        base.PopulateReactionsToActor(reactions, actor, target, witness, node, status);
+    public override void PopulateEmotionReactionsToActor(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
+        base.PopulateEmotionReactionsToActor(reactions, actor, target, witness, node, status);
         CRIME_SEVERITY severity = CrimeManager.Instance.GetCrimeSeverity(witness, actor, target, CRIME_TYPE.Werewolf);
         if (severity != CRIME_SEVERITY.None && severity != CRIME_SEVERITY.Unapplicable) {
             reactions.Add(EMOTION.Shock);
@@ -73,11 +75,11 @@ public class IsWerewolf : GoapAction {
     public override CRIME_TYPE GetCrimeType(Character actor, IPointOfInterest target, ActualGoapNode crime) {
         return CRIME_TYPE.Werewolf;
     }
-    #endregion
+#endregion
 
-    #region State Effects
+#region State Effects
     public void PreVampireSuccess(ActualGoapNode goapNode) { }
     public void PerTickVampireSuccess(ActualGoapNode goapNode) { }
     public void AfterVampireSuccess(ActualGoapNode goapNode) { }
-    #endregion
+#endregion
 }

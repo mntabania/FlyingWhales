@@ -27,7 +27,7 @@ public class OnDeathUIController : MVCUIController, OnDeathUIView.IListener
 	private void UpdateAllDeathEffects() {
 		UpdateDeathEffectData(PLAGUE_DEATH_EFFECT.Explosion);
 		UpdateDeathEffectData(PLAGUE_DEATH_EFFECT.Zombie);
-		UpdateDeathEffectData(PLAGUE_DEATH_EFFECT.Mana_Generator);
+		UpdateDeathEffectData(PLAGUE_DEATH_EFFECT.Chaos_Generator);
 		UpdateDeathEffectData(PLAGUE_DEATH_EFFECT.Haunted_Spirits);
 	}
 
@@ -35,11 +35,11 @@ public class OnDeathUIController : MVCUIController, OnDeathUIView.IListener
 		if (PlagueDisease.Instance.HasMaxDeathEffect() && PlagueDisease.Instance.IsDeathEffectActive(p_deathEffect, out var deathEffect)) {
 			int upgradeCost = deathEffect.GetFinalNextLevelUpgradeCost();
 			bool isMaxLevel = upgradeCost == -1;
-			m_onDeathUIView.UpdateDeathEffectCost(p_deathEffect, isMaxLevel ? "MAX" : $"{upgradeCost.ToString()}{UtilityScripts.Utilities.PlagueIcon()}");
+			m_onDeathUIView.UpdateDeathEffectCost(p_deathEffect, isMaxLevel ? "MAX" : $"{upgradeCost.ToString()}{UtilityScripts.Utilities.ChaoticEnergyIcon()}");
 			m_onDeathUIView.UpdateDeathEffectDescription(p_deathEffect, deathEffect.GetCurrentEffectDescription());
 			m_onDeathUIView.UpdateDeathEffectUpgradeButtonInteractable(p_deathEffect,  !isMaxLevel && CanAffordUnlockOrUpgrade(p_deathEffect));
 		} else {
-			m_onDeathUIView.UpdateDeathEffectCost(p_deathEffect, $"{p_deathEffect.GetUnlockCost().ToString()}{UtilityScripts.Utilities.PlagueIcon()}");
+			m_onDeathUIView.UpdateDeathEffectCost(p_deathEffect, $"{p_deathEffect.GetUnlockCost().ToString()}{UtilityScripts.Utilities.ChaoticEnergyIcon()}");
 			m_onDeathUIView.UpdateDeathEffectDescription(p_deathEffect, string.Empty);
 			m_onDeathUIView.UpdateDeathEffectUpgradeButtonInteractable(p_deathEffect, !PlagueDisease.Instance.HasMaxDeathEffect() && CanAffordUnlockOrUpgrade(p_deathEffect));
 		}
@@ -57,8 +57,8 @@ public class OnDeathUIController : MVCUIController, OnDeathUIView.IListener
 		UpdateAllDeathEffects();
 	}
 	public void OnMana2_3UpgradeClicked() {
-		PayForUnlockOrUpgrade(PLAGUE_DEATH_EFFECT.Mana_Generator);
-		SetOrUpgradeDeathEffect(PLAGUE_DEATH_EFFECT.Mana_Generator);
+		PayForUnlockOrUpgrade(PLAGUE_DEATH_EFFECT.Chaos_Generator);
+		SetOrUpgradeDeathEffect(PLAGUE_DEATH_EFFECT.Chaos_Generator);
 		UpdateAllDeathEffects();
 	}
 	public void OnRandomSpirit_1UpgradeClicked() {
@@ -68,7 +68,7 @@ public class OnDeathUIController : MVCUIController, OnDeathUIView.IListener
 	}
 	public void OnIgniteHoveredOver(UIHoverPosition hoverPosition) { ShowTooltip(PLAGUE_DEATH_EFFECT.Explosion, hoverPosition); }
 	public void OnWalkerZombieHoveredOver(UIHoverPosition hoverPosition) { ShowTooltip(PLAGUE_DEATH_EFFECT.Zombie, hoverPosition); }
-	public void OnManaHoveredOver(UIHoverPosition hoverPosition) { ShowTooltip(PLAGUE_DEATH_EFFECT.Mana_Generator, hoverPosition); }
+	public void OnManaHoveredOver(UIHoverPosition hoverPosition) { ShowTooltip(PLAGUE_DEATH_EFFECT.Chaos_Generator, hoverPosition); }
 	public void OnSpiritHoveredOver(UIHoverPosition hoverPosition) { ShowTooltip(PLAGUE_DEATH_EFFECT.Haunted_Spirits, hoverPosition); }
 	public void OnIgniteHoveredOut() { HideTooltip(); }
 	public void OnWalkerZombieHoveredOut() { HideTooltip(); }

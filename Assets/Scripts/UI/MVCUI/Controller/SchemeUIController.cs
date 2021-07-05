@@ -208,9 +208,25 @@ public class SchemeUIController : MVCUIController, SchemeUIView.IListener {
         //Only activate temptation effects if scheme is successful
         if (isSuccessful) {
             //Process all activate temptations also
-            for (int i = 0; i < _chosenTemptations.Count; i++) {
-                TEMPTATION temptation = _chosenTemptations[i];
-                ActivateTemptationEffect(temptation);
+            Messenger.Broadcast(CharacterSignals.CHARACTER_MEDDLER_SCHEME_SUCCESSFUL, _targetCharacter);
+            if (_chosenTemptations.Count > 0) {
+                Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Schemes", "General", "tempted", null, LOG_TAG.Player);
+                string temptations = string.Empty;
+                for (int i = 0; i < _chosenTemptations.Count; i++) {
+                    TEMPTATION temptation = _chosenTemptations[i];
+                    if (i == _chosenTemptations.Count - 1) {
+                        temptations += ", and ";
+                    } else if (i > 0) {
+                        temptations += ", ";
+                    }
+                    temptations += UtilityScripts.Utilities.NotNormalizedConversionEnumToString(temptation.ToString());
+                    ActivateTemptationEffect(temptation);
+                }
+                log.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                log.AddToFillers(null, temptations, LOG_IDENTIFIER.STRING_1);
+                log.AddLogToDatabase();
+                //_targetCharacter.logComponent.RegisterLog(log);
+                PlayerManager.Instance.player.ShowNotificationFromPlayer(log, true);
             }
         }
     }
@@ -262,6 +278,28 @@ public class SchemeUIController : MVCUIController, SchemeUIView.IListener {
     public void OnHoverOutTemptBtn() {
         UIManager.Instance.HideSmallInfo();
     }
+    public void OnHoverOverSuccessRate() {
+        if (_schemeUIItems.Count > 0) {
+            PlayerSkillData skillData = PlayerSkillManager.Instance.GetScriptableObjPlayerSkillData<PlayerSkillData>(_schemeUsed.type);
+            float resistanceValue = _targetCharacter.piercingAndResistancesComponent.GetResistanceValue(skillData.resistanceType);
+
+            if (resistanceValue > 0f) {
+                string text = string.Empty;
+                float piercing = PlayerSkillManager.Instance.GetAdditionalPiercePerLevelBaseOnLevel(_schemeUsed.type);
+                float baseSuccessRate = 0f;
+                for (int i = 0; i < _schemeUIItems.Count; i++) {
+                    baseSuccessRate += _schemeUIItems[i].successRate;
+                }
+                text += $"Base Success Rate: {baseSuccessRate.ToString("N1")}%";
+                text += $"\nPiercing: {piercing.ToString("N2")}%";
+                text += $"\nResistance: {resistanceValue.ToString("N2")}%";
+                UIManager.Instance.ShowSmallInfo(text);
+            }
+        }
+    }
+    public void OnHoverOutSuccessRate() {
+        UIManager.Instance.HideSmallInfo();
+    }
     #endregion
 
     #region SchemeUIItem
@@ -310,6 +348,10 @@ public class SchemeUIController : MVCUIController, SchemeUIView.IListener {
         for (int i = 0; i < _schemeUIItems.Count; i++) {
             successRate += _schemeUIItems[i].successRate;
         }
+        PlayerSkillData skillData = PlayerSkillManager.Instance.GetScriptableObjPlayerSkillData<PlayerSkillData>(_schemeUsed.type);
+        float resistanceValue = _targetCharacter.piercingAndResistancesComponent.GetResistanceValue(skillData.resistanceType);
+        CombatManager.ModifyValueByPiercingAndResistance(ref successRate, PlayerSkillManager.Instance.GetAdditionalPiercePerLevelBaseOnLevel(_schemeUsed.type), resistanceValue);
+
         _successRate = successRate;
 
         float successRateForText = successRate;

@@ -14,15 +14,19 @@ public class SaveDataTileObject : SaveData<TileObject>, ISavableCounterpart {
     public int regionLocationID;
     public TileLocationSave tileLocationID;
     public bool isPreplaced;
-    public int[] resourceValues; //food, wood, stone, metal
-    // public Dictionary<RESOURCE, int> storedResources;
     public string isBeingCarriedByID;
     public POI_STATE poiState;
     public List<INTERACTION_TYPE> advertisedActions;
     public List<string> jobsTargetingThis;
     public List<string> existingJobsTargetingThis;
     public MAP_OBJECT_STATE mapObjectState;
-    
+    public bool isDamageContributorToStructure;
+    public bool isStoredAsTarget;
+    public bool isDeadReference;
+
+    //resources
+    public SaveDataResourceStorageComponent resourceStorageComponent;
+
     //hp
     public int currentHP;
     
@@ -33,7 +37,9 @@ public class SaveDataTileObject : SaveData<TileObject>, ISavableCounterpart {
     //Traits
     public SaveDataTraitContainer saveDataTraitContainer;
 
+    //Components
     public SaveDataLogComponent logComponent;
+    public SaveDataTileObjectHiddenComponent hiddenComponent;
 
     #region getters
     public OBJECT_TYPE objectType => OBJECT_TYPE.Tile_Object;
@@ -54,7 +60,10 @@ public class SaveDataTileObject : SaveData<TileObject>, ISavableCounterpart {
         }
         isPreplaced = data.isPreplaced;
         poiState = data.state;
-        
+        isDamageContributorToStructure = data.isDamageContributorToStructure;
+        isStoredAsTarget = data.isStoredAsTarget;
+        isDeadReference = data.isDeadReference;
+
         advertisedActions = data.advertisedActions != null ? new List<INTERACTION_TYPE>(data.advertisedActions) : new List<INTERACTION_TYPE>();
 
         jobsTargetingThis = new List<string>();
@@ -72,28 +81,24 @@ public class SaveDataTileObject : SaveData<TileObject>, ISavableCounterpart {
         
         currentHP = data.currentHP;
 
-        if (data.mapObjectVisual == null || data.mapObjectVisual.usedSprite == null) {
+        if (data.mapObjectVisual == null) {
             spriteName = string.Empty;
             rotation = Quaternion.identity;
         } else {
-            spriteName = data.mapObjectVisual.usedSprite.name;
+            spriteName = data.mapObjectVisual.usedSpriteName;
             rotation = data.mapObjectVisual.rotation;
         }
-        
-        resourceValues = new int[data.storedResources.Count];
-        int index = 0;
-        foreach (var storedResource in data.storedResources) {
-            resourceValues[index] = storedResource.Value;
-            index++;
-        }
+
+        resourceStorageComponent = new SaveDataResourceStorageComponent();
+        resourceStorageComponent.Save(data.resourceStorageComponent);
 
         isBeingCarriedByID = data.isBeingCarriedBy != null ? data.isBeingCarriedBy.persistentID : string.Empty;
         
         saveDataTraitContainer = new SaveDataTraitContainer();
         saveDataTraitContainer.Save(data.traitContainer);
 
-        logComponent = new SaveDataLogComponent();
-        logComponent.Save(data.logComponent);
+        logComponent = new SaveDataLogComponent(); logComponent.Save(data.logComponent);
+        hiddenComponent = new SaveDataTileObjectHiddenComponent(); hiddenComponent.Save(data.hiddenComponent);
     }
     public override TileObject Load() {
         TileObject tileObject = InnerMapManager.Instance.LoadTileObject<TileObject>(this);

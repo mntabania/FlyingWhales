@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using Inner_Maps;
-using Locations.Tile_Features;
+using Locations.Area_Features;
 using UnityEngine;
 
 public class PoisonBloomData : SkillData {
@@ -11,21 +11,22 @@ public class PoisonBloomData : SkillData {
     //public override INTERVENTION_ABILITY_TYPE type => INTERVENTION_ABILITY_TYPE.SPELL;
 
     public PoisonBloomData() : base() {
-        targetTypes = new[] { SPELL_TARGET.HEX };
+        targetTypes = new[] { SPELL_TARGET.AREA };
     }
 
-    public override void ActivateAbility(HexTile targetHex) {
-        targetHex.featureComponent.AddFeature(TileFeatureDB.Poison_Bloom_Feature, targetHex);
-        base.ActivateAbility(targetHex);
+    public override void ActivateAbility(Area targetArea) {
+        AreaFeature feature = targetArea.featureComponent.AddFeature(AreaFeatureDB.Poison_Bloom_Feature, targetArea);
+        (feature as PoisonBloomFeature).SetIsPlayerSource(true);
+        base.ActivateAbility(targetArea);
     }
-    public override bool CanPerformAbilityTowards(HexTile targetHex) {
-        bool canPerform = base.CanPerformAbilityTowards(targetHex);
+    public override bool CanPerformAbilityTowards(Area targetArea) {
+        bool canPerform = base.CanPerformAbilityTowards(targetArea);
         if (canPerform) {
-            return targetHex != null && targetHex.featureComponent.HasFeature(TileFeatureDB.Poison_Bloom_Feature) == false;
+            return targetArea != null && targetArea.featureComponent.HasFeature(AreaFeatureDB.Poison_Bloom_Feature) == false;
         }
         return canPerform;
     }
-    public override void HighlightAffectedTiles(LocationGridTile tile) {
-        TileHighlighter.Instance.PositionHighlight(tile.collectionOwner.partOfHextile.hexTileOwner);
+    public override void ShowValidHighlight(LocationGridTile tile) {
+        TileHighlighter.Instance.PositionHighlight(tile.area);
     }
 }

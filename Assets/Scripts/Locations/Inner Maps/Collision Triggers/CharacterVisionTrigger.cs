@@ -5,6 +5,7 @@ using UnityEngine;
 public class CharacterVisionTrigger : POIVisionTrigger {
 
     [SerializeField] private bool _ignoreStructureDifference = false;
+    [SerializeField] private bool _ignoreRoomDifference = false;
     
     public override void Initialize(IDamageable damageable) {
         base.Initialize(damageable);
@@ -12,5 +13,8 @@ public class CharacterVisionTrigger : POIVisionTrigger {
     }
     public override bool IgnoresStructureDifference() {
         return _ignoreStructureDifference;
+    }
+    public override bool IgnoresRoomDifference() {
+        return _ignoreRoomDifference;
     }
 }

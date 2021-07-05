@@ -6,7 +6,10 @@ using UnityEngine;
 using Inner_Maps;
 using Traits;
 using UnityEngine.Assertions;
+using UnityEngine.Profiling;
+using UtilityScripts;
 using Debug = System.Diagnostics.Debug;
+
 namespace Traits {
     public class TraitContainer : ITraitContainer {
 
@@ -37,40 +40,35 @@ namespace Traits {
         /// The main AddTrait function. All other AddTrait functions will eventually call this.
         /// </summary>
         /// <returns>If the trait was added or not.</returns>
-        public bool AddTrait(ITraitable addTo, Trait trait, Character characterResponsible = null, 
-            ActualGoapNode gainedFromDoing = null, bool bypassElementalChance = false, int overrideDuration = -1) {
+        public bool AddTrait(ITraitable addTo, Trait trait, Character characterResponsible = null, bool bypassElementalChance = false, int overrideDuration = -1) {
             if (TraitValidator.CanAddTraitGeneric(addTo, trait.name, this) == false) {
                 return false;
             }
             if (TraitManager.Instance.IsTraitElemental(trait.name)) {
-                return TryAddElementalStatus(addTo, trait, characterResponsible, gainedFromDoing, bypassElementalChance, overrideDuration);
+                return TryAddElementalStatus(addTo, trait, characterResponsible, bypassElementalChance, overrideDuration);
             }
-            return TraitAddition(addTo, trait, characterResponsible, gainedFromDoing, overrideDuration);
+            return TraitAddition(addTo, trait, characterResponsible, overrideDuration);
         }
-        public bool AddTrait(ITraitable addTo, string traitName, out Trait trait, Character characterResponsible = null, 
-            ActualGoapNode gainedFromDoing = null, bool bypassElementalChance = false, int overrideDuration = -1) {
+        public bool AddTrait(ITraitable addTo, string traitName, out Trait trait, Character characterResponsible = null, bool bypassElementalChance = false, int overrideDuration = -1) {
             if (TraitValidator.CanAddTraitGeneric(addTo, traitName, this) == false) {
                 trait = null;
                 return false;
             }
             if (TraitManager.Instance.IsTraitElemental(traitName)) {
-                return TryAddElementalStatus(addTo, traitName, out trait, characterResponsible, 
-                    gainedFromDoing, bypassElementalChance, overrideDuration);
+                return TryAddElementalStatus(addTo, traitName, out trait, characterResponsible, bypassElementalChance, overrideDuration);
             }
-            return TraitAddition(addTo, traitName, out trait, characterResponsible, gainedFromDoing, overrideDuration);
+            return TraitAddition(addTo, traitName, out trait, characterResponsible, overrideDuration);
         }
-        public bool AddTrait(ITraitable addTo, string traitName, Character characterResponsible = null, 
-            ActualGoapNode gainedFromDoing = null, bool bypassElementalChance = false, int overrideDuration = -1) {
+        public bool AddTrait(ITraitable addTo, string traitName, Character characterResponsible = null, bool bypassElementalChance = false, int overrideDuration = -1) {
             if (TraitValidator.CanAddTraitGeneric(addTo, traitName, this) == false) {
                 return false;
             }
             if (TraitManager.Instance.IsTraitElemental(traitName)) {
-                return TryAddElementalStatus(addTo, traitName, characterResponsible, gainedFromDoing, bypassElementalChance, overrideDuration);
+                return TryAddElementalStatus(addTo, traitName, characterResponsible, bypassElementalChance, overrideDuration);
             }
-            return TraitAddition(addTo, traitName, characterResponsible, gainedFromDoing, overrideDuration);
+            return TraitAddition(addTo, traitName, characterResponsible, overrideDuration);
         }
-        private bool TryAddElementalStatus(ITraitable addTo, string traitName, Character characterResponsible, 
-            ActualGoapNode gainedFromDoing, bool bypassElementalChance, int overrideDuration) {
+        private bool TryAddElementalStatus(ITraitable addTo, string traitName, Character characterResponsible, bool bypassElementalChance, int overrideDuration) {
             if (addTo is MovingTileObject || addTo is Quicksand) {
                 return false;
             }
@@ -79,7 +77,7 @@ namespace Traits {
                 shouldAddTrait = ProcessBeforeSuccessfullyAddingElementalStatus(addTo, traitName, ref overrideDuration);
                 if (shouldAddTrait) {
                     Trait trait = null;
-                    shouldAddTrait = TraitAddition(addTo, traitName, out trait, characterResponsible, gainedFromDoing, overrideDuration);
+                    shouldAddTrait = TraitAddition(addTo, traitName, out trait, characterResponsible, overrideDuration);
                     if (shouldAddTrait) {
                         ProcessAfterSuccessfulAddingElementalTrait(addTo, trait as Status);
                     }
@@ -87,8 +85,7 @@ namespace Traits {
             }
             return shouldAddTrait;
         }
-        private bool TryAddElementalStatus(ITraitable addTo, string traitName, out Trait trait, Character characterResponsible, 
-            ActualGoapNode gainedFromDoing, bool bypassElementalChance, int overrideDuration) {
+        private bool TryAddElementalStatus(ITraitable addTo, string traitName, out Trait trait, Character characterResponsible, bool bypassElementalChance, int overrideDuration) {
             trait = null;
             if(addTo is MovingTileObject || addTo is Quicksand) {
                 return false;
@@ -97,7 +94,7 @@ namespace Traits {
             if (shouldAddTrait) {
                 shouldAddTrait = ProcessBeforeSuccessfullyAddingElementalStatus(addTo, traitName, ref overrideDuration);
                 if (shouldAddTrait) {
-                    shouldAddTrait = TraitAddition(addTo, traitName, out trait, characterResponsible, gainedFromDoing, overrideDuration);
+                    shouldAddTrait = TraitAddition(addTo, traitName, out trait, characterResponsible, overrideDuration);
                     if (shouldAddTrait) {
                         ProcessAfterSuccessfulAddingElementalTrait(addTo, trait as Status);
                     }
@@ -105,13 +102,12 @@ namespace Traits {
             }
             return shouldAddTrait;
         }
-        private bool TryAddElementalStatus(ITraitable addTo, Trait trait, Character characterResponsible, 
-            ActualGoapNode gainedFromDoing, bool bypassElementalChance, int overrideDuration) {
+        private bool TryAddElementalStatus(ITraitable addTo, Trait trait, Character characterResponsible, bool bypassElementalChance, int overrideDuration) {
             bool shouldAddTrait = ProcessBeforeAddingElementalStatus(addTo, trait.name, bypassElementalChance, characterResponsible);
             if (shouldAddTrait) {
                 shouldAddTrait = ProcessBeforeSuccessfullyAddingElementalStatus(addTo, trait.name, ref overrideDuration);
                 if (shouldAddTrait) {
-                    shouldAddTrait = TraitAddition(addTo, trait, characterResponsible, gainedFromDoing, overrideDuration);
+                    shouldAddTrait = TraitAddition(addTo, trait, characterResponsible, overrideDuration);
                     if (shouldAddTrait) {
                         ProcessAfterSuccessfulAddingElementalTrait(addTo, trait as Status);
                     }
@@ -139,9 +135,10 @@ namespace Traits {
                 }
                 if (HasTrait("Poisoned")) {
                     int poisonStacks = stacks["Poisoned"];
+                    Poisoned poisoned = GetTraitOrStatus<Poisoned>("Poisoned");
                     RemoveStatusAndStacks(addTo, "Poisoned");
                     if (addTo is IPointOfInterest to && addTo.gridTileLocation != null) {
-                        CombatManager.Instance.PoisonExplosion(to, addTo.gridTileLocation, poisonStacks, characterResponsible, 1);
+                        CombatManager.Instance.PoisonExplosion(to, addTo.gridTileLocation, poisonStacks, characterResponsible, 1, poisoned.isPlayerSource);
                     }
                     shouldAddTrait = false;
                 }
@@ -180,17 +177,18 @@ namespace Traits {
             } else if (traitName == "Zapped") {
                 if (HasTrait("Electric")) {
                     shouldAddTrait = false;
-                } else if(addTo is GenericTileObject || addTo is StructureWallObject) {
+                } else if(addTo is GenericTileObject || addTo is ThinWall) {
                     if (!HasTrait("Wet")) {
                         //Ground floor tiles and walls do not get Zapped by electric damage unless they are Wet.
                         shouldAddTrait = false;
                     }
                 }
                 if (HasTrait("Frozen")) {
+                    Frozen frozen = GetTraitOrStatus<Frozen>("Frozen");
                     RemoveTrait(addTo, "Frozen");
                     //NOTE: Do not trigger frozen explosion if frozen object is the floor, this is to prevent frozen explosion from getting wild in snow biomes where every tile is frozen
                     if (addTo is IPointOfInterest && addTo is GenericTileObject == false) { 
-                        CombatManager.Instance.FrozenExplosion(addTo as IPointOfInterest, addTo.gridTileLocation, 1);
+                        CombatManager.Instance.FrozenExplosion(addTo as IPointOfInterest, addTo.gridTileLocation, 1, frozen.isPlayerSource);
                     }
                     shouldAddTrait = false;
                 }
@@ -211,6 +209,7 @@ namespace Traits {
             bool shouldAddTrait = true;
             if (traitName == "Freezing") {
                 if (HasTrait("Frozen")) {
+                    //Add Frozen trait again to reset the duration
                     AddTrait(addTo, "Frozen");
                     shouldAddTrait = false;
                 }
@@ -220,71 +219,81 @@ namespace Traits {
         private void ProcessAfterSuccessfulAddingElementalTrait(ITraitable traitable, Status status) {
             if (status.name == "Freezing") {
                 if (stacks[status.name] >= status.stackLimit) {
+                    bool isPlayerSource = false;
+                    if (status is IElementalTrait et) {
+                        isPlayerSource = et.isPlayerSource;
+                    }
                     RemoveStatusAndStacks(traitable, status.name);
                     AddTrait(traitable, "Frozen");
+                    Frozen frozen = GetTraitOrStatus<Frozen>("Frozen");
+                    frozen.SetIsPlayerSource(isPlayerSource);
                 }
+            } else if (status.name == "Frozen") {
+                //Remove all stacks of Wet when a character gains Frozen.
+                //Reference: https://trello.com/c/0IT5tWi5/4291-remove-all-stacks-of-wet-when-a-character-gains-frozen
+                RemoveStatusAndStacks(traitable, "Wet");
             }
         }
-        private bool TraitAddition(ITraitable addTo, string traitName, Character characterResponsible, ActualGoapNode gainedFromDoing, int overrideDuration) {
+        private bool TraitAddition(ITraitable addTo, string traitName, Character characterResponsible, int overrideDuration) {
             if (TraitManager.Instance.IsInstancedTrait(traitName)) {
-                return AddTraitRoot(addTo, TraitManager.Instance.CreateNewInstancedTraitClass<Trait>(traitName), characterResponsible, gainedFromDoing, overrideDuration);
+                return AddTraitRoot(addTo, TraitManager.Instance.CreateNewInstancedTraitClass<Trait>(traitName), characterResponsible, overrideDuration);
             } else {
                 Assert.IsTrue(TraitManager.Instance.allTraits.ContainsKey(traitName), $"No trait named {traitName} in all traits");
-                return AddTraitRoot(addTo, TraitManager.Instance.allTraits[traitName], characterResponsible, gainedFromDoing, overrideDuration);
+                return AddTraitRoot(addTo, TraitManager.Instance.allTraits[traitName], characterResponsible, overrideDuration);
             }
         }
-        private bool TraitAddition(ITraitable addTo, string traitName, out Trait trait, Character characterResponsible, ActualGoapNode gainedFromDoing, int overrideDuration) {
+        private bool TraitAddition(ITraitable addTo, string traitName, out Trait trait, Character characterResponsible, int overrideDuration) {
             if (TraitManager.Instance.IsInstancedTrait(traitName)) {
+                //Highly non performant, because it always creates new instance even though the trait is just being stacked
                 trait = TraitManager.Instance.CreateNewInstancedTraitClass<Trait>(traitName);
-                return AddTraitRoot(addTo, trait, characterResponsible, gainedFromDoing, overrideDuration);
+                return AddTraitRoot(addTo, trait, characterResponsible, overrideDuration);
             } else {
                 Assert.IsTrue(TraitManager.Instance.allTraits.ContainsKey(traitName), $"No trait named {traitName} in all traits");
                 trait = TraitManager.Instance.allTraits[traitName];
-                return AddTraitRoot(addTo, trait, characterResponsible, gainedFromDoing, overrideDuration);
+                return AddTraitRoot(addTo, trait, characterResponsible, overrideDuration);
             }
         }
-        private bool TraitAddition(ITraitable addTo, Trait trait, Character characterResponsible, ActualGoapNode gainedFromDoing, int overrideDuration) {
-            return AddTraitRoot(addTo, trait, characterResponsible, gainedFromDoing, overrideDuration);
+        private bool TraitAddition(ITraitable addTo, Trait trait, Character characterResponsible, int overrideDuration) {
+            return AddTraitRoot(addTo, trait, characterResponsible, overrideDuration);
         }
-        private bool AddTraitRoot(ITraitable addTo, Trait trait, Character characterResponsible, ActualGoapNode gainedFromDoing, int overrideDuration) {
+        private bool AddTraitRoot(ITraitable addTo, Trait trait, Character characterResponsible, int overrideDuration) {
             if (TraitValidator.CanAddTrait(addTo, trait, this) == false) {
                 return false;
             }
-            if(trait is Status) {
-                Status status = trait as Status;
+            if(trait is Status status) {
                 string statusName = status.name;
                 if (status.isStacking) {
                     if (stacks.ContainsKey(statusName)) {
                         stacks[statusName]++;
                         if (TraitManager.Instance.IsInstancedTrait(statusName)) {
                             Status existingStatus = GetTraitOrStatus<Status>(statusName);
-                            addTo.traitProcessor.OnStatusStacked(addTo, existingStatus, characterResponsible, gainedFromDoing, overrideDuration);
+                            addTo.traitProcessor.OnStatusStacked(addTo, existingStatus, characterResponsible, overrideDuration);
                         } else {
-                            addTo.traitProcessor.OnStatusStacked(addTo, status, characterResponsible, gainedFromDoing, overrideDuration);
+                            addTo.traitProcessor.OnStatusStacked(addTo, status, characterResponsible, overrideDuration);
                         }
                     } else {
                         stacks.Add(statusName, 1);
                         statuses.Add(status);
-                        allTraitsAndStatuses.Add(statusName, status);
-                        addTo.traitProcessor.OnTraitAdded(addTo, status, characterResponsible, gainedFromDoing, overrideDuration);
+                        allTraitsAndStatuses.Add(statusName, status);    
+                        addTo.traitProcessor.OnTraitAdded(addTo, status, characterResponsible, overrideDuration);
                     }
                 } else {
                     statuses.Add(status);
                     allTraitsAndStatuses.Add(statusName, status);
-                    addTo.traitProcessor.OnTraitAdded(addTo, status, characterResponsible, gainedFromDoing, overrideDuration);
+                    addTo.traitProcessor.OnTraitAdded(addTo, status, characterResponsible, overrideDuration);
                 }
             } else {
                 traits.Add(trait);
                 allTraitsAndStatuses.Add(trait.name, trait);
-                addTo.traitProcessor.OnTraitAdded(addTo, trait, characterResponsible, gainedFromDoing, overrideDuration);
+                addTo.traitProcessor.OnTraitAdded(addTo, trait, characterResponsible, overrideDuration);
             }
             return true;
         }
-        private int GetElementalTraitChanceToBeAdded(string traitName, ITraitable addTo, bool bypassElementalChance) {
+        public int GetElementalTraitChanceToBeAdded(string traitName, ITraitable addTo, bool bypassElementalChance) {
             int chance = 100;
             if (traitName == "Burning") {
                 chance = bypassElementalChance ? 100 : 15;
-                if(HasTrait("Fireproof", "Wet", "Burnt") || !HasTrait("Flammable")) {
+                if(HasTrait("Fire Resistant", "Wet", "Burnt") || !HasTrait("Flammable")) {
                     chance = 0;
                 } else if (HasTrait("Poisoned")) {
                     chance = 100;
@@ -322,25 +331,30 @@ namespace Traits {
             return chance;
         }
         public bool RestrainAndImprison(ITraitable addTo, Character characterResponsible = null, Faction factionThatImprisoned = null, Character characterThatImprisoned = null) {
-            bool hasAddedRestrained = false;
-            bool hasAddedPrisoner = false;
+            AddTrait(addTo, "Restrained", characterResponsible);
+            AddTrait(addTo, "Prisoner", characterResponsible);
+            Prisoner prisoner = GetTraitOrStatus<Prisoner>("Prisoner");
+            Restrained restrained = GetTraitOrStatus<Restrained>("Restrained");
 
-            hasAddedRestrained = AddTrait(addTo, "Restrained", characterResponsible);
-
-            Trait trait = null;
-            hasAddedPrisoner = AddTrait(addTo, "Prisoner", out trait, characterResponsible);
-            if(hasAddedPrisoner && trait != null && trait is Prisoner prisoner) {
+            if (prisoner != null) {
+                prisoner.ClearResponsibleCharacters();
+                if (characterResponsible != null) {
+                    prisoner.AddCharacterResponsibleForTrait(characterResponsible);
+                }
                 prisoner.SetPrisonerOfFaction(factionThatImprisoned);
                 prisoner.SetPrisonerOfCharacter(characterThatImprisoned);
             }
-            return hasAddedRestrained && hasAddedPrisoner;
+            if (restrained != null) {
+                restrained.ClearResponsibleCharacters();
+                if (characterResponsible != null) {
+                    restrained.AddCharacterResponsibleForTrait(characterResponsible);
+                }
+            }
+            return true; //Always return true because once this is called, even if character is already restrained, it will be overridden by the new restrain
         }
         public bool RemoveRestrainAndImprison(ITraitable removedFrom, Character removedBy = null) {
-            bool hasRemovedRestrained = false;
-            bool hasRemovedPrisoner = false;
-
-            hasRemovedRestrained = RemoveTrait(removedFrom, "Restrained", removedBy);
-            hasRemovedPrisoner = RemoveTrait(removedFrom, "Prisoner", removedBy);
+            bool hasRemovedRestrained = RemoveTrait(removedFrom, "Restrained", removedBy);
+            bool hasRemovedPrisoner = RemoveTrait(removedFrom, "Prisoner", removedBy);
             return hasRemovedRestrained && hasRemovedPrisoner;
         }
 
@@ -367,6 +381,12 @@ namespace Traits {
         }
         public bool RemoveTrait(ITraitable removeFrom, string traitName, Character removedBy = null, bool bySchedule = false) {
             if (HasTrait(traitName)) {
+                if (removeFrom is Character character) {
+                    PLAYER_SKILL_TYPE afflictionType = PlayerSkillManager.Instance.GetAfflictionTypeByTraitName(traitName);
+                    if (afflictionType != PLAYER_SKILL_TYPE.NONE) {
+                        character.afflictionsSkillsInflictedByPlayer.Remove(afflictionType);
+                    }
+                }
                 Trait trait = GetTraitOrStatus<Trait>(traitName);
                 return RemoveTrait(removeFrom, trait, removedBy, bySchedule);
             }
@@ -554,37 +574,36 @@ namespace Traits {
         #endregion
 
         #region Getting
-        public T GetTraitOrStatus<T>(params string[] traitNames) where T : Trait {
-            for (int i = 0; i < traitNames.Length; i++) {
-                string name = traitNames[i];
-                if (HasTrait(name)) {
-                    return allTraitsAndStatuses[name] as T;
-                }
-            }
-            return null;
-        }
         public T GetTraitOrStatus<T>(string traitName) where T : Trait {
             if (HasTrait(traitName)) {
                 return allTraitsAndStatuses[traitName] as T;
             }
             return null;
         }
-        public List<T> GetTraitsOrStatuses<T>(params string[] traitNames) where T : Trait {
-            List<T> traits = new List<T>();
-            for (int i = 0; i < traitNames.Length; i++) {
-                string name = traitNames[i];
-                if (HasTrait(name)) {
-                    traits.Add(allTraitsAndStatuses[name] as T);
-                }
+        public T GetTraitOrStatus<T>(string traitName1, string traitName2) where T : Trait {
+            if (HasTrait(traitName1)) {
+                return allTraitsAndStatuses[traitName1] as T;
+            } else if (HasTrait(traitName2)) {
+                return allTraitsAndStatuses[traitName2] as T;
             }
-            //for (int i = 0; i < allTraitsAndStatuses.Count; i++) {
-            //    Trait trait = allTraitsAndStatuses[i];
-            //    if (traitNames.Contains(trait.name)) {
-            //        traits.Add(trait as T);
-            //    }
-            //}
-            return traits;
+            return null;
         }
+        //public List<T> GetTraitsOrStatuses<T>(params string[] traitNames) where T : Trait {
+        //    List<T> traits = new List<T>();
+        //    for (int i = 0; i < traitNames.Length; i++) {
+        //        string name = traitNames[i];
+        //        if (HasTrait(name)) {
+        //            traits.Add(allTraitsAndStatuses[name] as T);
+        //        }
+        //    }
+        //    //for (int i = 0; i < allTraitsAndStatuses.Count; i++) {
+        //    //    Trait trait = allTraitsAndStatuses[i];
+        //    //    if (traitNames.Contains(trait.name)) {
+        //    //        traits.Add(trait as T);
+        //    //    }
+        //    //}
+        //    return traits;
+        //}
         public bool HasTraitOf(TRAIT_TYPE traitType) {
             for (int i = 0; i < traits.Count; i++) {
                 if (traits[i].type == traitType) {
@@ -639,7 +658,13 @@ namespace Traits {
             if (traitOverrideFunctions != null) {
                 for (int i = 0; i < traitOverrideFunctions.Count; i++) {
                     Trait trait = traitOverrideFunctions[i];
+#if DEBUG_PROFILER
+                    Profiler.BeginSample($"{owner.name} - {trait.name} - Tick Started Process");
+#endif
                     trait.OnTickStarted(owner);
+#if DEBUG_PROFILER
+                    Profiler.EndSample();
+#endif
                 }
             }
             //if (allTraitsAndStatuses != null) {
@@ -677,9 +702,9 @@ namespace Traits {
             //    }
             //}
         }
-        #endregion
+#endregion
         
-        #region Schedule Tickets
+#region Schedule Tickets
         public void AddScheduleTicket(string traitName, string ticket, GameDate removeDate) {
             TraitRemoveSchedule traitRemoveSchedule = ObjectPoolManager.Instance.CreateNewTraitRemoveSchedule();
             traitRemoveSchedule.removeDate = removeDate;
@@ -741,9 +766,9 @@ namespace Traits {
             }
             return default;
         }
-        #endregion
+#endregion
         
-        #region Switches
+#region Switches
         //public void SwitchOnTrait(string name) {
         //    if (traitSwitches.ContainsKey(name)) {
         //        traitSwitches[name] = true;
@@ -764,7 +789,37 @@ namespace Traits {
         //    }
         //    return false;
         //}
-        public bool HasTrait(params string[] traitNames) {
+        public bool HasTrait(string traitName) {
+            return allTraitsAndStatuses.ContainsKey(traitName);
+        }
+        public bool HasTrait(string traitName1, string traitName2) {
+            if (allTraitsAndStatuses.ContainsKey(traitName1) || allTraitsAndStatuses.ContainsKey(traitName2)) {
+                return true;
+            }
+            return false;
+        }
+        public bool HasTrait(string traitName1, string traitName2, string traitName3) {
+            if (allTraitsAndStatuses.ContainsKey(traitName1) || allTraitsAndStatuses.ContainsKey(traitName2) || allTraitsAndStatuses.ContainsKey(traitName3)) {
+                return true;
+            }
+            return false;
+        }
+        public bool HasTrait(string traitName1, string traitName2, string traitName3, string traitName4) {
+            if (allTraitsAndStatuses.ContainsKey(traitName1) || allTraitsAndStatuses.ContainsKey(traitName2) 
+                || allTraitsAndStatuses.ContainsKey(traitName3) || allTraitsAndStatuses.ContainsKey(traitName4)) {
+                return true;
+            }
+            return false;
+        }
+        public bool HasTrait(string traitName1, string traitName2, string traitName3, string traitName4, string traitName5) {
+            if (allTraitsAndStatuses.ContainsKey(traitName1) || allTraitsAndStatuses.ContainsKey(traitName2)
+                || allTraitsAndStatuses.ContainsKey(traitName3) || allTraitsAndStatuses.ContainsKey(traitName4)
+                || allTraitsAndStatuses.ContainsKey(traitName5)) {
+                return true;
+            }
+            return false;
+        }
+        public bool HasTrait(string[] traitNames) {
             for (int i = 0; i < traitNames.Length; i++) {
                 if (allTraitsAndStatuses.ContainsKey(traitNames[i])) {
                     return true;
@@ -772,11 +827,8 @@ namespace Traits {
             }
             return false;
         }
-        public bool HasTrait(string traitName) {
-            return allTraitsAndStatuses.ContainsKey(traitName);
-        }
         #endregion
-        
+
         #region Trait Override Functions
         public void AddTraitOverrideFunction(string identifier, Trait trait) {
             if (traitOverrideFunctions.ContainsKey(identifier)) {
@@ -808,9 +860,9 @@ namespace Traits {
         //public bool RemoveOnEnterGridTileTrait(Trait trait) {
         //    return onEnterGridTileTraits.Remove(trait);
         //}
-        #endregion
+#endregion
 
-        #region Inquiry
+#region Inquiry
         public bool HasTangibleTrait() {
             for (int i = 0; i < statuses.Count; i++) {
                 Status currTrait = statuses[i];
@@ -820,9 +872,9 @@ namespace Traits {
             }
             return false;
         }
-        #endregion
+#endregion
 
-        #region Loading
+#region Loading
         private bool LoadUnInstancedTrait(ITraitable addTo, string traitName) {
             Assert.IsTrue(TraitManager.Instance.allTraits.ContainsKey(traitName), $"No trait named {traitName} in all traits");
             Trait trait = TraitManager.Instance.allTraits[traitName];
@@ -893,9 +945,9 @@ namespace Traits {
             //    traitSwitches.Add(pair.Key, pair.Value);
             //}
         }
-        #endregion
-        
-        #region Clean Up
+#endregion
+
+#region Clean Up
         public void CleanUp() {
             allTraitsAndStatuses?.Clear();
             traits?.Clear();
@@ -905,7 +957,7 @@ namespace Traits {
             scheduleTickets?.Clear();
             //traitSwitches?.Clear();
         }
-        #endregion
+#endregion
     }
 }
 
@@ -964,7 +1016,10 @@ public class SaveDataTraitContainer : SaveData<ITraitContainer> {
         //        nonInstancedTraits.Add(trait.name);
         //    }
         //}
-        stacks = data.stacks;
+        stacks = new Dictionary<string, int>();
+        foreach (var kvp in data.stacks) {
+            stacks.Add(kvp.Key, kvp.Value);
+        }
         scheduleTickets = new Dictionary<string, List<GameDate>>();
         foreach (var schedule in data.scheduleTickets) {
             scheduleTickets.Add(schedule.Key, new List<GameDate>());

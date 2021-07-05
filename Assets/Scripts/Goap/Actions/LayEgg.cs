@@ -25,26 +25,28 @@ public class LayEgg : GoapAction {
         SetState("Lay Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
+#if DEBUG_LOG
         string costLog = $"\n{name} {target.nameWithID}: +10(Constant)";
         actor.logComponent.AppendCostLog(costLog);
+#endif
         return 10;
     }
-    #endregion
+#endregion
 
-    #region Requirements
+#region Requirements
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, OtherData[] otherData, JobQueueItem job) {
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData, job);
         if (satisfied) {
-            return actor.gridTileLocation != null && actor.gridTileLocation.objHere == null;
+            return actor.gridTileLocation != null && actor.gridTileLocation.tileObjectComponent.objHere == null;
         }
         return false;
     }
-    #endregion
+#endregion
 
-    #region State Effects
+#region State Effects
     public void AfterLaySuccess(ActualGoapNode goapNode) {
         if(goapNode.actor is Summon summon) {
-            if(summon.gridTileLocation != null && summon.gridTileLocation.objHere == null) {
+            if(summon.gridTileLocation != null && summon.gridTileLocation.tileObjectComponent.objHere == null) {
                 TILE_OBJECT_TYPE eggType = CharacterManager.Instance.GetEggType(summon.summonType);
                 if(eggType != TILE_OBJECT_TYPE.NONE) {
                     MonsterEgg egg = InnerMapManager.Instance.CreateNewTileObject<MonsterEgg>(eggType);
@@ -55,6 +57,6 @@ public class LayEgg : GoapAction {
             }
         }
     }
-    #endregion
+#endregion
 
 }

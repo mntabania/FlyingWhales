@@ -17,6 +17,7 @@ public class MonsterInfoUI : InfoUIBase {
     [Header("Basic Info")]
     [SerializeField] private CharacterPortrait characterPortrait;
     [SerializeField] private TextMeshProUGUI nameLbl;
+    [SerializeField] private TextMeshProUGUI roleLbl;
     [SerializeField] private TextMeshProUGUI subLbl;
     [SerializeField] private TextMeshProUGUI plansLbl;
     [SerializeField] private EventLabel plansEventLabel;
@@ -48,6 +49,13 @@ public class MonsterInfoUI : InfoUIBase {
     [SerializeField] private TextMeshProUGUI itemsLbl;
     [SerializeField] private EventLabel itemsEventLbl;
     
+    [Space(10)]
+    [Header("Store Target")] 
+    [SerializeField] private StoreTargetButton btnStoreTarget;
+
+    private HoverText m_roleHoverText;
+    private HoverHandler m_hoverHandler;
+
     private Character _activeMonster;
 
     public Character activeMonster => _activeMonster;
@@ -67,7 +75,9 @@ public class MonsterInfoUI : InfoUIBase {
         Messenger.AddListener<TileObject, Character>(CharacterSignals.CHARACTER_LOST_ITEM, UpdateInventoryInfoFromSignal);
         Messenger.AddListener<Character>(UISignals.UPDATE_THOUGHT_BUBBLE, UpdateThoughtBubbleFromSignal);
         Messenger.AddListener<Character>(CharacterSignals.CHARACTER_CHANGED_NAME, OnCharacterChangedName);
-        
+        Messenger.AddListener<Character>(UISignals.UPDATE_CHARACTER_INFO, CharacterRequestedForUpdate);
+        Messenger.AddListener<KeyCode>(ControlsSignals.KEY_DOWN_EMPTY_SPACE, OnReceiveKeyCodeSignal);
+
         statusTraitsEventLbl.SetShouldColorHighlight(false);
         normalTraitsEventLbl.SetShouldColorHighlight(false);
         
@@ -77,6 +87,9 @@ public class MonsterInfoUI : InfoUIBase {
         itemsEventLbl.SetOnRightClickAction(OnRightClickItem);
         
         logsWindow.Initialize();
+
+        m_hoverHandler = roleLbl.GetComponent<HoverHandler>();
+        m_roleHoverText = roleLbl.GetComponent<HoverText>();
     }
     
     private void OnRightClickThoughtBubble(object obj) {
@@ -89,7 +102,12 @@ public class MonsterInfoUI : InfoUIBase {
             UIManager.Instance.ShowPlayerActionContextMenu(playerActionTarget, Input.mousePosition, true);
         }
     }
-
+    private void CharacterRequestedForUpdate(Character p_character) {
+        if (isShowing && activeMonster == p_character) {
+            UpdateMonsterInfo();
+        }
+    }
+    
     #region Overrides
     public override void CloseMenu() {
         base.CloseMenu();
@@ -127,6 +145,7 @@ public class MonsterInfoUI : InfoUIBase {
             }
             _activeMonster.marker.UpdateNameplateElementsState();
         }
+        btnStoreTarget.SetTarget(activeMonster);
         UpdateMonsterInfo();
         UpdateTraits();
         UpdateInventoryInfo();
@@ -174,6 +193,17 @@ public class MonsterInfoUI : InfoUIBase {
     }
     public void UpdateBasicInfo() {
         nameLbl.text = $"<b>{_activeMonster.firstNameWithColor}</b>";
+        if (_activeMonster.combatComponent.combatBehaviourParent.currentCombatBehaviour != null) {
+            roleLbl.text = $"<b>{_activeMonster.combatComponent.combatBehaviourParent.currentCombatBehaviour.name}</b>";
+            m_roleHoverText.SetText(_activeMonster.combatComponent.combatBehaviourParent.currentCombatBehaviour.description);
+            m_hoverHandler.enabled = true;
+        } else {
+            roleLbl.text = $"<b>None</b>";
+            m_hoverHandler.enabled = false;
+            m_roleHoverText.SetText("");
+        }
+        
+
         subLbl.text = _activeMonster.characterClass.className;
         UpdateThoughtBubble();
     }
@@ -185,6 +215,12 @@ public class MonsterInfoUI : InfoUIBase {
     }
     #endregion
 
+    private void OnReceiveKeyCodeSignal(KeyCode p_key) {
+        if (p_key == KeyCode.Mouse1) {
+            CloseMenu();
+        }
+    }
+
     #region Stats
     private void UpdateStatInfo() {
         if (_activeMonster is Summon summon) {
@@ -192,15 +228,19 @@ public class MonsterInfoUI : InfoUIBase {
             attackLbl.text = $"{summon.combatComponent.attack.ToString()}";
             speedLbl.text = $"{summon.combatComponent.attackSpeed / 1000f}s";
             raceLbl.text = $"{UtilityScripts.GameUtilities.GetNormalizedSingularRace(summon.race)}";
-            elementLbl.text = $"{summon.combatComponent.elementalDamage.type.ToString()}";
-            behaviourLbl.text = $"<link=\"0\">{summon.bredBehaviour}</link>";    
+            elementLbl.text = $"<size=\"20\">{UtilityScripts.Utilities.GetRichTextIconForElement(_activeMonster.combatComponent.elementalDamage.type)}</size>"; // + $"{_activeCharacter.combatComponent.elementalDamage.type}"
+            // elementLbl.text = UtilityScripts.Utilities.GetRichTextIconForElement(_activeMonster.combatComponent.elementalDamage.type) + $"{_activeMonster.combatComponent.elementalDamage.type}";
+            behaviourLbl.gameObject.SetActive(false);
+            // behaviourLbl.text = $"<link=\"0\">{summon.bredBehaviour}</link>";    
         } else {
             hpLbl.text = $"{_activeMonster.currentHP.ToString()}/{_activeMonster.maxHP.ToString()}";
             attackLbl.text = $"{_activeMonster.combatComponent.attack.ToString()}";
             speedLbl.text = $"{_activeMonster.combatComponent.attackSpeed / 1000f}s";
             raceLbl.text = $"{UtilityScripts.GameUtilities.GetNormalizedSingularRace(_activeMonster.race)}";
-            elementLbl.text = $"{_activeMonster.combatComponent.elementalDamage.type.ToString()}";
-            behaviourLbl.text = $"<link=\"0\">{_activeMonster.characterClass.traitNameOnTamedByPlayer}</link>";    
+            elementLbl.text = $"<size=\"20\">{UtilityScripts.Utilities.GetRichTextIconForElement(_activeMonster.combatComponent.elementalDamage.type)}</size>"; // + $"{_activeCharacter.combatComponent.elementalDamage.type}"
+            // elementLbl.text = UtilityScripts.Utilities.GetRichTextIconForElement(_activeMonster.combatComponent.elementalDamage.type) + $"{_activeMonster.combatComponent.elementalDamage.type}";
+            // behaviourLbl.text = $"<link=\"0\">{_activeMonster.characterClass.traitNameOnTamedByPlayer}</link>";
+            behaviourLbl.gameObject.SetActive(false);
         }
     }
     public void OnHoverBehaviour(object obj) {

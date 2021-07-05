@@ -11,7 +11,9 @@ public class ZombieBehaviour : CharacterBehaviourComponent {
         priority = 900;
     }
     public override bool TryDoBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
+#if DEBUG_LOG
         log += "Character is zombie, will just stroll";
+#endif
         return character.jobComponent.PlanZombieStrollOutside(out producedJob); //currentStructure
     }
 }

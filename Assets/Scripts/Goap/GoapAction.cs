@@ -115,7 +115,7 @@ public class GoapAction {
     protected virtual int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
         return 0;
     }
-    public virtual void AddFillersToLog(ref Log log, ActualGoapNode node) {
+    public virtual void AddFillersToLog(Log log, ActualGoapNode node) {
         Character actor = node.actor;
         IPointOfInterest poiTarget = node.poiTarget;
         LocationStructure targetStructure = node.targetStructure;
@@ -127,9 +127,6 @@ public class GoapAction {
         if (targetStructure != null) {
             log.AddToFillers(targetStructure, targetStructure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
         }
-        // else {
-        //     log.AddToFillers(actor.currentRegion, actor.currentRegion.name, LOG_IDENTIFIER.LANDMARK_1);
-        // }
     }
     public virtual bool IsInvalidOnVision(ActualGoapNode node, out string reason) {
         IPointOfInterest poiTarget = node.poiTarget;
@@ -144,8 +141,9 @@ public class GoapAction {
     }
     public virtual GoapActionInvalidity IsInvalid(ActualGoapNode node) {
         string stateName = "Target Missing";
-        bool defaultTargetMissing = IsTargetMissing(node);
+        bool defaultTargetMissing = IsTargetMissing(node, out string debug);
         GoapActionInvalidity goapActionInvalidity = new GoapActionInvalidity(defaultTargetMissing, stateName, "target_unavailable");
+        goapActionInvalidity.AppendDebugLog(debug);
         return goapActionInvalidity;
     }
     public virtual void OnInvalidAction(ActualGoapNode node) { }
@@ -187,13 +185,13 @@ public class GoapAction {
     /// </summary>
     /// <param name="goapNode"></param>
     /// <returns>List of tile choices</returns>
-    public virtual List<LocationGridTile> NearbyLocationGetter(ActualGoapNode goapNode) { return null; }
+    public virtual void PopulateNearbyLocation(List<LocationGridTile> gridTiles, ActualGoapNode goapNode) { }
     public virtual string ReactionToActor(Character actor, IPointOfInterest target, Character witness,
         ActualGoapNode node, REACTION_STATUS status) {
         CrimeManager.Instance.ReactToCrime(witness, actor, target, target.factionOwner, node.crimeType, node, status);
 
         List<EMOTION> emotions = ObjectPoolManager.Instance.CreateNewEmotionList();
-        PopulateReactionsToActor(emotions, actor, target, witness, node, status);
+        PopulateEmotionReactionsToActor(emotions, actor, target, witness, node, status);
         string response = string.Empty;
         if(emotions != null) {
             for (int i = 0; i < emotions.Count; i++) {
@@ -206,7 +204,7 @@ public class GoapAction {
     public virtual string ReactionToTarget(Character actor, IPointOfInterest target, Character witness,
         ActualGoapNode node, REACTION_STATUS status) {
         List<EMOTION> emotions = ObjectPoolManager.Instance.CreateNewEmotionList();
-        PopulateReactionsToTarget(emotions, actor, target, witness, node, status);
+        PopulateEmotionReactionsToTarget(emotions, actor, target, witness, node, status);
         string response = string.Empty;
         if (emotions != null) {
             for (int i = 0; i < emotions.Count; i++) {
@@ -221,7 +219,7 @@ public class GoapAction {
         if(target is Character targetCharacter) {
             CrimeManager.Instance.ReactToCrime(targetCharacter, actor, target, target.factionOwner, node.crimeType, node, status);
             List<EMOTION> emotions = ObjectPoolManager.Instance.CreateNewEmotionList();
-            PopulateReactionsOfTarget(emotions, actor, target, node, status);
+            PopulateEmotionReactionsOfTarget(emotions, actor, target, node, status);
             string response = string.Empty;
             if (emotions != null) {
                 for (int i = 0; i < emotions.Count; i++) {
@@ -233,11 +231,11 @@ public class GoapAction {
         }
         return string.Empty;
     }
-    public virtual void PopulateReactionsToActor(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness,
+    public virtual void PopulateEmotionReactionsToActor(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness,
         ActualGoapNode node, REACTION_STATUS status) { }
-    public virtual void PopulateReactionsToTarget(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness,
+    public virtual void PopulateEmotionReactionsToTarget(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness,
     ActualGoapNode node, REACTION_STATUS status) { }
-    public virtual void PopulateReactionsOfTarget(List<EMOTION> reactions, Character actor, IPointOfInterest target,
+    public virtual void PopulateEmotionReactionsOfTarget(List<EMOTION> reactions, Character actor, IPointOfInterest target,
     ActualGoapNode node, REACTION_STATUS status) { }
     public virtual void OnActionStarted(ActualGoapNode node) { }
     public virtual void OnStoppedInterrupt(ActualGoapNode node) { }
@@ -272,34 +270,51 @@ public class GoapAction {
         
         //* TimeOfDaysCostMultiplier(actor) removed cost multiplier since action should be disabled if time of day is invalid
         int distanceCost = GetDistanceCost(actor, target, job);
+#if DEBUG_LOG
         actor.logComponent.AppendCostLog($"+{distanceCost.ToString()}(Distance Cost)");
+#endif
         return (baseCost * PreconditionCostMultiplier()) + distanceCost;
     }
-    protected bool IsTargetMissing(ActualGoapNode node) {
+    protected bool IsTargetMissing(ActualGoapNode node, out string p_targetMissingLog) {
         Character actor = node.actor;
         IPointOfInterest poiTarget = node.poiTarget;
         //Action is invalid if the target is unavailable and the action cannot be advertised if target is unavailable
-        if ((poiTarget.IsAvailable() == false && !canBeAdvertisedEvenIfTargetIsUnavailable) || poiTarget.gridTileLocation == null) {
+        bool isTargetAvailable = poiTarget.IsAvailable();
+        p_targetMissingLog = $"Actor is {actor.name}. Target is {poiTarget.name}. Action is {name}";
+        p_targetMissingLog = $"{p_targetMissingLog}\nCan Be Advertised Even If Target us Unavailable?: {canBeAdvertisedEvenIfTargetIsUnavailable.ToString()}";
+        p_targetMissingLog = $"{p_targetMissingLog}\nTarget Tile Location: {poiTarget.gridTileLocation?.ToString()}";
+        p_targetMissingLog = $"{p_targetMissingLog}\nAction Location Type: {actionLocationType.ToString()}";
+        if ((!isTargetAvailable && !canBeAdvertisedEvenIfTargetIsUnavailable) || poiTarget.gridTileLocation == null) {
             return true;
         }
         if (actionLocationType != ACTION_LOCATION_TYPE.IN_PLACE && actor.currentRegion != poiTarget.gridTileLocation.structure.region) {
             return true;
         }
-        LocationGridTile targetTile = poiTarget.gridTileLocation;
         if (actionLocationType == ACTION_LOCATION_TYPE.NEAR_TARGET) {
             //if the action type is NEAR_TARGET, then check if the actor is near the target, if not, this action is invalid.
             if (actor.gridTileLocation != poiTarget.gridTileLocation && actor.gridTileLocation.IsNeighbour(poiTarget.gridTileLocation, true) == false) {
-                return true;
+                if (actor.hasMarker && actor.marker.IsCharacterInLineOfSightWith(poiTarget)) {
+                    return false;
+                }
+                p_targetMissingLog = $"{p_targetMissingLog}\n{actor.name} tile location ({actor.gridTileLocation?.ToString()}) is different from target {poiTarget.name} ({poiTarget.gridTileLocation?.ToString()}) and is not neighbour.";
+                return true; // means invalid
             }
         } else if (actionLocationType == ACTION_LOCATION_TYPE.NEAR_OTHER_TARGET) {
             //if the action type is NEAR_OTHER_TARGET, then check if the actor is near the target, if not, this action is invalid.
             if (actor.gridTileLocation != node.targetTile && actor.gridTileLocation.IsNeighbour(node.targetTile, true) == false) {
-                return true;
+                p_targetMissingLog = $"{p_targetMissingLog}\n{actor.name} tile location ({actor.gridTileLocation?.ToString()}) is different from target tile ({node.targetTile?.ToString()}) and is not neighbour.";
+                return true; // means invalid
             }
         } else if (actionLocationType == ACTION_LOCATION_TYPE.NEARBY || actionLocationType == ACTION_LOCATION_TYPE.RANDOM_LOCATION
             || actionLocationType == ACTION_LOCATION_TYPE.RANDOM_LOCATION_B || actionLocationType == ACTION_LOCATION_TYPE.OVERRIDE) {
             //if the action type is NEARBY, RANDOM_LOCATION, RANDOM_LOCATION_B, OVERRIDE, then check if the actor is near the target, if not, this action is invalid.
             if (actor.gridTileLocation != node.targetTile && actor.gridTileLocation.IsNeighbour(node.targetTile, true) == false) {
+                p_targetMissingLog = $"{p_targetMissingLog}\n{actor.name} tile location ({actor.gridTileLocation?.ToString()}) is different from target tile ({node.targetTile?.ToString()}) and is not neighbour.";
+                return true;
+            }
+        } else if (actionLocationType == ACTION_LOCATION_TYPE.TARGET_IN_VISION) {
+            if (!actor.hasMarker || !actor.marker.IsPOIInVision(poiTarget)) {
+                p_targetMissingLog = $"{p_targetMissingLog}\n{actor.name} has reached end of path but ({poiTarget.name}) is not yet in vision.";
                 return true;
             }
         }
@@ -345,7 +360,7 @@ public class GoapAction {
             requirementActionSatisfied = AreRequirementsSatisfied(actor, poiTarget, otherData, job);
         }
         //if action has valid times of day then check if current time is valid.
-        return requirementActionSatisfied && (validTimeOfDays == null || validTimeOfDays.Contains(GameManager.GetCurrentTimeInWordsOfTick()));
+        return requirementActionSatisfied && (validTimeOfDays == null || validTimeOfDays.Contains(GameManager.Instance.GetCurrentTimeInWordsOfTick()));
     }
     public bool DoesCharacterMatchRace(Character character) {
         //If no race is specified, assume all races are allowed
@@ -359,7 +374,7 @@ public class GoapAction {
         // if (actor.currentNpcSettlement == null) {
         //     return 1;
         // }
-        if (job.jobType == JOB_TYPE.SNATCH || job.jobType == JOB_TYPE.DROP_ITEM_PARTY) {
+        if (job.jobType == JOB_TYPE.SNATCH || job.jobType == JOB_TYPE.SNATCH_RESTRAIN || job.jobType == JOB_TYPE.DROP_ITEM_PARTY) {
             return 1; //ignore distance cost if job is snatch, this is so that snatchers won't reach the maximum cost when trying to snatch someone from a different region. 
         }
         if(poiTarget == job.poiTarget) {
@@ -386,7 +401,7 @@ public class GoapAction {
         return 1;
     }
     private int TimeOfDaysCostMultiplier(Character actor) {
-        if (validTimeOfDays == null || validTimeOfDays.Contains(GameManager.GetCurrentTimeInWordsOfTick(actor))) {
+        if (validTimeOfDays == null || validTimeOfDays.Contains(GameManager.Instance.GetCurrentTimeInWordsOfTick(actor))) {
             return 1;
         }
         return 3;
@@ -398,8 +413,8 @@ public class GoapAction {
         string invalidKey = goapActionInvalidity.stateName.ToLower() + "_description";
         if (goapActionInvalidity.stateName != "Target Missing" && LocalizationManager.Instance.HasLocalizedValue("GoapAction", name, invalidKey)) {
             Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "GoapAction", name, invalidKey, providedTags: LOG_TAG.Work);
-            AddFillersToLog(ref log, node);
-            log.AddLogToDatabase();
+            AddFillersToLog(log, node);
+            log.AddLogToDatabase(true);
         } else {
             string reason = goapActionInvalidity.reason;
             string reasonText = null;
@@ -415,16 +430,16 @@ public class GoapAction {
             Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "GoapAction", "Generic", key, providedTags: LOG_TAG.Work);
             log.AddToFillers(node.actor, node.actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             log.AddToFillers(node.poiTarget, node.poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-            log.AddToFillers(null, UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetterOnly(goapType.ToString()), LOG_IDENTIFIER.STRING_1);
+            log.AddToFillers(null, goapName, LOG_IDENTIFIER.STRING_1);
             if(!string.IsNullOrEmpty(reasonText) && key == "Invalid_with_reason") {
                 log.AddToFillers(null, reasonText, LOG_IDENTIFIER.STRING_2);
             }
-            log.AddLogToDatabase();
+            log.AddLogToDatabase(true);
         }
     }
-    #endregion
+#endregion
 
-    #region Preconditions
+#region Preconditions
     protected void SetPrecondition(GoapEffect effect, Func<Character, IPointOfInterest, OtherData[], JOB_TYPE, bool> condition) {
         basePrecondition = new Precondition(effect, condition);
     }
@@ -452,9 +467,9 @@ public class GoapAction {
         isOverridden = false; 
         return basePrecondition;
     }
-    #endregion
+#endregion
 
-    #region Effects
+#region Effects
     protected void AddExpectedEffect(GoapEffect effect) {
         baseExpectedEffects.Add(effect);
         AddPossibleExpectedEffectForTypeAndTargetMatching(new GoapEffectConditionTypeAndTargetType(effect.conditionType, effect.target));
@@ -503,7 +518,9 @@ public class GoapAction {
                             //TODO: There might be a better way to do this?
                             return effect.conditionKey == "Animal Meat" || effect.conditionKey == "Human Meat" ||
                                    effect.conditionKey == "Elf Meat" || effect.conditionKey == "Vegetables" ||
-                                   effect.conditionKey == "Fish Pile" || effect.conditionKey == "Food Pile";
+                                   effect.conditionKey == "Fish Pile" || effect.conditionKey == "Food Pile" || 
+                                   effect.conditionKey == "Potato" || effect.conditionKey == "Corn" ||
+                                   effect.conditionKey == "Pineapple" || effect.conditionKey == "Iceberry";
                         }
                     }
                 }
@@ -535,30 +552,35 @@ public class GoapAction {
         isOverriden = false;
         return baseExpectedEffects;
     }
-    #endregion
+#endregion
 
-    #region Crime
+#region Crime
     public virtual CRIME_TYPE GetCrimeType(Character actor, IPointOfInterest target, ActualGoapNode crime) {
         return CRIME_TYPE.None;
     }
-    #endregion
+#endregion
 }
 
 public struct GoapActionInvalidity {
     public bool isInvalid;
     public string stateName;
     public string reason;
+    public string debugLog;
 
     public GoapActionInvalidity(bool isInvalid, string stateName, string reason = null) {
         this.isInvalid = isInvalid;
         this.stateName = stateName;
         this.reason = reason;
+        debugLog = string.Empty;
     }
     public bool IsReasonForCancellationShouldDropJob() {
         if (!string.IsNullOrEmpty(reason)) {
             return reason == "target_carried" || reason == "target_inactive" || reason == "target_dead";
         }
         return false;
+    }
+    public void AppendDebugLog(string p_log) {
+        debugLog = $"{debugLog}{p_log}";
     }
 }
 public struct GoapEffectConditionTypeAndTargetType {

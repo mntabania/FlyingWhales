@@ -5,10 +5,11 @@ using System.Linq;
 using UnityEngine;
 using BayatGames.SaveGameFree;
 using Inner_Maps;
-using Locations.Tile_Features;
+using Locations.Area_Features;
 using Scenario_Maps;
 using Traits;
 using UtilityScripts;
+using UnityEngine.SceneManagement;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -19,6 +20,7 @@ public class SaveManager : MonoBehaviour {
     public SaveCurrentProgressManager saveCurrentProgressManager;
 
     public bool useSaveData { get; private set; }
+    public bool doNotContinueSaving { get; private set; }
 
     [Header("For Testing")] 
     [SerializeField] private bool alwaysResetSpecialPopupsOnStartup;
@@ -39,11 +41,11 @@ public class SaveManager : MonoBehaviour {
     #region getters
     public SaveDataPlayer currentSaveDataPlayer => savePlayerManager.currentSaveDataPlayer;
     public SaveDataCurrentProgress currentSaveDataProgress => saveCurrentProgressManager.currentSaveDataProgress;
-#if UNITY_EDITOR || DEVELOPMENT_BUILD
+// #if UNITY_EDITOR || DEVELOPMENT_BUILD
     public bool unlockAllWorlds => _unlockAllWorlds;
-#else
-    public bool unlockAllWorlds => false;
-#endif
+// #else
+//     public bool unlockAllWorlds => false;
+// #endif
     #endregion
 
     #region Monobehaviours
@@ -54,6 +56,7 @@ public class SaveManager : MonoBehaviour {
 #if UNITY_EDITOR
             EditorApplication.quitting += OnEditorQuit;
 #endif
+            SceneManager.sceneUnloaded += OnSceneUnloaded;
             //Should create folder of save path if no folder exists
             if (!Directory.Exists(UtilityScripts.Utilities.gameSavePath)) {
                 Directory.CreateDirectory(UtilityScripts.Utilities.gameSavePath);
@@ -68,12 +71,25 @@ public class SaveManager : MonoBehaviour {
     private void OnEditorQuit() {
         savePlayerManager.SavePlayerData();
     }
+    private void OnSceneUnloaded(Scene unloaded) {
+        if (unloaded.name == "Game") {
+            if (saveCurrentProgressManager.isSaving || saveCurrentProgressManager.isWritingToDisk) {
+                SetDoNotContinueSaving(true);
+            }
+        }
+    }
+    public void SetDoNotContinueSaving(bool p_state) {
+        doNotContinueSaving = p_state;
+    }
     #endregion
 
     #region Initialization
     public void PrepareTempDirectory() {
+        if (saveCurrentProgressManager.isSaving || saveCurrentProgressManager.isWritingToDisk) {
+            return;
+        }
         if (Directory.Exists(UtilityScripts.Utilities.tempPath)) {
-            Directory.Delete(UtilityScripts.Utilities.tempPath, true);    
+            Directory.Delete(UtilityScripts.Utilities.tempPath, true);
         }
         Directory.CreateDirectory(UtilityScripts.Utilities.tempPath);
         Directory.CreateDirectory(UtilityScripts.Utilities.tempZipPath);
@@ -98,7 +114,11 @@ public class SaveManager : MonoBehaviour {
         ScenarioWorldMapSave worldMapSave = new ScenarioWorldMapSave();
         worldMapSave.SaveWorld(
             WorldConfigManager.Instance.mapGenerationData.chosenWorldMapTemplate, 
-            GridMap.Instance.normalHexTiles
+            GridMap.Instance.allAreas,
+            GridMap.Instance.mainRegion.innerMap.elevationPerlinSettings,
+            GridMap.Instance.mainRegion.innerMap.warpWeight,
+            GridMap.Instance.mainRegion.innerMap.temperatureSeed,
+            GridMap.Instance.mainRegion.villageSpots
         );
         scenarioSave.worldMapSave = worldMapSave;
 
@@ -107,14 +127,16 @@ public class SaveManager : MonoBehaviour {
         if (string.IsNullOrEmpty(fileName)) {
             fileName = SaveCurrentProgressManager.savedCurrentProgressFileName;
         }
-        string path = $"{Application.streamingAssetsPath}/Scenario Maps/{fileName}.sce";
+        string path = $"{Application.streamingAssetsPath}/Scenario Maps/{fileName}.json";
         SaveGame.Save(path, scenarioSave);
-        
-        Debug.Log($"Saved new scenario at {path}");
-    }
-    #endregion
 
-    #region Loading
+#if DEBUG_LOG
+        Debug.Log($"Saved new scenario at {path}");
+#endif
+    }
+#endregion
+
+#region Loading
     public void LoadSaveDataPlayer() {
         savePlayerManager.LoadSaveDataPlayer();
         if (alwaysResetBonusTutorialsOnStartup) {
@@ -124,24 +146,24 @@ public class SaveManager : MonoBehaviour {
             savePlayerManager.currentSaveDataPlayer?.ResetSpecialPopupsProgress();
         }
     }
-    #endregion
+#endregion
 
-    #region Tile Features
-    public static SaveDataTileFeature ConvertTileFeatureToSaveData(TileFeature tileFeature) {
-        SaveDataTileFeature saveDataTrait = null;
-        System.Type type = System.Type.GetType($"Locations.Tile_Features.SaveData{tileFeature.GetType().Name}, Assembly-CSharp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null");
+#region Tile Features
+    public static SaveDataAreaFeature ConvertAreaFeatureToSaveData(AreaFeature p_areaFeature) {
+        SaveDataAreaFeature saveDataTrait = null;
+        System.Type type = p_areaFeature.serializedData; //System.Type.GetType($"Locations.Tile_Features.SaveData{p_areaFeature.GetType().Name}, Assembly-CSharp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null");
         if (type != null) {
-            saveDataTrait = System.Activator.CreateInstance(type) as SaveDataTileFeature;
+            saveDataTrait = System.Activator.CreateInstance(type) as SaveDataAreaFeature;
         } else {
-            saveDataTrait = new SaveDataTileFeature();
+            saveDataTrait = new SaveDataAreaFeature();
         }
         return saveDataTrait;
     }
-    #endregion
+#endregion
 
-    #region Scenario Maps
+#region Scenario Maps
     public ScenarioMapData GetScenarioMapData(string path) {
         return SaveGame.Load<ScenarioMapData>(path);
     }
-    #endregion
+#endregion
 }

@@ -41,8 +41,10 @@ public class BuildVampireCastle : GoapAction {
         SetState("Build Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
+#if DEBUG_LOG
         string costLog = $"\n{name} {target.nameWithID}: +10(Constant)";
         actor.logComponent.AppendCostLog(costLog);
+#endif
         return 10;
     }
     // public override void OnStopWhileStarted(ActualGoapNode node) {
@@ -69,9 +71,9 @@ public class BuildVampireCastle : GoapAction {
         }
         return invalidity;
     }
-    #endregion
+#endregion
 
-    #region Requirements
+#region Requirements
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, OtherData[] otherData, JobQueueItem job) {
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData, job);
         if (satisfied) {
@@ -80,9 +82,6 @@ public class BuildVampireCastle : GoapAction {
             }
             if (poiTarget is GenericTileObject genericTileObject) {
                 if (genericTileObject.blueprintOnTile != null) {
-                    return false;
-                }
-                if (!genericTileObject.gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
                     return false;
                 }
                 if (genericTileObject.gridTileLocation.structure.structureType != STRUCTURE_TYPE.WILDERNESS) {
@@ -98,7 +97,7 @@ public class BuildVampireCastle : GoapAction {
         }
         return false;
     }
-    #endregion
+#endregion
 
     // #region Preconditions
     // private bool HasResource(Character actor, IPointOfInterest poiTarget, OtherData[] otherData, JOB_TYPE jobType) {
@@ -115,13 +114,14 @@ public class BuildVampireCastle : GoapAction {
     // }
     // #endregion
 
-    #region State Effects
+#region State Effects
     public void AfterBuildSuccess(ActualGoapNode goapNode) {
         if (goapNode.poiTarget is GenericTileObject genericTileObject) {
             string prefabName = (string)goapNode.otherData[0].obj;
             if (LandmarkManager.Instance.HasEnoughSpaceForStructure(prefabName, genericTileObject.gridTileLocation)) {
                 NPCSettlement settlement = goapNode.actor.homeSettlement;
                 bool createdNewSettlement = false;
+                Area area = genericTileObject.gridTileLocation.area;
                 //create new settlement if vampire has no home settlement yet
                 if (goapNode.actor.homeSettlement == null) {
                     createdNewSettlement = true;
@@ -135,12 +135,13 @@ public class BuildVampireCastle : GoapAction {
                     // } else {
                     //     settlement.SetSettlementType(SETTLEMENT_TYPE.Default_Human);
                     // }
-                }
-
-                if (genericTileObject.gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
-                    settlement.AddTileToSettlement(genericTileObject.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner);
+                    VillageSpot villageSpot = goapNode.actor.currentRegion.GetVillageSpotOnArea(area);
+                    Assert.IsNotNull(villageSpot, $"New village {settlement} founded by {goapNode.actor.name} is being placed on area without a village spot! Area is {area}");
+                    settlement.SetOccupiedVillageSpot(villageSpot);
                 }
                 
+                settlement.AddAreaToSettlement(area);
+
                 List<LocationStructure> createdStructures = new List<LocationStructure>();
                 createdStructures.Add(LandmarkManager.Instance.PlaceIndividualBuiltStructureForSettlement(settlement, goapNode.actor.currentRegion.innerMap, genericTileObject.gridTileLocation, prefabName));
 
@@ -153,6 +154,6 @@ public class BuildVampireCastle : GoapAction {
             }
         }
     }
-    #endregion
+#endregion
 }
 

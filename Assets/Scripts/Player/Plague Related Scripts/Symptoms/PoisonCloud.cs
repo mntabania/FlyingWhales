@@ -11,10 +11,15 @@ namespace Plague.Symptom {
             int randomStacks = GameUtilities.RandomBetweenTwoNumbers(2, 5);
             //Is this dependency? Is this bad practice? If it is, we need to find a better way
             Inner_Maps.InnerMapManager.Instance.SpawnPoisonCloud(p_character.gridTileLocation, randomStacks);
-            if (PlayerManager.Instance.player.plagueComponent.CanGainPlaguePoints()) {
+            Messenger.Broadcast(PlayerSkillSignals.ON_PLAGUE_POISON_CLOUD_ACTIVATED, p_character);
+            /*
+             * if (PlayerManager.Instance.player.plagueComponent.CanGainPlaguePoints()) {
                 PlayerManager.Instance.player.plagueComponent.GainPlaguePointFromCharacter(1, p_character);    
             }
+            */
+#if DEBUG_LOG
             Debug.Log("Activated Poison Cloud Symptom");
+#endif
         }
         public override void PerTickWhileStationaryOrUnoccupied(Character p_character) {
             if (GameUtilities.RollChance(1.5f)) {

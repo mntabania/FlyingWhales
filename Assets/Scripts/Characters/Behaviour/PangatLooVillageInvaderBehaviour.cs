@@ -9,47 +9,56 @@ public class PangatLooVillageInvaderBehaviour : CharacterBehaviourComponent {
         priority = 450;
     }
     public override bool TryDoBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
+#if DEBUG_LOG
         log += $"\n{character.name} is a Pangat Loo Invader";
-
+#endif
         NPCSettlement targetSettlement = GetMainVillageSettlement(); //this is guaranteed to be the main village in Pangat Loo map
         if (targetSettlement != null) {
             if (character.currentSettlement == targetSettlement) {
+#if DEBUG_LOG
                 log += $"\n-Already at village target, will find character to attack";
+#endif
                 //character is already at target village
                 List<Character> targets = ObjectPoolManager.Instance.CreateNewCharactersList();
-                PopulateTargetChoices(targets, targetSettlement.tiles);
+                PopulateTargetChoices(targets, targetSettlement.areas);
                 if (targets.Count > 0) {
                     //Fight a random target
                     Character chosenTarget = CollectionUtilities.GetRandomElement(targets);
+#if DEBUG_LOG
                     log += $"\n-Chosen target is {chosenTarget.name}";
+#endif
                     character.combatComponent.Fight(chosenTarget, CombatManager.Hostility);
                     ObjectPoolManager.Instance.ReturnCharactersListToPool(targets);
                     producedJob = null;
                     return true;
                 } else {
+#if DEBUG_LOG
                     log += $"\n-No more valid targets, roam";
+#endif
                     ObjectPoolManager.Instance.ReturnCharactersListToPool(targets);
                     return character.jobComponent.TriggerRoamAroundStructure(out producedJob);
                 }
             } else {
+#if DEBUG_LOG
                 log += $"\n-character is not yet at village target, will go there now...";
+#endif
                 //character is not yet at target village
-                HexTile targetHextile = CollectionUtilities.GetRandomElement(targetSettlement.tiles);
-                LocationGridTile targetTile = CollectionUtilities.GetRandomElement(targetHextile.locationGridTiles);
+                Area targetArea = CollectionUtilities.GetRandomElement(targetSettlement.areas);
+                LocationGridTile targetTile = CollectionUtilities.GetRandomElement(targetArea.gridTileComponent.gridTiles);
                 return character.jobComponent.CreateGoToJob(targetTile, out producedJob);
             }    
         } else {
+#if DEBUG_LOG
             log += $"\n-character does not have an invade village target, roam";
+#endif
             //character could not find a valid target settlement
             return character.jobComponent.TriggerRoamAroundStructure(out producedJob);
         }
     }
-    private void PopulateTargetChoices(List<Character> p_targetChoices, List<HexTile> tiles) {
-        for (int i = 0; i < tiles.Count; i++) {
-            HexTile tile = tiles[i];
-            tile.PopulateCharacterListInsideHexThatMeetCriteria(p_targetChoices, c =>
-                c.isNormalCharacter && c.isDead == false && !c.isInLimbo && !c.isBeingSeized && c.carryComponent.IsNotBeingCarried() &&
-                !c.traitContainer.HasTrait("Hibernating", "Indestructible")); //Removed checking for allied with player because undead should attack all villagers in pangat loo
+    private void PopulateTargetChoices(List<Character> p_targetChoices, List<Area> o_area) {
+        for (int i = 0; i < o_area.Count; i++) {
+            Area area = o_area[i];
+            area.locationCharacterTracker.PopulateCharacterListInsideHexForPangatLooTargetForInvasion(p_targetChoices); //Removed checking for allied with player because undead should attack all villagers in pangat loo
         }
     }
     public NPCSettlement GetMainVillageSettlement() {
@@ -65,8 +74,8 @@ public class PangatLooVillageInvaderBehaviour : CharacterBehaviourComponent {
     //     producedJob = null;
     //     log += $"\n-{character.name} will invade";
     //     if (character.gridTileLocation.collectionOwner.isPartOfParentRegionMap
-    //         && character.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner 
-    //         && character.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.settlementOnTile == character.behaviourComponent.assignedTargetSettlement) {
+    //         && character.gridTileLocation.hexTileOwner 
+    //         && character.gridTileLocation.hexTileOwner.settlementOnTile == character.behaviourComponent.assignedTargetSettlement) {
     //         log += "\n-Already in the target npcSettlement, will try to combat residents";
     //         //It will only go here if the invader is not combat anymore, meaning there are no more hostiles in his vision, so we must make sure that he attacks a resident in the settlement even though he can't see it
     //         character.behaviourComponent.invadeCombatantTargetList.Clear();

@@ -13,15 +13,79 @@ MonoBehaviour:
   m_Name: Cultist Booby Trap
   m_EditorClassIdentifier: 
   skill: 143
-  manaCost: 10
+  manaCost: 50
   charges: 1
-  cooldown: 144
+  cooldown: 240
   threat: 0
   threatPerHour: 0
   expCost: 0
+  cheatedLevel: 0
+  pierce: 0
+  bonusChargeWhenUnlocked: 0
+  unlockChargeOnPortalUpgrade: 1
   buttonSprite: {fileID: 21300000, guid: 1de8b7335028dce4b8e2c6254181530f, type: 3}
   tooltipVideoClip: {fileID: 0}
   tooltipImage: {fileID: 0}
+  unlockCost: 0
+  tier: 0
+  baseLoadoutWeight: 0
+  resistanceType: 0
+  archetypeWeightedBonus: 1
+  canBeReleasedEvenIfLearned: 0
   contextMenuIcon: {fileID: 21300000, guid: 2bfc315d67335a74f97ffb42a8125af8, type: 3}
   contextMenuColumn: 0
   playerActionIcon: {fileID: 21300000, guid: a85b0710644af4c48a2a7f742a32da7e, type: 3}
+  isNonUpgradeable: 1
+  isAffliction: 0
+  isLockedBaseOnRequirements: 0
+  canBeCastedOnMaxLevel: 0
+  requirementData:
+    requirements: 08000000
+    requiredArchetypes: 
+    requiredSkills: 
+    actionCount: 0
+    afflictionCount: 0
+    spellsCount: 0
+    tier1Count: 0
+    tier2Count: 0
+    tier3Count: 0
+    portalLevel: 0
+    isOR: 0
+  skillUpgradeData:
+    upgradeCosts: 
+    manacostPerLevel: 64000000
+    chargesPerLevel: 01000000
+    bonuses: 0e000000
+    additionalDamagePerLevel: 
+    additionalPiercePerLevel:
+    - 50
+    - 100
+    - 150
+    additionalHpPercentagePerLevel: []
+    additionalAttackPercentagePerLevel: []
+    additionalHpValuePerLevel: 
+    additionalAttackValuePerLevel: 
+    applyOnLevel: 
+    additionalmanaReceivedPercentagePerLevel: []
+    statsIncreasedPercentagePerLevel: []
+    durationBonusPerLevel: 
+    additionalMaxHPPercentagePerLevel: []
+    additionalMaxHPActualPerLevel: 
+    additionalChanceBonusPercentagePerLevel: []
+    additionalTileRangeBonusPerLevel: 
+    decreaseMovementSpeedPerLevel: 
+    cooldownPerLevel: f0000000
+    skillMovementSpeed: 
+  afflictionUpgradeData:
+    bonuses: 
+    cooldown: 
+    additionalPiercePerLevel: []
+    rateChance: 
+    crowdNumber: 
+    napsDuration: 
+    numberOfCriteria: 
+    hungerRate: 
+    duration: []
+    opinionTrigger: 
+    addedBehaviour: 
+    listOfCriteria: 

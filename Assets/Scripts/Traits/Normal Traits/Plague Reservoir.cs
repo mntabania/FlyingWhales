@@ -20,15 +20,24 @@ namespace Traits {
             }
             addedTo.traitContainer.AddTrait(addedTo, "Plagued");
             if(addedTo is Character character) {
-                character.needsComponent.AdjustFullnessDecreaseRate(-0.17f);
-                character.needsComponent.AdjustHappinessDecreaseRate(-0.13f);
+                //Made it so that characters with plague reservoir will NOT get hungry/sad as much as normal villagers
+                //since we expect that Plague Reservoir characters do not usually have many sources of food.
+                //Related cards:
+                // - https://trello.com/c/qDZICPc0/2956-ratmen-have-different-happiness-and-fullness-reduction-per-tick 
+                // - https://trello.com/c/nBDrc2vM/4889-ratmen-healing-per-tick
+                float fullnessDecreaseRateEffect = EditableValuesManager.Instance.baseFullnessDecreaseRate / 2f;
+                float happinessDecreaseRateEffect = EditableValuesManager.Instance.baseHappinessDecreaseRate / 2f;
+                character.needsComponent.AdjustFullnessDecreaseRate(-fullnessDecreaseRateEffect);
+                character.needsComponent.AdjustHappinessDecreaseRate(-happinessDecreaseRateEffect);
             }
         }
         public override void OnRemoveTrait(ITraitable removedFrom, Character removedBy) {
             base.OnRemoveTrait(removedFrom, removedBy);
             if (removedFrom is Character character) {
-                character.needsComponent.AdjustFullnessDecreaseRate(0.17f);
-                character.needsComponent.AdjustHappinessDecreaseRate(0.13f);
+                float fullnessDecreaseRateEffect = EditableValuesManager.Instance.baseFullnessDecreaseRate / 2f;
+                float happinessDecreaseRateEffect = EditableValuesManager.Instance.baseHappinessDecreaseRate / 2f;
+                character.needsComponent.AdjustFullnessDecreaseRate(fullnessDecreaseRateEffect);
+                character.needsComponent.AdjustHappinessDecreaseRate(happinessDecreaseRateEffect);
             }
         }
         #endregion

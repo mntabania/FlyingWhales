@@ -24,6 +24,7 @@ namespace UtilityScripts {
         public static string Unfiltered_Vision_Layer = "Non Filtered Vision";
         public static int Line_Of_Sight_Layer_Mask = LayerMask.GetMask("Unpassable", Filtered_Object_Layer, Unfiltered_Object_Layer);
         public static int Unpassable_Layer_Mask = LayerMask.GetMask("Unpassable");
+        public static int Filtered_Layer_Mask = LayerMask.GetMask(Filtered_Object_Layer);
 
         public static WaitForSeconds waitFor1Second = new WaitForSeconds(1f);
         public static WaitForSeconds waitFor2Seconds = new WaitForSeconds(2f);
@@ -35,7 +36,17 @@ namespace UtilityScripts {
 
         public static BIOMES[] customWorldBiomeChoices = new[] {BIOMES.GRASSLAND, BIOMES.FOREST, BIOMES.DESERT, BIOMES.SNOW};
         public static FACTION_TYPE[] customWorldFactionTypeChoices = new[] {FACTION_TYPE.Human_Empire, FACTION_TYPE.Elven_Kingdom, FACTION_TYPE.Demon_Cult, FACTION_TYPE.Vampire_Clan, FACTION_TYPE.Lycan_Clan};
-        
+        public static TILE_OBJECT_TYPE[] corruptionTileObjectChoices = new[]
+            {TILE_OBJECT_TYPE.CORRUPTED_TENDRIL, TILE_OBJECT_TYPE.CORRUPTED_SPIKE, TILE_OBJECT_TYPE.DEMON_CIRCLE, TILE_OBJECT_TYPE.SPAWNING_PIT, TILE_OBJECT_TYPE.SIGIL, TILE_OBJECT_TYPE.SMALL_TREE_OBJECT};
+        public static List<STRUCTURE_TYPE> skinnerStructures = new List<STRUCTURE_TYPE>() {
+            STRUCTURE_TYPE.BOAR_DEN,
+            STRUCTURE_TYPE.WOLF_DEN,
+            STRUCTURE_TYPE.BEAR_DEN,
+            STRUCTURE_TYPE.RABBIT_HOLE,
+            STRUCTURE_TYPE.MINK_HOLE,
+            STRUCTURE_TYPE.MOONCRAWLER_HOLE,
+        };
+
         public static string GetNormalizedSingularRace(RACE race) {
             switch (race) {
                 case RACE.HUMANS:
@@ -96,38 +107,6 @@ namespace UtilityScripts {
                 default:
                     return Utilities.NormalizeStringUpperCaseFirstLetterOnly(race.ToString());
             }
-        }
-        public static HexTile GetCenterTile(List<HexTile> tiles, HexTile[,] map, int width, int height) {
-            int maxXCoordinate = tiles.Max(x => x.xCoordinate);
-            int minXCoordinate = tiles.Min(x => x.xCoordinate);
-            int maxYCoordinate = tiles.Max(x => x.yCoordinate);
-            int minYCoordinate = tiles.Min(x => x.yCoordinate);
-
-            int midPointX = (minXCoordinate + maxXCoordinate) / 2;
-            int midPointY = (minYCoordinate + maxYCoordinate) / 2;
-
-            if (width - 2 >= midPointX) {
-                midPointX -= 2;
-            }
-            if (height - 2 >= midPointY) {
-                midPointY -= 2;
-            }
-            if (midPointX >= 2) {
-                midPointX += 2;
-            }
-            if (midPointY >= 2) {
-                midPointY += 2;
-            }
-            midPointX = Mathf.Clamp(midPointX, 0, width - 1);
-            midPointY = Mathf.Clamp(midPointY, 0, height - 1);
-
-            try {
-                HexTile newCenterOfMass = map[midPointX, midPointY];
-                return newCenterOfMass;
-            } catch {
-                throw new Exception($"Cannot Recompute center. Computed new center is {midPointX}, {midPointY}");
-            }
-
         }
         public static Rect GetScreenRect(Vector3 screenPosition1, Vector3 screenPosition2) {
             // Move origin from bottom left to top left
@@ -253,15 +232,6 @@ namespace UtilityScripts {
             }
             return -1;
         }
-        public static List<HexTile> GetTilesFromIDs(List<int> ids) {
-            List<HexTile> tiles = new List<HexTile>();
-            for (int i = 0; i < ids.Count; i++) {
-                int currID = ids[i];
-                HexTile tile = GridMap.Instance.GetHexTile(currID);
-                tiles.Add(tile);
-            }
-            return tiles;
-        }
         public static GameObject FindParentWithTag(GameObject childObject, string tag) {
             Transform t = childObject.transform;
             while (t.parent != null) {
@@ -332,6 +302,10 @@ namespace UtilityScripts {
             result.y = a.y - b.y;
             return result;
         }
+        public static int Roll() {
+            int roll = UnityEngine.Random.Range(0, 100);
+            return roll;
+        }
         /// <summary>
         /// Roll a chance. This rolls from 0 - 100.
         /// </summary>
@@ -340,7 +314,9 @@ namespace UtilityScripts {
         /// <returns>Whether or not the given chance was met.</returns>
         public static bool RollChance(int chance, ref string log) {
             int roll = UnityEngine.Random.Range(0, 100);
+#if DEBUG_LOG
             log += $"\nRoll is {roll.ToString()}. Chance is {chance.ToString()}";
+#endif
             return roll < chance;
         }
         /// <summary>
@@ -362,19 +338,52 @@ namespace UtilityScripts {
             int roll = UnityEngine.Random.Range(0, 10000);
             return roll < chance;
         }
+        /// <summary>
+        /// Roll a chance. This rolls from 0f - 1000f.
+        /// </summary>
+        /// <param name="chance">The chance for this to return true.</param>
+        /// <param name="log">The log string to append this roll to.</param>
+        /// <returns>Whether or not the given chance was met.</returns>
+        public static bool RollChance(float chance, ref string log) {
+            chance *= 100f;
+            int roll = UnityEngine.Random.Range(0, 10000);
+            log += $"\nRoll is {roll.ToString()}. Chance is {chance.ToString()}";
+            return roll < chance;
+        }
         public static int RandomBetweenTwoNumbers(int p_min, int p_max) {
             //+1 because max range in Random.Range is exclusive
             int roll = UnityEngine.Random.Range(p_min, p_max + 1);
             return roll;
         }
-        public static List<HexTile> GetHexTilesGivenCoordinates(List<Point> coordinates, HexTile[,] map) {
-            List<HexTile> tiles = new List<HexTile>();
+
+        public static List<int> GetUniqueRandomNumbersInBetween(int p_min, int p_max, int p_count) {
+            var sequence = Enumerable.Range(p_min, p_max).OrderBy(n => n * n + UnityEngine.Random.Range(p_min, p_max) * (new System.Random()).Next());
+
+            var result = sequence.Distinct().Take(p_count);
+
+            return result.ToList<int>();
+        }
+        public static List<Area> GetHexTilesGivenCoordinates(List<Point> coordinates, Area[,] map) {
+            List<Area> tiles = new List<Area>();
             for (int i = 0; i < coordinates.Count; i++) {
                 Point point = coordinates[i];
-                HexTile tile = map[point.X, point.Y];
+                Area tile = map[point.X, point.Y];
                 tiles.Add(tile);
             }
             return tiles;
+        }
+        public static List<Area> GetHexTilesGivenCoordinates(Point[] coordinates, Area[,] map) {
+            List<Area> tiles = new List<Area>();
+            for (int i = 0; i < coordinates.Length; i++) {
+                Point point = coordinates[i];
+                Area tile = map[point.X, point.Y];
+                tiles.Add(tile);
+            }
+            return tiles;
+        }
+        public static Area GetHexTileGivenCoordinates(Point point, Area[,] map) {
+            Area tile = map[point.X, point.Y];
+            return tile;
         }
         public static Color GetUpgradeButtonTextColor(bool p_interactable) {
             return p_interactable ? _normalColor : _grayedOutColor;
@@ -481,6 +490,16 @@ namespace UtilityScripts {
             }
 
             return cornersOutside.Count == 0;
+        }
+        public static Color GetValidTileHighlightColor() {
+            Color color = Color.green;
+            color.a = 0.3f;
+            return color;
+        }
+        public static Color GetInvalidTileHighlightColor() {
+            Color color = Color.red;
+            color.a = 0.3f;
+            return color;
         }
     }    
 }

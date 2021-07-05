@@ -1,0 +1,103 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 88e6d539796c490aa0efea676d6fae59, type: 3}
+  m_Name: Farmer Data
+  m_EditorClassIdentifier: 
+  combatBehaviourType: 0
+  combatSpecialSkillType: 0
+  workStructureType: 39
+  summonCost: 50
+  portraitSprite: {fileID: 0}
+  defaultSprites:
+    stillSprite: {fileID: 0}
+    animationSprites: []
+  raceSprites:
+    m_keys: 0200000001000000
+    m_values:
+    - stillSprite: {fileID: 21300000, guid: 21dadcd1927636d4ba627d75071f527b, type: 3}
+      animationSprites:
+      - {fileID: 21300000, guid: 653daab318c18e848873f7e49f775950, type: 3}
+      - {fileID: 21300000, guid: 0e8cb82ff97c46c42b4803e93f1aa556, type: 3}
+      - {fileID: 21300000, guid: caa669c8d3d13854ebfc87d0ffb26d46, type: 3}
+      - {fileID: 21300000, guid: e0a2014a318442840be45a6e5151861e, type: 3}
+      - {fileID: 21300000, guid: 21dadcd1927636d4ba627d75071f527b, type: 3}
+      - {fileID: 21300000, guid: 60647fb4f95f2b54bb58bb2c60664a39, type: 3}
+      - {fileID: 21300000, guid: 5f0ba448fc7779a46a02c185dc26ac1b, type: 3}
+      - {fileID: 21300000, guid: d13730919bd71ad4aac80affb70f0f85, type: 3}
+      - {fileID: 21300000, guid: 895dbc060a90f784dab354df5e4c4d3e, type: 3}
+      - {fileID: 21300000, guid: 58e22aff68f6df949a4b41de690e5248, type: 3}
+      - {fileID: 21300000, guid: 31d6b173ea7953b47beb454fd845d071, type: 3}
+      - {fileID: 21300000, guid: b3c554e9168832e44afaf5e581d79873, type: 3}
+      - {fileID: 21300000, guid: e4efe431cb5388043af18b629d97ed52, type: 3}
+      - {fileID: 21300000, guid: 4b45f2cf8b47440418f7f966fa65ab37, type: 3}
+      - {fileID: 21300000, guid: b784692ba68e87947b48c2727f441463, type: 3}
+      - {fileID: 21300000, guid: f78e20ee3b80fcd419a980f101528de6, type: 3}
+      - {fileID: 21300000, guid: bdb5fca03809fe246a3b8e53e9db271d, type: 3}
+      - {fileID: 21300000, guid: 738296ba7d4178e47ac40651dacfa232, type: 3}
+    - stillSprite: {fileID: 21300000, guid: 4f2bd8606c1947f42a7942817ad1e717, type: 3}
+      animationSprites:
+      - {fileID: 21300000, guid: a446af5d6fed7b94096565d6ea3da094, type: 3}
+      - {fileID: 21300000, guid: 5f6553466dcfb8e419fb0105825e9c6f, type: 3}
+      - {fileID: 21300000, guid: ef11fb87bc4745340b8e7b3da1391d27, type: 3}
+      - {fileID: 21300000, guid: e0a96a04eee44da40af3f0649649ab9c, type: 3}
+      - {fileID: 21300000, guid: 4f2bd8606c1947f42a7942817ad1e717, type: 3}
+      - {fileID: 21300000, guid: 7e566e87b8caba74586157a13bfb9020, type: 3}
+      - {fileID: 21300000, guid: cf1d0316f7ebf9c4f9b49d30e84d2235, type: 3}
+      - {fileID: 21300000, guid: 836ca9aabac1feb44b5e972b2d6ca0bb, type: 3}
+      - {fileID: 21300000, guid: f7b310fd039d02e44b26973fe255cbc9, type: 3}
+      - {fileID: 21300000, guid: 8b54aeff68186d34589773221ad17cfa, type: 3}
+      - {fileID: 21300000, guid: 476bff7b60089a64980e1f87047a1e42, type: 3}
+      - {fileID: 21300000, guid: 929c166448fc8d2469bd30c83c7318fc, type: 3}
+      - {fileID: 21300000, guid: c85f2b04b39630c41b6ef5115c8e195a, type: 3}
+      - {fileID: 21300000, guid: 52c29fd2ea8492342816adf2569fb8b8, type: 3}
+      - {fileID: 21300000, guid: f136d0ed9b8e74e49913e46b807b48c0, type: 3}
+      - {fileID: 21300000, guid: 51b57d1ad8f5cdb4a8a9decab4637ee9, type: 3}
+      - {fileID: 21300000, guid: b9aba09a4d7b35b4895147e3955affa4, type: 3}
+      - {fileID: 21300000, guid: 3d8bd9579c25cf244bc68cfb1d6feefe, type: 3}
+  initialVillagerPiercing: 0
+  initialVillagerPhysicalResistances:
+  - 0
+  - 5
+  - 10
+  initialVillagerMentalResistances:
+  - 0
+  - 5
+  - 10
+  initialVillagerElementalResistances:
+  - 0
+  - 5
+  - 10
+  initialVillagerSecondaryResistances:
+  - 0
+  - 5
+  - 10
+  characterSkillUpdateData:
+    m_fireResistanceBonus: 0
+    m_earthResistanceBonus: 0
+    m_windResistanceBonus: 0
+    m_waterResistanceBonus: 0
+    m_allElementalresistanceBonus: 12
+    m_poisonResistanceBonus: 0
+    m_iceResistanceBonus: 0
+    m_electricResistanceBonus: 0
+    m_allSecondaryresistanceBonus: 6
+    m_piercingBonus: 5
+    m_mentalResistanceBonus: 5
+    m_physicalResistanceBonus: 15
+  craftableWeapons: 03010000cc000000cd000000ce000000cf000000
+  craftableArmors: 05010000d0000000bc000000d1000000d3000000
+  craftableAccessories: dd000000
+  droppableItems:
+  - item: 13
+    weight: 100
+  - item: 189
+    weight: 10

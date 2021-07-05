@@ -12,7 +12,7 @@ public class AbductorBehaviour : CharacterBehaviourComponent {
 
 	#region Overrides
 	public override bool TryDoBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
-		TIME_IN_WORDS currentTimeInWords = GameManager.GetCurrentTimeInWordsOfTick();
+		TIME_IN_WORDS currentTimeInWords = GameManager.Instance.GetCurrentTimeInWordsOfTick();
 		//if nest is blocked, destroy anything that is occupying it.
 		if (character.behaviourComponent.IsNestBlocked(out var blocker)) {
 			return character.jobComponent.TriggerDestroy(blocker, out producedJob);
@@ -89,9 +89,10 @@ public class AbductorBehaviour : CharacterBehaviourComponent {
         Character chosenTarget = null;
         for (int i = 0; i < abductor.currentRegion.charactersAtLocation.Count; i++) {
 			Character character = abductor.currentRegion.charactersAtLocation[i];
-			bool isValidTarget = character is Animal ||
+			bool isValidTarget = (character is Animal ||
 			                     (character.isNormalCharacter && character.isDead == false && 
-			                      character.traitContainer.HasTrait("Resting")) && character.currentStructure is Kennel == false;
+			                      character.traitContainer.HasTrait("Resting")) && character.currentStructure is Kennel == false)
+								  && !character.isAlliedWithPlayer; //Those who are allied with player should not be targeted by abductors
 			if (isValidTarget) {
 				validTargets.Add(character);
 			}

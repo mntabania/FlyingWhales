@@ -1,1 +1,1 @@
-{"items":[{"key":"absorb success_description","value":"%00@ absorbed the element of %10@. %00@ gained %111% element."},{"key":"thought_bubble","value":"%00@ is absorbing the element of %10@."},{"key":"thought_bubble_m","value":"%00@ is going to absorb the element of %10@."}]}
+{"items":[{"key":"absorb success_description","value":"%00@ absorbed the vitality of %10@. %00@ has gained increased stats."},{"key":"thought_bubble","value":"%00@ is absorbing the vitality of %10@."},{"key":"thought_bubble_m","value":"%00@ is going to absorb the vitality of %10@."}]}

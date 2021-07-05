@@ -20,18 +20,46 @@ public class ResignData : SchemeData {
             UIManager.Instance.ShowSchemeUI(targetCharacter, null, this);
         }
     }
-    public override bool IsValid(IPlayerActionTarget target) {
-        if (target is Character character) {
-            if(character.faction?.factionType.type == FACTION_TYPE.Undead) {
+    //public override bool IsValid(IPlayerActionTarget target) {
+    //    bool isValid = base.IsValid(target);
+    //    if (isValid) {
+    //        if (target is Character character) {
+    //            if (character.faction?.factionType.type == FACTION_TYPE.Undead) {
+    //                return false;
+    //            }
+    //            bool isFactionLeaderOrSettlementRuler = character.isFactionLeader || character.isSettlementRuler;
+    //            if (!isFactionLeaderOrSettlementRuler) {
+    //                return false;
+    //            }
+    //            return true;
+    //        }
+    //    }
+    //    return false;
+    //}
+    public override bool CanPerformAbilityTowards(Character targetCharacter) {
+        bool canPerform = base.CanPerformAbilityTowards(targetCharacter);
+        if (canPerform) {
+            if (targetCharacter.faction?.factionType.type == FACTION_TYPE.Undead) {
                 return false;
             }
-            bool isFactionLeaderOrSettlementRuler = character.isFactionLeader || character.isSettlementRuler;
+            bool isFactionLeaderOrSettlementRuler = targetCharacter.isFactionLeader || targetCharacter.isSettlementRuler;
             if (!isFactionLeaderOrSettlementRuler) {
                 return false;
             }
             return true;
         }
-        return false;
+        return canPerform;
+    }
+    public override string GetReasonsWhyCannotPerformAbilityTowards(Character targetCharacter) {
+        string reasons = base.GetReasonsWhyCannotPerformAbilityTowards(targetCharacter);
+        if (targetCharacter.faction?.factionType.type == FACTION_TYPE.Undead) {
+            reasons += "Undead characters cannot resign.";
+        }
+        bool isFactionLeaderOrSettlementRuler = targetCharacter.isFactionLeader || targetCharacter.isSettlementRuler;
+        if (!isFactionLeaderOrSettlementRuler) {
+            reasons += "Only faction leaders and settlement rulers can resign.";
+        }
+        return reasons;
     }
     protected override void OnSuccessScheme(Character character, object target) {
         base.OnSuccessScheme(character, target);

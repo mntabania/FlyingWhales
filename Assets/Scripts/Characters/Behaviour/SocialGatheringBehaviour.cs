@@ -10,13 +10,17 @@ public class SocialGatheringBehaviour : CharacterBehaviourComponent {
     public override bool TryDoBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
         producedJob = null;
         bool hasJob = false;
+#if DEBUG_LOG
         log += $"\n-Character is partying";
+#endif
         //Party socialParty = character.partyComponent.currentParty;
         Gathering socialGathering = character.gatheringComponent.currentGathering;
         if (!socialGathering.isWaitTimeOver) {
             if (character.currentStructure == socialGathering.target) {
+#if DEBUG_LOG
                 log += $"\n-Character is already in target structure, will do party jobs";
-                if(character.previousCurrentActionNode != null && character.previousCurrentActionNode.associatedJobType == JOB_TYPE.PARTY_GO_TO) {
+#endif
+                if (character.previousCharacterDataComponent.previousJobType == JOB_TYPE.PARTY_GO_TO) {
                     hasJob = character.jobComponent.TriggerRoamAroundStructure(out producedJob);
                 } else {
                     int roll = UnityEngine.Random.Range(0, 100);
@@ -41,11 +45,8 @@ public class SocialGatheringBehaviour : CharacterBehaviourComponent {
                             hasJob = character.jobComponent.TriggerPlayCardsJob(tileObject as Desk, out producedJob);
                         }
                     } else if (roll >= 50 && roll < 70) {
-                        Character chosenCharacter = character.currentStructure.GetRandomCharacterThatMeetCriteria(
-                            x => !x.combatComponent.isInCombat && x.limiterComponent.canPerform && x.limiterComponent.canWitness && !x.isDead &&
-                                 x != character
-                        );
-                        if (chosenCharacter != null && character.nonActionEventsComponent.CanInteract(chosenCharacter)) {
+                        Character chosenCharacter = character.currentStructure.GetRandomCharacterThatIsAliveCanPerformAndWitnessAndNotInCombatExcept(character);
+                        if (chosenCharacter != null && character.nonActionEventsComponent.CanChat(chosenCharacter)) {
                             hasJob = character.interruptComponent.TriggerInterrupt(INTERRUPT.Chat, chosenCharacter);
                         }
                     } else if (roll >= 70 && roll < 85) {
@@ -59,7 +60,9 @@ public class SocialGatheringBehaviour : CharacterBehaviourComponent {
 
                 }
             } else {
+#if DEBUG_LOG
                 log += $"\n-Character is not in target structure, go to it";
+#endif
                 if (socialGathering.target is LocationStructure targetStructure) {
                     LocationGridTile targetTile = UtilityScripts.CollectionUtilities.GetRandomElement(targetStructure.passableTiles);
                     hasJob = character.jobComponent.CreatePartyGoToJob(targetTile, out producedJob);

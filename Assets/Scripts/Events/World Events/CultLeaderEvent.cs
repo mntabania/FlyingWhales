@@ -40,7 +40,7 @@ namespace Events.World_Events {
             var hoursBasedOnTicks = GameManager.Instance.GetHoursBasedOnTicks(GameManager.Instance.Today().tick);
             if (hoursBasedOnTicks == 18 && !hasCultLeader) {
                 if (_activeCultists.Count >= Minimum_Cultist_Count) {
-                    int chance = 10;
+                    int chance = ChanceData.GetChance(CHANCE_TYPE.Base_Cult_Leader_Spawn_Chance);
                     if (_activeCultists.Count > Minimum_Cultist_Count) {
                         //+2% chance per excess cultist 
                         chance += 2 * (_activeCultists.Count - Minimum_Cultist_Count);
@@ -120,9 +120,11 @@ namespace Events.World_Events {
         }
         private void SetCurrentCultLeaderInWorld(Character character) {
             _currentCultLeader = character;
+#if DEBUG_LOG
             Debug.Log($"{GameManager.Instance.TodayLogString()}Set cult leader in world to {_currentCultLeader?.name ?? "Null"}");
+#endif
         }
-        #endregion
+#endregion
     }
 
     public class SaveDataCultLeaderEvent : SaveDataWorldEvent {

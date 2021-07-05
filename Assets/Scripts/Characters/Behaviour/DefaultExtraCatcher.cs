@@ -10,7 +10,9 @@ public class DefaultExtraCatcher : CharacterBehaviourComponent {
         //attributes = new BEHAVIOUR_COMPONENT_ATTRIBUTE[] { BEHAVIOUR_COMPONENT_ATTRIBUTE.OUTSIDE_SETTLEMENT_ONLY };
     }
     public override bool TryDoBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
-        log += $"\n-{character.name} is in default extra catcher behaviour";
+#if DEBUG_LOG
+        log = $"{log}\n-{character.name} is in default extra catcher behaviour";
+#endif
         //if((character.homeStructure == null || character.homeStructure.hasBeenDestroyed) && !character.HasTerritory()) {
         //    log += "\n-Character does not have home structure or territory, 25% chance to set home";
         //    if(UnityEngine.Random.Range(0, 100) < 25) {
@@ -19,70 +21,83 @@ public class DefaultExtraCatcher : CharacterBehaviourComponent {
         //    }
         //}
         producedJob = null;
-        if (character.isNormalCharacter && character.hasMarker && character.marker.inVisionCharacters.Count > 0 && HasCharacterNotConversedInMinutes(character, 10)) {
-            log += $"\n{character.name} has characters in vision and has not conversed in at least 10 minutes.";
-            List<Character> validChoices =
-                character.marker.GetInVisionCharactersThatMeetCriteria((c) => HasCharacterNotConversedInMinutes(c, 10) && c.isNormalCharacter && !c.isDead);
-            if (validChoices != null && validChoices.Count > 0) {
-                Character chosenTarget = CollectionUtilities.GetRandomElement(validChoices);
-                if (character.nonActionEventsComponent.CanInteract(chosenTarget)) {
-                    log += $"\n{character.name} has characters in vision that have not conversed in at least 10 minutes. Chosen target is {chosenTarget.name}. Rolling chat chance";
-                    if (GameUtilities.RollChance(20, ref log)) {
-                        character.interruptComponent.TriggerInterrupt(INTERRUPT.Chat, chosenTarget);
-                        return true;
-                    } else {
-                        log += $"\nChat roll failed.";
-                        if (character.moodComponent.moodState == MOOD_STATE.Normal &&
-                            RelationshipManager.IsSexuallyCompatible(character, chosenTarget) && character.relationshipContainer.IsFamilyMember(chosenTarget) == false && character.limiterComponent.isSociable) {
-                            log += "\nCharacter is in normal mood and is sexually compatible with target and target is not from same family tree and character is not Angry at Target";
-
-                            if (character.relationshipContainer.HasRelationshipWith(chosenTarget, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.AFFAIR)
-                                || character.relationshipContainer.GetFirstRelatableIDWithRelationship(RELATIONSHIP_TYPE.LOVER) == -1
-                                || character.traitContainer.HasTrait("Unfaithful")) {
-                                log += "\nCharacter does not have a lover or target is the lover or affair of character or character is unfaithful.";
-
-                                log += "\n-Flirt has 1% (multiplied by Compatibility value) chance to trigger";
-                                int compatibility = RelationshipManager.Instance.GetCompatibilityBetween(character, chosenTarget);
-                                int baseChance = 1;
-                                if (character.moodComponent.moodState == MOOD_STATE.Normal) {
-                                    log += "\n-Flirt has +2% chance to trigger because character is in a normal mood";
-                                    baseChance += 2;
-                                }
-
-                                int flirtChance;
-                                if (compatibility != -1) {
-                                    //has compatibility value
-                                    flirtChance = baseChance * compatibility;
-                                    log += $"\n-Chance: {flirtChance.ToString()}";
-                                } else {
-                                    //has NO compatibility value
-                                    flirtChance = baseChance * 2;
-                                    log += $"\n-Chance: {flirtChance.ToString()} (No Compatibility)";
-                                }
-
-                                if (GameUtilities.RollChance(flirtChance, ref log)) {
-                                    character.interruptComponent.TriggerInterrupt(INTERRUPT.Flirt, chosenTarget);
-                                    return true;
-                                } else {
-                                    log += "\n-Flirt did not trigger";
-                                }
-                            } else {
-                                log += "\n-Flirt did not trigger";
+        if (character.isNormalCharacter && character.hasMarker && character.marker.inVisionCharacters.Count > 0 && CharacterManager.Instance.HasCharacterNotConversedInMinutes(character, 6)) {
+#if DEBUG_LOG
+            log = $"{log}\n{character.name} has characters in vision and has not conversed in at least 10 minutes.";
+#endif
+            List<Character> validChoices = RuinarchListPool<Character>.Claim();
+            character.marker.PopulateCharactersThatIsNotDeadVillagerAndNotConversedInMinutes(validChoices, 6);
+            Character chosenTarget = null;
+            if (validChoices.Count > 0) {
+                chosenTarget = CollectionUtilities.GetRandomElement(validChoices);
+            }
+            RuinarchListPool<Character>.Release(validChoices);
+            if (chosenTarget != null) {
+#if DEBUG_LOG
+                log = $"{log}\n{character.name} has characters in vision that have not conversed in at least 10 minutes. Chosen target is {chosenTarget.name}. Rolling chat chance";
+#endif
+                if (character.nonActionEventsComponent.CanChat(chosenTarget) && GameUtilities.RollChance(20, ref log)) {
+                    character.interruptComponent.TriggerInterrupt(INTERRUPT.Chat, chosenTarget);
+                    return true;
+                } else {
+#if DEBUG_LOG
+                    log = $"{log}\nChat roll failed.";
+#endif
+                    if (character.moodComponent.moodState == MOOD_STATE.Normal && RelationshipManager.Instance.IsCompatibleBasedOnSexualityAndOpinion(character, chosenTarget) && character.limiterComponent.isSociable) { // && !character.relationshipContainer.IsFamilyMember(chosenTarget)
+#if DEBUG_LOG
+                        log = $"{log}\nCharacter is in normal mood and is compatible with target";
+#endif
+                        if (character.nonActionEventsComponent.CanFlirt(character, chosenTarget)) {
+#if DEBUG_LOG
+                            log = $"{log}\nCharacter can flirt with target.";
+#endif
+                            int compatibility = RelationshipManager.Instance.GetCompatibilityBetween(character, chosenTarget);
+                            int baseChance = ChanceData.GetChance(CHANCE_TYPE.Flirt_On_Sight_Base_Chance);
+#if DEBUG_LOG
+                            log = $"{log}\n-Flirt has {baseChance}% (multiplied by Compatibility value) chance to trigger";
+#endif
+                            if (character.moodComponent.moodState == MOOD_STATE.Normal) {
+#if DEBUG_LOG
+                                log = $"{log}\n-Flirt has +2% chance to trigger because character is in a normal mood";
+#endif
+                                baseChance += 2;
                             }
+
+                            int flirtChance;
+                            if (compatibility != -1) {
+                                //has compatibility value
+                                flirtChance = baseChance * compatibility;
+#if DEBUG_LOG
+                                log = $"{log}\n-Chance: {flirtChance.ToString()}";
+#endif
+                            } else {
+                                //has NO compatibility value
+                                flirtChance = baseChance * 2;
+#if DEBUG_LOG
+                                log = $"{log}\n-Chance: {flirtChance.ToString()} (No Compatibility)";
+#endif
+                            }
+
+                            if (GameUtilities.RollChance(flirtChance, ref log)) {
+                                character.interruptComponent.TriggerInterrupt(INTERRUPT.Flirt, chosenTarget);
+                                return true;
+                            } else {
+#if DEBUG_LOG
+                                log = $"{log}\n-Flirt did not trigger";
+#endif
+                            }
+                        } else {
+#if DEBUG_LOG
+                            log = $"{log}\n-Flirt did not trigger";
+#endif
                         }
                     }
                 }
             }
         }
+#if DEBUG_LOG
         log += "\n-Chat and flirt did not trigger. Will create an Idle Stand job";
+#endif
         return character.jobComponent.TriggerStand(out producedJob);
-    }
-
-    private bool HasCharacterNotConversedInMinutes(Character character, int minutes) {
-        GameDate lastConversationDate = character.nonActionEventsComponent.lastConversationDate;
-        //add ticks (based on given minutes) to last conversation date. If resulting date is before today, then character
-        //has not conversed for the given amount of time.
-        return lastConversationDate.AddTicks(GameManager.Instance.GetTicksBasedOnMinutes(minutes))
-            .IsBefore(GameManager.Instance.Today());
     }
 }

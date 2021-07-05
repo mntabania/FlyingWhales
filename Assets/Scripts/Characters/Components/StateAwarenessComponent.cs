@@ -25,12 +25,12 @@ public class StateAwarenessComponent : CharacterComponent {
     public void SubscribeSignals() {
         Messenger.AddListener<Character>(CharacterSignals.CHARACTER_MISSING, OnCharacterMissing);
         Messenger.AddListener<Character>(CharacterSignals.CHARACTER_PRESUMED_DEAD, OnCharacterPresumedDead);
-        Messenger.AddListener<Character, HexTile>(CharacterSignals.CHARACTER_ENTERED_HEXTILE, OnCharacterEnteredHexTile);
+        Messenger.AddListener<Character, Area>(CharacterSignals.CHARACTER_ENTERED_AREA, OnCharacterEnteredArea);
     }
     public void UnsubscribeSignals() {
         Messenger.RemoveListener<Character>(CharacterSignals.CHARACTER_MISSING, OnCharacterMissing);
         Messenger.RemoveListener<Character>(CharacterSignals.CHARACTER_PRESUMED_DEAD, OnCharacterPresumedDead);
-        Messenger.RemoveListener<Character, HexTile>(CharacterSignals.CHARACTER_ENTERED_HEXTILE, OnCharacterEnteredHexTile);
+        Messenger.RemoveListener<Character, Area>(CharacterSignals.CHARACTER_ENTERED_AREA, OnCharacterEnteredArea);
     }
 
     #region Listeners
@@ -44,10 +44,10 @@ public class StateAwarenessComponent : CharacterComponent {
             owner.relationshipContainer.SetAwarenessState(owner, presumedDeadCharacter, AWARENESS_STATE.Presumed_Dead);
         }
     }
-    private void OnCharacterEnteredHexTile(Character character, HexTile hex) {
+    private void OnCharacterEnteredArea(Character character, Area p_area) {
         if(character == owner) {
             if(owner.homeSettlement != null) {
-                if(hex.settlementOnTile != owner.homeSettlement) {
+                if(p_area.settlementOnArea != owner.homeSettlement) {
                     StartMissingTimer();
                 } else {
                     StopMissingTimer();
@@ -58,7 +58,8 @@ public class StateAwarenessComponent : CharacterComponent {
     #endregion
 
     public void OnCharacterWasSeenBy(Character characterThatSaw) {
-        if (characterThatSaw.isNormalCharacter) {
+        //Should only be available when seen by its own factionmate
+        if (characterThatSaw.isNormalCharacter && characterThatSaw.faction == owner.faction) {
             StopMissingTimer();
             if (owner.isDead) {
                 characterThatSaw.relationshipContainer.SetAwarenessState(characterThatSaw, owner, AWARENESS_STATE.Presumed_Dead);

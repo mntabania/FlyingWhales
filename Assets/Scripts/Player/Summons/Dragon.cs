@@ -5,7 +5,7 @@ using Traits;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
 
-public class Dragon : Summon {
+public class Dragon : SkinnableAnimal {
     public override string raceClassName => "Dragon";
     public override System.Type serializedData => typeof(SaveDataDragon);
 
@@ -17,13 +17,15 @@ public class Dragon : Summon {
     public List<Character> charactersThatAreWary { get; private set; }
     private readonly int _leaveWorldTimer;
 
+    public override TILE_OBJECT_TYPE produceableMaterial => TILE_OBJECT_TYPE.BEAR_HIDE;
+
     public override bool defaultDigMode => true;
 
     public Dragon() : base(SUMMON_TYPE.Dragon, "Dragon", RACE.DRAGON, UtilityScripts.Utilities.GetRandomGender()) {
         //SetMaxHPMod(1000);
         traitContainer.AddTrait(this, "Immune");
         traitContainer.AddTrait(this, "Hibernating");
-        traitContainer.AddTrait(this, "Fireproof");
+        traitContainer.AddTrait(this, "Fire Resistant");
         traitContainer.AddTrait(this, "Sturdy");
         //traitContainer.AddTrait(this, "Indestructible");
         _leaveWorldTimer = GameManager.Instance.GetTicksBasedOnHour(8);
@@ -38,7 +40,7 @@ public class Dragon : Summon {
         //SetMaxHPMod(1000);
         traitContainer.AddTrait(this, "Immune");
         traitContainer.AddTrait(this, "Hibernating");
-        traitContainer.AddTrait(this, "Fireproof");
+        traitContainer.AddTrait(this, "Fire Resistant");
         traitContainer.AddTrait(this, "Sturdy");
         //traitContainer.AddTrait(this, "Indestructible");
         _leaveWorldTimer = GameManager.Instance.GetTicksBasedOnHour(8);
@@ -57,7 +59,7 @@ public class Dragon : Summon {
     #region Overrides
     public override void Initialize() {
         base.Initialize();
-        movementComponent.SetIsFlying(true);
+        movementComponent.SetToFlying();
         behaviourComponent.ChangeDefaultBehaviourSet(CharacterManager.Dragon_Behaviour);
     }
     public override void SubscribeToSignals() {
@@ -89,7 +91,7 @@ public class Dragon : Summon {
     }
     public override void ConstructDefaultActions() {
         base.ConstructDefaultActions();
-        RemovePlayerAction(PLAYER_SKILL_TYPE.SNATCH);
+        // RemovePlayerAction(PLAYER_SKILL_TYPE.SNATCH);
     }
     public override void LoadReferences(SaveDataCharacter data) {
         if(data is SaveDataDragon savedData) {
@@ -98,7 +100,10 @@ public class Dragon : Summon {
             }
             if(savedData.charactersThatAreWary != null) {
                 for (int i = 0; i < savedData.charactersThatAreWary.Count; i++) {
-                    charactersThatAreWary.Add(CharacterManager.Instance.GetCharacterByPersistentID(savedData.charactersThatAreWary[i]));
+                    Character character = CharacterManager.Instance.GetCharacterByPersistentID(savedData.charactersThatAreWary[i]);
+                    if (character != null) {
+                        charactersThatAreWary.Add(character);
+                    }
                 }
             }
         }
@@ -177,7 +182,7 @@ public class Dragon : Summon {
     //    if (character != this && combatComponent.isInCombat) {
     //        if (HasTerritory()) {
     //            if (IsTerritory(tile)) {
-    //                bool isCharacterInStillInTerritory = character.gridTileLocation.collectionOwner.isPartOfParentRegionMap && IsTerritory(character.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner);
+    //                bool isCharacterInStillInTerritory = character.gridTileLocation.collectionOwner.isPartOfParentRegionMap && IsTerritory(character.gridTileLocation.hexTileOwner);
     //                if (!isCharacterInStillInTerritory) {
     //                    combatComponent.RemoveHostileInRange(character);
     //                }
@@ -188,7 +193,7 @@ public class Dragon : Summon {
 }
 
 [System.Serializable]
-public class SaveDataDragon : SaveDataSummon {
+public class SaveDataDragon : SaveDataSkinnableAnimal {
     public bool isAwakened;
     public bool isAttackingPlayer;
     public bool willLeaveWorld;

@@ -4,7 +4,7 @@ using Inner_Maps;
 using UnityEngine;
 using UnityEngine.Assertions;
 using UtilityScripts;
-
+using Traits;
 public class Vapor : MovingTileObject {
 
     private VaporMapObjectVisual _vaporMapVisualObject;
@@ -22,7 +22,7 @@ public class Vapor : MovingTileObject {
         SetDoExpireEffect(true);
         expiryDate = GameManager.Instance.Today().AddTicks(GameManager.Instance.GetTicksBasedOnHour(2));
     }
-    public Vapor(SaveDataVapor data) {
+    public Vapor(SaveDataVapor data) : base(data) {
         //SaveDataVapor saveDataVapor = data as SaveDataVapor;
         Assert.IsNotNull(data);
         expiryDate = data.expiryDate;
@@ -54,11 +54,11 @@ public class Vapor : MovingTileObject {
         return "Vapor";
     }
     public override void AdjustHP(int amount, ELEMENTAL_TYPE elementalDamageType, bool triggerDeath = false,
-        object source = null, CombatManager.ElementalTraitProcessor elementalTraitProcessor = null, bool showHPBar = false) {
+        object source = null, CombatManager.ElementalTraitProcessor elementalTraitProcessor = null, bool showHPBar = false, float piercingPower = 0f, bool isPlayerSource = false) {
         if (currentHP == 0 && amount < 0) {
             return; //hp is already at minimum, do not allow any more negative adjustments
         }
-        CombatManager.Instance.DamageModifierByElementsAndTraits(ref amount, elementalDamageType, this);
+        CombatManager.Instance.ModifyDamage(ref amount, elementalDamageType, piercingPower, this);
         currentHP += amount;
         currentHP = Mathf.Clamp(currentHP, 0, maxHP);
         if (amount < 0) { //&& source != null
@@ -67,7 +67,7 @@ public class Vapor : MovingTileObject {
             if (source is Character character) {
                 responsibleCharacter = character;
             }
-            CombatManager.Instance.ApplyElementalDamage(amount, elementalDamageType, this, responsibleCharacter, elementalTraitProcessor);
+            CombatManager.Instance.ApplyElementalDamage(amount, elementalDamageType, this, responsibleCharacter, elementalTraitProcessor, setAsPlayerSource: isPlayerSource);
         }
         if (elementalDamageType == ELEMENTAL_TYPE.Fire) {
             _vaporMapVisualObject.Expire();
@@ -89,10 +89,12 @@ public class Vapor : MovingTileObject {
         if (!hasExpired && currentHP == 0) {
             _vaporMapVisualObject.Expire();
         }
+#if DEBUG_LOG
         Debug.Log($"{GameManager.Instance.TodayLogString()}HP of {this} was adjusted by {amount}. New HP is {currentHP}.");
+#endif
     }
 
-    #region Moving Tile Object
+#region Moving Tile Object
     protected override bool TryGetGridTileLocation(out LocationGridTile tile) {
         if (_vaporMapVisualObject != null) {
             if (_vaporMapVisualObject.isSpawned) {
@@ -103,9 +105,9 @@ public class Vapor : MovingTileObject {
         tile = null;
         return false;
     }
-    #endregion
+#endregion
 
-    #region Size
+#region Size
     private void SetSize(int size) {
         this.size = size;
         if (_vaporMapVisualObject != null) {
@@ -127,9 +129,9 @@ public class Vapor : MovingTileObject {
             SetSize(6);
         }
     }
-    #endregion
+#endregion
 
-    #region Expire Effect
+#region Expire Effect
     private void ExpireEffect() {
         if (gridTileLocation != null) {
             int radius = 0;
@@ -143,16 +145,22 @@ public class Vapor : MovingTileObject {
             }
             //If the radius is less than or equal to zero this means we will only get the gridTileLocation itself
             if (radius <= 0) {
-                gridTileLocation.genericTileObject.traitContainer.AddTrait(gridTileLocation.genericTileObject, "Wet");
+                gridTileLocation.tileObjectComponent.genericTileObject.traitContainer.AddTrait(gridTileLocation.tileObjectComponent.genericTileObject, "Wet");
+                Wet wet = gridTileLocation.tileObjectComponent.genericTileObject.traitContainer.GetTraitOrStatus<Wet>("Wet");
+                wet?.SetIsPlayerSource(isPlayerSource);
             } else {
-                List<LocationGridTile> tiles = gridTileLocation.GetTilesInRadius(radius, includeCenterTile: true, includeTilesInDifferentStructure: true);
+                List<LocationGridTile> tiles = RuinarchListPool<LocationGridTile>.Claim();
+                gridTileLocation.PopulateTilesInRadius(tiles, radius, includeCenterTile: true, includeTilesInDifferentStructure: true);
                 for (int i = 0; i < tiles.Count; i++) {
-                    tiles[i].genericTileObject.traitContainer.AddTrait(tiles[i].genericTileObject, "Wet");
+                    tiles[i].tileObjectComponent.genericTileObject.traitContainer.AddTrait(tiles[i].tileObjectComponent.genericTileObject, "Wet");
+                    Wet wet = tiles[i].tileObjectComponent.genericTileObject.traitContainer.GetTraitOrStatus<Wet>("Wet");
+                    wet?.SetIsPlayerSource(isPlayerSource);
                 }
+                RuinarchListPool<LocationGridTile>.Release(tiles);
             }
         }
     }
-    #endregion
+#endregion
 }
 #region Save Data
 public class SaveDataVapor : SaveDataMovingTileObject {

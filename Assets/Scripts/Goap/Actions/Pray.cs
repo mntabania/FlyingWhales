@@ -27,27 +27,39 @@ public class Pray : GoapAction {
         SetState("Pray Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
+#if DEBUG_LOG
         string costLog = $"\n{name} {target.nameWithID}:";
+#endif
         int cost = UtilityScripts.Utilities.Rng.Next(90, 131);
+#if DEBUG_LOG
         costLog += $" +{cost}(Initial)";
+#endif
         int numOfTimesActionDone = actor.jobComponent.GetNumOfTimesActionDone(this);
         if (numOfTimesActionDone > 5) {
             cost += 2000;
+#if DEBUG_LOG
             costLog += " +2000(Times Prayed > 5)";
+#endif
         }
         if (actor.religionComponent.religion != RELIGION.Demon_Worship && actor.traitContainer.HasTrait("Evil", "Psychopath")) {
             cost += 2000;
+#if DEBUG_LOG
             costLog += " +2000(Evil/Psychopath)";
+#endif
         }
         if (actor.traitContainer.HasTrait("Chaste")) {
             cost -= 15;
+#if DEBUG_LOG
             costLog += " -15(Chaste)";
+#endif
         }
         int timesCost = 10 * numOfTimesActionDone;
         cost += timesCost;
+#if DEBUG_LOG
         costLog += $" +{timesCost}(10 x Times Prayed)";
-        
+
         actor.logComponent.AppendCostLog(costLog);
+#endif
         return cost;
     }
     //public override void OnStopWhilePerforming(ActualGoapNode node) {
@@ -65,8 +77,8 @@ public class Pray : GoapAction {
         }
         return base.GetCrimeType(actor, target, crime);
     }
-    public override void PopulateReactionsToActor(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
-        base.PopulateReactionsToActor(reactions, actor, target, witness, node, status);
+    public override void PopulateEmotionReactionsToActor(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
+        base.PopulateEmotionReactionsToActor(reactions, actor, target, witness, node, status);
         Character targetCharacter = target as Character;
 
         CRIME_SEVERITY severity = node.crimeType == CRIME_TYPE.None ? CRIME_SEVERITY.None : CrimeManager.Instance.GetCrimeSeverity(witness, actor, target, node.crimeType);
@@ -92,15 +104,15 @@ public class Pray : GoapAction {
     public override bool IsHappinessRecoveryAction() {
         return true;
     }
-    #endregion
+#endregion
 
-    #region State Effects
+#region State Effects
     public void PrePraySuccess(ActualGoapNode goapNode) {
         //goapNode.actor.needsComponent.AdjustDoNotGetBored(1);
         goapNode.actor.jobComponent.IncreaseNumOfTimesActionDone(this);
     }
     public void PerTickPraySuccess(ActualGoapNode goapNode) {
-        goapNode.actor.needsComponent.AdjustHappiness(4.4f);
+        goapNode.actor.needsComponent.AdjustHappiness(12f);
         //goapNode.actor.needsComponent.AdjustStamina(0.5f);
     }
     public void AfterPraySuccess(ActualGoapNode goapNode) {
@@ -108,19 +120,19 @@ public class Pray : GoapAction {
         if (goapNode.actor.religionComponent.religion == RELIGION.Demon_Worship) {
             //Demon Worshippers produce 1 Chaos Orb when they Pray
             //https://trello.com/c/qnZzSwcW/2590-demon-worshippers-produce-1-chaos-orb-when-they-pray
-            Messenger.Broadcast(PlayerSignals.CREATE_CHAOS_ORBS, goapNode.poiTarget.worldPosition, 1, goapNode.poiTarget.gridTileLocation.parentMap);
+            Messenger.Broadcast(CharacterSignals.CHARACTER_PRAY_SUCCESS, goapNode.poiTarget as Character);
         }
     }
-    #endregion
+#endregion
 
-    #region Requirement
+#region Requirement
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, OtherData[] otherData, JobQueueItem job) { 
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData, job);
         if (satisfied) {
             if (poiTarget.gridTileLocation != null && actor.trapStructure.IsTrappedAndTrapStructureIsNot(poiTarget.gridTileLocation.structure)) {
                 return false;
             }
-            if (poiTarget.gridTileLocation != null && poiTarget.gridTileLocation.collectionOwner.isPartOfParentRegionMap && actor.trapStructure.IsTrappedAndTrapHexIsNot(poiTarget.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner)) {
+            if (poiTarget.gridTileLocation != null && actor.trapStructure.IsTrappedAndTrapAreaIsNot(poiTarget.gridTileLocation.area)) {
                 return false;
             }
             if (actor.traitContainer.HasTrait("Evil")) {
@@ -130,5 +142,5 @@ public class Pray : GoapAction {
         }
         return false;
     }
-    #endregion
+#endregion
 }

@@ -12,7 +12,7 @@ namespace Quests {
 
         public static QuestManager Instance;
 
-        public WinconditionTracker winConditionTracker { set; get; }
+        public WinConditionTracker winConditionTracker { set; get; }
        
         /// <summary>
         /// List of active quests. NOTE: this does not include tutorials.
@@ -20,9 +20,9 @@ namespace Quests {
         private List<Quest> _activeQuests;
         
         public enum Special_Popup { 
-            Threat, Counterattack, Divine_Intervention, Special_Events, Pause_Reminder,
+            Threat, Special_Events, Pause_Reminder,
             Excalibur_Obtained, Disguised_Succubus, Activated_Ankh, Dragon_Left, Dragon_Awakened, Sleeping_Dragon,
-            The_Sword, The_Crack, The_Necronomicon, Cult_Leader, Low_Mana
+            The_Sword, The_Crack, The_Necronomicon, Cult_Leader
         }
 
         
@@ -40,72 +40,81 @@ namespace Quests {
         protected override void OnDestroy() {
             base.OnDestroy();
             Instance = null;
-            Messenger.RemoveListener<List<Character>, DemonicStructure>(PartySignals.CHARACTERS_ATTACKING_DEMONIC_STRUCTURE, OnCharactersAttackingDemonicStructure);
-            Messenger.RemoveListener<LocationStructure, Character, GoapPlanJob>(JobSignals.DEMONIC_STRUCTURE_DISCOVERED, OnDemonicStructureDiscovered);
-            Messenger.RemoveListener<List<Character>>(PlayerQuestSignals.ANGELS_ATTACKING_DEMONIC_STRUCTURE, OnAngelsAttackingDemonicStructure);
+            // Messenger.RemoveListener<List<Character>, DemonicStructure>(PartySignals.CHARACTERS_ATTACKING_DEMONIC_STRUCTURE, OnCharactersAttackingDemonicStructure);
+            // Messenger.RemoveListener<LocationStructure, Character, GoapPlanJob>(JobSignals.DEMONIC_STRUCTURE_DISCOVERED, OnDemonicStructureDiscovered);
+            //Messenger.RemoveListener<List<Character>>(PlayerQuestSignals.ANGELS_ATTACKING_DEMONIC_STRUCTURE, OnAngelsAttackingDemonicStructure);
             Messenger.RemoveListener<Character, DemonicStructure>(CharacterSignals.CHARACTER_HIT_DEMONIC_STRUCTURE, OnSingleCharacterAttackedDemonicStructure);
         }
         
         public void LoadWinConditionTracker(SaveDataWinConditionTracker data) {
-            InitializeQuestTracker();
-            winConditionTracker.Initialize(CharacterManager.Instance.allCharacters);
+            InitializeWinConditionTracker();
+            winConditionTracker?.Initialize(CharacterManager.Instance.allCharacters);
             winConditionTracker?.LoadReferences(data);
         }
 
         #region Win Condition
-        private void InitializeQuestTracker() {
-            switch (WorldSettings.Instance.worldSettingsData.worldType) {
-                case WorldSettingsData.World_Type.Oona:
-                    winConditionTracker = new OonaWinConditionTracker();
+        private void InitializeWinConditionTracker() {
+            if (PlayerManager.Instance.player.hasAlreadyWon) {
+                //if player has already won the game, do not spawn win condition any more to save processing power.
+                return;
+            }
+            switch (WorldSettings.Instance.worldSettingsData.victoryCondition) {
+                case VICTORY_CONDITION.Eliminate_All:
+                    winConditionTracker = new WipeOutAllVillagersWinConditionTracker();
                     break;
-                case WorldSettingsData.World_Type.Icalawa:
-                    winConditionTracker = new OonaWinConditionTracker();
+                case VICTORY_CONDITION.Wipe_Out_Village_On_Day:
+                    winConditionTracker = new WipeOutAllUntilDayWinConditionTracker();
                     break;
-                case WorldSettingsData.World_Type.Pangat_Loo:
-                    winConditionTracker = new PangatLooWinConditionTracker();
+                case VICTORY_CONDITION.Wipe_Elven_Kingdom_Survive_Humans:
+                    winConditionTracker = new HumansSurviveAndElvesWipedOutWinConditionTracker();
                     break;
-                case WorldSettingsData.World_Type.Affatt:
-                    winConditionTracker = new AffattWinConditionTracker();
+                case VICTORY_CONDITION.Kill_By_Plague:
+                    winConditionTracker = new PlagueDeathWinConditionTracker();
                     break;
-                case WorldSettingsData.World_Type.Zenko:
-                    winConditionTracker = new OonaWinConditionTracker(); //reverted for now. Since zenko win condition is currently difficult.
+                case VICTORY_CONDITION.Create_Demon_Cult:
+                    winConditionTracker = new RecruitCultistsWinConditionTracker();
                     break;
-                case WorldSettingsData.World_Type.Aneem:
-                    winConditionTracker = new AneemWinConditionTracker();
+                case VICTORY_CONDITION.Summon_Ruinarch:
+                    winConditionTracker = new UpgradePortalWinConditionTracker();
                     break;
-                case WorldSettingsData.World_Type.Pitto:
-                    winConditionTracker = new PittoWinConditionTracker();
+                case VICTORY_CONDITION.Sandbox:
+                    //no win condition.
                     break;
                 default:
-                    winConditionTracker = new OonaWinConditionTracker();
-                    break;
+                    throw new ArgumentOutOfRangeException();
             }
+#if DEBUG_LOG
+            UnityEngine.Debug.Log($"Set win condition to {winConditionTracker?.ToString()}");
+#endif
         }
-        public T GetWinConditionTracker<T>() where T : WinconditionTracker {
+        public T GetWinConditionTracker<T>() where T : WinConditionTracker {
             if (winConditionTracker is T converted) {
                 return converted;
             }
             throw new Exception($"Problem trying to convert Win Condition {winConditionTracker}");
         }
-        #endregion
+#endregion
         
         #region Initialization
         public void InitializeAfterGameLoaded() {
-            Messenger.AddListener<List<Character>, DemonicStructure>(PartySignals.CHARACTERS_ATTACKING_DEMONIC_STRUCTURE, OnCharactersAttackingDemonicStructure);
-            Messenger.AddListener<LocationStructure, Character, GoapPlanJob>(JobSignals.DEMONIC_STRUCTURE_DISCOVERED, OnDemonicStructureDiscovered);
-            Messenger.AddListener<List<Character>>(PlayerQuestSignals.ANGELS_ATTACKING_DEMONIC_STRUCTURE, OnAngelsAttackingDemonicStructure);
+            // Messenger.AddListener<List<Character>, DemonicStructure>(PartySignals.CHARACTERS_ATTACKING_DEMONIC_STRUCTURE, OnCharactersAttackingDemonicStructure);
+            // Messenger.AddListener<LocationStructure, Character, GoapPlanJob>(JobSignals.DEMONIC_STRUCTURE_DISCOVERED, OnDemonicStructureDiscovered);
+            //Messenger.AddListener<List<Character>>(PlayerQuestSignals.ANGELS_ATTACKING_DEMONIC_STRUCTURE, OnAngelsAttackingDemonicStructure);
             Messenger.AddListener<Character, DemonicStructure>(CharacterSignals.CHARACTER_HIT_DEMONIC_STRUCTURE, OnSingleCharacterAttackedDemonicStructure);
             Messenger.Broadcast(UISignals.SHOW_SELECTABLE_GLOW, "CenterButton");
-            if (!SaveManager.Instance.useSaveData) {
-                InitializeQuestTracker();
-                //TODO: Try to remove checking
-                winConditionTracker.Initialize(CharacterManager.Instance.allCharacters);    
-            }
         }
         public void InitializeAfterLoadoutPicked(){
+            if (!SaveManager.Instance.useSaveData) {
+                InitializeWinConditionTracker();
+                //TODO: Try to remove checking
+                winConditionTracker?.Initialize(CharacterManager.Instance.allCharacters);    
+            }
             if (WorldSettings.Instance.worldSettingsData.worldType != WorldSettingsData.World_Type.Tutorial) {
                 TryCreateWinConditionQuest();
                 InstantiatePendingSpecialPopups();    
+            }
+            if (winConditionTracker != null) {
+                winConditionTracker.AddStepsToBookmark();
             }
         }
         public void InitializeAfterStartTutorial(){
@@ -204,52 +213,58 @@ namespace Quests {
         }
         #endregion
 
-        #region Eliminate All Villagers Quest
+        #region Win Condition
         private void TryCreateWinConditionQuest() {
             if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Tutorial) {
                 if (SettingsManager.Instance.settings.skipTutorials) {
-                    SpawnWinConditionQuest();
+                    // SpawnWinConditionQuest();
                 } else {
                     Messenger.AddListener(PlayerQuestSignals.FINISHED_IMPORTANT_TUTORIALS, OnImportantTutorialsFinished);    
                 }
             } else {
-                SpawnWinConditionQuest();
+                // SpawnWinConditionQuest();
             }
         }
         private void OnImportantTutorialsFinished() {
-            SpawnWinConditionQuest();
+            // SpawnWinConditionQuest();
         }
-        private void SpawnWinConditionQuest() {
-            Messenger.RemoveListener(PlayerQuestSignals.FINISHED_IMPORTANT_TUTORIALS, OnImportantTutorialsFinished);
-            switch (WorldSettings.Instance.worldSettingsData.victoryCondition) {
-                case VICTORY_CONDITION.Eliminate_All:
-                CreateEliminateAllVillagersQuest();
-                break;
-                case VICTORY_CONDITION.Kill_By_Psychopath_Ritual:
-                CreateKillVillagersByPsychopathQuest();
-                break;
-                case VICTORY_CONDITION.Wiped_Village_On_Day8:
-                CreateEliminateAllVillagersOnGivenDateQuest();
-                break;
-                case VICTORY_CONDITION.Wipe_Elven_Kingdom_Survive_Humans:
-                CreateWipeElvenKingdomAndSurviveHumans();
-                break;
-                case VICTORY_CONDITION.Declare_3_Wars:
-                CreateDeclareWar();
-                break;
-                case VICTORY_CONDITION.Kill_By_Plague:
-                CreateKillByPlague();
-                break;
-                case VICTORY_CONDITION.Create_Demon_Cult:
-                CreateDemonCult();
-                break;
-                case VICTORY_CONDITION.Sandbox:
-                //no win condition quest
-                break;
-                default:
-                throw new ArgumentOutOfRangeException();
-            }
-        }
+        // private void SpawnWinConditionQuest() {
+        //            if (PlayerManager.Instance.player.hasAlreadyWon) {
+        //        return; //we hage a return here
+        //    }
+        //     Messenger.RemoveListener(PlayerQuestSignals.FINISHED_IMPORTANT_TUTORIALS, OnImportantTutorialsFinished);
+        //     switch (WorldSettings.Instance.worldSettingsData.victoryCondition) {
+        //         case VICTORY_CONDITION.Eliminate_All:
+        //         CreateEliminateAllVillagersQuest();
+        //         break;
+        //         case VICTORY_CONDITION.Kill_By_Psychopath_Ritual:
+        //         CreateKillVillagersByPsychopathQuest();
+        //         break;
+        //         case VICTORY_CONDITION.Wiped_Village_On_Day8:
+        //         CreateEliminateAllVillagersOnGivenDateQuest();
+        //         break;
+        //         case VICTORY_CONDITION.Wipe_Elven_Kingdom_Survive_Humans:
+        //         CreateWipeElvenKingdomAndSurviveHumans();
+        //         break;
+        //         case VICTORY_CONDITION.Declare_3_Wars:
+        //         CreateDeclareWar();
+        //         break;
+        //         case VICTORY_CONDITION.Kill_By_Plague:
+        //         CreateKillByPlague();
+        //         break;
+        //         case VICTORY_CONDITION.Create_Demon_Cult:
+        //         CreateDemonCult();
+        //         break;
+        //         case VICTORY_CONDITION.Summon_Ruinarch:
+        //         CreateSummonTheDemon();
+        //         break;
+        //         case VICTORY_CONDITION.Sandbox:
+        //         //no win condition quest
+        //         break;
+        //         default:
+        //         throw new ArgumentOutOfRangeException();
+        //     }
+        // }
         private void CreateEliminateAllVillagersQuest() {
             if (!IsQuestActive<EliminateAllVillagers>()) {
                 EliminateAllVillagers eliminateAllVillagers = new EliminateAllVillagers();
@@ -298,19 +313,26 @@ namespace Quests {
                 ActivateQuest(killVillagersByPsychopath);
             }
         }
-        #endregion
 
-        #region Counterattack
-        private void OnCharactersAttackingDemonicStructure(List<Character> attackers, DemonicStructure targetStructure) {
-            ActivateQuest<Counterattack>(attackers, targetStructure);
+        private void CreateSummonTheDemon() {
+            if (!IsQuestActive<SummonTheDemon>()) {
+                SummonTheDemon SummonTheDemon = new SummonTheDemon();
+                ActivateQuest(SummonTheDemon);
+            }
         }
         #endregion
 
-        #region Report Demonic Structure
-        private void OnDemonicStructureDiscovered(LocationStructure structure, Character reporter, GoapPlanJob job) {
-            ActivateQuest<DemonicStructureDiscovered>(structure, reporter, job);
-        }
-        #endregion
+        // #region Counterattack
+        // private void OnCharactersAttackingDemonicStructure(List<Character> attackers, DemonicStructure targetStructure) {
+        //     ActivateQuest<Counterattack>(attackers, targetStructure);
+        // }
+        // #endregion
+
+        // #region Report Demonic Structure
+        // private void OnDemonicStructureDiscovered(LocationStructure structure, Character reporter, GoapPlanJob job) {
+        //     ActivateQuest<DemonicStructureDiscovered>(structure, reporter, job);
+        // }
+        // #endregion
 
         #region Divine Intervention
         private void OnAngelsAttackingDemonicStructure(List<Character> angels) {

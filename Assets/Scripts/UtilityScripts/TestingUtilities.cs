@@ -1,53 +1,59 @@
 ﻿using System.Globalization;
 using System.Linq;
 using Boo.Lang;
+using Locations.Settlements;
 using Locations.Settlements.Settlement_Events;
 namespace UtilityScripts {
     public static class TestingUtilities {
         
-        public static void ShowLocationInfo(Region region) {
+        public static void ShowLocationInfo(Region region, NPCSettlement p_settlement) {
             string summary = $"{region.name} Info:";
             summary += "\nDivisions:";
-            for (int i = 0; i < region.regionDivisionComponent.divisions.Count; i++) {
-                RegionDivision division = region.regionDivisionComponent.divisions[i];
+            for (int i = 0; i < region.biomeDivisionComponent.divisions.Count; i++) {
+                BiomeDivision division = region.biomeDivisionComponent.divisions[i];
                 summary += $"\n- {division.biome.ToString()} - {division.tiles.Count.ToString()}";
             }
             List<NPCSettlement> settlements = GetSettlementsInRegion(region);
             summary += $"\n-----------------------------";
             summary += "\nLocations Info:";
-            for (int i = 0; i < settlements.Count; i++) {
-                NPCSettlement npcSettlement = settlements[i];
-                bool isRatmanFaction = npcSettlement.owner?.factionType.type == FACTION_TYPE.Ratmen;
-                if (npcSettlement.locationType != LOCATION_TYPE.VILLAGE && !isRatmanFaction) {
-                    continue;
+            NPCSettlement npcSettlement = p_settlement;
+            summary += $"\nLinked Beast Dens: {npcSettlement.occupiedVillageSpot?.GetLinkedBeastDensSummary()}";
+            summary += $"\nLinked Structures: {npcSettlement.structureComponent.GetLinkedStructuresSummary()}";
+            bool isRatmanFaction = npcSettlement.owner?.factionType.type == FACTION_TYPE.Ratmen;
+            if (npcSettlement.locationType != LOCATION_TYPE.VILLAGE && !isRatmanFaction) {
+                return;
+            }
+            if (!isRatmanFaction) {
+                summary += $"\n<b>{npcSettlement.name}</b> Settlement Type: {npcSettlement.settlementType?.settlementType.ToString() ?? "None"}";
+                summary += $"\nMax Facilities: {npcSettlement.settlementType?.maxFacilities}";
+                summary += $"\nMax Dwellings: {npcSettlement.settlementType?.maxDwellings}";
+                summary += $"\nMorning Needed Class: {npcSettlement.classComponent.morningScheduleDateForProcessingOfNeededClasses.ToString()}";
+                summary += $"\nAfternoon Needed Class: {npcSettlement.classComponent.afternoonScheduleDateForProcessingOfNeededClasses.ToString()}";
+                summary += $"\nParty Quests Processing: {npcSettlement.partyComponent.scheduleDateForProcessingOfPartyQuests.ToString()}";
+                summary += $"\nBuilt Resource Piles in Settlement: {npcSettlement.SettlementResources.GetBuiltResourcePileCount(npcSettlement)}";
+                summary += $"\nStorage: {npcSettlement.mainStorage?.name ?? "None"}. Prison: {npcSettlement.prison?.name ?? "None"}";
+                //summary += $"\nRocks Count: {npcSettlement.SettlementResources.rocks.Count}";
+                summary += $"\nTrees Count: {npcSettlement.SettlementResources.GetTreesCount(npcSettlement)}";
+                summary += $"\nFishing Spots Count: {npcSettlement.SettlementResources.GetFishingSpotCount(npcSettlement)}";
+                summary += $"\nCharacters Inside: {npcSettlement.SettlementResources.GetCharacterCount(npcSettlement)}";
+                summary += $"\nNeeded Items: ";
+                for (int j = 0; j < npcSettlement.neededObjects.Count; j++) {
+                    summary += $"|{npcSettlement.neededObjects[j].ToString()}|";
                 }
-                if (!isRatmanFaction) {
-                    summary += $"\n<b>{npcSettlement.name}</b> Settlement Type: {npcSettlement.settlementType?.settlementType.ToString() ?? "None"}";
-                    summary += $"\nPoisoned Tiles: {npcSettlement.settlementJobTriggerComponent.poisonedTiles.Count.ToString()}";
-                    summary += $"\nHas Peasants: {npcSettlement.hasPeasants.ToString()}, Has Workers: {npcSettlement.hasWorkers.ToString()}";
-                    summary += $"\nStorage: {npcSettlement.mainStorage?.name ?? "None"}. Prison: {npcSettlement.prison?.name ?? "None"}";
-                    summary += $"\nRocks Count: {npcSettlement.SettlementResources.rocks.Count}";
-                    summary += $"\nTrees Count: {npcSettlement.SettlementResources.trees.Count}";
-                    summary += $"\nFishing Spots Count: {npcSettlement.SettlementResources.fishingSpots.Count}";
-                    summary += $"\nCharacters inside: {npcSettlement.SettlementResources.characters.Count}";
-                    summary += $"\nNeeded Items: ";
-                    for (int j = 0; j < npcSettlement.neededObjects.Count; j++) {
-                        summary += $"|{npcSettlement.neededObjects[j].ToString()}|";
-                    }
-                    summary += $"\nActive Events: ";
-                    for (int j = 0; j < npcSettlement.eventManager.activeEvents.Count; j++) {
-                        SettlementEvent settlementEvent = npcSettlement.eventManager.activeEvents[j];
-                        summary += $"|{settlementEvent.GetTestingInfo()}|";
-                    }
+                summary += $"\nActive Events: ";
+                for (int j = 0; j < npcSettlement.eventManager.activeEvents.Count; j++) {
+                    SettlementEvent settlementEvent = npcSettlement.eventManager.activeEvents[j];
+                    summary += $"|{settlementEvent.GetTestingInfo()}|";
                 }
-                if (npcSettlement.owner == null) { continue; }
+            }
+            if (npcSettlement.owner != null) {
                 summary += $"\n{npcSettlement.name} Location Job Queue:";
                 if (npcSettlement.availableJobs.Count > 0) {
                     for (int j = 0; j < npcSettlement.availableJobs.Count; j++) {
                         JobQueueItem jqi = npcSettlement.availableJobs[j];
                         if (jqi is GoapPlanJob) {
                             GoapPlanJob gpj = jqi as GoapPlanJob;
-                            summary += $"\n<b>{gpj.name} Targeting {gpj.targetPOI?.ToString() ?? "None"}</b>" ;
+                            summary += $"\n<b>{gpj.name} Targeting {gpj.targetPOI?.ToString() ?? "None"}</b>";
                         } else {
                             summary += $"\n<b>{jqi.name}</b>";
                         }
@@ -88,9 +94,14 @@ namespace UtilityScripts {
                         }
                     }
                 }
-                summary += "\n";
-                UIManager.Instance.ShowSmallInfo(summary);
             }
+            // summary += $"\n{npcSettlement.name} Items in location: ";
+            // for (int i = 0; i < npcSettlement.areas.Count; i++) {
+            //     Area area = npcSettlement.areas[i];
+            //     summary += $"{area.tileObjectComponent.itemsInArea.ComafyList()}";
+            // }
+            summary += "\n";
+            UIManager.Instance.ShowSmallInfo(summary);
         }
         public static void HideLocationInfo() {
             UIManager.Instance.HideSmallInfo();
@@ -99,17 +110,18 @@ namespace UtilityScripts {
             List<NPCSettlement> settlements = new List<NPCSettlement>();
             for (int i = 0; i < LandmarkManager.Instance.allNonPlayerSettlements.Count; i++) {
                 NPCSettlement npcSettlement = LandmarkManager.Instance.allNonPlayerSettlements[i];
-                if (npcSettlement.HasTileInRegion(region)) {
+                //if (npcSettlement.HasAreaInRegion(region)) {
                     settlements.Add(npcSettlement);
-                }
+                //}
             }
             return settlements;
         }
 
         #region Character
-         public static void ShowCharacterTestingInfo(Character activeCharacter) {
+        public static void ShowCharacterTestingInfo(Character activeCharacter) {
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
         string summary = $"Home structure: {activeCharacter.homeStructure?.ToString() ?? "None"}";
+        summary = $"{summary} {$"Class: {activeCharacter.characterClass.className ?? "None"}"}";
         summary = $"{summary} {$"Territory: {activeCharacter.territory?.name ?? "None"}"}";
         summary = $"{summary} Home Settlement: {activeCharacter.homeSettlement?.name ?? "None"}";
         summary = $"{summary} Current structure: {activeCharacter.currentStructure}";
@@ -129,29 +141,33 @@ namespace UtilityScripts {
         summary = $"{summary} {"Is Running: " + activeCharacter.movementComponent.isRunning.ToString()}";
         summary = $"{summary} {"POI State: " + activeCharacter.state.ToString()}";
         summary = $"{summary} {"Personal Religion: " + activeCharacter.religionComponent.religion.ToString()}";
-        summary = $"{summary}{"\nFullness Time: " + (activeCharacter.needsComponent.fullnessForcedTick == 0 ? "N/A" : GameManager.ConvertTickToTime(activeCharacter.needsComponent.fullnessForcedTick))}";
-        summary = $"{summary}{"\nTiredness Time: " + (activeCharacter.needsComponent.tirednessForcedTick == 0 ? "N/A" : GameManager.ConvertTickToTime(activeCharacter.needsComponent.tirednessForcedTick))}";
-        summary = $"{summary}{"\nHappiness Time: " + (activeCharacter.needsComponent.happinessSecondForcedTick == 0 ? "N/A" : GameManager.ConvertTickToTime(activeCharacter.needsComponent.happinessSecondForcedTick))} - Satisfied Schedule Today ({activeCharacter.needsComponent.hasForcedSecondHappiness.ToString()})";
-        summary = $"{summary}{"\nRemaining Sleep Ticks: " + activeCharacter.needsComponent.currentSleepTicks.ToString()}";
+        summary = $"{summary} {"\nIs Reserved: " + !activeCharacter.classComponent.shouldChangeClass}";
+        summary = $"{summary} {"\nCoins: " + activeCharacter.moneyComponent.coins.ToString()}";
+        summary = $"{summary} {"\nAble Classes: " + activeCharacter.classComponent.GetAbleClassesText()}";
+        // summary = $"{summary}{"\nFullness Time: " + (activeCharacter.needsComponent.fullnessForcedTick == 0 ? "N/A" : GameManager.Instance.ConvertTickToTime(activeCharacter.needsComponent.fullnessForcedTick))}";
+        // summary = $"{summary}{"\nTiredness Time: " + (activeCharacter.needsComponent.tirednessForcedTick == 0 ? "N/A" : GameManager.Instance.ConvertTickToTime(activeCharacter.needsComponent.tirednessForcedTick))}";
+        // summary = $"{summary}{"\nHappiness Time: " + (activeCharacter.needsComponent.happinessSecondForcedTick == 0 ? "N/A" : GameManager.Instance.ConvertTickToTime(activeCharacter.needsComponent.happinessSecondForcedTick))} - Satisfied Schedule Today ({activeCharacter.needsComponent.hasForcedSecondHappiness.ToString()})";
+        // summary = $"{summary}{"\nRemaining Sleep Ticks: " + activeCharacter.needsComponent.currentSleepTicks.ToString()}";
         summary = $"{summary}{"\nSexuality: " + activeCharacter.sexuality.ToString()}";
         summary = $"{summary}{"\nAttack Range: " + activeCharacter.characterClass.attackRange.ToString(CultureInfo.InvariantCulture)}";
         summary = $"{summary}{"\nAttack Speed: " + activeCharacter.combatComponent.attackSpeed.ToString()}";
         summary = $"{summary}{"\nCombat Mode: " + activeCharacter.combatComponent.combatMode.ToString()}";
+        summary = $"{summary}{"\nCombat Behaviour: " + activeCharacter.combatComponent.combatBehaviourParent.currentCombatBehaviour?.name}";
+        summary = $"{summary}{"\nCombat Special Skill: " + activeCharacter.combatComponent.specialSkillParent.specialSkill?.name + ", Cooldown: " + activeCharacter.combatComponent.specialSkillParent.currentCooldown + "/" + activeCharacter.combatComponent.specialSkillParent.specialSkill?.cooldownInTicks}";
         summary = $"{summary}{"\nElemental Type: " + activeCharacter.combatComponent.elementalDamage.name}";
-        summary = $"{summary}{"\nPrimary Job: " + activeCharacter.jobComponent.primaryJob.ToString()}";
-        summary = $"{summary}{"\nPriority Jobs: " + activeCharacter.jobComponent.GetPriorityJobs()}";
-        summary = $"{summary}{"\nSecondary Jobs: " + activeCharacter.jobComponent.GetSecondaryJobs()}";
+        //summary = $"{summary}{"\nPrimary Job: " + activeCharacter.jobComponent.primaryJob.ToString()}";
+        //summary = $"{summary}{"\nPriority Jobs: " + activeCharacter.jobComponent.GetPriorityJobs()}";
+        //summary = $"{summary}{"\nSecondary Jobs: " + activeCharacter.jobComponent.GetSecondaryJobs()}";
         summary = $"{summary}{"\nAble Jobs: " + activeCharacter.jobComponent.GetAbleJobs()}";
-        summary = $"{summary}{"\nAdditional Priority Jobs: " + activeCharacter.jobComponent.GetAdditionalPriorityJobs()}";
-        summary = $"{summary}{("\nParty: " + (activeCharacter.partyComponent.hasParty ? activeCharacter.partyComponent.currentParty.partyName : "None") + ", State: " + activeCharacter.partyComponent.currentParty?.partyState.ToString() + ", Members: " + activeCharacter.partyComponent.currentParty?.members.Count)}";
+        // summary = $"{summary}{"\nAdditional Priority Jobs: " + activeCharacter.jobComponent.GetAdditionalPriorityJobs()}";
+        summary = $"{summary}{("\nParty: " + (activeCharacter.partyComponent.hasParty ? activeCharacter.partyComponent.currentParty.partyName : "None") + ", State: " + activeCharacter.partyComponent.currentParty?.partyState.ToString() + ", Members: " + activeCharacter.partyComponent.currentParty?.members.Count + ", Beacon: " + activeCharacter.partyComponent.currentParty?.beaconComponent.currentBeaconCharacter?.name + ", Is Following: " + activeCharacter.partyComponent.isFollowingBeacon)}";
         summary = $"{summary}{"\nPrimary Bed: " + (activeCharacter.tileObjectComponent.primaryBed != null ? activeCharacter.tileObjectComponent.primaryBed.name : "None")}";
         summary = $"{summary}{"\nEnable Digging: " + activeCharacter.movementComponent.enableDigging.ToString()}";
-        summary = $"{summary}{"\nAvoid Settlements: " + activeCharacter.movementComponent.avoidSettlements.ToString()}";
+        // summary = $"{summary}{"\nAvoid Settlements: " + activeCharacter.movementComponent.avoidSettlements.ToString()}";
         summary = $"{summary}{"\nPlanner Status: " + activeCharacter.planner.status.ToString()}";
         summary = $"{summary}{"\nNum of action being performed: " + activeCharacter.numOfActionsBeingPerformedOnThis}";
 
-
-            if (activeCharacter.stateComponent.currentState != null) {
+        if (activeCharacter.stateComponent.currentState != null) {
             summary = $"{summary}\nCurrent State: {activeCharacter.stateComponent.currentState}";
             summary = $"{summary}\n\tDuration in state: {activeCharacter.stateComponent.currentState.currentDuration.ToString()}/{activeCharacter.stateComponent.currentState.duration.ToString()}";
         }
@@ -171,25 +187,32 @@ namespace UtilityScripts {
         if (activeCharacter.jobQueue.jobsInQueue.Count > 0) {
             for (int i = 0; i < activeCharacter.jobQueue.jobsInQueue.Count; i++) {
                 JobQueueItem poi = activeCharacter.jobQueue.jobsInQueue[i];
-                summary += $"{poi}, ";
+                summary += $"{poi.jobType.ToString()}-{poi}-Owner: {poi.originalOwner?.name}";
+                // if (poi is GoapPlanJob goapPlanJob) {
+                //     summary += $"-Plan: {goapPlanJob.assignedPlan?.LogPlan()}, ";    
+                // }
+                // else {
+                    summary += ", ";
+                // }
             }
         } else {
             summary += "None";
         }
-        
-        // summary += "\nCharacters with opinion: ";
-        // if (activeCharacter.relationshipContainer.charactersWithOpinion.Count > 0) {
-        //     for (int i = 0; i < activeCharacter.relationshipContainer.charactersWithOpinion.Count; i++) {
-        //         Character characterWithOpinion = activeCharacter.relationshipContainer.charactersWithOpinion[i];
-        //         summary += $"{characterWithOpinion}, ";
-        //     }
-        // } else {
-        //     summary += "None";
-        // }
-        // summary += "\n" + activeCharacter.needsComponent.GetNeedsSummary();
-        UIManager.Instance.ShowSmallInfo(summary);
+        summary += $"\nCurrent Schedule Type: {activeCharacter.dailyScheduleComponent.schedule.GetScheduleType(GameManager.Instance.currentTick).ToString()}";
+        summary += $"\nIs in first hour of Current Schedule section: {activeCharacter.dailyScheduleComponent.schedule.IsInFirstHourOfCurrentScheduleType(GameManager.Instance.currentTick).ToString()}";
+        summary += $"\nDaily Schedule: {activeCharacter.dailyScheduleComponent.schedule.GetScheduleSummary()}";
+        summary += $"\nToggled Wants: {activeCharacter.villagerWantsComponent?.wantsToProcess.ComafyList()}";
+            if (activeCharacter is ShearableAnimal shearableAnimal) {
+                summary += $"\nShearable Resource Count: {shearableAnimal.count}";
+                summary += $"\nIs Shearable: {shearableAnimal.isAvailableForShearing}";
+            }
+            if (activeCharacter is SkinnableAnimal skinnable) {
+                summary += $"\nSkinnable Resource Count: {skinnable.count}";
+            }
+
+            UIManager.Instance.ShowSmallInfo(summary);
 #endif
-    }
+        }
     public static void HideCharacterTestingInfo() {
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
         UIManager.Instance.HideSmallInfo();

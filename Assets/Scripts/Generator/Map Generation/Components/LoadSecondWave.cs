@@ -46,9 +46,11 @@ public class LoadSecondWave : MapGenerationComponent {
         //Load Structure Wall Traits
         yield return MapGenerator.Instance.StartCoroutine(LoadStructureWallTraits(saveData));
         
-        //Load Hex tile Spells Component
-        yield return MapGenerator.Instance.StartCoroutine(LoadHexTileSpellsComponent(saveData));
+        //Load Area Spells Component
+        yield return MapGenerator.Instance.StartCoroutine(LoadAreaSpellsComponent(saveData));
 
+        //Always load action references before character references because there is a chance that the action is no longer viable to be done, so the action will be removed from the database
+        //This means that when the character loads its references (including jobs and actions), if the action of the character is no longer in the database it will not be loaded to it and that is exactly what we want
         yield return MapGenerator.Instance.StartCoroutine(LoadActionReferences(saveData));
         yield return MapGenerator.Instance.StartCoroutine(LoadInterruptReferences(saveData));
         yield return MapGenerator.Instance.StartCoroutine(LoadAdditionalActionReferences(saveData));
@@ -67,7 +69,8 @@ public class LoadSecondWave : MapGenerationComponent {
 
         yield return MapGenerator.Instance.StartCoroutine(LoadAdditionalTileObjectInfo(saveData));
         yield return MapGenerator.Instance.StartCoroutine(LoadTileObjectTraits(saveData));
-        
+        yield return MapGenerator.Instance.StartCoroutine(LoadTileObjectAsDeadReference(saveData));
+
         //Load additional structure references
         yield return MapGenerator.Instance.StartCoroutine(LoadAdditionalStructureReferences(saveData));
         
@@ -100,7 +103,7 @@ public class LoadSecondWave : MapGenerationComponent {
         }
     }
     private IEnumerator LoadAdditionalStructureReferences(SaveDataCurrentProgress saveData) {
-        LevelLoaderManager.Instance.UpdateLoadingInfo("Loading additional structure Data...");
+        LevelLoaderManager.Instance.UpdateLoadingInfo("Loading Additional Structure Data...");
         for (int i = 0; i < saveData.worldMapSave.structureSaves.Count; i++) {
             SaveDataLocationStructure saveDataLocationStructure = saveData.worldMapSave.structureSaves[i];
             LocationStructure structure = DatabaseManager.Instance.structureDatabase.GetStructureByPersistentID(saveDataLocationStructure.persistentID);
@@ -128,15 +131,18 @@ public class LoadSecondWave : MapGenerationComponent {
 
     #region Tile Objects
     private IEnumerator LoadTileObjects(SaveDataCurrentProgress saveData) {
-        LevelLoaderManager.Instance.UpdateLoadingInfo("Loading objects...");
+        LevelLoaderManager.Instance.UpdateLoadingInfo("Loading Objects...");
         int batchCount = 0;
-        TileObject[] allTileObjects = DatabaseManager.Instance.tileObjectDatabase.allTileObjectsList.ToArray();
-        for (int i = 0; i < allTileObjects.Length; i++) {
-            TileObject tileObject = allTileObjects[i];
+        HashSet<TileObject> allTileObjects = DatabaseManager.Instance.tileObjectDatabase.allTileObjectsList;
+        for (int i = 0; i < allTileObjects.Count; i++) {
+            TileObject tileObject = allTileObjects.ElementAt(i);
             string persistentID = tileObject.persistentID;
             SaveDataTileObject saveDataTileObject = saveData.GetFromSaveHub<SaveDataTileObject>(OBJECT_TYPE.Tile_Object, persistentID);
             if (saveDataTileObject == null) {
                 // Debug.LogWarning($"{tileObject} with persistentID {tileObject.persistentID} does not have any save data.");
+                continue;
+            }
+            if (tileObject is ThinWall) {
                 continue;
             }
             if (tileObject is GenericTileObject || !saveDataTileObject.tileLocationID.hasValue) {
@@ -197,11 +203,11 @@ public class LoadSecondWave : MapGenerationComponent {
         }
     }
     private IEnumerator LoadTileObjectTraits(SaveDataCurrentProgress saveData) {
-        LevelLoaderManager.Instance.UpdateLoadingInfo("Loading object traits...");
+        LevelLoaderManager.Instance.UpdateLoadingInfo("Loading Object Traits...");
         int batchCount = 0;
-        TileObject[] allTileObjects = DatabaseManager.Instance.tileObjectDatabase.allTileObjectsList.ToArray();
-        for (int i = 0; i < allTileObjects.Length; i++) {
-            TileObject tileObject = allTileObjects[i];
+        HashSet<TileObject> allTileObjects = DatabaseManager.Instance.tileObjectDatabase.allTileObjectsList;
+        for (int i = 0; i < allTileObjects.Count; i++) {
+            TileObject tileObject = allTileObjects.ElementAt(i);
             string persistentID = tileObject.persistentID;
             SaveDataTileObject saveDataTileObject = saveData.GetFromSaveHub<SaveDataTileObject>(OBJECT_TYPE.Tile_Object, persistentID);
             if (saveDataTileObject != null) {
@@ -216,11 +222,11 @@ public class LoadSecondWave : MapGenerationComponent {
         }
     }
     private IEnumerator LoadAdditionalTileObjectInfo(SaveDataCurrentProgress saveData) {
-        LevelLoaderManager.Instance.UpdateLoadingInfo("Loading other object info...");
+        LevelLoaderManager.Instance.UpdateLoadingInfo("Loading Other Object info...");
         int batchCount = 0;
-        TileObject[] allTileObjects = DatabaseManager.Instance.tileObjectDatabase.allTileObjectsList.ToArray();
-        for (int i = 0; i < allTileObjects.Length; i++) {
-            TileObject tileObject = allTileObjects[i];
+        HashSet<TileObject> allTileObjects = DatabaseManager.Instance.tileObjectDatabase.allTileObjectsList;
+        for (int i = 0; i < allTileObjects.Count; i++) {
+            TileObject tileObject = allTileObjects.ElementAt(i);
             string persistentID = tileObject.persistentID;
             SaveDataTileObject saveDataTileObject = saveData.GetFromSaveHub<SaveDataTileObject>(OBJECT_TYPE.Tile_Object, persistentID);
             if (tileObject is Tombstone tombstone) {
@@ -251,15 +257,27 @@ public class LoadSecondWave : MapGenerationComponent {
             }
         }
     }
+    private IEnumerator LoadTileObjectAsDeadReference(SaveDataCurrentProgress saveData) {
+        LevelLoaderManager.Instance.UpdateLoadingInfo("Loading Additional Info...");
+        HashSet<TileObject> allTileObjects = DatabaseManager.Instance.tileObjectDatabase.allTileObjectsList;
+        for (int i = 0; i < allTileObjects.Count; i++) {
+            TileObject tileObject = allTileObjects.ElementAt(i);
+            if (tileObject.isDeadReference) {
+                DatabaseManager.Instance.tileObjectDatabase.UnRegisterTileObject(tileObject, false);
+                i--;
+                yield return null;
+            }
+        }
+    }
     #endregion
 
     #region Hex Tile
-    private IEnumerator LoadHexTileSpellsComponent(SaveDataCurrentProgress saveData) {
+    private IEnumerator LoadAreaSpellsComponent(SaveDataCurrentProgress saveData) {
         LevelLoaderManager.Instance.UpdateLoadingInfo("Loading Area Spells...");
-        for (int i = 0; i < saveData.worldMapSave.hextileSaves.Count; i++) {
-            SaveDataHextile saveDataHextile = saveData.worldMapSave.hextileSaves[i];
-            HexTile hexTile = DatabaseManager.Instance.hexTileDatabase.GetHextileByPersistentID(saveDataHextile.persistentID);
-            hexTile.spellsComponent.Load(saveDataHextile.saveDataHexTileSpellsComponent);
+        for (int i = 0; i < saveData.worldMapSave.areaSaves.Count; i++) {
+            SaveDataArea saveArea = saveData.worldMapSave.areaSaves[i];
+            Area area = DatabaseManager.Instance.areaDatabase.GetAreaByPersistentID(saveArea.areaData.persistentID);
+            area.spellsComponent.LoadReferences(saveArea.spellsComponent);
         }
         yield return null;
     }
@@ -370,8 +388,8 @@ public class LoadSecondWave : MapGenerationComponent {
                 Assert.IsNotNull(manMadeStructure);
                 if (manMadeStructure.structureWalls != null) {
                     for (int j = 0; j < manMadeStructure.structureWalls.Count; j++) {
-                        StructureWallObject structureWallObject = manMadeStructure.structureWalls[j];
-                        SaveDataStructureWallObject saveDataStructureWallObject = saveDataManMadeStructure.structureWallObjects[j];
+                        ThinWall structureWallObject = manMadeStructure.structureWalls[j];
+                        SaveDataTileObject saveDataStructureWallObject = saveDataManMadeStructure.structureWallObjects[j];
                         structureWallObject.traitContainer.Load(structureWallObject, saveDataStructureWallObject.saveDataTraitContainer);
                     }    
                 }
@@ -383,7 +401,7 @@ public class LoadSecondWave : MapGenerationComponent {
 
     #region Traits
     private IEnumerator LoadTraitsSecondWave(SaveDataCurrentProgress saveData) {
-        LevelLoaderManager.Instance.UpdateLoadingInfo("Loading more trait data...");
+        LevelLoaderManager.Instance.UpdateLoadingInfo("Loading More Trait data...");
         saveData.LoadTraitsSecondWave();
         yield return null;
     }
@@ -391,13 +409,18 @@ public class LoadSecondWave : MapGenerationComponent {
 
     #region Jobs
     private IEnumerator LoadJobsSecondWave(SaveDataCurrentProgress saveData) {
-        LevelLoaderManager.Instance.UpdateLoadingInfo("Loading more job data...");
+        LevelLoaderManager.Instance.UpdateLoadingInfo("Loading More Job data...");
         int batchCount = 0;
         for (int i = 0; i < DatabaseManager.Instance.jobDatabase.allJobs.Count; i++) {
             JobQueueItem jobQueueItem = DatabaseManager.Instance.jobDatabase.allJobs[i];
             SaveDataJobQueueItem saveDataJobQueueItem = saveData.GetFromSaveHub<SaveDataJobQueueItem>(OBJECT_TYPE.Job, jobQueueItem.persistentID);
             if (saveDataJobQueueItem != null) {
-                jobQueueItem.LoadSecondWave(saveDataJobQueueItem);
+                bool isViable = jobQueueItem.LoadSecondWave(saveDataJobQueueItem);
+                //if (!isViable) {
+                //    if (DatabaseManager.Instance.jobDatabase.UnRegister(jobQueueItem)) {
+                //        i--;
+                //    }
+                //}
             }
             batchCount++;
             if (batchCount == MapGenerationData.JobLoadingBatches) {
@@ -433,7 +456,6 @@ public class LoadSecondWave : MapGenerationComponent {
     private IEnumerator LoadPlayerReferences(MapGenerationData data, SaveDataCurrentProgress saveData) {
         LevelLoaderManager.Instance.UpdateLoadingInfo("Loading Player Data...");
         saveData.LoadPlayerReferences();
-        data.portal = PlayerManager.Instance.player.portalTile;
         yield return null;
     }
     #endregion

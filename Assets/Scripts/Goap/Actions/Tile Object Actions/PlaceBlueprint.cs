@@ -24,10 +24,10 @@ public class PlaceBlueprint : GoapAction {
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
         return 3;
     }
-    public override void AddFillersToLog(ref Log log, ActualGoapNode goapNode) {
-        base.AddFillersToLog(ref log, goapNode);
+    public override void AddFillersToLog(Log log, ActualGoapNode goapNode) {
+        base.AddFillersToLog(log, goapNode);
         StructureSetting structureSetting = (StructureSetting)goapNode.otherData[2].obj;
-        log.AddToFillers(null, UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(structureSetting.structureType.ToString()), LOG_IDENTIFIER.STRING_1);
+        log.AddToFillers(null, structureSetting.structureType.StructureName(), LOG_IDENTIFIER.STRING_1);
     }
     #endregion
 
@@ -36,6 +36,9 @@ public class PlaceBlueprint : GoapAction {
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData, job);
         if (satisfied) {
             if (poiTarget.gridTileLocation == null) {
+                return false;
+            }
+            if (!actor.isSettlementRuler) {
                 return false;
             }
             return true;
@@ -50,23 +53,41 @@ public class PlaceBlueprint : GoapAction {
         LocationGridTile connectorTile = (LocationGridTile)goapNode.otherData[1].obj;
         StructureSetting structureSetting = (StructureSetting)goapNode.otherData[2].obj;
         if (goapNode.poiTarget is GenericTileObject genericTileObject) {
-            if (genericTileObject.PlaceBlueprintOnTile(prefabName)) {
-                //create new build job at npcSettlement
-                NPCSettlement settlement = goapNode.actor.homeSettlement;
-                if(settlement != null) {
-                    GoapPlanJob buildJob = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.BUILD_BLUEPRINT, INTERACTION_TYPE.BUILD_BLUEPRINT, goapNode.poiTarget, settlement);
-                    buildJob.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] { genericTileObject.blueprintOnTile.craftCost });
-                    buildJob.AddOtherData(INTERACTION_TYPE.BUILD_BLUEPRINT, new object[] { connectorTile });
-                    JobUtilities.PopulatePriorityLocationsForTakingNonEdibleResources(settlement, buildJob, INTERACTION_TYPE.TAKE_RESOURCE);
-                    // buildJob.SetCanTakeThisJobChecker(InteractionManager.Instance.CanCharacterTakeBuildJob);
-                    settlement.AddToAvailableJobs(buildJob);
+            bool successfullyPlacedBlueprint = false;
+            if (!LandmarkManager.Instance.HasAffectedCorruptedTilesForStructure(prefabName, genericTileObject.gridTileLocation)) {
+                if (genericTileObject.PlaceExpiringBlueprintOnTile(prefabName)) {
+                    successfullyPlacedBlueprint = true;
+                    //create new build job at npcSettlement
+                    NPCSettlement settlement = goapNode.actor.homeSettlement;
+                    if (settlement != null) {
+                        GoapPlanJob buildJob = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.BUILD_BLUEPRINT, INTERACTION_TYPE.BUILD_BLUEPRINT, goapNode.poiTarget, settlement);
+                        buildJob.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] { genericTileObject.blueprintOnTile.craftCost });
+                        buildJob.AddOtherData(INTERACTION_TYPE.BUILD_BLUEPRINT, new object[] { connectorTile });
+                        JobUtilities.PopulatePriorityLocationsForTakingNonEdibleResources(settlement, buildJob, INTERACTION_TYPE.TAKE_RESOURCE);
+                        List<LocationStructure> mines = settlement.GetStructuresOfType(STRUCTURE_TYPE.MINE);
+                        if (mines != null) {
+                            for (int i = 0; i < mines.Count; i++) {
+                                LocationStructure mine = mines[i];
+                                buildJob.AddPriorityLocation(INTERACTION_TYPE.TAKE_RESOURCE, mine);
+                            }    
+                        }
+                        List<LocationStructure> lumberyards = settlement.GetStructuresOfType(STRUCTURE_TYPE.LUMBERYARD);
+                        if (lumberyards != null) {
+                            for (int i = 0; i < lumberyards.Count; i++) {
+                                LocationStructure lumberyard = lumberyards[i];
+                                buildJob.AddPriorityLocation(INTERACTION_TYPE.TAKE_RESOURCE, lumberyard);
+                            }    
+                        }
+                        // buildJob.SetCanTakeThisJobChecker(InteractionManager.Instance.CanCharacterTakeBuildJob);
+                        settlement.AddToAvailableJobs(buildJob);
+                    }
+                    goapNode.descriptionLog.AddToFillers(null, structureSetting.structureType.StructureName(), LOG_IDENTIFIER.STRING_1);
                 }
-   
-                goapNode.descriptionLog.AddToFillers(null, UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(structureSetting.structureType.ToString()), LOG_IDENTIFIER.STRING_1);
-            } else {
-                Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "GoapAction", "Place Blueprint", "fail", goapNode, LOG_TAG.Work);
+            }
+            if (!successfullyPlacedBlueprint) {
+                Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "GoapAction", goapName, "fail", goapNode, LOG_TAG.Work);
                 log.AddToFillers(goapNode.actor, goapNode.actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                log.AddToFillers(null, UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(structureSetting.structureType.ToString()), LOG_IDENTIFIER.STRING_1);
+                log.AddToFillers(null, structureSetting.structureType.StructureName(), LOG_IDENTIFIER.STRING_1);
                 goapNode.OverrideDescriptionLog(log);
             }
         }

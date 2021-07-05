@@ -63,14 +63,16 @@ public class BuildBlueprint : GoapAction {
         SetState("Build Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
+#if DEBUG_LOG
         string costLog = $"\n{name} {target.nameWithID}: +10(Constant)";
         actor.logComponent.AppendCostLog(costLog);
+#endif
         return 10;
     }
-    public override void AddFillersToLog(ref Log log, ActualGoapNode goapNode) {
-        base.AddFillersToLog(ref log, goapNode);
+    public override void AddFillersToLog(Log log, ActualGoapNode goapNode) {
+        base.AddFillersToLog(log, goapNode);
         if (goapNode.poiTarget is GenericTileObject genericTileObject && genericTileObject.blueprintOnTile != null) {
-            log.AddToFillers(null, UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(genericTileObject.blueprintOnTile.structureType.ToString()), LOG_IDENTIFIER.STRING_1);
+            log.AddToFillers(null, genericTileObject.blueprintOnTile.structureType.StructureName(), LOG_IDENTIFIER.STRING_1);
         }
     }
     public override void OnStopWhileStarted(ActualGoapNode node) {
@@ -112,7 +114,7 @@ public class BuildBlueprint : GoapAction {
     #region Preconditions
     private bool HasResource(Character actor, IPointOfInterest poiTarget, OtherData[] otherData, JOB_TYPE jobType) {
         if (poiTarget is GenericTileObject genericTileObject && genericTileObject.blueprintOnTile != null) {
-            if (poiTarget.HasResourceAmount(genericTileObject.blueprintOnTile.thinWallResource, genericTileObject.blueprintOnTile.craftCost)) {
+            if (poiTarget.resourceStorageComponent.HasResourceAmount(genericTileObject.blueprintOnTile.thinWallResource, genericTileObject.blueprintOnTile.craftCost)) {
                 return true;
             }
             //return actor.ownParty.isCarryingAnyPOI && actor.ownParty.carriedPOI is ResourcePile;
@@ -129,15 +131,15 @@ public class BuildBlueprint : GoapAction {
         if (goapNode.poiTarget is GenericTileObject genericTileObject) {
             if (goapNode.actor.carryComponent.carriedPOI is ResourcePile carriedPile) {
                 carriedPile.AdjustResourceInPile(-genericTileObject.blueprintOnTile.craftCost);
-                goapNode.poiTarget.AdjustResource(genericTileObject.blueprintOnTile.thinWallResource, genericTileObject.blueprintOnTile.craftCost);    
+                goapNode.poiTarget.resourceStorageComponent.AdjustResource(carriedPile.specificProvidedResource, genericTileObject.blueprintOnTile.craftCost);    
             }
-            goapNode.descriptionLog.AddToFillers(null, UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(genericTileObject.blueprintOnTile.structureType.ToString()), LOG_IDENTIFIER.STRING_1);
+            goapNode.descriptionLog.AddToFillers(null, genericTileObject.blueprintOnTile.structureType.StructureName(), LOG_IDENTIFIER.STRING_1);
         }
     }
     public void AfterBuildSuccess(ActualGoapNode goapNode) {
         if (goapNode.poiTarget is GenericTileObject genericTileObject) {
             LocationGridTile connectorTile = (LocationGridTile)goapNode.otherData[0].obj;
-            genericTileObject.BuildBlueprint(goapNode.actor.homeSettlement, connectorTile);
+            genericTileObject.BuildBlueprintOnTile(goapNode.actor.homeSettlement, connectorTile);
 
             if(genericTileObject.blueprintOnTile != null) {
                 //After successfully building house, no house faction leader/settlement ruler/nobles should have first dibs on the newly built house

@@ -10,55 +10,83 @@ public class MonsterInvadeBehaviour : CharacterBehaviourComponent {
     }
     public override bool TryDoBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
         producedJob = null;
+#if DEBUG_LOG
         log += $"\n-Character is monster invading";
+#endif
         Gathering monsterInvadeGathering = character.gatheringComponent.currentGathering;
         if (!monsterInvadeGathering.isWaitTimeOver) {
+#if DEBUG_LOG
             log += $"\n-Party is waiting, Roam";
+#endif
             character.jobComponent.TriggerRoamAroundStructure(out producedJob);
         } else {
+#if DEBUG_LOG
             log += $"\n-Party is not waiting";
-            if(monsterInvadeGathering.target != null) {
+#endif
+            if (monsterInvadeGathering.target != null) {
+#if DEBUG_LOG
                 log += $"\n-Party has target structure";
+#endif
                 BaseSettlement targetSettlement = monsterInvadeGathering.target.currentSettlement;
                 if (character.gridTileLocation != null && targetSettlement != null) {
                     if (character.gridTileLocation.IsPartOfSettlement(targetSettlement)) {
+#if DEBUG_LOG
                         log += $"\n-Character is already in target settlement";
-                        Character target = targetSettlement.GetRandomResidentThatMeetCriteria(resident => character != resident && !resident.isDead && !resident.isBeingSeized && resident.gridTileLocation != null && resident.gridTileLocation.IsPartOfSettlement(targetSettlement) && !resident.traitContainer.HasTrait("Hibernating", "Indestructible"));
+#endif
+                        Character target = targetSettlement.GetRandomResidentForInvasionTargetThatIsInsideSettlement(targetSettlement, character);
                         if (target != null) {
+#if DEBUG_LOG
                             log += $"\n-Chosen target is {target.name}";
+#endif
                             character.combatComponent.Fight(target, CombatManager.Hostility);
                         } else {
+#if DEBUG_LOG
                             log += $"\n-Roam around";
+#endif
                             character.jobComponent.TriggerRoamAroundStructure(out producedJob);
                         }
                     } else {
+#if DEBUG_LOG
                         log += $"\n-Character is not in target structure, go to it";
+#endif
                         if (monsterInvadeGathering.target is LocationStructure targetStructure) {
                             LocationGridTile targetTile = UtilityScripts.CollectionUtilities.GetRandomElement(targetStructure.passableTiles);
                             character.jobComponent.CreateGoToJob(targetTile, out producedJob);
                         }
                     }
                 } else {
+#if DEBUG_LOG
                     log += $"\n-Character has no tile/target settlement, roam";
+#endif
                     character.jobComponent.TriggerRoamAroundStructure(out producedJob);
                 }
             } else {
+#if DEBUG_LOG
                 log += $"\n-Party has no target structure";
+#endif
                 MonsterInvadeGathering gathering = monsterInvadeGathering as MonsterInvadeGathering;
-                if (character.gridTileLocation.collectionOwner.isPartOfParentRegionMap && character.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner == gathering.targetHex) {
+                if (character.areaLocation == gathering.targetArea) {
+#if DEBUG_LOG
                     log += "\n-Already in the target hex, will try to combat residents";
-                    Character target = gathering.targetHex.GetRandomCharacterInsideHexThatMeetCriteria<Character>(c => !c.isDead && c.IsTerritory(gathering.targetHex));
+#endif
+                    Character target = gathering.targetArea.locationCharacterTracker.GetRandomCharacterInsideHexThatIsAliveAndConsidersAreaAsTerritory(gathering.targetArea);
                     if (target != null) {
+#if DEBUG_LOG
                         log += $"\n-Chosen target is {target.name}";
+#endif
                         character.combatComponent.Fight(target, CombatManager.Hostility);
                     } else {
+#if DEBUG_LOG
                         log += $"\n-Roam around";
+#endif
                         character.jobComponent.TriggerRoamAroundStructure(out producedJob);
                     }
                 } else {
+#if DEBUG_LOG
                     log += $"\n-Character is not in target hex, go to it";
-                    HexTile targetHex = gathering.targetHex;
-                    LocationGridTile targetTile = targetHex.locationGridTiles[UnityEngine.Random.Range(0, targetHex.locationGridTiles.Count)];
+#endif
+                    Area targetArea = gathering.targetArea;
+                    LocationGridTile targetTile = targetArea.gridTileComponent.gridTiles[UnityEngine.Random.Range(0, targetArea.gridTileComponent.gridTiles.Count)];
                     character.jobComponent.TriggerRoamAroundStructure(out producedJob, targetTile);
                 }
             }

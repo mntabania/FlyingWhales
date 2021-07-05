@@ -4,7 +4,8 @@ using UnityEngine;
 
 namespace Traits {
     public class Unconscious : Status {
-        public override bool isSingleton => true;
+        //Not singleton for responsible characters
+        //public override bool isSingleton => true;
 
         public Unconscious() {
             name = "Unconscious";
@@ -35,17 +36,17 @@ namespace Traits {
             if (sourceCharacter is Character character) {
                 //_sourceCharacter = character;
                 character.needsComponent.AdjustDoNotGetTired(1);
-                if (character.currentHP <= 0) {
+                if (!character.HasHealth()) {
                     character.SetHP(1);
                 }
                 //CheckToApplyRestrainJob();
                 //_sourceCharacter.CreateRemoveTraitJob(name);
                 character.AddTraitNeededToBeRemoved(this);
-                if (gainedFromDoing == null) {
+                if (gainedFromDoingType == INTERACTION_TYPE.NONE) {
                     Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "NonIntel", "add_trait", null, LOG_TAG.Needs);
                     log.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                     log.AddToFillers(null, this.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-                    log.AddLogToDatabase();
+                    log.AddLogToDatabase(true);
                 }
             }
         }
@@ -59,7 +60,7 @@ namespace Traits {
                 Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "NonIntel", "remove_trait", null, LOG_TAG.Needs);
                 log.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                 log.AddToFillers(null, this.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-                log.AddLogToDatabase();
+                log.AddLogToDatabase(true);
             }
             base.OnRemoveTrait(sourceCharacter, removedBy);
         }
@@ -99,8 +100,7 @@ namespace Traits {
         #region Lycanthropy
         private void CheckForLycanthropy(Character character) {
             if(character.isLycanthrope && !character.lycanData.isMaster) {
-                int chance = UnityEngine.Random.Range(0, 100);
-                if (chance < 25) {
+                if (ChanceData.RollChance(CHANCE_TYPE.Lycanthrope_Transform_Chance)) {
                     character.lycanData.Transform(character);
                 }
             }

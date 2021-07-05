@@ -4,7 +4,7 @@ public class Fireplace : TileObject{
     public Fireplace() {
         Initialize(TILE_OBJECT_TYPE.FIREPLACE);
     }
-    public Fireplace(SaveDataTileObject data) {
+    public Fireplace(SaveDataTileObject data) : base(data) {
         
     }
 }

@@ -15,7 +15,7 @@ MonoBehaviour:
   archetype: 6
   spells:
     extraSlots: 0
-    fixedSkills: 17000000090000005e0000002b0000002a000000ad000000
+    fixedSkills: 17000000090000005e0000002b0000002a000000ad0000009c000000
   afflictions:
     extraSlots: 0
     fixedSkills: 0f00000004000000020000005a000000
@@ -24,13 +24,42 @@ MonoBehaviour:
     fixedSkills: 540000005300000052000000
   structures:
     extraSlots: 0
-    fixedSkills: 600000004c00000048000000
+    fixedSkills: 4c00000048000000b5000000bf000000be000000
   miscs:
     extraSlots: 0
     fixedSkills: 0600000033000000320000005c0000008c00000021000000
-  passiveSkills: 020000000300000004000000
+  passiveSkills: 04000000060000000700000008000000090000000b0000000c0000000d0000000e0000000f000000100000001100000012000000
   availableSpells: 
   availableAfflictions: 
   availableMinions: 
   availableStructures: 
   availableMiscs: 
+  portalUpgradeTiers:
+  - name: Level 1
+    skillTypesToUnlock: 
+    upgradeCost: []
+    upgradeTime: 0
+  - name: Level 2
+    skillTypesToUnlock: 
+    upgradeCost: []
+    upgradeTime: 0
+  - name: Level 3
+    skillTypesToUnlock: 
+    upgradeCost: []
+    upgradeTime: 0
+  - name: Level 4
+    skillTypesToUnlock: 
+    upgradeCost: []
+    upgradeTime: 0
+  - name: Level 5
+    skillTypesToUnlock: 
+    upgradeCost: []
+    upgradeTime: 0
+  - name: Level 6
+    skillTypesToUnlock: 
+    upgradeCost: []
+    upgradeTime: 0
+  - name: Level 7
+    skillTypesToUnlock: 
+    upgradeCost: []
+    upgradeTime: 0

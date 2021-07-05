@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using Object_Pools;
+using UtilityScripts;
 
 public class AfflictData : PlayerAction {
     public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.AFFLICT;
@@ -23,6 +25,9 @@ public class AfflictData : PlayerAction {
         return false;
     }
     public override bool IsValid(IPlayerActionTarget target) {
+        if (!PlayerManager.Instance.player.playerSkillComponent.HasAfflictions()) {
+            return false;
+        }
         if(target is Character character) {
             if (!character.isNormalCharacter || character.isConsideredRatman) {
                 return false;
@@ -36,7 +41,7 @@ public class AfflictData : PlayerAction {
             List<PLAYER_SKILL_TYPE> afflictionTypes = PlayerManager.Instance.player.playerSkillComponent.afflictions;
             for (int i = 0; i < afflictionTypes.Count; i++) {
                 PLAYER_SKILL_TYPE spellType = afflictionTypes[i];
-                PlayerAction spellData = PlayerSkillManager.Instance.GetPlayerSkillData(spellType) as PlayerAction;
+                PlayerAction spellData = PlayerSkillManager.Instance.GetSkillData(spellType) as PlayerAction;
                 if (spellData != null && spellData.IsValid(PlayerManager.Instance.player.currentlySelectedPlayerActionTarget)) {
                     p_contextMenuItems.Add(spellData);
                 }
@@ -47,12 +52,25 @@ public class AfflictData : PlayerAction {
     }
     #endregion
 
-    protected void AfflictPOIWith(string traitName, IPointOfInterest target, string logName) {
-        target.traitContainer.AddTrait(target, traitName);
-        Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "General", "Player", "player_afflicted", null, LOG_TAG.Player, LOG_TAG.Life_Changes);
+    protected void AfflictPOIWith(string traitName, IPointOfInterest target, string logName, int overridenDuration = 0) {
+        //Log First
+        OnAfflictPOIWith(traitName, target, logName);
+        if (overridenDuration > 0) {
+            target.traitContainer.AddTrait(target, traitName, overrideDuration: overridenDuration);
+        } else {
+            target.traitContainer.AddTrait(target, traitName);
+        }
+    }
+    protected void OnAfflictPOIWith(string traitName, IPointOfInterest target, string logName) {
+        Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "General", "Player", "player_afflicted", null, LogUtilities.Player_Life_Changes_Tags);
         log.AddToFillers(target, target.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         log.AddToFillers(null, logName, LOG_IDENTIFIER.STRING_1);
         log.AddLogToDatabase();
         PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
+        LogPool.Release(log);
+
+        if (target is Character character) {
+            character.AddAfflictionByPlayer(traitName);
+        }
     }
 }

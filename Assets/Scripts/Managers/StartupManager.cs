@@ -20,7 +20,7 @@ public class StartupManager : MonoBehaviour {
         yield return StartCoroutine(initializer.InitializeDataBeforeWorldCreation());
 
         if (!string.IsNullOrEmpty(SaveManager.Instance.saveCurrentProgressManager.currentSaveDataPath)) {
-            LevelLoaderManager.Instance.UpdateLoadingInfo("Reading save file...");
+            LevelLoaderManager.Instance.UpdateLoadingInfo("Reading Save File...");
             LevelLoaderManager.Instance.UpdateLoadingBar(0.4f, 8f);
             yield return StartCoroutine(SaveManager.Instance.saveCurrentProgressManager.LoadSaveDataCurrentProgressBasedOnSetPath());
             yield return StartCoroutine(mapGenerator.InitializeSavedWorld(SaveManager.Instance.saveCurrentProgressManager.currentSaveDataProgress));

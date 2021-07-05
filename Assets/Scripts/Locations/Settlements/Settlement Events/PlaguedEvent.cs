@@ -32,18 +32,19 @@ namespace Locations.Settlements.Settlement_Events {
             DetermineLeaderResponse(leaderThatWillDecide, p_settlement);
             SubscribeListeners(p_settlement);
             ScheduleEnd(p_settlement);
-            p_settlement.settlementClassTracker.AddNeededClass("Druid");
+            //p_settlement.settlementClassTracker.AddNeededClass("Druid");
         }
         public override void DeactivateEvent(NPCSettlement p_settlement) {
             if (p_settlement.owner != null) { RevertFactionEffects(p_settlement.owner); }
             
-            List<JobQueueItem> jobs = p_settlement.GetJobs(JOB_TYPE.PLAGUE_CARE, JOB_TYPE.QUARANTINE);
+            List<JobQueueItem> jobs = RuinarchListPool<JobQueueItem>.Claim();
+            p_settlement.PopulateJobsOfType(jobs, JOB_TYPE.PLAGUE_CARE, JOB_TYPE.QUARANTINE);
             for (int i = 0; i < jobs.Count; i++) {
-                jobs[i].ForceCancelJob(false, "Settlement no longer in Quarantine");
+                jobs[i].ForceCancelJob("Settlement no longer in Quarantine");
             }
-            
+            RuinarchListPool<JobQueueItem>.Release(jobs);
             UnsubscribeListeners(p_settlement);
-            p_settlement.settlementClassTracker.RemoveNeededClass("Druid");
+            //p_settlement.settlementClassTracker.RemoveNeededClass("Druid");
             if (!string.IsNullOrEmpty(_endScheduleTicket)) { SchedulingManager.Instance.RemoveSpecificEntry(_endScheduleTicket); }
         }
         public override SaveDataSettlementEvent Save() {
@@ -80,7 +81,9 @@ namespace Locations.Settlements.Settlement_Events {
         private void RescheduleEnd(NPCSettlement p_settlement) {
             SchedulingManager.Instance.RemoveSpecificEntry(_endScheduleTicket);
             ScheduleEnd(p_settlement);
+#if DEBUG_LOG
             Debug.Log($"{GameManager.Instance.TodayLogString()}Rescheduled Plagued event end at {p_settlement.name}");
+#endif
         }
         private void DeactivateEventBySchedule(NPCSettlement p_settlement) {
             p_settlement.eventManager.DeactivateEvent(this);
@@ -88,11 +91,11 @@ namespace Locations.Settlements.Settlement_Events {
             log.AddToFillers(p_settlement, p_settlement.name, LOG_IDENTIFIER.LANDMARK_1);
             if (p_settlement.owner != null) { log.AddInvolvedObjectManual(p_settlement.owner.persistentID); }
             log.AddLogToDatabase();
-            PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
+            PlayerManager.Instance.player.ShowNotificationFromPlayer(log, true);
         }
-        #endregion
+#endregion
         
-        #region Leader Response
+#region Leader Response
         private void DetermineLeaderResponse(Character p_leader, NPCSettlement p_settlement) {
             PLAGUE_EVENT_RESPONSE response;
             if (p_leader == null) {
@@ -121,7 +124,9 @@ namespace Locations.Settlements.Settlement_Events {
                 }
             }
             if (_rulerDecision != response) {
+#if DEBUG_LOG
                 Debug.Log($"{p_leader?.name} set plagued event response in {p_settlement.name} to {response}");    
+#endif
                 RevertEffectsOfLeaderPreviousResponseToPlague(_rulerDecision, p_settlement.owner, p_settlement);
                 SetLeaderResponse(response);
                 ExecuteEffectsOfLeaderResponseToPlague(response, p_settlement.owner, p_settlement);
@@ -134,7 +139,7 @@ namespace Locations.Settlements.Settlement_Events {
                 if (p_leader != null) { log.AddToFillers(p_leader, p_leader.name, LOG_IDENTIFIER.ACTIVE_CHARACTER); }
                 if (p_settlement.owner != null) { log.AddInvolvedObjectManual(p_settlement.owner.persistentID); }
                 log.AddLogToDatabase();
-                PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
+                PlayerManager.Instance.player.ShowNotificationFromPlayer(log, true);
             }
         }
         private void SetLeaderResponse(PLAGUE_EVENT_RESPONSE p_response) {
@@ -143,10 +148,12 @@ namespace Locations.Settlements.Settlement_Events {
         private void RevertEffectsOfLeaderPreviousResponseToPlague(PLAGUE_EVENT_RESPONSE p_response, Faction p_faction, NPCSettlement p_settlement) {
             switch (p_response) {
                 case PLAGUE_EVENT_RESPONSE.Quarantine:
-                    List<JobQueueItem> jobs = p_settlement.GetJobs(JOB_TYPE.PLAGUE_CARE, JOB_TYPE.QUARANTINE);
+                    List<JobQueueItem> jobs = RuinarchListPool<JobQueueItem>.Claim();
+                    p_settlement.PopulateJobsOfType(jobs, JOB_TYPE.PLAGUE_CARE, JOB_TYPE.QUARANTINE);
                     for (int i = 0; i < jobs.Count; i++) {
-                        jobs[i].ForceCancelJob(false, "Settlement no longer in Quarantine");
+                        jobs[i].ForceCancelJob("Settlement no longer in Quarantine");
                     }
+                    RuinarchListPool<JobQueueItem>.Release(jobs);
                     break;
             }
         }
@@ -169,6 +176,7 @@ namespace Locations.Settlements.Settlement_Events {
                 default:
                     throw new ArgumentOutOfRangeException(nameof(p_response), p_response, null);
             }
+            Messenger.Broadcast(FactionSignals.FACTION_CRIMES_CHANGED, p_faction);
         }
         private Character GetLeaderThatWillDecideResponse(NPCSettlement p_settlement) {
             if (p_settlement.owner != null && p_settlement.owner.leader is Character factionLeader && factionLeader.homeSettlement != null && factionLeader.homeSettlement == p_settlement) {
@@ -178,26 +186,27 @@ namespace Locations.Settlements.Settlement_Events {
             }
             return null;
         }
-        #endregion
+#endregion
 
-        #region Faction Effects
+#region Faction Effects
         private void RevertFactionEffects(Faction p_faction) {
             if (!p_faction.ownedSettlements.Any(s => s is NPCSettlement npcSettlement && npcSettlement.eventManager.HasActiveEvent(SETTLEMENT_EVENT.Plagued_Event))) {
                 //if faction no longer has any plagued settlements, remove plague as crime. Otherwise retain its current value
-                p_faction.factionType.RemoveCrime(CRIME_TYPE.Plagued);    
+                p_faction.factionType.RemoveCrime(CRIME_TYPE.Plagued);
+                Messenger.Broadcast(FactionSignals.FACTION_CRIMES_CHANGED, p_faction);
             }
         }
-        #endregion
+#endregion
         
-        #region FactionEventDispatcher.IListener Implementation
+#region FactionEventDispatcher.IListener Implementation
         public void OnFactionLeaderChanged(ILeader p_newLeader) {
             if (p_newLeader is Character newFactionLeader && newFactionLeader.homeSettlement != null && newFactionLeader.homeSettlement.eventManager.HasActiveEvent(this)) {
                 DetermineLeaderResponse(newFactionLeader, newFactionLeader.homeSettlement);
             }
         }
-        #endregion
+#endregion
 
-        #region NPCSettlementEventDispatcher.IListener Implementation
+#region NPCSettlementEventDispatcher.IListener Implementation
         public void OnSettlementRulerChanged(Character p_newLeader, NPCSettlement p_settlement) {
             if (p_newLeader != null && GetLeaderThatWillDecideResponse(p_settlement) == p_newLeader) {
                 DetermineLeaderResponse(p_newLeader, p_settlement);
@@ -214,17 +223,17 @@ namespace Locations.Settlements.Settlement_Events {
                 p_settlement.eventManager.DeactivateEvent(this);
             }
         }
-        #endregion
+#endregion
 
-        #region IPlagueTransmissionListener Implementation
+#region IPlagueTransmissionListener Implementation
         public void OnPlagueTransmitted(IPointOfInterest p_target) {
             if (p_target is Character character && character.homeSettlement != null && character.homeSettlement.eventManager.HasActiveEvent(this)) {
                 RescheduleEnd(character.homeSettlement);
             }
         }
-        #endregion
+#endregion
 
-        #region Loading
+#region Loading
         private void LoadEnd(GameDate date) {
             _endDate = date;
             _endScheduleTicket = SchedulingManager.Instance.AddEntry(date, () => DeactivateEventBySchedule(location), location);
@@ -236,9 +245,9 @@ namespace Locations.Settlements.Settlement_Events {
                 p_settlement.settlementJobTriggerComponent.AddJobTrigger(p_settlement, SETTLEMENT_JOB_TRIGGER.Plague_Care);
             }
         }
-        #endregion
+#endregion
 
-        #region Utilities
+#region Utilities
         public static bool HasMinimumAmountOfPlaguedVillagersForEvent(NPCSettlement p_settlement) {
             if (p_settlement.residents.Count >= 1) {
                 int totalResidents = p_settlement.residents.Count(r => !r.isDead);
@@ -248,15 +257,15 @@ namespace Locations.Settlements.Settlement_Events {
             }
             return false;
         }
-        #endregion
+#endregion
 
-        #region For Testing
+#region For Testing
         public override string GetTestingInfo() {
             string info = base.GetTestingInfo();
             info = $"{info} will end on {endDate.ToString()}({_rulerDecision.ToString()})";
             return info;
         }
-        #endregion
+#endregion
     }
     
     public class SaveDataPlaguedSettlementEvent : SaveDataSettlementEvent {

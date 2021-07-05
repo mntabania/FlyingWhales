@@ -14,12 +14,14 @@ public class IsCultist : GoapAction {
         SetState("Cultist Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
+#if DEBUG_LOG
         string costLog = $"\n{name} {target.nameWithID}: +10(Constant)";
         actor.logComponent.AppendCostLog(costLog);
+#endif
         return 10;
     }
-    public override void PopulateReactionsToActor(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
-        base.PopulateReactionsToActor(reactions, actor, target, witness, node, status);
+    public override void PopulateEmotionReactionsToActor(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
+        base.PopulateEmotionReactionsToActor(reactions, actor, target, witness, node, status);
         Character poiTarget = target as Character;
         if (witness.traitContainer.HasTrait("Cultist") == false) {
             reactions.Add(EMOTION.Shock);
@@ -52,11 +54,11 @@ public class IsCultist : GoapAction {
     public override CRIME_TYPE GetCrimeType(Character actor, IPointOfInterest target, ActualGoapNode crime) {
         return CRIME_TYPE.Demon_Worship;
     }
-    #endregion
+#endregion
 
-    #region State Effects
-    public void PreCultistSuccess(ActualGoapNode goapNode) { }
-    public void PerTickCultistSuccess(ActualGoapNode goapNode) { }
-    public void AfterCultistSuccess(ActualGoapNode goapNode) { }
-    #endregion
+//#region State Effects
+//    public void PreCultistSuccess(ActualGoapNode goapNode) { }
+//    public void PerTickCultistSuccess(ActualGoapNode goapNode) { }
+//    public void AfterCultistSuccess(ActualGoapNode goapNode) { }
+//#endregion
 }

@@ -13,20 +13,32 @@ namespace Interrupts {
         }
 
         #region Overrides
-        public override bool ExecuteInterruptEndEffect(InterruptHolder interruptHolder) {
-            if (GameUtilities.RollChance(15) && interruptHolder.actor.homeSettlement != null && 
-                Locations.Settlements.Settlement_Events.PlaguedEvent.HasMinimumAmountOfPlaguedVillagersForEvent(interruptHolder.actor.homeSettlement) &&
-                !interruptHolder.actor.homeSettlement.eventManager.HasActiveEvent(SETTLEMENT_EVENT.Plagued_Event) && interruptHolder.actor.homeSettlement.eventManager.CanHaveEvents()) {
-                interruptHolder.actor.homeSettlement.eventManager.AddNewActiveEvent(SETTLEMENT_EVENT.Plagued_Event);
+        public override bool ExecuteInterruptStartEffect(InterruptHolder interruptHolder, ref Log overrideEffectLog, ActualGoapNode goapNode = null) {
+            if (interruptHolder.identifier != "plague" && !string.IsNullOrEmpty(interruptHolder.identifier)) {
+                overrideEffectLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Interrupt", name, "effect_with_reason", null, logTags);
+                overrideEffectLog.AddToFillers(interruptHolder.actor, interruptHolder.actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                overrideEffectLog.AddToFillers(null, interruptHolder.identifier, LOG_IDENTIFIER.STRING_1);
             }
-            interruptHolder.actor.Death("Heart Attack", _deathLog: interruptHolder.effectLog, interrupt: this);
+            return false;
+        }
+        public override bool ExecuteInterruptEndEffect(InterruptHolder interruptHolder) {
+            bool isPlayerSource = false;
+            if (interruptHolder.identifier == "plague") {
+                isPlayerSource = true;
+                if (GameUtilities.RollChance(15) && interruptHolder.actor.homeSettlement != null &&
+                    Locations.Settlements.Settlement_Events.PlaguedEvent.HasMinimumAmountOfPlaguedVillagersForEvent(interruptHolder.actor.homeSettlement) &&
+                    !interruptHolder.actor.homeSettlement.eventManager.HasActiveEvent(SETTLEMENT_EVENT.Plagued_Event) && interruptHolder.actor.homeSettlement.eventManager.CanHaveEvents()) {
+                    interruptHolder.actor.homeSettlement.eventManager.AddNewActiveEvent(SETTLEMENT_EVENT.Plagued_Event);
+                }
+            }
+            interruptHolder.actor.Death("Heart Attack", _deathLog: interruptHolder.effectLog, interrupt: this, isPlayerSource: isPlayerSource);
             return true;
         }
         public override string ReactionToActor(Character actor, IPointOfInterest target,
             Character witness, InterruptHolder interrupt, REACTION_STATUS status) {
             string response = base.ReactionToActor(actor, target, witness, interrupt, status);
 
-            if (status == REACTION_STATUS.WITNESSED && actor.homeSettlement != null && actor.homeSettlement is NPCSettlement settlement) {
+            if (status == REACTION_STATUS.WITNESSED && actor.homeSettlement != null && actor.homeSettlement is NPCSettlement settlement && interrupt.identifier == "plague") {
                 //When a resident has been witnessed to die due to Heart Attack, the Settlement will be flagged as Plagued
                 settlement.SetIsPlagued(true);
             }

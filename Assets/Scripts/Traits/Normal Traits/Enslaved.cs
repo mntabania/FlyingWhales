@@ -4,7 +4,8 @@ using UnityEngine;
 
 namespace Traits {
     public class Enslaved : Status {
-        public override bool isSingleton => true;
+        //Not singleton for responsible characters
+        //public override bool isSingleton => true;
 
         public Enslaved() {
             name = "Enslaved";
@@ -27,11 +28,11 @@ namespace Traits {
                 targetCharacter.traitContainer.RemoveRestrainAndImprison(targetCharacter);
                 targetCharacter.behaviourComponent.ChangeDefaultBehaviourSet(CharacterManager.Slave_Behaviour);
                 if (targetCharacter.isNotSummonAndDemonAndZombie) {
-                    targetCharacter.AssignClass("Peasant");
+                    targetCharacter.classComponent.AssignClass("Farmer");
                 }
                 if(responsibleCharacter != null) {
                     if (responsibleCharacter.faction != null) {
-                        targetCharacter.ChangeFactionTo(responsibleCharacter.faction);
+                        targetCharacter.ChangeFactionTo(responsibleCharacter.faction, true);
                     }
                     if (responsibleCharacter.homeStructure != null) {
                         targetCharacter.MigrateHomeStructureTo(responsibleCharacter.homeStructure);
@@ -41,7 +42,7 @@ namespace Traits {
                 } else if (responsibleCharacters != null && responsibleCharacters.Count > 0) {
                     Character characterResponsible = responsibleCharacters[0];
                     if(characterResponsible.faction != null) {
-                        targetCharacter.ChangeFactionTo(characterResponsible.faction);
+                        targetCharacter.ChangeFactionTo(characterResponsible.faction, true);
                     }
                     if (characterResponsible.homeStructure != null) {
                         targetCharacter.MigrateHomeStructureTo(characterResponsible.homeStructure);
@@ -49,20 +50,20 @@ namespace Traits {
                         targetCharacter.MigrateHomeTo(characterResponsible.homeSettlement);
                     }
                 }
-                targetCharacter.jobComponent.AddPriorityJob(JOB_TYPE.PRODUCE_FOOD);
-                targetCharacter.jobComponent.AddPriorityJob(JOB_TYPE.HAUL);
-                Messenger.Broadcast(SpellSignals.RELOAD_PLAYER_ACTIONS, targetCharacter as IPlayerActionTarget);
+                targetCharacter.jobComponent.AddAbleJob(JOB_TYPE.PRODUCE_FOOD);
+                targetCharacter.jobComponent.AddAbleJob(JOB_TYPE.HAUL);
+                Messenger.Broadcast(PlayerSkillSignals.RELOAD_PLAYER_ACTIONS, targetCharacter as IPlayerActionTarget);
             }
         }
         public override void OnRemoveTrait(ITraitable sourcePOI, Character removedBy) {
             base.OnRemoveTrait(sourcePOI, removedBy);
             if (sourcePOI is Character targetCharacter) {
-                FactionManager.Instance.LeaveFaction(targetCharacter);
+                targetCharacter.ChangeToDefaultFaction();
                 targetCharacter.MigrateHomeStructureTo(null);
                 targetCharacter.behaviourComponent.UpdateDefaultBehaviourSet();
-                targetCharacter.jobComponent.RemovePriorityJob(JOB_TYPE.PRODUCE_FOOD);
-                targetCharacter.jobComponent.RemovePriorityJob(JOB_TYPE.HAUL);
-                Messenger.Broadcast(SpellSignals.RELOAD_PLAYER_ACTIONS, targetCharacter as IPlayerActionTarget);
+                targetCharacter.jobComponent.RemoveAbleJob(JOB_TYPE.PRODUCE_FOOD);
+                targetCharacter.jobComponent.RemoveAbleJob(JOB_TYPE.HAUL);
+                Messenger.Broadcast(PlayerSkillSignals.RELOAD_PLAYER_ACTIONS, targetCharacter as IPlayerActionTarget);
             }
         }
         #endregion

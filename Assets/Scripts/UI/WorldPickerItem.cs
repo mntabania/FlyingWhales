@@ -13,6 +13,7 @@ public class WorldPickerItem : MonoBehaviour {
     public string description;
     public Toggle toggle;
     public GameObject cover;
+    public bool isScenario;
     
     public void OnHoverEnter() {
         WorldSettings.Instance.OnHoverEnterWorldPicker(this);

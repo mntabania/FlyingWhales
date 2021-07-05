@@ -35,7 +35,7 @@ public class FactionInfoHubUI : MonoBehaviour {
     //private int lastIndex = 0;
 
     #region getters
-    public FactionItem currentSelectedFactionItem => factionItems[factionScrollSnap.CurrentPage];
+    public FactionItem currentSelectedFactionItem => GetCurrentFactionItem();
     public bool isShowing => parentPanelGO.gameObject.activeInHierarchy;
     #endregion
 
@@ -51,7 +51,16 @@ public class FactionInfoHubUI : MonoBehaviour {
         //Messenger.AddListener<Faction>(FactionSignals.FACTION_CREATED, OnFactionCreated);
         Messenger.AddListener<Faction, Character>(FactionSignals.CREATE_FACTION_INTERRUPT, OnFactionCreated);
         Messenger.AddListener<Faction>(FactionSignals.FACTION_DISBANDED, OnFactionDisbanded);
+        Messenger.AddListener(FactionSignals.FORCE_FACTION_UI_RELOAD, ForceFactionReload);
+        Messenger.AddListener(UISignals.START_GAME_AFTER_LOADOUT_SELECT, OnLoadoutSelected);
+        Messenger.AddListener<Faction>(FactionSignals.FACTION_CREATED, OnFactionCreated);
     }
+    private void OnFactionCreated(Faction p_createdFaction) {
+        if (p_createdFaction.factionType.type == FACTION_TYPE.Ratmen) {
+            AddFactionItem(p_createdFaction);
+        }
+    }
+
     public void InitializeAfterGameLoaded() {
         factionInfoUI.Initialize();
         PopulateInitialFactions();
@@ -60,7 +69,7 @@ public class FactionInfoHubUI : MonoBehaviour {
     private void PopulateInitialFactions() {
         for (int i = 0; i < FactionManager.Instance.allFactions.Count; i++) {
             Faction faction = FactionManager.Instance.allFactions[i];
-            if(faction.isMajorNonPlayer) {
+            if(faction.isMajorNonPlayer && !faction.isDisbanded) {
                 AddFactionItem(faction);
             }
         }
@@ -157,6 +166,12 @@ public class FactionInfoHubUI : MonoBehaviour {
         yield return null;
         factionScrollSnap.GoToScreen(index);
     }
+    private FactionItem GetCurrentFactionItem() {
+        if(factionScrollSnap.CurrentPage >= 0 && factionScrollSnap.CurrentPage < factionItems.Count && factionItems.Count > 0) {
+            return factionItems[factionScrollSnap.CurrentPage];
+        }
+        return currentSelectedFactionItem;
+    }
     #endregion
 
     #region Listeners
@@ -175,6 +190,14 @@ public class FactionInfoHubUI : MonoBehaviour {
             if (faction.isMajorNonPlayer) {
                 StartCoroutine(RepopulateFactions());
             }
+        }
+    }
+    private void ForceFactionReload() {
+        StartCoroutine(RepopulateFactions());
+    }
+    private void OnLoadoutSelected() {
+        if (factionInfoUI.activeFaction != null) {
+            factionInfoUI.UpdateAllRelationships();    
         }
     }
     #endregion
@@ -269,7 +292,7 @@ public class FactionInfoHubUI : MonoBehaviour {
     }
     public bool IsShowing(Faction faction) {
         if(factionItems.Count > 0) {
-            return currentSelectedFactionItem.faction == faction && factionInfoUI.activeFaction == faction;
+            return /*currentSelectedFactionItem.faction == faction && */factionInfoUI.activeFaction == faction;
         }
         return false;
     }
@@ -279,11 +302,11 @@ public class FactionInfoHubUI : MonoBehaviour {
     public void UnFilterTrait(string traitName) {
         factionInfoUI.RemoveFilteredTrait(traitName);
     }
-    public void FilterRegion(Region region) {
-        factionInfoUI.AddFilteredRegion(region);
+    public void FilterRegion(BaseSettlement village) {
+        factionInfoUI.AddFilteredRegion(village);
     }
-    public void UnFilterRegion(Region region) {
-        factionInfoUI.RemoveFilteredRegion(region);
+    public void UnFilterRegion(BaseSettlement village) {
+        factionInfoUI.RemoveFilteredRegion(village);
     }
     #endregion
 }

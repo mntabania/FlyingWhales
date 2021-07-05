@@ -12,7 +12,7 @@ public class Nap : GoapAction {
         
         //advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.TILE_OBJECT };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.RATMAN };
-        validTimeOfDays = new TIME_IN_WORDS[] { TIME_IN_WORDS.AFTERNOON, TIME_IN_WORDS.LUNCH_TIME };
+        // validTimeOfDays = new TIME_IN_WORDS[] { TIME_IN_WORDS.AFTERNOON, TIME_IN_WORDS.LUNCH_TIME };
         logTags = new[] {LOG_TAG.Needs};
     }
 
@@ -41,28 +41,33 @@ public class Nap : GoapAction {
         return goapActionInvalidity;
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
+#if DEBUG_LOG
         string costLog = $"\n{name} {target.nameWithID}:";
+#endif
         int cost = 0;
         if (actor.traitContainer.HasTrait("Enslaved")) {
             if (target.gridTileLocation == null || !target.gridTileLocation.IsInHomeOf(actor)) {
+#if DEBUG_LOG
                 costLog += $" +2000(Slave, target is not in actor's home)";
                 actor.logComponent.AppendCostLog(costLog);
+#endif
                 return 2000;
             }
         }
         if (actor.partyComponent.hasParty && actor.partyComponent.currentParty.isActive) {
             if (actor.partyComponent.isActiveMember) {
-                if (target.gridTileLocation != null && target.gridTileLocation.collectionOwner.isPartOfParentRegionMap && actor.gridTileLocation != null
-                && actor.gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
-                    LocationGridTile centerGridTileOfTarget = target.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.GetCenterLocationGridTile();
-                    LocationGridTile centerGridTileOfActor = actor.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.GetCenterLocationGridTile();
+                if (target.gridTileLocation != null && actor.gridTileLocation != null) {
+                    LocationGridTile centerGridTileOfTarget = target.gridTileLocation.area.gridTileComponent.centerGridTile;
+                    LocationGridTile centerGridTileOfActor = actor.gridTileLocation.area.gridTileComponent.centerGridTile;
                     float distance = centerGridTileOfActor.GetDistanceTo(centerGridTileOfTarget);
-                    int distanceToCheck = (InnerMapManager.BuildingSpotSize.x * 2) * 3;
+                    int distanceToCheck = InnerMapManager.AreaLocationGridTileSize.x * 3;
 
                     if (distance > distanceToCheck) {
                         //target is at structure that character is avoiding
+#if DEBUG_LOG
                         costLog += $" +2000(Active Party, Location of target too far from actor)";
                         actor.logComponent.AppendCostLog(costLog);
+#endif
                         return 2000;
                     }
                 }
@@ -71,29 +76,43 @@ public class Nap : GoapAction {
         if (target is BaseBed targetBed) {
             if (!targetBed.IsSlotAvailable()) {
                 cost += 2000;
+#if DEBUG_LOG
                 costLog += " +2000(Fully Occupied)";
+#endif
             } else if (actor.traitContainer.HasTrait("Travelling")) {
                 cost += 100;
+#if DEBUG_LOG
                 costLog += " +100(Travelling)";
+#endif
             } else {
                 if (targetBed.IsOwnedBy(actor) || targetBed.structureLocation == actor.homeStructure) {
                     cost += UtilityScripts.Utilities.Rng.Next(30, 51);
+#if DEBUG_LOG
                     costLog += $" +{cost}(Owned/Location is in home structure)";
+#endif
                 } else {
                     if (actor.needsComponent.isExhausted) {
                         if (targetBed.IsInHomeStructureOfCharacterWithOpinion(actor, RelationshipManager.Close_Friend, RelationshipManager.Friend)) {
                             cost += UtilityScripts.Utilities.Rng.Next(130, 151);
+#if DEBUG_LOG
                             costLog += $" +{cost}(Exhausted, Is in Friend home structure)";
+#endif
                         } else if (targetBed.IsInHomeStructureOfCharacterWithOpinion(actor, RelationshipManager.Rival, RelationshipManager.Enemy)) {
                             cost += 2000;
+#if DEBUG_LOG
                             costLog += " +2000(Exhausted, Is in Enemy home structure)";
+#endif
                         } else {
                             cost = UtilityScripts.Utilities.Rng.Next(80, 101);
+#if DEBUG_LOG
                             costLog += $" +{cost}(Else)";
+#endif
                         }
                     } else {
                         cost += 2000;
+#if DEBUG_LOG
                         costLog += $" +{cost}(Not Exhausted)";
+#endif
                     }
                 }
 
@@ -109,18 +128,26 @@ public class Nap : GoapAction {
                     string opinionLabel = actor.relationshipContainer.GetOpinionLabel(alreadySleepingCharacter);
                     if(opinionLabel == RelationshipManager.Friend) {
                         cost += 20;
+#if DEBUG_LOG
                         costLog += " +20(Friend Occupies)";
+#endif
                     } else if (opinionLabel == RelationshipManager.Acquaintance) {
                         cost += 25;
+#if DEBUG_LOG
                         costLog += " +25(Acquaintance Occupies)";
+#endif
                     } else if (opinionLabel == RelationshipManager.Enemy || opinionLabel == RelationshipManager.Rival || opinionLabel == string.Empty) {
                         cost += 100;
+#if DEBUG_LOG
                         costLog += " +100(Enemy/Rival/None Occupies)";
+#endif
                     }
                 }
             }
         }
+#if DEBUG_LOG
         actor.logComponent.AppendCostLog(costLog);
+#endif
         return cost;
     }
     public override void OnStopWhilePerforming(ActualGoapNode node) {
@@ -128,25 +155,25 @@ public class Nap : GoapAction {
         Character actor = node.actor;
         actor.traitContainer.RemoveTrait(actor, "Resting");
     }
-    #endregion
+#endregion
 
-    #region Requirements
+#region Requirements
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, OtherData[] otherData, JobQueueItem job) { 
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData, job);
         if (satisfied) {
             if (poiTarget.gridTileLocation != null && actor.trapStructure.IsTrappedAndTrapStructureIsNot(poiTarget.gridTileLocation.structure)) {
                 return false;
             }
-            if (poiTarget.gridTileLocation != null && poiTarget.gridTileLocation.collectionOwner.isPartOfParentRegionMap && actor.trapStructure.IsTrappedAndTrapHexIsNot(poiTarget.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner)) {
+            if (poiTarget.gridTileLocation != null && actor.trapStructure.IsTrappedAndTrapAreaIsNot(poiTarget.gridTileLocation.area)) {
                 return false;
             }
             return poiTarget.IsAvailable() && CanSleepInBed(actor, poiTarget as TileObject) && poiTarget.gridTileLocation != null;
         }
         return false;
     }
-    #endregion
+#endregion
 
-    #region State Effects
+#region State Effects
     public void PreNapSuccess(ActualGoapNode goapNode) {
         goapNode.actor.traitContainer.AddTrait(goapNode.actor, "Resting");
     }
@@ -154,8 +181,8 @@ public class Nap : GoapAction {
         Character actor = goapNode.actor;
         CharacterNeedsComponent needsComponent = actor.needsComponent;
 
-        needsComponent.AdjustTiredness(1.1f);
-        needsComponent.AdjustHappiness(0.75f);
+        needsComponent.AdjustTiredness(1f);
+        needsComponent.AdjustHappiness(3f);
 
         //float staminaAdjustment = 0f;
         //if (actor.currentStructure == actor.homeStructure) {
@@ -180,7 +207,7 @@ public class Nap : GoapAction {
     //public void PreNapMissing() {
     //    goapNode.descriptionLog.AddToFillers(actor.currentStructure.location, actor.currentStructure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
     //}
-    #endregion
+#endregion
 
     private bool CanSleepInBed(Character character, TileObject tileObject) {
         return (tileObject as BaseBed).CanUseBed(character);

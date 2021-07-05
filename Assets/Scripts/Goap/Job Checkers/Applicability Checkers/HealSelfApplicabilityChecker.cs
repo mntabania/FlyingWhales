@@ -7,7 +7,7 @@ namespace Goap.Job_Checkers {
             Assert.IsNotNull(goapPlanJob);
             Character target = goapPlanJob.targetPOI as Character;
             Assert.IsNotNull(target);
-            return target.currentHP < target.maxHP;
+            return !target.IsHealthFull();
         }
     }
 }

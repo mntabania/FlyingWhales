@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine.Assertions;
+using UtilityScripts;
+
 namespace Goap.Job_Checkers {
     public class ProduceResourceApplicabilityChecker : JobApplicabilityChecker {
         public override string key => JobManager.Produce_Resource_Applicability;
@@ -31,13 +33,15 @@ namespace Goap.Job_Checkers {
         
         private int GetTotalResource(RESOURCE resourceType, NPCSettlement settlement) {
             int resource = 0;
-            List<ResourcePile> piles = settlement.mainStorage.GetTileObjectsOfType<ResourcePile>();
+            List<TileObject> piles = RuinarchListPool<TileObject>.Claim();
+            settlement.mainStorage.PopulateTileObjectsOfType<ResourcePile>(piles);
             for (int i = 0; i < piles.Count; i++) {
-                ResourcePile resourcePile = piles[i];
+                ResourcePile resourcePile = piles[i] as ResourcePile;
                 if (resourcePile.providedResource == resourceType) {
-                    resource += piles[i].resourceInPile;	
+                    resource += resourcePile.resourceInPile;	
                 }
             }
+            RuinarchListPool<TileObject>.Release(piles);
             return resource;
         }
         private int GetMinimumResource(RESOURCE resource) {

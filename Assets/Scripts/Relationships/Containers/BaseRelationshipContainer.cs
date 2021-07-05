@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using Traits;
 using UnityEngine;
 using UnityEngine.Assertions;
-
+using UtilityScripts;
 public class BaseRelationshipContainer : IRelationshipContainer {
     
     private const int Friend_Requirement = 1; //opinion requirement to consider someone a friend
@@ -110,23 +110,28 @@ public class BaseRelationshipContainer : IRelationshipContainer {
     public bool HasRelationshipWith(Relatable relatable, RELATIONSHIP_TYPE relType) {
         if (HasRelationshipWith(relatable)) {
             IRelationshipData data = relationships[relatable.id];
-            return data.relationships.Contains(relType);
+            return data.HasRelationship(relType);
         }
         return false;
     }
-    public bool HasRelationshipWith(Relatable relatable, params RELATIONSHIP_TYPE[] relType) {
+    public bool HasRelationshipWith(Relatable relatable, RELATIONSHIP_TYPE relType1, RELATIONSHIP_TYPE relType2) {
         if (HasRelationshipWith(relatable)) {
             IRelationshipData data = relationships[relatable.id];
-            for (int i = 0; i < relType.Length; i++) {
-                RELATIONSHIP_TYPE rel = relType[i];
-                for (int j = 0; j < data.relationships.Count; j++) {
-                    RELATIONSHIP_TYPE dataRel = data.relationships[j];
-                    if(rel == dataRel) {
-                        return true;
-                    }
-                }
-            }
-            return false;
+            return data.HasRelationship(relType1, relType2);
+        }
+        return false;
+    }
+    public bool HasRelationshipWith(Relatable relatable, RELATIONSHIP_TYPE relType1, RELATIONSHIP_TYPE relType2, RELATIONSHIP_TYPE relType3) {
+        if (HasRelationshipWith(relatable)) {
+            IRelationshipData data = relationships[relatable.id];
+            return data.HasRelationship(relType1, relType2, relType3);
+        }
+        return false;
+    }
+    public bool HasRelationshipWith(Relatable relatable, RELATIONSHIP_TYPE relType1, RELATIONSHIP_TYPE relType2, RELATIONSHIP_TYPE relType3, RELATIONSHIP_TYPE relType4, RELATIONSHIP_TYPE relType5) {
+        if (HasRelationshipWith(relatable)) {
+            IRelationshipData data = relationships[relatable.id];
+            return data.HasRelationship(relType1, relType2, relType3, relType4, relType5);
         }
         return false;
     }
@@ -137,23 +142,31 @@ public class BaseRelationshipContainer : IRelationshipContainer {
         }
         return false;
     }
-    public bool HasRelationship(params RELATIONSHIP_TYPE[] type) {
+    public bool HasRelationship(RELATIONSHIP_TYPE type) {
         return GetRelatablesWithRelationshipCount(type) > 0;
     }
-    public bool HasActiveRelationship(params RELATIONSHIP_TYPE[] type) {
-        for (int i = 0; i < type.Length; i++) {
-            RELATIONSHIP_TYPE relationshipType = type[i];
-            Character character = GetFirstCharacterWithRelationship(relationshipType);
-            if (character != null) {
-                return true;
-            }
+    public bool HasActiveRelationship(RELATIONSHIP_TYPE type1, RELATIONSHIP_TYPE type2) {
+        Character character = GetFirstCharacterWithRelationship(type1, type2);
+        if (character != null) {
+            return true;
         }
         return false;
     }
     #endregion
 
     #region Getting
-    public Character GetFirstCharacterWithRelationship(params RELATIONSHIP_TYPE[] type) {
+    public Character GetFirstCharacterWithRelationship(RELATIONSHIP_TYPE type1, RELATIONSHIP_TYPE type2) {
+        foreach (KeyValuePair<int, IRelationshipData> kvp in relationships) {
+            if (kvp.Value.HasRelationship(type1, type2)) {
+                Character character = CharacterManager.Instance.GetCharacterByID(kvp.Key);
+                if (character != null) {
+                    return character;
+                }
+            }
+        }
+        return null;
+    }
+    public Character GetFirstCharacterWithRelationship(RELATIONSHIP_TYPE type) {
         foreach (KeyValuePair<int, IRelationshipData> kvp in relationships) {
             if (kvp.Value.HasRelationship(type)) {
                 Character character = CharacterManager.Instance.GetCharacterByID(kvp.Key);
@@ -167,7 +180,7 @@ public class BaseRelationshipContainer : IRelationshipContainer {
     public bool IsRelativeLoverOrAffairAndNotRival(Character character) {
         return (IsFamilyMember(character) || HasRelationshipWith(character, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.AFFAIR)) && GetOpinionLabel(character) != RelationshipManager.Rival;
     }
-    public int GetFirstRelatableIDWithRelationship(params RELATIONSHIP_TYPE[] type) {
+    public int GetFirstRelatableIDWithRelationship(RELATIONSHIP_TYPE type) {
         foreach (KeyValuePair<int, IRelationshipData> kvp in relationships) {
             if (kvp.Value.HasRelationship(type)) {
                 return kvp.Key;
@@ -175,19 +188,26 @@ public class BaseRelationshipContainer : IRelationshipContainer {
         }
         return -1;
     }
-    public List<int> GetAllRelatableIDWithRelationship(params RELATIONSHIP_TYPE[] type) {
-        List<int> ids = new List<int>();
+    public void PopulateAllRelatableIDWithRelationship(List<int> ids, RELATIONSHIP_TYPE type) {
         foreach (KeyValuePair<int, IRelationshipData> kvp in relationships) {
             if (kvp.Value.HasRelationship(type)) {
                 ids.Add(kvp.Key);
             }
         }
-        return ids;
     }
-    public int GetRelatablesWithRelationshipCount(params RELATIONSHIP_TYPE[] type) {
+    public int GetRelatablesWithRelationshipCount(RELATIONSHIP_TYPE type) {
         int count = 0;
         foreach (KeyValuePair<int, IRelationshipData> kvp in relationships) {
             if (kvp.Value.HasRelationship(type)) {
+                count++;
+            }
+        }
+        return count;
+    }
+    public int GetRelatablesWithRelationshipCount(RELATIONSHIP_TYPE type1, RELATIONSHIP_TYPE type2) {
+        int count = 0;
+        foreach (KeyValuePair<int, IRelationshipData> kvp in relationships) {
+            if (kvp.Value.HasRelationship(type1, type2)) {
                 count++;
             }
         }
@@ -202,65 +222,69 @@ public class BaseRelationshipContainer : IRelationshipContainer {
         }
         return null;
     }
-    public RELATIONSHIP_TYPE GetRelationshipFromParametersWith(Relatable relatable, params RELATIONSHIP_TYPE[] relType) {
+    public RELATIONSHIP_TYPE GetRelationshipFromParametersWith(Relatable relatable, RELATIONSHIP_TYPE relType1, RELATIONSHIP_TYPE relType2) {
         if (HasRelationshipWith(relatable)) {
             IRelationshipData data = relationships[relatable.id];
-            for (int i = 0; i < relType.Length; i++) {
-                RELATIONSHIP_TYPE rel = relType[i];
-                for (int j = 0; j < data.relationships.Count; j++) {
-                    RELATIONSHIP_TYPE dataRel = data.relationships[j];
-                    if (rel == dataRel) {
-                        return rel;
-                    }
+            for (int j = 0; j < data.relationships.Count; j++) {
+                RELATIONSHIP_TYPE dataRel = data.relationships[j];
+                if (relType1 == dataRel || relType2 == dataRel) {
+                    return dataRel;
                 }
             }
             return RELATIONSHIP_TYPE.NONE;
         }
         return RELATIONSHIP_TYPE.NONE;
     }
-    public Character GetMissingCharacterWithOpinion(string opinionLabel) {
-        List<Character> characters = null;
+    public Character GetRandomMissingCharacterWithOpinion(string opinionLabel) {
+        Character chosenCharacter = null;
+        List<Character> characters = RuinarchListPool<Character>.Claim();
         for (int i = 0; i < charactersWithOpinion.Count; i++) {
             Character target = charactersWithOpinion[i];
             if (!target.isDead && GetAwarenessState(target) == AWARENESS_STATE.Missing) {
                 if (GetOpinionLabel(target) == opinionLabel) {
-                    if(characters == null) { characters = new List<Character>(); }
                     characters.Add(target);
                 }
             }
         }
-        if(characters != null && characters.Count > 0) {
-            return UtilityScripts.CollectionUtilities.GetRandomElement(characters);
+        if(characters.Count > 0) {
+            chosenCharacter = UtilityScripts.CollectionUtilities.GetRandomElement(characters);
         }
-        return null;
+        RuinarchListPool<Character>.Release(characters);
+        return chosenCharacter;
     }
-    public Character GetMissingCharacterThatMeetCriteria(Func<Character, bool> checker) {
-        List<Character> characters = null;
+    public Character GetRandomMissingCharacterThatIsFamilyMemberOrLoverAffairOf(Character p_character) {
+        Character chosenCharacter = null;
+        List<Character> characters = RuinarchListPool<Character>.Claim();
         for (int i = 0; i < charactersWithOpinion.Count; i++) {
             Character target = charactersWithOpinion[i];
             if (!target.isDead && GetAwarenessState(target) == AWARENESS_STATE.Missing) {
-                if (checker.Invoke(target)) {
-                    if (characters == null) { characters = new List<Character>(); }
+                if (p_character.relationshipContainer.IsFamilyMember(target) 
+                    || p_character.relationshipContainer.HasRelationshipWith(target, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.AFFAIR)) {
                     characters.Add(target);
                 }
             }
         }
-        if (characters != null && characters.Count > 0) {
-            return UtilityScripts.CollectionUtilities.GetRandomElement(characters);
+        if (characters.Count > 0) {
+            chosenCharacter = UtilityScripts.CollectionUtilities.GetRandomElement(characters);
         }
-        return null;
+        RuinarchListPool<Character>.Release(characters);
+        return chosenCharacter;
     }
     #endregion
 
     #region Opinions
     public void AdjustOpinion(Character owner, Character target, string opinionText, int opinionValue, string lastStrawReason = "") {
         if (owner.minion != null || owner is Summon) {
-            //Minions or Summons cannot have opinions
-            return;
+            if (!owner.relationshipContainer.HasSpecialRelationshipWith(target)) {
+                //Minions or Summons cannot have opinions on characters that they do not have relationships with
+                return;    
+            }
         }
         if (target.minion != null || target is Summon) {
-            //Minions or Summons cannot have opinions
-            return;
+            if (!target.relationshipContainer.HasSpecialRelationshipWith(owner)) {
+                //Minions or Summons cannot have opinions on characters that they do not have relationships with
+                return;    
+            }
         }
         if(owner == target) {
             //Cannot adjust opinion to self
@@ -273,8 +297,10 @@ public class BaseRelationshipContainer : IRelationshipContainer {
             Psychopath psychopath = owner.traitContainer.GetTraitOrStatus<Psychopath>("Psychopath");
             psychopath.AdjustOpinion(target, opinionText, opinionValue);
             //Psychopaths do not gain or lose Opinion towards other characters (ensure that logs related to Opinion changes also do not show up)
+#if DEBUG_LOG
             owner.logComponent.PrintLogIfActive(
                 $"{owner.name} wants to adjust {opinionText} opinion towards {target.name} by {opinionValue} but {owner.name} is a Psychopath");
+#endif
             opinionValue = 0;
         }
         relationshipData.opinions.AdjustOpinion(opinionText, opinionValue);
@@ -313,8 +339,10 @@ public class BaseRelationshipContainer : IRelationshipContainer {
         string opinionLabelBeforeChange = GetOpinionLabel(target);
         if (owner.traitContainer.HasTrait("Psychopath")) {
             //Psychopaths do not gain or lose Opinion towards other characters (ensure that logs related to Opinion changes also do not show up)
+#if DEBUG_LOG
             owner.logComponent.PrintLogIfActive(
                 $"{owner.name} wants to adjust {opinionText} opinion towards {target.name} by {opinionValue} but {owner.name} is a Psychopath, setting the value to zero...");
+#endif
             opinionValue = 0;
         }
         relationshipData.opinions.SetOpinion(opinionText, opinionValue);
@@ -525,37 +553,6 @@ public class BaseRelationshipContainer : IRelationshipContainer {
         string opinionLabel = GetOpinionLabel(character);
         return opinionLabel == RelationshipManager.Enemy || opinionLabel == RelationshipManager.Rival;
     }
-    public List<Character> GetCharactersWithPositiveOpinion() {
-        List<Character> characters = new List<Character>();
-        for (int i = 0; i < charactersWithOpinion.Count; i++) {
-            Character otherCharacter = charactersWithOpinion[i];
-            if (GetTotalOpinion(otherCharacter) > 0) {
-                characters.Add(otherCharacter);
-            }
-        }
-        return characters;
-    }
-    public List<Character> GetCharactersWithNeutralOpinion() {
-        List<Character> characters = new List<Character>();
-        for (int i = 0; i < charactersWithOpinion.Count; i++) {
-            Character otherCharacter = charactersWithOpinion[i];
-            int opinion = GetTotalOpinion(otherCharacter); 
-            if (opinion < Friend_Requirement && opinion > Enemy_Requirement) {
-                characters.Add(otherCharacter);
-            }
-        }
-        return characters;
-    }
-    public List<Character> GetCharactersWithNegativeOpinion() {
-        List<Character> characters = new List<Character>();
-        for (int i = 0; i < charactersWithOpinion.Count; i++) {
-            Character otherCharacter = charactersWithOpinion[i];
-            if (GetTotalOpinion(otherCharacter) < 0) {
-                characters.Add(otherCharacter);
-            }
-        }
-        return characters;
-    }
     public Character GetFirstEnemyCharacter() {
         for (int i = 0; i < charactersWithOpinion.Count; i++) {
             Character otherCharacter = charactersWithOpinion[i];
@@ -565,18 +562,17 @@ public class BaseRelationshipContainer : IRelationshipContainer {
         }
         return null;
     }
-    public List<Character> GetEnemyCharacters() {
-        List<Character> characters = new List<Character>();
+    public void PopulateEnemyCharacters(List<Character> characters) {
         for (int i = 0; i < charactersWithOpinion.Count; i++) {
             Character otherCharacter = charactersWithOpinion[i];
             if (IsEnemiesWith(otherCharacter)) {
                 characters.Add(otherCharacter);
             }
         }
-        return characters;
     }
     public Character GetRandomEnemyCharacter() {
-        List<Character> characters = new List<Character>();
+        Character chosenCharacter = null;
+        List<Character> characters = RuinarchListPool<Character>.Claim();
         for (int i = 0; i < charactersWithOpinion.Count; i++) {
             Character otherCharacter = charactersWithOpinion[i];
             if (IsEnemiesWith(otherCharacter)) {
@@ -584,50 +580,51 @@ public class BaseRelationshipContainer : IRelationshipContainer {
             }
         }
         if(characters.Count > 0) {
-            return characters[UnityEngine.Random.Range(0, characters.Count)];
+            chosenCharacter = characters[GameUtilities.RandomBetweenTwoNumbers(0, characters.Count - 1)];
         }
-        return null;
+        RuinarchListPool<Character>.Release(characters);
+        return chosenCharacter;
     }
-    public List<Character> GetFriendCharacters() {
-        List<Character> characters = new List<Character>();
+    public void PopulateFriendCharacters(List<Character> characters) {
         for (int i = 0; i < charactersWithOpinion.Count; i++) {
             Character otherCharacter = charactersWithOpinion[i];
             if (IsFriendsWith(otherCharacter)) {
                 characters.Add(otherCharacter);
             }
         }
-        return characters;
     }
-    public List<Character> GetCharactersWithOpinionLabel(params string[] labels) {
-        List<Character> characters = new List<Character>();
-        for (int i = 0; i < charactersWithOpinion.Count; i++) {
-            Character otherCharacter = charactersWithOpinion[i];
-            string opinionLabel = GetOpinionLabel(otherCharacter);
-            for (int j = 0; j < labels.Length; j++) {
-                if (labels[j] == opinionLabel) {
-                    characters.Add(otherCharacter);
-                }
-            }
-        }
-        return characters;
-    }
-    public bool HasCharacterWithOpinionLabel(params string[] labels) {
-        for (int i = 0; i < charactersWithOpinion.Count; i++) {
-            Character otherCharacter = charactersWithOpinion[i];
-            string opinionLabel = GetOpinionLabel(otherCharacter);
-            for (int j = 0; j < labels.Length; j++) {
-                if (labels[j] == opinionLabel) {
-                    return true;
-                }
+    public bool HasOpinionLabelWithCharacter(Character character, string opinion) {
+        if (HasRelationshipWith(character)) {
+            string opinionLabel = GetOpinionLabel(character);
+            if (opinion == opinionLabel) {
+                return true;
             }
         }
         return false;
     }
-    public bool HasOpinionLabelWithCharacter(Character character, params string[] labels) {
+    public bool HasOpinionLabelWithCharacter(Character character, string opinion1, string opinion2) {
         if (HasRelationshipWith(character)) {
             string opinionLabel = GetOpinionLabel(character);
-            for (int j = 0; j < labels.Length; j++) {
-                if (labels[j] == opinionLabel) {
+            if (opinion1 == opinionLabel || opinion2 == opinionLabel) {
+                return true;
+            }
+        }
+        return false;
+    }
+    public bool HasOpinionLabelWithCharacter(Character character, string opinion1, string opinion2, string opinion3) {
+        if (HasRelationshipWith(character)) {
+            string opinionLabel = GetOpinionLabel(character);
+            if (opinion1 == opinionLabel || opinion2 == opinionLabel || opinion3 == opinionLabel) {
+                return true;
+            }
+        }
+        return false;
+    }
+    public bool HasOpinionLabelWithCharacter(Character character, List<OPINIONS> opinions) {
+        if (HasRelationshipWith(character)) {
+            string opinionLabel = GetOpinionLabel(character);
+            for (int j = 0; j < opinions.Count; j++) {
+                if (opinions[j].GetOpinionLabel() == opinionLabel) {
                     return true;
                 }
             }
@@ -713,9 +710,9 @@ public class BaseRelationshipContainer : IRelationshipContainer {
         }
         return RelationshipManager.Acquaintance;
     }
-    #endregion
+#endregion
 
-    #region Awareness
+#region Awareness
     public AWARENESS_STATE GetAwarenessState(Character character) {
         if (relationships.ContainsKey(character.id)) {
             return relationships[character.id].awareness.state;
@@ -731,9 +728,9 @@ public class BaseRelationshipContainer : IRelationshipContainer {
             }
         }
     }
-    #endregion
+#endregion
 
-    #region Utilities
+#region Utilities
     public bool BreakUp(Character owner, Character targetCharacter, string reason) {
         if (HasRelationshipWith(targetCharacter, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.AFFAIR)) {
             owner.interruptComponent.TriggerInterrupt(INTERRUPT.Break_Up, targetCharacter, reason);
@@ -741,16 +738,16 @@ public class BaseRelationshipContainer : IRelationshipContainer {
         }
         return false;
     }
-    #endregion
+#endregion
 
-    #region Listeners
+#region Listeners
     private void OnCharacterChangedName(Character character) {
         if (HasRelationshipWith(character)) {
             IRelationshipData relationshipData = GetRelationshipDataWith(character);
             relationshipData.SetTargetName(character.name);
         }
     }
-    #endregion
+#endregion
 }
 
 #region Save Data

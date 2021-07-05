@@ -8,20 +8,21 @@ public class Ice : TileObject{
         AddAdvertisedAction(INTERACTION_TYPE.RESOLVE_COMBAT);
         AddAdvertisedAction(INTERACTION_TYPE.DROP_ITEM);
         AddAdvertisedAction(INTERACTION_TYPE.PICK_UP);
+        AddAdvertisedAction(INTERACTION_TYPE.STEAL_ANYTHING);
     }
-    public Ice(SaveDataTileObject data) { }
+    public Ice(SaveDataTileObject data) : base(data) { }
     
     public override void OnDestroyPOI() {
         base.OnDestroyPOI();
         traitContainer.RemoveTrait(this, "Melting");
         if (previousTile != null) {
-            previousTile.genericTileObject.traitContainer.AddTrait(previousTile.genericTileObject, "Wet");
+            previousTile.tileObjectComponent.genericTileObject.traitContainer.AddTrait(previousTile.tileObjectComponent.genericTileObject, "Wet");
         }
     }
 
     public override void OnPlacePOI() {
         base.OnPlacePOI();
-        if(gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.biomeType != BIOMES.SNOW) {
+        if(gridTileLocation.mainBiomeType != BIOMES.SNOW) {
             traitContainer.AddTrait(this, "Melting");
         } else {
             traitContainer.RemoveTrait(this, "Melting");

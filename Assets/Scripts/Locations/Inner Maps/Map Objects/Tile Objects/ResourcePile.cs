@@ -6,7 +6,8 @@ using UtilityScripts;
 public abstract class ResourcePile : TileObject {
 
 	public RESOURCE providedResource { get; private set; }
-    public int resourceInPile => storedResources[providedResource];
+    public abstract CONCRETE_RESOURCES specificProvidedResource { get; }
+    public int resourceInPile => resourceStorageComponent.storedResources[providedResource];
     public ResourcePile(RESOURCE providedResource) {
         AddAdvertisedAction(INTERACTION_TYPE.TAKE_RESOURCE);
         AddAdvertisedAction(INTERACTION_TYPE.PICK_UP);
@@ -17,6 +18,7 @@ public abstract class ResourcePile : TileObject {
         AddAdvertisedAction(INTERACTION_TYPE.RESOLVE_COMBAT);
         AddAdvertisedAction(INTERACTION_TYPE.BOOBY_TRAP);
         AddAdvertisedAction(INTERACTION_TYPE.DROP_ITEM);
+        AddAdvertisedAction(INTERACTION_TYPE.DROP_RESOURCE_TO_WORK_STRUCTURE);
         this.providedResource = providedResource;
     }
     public ResourcePile(SaveDataTileObject data, RESOURCE providedResource) : base(data) {
@@ -25,13 +27,13 @@ public abstract class ResourcePile : TileObject {
 
     #region Virtuals
     public virtual void SetResourceInPile(int amount) {
-        SetResource(providedResource, amount);
+        resourceStorageComponent.SetResource(specificProvidedResource, amount);
         if(resourceInPile <= 0 && gridTileLocation != null && isBeingCarriedBy == null) {
             gridTileLocation.structure.RemovePOI(this);
         }
     }
     public virtual void AdjustResourceInPile(int adjustment) {
-        AdjustResource(providedResource, adjustment);
+        resourceStorageComponent.AdjustResource(specificProvidedResource, adjustment);
         Messenger.Broadcast(TileObjectSignals.RESOURCE_IN_PILE_CHANGED, this);
         if (resourceInPile <= 0) {
             if(gridTileLocation != null && isBeingCarriedBy == null) {
@@ -39,20 +41,14 @@ public abstract class ResourcePile : TileObject {
             } else if (isBeingCarriedBy != null) {
                 //If amount in pile was reduced to zero and is still being carried, remove from being carried and destroy it
                 isBeingCarriedBy.UncarryPOI(this, addToLocation: false);
+                eventDispatcher.ExecuteTileObjectDestroyed(this);
+                Messenger.Broadcast(TileObjectSignals.DESTROY_TILE_OBJECT, this as TileObject);
             }
         }
     }
-    public virtual bool HasResource() {
-        return resourceInPile > 0;
-    }
-    protected override void ConstructMaxResources() {
-        maxResourceValues = new Dictionary<RESOURCE, int>();
-        RESOURCE[] resourceTypes = CollectionUtilities.GetEnumValues<RESOURCE>();
-        for (int i = 0; i < resourceTypes.Length; i++) {
-            RESOURCE resourceType = resourceTypes[i];
-            //only allow resource type of what this resource pile provides.
-            maxResourceValues.Add(resourceType, resourceType == providedResource ? 1000 : 0);
-        }
+    public void OnPileCombinedToOtherPile() {
+        eventDispatcher.ExecuteTileObjectDestroyed(this);
+        Messenger.Broadcast(TileObjectSignals.DESTROY_TILE_OBJECT, this as TileObject);
     }
     #endregion
 
@@ -74,5 +70,40 @@ public abstract class ResourcePile : TileObject {
         return data;
     }
     public override void SetCharacterOwner(Character characterOwner) { } //do not set character owner of resource pile. Reference: https://trello.com/c/TRzgjik6/1352-resources-like-food-pile-and-wood-pile-should-not-have-owners-at-any-time
+    protected override void Initialize(TILE_OBJECT_TYPE tileObjectType, bool shouldAddCommonAdvertisements = true) {
+        base.Initialize(tileObjectType, shouldAddCommonAdvertisements);
+
+        /*
+         * RESOURCE[] resourceTypes = CollectionUtilities.GetEnumValues<RESOURCE>();
+         * for (int i = 0; i < resourceTypes.Length; i++) {
+            RESOURCE resourceType = resourceTypes[i];
+            if (resourceType != RESOURCE.NONE) {
+                //only allow resource type of what this resource pile provides.
+                resourceStorageComponent.SetResourceCap(resourceType, resourceType == providedResource ? 1000 : 0);    
+            }
+        }
+        */
+    }
+    public override void VillagerReactionToTileObject(Character actor, ref string debugLog) {
+        base.VillagerReactionToTileObject(actor, ref debugLog);
+        if (actor.partyComponent.hasParty && actor.partyComponent.currentParty.isActive
+            && actor.partyComponent.currentParty.partyState == PARTY_STATE.Working) {
+            if (actor.partyComponent.currentParty.currentQuest is RaidPartyQuest raidParty
+                && gridTileLocation != null && gridTileLocation.IsPartOfSettlement(raidParty.targetSettlement)) {
+                if (GameUtilities.RollChance(35)) {
+                    if (actor.jobComponent.TriggerStealRaidJob(this)) {
+                        raidParty.SetIsSuccessful(true);
+                    }
+                }
+            }
+        }
+    }
+    protected override void OnSetGridTileLocation() {
+        base.OnSetGridTileLocation();
+#if DEBUG_LOG
+        Debug.Log($"Grid tile location of {nameWithID} was set to {gridTileLocation?.ToString()}");
+#endif
+    }
     #endregion
+    
 }

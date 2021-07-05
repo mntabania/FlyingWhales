@@ -40,7 +40,7 @@ public class StrollState : CharacterState {
     //         targetPOI is SpecialToken) {
     //         SpecialToken token = targetPOI as SpecialToken;
     //         if (token.CanBePickedUpNormallyUponVisionBy(stateComponent.character)) {
-    //             ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.PICK_UP], stateComponent.character, targetPOI, null, 0);
+    //             ActualGoapNode node = ObjectPoolManager.Instance.CreateNewAction(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.PICK_UP], stateComponent.character, targetPOI, null, 0);
     //             GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, stateComponent.character);
     //             GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.MISC, INTERACTION_TYPE.PICK_UP, targetPOI, stateComponent.character);
     //             goapPlan.SetDoNotRecalculate(true);

@@ -27,9 +27,9 @@ public class SnatchData : PlayerAction {
                     portraitGetter: null, showCover: true, layer: 25, shouldShowConfirmationWindowOnPick: true, asButton: true);
             } else {
                 List<LocationStructure> validStructures = new List<LocationStructure>();
-                if (PlayerManager.Instance.player.playerSettlement.HasStructure(STRUCTURE_TYPE.DEFILER)) {
-                    validStructures.AddRange(PlayerManager.Instance.player.playerSettlement.GetStructuresOfType(STRUCTURE_TYPE.DEFILER));    
-                }
+                //if (PlayerManager.Instance.player.playerSettlement.HasStructure(STRUCTURE_TYPE.DEFILER)) {
+                //    validStructures.AddRange(PlayerManager.Instance.player.playerSettlement.GetStructuresOfType(STRUCTURE_TYPE.DEFILER));    
+                //}
                 if (PlayerManager.Instance.player.playerSettlement.HasStructure(STRUCTURE_TYPE.TORTURE_CHAMBERS)) {
                     validStructures.AddRange(PlayerManager.Instance.player.playerSettlement.GetStructuresOfType(STRUCTURE_TYPE.TORTURE_CHAMBERS));
                 }
@@ -66,13 +66,25 @@ public class SnatchData : PlayerAction {
             //get an available skeleton then add job to skeleton to drop character near chosen structure
             Character availableSkeletonOrCultist = GetNearestAvailableSkeletonOrCultist(targetCharacter);
             availableSkeletonOrCultist.jobQueue.CancelAllJobs();
-            
-            List<LocationGridTile> choices;
+
+            List<LocationGridTile> choices = ObjectPoolManager.Instance.CreateNewGridTileList();
             if (structure is Kennel) {
-                HexTile hexTile = structure.occupiedHexTile.hexTileOwner;
-                choices = hexTile.locationGridTiles.Where(t => t.structure is Wilderness && t.IsPassable() && !t.isOccupied).ToList();  
+                Area area = structure.occupiedArea;
+                for (int i = 0; i < area.gridTileComponent.gridTiles.Count; i++) {
+                    LocationGridTile t = area.gridTileComponent.gridTiles[i];
+                    if(t.structure is Wilderness && t.IsPassable() && !t.isOccupied) {
+                        choices.Add(t);
+                    }
+                }
+                //choices = hexTile.locationGridTiles.Where(t => t.structure is Wilderness && t.IsPassable() && !t.isOccupied).ToList();  
             } else {
-                choices = structure.passableTiles.Where(t => !t.structure.IsTilePartOfARoom(t, out var room)).ToList();
+                for (int i = 0; i < structure.passableTiles.Count; i++) {
+                    LocationGridTile t = structure.passableTiles[i];
+                    if (!t.structure.IsTilePartOfARoom(t, out var room)) {
+                        choices.Add(t);
+                    }
+                }
+                //choices = structure.passableTiles.Where(t => !t.structure.IsTilePartOfARoom(t, out var room)).ToList();
             }
             if (choices.Count > 0) {
                 availableSkeletonOrCultist.jobComponent.CreateSnatchJob(targetCharacter, CollectionUtilities.GetRandomElement(choices), structure);
@@ -81,10 +93,11 @@ public class SnatchData : PlayerAction {
                 log.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
                 log.AddToFillers(structure, structure.nameplateName, LOG_IDENTIFIER.LANDMARK_1);
                 log.AddLogToDatabase();
-                PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
-                Messenger.Broadcast(SpellSignals.FORCE_RELOAD_PLAYER_ACTIONS);
+                PlayerManager.Instance.player.ShowNotificationFromPlayer(log, true);
+                Messenger.Broadcast(PlayerSkillSignals.FORCE_RELOAD_PLAYER_ACTIONS);
                 base.ActivateAbility(targetCharacter); //this is so that mana/charges/cooldown can be activated after picking structure to bring to
             }
+            ObjectPoolManager.Instance.ReturnGridTileListToPool(choices);
         }
     }
     public override bool CanPerformAbilityTowards(Character targetCharacter) {
@@ -120,9 +133,9 @@ public class SnatchData : PlayerAction {
                 reasons += "You have no Kennels that can house more Monsters,";    
             }
         } else {
-            if (!PlayerManager.Instance.player.playerSettlement.HasStructure(STRUCTURE_TYPE.DEFILER) &&
+            if (/*!PlayerManager.Instance.player.playerSettlement.HasStructure(STRUCTURE_TYPE.DEFILER) &&*/
                 !PlayerManager.Instance.player.playerSettlement.HasStructure(STRUCTURE_TYPE.TORTURE_CHAMBERS)) {
-                reasons += "You have no Defiler or Prison,";    
+                reasons += "You have no Prison,";    
             } else if (!PlayerManager.Instance.player.playerSettlement.HasAvailableDefilerForSnatch() && 
                        !PlayerManager.Instance.player.playerSettlement.HasAvailablePrisonForSnatch()) {
                 reasons += "You have no unoccupied Defiler Rooms or Prison Cells,";    

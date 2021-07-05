@@ -13,12 +13,14 @@ public class JobQueue {
     }
 
     #region Loading
-    public void LoadReferences(SaveDataCharacter saveDataCharacter) {
+    public void LoadReferences(SaveDataCharacter saveDataCharacter) { 
         for (int i = 0; i < saveDataCharacter.jobs.Count; i++) {
             string jobID = saveDataCharacter.jobs[i];
-            JobQueueItem jobQueueItem = DatabaseManager.Instance.jobDatabase.GetJobWithPersistentID(jobID);
-            jobsInQueue.Add(jobQueueItem);
-            jobQueueItem.OnAddJobToQueue();
+            JobQueueItem jobQueueItem = DatabaseManager.Instance.jobDatabase.GetJobWithPersistentIDSafe(jobID);
+            if (jobQueueItem != null) {
+                jobsInQueue.Add(jobQueueItem);
+                jobQueueItem.OnAddJobToQueue();    
+            }
         }
     }
     #endregion
@@ -32,7 +34,9 @@ public class JobQueue {
                 if (canPerformValue == -1 && (owner.traitContainer.HasTrait("Paralyzed") || owner.traitContainer.HasTrait("Quarantined"))) {
                     //If the owner is paralyzed and the only reason he cannot perform is because of that paralyzed, the plan must not be scrapped
                 } else {
+#if DEBUG_LOG
                     owner.logComponent.PrintLogIfActive($"{owner.name} is scrapping plan since {owner.name} cannot perform. {job.name} is the job.");
+#endif
                     return false;
                 }
             }
@@ -144,15 +148,20 @@ public class JobQueue {
         //    //    }
         //    //}
         //}
+        if (job.jobType == JOB_TYPE.TRIGGER_FLAW) {
+            job.isTriggeredFlaw = true;
+        }
         return true;
     }
-    public bool RemoveJobInQueue(JobQueueItem job, bool shouldDoAfterEffect = true, string reason = "") {
+    public bool RemoveJobInQueue(JobQueueItem job, string reason = "") {
         if (jobsInQueue.Remove(job)) {
             Messenger.Broadcast(JobSignals.JOB_REMOVED_FROM_QUEUE, job, owner);
             owner.combatComponent.OnJobRemovedFromQueue(job);
-            job.UnassignJob(shouldDoAfterEffect, reason);
+            job.UnassignJob(reason);
             string ownerName = owner.name;
+#if DEBUG_LOG
             Debug.Log(GameManager.Instance.TodayLogString() + $"{job.name} has been removed from {ownerName} job queue.");
+#endif
             bool state = job.OnRemoveJobFromQueue();
             job.originalOwner?.OnJobRemovedFromCharacterJobQueue(job, owner);
             return state;
@@ -608,7 +617,7 @@ public class JobQueue {
             for (int j = 0; j < jobTypes.Length; j++) {
                 JobQueueItem job = jobsInQueue[i];
                 if (job.jobType == jobTypes[j]) {
-                    if (job.CancelJob(false)) {
+                    if (job.CancelJob()) {
                         i--;
                     }
                     break;

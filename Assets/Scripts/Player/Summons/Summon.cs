@@ -6,8 +6,9 @@ using Inner_Maps.Location_Structures;
 using Traits;
 using UnityEngine;
 using Interrupts;
+using Object_Pools;
 using UnityEngine.Profiling;
-
+using UtilityScripts;
 public class Summon : Character {
 
 	public SUMMON_TYPE summonType { get; }
@@ -17,9 +18,14 @@ public class Summon : Character {
     /// </summary>
     public bool isVolatileMonster { get; private set; }
     public virtual Faction defaultFaction => FactionManager.Instance.neutralFaction;
+    public virtual int gainedKennelSummonCapacity => 3;
 
-    #region getters
-    public virtual SUMMON_TYPE adultSummonType => SUMMON_TYPE.None;
+	#region shearing and skinning data
+	public virtual TILE_OBJECT_TYPE produceableMaterial => TILE_OBJECT_TYPE.NONE;
+	#endregion
+
+	#region getters
+	public virtual SUMMON_TYPE adultSummonType => SUMMON_TYPE.None;
     public virtual COMBAT_MODE defaultCombatMode => COMBAT_MODE.Aggressive;
     public virtual bool defaultDigMode => false;
     public virtual string bredBehaviour => characterClass.traitNameOnTamedByPlayer;
@@ -32,44 +38,83 @@ public class Summon : Character {
         this.summonType = summonType;
         showNotificationOnDeath = true;
         isVolatileMonster = false;
+        isInfoUnlocked = true;
+        isWildMonster = true;
     }
     protected Summon(SaveDataSummon data) : base(data) {
         summonType = data.summonType;
         showNotificationOnDeath = true;
         isVolatileMonster = data.isVolatileMonster;
+        isInfoUnlocked = true;
+        isWildMonster = true;
     }
+
+    #region user defined functions
+    void DropItem() {
+        CharacterClassData cData = CharacterManager.Instance.GetOrCreateCharacterClassData(characterClass.className);
+
+        if (cData.droppableItems.Count > 0) {
+            TILE_OBJECT_TYPE itemToDrop = TryGetWeightedSpellChoicesList().PickRandomElementGivenWeights();
+            if (itemToDrop == TILE_OBJECT_TYPE.NONE) {
+                return;
+            }
+            TileObject drop = InnerMapManager.Instance.CreateNewTileObject<TileObject>(itemToDrop);
+            LocationGridTile tileToSpawnPile = gridTileLocation;
+            if (tileToSpawnPile != null && tileToSpawnPile.tileObjectComponent.objHere != null) {
+                tileToSpawnPile = gridTileLocation.GetFirstNeighborThatIsPassableAndNoObject();
+            }
+            tileToSpawnPile?.structure.AddPOI(drop, tileToSpawnPile);
+        }
+    }
+
+    private WeightedDictionary<TILE_OBJECT_TYPE> TryGetWeightedSpellChoicesList() {
+        CharacterClassData cData = CharacterManager.Instance.GetOrCreateCharacterClassData(characterClass.className);
+        WeightedDictionary<TILE_OBJECT_TYPE> weights = new WeightedDictionary<TILE_OBJECT_TYPE>();
+        for (int x = 0; x < cData.droppableItems.Count; ++x) {
+            weights.AddElement(cData.droppableItems[x].item, cData.droppableItems[x].weight);
+        }
+        return weights;
+    }
+    #endregion
 
     #region Overrides
     public override void Initialize() {
         combatComponent.SetCombatMode(defaultCombatMode);
         ConstructDefaultActions();
         OnUpdateRace();
-        OnUpdateCharacterClass();
+        classComponent.OnUpdateCharacterClass();
 
         moodComponent.OnCharacterBecomeMinionOrSummon();
         moodComponent.SetMoodValue(50);
         
         needsComponent.Initialize();
+        moneyComponent.Initialize();
         
         advertisedActions.Clear(); //This is so that any advertisements from OnUpdateRace will be negated. TODO: Make updating advertisements better.
         //TODO: Put this in a system
         AddAdvertisedAction(INTERACTION_TYPE.ABSORB_LIFE);
         AddAdvertisedAction(INTERACTION_TYPE.ABSORB_POWER);
         ConstructInitialGoapAdvertisementActions();
-        needsComponent.SetFullnessForcedTick(0);
-        needsComponent.SetTirednessForcedTick(0);
-        needsComponent.SetHappinessForcedTick(0);
+        // needsComponent.SetFullnessForcedTick(0);
+        // needsComponent.SetTirednessForcedTick(0);
+        // needsComponent.SetHappinessForcedTick(0);
         behaviourComponent.ChangeDefaultBehaviourSet(CharacterManager.Default_Monster_Behaviour);
         // movementComponent.AvoidAllFactions();
     }
     public override void OnActionPerformed(ActualGoapNode node) { } //overridden OnActionStateSet so that summons cannot witness other events.
     public override void Death(string cause = "normal", ActualGoapNode deathFromAction = null, Character responsibleCharacter = null, Log _deathLog = default, LogFillerStruct[] deathLogFillers = null,
-        Interrupt interrupt = null) {
+        Interrupt interrupt = null, bool isPlayerSource = false) {
         if (!_isDead) {
+            deathTilePosition = gridTileLocation;
             Region deathLocation = currentRegion;
             LocationStructure deathStructure = currentStructure;
-            LocationGridTile deathTile = gridTileLocation;
 
+            //Unseize first before processing death
+            if (isBeingSeized) {
+                PlayerManager.Instance.player.seizeComponent.UnseizePOIOnDeath();
+            }
+            SetDeathLocation(gridTileLocation);
+        
             if (isLycanthrope) {
                 //Added this so that human and lycan form can share the same death log and prevent duplicates
                 Character humanForm = lycanData.originalForm;
@@ -77,8 +122,12 @@ public class Summon : Character {
                 _deathLog = humanForm.deathLog;
                 _deathLog.AddInvolvedObjectManual(persistentID);
             }
-            
+
+			if (!isDead) {
+                DropItem();
+            }
             SetIsDead(true);
+            
             if (isLimboCharacter && isInLimbo) {
                 //If a limbo character dies while in limbo, that character should not process death, instead he/she will be removed from the list
                 CharacterManager.Instance.RemoveLimboCharacter(this);
@@ -94,7 +143,7 @@ public class Summon : Character {
             Messenger.Broadcast(CharacterSignals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, this as IPointOfInterest, "target is already dead");
             Messenger.Broadcast(CharacterSignals.FORCE_CANCEL_ALL_ACTIONS_TARGETING_POI, this as IPointOfInterest, "target is already dead");
             jobQueue.CancelAllJobs();
-            DropAllItems(deathTile);
+            DropAllItems(deathTilePosition);
             UnownOrTransferOwnershipOfAllItems();
 
             reactionComponent.SetIsHidden(false);
@@ -105,6 +154,9 @@ public class Summon : Character {
             Character carrier = isBeingCarriedBy;
             carrier?.UncarryPOI(this);
 
+            if (hasMarker) {
+                marker.OnDeath(deathTilePosition);
+            }
             if (destroyMarkerOnDeath) {
                 //If death is destroy marker, this will leave no corpse, so remove it from the list of characters at location in region
                 if (currentRegion != null) {
@@ -113,7 +165,6 @@ public class Summon : Character {
             }
             if (homeRegion != null) {
                 Region home = homeRegion;
-                LocationStructure homeStructure = this.homeStructure;
                 homeRegion.RemoveResident(this);
                 MigrateHomeStructureTo(null, addToRegionResidents: false);
                 SetHomeRegion(home); //keep this data with character to prevent errors
@@ -138,19 +189,25 @@ public class Summon : Character {
             if (interruptComponent.isInterrupted && interruptComponent.currentInterrupt.interrupt != interrupt) {
                 interruptComponent.ForceEndNonSimultaneousInterrupt();
             }
-            traitContainer.AddTrait(this, "Dead", responsibleCharacter, gainedFromDoing: deathFromAction);
+            traitContainer.AddTrait(this, "Dead", responsibleCharacter);
+            if (deathFromAction != null) {
+                traitContainer.GetTraitOrStatus<Trait>("Dead")?.SetGainedFromDoingAction(deathFromAction.action.goapType, deathFromAction.isStealth);
+            }
+
             if (cause == "attacked" && responsibleCharacter != null && responsibleCharacter.isInWerewolfForm) {
-                traitContainer.AddTrait(this, "Mangled", responsibleCharacter, gainedFromDoing: deathFromAction);
+                traitContainer.AddTrait(this, "Mangled", responsibleCharacter);
+                if (deathFromAction != null) {
+                    traitContainer.GetTraitOrStatus<Trait>("Mangled")?.SetGainedFromDoingAction(deathFromAction.action.goapType, deathFromAction.isStealth);
+                }
             }
             Messenger.Broadcast(CharacterSignals.CHARACTER_DEATH, this as Character);
-
-            marker?.OnDeath(deathTile);
+            eventDispatcher.ExecuteCharacterDied(this);
             behaviourComponent.OnDeath();
             jobQueue.CancelAllJobs();
 
-            Log localDeathLog;
-            if (!_deathLog.hasValue) {
-                localDeathLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "Generic", $"death_{cause}", null, LOG_TAG.Life_Changes);
+            
+            if (_deathLog == null) {
+                Log localDeathLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "Generic", $"death_{cause}", null, LOG_TAG.Life_Changes);
                 localDeathLog.AddToFillers(this, name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                 if (responsibleCharacter != null) {
                     localDeathLog.AddToFillers(responsibleCharacter, responsibleCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
@@ -165,18 +222,26 @@ public class Summon : Character {
                 if (showNotificationOnDeath) {
                     PlayerManager.Instance.player.ShowNotificationFrom(this, localDeathLog);    
                 }
+                SetDeathLog(localDeathLog);
+                LogPool.Release(localDeathLog);
             } else {
-                localDeathLog = _deathLog;
+                SetDeathLog(_deathLog);
             }
-            SetDeathLog(localDeathLog);
-            AfterDeath(deathTile);
+            
+            AfterDeath(deathTilePosition);
+            Messenger.Broadcast(PlayerSkillSignals.RELOAD_PLAYER_ACTIONS, this as IPlayerActionTarget);
         }
     }
     protected override void OnTickStarted() {
+#if DEBUG_PROFILER
         Profiler.BeginSample($"{name} OnTickStarted");
+#endif
+        needsComponent.PerTickSummon();
         ProcessTraitsOnTickStarted();
         StartTickGoapPlanGeneration();
+#if DEBUG_PROFILER
         Profiler.EndSample();
+#endif
     }
     public override void OnUnseizePOI(LocationGridTile tileLocation) {
         base.OnUnseizePOI(tileLocation);
@@ -201,19 +266,19 @@ public class Summon : Character {
         if (p_structure.HasReachedMaxResidentCapacity()) {
             return false;
         }
-        if (p_structure.HasResidentThatMeetCriteria(r => r.isNormalCharacter)) {
+        if (p_structure.HasVillagerResident()) {
             return false;
         }
         return true;
     }
     public override void LoadReferences(SaveDataCharacter data) {
         base.LoadReferences(data);
-        Messenger.RemoveListener(Signals.HOUR_STARTED, () => needsComponent.DecreaseNeeds()); //do not make summons decrease needs
+        //Messenger.RemoveListener(Signals.HOUR_STARTED, () => needsComponent.DecreaseNeeds()); //do not make summons decrease needs
         movementComponent.UpdateSpeed();
     }
-    #endregion
+#endregion
 
-    #region Virtuals
+#region Virtuals
     /// <summary>
     /// What should a summon do when it is placed.
     /// </summary>
@@ -234,9 +299,6 @@ public class Summon : Character {
             }
             
         }
-        behaviourComponent.SetIsHarassing(false, null);
-        behaviourComponent.SetIsInvading(false, null);
-        behaviourComponent.SetIsDefending(false, null);
         List<Trait> afterDeathTraitOverrideFunctions = traitContainer.GetTraitOverrideFunctions(TraitManager.After_Death);
         if (afterDeathTraitOverrideFunctions != null) {
             for (int i = 0; i < afterDeathTraitOverrideFunctions.Count; i++) {
@@ -248,9 +310,9 @@ public class Summon : Character {
     public virtual void OnSummonAsPlayerMonster() {
         combatComponent.SetCombatMode(COMBAT_MODE.Aggressive);
     }
-    #endregion
+#endregion
 
-    #region Player Action Target
+#region Player Action Target
     public override void ConstructDefaultActions() {
         if (actions == null) {
             actions = new List<PLAYER_SKILL_TYPE>();
@@ -258,17 +320,20 @@ public class Summon : Character {
             actions.Clear();
         }
         AddPlayerAction(PLAYER_SKILL_TYPE.SEIZE_MONSTER);
-        AddPlayerAction(PLAYER_SKILL_TYPE.BREED_MONSTER);
+        // AddPlayerAction(PLAYER_SKILL_TYPE.BREED_MONSTER);
         AddPlayerAction(PLAYER_SKILL_TYPE.AGITATE);
-        AddPlayerAction(PLAYER_SKILL_TYPE.SNATCH);
+        // AddPlayerAction(PLAYER_SKILL_TYPE.SNATCH);
         AddPlayerAction(PLAYER_SKILL_TYPE.SACRIFICE);
         AddPlayerAction(PLAYER_SKILL_TYPE.RELEASE);
         AddPlayerAction(PLAYER_SKILL_TYPE.HEAL);
         AddPlayerAction(PLAYER_SKILL_TYPE.EXPEL);
+        AddPlayerAction(PLAYER_SKILL_TYPE.DRAIN_SPIRIT);
+        AddPlayerAction(PLAYER_SKILL_TYPE.LET_GO);
+        AddPlayerAction(PLAYER_SKILL_TYPE.FULL_HEAL);
     }
-    #endregion
+#endregion
 
-    #region Selecatble
+#region Selecatble
     public override bool IsCurrentlySelected() {
         Character characterToSelect = this;
         if (isLycanthrope) {
@@ -277,53 +342,16 @@ public class Summon : Character {
         return UIManager.Instance.monsterInfoUI.isShowing &&
                UIManager.Instance.monsterInfoUI.activeMonster == characterToSelect;
     }
-    #endregion
+#endregion
 
-    #region Utilities
+#region Utilities
     public void SetShowNotificationOnDeath(bool showNotificationOnDeath) {
         this.showNotificationOnDeath = showNotificationOnDeath;
     }
     public void SetIsVolatile(bool isVolatile) {
         isVolatileMonster = isVolatile;
     }
-    #endregion
-}
-
-public class SummonSlot {
-    public int level;
-    public Summon summon;
-    public bool isLocked {
-        get { return false; }
-    }
-
-    public SummonSlot() {
-        level = 1;
-        summon = null;
-    }
-
-    public void SetSummon(Summon summon) {
-        this.summon = summon;
-        //if (this.summon != null) {
-        //    this.summon.StartingLevel();
-        //}
-    }
-
-    //public void LevelUp() {
-    //    level++;
-    //    level = Mathf.Clamp(level, 1, PlayerDB.MAX_LEVEL_SUMMON);
-    //    if (this.summon != null) {
-    //        this.summon.SetLevel(level);
-    //    }
-    //    Messenger.Broadcast(Signals.PLAYER_GAINED_SUMMON_LEVEL, this);
-    //}
-    //public void SetLevel(int amount) {
-    //    level = amount;
-    //    level = Mathf.Clamp(level, 1, PlayerDB.MAX_LEVEL_SUMMON);
-    //    if (this.summon != null) {
-    //        this.summon.SetLevel(level);
-    //    }
-    //    Messenger.Broadcast(Signals.PLAYER_GAINED_SUMMON_LEVEL, this);
-    //}
+#endregion
 }
 
 [System.Serializable]

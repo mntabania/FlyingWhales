@@ -13,6 +13,7 @@ public class DoorTileObject : TileObject {
     
     public DoorTileObject() {
         Initialize(TILE_OBJECT_TYPE.DOOR_TILE_OBJECT);
+        RemoveAdvertisedAction(INTERACTION_TYPE.STEAL_ANYTHING);
         traitContainer.AddTrait(this, "Immovable");
     }
     public DoorTileObject(SaveDataTileObject data) : base(data) { }
@@ -60,7 +61,9 @@ public class DoorTileObject : TileObject {
 
     public void Open() {
         if (mapVisual == null) { return; }
+#if DEBUG_LOG
         Debug.Log($"Opened door {this} at {structureLocation} {gridTileLocation}");
+#endif
         isOpen = true;
         _doorGameObject.SetBlockerState(false);
         mapVisual.SetVisualAlpha(0f);
@@ -68,7 +71,9 @@ public class DoorTileObject : TileObject {
     }
     public void Close() {
         if (mapVisual == null) { return; }
+#if DEBUG_LOG
         Debug.Log($"Closed door {this} at {structureLocation} {gridTileLocation}");
+#endif
         isOpen = false;
         _doorGameObject.SetBlockerState(true);
         mapVisual.SetVisualAlpha(1f);

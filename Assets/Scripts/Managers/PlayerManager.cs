@@ -1,22 +1,21 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using Inner_Maps;
 using UnityEngine;
 using UnityEngine.Serialization;
-using Traits;
 using Archetype;
 using Locations.Settlements;
+using Player_Input;
+using Quests;
+using Ruinarch;
 using UnityEngine.Assertions;
 using UtilityScripts;
 
 public class PlayerManager : BaseMonoBehaviour {
     public static PlayerManager Instance;
     public Player player;
-
-    public COMBAT_ABILITY[] allCombatAbilities;
-
+    
     [Header("Job Action Icons")]
     [FormerlySerializedAs("jobActionIcons")] [SerializeField] private StringSpriteDictionary spellIcons;
 
@@ -29,32 +28,52 @@ public class PlayerManager : BaseMonoBehaviour {
     [Header("Mana Orbs")] 
     [SerializeField] private GameObject chaosOrbPrefab;
 
-    private bool _hasWinCheckTimer;
+    [Header("Spirit Energy")]
+    [SerializeField] private GameObject spiritnEnergyPrefab;
 
+    [Header("Base Building")] 
+    [SerializeField] private PlayerStructurePlacementVisual _structurePlacementVisual;
+    
+    private List<PlayerInputModule> _playerInputModules;
+    public static SeizeInputModule seizeInputModule;
+    public static SpellInputModule spellInputModule;
+    public static IntelInputModule intelInputModule;
+    public static PickPortalInputModule pickPortalInputModule;
+    
     private void Awake() {
         Instance = this;
     }
     protected override void OnDestroy() {
         base.OnDestroy();
         Instance = null;
+        seizeInputModule = null;
+        spellInputModule = null;
+        intelInputModule = null;
+        pickPortalInputModule = null;
+        InputManager.RemoveOnUpdateEvent(ProcessPlayerInputModules);
     }
     public void Initialize() {
         availableChaosOrbs = new List<ChaosOrb>();
-        Messenger.AddListener<InfoUIBase>(UISignals.MENU_OPENED, OnMenuOpened);
-        Messenger.AddListener<InfoUIBase>(UISignals.MENU_CLOSED, OnMenuClosed);
-        // Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
-        // Messenger.AddListener<Character>(Signals.CHARACTER_CAN_NO_LONGER_MOVE, OnCharacterCanNoLongerMove);
-        // Messenger.AddListener<Character>(Signals.CHARACTER_CAN_NO_LONGER_PERFORM, OnCharacterCanNoLongerPerform);
+        _playerInputModules = new List<PlayerInputModule>();
         Messenger.AddListener<Vector3, int, InnerTileMap>(PlayerSignals.CREATE_CHAOS_ORBS, CreateChaosOrbsAt);
+        Messenger.AddListener< Vector3, int, InnerTileMap>(PlayerSignals.CREATE_SPIRIT_ENERGY, CreateSpiritEnergyAt);
         Messenger.AddListener<Character, ActualGoapNode>(JobSignals.CHARACTER_DID_ACTION_SUCCESSFULLY, OnCharacterDidActionSuccess);
-        // Messenger.AddListener(Signals.CHECK_IF_PLAYER_WINS, CheckWinCondition);
         Messenger.AddListener<string>(PlayerSignals.WIN_GAME, WinGame);
+        seizeInputModule = new SeizeInputModule();
+        spellInputModule = new SpellInputModule();
+        intelInputModule = new IntelInputModule();
+        pickPortalInputModule = new PickPortalInputModule();
+        InputManager.AddOnUpdateEvent(ProcessPlayerInputModules);
+        _structurePlacementVisual.Initialize(InnerMapCameraMove.Instance.camera);
+        // if (!SaveManager.Instance.useSaveData) {
+        //     player = new Player();   
+        // }
     }
-    public void InitializePlayer(HexTile portal) {
-        player = new Player();
+    public void InitializePlayer(Area portal) {
+        player = new Player();   
         player.CreatePlayerFaction();
         player.SetPortalTile(portal);
-        PlayerSettlement existingPlayerNpcSettlement = portal.settlementOnTile as PlayerSettlement;
+        PlayerSettlement existingPlayerNpcSettlement = portal.settlementOnArea as PlayerSettlement;
         Assert.IsNotNull(existingPlayerNpcSettlement, $"Portal does not have a player settlement on its tile");
         player.SetPlayerArea(existingPlayerNpcSettlement);
         
@@ -64,43 +83,7 @@ public class PlayerManager : BaseMonoBehaviour {
     }
     public void InitializePlayer(SaveDataCurrentProgress data) {
         player = data.LoadPlayer();
-        //player.CreatePlayerFaction(data.playerSave);
-        //player.LoadPlayerArea(data.playerSave);
-        //PlayerUI.Instance.UpdateUI();
-        // if (WorldConfigManager.Instance.isDemoWorld) {
-        //     player.LoadPlayerData(SaveManager.Instance.currentSaveDataPlayer);    
-        // }
-
     }
-    //public void InitializePlayer(SaveDataPlayer data) {
-    //    player = new Player(data);
-    //    player.CreatePlayerFaction(data);
-    //    // NPCSettlement existingPlayerNpcSettlement = LandmarkManager.Instance.GetAreaByID(data.playerAreaID);
-    //    // player.SetPlayerArea(existingPlayerNpcSettlement);
-    //    //PlayerUI.Instance.UpdateUI();
-    //    //PlayerUI.Instance.InitializeThreatMeter();
-    //    //PlayerUI.Instance.UpdateThreatMeter();
-
-    //    for (int i = 0; i < data.minions.Count; i++) {
-    //        data.minions[i].Load(player);
-    //    }
-    //    //for (int i = 0; i < data.summonSlots.Count; i++) {
-    //    //    Summon summon = CharacterManager.Instance.GetCharacterByID(data.summonIDs[i]) as Summon;
-    //    //    player.GainSummon(summon);
-    //    //}
-    //    //for (int i = 0; i < data.artifacts.Count; i++) {
-    //    //    data.artifacts[i].Load(player);
-    //    //}
-    //    //for (int i = 0; i < data.interventionAbilities.Count; i++) {
-    //    //    data.interventionAbilities[i].Load(player);
-    //    //}
-    //    for (int i = 0; i < player.minions.Count; i++) {
-    //        if(player.minions[i].character.id == data.currentMinionLeaderID) {
-    //            player.SetMinionLeader(player.minions[i]);
-    //        }
-    //    }
-    //    //player.SetPlayerTargetFaction(LandmarkManager.Instance.enemyOfPlayerArea.owner);
-    //}
     public int GetManaCostForSpell(int tier) {
         if (tier == 1) {
             return 150;
@@ -111,6 +94,27 @@ public class PlayerManager : BaseMonoBehaviour {
         }
     }
 
+    #region Player Input
+    private void ProcessPlayerInputModules() {
+        if (_playerInputModules == null) { return; }
+        for (int i = 0; i < _playerInputModules.Count; i++) {
+            PlayerInputModule module = _playerInputModules[i];
+            module.OnUpdate();
+        }
+    }
+    public void AddPlayerInputModule(PlayerInputModule p_module) {
+        if (!_playerInputModules.Contains(p_module)) {
+            _playerInputModules.Add(p_module);
+            Debug.Log($"Added Player Input Module: {p_module.GetType().ToString()}");
+        }
+    }
+    public void RemovePlayerInputModule(PlayerInputModule p_module) {
+        if (_playerInputModules.Remove(p_module)) {
+            Debug.Log($"Removed Player Input Module: {p_module.GetType().ToString()}");    
+        }
+    }
+    #endregion
+    
     #region Utilities
     public Sprite GetJobActionSprite(string actionName) {
         if (spellIcons.ContainsKey(actionName)) {
@@ -135,103 +139,6 @@ public class PlayerManager : BaseMonoBehaviour {
     }
     #endregion
 
-    #region Combat Ability
-    public CombatAbility CreateNewCombatAbility(COMBAT_ABILITY abilityType) {
-        switch (abilityType) {
-            case COMBAT_ABILITY.SINGLE_HEAL:
-                return new SingleHeal();
-            case COMBAT_ABILITY.FLAMESTRIKE:
-                return new Flamestrike();
-            case COMBAT_ABILITY.FEAR_SPELL:
-                return new FearSpellAbility();
-            case COMBAT_ABILITY.SACRIFICE:
-                return new Sacrifice();
-            case COMBAT_ABILITY.TAUNT:
-                return new Taunt();
-        }
-        return null;
-    }
-    #endregion
-
-    #region Unit Selection
-    private List<Character> selectedUnits = new List<Character>();
-    public void SelectUnit(Character character) {
-        if (!selectedUnits.Contains(character)) {
-            selectedUnits.Add(character);
-        }
-    }
-    public void DeselectUnit(Character character) {
-        if (selectedUnits.Remove(character)) {
-
-        }
-    }
-    public void DeselectAllUnits() {
-        Character[] units = selectedUnits.ToArray();
-        for (int i = 0; i < units.Length; i++) {
-            DeselectUnit(units[i]);
-        }
-    }
-    private void OnMenuOpened(InfoUIBase @base) {
-        // if (@base is CharacterInfoUI) {
-        //     DeselectAllUnits();
-        //     CharacterInfoUI infoUi = @base as CharacterInfoUI;
-        //     SelectUnit(infoUi.activeCharacter);
-        //     //if (infoUI.activeCharacter.CanBeInstructedByPlayer()) {
-        //     //    SelectUnit(infoUI.activeCharacter);
-        //     //}
-        // }
-    }
-    private void OnMenuClosed(InfoUIBase @base) {
-        // if (@base is CharacterInfoUI) {
-        //     DeselectAllUnits();
-        // }
-    }
-    // private void OnKeyPressedDown(KeyCode keyCode) {
-    //     if (selectedUnits.Count > 0) {
-    //         if (keyCode == KeyCode.Mouse1) {
-    //             //right click
-    //             for (int i = 0; i < selectedUnits.Count; i++) {
-    //                 Character character = selectedUnits[i];
-    //                 if (!character.CanBeInstructedByPlayer()) {
-    //                     continue;
-    //                 }
-    //                 IPointOfInterest hoveredPOI = InnerMapManager.Instance.currentlyHoveredPoi;
-    //                 character.StopCurrentActionNode(false, "Stopped by the player");
-    //                 if (character.stateComponent.currentState != null) {
-    //                     character.stateComponent.ExitCurrentState();
-    //                 }
-    //                 character.combatComponent.ClearHostilesInRange();
-    //                 character.combatComponent.ClearAvoidInRange();
-    //                 character.SetIsFollowingPlayerInstruction(false); //need to reset before giving commands
-    //                 if (hoveredPOI is Character) {
-    //                     Character target = hoveredPOI as Character;
-    //                     if (character.IsHostileWith(target) && character.IsCombatReady()) {
-    //                         character.combatComponent.Fight(target);
-    //                         character.combatComponent.AddOnProcessCombatAction((combatState) => combatState.SetForcedTarget(target));
-    //                         //CombatState cs = character.stateComponent.currentState as CombatState;
-    //                         //if (cs != null) {
-    //                         //    cs.SetForcedTarget(target);
-    //                         //} else {
-    //                         //    throw new System.Exception(character.name + " was instructed to attack " + target.name + " but did not enter combat state!");
-    //                         //}
-    //                     } else {
-    //                         Debug.Log(character.name + " is not combat ready or is not hostile with " + target.name + ". Ignoring command.");
-    //                     }
-    //                 } else {
-    //                     character.marker.GoTo(InnerMapManager.Instance.currentlyShowingMap.worldUiCanvas.worldCamera.ScreenToWorldPoint(Input.mousePosition), () => OnFinishInstructionFromPlayer(character));
-    //                 }
-    //                 character.SetIsFollowingPlayerInstruction(true);
-    //             }
-    //         } else if (keyCode == KeyCode.Mouse0) {
-    //             DeselectAllUnits();
-    //         }
-    //     }
-    // }
-    //private void OnFinishInstructionFromPlayer(Character character) {
-    //    character.SetIsFollowingPlayerInstruction(false);
-    //}
-    #endregion
-
     #region Mana Orbs
     public List<ChaosOrb> availableChaosOrbs;
     public void CreateChaosOrbFromSave(Vector3 worldPos, Region region) {
@@ -254,7 +161,9 @@ public class PlayerManager : BaseMonoBehaviour {
             AddAvailableChaosOrb(chaosOrb);
             yield return null;
         }
+#if DEBUG_LOG
         Debug.Log($"Created {amount.ToString()} chaos orbs at {mapLocation.region.name}. Position {worldPos.ToString()}");
+#endif
     }
     private void OnCharacterDidActionSuccess(Character character, ActualGoapNode actionNode) {
         if (character.isNormalCharacter) {
@@ -298,8 +207,10 @@ public class PlayerManager : BaseMonoBehaviour {
                         break;
                 }
                 if(orbsToCreate != 0) {
+#if DEBUG_LOG
                     character.logComponent.PrintLogIfActive($"{character.name} performed a crime of type {crimeType.ToString()}. Expelling {orbsToCreate.ToString()} Mana Orbs.");
-                    Messenger.Broadcast(PlayerSignals.CREATE_CHAOS_ORBS, character.marker.transform.position, orbsToCreate, character.currentRegion.innerMap);
+#endif
+                    //Messenger.Broadcast(PlayerSignals.CREATE_CHAOS_ORBS, character.marker.transform.position, orbsToCreate, character.currentRegion.innerMap);
                 }
             }    
         }
@@ -312,9 +223,46 @@ public class PlayerManager : BaseMonoBehaviour {
         availableChaosOrbs.Remove(chaosOrb);
         Messenger.Broadcast(PlayerSignals.CHAOS_ORB_DESPAWNED);
     }
-    #endregion
+#endregion
 
-    #region Archetypes
+#region Spirit Energy
+    public List<SpiritEnergy> availableSpiritEnergy;
+    public void CreateSpiritEnergyFromSave(Vector3 worldPos, Region region) {
+        GameObject spiritEnergyGO = ObjectPoolManager.Instance.InstantiateObjectFromPool(spiritnEnergyPrefab.name, Vector3.zero, Quaternion.identity, region.innerMap.objectsParent);
+        spiritEnergyGO.transform.position = worldPos;
+        SpiritEnergy spiritEnergy = spiritEnergyGO.GetComponent<SpiritEnergy>();
+        spiritEnergy.Initialize(worldPos, region);
+        availableSpiritEnergy.Add(spiritEnergy);
+    }
+    private void CreateSpiritEnergyAt(Vector3 worldPos, int amount, InnerTileMap mapLocation) {
+        StartCoroutine(SpiritEnergyCreationCoroutine(worldPos, amount, mapLocation));
+    }
+    private IEnumerator SpiritEnergyCreationCoroutine(Vector3 worldPos, int amount, InnerTileMap mapLocation) {
+        for (int i = 0; i < amount; i++) {
+            GameObject spiritEnergyGO = ObjectPoolManager.Instance.InstantiateObjectFromPool(spiritnEnergyPrefab.name, Vector3.zero,
+                Quaternion.identity, mapLocation.objectsParent);
+            spiritEnergyGO.transform.position = worldPos;
+            SpiritEnergy spiritEnergy = spiritEnergyGO.GetComponent<SpiritEnergy>();
+            spiritEnergy.Initialize(mapLocation.region, amount);
+            AddAvailableSpritiEnergy(spiritEnergy);
+            yield return null;
+        }
+#if DEBUG_LOG
+        Debug.Log($"Created {amount.ToString()} chaos orbs at {mapLocation.region.name}. Position {worldPos.ToString()}");
+#endif
+    }
+    
+    private void AddAvailableSpritiEnergy(SpiritEnergy p_spiritEnergy) {
+        availableSpiritEnergy.Add(p_spiritEnergy);
+        Messenger.Broadcast(PlayerSignals.SPIRIT_ENERGY_SPAWNED);
+    }
+    public void RemoveSpiritEnergyFromAvailability(SpiritEnergy p_spiritEnergy) {
+        availableSpiritEnergy.Remove(p_spiritEnergy);
+        Messenger.Broadcast(PlayerSignals.SPIRIT_ENERGY_DESPAWNED);
+    }
+#endregion
+
+#region Archetypes
     public static PlayerArchetype CreateNewArchetype(PLAYER_ARCHETYPE archetype) {
         string typeName = $"Archetype.{ UtilityScripts.Utilities.NotNormalizedConversionEnumToStringNoSpaces(archetype.ToString()) }, Assembly-CSharp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
         System.Type type = System.Type.GetType(typeName);
@@ -324,9 +272,9 @@ public class PlayerManager : BaseMonoBehaviour {
         }
         throw new System.Exception($"Could not create new archetype {archetype} because there is no data for it!");
     }
-    #endregion
+#endregion
 
-    #region End Game Mechanics
+#region End Game Mechanics
     private void WinGame(string winMessage) {
         StartCoroutine(DelayedWinGame(winMessage));
     }
@@ -334,54 +282,22 @@ public class PlayerManager : BaseMonoBehaviour {
         UIManager.Instance.SetSpeedTogglesState(false);
         yield return GameUtilities.waitFor3Seconds;
         PlayerUI.Instance.WinGameOver(winMessage);
+        QuestManager.Instance.winConditionTracker?.RemoveStepsFromBookmark();
     }
-    // private void OnCharacterDied(Character character) {
-    //     CheckWinCondition();
-    // }
-    // private void OnCharacterCanNoLongerPerform(Character character) {
-    //     //CheckWinCondition();
-    // }
-    // private void OnCharacterCanNoLongerMove(Character character) {
-    //     //CheckWinCondition();
-    // }
-    // private void CheckWinCondition() {
-    //     if (DoesPlayerWin()) {
-    //         if (!_hasWinCheckTimer) {
-    //             CreateWinCheckTimer();
-    //         }
-    //     }
-    // }
-    // private void FinalCheckWinCondition() {
-    //     if (DoesPlayerWin()) {
-    //         PlayerUI.Instance.WinGameOver();
-    //     }
-    //     _hasWinCheckTimer = false;
-    // }
-    // private bool DoesPlayerWin() {
-    //     for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
-    //         Character character = CharacterManager.Instance.allCharacters[i];
-    //         if(character.isNormalCharacter && !character.isAlliedWithPlayer) {
-    //             if(!character.isDead) {
-    //                 return false;
-    //             }
-    //         }
-    //     }
-    //     //check limbo characters
-    //     for (int i = 0; i < CharacterManager.Instance.limboCharacters.Count; i++) {
-    //         Character character = CharacterManager.Instance.limboCharacters[i];
-    //         if(character.isNormalCharacter && !character.isAlliedWithPlayer) {
-    //             if(!character.isDead) {
-    //                 return false;
-    //             }
-    //         }
-    //     }
-    //     return true;
-    // }
-    // private void CreateWinCheckTimer() {
-    //     GameDate dueDate = GameManager.Instance.Today();
-    //     dueDate.AddTicks(GameManager.Instance.GetTicksBasedOnMinutes(15));
-    //     SchedulingManager.Instance.AddEntry(dueDate, FinalCheckWinCondition, this);
-    //     _hasWinCheckTimer = true;
-    // }
-    #endregion
+#endregion
+
+#region Structure Placement
+    public void ShowStructurePlacementVisual(STRUCTURE_TYPE p_structureType) {
+        _structurePlacementVisual.Show(p_structureType);
+    }
+    public void HideStructurePlacementVisual() {
+        _structurePlacementVisual.Hide();
+    }
+    public void SetStructurePlacementVisualFollowMouseState(bool p_state) {
+        _structurePlacementVisual.SetFollowMouseState(p_state);
+    }
+    public void SetStructurePlacementVisualHighlightColor(Color p_color) {
+        _structurePlacementVisual.SetHighlightColor(p_color);
+    }
+#endregion
 }

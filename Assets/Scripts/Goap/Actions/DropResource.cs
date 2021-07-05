@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using Logs;
 using UnityEngine;  
 using Traits;
+using Inner_Maps.Location_Structures;
 
 public class DropResource : GoapAction {
 
     private Precondition _foodPrecondition;
+    private Precondition _buyFoodPrecondition;
 
     public DropResource() : base(INTERACTION_TYPE.DROP_RESOURCE) {
         actionIconString = GoapActionStateDB.Haul_Icon;
@@ -15,6 +17,7 @@ public class DropResource : GoapAction {
         logTags = new[] {LOG_TAG.Work};
 
         _foodPrecondition = new Precondition(new GoapEffect(GOAP_EFFECT_CONDITION.TAKE_POI, "Food Pile" /*+ (int)otherData[0]*/, false, GOAP_EFFECT_TARGET.ACTOR), HasTakenEnoughAmount);
+        _buyFoodPrecondition = new Precondition(new GoapEffect(GOAP_EFFECT_CONDITION.BUY_OBJECT, "Food Pile", false, GOAP_EFFECT_TARGET.ACTOR), HasBoughtFood);
     }
 
     #region Overrides
@@ -46,7 +49,11 @@ public class DropResource : GoapAction {
         //p.AddRange(baseP);
         Precondition p = null;
         if (target is Table) {
-            p = _foodPrecondition;
+            if (jobType == JOB_TYPE.BUY_FOOD_FOR_TAVERN) {
+                p = _buyFoodPrecondition;
+            } else {
+                p = _foodPrecondition;
+            }
         } else {
             p = new Precondition(new GoapEffect(GOAP_EFFECT_CONDITION.TAKE_POI, target.name /*+ (int) otherData[0]*/, false, GOAP_EFFECT_TARGET.ACTOR), HasTakenEnoughAmount);
         }
@@ -58,14 +65,23 @@ public class DropResource : GoapAction {
         SetState("Drop Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
+#if DEBUG_LOG
         string costLog = $"\n{name} {target.nameWithID}: +10(Constant)";
         actor.logComponent.AppendCostLog(costLog);
+#endif
         return 10;
     }
-    public override void AddFillersToLog(ref Log log, ActualGoapNode node) {
-        base.AddFillersToLog(ref log, node);
+    public override void AddFillersToLog(Log log, ActualGoapNode node) {
+        base.AddFillersToLog(log, node);
         ResourcePile pile = node.actor.carryComponent.carriedPOI as ResourcePile;
         log.AddToFillers(null, UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetterOnly(pile.providedResource.ToString()), LOG_IDENTIFIER.STRING_2);
+    }
+    public override void OnActionStarted(ActualGoapNode node) {
+        base.OnActionStarted(node);
+        if (node.associatedJobType == JOB_TYPE.BUY_FOOD_FOR_TAVERN) {
+            FoodPile item = node.actor.GetItem<FoodPile>();
+            node.actor.ShowItemVisualCarryingPOI(item);
+        }
     }
     public override void OnStopWhileStarted(ActualGoapNode node) {
         base.OnStopWhileStarted(node);
@@ -77,11 +93,17 @@ public class DropResource : GoapAction {
         Character actor = node.actor;
         actor.UncarryPOI();
     }
-    #endregion
+#endregion
 
     #region Preconditions
     private bool HasTakenEnoughAmount(Character actor, IPointOfInterest poiTarget, OtherData[] otherData, JOB_TYPE jobType) {
         if (actor.carryComponent.isCarryingAnyPOI && actor.carryComponent.carriedPOI is ResourcePile) {
+            return true;
+        }
+        return false;
+    }
+    private bool HasBoughtFood(Character actor, IPointOfInterest poiTarget, OtherData[] otherData, JOB_TYPE jobType) {
+        if (actor.HasItem<FoodPile>()) {
             return true;
         }
         return false;
@@ -92,6 +114,20 @@ public class DropResource : GoapAction {
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, OtherData[] otherData, JobQueueItem job) { 
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData, job);
         if (satisfied) {
+            if (job.jobType.IsFullnessRecoveryTypeJob()) {
+                LocationStructure structure = poiTarget.gridTileLocation?.structure;
+                if (structure != null) {
+                    if (structure is Dwelling) {
+                        if (!structure.IsResident(actor)) {
+                            return false;
+                        }
+                    } else if (structure.structureType.IsFoodProducingStructure()) {
+                        if (structure is ManMadeStructure manMadeStructure && !manMadeStructure.DoesCharacterWorkHere(actor)) {
+                            return false;
+                        }
+                    }
+                }
+            }
             if (poiTarget.gridTileLocation == null) {
                 return false;
             }
@@ -100,9 +136,9 @@ public class DropResource : GoapAction {
         }
         return false;
     }
-    #endregion
+#endregion
 
-    #region State Effects
+#region State Effects
     public void PreDropSuccess(ActualGoapNode goapNode) {
         //int givenFood = goapNode.actor.food;
         //GoapActionState currentState = goapNode.action.states[goapNode.currentStateName];
@@ -114,7 +150,7 @@ public class DropResource : GoapAction {
     public void AfterDropSuccess(ActualGoapNode goapNode) {
         if (goapNode.actor.carryComponent.carriedPOI is ResourcePile carriedPile) {
             if (goapNode.poiTarget is Table table) {
-                table.AdjustFood(carriedPile.resourceInPile);
+                table.AdjustFood(carriedPile.specificProvidedResource, carriedPile.resourceInPile);
             } else if (goapNode.poiTarget is ResourcePile resourcePile) {
                 resourcePile.AdjustResourceInPile(carriedPile.resourceInPile);
             }
@@ -128,5 +164,5 @@ public class DropResource : GoapAction {
         //    foodPile.AdjustFoodInPile(givenFood);
         //}
     }
-    #endregion
+#endregion
 }

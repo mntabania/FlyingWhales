@@ -3,6 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System;
+using System.Diagnostics;
+using System.Globalization;
 using DG.Tweening;
 using Factions;
 using Inner_Maps;
@@ -22,8 +24,16 @@ using UnityEngine.Profiling;
 using UnityEngine.Serialization;
 using UnityEngine.Video;
 using UtilityScripts;
+using Debug = UnityEngine.Debug;
+using Prison = Tutorial.Prison;
 
 public class UIManager : BaseMonoBehaviour {
+
+    public Action onSpireClicked;
+    public Action<LocationStructure> onMaraudClicked;
+    public Action<LocationStructure> onKennelClicked;
+    public Action<LocationStructure> onTortureChamberClicked;
+    public Action<LocationStructure> onDefensePointClicked;
 
     public static UIManager Instance = null;
 
@@ -67,6 +77,12 @@ public class UIManager : BaseMonoBehaviour {
     [Header("Character Nameplate Tooltip")]
     [SerializeField] private CharacterNameplateItem _characterNameplateTooltip;
     
+    [Header("Tile Object Tooltip")]
+    [SerializeField] private TileObjectNameplateItem _tileObjectNameplateTooltip;
+    
+    [Header("Tile Object Tooltip")]
+    [SerializeField] private StructureNameplateItem _structureNameplateTooltip;
+    
     [Header("Character Marker Nameplate")]
     public Transform characterMarkerNameplateParent;
     
@@ -84,18 +100,12 @@ public class UIManager : BaseMonoBehaviour {
     [SerializeField] private GameObject cover;
 
     [Space(10)]
-    [Header("World UI")]
-    [SerializeField] private RectTransform worldUIParent;
-    [SerializeField] private GraphicRaycaster worldUIRaycaster;
-
-    [Space(10)]
     [Header("Object Picker")]
     [SerializeField] private ObjectPicker objectPicker;
     
     [Space(10)]
     [Header("Right Click Commands")]
     public POITestingUI poiTestingUI;
-    public MinionCommandsUI minionCommandsUI;
 
     [Space(10)]
     [Header("Combat")]
@@ -128,25 +138,19 @@ public class UIManager : BaseMonoBehaviour {
     [Space(10)]
     [Header("Logs")]
     public LogTagSpriteDictionary logTagSpriteDictionary;
+    
+    [Space(10)]
+    [Header("Load Window")]
+    [SerializeField] private LoadWindow loadWindow;
 
-    [Header("Transition Region UI")]
-    public GameObject transitionRegionUIGO;
-    public RuinarchButton rightTransitionBtn;
-    public RuinarchButton leftTransitionBtn;
-    public RuinarchButton upTransitionBtn;
-    public RuinarchButton downTransitionBtn;
-
-    public bool isShowingAreaTooltip { get; private set; } //is the tooltip for npcSettlement double clicks showing?
-    public PopupMenuBase latestOpenedPopup { get; private set; }
     public InfoUIBase latestOpenedInfoUI { get; private set; }
     private InfoUIBase _lastOpenedInfoUI;
-    //public List<PopupMenuBase> openedPopups { get; private set; }
     private PointerEventData _pointer;
     private List<RaycastResult> _raycastResults;
     
     public bool tempDisableShowInfoUI { get; private set; }
 
-    public List<UnallowOverlaps> unallowOverlaps;
+    public List<UnallowOverlaps> unallowOverlaps = new List<UnallowOverlaps>();
     
     #region Monobehaviours
     private void Awake() {
@@ -158,11 +162,7 @@ public class UIManager : BaseMonoBehaviour {
         Messenger.AddListener(UISignals.UPDATE_UI, UpdateUI);
     }
     private void Update() {
-        if (isHoveringTile) {
-            currentTileHovered.region?.OnHoverOverAction();
-        }
-        UpdateTransitionRegionUI();
-        if (Input.GetMouseButtonDown(0) && GameManager.Instance.gameHasStarted && IsContextMenuShowing() && !IsMouseOnContextMenu()) { //!IsMouseOnUI()
+        if (Input.GetMouseButtonDown(0) && IsContextMenuShowing() && !IsMouseOnContextMenu()) { //!IsMouseOnUI() && GameManager.Instance.gameHasStarted
             HidePlayerActionContextMenu();
         }
     }
@@ -175,25 +175,18 @@ public class UIManager : BaseMonoBehaviour {
     internal void InitializeUI() {
         _pointer = new PointerEventData(EventSystem.current);
         _raycastResults = new List<RaycastResult>();
-        unallowOverlaps = new List<UnallowOverlaps>();
         allMenus = transform.GetComponentsInChildren<InfoUIBase>(true);
         for (int i = 0; i < allMenus.Length; i++) {
             allMenus[i].Initialize();
         }
         openedPopups = new List<PopupMenuBase>();
         questUI.Initialize();
-        _biolabUIController.Init(OnCloseBiolabUI);
+        biolabUIController.Init(OnCloseBiolabUI);
         Messenger.AddListener<string, int, UnityAction>(UISignals.SHOW_DEVELOPER_NOTIFICATION, ShowDeveloperNotification);
         Messenger.AddListener<PROGRESSION_SPEED>(UISignals.PROGRESSION_SPEED_CHANGED, OnProgressionSpeedChanged);
 
-        Messenger.AddListener<HexTile>(HexTileSignals.HEXTILE_HOVERED_OVER, OnHoverOverTile);
-        Messenger.AddListener<HexTile>(HexTileSignals.HEXTILE_HOVERED_OUT, OnHoverOutTile);
-        
         Messenger.AddListener(UISignals.INTERACTION_MENU_OPENED, OnInteractionMenuOpened);
         Messenger.AddListener(UISignals.INTERACTION_MENU_CLOSED, OnInteractionMenuClosed);
- 
-        Messenger.AddListener<Region>(RegionSignals.REGION_MAP_OPENED, OnInnerMapOpened);
-        Messenger.AddListener<Region>(RegionSignals.REGION_MAP_CLOSED, OnInnerMapClosed);
 
         Messenger.AddListener<IIntel>(UISignals.SHOW_INTEL_NOTIFICATION, ShowPlayerNotification);
         Messenger.AddListener<Log>(UISignals.SHOW_PLAYER_NOTIFICATION, ShowPlayerNotification);
@@ -212,7 +205,9 @@ public class UIManager : BaseMonoBehaviour {
         Messenger.AddListener<Faction>(UISignals.UPDATE_FACTION_LOGS_UI, TryUpdateFactionLog);
 
         Messenger.AddListener<LocationStructure>(StructureSignals.STRUCTURE_DESTROYED, OnStructureDestroyed);
-        Messenger.AddListener<PlayerAction>(SpellSignals.PLAYER_ACTION_ACTIVATED, OnPlayerActionActivated);
+        Messenger.AddListener<PlayerAction>(PlayerSkillSignals.PLAYER_ACTION_ACTIVATED, OnPlayerActionActivated);
+        
+        Messenger.AddListener<KeyCode>(ControlsSignals.KEY_DOWN, OnKeyPressed);
 
         AddPlayerActionContextMenuSignals();
         
@@ -230,13 +225,27 @@ public class UIManager : BaseMonoBehaviour {
         
         contextMenuUIController.SetOnHoverOverAction(OnHoverOverPlayerActionContextMenuItem);
         contextMenuUIController.SetOnHoverOutAction(OnHoverOutPlayerActionContextMenuItem);
+        optionsMenu.SubscribeListeners();
         
         UpdateUI();
     }
+    public void InitializeAfterLoadOutPicked() {
+        _portalUIController.InitializeAfterLoadoutSelected();
+        upgradePortalUIController.InitializeAfterLoadoutSelected();
+        purchaseSkillUIController.InitializeAfterLoadoutSelected();
+    }
     private void OnPlayerActionActivated(PlayerAction p_playerAction) {
         if (p_playerAction.type == PLAYER_SKILL_TYPE.SEIZE_CHARACTER || p_playerAction.type == PLAYER_SKILL_TYPE.SEIZE_MONSTER || p_playerAction.type == PLAYER_SKILL_TYPE.SEIZE_OBJECT
-            || p_playerAction.type == PLAYER_SKILL_TYPE.REMOVE_BUFF || p_playerAction.type == PLAYER_SKILL_TYPE.REMOVE_FLAW 
-            || p_playerAction.category == PLAYER_SKILL_CATEGORY.SCHEME) {
+            || p_playerAction.type == PLAYER_SKILL_TYPE.REMOVE_BUFF || p_playerAction.type == PLAYER_SKILL_TYPE.REMOVE_FLAW || p_playerAction.type == PLAYER_SKILL_TYPE.DESTROY || p_playerAction.type == PLAYER_SKILL_TYPE.DESTROY_EYE_WARD
+            || p_playerAction.category == PLAYER_SKILL_CATEGORY.SCHEME
+            || p_playerAction.type == PLAYER_SKILL_TYPE.PSYCHOPATHY
+            || p_playerAction.type == PLAYER_SKILL_TYPE.SNATCH_MONSTER
+            || p_playerAction.type == PLAYER_SKILL_TYPE.SNATCH_VILLAGER
+            || p_playerAction.type == PLAYER_SKILL_TYPE.RAID
+            || p_playerAction.type == PLAYER_SKILL_TYPE.DEFEND
+            || p_playerAction.type == PLAYER_SKILL_TYPE.EVANGELIZE
+            || p_playerAction.type == PLAYER_SKILL_TYPE.UPGRADE_BEHOLDER_EYE_LEVEL
+            || p_playerAction.type == PLAYER_SKILL_TYPE.UPGRADE_BEHOLDER_RADIUS_LEVEL) {
             HidePlayerActionContextMenu();    
         } else {
             if (IsContextMenuShowing()) {
@@ -262,10 +271,14 @@ public class UIManager : BaseMonoBehaviour {
     }
     private void OnGameLoaded() {
         UpdateUI();
-        returnToWorldBtn.gameObject.SetActive(WorldSettings.Instance.worldSettingsData.worldType != WorldSettingsData.World_Type.Tutorial);
+    }
+    private void OnKeyPressed(KeyCode p_pressedKey) {
+        if (p_pressedKey == KeyCode.F8) {
+            OnLoadHotkeyPressed();
+        }
     }
     private void UpdateUI() {
-        dateLbl.SetText($"Day {GameManager.Instance.continuousDays.ToString()}\n{GameManager.ConvertTickToTime(GameManager.Instance.Today().tick)}");
+        dateLbl.SetText($"Day {GameManager.Instance.continuousDays.ToString()}\n{GameManager.Instance.ConvertTickToTime(GameManager.Instance.Today().tick)}");
         UpdateInteractableInfoUI();
         PlayerUI.Instance.UpdateUI();
     }
@@ -273,11 +286,10 @@ public class UIManager : BaseMonoBehaviour {
         UpdateCharacterInfo();
         UpdateMonsterInfo();
         UpdateTileObjectInfo();
-        UpdateRegionInfo();
-        UpdateHextileInfo();
         UpdateStructureInfo();
         UpdateSettlementInfo();
         UpdatePartyInfo();
+        UpdateUnbuiltStructureInfo();
     }
 
     #region World Controls
@@ -408,6 +420,17 @@ public class UIManager : BaseMonoBehaviour {
     }
     #endregion
 
+    #region Save Game
+    [Header("Save Game")]
+    [SerializeField] private GameObject _saveWritingToDiskGO;
+    public void ShowSaveWritingToDisk() {
+        _saveWritingToDiskGO.SetActive(true);
+    }
+    public void HideSaveWritingToDisk() {
+        _saveWritingToDiskGO.SetActive(false);
+    }
+    #endregion
+
     #region Tooltips
     public void ShowSmallInfo(string info, string header = "", bool autoReplaceText = true) {
         smallInfoGO.transform.SetAsLastSibling();
@@ -425,7 +448,7 @@ public class UIManager : BaseMonoBehaviour {
             smallInfoLbl.text = message;
         }
         if (!IsSmallInfoShowing()) {
-            smallInfoGO.transform.SetParent(this.transform);
+            smallInfoGO.transform.SetParent(transform);
             smallInfoGO.SetActive(true);
             if (gameObject.activeInHierarchy) {
                 StartCoroutine(ReLayout(smallInfoBGParentLG));
@@ -496,7 +519,7 @@ public class UIManager : BaseMonoBehaviour {
         characterPortraitHoverInfo.GeneratePortrait(character);
         characterPortraitHoverInfoGO.SetActive(true);
 
-        characterPortraitHoverInfoRT.SetParent(this.transform);
+        characterPortraitHoverInfoRT.SetParent(transform);
         PositionTooltip(characterPortraitHoverInfoRT.gameObject, characterPortraitHoverInfoRT, characterPortraitHoverInfoRT);
     }
     public void HideCharacterPortraitHoverInfo() {
@@ -651,6 +674,22 @@ public class UIManager : BaseMonoBehaviour {
     public void HideCharacterNameplateTooltip() {
         _characterNameplateTooltip.gameObject.SetActive(false);
     }
+    public void ShowTileObjectNameplateTooltip(TileObject tileObject, UIHoverPosition position) {
+        _tileObjectNameplateTooltip.SetObject(tileObject);
+        _tileObjectNameplateTooltip.gameObject.SetActive(true);
+        _tileObjectNameplateTooltip.SetPosition(position);
+    }
+    public void HideTileObjectNameplateTooltip() {
+        _tileObjectNameplateTooltip.gameObject.SetActive(false);
+    }
+    public void ShowStructureNameplateTooltip(LocationStructure structure, UIHoverPosition position) {
+        _structureNameplateTooltip.SetObject(structure);
+        _structureNameplateTooltip.gameObject.SetActive(true);
+        _structureNameplateTooltip.SetPosition(position);
+    }
+    public void HideStructureNameplateTooltip() {
+        _structureNameplateTooltip.gameObject.SetActive(false);
+    }
     #endregion
 
     #region Developer Notifications NPCSettlement
@@ -715,10 +754,10 @@ public class UIManager : BaseMonoBehaviour {
             ShowPartyInfo(party);
         } else if (obj is TileObject tileObject) {
             ShowTileObjectInfo(tileObject);
-        } else if (obj is Region region) {
-            ShowRegionInfo(region);
         } else if (obj is LocationStructure structure) {
-            ShowStructureInfo(structure);
+            if (!structure.hasBeenDestroyed) {
+                ShowStructureInfo(structure);    
+            }
             // structure.CenterOnStructure();
         }
     }
@@ -726,16 +765,16 @@ public class UIManager : BaseMonoBehaviour {
         PointerEventData pointer = new PointerEventData(EventSystem.current);
         pointer.position = Input.mousePosition;
 
-        List<RaycastResult> raycastResults = new List<RaycastResult>();
-        EventSystem.current.RaycastAll(pointer, raycastResults);
+        _raycastResults.Clear();
+        //_raycastResults = new List<RaycastResult>();
+        EventSystem.current.RaycastAll(pointer, _raycastResults);
 
-        if (raycastResults.Count > 0) {
-            foreach (var go in raycastResults) {
+        if (_raycastResults.Count > 0) {
+            foreach (var go in _raycastResults) {
                 if (go.gameObject.CompareTag("Character Marker") || go.gameObject.CompareTag("Map Object")) {
                     //Debug.Log(go.gameObject.name, go.gameObject);
                     return true;
                 }
-
             }
         }
         return false;
@@ -743,11 +782,12 @@ public class UIManager : BaseMonoBehaviour {
     public bool IsMouseOnUIOrMapObject() {
         PointerEventData pointer = new PointerEventData(EventSystem.current);
         pointer.position = Input.mousePosition;
-        List<RaycastResult> raycastResults = new List<RaycastResult>();
-        EventSystem.current.RaycastAll(pointer, raycastResults);
+        _raycastResults.Clear();
+        //List<RaycastResult> raycastResults = new List<RaycastResult>();
+        EventSystem.current.RaycastAll(pointer, _raycastResults);
 
-        if (raycastResults.Count > 0) {
-            foreach (var go in raycastResults) {
+        if (_raycastResults.Count > 0) {
+            foreach (var go in _raycastResults) {
                 if (go.gameObject.layer == LayerMask.NameToLayer("UI") || go.gameObject.layer == LayerMask.NameToLayer("WorldUI") 
                     || go.gameObject.CompareTag("Character Marker") || go.gameObject.CompareTag("Map Object")) {
                     //Debug.Log(go.gameObject.name, go.gameObject);
@@ -756,6 +796,26 @@ public class UIManager : BaseMonoBehaviour {
             }
         }
         return false;
+    }
+    public int GetMouseOnUIOrMapObjectValue() {
+        PointerEventData pointer = new PointerEventData(EventSystem.current);
+        pointer.position = Input.mousePosition;
+        _raycastResults.Clear();
+        //List<RaycastResult> raycastResults = new List<RaycastResult>();
+        EventSystem.current.RaycastAll(pointer, _raycastResults);
+
+        if (_raycastResults.Count > 0) {
+            foreach (var go in _raycastResults) {
+                if (go.gameObject.layer == LayerMask.NameToLayer("UI") || go.gameObject.layer == LayerMask.NameToLayer("WorldUI")) {
+                    return 0;
+                } else if (go.gameObject.CompareTag("Character Marker")) {
+                    return 1;
+                } else if (go.gameObject.CompareTag("Map Object")) {
+                    return 2;
+                }
+            }
+        }
+        return -1;
     }
     public void SetCoverState(bool state, bool blockClicks = true) {
         cover.SetActive(state);
@@ -808,8 +868,6 @@ public class UIManager : BaseMonoBehaviour {
                 return structureRoomInfoUI.activeRoom;
             } else if (partyInfoUI.isShowing) {
                 return partyInfoUI.activeParty;
-            } else if (hexTileInfoUI.isShowing) {
-                return hexTileInfoUI.activeHex;
             }
         }
         return null;
@@ -827,15 +885,15 @@ public class UIManager : BaseMonoBehaviour {
     }
     #endregion
 
-    #region Nameplate
-    public LandmarkNameplate CreateLandmarkNameplate(BaseLandmark landmark) {
-        GameObject nameplateGO = UIManager.Instance.InstantiateUIObject("LandmarkNameplate", worldUIParent);
-        nameplateGO.transform.localScale = Vector3.one;
-        LandmarkNameplate nameplate = nameplateGO.GetComponent<LandmarkNameplate>();
-        nameplate.SetLandmark(landmark);
-        return nameplate;
-    }
-    #endregion
+    //#region Nameplate
+    //public LandmarkNameplate CreateLandmarkNameplate(BaseLandmark landmark) {
+    //    GameObject nameplateGO = UIManager.Instance.InstantiateUIObject("LandmarkNameplate", worldUIParent);
+    //    nameplateGO.transform.localScale = Vector3.one;
+    //    LandmarkNameplate nameplate = nameplateGO.GetComponent<LandmarkNameplate>();
+    //    nameplate.SetLandmark(landmark);
+    //    return nameplate;
+    //}
+    //#endregion
 
     #region Object Picker
     public void ShowClickableObjectPicker<T>(List<T> choices, Action<object> onClickAction, IComparer<T> comparer = null
@@ -863,7 +921,7 @@ public class UIManager : BaseMonoBehaviour {
 
     #region For Testing
     public void SetUIState(bool state) {
-        this.gameObject.SetActive(state);
+        gameObject.SetActive(state);
         Messenger.Broadcast(UISignals.UI_STATE_SET);
     }
     public void DateHover() {
@@ -872,7 +930,7 @@ public class UIManager : BaseMonoBehaviour {
     [ExecuteInEditMode]
     [ContextMenu("Set All Scroll Rect Scroll Speed")]
     public void SetAllScrollSpeed() {
-        ScrollRect[] allScroll = this.gameObject.GetComponentsInChildren<ScrollRect>(true);
+        ScrollRect[] allScroll = gameObject.GetComponentsInChildren<ScrollRect>(true);
         for (int i = 0; i < allScroll.Length; i++) {
             ScrollRect rect = allScroll[i];
             rect.scrollSensitivity = 25f;
@@ -916,12 +974,16 @@ public class UIManager : BaseMonoBehaviour {
     [Header("Character Info")]
     [SerializeField] internal CharacterInfoUI characterInfoUI;
     public void ShowCharacterInfo(Character character, bool centerOnCharacter = false) {
-        if (GameManager.Instance.gameHasStarted == false) {
-            return;
-        }
+        // if (GameManager.Instance.gameHasStarted == false) {
+        //     return;
+        // }
         Character characterToShow = character;
         if(character.isLycanthrope) {
             characterToShow = character.lycanData.activeForm;
+        }
+        if (characterToShow == null || !characterToShow.hasMarker) {
+            //Do not show characters that have no body anymore
+            return;
         }
         if(characterToShow.isNormalCharacter) {
             if (tempDisableShowInfoUI) {
@@ -994,25 +1056,6 @@ public class UIManager : BaseMonoBehaviour {
     }
     #endregion
 
-    #region Region Info
-    [Space(10)]
-    [Header("Region Info")] public RegionInfoUI regionInfoUI;
-    public void ShowRegionInfo(Region region, bool centerOnRegion = true) {
-        regionInfoUI.SetData(region);
-        regionInfoUI.OpenMenu();
-
-        if (centerOnRegion) {
-            region.CenterCameraOnRegion();
-            region.ShowBorders(Color.yellow, true);
-        }
-    }
-    public void UpdateRegionInfo() {
-        if (regionInfoUI.isShowing) {
-            regionInfoUI.UpdateInfo();
-        }
-    }
-    #endregion
-
     #region Tile Object Info
     [Space(10)]
     [Header("Tile Object Info")]
@@ -1051,38 +1094,37 @@ public class UIManager : BaseMonoBehaviour {
     }
     #endregion
 
-    #region Tile Info
-    [Space(10)]
-    [Header("Tile Info")]
-    [SerializeField] public HextileInfoUI hexTileInfoUI;
-    public void ShowHexTileInfo(HexTile item) {
-        if (tempDisableShowInfoUI) {
-            SetTempDisableShowInfoUI(false);
-            return;
-        }
-        hexTileInfoUI.SetData(item);
-        hexTileInfoUI.OpenMenu();
-    }
-    public void UpdateHextileInfo() {
-        if (hexTileInfoUI.isShowing) {
-            hexTileInfoUI.UpdateHexTileInfo();
-        }
-    }
-    #endregion
-    
     #region Structure Info
     [Space(10)]
     [Header("Structure Info")]
     [SerializeField] public StructureInfoUI structureInfoUI;
-    public void ShowStructureInfo(LocationStructure structure) {
+    public void ShowStructureInfo(LocationStructure structure, bool centerOnStructure = true) {
         if (tempDisableShowInfoUI) {
             SetTempDisableShowInfoUI(false);
             return;
         }
+        // if (structure.structureType == STRUCTURE_TYPE.SPIRE) {
+        //     onSpireClicked?.Invoke();
+        // }
+        // if (structure.structureType == STRUCTURE_TYPE.MARAUD) {
+        //     onMaraudClicked?.Invoke(structure);
+        // }
+        // if (structure.structureType == STRUCTURE_TYPE.TORTURE_CHAMBERS) {
+        //     onTortureChamberClicked?.Invoke(structure);
+        // }
+        // if (structure.structureType == STRUCTURE_TYPE.KENNEL) {
+        //     onKennelClicked?.Invoke(structure);
+        // }
+        // if (structure.structureType == STRUCTURE_TYPE.DEFENSE_POINT) {
+        //     onDefensePointClicked?.Invoke(structure);
+        // }
         structureInfoUI.SetData(structure);
         structureInfoUI.OpenMenu();
+        if (centerOnStructure) {
+            structure.CenterOnStructure();
+        }
     }
-    public void UpdateStructureInfo() {
+    private void UpdateStructureInfo() {
         if (structureInfoUI.isShowing) {
             structureInfoUI.UpdateStructureInfoUI();
         }
@@ -1093,6 +1135,25 @@ public class UIManager : BaseMonoBehaviour {
     private void CheckStructureInfoForClosure(LocationStructure structure) {
         if(structureInfoUI.isShowing && structureInfoUI.activeStructure == structure) {
             structureInfoUI.CloseMenu();
+        }
+    }
+    #endregion
+    
+    #region Unbuilt Structure Info
+    [Space(10)]
+    [Header("Unbuilt Structure Info")]
+    [SerializeField] public UnbuiltStructureInfoUI unbuiltStructureInfoUI;
+    public void ShowUnbuiltStructureInfo(LocationStructureObject p_structureObject) {
+        if (tempDisableShowInfoUI) {
+            SetTempDisableShowInfoUI(false);
+            return;
+        }
+        unbuiltStructureInfoUI.SetData(p_structureObject);
+        unbuiltStructureInfoUI.OpenMenu();
+    }
+    private void UpdateUnbuiltStructureInfo() {
+        if (unbuiltStructureInfoUI.isShowing) {
+            unbuiltStructureInfoUI.UpdateUnbuiltStructureInfoUI();
         }
     }
     #endregion
@@ -1183,67 +1244,6 @@ public class UIManager : BaseMonoBehaviour {
     }
     #endregion
 
-    #region Tile Hover
-    //private HexTile previousTileHovered;
-    private HexTile currentTileHovered;
-    private float timeHovered;
-    private const float hoverThreshold = 1.5f;
-    private bool isHoveringTile = false;
-    private void OnHoverOverTile(HexTile tile) {
-        //previousTileHovered = currentTileHovered;
-        currentTileHovered = tile;
-        isHoveringTile = true;
-    }
-    public void OnHoverOutTile(HexTile tile) {
-        currentTileHovered = null;
-        isHoveringTile = false;
-        tile.region?.OnHoverOutAction();
-        if (tile.region != null) {
-            HideSmallInfo();
-            isShowingAreaTooltip = false;
-        }
-    }
-    #endregion
-
-    #region Inner Map
-    [Header("Inner Maps")]
-    [SerializeField] private Button returnToWorldBtn;
-    [SerializeField] private UIHoverPosition returnToWorldBtnTooltipPos;
-    private void OnInnerMapOpened(Region location) {
-        worldUIRaycaster.enabled = false;
-        bottomNotification.HideMessage();
-    }
-    private void OnInnerMapClosed(Region location) {
-        worldUIRaycaster.enabled = true;
-        bottomNotification.ShowMessage("Click on any tile to go there.");
-    }
-
-    public void ToggleBetweenMaps() {
-        if (InnerMapManager.Instance.isAnInnerMapShowing) {
-            InnerMapManager.Instance.HideAreaMap();
-            OnCameraOutOfFocus();
-        } else {
-            if(regionInfoUI.activeRegion != null) {
-                InnerMapManager.Instance.TryShowLocationMap(regionInfoUI.activeRegion);
-            } else if(hexTileInfoUI.activeHex != null) {
-                InnerMapManager.Instance.TryShowLocationMap(hexTileInfoUI.activeHex.region);
-                InnerMapCameraMove.Instance.CenterCameraOnTile(hexTileInfoUI.activeHex);
-            }
-        }
-    }
-    public void ToggleMapsHover() {
-        if (InnerMapManager.Instance.isAnInnerMapShowing) {
-            ShowSmallInfo($"Click to exit {InnerMapManager.Instance.currentlyShowingLocation.name}.", returnToWorldBtnTooltipPos);
-        } else {
-            if (regionInfoUI.activeRegion != null) {
-                ShowSmallInfo($"Click to enter {regionInfoUI.activeRegion.name}.", returnToWorldBtnTooltipPos);
-            } else if(hexTileInfoUI.activeHex != null) {
-                ShowSmallInfo($"Click to enter {hexTileInfoUI.activeHex.region.name}.", returnToWorldBtnTooltipPos);
-            }
-        }
-    }
-    #endregion
-
     #region Conversation Menu
     [Header("Conversation Menu")]
     [SerializeField] private ConversationMenu conversationMenu;
@@ -1257,12 +1257,10 @@ public class UIManager : BaseMonoBehaviour {
         conversationMenu.Close();
     }
     private void OnOpenConversationMenu() {
-        returnToWorldBtn.interactable = false;
         SetCoverState(true);
         //playerNotificationParent.SetSiblingIndex(1);
     }
     private void OnCloseShareIntelMenu() {
-        returnToWorldBtn.interactable = true;
         SetCoverState(false);
         //Unpause();
         //SetSpeedTogglesState(true);
@@ -1275,6 +1273,8 @@ public class UIManager : BaseMonoBehaviour {
     [SerializeField] private GameObject intelPrefab;
     [SerializeField] private GameObject defaultNotificationPrefab;
     [SerializeField] private UIHoverPosition notificationHoverPos;
+    [SerializeField] private Vector2 notificationHoverPosDefaultPosition;
+    [SerializeField] private Vector2 notificationHoverPosModifiedPosition;
     [SerializeField] private GameObject searchFieldsParent;
     [SerializeField] private TMP_InputField notificationSearchField;
     [SerializeField] private GameObject searchFieldClearBtn;
@@ -1319,7 +1319,7 @@ public class UIManager : BaseMonoBehaviour {
         newIntelGO.transform.localScale = Vector3.one;
         PlaceNewNotification(newItem, log);
     }
-    private void PlaceNewNotification(PlayerNotificationItem newNotif, in Log shownLog) {
+    private void PlaceNewNotification(PlayerNotificationItem newNotif, Log shownLog) {
         //NOTE: Removed this since this was only needed when we would also show notifications of an action that the character is currently doing
         //but since we now only show logs after the fact, then this would be irrelevant and could cause notifications to get overwritten
         //example is Vampiric embrace that has a success log ([Actor Name] gave [Target Name] a Vampiric Embrace!) which is also an intel,
@@ -1429,6 +1429,7 @@ public class UIManager : BaseMonoBehaviour {
     #region Yes/No
     [Header("Yes or No Confirmation")]
     public YesNoConfirmation yesNoConfirmation;
+    private bool _yesNoPauseAndResume;
     /// <summary>
     /// Show a yes/no pop up window
     /// </summary>
@@ -1447,27 +1448,30 @@ public class UIManager : BaseMonoBehaviour {
     /// <param name="noBtnActive">Should the no button be visible?</param>
     /// <param name="yesBtnInactiveHoverAction">Action to execute when user hover over an un-clickable yes button</param>
     /// <param name="yesBtnInactiveHoverExitAction">Action to execute when user hover over an un-clickable no button</param>
-    public void ShowYesNoConfirmation(string header, string question, System.Action onClickYesAction = null, System.Action onClickNoAction = null,
+    /// <param name="onClickCloseAction">Action to execute when clicking on close btn. NOTE: Hide action is added by default</param>
+    /// <param name="onHideUIAction">Action to execute when popup is closed.</param>
+    public void ShowYesNoConfirmation(string header, string question, Action onClickYesAction = null, Action onClickNoAction = null,
         bool showCover = false, int layer = 21, string yesBtnText = "Yes", string noBtnText = "No", bool yesBtnInteractable = true, bool noBtnInteractable = true, bool pauseAndResume = false, 
-        bool yesBtnActive = true, bool noBtnActive = true, System.Action yesBtnInactiveHoverAction = null, System.Action yesBtnInactiveHoverExitAction = null) {
+        bool yesBtnActive = true, bool noBtnActive = true, Action yesBtnInactiveHoverAction = null, Action yesBtnInactiveHoverExitAction = null, System.Action onClickCloseAction = null,
+        System.Action onHideUIAction = null) {
         if (PlayerUI.Instance.IsMajorUIShowing()) {
             PlayerUI.Instance.AddPendingUI(() => ShowYesNoConfirmation(header, question, onClickYesAction, onClickNoAction, 
                 showCover, layer, yesBtnText, noBtnText, yesBtnInteractable, noBtnInteractable, pauseAndResume,
                 yesBtnActive, noBtnActive, yesBtnInactiveHoverAction, yesBtnInactiveHoverExitAction));
             return;
         }
-        
-        if (pauseAndResume && !IsObjectPickerOpen()) {
+        _yesNoPauseAndResume = pauseAndResume;
+        if (_yesNoPauseAndResume && !IsObjectPickerOpen()) {
             //if object picker is already being shown, do not pause, so that this does not mess with the previously set speed. 
             Pause();
             SetSpeedTogglesState(false);    
         }
-        yesNoConfirmation.ShowYesNoConfirmation(header, question, onClickYesAction, onClickNoAction, showCover, layer, yesBtnText, noBtnText, yesBtnInteractable, noBtnInteractable,  pauseAndResume, 
-            yesBtnActive, noBtnActive, yesBtnInactiveHoverAction, yesBtnInactiveHoverExitAction);
+        yesNoConfirmation.ShowYesNoConfirmation(header, question, onClickYesAction, onClickNoAction, showCover, layer, yesBtnText, noBtnText, yesBtnInteractable, noBtnInteractable, 
+            yesBtnActive, noBtnActive, yesBtnInactiveHoverAction, yesBtnInactiveHoverExitAction, onClickCloseAction, onHideUIAction);
     }
     public void HideYesNoConfirmation() {
-        yesNoConfirmation.HideYesNoConfirmation();
-        if (!PlayerUI.Instance.TryShowPendingUI() && !IsObjectPickerOpen() && !optionsMenu.isShowing) {
+        yesNoConfirmation.Close();
+        if (!PlayerUI.Instance.TryShowPendingUI() && !IsObjectPickerOpen() && !optionsMenu.isShowing && _yesNoPauseAndResume) {
             ResumeLastProgressionSpeed(); //if no other UI was shown and object picker is not open, unpause game
         }
     }
@@ -1496,8 +1500,7 @@ public class UIManager : BaseMonoBehaviour {
     [SerializeField] private Button triggerFlawYesBtn;
     [SerializeField] private Button triggerFlawNoBtn;
     [SerializeField] private Button triggerFlawCloseBtn;
-    public void ShowTriggerFlawConfirmation(string question, string effect, string manaCost, System.Action onClickYesAction = null,
-    bool showCover = false, int layer = 21, bool pauseAndResume = false) {
+    public void ShowTriggerFlawConfirmation(string question, string effect, string manaCost, Action onClickYesAction = null, bool showCover = false, int layer = 21, bool pauseAndResume = false) {
         if (PlayerUI.Instance.IsMajorUIShowing()) {
             PlayerUI.Instance.AddPendingUI(() => ShowTriggerFlawConfirmation(question, effect, manaCost, onClickYesAction, showCover, layer, pauseAndResume));
             return;
@@ -1548,7 +1551,7 @@ public class UIManager : BaseMonoBehaviour {
     [Header("Important Notification")]
     [SerializeField] private ScrollRect importantNotifScrollView;
     [SerializeField] private GameObject importantNotifPrefab;
-    public void ShowImportantNotification(GameDate date, string message, System.Action onClickAction) {
+    public void ShowImportantNotification(GameDate date, string message, Action onClickAction) {
         if (GameManager.Instance.gameHasStarted == false) {
             return;
         }
@@ -1593,7 +1596,7 @@ public class UIManager : BaseMonoBehaviour {
         minionCardTooltip.gameObject.SetActive(false);
     }
     private void PositionMinionCardTooltip(Vector3 screenPos) {
-        minionCardTooltip.transform.SetParent(this.transform);
+        minionCardTooltip.transform.SetParent(transform);
         var v3 = screenPos;
 
         minionCardRT.pivot = new Vector2(1f, 1f);
@@ -1689,75 +1692,7 @@ public class UIManager : BaseMonoBehaviour {
         if (logTagSpriteDictionary.ContainsKey(tag)) {
             return logTagSpriteDictionary[tag];
         }
-        throw new System.Exception($"No Log tag sprite for tag {tag.ToString()}");
-    }
-    #endregion
-
-    #region Transition Region UI
-    private void UpdateTransitionRegionUI() {
-        if (InnerMapManager.Instance.currentlyShowingLocation != null) {
-            transitionRegionUIGO.SetActive(true);
-            if (InnerMapCameraMove.Instance.HasReachedMapMinXBoundOf(InnerMapManager.Instance.currentlyShowingLocation) || InnerMapCameraMove.Instance.HasReachedMinXBounds()) {
-                if (InnerMapManager.Instance.currentlyShowingLocation.HasNeighbourInDirection(GridNeighbourDirection.West)) {
-                    leftTransitionBtn.gameObject.SetActive(true);
-                } else {
-                    leftTransitionBtn.gameObject.SetActive(false);
-                }
-            } else {
-                leftTransitionBtn.gameObject.SetActive(false);
-            }
-            if (InnerMapCameraMove.Instance.HasReachedMapMaxXBoundOf(InnerMapManager.Instance.currentlyShowingLocation) || InnerMapCameraMove.Instance.HasReachedMaxXBounds()) {
-                if (InnerMapManager.Instance.currentlyShowingLocation.HasNeighbourInDirection(GridNeighbourDirection.East)) {
-                    rightTransitionBtn.gameObject.SetActive(true);
-                } else {
-                    rightTransitionBtn.gameObject.SetActive(false);
-                }
-            } else {
-                rightTransitionBtn.gameObject.SetActive(false);
-            }
-            if (InnerMapCameraMove.Instance.HasReachedMapMinYBoundOf(InnerMapManager.Instance.currentlyShowingLocation) || InnerMapCameraMove.Instance.HasReachedMinYBounds()) {
-                if (InnerMapManager.Instance.currentlyShowingLocation.HasNeighbourInDirection(GridNeighbourDirection.South)) {
-                    downTransitionBtn.gameObject.SetActive(true);
-                } else {
-                    downTransitionBtn.gameObject.SetActive(false);
-                }
-            } else {
-                downTransitionBtn.gameObject.SetActive(false);
-            }
-            if (InnerMapCameraMove.Instance.HasReachedMapMaxYBoundOf(InnerMapManager.Instance.currentlyShowingLocation) || InnerMapCameraMove.Instance.HasReachedMaxYBounds()) {
-                if (InnerMapManager.Instance.currentlyShowingLocation.HasNeighbourInDirection(GridNeighbourDirection.North)) {
-                    upTransitionBtn.gameObject.SetActive(true);
-                } else {
-                    upTransitionBtn.gameObject.SetActive(false);
-                }
-            } else {
-                upTransitionBtn.gameObject.SetActive(false);
-            }
-        } else {
-            transitionRegionUIGO.SetActive(false);
-        }
-    }
-    public void OnClickRegionTransition(string direction) {
-        if (InnerMapManager.Instance.currentlyShowingLocation != null) {
-            GridNeighbourDirection dir = (GridNeighbourDirection) System.Enum.Parse(typeof(GridNeighbourDirection), direction);
-            Region region = InnerMapManager.Instance.currentlyShowingLocation.GetNeighbourInDirection(dir);
-            if(region != null) {
-                InnerMapManager.Instance.TryShowLocationMap(region);
-                InnerMapCameraMove.Instance.CenterCameraOnTile(region.coreTile);
-            }
-        }
-    }
-    public void OnHoverRegionTransitionBtn(string direction) {
-        if (InnerMapManager.Instance.currentlyShowingLocation != null) {
-            GridNeighbourDirection dir = (GridNeighbourDirection) System.Enum.Parse(typeof(GridNeighbourDirection), direction);
-            Region region = InnerMapManager.Instance.currentlyShowingLocation.GetNeighbourInDirection(dir);
-            if (region != null) {
-                ShowSmallInfo("Go To " + region.name);
-            }
-        }
-    }
-    public void OnHoverOutRegionTransitionBtn() {
-        HideSmallInfo();
+        throw new Exception($"No Log tag sprite for tag {tag.ToString()}");
     }
     #endregion
 
@@ -1788,18 +1723,19 @@ public class UIManager : BaseMonoBehaviour {
     #endregion
 
     #region Biolab UI
-    [Header("Biolab")] 
-    [SerializeField] private BiolabUIController _biolabUIController;
+    [FormerlySerializedAs("_biolabUIController")] [Header("Biolab")] 
+    public BiolabUIController biolabUIController;
     public void ShowBiolabUI() {
         Pause();
         SetSpeedTogglesState(false);
-        _biolabUIController.Open();
-        InputManager.Instance.AllowHotkeys(false);
+        biolabUIController.Open();
+        InputManager.Instance.SetAllHotkeysEnabledState(false);
+        InputManager.Instance.SetSpecificHotkeyEnabledState(KeyCode.Escape, true);
     }
     private void OnCloseBiolabUI() {
         SetSpeedTogglesState(true);
         ResumeLastProgressionSpeed();
-        InputManager.Instance.AllowHotkeys(true);
+        InputManager.Instance.SetAllHotkeysEnabledState(true);
     }
     #endregion
 
@@ -1810,51 +1746,45 @@ public class UIManager : BaseMonoBehaviour {
         Pause();
         SetSpeedTogglesState(false);
         _schemeUIController.Show(p_targetCharacter, p_otherTarget, p_schemeUsed, OnCloseSchemeUI);
-        InputManager.Instance.AllowHotkeys(false);
+        InputManager.Instance.SetAllHotkeysEnabledState(false);
         Messenger.Broadcast(UISignals.SCHEME_UI_SHOWN);
     }
     private void OnCloseSchemeUI() {
         SetSpeedTogglesState(true);
         ResumeLastProgressionSpeed();
-        InputManager.Instance.AllowHotkeys(true);
+        InputManager.Instance.SetAllHotkeysEnabledState(true);
     }
     #endregion
 
     #region Context Menu
     [Header("Context Menu")]
     public ContextMenuUIController contextMenuUIController;
-    [SerializeField] private UIHoverPosition _contextMenuTooltipHoverPosition;
-    public void ShowPlayerActionContextMenu(IPlayerActionTarget p_target, Transform p_followTarget) {
-        PlayerManager.Instance.player.SetCurrentPlayerActionTarget(p_target);
-        List<IContextMenuItem> contextMenuItems = GetPlayerActionContextMenuItems(p_target);
-        // if (contextMenuItems == null) {
-        //     HidePlayerActionContextMenu();
-        //     return;
-        // }
-        contextMenuUIController.SetFollowPosition(p_followTarget);
-        contextMenuUIController.ShowContextMenu(contextMenuItems, Input.mousePosition, p_target.name, InputManager.Instance.currentCursorType);
-        Messenger.Broadcast(UISignals.PLAYER_ACTION_CONTEXT_MENU_SHOWN, p_target);
-    }
+    private bool _allowContextMenuInteractions = true;
     public void ShowPlayerActionContextMenu(IPlayerActionTarget p_target, Vector3 p_followTarget, bool p_isScreenPosition) {
+        if (!_allowContextMenuInteractions) { return; }
         PlayerManager.Instance.player.SetCurrentPlayerActionTarget(p_target);
-        List<IContextMenuItem> contextMenuItems = GetPlayerActionContextMenuItems(p_target);
-        // if (contextMenuItems == null) {
-        //     HidePlayerActionContextMenu();
-        //     return;
-        // }
+        List<IContextMenuItem> contextMenuItems = RuinarchListPool<IContextMenuItem>.Claim();
+        PopulatePlayerActionContextMenuItems(contextMenuItems, p_target);
         contextMenuUIController.SetFollowPosition(p_followTarget, p_isScreenPosition);
         contextMenuUIController.ShowContextMenu(contextMenuItems, Input.mousePosition, p_target.name, InputManager.Instance.currentCursorType);
         Messenger.Broadcast(UISignals.PLAYER_ACTION_CONTEXT_MENU_SHOWN, p_target);
+        RuinarchListPool<IContextMenuItem>.Release(contextMenuItems);
     }
     public void RefreshPlayerActionContextMenuWithNewTarget(IPlayerActionTarget p_target) {
+        if (!_allowContextMenuInteractions) { return; }
         PlayerManager.Instance.player.SetCurrentPlayerActionTarget(p_target);
-        List<IContextMenuItem> contextMenuItems = GetPlayerActionContextMenuItems(p_target);
-        // if (contextMenuItems == null) {
-        //     HidePlayerActionContextMenu();
-        //     return;
-        // }
+        List<IContextMenuItem> contextMenuItems = RuinarchListPool<IContextMenuItem>.Claim();
+        PopulatePlayerActionContextMenuItems(contextMenuItems, p_target);
+        //List<IContextMenuItem> contextMenuItems = GetPlayerActionContextMenuItems(p_target);
         contextMenuUIController.ShowContextMenu(contextMenuItems, p_target.name);
         Messenger.Broadcast(UISignals.PLAYER_ACTION_CONTEXT_MENU_SHOWN, p_target);
+        RuinarchListPool<IContextMenuItem>.Release(contextMenuItems);
+    }
+    public void DisableContextMenuInteractions() {
+        _allowContextMenuInteractions = false;
+    }
+    public void EnableContextMenuInteractions() {
+        _allowContextMenuInteractions = true;
     }
     public void HidePlayerActionContextMenu() {
         PlayerManager.Instance.player.SetCurrentPlayerActionTarget(null);
@@ -1874,104 +1804,117 @@ public class UIManager : BaseMonoBehaviour {
         }
     }
     private void OnHoverOutPlayerActionContextMenuItem(IContextMenuItem p_item) {
-        HideSmallInfo();
+        if (p_item is PlayerAction playerAction) {
+            PlayerUI.Instance.skillDetailsTooltip.HidePlayerSkillDetails();
+        } else {
+            HideSmallInfo();    
+        }
+        
     }
     private void OnHoverEnterFlaw(string traitName, Character p_character, UIHoverPosition p_hoverPosition) {
         Trait trait = p_character.traitContainer.GetTraitOrStatus<Trait>(traitName);
         string title = traitName;
         string fullDescription = trait.GetTriggerFlawEffectDescription(p_character, "flaw_effect");
         if (string.IsNullOrEmpty(fullDescription)) {
-            fullDescription = "Flaw cannot be triggered.";
+            fullDescription = "This flaw does not have a trigger flaw effect.";
         }
-        int manaCost = PlayerSkillManager.Instance.GetPlayerActionData(PLAYER_SKILL_TYPE.TRIGGER_FLAW).manaCost;
-        string currencyStr = string.Empty;
-        if (manaCost != -1) {
-            currencyStr = $"{currencyStr}{manaCost.ToString()}{UtilityScripts.Utilities.ManaIcon()}  ";
+        if (p_character.isInfoUnlocked) {
+            int manaCost = PlayerSkillManager.Instance.GetPlayerActionData(PLAYER_SKILL_TYPE.TRIGGER_FLAW).manaCost;
+            string currencyStr = string.Empty;
+            if (manaCost != -1) {
+                currencyStr = $"{currencyStr}{manaCost.ToString()}{UtilityScripts.Utilities.ManaIcon()}  ";
+            }
+            title = $"{title}    <size=16>{currencyStr}";
+            string additionalText = string.Empty;
+            if (PlayerManager.Instance.player.mana < manaCost) {
+                additionalText = $"{additionalText}{UtilityScripts.Utilities.ColorizeInvalidText("Not enough mana.")}\n";
+            }
+            fullDescription = $"{fullDescription}\n\n{additionalText}";
+        } else {
+            title = "Unknown flaw";
+            fullDescription = $"{"Trigger "}{ UtilityScripts.Utilities.ColorizeName(p_character.name)}{"\'s unknown flaw"}";
         }
-        title = $"{title}    <size=16>{currencyStr}";
-        string additionalText = string.Empty;
-        if(PlayerManager.Instance.player.mana < manaCost) {
-            additionalText = $"{additionalText}{UtilityScripts.Utilities.ColorizeInvalidText("Not enough mana.")}\n";
-        }
-        
-        fullDescription = $"{fullDescription}\n\n{additionalText}";
-        
+      
         ShowSmallInfo(fullDescription, pos: p_hoverPosition, header: title, autoReplaceText: false);
     }
     private void OnHoverPlayerAction(SkillData spellData, UIHoverPosition p_hoverPosition, IPlayerActionTarget p_target) {
-        string title = $"{spellData.name}";
-        string fullDescription = spellData.description;
-        int charges = spellData.charges;
-        int manaCost = spellData.manaCost;
-        int cooldown = spellData.cooldown;
-
-        string currencyStr = string.Empty; 
+        PlayerUI.Instance.skillDetailsTooltip.ShowPlayerSkillDetails(spellData, p_hoverPosition);
+        return;
         
-        if (manaCost != -1) {
-            currencyStr = $"{currencyStr}{manaCost.ToString()}{UtilityScripts.Utilities.ManaIcon()}  ";
-        }
-        if (charges != -1) {
-            currencyStr = $"{currencyStr}{charges.ToString()}/{spellData.maxCharges.ToString()}{UtilityScripts.Utilities.ChargesIcon()}  ";
-        }
-        if (cooldown != -1) {
-            currencyStr = $"{currencyStr}{GameManager.GetTimeAsWholeDuration(cooldown).ToString()} {GameManager.GetTimeIdentifierAsWholeDuration(cooldown)}{UtilityScripts.Utilities.CooldownIcon()}  ";
-        }
-        if (spellData.threat > 0) {
-            currencyStr = $"{currencyStr}{spellData.threat.ToString()}{UtilityScripts.Utilities.ThreatIcon()}  ";
-        }
-        title = $"{title}    <size=16>{currencyStr}";
+        //PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetScriptableObjPlayerSkillData<PlayerSkillData>(spellData.type);
+        //string title = $"{spellData.name}";
+        //string fullDescription = spellData.description;
+        //int charges = spellData.charges;
+        //int manaCost = playerSkillData.GetManaCostBaseOnLevel(spellData.currentLevel);
+        //int cooldown = playerSkillData.GetCoolDownBaseOnLevel(spellData.currentLevel);
 
-        string additionalText = string.Empty;
-        if (spellData is PlayerAction) {
-            IPlayerActionTarget activePOI = p_target;
-            if (activePOI != null) {
-                if (activePOI is Character activeCharacter) {
-                    if (spellData.CanPerformAbilityTowards(activeCharacter) == false) {
-                        if (spellData is PlayerAction playerAction && !playerAction.canBeCastOnBlessed && activeCharacter.traitContainer.IsBlessed()) {
-                            additionalText = $"{additionalText}{UtilityScripts.Utilities.ColorizeInvalidText("Blessed Villagers are protected from your powers.")}\n";
-                        }
-                        string wholeReason = spellData.GetReasonsWhyCannotPerformAbilityTowards(activeCharacter);
-                        wholeReason = UtilityScripts.Utilities.SplitStringIntoNewLines(wholeReason, ',');
-                        additionalText += $"{UtilityScripts.Utilities.ColorizeInvalidText(wholeReason)}";
-                    }
-                } else if (activePOI is TileObject activeTileObject) {
-                    if (activeTileObject is AnkhOfAnubis ankh && ankh.isActivated && spellData.type == PLAYER_SKILL_TYPE.SEIZE_OBJECT) {
-                        additionalText = $"{additionalText}{UtilityScripts.Utilities.ColorizeInvalidText("Activated Ankh can no longer be seized.")}\n";
-                    }
-                    string wholeReason = spellData.GetReasonsWhyCannotPerformAbilityTowards(activeTileObject);
-                    wholeReason = UtilityScripts.Utilities.SplitStringIntoNewLines(wholeReason, ',');
-                    additionalText += $"{UtilityScripts.Utilities.ColorizeInvalidText(wholeReason)}";
-                } else if (activePOI is BaseSettlement activeSettlement) {
-                    if (spellData.CanPerformAbilityTowards(activeSettlement) == false) {
-                        string wholeReason = spellData.GetReasonsWhyCannotPerformAbilityTowards(activeSettlement);
-                        wholeReason = UtilityScripts.Utilities.SplitStringIntoNewLines(wholeReason, ',');
-                        additionalText += $"{UtilityScripts.Utilities.ColorizeInvalidText(wholeReason)}";
-                    }
-                } else if (activePOI is LocationStructure activeStructure) {
-                    if (spellData.CanPerformAbilityTowards(activeStructure) == false) {
-                        string wholeReason = spellData.GetReasonsWhyCannotPerformAbilityTowards(activeStructure);
-                        wholeReason = UtilityScripts.Utilities.SplitStringIntoNewLines(wholeReason, ',');
-                        additionalText += $"{UtilityScripts.Utilities.ColorizeInvalidText(wholeReason)}";
-                    }
-                }
-            }
-        }
-        if(HasEnoughMana(spellData) == false) {
-            additionalText = $"{additionalText}{UtilityScripts.Utilities.ColorizeInvalidText("Not enough mana.")}\n";
-        }
-        if(HasEnoughCharges(spellData) == false) {
-            if (spellData.hasCooldown) {
-                additionalText = $"{additionalText}{UtilityScripts.Utilities.ColorizeInvalidText("Recharging.")}\n";
-            } else {
-                additionalText = $"{additionalText}{UtilityScripts.Utilities.ColorizeInvalidText("Not enough charges.")}\n";
-            }
-        }
-        if (spellData is BrainwashData && p_target is Character targetCharacter) {
-            fullDescription = $"{fullDescription}\n<b>{targetCharacter.name} Brainwash Success Rate: {DefilerRoom.GetBrainwashSuccessRate(targetCharacter).ToString("N0")}%</b>";
-        }
+        //string currencyStr = string.Empty; 
+        
+        //if (manaCost != -1) {
+        //    currencyStr = $"{currencyStr}{manaCost.ToString()}{UtilityScripts.Utilities.ManaIcon()}  ";
+        //}
+        //if (charges != -1) {
+        //    currencyStr = $"{currencyStr}{charges.ToString()}/{playerSkillData.GetMaxChargesBaseOnLevel(spellData.currentLevel).ToString()}{UtilityScripts.Utilities.ChargesIcon()}  ";
+        //}
+        //if (cooldown != -1) {
+        //    currencyStr = $"{currencyStr}{GameManager.GetTimeAsWholeDuration(cooldown).ToString()} {GameManager.GetTimeIdentifierAsWholeDuration(cooldown)}{UtilityScripts.Utilities.CooldownIcon()}  ";
+        //}
+        //if (spellData.threat > 0) {
+        //    currencyStr = $"{currencyStr}{spellData.threat.ToString()}{UtilityScripts.Utilities.ThreatIcon()}  ";
+        //}
+        //title = $"{title}    <size=16>{currencyStr}";
 
-        fullDescription = $"{fullDescription}\n\n{additionalText}";
-        ShowSmallInfo(fullDescription, pos: p_hoverPosition, header: title, autoReplaceText: false);
+        //string additionalText = string.Empty;
+        //if (spellData is PlayerAction) {
+        //    IPlayerActionTarget activePOI = p_target;
+        //    if (activePOI != null) {
+        //        if (activePOI is Character activeCharacter) {
+        //            if (spellData.CanPerformAbilityTowards(activeCharacter) == false) {
+        //                if (spellData is PlayerAction playerAction && !playerAction.canBeCastOnBlessed && activeCharacter.traitContainer.IsBlessed()) {
+        //                    additionalText = $"{additionalText}{UtilityScripts.Utilities.ColorizeInvalidText("Blessed Villagers are protected from your powers.")}\n";
+        //                }
+        //                string wholeReason = spellData.GetReasonsWhyCannotPerformAbilityTowards(activeCharacter);
+        //                wholeReason = UtilityScripts.Utilities.SplitStringIntoNewLines(wholeReason, ',');
+        //                additionalText += $"{UtilityScripts.Utilities.ColorizeInvalidText(wholeReason)}";
+        //            }
+        //        } else if (activePOI is TileObject activeTileObject) {
+        //            if (activeTileObject is AnkhOfAnubis ankh && ankh.isActivated && spellData.type == PLAYER_SKILL_TYPE.SEIZE_OBJECT) {
+        //                additionalText = $"{additionalText}{UtilityScripts.Utilities.ColorizeInvalidText("Activated Ankh can no longer be seized.")}\n";
+        //            }
+        //            string wholeReason = spellData.GetReasonsWhyCannotPerformAbilityTowards(activeTileObject);
+        //            wholeReason = UtilityScripts.Utilities.SplitStringIntoNewLines(wholeReason, ',');
+        //            additionalText += $"{UtilityScripts.Utilities.ColorizeInvalidText(wholeReason)}";
+        //        } else if (activePOI is BaseSettlement activeSettlement) {
+        //            if (spellData.CanPerformAbilityTowards(activeSettlement) == false) {
+        //                string wholeReason = spellData.GetReasonsWhyCannotPerformAbilityTowards(activeSettlement);
+        //                wholeReason = UtilityScripts.Utilities.SplitStringIntoNewLines(wholeReason, ',');
+        //                additionalText += $"{UtilityScripts.Utilities.ColorizeInvalidText(wholeReason)}";
+        //            }
+        //        } else if (activePOI is LocationStructure activeStructure) {
+        //            if (spellData.CanPerformAbilityTowards(activeStructure) == false) {
+        //                string wholeReason = spellData.GetReasonsWhyCannotPerformAbilityTowards(activeStructure);
+        //                wholeReason = UtilityScripts.Utilities.SplitStringIntoNewLines(wholeReason, ',');
+        //                additionalText += $"{UtilityScripts.Utilities.ColorizeInvalidText(wholeReason)}";
+        //            }
+        //        }
+        //    }
+        //}
+        //if(HasEnoughMana(spellData) == false) {
+        //    additionalText = $"{additionalText}{UtilityScripts.Utilities.ColorizeInvalidText("Not enough mana.")}\n";
+        //}
+        //if(HasEnoughCharges(spellData) == false) {
+        //    if (spellData.hasCooldown) {
+        //        additionalText = $"{additionalText}{UtilityScripts.Utilities.ColorizeInvalidText("Recharging.")}\n";
+        //    } else {
+        //        additionalText = $"{additionalText}{UtilityScripts.Utilities.ColorizeInvalidText("Not enough charges.")}\n";
+        //    }
+        //}
+        //if (spellData is BrainwashData && p_target is Character targetCharacter) {
+        //    fullDescription = $"{fullDescription}\n<b>{targetCharacter.name} Brainwash Success Rate: {PrisonCell.GetBrainwashSuccessRate(targetCharacter).ToString("N0")}%</b>";
+        //}
+
+        //fullDescription = $"{fullDescription}\n\n{additionalText}";
+        //ShowSmallInfo(fullDescription, pos: p_hoverPosition, header: title, autoReplaceText: false);
     }
     private bool HasEnoughMana(SkillData spellData) {
         if (spellData.hasManaCost) {
@@ -1993,29 +1936,28 @@ public class UIManager : BaseMonoBehaviour {
         //if skill has no charges then always has enough charges
         return true;
     }
-    private List<IContextMenuItem> GetPlayerActionContextMenuItems(IPlayerActionTarget p_target) {
-        List<IContextMenuItem> contextMenuItems = null;
+    private void PopulatePlayerActionContextMenuItems(List<IContextMenuItem> contextMenuItems, IPlayerActionTarget p_target) {
         for (int i = 0; i < p_target.actions.Count; i++) {
             PLAYER_SKILL_TYPE skillType = p_target.actions[i];
-            PlayerAction playerAction = PlayerSkillManager.Instance.GetPlayerSkillData(skillType) as PlayerAction;
-            if (playerAction != null && playerAction.IsValid(p_target) && PlayerManager.Instance.player.playerSkillComponent.CanDoPlayerAction(skillType)) {
-                if (contextMenuItems == null) { contextMenuItems = new List<IContextMenuItem>(); }
-                contextMenuItems.Add(playerAction);
+            PlayerAction playerAction = PlayerSkillManager.Instance.GetSkillData(skillType) as PlayerAction;
+            if(playerAction != null && playerAction.shouldShowOnContextMenu) {
+                if (playerAction.IsValid(p_target) && PlayerManager.Instance.player.playerSkillComponent.CanDoPlayerAction(skillType)) {
+                    contextMenuItems.Add(playerAction);
+                }
             }
         }
-        return contextMenuItems;
     }
     private void AddPlayerActionContextMenuSignals() {
-        Messenger.AddListener<IPlayerActionTarget>(SpellSignals.RELOAD_PLAYER_ACTIONS, ReloadPlayerActions);
-        Messenger.AddListener(SpellSignals.FORCE_RELOAD_PLAYER_ACTIONS, ForceReloadPlayerActions);
-        Messenger.AddListener<PLAYER_SKILL_TYPE, IPlayerActionTarget>(SpellSignals.PLAYER_ACTION_ADDED_TO_TARGET, OnPlayerActionAddedToTarget);
-        Messenger.AddListener<PLAYER_SKILL_TYPE, IPlayerActionTarget>(SpellSignals.PLAYER_ACTION_REMOVED_FROM_TARGET, OnPlayerActionRemovedFromTarget);
+        Messenger.AddListener<IPlayerActionTarget>(PlayerSkillSignals.RELOAD_PLAYER_ACTIONS, ReloadPlayerActions);
+        Messenger.AddListener(PlayerSkillSignals.FORCE_RELOAD_PLAYER_ACTIONS, ForceReloadPlayerActions);
+        Messenger.AddListener<PLAYER_SKILL_TYPE, IPlayerActionTarget>(PlayerSkillSignals.PLAYER_ACTION_ADDED_TO_TARGET, OnPlayerActionAddedToTarget);
+        Messenger.AddListener<PLAYER_SKILL_TYPE, IPlayerActionTarget>(PlayerSkillSignals.PLAYER_ACTION_REMOVED_FROM_TARGET, OnPlayerActionRemovedFromTarget);
     }
     private void RemovePlayerActionContextMenuSignals() {
-        Messenger.RemoveListener<IPlayerActionTarget>(SpellSignals.RELOAD_PLAYER_ACTIONS, ReloadPlayerActions);
-        Messenger.RemoveListener(SpellSignals.FORCE_RELOAD_PLAYER_ACTIONS, ForceReloadPlayerActions);
-        Messenger.RemoveListener<PLAYER_SKILL_TYPE, IPlayerActionTarget>(SpellSignals.PLAYER_ACTION_ADDED_TO_TARGET, OnPlayerActionAddedToTarget);
-        Messenger.RemoveListener<PLAYER_SKILL_TYPE, IPlayerActionTarget>(SpellSignals.PLAYER_ACTION_REMOVED_FROM_TARGET, OnPlayerActionRemovedFromTarget);
+        Messenger.RemoveListener<IPlayerActionTarget>(PlayerSkillSignals.RELOAD_PLAYER_ACTIONS, ReloadPlayerActions);
+        Messenger.RemoveListener(PlayerSkillSignals.FORCE_RELOAD_PLAYER_ACTIONS, ForceReloadPlayerActions);
+        Messenger.RemoveListener<PLAYER_SKILL_TYPE, IPlayerActionTarget>(PlayerSkillSignals.PLAYER_ACTION_ADDED_TO_TARGET, OnPlayerActionAddedToTarget);
+        Messenger.RemoveListener<PLAYER_SKILL_TYPE, IPlayerActionTarget>(PlayerSkillSignals.PLAYER_ACTION_REMOVED_FROM_TARGET, OnPlayerActionRemovedFromTarget);
     }
     private void OnPlayerActionRemovedFromTarget(PLAYER_SKILL_TYPE p_skillType, IPlayerActionTarget p_target) {
         if (IsContextMenuShowing() && p_target != null && PlayerManager.Instance.player.currentlySelectedPlayerActionTarget == p_target) {
@@ -2038,12 +1980,15 @@ public class UIManager : BaseMonoBehaviour {
         }
     }
     private void UpdatePlayerActionContextMenuItems(IPlayerActionTarget p_target) {
-        List<IContextMenuItem> contextMenuItems = GetPlayerActionContextMenuItems(p_target);
+        List<IContextMenuItem> contextMenuItems = RuinarchListPool<IContextMenuItem>.Claim();
+        PopulatePlayerActionContextMenuItems(contextMenuItems, p_target);
+        //List<IContextMenuItem> contextMenuItems = GetPlayerActionContextMenuItems(p_target);
         // if (contextMenuItems == null) {
         //     HidePlayerActionContextMenu();
         //     return;
         // }
         contextMenuUIController.UpdateContextMenuItems(contextMenuItems);
+        RuinarchListPool<IContextMenuItem>.Release(contextMenuItems);
     }
     private bool IsMouseOnContextMenu() {
         if (_pointer != null) {
@@ -2056,4 +2001,105 @@ public class UIManager : BaseMonoBehaviour {
         return false;
     }
     #endregion
+
+    #region Demonic Structures
+    [Space(10)]
+    [Header("Demonic Structures")]
+    [SerializeField] private PortalUIController _portalUIController;
+    public UpgradePortalUIController upgradePortalUIController;
+    public PurchaseSkillUIController purchaseSkillUIController;
+    public void ShowUnlockAbilitiesUI(ThePortal portal) {
+        _portalUIController.ShowUI(portal);
+        SetSpeedTogglesState(false);
+        Pause();
+    }
+    public void ShowUpgradeAbilitiesUI() {
+        onSpireClicked?.Invoke();
+    }
+    public void ShowRaidUI(LocationStructure structure) {
+        onMaraudClicked?.Invoke(structure);
+    }
+    public void ShowSnatchVillagerUI(LocationStructure structure) {
+        onTortureChamberClicked?.Invoke(structure);
+    }
+    public void ShowSnatchMonsterUI(LocationStructure structure) {
+        onKennelClicked?.Invoke(structure);
+    }
+    public void ShowDefendUI(LocationStructure structure) {
+        onDefensePointClicked?.Invoke(structure);
+    }
+    public void ShowUpgradePortalUI(ThePortal portal) {
+        upgradePortalUIController.ShowPortalUpgradeTier(portal.nextTier, portal.level, portal);
+    }
+    public void ShowPurchaseSkillUI() {
+        purchaseSkillUIController.Init(3, true);
+    }
+    #endregion
+
+    #region Bookmarks UI
+    [Space(10)]
+    [Header("Bookmark UI")]
+    public BookmarkUIController bookmarkUIController;
+    public void OnBookmarkMenuHide() {
+        (notificationHoverPos.transform as RectTransform).anchoredPosition = notificationHoverPosDefaultPosition;
+    }
+    public void OnBookmarkMenuShow() {
+        (notificationHoverPos.transform as RectTransform).anchoredPosition = notificationHoverPosModifiedPosition;
+    }
+    #endregion
+
+    #region Wait Window
+    [Header("Wait Window")] 
+    [SerializeField] private GameObject waitWindow;
+    public void ShowWaitForTileObjectGenerationToFinishWindow() {
+        Pause();
+        SetSpeedTogglesState(false);
+        InnerMapCameraMove.Instance.DisableMovement();
+        InputManager.Instance.SetAllHotkeysEnabledState(false);
+        waitWindow.SetActive(true);
+        StartCoroutine(WaitForTileObjectGenerationToFinish());
+    }
+    private void HideWaitForTileObjectGenerationToFinishWindow() {
+        SetSpeedTogglesState(true);
+        InnerMapCameraMove.Instance.EnableMovement();
+        InputManager.Instance.SetAllHotkeysEnabledState(true);
+        waitWindow.SetActive(false);
+    }
+    private IEnumerator WaitForTileObjectGenerationToFinish() {
+        Stopwatch stopwatch = new Stopwatch();
+        stopwatch.Start();
+        while (WorldConfigManager.Instance.mapGenerationData.isGeneratingTileObjects) {
+            yield return null;
+        }
+        HideWaitForTileObjectGenerationToFinishWindow();
+        GameManager.Instance.StartProgression();
+        stopwatch.Stop();
+        Debug.Log($"WaitForTileObjectGenerationToFinish took {stopwatch.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)} seconds to complete.");
+    }
+    public bool IsWaitingForTileObjectGenerationToComplete() {
+        return waitWindow.activeInHierarchy;
+    }
+    #endregion
+
+    #region Load Window
+    public void OpenLoadWindow() {
+        loadWindow.Open();
+    }
+    private void OnLoadHotkeyPressed() {
+        if (SaveManager.Instance.saveCurrentProgressManager.isSaving || SaveManager.Instance.saveCurrentProgressManager.isWritingToDisk) {
+            //prevent opening load window while player is currently saving
+            return;
+        }
+        if (!IsLoadWindowShowing()) {
+            OpenLoadWindow();    
+        }
+    }
+    public bool IsLoadWindowShowing() {
+        return loadWindow.isShowing;
+    }
+    public void CloseLoadWindow() {
+        loadWindow.Close();
+    }
+    #endregion
+
 }

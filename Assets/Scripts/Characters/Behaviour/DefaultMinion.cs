@@ -10,8 +10,10 @@ public class DefaultMinion : CharacterBehaviourComponent {
 		// attributes = new[] { BEHAVIOUR_COMPONENT_ATTRIBUTE.WITHIN_HOME_SETTLEMENT_ONLY };
 	}
 	public override bool TryDoBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
-        log += $"\n-{character.name} will roam around assigned area!";
-        character.jobComponent.TriggerRoamAroundTile(out producedJob);
+#if DEBUG_LOG
+		log += $"\n-{character.name} will roam around assigned area!";
+#endif
+		character.jobComponent.TriggerRoamAroundTile(out producedJob);
         return true;
 	}
 }

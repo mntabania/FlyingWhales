@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using Logs;
+using Object_Pools;
 using UnityEngine;
 using Traits;
 
@@ -19,16 +20,16 @@ namespace Interrupts {
         public override bool ExecuteInterruptStartEffect(InterruptHolder interruptHolder,
 	        ref Log overrideEffectLog, ActualGoapNode goapNode = null) {
 			if (UnityEngine.Random.Range(0, 2) == 0) {
-				if(interruptHolder.actor.traitContainer.AddTrait(interruptHolder.actor, "Poisoned")) {
-                    //TODO: Can still be improved: Create a function that returns the trait that's been added instead of boolean
-                    Traits.Poisoned addedPoisoned = interruptHolder.actor.traitContainer.GetTraitOrStatus<Traits.Poisoned>("Poisoned");
-					Traits.Poisoned poisoned = interruptHolder.target.traitContainer.GetTraitOrStatus<Traits.Poisoned>("Poisoned");
+				if(interruptHolder.actor.traitContainer.AddTrait(interruptHolder.actor, "Poisoned", bypassElementalChance: true)) {
+                    Poisoned addedPoisoned = interruptHolder.actor.traitContainer.GetTraitOrStatus<Poisoned>("Poisoned");
+					Poisoned poisoned = interruptHolder.target.traitContainer.GetTraitOrStatus<Poisoned>("Poisoned");
 					if (poisoned.responsibleCharacters != null) {
 						for (int i = 0; i < poisoned.responsibleCharacters.Count; i++) {
 							addedPoisoned.AddCharacterResponsibleForTrait(poisoned.responsibleCharacters[i]);
 						}
 					}
-					
+					addedPoisoned.SetIsPlayerSource(poisoned.isPlayerSource);
+					//if (overrideEffectLog != null) { LogPool.Release(overrideEffectLog); }
 					overrideEffectLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Interrupt", "Ingested Poison", "sick", null, logTags);
 					overrideEffectLog.AddToFillers(interruptHolder.actor, interruptHolder.actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
 				}

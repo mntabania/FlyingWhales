@@ -40,10 +40,10 @@ namespace Traits {
                 _owner = null;
                 Log endLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Behaviour", "DryTilesBehaviour", "end", null, LOG_TAG.Work);
                 endLog.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                endLog.AddLogToDatabase();    
+                endLog.AddLogToDatabase(true);    
                 
                 character.behaviourComponent.RemoveBehaviourComponent(typeof(DryTilesBehaviour));
-                character.behaviourComponent.SetDryingTilesForSettlement(null);
+                // character.behaviourComponent.SetDryingTilesForSettlement(null);
                 Messenger.RemoveListener<Character>(CharacterSignals.CHARACTER_CAN_NO_LONGER_PERFORM, OnCharacterCanNoLongerPerform);
                 Messenger.RemoveListener<JobQueueItem, Character>(JobSignals.JOB_ADDED_TO_QUEUE, OnJobAddedToQueue);
             }

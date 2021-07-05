@@ -5,7 +5,7 @@ using System.Linq;
 using UnityEngine;
 
 public class LogComponent {
-    public IPointOfInterest owner { get; private set; }
+    //public IPointOfInterest owner { get; private set; }
     // public List<Log> history { get; }
     // /// <summary>
     // /// History categorized by files
@@ -26,9 +26,9 @@ public class LogComponent {
         ClearCostLog();
     }
 
-    public void SetOwner(IPointOfInterest owner) {
-        this.owner = owner;
-    }
+    //public void SetOwner(IPointOfInterest owner) {
+    //    this.owner = owner;
+    //}
 
     // #region History
     // public bool AddHistory(Log log) {
@@ -70,41 +70,40 @@ public class LogComponent {
     // #endregion
 
     #region Notifications
-    public void RegisterLog(Log addLog, GoapAction goapAction = null, bool onlyClickedCharacter = true) {
+    public void RegisterLog(Log addLog, bool releaseAfter = false) {
         if (!GameManager.Instance.gameHasStarted) {
             return;
         }
-        addLog.AddLogToDatabase();
-        // PlayerManager.Instance.player.ShowNotificationFrom(addLog, owner, onlyClickedCharacter);
+        addLog.AddLogToDatabase(releaseAfter);
     }
     #endregion
 
     #region Debug
     public void PrintLogIfActive(string log) {
-#if UNITY_EDITOR
+#if DEBUG_LOG
         Debug.Log(GameManager.Instance.TodayLogString() + log);
 #endif
     }
     public void PrintLogErrorIfActive(string log) {
-#if UNITY_EDITOR
+#if DEBUG_LOG
         Debug.LogError(GameManager.Instance.TodayLogString() + log);
 #endif
     }
     #endregion
-    
+
     #region Goap Planning Cost Log
     public void ClearCostLog() {
         _planCostLog = string.Empty;
     }
     public void AppendCostLog(string text) {
-#if UNITY_EDITOR
+#if DEBUG_LOG
         _planCostLog += text;
 #endif
     }
     public void PrintCostLog(){
         PrintLogIfActive(_planCostLog);   
     }
-    #endregion
+#endregion
 
     // #region Loading
     // public void LoadReferences(SaveDataLogComponent data) {
@@ -121,7 +120,7 @@ public class LogComponent {
 public class SaveDataLogComponent : SaveData<LogComponent> {
     // public List<string> history;
 
-    #region Overrides
+#region Overrides
     public override void Save(LogComponent data) {
         // history = new List<string>();
         // for (int i = 0; i < data.history.Count; i++) {
@@ -138,5 +137,5 @@ public class SaveDataLogComponent : SaveData<LogComponent> {
         LogComponent component = new LogComponent(this);
         return component;
     }
-    #endregion
+#endregion
 }

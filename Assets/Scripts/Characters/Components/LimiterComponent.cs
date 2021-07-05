@@ -50,6 +50,7 @@ public class LimiterComponent : CharacterComponent {
         bool couldMoveBefore = canMove;
         canMoveValue--;
         if (couldMoveBefore && canMove == false) {
+            owner.partyComponent.UnfollowBeacon();
             //character could move before adjustment, but cannot move after adjustment
             Messenger.Broadcast(CharacterSignals.CHARACTER_CAN_NO_LONGER_MOVE, owner);
         }
@@ -72,6 +73,7 @@ public class LimiterComponent : CharacterComponent {
         bool couldPerformBefore = canPerform;
         canPerformValue--;
         if (couldPerformBefore && canPerform == false) {
+            owner.partyComponent.UnfollowBeacon();
             //character could perform before adjustment, but cannot perform after adjustment
             Messenger.Broadcast(CharacterSignals.CHARACTER_CAN_NO_LONGER_PERFORM, owner);
         }

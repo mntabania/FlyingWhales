@@ -16,17 +16,17 @@ namespace Quests.Steps {
         }
         protected override void SubscribeListeners() {
             if (_neededSpellType == PLAYER_SKILL_TYPE.METEOR) {
-                Messenger.AddListener(SpellSignals.METEOR_FELL, Complete);
+                Messenger.AddListener(PlayerSkillSignals.METEOR_FELL, Complete);
             } else {
-                Messenger.AddListener<SkillData>(SpellSignals.ON_EXECUTE_PLAYER_SKILL, CheckForCompletion);    
+                Messenger.AddListener<SkillData>(PlayerSkillSignals.ON_EXECUTE_PLAYER_SKILL, CheckForCompletion);    
             }
             
         }
         protected override void UnSubscribeListeners() {
             if (_neededSpellType == PLAYER_SKILL_TYPE.METEOR) {
-                Messenger.RemoveListener(SpellSignals.METEOR_FELL, Complete);
+                Messenger.RemoveListener(PlayerSkillSignals.METEOR_FELL, Complete);
             } else {
-                Messenger.RemoveListener<SkillData>(SpellSignals.ON_EXECUTE_PLAYER_SKILL, CheckForCompletion);
+                Messenger.RemoveListener<SkillData>(PlayerSkillSignals.ON_EXECUTE_PLAYER_SKILL, CheckForCompletion);
             }
         }
 

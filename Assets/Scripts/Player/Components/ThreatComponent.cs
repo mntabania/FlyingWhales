@@ -35,10 +35,11 @@ public class ThreatComponent {
     // }
 
     public void AdjustThreatAndApplyModification(int amount) {
-        amount = SpellUtilities.GetModifiedSpellCost(amount, WorldSettings.Instance.worldSettingsData.playerSkillSettings.GetThreatModification());
+        // amount = SpellUtilities.GetModifiedSpellCost(amount, WorldSettings.Instance.worldSettingsData.playerSkillSettings.GetThreatModification());
         AdjustThreat(amount);
     }
     public void AdjustThreat(int amount) {
+        return; //disabled threat for now.
         if(!Tutorial.TutorialManager.Instance.hasCompletedImportantTutorials && 
            WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Tutorial) {
             //Threat does not increase until Tutorial is over, and since the last tutorial is Invade a village, it should be the checker
@@ -75,7 +76,7 @@ public class ThreatComponent {
     // }
     private void OnMaxThreat() {
         //Counterattack();
-        DivineIntervention();
+        //DivineIntervention();
     }
     private void OnThreatIncreased() {
         if (!isDecreasingThreatPerHour) {
@@ -130,39 +131,6 @@ public class ThreatComponent {
     // private void OnStartThreatEffect() {
     //     ResetThreatAfterHours(2);
     // }
-
-    public void DivineIntervention() {
-        string debugLog = GameManager.Instance.TodayLogString() + "Divine Intervention";
-        LocationStructure targetDemonicStructure = null;
-        if (InnerMapManager.Instance.HasExistingWorldKnownDemonicStructure()) {
-            targetDemonicStructure = InnerMapManager.Instance.worldKnownDemonicStructures[UnityEngine.Random.Range(0, InnerMapManager.Instance.worldKnownDemonicStructures.Count)];
-        } else {
-            targetDemonicStructure = PlayerManager.Instance.player.playerSettlement.GetRandomStructure();
-        }
-        if (targetDemonicStructure == null) {
-            //it is assumed that this only happens if the player casts a spell that is seen by another character,
-            //but results in the destruction of the portal
-            //attackingCharacters = null;
-            return;
-        }
-        debugLog += "\n-TARGET: " + targetDemonicStructure.name;
-        CharacterManager.Instance.SetCurrentDemonicStructureTargetOfAngels(targetDemonicStructure as DemonicStructure);
-        Region region = targetDemonicStructure.region;
-        HexTile spawnHex = targetDemonicStructure.region.GetRandomHexThatMeetCriteria(currHex => currHex.elevationType != ELEVATION.WATER && currHex.elevationType != ELEVATION.MOUNTAIN && !currHex.isCorrupted);
-        List<Character> characters = new List<Character>();
-        int angelCount = 4; //UnityEngine.Random.Range(3, 6);
-        for (int i = 0; i < angelCount; i++) {
-            SUMMON_TYPE angelType = SUMMON_TYPE.Warrior_Angel;
-            if (UnityEngine.Random.Range(0, 2) == 0) { angelType = SUMMON_TYPE.Magical_Angel; }
-            LocationGridTile spawnTile = spawnHex.GetRandomTile();
-            Summon angel = CharacterManager.Instance.CreateNewSummon(angelType, FactionManager.Instance.vagrantFaction, homeRegion: region);
-            CharacterManager.Instance.PlaceSummonInitially(angel, spawnTile);
-            angel.behaviourComponent.SetIsAttackingDemonicStructure(true, CharacterManager.Instance.currentDemonicStructureTargetOfAngels);
-            characters.Add(angel);
-        }
-        Messenger.Broadcast(PlayerQuestSignals.ANGELS_ATTACKING_DEMONIC_STRUCTURE, characters);
-        Messenger.Broadcast(PlayerSignals.START_THREAT_EFFECT);
-    }
 
     #region Save
     public void SetThreatFromSave(int amount) {

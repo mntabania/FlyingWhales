@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using Logs;
+using Object_Pools;
 using UnityEngine;
 using Traits;
 
@@ -52,8 +53,7 @@ public class AssumptionComponent : CharacterComponent {
         assumptionLog.AddLogToDatabase();
         newAssumption.SetAssumptionLog(assumptionLog);
         
-        // PlayerManager.Instance.player.ShowNotificationFrom(owner, assumptionLog);
-        PlayerManager.Instance.player.ShowNotificationFrom(owner, InteractionManager.Instance.CreateNewIntel(newAssumption.assumedAction) as IIntel);
+        PlayerManager.Instance.player.ShowNotificationFrom(owner, InteractionManager.Instance.CreateNewIntel(newAssumption.assumedAction));
 
         owner.reactionComponent.ReactTo(newAssumption, reactionStatus, false);
 
@@ -64,13 +64,13 @@ public class AssumptionComponent : CharacterComponent {
         Messenger.Broadcast(JobSignals.CHARACTER_ASSUMED, owner, assumedCharacter, targetOfAssumedCharacter);
     }
     private Assumption CreateNewAssumption(Character assumedCharacter, IPointOfInterest targetOfAssumedCharacter, INTERACTION_TYPE assumedActionType) {
-        ActualGoapNode assumedAction = new ActualGoapNode(InteractionManager.Instance.goapActionData[assumedActionType], assumedCharacter, targetOfAssumedCharacter, null, 0);
+        ActualGoapNode assumedAction = ObjectPoolManager.Instance.CreateNewAction(InteractionManager.Instance.goapActionData[assumedActionType], assumedCharacter, targetOfAssumedCharacter, null, 0);
         Assumption assumption = new Assumption(owner, assumedCharacter);
         assumedAction.SetAsAssumption(assumption);
         return assumption;
     }
     public ActualGoapNode CreateNewActionToReactTo(Character actor, IPointOfInterest target, INTERACTION_TYPE actionType) {
-        ActualGoapNode assumedAction = new ActualGoapNode(InteractionManager.Instance.goapActionData[actionType], actor, target, null, 0);
+        ActualGoapNode assumedAction = ObjectPoolManager.Instance.CreateNewAction(InteractionManager.Instance.goapActionData[actionType], actor, target, null, 0);
         assumedAction.SetAsIllusion();
         assumedAction.SetCrimeType();
         return assumedAction;
@@ -114,7 +114,7 @@ public class SaveDataAssumptionComponent : SaveData<AssumptionComponent> {
 
     #region Overrides
     public override void Save(AssumptionComponent data) {
-        assumptionData = data.assumptionData;
+        assumptionData = new List<AssumptionData>(data.assumptionData);
     }
 
     public override AssumptionComponent Load() {

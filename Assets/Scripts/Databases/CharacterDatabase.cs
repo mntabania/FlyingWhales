@@ -10,20 +10,71 @@ public class CharacterDatabase {
     
     public List<Character> allCharactersList { get; }
     public List<Character> limboCharactersList { get; }
+    public List<Character> aliveVillagersList { get; }
 
     public CharacterDatabase() {
         allCharacters = new Dictionary<string, Character>();
         limboCharacters = new Dictionary<string, Character>();
         allCharactersList = new List<Character>();
         limboCharactersList = new List<Character>();
+        aliveVillagersList = new List<Character>();
+        Messenger.AddListener<Character, CharacterClass, CharacterClass>(CharacterSignals.CHARACTER_CLASS_CHANGE, OnCharacterChangedClass);
+        Messenger.AddListener<Character>(CharacterSignals.CHARACTER_DEATH, OnCharacterDied);
+        Messenger.AddListener<Character>(CharacterSignals.CHARACTER_BECOMES_MINION_OR_SUMMON, OnCharacterBecameSummonOrMinion);
+        Messenger.AddListener<Character>(CharacterSignals.CHARACTER_BECOMES_NON_MINION_OR_SUMMON, OnCharacterNoLongerSummonOrMinion);
     }
 
-    internal void AddCharacter(Character character) {
+    #region Villagers List
+    private void OnCharacterNoLongerSummonOrMinion(Character p_character) {
+        if (IsConsideredVillager(p_character)) {
+            AddToAliveVillagersList(p_character);
+        }
+    }
+    private void OnCharacterDied(Character p_character) {
+        RemoveFromAliveVillagersList(p_character);
+    }
+    private void OnCharacterBecameSummonOrMinion(Character p_character) {
+        RemoveFromAliveVillagersList(p_character);
+    }
+    private void OnCharacterChangedClass(Character p_character, CharacterClass p_previousClass, CharacterClass p_newClass) {
+        if (IsConsideredVillager(p_character)) {
+            AddToAliveVillagersList(p_character);
+        } else {
+            RemoveFromAliveVillagersList(p_character);
+        }
+    }
+    private void RemoveFromAliveVillagersList(Character p_character) {
+        if (aliveVillagersList.Remove(p_character)) {
+#if DEBUG_LOG
+            Debug.Log($"Removed {p_character.name} from alive villagers list. All alive villagers are {aliveVillagersList.ComafyList()}");
+#endif
+        }
+    }
+    private void AddToAliveVillagersList(Character p_character) {
+        if (!aliveVillagersList.Contains(p_character)) {
+            aliveVillagersList.Add(p_character);
+#if DEBUG_LOG
+            Debug.Log($"Added {p_character.name} to alive villagers list. All alive villagers are {aliveVillagersList.ComafyList()}");
+#endif
+        }
+    }
+    private bool IsConsideredVillager(Character p_character) {
+        return p_character.isNormalCharacter && p_character.race != RACE.RATMAN;
+    }
+#endregion
+    
+    internal void AddCharacter(Character character, bool addToAliveVillagersList = true) {
         allCharacters.Add(character.persistentID, character);
         allCharactersList.Add(character);
+        if (addToAliveVillagersList && character.isNormalCharacter && !character.isDead) {
+            AddToAliveVillagersList(character);    
+        }
     }
-    internal bool RemoveCharacter(Character character) {
+    internal bool RemoveCharacter(Character character, bool removeFromAliveVillagersList = true) {
         allCharacters.Remove(character.persistentID);
+        if (removeFromAliveVillagersList) {
+            RemoveFromAliveVillagersList(character);    
+        }
         return allCharactersList.Remove(character);
     }
     internal void AddLimboCharacter(Character character) {
@@ -35,10 +86,12 @@ public class CharacterDatabase {
         return limboCharactersList.Remove(character);
     }
     internal Character GetCharacterByPersistentID(string id) {
-        if (DatabaseManager.Instance.characterDatabase.allCharacters.TryGetValue(id, out Character character)) {
-            return character;
-        } else if (DatabaseManager.Instance.characterDatabase.limboCharacters.TryGetValue(id, out character)) {
-            return character;
+        if (id != null) {
+            if (DatabaseManager.Instance.characterDatabase.allCharacters.TryGetValue(id, out Character character)) {
+                return character;
+            } else if (DatabaseManager.Instance.characterDatabase.limboCharacters.TryGetValue(id, out character)) {
+                return character;
+            }
         }
         return null;
     }

@@ -7,7 +7,7 @@ using UnityEngine;
 using UnityEngine.Profiling;
 using Random = UnityEngine.Random;
 
-public class BallLightningMapObjectVisual : MovingMapObjectVisual<TileObject> {
+public class BallLightningMapObjectVisual : MovingMapObjectVisual {
     
     [SerializeField] private ParticleSystem _ballLightningEffect;
     
@@ -47,7 +47,7 @@ public class BallLightningMapObjectVisual : MovingMapObjectVisual<TileObject> {
         Messenger.AddListener<PROGRESSION_SPEED>(UISignals.PROGRESSION_SPEED_CHANGED, OnProgressionSpeedChanged);
         isSpawned = true;
 
-        if (GameManager.Instance.isPaused) {
+        if (GameManager.Instance.isPaused || !GameManager.Instance.gameHasStarted) {
             _movement.Pause();
             StartCoroutine(PlayParticleCoroutineWhenGameIsPaused());
         } else {
@@ -67,9 +67,10 @@ public class BallLightningMapObjectVisual : MovingMapObjectVisual<TileObject> {
 
     #region Movement
     private void MoveToRandomDirection() {
+        float baseSpeed = PlayerSkillManager.Instance.GetSkillMovementSpeedPerLevel(PLAYER_SKILL_TYPE.BALL_LIGHTNING) / 100f;
         Vector3 direction = (new Vector3(Random.Range(-1.0f, 1.0f), Random.Range(-1.0f, 1.0f), 0f)).normalized * 50f;
         direction += transform.position;
-        _movement = transform.DOMove(direction, 0.3f).SetSpeedBased(true);
+        _movement = transform.DOMove(direction, baseSpeed).SetSpeedBased(true);
     }
     private void OnGamePaused(bool isPaused) {
         if (isPaused) {
@@ -98,9 +99,11 @@ public class BallLightningMapObjectVisual : MovingMapObjectVisual<TileObject> {
     }
     public override void SetWorldPosition(Vector3 worldPosition) {
         base.SetWorldPosition(worldPosition);
-        _movement?.Kill();
-        _movement = null;
-        MoveToRandomDirection();
+        if (GameManager.Instance.gameHasStarted) {
+            _movement?.Kill();
+            _movement = null;
+            MoveToRandomDirection();
+        }
     }
     #endregion
 
@@ -109,15 +112,33 @@ public class BallLightningMapObjectVisual : MovingMapObjectVisual<TileObject> {
         if (isSpawned == false) {
             return;
         }
+#if DEBUG_PROFILER
         Profiler.BeginSample($"Ball Lightning Per Tick");
+#endif
+        SkillData ballLightningData = PlayerSkillManager.Instance.GetSpellData(PLAYER_SKILL_TYPE.BALL_LIGHTNING);
+        int processedDamage = -PlayerSkillManager.Instance.GetDamageBaseOnLevel(ballLightningData);
+        float piercing = PlayerSkillManager.Instance.GetAdditionalPiercePerLevelBaseOnLevel(ballLightningData);
         for (int i = 0; i < _objsInRange.Count; i++) {
-            _objsInRange[i].AdjustHP(-60, ELEMENTAL_TYPE.Electric, true, showHPBar: true);
+            ITraitable traitable = _objsInRange[i];
+            if (owner != traitable) {
+                traitable.AdjustHP(processedDamage, ELEMENTAL_TYPE.Electric, true, showHPBar: true, piercingPower: piercing, isPlayerSource: owner.isPlayerSource, source: owner.isPlayerSource ? ballLightningData : null);
+            }
+            if (traitable is Character character) {
+                Messenger.Broadcast(PlayerSignals.PLAYER_HIT_CHARACTER_VIA_SPELL, character, processedDamage);
+                if (character != null && character.isDead && character.skillCauseOfDeath == PLAYER_SKILL_TYPE.NONE) {
+                    character.skillCauseOfDeath = PLAYER_SKILL_TYPE.BALL_LIGHTNING;
+                    //Messenger.Broadcast(PlayerSignals.CREATE_SPIRIT_ENERGY, character.deathTilePosition.centeredWorldLocation, 1, character.deathTilePosition.parentMap);
+                    //Messenger.Broadcast(PlayerSignals.CREATE_CHAOS_ORBS, character.deathTilePosition.centeredWorldLocation, 1, character.deathTilePosition.parentMap);
+                }
+            }
         }
+#if DEBUG_PROFILER
         Profiler.EndSample();
+#endif
     }
-    #endregion
+#endregion
     
-    #region Triggers
+#region Triggers
     public void OnTriggerEnter2D(Collider2D collision) {
         if (isSpawned == false) { return; }
         BaseVisionTrigger collidedWith = collision.gameObject.GetComponent<BaseVisionTrigger>();
@@ -128,13 +149,13 @@ public class BallLightningMapObjectVisual : MovingMapObjectVisual<TileObject> {
     public void OnTriggerExit2D(Collider2D collision) {
         if (isSpawned == false) { return; }
         BaseVisionTrigger collidedWith = collision.gameObject.GetComponent<BaseVisionTrigger>();
-        if (collidedWith != null && collidedWith.damageable is ITraitable traitable) { 
-            RemoveObject(traitable);   
+        if (collidedWith != null && collidedWith.damageable is ITraitable traitable) {
+            RemoveObject(traitable);
         }
     }
-    #endregion
+#endregion
     
-    #region POI's
+#region POI's
     private void AddObject(ITraitable obj) {
         if (!_objsInRange.Contains(obj)) {
             _objsInRange.Add(obj);
@@ -143,11 +164,13 @@ public class BallLightningMapObjectVisual : MovingMapObjectVisual<TileObject> {
     private void RemoveObject(ITraitable obj) {
         _objsInRange.Remove(obj);
     }
-    #endregion
+#endregion
     
-    #region Expiration
+#region Expiration
     public void Expire() {
+#if DEBUG_LOG
         Debug.Log($"{this.name} expired!");
+#endif
         _ballLightningEffect.Stop();
         isSpawned = false;
         if (string.IsNullOrEmpty(_expiryKey) == false) {
@@ -163,9 +186,9 @@ public class BallLightningMapObjectVisual : MovingMapObjectVisual<TileObject> {
         yield return new WaitForSeconds(0.8f);
         ObjectPoolManager.Instance.DestroyObject(this);
     }
-    #endregion
+#endregion
 
-    #region Particles
+#region Particles
     private IEnumerator PlayParticleCoroutineWhenGameIsPaused() {
         //Playing particle effect is done in a coroutine so that it will wait one frame before pausing the particles if the game is paused when the particle is activated
         //This will make sure that the particle effect will show but it will be paused right away
@@ -173,5 +196,5 @@ public class BallLightningMapObjectVisual : MovingMapObjectVisual<TileObject> {
         yield return new WaitForSeconds(0.1f);
         _ballLightningEffect.Pause();
     }
-    #endregion
+#endregion
 }

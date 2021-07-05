@@ -5,7 +5,7 @@ using Traits;
 using Inner_Maps;
 using UtilityScripts;
 using Locations.Settlements;
-
+using Inner_Maps.Location_Structures;
 public class Drink : GoapAction {
 
     public override ACTION_CATEGORY actionCategory => ACTION_CATEGORY.CONSUME;
@@ -25,11 +25,15 @@ public class Drink : GoapAction {
         SetState("Drink Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
+#if DEBUG_LOG
         string costLog = $"\n{name} {target.nameWithID}:";
+#endif
         if (actor.traitContainer.HasTrait("Enslaved")) {
             if (target.gridTileLocation == null || !target.gridTileLocation.IsInHomeOf(actor)) {
+#if DEBUG_LOG
                 costLog += $" +2000(Slave, target is not in actor's home)";
                 actor.logComponent.AppendCostLog(costLog);
+#endif
                 return 2000;
             }
         }
@@ -38,51 +42,66 @@ public class Drink : GoapAction {
             Faction targetFaction = settlement.owner;
             if(actor.faction != null && targetFaction != null && actor.faction.IsHostileWith(targetFaction)) {
                 //Do not drink on hostile faction's taverns
+#if DEBUG_LOG
                 costLog += $" +2000(Location of target is in hostile faction of actor)";
                 actor.logComponent.AppendCostLog(costLog);
+#endif
                 return 2000;
             }
         }
         if (actor.partyComponent.hasParty && actor.partyComponent.currentParty.isActive) {
             if (actor.partyComponent.isActiveMember) {
-                if (target.gridTileLocation != null && target.gridTileLocation.collectionOwner.isPartOfParentRegionMap && actor.gridTileLocation != null
-                && actor.gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
-                    LocationGridTile centerGridTileOfTarget = target.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.GetCenterLocationGridTile();
-                    LocationGridTile centerGridTileOfActor = actor.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.GetCenterLocationGridTile();
+                if (target.gridTileLocation != null && actor.gridTileLocation != null) {
+                    LocationGridTile centerGridTileOfTarget = target.gridTileLocation.area.gridTileComponent.centerGridTile;
+                    LocationGridTile centerGridTileOfActor = actor.areaLocation.gridTileComponent.centerGridTile;
                     float distance = centerGridTileOfActor.GetDistanceTo(centerGridTileOfTarget);
-                    int distanceToCheck = (InnerMapManager.BuildingSpotSize.x * 2) * 3;
+                    int distanceToCheck = InnerMapManager.AreaLocationGridTileSize.x * 3;
 
                     if (distance > distanceToCheck) {
                         //target is at structure that character is avoiding
+#if DEBUG_LOG
                         costLog += $" +2000(Active Party, Location of target too far from actor)";
                         actor.logComponent.AppendCostLog(costLog);
+#endif
                         return 2000;
                     }
                 }
             }
         }
         int cost = UtilityScripts.Utilities.Rng.Next(80, 121);
+#if DEBUG_LOG
         costLog += $" +{cost}(Initial)";
+#endif
         if (actor.traitContainer.HasTrait("Alcoholic")) {
             cost -= 35;
+#if DEBUG_LOG
             costLog += " -35(Alcoholic)";
+#endif
         } else {
             int numOfTimesActionDone = actor.jobComponent.GetNumOfTimesActionDone(this);
-            TIME_IN_WORDS timeOfDay = GameManager.GetCurrentTimeInWordsOfTick();
+            TIME_IN_WORDS timeOfDay = GameManager.Instance.GetCurrentTimeInWordsOfTick();
             if (timeOfDay == TIME_IN_WORDS.MORNING ||  timeOfDay == TIME_IN_WORDS.AFTERNOON) {
                 cost += 2000;
+#if DEBUG_LOG
                 costLog += " +2000(not Alcoholic, Morning/Lunch/Afternoon)";
+#endif
             }
             if (numOfTimesActionDone > 5) {
                 cost += 2000;
+#if DEBUG_LOG
                 costLog += " +2000(Times Drank > 5)";
+#endif
             } else {
                 int timesCost = 10 * numOfTimesActionDone;
                 cost += timesCost;
+#if DEBUG_LOG
                 costLog += $" +{timesCost}(10 x Times Drank)";
+#endif
             }
         }
+#if DEBUG_LOG
         actor.logComponent.AppendCostLog(costLog);
+#endif
         return cost;
     }
     //public override void OnStopWhilePerforming(ActualGoapNode node) {
@@ -99,15 +118,31 @@ public class Drink : GoapAction {
     public override bool IsHappinessRecoveryAction() {
         return true;
     }
-    #endregion
+#endregion
 
     #region State Effects
     public void PreDrinkSuccess(ActualGoapNode goapNode) {
         //goapNode.actor.needsComponent.AdjustDoNotGetBored(1);
         goapNode.actor.jobComponent.IncreaseNumOfTimesActionDone(this);
+        LocationStructure targetStructure = goapNode.poiTarget.gridTileLocation?.structure;
+        if (targetStructure != null && targetStructure.structureType == STRUCTURE_TYPE.TAVERN) {
+            if (targetStructure is ManMadeStructure mmStructure) {
+                if (mmStructure.HasAssignedWorker()) {
+                    //only added coins to first worker since we expect that the tavern only has 1 worker.
+                    //if that changes, this needs to be changed as well.
+                    string assignedWorkerID = mmStructure.assignedWorkerIDs[0];
+                    Character assignedWorker = DatabaseManager.Instance.characterDatabase.GetCharacterByPersistentID(assignedWorkerID);
+                    assignedWorker.moneyComponent.AdjustCoins(33);
+                }
+                // Character assignedWorker = mmStructure.assignedWorker;
+                // if (assignedWorker != null) {
+                //     assignedWorker.moneyComponent.AdjustCoins(10);
+                // }
+            }
+        }
     }
     public void PerTickDrinkSuccess(ActualGoapNode goapNode) {
-        goapNode.actor.needsComponent.AdjustHappiness(goapNode.actor.traitContainer.HasTrait("Alcoholic") ? 0.8f : 1.6f);
+        goapNode.actor.needsComponent.AdjustHappiness(goapNode.actor.traitContainer.HasTrait("Alcoholic") ? 1.35f : 2f);
         // goapNode.actor.needsComponent.AdjustStamina(2f);
         // if (goapNode.poiTarget is Table) {
         //     Table table = goapNode.poiTarget as Table;
@@ -121,7 +156,6 @@ public class Drink : GoapAction {
             goapNode.actor.traitContainer.AddTrait(goapNode.actor, "Alcoholic");
         }
         goapNode.actor.traitContainer.RemoveStatusAndStacks(goapNode.actor, "Withdrawal");
-        
     }
     //public void PreDrinkPoisoned() {
     //    actor.AdjustDoNotGetBored(1);
@@ -174,7 +208,7 @@ public class Drink : GoapAction {
             if (poiTarget.gridTileLocation != null && actor.trapStructure.IsTrappedAndTrapStructureIsNot(poiTarget.gridTileLocation.structure)) {
                 return false;
             }
-            if (poiTarget.gridTileLocation != null && poiTarget.gridTileLocation.collectionOwner.isPartOfParentRegionMap && actor.trapStructure.IsTrappedAndTrapHexIsNot(poiTarget.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner)) {
+            if (poiTarget.gridTileLocation != null && actor.trapStructure.IsTrappedAndTrapAreaIsNot(poiTarget.gridTileLocation.area)) {
                 return false;
             }
             return poiTarget.gridTileLocation != null && poiTarget.gridTileLocation.structure.structureType == STRUCTURE_TYPE.TAVERN && poiTarget.IsAvailable() && !actor.traitContainer.HasTrait("Agoraphobic");

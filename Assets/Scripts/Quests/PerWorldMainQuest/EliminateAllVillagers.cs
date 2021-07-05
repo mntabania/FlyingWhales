@@ -16,8 +16,8 @@ namespace Quests {
         public EliminateAllVillagers() : base($"Eliminate All Villagers") { }
         protected override void ConstructSteps() {
             _eliminateVillagerStep = new EliminateVillagerStep(GetEliminateAllVillagersDescription);
-            _eliminateVillagerStep.SetObjectsToCenter((QuestManager.Instance.winConditionTracker as OonaWinConditionTracker).villagersToEliminate.Count > 0
-                ? (QuestManager.Instance.winConditionTracker as OonaWinConditionTracker).villagersToEliminate.Select(x => x as ISelectable).ToList()
+            _eliminateVillagerStep.SetObjectsToCenter((QuestManager.Instance.winConditionTracker as WipeOutAllVillagersWinConditionTracker).villagersToEliminate.Count > 0
+                ? (QuestManager.Instance.winConditionTracker as WipeOutAllVillagersWinConditionTracker).villagersToEliminate.Select(x => x as ISelectable).ToList()
                 : new List<ISelectable>());
             steps = new List<QuestStepCollection>() {
                 new QuestStepCollection(_eliminateVillagerStep),

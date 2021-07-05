@@ -2,7 +2,7 @@
     public SkullLamp() {
         Initialize(TILE_OBJECT_TYPE.SKULL_LAMP);
     }
-    public SkullLamp(SaveDataTileObject data) {
+    public SkullLamp(SaveDataTileObject data) : base(data) {
         
     }
 }

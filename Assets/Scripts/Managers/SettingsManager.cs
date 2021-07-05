@@ -148,7 +148,7 @@ namespace Settings {
         private void UpdateUI() {
             edgePanningToggle.isOn = settings.useEdgePanning;
             confineCursorToggle.SetIsOnWithoutNotify(settings.confineCursor);
-            skipAdvancedTutorialsToggle.SetIsOnWithoutNotify(settings.skipAdvancedTutorials);
+            // skipAdvancedTutorialsToggle.SetIsOnWithoutNotify(settings.skipAdvancedTutorials);
             cameraShakeToggle.SetIsOnWithoutNotify(settings.disableCameraShake);
             randomizeMonsterNamesToggle.SetIsOnWithoutNotify(settings.randomizeMonsterNames);
             skipAdvancedTutorialsToggle.gameObject.SetActive(SceneManager.GetActiveScene().name == "MainMenu");
@@ -197,7 +197,7 @@ namespace Settings {
                      disableCameraShake = false,
                      randomizeMonsterNames =  false,
                      skipTutorials = false,
-                     skipAdvancedTutorials = false
+                     // skipAdvancedTutorials = false
                  };
                  Screen.SetResolution(Screen.currentResolution.width, Screen.currentResolution.height, settings.fullscreen);
                  QualitySettings.SetQualityLevel(settings.graphicsQuality);
@@ -267,7 +267,7 @@ namespace Settings {
 
         #region Tutorials
         public void OnToggleSkipAdvancedTutorials(bool state) {
-            _settings.skipAdvancedTutorials = state;
+            // _settings.skipAdvancedTutorials = state;
         }
         public void OnToggleSkipTutorials(bool state) {
             _settings.skipTutorials = state;

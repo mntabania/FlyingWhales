@@ -10,29 +10,33 @@ public class ExterminateBehaviour : CharacterBehaviourComponent {
     }
     public override bool TryDoBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
         producedJob = null;
+#if DEBUG_LOG
         log += $"\n-Character is exterminating";
+#endif
         Party party = character.partyComponent.currentParty;
         if (party.isActive && party.partyState == PARTY_STATE.Working) {
+#if DEBUG_LOG
             log += $"\n-Party is working";
+#endif
             if (party.targetDestination.IsAtTargetDestination(character)) {
+#if DEBUG_LOG
                 log += $"\n-Character is at target destination, do work";
+#endif
                 BaseSettlement settlement = null;
                 Character target = null;
                 if (character.gridTileLocation != null && character.gridTileLocation.IsPartOfSettlement(out settlement)) {
-                    target = settlement.GetRandomResidentThatMeetCriteria(resident => character != resident
-                    && !resident.isBeingSeized
-                    && !resident.isDead
-                    && resident.gridTileLocation != null
-                    && resident.gridTileLocation.IsPartOfSettlement(settlement)
-                    && (resident.faction == null || character.faction == null || character.faction.IsHostileWith(resident.faction))
-                    && !resident.traitContainer.HasTrait("Hibernating", "Indestructible"));
+                    target = settlement.GetRandomResidentForInvasionTargetThatIsInsideSettlementAndHostileWithFaction(settlement, character.faction, character);
                 }
                 if (target != null) {
+#if DEBUG_LOG
                     log += $"\n-Chosen target is {target.name}";
+#endif
                     character.combatComponent.Fight(target, CombatManager.Hostility);
                     return true;
                 } else {
+#if DEBUG_LOG
                     log += $"\n-End Exterminate";
+#endif
                     party.GoBackHomeAndEndQuest();
                     return true;
                     //character.jobComponent.TriggerRoamAroundStructure(out producedJob);
@@ -49,7 +53,7 @@ public class ExterminateBehaviour : CharacterBehaviourComponent {
         //    if(party.waitingHexArea != null) {
         //        log += $"\n-Party has waiting area";
         //        if (character.gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
-        //            if (character.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner == party.waitingHexArea) {
+        //            if (character.gridTileLocation.hexTileOwner == party.waitingHexArea) {
         //                log += $"\n-Character is in waiting area, roam";
         //                character.jobComponent.TriggerRoamAroundTile(out producedJob);
         //            } else {

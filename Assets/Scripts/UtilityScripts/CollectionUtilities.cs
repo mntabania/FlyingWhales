@@ -40,8 +40,18 @@ namespace UtilityScripts {
             }
             return (T[]) Enum.GetValues(typeof(T));
         }
-        public static List<T> Shuffle<T>(List<T> list) {
-            List<T> newList = new List<T>(list);
+        public static void Shuffle<T>(List<T> list) {
+            int n = list.Count;
+            while (n > 1) {
+                n--;
+                int k = UtilityScripts.Utilities.Rng.Next(n + 1);
+                T value = list[k];
+                list[k] = list[n];
+                list[n] = value;
+            }
+        }
+        public static void Shuffle<T>(List<T> list, List<T> newList) {
+            newList.AddRange(list);
             int n = newList.Count;
             while (n > 1) {
                 n--;
@@ -50,7 +60,6 @@ namespace UtilityScripts {
                 newList[k] = newList[n];
                 newList[n] = value;
             }
-            return newList;
         }
         public static void ListRemoveRange<T>(List<T> sourceList, List<T> itemsToRemove) {
             for (int i = 0; i < itemsToRemove.Count; i++) {
@@ -58,46 +67,14 @@ namespace UtilityScripts {
                 sourceList.Remove(currItem);
             }
         }
-        public static string GetDictionaryLog<T, V>(Dictionary<T, V> dict) {
-            string log = String.Empty;
-            if (dict == null) {
-                log = "Null dictionary";
-            } else {
-                foreach (KeyValuePair<T, V> kvp in dict) {
-                    log += $"{kvp.Key.ToString()} - {kvp.Value.ToString()}";
-                }
-            }
-
-            return log;
-        }
-        public static T[] CreateCopyOfArray<T>(T[] sourceArray) {
-            T[] copy = new T[sourceArray.Length];
-            for (int i = 0; i < sourceArray.Length; i++) {
-                copy[i] = sourceArray[i];
-            }
-            return copy;
-        }
-        public static List<T> RemoveElements<T>(ref List<T> sourceList, List<T> elementsToRemove) {
-            List<T> newList = new List<T>();
+        public static void RemoveElements<T>(List<T> sourceList, T[] elementsToRemove) {
             for (int i = 0; i < sourceList.Count; i++) {
                 T currElement = sourceList[i];
                 if (elementsToRemove.Contains(currElement)) {
-                    continue; //do not add that element to new list
+                    sourceList.RemoveAt(i);
+                    i--;
                 }
-                newList.Add(currElement);
             }
-            return newList;
-        }
-        public static List<T> RemoveElements<T>(ref List<T> sourceList, T[] elementsToRemove) {
-            List<T> newList = new List<T>();
-            for (int i = 0; i < sourceList.Count; i++) {
-                T currElement = sourceList[i];
-                if (elementsToRemove.Contains(currElement)) {
-                    continue; //do not add that element to new list
-                }
-                newList.Add(currElement);
-            }
-            return newList;
         }
         /// <summary>
         /// Get a random index from the given list.

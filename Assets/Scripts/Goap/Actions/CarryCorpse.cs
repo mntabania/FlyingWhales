@@ -57,14 +57,16 @@ public class CarryCorpse : GoapAction {
         return goapActionInvalidity;
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
+#if DEBUG_LOG
         string costLog = $"\n{name} {target.nameWithID}:";
         costLog += $" +10(Constant)";
         actor.logComponent.AppendCostLog(costLog);
+#endif
         return 10;
     }
-    #endregion
+#endregion
 
-    #region Requirements
+#region Requirements
    protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, OtherData[] otherData, JobQueueItem job) { 
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData, job);
         if (satisfied) {
@@ -82,15 +84,15 @@ public class CarryCorpse : GoapAction {
         }
         return false;
     }
-    #endregion
+#endregion
 
-    #region State Effects
+#region State Effects
     public void AfterCarrySuccess(ActualGoapNode goapNode) {
         goapNode.actor.CarryPOI(goapNode.poiTarget, setOwnership: false);
     }
-    #endregion
+#endregion
 
-    #region Precondition
+#region Precondition
     private bool TargetIsDead(Character actor, IPointOfInterest target, object[] otherData, JOB_TYPE jobType) {
         if(target is Character targetCharacter) {
             return targetCharacter.isDead;
@@ -99,12 +101,19 @@ public class CarryCorpse : GoapAction {
         }
         return true;
     }
-    #endregion
+#endregion
 
     private bool TargetMissingForCarry(ActualGoapNode node) {
         Character actor = node.actor;
         IPointOfInterest poiTarget = node.poiTarget;
-        return poiTarget.gridTileLocation == null || actor.currentRegion != poiTarget.currentRegion
-                    || !(actor.gridTileLocation == poiTarget.gridTileLocation || actor.gridTileLocation.IsNeighbour(poiTarget.gridTileLocation, true)) || !poiTarget.mapObjectVisual;
+        if (poiTarget.gridTileLocation == null || actor.currentRegion != poiTarget.currentRegion || !poiTarget.mapObjectVisual) {
+            return true;
+        } else if (actor.gridTileLocation != poiTarget.gridTileLocation && !actor.gridTileLocation.IsNeighbour(poiTarget.gridTileLocation, true)) {
+            if (actor.hasMarker && actor.marker.IsCharacterInLineOfSightWith(poiTarget)) {
+                return false;
+            }
+            return true;
+        }
+        return false;
     }
 }

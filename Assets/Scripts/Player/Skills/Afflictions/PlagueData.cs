@@ -1,6 +1,8 @@
 ﻿using System.Collections;
 using Logs;
+using Object_Pools;
 using UnityEngine;
+using UtilityScripts;
 
 public class PlagueData : AfflictData {
     public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.PLAGUE;
@@ -15,11 +17,12 @@ public class PlagueData : AfflictData {
 
     #region Overrides
     public override void ActivateAbility(IPointOfInterest targetPOI) {
-        Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "General", "Player", "player_afflicted", null, LOG_TAG.Player, LOG_TAG.Life_Changes);
+        Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "General", "Player", "player_afflicted", null, LogUtilities.Player_Life_Changes_Tags);
         log.AddToFillers(targetPOI, targetPOI.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         log.AddToFillers(null, "Plagued", LOG_IDENTIFIER.STRING_1);
         log.AddLogToDatabase();
         PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
+        LogPool.Release(log);
         if (targetPOI is Character) {
             (targetPOI as Character).interruptComponent.TriggerInterrupt(INTERRUPT.Plagued, targetPOI);
         }
@@ -45,7 +48,7 @@ public class PlagueData : AfflictData {
     #endregion
 
     private string GetDescription() {
-        string modifiedDescription = $"This Affliction will afflict a Villager with a virulent disease. The Plague may start spreading to others before eventually killing the Villager.";
+        string modifiedDescription = $"This Affliction will afflict a character with a virulent disease. The Plague may start spreading to others before eventually killing the character.";
         if (GameManager.Instance.gameHasStarted) {
             modifiedDescription = $"{modifiedDescription}\n\n{PlagueDisease.Instance.GetPlagueEffectsSummary()}";
         }

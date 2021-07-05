@@ -28,9 +28,9 @@ namespace Interrupts {
                 if (!actor.lycanData.isMaster && GameUtilities.RollChance(25)) { //25
                     //chance to master
                     actor.lycanData.SetIsMaster(true);
-                    Log log = new Log(GameManager.Instance.Today(), "Interrupt", "Revert To Normal", "mastered");
+                    Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Interrupt", "Revert To Normal", "mastered");
                     log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                    log.AddLogToDatabase();
+                    log.AddLogToDatabase(true);
                 }
             } else {
                 actor.traitContainer.RemoveTrait(actor, "Transforming");

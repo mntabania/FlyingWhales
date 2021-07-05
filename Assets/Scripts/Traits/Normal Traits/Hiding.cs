@@ -50,19 +50,25 @@ namespace Traits {
 		}
 		private void CoweringCheck() {
 			if (_owner.limiterComponent.canPerform == false) { return; }
-			string summary = $"{GameManager.Instance.TodayLogString()}{_owner.name} is rolling for cower.";
 			int roll = Random.Range(0, 100);
 			int chance = 50;
+#if DEBUG_LOG
+			string summary = $"{GameManager.Instance.TodayLogString()}{_owner.name} is rolling for cower.";
 			summary += $"\nRoll is {roll.ToString()}. Chance is {chance.ToString()}";
+#endif
 			if (roll < chance) {
+#if DEBUG_LOG
 				summary += $"\nChance met, triggering cowering interrupt";
+#endif
 				_owner.interruptComponent.TriggerInterrupt(INTERRUPT.Cowering, _owner, reason: "got scared");
 			}
+#if DEBUG_LOG
 			Debug.Log(summary);
+#endif
 		}
 		private void StopCheckingForCowering() {
 			Messenger.RemoveListener(Signals.HOUR_STARTED, CoweringCheck);
 		}
-		#endregion
+#endregion
 	}
 }

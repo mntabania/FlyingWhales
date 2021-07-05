@@ -21,14 +21,16 @@ namespace Plague.Death_Effect {
                     Meteor(p_character);
                     break;
             }
+#if DEBUG_LOG
             Debug.Log("Activated Explosion Death Effect");
+#endif
         }
         protected override int GetNextLevelUpgradeCost() {
             switch (_level) {
                 case 1:
-                    return 25;
-                case 2:
                     return 50;
+                case 2:
+                    return 75;
                 default:
                     return -1; //Max Level
             }
@@ -53,8 +55,7 @@ namespace Plague.Death_Effect {
         private void Ignite(Character p_character) {
             if (p_character.marker) {
                 BurningSource bs = new BurningSource();
-                Burning burning = new Burning();
-                burning.InitializeInstancedTrait();
+                Burning burning = TraitManager.Instance.CreateNewInstancedTraitClass<Burning>("Burning");
                 burning.SetSourceOfBurning(bs, p_character);
                 p_character.traitContainer.AddTrait(p_character, burning, bypassElementalChance: true);
             }
@@ -79,7 +80,7 @@ namespace Plague.Death_Effect {
             if (chosenTile != null) {
                 Summon summon = CharacterManager.Instance.CreateNewSummon(SUMMON_TYPE.Fire_Elemental, FactionManager.Instance.neutralFaction, null, chosenTile.parentMap.region);
                 CharacterManager.Instance.PlaceSummonInitially(summon, chosenTile);
-                summon.SetTerritory(chosenTile.collectionOwner.partOfHextile.hexTileOwner, false);
+                summon.SetTerritory(chosenTile.area, false);
             }
         }
         private void Meteor(Character p_character) {

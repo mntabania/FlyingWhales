@@ -5,7 +5,7 @@ using UnityEngine;
 public class KleptomaniaData : AfflictData {
     public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.KLEPTOMANIA;
     public override string name => "Kleptomania";
-    public override string description => $"This Affliction will turn a Villager into a Kleptomaniac. Kleptomaniacs will sometimes steal objects owned by other Villagers.";
+    public override string description => $"This Affliction will turn a Villager into a Kleptomaniac. Kleptomaniacs will sometimes steal objects owned by others.";
     public override PLAYER_SKILL_CATEGORY category => PLAYER_SKILL_CATEGORY.AFFLICTION;
     //public override INTERVENTION_ABILITY_TYPE type => INTERVENTION_ABILITY_TYPE.AFFLICTION;
 

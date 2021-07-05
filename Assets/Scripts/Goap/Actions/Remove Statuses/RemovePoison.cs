@@ -24,24 +24,31 @@ public class RemovePoison : GoapAction {
         SetState("Remove Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
-        string costLog = "";
+#if DEBUG_LOG
+        string costLog = string.Empty;
+#endif
         if (target.gridTileLocation != null && actor.movementComponent.structuresToAvoid.Contains(target.gridTileLocation.structure)) {
             //target is at structure that character is avoiding
+#if DEBUG_LOG
             costLog += $" +2000(Location of target is in avoid structure)";
             actor.logComponent.AppendCostLog(costLog);
+#endif
             return 2000;
         }
+#if DEBUG_LOG
         costLog = $"\n{name} {target.nameWithID}: +10(Constant)";
         actor.logComponent.AppendCostLog(costLog);
+#endif
         return 10;
     }
-    #endregion
+#endregion
 
-    #region State Effects
+#region State Effects
     //public void PreRemovePoisonSuccess(ActualGoapNode goapNode) {
     //    goapNode.descriptionLog.AddToFillers(goapNode.poiTarget.gridTileLocation.structure.location, goapNode.poiTarget.gridTileLocation.structure.GetNameRelativeTo(goapNode.actor), LOG_IDENTIFIER.LANDMARK_1);
     //}
     public void AfterRemoveSuccess(ActualGoapNode goapNode) {
+        //goapNode.actor.moneyComponent.AdjustCoins(10);
         //**Effect 1**: Remove Poisoned Trait from target table
         goapNode.poiTarget.traitContainer.RemoveStatusAndStacks(goapNode.poiTarget, "Poisoned");
         //**Effect 2**: Remove Tool from Actor's inventory
@@ -50,14 +57,16 @@ public class RemovePoison : GoapAction {
             goapNode.actor.UnobtainItem(tool);
         } else {
             //the actor does not have a tool, log for now
+#if DEBUG_LOG
             goapNode.actor.logComponent.PrintLogErrorIfActive(
                 $"{goapNode.actor.name} does not have a tool for removing poison! Poison was still removed, but thought you should know.");
+#endif
         }
        
     }
-    #endregion
+#endregion
 
-    #region Requirement
+#region Requirement
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, OtherData[] otherData, JobQueueItem job) {
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData, job);
         if (satisfied) {
@@ -68,11 +77,11 @@ public class RemovePoison : GoapAction {
         }
         return false;
     }
-    #endregion
+#endregion
 
-    #region Preconditions
+#region Preconditions
     private bool HasAntidote(Character actor, IPointOfInterest poiTarget, object[] otherData, JOB_TYPE jobType) {
         return actor.HasItem(TILE_OBJECT_TYPE.ANTIDOTE);
     }
-    #endregion
+#endregion
 }

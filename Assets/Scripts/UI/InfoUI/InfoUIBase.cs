@@ -8,7 +8,8 @@ using Ruinarch.Custom_UI;
 public abstract class InfoUIBase : MonoBehaviour {
     public Button backButton;
     public bool isShowing;
-    private Action openMenuAction;
+    private Action _openMenuAction;
+    private Action _closeMenuAction;
 
     protected object _data;
 
@@ -26,11 +27,11 @@ public abstract class InfoUIBase : MonoBehaviour {
         _toggles = GetComponentsInChildren<RuinarchToggle>(true);
     }
     protected void ListenToPlayerActionSignals() {
-        Messenger.AddListener<PlayerAction>(SpellSignals.ON_EXECUTE_PLAYER_ACTION, OnExecutePlayerAction);
-        Messenger.AddListener<IPlayerActionTarget>(SpellSignals.RELOAD_PLAYER_ACTIONS, ReloadPlayerActions);
-        Messenger.AddListener(SpellSignals.FORCE_RELOAD_PLAYER_ACTIONS, ForceReloadPlayerActions);
-        Messenger.AddListener<PLAYER_SKILL_TYPE, IPlayerActionTarget>(SpellSignals.PLAYER_ACTION_ADDED_TO_TARGET, OnPlayerActionAddedToTarget);
-        Messenger.AddListener<PLAYER_SKILL_TYPE, IPlayerActionTarget>(SpellSignals.PLAYER_ACTION_REMOVED_FROM_TARGET, OnPlayerActionRemovedFromTarget);
+        Messenger.AddListener<PlayerAction>(PlayerSkillSignals.ON_EXECUTE_PLAYER_ACTION, OnExecutePlayerAction);
+        Messenger.AddListener<IPlayerActionTarget>(PlayerSkillSignals.RELOAD_PLAYER_ACTIONS, ReloadPlayerActions);
+        Messenger.AddListener(PlayerSkillSignals.FORCE_RELOAD_PLAYER_ACTIONS, ForceReloadPlayerActions);
+        Messenger.AddListener<PLAYER_SKILL_TYPE, IPlayerActionTarget>(PlayerSkillSignals.PLAYER_ACTION_ADDED_TO_TARGET, OnPlayerActionAddedToTarget);
+        Messenger.AddListener<PLAYER_SKILL_TYPE, IPlayerActionTarget>(PlayerSkillSignals.PLAYER_ACTION_REMOVED_FROM_TARGET, OnPlayerActionRemovedFromTarget);
     }
     private void OnReceiveHideMenuSignal() {
         if (isShowing) {
@@ -53,14 +54,13 @@ public abstract class InfoUIBase : MonoBehaviour {
             }
         }
         
-        if (openMenuAction != null) {
-            openMenuAction();
-            openMenuAction = null;
+        if (_openMenuAction != null) {
+            _openMenuAction();
+            _openMenuAction = null;
         }
         Messenger.Broadcast(UISignals.MENU_OPENED, this);
         
         UIManager.Instance.poiTestingUI.HideUI();
-        UIManager.Instance.minionCommandsUI.HideUI();
         UIManager.Instance.customDropdownList.Close();
         if(_data is Minion minion) {
             _playerActionTarget = minion.character;
@@ -75,6 +75,8 @@ public abstract class InfoUIBase : MonoBehaviour {
     public virtual void CloseMenu() {
         isShowing = false;
         this.gameObject.SetActive(false);
+        _closeMenuAction?.Invoke();
+        SetData(null);
         Messenger.Broadcast(UISignals.MENU_CLOSED, this);
     }
     public virtual void SetData(object data) {
@@ -99,6 +101,15 @@ public abstract class InfoUIBase : MonoBehaviour {
         }
     }
 
+    #region Listeners
+    public void AddCloseMenuAction(System.Action p_action) {
+        _closeMenuAction += p_action;
+    }
+    public void AddOpenMenuAction(System.Action p_action) {
+        _openMenuAction += p_action;
+    }
+    #endregion
+    
     #region Actions
     protected List<ActionItem> activeActionItems = new List<ActionItem>();
     protected virtual void LoadActions(IPlayerActionTarget target) {
@@ -123,7 +134,7 @@ public abstract class InfoUIBase : MonoBehaviour {
         activeActionItems.Add(item);
         return item;
     }
-    private ActionItem GetActionItem(PlayerAction action) {
+    public ActionItem GetActionItem(PlayerAction action) {
         for (int i = 0; i < activeActionItems.Count; i++) {
             ActionItem item = activeActionItems[i];
             if (item.playerAction == action) {
@@ -162,4 +173,8 @@ public abstract class InfoUIBase : MonoBehaviour {
         return null;
     }
     #endregion
+
+    private void OnDestroy() {
+        _closeMenuAction = null;
+    }
 }

@@ -42,16 +42,18 @@ public class Stumble : GoapAction {
         int randomHpToLose = UnityEngine.Random.Range(1, 6);
         float percentMaxHPToLose = randomHpToLose / 100f;
         int actualHPToLose = Mathf.CeilToInt(goapNode.actor.maxHP * percentMaxHPToLose);
+#if DEBUG_LOG
         Debug.Log(
             $"Stumble of {goapNode.actor.name} percent: {percentMaxHPToLose}, max hp: {goapNode.actor.maxHP}, lost hp: {actualHPToLose}");
+#endif
         goapNode.actor.AdjustHP(-actualHPToLose, ELEMENTAL_TYPE.Normal, showHPBar: true);
     }
     public void AfterStumbleSuccess(ActualGoapNode goapNode) {
-        if (goapNode.actor.currentHP <= 0) {
+        if (!goapNode.actor.HasHealth()) {
             goapNode.actor.Death(deathFromAction: goapNode);
         }
     }
-    #endregion
+#endregion
 
     //#region Intel Reactions
     //private List<string> SuccessReactions(Character recipient, Intel sharedIntel, SHARE_INTEL_STATUS status) {

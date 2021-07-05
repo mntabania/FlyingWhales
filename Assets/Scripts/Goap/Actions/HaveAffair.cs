@@ -63,9 +63,17 @@ public class HaveAffair : GoapAction {
                 return false;
             }
             Character targetCharacter = poiTarget as Character;
-            if (RelationshipManager.IsSexuallyCompatible(actor, targetCharacter) && 
-                RelationshipManager.Instance.GetValidator(actor).CanHaveRelationship(actor, targetCharacter, RELATIONSHIP_TYPE.AFFAIR)) {
-                return true;
+            Unfaithful unfaithful = actor.traitContainer.GetTraitOrStatus<Unfaithful>("Unfaithful");
+            if (unfaithful != null) {
+                if (unfaithful.IsCompatibleBasedOnSexualityAndOpinions(actor, targetCharacter) &&
+                    RelationshipManager.Instance.GetValidator(actor).CanHaveRelationship(actor, targetCharacter, RELATIONSHIP_TYPE.AFFAIR)) {
+                    return true;
+                }
+            } else {
+                if (RelationshipManager.IsSexuallyCompatible(actor, targetCharacter) && 
+                    RelationshipManager.Instance.GetValidator(actor).CanHaveRelationship(actor, targetCharacter, RELATIONSHIP_TYPE.AFFAIR)) {
+                    return true;
+                }  
             }
         }
         return false;

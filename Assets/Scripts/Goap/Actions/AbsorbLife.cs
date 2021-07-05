@@ -23,13 +23,15 @@ public class AbsorbLife : GoapAction {
         SetState("Absorb Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
+#if DEBUG_LOG
         string costLog = $"\n{name} {target.nameWithID}: +10(Constant)";
         actor.logComponent.AppendCostLog(costLog);
+#endif
         return 10;
     }
-    #endregion
+#endregion
 
-    #region Requirements
+#region Requirements
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, OtherData[] otherData, JobQueueItem job) {
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData, job);
         if (satisfied) {
@@ -41,27 +43,27 @@ public class AbsorbLife : GoapAction {
         }
         return false;
     }
-    #endregion
+#endregion
 
-    #region Preconditions
+#region Preconditions
     private bool IsTargetDead(Character actor, IPointOfInterest poiTarget, object[] otherData, JOB_TYPE jobType) {
         if (poiTarget is Character character) {
             return character.isDead;
         }
         return true;
     }
-    #endregion
+#endregion
 
-    #region State Effects
+#region State Effects
     public void AfterAbsorbSuccess(ActualGoapNode goapNode) {
         goapNode.actor.necromancerTrait.AdjustLifeAbsorbed(2);
         if(goapNode.poiTarget is Character targetCharacter) {
-            if(targetCharacter.currentRegion != null) {
+            targetCharacter.DestroyMarker();
+            if (targetCharacter.currentRegion != null) {
                 targetCharacter.currentRegion.RemoveCharacterFromLocation(targetCharacter);
             }
-            targetCharacter.DestroyMarker();
         }
     }
-    #endregion
+#endregion
 
 }

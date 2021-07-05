@@ -1,1 +1,1 @@
-{"items":[{"key":"no_target","value":"Cannot find a valid Steal victim."},{"key":"no_path_to_target","value":"Cannot find a path towards Steal victim."}]}
+{"items":[{"key":"no_target","value":"Could not find anyone nearby to pickpocket."},{"key":"no_path_to_target","value":"Cannot find a path towards Pickpocket victim."}]}

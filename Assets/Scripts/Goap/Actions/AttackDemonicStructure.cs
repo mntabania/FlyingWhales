@@ -22,8 +22,10 @@ public class AttackDemonicStructure : GoapAction {
 		SetState("Attack Success", goapNode);
 	}
 	protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
+#if DEBUG_LOG
 		string costLog = $"\n{name} {target.nameWithID}: +10(Constant)";
 		actor.logComponent.AppendCostLog(costLog);
+#endif
 		return 10;
 	}
     public override LocationStructure GetTargetStructure(ActualGoapNode node) {
@@ -48,7 +50,7 @@ public class AttackDemonicStructure : GoapAction {
 		//This must return null so that the GetTargetTileToGoTo will be triggered
 		return null;
 	}
-    public override void AddFillersToLog(ref Log log, ActualGoapNode node) {
+    public override void AddFillersToLog(Log log, ActualGoapNode node) {
         Character actor = node.actor;
         IPointOfInterest poiTarget = node.poiTarget;
         LocationStructure targetStructure = node.targetStructure;
@@ -56,5 +58,5 @@ public class AttackDemonicStructure : GoapAction {
         log.AddToFillers(poiTarget, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER); //Target character is only the identifier but it doesn't mean that this is a character, it can be item, etc.
         log.AddToFillers(targetStructure, targetStructure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
     }
-    #endregion
+#endregion
 }

@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1e0fe33fc91848c68ab8d6bd0b390d79, type: 3}
+  m_Name: Abilities
+  m_EditorClassIdentifier: 
+  tutorialType: 11
+  tutorialNameKey: abilities
+  pages:
+  - imgTutorial: {fileID: 21300000, guid: 226dfad10e3028242845ce7bc16a457e, type: 3}
+    description: You have a variety of Abilities you can activate on specific characters
+      and objects. Simply right-click on the sprite to bring up the Ability Popup.
+  - imgTutorial: {fileID: 21300000, guid: 48ef5b6d3b23dca4f9f2f6e418eeaac5, type: 3}
+    description: You can also right-click on a character or object's name to bring
+      up the Ability Popup.

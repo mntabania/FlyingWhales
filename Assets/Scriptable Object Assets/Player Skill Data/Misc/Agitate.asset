@@ -13,15 +13,92 @@ MonoBehaviour:
   m_Name: Agitate
   m_EditorClassIdentifier: 
   skill: 89
-  manaCost: 15
-  charges: 3
-  cooldown: 96
+  manaCost: 100
+  charges: 1
+  cooldown: 160
   threat: 0
   threatPerHour: 0
   expCost: 0
+  cheatedLevel: 0
+  pierce: 0
+  bonusChargeWhenUnlocked: 2
+  unlockChargeOnPortalUpgrade: 1
   buttonSprite: {fileID: 21300000, guid: e82f28130057b894cb52771c34d33c2d, type: 3}
   tooltipVideoClip: {fileID: 0}
   tooltipImage: {fileID: 0}
+  unlockCost: 50
+  tier: 1
+  baseLoadoutWeight: 250
+  resistanceType: 9
+  archetypeWeightedBonus: 1
+  canBeReleasedEvenIfLearned: 0
   contextMenuIcon: {fileID: 21300000, guid: 0e0660d7121fbec41ab7b927d1bea4c9, type: 3}
   contextMenuColumn: 0
   playerActionIcon: {fileID: 21300000, guid: be6e6d76787bad747acdc647f43942bb, type: 3}
+  isNonUpgradeable: 0
+  isAffliction: 0
+  isLockedBaseOnRequirements: 0
+  canBeCastedOnMaxLevel: 0
+  requirementData:
+    requirements: 08000000
+    requiredArchetypes: 
+    requiredSkills: 
+    actionCount: 0
+    afflictionCount: 0
+    spellsCount: 0
+    tier1Count: 0
+    tier2Count: 0
+    tier3Count: 0
+    portalLevel: 2
+    isOR: 0
+  skillUpgradeData:
+    upgradeCosts: 140000003200000050000000
+    manacostPerLevel: 6400000096000000c80000002c010000
+    chargesPerLevel: 01000000010000000200000003000000
+    bonuses: 0e000000010000000600000004000000
+    additionalDamagePerLevel: 190000001900000019000000
+    additionalPiercePerLevel:
+    - 0
+    - 50
+    - 100
+    - 150
+    additionalHpPercentagePerLevel: []
+    additionalAttackPercentagePerLevel:
+    - 0
+    - 25
+    - 50
+    - 75
+    additionalHpValuePerLevel: 
+    additionalAttackValuePerLevel: 
+    applyOnLevel: 
+    additionalmanaReceivedPercentagePerLevel: []
+    statsIncreasedPercentagePerLevel: []
+    durationBonusPerLevel: 
+    additionalMaxHPPercentagePerLevel:
+    - 0
+    - 25
+    - 50
+    - 75
+    additionalMaxHPActualPerLevel: 
+    additionalChanceBonusPercentagePerLevel: []
+    additionalTileRangeBonusPerLevel: 0000000001000000
+    decreaseMovementSpeedPerLevel: 
+    cooldownPerLevel: a0000000780000007800000078000000
+    skillMovementSpeed: 
+  afflictionUpgradeData:
+    bonuses: 00000000
+    cooldown: 
+    additionalPiercePerLevel:
+    - 0
+    - 25
+    - 50
+    - 100
+    rateChance: 
+    crowdNumber: 
+    napsDuration: 
+    numberOfCriteria: 
+    hungerRate: 
+    duration: []
+    opinionTrigger: 
+    addedBehaviour: 
+    listOfCriteria: 

@@ -65,11 +65,32 @@ public class POITestingUI : MonoBehaviour {
         //}
         HideUI();
     }
+    public void FightThisCharacter() {
+        //activeCharacter.combatComponent.Fight(poi as Character, CombatManager.Hostility);
+        if (poi is Character targetCharacter) {
+            activeCharacter.combatComponent.Fight(targetCharacter, CombatManager.Anger);
+            // CreateKnockoutJob(activeCharacter, poi as Character);
+        } 
+        
+        //else if (poi is Bed) {
+        //    Bed bed = poi as Bed;
+        //    if (bed.users[0] != null) {
+        //        CreateKnockoutJob(activeCharacter, bed.users[0]);
+        //    } else if (bed.users[1] != null) {
+        //        CreateKnockoutJob(activeCharacter, bed.users[1]);
+        //    }
+        //} else {
+        //    Debug.LogError($"{poi.name} is not a character!");
+        //}
+        HideUI();
+    }
     public bool CreateKnockoutJob(Character character, Character targetCharacter) {
         GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.BRAWL, new GoapEffect(GOAP_EFFECT_CONDITION.HAS_TRAIT, "Unconscious", false, GOAP_EFFECT_TARGET.TARGET), targetCharacter, character);
         character.jobQueue.AddJobInQueue(job);
+#if DEBUG_LOG
         character.logComponent.PrintLogIfActive(
             $"Added a KNOCKOUT Job to {this.name} with target {targetCharacter.name}");
+#endif
         return true;
     }
     public void ChatWithThisCharacter() {
@@ -172,7 +193,7 @@ public class POITestingUI : MonoBehaviour {
         }
         HideUI();
     }
-    #endregion
+#endregion
 
     #region Tile Object Testing
     public void PoisonTable() {
@@ -205,13 +226,23 @@ public class POITestingUI : MonoBehaviour {
         HideUI();
     }
     public void BoobyTrap() {
-        poi.traitContainer.AddTrait(poi, "Plagued");
-        //if (poi.poiType == POINT_OF_INTEREST_TYPE.TILE_OBJECT) {
-        //    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.UNDERMINE, new GoapEffect(GOAP_EFFECT_CONDITION.HAS_TRAIT, "Booby Trapped", false, GOAP_EFFECT_TARGET.TARGET), poi, activeCharacter);
-        //    activeCharacter.jobQueue.AddJobInQueue(job);
-        //} else {
-        //    Debug.LogError($"{poi.name} is not a tile object!");
-        //}
+        //poi.traitContainer.AddTrait(poi, "Plagued");
+        if (poi.poiType == POINT_OF_INTEREST_TYPE.TILE_OBJECT) {
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.UNDERMINE, new GoapEffect(GOAP_EFFECT_CONDITION.HAS_TRAIT, "Booby Trapped", false, GOAP_EFFECT_TARGET.TARGET), poi, activeCharacter);
+            activeCharacter.jobQueue.AddJobInQueue(job);
+        } else {
+            Debug.LogError($"{poi.name} is not a tile object!");
+        }
+        HideUI();
+    }
+    public void KleptomaniacStealAnything() {
+        //poi.traitContainer.AddTrait(poi, "Plagued");
+        if (poi.poiType == POINT_OF_INTEREST_TYPE.TILE_OBJECT) {
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.KLEPTOMANIAC_STEAL, INTERACTION_TYPE.STEAL_ANYTHING, poi, activeCharacter);
+            activeCharacter.jobQueue.AddJobInQueue(job);
+        } else {
+            Debug.LogError($"{poi.name} is not a tile object!");
+        }
         HideUI();
     }
     public void HarvestPlant() {
@@ -243,6 +274,19 @@ public class POITestingUI : MonoBehaviour {
         poi.traitContainer.RestrainAndImprison(poi, activeCharacter, activeCharacter.faction, null);
         HideUI();
     }
+    public void MakeDirty() {
+        poi.traitContainer.AddTrait(poi, "Dirty");
+        HideUI();
+    }
+    public void CleanUpDirt() {
+        if (poi is TileObject tileObject && (tileObject.traitContainer.HasTrait("Dirty") || tileObject.traitContainer.HasTrait("Wet"))) {
+            activeCharacter.jobComponent.TryCreateCleanItemJob(tileObject, out var jobQueueItem);
+            activeCharacter.jobQueue.AddJobInQueue(jobQueueItem);
+        } else {
+            Debug.LogWarning($"{poi.name} is not a tile object that is dirty or wet!");
+        }
+        HideUI();
+    }
     #endregion
 
     #region Grid Tile Testing
@@ -252,7 +296,8 @@ public class POITestingUI : MonoBehaviour {
         } else {
             //Debug.LogWarning(activeCharacter.movementComponent.HasPathToEvenIfDiffRegion(this.poi.gridTileLocation));
             //STRUCTURE_TYPE[] _notAllowedStructures = new STRUCTURE_TYPE[] { STRUCTURE_TYPE.INN, STRUCTURE_TYPE.DWELLING, STRUCTURE_TYPE.WAREHOUSE, STRUCTURE_TYPE.PRISON };
-            activeCharacter.marker.GoTo(this.poi.gridTileLocation/*, notAllowedStructures: _notAllowedStructures*/);
+            //activeCharacter.marker.GoTo(this.poi.gridTileLocation/*, notAllowedStructures: _notAllowedStructures*/);
+            activeCharacter.jobComponent.CreateGoToSpecificTileJob(poi.gridTileLocation);
             HideUI();
         }
     }

@@ -51,7 +51,5 @@ namespace Managers {
             _activeEvents.Add(worldEvent);
         }
         #endregion
-        
-        
     }
 }

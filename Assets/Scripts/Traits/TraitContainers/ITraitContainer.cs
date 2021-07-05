@@ -17,9 +17,9 @@ namespace Traits {
         Dictionary<string, int> stacks { get; }
 
         #region Adding
-        bool AddTrait(ITraitable addTo, string traitName, Character characterResponsible = null, ActualGoapNode gainedFromDoing = null, bool bypassElementalChance = false, int overrideDuration = -1);
-        bool AddTrait(ITraitable addTo, Trait trait, Character characterResponsible = null, ActualGoapNode gainedFromDoing = null, bool bypassElementalChance = false, int overrideDuration = -1);
-        bool AddTrait(ITraitable addTo, string traitName, out Trait trait, Character characterResponsible = null, ActualGoapNode gainedFromDoing = null, bool bypassElementalChance = false, int overrideDuration = -1);
+        bool AddTrait(ITraitable addTo, string traitName, Character characterResponsible = null, bool bypassElementalChance = false, int overrideDuration = -1);
+        bool AddTrait(ITraitable addTo, Trait trait, Character characterResponsible = null, bool bypassElementalChance = false, int overrideDuration = -1);
+        bool AddTrait(ITraitable addTo, string traitName, out Trait trait, Character characterResponsible = null, bool bypassElementalChance = false, int overrideDuration = -1);
         void AddTraitOverrideFunction(string identifier, Trait trait);
         bool RestrainAndImprison(ITraitable addTo, Character characterResponsible = null, Faction factionThatImprisoned = null, Character characterThatImprisoned = null);
         #endregion
@@ -42,11 +42,14 @@ namespace Traits {
         #endregion
 
         #region Getting
-        T GetTraitOrStatus<T>(params string[] traitNames) where T : Trait;
         T GetTraitOrStatus<T>(string traitName) where T : Trait;
-        List<T> GetTraitsOrStatuses<T>(params string[] traitNames) where T : Trait;
-        bool HasTrait(params string[] traitNames);
+        T GetTraitOrStatus<T>(string traitName1, string traitName2) where T : Trait;
         bool HasTrait(string traitName);
+        bool HasTrait(string traitName1, string traitName2);
+        bool HasTrait(string traitName1, string traitName2, string traitName3);
+        bool HasTrait(string traitName1, string traitName2, string traitName3, string traitName4);
+        bool HasTrait(string traitName1, string traitName2, string traitName3, string traitName4, string traitName5);
+        bool HasTrait(string[] traitNames);
         bool HasTraitOf(TRAIT_TYPE traitType);
         bool HasTraitOrStatusOf(TRAIT_EFFECT traitEffect);
         List<Trait> GetAllTraitsOf(TRAIT_TYPE type);
@@ -70,6 +73,7 @@ namespace Traits {
 
         #region Inquiry
         bool HasTangibleTrait();
+        int GetElementalTraitChanceToBeAdded(string traitName, ITraitable addTo, bool bypassElementalChance);
         #endregion
 
         #region Loading

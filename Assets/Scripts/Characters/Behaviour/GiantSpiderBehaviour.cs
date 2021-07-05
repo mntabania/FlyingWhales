@@ -85,8 +85,10 @@ public class GiantSpiderBehaviour : BaseMonsterBehaviour {
         if (TryTakeSettlementJob(p_character, ref p_log, out p_producedJob)) {
             return true;
         } else {
-            TIME_IN_WORDS currentTimeInWordsOfTick = GameManager.GetCurrentTimeInWordsOfTick();
+            TIME_IN_WORDS currentTimeInWordsOfTick = GameManager.Instance.GetCurrentTimeInWordsOfTick();
+#if DEBUG_LOG
             p_log = $"{p_log}\n-Will check if can abduct, current time is {currentTimeInWordsOfTick.ToString()}";
+#endif
             if ((currentTimeInWordsOfTick == TIME_IN_WORDS.LATE_NIGHT || currentTimeInWordsOfTick == TIME_IN_WORDS.AFTER_MIDNIGHT) && GameUtilities.RollChance(5, ref p_log)) {
                 List<Character> abductChoices = ObjectPoolManager.Instance.CreateNewCharactersList();
                 for (int i = 0; i < p_character.currentRegion.charactersAtLocation.Count; i++) {
@@ -95,7 +97,9 @@ public class GiantSpiderBehaviour : BaseMonsterBehaviour {
                         abductChoices.Add(c);
                     }
                 }
+#if DEBUG_LOG
                 p_log = $"{p_log}\n-Checking if can abduct any animals: {abductChoices.Count.ToString()}";
+#endif
                 if (abductChoices.Count > 0) {
                     Character chosenCharacter = CollectionUtilities.GetRandomElement(abductChoices);
                     ObjectPoolManager.Instance.ReturnCharactersListToPool(abductChoices);
@@ -104,11 +108,15 @@ public class GiantSpiderBehaviour : BaseMonsterBehaviour {
                         targetDropLocation = CollectionUtilities.GetRandomElement(p_character.homeSettlement.mainStorage.tiles);
                     }
                     if (p_character.jobComponent.TriggerMonsterAbduct(chosenCharacter, out p_producedJob, targetDropLocation)) {
+#if DEBUG_LOG
                         p_log = $"{p_log}\n-Will abduct {chosenCharacter.nameWithID} and drop at {targetDropLocation}";
+#endif
                         return true;
                     }
                 } else {
+#if DEBUG_LOG
                     p_log = $"{p_log}\n-No valid animals to abduct, will find valid villager to abduct.";
+#endif
                     //no available animals to abduct
                     for (int i = 0; i < p_character.currentRegion.charactersAtLocation.Count; i++) {
                         Character c = p_character.currentRegion.charactersAtLocation[i];
@@ -117,7 +125,9 @@ public class GiantSpiderBehaviour : BaseMonsterBehaviour {
                             abductChoices.Add(c);
                         }
                     }
+#if DEBUG_LOG
                     p_log = $"{p_log}\n-Checking if can abduct any villagers: {abductChoices.Count.ToString()}";
+#endif
                     if (abductChoices.Count > 0) {
                         Character chosenCharacter = CollectionUtilities.GetRandomElement(abductChoices);
                         ObjectPoolManager.Instance.ReturnCharactersListToPool(abductChoices);
@@ -126,22 +136,28 @@ public class GiantSpiderBehaviour : BaseMonsterBehaviour {
                             targetDropLocation = CollectionUtilities.GetRandomElement(p_character.homeSettlement.mainStorage.tiles);
                         }
                         if (p_character.jobComponent.TriggerMonsterAbduct(chosenCharacter, out p_producedJob, targetDropLocation)) {
+#if DEBUG_LOG
                             p_log = $"{p_log}\n-Will abduct {chosenCharacter.nameWithID} and drop at {targetDropLocation}";
+#endif
                             return true;
                         }
                     }
                 }
             }
-
+#if DEBUG_LOG
             p_log = $"{p_log}\n-Will try to take personal patrol job.";
+#endif
             if (TryTakePersonalPatrolJob(p_character, 15, ref p_log, out p_producedJob)) {
                 return true;
             }
-
+#if DEBUG_LOG
             p_log = $"{p_log}\n-Will try to lay egg";
+#endif
             if (GameUtilities.RollChance(3, ref p_log)) {
                 if (TryTriggerLayEgg(p_character, 5, TILE_OBJECT_TYPE.SPIDER_EGG, out p_producedJob)) {
+#if DEBUG_LOG
                     p_log = $"{p_log}\n-Will lay an egg";
+#endif
                     return true;
                 }
             }
@@ -151,9 +167,9 @@ public class GiantSpiderBehaviour : BaseMonsterBehaviour {
     }
     private void PopulateWebbedCharactersAtHome(List<Character> p_characterList, Character character) {
         if (character.homeStructure != null) {
-            character.homeStructure.PopulateCharacterListThatMeetCriteria(p_characterList, c => c.traitContainer.HasTrait("Webbed"));
+            character.homeStructure.PopulateCharacterListThatIsWebbed(p_characterList);
         } else if (character.HasTerritory()) {
-            character.territory.PopulateCharacterListInsideHexThatMeetCriteria(p_characterList, c => c.traitContainer.HasTrait("Webbed"));
+            character.territory.locationCharacterTracker.PopulateCharacterListInsideHexThatHasTrait(p_characterList, "Webbed");
         }
     }
 }

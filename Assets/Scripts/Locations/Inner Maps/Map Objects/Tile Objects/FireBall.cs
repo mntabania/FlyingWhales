@@ -16,9 +16,9 @@ public class FireBall : MovingTileObject {
         Initialize(TILE_OBJECT_TYPE.FIRE_BALL, false);
         AddAdvertisedAction(INTERACTION_TYPE.ASSAULT);
         AddAdvertisedAction(INTERACTION_TYPE.RESOLVE_COMBAT);
-        expiryDate = GameManager.Instance.Today().AddTicks(GameManager.Instance.GetTicksBasedOnHour(2));
+        expiryDate = GameManager.Instance.Today().AddTicks((int)PlayerSkillManager.Instance.GetDurationBonusPerLevel(PLAYER_SKILL_TYPE.FIRE_BALL));
     }
-    public FireBall(SaveDataFireBall data) {
+    public FireBall(SaveDataFireBall data) : base(data) {
         //SaveDataFireBall saveDataFireBall = data as SaveDataFireBall;
         Assert.IsNotNull(data);
         expiryDate = data.expiryDate;
@@ -44,12 +44,12 @@ public class FireBall : MovingTileObject {
         return "Fire Ball";
     }
     public override void AdjustHP(int amount, ELEMENTAL_TYPE elementalDamageType, bool triggerDeath = false,
-        object source = null, CombatManager.ElementalTraitProcessor elementalTraitProcessor = null, bool showHPBar = false) {
+        object source = null, CombatManager.ElementalTraitProcessor elementalTraitProcessor = null, bool showHPBar = false, float piercingPower = 0f, bool isPlayerSource = false) {
         if (currentHP == 0 && amount < 0) {
             return; //hp is already at minimum, do not allow any more negative adjustments
         }
         LocationGridTile tileLocation = gridTileLocation;
-        CombatManager.Instance.DamageModifierByElementsAndTraits(ref amount, elementalDamageType, this);
+        CombatManager.Instance.ModifyDamage(ref amount, elementalDamageType, piercingPower, this);
         currentHP += amount;
         currentHP = Mathf.Clamp(currentHP, 0, maxHP);
         if (amount < 0) { 
@@ -57,7 +57,13 @@ public class FireBall : MovingTileObject {
             if (source is Character character) {
                 responsibleCharacter = character;
             }
-            CombatManager.Instance.ApplyElementalDamage(amount, elementalDamageType, this, responsibleCharacter, elementalTraitProcessor);
+            //amount += -PlayerSkillManager.Instance.GetAdditionalDamageBaseOnLevel(PLAYER_SKILL_TYPE.FIRE_BALL);
+            CombatManager.Instance.ApplyElementalDamage(amount, elementalDamageType, this, responsibleCharacter, elementalTraitProcessor, setAsPlayerSource: isPlayerSource);
+            //Messenger.Broadcast(PlayerSignals.PLAYER_HIT_CHARACTER_VIA_SPELL, responsibleCharacter, amount);
+            //if (responsibleCharacter != null && !responsibleCharacter.HasHealth()) {
+            //    responsibleCharacter.skillCauseOfDeath = PLAYER_SKILL_TYPE.FIRE_BALL;
+            //    Messenger.Broadcast(PlayerSignals.CREATE_SPIRIT_ENERGY, responsibleCharacter.deathTilePosition.centeredLocalLocation, 1, responsibleCharacter.currentRegion.innerMap);
+            //}
         }
         if (amount < 0 && elementalDamageType == ELEMENTAL_TYPE.Water) {
             //2 Vapors
@@ -71,10 +77,12 @@ public class FireBall : MovingTileObject {
             //object has been destroyed
             _fireBallMapVisual.Expire();
         }
+#if DEBUG_LOG
         Debug.Log($"{GameManager.Instance.TodayLogString()}HP of {this} was adjusted by {amount}. New HP is {currentHP}.");
+#endif
     }
 
-    #region Moving Tile Object
+#region Moving Tile Object
     protected override bool TryGetGridTileLocation(out LocationGridTile tile) {
         if (_fireBallMapVisual != null) {
             if (_fireBallMapVisual.isSpawned) {
@@ -85,7 +93,7 @@ public class FireBall : MovingTileObject {
         tile = null;
         return false;
     }
-    #endregion
+#endregion
 }
 #region Save Data
 public class SaveDataFireBall : SaveDataMovingTileObject {

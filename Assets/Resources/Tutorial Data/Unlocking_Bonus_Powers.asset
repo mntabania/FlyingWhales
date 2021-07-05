@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1e0fe33fc91848c68ab8d6bd0b390d79, type: 3}
+  m_Name: Unlocking_Bonus_Powers
+  m_EditorClassIdentifier: 
+  tutorialType: 0
+  tutorialNameKey: unlock_bonus_powers
+  pages:
+  - imgTutorial: {fileID: 21300000, guid: fa8cec40289be5140ada6ec0a03b9237, type: 3}
+    description: You can obtain limited charges of various Powers from the Portal.
+  - imgTutorial: {fileID: 21300000, guid: 1176c1c7d76c1fe4fb7ccc02fc5ab3f4, type: 3}
+    description: The Portal will provide you with a random set of three Powers to
+      choose from. Note that Powers obtained here have limited charges only!

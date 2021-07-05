@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;  
 using Traits;
-
+using Inner_Maps.Location_Structures;
 public class ReleaseCharacter : GoapAction {
 
     public override ACTION_CATEGORY actionCategory { get { return ACTION_CATEGORY.DIRECT; } }
@@ -43,7 +43,7 @@ public class ReleaseCharacter : GoapAction {
     }
     public override void OnStoppedInterrupt(ActualGoapNode node) {
         base.OnStoppedInterrupt(node);
-        if (node.actor.partyComponent.hasParty && node.actor.partyComponent.currentParty.isActive && node.actor.partyComponent.currentParty.currentQuest is RescuePartyQuest quest) {
+        if (node.actor.partyComponent.hasParty && node.actor.partyComponent.currentParty.isActive && node.actor.partyComponent.currentParty.currentQuest is IRescuePartyQuest quest) {
             if (quest.targetCharacter == node.poiTarget) {
                 quest.SetIsReleasing(false);
             }
@@ -51,7 +51,7 @@ public class ReleaseCharacter : GoapAction {
     }
     public override void OnStopWhilePerforming(ActualGoapNode node) {
         base.OnStopWhilePerforming(node);
-        if (node.actor.partyComponent.hasParty && node.actor.partyComponent.currentParty.isActive && node.actor.partyComponent.currentParty.currentQuest is RescuePartyQuest quest) {
+        if (node.actor.partyComponent.hasParty && node.actor.partyComponent.currentParty.isActive && node.actor.partyComponent.currentParty.currentQuest is IRescuePartyQuest quest) {
             if (quest.targetCharacter == node.poiTarget) {
                 quest.SetIsReleasing(false);
             }
@@ -59,7 +59,7 @@ public class ReleaseCharacter : GoapAction {
     }
     public override void OnStopWhileStarted(ActualGoapNode node) {
         base.OnStopWhileStarted(node);
-        if (node.actor.partyComponent.hasParty && node.actor.partyComponent.currentParty.isActive && node.actor.partyComponent.currentParty.currentQuest is RescuePartyQuest quest) {
+        if (node.actor.partyComponent.hasParty && node.actor.partyComponent.currentParty.isActive && node.actor.partyComponent.currentParty.currentQuest is IRescuePartyQuest quest) {
             if (quest.targetCharacter == node.poiTarget) {
                 quest.SetIsReleasing(false);
             }
@@ -67,7 +67,7 @@ public class ReleaseCharacter : GoapAction {
     }
     public override void OnInvalidAction(ActualGoapNode node) {
         base.OnInvalidAction(node);
-        if (node.actor.partyComponent.hasParty && node.actor.partyComponent.currentParty.isActive && node.actor.partyComponent.currentParty.currentQuest is RescuePartyQuest quest) {
+        if (node.actor.partyComponent.hasParty && node.actor.partyComponent.currentParty.isActive && node.actor.partyComponent.currentParty.currentQuest is IRescuePartyQuest quest) {
             if (quest.targetCharacter == node.poiTarget) {
                 quest.SetIsReleasing(false);
             }
@@ -102,11 +102,19 @@ public class ReleaseCharacter : GoapAction {
         target.traitContainer.RemoveStatusAndStacks(target, "Ensnared", goapNode.actor);
         target.traitContainer.RemoveTrait(target, "Enslaved", goapNode.actor);
 
-        if (goapNode.actor.partyComponent.hasParty && goapNode.actor.partyComponent.currentParty.isActive && goapNode.actor.partyComponent.currentParty.currentQuest is RescuePartyQuest quest) {
+        if (goapNode.actor.partyComponent.hasParty && goapNode.actor.partyComponent.currentParty.isActive && goapNode.actor.partyComponent.currentParty.currentQuest is IRescuePartyQuest quest) {
             if(quest.targetCharacter == goapNode.poiTarget) {
                 quest.SetIsSuccessful(true);
                 quest.SetIsReleasing(false);
-                goapNode.actor.partyComponent.currentParty.GoBackHomeAndEndQuest();
+                goapNode.actor.partyComponent.currentParty.currentQuest.EndQuest("Finished quest");
+
+                //if target is paralyzed carry back home
+                if (target.traitContainer.HasTrait("Paralyzed")) {
+                    //if target is paralyzed carry back home
+                    if (!target.IsPOICurrentlyTargetedByAPerformingAction(JOB_TYPE.MOVE_CHARACTER)) {
+                        goapNode.actor.jobComponent.TryTriggerMoveCharacter(target);
+                    }
+                }
             }
         }
         if (isEnslaved) {

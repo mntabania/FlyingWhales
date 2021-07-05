@@ -17,6 +17,6 @@ public abstract class MapGenerationComponent {
 	
 
 	public void AddLog(string str) {
-		log += $"\t-{str}\n";
+		log = $"{log}\t-{str}\n";
 	}
 }

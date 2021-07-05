@@ -14,14 +14,20 @@ public struct VillageSetting {
         }
     }
     
-    public int GetTileCountReservedForVillage() {
+    public int GetTileCountReservedForVillage(MAP_SIZE p_mapSize) {
         switch (villageSize) {
             case VILLAGE_SIZE.Small:
-                return 3;
+                return 2;
             case VILLAGE_SIZE.Medium:
+                if (p_mapSize == MAP_SIZE.Small) {
+                    return 2;
+                }
                 return 3;
             case VILLAGE_SIZE.Large:
-                return 4;
+                if (p_mapSize == MAP_SIZE.Small) {
+                    return 2;
+                }
+                return 3;
             default:
                 throw new ArgumentOutOfRangeException();
         }
@@ -29,23 +35,59 @@ public struct VillageSetting {
     public int GetRandomDwellingCount() {
         switch (villageSize) {
             case VILLAGE_SIZE.Small:
-                return UtilityScripts.Utilities.Rng.Next(4, 6);
+                return UtilityScripts.Utilities.Rng.Next(5, 7);
             case VILLAGE_SIZE.Medium:
-                return UtilityScripts.Utilities.Rng.Next(6, 8);
+                return UtilityScripts.Utilities.Rng.Next(9, 11);
             case VILLAGE_SIZE.Large:
-                return UtilityScripts.Utilities.Rng.Next(7, 9);
+                return UtilityScripts.Utilities.Rng.Next(13, 15);
             default:
                 throw new ArgumentOutOfRangeException();
         }
     }
-    public int GetRandomFacilityCount() {
+    public int GetFacilityCount() {
         switch (villageSize) {
             case VILLAGE_SIZE.Small:
-                return UtilityScripts.Utilities.Rng.Next(2, 4);
+                return 2;
             case VILLAGE_SIZE.Medium:
-                return UtilityScripts.Utilities.Rng.Next(3, 5);
+                return 4;
             case VILLAGE_SIZE.Large:
-                return UtilityScripts.Utilities.Rng.Next(3, 6);
+                return 6;
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
+    }
+    public int GetFoodProducingStructureCount() {
+        switch (villageSize) {
+            case VILLAGE_SIZE.Small:
+                return 1;
+            case VILLAGE_SIZE.Medium:
+                return 2;
+            case VILLAGE_SIZE.Large:
+                return 2;
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
+    }
+    public int GetBasicResourceProducingStructureCount() {
+        switch (villageSize) {
+            case VILLAGE_SIZE.Small:
+                return 1;
+            case VILLAGE_SIZE.Medium:
+                return 1;
+            case VILLAGE_SIZE.Large:
+                return 1;
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
+    }
+    public int GetSpecialStructureCount() {
+        switch (villageSize) {
+            case VILLAGE_SIZE.Small:
+                return 0;
+            case VILLAGE_SIZE.Medium:
+                return 1;
+            case VILLAGE_SIZE.Large:
+                return 2;
             default:
                 throw new ArgumentOutOfRangeException();
         }

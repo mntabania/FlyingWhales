@@ -33,6 +33,10 @@ public class ContextMenuUIController : MVCUIController, ContextMenuUIView.IListe
 		InstantiateUI();
 		HideUI();
 	}
+
+	private void Start() {
+		Messenger.AddListener<KeyCode>(ControlsSignals.KEY_DOWN_EMPTY_SPACE, OnReceiveKeyCodeSignal);
+	}
 	public void SetOnHoverOverAction(System.Action<IContextMenuItem, UIHoverPosition> p_onHoverOverAction) {
 		_onHoverOverAction = p_onHoverOverAction;
 	}
@@ -71,7 +75,13 @@ public class ContextMenuUIController : MVCUIController, ContextMenuUIView.IListe
         if (!p_isAction) {
             if (p_UIMenu.CanBePickedRegardlessOfCooldown()) {
                 currentlyOpenedParentContextItem = p_UIMenu;
-                m_contextMenuUIView.DisplaySubMenu(p_UIMenu.subMenus, p_currentColumn + 1, _canvas);
+				bool dontShowName = false;
+				if (PlayerManager.Instance.player.currentlySelectedPlayerActionTarget is Character targetCharacter) {
+					if (p_UIMenu.contextMenuName == "Trigger Flaw" && !targetCharacter.isInfoUnlocked) {
+						dontShowName = true;
+					}
+				}
+				m_contextMenuUIView.DisplaySubMenu(p_UIMenu.subMenus, p_currentColumn + 1, _canvas , dontShowName);
 			}
 		} else {
 			p_UIMenu.OnPickAction();
@@ -126,5 +136,10 @@ public class ContextMenuUIController : MVCUIController, ContextMenuUIView.IListe
 	public void OnHoverOutParentDisplay() {
 		// m_contextMenuUIView.HideColumn(1);
 	}
-	
+
+	private void OnReceiveKeyCodeSignal(KeyCode p_key) {
+		if (p_key == KeyCode.Mouse1) {
+			HideUI();
+		}
+	}
 }

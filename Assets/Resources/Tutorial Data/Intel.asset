@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1e0fe33fc91848c68ab8d6bd0b390d79, type: 3}
+  m_Name: Intel
+  m_EditorClassIdentifier: 
+  tutorialType: 7
+  tutorialNameKey: intel
+  pages:
+  - imgTutorial: {fileID: 21300000, guid: da2490860fa6bba43bcf77c1eb215166, type: 3}
+    description: Beholders allow you to spawn Eyes that will log Notifications regarding
+      important events around it.
+  - imgTutorial: {fileID: 21300000, guid: d3133d5afaf47724dbaaaadf41d02fb9, type: 3}
+    description: Store Intel by clicking on the Eye icon on the log Notification.
+      You can store up to 5 Intel at a time.
+  - imgTutorial: {fileID: 21300000, guid: 260c68ea068b5724f8985cf535452dbb, type: 3}
+    description: Intel can be shared to Villagers and they will react accordingly.
+      Some Intel can also be used as Blackmail material for your Schemes (available
+      if you have a Meddler).

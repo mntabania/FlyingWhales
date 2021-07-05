@@ -245,7 +245,9 @@ public class PlagueDisease : ISingletonPattern, ISavable {
     public void UpgradeTransmissionLevel(PLAGUE_TRANSMISSION p_transmissionType) {
         if (_transmissionLevels.ContainsKey(p_transmissionType)) {
             _transmissionLevels[p_transmissionType]++;
+#if DEBUG_LOG
             Debug.Log($"Upgraded {p_transmissionType.ToString()} to level {_transmissionLevels[p_transmissionType].ToString()}");
+#endif
         }
     }
     public bool HasMaxTransmissions() {
@@ -263,9 +265,9 @@ public class PlagueDisease : ISingletonPattern, ISavable {
         }
         return false;
     }
-    #endregion
+#endregion
     
-    #region Death Effect
+#region Death Effect
     public void SetNewPlagueDeathEffectAndUnsetPrev(PLAGUE_DEATH_EFFECT p_deathEffectType) {
         UnseteDeathEffect();
         PlagueDeathEffect deathEffect = CreateNewPlagueDeathEffectInstance(p_deathEffectType);
@@ -297,9 +299,9 @@ public class PlagueDisease : ISingletonPattern, ISavable {
         deathEffect = _activeDeathEffect;
         return _activeDeathEffect != null && _activeDeathEffect.deathEffectType == p_deathEffect;
     }
-    #endregion
+#endregion
 
-    #region Plagued Status
+#region Plagued Status
     public bool AddPlaguedStatusOnPOIWithLifespanDuration(IPointOfInterest poi) {
         //Made this a function because we still need an extra process to know that the character will be affected by plague which is the lifespan
         //If the lifespan is -1, then the character will not be affected by plague
@@ -309,16 +311,18 @@ public class PlagueDisease : ISingletonPattern, ISavable {
         }
         return false;
     }
-    #endregion
+#endregion
 
-    #region Randomization
+#region Randomization
     public void OnLoadoutPicked() {
-        if (!PlayerSkillManager.Instance.GetPlayerSkillData(PLAYER_SKILL_TYPE.BIOLAB).isInUse) {
-            RandomizePlague();
-        }
+        // if (!PlayerSkillManager.Instance.GetSkillData(PLAYER_SKILL_TYPE.BIOLAB).isInUse) {
+        //     RandomizePlague();
+        // }
     }
     private void RandomizePlague() {
+#if DEBUG_LOG
         string randomizeSummary = $"Randomizing Plague Effects:";
+#endif
         List<PLAGUE_TRANSMISSION> transmissionChoices = CollectionUtilities.GetEnumValues<PLAGUE_TRANSMISSION>().ToList();
         for (int i = 0; i < 2; i++) {
             if (transmissionChoices.Count == 0) { break; }
@@ -326,7 +330,9 @@ public class PlagueDisease : ISingletonPattern, ISavable {
             int level = i == 0 ? 1 : 2;
             _transmissionLevels[transmissionTypeToUpgrade] = level;
             transmissionChoices.Remove(transmissionTypeToUpgrade);
+#if DEBUG_LOG
             randomizeSummary = $"{randomizeSummary}\nUpgraded {transmissionTypeToUpgrade.ToString()} to Level {level}";
+#endif
         }
         List<string> lifespanChoices = new List<string>() { "Tile Object", "Monster", "Undead", "Human", "Elf" };
         for (int i = 0; i < 2; i++) {
@@ -340,32 +346,40 @@ public class PlagueDisease : ISingletonPattern, ISavable {
                 case "Elf": _lifespan.UpgradeSapientInfectionTime(RACE.ELVES); break;
             }
             lifespanChoices.Remove(chosenLifespanToUpgrade);
+#if DEBUG_LOG
             randomizeSummary = $"{randomizeSummary}\nUpgraded {chosenLifespanToUpgrade} lifespan by 1 level.";
+#endif
         }
         PLAGUE_FATALITY[] fatalityChoices = CollectionUtilities.GetEnumValues<PLAGUE_FATALITY>();
         PLAGUE_FATALITY chosenFatality = CollectionUtilities.GetRandomElement(fatalityChoices);
         AddAndInitializeFatality(chosenFatality);
+#if DEBUG_LOG
         randomizeSummary = $"{randomizeSummary}\nUnlocked {chosenFatality.ToString()} Fatality";
-        
+#endif
+
         List<PLAGUE_SYMPTOM> symptomChoices = CollectionUtilities.GetEnumValues<PLAGUE_SYMPTOM>().ToList();
         for (int i = 0; i < 1; i++) {
             if (symptomChoices.Count == 0) { break; }
             PLAGUE_SYMPTOM symptomToUpgrade = CollectionUtilities.GetRandomElement(symptomChoices);
             AddAndInitializeSymptom(symptomToUpgrade);
             symptomChoices.Remove(symptomToUpgrade);
+#if DEBUG_LOG
             randomizeSummary = $"{randomizeSummary}\nUnlocked {symptomToUpgrade.ToString()} Symptom";
+#endif
         }
 
         PLAGUE_DEATH_EFFECT[] deathEffectChoices = CollectionUtilities.GetEnumValues<PLAGUE_DEATH_EFFECT>();
         PLAGUE_DEATH_EFFECT deathEffect = CollectionUtilities.GetRandomElement(deathEffectChoices);
         SetNewPlagueDeathEffectAndUnsetPrev(deathEffect);
         _activeDeathEffect.AdjustLevel(1);
+#if DEBUG_LOG
         randomizeSummary = $"{randomizeSummary}\nUnlocked and Upgraded {deathEffect.ToString()} to Level 2";
         Debug.Log(randomizeSummary);
+#endif
     }
-    #endregion
+#endregion
 
-    #region Utilities
+#region Utilities
     public string GetPlagueEffectsSummary() {
         string tooltip = $"<b>Effects:</b>";
         int airborneLevel = GetTransmissionLevel(PLAGUE_TRANSMISSION.Airborne);
@@ -409,7 +423,7 @@ public class PlagueDisease : ISingletonPattern, ISavable {
         tooltip = $"{tooltip}\nOn Death: {activeDeathEffect?.GetCurrentEffectDescription() ?? "-"}";
         return tooltip;
     }
-    #endregion
+#endregion
 
 }
 
@@ -426,7 +440,7 @@ public class SaveDataPlagueDisease : SaveData<PlagueDisease> {
     public int recoveries;
     public Dictionary<PLAGUE_TRANSMISSION, int> transmissionLevels;
 
-    #region Overrides
+#region Overrides
     public override void Save() {
         base.Save();
         PlagueDisease p_data = PlagueDisease.Instance;
@@ -462,9 +476,9 @@ public class SaveDataPlagueDisease : SaveData<PlagueDisease> {
         PlagueDisease plagueDisease = new PlagueDisease(this);
         return plagueDisease;
     }
-    #endregion
+#endregion
 
-    #region Clean Up
+#region Clean Up
     public void CleanUp() {
         lifespan = null;
         activeFatalities.Clear();
@@ -474,5 +488,5 @@ public class SaveDataPlagueDisease : SaveData<PlagueDisease> {
         transmissionLevels.Clear();
         transmissionLevels = null;
     }
-    #endregion
+#endregion
 }

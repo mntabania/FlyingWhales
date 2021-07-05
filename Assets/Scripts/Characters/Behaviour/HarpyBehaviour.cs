@@ -25,7 +25,7 @@ public class HarpyBehaviour : BaseMonsterBehaviour {
             Harpy harpy = character as Harpy;
             if (!harpy.hasCapturedForTheDay) {
                 harpy.SetHasCapturedForTheDay(true);
-                if (GameUtilities.RollChance(15)) {
+                if (ChanceData.RollChance(CHANCE_TYPE.Harpy_Capture)) {
                     if (TryCaptureCharacter(character, out producedJob)) {
                         return true;
                     }
@@ -40,20 +40,27 @@ public class HarpyBehaviour : BaseMonsterBehaviour {
     protected override bool TamedBehaviour(Character p_character, ref string p_log, out JobQueueItem p_producedJob) {
         if (TryTakeSettlementJob(p_character, ref p_log, out p_producedJob)) {
             return true;
-        } 
+        }
+#if DEBUG_LOG
         p_log = $"{p_log}\n-Will try to take personal patrol job.";
+#endif
         if (TryTakePersonalPatrolJob(p_character, 15, ref p_log, out p_producedJob)) {
             return true;
         }
-
+#if DEBUG_LOG
         p_log = $"{p_log}\n-Will try to lay egg";
+#endif
         if (GameUtilities.RollChance(1, ref p_log)) {
             if (TryTriggerLayEgg(p_character, 5, TILE_OBJECT_TYPE.HARPY_EGG, out p_producedJob)) {
+#if DEBUG_LOG
                 p_log = $"{p_log}\n-Will lay an egg";
+#endif
                 return true;
             }
         }
+#if DEBUG_LOG
         p_log = $"{p_log}\n-Will roam";
+#endif
         return p_character.jobComponent.TriggerRoamAroundTile(JOB_TYPE.IDLE_RETURN_HOME, out p_producedJob);
     }
 
@@ -64,7 +71,7 @@ public class HarpyBehaviour : BaseMonsterBehaviour {
             Character chosenTargetCharacter = GetTargetForCapture(actor, region);
             if(chosenTargetCharacter != null) {
                 LocationStructure chosenTargetStructure = GetDestinationToDropCapturedCharacter(actor, region);
-                if(chosenTargetCharacter != null) {
+                if(chosenTargetStructure != null) {
                     return actor.jobComponent.TryTriggerCaptureCharacter(chosenTargetCharacter, chosenTargetStructure, out producedJob, true);
                 }
             }
@@ -87,10 +94,10 @@ public class HarpyBehaviour : BaseMonsterBehaviour {
         return chosenCharacter;
     }
     private LocationStructure GetDestinationToDropCapturedCharacter(Character actor, Region region) {
-        List<LocationStructure> structures = ObjectPoolManager.Instance.CreateNewStructuresList();
-        for (int i = 0; i < region.allStructures.Count; i++) {
-            LocationStructure structure = region.allStructures[i];
-            if (structure != actor.homeStructure && structure.structureType.IsSpecialStructure() && structure.passableTiles.Count > 0) {
+        List<LocationStructure> structures = RuinarchListPool<LocationStructure>.Claim();
+        for (int i = 0; i < region.allSpecialStructures.Count; i++) {
+            LocationStructure structure = region.allSpecialStructures[i];
+            if (structure != actor.homeStructure && structure.passableTiles.Count > 0) {
                 structures.Add(structure);
             }
         }
@@ -98,7 +105,7 @@ public class HarpyBehaviour : BaseMonsterBehaviour {
         if (structures.Count > 0) {
             chosenStructure = structures[GameUtilities.RandomBetweenTwoNumbers(0, structures.Count - 1)];
         }
-        ObjectPoolManager.Instance.ReturnStructuresListToPool(structures);
+        RuinarchListPool<LocationStructure>.Release(structures);
         return chosenStructure;
     }
 }

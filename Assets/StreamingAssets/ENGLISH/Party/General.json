@@ -1,1 +1,1 @@
-{"items":[{"key":"disband","value":"%05@ party has disbanded."}]}
+{"items":[{"key":"disband","value":"%05@ party has disbanded."},{"key":"invalid_build_neighbour_not_wilderness","value":"Cannot summon inside villages"},{"key":"invalid_build_at_cave","value":"Cannot summon inside cave."},{"key":"invalid_build_at_water","value":"Demons can't swim."},{"key":"invalid_build_at_structure","value":"Cannnot summon close to structures"}]}

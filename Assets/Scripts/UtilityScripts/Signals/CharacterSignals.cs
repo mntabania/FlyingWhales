@@ -82,13 +82,13 @@
     /// </summary>
     public static string OPINION_LABEL_DECREASED = "OnOpinionLabelDecreased";
     /// <summary>
-    /// Parameters (Character character, Hextile enteredTile)
+    /// Parameters (Character character, Area enteredArea)
     /// </summary>
-    public static string CHARACTER_ENTERED_HEXTILE = "OnCharacterEnteredHexTile";
+    public static string CHARACTER_ENTERED_AREA = "OnCharacterEnteredArea";
     /// <summary>
-    /// Parameters (Character character, HexTile exitedTile)
+    /// Parameters (Character character, Area exitedArea)
     /// </summary>
-    public static string CHARACTER_EXITED_HEXTILE = "OnCharacterExitedHexTile";
+    public static string CHARACTER_EXITED_AREA = "OnCharacterExitedArea";
     public static string CHARACTER_CAN_NO_LONGER_MOVE = "OnCharacterCannotMove";
     public static string CHARACTER_CAN_MOVE_AGAIN = "OnCharacterCannotMove";
     /// <summary>
@@ -154,4 +154,26 @@
     public static string CHARACTER_TICK_ENDED_MOVEMENT = "OnTickEndedCharacterMovement";
     public static string PROCESS_ALL_UNPOROCESSED_POIS = "ProcessAllUnprocessedPOIS";
     public static string CHARACTER_TICK_ENDED = "OnCharacterTickEnded";
+
+    public static string CHARACTER_INFO_REVEALED = "OnCharacterInfoRevealed";
+    public static string TOGGLE_CHARACTER_MARKER_NAMEPLATE = "OnToggleCharacterMarkerNameplate";
+
+    public static string ON_CHARACTER_RAISE_DEAD_BY_NECRO = "OnCharacterRaiseDeadByNecro";
+
+    public static string ON_ELF_ABSORB_CRYSTAL = "OnElfAbsorbCrystal";
+    public static string TRY_CREATE_BURY_JOBS = "CheckBuryJob";
+
+    #region used for chaotic energy generation
+    public static string CHARACTER_PRAY_SUCCESS = "OnCharacterPraySuccess";
+    public static string CHARACTER_BECAME_VAMPIRE = "OnCharacterBecameVampire";
+    public static string CHARACTER_MEDDLER_SCHEME_SUCCESSFUL = "OnCharacterMedlerSchemeSuccessful";
+    public static string LYCANTHROPE_SHED_WOLF_PELT = "OnLycanthropeShedWolfPelt";
+    #endregion
+
+    #region Equipment
+    public static string WEAPON_UNEQUIPPED = "OnWeaponUnequipped";
+    public static string ARMOR_UNEQUIPPED = "OnArmorUnequipped";
+    public static string ACCESSORY_UNEQUIPPED = "OnAccessoryUnequipped";
+    public static string CHARACTER_EQUIPPED_ITEM = "OnCharacterEquippedItem";
+    #endregion
 }

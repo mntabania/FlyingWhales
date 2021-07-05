@@ -22,37 +22,26 @@ public class BuildCampfire : GoapAction {
         SetState("Build Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
+#if DEBUG_LOG
         string costLog = $"\n{name} {target.nameWithID}: +10(Constant)";
         actor.logComponent.AppendCostLog(costLog);
+#endif
         return 10;
     }
-    public override List<LocationGridTile> NearbyLocationGetter(ActualGoapNode goapNode) {
-        HexTile hex = null;
-        if (goapNode.actor.gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
-            hex = goapNode.actor.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner;
-        }
-        List<LocationGridTile> tiles = null;
-        if (hex != null) {
-            tiles = hex.GetUnoccupiedTiles();
-            if(tiles != null && tiles.Count > 0) {
-                return tiles;
-            } else {
-                return hex.locationGridTiles;
+    public override void PopulateNearbyLocation(List<LocationGridTile> gridTiles, ActualGoapNode goapNode) {
+        Area area = goapNode.actor.gridTileLocation.area;
+        if (area != null) {
+            area.gridTileComponent.PopulateUnoccupiedTiles(gridTiles);
+            if(gridTiles.Count <= 0) {
+                gridTiles = area.gridTileComponent.gridTiles;
             }
         } else {
-            tiles = goapNode.actor.gridTileLocation.GetTilesInRadius(3, includeImpassable: false);
-            for (int i = 0; i < tiles.Count; i++) {
-                if (tiles[i].objHere != null) {
-                    tiles.RemoveAt(i);
-                    i--;
-                }
-            }
+            goapNode.actor.gridTileLocation.PopulateTilesInRadius(gridTiles, 3, includeImpassable: false, includeTilesWithObject: false);
         }
-        return tiles;
     }
-    #endregion
+#endregion
 
-    #region Requirement
+#region Requirement
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, OtherData[] otherData, JobQueueItem job) {
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData, job);
         if (satisfied) {
@@ -60,43 +49,38 @@ public class BuildCampfire : GoapAction {
         }
         return false;
     }
-    #endregion
+#endregion
 
-    #region Effects
+#region Effects
     public void AfterBuildSuccess(ActualGoapNode goapNode) {
         Character actor = goapNode.actor;
         LocationGridTile targetTile = actor.gridTileLocation;
 
-        if (targetTile != null && targetTile.objHere != null) {
-            if (targetTile.collectionOwner.isPartOfParentRegionMap) {
-                targetTile = targetTile.GetFirstNeighborThatMeetCriteria(x => x.objHere == null && x.IsPassable() && x.collectionOwner.isPartOfParentRegionMap && x.collectionOwner.partOfHextile.hexTileOwner == targetTile.collectionOwner.partOfHextile.hexTileOwner);
-            }
+        if (targetTile != null && targetTile.tileObjectComponent.objHere != null) {
+            targetTile = targetTile.GetFirstNeighborThatIsPassableAndNoObjectAndSameAreaAs(targetTile.area);
         }
-        if (targetTile != null && targetTile.objHere != null) {
-            targetTile = targetTile.GetFirstNeighborThatMeetCriteria(x => x.objHere == null && x.IsPassable());
+        if (targetTile != null && targetTile.tileObjectComponent.objHere != null) {
+            targetTile = targetTile.GetFirstNeighborThatIsPassableAndNoObject();
         }
-        if (targetTile != null && targetTile.objHere != null) {
-            targetTile.structure.RemovePOI(targetTile.objHere);
+        if (targetTile != null && targetTile.tileObjectComponent.objHere != null) {
+            targetTile.structure.RemovePOI(targetTile.tileObjectComponent.objHere);
         }
         Campfire campfire = InnerMapManager.Instance.CreateNewTileObject<Campfire>(TILE_OBJECT_TYPE.CAMPFIRE);
         targetTile.structure.AddPOI(campfire, targetTile);
         goapNode.descriptionLog.AddInvolvedObjectManual(campfire.persistentID);
 
         if (targetTile != null) {
-            LocationGridTile foodPileTile = null;
-            if (targetTile.collectionOwner.isPartOfParentRegionMap) {
-                foodPileTile = targetTile.GetFirstNeighborThatMeetCriteria(x => x.objHere == null && x.IsPassable() && x.collectionOwner.isPartOfParentRegionMap && x.collectionOwner.partOfHextile.hexTileOwner == targetTile.collectionOwner.partOfHextile.hexTileOwner);
-            }
+            LocationGridTile foodPileTile = targetTile.GetFirstNeighborThatIsPassableAndNoObjectAndSameAreaAs(targetTile.area);
 
             if(foodPileTile == null) {
-                foodPileTile = targetTile.GetFirstNeighborThatMeetCriteria(x => x.objHere == null && x.IsPassable());
+                foodPileTile = targetTile.GetFirstNeighborThatIsPassableAndNoObject();
             }
             if (foodPileTile == null) {
-                foodPileTile = targetTile.GetFirstNeighborThatMeetCriteria(x => x.IsPassable());
+                foodPileTile = targetTile.GetFirstNeighborThatIsPassable();
             }
             if(foodPileTile != null) {
-                if(foodPileTile.objHere != null) {
-                    foodPileTile.structure.RemovePOI(foodPileTile.objHere);
+                if(foodPileTile.tileObjectComponent.objHere != null) {
+                    foodPileTile.structure.RemovePOI(foodPileTile.tileObjectComponent.objHere);
                 }
                 int food = 12;
                 if (actor.partyComponent.isMemberThatJoinedQuest) {
@@ -110,5 +94,5 @@ public class BuildCampfire : GoapAction {
         }
         // campfire.logComponent.AddHistory(goapNode.descriptionLog);
     }
-    #endregion
+#endregion
 }

@@ -1,5 +1,7 @@
-﻿using Inner_Maps;
+﻿using System.Collections.Generic;
+using Inner_Maps;
 using Traits;
+using UtilityScripts;
 
 public class Triton : Summon {
 
@@ -22,7 +24,8 @@ public class Triton : Summon {
     public override void OnPlaceSummon(LocationGridTile tile) {
         base.OnPlaceSummon(tile);
         if(spawnLocationTile == null) {
-            spawnLocationTile = tile.GetNeareastTileFromThisThatMeetCriteria(t => (t.IsPassable() || t.objHere is BlockWall) && t.structure.structureType != STRUCTURE_TYPE.OCEAN, null);
+            List<LocationGridTile> checkedTiles = RuinarchListPool<LocationGridTile>.Claim();
+            spawnLocationTile = tile.GetNeareastTileFromThisThatIsPassableOrHasNoWallsAndIsNotInOcean(checkedTiles);
             if(spawnLocationTile == null) {
                 spawnLocationTile = tile;
             }

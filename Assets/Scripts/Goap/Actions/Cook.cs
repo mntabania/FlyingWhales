@@ -95,21 +95,21 @@ public class Cook : GoapAction {
     public override bool ShouldActionBeAnIntel(ActualGoapNode node) {
         return true;
     }
-    public override string ReactionToActor(Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
-        string reaction = base.ReactionToActor(actor, target, witness, node, status);
-        if (!actor.isNormalCharacter && witness.homeSettlement != null && witness.faction != null && actor.homeStructure != null && target is Character targetCharacter) {
-            Prisoner prisoner = targetCharacter.traitContainer.GetTraitOrStatus<Prisoner>("Prisoner");
-            if (node.targetStructure == actor.homeStructure || (prisoner != null && prisoner.IsConsideredPrisonerOf(actor))) {
-                string relationshipName = witness.relationshipContainer.GetRelationshipNameWith(targetCharacter);
-                if (relationshipName == RelationshipManager.Acquaintance || witness.relationshipContainer.IsFriendsWith(targetCharacter)) {
-                    witness.faction.partyQuestBoard.CreateExterminatePartyQuest(witness, witness.homeSettlement, actor.homeStructure, witness.homeSettlement);    
-                }    
-            }
-        }
-        return reaction;
-    }
-    public override void PopulateReactionsToTarget(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
-        base.PopulateReactionsToTarget(reactions, actor, target, witness, node, status);
+    //public override string ReactionToActor(Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
+    //    string reaction = base.ReactionToActor(actor, target, witness, node, status);
+    //    if (!actor.isNormalCharacter && witness.homeSettlement != null && witness.faction != null && actor.homeStructure != null && target is Character targetCharacter) {
+    //        Prisoner prisoner = targetCharacter.traitContainer.GetTraitOrStatus<Prisoner>("Prisoner");
+    //        if (node.targetStructure == actor.homeStructure || (prisoner != null && prisoner.IsConsideredPrisonerOf(actor))) {
+    //            string relationshipName = witness.relationshipContainer.GetRelationshipNameWith(targetCharacter);
+    //            if (relationshipName == RelationshipManager.Acquaintance || witness.relationshipContainer.IsFriendsWith(targetCharacter)) {
+    //                witness.faction.partyQuestBoard.CreateExterminatePartyQuest(witness, witness.homeSettlement, actor.homeStructure, witness.homeSettlement);    
+    //            }    
+    //        }
+    //    }
+    //    return reaction;
+    //}
+    public override void PopulateEmotionReactionsToTarget(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
+        base.PopulateEmotionReactionsToTarget(reactions, actor, target, witness, node, status);
         if (target is Character targetCharacter) {
             if (witness.relationshipContainer.IsFriendsWith(targetCharacter)) {
                 if (!witness.traitContainer.HasTrait("Psychopath")) {
@@ -140,11 +140,11 @@ public class Cook : GoapAction {
         if(goapNode.poiTarget is Character targetCharacter) {
             goapNode.actor.UncarryPOI(addToLocation: false);
             if (targetCharacter.isDead) {
-                if (targetCharacter.currentRegion != null) {
-                    targetCharacter.currentRegion.RemoveCharacterFromLocation(targetCharacter);
-                }
                 if (targetCharacter.hasMarker) {
                     targetCharacter.DestroyMarker();
+                }
+                if (targetCharacter.currentRegion != null) {
+                    targetCharacter.currentRegion.RemoveCharacterFromLocation(targetCharacter);
                 }
             } else {
                 targetCharacter.SetDestroyMarkerOnDeath(true);

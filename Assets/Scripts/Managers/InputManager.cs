@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Inner_Maps;
 using Ruinarch.Custom_UI;
@@ -9,28 +8,64 @@ using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using Locations.Settlements;
+using UtilityScripts;
 
 namespace Ruinarch {
     public class InputManager : MonoBehaviour {
 
         public static InputManager Instance;
-        public bool isDraggingItem;
-
-        private CursorMode cursorMode = CursorMode.ForceSoftware;
-
-        [Space(10)] 
-        [Header("Cursors")] 
-        [SerializeField] private CursorTextureDictionary cursors;
-
-        public HashSet<string> buttonsToHighlight { get; private set; }
 
         public enum Cursor_Type {
             None, Default, Target, Drag_Hover, Drag_Clicked, Check, Cross, Link
         }
+
+        #region Events
+        private static System.Action m_onUpdateEvent;
+        #endregion
+        
+        [Space(10)] 
+        [Header("Cursors")] 
+        [SerializeField] private CursorTextureDictionary cursors;
+        
+        public HashSet<string> buttonsToHighlight { get; private set; }
         public Cursor_Type currentCursorType;
         public Cursor_Type previousCursorType;
+        public bool isDraggingItem;
+        
+        private CursorMode cursorMode = CursorMode.ForceSoftware;
         private bool runUpdate;
-        private bool _allowHotKeys = true;
+        private bool _isShiftDown;
+
+        private Dictionary<KeyCode, bool> _allowedHotKeys;
+        private List<KeyCode> _allowedHotKeysList = new List<KeyCode>() {
+            {KeyCode.Alpha1},
+            {KeyCode.Alpha2},
+            {KeyCode.Alpha3},
+            {KeyCode.Alpha4},
+            {KeyCode.Alpha5},
+            {KeyCode.Alpha6},
+            {KeyCode.Alpha7},
+            {KeyCode.Alpha8},
+            {KeyCode.Alpha9},
+            {KeyCode.F10},
+            {KeyCode.Space},
+            {KeyCode.Escape},
+            {KeyCode.F5},
+            {KeyCode.F8},
+            {KeyCode.Tab},
+            {KeyCode.LeftAlt},
+            {KeyCode.LeftShift},
+            {KeyCode.P},
+            {KeyCode.Minus},
+            {KeyCode.Plus},
+            {KeyCode.Equals},
+            {KeyCode.KeypadPlus},
+            {KeyCode.KeypadMinus},
+        };
+
+        #region getters
+        public bool isShiftDown => _isShiftDown;
+        #endregion
         
         #region Monobehaviours
         private void Awake() {
@@ -39,7 +74,6 @@ namespace Ruinarch {
                 DontDestroyOnLoad(gameObject);
                 SetCursorTo(Cursor_Type.Default);
                 previousCursorType = Cursor_Type.Default;
-                // Cursor.lockState = CursorLockMode.Confined;
                 SceneManager.activeSceneChanged += OnActiveSceneChanged;
                 Initialize();
             } else {
@@ -52,96 +86,14 @@ namespace Ruinarch {
                     SettingsManager.Instance.CloseSettings();
                     return;
                 }
-            } else if (Input.GetKeyDown(KeyCode.F8)) {
-                if (!CanUseHotkey(KeyCode.F8)) return;
+            } else if (Input.GetKeyDown(KeyCode.F10)) {
+                if (!CanUseHotkey(KeyCode.F10)) return;
                 ReportABug();
-                Messenger.Broadcast(ControlsSignals.KEY_DOWN, KeyCode.F8);
+                Messenger.Broadcast(ControlsSignals.KEY_DOWN, KeyCode.F10);
             }
             
             if (runUpdate == false) { return; }
-            if (ReferenceEquals(PlayerManager.Instance, null) == false && PlayerManager.Instance.player != null) {
-                if (PlayerManager.Instance.player.seizeComponent.hasSeizedPOI) {
-                    if (UIManager.Instance.IsMouseOnUI() || !InnerMapManager.Instance.isAnInnerMapShowing) {
-                        SetCursorTo(Cursor_Type.Default);
-                        PlayerManager.Instance.player.seizeComponent.DisableFollowMousePosition();
-                    } else {
-                        PlayerManager.Instance.player.seizeComponent.EnableFollowMousePosition();
-                        PlayerManager.Instance.player.seizeComponent.FollowMousePosition();
-                        LocationGridTile hoveredTile = InnerMapManager.Instance.GetTileFromMousePosition();
-                        if (hoveredTile != null) {
-                            SetCursorTo(PlayerManager.Instance.player.seizeComponent.CanUnseizeHere(hoveredTile) ? Cursor_Type.Check : Cursor_Type.Cross);
-                        } else {
-                            SetCursorTo(Cursor_Type.Cross);
-                        }
-                    }
-                } else if (PlayerManager.Instance.player.currentActivePlayerSpell != null) { 
-                    if (UIManager.Instance.IsMouseOnUI() || !InnerMapManager.Instance.isAnInnerMapShowing) {
-                        SetCursorTo(Cursor_Type.Default); 
-                        PlayerManager.Instance.player.currentActivePlayerSpell.UnhighlightAffectedTiles();
-                    } else { 
-                        LocationGridTile hoveredTile = InnerMapManager.Instance.GetTileFromMousePosition();
-                        bool canTarget = false; 
-                        IPointOfInterest hoveredPOI = InnerMapManager.Instance.currentlyHoveredPoi; 
-                        string hoverText = string.Empty; 
-                        for (int i = 0; i < PlayerManager.Instance.player.currentActivePlayerSpell.targetTypes.Length; i++) {
-                            switch (PlayerManager.Instance.player.currentActivePlayerSpell.targetTypes[i]) { 
-                                case SPELL_TARGET.CHARACTER: 
-                                case SPELL_TARGET.TILE_OBJECT: 
-                                    if (hoveredPOI != null) { 
-                                        canTarget = PlayerManager.Instance.player.currentActivePlayerSpell.CanTarget(hoveredPOI, ref hoverText); 
-                                    } 
-                                    break; 
-                                case SPELL_TARGET.TILE: 
-                                    if (hoveredTile != null) {
-                                        canTarget = PlayerManager.Instance.player.currentActivePlayerSpell.CanTarget(hoveredTile); 
-                                    } 
-                                    break; 
-                                case SPELL_TARGET.HEX: 
-                                    if (hoveredTile != null && hoveredTile.collectionOwner.isPartOfParentRegionMap && hoveredTile.collectionOwner.partOfHextile.hexTileOwner) { 
-                                        canTarget = PlayerManager.Instance.player.currentActivePlayerSpell.CanTarget(hoveredTile.collectionOwner.partOfHextile.hexTileOwner); 
-                                    } 
-                                    break;
-                                case SPELL_TARGET.SETTLEMENT:
-                                    BaseSettlement settlement = null;
-                                    if (hoveredTile != null && hoveredTile.IsPartOfSettlement(out settlement)) {
-                                        canTarget = PlayerManager.Instance.player.currentActivePlayerSpell.CanTarget(settlement);
-                                    }
-                                    break;
-                                default: 
-                                    break; 
-                            }
-                            SetCursorTo(canTarget ? Cursor_Type.Check : Cursor_Type.Cross);
-                        }
-                        if (canTarget) {
-                            PlayerManager.Instance.player.currentActivePlayerSpell.HighlightAffectedTiles(hoveredTile);
-                        } else {
-                            if (hoveredTile == null || PlayerManager.Instance.player.currentActivePlayerSpell.InvalidHighlight(hoveredTile, ref hoverText) == false) {
-                                PlayerManager.Instance.player.currentActivePlayerSpell.UnhighlightAffectedTiles();    
-                            }
-                        }
-                        if(!string.IsNullOrEmpty(hoverText)) {
-                            UIManager.Instance.ShowSmallInfo(hoverText);
-                        } else { 
-                            UIManager.Instance.HideSmallInfo(); 
-                        } 
-                    }
-                } else if (PlayerManager.Instance.player.currentActiveIntel != null) {
-                    IPointOfInterest hoveredPOI = InnerMapManager.Instance.currentlyHoveredPoi;
-                    if (hoveredPOI != null) {
-                        string hoverText = string.Empty;
-                        SetCursorTo(PlayerManager.Instance.player.CanShareIntel(hoveredPOI, ref hoverText)
-                            ? Cursor_Type.Check
-                            : Cursor_Type.Cross);
-                        if(hoverText != string.Empty) {
-                            UIManager.Instance.ShowSmallInfo(hoverText);
-                        }
-                    } else {
-                        UIManager.Instance.HideSmallInfo();
-                        SetCursorTo(Cursor_Type.Cross);
-                    }
-                }
-            }
-            
+            m_onUpdateEvent?.Invoke();
             if (LevelLoaderManager.Instance.isLoadingNewScene || LevelLoaderManager.Instance.IsLoadingScreenActive()) {
                 //Do not allow any hotkeys while loading
                 return;
@@ -149,6 +101,9 @@ namespace Ruinarch {
             if (Input.GetMouseButtonDown(0)) {
                 Messenger.Broadcast(ControlsSignals.KEY_DOWN, KeyCode.Mouse0);
             } else if (Input.GetMouseButtonDown(1)) {
+                if (!EventSystem.current.IsPointerOverGameObject()) {
+                    Messenger.Broadcast(ControlsSignals.KEY_DOWN_EMPTY_SPACE, KeyCode.Mouse1);
+                }
                 Messenger.Broadcast(ControlsSignals.KEY_DOWN, KeyCode.Mouse1);
                 CancelSpellsByPriority();
             } else if (Input.GetMouseButtonDown(2)) {
@@ -158,15 +113,27 @@ namespace Ruinarch {
             } else if (Input.GetKeyDown(KeyCode.Space)) {
                 if (!CanUseHotkey(KeyCode.Space)) return;
                 Messenger.Broadcast(ControlsSignals.KEY_DOWN, KeyCode.Space);
-            } else if (Input.GetKeyDown(KeyCode.Alpha1)) {
-                if (!CanUseHotkey(KeyCode.Alpha1)) return;
-                Messenger.Broadcast(ControlsSignals.KEY_DOWN, KeyCode.Alpha1);
-            } else if (Input.GetKeyDown(KeyCode.Alpha2)) {
-                if (!CanUseHotkey(KeyCode.Alpha2)) return;
-                Messenger.Broadcast(ControlsSignals.KEY_DOWN, KeyCode.Alpha2);
-            } else if (Input.GetKeyDown(KeyCode.Alpha3)) {
-                if (!CanUseHotkey(KeyCode.Alpha3)) return;
-                Messenger.Broadcast(ControlsSignals.KEY_DOWN, KeyCode.Alpha3);
+            } else if (Input.GetKeyDown(KeyCode.Minus)) {
+                if (!CanUseHotkey(KeyCode.Minus)) return;
+                Messenger.Broadcast(ControlsSignals.KEY_DOWN, KeyCode.Minus);
+            } else if (Input.GetKeyDown(KeyCode.KeypadMinus)) {
+                if (!CanUseHotkey(KeyCode.KeypadMinus)) return;
+                Messenger.Broadcast(ControlsSignals.KEY_DOWN, KeyCode.KeypadMinus);
+            } else if (Input.GetKeyDown(KeyCode.Plus)) {
+                if (!CanUseHotkey(KeyCode.Plus)) return;
+                Messenger.Broadcast(ControlsSignals.KEY_DOWN, KeyCode.Plus);
+            } else if (Input.GetKeyDown(KeyCode.KeypadPlus)) {
+                if (!CanUseHotkey(KeyCode.KeypadPlus)) return;
+                Messenger.Broadcast(ControlsSignals.KEY_DOWN, KeyCode.KeypadPlus);
+            } else if (Input.GetKeyDown(KeyCode.Equals)) {
+                if (!CanUseHotkey(KeyCode.Equals)) return;
+                Messenger.Broadcast(ControlsSignals.KEY_DOWN, KeyCode.Equals);
+            } else if (Input.GetKeyDown(KeyCode.F5)) {
+                if (!CanUseHotkey(KeyCode.F5)) return;
+                Messenger.Broadcast(ControlsSignals.KEY_DOWN, KeyCode.F5);
+            } else if (Input.GetKeyDown(KeyCode.F8)) {
+                if (!CanUseHotkey(KeyCode.F8)) return;
+                Messenger.Broadcast(ControlsSignals.KEY_DOWN, KeyCode.F8);
             } else if (Input.GetKeyDown(KeyCode.Escape)) {
                 if (!CanUseHotkey(KeyCode.Escape)) return;
                 Messenger.Broadcast(ControlsSignals.KEY_DOWN, KeyCode.Escape);
@@ -181,35 +148,48 @@ namespace Ruinarch {
                         }    
                     }
                 }
-                // CancelActionsByPriority();
-            } else if (Input.GetKeyDown(KeyCode.F1)) {
-                BroadcastHotkeyPress("Spells Tab", KeyCode.F1);
-            } else if (Input.GetKeyDown(KeyCode.F2)) {
-                BroadcastHotkeyPress("Demons Tab", KeyCode.F2);
-            } else if (Input.GetKeyDown(KeyCode.F3)) {
-                BroadcastHotkeyPress("Monsters Tab", KeyCode.F3);
-            } else if (Input.GetKeyDown(KeyCode.F4)) {
-                BroadcastHotkeyPress("Intel Tab", KeyCode.F4);
-            } else if (Input.GetKeyDown(KeyCode.F5)) {
-                BroadcastHotkeyPress("Villagers Tab", KeyCode.F5);
-            } else if (Input.GetKeyDown(KeyCode.F6)) {
-                BroadcastHotkeyPress("Build Tab", KeyCode.F6);
-            } else if (Input.GetKeyDown(KeyCode.F7)) {
-                BroadcastHotkeyPress("Cultist Tab", KeyCode.F7);
-            } else if (Input.GetKeyDown(KeyCode.M)) {
-                BroadcastHotkeyPress("ToggleMapBtn", KeyCode.M);
-            } else if (Input.GetKeyDown(KeyCode.F9)) {
-                if (!CanUseHotkey(KeyCode.F9)) return;
-                Messenger.Broadcast(ControlsSignals.KEY_DOWN, KeyCode.F9);
+            } else if (Input.GetKeyDown(KeyCode.Alpha1)) {
+                BroadcastHotkeyPress("Spells Tab", KeyCode.Alpha1);
+            } else if (Input.GetKeyDown(KeyCode.Alpha2)) {
+                BroadcastHotkeyPress("Structures Tab", KeyCode.Alpha2);
+            } else if (Input.GetKeyDown(KeyCode.Alpha3)) {
+                BroadcastHotkeyPress("Demons Tab", KeyCode.Alpha3);
+            } else if (Input.GetKeyDown(KeyCode.Alpha4)) {
+                BroadcastHotkeyPress("Monsters Tab", KeyCode.Alpha4);
+            } else if (Input.GetKeyDown(KeyCode.Alpha5)) {
+                BroadcastHotkeyPress("Intel Tab", KeyCode.Alpha5);
+            } else if (Input.GetKeyDown(KeyCode.Alpha6)) {
+                BroadcastHotkeyPress("Targets Tab", KeyCode.Alpha6);
+            } else if (Input.GetKeyDown(KeyCode.Alpha7)) {
+                BroadcastHotkeyPress("Villagers Tab", KeyCode.Alpha7);
+            } else if (Input.GetKeyDown(KeyCode.Alpha8)) {
+                BroadcastHotkeyPress("Cultist Tab", KeyCode.Alpha8);
+            } else if (Input.GetKeyDown(KeyCode.Alpha9)) {
+                BroadcastHotkeyPress("Tutorials Tab", KeyCode.Alpha9);
+            } else if (Input.GetKeyDown(KeyCode.P)) {
+                BroadcastHotkeyPress("portal shortcut", KeyCode.P);
             } else if (Input.GetKeyDown(KeyCode.Tab)) {
                 if (!CanUseHotkey(KeyCode.Tab)) return;
                 if (HasSelectedUIObject()) { return; } //if currently selecting a UI object, ignore (This is mostly for Input fields)
+                CharacterCenterCycle();
                 Messenger.Broadcast(ControlsSignals.KEY_DOWN, KeyCode.Tab);
-            } else if (Input.GetKeyDown(KeyCode.R)) {
-                if (!CanUseHotkey(KeyCode.R)) return;
-                if (HasSelectedUIObject()) { return; } //if currently selecting a UI object, ignore (This is mostly for Input fields)
-                Messenger.Broadcast(ControlsSignals.KEY_DOWN, KeyCode.R);
+            } else if (Input.GetKeyDown(KeyCode.LeftAlt)) {
+                if (!CanUseHotkey(KeyCode.LeftAlt)) return;
+                if (GameManager.Instance != null && GameManager.Instance.gameHasStarted) {
+                    CharacterManager.Instance.ToggleCharacterMarkerNameplate();
+                }
+            } else if (Input.GetKeyDown(KeyCode.LeftShift)) {
+                if (!CanUseHotkey(KeyCode.LeftShift)) return;
+                _isShiftDown = true;
+                Messenger.Broadcast(ControlsSignals.LEFT_SHIFT_DOWN);
             }
+            
+            if (Input.GetKeyUp(KeyCode.LeftShift)) {
+                _isShiftDown = false;
+                Messenger.Broadcast(ControlsSignals.LEFT_SHIFT_UP);
+            }
+
+            
         }
         private void BroadcastHotkeyPress(string buttonToActivate, KeyCode p_keyCode) {
             if (!CanUseHotkey(p_keyCode)) return;
@@ -234,14 +214,27 @@ namespace Ruinarch {
                     return false;
                 }    
             }
-            return _allowHotKeys;
+            return _allowedHotKeys[p_keyCode];
         }
-        public void AllowHotkeys(bool p_state) {
-            _allowHotKeys = p_state;
+        public void SetAllHotkeysEnabledState(bool p_state) {
+#if DEBUG_LOG
+            Debug.Log($"Set all hotkeys state to {p_state.ToString()}");
+#endif
+            List<KeyCode> keys = _allowedHotKeysList;
+            for (int i = 0; i < keys.Count; i++) {
+                KeyCode key = keys[i];
+                SetSpecificHotkeyEnabledState(key, p_state);
+            }
         }
-        #endregion
+        public void SetSpecificHotkeyEnabledState(KeyCode p_keyCode, bool p_state) {
+            _allowedHotKeys[p_keyCode] = p_state;
+// #if DEBUG_LOG
+//             Debug.Log($"Set hotkeys state of {p_keyCode} to {p_state}");
+// #endif
+        }
+#endregion
 
-        #region Initialization
+#region Initialization
         private void Initialize() {
             buttonsToHighlight = new HashSet<string>();
             Messenger.MarkAsPermanent(UISignals.SHOW_SELECTABLE_GLOW);
@@ -251,6 +244,15 @@ namespace Ruinarch {
             Messenger.AddListener<string>(UISignals.HIDE_SELECTABLE_GLOW, OnReceiveUnHighlightSignal);
             Messenger.AddListener<RuinarchToggle>(UISignals.TOGGLE_SHOWN, OnToggleShown);
             Messenger.AddListener<RuinarchButton>(UISignals.BUTTON_SHOWN, OnButtonShown);
+
+            ConstructHotKeys();
+        }
+        private void ConstructHotKeys() {
+            _allowedHotKeys = new Dictionary<KeyCode, bool>();
+            for (int i = 0; i < _allowedHotKeysList.Count; i++) {
+                KeyCode hotKey = _allowedHotKeysList[i];
+                _allowedHotKeys.Add(hotKey, true);
+            }
         }
         private void OnReceiveHighlightSignal(string name) {
             buttonsToHighlight.Add(name);
@@ -268,8 +270,9 @@ namespace Ruinarch {
                 button.StartGlow();
             }
         }
-        #endregion
+#endregion
 
+#region Cursor
         public void SetCursorTo(Cursor_Type type) {
             if (currentCursorType == type) {
                 return; //ignore 
@@ -294,13 +297,16 @@ namespace Ruinarch {
             }
             currentCursorType = type;
             Cursor.SetCursor(cursors[type], hotSpot, cursorMode);
+#if DEBUG_LOG
+            Debug.Log($"Set cursor to {currentCursorType.ToString()}");
+#endif
         }
         public void RevertToPreviousCursor() {
             SetCursorTo(previousCursorType);
         }
-        //public void SetSelectedArchetype(PLAYER_ARCHETYPE archetype) {
-        //    selectedArchetype = archetype;
-        //}
+#endregion
+
+#region Spells
         /// <summary>
         /// Cancel actions based on a hardcoded process
         /// </summary>
@@ -322,8 +328,8 @@ namespace Ruinarch {
             if (!CancelSpellsByPriority()) {
                 if (UIManager.Instance.IsOptionsMenuShowing()) {
                     //if options menu is showing, check if load window is showing, if it is close load window.
-                    if (UIManager.Instance.optionsMenu.IsLoadWindowShowing()) {
-                        UIManager.Instance.optionsMenu.CloseLoadWindow();
+                    if (UIManager.Instance.IsLoadWindowShowing()) {
+                        UIManager.Instance.CloseLoadWindow();
                         return true;
                     }
                     //if load window is not showing then close options menu
@@ -334,7 +340,32 @@ namespace Ruinarch {
                     UIManager.Instance.HidePlayerActionContextMenu();
                     return true;
                 }
-            
+                if (UIManager.Instance.biolabUIController.isShowing) {
+                    UIManager.Instance.biolabUIController.HideViaShortcutKey();
+                    return true;
+                }
+                if (UIManager.Instance.upgradePortalUIController.isShowing) {
+                    //TODO: Improve this
+                    if (UIManager.Instance.yesNoConfirmation.isShowing) {
+                        UIManager.Instance.yesNoConfirmation.Close();
+                        return true;
+                    }
+                    UIManager.Instance.upgradePortalUIController.HideViaShortcutKey();
+                    return true;
+                }
+                if (UIManager.Instance.purchaseSkillUIController.isShowing) {
+                    //TODO: Improve this
+                    if (UIManager.Instance.yesNoConfirmation.isShowing) {
+                        UIManager.Instance.yesNoConfirmation.Close();
+                        return true;
+                    }
+                    UIManager.Instance.purchaseSkillUIController.HideViaShortcutKey();
+                    return true;
+                }
+                if (PlayerUI.Instance.tutorialUIController.isShowing) {
+                    PlayerUI.Instance.tutorialUIController.HideViaShortcutKey();
+                    return true;
+                }
                 CustomStandaloneInputModule customModule = EventSystem.current.currentInputModule as CustomStandaloneInputModule;
                 if (ignoreCursor || !EventSystem.current.IsPointerOverGameObject() || customModule.GetPointerData().pointerEnter.GetComponent<Button>() == null) {
                     if (UIManager.Instance.openedPopups.Count > 0) {
@@ -342,8 +373,7 @@ namespace Ruinarch {
                         UIManager.Instance.openedPopups.Last().Close();
                         return true;
                     } else {
-                        if (UIManager.Instance.poiTestingUI.gameObject.activeSelf ||
-                            UIManager.Instance.minionCommandsUI.gameObject.activeSelf) {
+                        if (UIManager.Instance.poiTestingUI.gameObject.activeSelf) { //|| UIManager.Instance.minionCommandsUI.gameObject.activeSelf
                             return true;
                         }
                         //close latest Info UI
@@ -378,8 +408,9 @@ namespace Ruinarch {
             }
             return false;
         }
+#endregion
         
-        #region Utilities
+#region Utilities
         private void OnActiveSceneChanged(Scene current, Scene next) {
             if (next.name == "Game") {
                 runUpdate = true;
@@ -398,16 +429,16 @@ namespace Ruinarch {
             var currentSelectedGameObject = EventSystem.current.currentSelectedGameObject;
             return currentSelectedGameObject != null && currentSelectedGameObject.activeInHierarchy;
         }
-        #endregion
+#endregion
 
-        #region Selection
+#region Selection
         public void Select(ISelectable objToSelect) {
             objToSelect.LeftSelectAction();
             Messenger.Broadcast(ControlsSignals.SELECTABLE_LEFT_CLICKED, objToSelect);
         }
-        #endregion
+#endregion
 
-        #region Report A Bug
+#region Report A Bug
         private void ReportABug() {
             YesNoConfirmation yesNoConfirmation = null;
             if (UIManager.Instance != null) {
@@ -422,6 +453,42 @@ namespace Ruinarch {
                 }
             }
         }
-        #endregion
+#endregion
+
+#region Events
+        public static void AddOnUpdateEvent(System.Action p_event) {
+            m_onUpdateEvent += p_event;
+        }
+        public static void RemoveOnUpdateEvent(System.Action p_event) {
+            m_onUpdateEvent -= p_event;
+        } 
+#endregion
+        
+#region Center Cycle
+        private void CharacterCenterCycle() {
+            if (DatabaseManager.Instance.characterDatabase.aliveVillagersList != null && DatabaseManager.Instance.characterDatabase.aliveVillagersList.Count > 0) {
+                //normal objects to center
+                ISelectable objToSelect = GetNextCharacterToCenter(DatabaseManager.Instance.characterDatabase.aliveVillagersList);
+                if (objToSelect != null) {
+                    Select(objToSelect);
+                }
+            }
+        }
+        private Character GetNextCharacterToCenter(List<Character> selectables) {
+            Character objToSelect = null;
+            for (int i = 0; i < selectables.Count; i++) {
+                Character currentSelectable = selectables[i];
+                if (currentSelectable.IsCurrentlySelected()) {
+                    //set next selectable in list to be selected.
+                    objToSelect = CollectionUtilities.GetNextElementCyclic(selectables, i);
+                    break;
+                }
+            }
+            if (objToSelect == null) {
+                objToSelect = selectables[0];
+            }
+            return objToSelect;
+        }
+#endregion
     }
 }

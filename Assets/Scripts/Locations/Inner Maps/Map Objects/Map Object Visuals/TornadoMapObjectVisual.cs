@@ -5,15 +5,14 @@ using Inner_Maps;
 using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.Profiling;
+using UtilityScripts;
 using Random = UnityEngine.Random;
 
-public sealed class TornadoMapObjectVisual : MovingMapObjectVisual<TileObject> {
+public sealed class TornadoMapObjectVisual : MovingMapObjectVisual {
 
     [Header("Particles")]
     [SerializeField] private ParticleSystem[] particles;
     
-    [Header("Movement")]
-    [SerializeField] private float baseSpeed = 1.0F; // Movement speed in units per second.
     private float _startTime;  // Time when the movement started.
     private float _journeyLength; // Total distance between the markers.
     private Vector3 _startPosition;
@@ -80,15 +79,17 @@ public sealed class TornadoMapObjectVisual : MovingMapObjectVisual<TileObject> {
     #endregion
 
     private void GoToRandomTileInRadius() {
-        List<LocationGridTile> tilesInRadius = gridTileLocation.GetTilesInRadius(8, 6, false, true);
+        List<LocationGridTile> tilesInRadius = RuinarchListPool<LocationGridTile>.Claim();
+        gridTileLocation.PopulateTilesInRadius(tilesInRadius, 8, 6, false, true);
         LocationGridTile chosen = tilesInRadius[Random.Range(0, tilesInRadius.Count)];
+        RuinarchListPool<LocationGridTile>.Release(tilesInRadius);
         Assert.IsNotNull(chosen, $"Tornado at {gridTileLocation} cannot find a tile to go to!");
         GoTo(chosen);
     }
 
     public override void PlaceObjectAt(LocationGridTile tile) {
         base.PlaceObjectAt(tile);
-        
+
         GoToRandomTileInRadius();
         _expiryKey = SchedulingManager.Instance.AddEntry(_tornado.expiryDate, Expire, this);
         Messenger.AddListener(Signals.TICK_ENDED, PerTick);
@@ -97,7 +98,7 @@ public sealed class TornadoMapObjectVisual : MovingMapObjectVisual<TileObject> {
         Messenger.AddListener<TileObject, Character, LocationGridTile>(GridTileSignals.TILE_OBJECT_REMOVED, OnTileObjectRemovedFromTile);
         isSpawned = true;
 
-        if (GameManager.Instance.isPaused) {
+        if (GameManager.Instance.isPaused || !GameManager.Instance.gameHasStarted) {
             StartCoroutine(PlayParticleCoroutineWhenGameIsPaused());
         } else {
             PlayTornadoParticle();
@@ -111,6 +112,9 @@ public sealed class TornadoMapObjectVisual : MovingMapObjectVisual<TileObject> {
         RecalculatePathingValues();
     }
     private void RecalculatePathingValues() {
+        if (!GameManager.Instance.gameHasStarted || destinationTile == null) {
+            return;
+        }
         // Keep a note of the time the movement started.
         _startTime = Time.time;
         
@@ -120,7 +124,7 @@ public sealed class TornadoMapObjectVisual : MovingMapObjectVisual<TileObject> {
         _journeyLength = Vector3.Distance(position, destinationTile.centeredWorldLocation);
     }
     private void UpdateSpeed() {
-        _speed = baseSpeed;
+        _speed = PlayerSkillManager.Instance.GetSkillMovementSpeedPerLevel(PLAYER_SKILL_TYPE.TORNADO);
         if (GameManager.Instance.currProgressionSpeed == PROGRESSION_SPEED.X2) {
             _speed *= 1.5f;
         } else if (GameManager.Instance.currProgressionSpeed == PROGRESSION_SPEED.X4) {
@@ -132,6 +136,9 @@ public sealed class TornadoMapObjectVisual : MovingMapObjectVisual<TileObject> {
         RecalculatePathingValues();
     }
     private void OnGamePaused(bool paused) {
+        if (!isSpawned) {
+            return; //tornado has already been reset
+        }
         if (paused) {
             PauseTornadoParticle();
         } else {
@@ -174,7 +181,7 @@ public sealed class TornadoMapObjectVisual : MovingMapObjectVisual<TileObject> {
         if (gameObject.activeSelf == false) {
             return;
         }
-        if (GameManager.Instance.isPaused) {
+        if (GameManager.Instance.isPaused || !GameManager.Instance.gameHasStarted) {
             RecalculatePathingValues();
             return;
         }
@@ -252,12 +259,19 @@ public sealed class TornadoMapObjectVisual : MovingMapObjectVisual<TileObject> {
         if (gridTileLocation == null) {
             return;
         }
+#if DEBUG_PROFILER
         Profiler.BeginSample($"Tornado Per Tick");
-        List<LocationGridTile> tiles = gridTileLocation.GetTilesInRadius(_radius, includeCenterTile: true, includeTilesInDifferentStructure: true);
+#endif
+        SkillData tornadoData = PlayerSkillManager.Instance.GetSpellData(PLAYER_SKILL_TYPE.TORNADO);
+        int processedDamage = -PlayerSkillManager.Instance.GetDamageBaseOnLevel(tornadoData);
+        float piercing = PlayerSkillManager.Instance.GetAdditionalPiercePerLevelBaseOnLevel(tornadoData);
+        List<LocationGridTile> tiles = RuinarchListPool<LocationGridTile>.Claim();
+        gridTileLocation.PopulateTilesInRadius(tiles, _radius, includeCenterTile: true, includeTilesInDifferentStructure: true);
         for (int i = 0; i < tiles.Count; i++) {
             LocationGridTile tile = tiles[i];
-            tile.genericTileObject.AdjustHP(-50, ELEMENTAL_TYPE.Wind, true, this);
+            tile.tileObjectComponent.genericTileObject.AdjustHP(processedDamage, ELEMENTAL_TYPE.Wind, true, this, piercingPower: piercing, isPlayerSource: _tornado.isPlayerSource);
         }
+        RuinarchListPool<LocationGridTile>.Release(tiles);
         for (int i = 0; i < _damagablesInTornado.Count; i++) {
             IDamageable damageable = _damagablesInTornado[i];
             if (damageable.mapObjectVisual != null) {
@@ -267,8 +281,8 @@ public sealed class TornadoMapObjectVisual : MovingMapObjectVisual<TileObject> {
                 //    }
                 //} else {
                     Vector3 distance = transform.position - damageable.mapObjectVisual.gameObjectVisual.transform.position;
-                    if (distance.magnitude < 3f) {
-                        DealDamage(damageable);
+                    if (distance.magnitude < 2f) { //3
+                        DealDamage(damageable, processedDamage, piercing);
                     } else {
                         //check for suck in
                         TrySuckIn(damageable);
@@ -276,14 +290,24 @@ public sealed class TornadoMapObjectVisual : MovingMapObjectVisual<TileObject> {
                 //}
             }
         }
+#if DEBUG_PROFILER
         Profiler.EndSample();
+#endif
     }
-    private void DealDamage(IDamageable damageable) {
+    private void DealDamage(IDamageable damageable, int processedDamage, float piercing) {
         if (damageable.CanBeDamaged()) {
-            if (damageable is Character) {
-                damageable.AdjustHP(-120, ELEMENTAL_TYPE.Wind, true, _tornado, showHPBar: true);
+            if (damageable is Character character) {
+                damageable.AdjustHP(processedDamage, ELEMENTAL_TYPE.Wind, true, _tornado, showHPBar: true, piercingPower: piercing, isPlayerSource: _tornado.isPlayerSource);
+                Messenger.Broadcast(PlayerSignals.PLAYER_HIT_CHARACTER_VIA_SPELL, character, processedDamage);
+                if (character.isDead && character.skillCauseOfDeath == PLAYER_SKILL_TYPE.NONE) {
+                    character.skillCauseOfDeath = PLAYER_SKILL_TYPE.TORNADO;
+                    //Messenger.Broadcast(PlayerSignals.CREATE_SPIRIT_ENERGY, character.deathTilePosition.centeredWorldLocation, 1, character.deathTilePosition.parentMap);
+                    //Messenger.Broadcast(PlayerSignals.CREATE_CHAOS_ORBS, character.deathTilePosition.centeredWorldLocation, 1, character.deathTilePosition.parentMap);
+                }
             } else {
-                damageable.AdjustHP(-50, ELEMENTAL_TYPE.Wind, true, _tornado, showHPBar: true);    
+                //Damage to tile objects should be half so that the village structures should not be destroyed easily
+                int objectDamage = Mathf.RoundToInt(processedDamage * 0.5f);
+                damageable.AdjustHP(objectDamage, ELEMENTAL_TYPE.Wind, true, _tornado, showHPBar: true, piercingPower: piercing, isPlayerSource: _tornado.isPlayerSource);    
             }
         }
     }
@@ -297,20 +321,20 @@ public sealed class TornadoMapObjectVisual : MovingMapObjectVisual<TileObject> {
     }
     private void OnDamagableReachedThis(IDamageable damageable) {
         damageable.mapObjectVisual?.OnReachTarget();
-        damageable.AdjustHP(-damageable.maxHP, ELEMENTAL_TYPE.Wind, true, _tornado, showHPBar: true);
+        damageable.AdjustHP(-damageable.maxHP, ELEMENTAL_TYPE.Wind, true, _tornado, showHPBar: true, isPlayerSource: _tornado.isPlayerSource);
     }
     private bool CanBeSuckedIn(IDamageable damageable) {
         return damageable.CanBeDamaged() && (damageable is GenericTileObject) == false 
             && (damageable is Character) == false && damageable.mapObjectVisual.IsTweening() == false;
     }
 
-    #region Abstract Member Implementation
+#region Abstract Member Implementation
     public override void UpdateTileObjectVisual(TileObject obj) { }
-    #endregion
+#endregion
 
-    #region Listeners
+#region Listeners
     private void OnTileObjectRemovedFromTile(TileObject tileObject, Character removedBy, LocationGridTile removedFrom) {
        RemoveDamageable(tileObject);
     }
-    #endregion
+#endregion
 }

@@ -12,9 +12,11 @@ namespace Plague.Symptom {
                 p_character.traitContainer.AddTrait(p_character, "Paralyzed");
                 Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "Plague", "plague_paralysis", null, LOG_TAG.Life_Changes);
                 log.AddToFillers(p_character, p_character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                log.AddLogToDatabase();
+                log.AddLogToDatabase(true);
             }
+#if DEBUG_LOG
             Debug.Log("Activated Paralysis Symptom");
+#endif
         }
         public override void HourStarted (Character p_character, int p_numOfHoursPassed) {
             if (p_numOfHoursPassed == 49) {

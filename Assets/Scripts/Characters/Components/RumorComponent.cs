@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Interrupts;
 using UtilityScripts;
+using System.Linq;
 
 public class RumorComponent : CharacterComponent {
     private List<string> _rumorPool;
@@ -31,17 +32,18 @@ public class RumorComponent : CharacterComponent {
         if (_negativeInfoPool.Count == 0) {
             return null;
         }
-        List<ActualGoapNode> filteredInfo = new List<ActualGoapNode>();
+        List<ActualGoapNode> filteredInfo = RuinarchListPool<ActualGoapNode>.Claim();
         for (int i = 0; i < _negativeInfoPool.Count; i++) {
             ActualGoapNode node = _negativeInfoPool[i];
-            if(node.descriptionLog.hasValue) {
+            if(node.descriptionLog != null) {
                 if(node.actor == negativeCharacter && node.poiTarget != spreadTargetCharacter) {
                     filteredInfo.Add(node);
                 }
             }
         }
+        ActualGoapNode chosen = null;
         if(filteredInfo.Count > 0) {
-            return CollectionUtilities.GetRandomElement(filteredInfo);
+            chosen = CollectionUtilities.GetRandomElement(filteredInfo);
         }
         //_negativeInfoPool.Clear();
         // for (int i = 0; i < owner.logComponent.history.Count; i++) {
@@ -54,13 +56,22 @@ public class RumorComponent : CharacterComponent {
         //         }
         //     }
         // }
-        return null;
+        RuinarchListPool<ActualGoapNode>.Release(filteredInfo);
+        return chosen;
     }
     public void AddAssumedWitnessedOrInformedNegativeInfo(ActualGoapNode node) {
         if (!_negativeInfoPool.Contains(node)) {
             _negativeInfoPool.Add(node);
+            node.SetIsNegativeInfo(true);
             if (_negativeInfoPool.Count > Max_Negative_Info) {
+                ActualGoapNode previousNode = _negativeInfoPool[0];
                 _negativeInfoPool.RemoveAt(0);
+                if (previousNode != null) {
+                    previousNode.SetIsNegativeInfo(false);
+                    if (previousNode.isSupposedToBeInPool) {
+                        previousNode.ProcessReturnToPool();
+                    }
+                }
             }
         }
     }
@@ -172,7 +183,7 @@ public class RumorComponent : CharacterComponent {
     }
     public Character GetRandomSpreadRumorOrNegativeInfoTarget(Character rumoredCharacter) {
         Character chosenCharacter = null;
-        int charactersWithOpinionCount = owner.relationshipContainer.charactersWithOpinion.Count;
+        int charactersWithOpinionCount = owner.relationshipContainer.charactersWithOpinion.Count(CanShareInfoTo);
         if(charactersWithOpinionCount > 2) {
             while (chosenCharacter == null) {
                 Character potentialCharacter = owner.relationshipContainer.charactersWithOpinion[Random.Range(0, owner.relationshipContainer.charactersWithOpinion.Count)];
@@ -230,7 +241,7 @@ public class RumorComponent : CharacterComponent {
             } else if (identifier == CharacterManager.Drink_Blood) {
                 actionType = INTERACTION_TYPE.DRINK_BLOOD;
             }
-            ActualGoapNode action = new ActualGoapNode(InteractionManager.Instance.goapActionData[actionType], rumoredCharacter, targetOfRumoredCharacter, null, 0);
+            ActualGoapNode action = ObjectPoolManager.Instance.CreateNewAction(InteractionManager.Instance.goapActionData[actionType], rumoredCharacter, targetOfRumoredCharacter, null, 0);
             if (identifier == CharacterManager.Poison_Food) {
                 if(targetOfRumoredCharacter.gridTileLocation != null) {
                     action.SetTargetStructure(targetOfRumoredCharacter.gridTileLocation.structure);
@@ -248,7 +259,7 @@ public class RumorComponent : CharacterComponent {
     }
     public Rumor CreateNewRumor(Character rumoredCharacter, IPointOfInterest targetOfRumoredCharacter, INTERACTION_TYPE actionType) {
         if (rumoredCharacter != null && targetOfRumoredCharacter != null) {
-            ActualGoapNode action = new ActualGoapNode(InteractionManager.Instance.goapActionData[actionType], rumoredCharacter, targetOfRumoredCharacter, null, 0);
+            ActualGoapNode action = ObjectPoolManager.Instance.CreateNewAction(InteractionManager.Instance.goapActionData[actionType], rumoredCharacter, targetOfRumoredCharacter, null, 0);
             if (actionType == INTERACTION_TYPE.POISON) {
                 if (targetOfRumoredCharacter.gridTileLocation != null) {
                     action.SetTargetStructure(targetOfRumoredCharacter.gridTileLocation.structure);
@@ -267,7 +278,11 @@ public class RumorComponent : CharacterComponent {
         for (int i = 0; i < data.negativeInfoIDs.Count; i++) {
             string id = data.negativeInfoIDs[i];
             ActualGoapNode node = DatabaseManager.Instance.actionDatabase.GetActionByPersistentID(id);
-            _negativeInfoPool.Add(node);
+            if (node.actor == null || node.poiTarget == null) {
+                //Do not add negative info if actor or target is no longer in the world or does not exist
+            } else {
+                _negativeInfoPool.Add(node);
+            }
         }
     }
     #endregion

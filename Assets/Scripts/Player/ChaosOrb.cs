@@ -14,13 +14,13 @@ public class ChaosOrb : PooledObject {
 
 	private string expiryKey;
 	private Coroutine positionCoroutine;
-	private Vector3 randomPos;
 	private Vector3 velocity = Vector3.zero;
+	public  CURRENCY targetCurrency = CURRENCY.Chaotic_Energy;
 	[SerializeField] private Collider2D _collider;
 	[SerializeField] private TrailRenderer _trail;
 	
 	public Region location { get; private set; }
-	
+	public Vector3 randomPos { get; private set; }
 	public void Initialize(Region location) {
 		this.location = location;
 		GameDate expiry = GameManager.Instance.Today();
@@ -28,8 +28,10 @@ public class ChaosOrb : PooledObject {
 		expiryKey = SchedulingManager.Instance.AddEntry(expiry, Expire, this);
 		
 		randomPos = transform.position;
-		randomPos.x += Random.Range(-1.5f, 1.5f);
-		randomPos.y += Random.Range(-1.5f, 1.5f);
+		Vector3 calculatedPos = randomPos;
+		calculatedPos.x += Random.Range(-1.5f, 1.5f);
+		calculatedPos.y += Random.Range(-1.5f, 1.5f);
+		randomPos = calculatedPos;
 		positionCoroutine = StartCoroutine(GoTo(randomPos, 0.5f));
 		_collider.enabled = true;
 		_trail.enabled = false;
@@ -74,26 +76,28 @@ public class ChaosOrb : PooledObject {
 		}
 		_collider.enabled = false;
 		_trail.enabled = true;
-		Vector3 manaContainerPos = InnerMapCameraMove.Instance.camera.ScreenToWorldPoint(PlayerUI.Instance.manaLbl.transform.position);
+		Transform targetTransform;
+		targetTransform = PlayerUI.Instance.plaguePointLbl.transform;
+		Vector3 plaguePointsContainer = InnerMapCameraMove.Instance.camera.ScreenToWorldPoint(targetTransform.position);
 
 		Vector3 controlPointA = transform.position;
 		controlPointA.x += 5f;
 		
-		Vector3 controlPointB = manaContainerPos;
+		Vector3 controlPointB = plaguePointsContainer;
 		controlPointB.y -= 5f;
 
 		if (InnerMapCameraMove.Instance.target == transform) {
 			InnerMapCameraMove.Instance.CenterCameraOn(null); //this is so that the camera will not follow this orb when it is animating towards the mana container.
 		}
 		
-		transform.DOPath(new[] {manaContainerPos, controlPointA, controlPointB}, 0.7f, PathType.CubicBezier)
+		transform.DOPath(new[] {plaguePointsContainer, controlPointA, controlPointB}, 0.7f, PathType.CubicBezier)
 			.SetEase(Ease.InSine)
-			.OnComplete(GainMana);
+			.OnComplete(GainPlaguePoints);
 		Messenger.Broadcast(PlayerSignals.CHAOS_ORB_COLLECTED);
 	}
-	private void GainMana() {
-		int randomMana = Random.Range(5, 11);
-		PlayerManager.Instance.player.AdjustMana(randomMana);
+	private void GainPlaguePoints() {
+		AudioManager.Instance.PlayParticleMagnet();    
+		PlayerManager.Instance.player.plagueComponent.AdjustPlaguePoints(EditableValuesManager.Instance.GetChaosOrbHoverAmount());
 		Destroy();
 	}
 	public override void Reset() {
@@ -110,11 +114,10 @@ public class ChaosOrb : PooledObject {
 public class SaveDataChaosOrb {
     public Vector3 pos;
     public string regionID;
-
     public void Save(ChaosOrb orb) {
-        pos = orb.transform.position;
+        pos = orb.randomPos;
         regionID = orb.location.persistentID;
-    }
+	}
 
     public void Load() {
         Region region = DatabaseManager.Instance.regionDatabase.GetRegionByPersistentID(regionID);

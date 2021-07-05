@@ -9,16 +9,15 @@ namespace Quests {
         }
         
         public override void Enable() {
-            Messenger.AddListener<ActualGoapNode>(JobSignals.CHARACTER_FINISHED_ACTION, OnCharacterFinishedAction);
+            Messenger.AddListener<Character, IPointOfInterest, INTERACTION_TYPE, ACTION_STATUS>(JobSignals.CHARACTER_FINISHED_ACTION, OnCharacterFinishedAction);
         }
         public override void Disable() {
-            Messenger.RemoveListener<ActualGoapNode>(JobSignals.CHARACTER_FINISHED_ACTION, OnCharacterFinishedAction);
+            Messenger.RemoveListener<Character, IPointOfInterest, INTERACTION_TYPE, ACTION_STATUS>(JobSignals.CHARACTER_FINISHED_ACTION, OnCharacterFinishedAction);
         }
         
-        private void OnCharacterFinishedAction(ActualGoapNode actualGoapNode) {
-            if (actualGoapNode.action.goapType == _interactionType 
-                && actualGoapNode.actionStatus == ACTION_STATUS.SUCCESS) {
-                finishedAction = actualGoapNode;
+        private void OnCharacterFinishedAction(Character p_actor, IPointOfInterest p_target, INTERACTION_TYPE p_type, ACTION_STATUS p_status) {
+            if (p_type == _interactionType && p_status == ACTION_STATUS.SUCCESS) {
+                //finishedAction = actualGoapNode;
                 SetCriteriaAsMet();
             }
         }

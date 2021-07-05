@@ -23,6 +23,13 @@ public class Ghost : Summon {
     }
 
     #region Overrides
+    public override void Initialize() {
+        base.Initialize();
+        movementComponent.SetToFlying();
+        RemoveAdvertisedAction(INTERACTION_TYPE.BURY_CHARACTER);
+        isWildMonster = false;
+    }
+
     public override void SubscribeToSignals() {
         if (hasSubscribedToSignals) {
             return;
@@ -65,7 +72,9 @@ public class Ghost : Summon {
     }
     
     private void FearCheck() {
+#if DEBUG_PROFILER
         Profiler.BeginSample($"Ghost Fear Check");
+#endif
         if (UtilityScripts.Utilities.IsEven(GameManager.Instance.Today().tick)) {
             if (UnityEngine.Random.Range(0, 100) < 15) {
                 //cast fear on random hostile
@@ -92,11 +101,13 @@ public class Ghost : Summon {
                     Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Summon", "Ghost", "feared", null, LOG_TAG.Combat);
                     log.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                     log.AddToFillers(chosenCharacter, chosenCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-                    log.AddLogToDatabase();
+                    log.AddLogToDatabase(true);
                 }
             }
         }
+#if DEBUG_PROFILER
         Profiler.EndSample();
+#endif
     }
 }
 

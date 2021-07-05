@@ -11,6 +11,7 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
 
     private Character _character;
     private PortraitSettings _portraitSettings;
+    private Sprite _portraitSprite;
 
     public bool ignoreInteractions = false;
 
@@ -38,8 +39,9 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
     [SerializeField] private GameObject hoverObj;
     [SerializeField] private GameObject leaderIcon;
 
-    private System.Action onClickAction;
+    private System.Action _onClickAction;
     private bool _isSubscribedToListeners;
+    
     #region getters/setters
     public Character character => _character;
     #endregion
@@ -47,8 +49,9 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
     private bool isPixelPerfect;
 
     private void OnEnable() {
-        //Messenger.AddListener<Character>(Signals.CHARACTER_LEVEL_CHANGED, OnCharacterLevelChanged);
+        Messenger.AddListener(CharacterSignals.CHARACTER_INFO_REVEALED, UpdateLeaderIcon);
         SubscribeListeners();
+        UpdateLeaderIcon();
     }
     public void GeneratePortrait(PortraitSettings portraitSettings, bool makePixelPerfect = true) {
         _portraitSettings = portraitSettings;
@@ -58,16 +61,30 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
     public void GeneratePortrait(Character character, bool makePixelPerfect = true) {
         _character = character;
         _portraitSettings = character.visuals.portraitSettings;
+        _portraitSprite = null;
+        UpdatePortrait(makePixelPerfect);
+        UpdateLeaderIcon();
+    }
+    public void GeneratePortrait(SUMMON_TYPE p_monsterType, bool makePixelPerfect = true) {
+        _portraitSprite = CharacterManager.Instance.GetOrCreateCharacterClassData(CharacterManager.Instance.GetSummonSettings(p_monsterType).className)?.portraitSprite;
+        UpdatePortrait(makePixelPerfect);
+        UpdateLeaderIcon();
+    }
+    public void GeneratePortrait(MINION_TYPE p_demonType, bool makePixelPerfect = true) {
+        _portraitSprite = CharacterManager.Instance.GetOrCreateCharacterClassData(CharacterManager.Instance.GetMinionSettings(p_demonType).className)?.portraitSprite;
         UpdatePortrait(makePixelPerfect);
         UpdateLeaderIcon();
     }
 
     private void UpdatePortrait(bool makePixelPerfect) {
         isPixelPerfect = makePixelPerfect;
-
-        if (string.IsNullOrEmpty(_portraitSettings.wholeImage) == false) {
+        if(!string.IsNullOrEmpty(_portraitSettings.className)) {
+            _portraitSprite = CharacterManager.Instance.GetOrCreateCharacterClassData(_portraitSettings.className)?.portraitSprite;
+        }
+        if (_portraitSprite != null) {
+            //use portrait sprite directly
             //use whole image
-            SetWholeImageSprite(CharacterManager.Instance.GetWholeImagePortraitSprite(_portraitSettings.wholeImage));
+            SetWholeImageSprite(_portraitSprite);
             if (character != null) {
                 SetWholeImageMaterial(character.visuals.wholeImageMaterial);
             }
@@ -137,7 +154,7 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
         wholeImage.sprite = sprite;
     }
     public void SetAsDefaultMinion() {
-        SetWholeImageSprite(CharacterManager.Instance.GetWholeImagePortraitSprite("Wrath"));
+        SetWholeImageSprite(CharacterManager.Instance.GetOrCreateCharacterClassData("Wrath").portraitSprite);
         SetWholeImageState(true);
         SetFaceObjectStates(false);
         lvlGO.SetActive(false);
@@ -187,6 +204,9 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
     #endregion
 
     #region Pointer Actions
+    public void AddPointerClickAction(System.Action p_action) {
+        _onClickAction += p_action;
+    }
     public void OnPointerClick(PointerEventData eventData) {
         if (ignoreInteractions) {
             return;
@@ -204,7 +224,11 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
         OnPointerClick(eventData as PointerEventData);
     }
     public void OnLeftClick() {
-        ShowCharacterMenu();
+        if (_onClickAction != null) {
+            _onClickAction?.Invoke();
+        } else {
+            ShowCharacterMenu();    
+        }
     }
     private void OnRightClick() {
         if (_character != null) {
@@ -291,7 +315,9 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
     public override void Reset() {
         base.Reset();
         _character = null;
+        _onClickAction = null;
         ignoreInteractions = false;
+        _portraitSprite = null;
         RemoveListeners();
     }
     #endregion
@@ -326,7 +352,7 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
     #region Leader Icon
     private void UpdateLeaderIcon() {
         if (character != null) {
-            leaderIcon.SetActive(character.isFactionLeader || character.isSettlementRuler);    
+            leaderIcon.SetActive(character.isFactionLeader || character.isSettlementRuler);
         } else {
             leaderIcon.SetActive(false);
         }

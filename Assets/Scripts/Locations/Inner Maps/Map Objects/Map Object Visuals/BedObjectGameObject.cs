@@ -29,13 +29,12 @@ public class BedObjectGameObject : TileObjectGameObject {
     }
 
     public override void UpdateTileObjectVisual(TileObject bed) {
-        HexTile hex = bed.gridTileLocation.collectionOwner.GetConnectedHextileOrNearestHextile();
-        int userCount = bed.users.Length;
+        int userCount = bed.GetUserCount();
         if (userCount == 0) {
             SetVisual(InnerMapManager.Instance.GetTileObjectAsset(bed, 
                 bed.state,
-                hex.biomeType,
-                bed.gridTileLocation?.isCorrupted ?? false));
+                bed.gridTileLocation.mainBiomeType,
+                bed.gridTileLocation?.corruptionComponent.isCorrupted ?? false));
         } else if (userCount == 1) {
             SetVisual(bed1Sleeping);
         } else if (userCount == 2) {

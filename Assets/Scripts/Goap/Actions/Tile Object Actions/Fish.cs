@@ -23,26 +23,31 @@ public class Fish : GoapAction {
         SetState("Fish Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
+#if DEBUG_LOG
         string costLog = $"\n{name} {target.nameWithID}:";
+#endif
         if (job.jobType == JOB_TYPE.PRODUCE_FOOD_FOR_CAMP) {
-            if (target.gridTileLocation != null && target.gridTileLocation.collectionOwner.isPartOfParentRegionMap && actor.gridTileLocation != null
-                && actor.gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
-                LocationGridTile centerGridTileOfTarget = target.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.GetCenterLocationGridTile();
-                LocationGridTile centerGridTileOfActor = actor.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.GetCenterLocationGridTile();
+            if (target.gridTileLocation != null && actor.gridTileLocation != null) {
+                LocationGridTile centerGridTileOfTarget = target.gridTileLocation.area.gridTileComponent.centerGridTile;
+                LocationGridTile centerGridTileOfActor = actor.gridTileLocation.area.gridTileComponent.centerGridTile;
                 float distance = centerGridTileOfActor.GetDistanceTo(centerGridTileOfTarget);
-                int distanceToCheck = (InnerMapManager.BuildingSpotSize.x * 2) * 3;
+                int distanceToCheck = InnerMapManager.AreaLocationGridTileSize.x * 3;
 
                 if (distance > distanceToCheck) {
                     //target is at structure that character is avoiding
+#if DEBUG_LOG
                     costLog += $" +2000(Location of target too far from actor)";
                     actor.logComponent.AppendCostLog(costLog);
+#endif
                     return 2000;
                 }
             }
         }
-        int cost = UtilityScripts.Utilities.Rng.Next(80, 101); 
+        int cost = UtilityScripts.Utilities.Rng.Next(80, 101);
+#if DEBUG_LOG
         costLog += $" +{cost.ToString()}(Random Cost Between 80-100)";
         actor.logComponent.AppendCostLog(costLog);
+#endif
         return cost;
     }
     //public override void OnStopWhilePerforming(ActualGoapNode node) {
@@ -92,7 +97,7 @@ public class Fish : GoapAction {
     }
     #endregion
 
-    #region Requirements
+#region Requirements
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, OtherData[] otherData, JobQueueItem job) { 
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData, job);
         if (satisfied) {
@@ -104,9 +109,9 @@ public class Fish : GoapAction {
         }
         return false;
     }
-    #endregion
+#endregion
 
-    #region State Effects
+#region State Effects
     public void PreFishSuccess(ActualGoapNode goapNode) {
         goapNode.descriptionLog.AddToFillers(null, "50", LOG_IDENTIFIER.STRING_1);
         //if (goapNode.actor.characterClass.IsCombatant()) {
@@ -115,7 +120,7 @@ public class Fish : GoapAction {
     }
     public void PerTickFishSuccess(ActualGoapNode goapNode) {
         if (goapNode.actor.characterClass.IsCombatant()) {
-            goapNode.actor.needsComponent.AdjustHappiness(-2);
+            goapNode.actor.needsComponent.AdjustHappiness(-4);
         }
     }
     public void AfterFishSuccess(ActualGoapNode goapNode) {
@@ -123,7 +128,7 @@ public class Fish : GoapAction {
         //    goapNode.actor.needsComponent.AdjustDoNotGetBored(-1);
         //}
         LocationGridTile tile = goapNode.actor.gridTileLocation;
-        if(tile != null && tile.objHere != null) {
+        if(tile != null && tile.tileObjectComponent.objHere != null) {
             tile = goapNode.actor.gridTileLocation.GetFirstNearestTileFromThisWithNoObject();
         }
 
@@ -144,6 +149,7 @@ public class Fish : GoapAction {
                 InnerMapManager.Instance.CreateNewResourcePileAndTryCreateHaulJob<FoodPile>(TILE_OBJECT_TYPE.FISH_PILE, 50, goapNode.actor, tile);
             }
         }
+        goapNode.actor.talentComponent?.GetTalent(CHARACTER_TALENT.Food).AdjustExperience(8, goapNode.actor);
     }
-    #endregion
+#endregion
 }

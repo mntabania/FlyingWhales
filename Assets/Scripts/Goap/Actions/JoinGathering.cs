@@ -26,38 +26,41 @@ public class JoinGathering : GoapAction {
         SetState("Join Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
+#if DEBUG_LOG
         string costLog = $"\n{name} {target.nameWithID}: +10(Constant)";
         actor.logComponent.AppendCostLog(costLog);
+#endif
         return 10;
     }
-    public override void AddFillersToLog(ref Log log, ActualGoapNode node) {
-        base.AddFillersToLog(ref log, node);
+    public override void AddFillersToLog(Log log, ActualGoapNode node) {
+        base.AddFillersToLog(log, node);
         IPointOfInterest poiTarget = node.poiTarget;
         if (poiTarget is Character partyLeader) {
-            log.AddToFillers(null, partyLeader.partyComponent.currentParty.partyName, LOG_IDENTIFIER.STRING_1); //partyLeader.partyComponent.currentParty
+            log.AddToFillers(null, partyLeader.gatheringComponent.currentGathering.gatheringName, LOG_IDENTIFIER.STRING_1); //partyLeader.partyComponent.currentParty
         }
     }
-    #endregion
+#endregion
 
-    #region Requirements
+#region Requirements
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, OtherData[] otherData, JobQueueItem job) {
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData, job);
         if (satisfied) {
             if(poiTarget is Character partyLeader) {
-                return !partyLeader.isDead && partyLeader.partyComponent.hasParty;
+                return !partyLeader.isDead && partyLeader.gatheringComponent.hasGathering; //&& partyLeader.partyComponent.hasParty;
             }
             return actor != poiTarget;
         }
         return false;
     }
-    #endregion
+#endregion
 
-    #region State Effects
+#region State Effects
     public void AfterJoinSuccess(ActualGoapNode goapNode) {
         if (goapNode.poiTarget is Character partyLeader) {
-            partyLeader.partyComponent.currentParty.AddMember(goapNode.actor);
+            partyLeader.gatheringComponent.currentGathering.AddAttendee(goapNode.actor);
+            // partyLeader.partyComponent.currentParty?.AddMember(goapNode.actor);
         }
     }
-    #endregion
+#endregion
 
 }

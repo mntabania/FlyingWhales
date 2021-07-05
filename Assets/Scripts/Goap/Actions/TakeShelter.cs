@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using Inner_Maps.Location_Structures;
-using Locations.Tile_Features;
+using Locations.Area_Features;
 using Logs;
 using UnityEngine;
 using Traits;
@@ -29,8 +29,8 @@ public class TakeShelter : GoapAction {
         }
         return null;
     }
-    public override void AddFillersToLog(ref Log log, ActualGoapNode node) {
-        base.AddFillersToLog(ref log, node);
+    public override void AddFillersToLog(Log log, ActualGoapNode node) {
+        base.AddFillersToLog(log, node);
         OtherData[] otherData = node.otherData;
         if (otherData != null && otherData.Length == 2) {
             if (otherData[0].obj is LocationStructure structure) {
@@ -46,13 +46,15 @@ public class TakeShelter : GoapAction {
         SetState("Take Shelter Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
+#if DEBUG_LOG
         string costLog = $"\n{name} {target.nameWithID}: +10(Constant)";
         actor.logComponent.AppendCostLog(costLog);
+#endif
         return 10;
     }
-    #endregion
+#endregion
 
-    #region Requirement
+#region Requirement
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, OtherData[] otherData, JobQueueItem job) {
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData, job);
         if (satisfied) {
@@ -60,13 +62,13 @@ public class TakeShelter : GoapAction {
         }
         return false;
     }
-    #endregion
+#endregion
 
-    #region State Effects
+#region State Effects
     public void AfterTakeShelterSuccess(ActualGoapNode goapNode) {
-        bool shouldSetShelter = goapNode.actor.gridTileLocation != null && goapNode.actor.gridTileLocation.collectionOwner.isPartOfParentRegionMap && 
-            (goapNode.actor.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.featureComponent.HasFeature(TileFeatureDB.Blizzard_Feature) 
-            || goapNode.actor.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.featureComponent.HasFeature(TileFeatureDB.Heat_Wave_Feature));
+        bool shouldSetShelter = goapNode.actor.gridTileLocation != null && 
+            (goapNode.actor.areaLocation.featureComponent.HasFeature(AreaFeatureDB.Blizzard_Feature) 
+            || goapNode.actor.areaLocation.featureComponent.HasFeature(AreaFeatureDB.Heat_Wave_Feature));
         if (shouldSetShelter) {
             if (goapNode.actor.traitContainer.HasTrait("Freezing")) {
                 Freezing freezing = goapNode.actor.traitContainer.GetTraitOrStatus<Freezing>("Freezing");
@@ -79,5 +81,5 @@ public class TakeShelter : GoapAction {
             goapNode.actor.trapStructure.SetForcedStructure(goapNode.targetStructure);
         }
     }
-    #endregion
+#endregion
 }

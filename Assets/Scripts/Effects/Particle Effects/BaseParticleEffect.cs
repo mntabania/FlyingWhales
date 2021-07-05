@@ -100,6 +100,13 @@ public class BaseParticleEffect : PooledObject {
             }
         }
     }
+    public virtual void SetSize(Vector2Int p_size) {
+        for (int i = 0; i < particleSystems.Length; i++) {
+            ParticleSystem currentParticle = particleSystems[i];
+            ParticleSystem.ShapeModule shapeModule = currentParticle.shape; 
+            shapeModule.scale = new Vector3(p_size.x, p_size.y, 1f);
+        }
+    }
 
     #region Object Pool
     public override void Reset() {

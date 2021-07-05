@@ -15,6 +15,11 @@ public class InterruptDatabase {
             allInterrupts.Add(interrupt.persistentID, interrupt);
         }
     }
+    public void RemoveInterrupt(string interrupt) {
+        if (allInterrupts.ContainsKey(interrupt)) {
+            allInterrupts.Remove(interrupt);
+        }
+    }
     public InterruptHolder GetInterruptByPersistentID(string id) {
         if (allInterrupts.ContainsKey(id)) {
             return allInterrupts[id];

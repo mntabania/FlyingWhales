@@ -32,27 +32,12 @@ public class GoapActionState {
     }
 
     #region Logs
-    // public Log CreateDescriptionLog(ActualGoapNode goapNode) {
-    //     string actionName = parentAction.goapName;
-    //     string stateNameLowercase = name.ToLower();
-    //     if (LocalizationManager.Instance.HasLocalizedValue("GoapAction", actionName, $"{stateNameLowercase}_description")) {
-    //         Log _descriptionLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "GoapAction", actionName, $"{stateNameLowercase}_description", goapNode);
-    //         if (goapNode != null) {
-    //             _descriptionLog.SetLogType(LOG_TYPE.Action);
-    //         }
-    //         goapNode.action.AddFillersToLog(_descriptionLog, goapNode);
-    //         return _descriptionLog;
-    //     } else {
-    //         Debug.LogWarning($"{this.name} had problems creating it's description log");
-    //     }
-    //     return null;
-    // }
     public Log CreateDescriptionLog(ActualGoapNode goapNode) {
         string actionName = parentAction.goapName;
         string stateNameLowercase = name.ToLower();
         if (LocalizationManager.Instance.HasLocalizedValue("GoapAction", actionName, $"{stateNameLowercase}_description")) {
-            Log _descriptionLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "GoapAction", actionName, $"{stateNameLowercase}_description", goapNode, goapNode.logTags);
-            goapNode.action.AddFillersToLog(ref _descriptionLog, goapNode);
+            Log _descriptionLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "GoapAction", actionName, $"{stateNameLowercase}_description", goapNode.logTags, goapNode);
+            goapNode.action.AddFillersToLog(_descriptionLog, goapNode);
             return _descriptionLog;
         } else {
             Debug.LogWarning($"{this.name} had problems creating it's description log");

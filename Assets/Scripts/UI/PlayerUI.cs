@@ -19,14 +19,19 @@ using Random = UnityEngine.Random;
 public class PlayerUI : BaseMonoBehaviour {
     public static PlayerUI Instance;
 
-    [Header("Top Menu")]
-    public GameObject regionNameTopMenuGO;
-    public TextMeshProUGUI regionNameTopMenuText;
-    public HoverHandler regionNameHoverHandler;
-    
+    //[Header("Top Menu")]
+    //public GameObject regionNameTopMenuGO;
+    //public TextMeshProUGUI regionNameTopMenuText;
+    //public HoverHandler regionNameHoverHandler;
+
+    [Header("Spirit Energy")]
+    public TextMeshProUGUI spiritEnergyLabel;
+    [SerializeField] private RectTransform spiritEnergyContainer;
+
     [Header("Mana")]
     public TextMeshProUGUI manaLbl;
     [SerializeField] private RectTransform manaContainer;
+    [SerializeField] private UIHoverPosition manaTooltipPos;
 
     [Header("Intel")]
     public GameObject intelContainer;
@@ -40,9 +45,9 @@ public class PlayerUI : BaseMonoBehaviour {
     [SerializeField] private GameObject successfulAreaCorruptionGO;
     [SerializeField] private ScrollRect killSummaryScrollView;
 
-    [Header("General Confirmation")] 
+    [Header("General Confirmation")]
     [SerializeField] private GeneralConfirmation _generalConfirmation;
-    
+
     [Header("Intervention Abilities")]
     [SerializeField] private GameObject actionBtnPrefab;
 
@@ -53,16 +58,9 @@ public class PlayerUI : BaseMonoBehaviour {
     [SerializeField] private WinGameOverItem winGameOver;
     [SerializeField] private LoseGameOverItem loseGameOver;
 
-    
     [Header("Villagers")]
-    [FormerlySerializedAs("killSummaryGO")] [SerializeField] private GameObject villagerGO;
-    [SerializeField] private GameObject villagerItemPrefab;
-    [FormerlySerializedAs("killCountScrollView")] [SerializeField] private ScrollRect villagersScrollView;
-    [SerializeField] private RectTransform aliveHeader;
     [SerializeField] private Toggle villagerTab;
-    public RectTransform deadHeader;
-    private List<CharacterNameplateItem> villagerItems;
-    
+
     [Header("Seize Object")]
     [SerializeField] private Button unseizeButton;
 
@@ -71,8 +69,10 @@ public class PlayerUI : BaseMonoBehaviour {
     [SerializeField] private SpellListUI spellList;
     [SerializeField] private CustomDropdownList customDropdownList;
     [SerializeField] private CultistsListUI cultistsList;
+    [SerializeField] private TargetsListUI targetsList;
     public Toggle monsterToggle;
-    
+    public Toggle targetsToggle;
+
     [Header("Minion List")]
     [SerializeField] private MinionListUI minionList;
     public UIHoverPosition minionListHoverPosition;
@@ -91,7 +91,7 @@ public class PlayerUI : BaseMonoBehaviour {
     [Header("Summons")]
     [SerializeField] private SummonListUI summonList;
 
-    [Header("Items")] 
+    [Header("Items")]
     public Toggle itemsToggle;
     public ScrollRect itemsScrollRect;
     public GameObject itemsContainerGO;
@@ -104,20 +104,25 @@ public class PlayerUI : BaseMonoBehaviour {
     public GameObject artifactsContainerGO;
     public GameObject artifactItemPrefab;
     private List<ArtifactItem> _artifactItems;
-    
+
     [Header("Threat")]
     [SerializeField] private TextMeshProUGUI threatLbl;
     [SerializeField] private UIHoverPosition threatHoverPos;
     [SerializeField] private RectTransform threatContainer;
 
-    [Header("Building")] 
+    [Header("Building")]
     [SerializeField] private BuildListUI _buildListUI;
-    
+
     [Header("Plague Points")]
-    [SerializeField] private TextMeshProUGUI plaguePointLbl;
+    [SerializeField] public TextMeshProUGUI plaguePointLbl;
     [SerializeField] private RectTransform plaguePointsContainer;
-    
-    public HexTile harassDefendInvadeTargetHex { get; private set; }
+
+    [Header("Accumulated Damage")]
+    public TextMeshProUGUI accumulatedDamageLbl;
+    public GameObject accumulatedDamageGO;
+
+    [Header("Skill Pup Up Notif Position")]
+    public Transform popUpDisplayPoint;
 
     void Awake() {
         Instance = this;
@@ -131,6 +136,7 @@ public class PlayerUI : BaseMonoBehaviour {
             return;
         }
         UpdateMana();
+        UpdateSpiritEnergy();
     }
 
     public void Initialize() {
@@ -141,10 +147,7 @@ public class PlayerUI : BaseMonoBehaviour {
 
         minionList.Initialize();
         summonList.Initialize();
-        plaguePointsContainer.gameObject.SetActive(false);
 
-        Messenger.AddListener<InfoUIBase>(UISignals.MENU_OPENED, OnMenuOpened);
-        Messenger.AddListener<InfoUIBase>(UISignals.MENU_CLOSED, OnMenuClosed);
         Messenger.AddListener(PlayerSignals.UPDATED_CURRENCIES, UpdateUI);
         Messenger.AddListener<IIntel>(PlayerSignals.PLAYER_OBTAINED_INTEL, OnIntelObtained);
         Messenger.AddListener<IIntel>(PlayerSignals.PLAYER_REMOVED_INTEL, OnIntelRemoved);
@@ -152,35 +155,62 @@ public class PlayerUI : BaseMonoBehaviour {
         Messenger.AddListener(UISignals.ON_OPEN_CONVERSATION_MENU, OnOpenConversationMenu);
         Messenger.AddListener(UISignals.ON_CLOSE_CONVERSATION_MENU, OnCloseConversationMenu);
         
-        Messenger.AddListener<Region>(RegionSignals.REGION_MAP_OPENED, OnInnerMapOpened);
-        Messenger.AddListener<Region>(RegionSignals.REGION_MAP_CLOSED, OnInnerMapClosed);
+        //Messenger.AddListener<Region>(RegionSignals.REGION_MAP_OPENED, OnInnerMapOpened);
+        //Messenger.AddListener<Region>(RegionSignals.REGION_MAP_CLOSED, OnInnerMapClosed);
         
-        Messenger.AddListener<PLAYER_SKILL_TYPE>(SpellSignals.PLAYER_GAINED_SPELL, OnGainSpell);
-        Messenger.AddListener<PLAYER_SKILL_TYPE>(SpellSignals.PLAYER_LOST_SPELL, OnLostSpell);
+        Messenger.AddListener<PLAYER_SKILL_TYPE>(PlayerSkillSignals.PLAYER_GAINED_SPELL, OnGainSpell);
+        Messenger.AddListener<PLAYER_SKILL_TYPE>(PlayerSkillSignals.PLAYER_LOST_SPELL, OnLostSpell);
+        Messenger.AddListener<SkillData>(PlayerSkillSignals.SPELL_COOLDOWN_FINISHED, OnSpellCooldownFinished);
+        Messenger.AddListener<MonsterAndDemonUnderlingCharges>(PlayerSkillSignals.ON_FINISH_UNDERLING_COOLDOWN, OnFinishUnderlingCoolDown);
+        AdjustUIDisplayBaseOnGameMode();
+        
+    }
+
+    void OnFinishUnderlingCoolDown(MonsterAndDemonUnderlingCharges p_playerUnderlingComponent) {
+        string rawString = p_playerUnderlingComponent.characterClassName;
+        rawString += " is now available";
+        PopUpTextNotification.ShowPlayerPoppingTextNotif($"{UtilityScripts.Utilities.YellowDotIcon()}{UtilityScripts.Utilities.ColorizeName(p_playerUnderlingComponent.characterClassName)} is now available", popUpDisplayPoint, rawString.Length);
+    }
+
+    void OnSpellCooldownFinished(SkillData p_skillData) {
+        string rawString = p_skillData.name;
+        if (p_skillData.category != PLAYER_SKILL_CATEGORY.MINION && p_skillData.category != PLAYER_SKILL_CATEGORY.SUMMON) {
+            if (p_skillData.category == PLAYER_SKILL_CATEGORY.SCHEME) {
+                rawString = "Scheme";
+            }
+            rawString += " charge replenished by 1";
+            PopUpTextNotification.ShowPlayerPoppingTextNotif($"{UtilityScripts.Utilities.YellowDotIcon()}{UtilityScripts.Utilities.ColorizeName(p_skillData.name)} charge replenished by 1", popUpDisplayPoint, rawString.Length);
+        }
+    }
+
+    public void AdjustUIDisplayBaseOnGameMode() {
+        if (WorldSettings.Instance.worldSettingsData.IsScenarioMap()) {
+            spiritEnergyContainer.transform.position = new Vector3(0, 10000f, 0f);
+            Vector3 pos = manaContainer.transform.localPosition;
+            pos.x += 140f;
+            manaContainer.transform.localPosition = pos;
+            pos = plaguePointsContainer.transform.localPosition;
+            pos.x += 140f;
+            plaguePointsContainer.transform.localPosition = pos;
+        }
+        UpdatePlaguePointsAmount(EditableValuesManager.Instance.GetInitialChaoticEnergyBaseOnGameMode());
+        manaLbl.text = EditableValuesManager.Instance.startingMana.ToString();
     }
 
     public void InitializeAfterGameLoaded() {
-        Messenger.AddListener<Character>(CharacterSignals.CHARACTER_DEATH, OnCharacterDied);
-        Messenger.AddListener<Character, Trait>(CharacterSignals.CHARACTER_TRAIT_ADDED, OnCharacterGainedTrait);
-        Messenger.AddListener<Character, Trait>(CharacterSignals.CHARACTER_TRAIT_REMOVED, OnCharacterLostTrait);
-        Messenger.AddListener<Character>(CharacterSignals.CHARACTER_CREATED, AddedNewCharacter);
-        Messenger.AddListener<Character, CharacterClass, CharacterClass>(CharacterSignals.CHARACTER_CLASS_CHANGE, OnCharacterClassChange);
-        Messenger.AddListener<Character, Character>(CharacterSignals.ON_SWITCH_FROM_LIMBO, OnCharacterSwitchFromLimbo);
         Messenger.AddListener(PlayerSignals.THREAT_UPDATED, OnThreatUpdated);
         Messenger.AddListener<int>(PlayerSignals.THREAT_INCREASED, OnThreatIncreased);
         Messenger.AddListener(PlayerSignals.THREAT_RESET, OnThreatReset);
         Messenger.AddListener<IPointOfInterest>(CharacterSignals.ON_SEIZE_POI, OnSeizePOI);
         Messenger.AddListener<IPointOfInterest>(CharacterSignals.ON_UNSEIZE_POI, OnUnseizePOI);
-        Messenger.AddListener<Character>(WorldEventSignals.NEW_VILLAGER_ARRIVED, OnAddNewCharacter);
-        Messenger.AddListener<Character>(CharacterSignals.NECROMANCER_SPAWNED, OnNecromancerSpawned);
         Messenger.AddListener<int>(PlayerSignals.UPDATED_PLAGUE_POINTS, UpdatePlaguePointsAmount);
-
-        //key presses
-        Messenger.AddListener<KeyCode>(ControlsSignals.KEY_DOWN, OnKeyPressed);
-
+        
         //currencies
         Messenger.AddListener<int, int>(PlayerSignals.PLAYER_ADJUSTED_MANA, OnManaAdjusted);
-        InitialUpdateVillagerListCharacterItems();
+        Messenger.AddListener<int, int>(PlayerSignals.PLAYER_ADJUSTED_SPIRIT_ENERGY, OnSpiritEnergyAdjusted);
+        Messenger.AddListener<int, int>(PlayerSignals.PLAGUE_POINTS_ADJUSTED, OnPlaguePointsAdjusted);
+        //Messenger.AddListener(PlayerSignals.CHAOS_ORB_COLLECTED, OnSpiritEnergyAdjustedByOne);
+
         InitializeIntel();
 #if UNITY_EDITOR
         itemsToggle.gameObject.SetActive(true);
@@ -191,126 +221,30 @@ public class PlayerUI : BaseMonoBehaviour {
         itemsToggle.gameObject.SetActive(false);
         artifactsToggle.gameObject.SetActive(false);        
 #endif
+        summonList.UpdateMonsterUnderlingQuantityList();
     }
     public void InitializeAfterLoadOutPicked() {
         UpdateIntel();
-        CreateInitialSpells();
+        //CreateInitialSpells();
         _buildListUI.Initialize();
         cultistsList.Initialize();
-
+        targetsList.Initialize();
+        
         cultistsList.UpdateList();
         minionList.UpdateList();
         summonList.UpdateList();
 
         OnThreatUpdated();
-        UpdatePlaguePointsContainer();
         UpdatePlaguePointsAmount(PlayerManager.Instance.player.plagueComponent.plaguePoints);
     }
 
     #region Listeners
-    private void OnInnerMapOpened(Region location) {
-        UpdateRegionNameState();
-    }
-    private void OnInnerMapClosed(Region location) {
-        UpdateRegionNameState();
-    }
-    private void OnKeyPressed(KeyCode pressedKey) {
-        if (pressedKey == KeyCode.F9) {
-            UIManager.Instance.optionsMenu.QuickSave();
-        }
-    }
-    private void OnCharacterDied(Character character) {
-        TransferCharacterFromActiveToInactive(character);
-    }
-    private void OnCharacterGainedTrait(Character character, Trait trait) {
-        if (trait is Cultist) {
-            CharacterNameplateItem item = GetActiveCharacterNameplateItem(character);
-            if (item != null) {
-                ObjectPoolManager.Instance.DestroyObject(item);
-            }
-        }
-        //if (trait.type == TRAIT_TYPE.DISABLER && trait.effect == TRAIT_EFFECT.NEGATIVE) {
-        //    TransferCharacterFromActiveToInactive(character);
-        //    UpdateKillCount();
-        //}
-    }
-    private void OnCharacterLostTrait(Character character, Trait trait) {
-        //if (trait.type == TRAIT_TYPE.DISABLER && trait.effect == TRAIT_EFFECT.NEGATIVE) {
-        //    TransferCharacterFromInactiveToActive(character);
-        //    UpdateKillCount();
-        //}
-    }
-    private void OnCharacterRemovedFromFaction(Character character, Faction faction) {
-        //UpdateKillCount();
-        //OrderKillSummaryItems();
-
-        //TODO: This causes inconsistencies since the character will have null faction once he/she is removed from the faction
-        //TransferCharacterFromActiveToInactive(character);
-        //CheckIfAllCharactersWipedOut();
-    }
-    private void OnCharacterAddedToFaction(Character character, Faction faction) {
-        //if (faction?.factionType.type == FACTION_TYPE.Wild_Monsters) {
-        //    TransferCharacterFromActiveToInactive(character);
-        //} else 
-        if (faction.isPlayerFaction || faction?.factionType.type == FACTION_TYPE.Undead) {
-            OnCharacterBecomesMinionOrSummon(character);
-        } else {
-            TransferCharacterFromInactiveToActive(character);
-        }
-    }
-    private void OnCharacterClassChange(Character character, CharacterClass previousClass, CharacterClass currentClass) {
-        CharacterNameplateItem item = GetActiveCharacterNameplateItem(character);
-        if (item != null) {
-            item.UpdateObject(character);
-        } else {
-            item = GetInactiveCharacterNameplateItem(character);
-            if (item != null) {
-                item.UpdateObject(character);
-            }
-        }
-    }
-    private void OnCharacterSwitchFromLimbo(Character fromCharacter, Character toCharacter) {
-        CharacterNameplateItem item = GetActiveCharacterNameplateItem(fromCharacter);
-        if (item != null) {
-            item.UpdateObject(toCharacter);
-        } else {
-            item = GetInactiveCharacterNameplateItem(fromCharacter);
-            if (item != null) {
-                item.UpdateObject(toCharacter);
-            }
-        }
-        // if (!toCharacter.IsAble()/* || toCharacter.isFactionless*/) {
-        //     TransferCharacterFromActiveToInactive(toCharacter);
-        // } else if (toCharacter.faction.isPlayerFaction /*|| faction == FactionManager.Instance.friendlyNeutralFaction*/) {
-        //     OnCharacterBecomesMinionOrSummon(toCharacter);
-        // } else {
-        //     TransferCharacterFromInactiveToActive(toCharacter);
-        // }
-    }
-    private void AddedNewCharacter(Character character) {
-        // OnAddNewCharacter(character);
-    }
-    private void CharacterBecomesMinionOrSummon(Character character) {
-        //OnCharacterBecomesMinionOrSummon(character);
-    }
-    private void CharacterBecomesNonMinionOrSummon(Character character) {
-        OnCharacterBecomesNonMinionOrSummon(character);
-    }
-    private void OnNecromancerSpawned(Character character) {
-        OnCharacterBecomesNecromancer(character);
-    }
-    private void OnMenuOpened(InfoUIBase @base) {
-        if (@base is CharacterInfoUI || @base is TileObjectInfoUI) {
-            // HideKillSummary();
-        }else if (@base is HextileInfoUI || @base is RegionInfoUI) {
-            UpdateRegionNameState();
-        }
-    }
-    private void OnMenuClosed(InfoUIBase @base) {
-        if (@base is HextileInfoUI || @base is RegionInfoUI) {
-            UpdateRegionNameState();
-        }
-    }
+    //private void OnInnerMapOpened(Region location) {
+    //    UpdateRegionNameState();
+    //}
+    //private void OnInnerMapClosed(Region location) {
+    //    UpdateRegionNameState();
+    //}
     private void OnThreatUpdated() {
         threatLbl.text = PlayerManager.Instance.player.threatComponent.threat.ToString();
         //threatLbl.transform.DOPunchScale(new Vector3(1.2f, 1.2f, 1.2f), 0.5f);
@@ -337,28 +271,46 @@ public class PlayerUI : BaseMonoBehaviour {
     }
     #endregion
 
-    private void UpdateRegionNameState() {
-        if (UIManager.Instance.regionInfoUI.isShowing || UIManager.Instance.hexTileInfoUI.isShowing 
-            || InnerMapManager.Instance.isAnInnerMapShowing) {
-            Region location;
-            if (UIManager.Instance.regionInfoUI.isShowing) {
-                location = UIManager.Instance.regionInfoUI.activeRegion;
-            } else if (UIManager.Instance.hexTileInfoUI.isShowing) {
-                location = UIManager.Instance.hexTileInfoUI.activeHex.region;
-            } else {
-                location = InnerMapManager.Instance.currentlyShowingMap.region as Region;
-            }
-            Assert.IsNotNull(location, $"Trying to update region name UI in top menu, but no region is specified.");
-            regionNameTopMenuText.text = location.name;
-            regionNameTopMenuGO.SetActive(true);
-#if UNITY_EDITOR || DEVELOPMENT_BUILD
-            regionNameHoverHandler.SetOnHoverOverAction(() => TestingUtilities.ShowLocationInfo(location));
-            regionNameHoverHandler.SetOnHoverOutAction(TestingUtilities.HideLocationInfo);
-#endif
-        } else {
-            regionNameTopMenuGO.SetActive(false);
+    //    private void UpdateRegionNameState() {
+    //        if (InnerMapManager.Instance.isAnInnerMapShowing) {
+    //            Region location = InnerMapManager.Instance.currentlyShowingMap.region;
+    //            Assert.IsNotNull(location, $"Trying to update region name UI in top menu, but no region is specified.");
+    //            regionNameTopMenuText.text = location.name;
+    //            regionNameTopMenuGO.SetActive(true);
+    //#if UNITY_EDITOR || DEVELOPMENT_BUILD
+    //            regionNameHoverHandler.SetOnHoverOverAction(() => TestingUtilities.ShowLocationInfo(location));
+    //            regionNameHoverHandler.SetOnHoverOutAction(TestingUtilities.HideLocationInfo);
+    //#endif
+    //        } else {
+    //            regionNameTopMenuGO.SetActive(false);
+    //        }
+    //    }
+
+    #region Spiri tEnergy
+    private void OnSpiritEnergyAdjusted(int adjustedAmount, int spiritEnergy) {
+        if (adjustedAmount != 0) {
+            UpdateSpiritEnergy();
+            ShowSpiritEnergyAdjustEffect(adjustedAmount);
+            DoSpiritEnergyPunchEffect();
+            // AudioManager.Instance.PlayParticleMagnet();
         }
     }
+    private void UpdateSpiritEnergy() {
+        spiritEnergyLabel.text = PlayerManager.Instance.player.spiritEnergy.ToString();
+    }
+    private Tweener _currentSpiritEnergyPunchTween;
+    private void DoSpiritEnergyPunchEffect() {
+        if (_currentSpiritEnergyPunchTween == null) {
+            _currentSpiritEnergyPunchTween = spiritEnergyContainer.DOPunchScale(new Vector3(0.8f, 0.8f, 0.8f), 0.5f).OnComplete(() => _currentSpiritEnergyPunchTween = null);
+        }
+    }
+    private void ShowSpiritEnergyAdjustEffect(int adjustmentAmount) {
+        var text = adjustmentAmount > 0 ? $"<color=\"green\">+{adjustmentAmount.ToString()}</color>" : $"<color=\"red\">{adjustmentAmount.ToString()}</color>";
+        GameObject effectGO = ObjectPoolManager.Instance.InstantiateObjectFromPool("AdjustmentEffectLbl", spiritEnergyLabel.transform.position,
+            Quaternion.identity, transform, true);
+        effectGO.GetComponent<AdjustmentEffectLabel>().PlayEffect(text, new Vector2(Random.Range(-25, 25), -70f));
+    }
+    #endregion
 
     #region Mana
     private void OnManaAdjusted(int adjustedAmount, int mana) {
@@ -366,7 +318,7 @@ public class PlayerUI : BaseMonoBehaviour {
             UpdateMana();
             ShowManaAdjustEffect(adjustedAmount);
             DoManaPunchEffect();
-            AudioManager.Instance.PlayParticleMagnet();    
+            // AudioManager.Instance.PlayParticleMagnet();    
         }
     }
     private void UpdateMana() {
@@ -383,6 +335,27 @@ public class PlayerUI : BaseMonoBehaviour {
         GameObject effectGO = ObjectPoolManager.Instance.InstantiateObjectFromPool("AdjustmentEffectLbl", manaLbl.transform.position,
             Quaternion.identity, transform, true);
         effectGO.GetComponent<AdjustmentEffectLabel>().PlayEffect(text, new Vector2(Random.Range(-25, 25), -70f));
+    }
+    public void OnHoverSpiritEnergy() {
+        string header = $"{UtilityScripts.Utilities.SpiritEnergyIcon()}Spirit Energy";
+        if (PlayerManager.Instance.player != null) {
+            header = $"{header}";
+            //header += " (+" + (EditableValuesManager.Instance.GetManaRegenPerHour() + (PlayerManager.Instance.player.manaRegenComponent.GetManaPitCount() * (EditableValuesManager.Instance.GetManaRegenPerManaPit())) + "/hour)");
+        }
+        UIManager.Instance.ShowSmallInfo("Spirit Energy is used to upgrade your Portal to learn new Powers. You also gain Spirit Energy from Chaos Orbs.", pos: manaTooltipPos, header, autoReplaceText: false);
+    }
+
+    public void OnHoverOverMana() {
+        string header = $"{UtilityScripts.Utilities.ManaIcon()}Mana";
+        if (PlayerManager.Instance.player != null) {
+            header = $"{header} - {PlayerManager.Instance.player.mana.ToString()}/{EditableValuesManager.Instance.maximumMana.ToString()} (+{(EditableValuesManager.Instance.GetManaRegenPerHour() + (PlayerManager.Instance.player.manaRegenComponent.GetManaPitCount() * (EditableValuesManager.Instance.GetManaRegenPerManaPit())))}/hour)";
+            //header += " (+" + (EditableValuesManager.Instance.GetManaRegenPerHour() + (PlayerManager.Instance.player.manaRegenComponent.GetManaPitCount() * (EditableValuesManager.Instance.GetManaRegenPerManaPit())) + "/hour)");
+        }
+        UIManager.Instance.ShowSmallInfo("Mana is spent whenever you use any of your Powers, summon Minions or build Demonic Structures. It is easy to deplete but also quickly replenishes every hour. Build more Mana Pits to expand maximum capacity and increase hourly replenish.", pos: manaTooltipPos, header, autoReplaceText: false);
+    }
+
+    public void OnHoverOutMana() {
+        UIManager.Instance.HideSmallInfo();
     }
     #endregion
 
@@ -477,30 +450,12 @@ public class PlayerUI : BaseMonoBehaviour {
     }
     private void OnCloseConversationMenu() {
         intelToggle.interactable = true;
-        //for (int i = 0; i < roleSlots.Length; i++) {
-        //    RoleSlotItem rsi = roleSlots[i];
-        //    //rsi.UpdateActionButtons();
-        //    rsi.OverrideDraggableState(true);
-        //}
-        //assignBtn.interactable = true;
-        //if (UIManager.Instance.characterInfoUI.isShowing) {
-        //    ShowActionButtonsFor(UIManager.Instance.characterInfoUI.activeCharacter);
-        //}else if (UIManager.Instance.tileObjectInfoUI.isShowing) {
-        //    ShowActionButtonsFor(UIManager.Instance.tileObjectInfoUI.activeTileObject);
-        //}
     }
     public void ShowPlayerIntels(bool state) {
         intelContainer.SetActive(state);
         if (state) {
             Messenger.Broadcast(UISignals.INTEL_MENU_OPENED);    
         }
-        //RectTransform rt = UIManager.Instance.playerNotifGO.transform as RectTransform;
-        //Vector3 previousPos = rt.anchoredPosition;
-        //if (!state) {
-        //    rt.anchoredPosition = new Vector3(-640f, previousPos.y, previousPos.z);
-        //} else {
-        //    rt.anchoredPosition = new Vector3(-1150f, previousPos.y, previousPos.z);
-        //}
     }
     public IntelItem GetIntelItemWithIntel(IIntel intel) {
         for (int i = 0; i < intelItems.Length; i++) {
@@ -536,6 +491,10 @@ public class PlayerUI : BaseMonoBehaviour {
 
     #region End Game Mechanics
     public void WinGameOver(string winMessage) {
+        if (PlayerManager.Instance.player.hasAlreadyWon) {
+            return;
+        }
+        PlayerManager.Instance.player.hasAlreadyWon = true;
         SaveManager.Instance.currentSaveDataPlayer.OnWorldCompleted(WorldSettings.Instance.worldSettingsData.worldType);
         UIManager.Instance.ShowEndDemoScreen(winMessage);
         // if (WorldConfigManager.Instance.isTutorialWorld) {
@@ -561,14 +520,6 @@ public class PlayerUI : BaseMonoBehaviour {
     public void SuccessfulAreaCorruption() {
         successfulAreaCorruptionGO.SetActive(true);
         //Utilities.DestroyChildren(killSummaryScrollView.content);
-        LoadKillSummaryCharacterItems();
-    }
-    private void LoadKillSummaryCharacterItems() {
-        CharacterNameplateItem[] items = UtilityScripts.GameUtilities.GetComponentsInDirectChildren<CharacterNameplateItem>(villagersScrollView.content.gameObject);
-        for (int i = 0; i < items.Length; i++) {
-            CharacterNameplateItem item = items[i];
-            item.transform.SetParent(killSummaryScrollView.content);
-        }
     }
     #endregion
 
@@ -586,199 +537,6 @@ public class PlayerUI : BaseMonoBehaviour {
     public void SetVillagerTabIsOn(bool state) {
         villagerTab.isOn = state;
     }
-    public void OpenVillagersList() {
-        villagerGO.SetActive(true);
-        villagerTab.SetIsOnWithoutNotify(true);
-    }
-    public void CloseVillagersList() {
-        villagerGO.SetActive(false);
-        villagerTab.SetIsOnWithoutNotify(false);
-    }
-    private void LoadVillagerItems(int itemsToCreate) {
-        villagerItems = new List<CharacterNameplateItem>();
-        for (int i = 0; i < itemsToCreate; i++) {
-            CreateNewVillagerItem();
-        }
-    }
-    private CharacterNameplateItem CreateNewVillagerItem() {
-        GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(villagerItemPrefab.name, Vector3.zero, Quaternion.identity, villagersScrollView.content);
-        CharacterNameplateItem item = go.GetComponent<CharacterNameplateItem>();
-        go.SetActive(false);
-        villagerItems.Add(item);
-        return item;
-    }
-    private void InitialUpdateVillagerListCharacterItems() {
-        List<Character> villagers = CharacterManager.Instance.allCharacters.Where(x => x.isNormalEvenLycanAndNotAlliedWithPlayer && !x.isPreplaced).ToList();
-        int allVillagersCount = villagers.Count;
-        LoadVillagerItems(allVillagersCount);
-        
-        List<CharacterNameplateItem> alive = new List<CharacterNameplateItem>();
-        List<CharacterNameplateItem> dead = new List<CharacterNameplateItem>();
-
-        for (int i = 0; i < allVillagersCount; i++) {
-            Character character = villagers[i];
-            CharacterNameplateItem item = villagerItems[i];
-            
-            item.SetObject(character);
-            item.SetAsButton();
-            item.ClearAllOnClickActions();
-            item.AddOnClickAction((c) => UIManager.Instance.ShowCharacterInfo(c, true));
-            item.gameObject.SetActive(true);
-            if (!character.IsAble()) {
-                dead.Add(item);
-            } else {
-                alive.Add(item);
-            }
-        }
-
-        aliveHeader.transform.SetAsFirstSibling();
-        for (int i = 0; i < alive.Count; i++) {
-            CharacterNameplateItem currItem = alive[i];
-            currItem.SetIsActive(true);
-            currItem.transform.SetSiblingIndex(i + 1);
-        }
-        deadHeader.transform.SetSiblingIndex(alive.Count + 1);
-        for (int i = 0; i < dead.Count; i++) {
-            CharacterNameplateItem currItem = dead[i];
-            currItem.SetIsActive(false);
-            currItem.transform.SetSiblingIndex(alive.Count + i + 2);
-        }
-    }
-    private void OnAddNewCharacter(Character character) {
-        if (!character.isNormalEvenLycanAndNotAlliedWithPlayer || character.isPreplaced) {
-            //Do not show minions and summons
-            return;
-        }
-        CharacterNameplateItem item = GetUnusedCharacterNameplateItem();
-        if(item == null) {
-            item = CreateNewVillagerItem();
-        }
-        item.SetObject(character);
-        item.SetAsButton();
-        item.ClearAllOnClickActions();
-        item.AddOnClickAction((c) => UIManager.Instance.ShowCharacterInfo(c, true));
-        item.gameObject.SetActive(true);
-        if (!character.IsAble()) {
-            //if (allFilteredCharactersCount == villagerItems.Count) {
-            //    item.transform.SetAsLastSibling();
-            //} else {
-            //    item.transform.SetSiblingIndex(allFilteredCharactersCount + 2);
-            //}
-            item.transform.SetAsLastSibling();
-            item.SetIsActive(false);
-        } else {
-            item.transform.SetSiblingIndex(deadHeader.transform.GetSiblingIndex());
-            item.SetIsActive(true);
-        }
-    }
-    private void TransferCharacterFromActiveToInactive(Character character) {
-        if (!character.isNormalEvenLycanAndNotAlliedWithPlayer || character.isPreplaced) {
-            return;
-        }
-        CharacterNameplateItem item = GetActiveCharacterNameplateItem(character);
-        if(item != null) {
-            // if (allFilteredCharactersCount == villagerItems.Count) {
-            //     item.transform.SetAsLastSibling();
-            // } else {
-            //     item.transform.SetSiblingIndex(allFilteredCharactersCount + 2);
-            // }
-            // item.SetIsActive(false);
-            item.transform.SetAsLastSibling(); //put character item at the bottom of the list.
-        }
-        //UpdateKillCount();
-    }
-    private void TransferCharacterFromInactiveToActive(Character character) {
-        if (!character.isNormalEvenLycanAndNotAlliedWithPlayer || character.isPreplaced) {
-            return;
-        }
-        CharacterNameplateItem item = GetInactiveCharacterNameplateItem(character);
-        if (item != null) {
-            int index = item.transform.GetSiblingIndex();
-            int deadHeaderIndex = deadHeader.transform.GetSiblingIndex();
-            item.transform.SetSiblingIndex(deadHeaderIndex);
-            item.SetIsActive(true);
-        }
-        //UpdateKillCount();
-    }
-    private void OnCharacterBecomesMinionOrSummon(Character character) {
-        CharacterNameplateItem item = GetActiveCharacterNameplateItem(character);
-        if (item != null) {
-            item.gameObject.SetActive(false);
-            //UpdateKillCount();
-        } else {
-            item = GetInactiveCharacterNameplateItem(character);
-            if (item != null) {
-                item.gameObject.SetActive(false);
-                //UpdateKillCount();
-            }
-        }
-    }
-    private void OnCharacterBecomesNonMinionOrSummon(Character character) {
-        // OnAddNewCharacter(character);
-    }
-    private void OnCharacterBecomesNecromancer(Character character) {
-        CharacterNameplateItem item = GetActiveCharacterNameplateItem(character);
-        if (item != null) {
-            item.gameObject.SetActive(false);
-        }
-    }
-    private CharacterNameplateItem GetUnusedCharacterNameplateItem() {
-        int killCountCharacterItemsCount = villagerItems.Count;
-        for (int i = killCountCharacterItemsCount - 1; i >= 0; i--) {
-            CharacterNameplateItem item = villagerItems[i];
-            if (!item.gameObject.activeSelf) {
-                return item;
-            }
-        }
-        return null;
-    }
-    private CharacterNameplateItem GetActiveCharacterNameplateItem(Character character) {
-        int killCountCharacterItemsCount = villagerItems.Count;
-        for (int i = 0; i < killCountCharacterItemsCount; i++) {
-            CharacterNameplateItem item = villagerItems[i];
-            if (item.gameObject.activeSelf && item.isActive && item.character == character) {
-                return item;
-            }
-        }
-        return null;
-    }
-    private CharacterNameplateItem GetInactiveCharacterNameplateItem(Character character) {
-        int killCountCharacterItemsCount = villagerItems.Count;
-        for (int i = killCountCharacterItemsCount - 1; i >= 0; i--) {
-            CharacterNameplateItem item = villagerItems[i];
-            if (item.gameObject.activeSelf && !item.isActive && item.character == character) {
-                return item;
-            }
-        }
-        return null;
-    }
-    //private void OrderKillSummaryItems() {
-    //    CharacterNameplateItem[] items = GameGameUtilities.GetComponentsInDirectChildren<CharacterNameplateItem>(killCountScrollView.content.gameObject);
-    //    List<CharacterNameplateItem> alive = new List<CharacterNameplateItem>();
-    //    List<CharacterNameplateItem> dead = new List<CharacterNameplateItem>();
-    //    for (int i = 0; i < items.Length; i++) {
-    //        CharacterNameplateItem currItem = items[i];
-    //        if (!currItem.character.IsAble() || !LandmarkManager.Instance.enemyOfPlayerArea.region.IsFactionHere(currItem.character.faction)) { //added checking for faction in cases that the character was raised from dead (Myk, if the concern here is only from raise dead, I changed the checker to returnedToLife to avoid conflicts with factions, otherwise you can return it to normal. -Chy)
-    //            dead.Add(currItem);
-    //        } else {
-    //            alive.Add(currItem);
-    //        }
-    //    }
-    //    aliveHeader.transform.SetAsFirstSibling();
-    //    for (int i = 0; i < alive.Count; i++) {
-    //        CharacterNameplateItem currItem = alive[i];
-    //        currItem.transform.SetSiblingIndex(i + 1);
-    //    }
-    //    deadHeader.transform.SetSiblingIndex(alive.Count + 1);
-    //    for (int i = 0; i < dead.Count; i++) {
-    //        CharacterNameplateItem currItem = dead[i];
-    //        currItem.transform.SetSiblingIndex(alive.Count + i + 2);
-    //    }
-    //    UpdateKillCount();
-    //}
-    public void ToggleKillSummary(bool isOn) {
-        villagerGO.SetActive(isOn);
-    }
     #endregion
 
     #region General Confirmation
@@ -793,19 +551,6 @@ public class PlayerUI : BaseMonoBehaviour {
     }
     private void OnUnseizePOI(IPointOfInterest poi) {
         EnableTopMenuButtons();
-    }
-    public void ShowSeizedObjectUI() {
-        // unseizeButton.gameObject.SetActive(true);
-    }
-    public void HideSeizedObjectUI() {
-        // unseizeButton.gameObject.SetActive(false);
-    }
-    //Not used right now, might be used in the future
-    public void UpdateSeizedObjectUI() {
-        unseizeButton.gameObject.SetActive(PlayerManager.Instance.player.seizeComponent.hasSeizedPOI);
-    }
-    public void OnClickSeizedObject() {
-        // PlayerManager.Instance.player.seizeComponent.PrepareToUnseize();
     }
     #endregion
 
@@ -873,6 +618,7 @@ public class PlayerUI : BaseMonoBehaviour {
         SpellItem item = GetSpellItem(spell);
         if (item != null) {
             ObjectPoolManager.Instance.DestroyObject(item.gameObject);
+            _spellItems.Remove(item);
         }
     }
     private SpellItem GetSpellItem(PLAYER_SKILL_TYPE spell) {
@@ -887,7 +633,23 @@ public class PlayerUI : BaseMonoBehaviour {
     public void OnHoverSpell(SkillData skillData, UIHoverPosition position = null) {
         skillDetailsTooltip.ShowPlayerSkillDetails(skillData, position);
     }
+    public void OnHoverSpellChargeRemaining(SkillData skillData, MonsterAndDemonUnderlingCharges p_monsterUnderling) {
+        if (skillData.isInCooldown) {
+            string timeDate = GameManager.Instance.Today().AddTicks(skillData.cooldown - skillData.currentCooldownTick).ToString();
+            Tooltip.Instance.ShowSmallInfo($"New charge of {UtilityScripts.Utilities.ColorizeName(skillData.name)} at {UtilityScripts.Utilities.ColorizeName(timeDate)}", autoReplaceText: false);
+        }
+    }
+
+    public void OnHoverSpellChargeRemainingForSummon(CharacterClassData cData, MonsterAndDemonUnderlingCharges p_monsterUnderling) {
+        if (p_monsterUnderling.isReplenishing) {
+            CharacterClass charClass = CharacterManager.Instance.GetCharacterClass(p_monsterUnderling.characterClassName);
+            string timeDate = GameManager.Instance.Today().AddTicks(p_monsterUnderling.cooldown - p_monsterUnderling.currentCooldownTick).ToString();
+            Tooltip.Instance.ShowSmallInfo($"New charge of {UtilityScripts.Utilities.ColorizeName(charClass.className)} at {UtilityScripts.Utilities.ColorizeName(timeDate)}", autoReplaceText: false);
+        }
+    }
+
     public void OnHoverOutSpell(SkillData skillData) {
+        Tooltip.Instance.HideSmallInfo();
         skillDetailsTooltip.HidePlayerSkillDetails();
     }
     #endregion
@@ -960,9 +722,21 @@ public class PlayerUI : BaseMonoBehaviour {
             TILE_OBJECT_TYPE.ELECTRIC_CRYSTAL, TILE_OBJECT_TYPE.FIRE_CRYSTAL, TILE_OBJECT_TYPE.ICE_CRYSTAL,
             TILE_OBJECT_TYPE.POISON_CRYSTAL, TILE_OBJECT_TYPE.WATER_CRYSTAL, TILE_OBJECT_TYPE.SNOW_MOUND,
             TILE_OBJECT_TYPE.WINTER_ROSE, TILE_OBJECT_TYPE.DESERT_ROSE, TILE_OBJECT_TYPE.CULTIST_KIT,
-            TILE_OBJECT_TYPE.TREASURE_CHEST, TILE_OBJECT_TYPE.ICE, TILE_OBJECT_TYPE.HERB_PLANT, 
+            TILE_OBJECT_TYPE.TREASURE_CHEST, TILE_OBJECT_TYPE.ICE, TILE_OBJECT_TYPE.HERB_PLANT,
             TILE_OBJECT_TYPE.ANIMAL_MEAT, TILE_OBJECT_TYPE.PROFESSION_PEDESTAL, TILE_OBJECT_TYPE.TOOL,
-            TILE_OBJECT_TYPE.EXCALIBUR, TILE_OBJECT_TYPE.PHYLACTERY
+            TILE_OBJECT_TYPE.EXCALIBUR, TILE_OBJECT_TYPE.PHYLACTERY, TILE_OBJECT_TYPE.BIG_TREE_OBJECT,
+            TILE_OBJECT_TYPE.COPPER_SWORD, TILE_OBJECT_TYPE.IRON_SWORD, TILE_OBJECT_TYPE.ORICHALCUM_SWORD,
+            TILE_OBJECT_TYPE.MITHRIL_SWORD, TILE_OBJECT_TYPE.MINK_SHIRT, TILE_OBJECT_TYPE.SPIDER_SILK_SHIRT, TILE_OBJECT_TYPE.SCROLL,
+            TILE_OBJECT_TYPE.RING, TILE_OBJECT_TYPE.BELT, TILE_OBJECT_TYPE.BRACER, TILE_OBJECT_TYPE.COPPER_ARMOR, TILE_OBJECT_TYPE.IRON_ARMOR,
+            TILE_OBJECT_TYPE.POWER_CRYSTAL, TILE_OBJECT_TYPE.BASIC_SWORD, TILE_OBJECT_TYPE.BASIC_AXE, TILE_OBJECT_TYPE.BASIC_BOW,
+            TILE_OBJECT_TYPE.BASIC_DAGGER, TILE_OBJECT_TYPE.BASIC_STAFF, TILE_OBJECT_TYPE.BASIC_SHIRT,
+            TILE_OBJECT_TYPE.CORN, TILE_OBJECT_TYPE.POTATO, TILE_OBJECT_TYPE.PINEAPPLE,
+            TILE_OBJECT_TYPE.ICEBERRY, TILE_OBJECT_TYPE.HYPNO_HERB, TILE_OBJECT_TYPE.COPPER, TILE_OBJECT_TYPE.IRON,
+            TILE_OBJECT_TYPE.MITHRIL, TILE_OBJECT_TYPE.ORICHALCUM, TILE_OBJECT_TYPE.RABBIT_CLOTH, TILE_OBJECT_TYPE.MINK_CLOTH,
+            TILE_OBJECT_TYPE.WOOL, TILE_OBJECT_TYPE.MOON_THREAD, TILE_OBJECT_TYPE.BOAR_HIDE, TILE_OBJECT_TYPE.WOLF_HIDE, TILE_OBJECT_TYPE.BEAR_HIDE,
+            TILE_OBJECT_TYPE.SCALE_HIDE, TILE_OBJECT_TYPE.DRAGON_HIDE, TILE_OBJECT_TYPE.COPPER, TILE_OBJECT_TYPE.STONE_PILE, TILE_OBJECT_TYPE.MITHRIL,
+            TILE_OBJECT_TYPE.MINK_CLOTH, TILE_OBJECT_TYPE.WOOD_PILE, TILE_OBJECT_TYPE.ANIMAL_MEAT, TILE_OBJECT_TYPE.ELF_MEAT, TILE_OBJECT_TYPE.HUMAN_MEAT,
+            TILE_OBJECT_TYPE.STONE_PILE, TILE_OBJECT_TYPE.WOOD_PILE, TILE_OBJECT_TYPE.FISH_PILE, TILE_OBJECT_TYPE.TABLE
         };
         for (int i = 0; i < items.Length; i++) {
             CreateNewItemItem(items[i]);
@@ -1023,14 +797,19 @@ public class PlayerUI : BaseMonoBehaviour {
     #endregion
 
     #region Top Menu
-    private void EnableTopMenuButtons() {
+    public void EnableTopMenuButtons() {
         for (int i = 0; i < topMenuButtons.Length; i++) {
             topMenuButtons[i].interactable = true;
         }
     }
-    private void DisableTopMenuButtons() {
+    public void DisableTopMenuButtons() {
         for (int i = 0; i < topMenuButtons.Length; i++) {
             topMenuButtons[i].interactable = false;
+        }
+    }
+    public void CloseAllTopMenus() {
+        for (int i = 0; i < topMenuButtons.Length; i++) {
+            topMenuButtons[i].isOn = false;
         }
     }
     #endregion
@@ -1047,36 +826,81 @@ public class PlayerUI : BaseMonoBehaviour {
 
     #region Plague
     private Tweener _currentPlaguePointPunchTween;
+    private void OnPlaguePointsAdjusted(int p_adjustedAmount, int p_totalAmount) {
+        if (p_adjustedAmount != 0) {
+            UpdatePlaguePointsAmount(p_totalAmount);
+            ShowPlaguePointsGainedEffect(p_adjustedAmount);
+            DoPlaguePointPunchEffect();
+            // AudioManager.Instance.PlayParticleMagnet();    
+        }
+    }
     private void DoPlaguePointPunchEffect() {
         if (_currentPlaguePointPunchTween == null) {
             _currentPlaguePointPunchTween = plaguePointsContainer.DOPunchScale(new Vector3(0.8f, 0.8f, 0.8f), 0.5f).OnComplete(() => _currentPlaguePointPunchTween = null);    
         }
     }
-    public void ShowPlaguePointsGainedEffect(int adjustmentAmount) {
+    private void ShowPlaguePointsGainedEffect(int adjustmentAmount) {
         if (plaguePointsContainer.gameObject.activeSelf) {
-            DoPlaguePointPunchEffect();
-            var text = $"<color=#FE4D60>+{adjustmentAmount.ToString()}{UtilityScripts.Utilities.PlagueIcon()}</color>";
+            var text = adjustmentAmount > 0 ? $"<color=\"green\">+{adjustmentAmount.ToString()}</color>" : $"<color=\"red\">{adjustmentAmount.ToString()}</color>";
             GameObject effectGO = ObjectPoolManager.Instance.InstantiateObjectFromPool("AdjustmentEffectLbl", plaguePointLbl.transform.position, Quaternion.identity, transform, true);
-            effectGO.GetComponent<AdjustmentEffectLabel>().PlayEffect(text, new Vector2(Random.Range(-25, 25), -70f));    
+            effectGO.GetComponent<AdjustmentEffectLabel>().PlayEffect(text, new Vector2(Random.Range(-25, 25), -70f));
         }
     }
     private void UpdatePlaguePointsAmount(int p_amount) {
         plaguePointLbl.text = p_amount.ToString();
     }
-    private void UpdatePlaguePointsContainer() {
-        plaguePointsContainer.gameObject.SetActive(PlayerSkillManager.Instance.GetDemonicStructureSkillData(PLAYER_SKILL_TYPE.BIOLAB).isInUse);
-    }
     public void OnHoverEnterPlaguePoints() {
-        string text = "The amount of Plague Points you've generated. You can use this to upgrade your Plague if you have a Biolab built";
-        UIManager.Instance.ShowSmallInfo(text, threatHoverPos, $"{UtilityScripts.Utilities.PlagueIcon()} Plague Points");
+        string header = $"{UtilityScripts.Utilities.ChaoticEnergyIcon()}Chaotic Energy";
+        if (PlayerManager.Instance.player != null) {
+            header = $"{header} - {PlayerManager.Instance.player.plagueComponent.plaguePoints.ToString()}/{PlayerManager.Instance.player.plagueComponent.maxPlaguePoints.ToString()}";
+        }
+        string text = "Chaotic Energy is used for long term improvements. Use it to upgrade your Portal and unlock more Powers, or upgrade your other Demonic Structures. Gain more Chaotic Energy from Chaos Orbs that are produced through different interactions with the world.";
+        UIManager.Instance.ShowSmallInfo(text, threatHoverPos, header, autoReplaceText: false);
     }
     public void OnHoverExitPlaguePoints() {
         UIManager.Instance.HideSmallInfo();
     }
-    public void OnClickPlaguePoints() {
-        if (PlayerManager.Instance.player.playerSettlement.HasStructure(STRUCTURE_TYPE.BIOLAB)) {
-            UIManager.Instance.ShowBiolabUI();    
+    #endregion
+
+    #region Targets
+    public void OnToggleTargetsTab(bool p_state) {
+        if (p_state) {
+            targetsList.Open();
+        } else {
+            targetsList.Close();
         }
+    }
+    private Tweener _currentTargetPunchEffect;
+    public void DoTargetTabPunchEffect() {
+        if (_currentTargetPunchEffect == null) {
+            _currentTargetPunchEffect = targetsToggle.transform.DOPunchScale(new Vector3(2f, 2f, 1f), 0.2f).OnComplete(() => _currentTargetPunchEffect = null);
+        }
+    }
+    #endregion
+
+    #region Accumulated Damage
+    public void UpdateAccumulatedDamageText(int amount) {
+        accumulatedDamageLbl.text = amount.ToString();
+    }
+    #endregion
+
+    #region Tutorial
+    [FormerlySerializedAs("_tutorialUIController")] [Header("Tutorial")]
+    public TutorialUIController tutorialUIController;
+    [SerializeField] private Toggle _tutorialToggle;
+    public void OnToggleTutorialTab(bool p_isOn) {
+        if (p_isOn) {
+            tutorialUIController.ShowUI();
+        } else {
+            tutorialUIController.HideUI();
+        }
+    }
+    public void ShowSpecificTutorial(TutorialManager.Tutorial_Type p_type) {
+        tutorialUIController.ShowUI();
+        tutorialUIController.JumpToSpecificTutorial(p_type);
+    }
+    public void OnCloseTutorialUI() {
+        _tutorialToggle.SetIsOnWithoutNotify(false);
     }
     #endregion
 }

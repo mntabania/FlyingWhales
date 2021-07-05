@@ -5,7 +5,7 @@ using Traits;
 using UnityEngine;
 using UtilityScripts;
 using Locations.Settlements;
-
+using Object_Pools;
 namespace Interrupts {
     public class BecomeFactionLeader : Interrupt {
         public BecomeFactionLeader() : base(INTERRUPT.Become_Faction_Leader) {
@@ -48,7 +48,7 @@ namespace Interrupts {
                     //Evaluate all character if they will stay or leave
                     for (int i = 0; i < faction.characters.Count; i++) {
                         Character member = faction.characters[i];
-                        if (member != actor) {
+                        if (member != actor && !member.isDead) {
                             member.interruptComponent.TriggerInterrupt(INTERRUPT.Evaluate_Cultist_Affiliation, member);
                         }
                     }
@@ -93,19 +93,19 @@ namespace Interrupts {
 
             Log changeIdeologyLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Faction", "Generic", "ideology_change", null, LOG_TAG.Life_Changes);
             changeIdeologyLog.AddToFillers(faction, faction.name, LOG_IDENTIFIER.FACTION_1);
-            changeIdeologyLog.AddLogToDatabase();
-
+            changeIdeologyLog.AddLogToDatabase(true);
 
             //check if faction characters still meets ideology requirements
-            List<Character> charactersToCheck = ObjectPoolManager.Instance.CreateNewCharactersList();
+            List<Character> charactersToCheck = RuinarchListPool<Character>.Claim();
             charactersToCheck.AddRange(faction.characters);
             charactersToCheck.Remove(actor);
             for (int i = 0; i < charactersToCheck.Count; i++) {
                 Character factionMember = charactersToCheck[i];
                 faction.CheckIfCharacterStillFitsIdeology(factionMember);
             }
-            ObjectPoolManager.Instance.ReturnCharactersListToPool(charactersToCheck);
+            RuinarchListPool<Character>.Release(charactersToCheck);
 
+            if (overrideEffectLog != null) { LogPool.Release(overrideEffectLog); }
             overrideEffectLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Interrupt", "Become Faction Leader", "became_leader", null, LOG_TAG.Major);
             overrideEffectLog.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             overrideEffectLog.AddToFillers(actor.faction, actor.faction.name, LOG_IDENTIFIER.FACTION_1);

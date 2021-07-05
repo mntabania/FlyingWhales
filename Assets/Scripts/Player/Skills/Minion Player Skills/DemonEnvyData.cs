@@ -5,9 +5,10 @@ using UnityEngine;
 public class DemonEnvyData : MinionPlayerSkill {
     public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.DEMON_ENVY;
     public override string name => "Envy Demon";
-    public override string description => "This Demon is a non-combatant with a special utility. When spawned, it will immediately cast a spell that will ensnare all nearby Villagers and prevent them from moving for a duration. It will immediately despawn afterwards.";
+    public override string description => "This Lesser Demon is a Melee Physical Combatant with Poison attacks. It is effective in knocking out opponents.";
 
     public DemonEnvyData() {
+        minionType = MINION_TYPE.Envy;
         className = "Envy";
     }
 }

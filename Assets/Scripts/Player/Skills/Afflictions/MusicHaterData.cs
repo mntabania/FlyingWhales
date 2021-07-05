@@ -6,8 +6,8 @@ using UnityEngine;
 
 public class MusicHaterData : AfflictData {
     public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.MUSIC_HATER;
-    public override string name { get { return "Music Hater"; } }
-    public override string description { get { return "Music Hater"; } }
+    public override string name => "Music Hater";
+    public override string description => "This Affliction will make a Villager hate anything related to Music.";
     public override PLAYER_SKILL_CATEGORY category => PLAYER_SKILL_CATEGORY.AFFLICTION;
 
     public MusicHaterData() : base() {

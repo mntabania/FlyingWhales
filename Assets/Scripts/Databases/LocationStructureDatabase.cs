@@ -21,5 +21,11 @@ namespace Databases {
             }
             throw new Exception($"There is no structure with persistent ID {id}");
         }
+        public LocationStructure GetStructureByPersistentIDSafe(string id) {
+            if (structuresByGUID.ContainsKey(id)) {
+                return structuresByGUID[id];
+            }
+            return null;
+        }
     }
 }

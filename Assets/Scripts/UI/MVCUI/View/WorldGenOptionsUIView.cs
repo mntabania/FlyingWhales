@@ -14,7 +14,7 @@ public class WorldGenOptionsUIView : MVCUIView {
         void OnChangeSkillCooldownSpeed(SKILL_COOLDOWN_SPEED p_value);
         void OnChangeSkillCostAmount(SKILL_COST_AMOUNT p_value);
         void OnChangeSkillChargeAmount(SKILL_CHARGE_AMOUNT p_value);
-        void OnChangeThreatAmount(THREAT_AMOUNT p_value);
+        void OnChangeThreatAmount(RETALIATION p_value);
         void OnChangeOmnipotentMode(OMNIPOTENT_MODE p_value);
         void OnClickAddBiome();
         void OnClickAddFaction();
@@ -162,8 +162,8 @@ public class WorldGenOptionsUIView : MVCUIView {
     }
     public void InitializeVictoryConditionDropdown() {
         UIModel.dropDownVictory.ClearOptions();
-        UIModel.dropDownVictory.AddOptions(UtilityScripts.Utilities.GetEnumChoices<VICTORY_CONDITION>(VICTORY_CONDITION.Eliminate_All, VICTORY_CONDITION.Sandbox));
-        UIModel.dropDownVictory.value = UIModel.dropDownVictory.GetDropdownOptionIndex("Eliminate All");
+        UIModel.dropDownVictory.AddOptions(UtilityScripts.Utilities.GetEnumChoices<VICTORY_CONDITION>(VICTORY_CONDITION.Summon_Ruinarch, VICTORY_CONDITION.Sandbox));
+        UIModel.dropDownVictory.value = UIModel.dropDownVictory.GetDropdownOptionIndex("Summon Ruinarch");
     }
     public void SetVictoryDropdownValue(string p_value) {
         UIModel.dropDownVictory.value = UIModel.dropDownVictory.GetDropdownOptionIndex(p_value);
@@ -194,7 +194,7 @@ public class WorldGenOptionsUIView : MVCUIView {
     }
     public void InitializeThreatDropdown() {
         UIModel.dropDownThreat.ClearOptions();
-        UIModel.dropDownThreat.AddOptions(UtilityScripts.Utilities.GetEnumChoices<THREAT_AMOUNT>());
+        UIModel.dropDownThreat.AddOptions(UtilityScripts.Utilities.GetEnumChoices<RETALIATION>());
         UIModel.dropDownThreat.value = UIModel.dropDownThreat.GetDropdownOptionIndex("Normal");
     }
     public void SetThreatDropdownValue(string p_value) {

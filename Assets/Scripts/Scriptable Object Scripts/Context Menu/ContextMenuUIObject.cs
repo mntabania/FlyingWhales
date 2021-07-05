@@ -54,16 +54,21 @@ public class ContextMenuUIObject : PooledObject {
             if (txtCooldownTimer.gameObject.activeSelf) {
                 txtCooldownTimer.text = m_parentUIMenu.GetCurrentRemainingCooldownTicks().ToString();
             }
-            if (m_parentUIMenu is PlayerAction playerAction && playerAction.charges > 0) {
-                txtCharges.text = $"{playerAction.charges}{UtilityScripts.Utilities.ChargesIcon()}";
-                txtCharges.gameObject.SetActive(true);
+            if (m_parentUIMenu is PlayerAction playerAction) {
+                string chargesText = playerAction.displayOfCurrentChargesWithBonusChargesCombined;
+                if (!string.IsNullOrEmpty(chargesText)) {
+                    txtCharges.text = $"{chargesText}";
+                    txtCharges.gameObject.SetActive(true);
+                } else {
+                    txtCharges.gameObject.SetActive(false);
+                }
             } else {
                 txtCharges.gameObject.SetActive(false);
             }
             
         }
     }
-    public void SetMenuDetails(IContextMenuItem p_parentUIMenu) {
+    public void SetMenuDetails(IContextMenuItem p_parentUIMenu, bool dontShowName = false) {
         ImgIcon.gameObject.SetActive(p_parentUIMenu.contextMenuIcon != null);
         if (ImgIcon.gameObject.activeSelf) {
             txtMenuName.text = p_parentUIMenu.contextMenuName;
@@ -75,7 +80,12 @@ public class ContextMenuUIObject : PooledObject {
                 fullName = $"{p_parentUIMenu.GetManaCost()}{UtilityScripts.Utilities.ManaIcon()}  ";
             }
             fullName = $"{fullName}{p_parentUIMenu.contextMenuName}";
-            txtMenuFullName.text = fullName;
+            if (dontShowName) {
+                txtMenuFullName.text = "?????";
+            } else {
+                txtMenuFullName.text = fullName;
+            }
+            
             txtMenuFullName.gameObject.SetActive(true);
             txtMenuName.gameObject.SetActive(false);
         }

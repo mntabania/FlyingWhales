@@ -5,8 +5,6 @@ using UnityEngine;
 namespace Traits {
     public class MusicHater : Trait {
         public override bool isSingleton => true;
-        //private Character owner;
-
         public MusicHater() {
             name = "Music Hater";
             description = "Has an irrational hate for music.";
@@ -34,6 +32,16 @@ namespace Traits {
             return base.OnSeePOI(targetPOI, characterThatWillDoJob);
         }
         #endregion
+
+        public void ReactToMusicPerformer(Character p_witness, Character p_actor) {
+            if (p_witness.HasAfflictedByPlayerWith(this)) {
+                if (PlayerSkillManager.Instance.HasAfflictionAddedBehaviourForSkillAtCurrentLevel(PLAYER_SKILL_TYPE.MUSIC_HATER, AFFLICTION_SPECIFIC_BEHAVIOUR.Murder_Singers_Guitar_Players)) {
+                    p_witness.combatComponent.Fight(p_actor, CombatManager.Music_Hater_Murder, isLethal: true);
+                } else if (PlayerSkillManager.Instance.HasAfflictionAddedBehaviourForSkillAtCurrentLevel(PLAYER_SKILL_TYPE.MUSIC_HATER, AFFLICTION_SPECIFIC_BEHAVIOUR.Knockout_Singers_Guitar_Players)) {
+                    p_witness.combatComponent.Fight(p_actor, CombatManager.Music_Hater_Knockout, isLethal: false);
+                }    
+            }
+        }
     }
 }
 

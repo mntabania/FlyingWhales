@@ -47,7 +47,7 @@ public class LightingManager : BaseMonoBehaviour {
         Messenger.AddListener<bool>(UISignals.PAUSED, OnGamePaused);
         Messenger.AddListener<PROGRESSION_SPEED>(UISignals.PROGRESSION_SPEED_CHANGED, OnProgressionSpeedChanged);
         ComputeLightingValues();
-        // SetGlobalLightIntensity(_brightestIntensity);
+        SetGlobalLightIntensity(_brightestIntensity);
         // UpdateAllLightsBasedOnTimeOfDay(GameManager.Instance.Today());
         GameDate date = GameManager.Instance.Today();
         if (_brightPeriodRange.IsInRange(GameManager.Instance.GetCeilingHoursBasedOnTicks(date.tick))) {
@@ -61,9 +61,13 @@ public class LightingManager : BaseMonoBehaviour {
     }
    
     private void OnTickEnded() {
+#if DEBUG_PROFILER
         Profiler.BeginSample($"Lighting On Tick Ended");
+#endif
         UpdateAllLightsBasedOnTimeOfDay(GameManager.Instance.Today());
+#if DEBUG_PROFILER
         Profiler.EndSample();
+#endif
     }
     private void ComputeLightingValues() {
         int darkToLightDifferenceInHours = Mathf.Abs(_darkPeriodRange.lowerBound - _brightPeriodRange.lowerBound);

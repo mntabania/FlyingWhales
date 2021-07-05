@@ -15,7 +15,7 @@ public class ImportantNotificationItem : PooledObject {
     private System.Action onClickAction;
 
     public void Initialize(GameDate date, string message, System.Action onClickAction) {
-        messageLbl.text = $"[{GameManager.ConvertTickToTime(date.tick)}] {message}";
+        messageLbl.text = $"[{GameManager.Instance.ConvertTickToTime(date.tick)}] {message}";
         this.onClickAction = onClickAction;
         tween.OpenCloseObjectAnimation();
     }

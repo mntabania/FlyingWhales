@@ -6,6 +6,7 @@ using System.Linq;
 using Factions.Faction_Types;
 using Factions.Faction_Succession;
 using Inner_Maps;
+using Object_Pools;
 using UnityEngine.UI;
 using UtilityScripts;
 using Traits;
@@ -14,6 +15,8 @@ public class FactionManager : BaseMonoBehaviour {
 
     public static FactionManager Instance = null;
 
+    public static int MaxActiveVillagerFactions = 10;
+    
     public Faction neutralFaction { get; private set; }
     public Faction vagrantFaction { get; private set; }
     public Faction disguisedFaction { get; private set; }
@@ -35,12 +38,10 @@ public class FactionManager : BaseMonoBehaviour {
     [Header("Character Name Colors")]
     public Color factionNameColor;
     private string _factionNameColorHex;
-
-    private List<Sprite> _usedEmblems = new List<Sprite>();
-
+    
     private Dictionary<FACTION_SUCCESSION_TYPE, FactionSuccession> _factionSuccessions = new Dictionary<FACTION_SUCCESSION_TYPE, FactionSuccession>();
 
-    public readonly string[] exclusiveIdeologyTraitRequirements = new string[] { "Worker", "Combatant", "Royalty" };
+    //public readonly string[] exclusiveIdeologyTraitRequirements = new string[] { "Worker", "Combatant", "Royalty" };
     public readonly FACTION_IDEOLOGY[][] categorizedFactionIdeologies = new FACTION_IDEOLOGY[][] { 
         new FACTION_IDEOLOGY[] { FACTION_IDEOLOGY.Inclusive }, //, FACTION_IDEOLOGY.EXCLUSIVE
         new FACTION_IDEOLOGY[] { FACTION_IDEOLOGY.Warmonger, FACTION_IDEOLOGY.Peaceful },
@@ -99,6 +100,7 @@ public class FactionManager : BaseMonoBehaviour {
         SetVagrantFaction(newFaction);
         CreateRelationshipsForFaction(newFaction);
         Messenger.Broadcast(FactionSignals.FACTION_CREATED, newFaction);
+        newFaction.isInfoUnlocked = true;
     }
     public void CreateDisguisedFaction() {
         Faction newFaction = new Faction(FACTION_TYPE.Disguised);
@@ -149,12 +151,21 @@ public class FactionManager : BaseMonoBehaviour {
           newFaction.SetEmblem(factionEmblem);  
         }
         DetermineFactionPathfindingTags(newFaction);
-        CreateRelationshipsForFaction(newFaction);
         if (!string.IsNullOrEmpty(factionName)) {
             newFaction.SetName(factionName);
         }
+        CreateRelationshipsForFaction(newFaction);
+        
         if (!newFaction.isPlayerFaction) {
             Messenger.Broadcast(FactionSignals.FACTION_CREATED, newFaction);
+        }
+        
+        if (newFaction.race.IsSapient()) {
+            if (newFaction.factionType.type == FACTION_TYPE.Undead) {
+                newFaction.isInfoUnlocked = true;
+            } else {
+                newFaction.isInfoUnlocked = false;
+            }
         }
         return newFaction;
     }
@@ -191,9 +202,10 @@ public class FactionManager : BaseMonoBehaviour {
             faction.SetPathfindingDoorTag(InnerMapManager.Ratmen_Faction_Doors);
         } else {
             if (faction.isMajorNonPlayer) {
+                PathfindingTagPair pathfindingTagPair = InnerMapManager.Instance.ClaimNextPathfindingTagPair(); 
                 //claim new tags per new MAJOR faction.
-                faction.SetPathfindingTag(InnerMapManager.Instance.ClaimNextTag());
-                faction.SetPathfindingDoorTag(InnerMapManager.Instance.ClaimNextTag());    
+                faction.SetPathfindingTag(pathfindingTagPair.groundTag);
+                faction.SetPathfindingDoorTag(pathfindingTagPair.doorsTag);    
             }
         }
     }
@@ -218,11 +230,6 @@ public class FactionManager : BaseMonoBehaviour {
             SetVagrantFaction(newFaction);
         } else if (data.factionType.type == FACTION_TYPE.Ratmen) {
             SetRatmenFaction(newFaction);
-        }
-        if (newFaction.isMajorNonPlayer) {
-            //claim 2 tags per MAJOR non Player faction, this is so that the last tag is still accurate.
-            InnerMapManager.Instance.ClaimNextTag();
-            InnerMapManager.Instance.ClaimNextTag();
         }
         DatabaseManager.Instance.factionDatabase.RegisterFaction(newFaction);
         if (!newFaction.isPlayerFaction) {
@@ -287,11 +294,6 @@ public class FactionManager : BaseMonoBehaviour {
         }
         return null;
     }
-    public void SetEmblemAsUsed(Sprite sprite) {
-        if (sprite != null && !_usedEmblems.Contains(sprite)) {
-            _usedEmblems.Add(sprite);
-        }   
-    }
     #endregion
 
     #region Utilities
@@ -321,6 +323,16 @@ public class FactionManager : BaseMonoBehaviour {
                 return neutralFaction;
         }
     }
+    public int GetActiveVillagerFactionCount() {
+        int count = 0;
+        for (int i = 0; i < DatabaseManager.Instance.factionDatabase.allFactionsList.Count; i++) {
+            Faction faction = DatabaseManager.Instance.factionDatabase.allFactionsList[i];
+            if (faction.isMajorNonPlayer && !faction.isDisbanded) {
+                count++;
+            }
+        }
+        return count;
+    }
     #endregion
 
     #region Relationships
@@ -328,7 +340,13 @@ public class FactionManager : BaseMonoBehaviour {
         for (int i = 0; i < DatabaseManager.Instance.factionDatabase.allFactionsList.Count; i++) {
             Faction otherFaction = DatabaseManager.Instance.factionDatabase.allFactionsList[i];
             if(otherFaction.id != faction.id) {
-                CreateNewRelationshipBetween(otherFaction, faction);
+                //only create relationships for the following factions:
+                // - Villager factions that are not yet disbanded
+                // - Non-Villager factions
+                // - The Player Faction
+                if ((otherFaction.isMajorNonPlayer && !otherFaction.isDisbanded) || !otherFaction.isMajorNonPlayer || otherFaction.isPlayerFaction) {
+                    CreateNewRelationshipBetween(otherFaction, faction);    
+                }
             }
         }
     }
@@ -337,6 +355,7 @@ public class FactionManager : BaseMonoBehaviour {
             Faction otherFaction = DatabaseManager.Instance.factionDatabase.allFactionsList[i];
             if (otherFaction.id != faction.id) {
                 otherFaction.RemoveRelationshipWith(faction);
+                faction.RemoveRelationshipWith(otherFaction);
             }
         }
     }
@@ -356,6 +375,10 @@ public class FactionManager : BaseMonoBehaviour {
         faction1.SetRelationshipFor(faction2, status);
         faction2.SetRelationshipFor(faction1, status);
 
+#if DEBUG_LOG
+        Debug.Log($"Created new relationship between {faction1.name} and {faction2.name}");
+#endif
+        
         //if (faction1.isPlayerFaction || faction2.isPlayerFaction || 
         //   faction1.factionType.type == FACTION_TYPE.Wild_Monsters || faction2.factionType.type == FACTION_TYPE.Wild_Monsters || 
         //   faction1.factionType.type == FACTION_TYPE.Undead || faction2.factionType.type == FACTION_TYPE.Undead ||
@@ -379,6 +402,8 @@ public class FactionManager : BaseMonoBehaviour {
             //Reference: https://trello.com/c/hqFZ1MC2/1561-player-faction-should-be-neutral-with-wild-monsters
             if (faction1.factionType.type == FACTION_TYPE.Wild_Monsters || faction2.factionType.type == FACTION_TYPE.Wild_Monsters) {
                 return FACTION_RELATIONSHIP_STATUS.Neutral;
+            } else if (faction1.factionType.type == FACTION_TYPE.Demon_Cult || faction2.factionType.type == FACTION_TYPE.Demon_Cult) {
+                return FACTION_RELATIONSHIP_STATUS.Friendly;
             } else {
                 return FACTION_RELATIONSHIP_STATUS.Hostile;
             }
@@ -501,7 +526,9 @@ public class FactionManager : BaseMonoBehaviour {
                 log.AddToFillers(dislikeLog.fillers);
                 log.AddToFillers(null, dislikeLog.unReplacedText, LOG_IDENTIFIER.APPEND);
                 log.AddLogToDatabase();    
-                PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
+                PlayerManager.Instance.player.ShowNotificationFromPlayer(log, true);
+                
+                LogPool.Release(dislikeLog);
             } else if (status == FACTION_RELATIONSHIP_STATUS.Friendly) {
                 //If this one's Faction Leader considers that a Friend or Close Friend, friendly with that faction
                 Log likeLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Faction", "Generic", "like_leader", null, LOG_TAG.Major);
@@ -514,7 +541,9 @@ public class FactionManager : BaseMonoBehaviour {
                 log.AddToFillers(likeLog.fillers);
                 log.AddToFillers(null, likeLog.unReplacedText, LOG_IDENTIFIER.APPEND);
                 log.AddLogToDatabase();
-                PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
+                PlayerManager.Instance.player.ShowNotificationFromPlayer(log, true);
+                
+                LogPool.Release(likeLog);
             }    
         }
     }
@@ -717,9 +746,10 @@ public class FactionManager : BaseMonoBehaviour {
     public FACTION_TYPE GetFactionTypeForCharacter(Character character) {
         if (character.characterClass.className == "Cult Leader") {
             return FACTION_TYPE.Demon_Cult;
-        } else if (character.traitContainer.HasTrait("Vampire")) {
+        } else if (character.traitContainer.HasTrait("Vampire") && PlayerSkillManager.Instance.GetAfflictionData(PLAYER_SKILL_TYPE.VAMPIRISM).currentLevel >= 3) {
             return FACTION_TYPE.Vampire_Clan;
-        } else if (character.isLycanthrope && character.lycanData.isMaster) {
+        } else if (character.isLycanthrope && character.lycanData.isMaster
+            && PlayerSkillManager.Instance.GetAfflictionData(PLAYER_SKILL_TYPE.LYCANTHROPY).currentLevel >= 3) {
             return FACTION_TYPE.Lycan_Clan;
         } else if (character.traitContainer.HasTrait("Cultist")) {
             return FACTION_TYPE.Demon_Cult;
@@ -770,17 +800,8 @@ public class FactionManager : BaseMonoBehaviour {
         return null;
     }
     #endregion
-
-    public int GetActiveVillagerFactionCount() {
-        int count = 0;
-        for (int i = 0; i < DatabaseManager.Instance.factionDatabase.allFactionsList.Count; i++) {
-            Faction faction = DatabaseManager.Instance.factionDatabase.allFactionsList[i];
-            if (faction.isMajorNonPlayer && !faction.isDisbanded) {
-                count++;
-            }
-        }
-        return count;
-    }
+    
+    
 }
 
 [System.Serializable]
