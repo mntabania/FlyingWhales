@@ -81,10 +81,12 @@ public class EquipmentComponent {
             SetAccessory(p_newItem, p_targetCharacter, p_initializedStackCountOnly);
         }
 
-        Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "Equip Item", "equipped_item", null, LOG_TAG.Major);
-        log.AddToFillers(p_targetCharacter, p_targetCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-        log.AddToFillers(p_newItem, p_newItem.name, LOG_IDENTIFIER.ITEM_1);
-        log.AddLogToDatabase();
+        if (!p_initializedStackCountOnly) {
+            Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "Equip Item", "equipped_item", null, LOG_TAG.Major);
+            log.AddToFillers(p_targetCharacter, p_targetCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            log.AddToFillers(p_newItem, p_newItem.name, LOG_IDENTIFIER.ITEM_1);
+            log.AddLogToDatabase();
+        }
     }
 
     public void RemoveEquipment(EquipmentItem p_removedItem, Character p_targetCharacter) {
