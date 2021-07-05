@@ -54,7 +54,7 @@ namespace Characters.Villager_Wants {
         /// <param name="p_character">The character to check.</param>
         /// <param name="needsToPay">Does this character need to pay for the goods.</param>
         /// <param name="foundStructure">The found basic resource structure</param>
-        protected bool HasBasicResourceProducingStructureInSameVillageOwnedByValidCharacter(Character p_character, out bool needsToPay, out LocationStructure foundStructure) {
+        protected bool HasBasicResourceProducingStructureInSameVillageOwnedByValidCharacter(Character p_character, out bool needsToPay, out LocationStructure foundStructure, int neededResourceAmount) {
             Assert.IsNotNull(p_character.homeSettlement);
             Assert.IsTrue(p_character.faction.isMajorFaction);
             if (!p_character.homeSettlement.HasBasicResourceProducingStructure()) {
@@ -66,12 +66,13 @@ namespace Characters.Villager_Wants {
                 p_character.structureComponent.workPlaceStructure.structureType.IsBasicResourceProducingStructureForFaction(p_character.faction.factionType.type)) {
                 bool hasNeededResource = false;
                 if (p_character.faction.factionType.type == FACTION_TYPE.Human_Empire) {
-                    hasNeededResource = p_character.structureComponent.workPlaceStructure.HasBuiltTileObjectOfType(TILE_OBJECT_TYPE.STONE_PILE);
+                    hasNeededResource = p_character.structureComponent.workPlaceStructure.HasBuiltResourcePileOfTypeThatHasResourceAmount(TILE_OBJECT_TYPE.STONE_PILE, neededResourceAmount);
                 } else if (p_character.faction.factionType.type == FACTION_TYPE.Elven_Kingdom) {
-                    hasNeededResource = p_character.structureComponent.workPlaceStructure.HasBuiltTileObjectOfType(TILE_OBJECT_TYPE.WOOD_PILE);
+                    hasNeededResource = p_character.structureComponent.workPlaceStructure.HasBuiltResourcePileOfTypeThatHasResourceAmount(TILE_OBJECT_TYPE.WOOD_PILE, neededResourceAmount);
                 } else if (p_character.faction.factionType.type == FACTION_TYPE.Demon_Cult ||
                            p_character.faction.factionType.type == FACTION_TYPE.Lycan_Clan || p_character.faction.factionType.type == FACTION_TYPE.Vampire_Clan) {
-                    hasNeededResource = p_character.structureComponent.workPlaceStructure.HasBuiltTileObjectOfType(TILE_OBJECT_TYPE.STONE_PILE) || p_character.structureComponent.workPlaceStructure.HasBuiltTileObjectOfType(TILE_OBJECT_TYPE.WOOD_PILE);
+                    hasNeededResource = p_character.structureComponent.workPlaceStructure.HasBuiltResourcePileOfTypeThatHasResourceAmount(TILE_OBJECT_TYPE.STONE_PILE, neededResourceAmount) || 
+                                        p_character.structureComponent.workPlaceStructure.HasBuiltResourcePileOfTypeThatHasResourceAmount(TILE_OBJECT_TYPE.WOOD_PILE, neededResourceAmount);
                 }
                 if (hasNeededResource) {
                     //character works at a basic resource producing structure
@@ -132,12 +133,13 @@ namespace Characters.Villager_Wants {
                     Assert.IsNotNull(manMadeStructure, $"Food producing structure is not Man made! {structure?.name}");
                     bool hasNeededResource = false;
                     if (p_character.faction.factionType.type == FACTION_TYPE.Human_Empire) {
-                        hasNeededResource = manMadeStructure.HasBuiltTileObjectOfType(TILE_OBJECT_TYPE.STONE_PILE);
+                        hasNeededResource = manMadeStructure.HasBuiltResourcePileOfTypeThatHasResourceAmount(TILE_OBJECT_TYPE.STONE_PILE, neededResourceAmount);
                     } else if (p_character.faction.factionType.type == FACTION_TYPE.Elven_Kingdom) {
-                        hasNeededResource = manMadeStructure.HasBuiltTileObjectOfType(TILE_OBJECT_TYPE.WOOD_PILE);
+                        hasNeededResource = manMadeStructure.HasBuiltResourcePileOfTypeThatHasResourceAmount(TILE_OBJECT_TYPE.WOOD_PILE, neededResourceAmount);
                     } else if (p_character.faction.factionType.type == FACTION_TYPE.Demon_Cult ||
                                p_character.faction.factionType.type == FACTION_TYPE.Lycan_Clan || p_character.faction.factionType.type == FACTION_TYPE.Vampire_Clan) {
-                        hasNeededResource = manMadeStructure.HasBuiltTileObjectOfType(TILE_OBJECT_TYPE.STONE_PILE) || manMadeStructure.HasBuiltTileObjectOfType(TILE_OBJECT_TYPE.WOOD_PILE);
+                        hasNeededResource = manMadeStructure.HasBuiltResourcePileOfTypeThatHasResourceAmount(TILE_OBJECT_TYPE.STONE_PILE, neededResourceAmount) || 
+                                            manMadeStructure.HasBuiltResourcePileOfTypeThatHasResourceAmount(TILE_OBJECT_TYPE.WOOD_PILE, neededResourceAmount);
                     }
                     if (hasNeededResource) {
                         foundStructure = manMadeStructure;

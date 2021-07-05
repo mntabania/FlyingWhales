@@ -933,10 +933,20 @@ public class Region : ISavable, ILogFiller {
         villageSpots.Clear();
         villageSpots.AddRange(p_villageSpots);
     }
-    public VillageSpot GetRandomUnoccupiedVillageSpot() {
+    public VillageSpot GetFirstUnoccupiedVillageSpot() {
         for (int i = 0; i < villageSpots.Count; i++) {
             VillageSpot villageSpot = villageSpots[i];
             if (!villageSpot.mainSpot.structureComponent.HasStructureInArea() && !villageSpot.mainSpot.IsNextToOrPartOfVillage() && !villageSpot.mainSpot.gridTileComponent.HasCorruption()) {
+                return villageSpot;
+            }
+        }
+        return null;
+    }
+    public VillageSpot GetFirstUnoccupiedVillageSpotThatCanAccomodateFaction(FACTION_TYPE p_factionType) {
+        for (int i = 0; i < villageSpots.Count; i++) {
+            VillageSpot villageSpot = villageSpots[i];
+            if (!villageSpot.mainSpot.structureComponent.HasStructureInArea() && !villageSpot.mainSpot.IsNextToOrPartOfVillage() && 
+                !villageSpot.mainSpot.gridTileComponent.HasCorruption() && villageSpot.CanAccommodateFaction(p_factionType)) {
                 return villageSpot;
             }
         }

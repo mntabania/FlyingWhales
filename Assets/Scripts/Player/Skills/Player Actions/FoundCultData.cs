@@ -25,7 +25,7 @@ public class FoundCultData : PlayerAction {
             if (!WorldSettings.Instance.worldSettingsData.villageSettings.disableNewVillages) {
                 if (!character.currentRegion.IsRegionVillageCapacityReached()) {
                     // Area targetArea = character.currentRegion.GetRandomHexThatMeetCriteria(a => a.elevationType != ELEVATION.WATER && a.elevationType != ELEVATION.MOUNTAIN && !a.structureComponent.HasStructureInArea() && !a.IsNextToOrPartOfVillage() && !a.gridTileComponent.HasCorruption());
-                    VillageSpot villageSpot = character.currentRegion.GetRandomUnoccupiedVillageSpot();
+                    VillageSpot villageSpot = character.currentRegion.GetFirstUnoccupiedVillageSpotThatCanAccomodateFaction(FACTION_TYPE.Demon_Cult);
                     if (villageSpot != null) {
                         Area targetArea = villageSpot.mainSpot;
                         StructureSetting structureSetting = new StructureSetting(STRUCTURE_TYPE.CITY_CENTER, character.faction.factionType.mainResource, character.faction.factionType.usesCorruptedStructures);

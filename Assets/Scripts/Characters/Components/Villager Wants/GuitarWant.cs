@@ -17,8 +17,8 @@ namespace Characters.Villager_Wants {
                 p_preferredStructure = null;
                 return false;
             }
-            
-            if (!HasBasicResourceProducingStructureInSameVillageOwnedByValidCharacter(p_character, out bool needsToPay, out p_preferredStructure)) {
+            TileObjectData tileObjectData = TileObjectDB.GetTileObjectData(furnitureWanted);
+            if (!HasBasicResourceProducingStructureInSameVillageOwnedByValidCharacter(p_character, out bool needsToPay, out p_preferredStructure, tileObjectData.craftResourceCost)) {
                 //could not find basic resource producing structure that is owned by a valid character
                 return false;
             }
