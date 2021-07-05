@@ -150,8 +150,9 @@ public class Drop : GoapAction {
                 if (targetCharacter.traitContainer.HasTrait("Criminal")) {
                     Criminal criminalTrait = targetCharacter.traitContainer.GetTraitOrStatus<Criminal>("Criminal");
                     criminalTrait.SetIsImprisoned(true);
-                }    
-            } 
+                }
+                targetCharacter.ForceCancelAllJobsTargetingThisCharacter(JOB_TYPE.APPREHEND);
+            }
             //else if (goapNode.associatedJobType == JOB_TYPE.SNATCH) {
             //    //snatcher specific behaviour
             //    Area areaLocation = targetCharacter.areaLocation;
