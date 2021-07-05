@@ -455,6 +455,7 @@ public class FactionManager : BaseMonoBehaviour {
             Faction otherFaction = allFactions[i];
             if(otherFaction.id != faction.id) {
                 FactionRelationship factionRelationship = faction.GetRelationshipWith(otherFaction);
+                if (factionRelationship == null) { continue; }
                 FACTION_RELATIONSHIP_STATUS newStatus = factionRelationship.relationshipStatus;
                 if (faction.factionType.HasIdeology(FACTION_IDEOLOGY.Demon_Worship)) {
                     if (otherFaction.isPlayerFaction || otherFaction.factionType.HasIdeology(FACTION_IDEOLOGY.Demon_Worship)) {

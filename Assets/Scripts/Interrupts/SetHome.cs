@@ -515,8 +515,10 @@ namespace Interrupts {
 #endif
                 return false;
             }
-            // Area targetArea = actor.currentRegion.GetRandomHexThatMeetCriteria(a => a.elevationType != ELEVATION.WATER && a.elevationType != ELEVATION.MOUNTAIN && !a.structureComponent.HasStructureInArea() && !a.IsNextToOrPartOfVillage() && !a.gridTileComponent.HasCorruption());
-            VillageSpot villageSpot = actor.currentRegion.GetRandomUnoccupiedVillageSpot();
+            VillageSpot villageSpot = actor.faction != null ? 
+                actor.currentRegion.GetFirstUnoccupiedVillageSpotThatCanAccomodateFaction(actor.faction.factionType.type) : 
+                actor.currentRegion.GetFirstUnoccupiedVillageSpot();
+            
             if (villageSpot != null) {
                 Area targetArea = villageSpot.mainSpot;
                 if (!checkIfThereAreOtherFindVillageJob || !FactionMemberAlreadyHasFindVillageJob(actor.faction)) {

@@ -547,6 +547,18 @@ namespace Inner_Maps.Location_Structures {
             }
             return false;
         }
+        public bool HasBuiltResourcePileOfTypeThatHasResourceAmount(TILE_OBJECT_TYPE type, int amount) {
+            if (groupedTileObjects.ContainsKey(type)) {
+                List<TileObject> tileObjects = groupedTileObjects[type];
+                for (int i = 0; i < tileObjects.Count; i++) {
+                    TileObject t = tileObjects[i];
+                    if (t.mapObjectState == MAP_OBJECT_STATE.BUILT && t is ResourcePile resourcePile && resourcePile.resourceInPile >= amount) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
         public bool HasTileObjectThatIsBuiltFoodPile() {
             for (int i = 0; i < pointsOfInterest.Count; i++) {
                 IPointOfInterest poi = pointsOfInterest.ElementAt(i);

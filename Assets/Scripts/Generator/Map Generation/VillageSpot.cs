@@ -106,7 +106,7 @@ public class VillageSpot {
             case FACTION_TYPE.Demon_Cult:
                 return lumberyardSpots > 0 || miningSpots > 0;
             default:
-                return false;
+                return true;
         }
     }
 

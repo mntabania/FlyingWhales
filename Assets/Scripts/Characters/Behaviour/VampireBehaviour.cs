@@ -74,9 +74,10 @@ public class VampireBehaviour : CharacterBehaviourComponent {
                         character.interruptComponent.TriggerInterrupt(INTERRUPT.Set_Home, unoccupiedCastle.tiles.First().tileObjectComponent.genericTileObject);
                         producedJob = null;
                         return true;
-                    } else if (!WorldSettings.Instance.worldSettingsData.villageSettings.disableNewVillages && GameUtilities.RollChance(15, ref log) && character.faction?.factionType.type != FACTION_TYPE.Vagrants){ //15
+                    } else if (!WorldSettings.Instance.worldSettingsData.villageSettings.disableNewVillages && GameUtilities.RollChance(15, ref log) && character.faction != null && 
+                               character.faction.factionType.type != FACTION_TYPE.Vagrants){ //15
                         // Area targetArea = GetNoStructurePlainAreaInAllRegions();
-                        VillageSpot villageSpot = character.currentRegion.GetRandomUnoccupiedVillageSpot();
+                        VillageSpot villageSpot = character.currentRegion.GetFirstUnoccupiedVillageSpotThatCanAccomodateFaction(character.faction.factionType.type);
                         if (villageSpot != null) {
                             Area targetArea = villageSpot.mainSpot;
 #if DEBUG_LOG
