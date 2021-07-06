@@ -92,11 +92,18 @@ public class TakeResource : GoapAction {
 #endif
                 }
             } else {
-                // int currCost = UtilityScripts.Utilities.Rng.Next(400, 431);
-                cost = 400;
+                if (actor.homeStructure != null && target.gridTileLocation != null && target.gridTileLocation.structure != actor.homeStructure) {
+                    cost = 2000;
 #if DEBUG_LOG
-                costLog += $" +{cost}(Obtain Personal Food, not Elf/Human Meat)";
-#endif
+                    costLog += $" +{cost}(Obtain Personal Food, not Elf/Human Meat but is not inside home of actor)";
+#endif                        
+                } else {
+                    // int currCost = UtilityScripts.Utilities.Rng.Next(400, 431);
+                    cost = 400;
+#if DEBUG_LOG
+                    costLog += $" +{cost}(Obtain Personal Food, not Elf/Human Meat and is at home of actor)";
+#endif    
+                }
             }
         } else {
             if (target.gridTileLocation != null && target.gridTileLocation.IsPartOfSettlement(out var settlement) && 

@@ -38,8 +38,6 @@ public class Poison : GoapAction {
     }
     public override void PopulateEmotionReactionsToActor(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
         base.PopulateEmotionReactionsToActor(reactions, actor, target, witness, node, status);
-        Poisoned poisoned = target.traitContainer.GetTraitOrStatus<Poisoned>("Poisoned");
-        poisoned?.AddAwareCharacter(witness); //make character aware of poisoned trait
 
         Character targetObjectOwner = null;
         if (target is TileObject targetTileObject) {
@@ -85,6 +83,11 @@ public class Poison : GoapAction {
                 }
             }
         }
+    }
+    public override string ReactionToActor(Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
+        Poisoned poisoned = target.traitContainer.GetTraitOrStatus<Poisoned>("Poisoned");
+        poisoned?.AddAwareCharacter(witness); //make character aware of poisoned trait
+        return base.ReactionToActor(actor, target, witness, node, status);
     }
     public override REACTABLE_EFFECT GetReactableEffect(ActualGoapNode node, Character witness) {
         return REACTABLE_EFFECT.Negative;
