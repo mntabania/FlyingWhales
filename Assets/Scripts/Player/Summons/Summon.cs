@@ -163,6 +163,7 @@ public class Summon : Character {
                     currentRegion.RemoveCharacterFromLocation(this);
                 }
             }
+            previousCharacterDataComponent.SetHomeSettlementOnDeath(homeSettlement);
             if (homeRegion != null) {
                 Region home = homeRegion;
                 homeRegion.RemoveResident(this);
