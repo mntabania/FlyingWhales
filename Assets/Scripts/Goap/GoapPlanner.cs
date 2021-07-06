@@ -163,6 +163,7 @@ public class GoapPlanner {
                 //Only set assigned plan if job is still in character job queue because if not, it means that the job is no longer taken
                 _goapThreadInProcess.job.SetAssignedPlan(createdPlan);
                 if (jobIndex != 0) {
+                    //Return to pool first before processing new job, do not return to pool after processing job because the _goapThreadInProcess will be reset while being processed in multithread
                     ObjectPoolManager.Instance.ReturnGoapThreadToPool(_goapThreadInProcess);
                     _goapThreadInProcess = null;
                     //If the job of the receive plan is no longer the top priority, process the top most job because it means that while the goap planner is running, the top most priority has been replaced
@@ -241,7 +242,13 @@ public class GoapPlanner {
                     if (!owner.partyComponent.isMemberThatJoinedQuest) {
                         //If character is currently in an active party with a quest and it is one of the members that joined the quest
                         //It should not produce food personally because the produce food while in a party that has quest is controlled by the party itseld, the Produce Food For Camp
+
+                        //Return to pool first before processing new job, do not return to pool after processing job because the _goapThreadInProcess will be reset while being processed in multithread
+                        ObjectPoolManager.Instance.ReturnGoapThreadToPool(_goapThreadInProcess);
+                        _goapThreadInProcess = null;
+
                         owner.jobComponent.CreateProduceFoodJob();
+                        return;
                     }
                 }
                 if (owner.traitContainer.HasTrait("Pest") || owner is Rat) {
