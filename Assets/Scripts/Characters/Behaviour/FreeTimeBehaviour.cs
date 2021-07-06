@@ -816,7 +816,7 @@ public class FreeTimeBehaviour : CharacterBehaviourComponent {
         }
     }
     private void FreeTimePartyLogic(Character character, ref string log) {
-        if ((character.characterClass.IsCombatant() || character.characterClass.className == "Noble") && !character.traitContainer.HasTrait("Enslaved")) {
+        if ((character.characterClass.IsCombatant() || character.characterClass.className == "Noble") && !character.traitContainer.HasTrait("Enslaved") && character.faction != null) {
             if (!character.partyComponent.hasParty && character.homeSettlement != null && !character.structureComponent.HasWorkPlaceStructure() && !character.crimeComponent.IsWantedBy(character.faction)) {
 #if DEBUG_LOG
                 log = $"{log}\n-{character.name} is not yet part of a party. Will try to join or create one.";
@@ -830,7 +830,7 @@ public class FreeTimeBehaviour : CharacterBehaviourComponent {
 #if DEBUG_LOG
                     log = $"{log}\n-No un-full party. Will try to create party, rolling chance...";
 #endif
-                    if (GameUtilities.RollChance(10, ref log) && character.faction != null && shouldCreateOrJoinParty) {
+                    if (GameUtilities.RollChance(10, ref log) && shouldCreateOrJoinParty) {
 #if DEBUG_LOG
                         log = $"{log}\n-Chance met, will create party.";
 #endif
