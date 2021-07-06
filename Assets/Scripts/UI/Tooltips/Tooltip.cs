@@ -10,6 +10,7 @@ public class Tooltip : MonoBehaviour {
     public static Tooltip Instance;
     
     public RectTransform mainRT;
+    public Canvas canvas;
     public GameObject smallInfoGO;
     public RectTransform smallInfoRT;
     public HorizontalLayoutGroup smallInfoBGParentLG;
@@ -83,7 +84,14 @@ public class Tooltip : MonoBehaviour {
         PositionTooltip(Input.mousePosition, tooltipParent, rtToReposition, boundsRT);
     }
     private void PositionTooltip(Vector3 position, GameObject tooltipParent, RectTransform rtToReposition, RectTransform boundsRT) {
-        var v3 = position;
+        Vector3 v3 = position;
+        
+        if (tooltipParent.transform.parent != mainRT) {
+            tooltipParent.transform.SetParent(mainRT);    
+        }
+        if (tooltipParent.transform.localScale != Vector3.one) {
+            tooltipParent.transform.localScale = Vector3.one;    
+        }
 
         rtToReposition.pivot = new Vector2(0f, 1f);
         RectTransform tooltipParentRT = tooltipParent.transform as RectTransform;
@@ -92,7 +100,7 @@ public class Tooltip : MonoBehaviour {
         UtilityScripts.Utilities.GetAnchorMinMax(TextAnchor.LowerLeft, out var anchorMin, out var anchorMax);
         tooltipParentRT.anchorMin = anchorMin;
         tooltipParentRT.anchorMax = anchorMax;
-        
+
         smallInfoBGParentLG.childAlignment = TextAnchor.UpperLeft;
 
         if (InputManager.Instance != null) {
@@ -107,21 +115,63 @@ public class Tooltip : MonoBehaviour {
             }    
         }
 
-
-        Vector3 clampedPos = KeepFullyOnScreen(smallInfoBGRT, v3, mainRT);
-        (tooltipParent.transform as RectTransform).anchoredPosition = clampedPos;
-    }
-    private Vector3 KeepFullyOnScreen(RectTransform rect, Vector3 newPos, RectTransform CanvasRect) {
-        float minX = 0f;
-        float maxX = (CanvasRect.sizeDelta.x - rect.sizeDelta.x); //* 0.5f;
-        float minY = rect.sizeDelta.y; //* -0.5f;
-        float maxY = CanvasRect.sizeDelta.y; //* 0.5f;
+        Vector3 clampedPos = KeepFullyOnScreen(smallInfoBGRT, v3, canvas, mainRT);
+        RectTransformUtility.ScreenPointToLocalPointInRectangle(mainRT, clampedPos, null, out var localPoint);
         
-        newPos.x = Mathf.Clamp(newPos.x, minX, maxX);
-        newPos.y = Mathf.Clamp(newPos.y, minY, maxY);
-        
-        return newPos;
+        (tooltipParent.transform as RectTransform).localPosition = localPoint; //clampedPos;
     }
+     private Vector3 KeepFullyOnScreen(RectTransform rect, Vector3 newPos, Canvas canvas, RectTransform CanvasRect) {
+         float minX = 0f;
+         var scaleFactor = canvas.scaleFactor;
+         float maxX = ((CanvasRect.sizeDelta.x * scaleFactor) - (rect.sizeDelta.x * scaleFactor));
+         float minY = rect.sizeDelta.y * scaleFactor;
+         float maxY = CanvasRect.sizeDelta.y * scaleFactor;
+        
+         newPos.x = Mathf.Clamp(newPos.x, minX, maxX);
+         newPos.y = Mathf.Clamp(newPos.y, minY, maxY);
+        
+         return newPos;
+     }
+    // private void PositionTooltip(Vector3 position, GameObject tooltipParent, RectTransform rtToReposition, RectTransform boundsRT) {
+    //     var v3 = position;
+    //
+    //     rtToReposition.pivot = new Vector2(0f, 1f);
+    //     RectTransform tooltipParentRT = tooltipParent.transform as RectTransform;
+    //     tooltipParentRT.pivot = new Vector2(0f, 0f);
+    //
+    //     UtilityScripts.Utilities.GetAnchorMinMax(TextAnchor.LowerLeft, out var anchorMin, out var anchorMax);
+    //     tooltipParentRT.anchorMin = anchorMin;
+    //     tooltipParentRT.anchorMax = anchorMax;
+    //     
+    //     smallInfoBGParentLG.childAlignment = TextAnchor.UpperLeft;
+    //
+    //     if (InputManager.Instance != null) {
+    //         if (InputManager.Instance.currentCursorType == InputManager.Cursor_Type.Cross 
+    //             || InputManager.Instance.currentCursorType == InputManager.Cursor_Type.Check 
+    //             || InputManager.Instance.currentCursorType == InputManager.Cursor_Type.Link) {
+    //             v3.x += 100f;
+    //             v3.y -= 32f;
+    //         } else {
+    //             v3.x += 25f;
+    //             v3.y -= 25f;
+    //         }    
+    //     }
+    //
+    //
+    //     Vector3 clampedPos = KeepFullyOnScreen(smallInfoBGRT, v3, mainRT);
+    //     (tooltipParent.transform as RectTransform).anchoredPosition = clampedPos;
+    // }
+    // private Vector3 KeepFullyOnScreen(RectTransform rect, Vector3 newPos, RectTransform CanvasRect) {
+    //     float minX = 0f;
+    //     float maxX = (CanvasRect.sizeDelta.x - rect.sizeDelta.x); //* 0.5f;
+    //     float minY = rect.sizeDelta.y; //* -0.5f;
+    //     float maxY = CanvasRect.sizeDelta.y; //* 0.5f;
+    //     
+    //     newPos.x = Mathf.Clamp(newPos.x, minX, maxX);
+    //     newPos.y = Mathf.Clamp(newPos.y, minY, maxY);
+    //     
+    //     return newPos;
+    // }
     private void PositionTooltip(UIHoverPosition position, GameObject tooltipParent, RectTransform rt) {
         tooltipParent.transform.SetParent(position.transform);
         RectTransform tooltipParentRT = tooltipParent.transform as RectTransform;
