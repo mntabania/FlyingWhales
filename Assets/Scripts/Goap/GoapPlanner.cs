@@ -235,7 +235,7 @@ public class GoapPlanner {
 
             if (jobType == JOB_TYPE.FULLNESS_RECOVERY_URGENT || jobType == JOB_TYPE.FULLNESS_RECOVERY_NORMAL) {
                 //Do not produce food anymore personally, since it is already handled in character wants
-                if (!owner.traitContainer.HasTrait("Vampire") && owner.isNormalCharacter && !owner.isConsideredRatman) {
+                if (!owner.traitContainer.HasTrait("Vampire") && owner.isNormalCharacter && !owner.isConsideredRatman && (owner.homeSettlement == null || !owner.homeSettlement.HasPathTowardsTileInSettlement(owner, 2))) {
                     //Special case for when a character cannot do hunger recovery, he/she must produce food instead
                     //NOTE: Excluded vampires because we don't want vampires to produce food when they fail to drink blood.
                     if (!owner.partyComponent.isMemberThatJoinedQuest) {
