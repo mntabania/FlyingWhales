@@ -481,6 +481,10 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         if (race.IsSapient() || race == RACE.RATMAN) {
             villagerWantsComponent = new VillagerWantsComponent(); villagerWantsComponent.SetOwner(this);
             villagerWantsComponent.Initialize(this);
+
+            if (race == RACE.RATMAN) {
+                isInfoUnlocked = true;
+            }
         }
     }
     public void InitialCharacterPlacement(LocationGridTile tile) {
