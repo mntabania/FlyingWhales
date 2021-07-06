@@ -5,6 +5,7 @@ using System.Linq;
 using Characters.Villager_Wants;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
+using Traits;
 using UnityEngine;
 using UnityEngine.Assertions;
 using UtilityScripts;
@@ -816,7 +817,7 @@ public class FreeTimeBehaviour : CharacterBehaviourComponent {
     }
     private void FreeTimePartyLogic(Character character, ref string log) {
         if ((character.characterClass.IsCombatant() || character.characterClass.className == "Noble") && !character.traitContainer.HasTrait("Enslaved")) {
-            if (!character.partyComponent.hasParty && character.homeSettlement != null && !character.structureComponent.HasWorkPlaceStructure()) {
+            if (!character.partyComponent.hasParty && character.homeSettlement != null && !character.structureComponent.HasWorkPlaceStructure() && !character.crimeComponent.IsWantedBy(character.faction)) {
 #if DEBUG_LOG
                 log = $"{log}\n-{character.name} is not yet part of a party. Will try to join or create one.";
 #endif
