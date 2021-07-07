@@ -40,11 +40,14 @@ SpriteAtlas:
       allowAlphaSplitting: 0
       enableRotation: 0
       enableTightPacking: 0
+    secondaryTextureSettings: {}
     variantMultiplier: 1
     packables:
     - {fileID: 102900000, guid: 92d5c9ea6b0c99c4481a0d7e33d3598e, type: 3}
     totalSpriteSurfaceArea: 75000
     bindAsDefault: 1
+    isAtlasV2: 0
+    cachedData: {fileID: 0}
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
   - {fileID: 21300000, guid: af114870cabcb834bac29fb12dcc5310, type: 3}
@@ -108,5 +111,6 @@ SpriteAtlas:
   - 14
   - orelia
   - ziranna
+  m_RenderDataMap: {}
   m_Tag: EmblemsAtlas
   m_IsVariant: 0

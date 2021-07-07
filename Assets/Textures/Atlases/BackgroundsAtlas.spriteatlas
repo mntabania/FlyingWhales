@@ -40,11 +40,14 @@ SpriteAtlas:
       allowAlphaSplitting: 0
       enableRotation: 0
       enableTightPacking: 0
+    secondaryTextureSettings: {}
     variantMultiplier: 1
     packables:
     - {fileID: 102900000, guid: bcf15e72d43b74a429a0f3cd1f86e7a1, type: 3}
     totalSpriteSurfaceArea: 4147200
     bindAsDefault: 1
+    isAtlasV2: 0
+    cachedData: {fileID: 0}
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
   - {fileID: 21300000, guid: 3ad825620f90e104ba9787f50b283e46, type: 3}
@@ -52,5 +55,6 @@ SpriteAtlas:
   m_PackedSpriteNamesToIndex:
   - world_options_bg
   - tutorialbg
+  m_RenderDataMap: {}
   m_Tag: BackgroundsAtlas
   m_IsVariant: 0
