@@ -64,7 +64,7 @@ public class RatBehaviour : CharacterBehaviourComponent {
                 }
             }
         }
-        return character.jobComponent.TriggerRoamAroundTile(JOB_TYPE.ROAM_AROUND_TILE, out producedJob);
+        return character.jobComponent.TriggerRoamAroundTile(out producedJob);
     }
     private BaseSettlement GetVillageTargetsByPriority(Character owner, BaseSettlement except = null) {
         //get settlements in region that have normal characters living there.

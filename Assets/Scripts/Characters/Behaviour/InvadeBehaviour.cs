@@ -24,7 +24,7 @@ public class InvadeBehaviour : CharacterBehaviourComponent {
 #if DEBUG_LOG
                 log += $"\n-Still no invade target, roam around.";
 #endif
-                return character.jobComponent.TriggerRoamAroundTile(JOB_TYPE.ROAM_AROUND_TILE, out producedJob);
+                return character.jobComponent.TriggerRoamAroundTile(out producedJob);
             }
             producedJob = null;
             return true;
