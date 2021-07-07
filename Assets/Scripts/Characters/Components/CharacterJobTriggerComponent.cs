@@ -2148,7 +2148,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
         Character targetCharacter = null;
         if (owner.homeSettlement != null) {
 	        Character settlementRuler = owner.homeSettlement.ruler;
-	        if (settlementRuler != null && !settlementRuler.isDead && settlementRuler != owner && settlementRuler != crimeData.criminal && 
+	        if (settlementRuler != null && !settlementRuler.isInLimbo && !settlementRuler.isDead && settlementRuler != owner && settlementRuler != crimeData.criminal && 
 	            settlementRuler != crimeData.target && !settlementRuler.traitContainer.HasTrait("Travelling") && !settlementRuler.partyComponent.isActiveMember && 
 	            !crimeData.IsWitness(settlementRuler) && settlementRuler.currentSettlement == owner.currentSettlement) {
 		        targetCharacter = settlementRuler;
@@ -2159,7 +2159,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
         if (targetCharacter == null) {
 	        if (owner.faction != null) {
 		        Character factionLeader = owner.faction.leader as Character;
-		        if (factionLeader != null && !factionLeader.isDead && factionLeader != owner && factionLeader != crimeData.criminal && 
+		        if (factionLeader != null && !factionLeader.isInLimbo && !factionLeader.isDead && factionLeader != owner && factionLeader != crimeData.criminal && 
 		            factionLeader != crimeData.target && !factionLeader.traitContainer.HasTrait("Travelling") && !factionLeader.partyComponent.isActiveMember && 
 		            !crimeData.IsWitness(factionLeader) && factionLeader.currentSettlement == owner.currentSettlement) {
 			        targetCharacter = factionLeader;
@@ -2172,7 +2172,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 			        for (int i = 0; i < owner.faction.characters.Count; i++) {
 				        Character factionMember = owner.faction.characters[i];
 				        if (factionMember.isFactionLeader || factionMember.isSettlementRuler) {
-					        if (!factionMember.isDead && factionMember != owner && factionMember != crimeData.criminal && 
+					        if (!factionMember.isDead && !factionMember.isInLimbo && factionMember != owner && factionMember != crimeData.criminal && 
 					            factionMember != crimeData.target && !factionMember.traitContainer.HasTrait("Travelling") && !factionMember.partyComponent.isActiveMember &&
 					            !crimeData.IsWitness(factionMember)) {
 						        float distanceToTarget = Vector2.Distance(owner.worldPosition, factionMember.worldPosition);
