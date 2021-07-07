@@ -12,6 +12,7 @@ namespace Interrupts {
 
         #region Overrides
         public override bool ExecuteInterruptStartEffect(InterruptHolder interruptHolder, ref Log overrideEffectLog, ActualGoapNode goapNode = null) {
+            interruptHolder.actor.structureComponent.TryUnassignFromCurrentWorkStructureOnClassChange(interruptHolder.actor, "Vampire Lord");
             interruptHolder.actor.classComponent.AssignClass("Vampire Lord");
             Traits.Vampire vampire = interruptHolder.actor.traitContainer.GetTraitOrStatus<Traits.Vampire>("Vampire");
             Assert.IsNotNull(vampire, $"{interruptHolder.actor.name}");

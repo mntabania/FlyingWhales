@@ -54,15 +54,8 @@ public class ChangeClass : GoapAction {
         //Also to prevent 1 character from getting all change class jobs in settlement
         goapNode.actor.classComponent.SetShouldChangeClass(false);
 
-        ManMadeStructure previousWorkStructure = goapNode.actor.structureComponent.workPlaceStructure;
-        if (previousWorkStructure != null) {
-            //if actor can no longer work at its current work structure, unassign them
-            CharacterClassData classData = CharacterManager.Instance.GetOrCreateCharacterClassData(className);
-            if (classData.workStructureType != previousWorkStructure.structureType) {
-                previousWorkStructure.RemoveAssignedWorker(goapNode.actor);    
-            }
-        }
-        
+        goapNode.actor.structureComponent.TryUnassignFromCurrentWorkStructureOnClassChange(goapNode.actor, className);
+
         if (otherData.Length > 1) {
             OtherData structureOtherData = otherData[1];
             if (structureOtherData != null) {

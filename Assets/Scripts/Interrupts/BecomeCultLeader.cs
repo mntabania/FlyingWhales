@@ -15,6 +15,7 @@ namespace Interrupts {
         #region Overrides
         public override bool ExecuteInterruptStartEffect(InterruptHolder interruptHolder, ref Log overrideEffectLog, ActualGoapNode goapNode = null) {
             Character actor = interruptHolder.actor;
+            actor.structureComponent.TryUnassignFromCurrentWorkStructureOnClassChange(actor, "Cult Leader");
             actor.classComponent.AssignClass("Cult Leader");
 
             Faction faction = actor.faction;

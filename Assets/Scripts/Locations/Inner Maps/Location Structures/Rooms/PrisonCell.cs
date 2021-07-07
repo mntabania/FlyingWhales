@@ -101,6 +101,15 @@ namespace Inner_Maps.Location_Structures {
             }
             return false;
         }
+        public bool HasOccupants() {
+            for (int i = 0; i < tilesInRoom.Count; i++) {
+                LocationGridTile t = tilesInRoom[i];
+                if (t.charactersHere.Count > 0) {
+                    return true;
+                }
+            }
+            return false;
+        }
         public void PopulateValidOccupants(List<Character> p_characters) {
             for (int i = 0; i < tilesInRoom.Count; i++) {
                 LocationGridTile t = tilesInRoom[i];

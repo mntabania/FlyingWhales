@@ -20,7 +20,7 @@ public class LetGoData : PlayerAction {
         if (isValid) {
             if (target is Character targetCharacter) {
                 if (!targetCharacter.isDead) {
-                    if (targetCharacter.currentStructure is Kennel kennel && kennel.occupyingSummon == targetCharacter) {
+                    if (targetCharacter.currentStructure is Kennel) { //kennel && kennel.occupyingSummon == targetCharacter
                         return true;
                     }
                     if (targetCharacter.gridTileLocation != null && targetCharacter.currentStructure is TortureChambers tortureChambers && 
