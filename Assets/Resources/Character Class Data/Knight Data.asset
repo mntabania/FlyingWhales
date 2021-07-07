@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 88e6d539796c490aa0efea676d6fae59, type: 3}
   m_Name: Knight Data
   m_EditorClassIdentifier: 
+  displayName: Knight
   combatBehaviourType: 0
   combatSpecialSkillType: 0
   workStructureType: 21
@@ -63,6 +64,11 @@ MonoBehaviour:
       - {fileID: 21300000, guid: a8160f8e666925d4c8703d2f41c566d2, type: 3}
       - {fileID: 21300000, guid: 03313112cafd86646b194931eeb611fa, type: 3}
       - {fileID: 21300000, guid: 88262f59ba48124499bfe7cf71d86fc1, type: 3}
+  initialVillagerPiercing: 0
+  initialVillagerPhysicalResistances: []
+  initialVillagerMentalResistances: []
+  initialVillagerElementalResistances: []
+  initialVillagerSecondaryResistances: []
   characterSkillUpdateData:
     m_fireResistanceBonus: 0
     m_earthResistanceBonus: 0

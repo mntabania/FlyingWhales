@@ -3577,7 +3577,8 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 		    TileObject targetObject = null;
 		    for (int i = 0; i < objects.Count; i++) {
 			    TileObject tileObject = objects[i];
-			    if (tileObject.mapObjectState == MAP_OBJECT_STATE.BUILT && tileObject.OccupiesTile() && !tileObject.traitContainer.HasTrait("Immovable")) {
+			    if (tileObject.mapObjectState == MAP_OBJECT_STATE.BUILT && tileObject.OccupiesTile() && 
+			        !tileObject.traitContainer.HasTrait("Immovable") && !tileObject.hiddenComponent.isHidden) {
 				    targetObject = tileObject;
 				    break;
 			    }

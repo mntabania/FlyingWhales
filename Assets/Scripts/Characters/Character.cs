@@ -2807,10 +2807,13 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         amount = processedAmount;
         if ((amount < 0 && (ignoreIndestructibleTrait || CanBeDamaged())) || amount > 0) {
             if (hasMarker) {
-                if (responsibleCharacter == null || responsibleCharacter.combatComponent == null) {
-                    marker.ShowHealthAdjustmentEffect(amount, null);
-                } else {
-                    marker.ShowHealthAdjustmentEffect(amount, responsibleCharacter.combatComponent);
+                if (currentHP > 0) {
+                    //only show hp adjustment if character still has HP
+                    if (responsibleCharacter == null || responsibleCharacter.combatComponent == null) {
+                        marker.ShowHealthAdjustmentEffect(amount, null);
+                    } else {
+                        marker.ShowHealthAdjustmentEffect(amount, responsibleCharacter.combatComponent);
+                    }    
                 }
             }
             //only added checking here because even if objects cannot be damaged,

@@ -104,14 +104,14 @@ public class PlayerUnderlingsComponent {
     #region Monster Underlings
     public void AddMonsterUnderlingEntry(SUMMON_TYPE p_monsterType, int currentCharges, int maxCharges, string p_characterClassName) {
         if (!HasMonsterUnderlingEntry(p_monsterType)) {
-            MonsterAndDemonUnderlingCharges m_underlingCharges = new MonsterAndDemonUnderlingCharges() { monsterType = p_monsterType, currentCharges = currentCharges, maxCharges = maxCharges, characterClassName = p_characterClassName };
+            MonsterAndDemonUnderlingCharges m_underlingCharges = new MonsterAndDemonUnderlingCharges(p_monsterType, currentCharges, maxCharges, p_characterClassName);
             monsterUnderlingCharges.Add(p_monsterType, m_underlingCharges);
             Messenger.Broadcast(PlayerSignals.UPDATED_MONSTER_UNDERLING, m_underlingCharges);
         }
     }
     public void AddDemonUnderlingEntry(MINION_TYPE p_demonType, int currentCharges, int maxCharges, string p_characterClassName) {
         if (!HasDemonUnderlingEntry(p_demonType)) {
-            MonsterAndDemonUnderlingCharges m_underlingCharges = new MonsterAndDemonUnderlingCharges() { minionType = p_demonType, currentCharges = currentCharges, maxCharges = maxCharges, characterClassName = p_characterClassName, isDemon = true };
+            MonsterAndDemonUnderlingCharges m_underlingCharges = new MonsterAndDemonUnderlingCharges(p_demonType, currentCharges, maxCharges, p_characterClassName);
             demonUnderlingCharges.Add(p_demonType, m_underlingCharges);
             Messenger.Broadcast(PlayerSignals.UPDATED_MONSTER_UNDERLING, m_underlingCharges);
         }
@@ -287,12 +287,26 @@ public class MonsterAndDemonUnderlingCharges {
     public bool isDemon;
     public bool isReplenishing;
     //public GameDate replenishDate;
-
     public int currentCooldownTick;
+
 
     public bool hasMaxCharge => maxCharges > 0;
     public int cooldown => PlayerManager.Instance.player.underlingsComponent.cooldown;
 
+    public MonsterAndDemonUnderlingCharges(SUMMON_TYPE p_monsterType, int p_currentCharges, int p_maxCharges, string p_characterClassName) {
+        monsterType = p_monsterType;
+        currentCharges = p_currentCharges;
+        maxCharges = p_maxCharges;
+        characterClassName = p_characterClassName;
+    }
+    public MonsterAndDemonUnderlingCharges(MINION_TYPE p_minionType, int p_currentCharges, int p_maxCharges, string p_characterClassName) {
+        minionType = p_minionType;
+        currentCharges = p_currentCharges;
+        maxCharges = p_maxCharges;
+        characterClassName = p_characterClassName;
+        isDemon = true;
+    }
+    
     #region Monster Replenish
     public void StartMonsterReplenish() {
         if (!isReplenishing) {

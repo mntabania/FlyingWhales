@@ -274,7 +274,8 @@ public class FreeTimeBehaviour : CharacterBehaviourComponent {
             log = $"{log}\n-{character.name} is in home structure and previous action is not returned home";
 #endif
             if (character.dailyScheduleComponent.schedule.GetScheduleType(GameManager.Instance.currentTick) == DAILY_SCHEDULE.Free_Time &&
-                character.dailyScheduleComponent.schedule.IsInFirstHourOfCurrentScheduleType(GameManager.Instance.currentTick) && !character.traitContainer.HasTrait("Agoraphobic")) {
+                character.dailyScheduleComponent.schedule.IsInFirstHourOfCurrentScheduleType(GameManager.Instance.currentTick) && 
+                !character.traitContainer.HasTrait("Agoraphobic") && !character.crimeComponent.IsWantedBy(character.faction)) {
             
                 if (ChanceData.RollChance(CHANCE_TYPE.Socialize_Chance, ref log) && !character.behaviourComponent.HasBehaviour(typeof(SocializingBehaviour)) && 
                     character.homeSettlement != null && character.homeSettlement.locationType == LOCATION_TYPE.VILLAGE) {
@@ -544,7 +545,8 @@ public class FreeTimeBehaviour : CharacterBehaviourComponent {
 #endif
                 //socializing and visit village
                  if (character.dailyScheduleComponent.schedule.GetScheduleType(GameManager.Instance.currentTick) == DAILY_SCHEDULE.Free_Time &&
-                    character.dailyScheduleComponent.schedule.IsInFirstHourOfCurrentScheduleType(GameManager.Instance.currentTick) && !character.traitContainer.HasTrait("Agoraphobic")) {
+                    character.dailyScheduleComponent.schedule.IsInFirstHourOfCurrentScheduleType(GameManager.Instance.currentTick) && 
+                    !character.traitContainer.HasTrait("Agoraphobic") && !character.crimeComponent.IsWantedBy(character.faction)) {
 #if DEBUG_LOG
                      log = $"{log}\n-Is in first hour of free time. Will roll chance to socialize";
 #endif
