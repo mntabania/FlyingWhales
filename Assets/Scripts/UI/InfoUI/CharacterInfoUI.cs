@@ -264,19 +264,19 @@ public class CharacterInfoUI : InfoUIBase {
             btnRevealLogs.GetComponent<HoverText>()?.SetText("Not Enough Chaotic Energy");
             btnRevealMood.GetComponent<HoverText>()?.SetText("Not Enough Chaotic Energy");
             btnRevealRelationship.GetComponent<HoverText>()?.SetText("Not Enough Chaotic Energy");
-            btnRevealInfo.GetComponent<RuinarchButton>().MakeUnavailable();
-            btnRevealLogs.GetComponent<RuinarchButton>().MakeUnavailable();
-            btnRevealMood.GetComponent<RuinarchButton>().MakeUnavailable();
-            btnRevealRelationship.GetComponent<RuinarchButton>().MakeUnavailable();
+            btnRevealInfo.GetComponent<RuinarchButton>().interactable = false;
+            btnRevealLogs.GetComponent<RuinarchButton>().interactable = false;
+            btnRevealMood.GetComponent<RuinarchButton>().interactable = false;
+            btnRevealRelationship.GetComponent<RuinarchButton>().interactable = false;
         } else {
             btnRevealInfo.GetComponent<HoverText>()?.SetText("Reveal Character Info");
             btnRevealLogs.GetComponent<HoverText>()?.SetText("Reveal Character Info");
             btnRevealMood.GetComponent<HoverText>()?.SetText("Reveal Character Info");
             btnRevealRelationship.GetComponent<HoverText>()?.SetText("Reveal Character Info");
-            btnRevealInfo.GetComponent<RuinarchButton>().MakeAvailable();
-            btnRevealLogs.GetComponent<RuinarchButton>().MakeAvailable();
-            btnRevealMood.GetComponent<RuinarchButton>().MakeAvailable();
-            btnRevealRelationship.GetComponent<RuinarchButton>().MakeAvailable();
+            btnRevealInfo.GetComponent<RuinarchButton>().interactable = true;
+            btnRevealLogs.GetComponent<RuinarchButton>().interactable = true;
+            btnRevealMood.GetComponent<RuinarchButton>().interactable = true;
+            btnRevealRelationship.GetComponent<RuinarchButton>().interactable = true;
         }
     }
 
