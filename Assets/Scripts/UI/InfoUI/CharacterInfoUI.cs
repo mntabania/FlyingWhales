@@ -178,6 +178,7 @@ public class CharacterInfoUI : InfoUIBase {
         Messenger.AddListener<Character, EquipmentItem>(CharacterSignals.WEAPON_UNEQUIPPED, OnEquipmentUnequipped);
         Messenger.AddListener<Character, EquipmentItem>(CharacterSignals.ARMOR_UNEQUIPPED, OnEquipmentUnequipped);
         Messenger.AddListener<Character, EquipmentItem>(CharacterSignals.ACCESSORY_UNEQUIPPED, OnEquipmentUnequipped);
+        Messenger.AddListener<int, int>(PlayerSignals.PLAGUE_POINTS_ADJUSTED, OnPlaguePointsAdjusted);
 
         actionEventLabel.SetOnRightClickAction(OnRightClickThoughtBubble);
         relationshipNamesEventLbl.SetOnLeftClickAction(OnLeftClickRelationship);
@@ -244,6 +245,10 @@ public class CharacterInfoUI : InfoUIBase {
 
         ListenTalentHoverListener();
         ListenEquipmentHoverListener();
+    }
+
+    private void OnPlaguePointsAdjusted(int p_amount, int p_plaguePoints) {
+        InitializeRevealHoverText();
     }
 
     void SetButtonRevealPriceDisplay() {
