@@ -117,10 +117,9 @@ namespace Traits {
         
         private void CheckForLycanthropy(Character character) {
             if(character.isLycanthrope && !character.lycanData.isMaster && 
-               character.lycanData.activeForm == character.lycanData.lycanthropeForm) {
+               character.lycanData.activeForm == character.lycanData.lycanthropeForm && character.carryComponent.isBeingCarriedBy == null) {
                 //only transform back to human/elf if restrained
-                int chance = UnityEngine.Random.Range(0, 100);
-                if (chance < 25) { //25
+                if (ChanceData.RollChance(CHANCE_TYPE.Lycanthrope_Transform_Chance)) { //25
                     character.lycanData.Transform(character);
                 }
             }
