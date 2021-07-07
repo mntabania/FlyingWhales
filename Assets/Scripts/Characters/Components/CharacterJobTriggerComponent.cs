@@ -3783,8 +3783,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
     public void TryCreateHaulJobItem(TileObject target) {
         if (owner.jobQueue.HasJob(JOB_TYPE.HAUL) == false) {
             //ResourcePile chosenPileToDepositTo = target;// owner.mainStorage.GetResourcePileObjectWithLowestCount(target.tileObjectType);
-            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.HAUL,
-                new GoapEffect(GOAP_EFFECT_CONDITION.DEPOSIT_RESOURCE, string.Empty, false, GOAP_EFFECT_TARGET.TARGET), target, owner);
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.HAUL, INTERACTION_TYPE.DEPOSIT_RESOURCE_PILE, target, owner);
             if (owner.structureComponent.workPlaceStructure != null) {
                 job.AddOtherData(INTERACTION_TYPE.DEPOSIT_RESOURCE_PILE, new object[] { owner.structureComponent.workPlaceStructure });
             }
@@ -3798,8 +3797,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
         jobQueueItem = null;
         if (owner.jobQueue.HasJob(JOB_TYPE.HAUL) == false) {
             //ResourcePile chosenPileToDepositTo = target;// owner.mainStorage.GetResourcePileObjectWithLowestCount(target.tileObjectType);
-            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.HAUL,
-                new GoapEffect(GOAP_EFFECT_CONDITION.DEPOSIT_RESOURCE, string.Empty, false, GOAP_EFFECT_TARGET.TARGET), target, owner);
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.HAUL, INTERACTION_TYPE.DEPOSIT_RESOURCE_PILE, target, owner);
             if (owner.structureComponent.workPlaceStructure != null) {
                 job.AddOtherData(INTERACTION_TYPE.DEPOSIT_RESOURCE_PILE, new object[] { owner.structureComponent.workPlaceStructure });
             }
@@ -3817,8 +3815,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
         jobQueueItem = null;
         if (owner.jobQueue.HasJob(JOB_TYPE.HAUL) == false) {
             //ResourcePile chosenPileToDepositTo = target;// owner.mainStorage.GetResourcePileObjectWithLowestCount(target.tileObjectType);
-            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.HAUL,
-                new GoapEffect(GOAP_EFFECT_CONDITION.DEPOSIT_RESOURCE, string.Empty, false, GOAP_EFFECT_TARGET.TARGET), target, owner);
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.HAUL, INTERACTION_TYPE.DEPOSIT_RESOURCE_PILE, target, owner);
             if (owner.structureComponent.workPlaceStructure != null) {
                 job.AddOtherData(INTERACTION_TYPE.DEPOSIT_RESOURCE_PILE, new object[] { owner.structureComponent.workPlaceStructure });
             }
@@ -3845,8 +3842,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
     public void TryCreateHaulToWorkplaceJob(ResourcePile target) {
         if (!owner.jobQueue.HasJob(JOB_TYPE.HAUL) && owner.structureComponent.workPlaceStructure != null && owner.structureComponent.workPlaceStructure != target.structureLocation) {
             //ResourcePile chosenPileToDepositTo = target;// owner.mainStorage.GetResourcePileObjectWithLowestCount(target.tileObjectType);
-            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.HAUL,
-                new GoapEffect(GOAP_EFFECT_CONDITION.DEPOSIT_RESOURCE, string.Empty, false, GOAP_EFFECT_TARGET.TARGET), target, owner);
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.HAUL, INTERACTION_TYPE.DEPOSIT_RESOURCE_PILE, target, owner);
             if (owner.structureComponent.workPlaceStructure != null) {
                 job.AddOtherData(INTERACTION_TYPE.DEPOSIT_RESOURCE_PILE, new object[] { owner.structureComponent.workPlaceStructure });
             }
