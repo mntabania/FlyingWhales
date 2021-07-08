@@ -221,24 +221,36 @@ public class SettlementRulerBehaviour : CharacterBehaviourComponent {
 #if DEBUG_LOG
                                             log = $"{log}\n-Will try to build workshop";
 #endif
-                                        } else {
-#if DEBUG_LOG
-                                            log = $"{log}\n-Will check if should build tavern, hospice, prison or cemetery";
-#endif
-                                            if (!characterHomeSettlement.HasStructure(STRUCTURE_TYPE.TAVERN) && !characterHomeSettlement.HasBlueprintOnTileForStructure(STRUCTURE_TYPE.TAVERN)) {
-                                                determinedStructureToUse = STRUCTURE_TYPE.TAVERN;    
-                                            } else if (!characterHomeSettlement.HasStructure(STRUCTURE_TYPE.HOSPICE) && !characterHomeSettlement.HasBlueprintOnTileForStructure(STRUCTURE_TYPE.HOSPICE)) {
-                                                determinedStructureToUse = STRUCTURE_TYPE.HOSPICE;    
-                                            } else if (!characterHomeSettlement.HasStructure(STRUCTURE_TYPE.PRISON) && !characterHomeSettlement.HasBlueprintOnTileForStructure(STRUCTURE_TYPE.PRISON)) {
-                                                determinedStructureToUse = STRUCTURE_TYPE.PRISON;    
-                                            } else if (!characterHomeSettlement.HasStructure(STRUCTURE_TYPE.CEMETERY) && !characterHomeSettlement.HasBlueprintOnTileForStructure(STRUCTURE_TYPE.CEMETERY)) {
-                                                determinedStructureToUse = STRUCTURE_TYPE.CEMETERY;    
-                                            }
-#if DEBUG_LOG
-                                            log = $"{log}\n-Will try to build {determinedStructureToUse.ToString()}";
-#endif
                                         }
                                     }    
+                                }
+
+                                if (determinedStructureToUse == STRUCTURE_TYPE.NONE) {
+                                    if (character.faction != null && character.faction.factionType.type == FACTION_TYPE.Demon_Cult && 
+                                        !characterHomeSettlement.HasStructure(STRUCTURE_TYPE.CULT_TEMPLE) && !characterHomeSettlement.HasBlueprintOnTileForStructure(STRUCTURE_TYPE.CULT_TEMPLE)) {
+#if DEBUG_LOG
+                                        log = $"{log}\n-Faction is demon cult and village does not yet have a temple";
+#endif                                      
+                                        determinedStructureToUse = STRUCTURE_TYPE.CULT_TEMPLE;
+                                    }
+                                }
+
+                                if (determinedStructureToUse == STRUCTURE_TYPE.NONE) {
+#if DEBUG_LOG
+                                    log = $"{log}\n-Will check if should build tavern, hospice, prison or cemetery";
+#endif
+                                    if (!characterHomeSettlement.HasStructure(STRUCTURE_TYPE.TAVERN) && !characterHomeSettlement.HasBlueprintOnTileForStructure(STRUCTURE_TYPE.TAVERN)) {
+                                        determinedStructureToUse = STRUCTURE_TYPE.TAVERN;    
+                                    } else if (!characterHomeSettlement.HasStructure(STRUCTURE_TYPE.HOSPICE) && !characterHomeSettlement.HasBlueprintOnTileForStructure(STRUCTURE_TYPE.HOSPICE)) {
+                                        determinedStructureToUse = STRUCTURE_TYPE.HOSPICE;    
+                                    } else if (!characterHomeSettlement.HasStructure(STRUCTURE_TYPE.PRISON) && !characterHomeSettlement.HasBlueprintOnTileForStructure(STRUCTURE_TYPE.PRISON)) {
+                                        determinedStructureToUse = STRUCTURE_TYPE.PRISON;    
+                                    } else if (!characterHomeSettlement.HasStructure(STRUCTURE_TYPE.CEMETERY) && !characterHomeSettlement.HasBlueprintOnTileForStructure(STRUCTURE_TYPE.CEMETERY)) {
+                                        determinedStructureToUse = STRUCTURE_TYPE.CEMETERY;    
+                                    }
+#if DEBUG_LOG
+                                    log = $"{log}\n-Will try to build {determinedStructureToUse.ToString()}";
+#endif
                                 }
                             }
 #if DEBUG_LOG
