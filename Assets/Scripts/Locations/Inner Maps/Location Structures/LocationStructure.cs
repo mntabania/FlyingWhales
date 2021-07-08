@@ -865,13 +865,27 @@ namespace Inner_Maps.Location_Structures {
             }
             return null;
         }
-        public T GetFirstTileObjectOfType<T>(TILE_OBJECT_TYPE type) where T : TileObject {
+        public T GetFirstTileObjectOfType<T>(TILE_OBJECT_TYPE type, TileObject exception = null) where T : TileObject {
             if (groupedTileObjects.ContainsKey(type)) {
                 List<TileObject> objs = groupedTileObjects[type];
                 if (objs != null) {
                     for (int j = 0; j < objs.Count; j++) {
                         TileObject t = objs[j];
-                        if (t is T converted) {
+                        if ((exception == null || exception != t) && t is T converted) {
+                            return converted;
+                        }
+                    }
+                }
+            }
+            return null;
+        }
+        public T GetFirstBuiltTileObjectOfType<T>(TILE_OBJECT_TYPE type, TileObject exception = null) where T : TileObject {
+            if (groupedTileObjects.ContainsKey(type)) {
+                List<TileObject> objs = groupedTileObjects[type];
+                if (objs != null) {
+                    for (int j = 0; j < objs.Count; j++) {
+                        TileObject t = objs[j];
+                        if ((exception == null || exception != t) && t.mapObjectState == MAP_OBJECT_STATE.BUILT && t is T converted) {
                             return converted;
                         }
                     }
