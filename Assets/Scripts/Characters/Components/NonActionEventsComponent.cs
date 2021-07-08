@@ -488,7 +488,7 @@ public class NonActionEventsComponent : CharacterComponent {
 #endregion
 
 #region Flirt
-    public bool NormalFlirtCharacter(Character target, Log overrideLog) {
+    public bool NormalFlirtCharacter(Character target, ref Log overrideLog) {
         Character disguisedActor = owner;
         Character disguisedTarget = target;
         if (owner.reactionComponent.disguisedCharacter != null) {

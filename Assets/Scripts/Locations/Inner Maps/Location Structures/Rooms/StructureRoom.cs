@@ -91,8 +91,11 @@ namespace Inner_Maps.Location_Structures {
         //    return characters;
         //}
         public void PopulateCharactersInRoom(List<Character> p_characters) {
-            for (int i = 0; i < tilesInRoom.Count; i++) {
-                p_characters.AddRange(tilesInRoom[i].charactersHere);
+            for (int i = 0; i < parentStructure.charactersHere.Count; i++) {
+                Character character = parentStructure.charactersHere[i];
+                if (character.gridTileLocation != null && parentStructure.IsTilePartOfARoom(character.gridTileLocation, out var room) && room == this) {
+                    p_characters.Add(character);
+                }
             }
         }
         public Character GetFirstAliveCharacterInRoom() {

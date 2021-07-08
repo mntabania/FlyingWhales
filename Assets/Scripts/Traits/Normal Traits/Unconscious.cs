@@ -99,7 +99,7 @@ namespace Traits {
 
         #region Lycanthropy
         private void CheckForLycanthropy(Character character) {
-            if(character.isLycanthrope && !character.lycanData.isMaster) {
+            if(character.isLycanthrope && !character.lycanData.isMaster && character.carryComponent.isBeingCarriedBy == null) {
                 if (ChanceData.RollChance(CHANCE_TYPE.Lycanthrope_Transform_Chance)) {
                     character.lycanData.Transform(character);
                 }

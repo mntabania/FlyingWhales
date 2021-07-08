@@ -51,7 +51,7 @@ public class HarvestCrops : GoapAction {
     public void AfterHarvestCropsSuccess(ActualGoapNode p_node) {
         ResourcePile pile = ProduceMatsPile(p_node);
         if (pile != null && pile.resourceInPile > 0) {
-            p_node.actor.jobComponent.TryCreateHaulToWorkplaceJob(ProduceMatsPile(p_node));
+            p_node.actor.jobComponent.TryCreateHaulToWorkplaceJob(pile);
         }
     }
     #endregion

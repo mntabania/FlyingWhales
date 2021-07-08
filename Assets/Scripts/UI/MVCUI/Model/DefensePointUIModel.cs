@@ -37,6 +37,8 @@ public class DefensePointUIModel : MVCUIModel {
 	public RuinarchText txtTitle;
 
 	public UIHoverPosition hoverPosition;
+
+	public MonsterToolTipUI monsterToolTipUI;
 	private void OnEnable() {
 		btnDeploy.onClick.AddListener(ClickDeploy);
 		btnClose.onClick.AddListener(ClickClose);

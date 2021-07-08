@@ -481,6 +481,10 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         if (race.IsSapient() || race == RACE.RATMAN) {
             villagerWantsComponent = new VillagerWantsComponent(); villagerWantsComponent.SetOwner(this);
             villagerWantsComponent.Initialize(this);
+
+            if (race == RACE.RATMAN) {
+                isInfoUnlocked = true;
+            }
         }
     }
     public void InitialCharacterPlacement(LocationGridTile tile) {
@@ -2803,10 +2807,13 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         amount = processedAmount;
         if ((amount < 0 && (ignoreIndestructibleTrait || CanBeDamaged())) || amount > 0) {
             if (hasMarker) {
-                if (responsibleCharacter == null || responsibleCharacter.combatComponent == null) {
-                    marker.ShowHealthAdjustmentEffect(amount, null);
-                } else {
-                    marker.ShowHealthAdjustmentEffect(amount, responsibleCharacter.combatComponent);
+                if (currentHP > 0) {
+                    //only show hp adjustment if character still has HP
+                    if (responsibleCharacter == null || responsibleCharacter.combatComponent == null) {
+                        marker.ShowHealthAdjustmentEffect(amount, null);
+                    } else {
+                        marker.ShowHealthAdjustmentEffect(amount, responsibleCharacter.combatComponent);
+                    }    
                 }
             }
             //only added checking here because even if objects cannot be damaged,
@@ -4069,6 +4076,21 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         return false;
     }
     public bool DropItem(TileObject item, LocationGridTile gridTile = null) {
+        if (DropItemBase(item, gridTile)) {
+            LocationGridTile currentTile = item.gridTileLocation;
+            if (currentTile != null && currentTile.structure is Dwelling dwelling && item is ResourcePile pile) {
+                ResourcePile firstPileOfType = dwelling.GetFirstBuiltTileObjectOfType<ResourcePile>(item.tileObjectType, item);
+                if (firstPileOfType != null) {
+                    firstPileOfType.AdjustResourceInPile(pile.resourceInPile);
+                    TraitManager.Instance.CopyStatuses(pile, firstPileOfType);
+                    dwelling.RemovePOI(pile);
+                }
+            }
+            return true;
+        }
+        return false;
+    }
+    private bool DropItemBase(TileObject item, LocationGridTile gridTile) {
         if (UnobtainItem(item)) {
             //if (item.specialTokenType.CreatesObjectWhenDropped()) {
             //    structure.AddItem(item, gridTile);
@@ -5986,6 +6008,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                     currentRegion.RemoveCharacterFromLocation(this);
                 }
             }
+            previousCharacterDataComponent.SetHomeSettlementOnDeath(homeSettlement);
             if (homeRegion != null) {
                 Region home = homeRegion;
                 LocationStructure homeStructure = this.homeStructure;
@@ -6096,6 +6119,10 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                     Trait trait = afterDeathTraitOverrideFunctions[i];
                     trait.AfterDeath(this);
                 }
+            }
+
+            if (hasMarker) {
+                marker.UpdateName();
             }
 
             //         if(responsibleCharacter != null) {

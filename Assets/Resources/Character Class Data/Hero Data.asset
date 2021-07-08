@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 88e6d539796c490aa0efea676d6fae59, type: 3}
   m_Name: Hero Data
   m_EditorClassIdentifier: 
+  displayName: Hero
   combatBehaviourType: 0
   combatSpecialSkillType: 0
   workStructureType: 21
@@ -63,6 +64,11 @@ MonoBehaviour:
       - {fileID: 21300000, guid: db7ba4c48461f874cad549220e90db30, type: 3}
       - {fileID: 21300000, guid: 39ce2957ab5de434ca3f96ac2b71d290, type: 3}
       - {fileID: 21300000, guid: e9d74c187662a7c46bf8e0722caad9e2, type: 3}
+  initialVillagerPiercing: 0
+  initialVillagerPhysicalResistances: []
+  initialVillagerMentalResistances: []
+  initialVillagerElementalResistances: []
+  initialVillagerSecondaryResistances: []
   characterSkillUpdateData:
     m_fireResistanceBonus: 0
     m_earthResistanceBonus: 0

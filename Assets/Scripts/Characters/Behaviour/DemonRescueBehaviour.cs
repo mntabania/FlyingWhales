@@ -87,7 +87,11 @@ public class DemonRescueBehaviour : CharacterBehaviourComponent {
             if(target is Character targetCharacter && targetCharacter.gridTileLocation != null) {
                 Area targetArea = targetCharacter.areaLocation;
                 //Job type is Roam Around Structure because the Roam Around Tile job priority is less than the Rescue Behaviour
-                return actor.jobComponent.TriggerRoamAroundTile(JOB_TYPE.ROAM_AROUND_STRUCTURE, out producedJob, targetArea.gridTileComponent.GetRandomTile());
+                JOB_TYPE jobType = JOB_TYPE.ROAM_AROUND_STRUCTURE;
+                if (!actor.IsAtHome()) {
+                    jobType = JOB_TYPE.IDLE_RETURN_HOME_HIGHER;
+                }
+                return actor.jobComponent.TriggerRoamAroundTile(jobType, out producedJob, targetArea.gridTileComponent.GetRandomTile());
             }
         }
         //When roaming around structure or hex relative to the target and the target is not in a tile that we expect him to be, just roam aroung current structure to avoid null refs

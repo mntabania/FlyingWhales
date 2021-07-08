@@ -284,6 +284,14 @@ public class DepositResourcePile : GoapAction {
             } else {
                 actor.UncarryPOI(poiTarget, addToLocation: false);
             }
+            if (goapNode.associatedJobType == JOB_TYPE.HAUL && poiTarget.gridTileLocation != null) {
+                ResourcePile firstResourcePileOfType = structure.GetFirstBuiltTileObjectOfType<ResourcePile>(poiTarget.tileObjectType, poiTarget);
+                if (firstResourcePileOfType != null) {
+                    firstResourcePileOfType.AdjustResourceInPile(poiTarget.resourceInPile);
+                    TraitManager.Instance.CopyStatuses(poiTarget, firstResourcePileOfType);
+                    poiTarget.gridTileLocation.structure.RemovePOI(poiTarget);
+                }
+            }
         } else {
             actor.UncarryPOI(poiTarget);
         }

@@ -5,6 +5,7 @@ using System.Linq;
 using Characters.Villager_Wants;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
+using Traits;
 using UnityEngine;
 using UnityEngine.Assertions;
 using UtilityScripts;
@@ -273,7 +274,8 @@ public class FreeTimeBehaviour : CharacterBehaviourComponent {
             log = $"{log}\n-{character.name} is in home structure and previous action is not returned home";
 #endif
             if (character.dailyScheduleComponent.schedule.GetScheduleType(GameManager.Instance.currentTick) == DAILY_SCHEDULE.Free_Time &&
-                character.dailyScheduleComponent.schedule.IsInFirstHourOfCurrentScheduleType(GameManager.Instance.currentTick) && !character.traitContainer.HasTrait("Agoraphobic")) {
+                character.dailyScheduleComponent.schedule.IsInFirstHourOfCurrentScheduleType(GameManager.Instance.currentTick) && 
+                !character.traitContainer.HasTrait("Agoraphobic") && !character.crimeComponent.IsWantedBy(character.faction)) {
             
                 if (ChanceData.RollChance(CHANCE_TYPE.Socialize_Chance, ref log) && !character.behaviourComponent.HasBehaviour(typeof(SocializingBehaviour)) && 
                     character.homeSettlement != null && character.homeSettlement.locationType == LOCATION_TYPE.VILLAGE) {
@@ -543,7 +545,8 @@ public class FreeTimeBehaviour : CharacterBehaviourComponent {
 #endif
                 //socializing and visit village
                  if (character.dailyScheduleComponent.schedule.GetScheduleType(GameManager.Instance.currentTick) == DAILY_SCHEDULE.Free_Time &&
-                    character.dailyScheduleComponent.schedule.IsInFirstHourOfCurrentScheduleType(GameManager.Instance.currentTick) && !character.traitContainer.HasTrait("Agoraphobic")) {
+                    character.dailyScheduleComponent.schedule.IsInFirstHourOfCurrentScheduleType(GameManager.Instance.currentTick) && 
+                    !character.traitContainer.HasTrait("Agoraphobic") && !character.crimeComponent.IsWantedBy(character.faction)) {
 #if DEBUG_LOG
                      log = $"{log}\n-Is in first hour of free time. Will roll chance to socialize";
 #endif
@@ -815,8 +818,8 @@ public class FreeTimeBehaviour : CharacterBehaviourComponent {
         }
     }
     private void FreeTimePartyLogic(Character character, ref string log) {
-        if ((character.characterClass.IsCombatant() || character.characterClass.className == "Noble") && !character.traitContainer.HasTrait("Enslaved")) {
-            if (!character.partyComponent.hasParty && character.homeSettlement != null && !character.structureComponent.HasWorkPlaceStructure()) {
+        if ((character.characterClass.IsCombatant() || character.characterClass.className == "Noble") && !character.traitContainer.HasTrait("Enslaved") && character.faction != null) {
+            if (!character.partyComponent.hasParty && character.homeSettlement != null && !character.structureComponent.HasWorkPlaceStructure() && !character.crimeComponent.IsWantedBy(character.faction)) {
 #if DEBUG_LOG
                 log = $"{log}\n-{character.name} is not yet part of a party. Will try to join or create one.";
 #endif
@@ -829,7 +832,7 @@ public class FreeTimeBehaviour : CharacterBehaviourComponent {
 #if DEBUG_LOG
                     log = $"{log}\n-No un-full party. Will try to create party, rolling chance...";
 #endif
-                    if (GameUtilities.RollChance(10, ref log) && character.faction != null && shouldCreateOrJoinParty) {
+                    if (GameUtilities.RollChance(10, ref log) && shouldCreateOrJoinParty) {
 #if DEBUG_LOG
                         log = $"{log}\n-Chance met, will create party.";
 #endif

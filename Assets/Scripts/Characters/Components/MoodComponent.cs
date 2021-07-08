@@ -6,7 +6,7 @@ using Traits;
 using UnityEngine;
 using UnityEngine.Profiling;
 using Random = UnityEngine.Random;
-
+using UtilityScripts;
 public class MoodComponent : CharacterComponent {
 	
 	public int moodValue { get; private set; }
@@ -253,14 +253,18 @@ public class MoodComponent : CharacterComponent {
 #endif
 		IncreaseMajorMentalBreakChance();
 		if (owner.limiterComponent.canPerform && isInMinorMentalBreak == false && isInMajorMentalBreak == false) {
-			float roll = Random.Range(0f, 100f);
+			//float roll = Random.Range(0f, 100f);
+			string debugLog = string.Empty;
 #if DEBUG_LOG
-			Debug.Log($"<color=green>{GameManager.Instance.TodayLogString()}{owner.name} is checking for <b>MAJOR</b> mental break. Roll is <b>{roll.ToString(CultureInfo.InvariantCulture)}</b>. Chance is <b>{currentCriticalMoodEffectChance.ToString(CultureInfo.InvariantCulture)}</b></color>");
+			debugLog += $"<color=green>{GameManager.Instance.TodayLogString()}{owner.name} is checking for <b>MAJOR</b> mental break.</color>";
 #endif
-			if (roll <= currentCriticalMoodEffectChance) {
-				//Trigger Major Mental Break.
-				TriggerMajorMentalBreak();
-			}
+			if (GameUtilities.RollChance(currentCriticalMoodEffectChance, ref debugLog)) {
+                //Trigger Major Mental Break.
+                TriggerMajorMentalBreak();
+            }
+#if DEBUG_LOG
+			Debug.Log(debugLog);
+#endif
 		}
 #if DEBUG_PROFILER
 		Profiler.EndSample();

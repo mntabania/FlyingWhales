@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 88e6d539796c490aa0efea676d6fae59, type: 3}
   m_Name: Mage Data
   m_EditorClassIdentifier: 
+  displayName: Mage
   combatBehaviourType: 0
   combatSpecialSkillType: 0
   workStructureType: 14
@@ -63,6 +64,11 @@ MonoBehaviour:
       - {fileID: 21300000, guid: d37408666f8835342bc5996cee32cf44, type: 3}
       - {fileID: 21300000, guid: 2639da8e6d6fc6c4c84a69b78e2d3a55, type: 3}
       - {fileID: 21300000, guid: 4bbeecdff42ada34eb49a453bf26825c, type: 3}
+  initialVillagerPiercing: 0
+  initialVillagerPhysicalResistances: []
+  initialVillagerMentalResistances: []
+  initialVillagerElementalResistances: []
+  initialVillagerSecondaryResistances: []
   characterSkillUpdateData:
     m_fireResistanceBonus: 0
     m_earthResistanceBonus: 0

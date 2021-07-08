@@ -916,6 +916,7 @@ public static class Extensions {
             case JOB_TYPE.PLACE_TRAP:
             case JOB_TYPE.OPEN_CHEST:
             case JOB_TYPE.ROAM_AROUND_STRUCTURE:
+            case JOB_TYPE.IDLE_RETURN_HOME_HIGHER:
             priority = 910;
             break;
             //case JOB_TYPE.FEED:
