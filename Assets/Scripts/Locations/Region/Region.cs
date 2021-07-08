@@ -664,6 +664,20 @@ public class Region : ISavable, ILogFiller {
             }
         }
     }
+    public void PopulateBuiltTileObjectsOfTypeWithAreaDistanceFrom(List<TileObject> p_tileObjects, TILE_OBJECT_TYPE type, Area p_sourceArea, int p_distanceLimit) {
+        for (int i = 0; i < allStructures.Count; i++) {
+            List<TileObject> tileObjects = allStructures[i].GetTileObjectsOfType(type);
+            if (tileObjects != null && tileObjects.Count > 0) {
+                for (int j = 0; j < tileObjects.Count; j++) {
+                    TileObject t = tileObjects[j];
+                    LocationGridTile gridTile = t.gridTileLocation;
+                    if (t.mapObjectState == MAP_OBJECT_STATE.BUILT && gridTile != null && gridTile.area.GetAreaDistanceTo(p_sourceArea) <= p_distanceLimit) {
+                        p_tileObjects.Add(t);
+                    }
+                }
+            }
+        }
+    }
     public bool HasTileObjectOfType(TILE_OBJECT_TYPE type) {
         for (int i = 0; i < allStructures.Count; i++) {
             LocationStructure structure = allStructures[i];

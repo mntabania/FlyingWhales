@@ -4079,7 +4079,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         if (DropItemBase(item, gridTile)) {
             LocationGridTile currentTile = item.gridTileLocation;
             if (currentTile != null && currentTile.structure is Dwelling dwelling && item is ResourcePile pile) {
-                ResourcePile firstPileOfType = dwelling.GetFirstTileObjectOfType<ResourcePile>(item.tileObjectType);
+                ResourcePile firstPileOfType = dwelling.GetFirstBuiltTileObjectOfType<ResourcePile>(item.tileObjectType, item);
                 if (firstPileOfType != null) {
                     firstPileOfType.AdjustResourceInPile(pile.resourceInPile);
                     TraitManager.Instance.CopyStatuses(pile, firstPileOfType);
