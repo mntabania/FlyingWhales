@@ -19,6 +19,8 @@ public class CharacterClassData : ScriptableObject {
             weight = p_weight;
         }
     }
+    [Header("UI")] 
+    public string displayName;
     [Header("Combat")]
     public CHARACTER_COMBAT_BEHAVIOUR combatBehaviourType;
     public COMBAT_SPECIAL_SKILL combatSpecialSkillType;
@@ -48,6 +50,7 @@ public class CharacterClassData : ScriptableObject {
 
     [Header("Droppable Items Equipments")]
     public List<DroppableItemWithWeights> droppableItems = new List<DroppableItemWithWeights>();
+
     public int GetSummonCost() {
         return SpellUtilities.GetModifiedSpellCost(summonCost, WorldSettings.Instance.worldSettingsData.playerSkillSettings.GetCostsModification());
     }

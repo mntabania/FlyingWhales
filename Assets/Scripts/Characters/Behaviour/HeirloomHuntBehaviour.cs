@@ -115,13 +115,13 @@ public class HeirloomHuntBehaviour : CharacterBehaviourComponent {
         return true;
     }
 
-    private bool RoamAroundStructureOrHex(Character actor, IPartyQuestTarget target, out JobQueueItem producedJob) {
-        if(target.currentStructure != null && target.currentStructure.structureType == STRUCTURE_TYPE.WILDERNESS) {
-            if(target is Character targetCharacter) {
-                Area targetArea = targetCharacter.areaLocation;
-                return actor.jobComponent.TriggerRoamAroundTile(JOB_TYPE.ROAM_AROUND_STRUCTURE, out producedJob, targetArea.gridTileComponent.GetRandomTile());
-            }
-        }
-        return actor.jobComponent.TriggerRoamAroundStructure(out producedJob);
-    }
+    //private bool RoamAroundStructureOrHex(Character actor, IPartyQuestTarget target, out JobQueueItem producedJob) {
+    //    if(target.currentStructure != null && target.currentStructure.structureType == STRUCTURE_TYPE.WILDERNESS) {
+    //        if(target is Character targetCharacter) {
+    //            Area targetArea = targetCharacter.areaLocation;
+    //            return actor.jobComponent.TriggerRoamAroundTile(JOB_TYPE.ROAM_AROUND_STRUCTURE, out producedJob, targetArea.gridTileComponent.GetRandomTile());
+    //        }
+    //    }
+    //    return actor.jobComponent.TriggerRoamAroundStructure(out producedJob);
+    //}
 }

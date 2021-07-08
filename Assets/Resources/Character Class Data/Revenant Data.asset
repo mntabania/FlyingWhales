@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 88e6d539796c490aa0efea676d6fae59, type: 3}
   m_Name: Revenant Data
   m_EditorClassIdentifier: 
+  displayName: Revenant
   combatBehaviourType: 6
   combatSpecialSkillType: 2
   workStructureType: 21

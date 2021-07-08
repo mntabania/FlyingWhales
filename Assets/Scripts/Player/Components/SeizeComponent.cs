@@ -165,7 +165,7 @@ public class SeizeComponent {
         }
         if (tileLocation.structure is Kennel kennel) {
             if (seizedPOI is Summon summon) {
-                return !kennel.HasReachedKennelCapacity() && (kennel.preOccupiedBy == null || kennel.preOccupiedBy == seizedPOI) && (summon.faction == null || !summon.faction.isPlayerFaction);
+                return !summon.isDead && !kennel.HasReachedKennelCapacity() && (kennel.preOccupiedBy == null || kennel.preOccupiedBy == seizedPOI) && (summon.faction == null || !summon.faction.isPlayerFaction);
             }
             return false;
         } else if (tileLocation.structure is TortureChambers prison) {

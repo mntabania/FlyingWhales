@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 88e6d539796c490aa0efea676d6fae59, type: 3}
   m_Name: Fire Wisp Data
   m_EditorClassIdentifier: 
+  displayName: Fire Wisp
   combatBehaviourType: 8
   combatSpecialSkillType: 0
   workStructureType: 21

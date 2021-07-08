@@ -17,6 +17,7 @@ namespace Interrupts {
         public override bool ExecuteInterruptStartEffect(InterruptHolder interruptHolder,
             ref Log overrideEffectLog, ActualGoapNode goapNode = null) {
             Character actor = interruptHolder.actor;
+            actor.structureComponent.TryUnassignFromCurrentWorkStructureOnClassChange(actor, "Necromancer");
             actor.classComponent.AssignClass("Necromancer");
             //Remove enslaved because necromancer will build 2 lairs if it is not removed.
             actor.traitContainer.RemoveTrait(actor, "Enslaved");

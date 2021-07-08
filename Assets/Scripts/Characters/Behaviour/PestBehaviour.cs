@@ -59,7 +59,7 @@ public class PestBehaviour : CharacterBehaviourComponent {
                 }
             }
         }
-        return character.jobComponent.TriggerRoamAroundTile(JOB_TYPE.ROAM_AROUND_TILE, out producedJob);
+        return character.jobComponent.TriggerRoamAroundTile(out producedJob);
     }
     private BaseSettlement GetVillageTargetsByPriority(Character owner) {
         //get settlements in region that have normal characters living there.

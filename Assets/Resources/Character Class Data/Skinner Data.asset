@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 88e6d539796c490aa0efea676d6fae59, type: 3}
   m_Name: Skinner Data
   m_EditorClassIdentifier: 
+  displayName: Skinner
   combatBehaviourType: 0
   combatSpecialSkillType: 0
   workStructureType: 19
@@ -63,6 +64,11 @@ MonoBehaviour:
       - {fileID: 21300000, guid: 51b57d1ad8f5cdb4a8a9decab4637ee9, type: 3}
       - {fileID: 21300000, guid: b9aba09a4d7b35b4895147e3955affa4, type: 3}
       - {fileID: 21300000, guid: 3d8bd9579c25cf244bc68cfb1d6feefe, type: 3}
+  initialVillagerPiercing: 0
+  initialVillagerPhysicalResistances: []
+  initialVillagerMentalResistances: []
+  initialVillagerElementalResistances: []
+  initialVillagerSecondaryResistances: []
   characterSkillUpdateData:
     m_fireResistanceBonus: 0
     m_earthResistanceBonus: 0

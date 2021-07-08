@@ -31,7 +31,7 @@ public class HarpyBehaviour : BaseMonsterBehaviour {
                     }
                 }
             }
-            return character.jobComponent.TriggerRoamAroundTile(JOB_TYPE.ROAM_AROUND_TILE, out producedJob);
+            return character.jobComponent.TriggerRoamAroundTile(out producedJob);
         } else if (character.HasHome()) {
             return character.jobComponent.PlanReturnHome(JOB_TYPE.IDLE_RETURN_HOME, out producedJob);
         }
@@ -61,7 +61,7 @@ public class HarpyBehaviour : BaseMonsterBehaviour {
 #if DEBUG_LOG
         p_log = $"{p_log}\n-Will roam";
 #endif
-        return p_character.jobComponent.TriggerRoamAroundTile(JOB_TYPE.IDLE_RETURN_HOME, out p_producedJob);
+        return p_character.jobComponent.TriggerRoamAroundTile(out p_producedJob);
     }
 
     private bool TryCaptureCharacter(Character actor, out JobQueueItem producedJob) {
