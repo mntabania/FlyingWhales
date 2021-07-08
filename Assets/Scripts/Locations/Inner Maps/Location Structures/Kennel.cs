@@ -83,8 +83,7 @@ namespace Inner_Maps.Location_Structures {
             
             //checked characters instead because of this issue
             //https://trello.com/c/AKcwTMkY/5383-drop-lycanwerewolf-form-kennel-bug
-            int charactersHereCount = charactersHere.Count; 
-            return charactersHereCount >= 1;
+            return HasCharactersInside();
         }
         public override void OnCharacterUnSeizedHere(Character character) {
             base.OnCharacterUnSeizedHere(character);
@@ -203,8 +202,11 @@ namespace Inner_Maps.Location_Structures {
             
             //checked characters instead because of this issue
             //https://trello.com/c/AKcwTMkY/5383-drop-lycanwerewolf-form-kennel-bug
+            return !HasCharactersInside();
+        }
+        public bool HasCharactersInside() {
             int charactersHereCount = charactersHere.Count; 
-            return charactersHereCount == 0;
+            return charactersHereCount > 0;
         }
         #endregion
 

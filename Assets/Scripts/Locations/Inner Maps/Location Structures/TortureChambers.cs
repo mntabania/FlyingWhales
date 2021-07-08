@@ -126,7 +126,7 @@ namespace Inner_Maps.Location_Structures {
             //     DoorTileObject door = room.GetTileObjectInRoom<DoorTileObject>(); //close door in room
             //     door?.Close();
             // }
-            // Messenger.Broadcast(PlayerSkillSignals.FORCE_RELOAD_PLAYER_ACTIONS);
+            Messenger.Broadcast(PlayerSkillSignals.RELOAD_PLAYER_ACTIONS, this as IPlayerActionTarget);
         }
         protected override void AfterCharacterRemovedFromLocation(Character p_character) {
             base.AfterCharacterRemovedFromLocation(p_character);
