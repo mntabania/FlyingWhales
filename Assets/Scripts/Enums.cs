@@ -1453,7 +1453,9 @@ public enum CHANCE_TYPE {
     Visit_Village_Chance,
     Create_Change_Class_Combatant,
     Personal_Combatant_Change_Class,
-    Kobold_Place_Freezing_Trap
+    Kobold_Place_Freezing_Trap,
+    Base_Create_Faction_Chance,
+    Vagrant_Join_Or_Create_Faction
 }
 public enum Gradient_Direction {
     Top, Bottom, Left, Right

@@ -126,7 +126,7 @@ public class VillagerWantsComponent : CharacterComponent, CharacterEventDispatch
     #region Dwelling
     public void OnCharacterSetHomeStructure(Character p_character, LocationStructure p_homeStructure) {
         Assert.IsTrue(p_character == owner);
-        if (p_homeStructure is Dwelling) {
+        if (p_homeStructure is Dwelling || p_homeStructure is VampireCastle) {
             DwellingWant dwellingWant = CharacterManager.Instance.GetVillagerWantInstance<DwellingWant>();
             ToggleWantOff(dwellingWant);
             //check if other wants are still valid given new home.
@@ -141,19 +141,20 @@ public class VillagerWantsComponent : CharacterComponent, CharacterEventDispatch
     }
     public void OnObjectPlacedInHomeDwelling(Character p_character, LocationStructure p_homeStructure, TileObject p_placedObject) {
         Assert.IsTrue(p_character == owner);
-        Dwelling dwelling = p_homeStructure as Dwelling;
-        Assert.IsNotNull(dwelling);
         if (p_placedObject is FoodPile) {
             //toggle food want 1 off if a food pile is placed in the character's home.
             FoodWant_1 foodWant1 = CharacterManager.Instance.GetVillagerWantInstance<FoodWant_1>();
             ToggleWantOff(foodWant1);
-            if (dwelling.differentFoodPileKindsInDwelling >= 2) {
-                FoodWant_2 foodWant2 = CharacterManager.Instance.GetVillagerWantInstance<FoodWant_2>();
-                ToggleWantOff(foodWant2);    
-            }
-            if (dwelling.differentFoodPileKindsInDwelling >= 3) {
-                FoodWant_3 foodWant3 = CharacterManager.Instance.GetVillagerWantInstance<FoodWant_3>();
-                ToggleWantOff(foodWant3);    
+            Dwelling dwelling = p_homeStructure as Dwelling;
+            if (dwelling != null) {
+                if (dwelling.differentFoodPileKindsInDwelling >= 2) {
+                    FoodWant_2 foodWant2 = CharacterManager.Instance.GetVillagerWantInstance<FoodWant_2>();
+                    ToggleWantOff(foodWant2);    
+                }
+                if (dwelling.differentFoodPileKindsInDwelling >= 3) {
+                    FoodWant_3 foodWant3 = CharacterManager.Instance.GetVillagerWantInstance<FoodWant_3>();
+                    ToggleWantOff(foodWant3);    
+                }    
             }
         } else if (p_placedObject is Table) {
             //toggle table want off if a table is placed or built in the character's home.
@@ -175,21 +176,23 @@ public class VillagerWantsComponent : CharacterComponent, CharacterEventDispatch
     }
     public void OnObjectRemovedFromHomeDwelling(Character p_character, LocationStructure p_homeStructure, TileObject p_removedObject) {
         Assert.IsTrue(p_character == owner);
-        Dwelling dwelling = p_homeStructure as Dwelling;
-        Assert.IsNotNull(dwelling);
+        
         if (p_removedObject is FoodPile) {
             if (!p_homeStructure.HasTileObjectThatIsBuiltFoodPile()) {
                 //Food Pile is taken from home structure floor and there are no other Food Piles inside
                 FoodWant_1 foodWant1 = CharacterManager.Instance.GetVillagerWantInstance<FoodWant_1>();
                 ToggleWantOn(foodWant1);    
             }
-            if (dwelling.differentFoodPileKindsInDwelling < 2) {
-                FoodWant_2 foodWant2 = CharacterManager.Instance.GetVillagerWantInstance<FoodWant_2>();
-                ToggleWantOn(foodWant2);
-            }
-            if (dwelling.differentFoodPileKindsInDwelling < 3) {
-                FoodWant_3 foodWant3 = CharacterManager.Instance.GetVillagerWantInstance<FoodWant_3>();
-                ToggleWantOn(foodWant3);
+            Dwelling dwelling = p_homeStructure as Dwelling;
+            if (dwelling != null) {
+                if (dwelling.differentFoodPileKindsInDwelling < 2) {
+                    FoodWant_2 foodWant2 = CharacterManager.Instance.GetVillagerWantInstance<FoodWant_2>();
+                    ToggleWantOn(foodWant2);
+                }
+                if (dwelling.differentFoodPileKindsInDwelling < 3) {
+                    FoodWant_3 foodWant3 = CharacterManager.Instance.GetVillagerWantInstance<FoodWant_3>();
+                    ToggleWantOn(foodWant3);
+                }    
             }
         } else if (p_removedObject is Table) {
             if (!p_homeStructure.HasBuiltTileObjectOfType(TILE_OBJECT_TYPE.TABLE)) {

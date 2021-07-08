@@ -27,8 +27,8 @@ namespace Characters.Villager_Wants {
         #endregion
 
         #region Utilities
-        protected bool CharacterLivesInADwelling(Character p_character) {
-            if (p_character.homeStructure == null || p_character.homeStructure.structureType != STRUCTURE_TYPE.DWELLING) {
+        protected bool CharacterLivesInAValidHome(Character p_character) {
+            if (p_character.homeStructure == null || (p_character.homeStructure.structureType != STRUCTURE_TYPE.DWELLING && p_character.homeStructure.structureType != STRUCTURE_TYPE.VAMPIRE_CASTLE)) {
                 //the character must live in a dwelling
                 return false;
             }

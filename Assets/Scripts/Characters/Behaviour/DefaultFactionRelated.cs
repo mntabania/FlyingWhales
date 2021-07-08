@@ -15,9 +15,12 @@ public class DefaultFactionRelated : CharacterBehaviourComponent {
     public override bool TryDoBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
         producedJob = null;
         if (character.isVagrantOrFactionless) {
-            if(UnityEngine.Random.Range(0, 100) < 15) {
 #if DEBUG_LOG
-                log += $"\n-{character.name} is factionless, 15% chance to join faction";
+            log += $"\n-{character.name} is vagrant or factionless, 15% chance to join faction";
+#endif
+            if(ChanceData.RollChance(CHANCE_TYPE.Vagrant_Join_Or_Create_Faction, ref log)) {
+#if DEBUG_LOG
+                log += $"\n-Chance met.";
 #endif
                 Faction chosenFaction = character.JoinFactionProcessing();
                 if (chosenFaction != null) {
@@ -39,14 +42,13 @@ public class DefaultFactionRelated : CharacterBehaviourComponent {
 #if DEBUG_LOG
                     log += $"\nActive villager faction count is {villagerFactionCount.ToString()}";
 #endif
-                    if (villagerFactionCount < FactionManager.MaxActiveVillagerFactions) {
+                    if (villagerFactionCount < FactionManager.Instance.maxActiveVillagerFactions) {
 #if DEBUG_LOG
-                        log += $"\nActive villager factions is less than 10, rolling chances";
+                        log += $"\nActive villager factions is less than {FactionManager.Instance.maxActiveVillagerFactions.ToString()}, rolling chances";
 #endif
-                        int factionsInRegion = GetFactionsInRegion(character.currentRegion);
-                        float createChance = factionsInRegion >= 2 ? 2f : 3f;
-                        if (character.traitContainer.HasTrait("Inspiring", "Ambitious")) {
-                            createChance = factionsInRegion >= 2 ? 0.5f : 15f;
+                        int createChance = ChanceData.GetChance(CHANCE_TYPE.Base_Create_Faction_Chance);
+                        if (character.traitContainer.HasTrait("Inspiring", "Ambitious") || character.characterClass.className == "Vampire Lord") {
+                            createChance = 8;
                         }
                         if (GameUtilities.RollChance(createChance)) {
 #if DEBUG_LOG

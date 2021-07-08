@@ -1258,6 +1258,8 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
             gridTileLocation.parentMap.region.RemoveTileObjectInRegion(this);
             if (gridTileLocation.structure is Dwelling dwelling) {
                 dwelling.OnTileObjectInDwellingSetAsUnbuilt(this);
+            } else if (gridTileLocation.structure is VampireCastle vampireCastle) {
+                vampireCastle.OnTileObjectInDwellingSetAsUnbuilt(this);
             }
         }
     }
@@ -1282,6 +1284,8 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
             gridTileLocation.parentMap.region.AddTileObjectInRegion(this);
             if (gridTileLocation.structure is Dwelling dwelling) {
                 dwelling.OnTileObjectInDwellingSetAsBuilt(this);
+            } else if (gridTileLocation.structure is VampireCastle vampireCastle) {
+                vampireCastle.OnTileObjectInDwellingSetAsBuilt(this);
             }
         }
     }

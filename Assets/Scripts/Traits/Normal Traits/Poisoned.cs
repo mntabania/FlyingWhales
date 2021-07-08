@@ -169,7 +169,9 @@ namespace Traits {
         }
         protected override string GetDescriptionInUI() {
             string desc = base.GetDescriptionInUI();
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
             desc += "\nIs Player Source: " + isPlayerSource;
+#endif
             return desc;
         }
         #endregion
