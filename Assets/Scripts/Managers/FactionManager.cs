@@ -15,8 +15,6 @@ public class FactionManager : BaseMonoBehaviour {
 
     public static FactionManager Instance = null;
 
-    public static int MaxActiveVillagerFactions = 10;
-    
     public Faction neutralFaction { get; private set; }
     public Faction vagrantFaction { get; private set; }
     public Faction disguisedFaction { get; private set; }
@@ -58,6 +56,7 @@ public class FactionManager : BaseMonoBehaviour {
         }
     }
     public List<Faction> allFactions => DatabaseManager.Instance.factionDatabase.allFactionsList;
+    public int maxActiveVillagerFactions => WorldSettings.Instance.worldSettingsData.mapSettings.GetMaxActiveFactionsForMapSize();
     #endregion
 
     private void Awake() {

@@ -26,7 +26,7 @@ namespace Characters.Villager_Wants {
         }
         
         public override bool IsWantValid(Character p_character) {
-            return !CharacterLivesInADwelling(p_character);
+            return !CharacterLivesInAValidHome(p_character);
         }
     }
 }

@@ -3,11 +3,11 @@ namespace Locations.Settlements.Settlement_Types {
     public class CultTown : SettlementType {
         public CultTown() : base(SETTLEMENT_TYPE.Cult_Town) {
             maxDwellings = 10;
-            maxFacilities = 5;
+            maxFacilities = 16;
         }
         public CultTown(SaveDataSettlementType saveData) : base(saveData) {
-            maxDwellings = 110;
-            maxFacilities = 5;
+            maxDwellings = 10;
+            maxFacilities = 16;
         }
         public override void ApplyDefaultSettings() {
             SetInitialFacilityWeightAndCap(new StructureSetting(STRUCTURE_TYPE.LUMBERYARD, RESOURCE.NONE, true), 300, 1);

@@ -20,6 +20,12 @@ MonoBehaviour:
       structureType: 46
       hasValue: 1
       isCorrupted: 1
+    - resource: 1
+      structureType: 46
+      hasValue: 1
+      isCorrupted: 1
     m_values:
     - data:
       - {fileID: 7404522607788643372, guid: 7d0db2f4dce1cee41a8c3c32093da91e, type: 3}
+    - data:
+      - {fileID: 7404522607788643372, guid: 34a27e65817c27d4b8b9711dc1c859f0, type: 3}
