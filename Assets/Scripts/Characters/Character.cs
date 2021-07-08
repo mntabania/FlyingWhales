@@ -5344,6 +5344,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             Prisoner prisoner = traitContainer.GetTraitOrStatus<Prisoner>("Prisoner");
             if (prisoner != null && prisoner.IsFactionPrisonerOf(PlayerManager.Instance.player.playerFaction)) {
                 traitContainer.RemoveRestrainAndImprison(this);
+                if (isLycanthrope) {
+                    lycanData.limboForm.traitContainer.RemoveRestrainAndImprison(lycanData.limboForm);
+                }
             }
         }
         //List<Trait> traitOverrideFunctions = traitContainer.GetTraitOverrideFunctions(TraitManager.Initiate_Map_Visual_Trait);

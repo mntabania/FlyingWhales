@@ -459,10 +459,13 @@ public class Butcher : GoapAction {
     public void AfterTransformSuccess(ActualGoapNode goapNode) {
         ProduceMats(goapNode);
     }
-
-    public void ProduceMats(ActualGoapNode p_node) {
+    private void ProduceMats(ActualGoapNode p_node) {
         IPointOfInterest poiTarget = p_node.poiTarget;
         LocationGridTile tileLocation = poiTarget.gridTileLocation;
+        if (tileLocation == null) {
+            //if code reaches here, we assume that the target has already been butchered by another character
+            return;
+        }
 
         tileLocation.structure.RemoveCharacterAtLocation(poiTarget as Character);
         if (poiTarget is Character character) {

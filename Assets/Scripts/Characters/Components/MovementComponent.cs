@@ -706,6 +706,9 @@ public class MovementComponent : CharacterComponent {
         CharacterManager.Instance.Teleport(owner, targetTile);
         GameManager.Instance.CreateParticleEffectAt(targetTile, PARTICLE_EFFECT.Minion_Dissipate);
         owner.traitContainer.RemoveRestrainAndImprison(owner);
+        if (owner.isLycanthrope) {
+            owner.lycanData.limboForm.traitContainer.RemoveRestrainAndImprison(owner.lycanData.limboForm);
+        }
         RuinarchListPool<LocationGridTile>.Release(allTilesOutside);
         RuinarchListPool<LocationGridTile>.Release(passableTilesOutside);
     }
