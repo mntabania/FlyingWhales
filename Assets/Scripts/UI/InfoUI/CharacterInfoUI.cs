@@ -421,7 +421,8 @@ public class CharacterInfoUI : InfoUIBase {
         if (!_activeCharacter.isNormalCharacter) {
             subLbl.gameObject.SetActive(false);
         } else {
-            subLbl.text = _activeCharacter.characterClass.className;
+            CharacterClassData characterClassData = CharacterManager.Instance.GetOrCreateCharacterClassData(_activeCharacter.characterClass.className);
+            subLbl.text = characterClassData.displayName;
             raceIcon.sprite = _activeCharacter.raceSetting.nameplateIcon;
             raceIcon.gameObject.SetActive(_activeCharacter.raceSetting.nameplateIcon != null);
             subLbl.gameObject.SetActive(true);

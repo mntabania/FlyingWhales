@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 88e6d539796c490aa0efea676d6fae59, type: 3}
   m_Name: Noble Data
   m_EditorClassIdentifier: 
+  displayName: Noble
   combatBehaviourType: 0
   combatSpecialSkillType: 0
   workStructureType: 21
@@ -63,6 +64,11 @@ MonoBehaviour:
       - {fileID: 21300000, guid: e458468d049987342a7292b1f93d7a67, type: 3}
       - {fileID: 21300000, guid: e14149d6e806fab4a8a62dcf971d7a50, type: 3}
       - {fileID: 21300000, guid: 9fa6e32a3b538d24a9c93f8948825033, type: 3}
+  initialVillagerPiercing: 0
+  initialVillagerPhysicalResistances: []
+  initialVillagerMentalResistances: []
+  initialVillagerElementalResistances: []
+  initialVillagerSecondaryResistances: []
   characterSkillUpdateData:
     m_fireResistanceBonus: 0
     m_earthResistanceBonus: 0

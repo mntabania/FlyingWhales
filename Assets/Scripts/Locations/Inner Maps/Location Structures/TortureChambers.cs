@@ -104,9 +104,10 @@ namespace Inner_Maps.Location_Structures {
         // }
         public override bool IsAvailableForTargeting() {
             if (rooms.Length > 0 && rooms[0] is PrisonCell prisonCell) {
-                //List<Character> charactersInRoom = prisonCell.charactersInRoom;
-                //return !charactersInRoom.Any(prisonCell.IsValidOccupant); //can target character for snatch if prison does not currently have a valid occupant
-                return !prisonCell.HasValidOccupant();
+                // return !prisonCell.HasValidOccupant();
+                //changed checking because of this issue: 
+                //https://trello.com/c/AKcwTMkY/5383-drop-lycanwerewolf-form-kennel-bug
+                return !prisonCell.HasOccupants();
             }
             return false;
         }
@@ -125,7 +126,7 @@ namespace Inner_Maps.Location_Structures {
             //     DoorTileObject door = room.GetTileObjectInRoom<DoorTileObject>(); //close door in room
             //     door?.Close();
             // }
-            // Messenger.Broadcast(PlayerSkillSignals.FORCE_RELOAD_PLAYER_ACTIONS);
+            Messenger.Broadcast(PlayerSkillSignals.RELOAD_PLAYER_ACTIONS, this as IPlayerActionTarget);
         }
         protected override void AfterCharacterRemovedFromLocation(Character p_character) {
             base.AfterCharacterRemovedFromLocation(p_character);

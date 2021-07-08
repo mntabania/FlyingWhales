@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 88e6d539796c490aa0efea676d6fae59, type: 3}
   m_Name: Druid Data
   m_EditorClassIdentifier: 
+  displayName: Druid
   combatBehaviourType: 0
   combatSpecialSkillType: 0
   workStructureType: 14
@@ -63,6 +64,11 @@ MonoBehaviour:
       - {fileID: 21300000, guid: 0449b18b51671c2439223d53a83716b3, type: 3}
       - {fileID: 21300000, guid: d088385016410b04da0eced1b4f63bbb, type: 3}
       - {fileID: 21300000, guid: c9651c4c32f892a43b5b08157299a9e7, type: 3}
+  initialVillagerPiercing: 0
+  initialVillagerPhysicalResistances: []
+  initialVillagerMentalResistances: []
+  initialVillagerElementalResistances: []
+  initialVillagerSecondaryResistances: []
   characterSkillUpdateData:
     m_fireResistanceBonus: 0
     m_earthResistanceBonus: 0
