@@ -2783,12 +2783,13 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
     public bool TryCreateDarkRitualJob(out JobQueueItem producedJob) {
 	    if (owner.currentRegion != null) {
 		    MagicCircle magicCircle = null;
-		    if (owner.currentRegion.HasTileObjectOfType(TILE_OBJECT_TYPE.MAGIC_CIRCLE)) {
-                List<TileObject> magicCircles = RuinarchListPool<TileObject>.Claim(); 
-                owner.currentRegion.PopulateTileObjectsOfType(magicCircles, TILE_OBJECT_TYPE.MAGIC_CIRCLE);
+		    if (owner.currentRegion.HasTileObjectOfType(TILE_OBJECT_TYPE.MAGIC_CIRCLE) && owner.gridTileLocation != null) {
+                List<TileObject> magicCircles = RuinarchListPool<TileObject>.Claim();
+                owner.currentRegion.PopulateBuiltTileObjectsOfTypeWithAreaDistanceFrom(magicCircles, TILE_OBJECT_TYPE.MAGIC_CIRCLE, owner.gridTileLocation.area, 4);
 			    magicCircle = CollectionUtilities.GetRandomElement(magicCircles) as MagicCircle;
                 RuinarchListPool<TileObject>.Release(magicCircles);
-            } else {
+            }
+            if (magicCircle == null) {
 			    MagicCircle newCircle = InnerMapManager.Instance.CreateNewTileObject<MagicCircle>(TILE_OBJECT_TYPE.MAGIC_CIRCLE);
                 LocationGridTile chosenTile = null;
                 if (owner.homeSettlement != null) {
