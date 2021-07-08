@@ -197,6 +197,19 @@ public class MaraudUIView : MVCUIView {
 	public void DisableDeployButton() {
 		UIModel.btnDeploy.interactable = false;
 	}
+
+	public void DisplayToolTipWithCharge(string p_name, string p_description, string p_chargeDisplay) {
+		
+		UIModel.monsterToolTipUI.DisplayToolTipWithCharge(p_name, p_description, p_chargeDisplay);
+	}
+
+	public void DisplayToolTipWithoutCharge(string p_name, string p_description) {
+		UIModel.monsterToolTipUI.DisplayToolTipWithoutCharge(p_name, p_description);
+	}
+
+	public void HideToolTip() {
+		UIModel.monsterToolTipUI.HideToolTip();
+	}
 	#endregion
 
 	#region Subscribe/Unsubscribe for IListener

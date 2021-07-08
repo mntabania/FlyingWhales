@@ -18,8 +18,11 @@ public class SummonListUI : PopupMenuBase {
     [SerializeField] private GameObject quantityMonsterItemPrefab;
     [SerializeField] private ScrollRect quantityScrollView;
 
+    [SerializeField] private MonsterToolTipUI monsterToolTipUI;
+
     private List<SummonMinionPlayerSkillNameplateItem> _summonPlayerSkillItems;
     private List<MonsterUnderlingQuantityNameplateItem> _monsterUnderlingQuantityNameplateItems;
+
 
     public override void Open() {
         base.Open();
@@ -29,6 +32,7 @@ public class SummonListUI : PopupMenuBase {
     }
     public override void Close() {
         base.Close();
+        monsterToolTipUI.HideToolTip();
         _mainToggle.SetIsOnWithoutNotify(false);
     }
     public void Initialize() {
@@ -125,10 +129,12 @@ public class SummonListUI : PopupMenuBase {
     private void OnHoverEnterActiveSummon(Character p_character) {
         CharacterCombatBehaviour combatBehaviour = p_character.combatComponent.combatBehaviourParent.currentCombatBehaviour;
         if (combatBehaviour != null) {
-            UIManager.Instance.ShowSmallInfo(combatBehaviour.description, PlayerUI.Instance.minionListHoverPosition, combatBehaviour.name);
+            //UIManager.Instance.ShowSmallInfo(combatBehaviour.description, PlayerUI.Instance.minionListHoverPosition, combatBehaviour.name);
+            monsterToolTipUI.DisplayToolTipWithoutCharge(combatBehaviour.name, combatBehaviour.description);
         }
     }
     private void OnHoverExitActiveSummon(Character p_character) {
+        monsterToolTipUI.HideToolTip();
         UIManager.Instance.HideSmallInfo();
     }
 
@@ -184,13 +190,20 @@ public class SummonListUI : PopupMenuBase {
         return item;
     }
     private void OnHoverEnterDemonUnderlingData(MonsterAndDemonUnderlingCharges p_data) {
+        string txtChargeTime = string.Empty;
         CharacterClassData cData = CharacterManager.Instance.GetOrCreateCharacterClassData(p_data.characterClassName);
         CharacterCombatBehaviour combatBehaviour = CombatManager.Instance.GetCombatBehaviour(cData.combatBehaviourType);
-        UIManager.Instance.ShowSmallInfo(combatBehaviour.description, PlayerUI.Instance.minionListHoverPosition, combatBehaviour.name);
-        PlayerUI.Instance.OnHoverSpellChargeRemainingForSummon(cData, p_data);
+        //UIManager.Instance.ShowSmallInfo(combatBehaviour.description, PlayerUI.Instance.minionListHoverPosition, combatBehaviour.name);
+        txtChargeTime = PlayerUI.Instance.OnHoverSpellChargeRemainingForSummon(cData, p_data);
         //PlayerUI.Instance.skillDetailsTooltip.ShowPlayerSkillDetails(summonPlayerSkill, PlayerUI.Instance.minionListHoverPosition);
+        if (string.IsNullOrEmpty(txtChargeTime)) {
+            monsterToolTipUI.DisplayToolTipWithoutCharge(combatBehaviour.name, combatBehaviour.description);
+        } else {
+            monsterToolTipUI.DisplayToolTipWithCharge(combatBehaviour.name, combatBehaviour.description, txtChargeTime);
+        }
     }
     private void OnHoverExitDemonUnderlingData(MonsterAndDemonUnderlingCharges p_data) {
+        monsterToolTipUI.HideToolTip();
         Tooltip.Instance.HideSmallInfo();
         UIManager.Instance.HideSmallInfo();
         //PlayerUI.Instance.skillDetailsTooltip.HidePlayerSkillDetails();
@@ -223,10 +236,16 @@ public class SummonListUI : PopupMenuBase {
     #endregion
 
     private void OnHoverEnterReserveSummon(SkillData spellData, MonsterAndDemonUnderlingCharges m_underling) {
-        PlayerUI.Instance.OnHoverSpellChargeRemaining(spellData, m_underling);
-        PlayerUI.Instance.skillDetailsTooltip.ShowPlayerSkillDetails(spellData);
+        string txtRecharge = PlayerUI.Instance.OnHoverSpellChargeRemaining(spellData, m_underling);
+        if (string.IsNullOrEmpty(txtRecharge)) {
+            monsterToolTipUI.DisplayToolTipWithoutCharge(spellData.name, spellData.description);
+        } else {
+            monsterToolTipUI.DisplayToolTipWithCharge(spellData.name, spellData.description, txtRecharge);
+        }
+        //PlayerUI.Instance.skillDetailsTooltip.ShowPlayerSkillDetails(spellData);
     }
     private void OnHoverExitReserveSummon(SkillData spellData) {
+        monsterToolTipUI.HideToolTip();
         Tooltip.Instance.HideSmallInfo();
         PlayerUI.Instance.skillDetailsTooltip.HidePlayerSkillDetails();
     }
