@@ -22,7 +22,7 @@ public class PlayerSkillLoadoutNameplateItem : MonoBehaviour {
     public void SetObject(PLAYER_SKILL_TYPE o) {
         skillData = PlayerSkillManager.Instance.GetScriptableObjPlayerSkillData<PlayerSkillData>(o);
         SkillData data = PlayerSkillManager.Instance.GetSkillData(o);
-        string gameObjectName = data.name;
+        string gameObjectName = data.localizedName;
         name = gameObjectName;
         mainLbl.text = gameObjectName;
         SetPortrait(skillData.buttonSprite);

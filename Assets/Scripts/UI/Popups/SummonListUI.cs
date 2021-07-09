@@ -238,9 +238,9 @@ public class SummonListUI : PopupMenuBase {
     private void OnHoverEnterReserveSummon(SkillData spellData, MonsterAndDemonUnderlingCharges m_underling) {
         string txtRecharge = PlayerUI.Instance.OnHoverSpellChargeRemaining(spellData, m_underling);
         if (string.IsNullOrEmpty(txtRecharge)) {
-            monsterToolTipUI.DisplayToolTipWithoutCharge(spellData.name, spellData.description);
+            monsterToolTipUI.DisplayToolTipWithoutCharge(spellData.localizedName, spellData.localizedDescription);
         } else {
-            monsterToolTipUI.DisplayToolTipWithCharge(spellData.name, spellData.description, txtRecharge);
+            monsterToolTipUI.DisplayToolTipWithCharge(spellData.localizedName, spellData.localizedDescription, txtRecharge);
         }
         //PlayerUI.Instance.skillDetailsTooltip.ShowPlayerSkillDetails(spellData);
     }

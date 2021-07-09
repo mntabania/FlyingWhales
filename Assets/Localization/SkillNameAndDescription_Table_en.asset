@@ -1,0 +1,327 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e9620f8c34305754d8cc9a7e49e852d9, type: 3}
+  m_Name: SkillNameAndDescription_Table_en
+  m_EditorClassIdentifier: 
+  m_LocaleId:
+    m_Code: en
+  m_SharedData: {fileID: 11400000, guid: f518eadf0478bad4eb9c2b552b7acb67, type: 2}
+  m_Metadata:
+    m_Items: []
+  m_TableData:
+  - m_Id: 113447182336
+    m_Localized: Meteor
+    m_Metadata:
+      m_Items: []
+  - m_Id: 351251636224
+    m_Localized: This Spell spawns a flaming Meteor that will crash down and deal
+      major Fire damage to a small target area.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 20622343839744
+    m_Localized: This Spell spawns a floating ball of electricity that will move
+      around randomly for a few hours, dealing Electric damage to everything in its
+      path.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 20603045847040
+    m_Localized: Ball Lightning
+    m_Metadata:
+      m_Items: []
+  - m_Id: 25955854360576
+    m_Localized: "Blizzard\t"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 25974653231104
+    m_Localized: This Spell summons a chilling Blizzard over a large area. Characters
+      caught outside within the Blizzard may get stacks of Freezing, eventually causing
+      them to be Frozen in place. It does not affect characters inside structures
+      and caves.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 26761370443776
+    m_Localized: Brimstones
+    m_Metadata:
+      m_Items: []
+  - m_Id: 26800973062144
+    m_Localized: Electric Storm
+    m_Metadata:
+      m_Items: []
+  - m_Id: 26927192252416
+    m_Localized: Feeble Spirit
+    m_Metadata:
+      m_Items: []
+  - m_Id: 26966828425216
+    m_Localized: Fire Ball
+    m_Metadata:
+      m_Items: []
+  - m_Id: 27042107793408
+    m_Localized: Forlorn Spirit
+    m_Metadata:
+      m_Items: []
+  - m_Id: 27113570344960
+    m_Localized: Freezing Trap
+    m_Metadata:
+      m_Items: []
+  - m_Id: 27117680762880
+    m_Localized: Heat Wave
+    m_Metadata:
+      m_Items: []
+  - m_Id: 27119756943360
+    m_Localized: Iceteroids
+    m_Metadata:
+      m_Items: []
+  - m_Id: 26763345960960
+    m_Localized: This Spell will make dozens of burning rocks come crashing down
+      from space onto a target area, dealing Fire damage to anything they hit.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 26876533448704
+    m_Localized: '"This Spell will spawn a series of lightning strikes onto a target
+      area, dealing Electric damage to anything they hit."'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 26928060473344
+    m_Localized: "This Spell summons a Feeble Spirit that will drain Energy from
+      a nearby Villager. \nA Villager produces a Chaos Orb whenever it becomes Exhausted."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 26981684649984
+    m_Localized: This Spell spawns a floating ball of fire that will move around
+      randomly for a few hours, dealing Fire damage to everything in its path.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 27042841796608
+    m_Localized: "This Spell summons a Forlorn Spirit that will drain Happiness from
+      a nearby Villager. \nA Villager produces a Chaos Orb whenever it becomes Sulking."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 27115118043136
+    m_Localized: "This Spell places an invisible trap on a target unoccupied tile.
+      Any character that walks into the tile will activate it and become Frozen.
+      \nTrapping a hostile Villager produces 2 Chaos Orbs. Additionally, characters
+      Frozen by the player has a small chance of periodically producing Chaos Orbs."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 27118620286976
+    m_Localized: This Spell summons a blistering heatwave over a large area. Characters
+      caught outside within the Heatwave may get stacks of Overheating. It does not
+      affect characters inside structures.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 27120495140864
+    m_Localized: This Spell will make dozens of icy rocks come crashing down from
+      space onto a target area, dealing Ice damage to anything they hit.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 279758834933760
+    m_Localized: Land Mine
+    m_Metadata:
+      m_Items: []
+  - m_Id: 279806243151872
+    m_Localized: Lightning
+    m_Metadata:
+      m_Items: []
+  - m_Id: 279852552462336
+    m_Localized: Locust Swarm
+    m_Metadata:
+      m_Items: []
+  - m_Id: 279896089337856
+    m_Localized: Manifest Food
+    m_Metadata:
+      m_Items: []
+  - m_Id: 279951500288000
+    m_Localized: Poison Cloud
+    m_Metadata:
+      m_Items: []
+  - m_Id: 282710794477568
+    m_Localized: Rain
+    m_Metadata:
+      m_Items: []
+  - m_Id: 282747532386304
+    m_Localized: Ravenous Spirit
+    m_Metadata:
+      m_Items: []
+  - m_Id: 286903622082560
+    m_Localized: Snare Trap
+    m_Metadata:
+      m_Items: []
+  - m_Id: 286968956755968
+    m_Localized: Splash Poison
+    m_Metadata:
+      m_Items: []
+  - m_Id: 287008064446464
+    m_Localized: Splash Water
+    m_Metadata:
+      m_Items: []
+  - m_Id: 287047964860416
+    m_Localized: Terrifying Howl
+    m_Metadata:
+      m_Items: []
+  - m_Id: 287087399706624
+    m_Localized: Tornado
+    m_Metadata:
+      m_Items: []
+  - m_Id: 287138813485056
+    m_Localized: Wall
+    m_Metadata:
+      m_Items: []
+  - m_Id: 287180337094656
+    m_Localized: Wind Blast
+    m_Metadata:
+      m_Items: []
+  - m_Id: 287235123093504
+    m_Localized: Earthquake
+    m_Metadata:
+      m_Items: []
+  - m_Id: 287298054430720
+    m_Localized: Protection
+    m_Metadata:
+      m_Items: []
+  - m_Id: 287361858183168
+    m_Localized: Ice Blast
+    m_Metadata:
+      m_Items: []
+  - m_Id: 287401074925568
+    m_Localized: Earth Spike
+    m_Metadata:
+      m_Items: []
+  - m_Id: 287443898769408
+    m_Localized: Water Spike
+    m_Metadata:
+      m_Items: []
+  - m_Id: 287481316155392
+    m_Localized: Plagued Rats
+    m_Metadata:
+      m_Items: []
+  - m_Id: 287520587423744
+    m_Localized: Spawn Necronomicon
+    m_Metadata:
+      m_Items: []
+  - m_Id: 287564044607488
+    m_Localized: Spawn Ratman
+    m_Metadata:
+      m_Items: []
+  - m_Id: 279779433160704
+    m_Localized: This Spell places an invisible trap on a target unoccupied tile.
+      Any character that walks into the tile will activate it, causing it to explode
+      and deal Normal damage to a small area around it.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 279833808117760
+    m_Localized: This Spell triggers a lightning strike at the target spot. Deals
+      major Electric damage.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 279873763057664
+    m_Localized: This Spell spawns a swarm of hungry locusts that would roam around
+      randomly for a few hours, eating everything edible in its path.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 279915601240064
+    m_Localized: This Spell produces a pile of food out of thin air. Use it to lure
+      characters.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 279975357489152
+    m_Localized: This Spell spawns a small Poison Cloud. A Poison Cloud may apply
+      Poison to objects and characters it touches.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 282722999902208
+    m_Localized: This Spell will generate rainfall on the target area, applying Wet
+      to anything outside structures and caves.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 286814807695360
+    m_Localized: "This Spell summons a Ravenous Spirit that will drain Fullness from
+      a nearby Villager. \nA Villager produces a Chaos Orb whenever it becomes Starving."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 286930587262976
+    m_Localized: This Spell places an invisible trap on a target unoccupied tile.
+      Any character that walks into the tile will activate it and become Ensnared.
+      \nTrapping a hostile Villager produces 2 Chaos Orbs. Additionally, characters
+      Ensnared by the player has a small chance of periodically producing Chaos Orbs.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 286985222266880
+    m_Localized: This Spell applies Poison on a small area.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 287024208322560
+    m_Localized: This Spell applies Wet to a small area.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 287068500172800
+    m_Localized: This Spell releases a bunch of screaming skulls. Their spine-tingling
+      wails will cause all nearby Villager to flee.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 287116097134592
+    m_Localized: This Spell summons a devastating Tornado that moves around randomly.
+      It deals a high amount of Wind damage to everything it comes in contact with.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 287149278273536
+    m_Localized: This Spell spawns a single tile of durable wall. Can be chained
+      together to block someone's path.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 287211538522112
+    m_Localized: This Spell blasts a powerful wave of air outward from a target spot,
+      dealing Wind damage to anything it hits.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 287274620854272
+    m_Localized: This Spell will cause the ground to shake vigorously, dealing a
+      small amount of Earth damage to everyone in range. Objects may get moved around.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 287314340913152
+    m_Localized: This Spell will apply Protection to all non-hostile units within
+      its area of effect - significantly reducing damage they receive.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 287380665442304
+    m_Localized: This Spell causes cold spikes to shatter around a small area, dealing
+      Ice damage to those within range.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 287418556784640
+    m_Localized: This Spell causes a small Earth Spike to erupt from the ground,
+      dealing Earth damage to those within range.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 287457807081472
+    m_Localized: This Spell causes blasts of water to shatter around a small area,
+      dealing Water damage to those within range.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 287498869317632
+    m_Localized: This Spell spawns 2 Plagued Rats. These virulent rats will transmit
+      Plague to food sources they come in contact with.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 287579299291136
+    m_Localized: This Spell will spawns a single Ratman on the target ground.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 287546231398400
+    m_Localized: "This Spell will create a Necronomicon on the target ground. If
+      an appropriate character picks it up, it will turn into a Necromancer. \nA
+      Necromancer produces a Chaos Orb each time it raises a Skeleton. It also produces
+      2 Chaos Orbs whenever it or its army of skeletons kill a Villager."
+    m_Metadata:
+      m_Items: []
+  references:
+    version: 1

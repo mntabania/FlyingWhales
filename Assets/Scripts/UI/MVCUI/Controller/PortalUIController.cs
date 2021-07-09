@@ -125,7 +125,7 @@ public class PortalUIController : MVCUIController, PortalUIView.IListener {
     public void OnClickCancelReleaseAbility() {
         SkillData spellData = PlayerSkillManager.Instance.GetSkillData(PlayerManager.Instance.player.playerSkillComponent.currentSpellBeingUnlocked);
         UIManager.Instance.ShowYesNoConfirmation(
-            "Cancel Release Ability", $"Are you sure you want to cancel Releasing Ability: <b>{spellData.name}</b>? " + 
+            "Cancel Release Ability", $"Are you sure you want to cancel Releasing Ability: <b>{spellData.localizedName}</b>? " + 
                                       $"\n<i>{UtilityScripts.Utilities.InvalidColorize("Cancelling will reset all current release progress!")}</i>", OnConfirmCancelRelease, showCover: true, layer: 30);
         // purchaseSkillUIController.Init(purchaseSkillUIController.skillCountPerDraw);
     }

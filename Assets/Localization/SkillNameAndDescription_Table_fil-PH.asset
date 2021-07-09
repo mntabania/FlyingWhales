@@ -1,0 +1,287 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e9620f8c34305754d8cc9a7e49e852d9, type: 3}
+  m_Name: SkillNameAndDescription_Table_fil-PH
+  m_EditorClassIdentifier: 
+  m_LocaleId:
+    m_Code: fil-PH
+  m_SharedData: {fileID: 11400000, guid: f518eadf0478bad4eb9c2b552b7acb67, type: 2}
+  m_Metadata:
+    m_Items: []
+  m_TableData:
+  - m_Id: 113447182336
+    m_Localized: Bulalakaw
+    m_Metadata:
+      m_Items: []
+  - m_Id: 351251636224
+    m_Localized: Ang kapangyarihang ito ay mag babagsak pababa ng nagbabagang bulalakaw
+      at magiging pangunahing pinsala sa maliit na punteryang lugar.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 20622343839744
+    m_Localized: tagalog ball Lightning.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 20603045847040
+    m_Localized: Bilog Kidlat
+    m_Metadata:
+      m_Items: []
+  - m_Id: 25955854360576
+    m_Localized: Nyebe
+    m_Metadata:
+      m_Items: []
+  - m_Id: 25974653231104
+    m_Localized: Woooh Lamig.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 26761370443776
+    m_Localized: Batong Makinang
+    m_Metadata:
+      m_Items: []
+  - m_Id: 26800973062144
+    m_Localized: Bagyo ng Kuryente
+    m_Metadata:
+      m_Items: []
+  - m_Id: 26927192252416
+    m_Localized: Fibol Kaluluwa
+    m_Metadata:
+      m_Items: []
+  - m_Id: 26966828425216
+    m_Localized: Bolang Apoy
+    m_Metadata:
+      m_Items: []
+  - m_Id: 27042107793408
+    m_Localized: Porlorn Kaluluwa
+    m_Metadata:
+      m_Items: []
+  - m_Id: 27113570344960
+    m_Localized: Yelong Patibong
+    m_Metadata:
+      m_Items: []
+  - m_Id: 27117680762880
+    m_Localized: Kaway Init
+    m_Metadata:
+      m_Items: []
+  - m_Id: 27119756943360
+    m_Localized: Yelo Storm
+    m_Metadata:
+      m_Items: []
+  - m_Id: 26763345960960
+    m_Localized: Batong Makinang Tagalog.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 26876533448704
+    m_Localized: Bagyo ng Kuryente Tagalog.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 26928060473344
+    m_Localized: Fibol Kaluluwa Tagalog.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 26981684649984
+    m_Localized: Bolang Apoy Tagalog.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 27042841796608
+    m_Localized: Porlorn Kaluluwa Tagalog.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 27115118043136
+    m_Localized: Yelong Patibong Tagalog.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 27118620286976
+    m_Localized: Kaway Init Tagalog.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 27120495140864
+    m_Localized: Yelo Storm Tagalog.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 279758834933760
+    m_Localized: Lupa Yaman
+    m_Metadata:
+      m_Items: []
+  - m_Id: 279806243151872
+    m_Localized: Kidlat
+    m_Metadata:
+      m_Items: []
+  - m_Id: 279852552462336
+    m_Localized: Madaming Langaw
+    m_Metadata:
+      m_Items: []
+  - m_Id: 279896089337856
+    m_Localized: Paen Kaen
+    m_Metadata:
+      m_Items: []
+  - m_Id: 279951500288000
+    m_Localized: Lason Ulap
+    m_Metadata:
+      m_Items: []
+  - m_Id: 282710794477568
+    m_Localized: Ulan
+    m_Metadata:
+      m_Items: []
+  - m_Id: 282747532386304
+    m_Localized: Rabenus Kaluluwa
+    m_Metadata:
+      m_Items: []
+  - m_Id: 286903622082560
+    m_Localized: Drum Patibong
+    m_Metadata:
+      m_Items: []
+  - m_Id: 286968956755968
+    m_Localized: Saboy Lason
+    m_Metadata:
+      m_Items: []
+  - m_Id: 287008064446464
+    m_Localized: Saboy Tubig
+    m_Metadata:
+      m_Items: []
+  - m_Id: 287047964860416
+    m_Localized: Sigaw ni Misis.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 287087399706624
+    m_Localized: Ipoipo
+    m_Metadata:
+      m_Items: []
+  - m_Id: 287138813485056
+    m_Localized: Pader
+    m_Metadata:
+      m_Items: []
+  - m_Id: 287180337094656
+    m_Localized: Hanging Bang
+    m_Metadata:
+      m_Items: []
+  - m_Id: 287235123093504
+    m_Localized: Lindol
+    m_Metadata:
+      m_Items: []
+  - m_Id: 287298054430720
+    m_Localized: Aruga
+    m_Metadata:
+      m_Items: []
+  - m_Id: 287361858183168
+    m_Localized: Yelo Bang
+    m_Metadata:
+      m_Items: []
+  - m_Id: 287401074925568
+    m_Localized: Tusok ng Daigdig
+    m_Metadata:
+      m_Items: []
+  - m_Id: 287443898769408
+    m_Localized: Tusok ng Tubig
+    m_Metadata:
+      m_Items: []
+  - m_Id: 287481316155392
+    m_Localized: Dagang Costa
+    m_Metadata:
+      m_Items: []
+  - m_Id: 287520587423744
+    m_Localized: Ispon Nekro
+    m_Metadata:
+      m_Items: []
+  - m_Id: 287564044607488
+    m_Localized: Ispon Dagang Tao
+    m_Metadata:
+      m_Items: []
+  - m_Id: 279779433160704
+    m_Localized: Land Mine_Description Tagalog.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 279833808117760
+    m_Localized: Kulog Kidlat walang pasok.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 279873763057664
+    m_Localized: eeeewww daming langaw.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 279915601240064
+    m_Localized: Panghuli sa matatakaw.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 279975357489152
+    m_Localized: Lason na ulap kumakalat.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 282722999902208
+    m_Localized: Pumapatak nanaman ang ulan sa bubuong ng bahay.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 286814807695360
+    m_Localized: kung ano mang tong kaluluwa na to hindi ko alam.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 286930587262976
+    m_Localized: Pang drummer ung snare di ba?.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 286985222266880
+    m_Localized: Lalasunin kita.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 287024208322560
+    m_Localized: Yehey Wet na.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 287068500172800
+    m_Localized: pag si misis sumigaw uwi ka na.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 287116097134592
+    m_Localized: Ayan na ing ipo ipo ni Jinda.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 287149278273536
+    m_Localized: Pader matigas.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 287211538522112
+    m_Localized: woooh woooh hangin.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 287274620854272
+    m_Localized: Lindol dahil sa bulkan.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 287314340913152
+    m_Localized: Kulang ka siguro sa aruga.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 287380665442304
+    m_Localized: Woooh lamig woooh lamig talaga.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 287418556784640
+    m_Localized: Tutusukin ka ng daigdig.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 287457807081472
+    m_Localized: Tutusukin ka ng tubig.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 287498869317632
+    m_Localized: Hindi ito kaya ng racumin.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 287579299291136
+    m_Localized: Andyan na ang taong daga.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 287546231398400
+    m_Localized: Lulubog lilitaw sasaradong hukay tabi tabi po sa bangkay.
+    m_Metadata:
+      m_Items: []
+  references:
+    version: 1

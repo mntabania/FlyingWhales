@@ -37,8 +37,8 @@ public class PlayerSkillDetails : MonoBehaviour {
     }
 
     private void UpdateData() {
-        titleText.text = spellData.name;
-        descriptionText.text = spellData.description;
+        titleText.text = spellData.localizedName;
+        descriptionText.text = spellData.localizedDescription;
         expText.text = skillData.expCost + " XP";
 
         int charges = skillData.charges;
@@ -97,7 +97,7 @@ public class PlayerSkillDetails : MonoBehaviour {
     }
 
     public void OnClickUnlock() {
-        confirmationTitleText.text = "Are you sure you want to unlock " + spellData.name + "?";
+        confirmationTitleText.text = "Are you sure you want to unlock " + spellData.localizedName + "?";
         confirmationGO.SetActive(true);
     }
     public void OnClickYes() {

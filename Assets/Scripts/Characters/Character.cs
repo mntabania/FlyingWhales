@@ -2889,7 +2889,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                         if (source is SkillData skillData) {
                             cause += $"_spell";
                             Death(cause, isPlayerSource: isPlayerSource, deathLogFillers: new[] {
-                                new LogFillerStruct(null, skillData.name, LOG_IDENTIFIER.STRING_1)
+                                new LogFillerStruct(null, skillData.localizedName, LOG_IDENTIFIER.STRING_1)
                             });
                         } else if (source is TileObject tileObject) {
                             cause += $"_spell";

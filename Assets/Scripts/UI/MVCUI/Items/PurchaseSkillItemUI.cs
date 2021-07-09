@@ -61,9 +61,9 @@ public class PurchaseSkillItemUI : MonoBehaviour {
 	public void InitItem(PLAYER_SKILL_TYPE p_type, int p_currentMana) {
 		m_data = PlayerSkillManager.Instance.GetScriptableObjPlayerSkillData<PlayerSkillData>(p_type);
 		SkillData skillData = PlayerSkillManager.Instance.GetSkillData(p_type);
-		string name = $"{UtilityScripts.Utilities.ColorizeSpellTitle($"{skillData.name}")} {("x" + $"{m_data.bonusChargeWhenUnlocked}")} {UtilityScripts.Utilities.BonusChargesIcon()}";
+		string name = $"{UtilityScripts.Utilities.ColorizeSpellTitle($"{skillData.localizedName}")} {("x" + $"{m_data.bonusChargeWhenUnlocked}")} {UtilityScripts.Utilities.BonusChargesIcon()}";
 		txtSkillName.text = name;
-		txtDescription.text = skillData.description;
+		txtDescription.text = skillData.localizedDescription;
 		switch (skillData.category) {
 			case PLAYER_SKILL_CATEGORY.AFFLICTION:
 			imgIcon.sprite = affliction;

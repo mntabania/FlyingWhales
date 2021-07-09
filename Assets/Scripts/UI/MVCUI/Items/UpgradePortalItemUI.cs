@@ -56,7 +56,7 @@ public class UpgradePortalItemUI : PooledObject {
             goPassiveSkillPortrait.SetActive(false);
             goSpellPortrait.SetActive(false);
             characterPortrait.GeneratePortrait(minionPlayerSkill.minionType);
-            lblName.text = minionPlayerSkill.name;
+            lblName.text = minionPlayerSkill.localizedName;
         } else if (skillData.category == PLAYER_SKILL_CATEGORY.DEMONIC_STRUCTURE) {
             DemonicStructurePlayerSkill demonicStructurePlayerSkill = PlayerSkillManager.Instance.GetDemonicStructureSkillData(p_type);
             locationPortrait.gameObject.SetActive(true);
@@ -64,7 +64,7 @@ public class UpgradePortalItemUI : PooledObject {
             goPassiveSkillPortrait.SetActive(false);
             goSpellPortrait.SetActive(false);
             locationPortrait.SetPortrait(demonicStructurePlayerSkill.structureType);
-            lblName.text = demonicStructurePlayerSkill.name;
+            lblName.text = demonicStructurePlayerSkill.localizedName;
         } else {
             Sprite sprite = GetPowerSprite(skillData.category);
             locationPortrait.gameObject.SetActive(false);
@@ -72,7 +72,7 @@ public class UpgradePortalItemUI : PooledObject {
             goPassiveSkillPortrait.SetActive(false);
             goSpellPortrait.SetActive(true);
             imgSpellPortrait.sprite = sprite;
-            lblName.text = skillData.name;
+            lblName.text = skillData.localizedName;
         }
     }
     private Sprite GetPowerSprite(PLAYER_SKILL_CATEGORY p_category) {

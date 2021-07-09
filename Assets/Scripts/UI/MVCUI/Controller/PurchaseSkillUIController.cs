@@ -352,7 +352,7 @@ public class PurchaseSkillUIController : MVCUIController, PurchaseSkillUIView.IL
 	public void OnClickCancelReleaseAbility() {
 		SkillData spellData = PlayerSkillManager.Instance.GetSkillData(PlayerManager.Instance.player.playerSkillComponent.currentSpellBeingUnlocked);
 		UIManager.Instance.ShowYesNoConfirmation(
-			"Cancel Release Ability", $"Are you sure you want to cancel Releasing Ability: <b>{spellData.name}</b>? " + 
+			"Cancel Release Ability", $"Are you sure you want to cancel Releasing Ability: <b>{spellData.localizedName}</b>? " + 
 			                          $"\n<i>{UtilityScripts.Utilities.InvalidColorize("Cancelling will reset all current release progress!")}</i>", OnConfirmCancelRelease, showCover: true, layer: 30);
 	}
 	private void OnConfirmCancelRelease() {
@@ -387,7 +387,7 @@ public class PurchaseSkillUIController : MVCUIController, PurchaseSkillUIView.IL
 			m_skillProgressionManager.CheckRequirementsAndGetUnlockCost(PlayerManager.Instance.player.playerSkillComponent, PlayerManager.Instance.player.plagueComponent.plaguePoints, p_type);
 		m_unlockCost = result;
 		if (result != -1) {
-			UIManager.Instance.ShowYesNoConfirmation("Portal Upgrade", $"Do you want to spend {result}{UtilityScripts.Utilities.ChaoticEnergyIcon()} to unlock {skillData.name}?", 
+			UIManager.Instance.ShowYesNoConfirmation("Portal Upgrade", $"Do you want to spend {result}{UtilityScripts.Utilities.ChaoticEnergyIcon()} to unlock {skillData.localizedName}?", 
 				OnYesUnlockSkill, layer: 150, showCover: true);
 		}
 	}

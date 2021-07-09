@@ -75,14 +75,14 @@ namespace Tutorial {
             for (int i = 0; i < PlayerSkillManager.Instance.allSchemes.Length; i++) {
                 PLAYER_SKILL_TYPE scheme = PlayerSkillManager.Instance.allSchemes[i];
                 SkillData spellData = PlayerSkillManager.Instance.GetSkillData(scheme);
-                Messenger.Broadcast(UISignals.SHOW_SELECTABLE_GLOW, spellData.name);    
+                Messenger.Broadcast(UISignals.SHOW_SELECTABLE_GLOW, spellData.localizedName);    
             }
         }
         private void OnNoLongerTopmostAllSchemeActions() {
             for (int i = 0; i < PlayerSkillManager.Instance.allSchemes.Length; i++) {
                 PLAYER_SKILL_TYPE scheme = PlayerSkillManager.Instance.allSchemes[i];
                 SkillData spellData = PlayerSkillManager.Instance.GetSkillData(scheme);
-                Messenger.Broadcast(UISignals.HIDE_SELECTABLE_GLOW, spellData.name);    
+                Messenger.Broadcast(UISignals.HIDE_SELECTABLE_GLOW, spellData.localizedName);    
             }
         }
         #endregion

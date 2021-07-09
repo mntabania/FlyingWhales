@@ -8,6 +8,7 @@ using TMPro;
 using UnityEngine.Profiling;
 using UnityEngine.UI;
 using UtilityScripts;
+using UnityEngine.Localization.Settings;
 
 public class SpellItem : NameplateItem<SkillData> {
     [SerializeField] private Image cooldownImage;
@@ -22,9 +23,9 @@ public class SpellItem : NameplateItem<SkillData> {
 
     public override void SetObject(SkillData spellData) {
         base.SetObject(spellData);
-        name = spellData.name;
-        button.name = spellData.name;
-        toggle.name = spellData.name;
+        name = spellData.localizedName;
+        button.name = spellData.localizedName;
+        toggle.name = spellData.localizedName;
         this.spellData = spellData;
         UpdateData();
         Messenger.AddListener<SkillData>(PlayerSkillSignals.PLAYER_NO_ACTIVE_SPELL, OnPlayerNoActiveSpell);
@@ -35,14 +36,20 @@ public class SpellItem : NameplateItem<SkillData> {
         Messenger.AddListener<SkillData>(PlayerSkillSignals.CHARGES_ADJUSTED, OnChargesAdjusted);
         Messenger.AddListener<SkillData>(PlayerSkillSignals.BONUS_CHARGES_ADJUSTED, OnBonusChargesAdjusted);
         Messenger.AddListener<int, int>(PlayerSignals.PLAYER_ADJUSTED_MANA, OnPlayerAdjustedMana);
+        LocalizationSettings.SelectedLocaleChanged += OnLocaleChanged;
         SetAsDefault();
 
         //_coverImg = coverGO.GetComponent<Image>();
         //_coverImg.type = Image.Type.Filled;
         //_coverImg.fillMethod = Image.FillMethod.Horizontal;
     }
+
+    void OnLocaleChanged(UnityEngine.Localization.Locale p_newLang) {
+        UpdateData();
+    }
+
     public void UpdateData() {
-        mainLbl.text = spellData.name;
+        mainLbl.text = spellData.localizedName;
         currencyLbl.text = string.Empty;
         PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetScriptableObjPlayerSkillData<PlayerSkillData>(spellData.type);
         SkillData updatedSkillData = PlayerSkillManager.Instance.GetSkillData(this.spellData.type);

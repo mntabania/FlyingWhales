@@ -1,10 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
 using UnityEngine;
 using Locations.Settlements;
 using UnityEngine.Profiling;
 using UtilityScripts;
+using UnityEngine.Localization.Settings;
 
 public class SkillData : IPlayerSkill {
     public const int MAX_SPELL_LEVEL = 3;
@@ -28,7 +29,10 @@ public class SkillData : IPlayerSkill {
     /// </summary>
     public int currentLevel { get; set; }
     public bool isUnlockedBaseOnRequirements { get; set; }
-    
+
+    public string localizedName => LocalizationSettings.StringDatabase.GetLocalizedString("SkillNameAndDescription_Table", name);
+    public string localizedDescription => $"{LocalizationSettings.StringDatabase.GetLocalizedString("SkillNameAndDescription_Table", name + "_Description")}";
+
     public int unlockCost { get; set; }
     public SkillEventDispatcher skillEventDispatcher { get; }
 
@@ -68,7 +72,7 @@ public class SkillData : IPlayerSkill {
         SetCharges(maxCharges);
         FinishCooldown();
         if (category == PLAYER_SKILL_CATEGORY.AFFLICTION) {
-            Messenger.Broadcast($"{name}LevelUp", this);
+            Messenger.Broadcast($"{localizedName}LevelUp", this);
         }
         Messenger.Broadcast(PlayerSkillSignals.PLAYER_SKILL_LEVEL_UP, this);
     }
@@ -277,7 +281,7 @@ public class SkillData : IPlayerSkill {
     }
     protected virtual void PerTickCooldown() {
 #if DEBUG_PROFILER
-        Profiler.BeginSample($"{name} Per Tick Cooldown");
+        Profiler.BeginSample($"{localizedName} Per Tick Cooldown");
 #endif
         currentCooldownTick++;
         // Assert.IsFalse(currentCooldownTick > cooldown, $"Cooldown tick became higher than cooldown in {name}. Cooldown is {cooldown.ToString()}. Cooldown Tick is {currentCooldownTick.ToString()}");

@@ -147,7 +147,7 @@ public class UpgradePortalUIController : MVCUIController, UpgradePortalUIView.IL
             if (p_item.skill != PLAYER_SKILL_TYPE.NONE) {
                 PlayerSkillData playerSkillData = PlayerSkillManager.Instance.GetScriptableObjPlayerSkillData<PlayerSkillData>(p_item.skill);
                 SkillData skillData = PlayerSkillManager.Instance.GetSkillData(playerSkillData.skill);
-                PlayerUI.Instance.skillDetailsTooltip.ShowPlayerSkillDetails(skillData.name, skillData.description, position: m_upgradePortalUIView.UIModel.tooltipHoverPos);    
+                PlayerUI.Instance.skillDetailsTooltip.ShowPlayerSkillDetails(skillData.localizedName, skillData.localizedDescription, position: m_upgradePortalUIView.UIModel.tooltipHoverPos);    
             } else if (p_item.passiveSkill != PASSIVE_SKILL.None) {
                 PassiveSkill passiveSkill = PlayerSkillManager.Instance.GetPassiveSkill(p_item.passiveSkill);
                 PlayerUI.Instance.skillDetailsTooltip.ShowPlayerSkillDetails(passiveSkill.name, passiveSkill.description, position: m_upgradePortalUIView.UIModel.tooltipHoverPos);

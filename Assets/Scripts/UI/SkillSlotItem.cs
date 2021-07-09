@@ -93,7 +93,7 @@ public class SkillSlotItem : MonoBehaviour {
             if (playerSkillData == null) {
                 Debug.LogError(skillData.skill.ToString() + " skill data is null!");
             }
-            spellText.text = playerSkillData.name;
+            spellText.text = playerSkillData.localizedName;
         } else {
             if (!isFixed) {
                 spellText.text = "Click to Assign a Skill";

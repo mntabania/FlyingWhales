@@ -58,7 +58,7 @@ public class SchemeUIController : MVCUIController, SchemeUIView.IListener {
         _chosenBlackmail.Clear();
         _chosenTemptations.Clear();
         ClearSchemeUIItems();
-        m_schemeUIView.SetTitle(_schemeUsed.name);
+        m_schemeUIView.SetTitle(_schemeUsed.localizedName);
         m_schemeUIView.SetBlackmailBtnInteractableState(HasValidBlackmailForTarget(p_targetCharacter));
         m_schemeUIView.SetTemptBtnInteractableState(temptUIController.HasValidTemptationsForTarget(p_targetCharacter));
 

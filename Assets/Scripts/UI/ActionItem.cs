@@ -24,7 +24,7 @@ public class ActionItem : PooledObject {
 	private string expiryKey;
 	
 	public void SetAction(PlayerAction playerAction, IPlayerActionTarget playerActionTarget) {
-		name = playerAction.name;
+		name = playerAction.localizedName;
         this.playerAction = playerAction;
         this.playerActionTarget = playerActionTarget;
         UnToggleHighlight();

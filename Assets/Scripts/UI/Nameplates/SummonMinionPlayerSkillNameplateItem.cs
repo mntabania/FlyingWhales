@@ -14,7 +14,7 @@ public class SummonMinionPlayerSkillNameplateItem : SpellItem {
     #region Overrides
     public override void SetObject(SkillData o) {
         base.SetObject(o);
-        mainLbl.text = spellData.name;
+        mainLbl.text = spellData.localizedName;
         subLbl.text = string.Empty;
         SetPortrait();
         ClearAllHoverEnterActions();
@@ -35,7 +35,7 @@ public class SummonMinionPlayerSkillNameplateItem : SpellItem {
         if(race != RACE.NONE && className != string.Empty) {
             classPortrait.GeneratePortrait(CharacterManager.Instance.GeneratePortrait(race, GENDER.MALE, className, false));
         } else {
-            throw new System.Exception("Trying to create portrait for " + spellData.name + " but Race or Class is None");
+            throw new System.Exception("Trying to create portrait for " + spellData.localizedName + " but Race or Class is None");
         }
     }
     [System.Obsolete("Use UpdateData function instead")]

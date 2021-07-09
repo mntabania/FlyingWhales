@@ -140,7 +140,7 @@ public class PlayerSkillComponent {
     public void PlayerChoseSkillToAddBonusCharge(SkillData p_skillData, int p_unlockCost) {
         currentSpellBeingUnlocked = p_skillData.type;
         currentSpellUnlockCost = p_unlockCost;
-        timerUnlockSpell.SetTimerName($"{LocalizationManager.Instance.GetLocalizedValue("UI", "PortalUI", "release_ability_active")} {p_skillData.name}");
+        timerUnlockSpell.SetTimerName($"{LocalizationManager.Instance.GetLocalizedValue("UI", "PortalUI", "release_ability_active")} {p_skillData.localizedName}");
         timerUnlockSpell.Start(GameManager.Instance.Today(), GameManager.Instance.Today().AddTicks(GameManager.Instance.GetTicksBasedOnHour(GetBonusChargeCooldownInHours)), OnCompleteSpellUnlockTimer); //.AddDays(1)
         timerUnlockSpell.SetOnSelectAction(() => UIManager.Instance.ShowStructureInfo(PlayerManager.Instance.player.playerSettlement.GetRandomStructureOfType(STRUCTURE_TYPE.THE_PORTAL)));
         PlayerManager.Instance.player.bookmarkComponent.AddBookmark(timerUnlockSpell, BOOKMARK_CATEGORY.Portal);
@@ -171,7 +171,7 @@ public class PlayerSkillComponent {
         currentSpellUnlockCost = 0;
         
         string chargeText = playerSkillData.bonusChargeWhenUnlocked == 1 ? "charge" : "charges";
-        lastSpellUnlockSummary = $"Gained {playerSkillData.bonusChargeWhenUnlocked.ToString()}{UtilityScripts.Utilities.BonusChargesIcon()} <b>{skillData.name}</b>";
+        lastSpellUnlockSummary = $"Gained {playerSkillData.bonusChargeWhenUnlocked.ToString()}{UtilityScripts.Utilities.BonusChargesIcon()} <b>{skillData.localizedName}</b>";
         AddSpellUnlockedBookmark();
         PlayerManager.Instance.player.bookmarkComponent.RemoveBookmark(timerUnlockSpell);
     }
@@ -180,7 +180,7 @@ public class PlayerSkillComponent {
         m_log.AddTag(LOG_TAG.Major);
         string chargeText = p_playerSkillData.bonusChargeWhenUnlocked == 1 ? "charge" : "charges";
         m_log.AddToFillers(null, $"{p_playerSkillData.bonusChargeWhenUnlocked.ToString()} {chargeText}", LOG_IDENTIFIER.STRING_1);
-        m_log.AddToFillers(null, p_skillData.name, LOG_IDENTIFIER.STRING_2);
+        m_log.AddToFillers(null, p_skillData.localizedName, LOG_IDENTIFIER.STRING_2);
         m_log.AddLogToDatabase();
         PlayerManager.Instance.player.ShowNotificationFromPlayer(m_log, true);
     }

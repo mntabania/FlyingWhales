@@ -8,7 +8,7 @@ public class PlayerAction : SkillData, IContextMenuItem {
     public virtual bool canBeCastOnBlessed => false;
     public virtual bool shouldShowOnContextMenu => true;
     public virtual Sprite contextMenuIcon => PlayerSkillManager.Instance.GetScriptableObjPlayerSkillData<PlayerSkillData>(type)?.contextMenuIcon;
-    public string contextMenuName => name;
+    public string contextMenuName => localizedName;
     public virtual int contextMenuColumn  => PlayerSkillManager.Instance.GetScriptableObjPlayerSkillData<PlayerSkillData>(type)?.contextMenuColumn ?? 0;
     public List<IContextMenuItem> subMenus => GetSubMenus(_contextMenuItems);
     private List<IContextMenuItem> _contextMenuItems;
@@ -38,7 +38,7 @@ public class PlayerAction : SkillData, IContextMenuItem {
         return true;
     }
     public string GetLabelName(IPlayerActionTarget target) {
-        return name;
+        return localizedName;
     }
     protected virtual List<IContextMenuItem> GetSubMenus(List<IContextMenuItem> p_contextMenuItems) {
         return null;
@@ -123,7 +123,7 @@ public class PlayerAction : SkillData, IContextMenuItem {
         }
         string log = string.Empty;
 #if DEBUG_LOG
-        log = $"Rolling chance to succeed for skill {name} against {p_target.name}";
+        log = $"Rolling chance to succeed for skill {localizedName} against {p_target.name}";
 #endif
         bool didRollSucceed = GameUtilities.RollChance(baseChance, ref log);
 #if DEBUG_LOG

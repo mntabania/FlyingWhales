@@ -1,0 +1,292 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5b11a58205ec3474ca216360e9fa74a8, type: 3}
+  m_Name: SkillNameAndDescription_Table Shared Data
+  m_EditorClassIdentifier: 
+  m_TableCollectionName: SkillNameAndDescription_Table
+  m_TableCollectionNameGuidString: f518eadf0478bad4eb9c2b552b7acb67
+  m_Entries:
+  - m_Id: 113447182336
+    m_Key: Meteor
+    m_Metadata:
+      m_Items: []
+  - m_Id: 351251636224
+    m_Key: Meteor_Description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 20603045847040
+    m_Key: Ball Lightning
+    m_Metadata:
+      m_Items: []
+  - m_Id: 20622343839744
+    m_Key: Ball Lightning_Description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 25955854360576
+    m_Key: Blizzard
+    m_Metadata:
+      m_Items: []
+  - m_Id: 25974653231104
+    m_Key: Blizzard_Description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 26761370443776
+    m_Key: Brimstones
+    m_Metadata:
+      m_Items: []
+  - m_Id: 26763345960960
+    m_Key: Brimstones_Description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 26800973062144
+    m_Key: Electric Storm
+    m_Metadata:
+      m_Items: []
+  - m_Id: 26876533448704
+    m_Key: Electric Storm_Description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 26927192252416
+    m_Key: Feeble Spirit
+    m_Metadata:
+      m_Items: []
+  - m_Id: 26928060473344
+    m_Key: Feeble Spirit_Description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 26966828425216
+    m_Key: Fire Ball
+    m_Metadata:
+      m_Items: []
+  - m_Id: 26981684649984
+    m_Key: Fire Ball_Description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 27042107793408
+    m_Key: Forlorn Spirit
+    m_Metadata:
+      m_Items: []
+  - m_Id: 27042841796608
+    m_Key: Forlorn Spirit_Description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 27113570344960
+    m_Key: Freezing Trap
+    m_Metadata:
+      m_Items: []
+  - m_Id: 27115118043136
+    m_Key: Freezing Trap_Description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 27117680762880
+    m_Key: Heat Wave
+    m_Metadata:
+      m_Items: []
+  - m_Id: 27118620286976
+    m_Key: Heat Wave_Description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 27119756943360
+    m_Key: Iceteroids
+    m_Metadata:
+      m_Items: []
+  - m_Id: 27120495140864
+    m_Key: Iceteroids_Description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 279758834933760
+    m_Key: Landmine
+    m_Metadata:
+      m_Items: []
+  - m_Id: 279779433160704
+    m_Key: Landmine_Description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 279806243151872
+    m_Key: Lightning
+    m_Metadata:
+      m_Items: []
+  - m_Id: 279833808117760
+    m_Key: Lightning_Description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 279852552462336
+    m_Key: Locust Swarm
+    m_Metadata:
+      m_Items: []
+  - m_Id: 279873763057664
+    m_Key: Locust Swarm_Description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 279896089337856
+    m_Key: Manifest Food
+    m_Metadata:
+      m_Items: []
+  - m_Id: 279915601240064
+    m_Key: Manifest Food_Description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 279951500288000
+    m_Key: Poison Cloud
+    m_Metadata:
+      m_Items: []
+  - m_Id: 279975357489152
+    m_Key: Poison Cloud_Description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 282710794477568
+    m_Key: Rain
+    m_Metadata:
+      m_Items: []
+  - m_Id: 282722999902208
+    m_Key: Rain_Description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 282747532386304
+    m_Key: Ravenous Spirit
+    m_Metadata:
+      m_Items: []
+  - m_Id: 286814807695360
+    m_Key: Ravenous Spirit_Description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 286903622082560
+    m_Key: Snare Trap
+    m_Metadata:
+      m_Items: []
+  - m_Id: 286930587262976
+    m_Key: Snare Trap_Description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 286968956755968
+    m_Key: Splash Poison
+    m_Metadata:
+      m_Items: []
+  - m_Id: 286985222266880
+    m_Key: Splash Poison_Description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 287008064446464
+    m_Key: Splash Water
+    m_Metadata:
+      m_Items: []
+  - m_Id: 287024208322560
+    m_Key: Splash Water_Description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 287047964860416
+    m_Key: Terrifying Howl
+    m_Metadata:
+      m_Items: []
+  - m_Id: 287068500172800
+    m_Key: Terrifying Howl_Description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 287087399706624
+    m_Key: Tornado
+    m_Metadata:
+      m_Items: []
+  - m_Id: 287116097134592
+    m_Key: Tornado_Description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 287138813485056
+    m_Key: Wall
+    m_Metadata:
+      m_Items: []
+  - m_Id: 287149278273536
+    m_Key: Wall_Description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 287180337094656
+    m_Key: Wind Blast
+    m_Metadata:
+      m_Items: []
+  - m_Id: 287211538522112
+    m_Key: Wind Blast_Description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 287235123093504
+    m_Key: Earthquake
+    m_Metadata:
+      m_Items: []
+  - m_Id: 287274620854272
+    m_Key: Earthquake_Description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 287298054430720
+    m_Key: Protection
+    m_Metadata:
+      m_Items: []
+  - m_Id: 287314340913152
+    m_Key: Protection_Description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 287361858183168
+    m_Key: Ice Blast
+    m_Metadata:
+      m_Items: []
+  - m_Id: 287380665442304
+    m_Key: Ice Blast_Description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 287401074925568
+    m_Key: Earth Spike
+    m_Metadata:
+      m_Items: []
+  - m_Id: 287418556784640
+    m_Key: Earth Spike_Description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 287443898769408
+    m_Key: Water Spike
+    m_Metadata:
+      m_Items: []
+  - m_Id: 287457807081472
+    m_Key: Water Spike_Description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 287481316155392
+    m_Key: Plagued Rats
+    m_Metadata:
+      m_Items: []
+  - m_Id: 287498869317632
+    m_Key: Plagued Rats_Description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 287520587423744
+    m_Key: Spawn Necronomicon
+    m_Metadata:
+      m_Items: []
+  - m_Id: 287546231398400
+    m_Key: Spawn Necronomicon_Description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 287564044607488
+    m_Key: Spawn Ratman
+    m_Metadata:
+      m_Items: []
+  - m_Id: 287579299291136
+    m_Key: Spawn Ratman_Description
+    m_Metadata:
+      m_Items: []
+  m_Metadata:
+    m_Items: []
+  m_KeyGenerator:
+    id: 0
+  references:
+    version: 1
+    00000000:
+      type: {class: DistributedUIDGenerator, ns: UnityEngine.Localization.Tables,
+        asm: Unity.Localization}
+      data:
+        m_CustomEpoch: 1625736831768

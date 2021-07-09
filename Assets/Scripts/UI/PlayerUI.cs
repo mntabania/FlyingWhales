@@ -174,13 +174,13 @@ public class PlayerUI : BaseMonoBehaviour {
     }
 
     void OnSpellCooldownFinished(SkillData p_skillData) {
-        string rawString = p_skillData.name;
+        string rawString = p_skillData.localizedName;
         if (p_skillData.category != PLAYER_SKILL_CATEGORY.MINION && p_skillData.category != PLAYER_SKILL_CATEGORY.SUMMON) {
             if (p_skillData.category == PLAYER_SKILL_CATEGORY.SCHEME) {
                 rawString = "Scheme";
             }
             rawString += " charge replenished by 1";
-            PopUpTextNotification.ShowPlayerPoppingTextNotif($"{UtilityScripts.Utilities.YellowDotIcon()}{UtilityScripts.Utilities.ColorizeName(p_skillData.name)} charge replenished by 1", popUpDisplayPoint, rawString.Length);
+            PopUpTextNotification.ShowPlayerPoppingTextNotif($"{UtilityScripts.Utilities.YellowDotIcon()}{UtilityScripts.Utilities.ColorizeName(p_skillData.localizedName)} charge replenished by 1", popUpDisplayPoint, rawString.Length);
         }
     }
 
@@ -638,7 +638,7 @@ public class PlayerUI : BaseMonoBehaviour {
         string text = string.Empty; 
         if (skillData.isInCooldown) {
             string timeDate = GameManager.Instance.Today().AddTicks(skillData.cooldown - skillData.currentCooldownTick).ToString();
-            text = $"New charge of {UtilityScripts.Utilities.ColorizeName(skillData.name)} at {UtilityScripts.Utilities.ColorizeName(timeDate)}";
+            text = $"New charge of {UtilityScripts.Utilities.ColorizeName(skillData.localizedName)} at {UtilityScripts.Utilities.ColorizeName(timeDate)}";
         }
         return text;
     }

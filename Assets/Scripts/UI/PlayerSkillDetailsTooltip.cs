@@ -61,8 +61,8 @@ public class PlayerSkillDetailsTooltip : MonoBehaviour {
     }
     private void UpdateData(PlayerSkillData p_playerSkillData, int level) {
         SkillData skillData = PlayerSkillManager.Instance.GetSkillData(p_playerSkillData.skill);
-        titleText.SetText(skillData.name);
-        descriptionText.SetTextAndReplaceWithIcons(skillData.description);
+        titleText.SetText(skillData.localizedName);
+        descriptionText.SetTextAndReplaceWithIcons(skillData.localizedDescription);
         int charges = skillData.maxCharges;// SpellUtilities.GetModifiedSpellCost(, WorldSettings.Instance.worldSettingsData.playerSkillSettings.GetChargeCostsModification());
         int manaCost = skillData.manaCost;// SpellUtilities.GetModifiedSpellCost(, WorldSettings.Instance.worldSettingsData.playerSkillSettings.GetCostsModification());
         int cooldown = skillData.cooldown;// SpellUtilities.GetModifiedSpellCost(, WorldSettings.Instance.worldSettingsData.playerSkillSettings.GetCooldownSpeedModification());
@@ -92,8 +92,8 @@ public class PlayerSkillDetailsTooltip : MonoBehaviour {
     }
     private void UpdateData(SkillData skillData, bool p_dontShowAdditionalText = false) {
         // UnityEngine.Debug.LogError(skillData.name + " -- " + skillData.manaCost);
-        titleText.text = skillData.name;
-        string fullDescription = skillData.description;
+        titleText.text = skillData.localizedName;
+        string fullDescription = skillData.localizedDescription;
         int charges = skillData.charges;
         int manaCost = skillData.manaCost;
         int cooldown = skillData.cooldown;
@@ -145,8 +145,8 @@ public class PlayerSkillDetailsTooltip : MonoBehaviour {
         additionalText.text = string.Empty;
     }
     private void UpdateDataWithLevelUpDetails(SkillData spellData, bool p_isChaoticEnergyEnough = true) {
-        titleText.text = spellData.name;
-        string fullDescription = spellData.description;
+        titleText.text = spellData.localizedName;
+        string fullDescription = spellData.localizedDescription;
         int charges = spellData.charges;
         int manaCost = spellData.manaCost;
         int cooldown = spellData.cooldown;
