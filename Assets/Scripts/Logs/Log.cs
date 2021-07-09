@@ -304,16 +304,21 @@ public class Log {
         return false;
     }
     public void ReEvaluateWholeText() {
+        // string summary = $"Re-evaluating log with id {persistentID}";
         for (int i = 0; i < fillers.Count; i++) {
             LogFillerStruct logFiller = fillers[i];
             if (logFiller.type != null && (logFiller.type == typeof(LocationStructure) || logFiller.type.IsSubclassOf(typeof(LocationStructure)))) {
                 continue; //Do not update structure names because it is okay for them to be inaccurate. 
             }
+            // summary = $"{summary}\nForce Updating log filler. Old value was {logFiller.value}";
             logFiller.ForceUpdateValueBasedOnConnectedObject();
+            // summary = $"{summary}\nNew log filler value is {logFiller.value}";
             fillers[i] = logFiller;
         }
         ResetText();
         FinalizeText();
+        // summary = $"{summary}\nFinalized text is: {logText}";
+        // Debug.Log(summary);
     }
 #endregion
 

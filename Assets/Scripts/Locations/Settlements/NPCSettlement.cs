@@ -45,7 +45,8 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
     /// Note: This value is only set on VILLAGE type settlements.
     /// </summary>
     public VillageSpot occupiedVillageSpot { get; private set; }
-
+    public GameDate clearBlacklistScheduleDate { get; private set; }
+    public bool hasClearBlacklistSchedule { get; private set; }
     //Components
     public SettlementJobTriggerComponent settlementJobTriggerComponent { get; }
     //public SettlementJobPriorityComponent jobPriorityComponent { get; }
@@ -119,6 +120,9 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         classComponent = saveData.classComponent.Load(); classComponent.SetOwner(this);
         partyComponent = saveData.partyComponent.Load(); partyComponent.SetOwner(this);
         structureComponent = saveData.structureComponent.Load(); structureComponent.SetOwner(this);
+
+        hasClearBlacklistSchedule = saveData.hasClearBlacklistSchedule;
+        clearBlacklistScheduleDate = saveData.clearBlacklistScheduleDate;
     }
 
     #region Loading
@@ -174,6 +178,12 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
                 Assert.IsNotNull(area, $"{name}'s save data has occupied village spot but no area is at {saveDataNpcSettlement.occupiedVillageSpot.ToString()}");
                 occupiedVillageSpot = region.GetVillageSpotOnArea(area);
                 Assert.IsNotNull(occupiedVillageSpot, $"{name}'s save data has occupied village spot but no village spot could be found on {area}");
+            }
+
+            if (hasClearBlacklistSchedule) {
+                SchedulingManager.Instance.AddEntry(clearBlacklistScheduleDate, ClearAllBlacklistToAllExistingJobs, null);
+            } else {
+                ScheduleClearBlacklistJobs();
             }
         }
     }
@@ -319,7 +329,13 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
     #region Utilities
     public void Initialize() {
         SubscribeToSignals();
+        ScheduleClearBlacklistJobs();
         //onSettlementBuilt?.Invoke();
+    }
+    private void ScheduleClearBlacklistJobs() {
+        hasClearBlacklistSchedule = true;
+        clearBlacklistScheduleDate = GameManager.Instance.Today().AddTicks(GameManager.Instance.GetTicksBasedOnHour(4));
+        SchedulingManager.Instance.AddEntry(clearBlacklistScheduleDate, ClearAllBlacklistToAllExistingJobs, null);
     }
     protected override void SettlementWipedOut() {
         base.SettlementWipedOut();
@@ -373,7 +389,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
     }
     private void OnDayStarted() {
         hasTriedToStealCorpse = false;
-        ClearAllBlacklistToAllExistingJobs();
+        //ClearAllBlacklistToAllExistingJobs();
     }
     private void OnHourStarted() {
 #if DEBUG_PROFILER
@@ -1945,6 +1961,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         for (int i = 0; i < availableJobs.Count; i++) {
             availableJobs[i].ClearBlacklist();
         }
+        ScheduleClearBlacklistJobs();
     }
     private void UnassignJobsTakenBy(Character character) {
         for (int i = 0; i < availableJobs.Count; i++) {

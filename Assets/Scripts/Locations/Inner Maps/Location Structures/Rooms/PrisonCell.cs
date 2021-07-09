@@ -101,16 +101,37 @@ namespace Inner_Maps.Location_Structures {
             }
             return false;
         }
-        public void PopulateValidOccupants(List<Character> p_characters) {
-            for (int i = 0; i < tilesInRoom.Count; i++) {
-                LocationGridTile t = tilesInRoom[i];
-                for (int j = 0; j < t.charactersHere.Count; j++) {
-                    Character c = t.charactersHere[j];
-                    if (IsValidOccupant(c)) {
-                        p_characters.Add(c);
-                    }
+        public bool HasOccupants() {
+            for (int i = 0; i < parentStructure.charactersHere.Count; i++) {
+                Character character = parentStructure.charactersHere[i];
+                if (character.gridTileLocation != null && character.gridTileLocation.structure.IsTilePartOfARoom(character.gridTileLocation, out var room) && room == this) {
+                    return true;
                 }
             }
+            // for (int i = 0; i < tilesInRoom.Count; i++) {
+            //     LocationGridTile t = tilesInRoom[i];
+            //     if (t.charactersHere.Count > 0) {
+            //         return true;
+            //     }
+            // }
+            return false;
+        }
+        public void PopulateOccupants(List<Character> p_characters) {
+            for (int i = 0; i < parentStructure.charactersHere.Count; i++) {
+                Character character = parentStructure.charactersHere[i];
+                if (character.gridTileLocation != null && character.gridTileLocation.structure.IsTilePartOfARoom(character.gridTileLocation, out var room) && room == this) {
+                    p_characters.Add(character);
+                }
+            }
+            // for (int i = 0; i < tilesInRoom.Count; i++) {
+            //     LocationGridTile t = tilesInRoom[i];
+            //     for (int j = 0; j < t.charactersHere.Count; j++) {
+            //         Character c = t.charactersHere[j];
+            //         if (IsValidOccupant(c)) {
+            //             p_characters.Add(c);
+            //         }
+            //     }
+            // }
         }
         #endregion
 

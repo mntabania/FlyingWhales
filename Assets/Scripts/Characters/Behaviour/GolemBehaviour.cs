@@ -47,43 +47,15 @@ public class GolemBehaviour : BaseMonsterBehaviour {
 #if DEBUG_LOG
                         log += "\n-Inside territory or home structure";
 #endif
-                        int fiftyPercentOfMaxHP = Mathf.RoundToInt(summon.maxHP * 0.5f);
-                        if (summon.currentHP < fiftyPercentOfMaxHP) {
+                        int roll = UnityEngine.Random.Range(0, 100);
 #if DEBUG_LOG
-                            log += "\n-Less than 50% of Max HP, Sleep";
+                        log += "\n-35% chance to Roam Around Territory";
+                        log += $"\n-Roll: {roll.ToString()}";
 #endif
-                            hasAddedJob = summon.jobComponent.TriggerMonsterSleep(out producedJob);
-                        } else {
-                            int roll = UnityEngine.Random.Range(0, 100);
-#if DEBUG_LOG
-                            log += "\n-35% chance to Roam Around Territory";
-                            log += $"\n-Roll: {roll.ToString()}";
-#endif
-                            if (roll < 35) {
-                                hasAddedJob = summon.jobComponent.TriggerRoamAroundTerritory(out producedJob);
-                            } else {
-                                TIME_IN_WORDS currTime = GameManager.Instance.GetCurrentTimeInWordsOfTick();
-                                if (currTime == TIME_IN_WORDS.LATE_NIGHT || currTime == TIME_IN_WORDS.AFTER_MIDNIGHT) {
-                                    int sleepRoll = UnityEngine.Random.Range(0, 100);
-#if DEBUG_LOG
-                                    log += "\n-Late Night or After Midnight, 40% chance to Sleep";
-                                    log += $"\n-Roll: {sleepRoll.ToString()}";
-#endif
-                                    if (roll < 40) {
-                                        hasAddedJob = summon.jobComponent.TriggerMonsterSleep(out producedJob);
-                                    }
-                                } else {
-                                    int sleepRoll = UnityEngine.Random.Range(0, 100);
-#if DEBUG_LOG
-                                    log += "\n-5% chance to Sleep";
-                                    log += $"\n-Roll: {sleepRoll.ToString()}";
-#endif
-                                    if (sleepRoll < 5) {
-                                        hasAddedJob = summon.jobComponent.TriggerMonsterSleep(out producedJob);
-                                    }
-                                }
-                            }
+                        if (roll < 35) {
+                            hasAddedJob = summon.jobComponent.TriggerRoamAroundTerritory(out producedJob);
                         }
+                        
                         if (!hasAddedJob) {
 #if DEBUG_LOG
                             log += "\n-Stand";

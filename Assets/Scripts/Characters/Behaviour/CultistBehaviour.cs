@@ -15,7 +15,7 @@ public class CultistBehaviour : CharacterBehaviourComponent {
         if (character.homeSettlement == null && !WorldSettings.Instance.worldSettingsData.villageSettings.disableNewVillages && !character.currentRegion.IsRegionVillageCapacityReached() && character.faction != null && 
             character.faction.factionType.type == FACTION_TYPE.Demon_Cult && character.characterClass.className == "Cult Leader") {
             // Area targetArea = character.currentRegion.GetRandomHexThatMeetCriteria(currArea => currArea.elevationType != ELEVATION.WATER && currArea.elevationType != ELEVATION.MOUNTAIN && !currArea.structureComponent.HasStructureInArea() && !currArea.IsNextToOrPartOfVillage() && !currArea.gridTileComponent.HasCorruption());
-            VillageSpot villageSpot = character.currentRegion.GetRandomUnoccupiedVillageSpot();
+            VillageSpot villageSpot = character.currentRegion.GetFirstUnoccupiedVillageSpotThatCanAccomodateFaction(character.faction.factionType.type);
             if (villageSpot != null) {
                 Area targetArea = villageSpot.mainSpot;
                 StructureSetting structureSetting = new StructureSetting(STRUCTURE_TYPE.CITY_CENTER, character.faction.factionType.mainResource, true);
@@ -27,19 +27,28 @@ public class CultistBehaviour : CharacterBehaviourComponent {
             }    
         }
         
-        TIME_IN_WORDS timeInWords = GameManager.Instance.GetCurrentTimeInWordsOfTick();
+        
         int chance = 0;
-        if (timeInWords == TIME_IN_WORDS.EARLY_NIGHT) {
-            chance = 12;
+        if (character.dailyScheduleComponent.schedule.GetScheduleType(GameManager.Instance.currentTick) == DAILY_SCHEDULE.Free_Time) {
             if (character.HasItem(TILE_OBJECT_TYPE.CULTIST_KIT)) {
-                chance = 50;
-            }
-        } else if (timeInWords == TIME_IN_WORDS.LATE_NIGHT || timeInWords == TIME_IN_WORDS.AFTER_MIDNIGHT) {
-            chance = 20;
-            if (character.HasItem(TILE_OBJECT_TYPE.CULTIST_KIT)) {
-                chance = 50;
+                chance = 10;
+            } else {
+                chance = 25;
             }
         }
+        
+        // TIME_IN_WORDS timeInWords = GameManager.Instance.GetCurrentTimeInWordsOfTick();
+        // if (timeInWords == TIME_IN_WORDS.EARLY_NIGHT) {
+        //     chance = 12;
+        //     if (!character.HasItem(TILE_OBJECT_TYPE.CULTIST_KIT)) {
+        //         chance = 50;
+        //     }
+        // } else if (timeInWords == TIME_IN_WORDS.LATE_NIGHT || timeInWords == TIME_IN_WORDS.AFTER_MIDNIGHT) {
+        //     chance = 20;
+        //     if (!character.HasItem(TILE_OBJECT_TYPE.CULTIST_KIT)) {
+        //         chance = 50;
+        //     }
+        // }
 
         // chance = 100;
         

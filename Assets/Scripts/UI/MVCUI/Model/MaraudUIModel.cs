@@ -61,6 +61,8 @@ public class MaraudUIModel : MVCUIModel {
 	public UIHoverPosition hoverPosition;
 	public UIHoverPosition deployedItemHoverPosition;
 
+	public MonsterToolTipUI monsterToolTipUI;
+
 	private void OnEnable() {
 		btnDeploy.onClick.AddListener(ClickDeploy);
 		btnClose.onClick.AddListener(ClickClose);

@@ -481,6 +481,10 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         if (race.IsSapient() || race == RACE.RATMAN) {
             villagerWantsComponent = new VillagerWantsComponent(); villagerWantsComponent.SetOwner(this);
             villagerWantsComponent.Initialize(this);
+
+            if (race == RACE.RATMAN) {
+                isInfoUnlocked = true;
+            }
         }
     }
     public void InitialCharacterPlacement(LocationGridTile tile) {
@@ -2803,10 +2807,13 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         amount = processedAmount;
         if ((amount < 0 && (ignoreIndestructibleTrait || CanBeDamaged())) || amount > 0) {
             if (hasMarker) {
-                if (responsibleCharacter == null || responsibleCharacter.combatComponent == null) {
-                    marker.ShowHealthAdjustmentEffect(amount, null);
-                } else {
-                    marker.ShowHealthAdjustmentEffect(amount, responsibleCharacter.combatComponent);
+                if (currentHP > 0) {
+                    //only show hp adjustment if character still has HP
+                    if (responsibleCharacter == null || responsibleCharacter.combatComponent == null) {
+                        marker.ShowHealthAdjustmentEffect(amount, null);
+                    } else {
+                        marker.ShowHealthAdjustmentEffect(amount, responsibleCharacter.combatComponent);
+                    }    
                 }
             }
             //only added checking here because even if objects cannot be damaged,
@@ -2933,7 +2940,13 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         //chance based dependent on the character
         return currentHP < (maxHP * 0.2f);
     }
-#endregion
+    protected void PerTickOutsideCombatHPRecovery() {
+        if (currentHP < maxHP && !combatComponent.isInCombat) {
+            //gain 1% of max hp per tick outside of combat
+            HPRecovery(0.01f);
+        }
+    }
+    #endregion
 
 #region Home
     /// <summary>
@@ -3452,6 +3465,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
 #if DEBUG_PROFILER
         Profiler.EndSample();
 #endif
+        if (characterClass.IsZombie()) {
+            PerTickOutsideCombatHPRecovery();
+        }
     }
     protected virtual void OnHourStarted() {
 #if DEBUG_PROFILER
@@ -3491,11 +3507,18 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
 #endif
                 if (jobToAssign != null && ((jobQueue.jobsInQueue.Count <= 0 && behaviourComponent.GetHighestBehaviourPriority() < jobToAssign.priority) ||
                     (jobQueue.jobsInQueue.Count > 0 && jobToAssign.priority > jobQueue.jobsInQueue[0].priority))) {
-                    jobQueue.AddJobInQueue(jobToAssign);
+                    if (jobQueue.AddJobInQueue(jobToAssign)) {
 #if DEBUG_LOG
-                    debugLog = $"{debugLog}\nJob was added to queue!";
-                    logComponent.PrintLogIfActive(debugLog);
+                        debugLog = $"{debugLog}\nJob was added to queue!";
+                        logComponent.PrintLogIfActive(debugLog);
 #endif
+                    } else {
+#if DEBUG_LOG
+                        debugLog = $"{debugLog}\nJob was NOT added to queue!";
+                        logComponent.PrintLogIfActive(debugLog);
+#endif
+                    }
+
                 }
                 // else {
                 //     debugLog = $"{debugLog}\nCouldn't assign job!";
@@ -4069,6 +4092,23 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         return false;
     }
     public bool DropItem(TileObject item, LocationGridTile gridTile = null) {
+        if (DropItemBase(item, gridTile)) {
+            LocationGridTile currentTile = item.gridTileLocation;
+            if (currentTile != null && currentTile.structure is Dwelling dwelling && item is ResourcePile pile) {
+                ResourcePile firstPileOfType = dwelling.GetFirstBuiltTileObjectOfType<ResourcePile>(item.tileObjectType, item);
+                if (firstPileOfType != null) {
+                    int amount = pile.resourceInPile;
+                    firstPileOfType.AdjustResourceInPile(amount);
+                    InnerMapManager.Instance.ShowAreaMapTextPopup($"+{amount}", firstPileOfType.worldPosition, Color.green);
+                    TraitManager.Instance.CopyStatuses(pile, firstPileOfType);
+                    dwelling.RemovePOI(pile);
+                }
+            }
+            return true;
+        }
+        return false;
+    }
+    private bool DropItemBase(TileObject item, LocationGridTile gridTile) {
         if (UnobtainItem(item)) {
             //if (item.specialTokenType.CreatesObjectWhenDropped()) {
             //    structure.AddItem(item, gridTile);
@@ -5322,6 +5362,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             Prisoner prisoner = traitContainer.GetTraitOrStatus<Prisoner>("Prisoner");
             if (prisoner != null && prisoner.IsFactionPrisonerOf(PlayerManager.Instance.player.playerFaction)) {
                 traitContainer.RemoveRestrainAndImprison(this);
+                if (isLycanthrope) {
+                    lycanData.limboForm.traitContainer.RemoveRestrainAndImprison(lycanData.limboForm);
+                }
             }
         }
         //List<Trait> traitOverrideFunctions = traitContainer.GetTraitOverrideFunctions(TraitManager.Initiate_Map_Visual_Trait);
@@ -5986,6 +6029,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                     currentRegion.RemoveCharacterFromLocation(this);
                 }
             }
+            previousCharacterDataComponent.SetHomeSettlementOnDeath(homeSettlement);
             if (homeRegion != null) {
                 Region home = homeRegion;
                 LocationStructure homeStructure = this.homeStructure;
@@ -6096,6 +6140,10 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                     Trait trait = afterDeathTraitOverrideFunctions[i];
                     trait.AfterDeath(this);
                 }
+            }
+
+            if (hasMarker) {
+                marker.UpdateName();
             }
 
             //         if(responsibleCharacter != null) {

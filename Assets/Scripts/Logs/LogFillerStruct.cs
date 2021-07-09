@@ -24,7 +24,7 @@ public struct LogFillerStruct {
     }
     public LogFillerStruct(string formattedLogFillerString, LOG_IDENTIFIER identifier) {
         this.identifier = identifier;
-        if (identifier == LOG_IDENTIFIER.STRING_1 || identifier == LOG_IDENTIFIER.STRING_2) {
+        if (identifier == LOG_IDENTIFIER.STRING_1 || identifier == LOG_IDENTIFIER.STRING_2 || identifier == LOG_IDENTIFIER.PARTY_2) {
             //assume that filler is only a string value
             value = formattedLogFillerString;
             type = null;

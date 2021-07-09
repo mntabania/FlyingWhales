@@ -95,10 +95,11 @@ public class CharacterClassComponent : CharacterComponent {
         owner.UpdateCanCombatState();
 
         //Misc
-        if (previousClassName == "Ratman") {
+        //Miner reference: https://trello.com/c/fLZ4gedj/5377-miners-sometimes-cannot-reach-rocks-in-cave
+        if (previousClassName == "Ratman" || previousClassName == "Miner") {
             owner.movementComponent.SetEnableDigging(false);
         }
-        if (characterClass.className == "Ratman") {
+        if (characterClass.className == "Ratman" || characterClass.className == "Miner") {
             owner.movementComponent.SetEnableDigging(true);
         }
         //Should not remove necromancer trait when necromancer becomes werewolf because it is only temporary

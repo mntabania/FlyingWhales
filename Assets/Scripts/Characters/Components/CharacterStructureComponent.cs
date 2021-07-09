@@ -28,6 +28,16 @@ public class CharacterStructureComponent : CharacterComponent {
     public bool HasWorkPlaceStructure() {
         return workPlaceStructure != null;
     }
+    public bool TryUnassignFromCurrentWorkStructureOnClassChange(Character p_character, string p_newClassName) {
+        if (workPlaceStructure != null) {
+            //if actor can no longer work at its current work structure given new class, unassign them
+            CharacterClassData classData = CharacterManager.Instance.GetOrCreateCharacterClassData(p_newClassName);
+            if (classData.workStructureType != workPlaceStructure.structureType) {
+                return workPlaceStructure.RemoveAssignedWorker(p_character);
+            }
+        }
+        return false;
+    }
     #endregion
 
     #region Purchasing

@@ -532,7 +532,9 @@ public class Region : ISavable, ILogFiller {
         LocationStructure chosenStructure = null;
         for (int i = 0; i < allStructures.Count; i++) {
             LocationStructure currStructure = allStructures[i];
-            if (!currStructure.IsOccupied() && currStructure.settlementLocation != null && currStructure.settlementLocation.locationType == LOCATION_TYPE.DUNGEON && currStructure.passableTiles.Count > 0) {
+            if (!currStructure.IsOccupied() && currStructure.settlementLocation != null && 
+                currStructure.settlementLocation.locationType == LOCATION_TYPE.DUNGEON && currStructure.passableTiles.Count > 0 &&
+                !(currStructure is AnimalDen)) {
                 structureChoices.Add(currStructure);
             }
         }
@@ -661,6 +663,20 @@ public class Region : ISavable, ILogFiller {
             List<TileObject> tileObjects = allStructures[i].GetTileObjectsOfType(type);
             if (tileObjects != null && tileObjects.Count > 0) {
                 p_tileObjects.AddRange(tileObjects);
+            }
+        }
+    }
+    public void PopulateBuiltTileObjectsOfTypeWithAreaDistanceFrom(List<TileObject> p_tileObjects, TILE_OBJECT_TYPE type, Area p_sourceArea, int p_distanceLimit) {
+        for (int i = 0; i < allStructures.Count; i++) {
+            List<TileObject> tileObjects = allStructures[i].GetTileObjectsOfType(type);
+            if (tileObjects != null && tileObjects.Count > 0) {
+                for (int j = 0; j < tileObjects.Count; j++) {
+                    TileObject t = tileObjects[j];
+                    LocationGridTile gridTile = t.gridTileLocation;
+                    if (t.mapObjectState == MAP_OBJECT_STATE.BUILT && gridTile != null && gridTile.area.GetAreaDistanceTo(p_sourceArea) <= p_distanceLimit) {
+                        p_tileObjects.Add(t);
+                    }
+                }
             }
         }
     }
@@ -933,10 +949,20 @@ public class Region : ISavable, ILogFiller {
         villageSpots.Clear();
         villageSpots.AddRange(p_villageSpots);
     }
-    public VillageSpot GetRandomUnoccupiedVillageSpot() {
+    public VillageSpot GetFirstUnoccupiedVillageSpot() {
         for (int i = 0; i < villageSpots.Count; i++) {
             VillageSpot villageSpot = villageSpots[i];
             if (!villageSpot.mainSpot.structureComponent.HasStructureInArea() && !villageSpot.mainSpot.IsNextToOrPartOfVillage() && !villageSpot.mainSpot.gridTileComponent.HasCorruption()) {
+                return villageSpot;
+            }
+        }
+        return null;
+    }
+    public VillageSpot GetFirstUnoccupiedVillageSpotThatCanAccomodateFaction(FACTION_TYPE p_factionType) {
+        for (int i = 0; i < villageSpots.Count; i++) {
+            VillageSpot villageSpot = villageSpots[i];
+            if (!villageSpot.mainSpot.structureComponent.HasStructureInArea() && !villageSpot.mainSpot.IsNextToOrPartOfVillage() && 
+                !villageSpot.mainSpot.gridTileComponent.HasCorruption() && villageSpot.CanAccommodateFaction(p_factionType)) {
                 return villageSpot;
             }
         }

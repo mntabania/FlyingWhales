@@ -114,7 +114,7 @@ public abstract class BaseMonsterBehaviour : CharacterBehaviourComponent {
                         p_log += "\n-Inside territory or home structure";
 #endif
                         int fiftyPercentOfMaxHP = Mathf.RoundToInt(summon.maxHP * 0.5f);
-                        if (summon.currentHP < fiftyPercentOfMaxHP && !summon.traitContainer.HasTrait("Poisoned") && !summon.traitContainer.HasTrait("Burning")) {
+                        if (summon.currentHP < fiftyPercentOfMaxHP && !summon.traitContainer.HasTrait("Poisoned") && !summon.traitContainer.HasTrait("Burning") && ShouldSleep(summon)) {
 #if DEBUG_LOG
                             p_log += "\n-Less than 50% of Max HP, Sleep";
 #endif
@@ -127,7 +127,7 @@ public abstract class BaseMonsterBehaviour : CharacterBehaviourComponent {
 #endif
                             if (roll < 35) {
                                 hasAddedJob = summon.jobComponent.TriggerRoamAroundTerritory(out p_producedJob);
-                            } else {
+                            } else if (ShouldSleep(summon)) {
                                 TIME_IN_WORDS currTime = GameManager.Instance.GetCurrentTimeInWordsOfTick();
                                 if (currTime == TIME_IN_WORDS.LATE_NIGHT || currTime == TIME_IN_WORDS.AFTER_MIDNIGHT) {
                                     int sleepRoll = UnityEngine.Random.Range(0, 100);
@@ -228,5 +228,8 @@ public abstract class BaseMonsterBehaviour : CharacterBehaviourComponent {
         producedJob = null;
         return false;
     }
-#endregion
+    private bool ShouldSleep(Character p_character) {
+        return !p_character.IsUndead() && p_character.race != RACE.GOLEM;
+    }
+    #endregion
 }

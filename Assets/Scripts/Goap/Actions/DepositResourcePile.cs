@@ -129,25 +129,32 @@ public class DepositResourcePile : GoapAction {
         Character actor = node.actor;
         IPointOfInterest poiTarget = node.poiTarget;
         // actor.UncarryPOI(poiTarget, dropLocation: actor.gridTileLocation);
-        if (actor.carryComponent.carriedPOI is ResourcePile resourcePile) {
-            actor.UncarryPOI(resourcePile, dropLocation: actor.gridTileLocation);
+        //if (actor.carryComponent.carriedPOI is ResourcePile resourcePile) {
+        if (poiTarget != null) {
+            actor.UncarryPOI(poiTarget, dropLocation: actor.gridTileLocation);
         }
+        //}
     }
     public override void OnStopWhilePerforming(ActualGoapNode node) {
         base.OnStopWhilePerforming(node);
         Character actor = node.actor;
         IPointOfInterest poiTarget = node.poiTarget;
         // actor.UncarryPOI(poiTarget);
-        if (actor.carryComponent.carriedPOI is ResourcePile resourcePile) {
-            actor.UncarryPOI(resourcePile, dropLocation: actor.gridTileLocation);
+        //if (actor.carryComponent.carriedPOI is ResourcePile resourcePile) {
+        if (poiTarget != null) {
+            actor.UncarryPOI(poiTarget, dropLocation: actor.gridTileLocation);
         }
+        //}
     }
     public override void OnInvalidAction(ActualGoapNode node) {
         base.OnInvalidAction(node);
         Character actor = node.actor;
-        if (actor.carryComponent.carriedPOI is ResourcePile resourcePile) {
-            actor.UncarryPOI(resourcePile, dropLocation: actor.gridTileLocation);
+        IPointOfInterest poiTarget = node.poiTarget;
+        //if (actor.carryComponent.carriedPOI is ResourcePile resourcePile) {
+        if (poiTarget != null) {
+            actor.UncarryPOI(poiTarget, dropLocation: actor.gridTileLocation);
         }
+        //}
     }
     public override GoapActionInvalidity IsInvalid(ActualGoapNode node) {
         Character actor = node.actor;
@@ -283,6 +290,16 @@ public class DepositResourcePile : GoapAction {
                 actor.UncarryPOI(poiTarget, dropLocation: targetTile);
             } else {
                 actor.UncarryPOI(poiTarget, addToLocation: false);
+            }
+            if (goapNode.associatedJobType == JOB_TYPE.HAUL && poiTarget.gridTileLocation != null) {
+                ResourcePile firstResourcePileOfType = structure.GetFirstBuiltTileObjectOfType<ResourcePile>(poiTarget.tileObjectType, poiTarget);
+                if (firstResourcePileOfType != null) {
+                    int amount = poiTarget.resourceInPile;
+                    firstResourcePileOfType.AdjustResourceInPile(amount);
+                    InnerMapManager.Instance.ShowAreaMapTextPopup($"+{amount}", firstResourcePileOfType.worldPosition, Color.green);
+                    TraitManager.Instance.CopyStatuses(poiTarget, firstResourcePileOfType);
+                    poiTarget.gridTileLocation.structure.RemovePOI(poiTarget);
+                }
             }
         } else {
             actor.UncarryPOI(poiTarget);

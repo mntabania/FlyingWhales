@@ -47,25 +47,29 @@ public class DemonDefendBehaviour : CharacterBehaviourComponent {
                 }
             }
              
-             //check if any demonic structures are being attacked
-             for (int i = 0; i < PlayerManager.Instance.player.playerSettlement.allStructures.Count; i++) {
-                 LocationStructure structure = PlayerManager.Instance.player.playerSettlement.allStructures[i];
-                 if (structure is DemonicStructure demonicStructure && demonicStructure.currentAttackers.Count > 0) {
-                     Character attacker = null;
-                     for (int j = 0; j < demonicStructure.currentAttackers.Count; j++) {
-                         Character c = demonicStructure.currentAttackers.ElementAt(j);
-                         if (!c.isBeingSeized) {
-                             attacker = c;
-                             break;
-                         }
-                     }
-                     if (attacker != null) {
-                         character.combatComponent.Fight(attacker, CombatManager.Defending_Home, null, true);
-                         producedJob = null;
-                         return true;    
-                     }
-                 }
-             }
+            //check if any demonic structures are being attacked
+            for (int i = 0; i < PlayerManager.Instance.player.playerSettlement.allStructures.Count; i++) {
+                LocationStructure structure = PlayerManager.Instance.player.playerSettlement.allStructures[i];
+                if (structure is DemonicStructure demonicStructure && demonicStructure.currentAttackers.Count > 0) {
+                    Character attacker = null;
+                    for (int j = 0; j < demonicStructure.currentAttackers.Count; j++) {
+                        Character c = demonicStructure.currentAttackers.ElementAt(j);
+                        LocationGridTile t = c.gridTileLocation;
+                        if (!c.isBeingSeized 
+                            && !c.isDead 
+                            && (c.currentSettlement == PlayerManager.Instance.player.playerSettlement || (t != null && t.corruptionComponent.isCorrupted) || t.structure.structureType.IsPlayerStructure()) 
+                            && c.combatComponent.IsCurrentlyAttackingDemonicStructure()) {
+                            attacker = c;
+                            break;
+                        }
+                    }
+                    if (attacker != null) {
+                        character.combatComponent.Fight(attacker, CombatManager.Defending_Home, null, true);
+                        producedJob = null;
+                        return true;    
+                    }
+                }
+            }
 
             if (targetStructure != null && !targetStructure.hasBeenDestroyed) {
                 if(character.currentStructure != targetStructure) {

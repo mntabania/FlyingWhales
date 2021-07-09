@@ -42,7 +42,7 @@ public class UIManager : BaseMonoBehaviour {
     public const string flawTextColor = "#FF073A";
 
     public Canvas canvas;
-    public RectTransform smallInfoCanvas;
+    public RectTransform smallInfoCanvasRT;
     public RectTransform canvasRectTransform;
     private InfoUIBase[] allMenus;
 
@@ -68,6 +68,7 @@ public class UIManager : BaseMonoBehaviour {
     public GameObject characterPortraitHoverInfoGO;
     public CharacterPortrait characterPortraitHoverInfo;
     public RectTransform characterPortraitHoverInfoRT;
+    public Canvas smallInfoCanvas;
     private List<int> cornersOutside = new List<int>();
     private Vector3[] cornerVectors = new Vector3[4]; //bottom-left, top-left, top-right, bottom-right
 
@@ -598,9 +599,13 @@ public class UIManager : BaseMonoBehaviour {
     //     // }
     // }
     private void PositionTooltip(Vector3 position, GameObject tooltipParent, RectTransform rtToReposition, RectTransform boundsRT) {
-        var v3 = position;
-        if (tooltipParent.transform.parent != smallInfoCanvas) {
-            tooltipParent.transform.SetParent(smallInfoCanvas);    
+        Vector3 v3 = position;
+        
+        if (tooltipParent.transform.parent != smallInfoCanvasRT) {
+            tooltipParent.transform.SetParent(smallInfoCanvasRT);    
+        }
+        if (tooltipParent.transform.localScale != Vector3.one) {
+            tooltipParent.transform.localScale = Vector3.one;    
         }
 
         rtToReposition.pivot = new Vector2(0f, 1f);
@@ -623,14 +628,17 @@ public class UIManager : BaseMonoBehaviour {
             v3.y -= 25f;
         }
         
-        Vector3 clampedPos = KeepFullyOnScreen(smallInfoBGRT, v3, canvasRectTransform);
-        (tooltipParent.transform as RectTransform).anchoredPosition = clampedPos;
+        Vector3 clampedPos = KeepFullyOnScreen(smallInfoBGRT, v3, smallInfoCanvas, smallInfoCanvasRT);
+        RectTransformUtility.ScreenPointToLocalPointInRectangle(smallInfoCanvasRT, clampedPos, null, out var localPoint);
+        
+        (tooltipParent.transform as RectTransform).localPosition = localPoint; //clampedPos;
     }
-     private Vector3 KeepFullyOnScreen(RectTransform rect, Vector3 newPos, RectTransform CanvasRect) {
+     private Vector3 KeepFullyOnScreen(RectTransform rect, Vector3 newPos, Canvas canvas, RectTransform CanvasRect) {
          float minX = 0f;
-         float maxX = (CanvasRect.sizeDelta.x - rect.sizeDelta.x); //* 0.5f;
-         float minY = rect.sizeDelta.y; //* -0.5f;
-         float maxY = CanvasRect.sizeDelta.y; //* 0.5f;
+         var scaleFactor = canvas.scaleFactor;
+         float maxX = ((CanvasRect.sizeDelta.x * scaleFactor) - (rect.sizeDelta.x * scaleFactor));
+         float minY = rect.sizeDelta.y * scaleFactor;
+         float maxY = CanvasRect.sizeDelta.y * scaleFactor;
         
          newPos.x = Mathf.Clamp(newPos.x, minX, maxX);
          newPos.y = Mathf.Clamp(newPos.y, minY, maxY);
@@ -1697,12 +1705,12 @@ public class UIManager : BaseMonoBehaviour {
     #endregion
 
     #region Overlap UI
-    public void InitializeOverlapUI() {
-        for (int i = 0; i < unallowOverlaps.Count; i++) {
-            UnallowOverlaps currOverlap = unallowOverlaps[i];
-            currOverlap.Initialize();
-        }
-    }
+    // public void InitializeOverlapUI() {
+    //     for (int i = 0; i < unallowOverlaps.Count; i++) {
+    //         UnallowOverlaps currOverlap = unallowOverlaps[i];
+    //         currOverlap.Initialize();
+    //     }
+    // }
     public void AddUnallowOverlapUI(UnallowOverlaps overlap) {
         unallowOverlaps.Add(overlap);
     }

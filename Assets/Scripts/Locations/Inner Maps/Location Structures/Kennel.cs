@@ -48,6 +48,10 @@ namespace Inner_Maps.Location_Structures {
         #endregion
         
         #region Overrides
+        protected override void AfterCharacterAddedToLocation(Character p_character) {
+            base.AfterCharacterAddedToLocation(p_character);
+            Messenger.Broadcast(PlayerSkillSignals.RELOAD_PLAYER_ACTIONS, this as IPlayerActionTarget);
+        }
         public override void SetStructureObject(LocationStructureObject structureObj) {
             base.SetStructureObject(structureObj);
             _markerDummy = ObjectPoolManager.Instance.InstantiateObjectFromPool("MarkerDummy", Vector3.zero, Quaternion.identity, structureObj.objectsParent).GetComponent<MarkerDummy>();
@@ -64,6 +68,9 @@ namespace Inner_Maps.Location_Structures {
             for (int i = 0; i < characters.Count; i++) {
                 Character character = characters[i];
                 character.traitContainer.RemoveRestrainAndImprison(character);
+                if (character.isLycanthrope) {
+                    character.lycanData.limboForm.traitContainer.RemoveRestrainAndImprison(character.lycanData.limboForm);
+                }
             }
             base.DestroyStructure(p_responsibleCharacter, isPlayerSource);
             if (_markerDummy != null) {
@@ -74,8 +81,12 @@ namespace Inner_Maps.Location_Structures {
             if(preOccupiedBy != null) {
                 return true;
             }
-            int numOfSummons = GetNumberOfSummonsHere();
-            return numOfSummons >= 1;
+            // int numOfSummons = GetNumberOfSummonsHere();
+            // return numOfSummons >= 1;
+            
+            //checked characters instead because of this issue
+            //https://trello.com/c/AKcwTMkY/5383-drop-lycanwerewolf-form-kennel-bug
+            return HasCharactersInside();
         }
         public override void OnCharacterUnSeizedHere(Character character) {
             base.OnCharacterUnSeizedHere(character);
@@ -190,7 +201,15 @@ namespace Inner_Maps.Location_Structures {
             return GameUtilities.GetCenterTile(tiles.ToList(), tiles.ElementAt(0).parentMap.map);
         }
         public override bool IsAvailableForTargeting() {
-            return _occupyingSummon == null;
+            // return _occupyingSummon == null;
+            
+            //checked characters instead because of this issue
+            //https://trello.com/c/AKcwTMkY/5383-drop-lycanwerewolf-form-kennel-bug
+            return !HasCharactersInside();
+        }
+        public bool HasCharactersInside() {
+            int charactersHereCount = charactersHere.Count; 
+            return charactersHereCount > 0;
         }
         #endregion
 

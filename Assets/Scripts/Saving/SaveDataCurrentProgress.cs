@@ -685,22 +685,26 @@ public class SaveDataNotification {
 
     public void Load() {
         Log log = DatabaseManager.Instance.mainSQLDatabase.GetLogWithPersistentID(logID);
-        if (isIntel) {
-            IIntel intel = null;
-            if (isActionIntel) {
-                ActualGoapNode node = DatabaseManager.Instance.actionDatabase.GetActionByPersistentID(actionIntel.node);
-                intel = new ActionIntel(node);
-            } else {
-                InterruptHolder interrupt = DatabaseManager.Instance.interruptDatabase.GetInterruptByPersistentID(interruptIntel.interruptHolder);
-                intel = new InterruptIntel(interrupt);
-            }
-            Assert.IsNotNull(intel, $"Intel Notification for loading is null!");
-            UIManager.Instance.ShowPlayerNotification(intel, log, tickShown);
-        } else {
-            UIManager.Instance.ShowPlayerNotification(log, tickShown);
-        }
         if (log != null) {
+            if (isIntel) {
+                IIntel intel = null;
+                if (isActionIntel) {
+                    ActualGoapNode node = DatabaseManager.Instance.actionDatabase.GetActionByPersistentID(actionIntel.node);
+                    intel = new ActionIntel(node);
+                } else {
+                    InterruptHolder interrupt = DatabaseManager.Instance.interruptDatabase.GetInterruptByPersistentID(interruptIntel.interruptHolder);
+                    intel = new InterruptIntel(interrupt);
+                }
+                Assert.IsNotNull(intel, $"Intel Notification for loading is null!");
+                UIManager.Instance.ShowPlayerNotification(intel, log, tickShown);
+            } else {
+                UIManager.Instance.ShowPlayerNotification(log, tickShown);
+            }
             LogPool.Release(log);
+        } else {
+#if DEBUG_LOG
+            Debug.LogError("Loading Notif but Log is null!");
+#endif
         }
     }
 }

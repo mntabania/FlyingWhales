@@ -44,6 +44,7 @@ public class DefensePointUIController : MVCUIController, DefensePointUIView.ILis
 
 	private void Start() {
 		UIManager.Instance.onDefensePointClicked += OnDefensePointClicked;
+		Messenger.AddListener<int, int>(PlayerSignals.PLAYER_ADJUSTED_MANA, OnManaAdjusted);
 	}
 
 	private void OnDestroy() {
@@ -54,6 +55,10 @@ public class DefensePointUIController : MVCUIController, DefensePointUIView.ILis
 			m_defensePointUIView.Unsubscribe(this);
 		}
 		UnlistenToDeployedItems();
+	}
+
+	void OnManaAdjusted(int p_1, int p_2) {
+		ProcessDeployButtonDisplay();
 	}
 
 	void ReturnAllItemToPool() {
@@ -269,6 +274,9 @@ public class DefensePointUIController : MVCUIController, DefensePointUIView.ILis
 
 	int displayedCount = 0;
 	private void ProcessDeployButtonDisplay() {
+		if (m_targetPartyStructure == null) {
+			return;
+		}
 		displayedCount = 0;
 		int deployedCount = m_targetPartyStructure.partyData.deployedSummonCount;
 		m_deployedSummonsUI.ForEach((eachUi) => {
@@ -306,6 +314,7 @@ public class DefensePointUIController : MVCUIController, DefensePointUIView.ILis
 	}
 
 	public void OnCloseClicked() {
+		m_defensePointUIView.HideToolTip();
 		HideSummonItems();
 		ReturnAllItemToPool();
 		HideUI();
@@ -315,26 +324,30 @@ public class DefensePointUIController : MVCUIController, DefensePointUIView.ILis
 	}
 
 	void OnHoverItemOccupiedStructure(MonsterAndDemonUnderlingCharges p_monsterAndDemonUnderlingCharges) {
+		string strDescription = string.Empty;
+		string strName = string.Empty;
+		string strChargeTime = string.Empty;
 		CharacterClassData data = CharacterManager.Instance.GetOrCreateCharacterClassData(p_monsterAndDemonUnderlingCharges.characterClassName);
 		if (data.combatBehaviourType != CHARACTER_COMBAT_BEHAVIOUR.None) {
 			CharacterCombatBehaviour combatBehaviour = CombatManager.Instance.GetCombatBehaviour(data.combatBehaviourType);
-			UIManager.Instance.ShowSmallInfo(combatBehaviour.description, m_defensePointUIView.UIModel.hoverPosition, combatBehaviour.name);
+			strDescription = combatBehaviour.description;
+			strName = combatBehaviour.name; 
+			//UIManager.Instance.ShowSmallInfo(combatBehaviour.description, m_defensePointUIView.UIModel.hoverPosition, combatBehaviour.name);
 		}
-		/*
-		if (p_monsterAndDemonUnderlingCharges.isDemon) {
-			MinionPlayerSkill minionPlayerSkill = PlayerSkillManager.Instance.GetMinionPlayerSkillDataByMinionType(p_monsterAndDemonUnderlingCharges.minionType);
-			PlayerUI.Instance.skillDetailsTooltip.ShowPlayerSkillDetails(minionPlayerSkill, PlayerUI.Instance.minionListHoverPosition);
-		}*/
+		
 		if (!p_monsterAndDemonUnderlingCharges.isDemon && p_monsterAndDemonUnderlingCharges.isReplenishing) {
-			PlayerUI.Instance.OnHoverSpellChargeRemainingForSummon(data, p_monsterAndDemonUnderlingCharges);
-		} else if (p_monsterAndDemonUnderlingCharges.isDemon && p_monsterAndDemonUnderlingCharges.isReplenishing) {
-			SkillData skillData = PlayerSkillManager.Instance.GetMinionPlayerSkillDataByMinionType(p_monsterAndDemonUnderlingCharges.minionType);
-			PlayerUI.Instance.OnHoverSpellChargeRemaining(skillData, p_monsterAndDemonUnderlingCharges);
+			strChargeTime = PlayerUI.Instance.OnHoverSpellChargeRemainingForSummon(data, p_monsterAndDemonUnderlingCharges);
+		}
+
+		if (string.IsNullOrEmpty(strChargeTime)) {
+			m_defensePointUIView.DisplayToolTipWithoutCharge(strName, strDescription);
+		} else {
+			m_defensePointUIView.DisplayToolTipWithCharge(strName, strDescription, strChargeTime);
 		}
 	}
 
 	void OnHoverExitItemOccupiedStructure(MonsterAndDemonUnderlingCharges monsterAndDemonUnderlingCharges) {
-		UIManager.Instance.HideSmallInfo();
+		m_defensePointUIView.HideToolTip();
 	}
 
 	public void OnCloseSummonSubContainer() { m_defensePointUIView.HideAllSubMenu(); m_defensePointUIView.ProcessSummonDisplay(m_targetPartyStructure.startingSummonCount, m_targetPartyStructure.MAX_SUMMON_COUNT, PlayerManager.Instance.player.plagueComponent.plaguePoints); }

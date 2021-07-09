@@ -63,6 +63,7 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 		UIManager.Instance.onKennelClicked += OnKennelClicked;
 		UIManager.Instance.onTortureChamberClicked += OnTortureChambersClicked;
 		Messenger.AddListener<LocationGridTile>(PartySignals.PARTY_TILE_CHOSEN_FOR_SPAWNING, OnTileChosenForSpawning);
+		Messenger.AddListener<int, int>(PlayerSignals.PLAYER_ADJUSTED_MANA, OnManaAdjusted);
 	}
 
 	private void OnDestroy() {
@@ -75,6 +76,10 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 			m_maraudUIView.Unsubscribe(this);
 		}
 		UnlistenToDeployedItems();
+	}
+
+	void OnManaAdjusted(int p_1, int p_2) {
+		ProcessButtonAvailability();
 	}
 
 	void ListenToDeployedItems() {
@@ -279,30 +284,41 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 	}
 
 	void OnHoverItemOccupiedStructure(MonsterAndDemonUnderlingCharges p_monsterAndDemonUnderlingCharges) {
+		string strDescription = string.Empty;
+		string strName = string.Empty;
+		string strChargeTime = string.Empty;
 		if (!m_targetPartyStructure.IsAvailableForTargeting()) {
 			UIManager.Instance.ShowSmallInfo("You cant add a team member bacause the structure is occupied", "Structure Occupied", true);
 		} else {
 			CharacterClassData data = CharacterManager.Instance.GetOrCreateCharacterClassData(p_monsterAndDemonUnderlingCharges.characterClassName);
 			if (data.combatBehaviourType != CHARACTER_COMBAT_BEHAVIOUR.None) {
 				CharacterCombatBehaviour combatBehaviour = CombatManager.Instance.GetCombatBehaviour(data.combatBehaviourType);
-				UIManager.Instance.ShowSmallInfo(combatBehaviour.description, m_maraudUIView.UIModel.hoverPosition, combatBehaviour.name);
+				strDescription = combatBehaviour.description;
+				strName = combatBehaviour.name;
+				//UIManager.Instance.ShowSmallInfo(combatBehaviour.description, m_maraudUIView.UIModel.hoverPosition, combatBehaviour.name);
 			}
 			if (!p_monsterAndDemonUnderlingCharges.isDemon && p_monsterAndDemonUnderlingCharges.isReplenishing) {
-				PlayerUI.Instance.OnHoverSpellChargeRemainingForSummon(data, p_monsterAndDemonUnderlingCharges);
-			} else if(p_monsterAndDemonUnderlingCharges.isDemon && p_monsterAndDemonUnderlingCharges.isReplenishing){
-				SkillData skillData = PlayerSkillManager.Instance.GetMinionPlayerSkillDataByMinionType(p_monsterAndDemonUnderlingCharges.minionType); 
-				PlayerUI.Instance.OnHoverSpellChargeRemaining(skillData, p_monsterAndDemonUnderlingCharges);
+				strChargeTime = PlayerUI.Instance.OnHoverSpellChargeRemainingForSummon(data, p_monsterAndDemonUnderlingCharges);
+			} else if(p_monsterAndDemonUnderlingCharges.isDemon){
+				MinionPlayerSkill minionPlayerSkill = PlayerSkillManager.Instance.GetMinionPlayerSkillDataByMinionType(p_monsterAndDemonUnderlingCharges.minionType);
+				strChargeTime = PlayerUI.Instance.OnHoverSpellChargeRemaining(minionPlayerSkill, p_monsterAndDemonUnderlingCharges);
 			}
 			/*
 			if (p_monsterAndDemonUnderlingCharges.isDemon) {
 				MinionPlayerSkill minionPlayerSkill = PlayerSkillManager.Instance.GetMinionPlayerSkillDataByMinionType(p_monsterAndDemonUnderlingCharges.minionType);
 				PlayerUI.Instance.skillDetailsTooltip.ShowPlayerSkillDetails(minionPlayerSkill, PlayerUI.Instance.minionListHoverPosition);
 			}*/
+			//UIManager.Instance.ShowSmallInfo(txtDescription, m_maraudUIView.UIModel.hoverPosition, textName);
+			if (string.IsNullOrEmpty(strChargeTime)) {
+				m_maraudUIView.DisplayToolTipWithoutCharge(strName, strDescription);
+			} else {
+				m_maraudUIView.DisplayToolTipWithCharge(strName, strDescription, strChargeTime);
+			}
 		}
 	}
 
 	void OnHoverExitItemOccupiedStructure(MonsterAndDemonUnderlingCharges monsterAndDemonUnderlingCharges) {
-		UIManager.Instance.HideSmallInfo();
+		m_maraudUIView.HideToolTip();
 	}
 
 	void InitializeTargets() {
@@ -512,6 +528,9 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 	}
 
 	void ProcessButtonAvailability() {
+		if (m_targetPartyStructure == null) {
+			return;
+		}
 		if (!m_isTeamDeployed) {
 			if (m_targetPartyStructure.partyData.readyForDeployMinionCount > 0 && m_targetPartyStructure.partyData.readyForDeployTargetCount > 0) {
 				m_maraudUIView.EnableDeployButton();
@@ -678,6 +697,7 @@ public class MaraudUIController : MVCUIController, MaraudUIView.IListener {
 	}
 
 	public void OnCloseClicked() {
+		m_maraudUIView.HideToolTip();
 		HideAvailableItems();
 		ReturnAllItemToPool();
 		HideUI();

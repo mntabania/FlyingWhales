@@ -19,21 +19,19 @@ public class LetGoData : PlayerAction {
         bool isValid = base.IsValid(target);
         if (isValid) {
             if (target is Character targetCharacter) {
-                if (!targetCharacter.isDead) {
-                    if (targetCharacter.currentStructure is Kennel kennel && kennel.occupyingSummon == targetCharacter) {
-                        return true;
-                    }
-                    if (targetCharacter.gridTileLocation != null && targetCharacter.currentStructure is TortureChambers tortureChambers && 
-                        targetCharacter.currentStructure.IsTilePartOfARoom(targetCharacter.gridTileLocation, out var room) && room.parentStructure == tortureChambers) {
-                        return true;
-                    }    
+                if (targetCharacter.currentStructure is Kennel) { //kennel && kennel.occupyingSummon == targetCharacter
+                    return true;
+                }
+                if (targetCharacter.gridTileLocation != null && targetCharacter.currentStructure is TortureChambers tortureChambers && 
+                    targetCharacter.currentStructure.IsTilePartOfARoom(targetCharacter.gridTileLocation, out var room) && room.parentStructure == tortureChambers) {
+                    return true;
                 }
             } else if (target is DemonicStructure demonicStructure) {
-                if (demonicStructure is Kennel kennel && kennel.occupyingSummon != null) {
+                if (demonicStructure is Kennel kennel && kennel.HasCharactersInside()) {
                     return true;
                 }
                 if (demonicStructure is TortureChambers tortureChambers && tortureChambers.rooms.ElementAtOrDefault(0) is PrisonCell prisonCell && 
-                    prisonCell.HasValidOccupant()) {
+                    prisonCell.HasOccupants()) {
                     return true;
                 }
             }
@@ -56,10 +54,10 @@ public class LetGoData : PlayerAction {
     }
     public override bool CanPerformAbilityTowards(LocationStructure targetStructure) {
         if (targetStructure is Kennel kennel) {
-            if (kennel.occupyingSummon == null) {
+            if (!kennel.HasCharactersInside()) {
                 return false;
             }
-            if (!CanPerformAbilityTowards(kennel.occupyingSummon)) {
+            if (!HasCharacterInKennelThatIsValid(kennel)) {
                 return false;
             }
         } else if (targetStructure is TortureChambers tortureChambers) {
@@ -89,10 +87,10 @@ public class LetGoData : PlayerAction {
     public override string GetReasonsWhyCannotPerformAbilityTowards(LocationStructure p_targetStructure) {
         string reasons = base.GetReasonsWhyCannotPerformAbilityTowards(p_targetStructure);
         if (p_targetStructure is Kennel kennel) {
-            if (kennel.occupyingSummon == null) {
+            if (!kennel.HasCharactersInside()) {
                 reasons += "No Character at Kennel.";
             } else {
-                reasons += GetReasonsWhyCannotPerformAbilityTowards(kennel.occupyingSummon);
+                reasons += "Cannot let go of anybody. Cannot let go of characters being Brainwashed or Tortured";
             }
         } else if (p_targetStructure is TortureChambers tortureChambers) {
             if (tortureChambers.rooms.Length <= 0) {
@@ -105,8 +103,18 @@ public class LetGoData : PlayerAction {
     }
     public override void ActivateAbility(LocationStructure targetStructure) {
         if (targetStructure is Kennel kennel) {
-            Assert.IsNotNull(kennel.occupyingSummon);
-            ActivateAbility(kennel.occupyingSummon);    
+            List<Character> charactersInKennel = RuinarchListPool<Character>.Claim();
+            charactersInKennel.AddRange(kennel.charactersHere);
+            for (int i = 0; i < charactersInKennel.Count; i++) {
+                Character character = charactersInKennel[i];
+                if (CanPerformAbilityTowards(character)) {
+                    LetGo(character);
+                }
+            }
+            RuinarchListPool<Character>.Release(charactersInKennel);
+            // Assert.IsNotNull(kennel.occupyingSummon);
+            // ActivateAbility(kennel.occupyingSummon);    
+            base.ActivateAbility(targetStructure);
         } else if (targetStructure is TortureChambers tortureChambers) {
             Assert.IsFalse(tortureChambers.rooms.Length <= 0);
             PrisonCell prisonCell = tortureChambers.rooms[0] as PrisonCell;
@@ -143,13 +151,23 @@ public class LetGoData : PlayerAction {
         return GetFirstCharacterInPrisonCellThatIsValid(prisonCell) != null;
     }
     private Character GetFirstCharacterInPrisonCellThatIsValid(PrisonCell prisonCell) {
-        for (int i = 0; i < prisonCell.tilesInRoom.Count; i++) {
-            LocationGridTile t = prisonCell.tilesInRoom[i];
-            for (int j = 0; j < t.charactersHere.Count; j++) {
-                Character c = t.charactersHere[j];
-                if (CanPerformAbilityTowards(c)) {
-                    return c;
-                }
+        for (int i = 0; i < prisonCell.parentStructure.charactersHere.Count; i++) {
+            Character character = prisonCell.parentStructure.charactersHere[i];
+            if (character.gridTileLocation != null && prisonCell.parentStructure.IsTilePartOfARoom(character.gridTileLocation, out var room) && 
+                room == prisonCell && CanPerformAbilityTowards(character)) {
+                return character;
+            }
+        }
+        return null;
+    }
+    private bool HasCharacterInKennelThatIsValid(Kennel kennel) {
+        return GetFirstCharacterInKennelThatIsValid(kennel) != null;
+    }
+    private Character GetFirstCharacterInKennelThatIsValid(Kennel kennel) {
+        for (int i = 0; i < kennel.charactersHere.Count; i++) {
+            Character c = kennel.charactersHere[i];
+            if (CanPerformAbilityTowards(c)) {
+                return c;
             }
         }
         return null;

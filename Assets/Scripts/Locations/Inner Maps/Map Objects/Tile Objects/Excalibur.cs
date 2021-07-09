@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Inner_Maps;
+using Inner_Maps.Location_Structures;
 using Traits;
 using UnityEngine.Assertions;
 
@@ -117,6 +118,7 @@ public class Excalibur : TileObject {
                 SetCharacterOwner(p_newOwner);
                 if (CanBecomeHero(p_newOwner)) {
                     _previousClassOfCurrentOwner = p_newOwner.characterClass.className;
+                    p_newOwner.structureComponent.TryUnassignFromCurrentWorkStructureOnClassChange(p_newOwner, "Hero");
                     p_newOwner.classComponent.AssignClass("Hero");    
                 }
                 //add traits to new carrier

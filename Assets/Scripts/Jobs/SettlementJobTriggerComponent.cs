@@ -366,7 +366,7 @@ public class SettlementJobTriggerComponent : JobTriggerComponent/*, SettlementCl
 	public bool HasTotalResource(RESOURCE resourceType, int neededResource) {
 		int resource = 0;
 		List<TileObject> piles = RuinarchListPool<TileObject>.Claim();
-		_owner.mainStorage.PopulateTileObjectsOfType<ResourcePile>(piles);
+		_owner.mainStorage.PopulateBuiltTileObjectsOfType<ResourcePile>(piles);
 		for (int i = 0; i < piles.Count; i++) {
 			ResourcePile resourcePile = piles[i] as ResourcePile;
 			if (resourcePile.providedResource == resourceType) {
@@ -383,7 +383,7 @@ public class SettlementJobTriggerComponent : JobTriggerComponent/*, SettlementCl
 			for (int i = 0; i < lumberyards.Count; i++) {
 				LocationStructure lumberyard = lumberyards[i];
 				piles = RuinarchListPool<TileObject>.Claim();
-				lumberyard.PopulateTileObjectsOfType<ResourcePile>(piles);
+				lumberyard.PopulateBuiltTileObjectsOfType<ResourcePile>(piles);
 				for (int j = 0; j < piles.Count; j++) {
 					ResourcePile resourcePile = piles[j] as ResourcePile;
 					if (resourcePile.resourceInPile >= neededResource) {
@@ -400,7 +400,7 @@ public class SettlementJobTriggerComponent : JobTriggerComponent/*, SettlementCl
 			for (int i = 0; i < mines.Count; i++) {
 				LocationStructure mine = mines[i];
 				piles = RuinarchListPool<TileObject>.Claim();
-				mine.PopulateTileObjectsOfType<ResourcePile>(piles);
+				mine.PopulateBuiltTileObjectsOfType<ResourcePile>(piles);
 				for (int j = 0; j < piles.Count; j++) {
 					ResourcePile resourcePile = piles[j] as ResourcePile;
 					if (resourcePile.resourceInPile >= neededResource) {
@@ -412,6 +412,18 @@ public class SettlementJobTriggerComponent : JobTriggerComponent/*, SettlementCl
 			}	
 		}
 		return false;
+	}
+	public bool HasAccessToResource(RESOURCE p_resource) {
+		switch (p_resource) {
+			case RESOURCE.STONE:
+				return _owner.HasStructure(STRUCTURE_TYPE.MINE);
+			case RESOURCE.WOOD:
+				return _owner.HasStructure(STRUCTURE_TYPE.LUMBERYARD);
+			case RESOURCE.FOOD:
+				return _owner.HasFoodProducingStructure();
+			default:
+				return false;
+		}
 	}
 	// private int GetMinimumResource(RESOURCE resource) {
 	// 	switch (resource) {
@@ -633,7 +645,7 @@ public class SettlementJobTriggerComponent : JobTriggerComponent/*, SettlementCl
 	public void TryCreateApprehend(Character target) {
 		if (target.currentSettlement == _owner && _owner.owner != null && target.traitContainer.HasTrait("Criminal") && !target.isDead && target.currentStructure != _owner.prison) {
 			if (_owner.HasJob(JOB_TYPE.APPREHEND, target) == false) {
-                if (target.crimeComponent.IsWantedBy(_owner.owner)) {
+                if (target.crimeComponent.IsWantedBy(_owner.owner) && target.gridTileLocation.IsNextToSettlementAreaOrPartOfSettlement(_owner)) {
                     GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.APPREHEND, INTERACTION_TYPE.DROP_RESTRAINED, target, _owner);
                     job.SetCanTakeThisJobChecker(JobManager.Can_Take_Apprehend);
                     job.SetStillApplicableChecker(JobManager.Apprehend_Settlement_Applicability);

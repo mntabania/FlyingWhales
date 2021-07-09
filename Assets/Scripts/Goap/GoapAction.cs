@@ -353,7 +353,7 @@ public class GoapAction {
         //https://trello.com/c/Pj6zRg3O/2404-paralyzed-vampire
         if (!actor.limiterComponent.canPerform && actionLocationType != ACTION_LOCATION_TYPE.NEARBY && actionLocationType != ACTION_LOCATION_TYPE.IN_PLACE) {
             //Cannot perform characters can only perform NEARBY and IN PLACE actions
-            requirementActionSatisfied = true;
+            requirementActionSatisfied = false;
         }
         
         if (requirementActionSatisfied) {

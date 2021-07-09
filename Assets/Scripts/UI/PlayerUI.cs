@@ -167,9 +167,10 @@ public class PlayerUI : BaseMonoBehaviour {
     }
 
     void OnFinishUnderlingCoolDown(MonsterAndDemonUnderlingCharges p_playerUnderlingComponent) {
-        string rawString = p_playerUnderlingComponent.characterClassName;
+        string displayName = CharacterManager.Instance.GetOrCreateCharacterClassData(p_playerUnderlingComponent.characterClassName).displayName;
+        string rawString = displayName;
         rawString += " is now available";
-        PopUpTextNotification.ShowPlayerPoppingTextNotif($"{UtilityScripts.Utilities.YellowDotIcon()}{UtilityScripts.Utilities.ColorizeName(p_playerUnderlingComponent.characterClassName)} is now available", popUpDisplayPoint, rawString.Length);
+        PopUpTextNotification.ShowPlayerPoppingTextNotif($"{UtilityScripts.Utilities.YellowDotIcon()}{UtilityScripts.Utilities.ColorizeName(displayName)} is now available", popUpDisplayPoint, rawString.Length);
     }
 
     void OnSpellCooldownFinished(SkillData p_skillData) {
@@ -633,19 +634,26 @@ public class PlayerUI : BaseMonoBehaviour {
     public void OnHoverSpell(SkillData skillData, UIHoverPosition position = null) {
         skillDetailsTooltip.ShowPlayerSkillDetails(skillData, position);
     }
-    public void OnHoverSpellChargeRemaining(SkillData skillData, MonsterAndDemonUnderlingCharges p_monsterUnderling) {
+    public string OnHoverSpellChargeRemaining(SkillData skillData, MonsterAndDemonUnderlingCharges p_monsterUnderling) {
+        string text = string.Empty; 
         if (skillData.isInCooldown) {
             string timeDate = GameManager.Instance.Today().AddTicks(skillData.cooldown - skillData.currentCooldownTick).ToString();
-            Tooltip.Instance.ShowSmallInfo($"New charge of {UtilityScripts.Utilities.ColorizeName(skillData.name)} at {UtilityScripts.Utilities.ColorizeName(timeDate)}", autoReplaceText: false);
+            text = $"New charge of {UtilityScripts.Utilities.ColorizeName(skillData.name)} at {UtilityScripts.Utilities.ColorizeName(timeDate)}";
         }
+        return text;
     }
 
-    public void OnHoverSpellChargeRemainingForSummon(CharacterClassData cData, MonsterAndDemonUnderlingCharges p_monsterUnderling) {
+    public string OnHoverSpellChargeRemainingForSummon(CharacterClassData cData, MonsterAndDemonUnderlingCharges p_monsterUnderling) {
+        string text = string.Empty;
         if (p_monsterUnderling.isReplenishing) {
-            CharacterClass charClass = CharacterManager.Instance.GetCharacterClass(p_monsterUnderling.characterClassName);
             string timeDate = GameManager.Instance.Today().AddTicks(p_monsterUnderling.cooldown - p_monsterUnderling.currentCooldownTick).ToString();
-            Tooltip.Instance.ShowSmallInfo($"New charge of {UtilityScripts.Utilities.ColorizeName(charClass.className)} at {UtilityScripts.Utilities.ColorizeName(timeDate)}", autoReplaceText: false);
+
+            text = $"New charge of {UtilityScripts.Utilities.ColorizeName(cData.displayName)} at {UtilityScripts.Utilities.ColorizeName(timeDate)}";
+
+            //Tooltip.Instance.ShowSmallInfo($"New charge of {UtilityScripts.Utilities.ColorizeName(cData.displayName)} at {UtilityScripts.Utilities.ColorizeName(timeDate)}", autoReplaceText: false);
+
         }
+        return text;
     }
 
     public void OnHoverOutSpell(SkillData skillData) {

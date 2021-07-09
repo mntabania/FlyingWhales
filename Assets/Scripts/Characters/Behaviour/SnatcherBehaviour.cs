@@ -47,7 +47,7 @@ namespace Characters.Behaviour {
                     RuinarchListPool<LocationGridTile>.Release(choices);
                     if (chosen != null) {
                         //character is already at demonic structure, just roam around there
-                        return character.jobComponent.TriggerRoamAroundTile(JOB_TYPE.ROAM_AROUND_CORRUPTION, out producedJob, chosen);
+                        return character.jobComponent.TriggerRoamAroundTile(out producedJob, chosen);
                     } else {
                         character.PlanFixedJob(JOB_TYPE.IDLE_STAND, INTERACTION_TYPE.STAND, character, out producedJob);
                         return true;

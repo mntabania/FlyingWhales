@@ -65,7 +65,8 @@ public class DeployedMonsterItemUI : MonoBehaviour {
 	public void InitializeItem(MonsterAndDemonUnderlingCharges p_underling, bool p_isDeployed = false, bool p_hideRemoveButton = false) {
         _monsterOrMinion = p_underling;
         CharacterClass cClass = CharacterManager.Instance.GetCharacterClass(p_underling.characterClassName);
-        txtName.text = cClass.className;
+        CharacterClassData classData = CharacterManager.Instance.GetOrCreateCharacterClassData(p_underling.characterClassName);
+        txtName.text = classData.displayName;
         txtHP.text = cClass.baseHP.ToString();
         txtAtk.text = cClass.baseAttackPower.ToString();
         txtAtkSpd.text = cClass.baseAttackSpeed.ToString();
@@ -73,10 +74,10 @@ public class DeployedMonsterItemUI : MonoBehaviour {
         txtSummonCost.text = summonCost.ToString();
         if (p_underling.isDemon) {
             isMinion = true;
-            imgPortrait.sprite = CharacterManager.Instance.GetOrCreateCharacterClassData(CharacterManager.Instance.GetMinionSettings(p_underling.minionType).className).portraitSprite;
+            imgPortrait.sprite = classData.portraitSprite;
         } else {
             isMinion = false;
-            imgPortrait.sprite = CharacterManager.Instance.GetOrCreateCharacterClassData(CharacterManager.Instance.GetSummonSettings(p_underling.monsterType).className).portraitSprite;
+            imgPortrait.sprite = classData.portraitSprite;
         }
         
         if (!p_isDeployed) {

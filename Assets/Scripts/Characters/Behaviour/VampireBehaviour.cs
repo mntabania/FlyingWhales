@@ -61,40 +61,42 @@ public class VampireBehaviour : CharacterBehaviourComponent {
                             return character.jobComponent.TriggerBuildVampireCastle(targetTile, out producedJob, structurePrefabName);    
                         }    
                     }
-                } else {
-#if DEBUG_LOG
-                    log += $"\n-{character.name} does not have a home settlement. Will try to find unoccupied vampire castles in the wild.";
-#endif
-                    LocationStructure unoccupiedCastle = GetFirstNonSettlementVampireCastles(character);
-                    if (unoccupiedCastle != null) {
-#if DEBUG_LOG
-                        log += $"\n-Found unoccupied castle {unoccupiedCastle.name}";
-#endif
-                        //Transfer home
-                        character.interruptComponent.TriggerInterrupt(INTERRUPT.Set_Home, unoccupiedCastle.tiles.First().tileObjectComponent.genericTileObject);
-                        producedJob = null;
-                        return true;
-                    } else if (!WorldSettings.Instance.worldSettingsData.villageSettings.disableNewVillages && GameUtilities.RollChance(15, ref log) && character.faction?.factionType.type != FACTION_TYPE.Vagrants){ //15
-                        // Area targetArea = GetNoStructurePlainAreaInAllRegions();
-                        VillageSpot villageSpot = character.currentRegion.GetRandomUnoccupiedVillageSpot();
-                        if (villageSpot != null) {
-                            Area targetArea = villageSpot.mainSpot;
-#if DEBUG_LOG
-                            log += $"\n-Could not find valid castle in wild, and successfully rolled to build a new castle at {targetArea}";
-#endif
-                            //Build vampire castle
-                            List<GameObject> choices = InnerMapManager.Instance.GetStructurePrefabsForStructure(structureSetting);
-                            GameObject chosenStructurePrefab = CollectionUtilities.GetRandomElement(choices);
-                            if (LandmarkManager.Instance.HasEnoughSpaceForStructure(chosenStructurePrefab.name, targetArea.gridTileComponent.centerGridTile)) {
-                                return character.jobComponent.TriggerBuildVampireCastle(targetArea.gridTileComponent.centerGridTile, out producedJob, chosenStructurePrefab.name);    
-                            }
-                        } else {
-#if DEBUG_LOG
-                            log += $"\n-Could not find valid Area in wild to build a vampire castle.";
-#endif
-                        }
-                    }
-                }
+                } 
+//                 else {
+// #if DEBUG_LOG
+//                     log += $"\n-{character.name} does not have a home settlement. Will try to find unoccupied vampire castles in the wild.";
+// #endif
+//                     LocationStructure unoccupiedCastle = GetFirstNonSettlementVampireCastles(character);
+//                     if (unoccupiedCastle != null) {
+// #if DEBUG_LOG
+//                         log += $"\n-Found unoccupied castle {unoccupiedCastle.name}";
+// #endif
+//                         //Transfer home
+//                         character.interruptComponent.TriggerInterrupt(INTERRUPT.Set_Home, unoccupiedCastle.tiles.First().tileObjectComponent.genericTileObject);
+//                         producedJob = null;
+//                         return true;
+//                     } else if (!WorldSettings.Instance.worldSettingsData.villageSettings.disableNewVillages && GameUtilities.RollChance(15, ref log) && character.faction != null && 
+//                                character.faction.factionType.type != FACTION_TYPE.Vagrants){ //15
+//                         // Area targetArea = GetNoStructurePlainAreaInAllRegions();
+//                         VillageSpot villageSpot = character.currentRegion.GetFirstUnoccupiedVillageSpotThatCanAccomodateFaction(character.faction.factionType.type);
+//                         if (villageSpot != null) {
+//                             Area targetArea = villageSpot.mainSpot;
+// #if DEBUG_LOG
+//                             log += $"\n-Could not find valid castle in wild, and successfully rolled to build a new castle at {targetArea}";
+// #endif
+//                             //Build vampire castle
+//                             List<GameObject> choices = InnerMapManager.Instance.GetStructurePrefabsForStructure(structureSetting);
+//                             GameObject chosenStructurePrefab = CollectionUtilities.GetRandomElement(choices);
+//                             if (LandmarkManager.Instance.HasEnoughSpaceForStructure(chosenStructurePrefab.name, targetArea.gridTileComponent.centerGridTile)) {
+//                                 return character.jobComponent.TriggerBuildVampireCastle(targetArea.gridTileComponent.centerGridTile, out producedJob, chosenStructurePrefab.name);    
+//                             }
+//                         } else {
+// #if DEBUG_LOG
+//                             log += $"\n-Could not find valid Area in wild to build a vampire castle.";
+// #endif
+//                         }
+//                     }
+//                 }
             }
 
             if (character.homeStructure != null) {

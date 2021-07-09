@@ -75,7 +75,7 @@ public class MapSettings {
                 throw new ArgumentOutOfRangeException();
         }
     }
-    public int GetMaxFactions() {
+    public int GetMaxStartingFactions() {
         switch (mapSize) {
             case MAP_SIZE.Small:
                 return 1;
@@ -113,6 +113,20 @@ public class MapSettings {
                 return 6;
             case MAP_SIZE.Extra_Large:
                 return 8;
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
+    }
+    public int GetMaxActiveFactionsForMapSize() {
+        switch (mapSize) {
+            case MAP_SIZE.Small:
+                return 2;
+            case MAP_SIZE.Medium:
+                return 3;
+            case MAP_SIZE.Large:
+                return 4;
+            case MAP_SIZE.Extra_Large:
+                return 6;
             default:
                 throw new ArgumentOutOfRangeException();
         }

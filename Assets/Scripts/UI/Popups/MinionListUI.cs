@@ -19,6 +19,8 @@ public class MinionListUI : PopupMenuBase {
     [SerializeField] private GameObject quantityMonsterItemPrefab;
     [SerializeField] private ScrollRect quantityScrollView;
 
+    [SerializeField] private MonsterToolTipUI monsterToolTipUI;
+
     private List<SummonMinionPlayerSkillNameplateItem> _minionItems;
     private List<MonsterUnderlingQuantityNameplateItem> _monsterUnderlingQuantityNameplateItems;
 
@@ -28,6 +30,7 @@ public class MinionListUI : PopupMenuBase {
     }
     public override void Close() {
         base.Close();
+        monsterToolTipUI.HideToolTip();
         HideMinionList();
     }
     public void Initialize() {
@@ -120,10 +123,12 @@ public class MinionListUI : PopupMenuBase {
     private void OnHoverEnterActiveMinion(Character p_character) {
         CharacterCombatBehaviour combatBehaviour = p_character.combatComponent.combatBehaviourParent.currentCombatBehaviour;
         if (combatBehaviour != null) {
-            UIManager.Instance.ShowSmallInfo(combatBehaviour.description, PlayerUI.Instance.minionListHoverPosition, combatBehaviour.name);
+            //UIManager.Instance.ShowSmallInfo(combatBehaviour.description, PlayerUI.Instance.minionListHoverPosition, combatBehaviour.name);
+            monsterToolTipUI.DisplayToolTipWithoutCharge(combatBehaviour.name, combatBehaviour.description);
         }
     }
     private void OnHoverExitActiveMinion(Character p_character) {
+        monsterToolTipUI.HideToolTip();
         UIManager.Instance.HideSmallInfo();
     }
 
@@ -176,18 +181,28 @@ public class MinionListUI : PopupMenuBase {
         }
     }
     private void OnHoverEnterDemonUnderlingData(MonsterAndDemonUnderlingCharges p_data) {
+        string txtRecharge = string.Empty;
         MinionPlayerSkill minionPlayerSkill = PlayerSkillManager.Instance.GetMinionPlayerSkillDataByMinionType(p_data.minionType);
+        CharacterCombatBehaviour combatBehaviour = null;
         if (minionPlayerSkill != null) {
             CharacterClassData data = CharacterManager.Instance.GetOrCreateCharacterClassData(minionPlayerSkill.className);
             if (data.combatBehaviourType != CHARACTER_COMBAT_BEHAVIOUR.None) {
-                CharacterCombatBehaviour combatBehaviour = CombatManager.Instance.GetCombatBehaviour(data.combatBehaviourType);
-                UIManager.Instance.ShowSmallInfo(combatBehaviour.description, _hoverPosition, combatBehaviour.name);
+                combatBehaviour = CombatManager.Instance.GetCombatBehaviour(data.combatBehaviourType);
+                //UIManager.Instance.ShowSmallInfo(combatBehaviour.description, _hoverPosition, combatBehaviour.name);
+            } else {
+                return;
             }
         }
-        PlayerUI.Instance.OnHoverSpellChargeRemaining(minionPlayerSkill, p_data);
-        PlayerUI.Instance.skillDetailsTooltip.ShowPlayerSkillDetails(minionPlayerSkill, PlayerUI.Instance.minionListHoverPosition);
+        txtRecharge = PlayerUI.Instance.OnHoverSpellChargeRemaining(minionPlayerSkill, p_data);
+        //PlayerUI.Instance.skillDetailsTooltip.ShowPlayerSkillDetails(minionPlayerSkill, PlayerUI.Instance.minionListHoverPosition);
+        if (string.IsNullOrEmpty(txtRecharge)) {
+            monsterToolTipUI.DisplayToolTipWithoutCharge(combatBehaviour.name, combatBehaviour.description);
+        } else {
+            monsterToolTipUI.DisplayToolTipWithCharge(combatBehaviour.name, combatBehaviour.description, txtRecharge);
+        }
     }
     private void OnHoverExitDemonUnderlingData(MonsterAndDemonUnderlingCharges p_data) {
+        monsterToolTipUI.HideToolTip();
         Tooltip.Instance.HideSmallInfo();
         UIManager.Instance.HideSmallInfo();
         PlayerUI.Instance.skillDetailsTooltip.HidePlayerSkillDetails();

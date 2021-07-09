@@ -13,12 +13,12 @@ namespace Characters.Villager_Wants {
                 p_preferredStructure = null;
                 return false;
             }
-            if (!CharacterLivesInADwelling(p_character)) {
+            if (!CharacterLivesInAValidHome(p_character)) {
                 p_preferredStructure = null;
                 return false;
             }
-            
-            if (!HasBasicResourceProducingStructureInSameVillageOwnedByValidCharacter(p_character, out bool needsToPay, out p_preferredStructure)) {
+            TileObjectData tileObjectData = TileObjectDB.GetTileObjectData(furnitureWanted);
+            if (!HasBasicResourceProducingStructureInSameVillageOwnedByValidCharacter(p_character, out bool needsToPay, out p_preferredStructure, tileObjectData.craftResourceCost)) {
                 //could not find basic resource producing structure that is owned by a valid character
                 return false;
             }
@@ -30,7 +30,7 @@ namespace Characters.Villager_Wants {
         }
         
         public override bool IsWantValid(Character p_character) {
-            if (!CharacterLivesInADwelling(p_character)) return false;
+            if (!CharacterLivesInAValidHome(p_character)) return false;
             return !p_character.homeStructure.HasBuiltTileObjectOfType(TILE_OBJECT_TYPE.TORCH);
         }
     }

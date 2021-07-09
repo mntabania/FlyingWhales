@@ -72,6 +72,10 @@ public class Golem : Summon {
     //    //add taunted trait to the character
     //    character.traitContainer.AddTrait(character, new Taunted(), this);
     //}
+    protected override void OnTickEnded() {
+        base.OnTickEnded();
+        PerTickOutsideCombatHPRecovery();
+    }
     #endregion
 
     private void OnCharacterArrivedAtStructure(Character character, LocationStructure structure) {

@@ -84,6 +84,7 @@ namespace Traits {
             if (action == INTERACTION_TYPE.EAT) {
                 if (owner is Crops crops) {
                     crops.SetGrowthState(Crops.Growth_State.Growing);
+                    isRemoved = true;
                 }
             }
         }

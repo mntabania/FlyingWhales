@@ -295,11 +295,12 @@ public class StructureInfoUI : InfoUIBase {
         UtilityScripts.Utilities.DestroyChildren(prisonersScrollView.content);
         List<Character> characters = RuinarchListPool<Character>.Claim();
         if (activeStructure is Kennel kennel) {
-            if (kennel.occupyingSummon != null) {
-                characters.Add(kennel.occupyingSummon);
-            }
+            // if (kennel.occupyingSummon != null) {
+            //     characters.Add(kennel.occupyingSummon);
+            // }
+            characters.AddRange(activeStructure.charactersHere);
         } else if (activeStructure is TortureChambers tortureChambers&& tortureChambers.rooms != null && tortureChambers.rooms.Length > 0 && tortureChambers.rooms[0] is PrisonCell prisonCell) {
-            prisonCell.PopulateValidOccupants(characters);
+            prisonCell.PopulateOccupants(characters);
             //List<Character> validCharacters = prisonCell.charactersInRoom.Where(c => prisonCell.IsValidOccupant(c)).ToList();
             //if (validCharacters.Count > 0) {
             //    characters.AddRange(validCharacters);    

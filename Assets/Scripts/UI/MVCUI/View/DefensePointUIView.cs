@@ -39,7 +39,18 @@ public class DefensePointUIView : MVCUIView {
 	#endregion
 
 	#region user defined functions
-	
+	public void DisplayToolTipWithCharge(string p_name, string p_description, string p_chargeDisplay) {
+
+		UIModel.monsterToolTipUI.DisplayToolTipWithCharge(p_name, p_description, p_chargeDisplay);
+	}
+
+	public void DisplayToolTipWithoutCharge(string p_name, string p_description) {
+		UIModel.monsterToolTipUI.DisplayToolTipWithoutCharge(p_name, p_description);
+	}
+
+	public void HideToolTip() {
+		UIModel.monsterToolTipUI.HideToolTip();
+	}
 	public void ShowSummonTab() {
 		UIModel.scrollViewDeployedSummons.gameObject.SetActive(true);
 	}

@@ -198,7 +198,7 @@ public class WorldGenOptionsUIController : MVCUIController, WorldGenOptionsUIVie
 		Tooltip.Instance.HideSmallInfo();
 	}
 	private void UpdateAddFactionBtn() {
-		m_worldGenOptionsUIView.SetAddFactionBtnState(!WorldSettings.Instance.worldSettingsData.HasReachedMaxFactionCount());
+		m_worldGenOptionsUIView.SetAddFactionBtnState(!WorldSettings.Instance.worldSettingsData.HasReachedMaxStartingFactionCount());
 	}
 	private void ResetFactions() {
 		WorldSettings.Instance.worldSettingsData.factionSettings.ClearFactionSettings();
@@ -206,7 +206,7 @@ public class WorldGenOptionsUIController : MVCUIController, WorldGenOptionsUIVie
 		FactionEmblemRandomizer.Reset();
 	}
 	private void AddDefaultFactionSetting() {
-		int maxFactions = WorldSettings.Instance.worldSettingsData.mapSettings.GetMaxFactions();
+		int maxFactions = WorldSettings.Instance.worldSettingsData.mapSettings.GetMaxStartingFactions();
 		int maxVillages = WorldSettings.Instance.worldSettingsData.mapSettings.GetMaxStartingVillages();
 		int dividedVillages = maxVillages / maxFactions;
 		FactionTemplate factionTemplate = WorldSettings.Instance.worldSettingsData.factionSettings.AddFactionSetting(dividedVillages);
@@ -241,7 +241,7 @@ public class WorldGenOptionsUIController : MVCUIController, WorldGenOptionsUIVie
 		UpdateAddBiomeBtn();
 		
 		//reset faction settings
-		int maxFactions = WorldSettings.Instance.worldSettingsData.mapSettings.GetMaxFactions();
+		int maxFactions = WorldSettings.Instance.worldSettingsData.mapSettings.GetMaxStartingFactions();
 		for (int i = 0; i < maxFactions; i++) {
 			AddDefaultFactionSetting();
 		}
