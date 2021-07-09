@@ -4097,7 +4097,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             if (currentTile != null && currentTile.structure is Dwelling dwelling && item is ResourcePile pile) {
                 ResourcePile firstPileOfType = dwelling.GetFirstBuiltTileObjectOfType<ResourcePile>(item.tileObjectType, item);
                 if (firstPileOfType != null) {
-                    firstPileOfType.AdjustResourceInPile(pile.resourceInPile);
+                    int amount = pile.resourceInPile;
+                    firstPileOfType.AdjustResourceInPile(amount);
+                    InnerMapManager.Instance.ShowAreaMapTextPopup($"+{amount}", firstPileOfType.worldPosition, Color.green);
                     TraitManager.Instance.CopyStatuses(pile, firstPileOfType);
                     dwelling.RemovePOI(pile);
                 }

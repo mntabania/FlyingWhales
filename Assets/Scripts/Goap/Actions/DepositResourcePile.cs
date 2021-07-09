@@ -294,7 +294,9 @@ public class DepositResourcePile : GoapAction {
             if (goapNode.associatedJobType == JOB_TYPE.HAUL && poiTarget.gridTileLocation != null) {
                 ResourcePile firstResourcePileOfType = structure.GetFirstBuiltTileObjectOfType<ResourcePile>(poiTarget.tileObjectType, poiTarget);
                 if (firstResourcePileOfType != null) {
-                    firstResourcePileOfType.AdjustResourceInPile(poiTarget.resourceInPile);
+                    int amount = poiTarget.resourceInPile;
+                    firstResourcePileOfType.AdjustResourceInPile(amount);
+                    InnerMapManager.Instance.ShowAreaMapTextPopup($"+{amount}", firstResourcePileOfType.worldPosition, Color.green);
                     TraitManager.Instance.CopyStatuses(poiTarget, firstResourcePileOfType);
                     poiTarget.gridTileLocation.structure.RemovePOI(poiTarget);
                 }
