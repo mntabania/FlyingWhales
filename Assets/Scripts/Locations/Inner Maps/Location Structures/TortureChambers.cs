@@ -179,6 +179,9 @@ namespace Inner_Maps.Location_Structures {
                     //automatically restrain and imprison accidentally captured characters
                     //Reference: https://trello.com/c/AlvDm0U6/4251-kennel-and-prison-updates
                     character.traitContainer.RestrainAndImprison(character, factionThatImprisoned: PlayerManager.Instance.player.playerFaction);
+                    if (character.isLycanthrope) {
+                        character.lycanData.limboForm.traitContainer.RestrainAndImprison(character, factionThatImprisoned: PlayerManager.Instance.player.playerFaction);
+                    }
                     LocationGridTile targetTile = prisonCell.tilesInRoom.First(t => t.charactersHere.Count <= 0) ?? CollectionUtilities.GetRandomElement(prisonCell.tilesInRoom);
                     if (targetTile != null) {
                         CharacterManager.Instance.Teleport(character, targetTile);
