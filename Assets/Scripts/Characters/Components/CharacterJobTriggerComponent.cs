@@ -2225,7 +2225,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 #endregion
 
 	#region Bury
-    bool IsCharacterGhost(Character p_character) {
+    public bool IsCharacterGhost(Character p_character) {
         if (p_character is Summon summon) {
             if (summon.summonType == SUMMON_TYPE.Ghost || summon.summonType == SUMMON_TYPE.Vengeful_Ghost) {
                 return true;
@@ -2236,7 +2236,8 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
     public void TriggerBuryMe() {
 	    if (owner.minion == null && !(owner is Animal) && owner.gridTileLocation != null && 
 	        owner.gridTileLocation.IsNextToOrPartOfSettlement(out var settlement) && 
-	        settlement is NPCSettlement npcSettlement && !npcSettlement.HasJob(JOB_TYPE.BURY, owner)) {
+	        settlement is NPCSettlement npcSettlement && !npcSettlement.HasJob(JOB_TYPE.BURY, owner)
+            && owner.grave == null) {
             if (IsCharacterGhost(owner)) { return; }
 
             if (owner.race.IsSkinnable() ) {

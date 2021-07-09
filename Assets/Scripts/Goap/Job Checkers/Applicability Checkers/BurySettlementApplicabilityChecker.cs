@@ -9,7 +9,10 @@ namespace Goap.Job_Checkers {
             Assert.IsNotNull(target);
             NPCSettlement npcSettlement = job.originalOwner as NPCSettlement;
             Assert.IsNotNull(npcSettlement);
-            
+
+            if (target.jobComponent.IsCharacterGhost(target)) {
+                return false;
+            }
             if (target.race.IsSkinnable() ) {
                 //if race is skinnable and settlement has an assigned skinners lodge, do not bury this character
                 //Reference: https://trello.com/c/VEBnv6Aw/4771-bury-updates
