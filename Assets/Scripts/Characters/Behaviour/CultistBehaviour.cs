@@ -27,19 +27,28 @@ public class CultistBehaviour : CharacterBehaviourComponent {
             }    
         }
         
-        TIME_IN_WORDS timeInWords = GameManager.Instance.GetCurrentTimeInWordsOfTick();
+        
         int chance = 0;
-        if (timeInWords == TIME_IN_WORDS.EARLY_NIGHT) {
-            chance = 12;
+        if (character.dailyScheduleComponent.schedule.GetScheduleType(GameManager.Instance.currentTick) == DAILY_SCHEDULE.Free_Time) {
             if (character.HasItem(TILE_OBJECT_TYPE.CULTIST_KIT)) {
-                chance = 50;
-            }
-        } else if (timeInWords == TIME_IN_WORDS.LATE_NIGHT || timeInWords == TIME_IN_WORDS.AFTER_MIDNIGHT) {
-            chance = 20;
-            if (character.HasItem(TILE_OBJECT_TYPE.CULTIST_KIT)) {
-                chance = 50;
+                chance = 10;
+            } else {
+                chance = 25;
             }
         }
+        
+        // TIME_IN_WORDS timeInWords = GameManager.Instance.GetCurrentTimeInWordsOfTick();
+        // if (timeInWords == TIME_IN_WORDS.EARLY_NIGHT) {
+        //     chance = 12;
+        //     if (!character.HasItem(TILE_OBJECT_TYPE.CULTIST_KIT)) {
+        //         chance = 50;
+        //     }
+        // } else if (timeInWords == TIME_IN_WORDS.LATE_NIGHT || timeInWords == TIME_IN_WORDS.AFTER_MIDNIGHT) {
+        //     chance = 20;
+        //     if (!character.HasItem(TILE_OBJECT_TYPE.CULTIST_KIT)) {
+        //         chance = 50;
+        //     }
+        // }
 
         // chance = 100;
         
