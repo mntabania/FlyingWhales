@@ -1705,12 +1705,12 @@ public class UIManager : BaseMonoBehaviour {
     #endregion
 
     #region Overlap UI
-    public void InitializeOverlapUI() {
-        for (int i = 0; i < unallowOverlaps.Count; i++) {
-            UnallowOverlaps currOverlap = unallowOverlaps[i];
-            currOverlap.Initialize();
-        }
-    }
+    // public void InitializeOverlapUI() {
+    //     for (int i = 0; i < unallowOverlaps.Count; i++) {
+    //         UnallowOverlaps currOverlap = unallowOverlaps[i];
+    //         currOverlap.Initialize();
+    //     }
+    // }
     public void AddUnallowOverlapUI(UnallowOverlaps overlap) {
         unallowOverlaps.Add(overlap);
     }

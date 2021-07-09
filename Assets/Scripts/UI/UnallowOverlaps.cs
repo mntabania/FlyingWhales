@@ -33,7 +33,7 @@ public class UnallowOverlaps : MonoBehaviour
     #endregion
 
     public void Initialize() {
-        _defaultLocalPosition = transform.localPosition;
+        _defaultLocalPosition = rectTransform.anchoredPosition;
     }
     void OnEnable() {
         if(rectTransform == null) {
@@ -78,7 +78,7 @@ public class UnallowOverlaps : MonoBehaviour
         //string log = "offset min: " + anchoredOffsetMin + ", offset max: " + anchoredOffsetMax + ", width: " + rectTransform.rect.width + ", localPos: " + transform.localPosition + ", rect pos: + " + rectTransform.rect.position;
         //Debug.LogWarning(log);
     }
-    public void DefaultPosition() {
-        transform.localPosition = _defaultLocalPosition;
+    private void DefaultPosition() {
+        rectTransform.anchoredPosition = _defaultLocalPosition;
     }
 }
