@@ -984,7 +984,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-  executeHoverEnterActionPerFrame: 1
+  executeHoverEnterActionPerFrame: 0
 --- !u!1 &343256635267328645
 GameObject:
   m_ObjectHideFlags: 0
@@ -1516,6 +1516,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hoverDisplayText: Summon Cost
+  m_hoverHandler: {fileID: 0}
+  m_uiHoverPosition: {fileID: 0}
 --- !u!1 &1752227552806911372
 GameObject:
   m_ObjectHideFlags: 0
@@ -2023,6 +2025,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hoverDisplayText: Attack Speed
+  m_hoverHandler: {fileID: 0}
+  m_uiHoverPosition: {fileID: 0}
 --- !u!1 &8641893856632583227
 GameObject:
   m_ObjectHideFlags: 0
@@ -2231,6 +2235,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hoverDisplayText: Attack
+  m_hoverHandler: {fileID: 0}
+  m_uiHoverPosition: {fileID: 0}
 --- !u!1 &8924386454840421663
 GameObject:
   m_ObjectHideFlags: 0
@@ -2439,6 +2445,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hoverDisplayText: HP
+  m_hoverHandler: {fileID: 0}
+  m_uiHoverPosition: {fileID: 0}
 --- !u!1001 &3256527410787646522
 PrefabInstance:
   m_ObjectHideFlags: 0
