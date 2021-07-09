@@ -22,7 +22,8 @@ public class SaveDataNPCSettlement : SaveDataBaseSettlement {
     public bool hasWorkers;
     public bool hasOccupiedVillageSpot;
     public Point occupiedVillageSpot;
-
+    public GameDate clearBlacklistScheduleDate;
+    public bool hasClearBlacklistSchedule;
     //Components
     public SaveDataSettlementVillageMigrationComponent migrationComponent;
     public SaveDataSettlementResourcesComponent resourcesComponent;
@@ -85,6 +86,8 @@ public class SaveDataNPCSettlement : SaveDataBaseSettlement {
         if (npcSettlement.occupiedVillageSpot != null) {
             occupiedVillageSpot = new Point(npcSettlement.occupiedVillageSpot.mainSpot.areaData.xCoordinate, npcSettlement.occupiedVillageSpot.mainSpot.areaData.yCoordinate);
         }
+        clearBlacklistScheduleDate = npcSettlement.clearBlacklistScheduleDate;
+        hasClearBlacklistSchedule = npcSettlement.hasClearBlacklistSchedule;
     }
     public override BaseSettlement Load() {
         return LandmarkManager.Instance.LoadNPCSettlement(this);
