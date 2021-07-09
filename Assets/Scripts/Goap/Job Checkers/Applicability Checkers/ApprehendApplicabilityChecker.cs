@@ -8,9 +8,10 @@ namespace Goap.Job_Checkers {
             Assert.IsNotNull(goapPlanJob);
             Character target = goapPlanJob.targetPOI as Character;
             Assert.IsNotNull(target);
-
+            Character actor = goapPlanJob.assignedCharacter;
+            Assert.IsNotNull(actor);
             bool isApplicable = !target.traitContainer.HasTrait("Restrained") || !target.IsInPrison();
-            return target.gridTileLocation != null && target.gridTileLocation.IsNextToOrPartOfSettlement() && isApplicable;
+            return actor != null && actor.homeSettlement != null && target.gridTileLocation != null && target.gridTileLocation.IsNextToSettlementAreaOrPartOfSettlement(actor.homeSettlement) && isApplicable;
         }
     }
 }

@@ -3507,11 +3507,18 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
 #endif
                 if (jobToAssign != null && ((jobQueue.jobsInQueue.Count <= 0 && behaviourComponent.GetHighestBehaviourPriority() < jobToAssign.priority) ||
                     (jobQueue.jobsInQueue.Count > 0 && jobToAssign.priority > jobQueue.jobsInQueue[0].priority))) {
-                    jobQueue.AddJobInQueue(jobToAssign);
+                    if (jobQueue.AddJobInQueue(jobToAssign)) {
 #if DEBUG_LOG
-                    debugLog = $"{debugLog}\nJob was added to queue!";
-                    logComponent.PrintLogIfActive(debugLog);
+                        debugLog = $"{debugLog}\nJob was added to queue!";
+                        logComponent.PrintLogIfActive(debugLog);
 #endif
+                    } else {
+#if DEBUG_LOG
+                        debugLog = $"{debugLog}\nJob was NOT added to queue!";
+                        logComponent.PrintLogIfActive(debugLog);
+#endif
+                    }
+
                 }
                 // else {
                 //     debugLog = $"{debugLog}\nCouldn't assign job!";
