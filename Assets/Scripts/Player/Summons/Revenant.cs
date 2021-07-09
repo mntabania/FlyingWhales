@@ -40,6 +40,10 @@ public class Revenant : Summon {
         }
         base.LoadReferences(data);
     }
+    protected override void OnTickEnded() {
+        base.OnTickEnded();
+        PerTickOutsideCombatHPRecovery();
+    }
     #endregion
 
     public void AddBetrayer(Character character) {

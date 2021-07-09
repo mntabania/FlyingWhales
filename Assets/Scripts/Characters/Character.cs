@@ -2940,7 +2940,13 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         //chance based dependent on the character
         return currentHP < (maxHP * 0.2f);
     }
-#endregion
+    protected void PerTickOutsideCombatHPRecovery() {
+        if (currentHP < maxHP && !combatComponent.isInCombat) {
+            //gain 1% of max hp per tick outside of combat
+            HPRecovery(0.01f);
+        }
+    }
+    #endregion
 
 #region Home
     /// <summary>
@@ -3459,6 +3465,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
 #if DEBUG_PROFILER
         Profiler.EndSample();
 #endif
+        if (characterClass.IsZombie()) {
+            PerTickOutsideCombatHPRecovery();
+        }
     }
     protected virtual void OnHourStarted() {
 #if DEBUG_PROFILER

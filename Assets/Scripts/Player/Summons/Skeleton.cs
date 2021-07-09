@@ -25,6 +25,11 @@ public class Skeleton : Summon {
 		base.Initialize();
 		isWildMonster = false;
 	}
+	protected override void OnTickEnded() {
+		base.OnTickEnded();
+		PerTickOutsideCombatHPRecovery();
+	}
+	
 	//#region Overrides
 	//public override bool SetFaction(Faction newFaction) {
 	//    if (base.SetFaction(newFaction)) {

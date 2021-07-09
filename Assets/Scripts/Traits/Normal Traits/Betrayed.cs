@@ -32,7 +32,7 @@ namespace Traits {
 #endif
                 return;
             }
-            Summon ghost = CharacterManager.Instance.CreateNewSummon(SUMMON_TYPE.Ghost, FactionManager.Instance.neutralFaction, null, character.homeRegion);
+            Summon ghost = CharacterManager.Instance.CreateNewSummon(SUMMON_TYPE.Ghost, FactionManager.Instance.GetDefaultFactionForMonster(SUMMON_TYPE.Ghost), null, character.homeRegion);
             ghost.SetFirstAndLastName(character.firstName, character.surName);
             (ghost as Ghost).SetBetrayedBy(responsibleCharacter);
             CharacterManager.Instance.PlaceSummonInitially(ghost, character.gridTileLocation);
