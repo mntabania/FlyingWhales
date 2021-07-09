@@ -645,7 +645,7 @@ public class SettlementJobTriggerComponent : JobTriggerComponent/*, SettlementCl
 	public void TryCreateApprehend(Character target) {
 		if (target.currentSettlement == _owner && _owner.owner != null && target.traitContainer.HasTrait("Criminal") && !target.isDead && target.currentStructure != _owner.prison) {
 			if (_owner.HasJob(JOB_TYPE.APPREHEND, target) == false) {
-                if (target.crimeComponent.IsWantedBy(_owner.owner)) {
+                if (target.crimeComponent.IsWantedBy(_owner.owner) && target.gridTileLocation.IsNextToSettlementAreaOrPartOfSettlement(_owner)) {
                     GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.APPREHEND, INTERACTION_TYPE.DROP_RESTRAINED, target, _owner);
                     job.SetCanTakeThisJobChecker(JobManager.Can_Take_Apprehend);
                     job.SetStillApplicableChecker(JobManager.Apprehend_Settlement_Applicability);
