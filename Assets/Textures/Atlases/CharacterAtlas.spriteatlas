@@ -40,11 +40,14 @@ SpriteAtlas:
       allowAlphaSplitting: 0
       enableRotation: 0
       enableTightPacking: 0
+    secondaryTextureSettings: {}
     variantMultiplier: 1
     packables:
     - {fileID: 102900000, guid: da1d92a130b3f8f4bb0110cd352dca08, type: 3}
     totalSpriteSurfaceArea: 6292937
     bindAsDefault: 1
+    isAtlasV2: 0
+    cachedData: {fileID: 0}
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
   - {fileID: 21300000, guid: c6a4c900e32e8bd40bbbfaa89f592b21, type: 3}
@@ -1744,5 +1747,6 @@ SpriteAtlas:
   - attack_1
   - interact_2
   - interact_2
+  m_RenderDataMap: {}
   m_Tag: CharacterAtlas
   m_IsVariant: 0

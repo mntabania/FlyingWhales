@@ -40,11 +40,14 @@ SpriteAtlas:
       allowAlphaSplitting: 0
       enableRotation: 0
       enableTightPacking: 0
+    secondaryTextureSettings: {}
     variantMultiplier: 1
     packables:
     - {fileID: 102900000, guid: 4b18ba5513d55364284cd64228896343, type: 3}
     totalSpriteSurfaceArea: 8402864
     bindAsDefault: 1
+    isAtlasV2: 0
+    cachedData: {fileID: 0}
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
   - {fileID: 21300000, guid: baaca0a0715a3844183d8fadb56ded82, type: 3}
@@ -114,5 +117,6 @@ SpriteAtlas:
   - minion_list_container
   - faction_panel
   - mood_container
+  m_RenderDataMap: {}
   m_Tag: UI Windows
   m_IsVariant: 0

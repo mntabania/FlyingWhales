@@ -1,6 +1,6 @@
 ﻿using System.Globalization;
 using System.Linq;
-using Boo.Lang;
+using System.Collections.Generic;
 using Locations.Settlements;
 using Locations.Settlements.Settlement_Events;
 namespace UtilityScripts {

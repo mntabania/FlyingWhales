@@ -40,11 +40,14 @@ SpriteAtlas:
       allowAlphaSplitting: 0
       enableRotation: 0
       enableTightPacking: 0
+    secondaryTextureSettings: {}
     variantMultiplier: 1
     packables:
     - {fileID: 102900000, guid: c56691e3000aa5f46b6b0f833f973a16, type: 3}
     totalSpriteSurfaceArea: 2137296
     bindAsDefault: 1
+    isAtlasV2: 0
+    cachedData: {fileID: 0}
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
   - {fileID: 21300000, guid: 4f3a9e80d06217e459457eb69c035973, type: 3}
@@ -222,5 +225,6 @@ SpriteAtlas:
   - chaos_orb_circle
   - poison_skull
   - snare_trap
+  m_RenderDataMap: {}
   m_Tag: ParticleAtlas
   m_IsVariant: 0

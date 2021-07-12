@@ -1,6 +1,12 @@
 version: 2
 importPivots: 1
 tpsheetFileNames:
+- Assets/Textures/Particles/Poison Cloud/Poison_Cloud.tpsheet
+- Assets/Textures/Text Sprites/Text Sprites.tpsheet
 textureFileNames:
+- Assets/Textures/Particles/Poison Cloud/Poison_Cloud_Spritesheet.png
+- Assets/Textures/Text Sprites/Text Sprites.png
 normalmapFileNames:
+- 
+- Assets/Textures/Text Sprites/Text Sprites_n.png
 enableDebugOutput: 0

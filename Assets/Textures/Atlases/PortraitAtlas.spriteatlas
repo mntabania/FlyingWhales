@@ -40,11 +40,14 @@ SpriteAtlas:
       allowAlphaSplitting: 0
       enableRotation: 0
       enableTightPacking: 0
+    secondaryTextureSettings: {}
     variantMultiplier: 1
     packables:
     - {fileID: 102900000, guid: 891be410796e8554eafb2611643cc64f, type: 3}
     totalSpriteSurfaceArea: 3635222
     bindAsDefault: 1
+    isAtlasV2: 0
+    cachedData: {fileID: 0}
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
   - {fileID: 21300000, guid: 37ca32002f93f0d42adcaa5d97aaadf3, type: 3}
@@ -642,5 +645,6 @@ SpriteAtlas:
   - male_elf_head2
   - TheKennel
   - mail_human_stache1
+  m_RenderDataMap: {}
   m_Tag: PortraitAtlas
   m_IsVariant: 0
