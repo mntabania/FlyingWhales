@@ -421,13 +421,13 @@ public class BaseRelationshipContainer : IRelationshipContainer {
             if (roll < chance) {
                 if (owner.marker && owner.marker.IsPOIInVision(targetCharacter)) {
                     if (targetCharacter.combatComponent.isInCombat) {
-                        if (owner.jobComponent.CreateBrawlJob(targetCharacter) != null) {
+                        if (owner.jobComponent.CreateBrawlJob(targetCharacter)) {
                             return;
                         }
                     }
                     if (owner.traitContainer.HasTrait("Combatant")) {
                         if (UnityEngine.Random.Range(0, 100) < 50) {
-                            if (owner.jobComponent.CreateBrawlJob(targetCharacter) != null) {
+                            if (owner.jobComponent.CreateBrawlJob(targetCharacter)) {
                                 return;
                             }
                         }

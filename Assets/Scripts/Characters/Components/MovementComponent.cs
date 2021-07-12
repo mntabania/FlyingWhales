@@ -537,8 +537,8 @@ public class MovementComponent : CharacterComponent {
             if (!owner.jobQueue.HasJob(JOB_TYPE.DIG_THROUGH)) {
                 GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.DIG_THROUGH, INTERACTION_TYPE.DIG, targetTile.tileObjectComponent.GetFirstWall(), owner);
                 job.SetCannotBePushedBack(true);
-                owner.jobQueue.AddJobInQueue(job);
-                return true;
+                return owner.jobQueue.AddJobInQueue(job);
+                //return true;
             }
         }
         return false;

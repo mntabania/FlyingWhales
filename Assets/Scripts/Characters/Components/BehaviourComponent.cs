@@ -365,8 +365,7 @@ public class BehaviourComponent : CharacterComponent, CharacterEventDispatcher.I
                         //no job was produced, check if current behaviour stops processing
                         if (!component.WillContinueProcess()) { break; }    
                     }
-                }
-                if (!isProducedJobValid && producedJob != null) { //if produced valid is not valid and produced job is not null
+                } else { //if (!isProducedJobValid && producedJob != null) { <--- this line is the same as "else" //if produced valid is not valid and produced job is not null
                     //add character to blacklist if job is owned by a settlement
                     if (producedJob.originalOwner != null && producedJob.originalOwner.ownerType != JOB_OWNER.CHARACTER) {
                         producedJob.AddBlacklistedCharacter(owner);

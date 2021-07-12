@@ -25,11 +25,23 @@ public class JobQueue {
     }
     #endregion
     
-    public bool AddJobInQueue(JobQueueItem job) { //, bool processLogicForPersonalJob = true
+    public bool AddJobInQueue(JobQueueItem job, bool shouldPersonalJobBeReturnedToObjectPoolOnAddFail = true) { //, bool processLogicForPersonalJob = true
+        if (AddJobInQueueBase(job)) {
+            return true;
+        } else {
+            if (shouldPersonalJobBeReturnedToObjectPoolOnAddFail) {
+                if (job.originalOwner == owner) {
+                    JobManager.Instance.OnFinishJob(job);
+                }
+            }
+        }
+        return false;
+    }
+    private bool AddJobInQueueBase(JobQueueItem job) { //, bool processLogicForPersonalJob = true
         if (!owner.limiterComponent.canPerform) {
             //We are only checking the jobs that has an assigned plan because we already have a handle for jobs that goes through multithread in ReceivePlanFromGoapThread
             //Adding job in queue with assigned plan means that the job has fixes steps and will not go to the multithread anymore to get a plan
-            if(job is GoapPlanJob goapPlanJob && goapPlanJob.assignedPlan != null) {
+            if (job is GoapPlanJob goapPlanJob && goapPlanJob.assignedPlan != null) {
                 int canPerformValue = owner.limiterComponent.canPerformValue;
                 if (canPerformValue == -1 && (owner.traitContainer.HasTrait("Paralyzed") || owner.traitContainer.HasTrait("Quarantined"))) {
                     //If the owner is paralyzed and the only reason he cannot perform is because of that paralyzed, the plan must not be scrapped
@@ -89,7 +101,7 @@ public class JobQueue {
             //}
         } else {
             bool hasBeenInserted = false;
-            if(jobsInQueue.Count > 1) {
+            if (jobsInQueue.Count > 1) {
                 for (int i = 1; i < jobsInQueue.Count; i++) {
                     if (job.priority > jobsInQueue[i].priority) {
                         jobsInQueue.Insert(i, job);

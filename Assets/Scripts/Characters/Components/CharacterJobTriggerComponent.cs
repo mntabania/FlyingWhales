@@ -882,18 +882,18 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 #endregion
 
 #region Suicide
-    public GoapPlanJob TriggerSuicideJob(string reason) {
-		if (owner.jobQueue.HasJob(JOB_TYPE.COMMIT_SUICIDE) == false) {
-			GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.COMMIT_SUICIDE, 
-				new GoapEffect(GOAP_EFFECT_CONDITION.DEATH, string.Empty, false, GOAP_EFFECT_TARGET.ACTOR),
-				owner,  owner);
-            JobUtilities.PopulatePriorityLocationsForSuicide(owner, job);
-            job.AddOtherData(INTERACTION_TYPE.NONE, new object[] {reason});
-			owner.jobQueue.AddJobInQueue(job);
-			return job;	
-		}
-		return null;
-	}
+ //   public GoapPlanJob TriggerSuicideJob(string reason) {
+	//	if (owner.jobQueue.HasJob(JOB_TYPE.COMMIT_SUICIDE) == false) {
+	//		GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.COMMIT_SUICIDE, 
+	//			new GoapEffect(GOAP_EFFECT_CONDITION.DEATH, string.Empty, false, GOAP_EFFECT_TARGET.ACTOR),
+	//			owner,  owner);
+ //           JobUtilities.PopulatePriorityLocationsForSuicide(owner, job);
+ //           job.AddOtherData(INTERACTION_TYPE.NONE, new object[] {reason});
+	//		owner.jobQueue.AddJobInQueue(job);
+	//		return job;	
+	//	}
+	//	return null;
+	//}
     public bool TriggerSuicideJob(out JobQueueItem producedJob, string reason) {
         producedJob = null;
         if (owner.jobQueue.HasJob(JOB_TYPE.COMMIT_SUICIDE) == false) { 
@@ -1246,8 +1246,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
             goapPlan.SetDoNotRecalculate(true);
             job.SetCannotBePushedBack(true);
             job.SetAssignedPlan(goapPlan);
-            owner.jobQueue.AddJobInQueue(job);
-            return true;
+            return owner.jobQueue.AddJobInQueue(job);
         }
         return false;
     }
@@ -1479,32 +1478,31 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 #endregion
     
 #region Violence
-    public GoapPlanJob CreateKnockoutJob(Character targetCharacter) {
-	    if (!owner.jobQueue.HasJob(JOB_TYPE.KNOCKOUT, targetCharacter)) {
-		    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.KNOCKOUT, new GoapEffect(GOAP_EFFECT_CONDITION.HAS_TRAIT, "Unconscious", false, GOAP_EFFECT_TARGET.TARGET), targetCharacter, owner);
-		    owner.jobQueue.AddJobInQueue(job);
-            return job;
-	    }
-        return null;
-    }
-    public GoapPlanJob CreateBrawlJob(Character targetCharacter) {
+    //public GoapPlanJob CreateKnockoutJob(Character targetCharacter) {
+	   // if (!owner.jobQueue.HasJob(JOB_TYPE.KNOCKOUT, targetCharacter)) {
+		  //  GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.KNOCKOUT, new GoapEffect(GOAP_EFFECT_CONDITION.HAS_TRAIT, "Unconscious", false, GOAP_EFFECT_TARGET.TARGET), targetCharacter, owner);
+		  //  owner.jobQueue.AddJobInQueue(job);
+    //        return job;
+	   // }
+    //    return null;
+    //}
+    public bool CreateBrawlJob(Character targetCharacter) {
         if (!owner.jobQueue.HasJob(JOB_TYPE.BRAWL, targetCharacter)) {
             GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.BRAWL, new GoapEffect(GOAP_EFFECT_CONDITION.HAS_TRAIT, "Unconscious", false, GOAP_EFFECT_TARGET.TARGET), targetCharacter, owner);
             job.SetCannotBePushedBack(true);
             job.SetDoNotRecalculate(true);
-            owner.jobQueue.AddJobInQueue(job);
-            return job;
+            return owner.jobQueue.AddJobInQueue(job);
         }
-        return null;
+        return false;
     }
-    public GoapPlanJob CreateDemonKillJob(Character targetCharacter) {
-	    if (!owner.jobQueue.HasJob(JOB_TYPE.DEMON_KILL, targetCharacter)) {
-		    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.DEMON_KILL, new GoapEffect(GOAP_EFFECT_CONDITION.DEATH, string.Empty, false, GOAP_EFFECT_TARGET.TARGET), targetCharacter, owner);
-		    owner.jobQueue.AddJobInQueue(job);
-            return job;
-	    }
-        return null;
-    }
+    //public GoapPlanJob CreateDemonKillJob(Character targetCharacter) {
+	   // if (!owner.jobQueue.HasJob(JOB_TYPE.DEMON_KILL, targetCharacter)) {
+		  //  GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.DEMON_KILL, new GoapEffect(GOAP_EFFECT_CONDITION.DEATH, string.Empty, false, GOAP_EFFECT_TARGET.TARGET), targetCharacter, owner);
+		  //  owner.jobQueue.AddJobInQueue(job);
+    //        return job;
+	   // }
+    //    return null;
+    //}
     public bool CreateDemonKillJob(Character targetCharacter, out JobQueueItem producedJob) {
         if (!owner.jobQueue.HasJob(JOB_TYPE.DEMON_KILL, targetCharacter)) {
             GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.DEMON_KILL, new GoapEffect(GOAP_EFFECT_CONDITION.DEATH, string.Empty, false, GOAP_EFFECT_TARGET.TARGET), targetCharacter, owner);
@@ -1514,14 +1512,14 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
         producedJob = null;
         return false;
     }
-    public GoapPlanJob CreateBerserkAttackJob(IPointOfInterest targetPOI) {
-        if (!owner.jobQueue.HasJob(JOB_TYPE.BERSERK_ATTACK, targetPOI)) {
-            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.BERSERK_ATTACK, new GoapEffect(GOAP_EFFECT_CONDITION.DEATH, string.Empty, false, GOAP_EFFECT_TARGET.TARGET), targetPOI, owner);
-            owner.jobQueue.AddJobInQueue(job);
-            return job;
-        }
-        return null;
-    }
+    //public GoapPlanJob CreateBerserkAttackJob(IPointOfInterest targetPOI) {
+    //    if (!owner.jobQueue.HasJob(JOB_TYPE.BERSERK_ATTACK, targetPOI)) {
+    //        GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.BERSERK_ATTACK, new GoapEffect(GOAP_EFFECT_CONDITION.DEATH, string.Empty, false, GOAP_EFFECT_TARGET.TARGET), targetPOI, owner);
+    //        owner.jobQueue.AddJobInQueue(job);
+    //        return job;
+    //    }
+    //    return null;
+    //}
 #endregion
 
 #region Needs
@@ -2454,14 +2452,14 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 		    producedJob = job;
 	    }
     }
-    public bool TriggerSpawnSkeleton() {
-        if (!owner.jobQueue.HasJob(JOB_TYPE.SPAWN_SKELETON)) {
-            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.SPAWN_SKELETON, INTERACTION_TYPE.SPAWN_SKELETON, owner, owner);
-            owner.jobQueue.AddJobInQueue(job);
-            return true;
-        }
-        return false;
-    }
+    //public bool TriggerSpawnSkeleton() {
+    //    if (!owner.jobQueue.HasJob(JOB_TYPE.SPAWN_SKELETON)) {
+    //        GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.SPAWN_SKELETON, INTERACTION_TYPE.SPAWN_SKELETON, owner, owner);
+    //        owner.jobQueue.AddJobInQueue(job);
+    //        return true;
+    //    }
+    //    return false;
+    //}
     public bool TriggerSpawnSkeleton(out JobQueueItem producedJob) {
 	    producedJob = null;
 	    if (!owner.jobQueue.HasJob(JOB_TYPE.SPAWN_SKELETON)) {
@@ -3518,8 +3516,8 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
                 job.isTriggeredFlaw = true;
 			}
             job.SetDoNotRecalculate(true);
-		    owner.jobQueue.AddJobInQueue(job);
-		    return true;
+            return owner.jobQueue.AddJobInQueue(job);
+		    //return true;
 	    }
 	    return false;
     }
