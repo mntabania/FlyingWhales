@@ -4392,7 +4392,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     }
     public bool CanAdvertiseActionToActor(Character actor, GoapAction action, GoapPlanJob job) {
         if ((IsAvailable() || action.canBeAdvertisedEvenIfTargetIsUnavailable)
-            //&& advertisedActions != null && advertisedActions.Contains(action.goapType)
+            //&& advertisedActions != null && advertisedActions.Contains(action.goapType) Note: Remove checking of advertisedActions here because we do not need to anymore since our awareness list is a list of POI that advertises a certain action (see GetListOfPOIBasedOnActionType), so we are sure that we only get the pois that can advertise the action
             && actor.trapStructure.SatisfiesForcedStructure(this)
             && actor.trapStructure.SatisfiesForcedArea(this)
             && RaceManager.Instance.CanCharacterDoGoapAction(actor, action.goapType)
