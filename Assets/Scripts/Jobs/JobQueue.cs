@@ -102,52 +102,6 @@ public class JobQueue {
         job.OnAddJobToQueue();
         job.originalOwner?.OnJobAddedToCharacterJobQueue(job, owner);
         Messenger.Broadcast(JobSignals.JOB_ADDED_TO_QUEUE, job, owner);
-        //if(quest != null) {
-        //    quest.OnAddJob(job);
-        //}
-
-        //if (processLogicForPersonalJob) {
-        //    //bool hasProcessed = false;
-        //    //Character characterOwner = owner as Character;
-        //    //If the current action's job of the character is overridable and the added job has higher priority than it,
-        //    //then process that job immediately and stop what the character is currently doing
-        //    //Sometimes, in rare cases, the character still cannot be assigned to a job even if it is a personal job,
-        //    //It might be because CanTakeJob/CanCharacterTakeThisJob function is not satisfied
-        //    //if (processLogicForPersonalJob) {
-        //    if (hasBeenInserted && insertIndex == 0){ //This means that the job is inserted as the top most priority //characterOwner.CanCurrentJobBeOverriddenByJob(job))
-        //        CurrentTopPriorityIsPushedBackBy(job);
-        //    } 
-        //    //else {
-        //    //    //If a character is a higher priority than one of the currently existing jobs
-        //    //    //Check all currently existing plans of character
-        //    //    //All plans' job of character that has lower priority than the added job must be dropped so that the job will be prioritized than those 
-        //    //    if (hasBeenInserted) {
-        //    //        for (int i = 0; i < owner.allGoapPlans.Count; i++) {
-        //    //            GoapPlan plan = owner.allGoapPlans[i];
-        //    //            if(plan.job == null || (job.priority < plan.job.priority)) {
-        //    //                if(plan.job == null) {
-        //    //                    owner.JustDropPlan(plan);
-        //    //                } else {
-        //    //                    if (plan.job.jobQueueParent.isAreaOrQuestJobQueue) {
-        //    //                        plan.job.UnassignJob(false);
-        //    //                    } else {
-        //    //                        owner.JustDropPlan(plan);
-        //    //                    }
-        //    //                }
-        //    //                i--;
-        //    //            }
-        //    //        }
-        //    //    }
-        //    //}
-        //    //}
-        //    //if (processLogicForPersonalJob && !hasProcessed) {
-        //    //    if ((character.stateComponent.currentState != null && (character.stateComponent.currentState.characterState == CHARACTER_STATE.STROLL || character.stateComponent.currentState.characterState == CHARACTER_STATE.STROLL_OUTSIDE))
-        //    //        || (character.currentAction != null && character.currentAction.goapType == INTERACTION_TYPE.RETURN_HOME &&
-        //    //        (character.currentAction.parentPlan == null || character.currentAction.parentPlan.category == GOAP_CATEGORY.IDLE))) {
-        //    //        character.jobQueue.ProcessFirstJobInQueue(character);
-        //    //    }
-        //    //}
-        //}
         if (job.jobType == JOB_TYPE.TRIGGER_FLAW) {
             job.isTriggeredFlaw = true;
         }

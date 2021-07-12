@@ -11,6 +11,8 @@ public class AbsorbPowerCrystal : GoapAction {
         //advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
         racesThatCanDoAction = new RACE[] { RACE.ELVES, };
         logTags = new[] { LOG_TAG.Work };
+        //Do not add log because absorb power crystal log is done in AbsorbCrystal in Character script
+        //If we add log here, it creates an absorb power crystal duplicate log
         shouldAddLogs = false;
     }
 
@@ -50,10 +52,10 @@ public class AbsorbPowerCrystal : GoapAction {
     //#endregion
 
     #region State Effects
-    public void PreAbsorbCrystalSuccess(ActualGoapNode goapNode) {
-        //Character targetCharacter = goapNode.poiTarget as Character;
-        //goapNode.descriptionLog.AddToFillers(null, targetCharacter.name + "POWER CRYSTAL ABSORB", LOG_IDENTIFIER.STRING_1);
-    }
+    //public void PreAbsorbCrystalSuccess(ActualGoapNode goapNode) {
+    //    //Character targetCharacter = goapNode.poiTarget as Character;
+    //    //goapNode.descriptionLog.AddToFillers(null, targetCharacter.name + "POWER CRYSTAL ABSORB", LOG_IDENTIFIER.STRING_1);
+    //}
     public void AfterAbsorbCrystalSuccess(ActualGoapNode goapNode) {
         //goapNode.actor.necromancerTrait.AdjustLifeAbsorbed(2);
         //(goapNode.poiTarget as Character).Death(deathFromAction: goapNode);

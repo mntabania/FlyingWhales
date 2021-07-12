@@ -186,7 +186,7 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
             }
             character.SetFaction(null);
             Messenger.Broadcast(FactionSignals.CHARACTER_REMOVED_FROM_FACTION, character, this);
-            if (characters.All(c => c.isDead) && factionType.type != FACTION_TYPE.Undead && factionType.type != FACTION_TYPE.Vagrants && factionType.type != FACTION_TYPE.Demons) {
+            if (characters.All(c => c.isDead) && factionType.type != FACTION_TYPE.Undead && factionType.type != FACTION_TYPE.Vagrants && factionType.type != FACTION_TYPE.Demons && factionType.type != FACTION_TYPE.Ratmen) {
                 Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Faction", "Generic", "disband", providedTags: LOG_TAG.Major);
                 log.AddToFillers(this, name, LOG_IDENTIFIER.FACTION_1);
                 log.AddLogToDatabase();
