@@ -1134,7 +1134,8 @@ public class CharacterManager : BaseMonoBehaviour {
             && p_considerer.movementComponent.HasPathTo(p_targetCharacter.gridTileLocation)
             && !p_targetCharacter.isInLimbo
             && !p_targetCharacter.isBeingSeized
-            && p_targetCharacter.carryComponent.IsNotBeingCarried()) {
+            && p_targetCharacter.carryComponent.IsNotBeingCarried()
+            && p_targetCharacter.combatComponent.combatMode != COMBAT_MODE.Passive) {
             if (!p_targetCharacter.traitContainer.HasTrait("Hibernating", "Indestructible")) {
                 if (p_considerer.IsHostileWith(p_targetCharacter)) {
                     if (!IsCharacterConsideredPrisonerOf(p_considerer, p_targetCharacter)) {
