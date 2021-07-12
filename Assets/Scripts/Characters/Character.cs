@@ -545,7 +545,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         Messenger.AddListener<Faction, Character>(FactionSignals.CREATE_FACTION_INTERRUPT, OnFactionCreated);
         Messenger.AddListener<ITraitable, Trait>(TraitSignals.TRAITABLE_GAINED_TRAIT, OnTraitableGainedTrait);
         Messenger.AddListener<Faction, Faction, FACTION_RELATIONSHIP_STATUS, FACTION_RELATIONSHIP_STATUS>(FactionSignals.CHANGE_FACTION_RELATIONSHIP, OnChangeFactionRelationship);
-        Messenger.AddListener<Character, PowerCrystal>(CharacterSignals.ON_ELF_ABSORB_CRYSTAL, OnPowerCrystalAbsorbedByAnElf);
         needsComponent.SubscribeToSignals();
         jobComponent.SubscribeToListeners();
         stateAwarenessComponent.SubscribeSignals();
@@ -6749,14 +6748,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     //     InitialBonusForCharacterBaseOnClass(this);
     // }
 
-    //function to be attached on signal that 1 elven got a power crystal
-    //check if they are on the same village
-    //NOTE!! - only elves should gain from this call
-    void OnPowerCrystalAbsorbedByAnElf(Character p_powerCrystalAbsorber, PowerCrystal p_crystal) {
-        if (this != p_powerCrystalAbsorber && race == RACE.ELVES && homeSettlement == p_powerCrystalAbsorber.homeSettlement) {
-            ApplyCrystalBonus(p_crystal);
-        }
-    }
 
     //the signal should be called here and also the absorber will gain the bonus from this function
     //NOTE!! - only elves should gain from this call
@@ -6776,6 +6767,13 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             log.AddToFillers(null, crystalBonus, LOG_IDENTIFIER.STRING_1);
             log.AddLogToDatabase();
             PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
+
+            for(int x = 0; x < homeSettlement.residents.Count; ++x) {
+                if (this != homeSettlement.residents[x] && !homeSettlement.residents[x].isDead && race == RACE.ELVES) {
+                    homeSettlement.residents[x].ApplyCrystalBonus(p_crystal);
+                }
+            }
+            
         } else {
             if (p_crystal.amountBonusPiercing > 0) {
                 crystalBonus = " gained " + p_crystal.amountBonusPiercing + "% Piercing";
