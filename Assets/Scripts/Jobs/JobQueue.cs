@@ -80,9 +80,13 @@ public class JobQueue {
             jobsInQueue.Insert(0, job);
 
             //If job queue has jobs even before the new job is inserted, process it
-            if (!isJobQueueEmpty) {
-                job.ProcessJob();
-            }
+            //UPDATE: Whether or not the job queue is empty, if this is the highest priority when it is added to queue, process it immediately.
+            //Reason: So that the character will spend less time waiting to do an action, because right now, after doing an action, a character will wait 1-2 ticks before doing another one
+            job.ProcessJob();
+
+            //if (!isJobQueueEmpty) {
+            //    job.ProcessJob();
+            //}
         } else {
             bool hasBeenInserted = false;
             if(jobsInQueue.Count > 1) {
