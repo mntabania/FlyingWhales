@@ -394,6 +394,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     }
     public bool CanAdvertiseActionToActor(Character actor, GoapAction action, GoapPlanJob job) {
         if ((IsAvailable() || action.canBeAdvertisedEvenIfTargetIsUnavailable)
+
             //&& advertisedActions != null && advertisedActions.Contains(action.goapType)
             && actor.trapStructure.SatisfiesForcedStructure(this)
             && actor.trapStructure.SatisfiesForcedArea(this)

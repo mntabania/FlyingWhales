@@ -72,7 +72,7 @@ public class FishingSpot : TileObject {
         base.OnPlacePOI();
         traitContainer.AddTrait(this, "Indestructible");
         name = "a Lake";
-        AddAdvertisedAction(INTERACTION_TYPE.FISH);
+        AddAdvertisedAction(INTERACTION_TYPE.FIND_FISH);
         Messenger.AddListener(Signals.HOUR_STARTED, HourStarted);
         if (structureConnector != null && gridTileLocation != null) {
             structureConnector.OnPlaceConnector(gridTileLocation.parentMap);    
