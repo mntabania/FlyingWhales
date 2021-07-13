@@ -9,6 +9,7 @@
         AddAdvertisedAction(INTERACTION_TYPE.PICK_UP);
         AddAdvertisedAction(INTERACTION_TYPE.BOOBY_TRAP);
         AddAdvertisedAction(INTERACTION_TYPE.STEAL_ANYTHING);
+        traitContainer.AddTrait(this, "Treasure");
     }
     public Phylactery(SaveDataTileObject data) : base(data) { }
     protected override string GenerateName() { return "Phylactery"; }

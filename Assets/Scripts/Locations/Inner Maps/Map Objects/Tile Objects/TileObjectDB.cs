@@ -428,6 +428,28 @@ public class TileObjectData {
         possibleRecipe = mainRecipe;
         return false;
     }
+    public bool TryGetPossibleRecipe(NPCSettlement p_settlement, out TileObjectRecipe possibleRecipe) {
+        for (int i = 0; i < craftRecipes.Length; i++) { 
+            TileObjectRecipe recipe = craftRecipes[i];
+            bool hasAllIngredients = p_settlement.HasTileObjectOfType(recipe.ingredient.ingredient);
+
+            //bool hasAllIngredients = true;
+            //for (int j = 0; j < recipe.ingredient.Length; j++) {
+            //    TileObjectRecipeIngredient ingredient = recipe.ingredient[j];
+            //    if (region.GetTileObjectInRegionCount(ingredient.ingredient) <= 0) {
+            //        hasAllIngredients = false;
+            //        break;
+            //    }
+            //}
+            if (hasAllIngredients) {
+                possibleRecipe = recipe;
+                return true;
+            }
+        }
+        //if no possible recipe was found just return main recipe
+        possibleRecipe = mainRecipe;
+        return false;
+    }
     public TileObjectRecipe GetRecipeThatUses(TILE_OBJECT_TYPE tileObjectType) {
         for (int i = 0; i < craftRecipes.Length; i++) {
             TileObjectRecipe recipe = craftRecipes[i];

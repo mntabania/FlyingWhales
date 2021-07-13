@@ -472,9 +472,11 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable, IObjectPoolTeste
                 actor.PerformGoapAction();
             }
         } else if (action.actionLocationType == ACTION_LOCATION_TYPE.UPON_STRUCTURE_ARRIVAL) {
-            //If action location type is Upon Structure Arrival and the character already reached the target tile but the target structure is wilderness or the target structure is not the current structure, perform again
-            if (targetStructure.structureType == STRUCTURE_TYPE.WILDERNESS || actor.currentStructure != targetStructure) {
-                actor.PerformGoapAction();
+            if (targetStructure != null) {
+                //If action location type is Upon Structure Arrival and the character already reached the target tile but the target structure is wilderness or the target structure is not the current structure, perform again
+                if (targetStructure.structureType == STRUCTURE_TYPE.WILDERNESS || actor.currentStructure != targetStructure) {
+                    actor.PerformGoapAction();
+                }    
             }
         } else {
             actor.PerformGoapAction();
