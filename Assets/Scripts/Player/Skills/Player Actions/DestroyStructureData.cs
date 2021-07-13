@@ -3,10 +3,16 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using Inner_Maps.Location_Structures;
-
+using UnityEngine.Localization.Settings;
 public class DestroyStructureData : PlayerAction {
     public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.DESTROY_STRUCTURE;
     public override string name => "Destroy";
+
+    //this one has its own override for loc because it has same name as the DestroyData
+    public override string localizedName => LocalizationSettings.StringDatabase.GetLocalizedString("PlayerActionsNameAndDescription_Table", "Destroy Structure");
+    public override string localizedDescription => $"{LocalizationSettings.StringDatabase.GetLocalizedString("PlayerActionsNameAndDescription_Table", "Destroy Structure_Description")}";
+    //this one has its own override for loc because it has same name as the DestroyData
+
     public override string description => "This Ability can be used to destroy Demonic Structure.";
     public DestroyStructureData() : base() {
         targetTypes = new SPELL_TARGET[] { SPELL_TARGET.STRUCTURE };

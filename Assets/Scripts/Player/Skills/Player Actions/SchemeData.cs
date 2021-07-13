@@ -8,7 +8,7 @@ using UnityEngine.Assertions;
 using Inner_Maps.Location_Structures;
 using UtilityScripts;
 using Locations.Settlements;
-
+using UnityEngine.Localization.Settings;
 public class SchemeData : PlayerAction {
 
     public static bool alwaysSuccessScheme = false;
@@ -18,6 +18,9 @@ public class SchemeData : PlayerAction {
     public override string description => $"This Action can be used to start various different schemes to manipulate world events.";
 
     public virtual string verbName => name;
+
+    public override string localizedName => LocalizationSettings.StringDatabase.GetLocalizedString("SchemesNameAndDescription_Table", name);
+    public override string localizedDescription => $"{LocalizationSettings.StringDatabase.GetLocalizedString("SchemesNameAndDescription_Table", name + "_Description")}";
 
     public SchemeData() : base() {
         targetTypes = new SPELL_TARGET[] { SPELL_TARGET.CHARACTER };

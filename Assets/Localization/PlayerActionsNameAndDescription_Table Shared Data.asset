@@ -1,0 +1,452 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5b11a58205ec3474ca216360e9fa74a8, type: 3}
+  m_Name: PlayerActionsNameAndDescription_Table Shared Data
+  m_EditorClassIdentifier: 
+  m_TableCollectionName: PlayerActionsNameAndDescription_Table
+  m_TableCollectionNameGuidString: 824d66bf7235b5243b5947daad480ff1
+  m_Entries:
+  - m_Id: 70761750528
+    m_Key: Induce Migration
+    m_Metadata:
+      m_Items: []
+  - m_Id: 77028040704
+    m_Key: Induce Migration_Description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 154777853952
+    m_Key: Stifle Migration
+    m_Metadata:
+      m_Items: []
+  - m_Id: 160507273216
+    m_Key: Stifle Migration_Description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1619000991744
+    m_Key: Afflict
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1624092876800
+    m_Key: Afflict_Description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1807199412224
+    m_Key: Agitate
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1813247598592
+    m_Key: Agitate_Description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1993069993984
+    m_Key: Brainwash
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1998447091712
+    m_Key: Brainwash_Description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2167783727104
+    m_Key: Breed Monster
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2174624636928
+    m_Key: Breed Monster_Description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2386139193344
+    m_Key: Build Structure
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2391281410048
+    m_Key: Build Structure_Description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2564833320960
+    m_Key: Create Blackmail
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2569509969920
+    m_Key: Create Blackmail_Description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2857247612928
+    m_Key: Booby Trap
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2863002198016
+    m_Key: Booby Trap_Description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3020942909440
+    m_Key: Join Faction
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3027792207872
+    m_Key: Join Faction_Description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3577287974912
+    m_Key: Poison Neighbor
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3583441018880
+    m_Key: Poison Neighbor_Description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6063902072832
+    m_Key: Transform
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6072961769472
+    m_Key: Transform_Description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6190179983360
+    m_Key: Defend
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6196001677312
+    m_Key: Defend_Description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6325152686080
+    m_Key: Destroy
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6330114547712
+    m_Key: Destroy_Description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6473798819840
+    m_Key: Destroy Eye
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6477640802304
+    m_Key: Destroy Eye_Description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8058536894464
+    m_Key: Destroy Structure
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8064819961856
+    m_Key: Destroy Structure_Description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8218297933824
+    m_Key: Drain Spirit
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8223662448640
+    m_Key: Drain Spirit_Description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8428482895872
+    m_Key: Empower
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8432970801152
+    m_Key: Empower_Description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8576638296064
+    m_Key: Preach
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8580874543104
+    m_Key: Preach_Description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9002766999552
+    m_Key: Expel
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9006789337088
+    m_Key: Expel_Description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9184183230464
+    m_Key: Found Cult
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9237367005184
+    m_Key: Found Cult_Description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9400588345344
+    m_Key: Full Heal
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9404967198720
+    m_Key: Full Heal_Description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9537108746240
+    m_Key: Heal
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9542586507264
+    m_Key: Heal_Description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9667119587328
+    m_Key: Ignite
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9673075499008
+    m_Key: Ignite_Description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9810766110720
+    m_Key: Let It Go
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9818194223104
+    m_Key: Let It Go_Description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10048830611456
+    m_Key: Poison
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10070347390976
+    m_Key: Poison_Description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10158763319296
+    m_Key: Raid
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10164295606272
+    m_Key: Raid_Description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10259606970368
+    m_Key: Raise Dead
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10263377649664
+    m_Key: Raise Dead_Description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10413537927168
+    m_Key: Release Powers
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10417287634944
+    m_Key: Release Powers_Description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10645529075712
+    m_Key: Release
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10650352525312
+    m_Key: Release_Description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10821584986112
+    m_Key: Remove Buff
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10824919457792
+    m_Key: Remove Buff_Description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11019157676032
+    m_Key: Remove Flaw
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11024484442112
+    m_Key: Remove Flaw_Description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11188544643072
+    m_Key: Repair
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11200158670848
+    m_Key: Repair_Description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11300125712384
+    m_Key: Sacrifice
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11304114495488
+    m_Key: Sacrifice_Description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11431701028864
+    m_Key: Scheme
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11443461857280
+    m_Key: Scheme_Description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11581634813952
+    m_Key: Seize Villager
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11585543905280
+    m_Key: Seize Villager_Description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11868168691712
+    m_Key: Seize Monster
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11874653085696
+    m_Key: Seize Monster_Description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11985416265728
+    m_Key: Seize Object
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11990524928000
+    m_Key: Seize Object_Description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12123811520512
+    m_Key: Snatch
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12128714661888
+    m_Key: Snatch_Description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12353583882240
+    m_Key: Snatch Monster
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12361418842112
+    m_Key: Snatch Monster_Description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12545569759232
+    m_Key: Snatch Villager
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12549759868928
+    m_Key: Snatch Villager_Description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12731415175168
+    m_Key: Spawn Eye
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12737882791936
+    m_Key: Spawn Eye_Description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12880388464640
+    m_Key: Spawn Party
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12887531364352
+    m_Key: Spawn Party_Description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 13055924281344
+    m_Key: Spread Rumor
+    m_Metadata:
+      m_Items: []
+  - m_Id: 13060500267008
+    m_Key: Spread Rumor_Description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 13194495696896
+    m_Key: Torture
+    m_Metadata:
+      m_Items: []
+  - m_Id: 13198631280640
+    m_Key: Torture_Description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 13373504397312
+    m_Key: Trigger Flaw
+    m_Metadata:
+      m_Items: []
+  - m_Id: 13377107304448
+    m_Key: Trigger Flaw_Description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 13560784265216
+    m_Key: Unsummon
+    m_Metadata:
+      m_Items: []
+  - m_Id: 13565817430016
+    m_Key: Unsummon_Description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 13661950877696
+    m_Key: Upgrade Abilities
+    m_Metadata:
+      m_Items: []
+  - m_Id: 13672537300992
+    m_Key: Upgrade Abilities_Description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 13789570965504
+    m_Key: Increase Eyes
+    m_Metadata:
+      m_Items: []
+  - m_Id: 13794142756864
+    m_Key: Increase Eyes_Description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 17246705065984
+    m_Key: Increase Radius
+    m_Metadata:
+      m_Items: []
+  - m_Id: 17252451262464
+    m_Key: Increase Radius_Description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 17723706482688
+    m_Key: Upgrade
+    m_Metadata:
+      m_Items: []
+  - m_Id: 17730241208320
+    m_Key: Upgrade_Description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18171091918848
+    m_Key: Upgrade Portal
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18200502378496
+    m_Key: Upgrade Portal_Description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18383868960768
+    m_Key: Zap
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18388407197696
+    m_Key: Zap_Description
+    m_Metadata:
+      m_Items: []
+  m_Metadata:
+    m_Items: []
+  m_KeyGenerator:
+    id: 0
+  references:
+    version: 1
+    00000000:
+      type: {class: DistributedUIDGenerator, ns: UnityEngine.Localization.Tables,
+        asm: Unity.Localization}
+      data:
+        m_CustomEpoch: 1626182733168

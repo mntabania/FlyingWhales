@@ -1,0 +1,448 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e9620f8c34305754d8cc9a7e49e852d9, type: 3}
+  m_Name: PlayerActionsNameAndDescription_Table_fil-PH
+  m_EditorClassIdentifier: 
+  m_LocaleId:
+    m_Code: fil-PH
+  m_SharedData: {fileID: 11400000, guid: 824d66bf7235b5243b5947daad480ff1, type: 2}
+  m_Metadata:
+    m_Items: []
+  m_TableData:
+  - m_Id: 77028040704
+    m_Localized: Magimbita ng marami pang villagers.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 70761750528
+    m_Localized: Lipat Bahay
+    m_Metadata:
+      m_Items: []
+  - m_Id: 154777853952
+    m_Localized: Ulitin Migrasyon
+    m_Metadata:
+      m_Items: []
+  - m_Id: 160507273216
+    m_Localized: Ulitin natin ang metro ng migrasyon.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1619000991744
+    m_Localized: Magpahirap
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1624092876800
+    m_Localized: Lagyan ng kapansanan ang isang villager.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1807199412224
+    m_Localized: Galitin
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1813247598592
+    m_Localized: Galitin ang isang nilalang.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1993069993984
+    m_Localized: Linlangin
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1998447091712
+    m_Localized: Linlangin ang isang villager at gawing miyembro ng kulto.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2167783727104
+    m_Localized: Mag Alaga ng Halimaw
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2174624636928
+    m_Localized: Ang aksyon na ito ay mag dadagdag ng isang charge sa halimaw.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2386139193344
+    m_Localized: Magtayo ng Istraktura
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2391281410048
+    m_Localized: Magtayo ng pang demonyong istraktura.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2564833320960
+    m_Localized: Pananakot
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2569509969920
+    m_Localized: Takutin at bolahin ang isang villager.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2857247612928
+    m_Localized: Bubi Trap
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2863002198016
+    m_Localized: Mang bully ng isang kakilala at lagyan ng bombang prank.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3020942909440
+    m_Localized: Sali Paksyon
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3027792207872
+    m_Localized: Para sa miyembro ng kulto aalis ito sa paksyon.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3577287974912
+    m_Localized: Lason Kapit Bahay
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3583441018880
+    m_Localized: Myembro ng kulto lalasunin ang tropa.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6063902072832
+    m_Localized: Bagong Anyo
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6072961769472
+    m_Localized: Gawing abomination ang isang nilalang.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6190179983360
+    m_Localized: Pagtanggol
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6196001677312
+    m_Localized: Mag pakawala ng mga minyons pra ipagtanggol ang paligid ng prisma.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6325152686080
+    m_Localized: Wasakin
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6330114547712
+    m_Localized: Sirain ang isang bagay.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6473798819840
+    m_Localized: Wasakin Mata
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6477640802304
+    m_Localized: Wasakin ang matang tagapagmasid.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8058536894464
+    m_Localized: Wasakin
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8064819961856
+    m_Localized: Sirain ang pan demonyong istraktura.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8218297933824
+    m_Localized: Sipsip Ispirit.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8223662448640
+    m_Localized: Sipsipin ispiritu at maglabas kaguluhang bato.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8428482895872
+    m_Localized: Palakasin
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8432970801152
+    m_Localized: Palakasin ang kombat pawer ng isang nilalang.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8576638296064
+    m_Localized: Mangaral.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8580874543104
+    m_Localized: Mangaral sa isang nilalang at gawin itong isang miyembro ng kulto.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9002766999552
+    m_Localized: Sipain
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9006789337088
+    m_Localized: Sipain ang isang nilalang sa kanyang nayon at paksyon.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9184183230464
+    m_Localized: Tayo Kulto
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9237367005184
+    m_Localized: Utusan ang isang lider ng kulto na magtayo na ng sariling kultong
+      paksyon.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9400588345344
+    m_Localized: Hilom Buo
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9404967198720
+    m_Localized: Punuin ng buo ang buhay ng isang nilalang.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9537108746240
+    m_Localized: Hilumin
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9542586507264
+    m_Localized: Hilumin ng bahagya ang buhay ng isang nilalang.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9667119587328
+    m_Localized: Sindihan
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9673075499008
+    m_Localized: Sindihan ang isang bagay at sunugin.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9810766110720
+    m_Localized: Palayain
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9818194223104
+    m_Localized: Palayain ang isang nilalang mula sa kennel o bilangguan.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10048830611456
+    m_Localized: Lason
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10070347390976
+    m_Localized: Lasunin ang isang bagay.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10158763319296
+    m_Localized: Sugod
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10164295606272
+    m_Localized: Sugurin ang isang nayon.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10259606970368
+    m_Localized: Buhayin Patay
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10263377649664
+    m_Localized: BUhayin ang patay na nilalang at isali sa undead paksyon.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10413537927168
+    m_Localized: Pagaralan Kapangyarihan.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10417287634944
+    m_Localized: Makakuha ng mga charges pra sa random kapangyarihan.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10645529075712
+    m_Localized: Pakawalan
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10650352525312
+    m_Localized: Pakawalana ng isang nilalangna nakakulong, nagyeyelo, alipin o nasa
+      patibong.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10821584986112
+    m_Localized: Tanggal Lakas
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10824919457792
+    m_Localized: Tanggalan ng pampalakas ang isang villager.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11019157676032
+    m_Localized: Tanggal Bahid
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11024484442112
+    m_Localized: Magtanggal ng isang bahid sa isang nilalang.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11188544643072
+    m_Localized: Kumpuni
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11200158670848
+    m_Localized: Kumpunihin ang istrakturang may sira.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11300125712384
+    m_Localized: Mag-Alay
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11304114495488
+    m_Localized: Mag alay ng isang aliping nilalang.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11431701028864
+    m_Localized: Modus
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11443461857280
+    m_Localized: Iba ibang modus para makapanloko ng nilalang.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11581634813952
+    m_Localized: Hulihin Villager
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11585543905280
+    m_Localized: Hulihin at ilapag ang isang villager sa isang baldosang walang laman.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11868168691712
+    m_Localized: Hulihin Halimaw
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11874653085696
+    m_Localized: Hulihin at ilapag ang isang halimaw sa isang baldosang walang laman.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11985416265728
+    m_Localized: Hulihin Bagay
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11990524928000
+    m_Localized: Hulihin at ilapag ang isang bagay sa isang baldosang walang laman.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12123811520512
+    m_Localized: Dukutin
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12128714661888
+    m_Localized: Dukutin ang isang nilalang at dalin sa prison, kennel.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12353583882240
+    m_Localized: Dukutin Halimaw
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12361418842112
+    m_Localized: Dukutin ang isang halimaw at dalhin sa isang istruktura.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12545569759232
+    m_Localized: Dukutin TigaNayon
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12549759868928
+    m_Localized: Dukutin ang isang nilalang na tiga nayon habang magisa o natutulog.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12731415175168
+    m_Localized: Lagay Mata
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12737882791936
+    m_Localized: Mag lagay ng matang taga pag masid sa mga gawain ng mga tiga nayon.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12880388464640
+    m_Localized: Gawa Grupo
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12887531364352
+    m_Localized: Gawa Grupo.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 13055924281344
+    m_Localized: Kalat Tsismis
+    m_Metadata:
+      m_Items: []
+  - m_Id: 13060500267008
+    m_Localized: Magkalat ng tsismis. Gawain ito ng mga tiga kulto.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 13194495696896
+    m_Localized: Pahirapan
+    m_Metadata:
+      m_Items: []
+  - m_Id: 13198631280640
+    m_Localized: Pahirapan ang isang nilalang at bigyan ng bahid.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 13373504397312
+    m_Localized: Paganahin ang Bahid
+    m_Metadata:
+      m_Items: []
+  - m_Id: 13377107304448
+    m_Localized: 'Paganahin ang isang bahid ng isang nilalang. '
+    m_Metadata:
+      m_Items: []
+  - m_Id: 13560784265216
+    m_Localized: Pabalikin
+    m_Metadata:
+      m_Items: []
+  - m_Id: 13565817430016
+    m_Localized: Pabalikin ang minyon.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 13661950877696
+    m_Localized: Paghusayan Abilidad
+    m_Metadata:
+      m_Items: []
+  - m_Id: 13672537300992
+    m_Localized: Paghusayan ang iyong mga abilidad.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 13789570965504
+    m_Localized: Dagdagan Mata
+    m_Metadata:
+      m_Items: []
+  - m_Id: 13794142756864
+    m_Localized: Dagdagan ang dami ng bilang ng mga mata na pwedeng ilagay.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 17246705065984
+    m_Localized: Palawakin
+    m_Metadata:
+      m_Items: []
+  - m_Id: 17252451262464
+    m_Localized: Palawakin ang sakop ng mga matang taga masid.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 17723706482688
+    m_Localized: Paghusayin
+    m_Metadata:
+      m_Items: []
+  - m_Id: 17730241208320
+    m_Localized: Gamitin ang merkyuri pra paghusayin ang plague.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18171091918848
+    m_Localized: Paghusayin Lagusan.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18200502378496
+    m_Localized: Paghusayin ang lagusan at magpakawala ng mga bagong kapangyarihan.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18383868960768
+    m_Localized: Zzzapp
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18388407197696
+    m_Localized: Pansamantalang wag pagalawin ang nilalang.
+    m_Metadata:
+      m_Items: []
+  references:
+    version: 1

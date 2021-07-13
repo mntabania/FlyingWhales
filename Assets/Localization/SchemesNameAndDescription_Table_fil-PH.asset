@@ -1,0 +1,102 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e9620f8c34305754d8cc9a7e49e852d9, type: 3}
+  m_Name: SchemesNameAndDescription_Table_fil-PH
+  m_EditorClassIdentifier: 
+  m_LocaleId:
+    m_Code: fil-PH
+  m_SharedData: {fileID: 11400000, guid: 06789b5733bfb654caa9fb49c282929f, type: 2}
+  m_Metadata:
+    m_Items: []
+  m_TableData:
+  - m_Id: 31121383424
+    m_Localized: Hiwalay
+    m_Metadata:
+      m_Items: []
+  - m_Id: 38373335040
+    m_Localized: Ayoko na sawang sawa na ko.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 91641976889344
+    m_Localized: Gyera Na
+    m_Metadata:
+      m_Items: []
+  - m_Id: 91647806971904
+    m_Localized: Pwersahin ang isang lider na mag deklara ng gyera sa iba pang paksyon.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 91811934281728
+    m_Localized: Sali Paksyon
+    m_Metadata:
+      m_Items: []
+  - m_Id: 91820662628352
+    m_Localized: Palipatin ng paksyon ang isang miyembro ng kulto.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 91990607437824
+    m_Localized: Alis Paksyon
+    m_Metadata:
+      m_Items: []
+  - m_Id: 91995263115264
+    m_Localized: Bolahin ang isang villager na umalis sa kanyang paksyon.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 92132928561152
+    m_Localized: Lumayas
+    m_Metadata:
+      m_Items: []
+  - m_Id: 92138527956992
+    m_Localized: Bolahin ang isang villagerr na lumayas sa kanyang bahay.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 92257268703232
+    m_Localized: Lipat Nayon
+    m_Metadata:
+      m_Items: []
+  - m_Id: 92263484661760
+    m_Localized: Bolahin ang villager na umalis at lumipat sa ibang nayon.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 92397819830272
+    m_Localized: Sipain ang Lider
+    m_Metadata:
+      m_Items: []
+  - m_Id: 92401758281728
+    m_Localized: Palitan na natin si bossing.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 92510902460416
+    m_Localized: Pagaalsa
+    m_Metadata:
+      m_Items: []
+  - m_Id: 92515310673920
+    m_Localized: Mag rally at mag tayo ng unyon.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 92652166619136
+    m_Localized: Magbitaw
+    m_Metadata:
+      m_Items: []
+  - m_Id: 92656721633280
+    m_Localized: Magbitaw sa pagiging lider ng paksyon.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 92785193164800
+    m_Localized: Ulitin Migrasyon
+    m_Metadata:
+      m_Items: []
+  - m_Id: 92790389907456
+    m_Localized: Ulitin natin ang metro ng migrasyon.
+    m_Metadata:
+      m_Items: []
+  references:
+    version: 1

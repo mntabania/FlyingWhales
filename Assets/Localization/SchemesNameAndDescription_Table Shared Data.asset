@@ -1,0 +1,108 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5b11a58205ec3474ca216360e9fa74a8, type: 3}
+  m_Name: SchemesNameAndDescription_Table Shared Data
+  m_EditorClassIdentifier: 
+  m_TableCollectionName: SchemesNameAndDescription_Table
+  m_TableCollectionNameGuidString: 06789b5733bfb654caa9fb49c282929f
+  m_Entries:
+  - m_Id: 31121383424
+    m_Key: Break Up
+    m_Metadata:
+      m_Items: []
+  - m_Id: 38373335040
+    m_Key: Break Up_Description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 91641976889344
+    m_Key: Instigate War
+    m_Metadata:
+      m_Items: []
+  - m_Id: 91647806971904
+    m_Key: Instigate War_Description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 91811934281728
+    m_Key: Join Faction
+    m_Metadata:
+      m_Items: []
+  - m_Id: 91820662628352
+    m_Key: Join Faction_Description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 91990607437824
+    m_Key: Leave Faction
+    m_Metadata:
+      m_Items: []
+  - m_Id: 91995263115264
+    m_Key: Leave Faction_Description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 92132928561152
+    m_Key: Leave Home
+    m_Metadata:
+      m_Items: []
+  - m_Id: 92138527956992
+    m_Key: Leave Home_Description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 92257268703232
+    m_Key: Leave Village
+    m_Metadata:
+      m_Items: []
+  - m_Id: 92263484661760
+    m_Key: Leave Village_Description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 92397819830272
+    m_Key: Overthrow Leader
+    m_Metadata:
+      m_Items: []
+  - m_Id: 92401758281728
+    m_Key: Overthrow Leader_Description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 92510902460416
+    m_Key: Rebellion
+    m_Metadata:
+      m_Items: []
+  - m_Id: 92515310673920
+    m_Key: Rebellion_Description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 92652166619136
+    m_Key: Resign
+    m_Metadata:
+      m_Items: []
+  - m_Id: 92656721633280
+    m_Key: Resign_Description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 92785193164800
+    m_Key: Stifle Migration
+    m_Metadata:
+      m_Items: []
+  - m_Id: 92790389907456
+    m_Key: Stifle Migration_Description
+    m_Metadata:
+      m_Items: []
+  m_Metadata:
+    m_Items: []
+  m_KeyGenerator:
+    id: 0
+  references:
+    version: 1
+    00000000:
+      type: {class: DistributedUIDGenerator, ns: UnityEngine.Localization.Tables,
+        asm: Unity.Localization}
+      data:
+        m_CustomEpoch: 1626160232456

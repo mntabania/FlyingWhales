@@ -37,6 +37,16 @@ MonoBehaviour:
     m_ReadOnly: 1
     m_SerializedLabels:
     - Locale-en
+  - m_GUID: 6d6f9b093bfd0224aaf4d48d155a6cea
+    m_Address: SchemesNameAndDescription_Table_en
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-en
+  - m_GUID: ba2dbc09d6bdac448b907eb066418bea
+    m_Address: PlayerActionsNameAndDescription_Table_en
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-en
   m_ReadOnly: 1
   m_Settings: {fileID: 11400000, guid: 6745de4528465fa4b9f5f205b9ba154b, type: 2}
   m_SchemaSet:

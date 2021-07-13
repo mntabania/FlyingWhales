@@ -1,0 +1,104 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e9620f8c34305754d8cc9a7e49e852d9, type: 3}
+  m_Name: SchemesNameAndDescription_Table_en
+  m_EditorClassIdentifier: 
+  m_LocaleId:
+    m_Code: en
+  m_SharedData: {fileID: 11400000, guid: 06789b5733bfb654caa9fb49c282929f, type: 2}
+  m_Metadata:
+    m_Items: []
+  m_TableData:
+  - m_Id: 31121383424
+    m_Localized: Break Up
+    m_Metadata:
+      m_Items: []
+  - m_Id: 38373335040
+    m_Localized: Force a Villager to break up with his/her lover.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 91641976889344
+    m_Localized: Instigate War
+    m_Metadata:
+      m_Items: []
+  - m_Id: 91647806971904
+    m_Localized: Force a Faction Leader to declare war on another faction.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 91811934281728
+    m_Localized: Join Faction
+    m_Metadata:
+      m_Items: []
+  - m_Id: 91820662628352
+    m_Localized: This Ability instructs the character to join a target Faction if
+      possible. Only available on Cultists.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 91990607437824
+    m_Localized: Leave Faction
+    m_Metadata:
+      m_Items: []
+  - m_Id: 91995263115264
+    m_Localized: Convince a Villager to leave their current Faction.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 92132928561152
+    m_Localized: Leave Home
+    m_Metadata:
+      m_Items: []
+  - m_Id: 92138527956992
+    m_Localized: Convince a Villager to leave their current Home.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 92257268703232
+    m_Localized: Leave Village
+    m_Metadata:
+      m_Items: []
+  - m_Id: 92263484661760
+    m_Localized: Convince a Villager to leave their current Village.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 92397819830272
+    m_Localized: Overthrow Leader
+    m_Metadata:
+      m_Items: []
+  - m_Id: 92401758281728
+    m_Localized: Convince a Successor to depose the current Faction Leader.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 92510902460416
+    m_Localized: Rebellion
+    m_Metadata:
+      m_Items: []
+  - m_Id: 92515310673920
+    m_Localized: Convince a Settlement Ruler to split off their entire Village from
+      current Faction.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 92652166619136
+    m_Localized: Resign
+    m_Metadata:
+      m_Items: []
+  - m_Id: 92656721633280
+    m_Localized: Force a Faction Leader or Settlement Ruler to resign.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 92785193164800
+    m_Localized: Stifle Migration
+    m_Metadata:
+      m_Items: []
+  - m_Id: 92790389907456
+    m_Localized: This Ability resets a Village's Migration Meter.
+    m_Metadata:
+      m_Items: []
+  references:
+    version: 1

@@ -3,6 +3,7 @@ using Inner_Maps.Location_Structures;
 using Locations.Settlements;
 using UnityEngine;
 using UtilityScripts;
+using UnityEngine.Localization.Settings;
 
 public class PlayerAction : SkillData, IContextMenuItem {
     public virtual bool canBeCastOnBlessed => false;
@@ -12,7 +13,10 @@ public class PlayerAction : SkillData, IContextMenuItem {
     public virtual int contextMenuColumn  => PlayerSkillManager.Instance.GetScriptableObjPlayerSkillData<PlayerSkillData>(type)?.contextMenuColumn ?? 0;
     public List<IContextMenuItem> subMenus => GetSubMenus(_contextMenuItems);
     private List<IContextMenuItem> _contextMenuItems;
-    
+
+    public override string localizedName => LocalizationSettings.StringDatabase.GetLocalizedString("PlayerActionsNameAndDescription_Table", name);
+    public override string localizedDescription => $"{LocalizationSettings.StringDatabase.GetLocalizedString("PlayerActionsNameAndDescription_Table", name + "_Description")}";
+
     public override PLAYER_SKILL_CATEGORY category => PLAYER_SKILL_CATEGORY.PLAYER_ACTION;
 
     public PlayerAction() {

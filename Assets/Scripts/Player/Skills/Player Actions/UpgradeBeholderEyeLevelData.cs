@@ -3,22 +3,25 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Localization.Settings;
 
 public class UpgradeBeholderEyeLevelData : PlayerAction {
     public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.UPGRADE_BEHOLDER_EYE_LEVEL;
     public override string name => "Increase Eyes";
     public override string description => GetDescription();
 
+    public override string localizedDescription => GetDescription();
+
     private Inner_Maps.Location_Structures.Watcher m_targetBeholder;
 
     public string GetDescription() {
         if (m_targetBeholder != null) {
             if (m_targetBeholder.GetEyeLevel() >= 3) {
-                return "Increase the number of Demon Eye capacity of this Watcher";
+                return $"{LocalizationSettings.StringDatabase.GetLocalizedString("PlayerActionsNameAndDescription_Table", name + "_Description")}";
             }
             return $"Spend {EditableValuesManager.Instance.GetBeholderEyeUpgradeCostPerLevel(m_targetBeholder.GetEyeLevel()).GetCostStringWithIcon()} to increase maximum Demon Eye count by 1.";
         } else {
-            return "Increase the number of Demon Eye capacity of this Watcher";
+            return $"{LocalizationSettings.StringDatabase.GetLocalizedString("PlayerActionsNameAndDescription_Table", name + "_Description")}";
         }
     }
 

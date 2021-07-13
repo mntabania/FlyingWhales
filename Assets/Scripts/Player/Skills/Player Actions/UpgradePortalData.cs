@@ -1,9 +1,14 @@
 ﻿using Inner_Maps.Location_Structures;
-
+using UnityEngine.Localization.Settings;
 public class UpgradePortalData : PlayerAction {
     public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.UPGRADE_PORTAL;
     public override string name => "Upgrade";
     public override string description => $"Upgrade the Portal to permanently unlock new Powers.";
+
+    //this one has its own override for loc because it has same name as the DestroyData
+    public override string localizedName => LocalizationSettings.StringDatabase.GetLocalizedString("PlayerActionsNameAndDescription_Table", "Upgrade Portal");
+    public override string localizedDescription => $"{LocalizationSettings.StringDatabase.GetLocalizedString("PlayerActionsNameAndDescription_Table", "Upgrade Portal_Description")}";
+    //this one has its own override for loc because it has same name as the DestroyData
     public UpgradePortalData() : base() {
         targetTypes = new SPELL_TARGET[] { SPELL_TARGET.STRUCTURE };
     }

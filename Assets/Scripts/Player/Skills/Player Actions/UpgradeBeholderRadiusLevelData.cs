@@ -3,11 +3,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Localization.Settings;
 
 public class UpgradeBeholderRadiusLevelData : PlayerAction {
     public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.UPGRADE_BEHOLDER_RADIUS_LEVEL;
     public override string name => "Increase Radius";
     public override string description => GetDescription();
+
+    public override string localizedDescription => GetDescription();
 
     private Inner_Maps.Location_Structures.Watcher m_targetBeholder;
     public string GetDescription() {

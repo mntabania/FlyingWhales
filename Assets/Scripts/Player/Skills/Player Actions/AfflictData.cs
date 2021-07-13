@@ -8,8 +8,8 @@ public class AfflictData : PlayerAction {
     public override string name => "Afflict";
     public override string description => $"Afflict a Villager with a negative Trait.";
 
-    public override string localizedName => LocalizationSettings.StringDatabase.GetLocalizedString("AfflictionsNameAndDescription_Table", name);
-    public override string localizedDescription => $"{LocalizationSettings.StringDatabase.GetLocalizedString("AfflictionsNameAndDescription_Table", name + "_Description")}";
+    public override string localizedName => LocalizationSettings.StringDatabase.GetLocalizedString("PlayerActionsNameAndDescription_Table", name);
+    public override string localizedDescription => $"{LocalizationSettings.StringDatabase.GetLocalizedString("PlayerActionsNameAndDescription_Table", name + "_Description")}";
 
     public AfflictData() : base() {
         targetTypes = new SPELL_TARGET[] { SPELL_TARGET.CHARACTER };
