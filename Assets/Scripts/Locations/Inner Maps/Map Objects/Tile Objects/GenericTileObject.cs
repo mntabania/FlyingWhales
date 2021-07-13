@@ -252,6 +252,7 @@ public class GenericTileObject : TileObject {
         AddAdvertisedAction(INTERACTION_TYPE.BUILD_BLUEPRINT);
         AddAdvertisedAction(INTERACTION_TYPE.BUILD_VAMPIRE_CASTLE);
         AddAdvertisedAction(INTERACTION_TYPE.BUILD_NEW_VILLAGE);
+        AddAdvertisedAction(INTERACTION_TYPE.TILL_TILE);
     }
     public void ManualInitializeLoad(LocationGridTile tile, SaveDataTileObject saveDataTileObject) {
         if (hasBeenInitialized) {

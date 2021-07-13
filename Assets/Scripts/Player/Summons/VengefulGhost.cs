@@ -29,5 +29,9 @@ public class VengefulGhost : Summon {
         base.OnChangeFaction(prevFaction, newFaction);
         behaviourComponent.ResetInvadeVillageTarget();
     }
+    protected override void OnTickEnded() {
+        base.OnTickEnded();
+        PerTickOutsideCombatHPRecovery();
+    }
     #endregion
 }

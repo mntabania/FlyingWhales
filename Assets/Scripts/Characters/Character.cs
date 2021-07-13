@@ -545,7 +545,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         Messenger.AddListener<Faction, Character>(FactionSignals.CREATE_FACTION_INTERRUPT, OnFactionCreated);
         Messenger.AddListener<ITraitable, Trait>(TraitSignals.TRAITABLE_GAINED_TRAIT, OnTraitableGainedTrait);
         Messenger.AddListener<Faction, Faction, FACTION_RELATIONSHIP_STATUS, FACTION_RELATIONSHIP_STATUS>(FactionSignals.CHANGE_FACTION_RELATIONSHIP, OnChangeFactionRelationship);
-        Messenger.AddListener<Character, PowerCrystal>(CharacterSignals.ON_ELF_ABSORB_CRYSTAL, OnPowerCrystalAbsorbedByAnElf);
         needsComponent.SubscribeToSignals();
         jobComponent.SubscribeToListeners();
         stateAwarenessComponent.SubscribeSignals();
@@ -2940,7 +2939,13 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         //chance based dependent on the character
         return currentHP < (maxHP * 0.2f);
     }
-#endregion
+    protected void PerTickOutsideCombatHPRecovery() {
+        if (currentHP < maxHP && !combatComponent.isInCombat) {
+            //gain 1% of max hp per tick outside of combat
+            HPRecovery(0.01f);
+        }
+    }
+    #endregion
 
 #region Home
     /// <summary>
@@ -3459,6 +3464,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
 #if DEBUG_PROFILER
         Profiler.EndSample();
 #endif
+        if (characterClass.IsZombie()) {
+            PerTickOutsideCombatHPRecovery();
+        }
     }
     protected virtual void OnHourStarted() {
 #if DEBUG_PROFILER
@@ -3498,11 +3506,18 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
 #endif
                 if (jobToAssign != null && ((jobQueue.jobsInQueue.Count <= 0 && behaviourComponent.GetHighestBehaviourPriority() < jobToAssign.priority) ||
                     (jobQueue.jobsInQueue.Count > 0 && jobToAssign.priority > jobQueue.jobsInQueue[0].priority))) {
-                    jobQueue.AddJobInQueue(jobToAssign);
+                    if (jobQueue.AddJobInQueue(jobToAssign)) {
 #if DEBUG_LOG
-                    debugLog = $"{debugLog}\nJob was added to queue!";
-                    logComponent.PrintLogIfActive(debugLog);
+                        debugLog = $"{debugLog}\nJob was added to queue!";
+                        logComponent.PrintLogIfActive(debugLog);
 #endif
+                    } else {
+#if DEBUG_LOG
+                        debugLog = $"{debugLog}\nJob was NOT added to queue!";
+                        logComponent.PrintLogIfActive(debugLog);
+#endif
+                    }
+
                 }
                 // else {
                 //     debugLog = $"{debugLog}\nCouldn't assign job!";
@@ -4081,7 +4096,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             if (currentTile != null && currentTile.structure is Dwelling dwelling && item is ResourcePile pile) {
                 ResourcePile firstPileOfType = dwelling.GetFirstBuiltTileObjectOfType<ResourcePile>(item.tileObjectType, item);
                 if (firstPileOfType != null) {
-                    firstPileOfType.AdjustResourceInPile(pile.resourceInPile);
+                    int amount = pile.resourceInPile;
+                    firstPileOfType.AdjustResourceInPile(amount);
+                    InnerMapManager.Instance.ShowAreaMapTextPopup($"+{amount}", firstPileOfType.worldPosition, Color.green);
                     TraitManager.Instance.CopyStatuses(pile, firstPileOfType);
                     dwelling.RemovePOI(pile);
                 }
@@ -4374,7 +4391,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     }
     public bool CanAdvertiseActionToActor(Character actor, GoapAction action, GoapPlanJob job) {
         if ((IsAvailable() || action.canBeAdvertisedEvenIfTargetIsUnavailable)
-            //&& advertisedActions != null && advertisedActions.Contains(action.goapType)
+            //&& advertisedActions != null && advertisedActions.Contains(action.goapType) Note: Remove checking of advertisedActions here because we do not need to anymore since our awareness list is a list of POI that advertises a certain action (see GetListOfPOIBasedOnActionType), so we are sure that we only get the pois that can advertise the action
             && actor.trapStructure.SatisfiesForcedStructure(this)
             && actor.trapStructure.SatisfiesForcedArea(this)
             && RaceManager.Instance.CanCharacterDoGoapAction(actor, action.goapType)
@@ -5344,6 +5361,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             Prisoner prisoner = traitContainer.GetTraitOrStatus<Prisoner>("Prisoner");
             if (prisoner != null && prisoner.IsFactionPrisonerOf(PlayerManager.Instance.player.playerFaction)) {
                 traitContainer.RemoveRestrainAndImprison(this);
+                if (isLycanthrope) {
+                    lycanData.limboForm.traitContainer.RemoveRestrainAndImprison(lycanData.limboForm);
+                }
             }
         }
         //List<Trait> traitOverrideFunctions = traitContainer.GetTraitOverrideFunctions(TraitManager.Initiate_Map_Visual_Trait);
@@ -6728,14 +6748,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     //     InitialBonusForCharacterBaseOnClass(this);
     // }
 
-    //function to be attached on signal that 1 elven got a power crystal
-    //check if they are on the same village
-    //NOTE!! - only elves should gain from this call
-    void OnPowerCrystalAbsorbedByAnElf(Character p_powerCrystalAbsorber, PowerCrystal p_crystal) {
-        if (this != p_powerCrystalAbsorber && race == RACE.ELVES && homeSettlement == p_powerCrystalAbsorber.homeSettlement) {
-            ApplyCrystalBonus(p_crystal);
-        }
-    }
 
     //the signal should be called here and also the absorber will gain the bonus from this function
     //NOTE!! - only elves should gain from this call
@@ -6755,6 +6767,13 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             log.AddToFillers(null, crystalBonus, LOG_IDENTIFIER.STRING_1);
             log.AddLogToDatabase();
             PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
+
+            for(int x = 0; x < homeSettlement.residents.Count; ++x) {
+                if (this != homeSettlement.residents[x] && !homeSettlement.residents[x].isDead && race == RACE.ELVES) {
+                    homeSettlement.residents[x].ApplyCrystalBonus(p_crystal);
+                }
+            }
+            
         } else {
             if (p_crystal.amountBonusPiercing > 0) {
                 crystalBonus = " gained " + p_crystal.amountBonusPiercing + "% Piercing";

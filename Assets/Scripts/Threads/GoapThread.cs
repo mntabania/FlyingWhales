@@ -102,7 +102,7 @@ public class GoapThread : Multithread {
         if (goalType != INTERACTION_TYPE.NONE) {
             //provided goal type
             GoapAction action = InteractionManager.Instance.goapActionData[goalType];
-            if (target.CanAdvertiseActionToActor(actor, action, job)) {
+            if (target.CanAdvertiseActionToActor(actor, action, job) && target.Advertises(goalType)) {
 #if DEBUG_LOG
                 log += $"\n{target.name} Can advertise actions to {actor.name}";
 #endif

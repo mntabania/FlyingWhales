@@ -356,8 +356,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
     }
     public bool PlanIdleStrollOutside() {
         CharacterStateJob job = JobManager.Instance.CreateNewCharacterStateJob(JOB_TYPE.STROLL, CHARACTER_STATE.STROLL_OUTSIDE, owner);
-        owner.jobQueue.AddJobInQueue(job);
-        return true;
+        return owner.jobQueue.AddJobInQueue(job);
     }
     public bool PlanIdleStrollOutside(out JobQueueItem producedJob) {
         CharacterStateJob job = JobManager.Instance.CreateNewCharacterStateJob(JOB_TYPE.STROLL, CHARACTER_STATE.STROLL_OUTSIDE, owner);
@@ -1672,8 +1671,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
                 GoapEffect goapEffect = new GoapEffect(GOAP_EFFECT_CONDITION.HAS_POI, chosenItemName, false, GOAP_EFFECT_TARGET.ACTOR);
                 GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.OBTAIN_PERSONAL_ITEM, goapEffect, owner, owner);
                 JobUtilities.PopulatePriorityLocationsForTakingPersonalItem(owner, job, INTERACTION_TYPE.PICK_UP);
-                owner.jobQueue.AddJobInQueue(job);
-                return true;
+                return owner.jobQueue.AddJobInQueue(job);
             }
         }
         return false;
@@ -1777,8 +1775,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
     public bool CreateHideAtHomeJob() {
         if (owner.homeStructure != null && !owner.homeStructure.hasBeenDestroyed && owner.homeStructure.tiles.Count > 0) {
             GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.HIDE_AT_HOME, INTERACTION_TYPE.RETURN_HOME, owner, owner);
-            owner.jobQueue.AddJobInQueue(job);
-            return true;
+            return owner.jobQueue.AddJobInQueue(job);
         }
         return false;
 
@@ -1794,8 +1791,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
             goapPlan.SetDoNotRecalculate(true);
             job.SetCannotBePushedBack(true);
             job.SetAssignedPlan(goapPlan);
-            owner.jobQueue.AddJobInQueue(job);
-            return true;
+            return owner.jobQueue.AddJobInQueue(job);
         }
         return false;
     }
@@ -1845,18 +1841,18 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
             return false;
         }
         GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.UNDERMINE, new GoapEffect(GOAP_EFFECT_CONDITION.HAS_TRAIT, "Booby Trapped", false, GOAP_EFFECT_TARGET.TARGET), chosenObject, owner);
-        owner.jobQueue.AddJobInQueue(job);
-
-        Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "NonIntel", $"{reason}_and_undermine", null, LOG_TAG.Social, LOG_TAG.Crimes);
-        log.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-        log.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-        log.AddLogToDatabase(true);
-        return true;
+        if (owner.jobQueue.AddJobInQueue(job)) {
+            Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "NonIntel", $"{reason}_and_undermine", null, LOG_TAG.Social, LOG_TAG.Crimes);
+            log.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            log.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+            log.AddLogToDatabase(true);
+            return true;
+        }
+        return false;
     }
     private bool CreatePlaceTrapPOIJob(IPointOfInterest target, JOB_TYPE jobType = JOB_TYPE.PLACE_TRAP) {
         GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType, new GoapEffect(GOAP_EFFECT_CONDITION.HAS_TRAIT, "Booby Trapped", false, GOAP_EFFECT_TARGET.TARGET), target, owner);
-        owner.jobQueue.AddJobInQueue(job);
-        return true;
+        return owner.jobQueue.AddJobInQueue(job);
     }
     private bool CreatePlaceTrapPOIJob(IPointOfInterest target, out JobQueueItem producedJob) {
 	    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.PLACE_TRAP, new GoapEffect(GOAP_EFFECT_CONDITION.HAS_TRAIT, "Booby Trapped", false, GOAP_EFFECT_TARGET.TARGET), target, owner);
@@ -1904,8 +1900,9 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 			   //  showCover:true, pauseAndResume: true);
 		    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.REPORT_CORRUPTED_STRUCTURE, INTERACTION_TYPE.REPORT_CORRUPTED_STRUCTURE, owner, owner);
             job.AddOtherData(INTERACTION_TYPE.REPORT_CORRUPTED_STRUCTURE, new object[] { structureToReport, homeSettlement.mainStorage });
-            owner.jobQueue.AddJobInQueue(job);
-            Messenger.Broadcast(JobSignals.DEMONIC_STRUCTURE_DISCOVERED, structureToReport, owner, job);
+            if (owner.jobQueue.AddJobInQueue(job)) {
+                Messenger.Broadcast(JobSignals.DEMONIC_STRUCTURE_DISCOVERED, structureToReport, owner, job);
+            }
             return true;
 	    }
 	    return false;
@@ -2228,7 +2225,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 #endregion
 
 	#region Bury
-    bool IsCharacterGhost(Character p_character) {
+    public bool IsCharacterGhost(Character p_character) {
         if (p_character is Summon summon) {
             if (summon.summonType == SUMMON_TYPE.Ghost || summon.summonType == SUMMON_TYPE.Vengeful_Ghost) {
                 return true;
@@ -2239,7 +2236,8 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
     public void TriggerBuryMe() {
 	    if (owner.minion == null && !(owner is Animal) && owner.gridTileLocation != null && 
 	        owner.gridTileLocation.IsNextToOrPartOfSettlement(out var settlement) && 
-	        settlement is NPCSettlement npcSettlement && !npcSettlement.HasJob(JOB_TYPE.BURY, owner)) {
+	        settlement is NPCSettlement npcSettlement && !npcSettlement.HasJob(JOB_TYPE.BURY, owner)
+            && owner.grave == null) {
             if (IsCharacterGhost(owner)) { return; }
 
             if (owner.race.IsSkinnable() ) {
@@ -2548,7 +2546,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 
         canDoJob = InteractionManager.Instance.CanCharacterTakeApprehendJob(owner, target) && prison != null && CanDoJob(JOB_TYPE.APPREHEND);
         if (canDoJob) {
-            if (owner.jobQueue.HasJob(JOB_TYPE.APPREHEND, target) == false && target.currentStructure != prison) {
+            if (owner.jobQueue.HasJob(JOB_TYPE.APPREHEND, target) == false && target.currentStructure != prison && owner.homeSettlement != null && target.gridTileLocation.IsNextToSettlementAreaOrPartOfSettlement(owner.homeSettlement)) {
                 bool isCriminal = target.traitContainer.HasTrait("Criminal") && target.crimeComponent.IsWantedBy(owner.faction);
                 bool isPrisoner = prisonerStatus != null && prisonerStatus.IsConsideredPrisonerOf(owner);
                 if (isCriminal || isPrisoner) {

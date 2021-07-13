@@ -18,6 +18,7 @@ public class SacrificeData : PlayerAction {
         if(targetPOI is Summon summon) {
             int orbCount = UtilityScripts.GameUtilities.RandomBetweenTwoNumbers(2, 5);
             Messenger.Broadcast(PlayerSignals.CREATE_CHAOS_ORBS, summon.gridTileLocation.centeredWorldLocation, orbCount, summon.gridTileLocation.parentMap);
+            summon.SetDestroyMarkerOnDeath(true);
             summon.Death("sacrifice");
             base.ActivateAbility(targetPOI);
         }

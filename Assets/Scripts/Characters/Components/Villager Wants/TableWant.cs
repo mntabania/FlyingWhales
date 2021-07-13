@@ -16,7 +16,7 @@ namespace Characters.Villager_Wants {
                 p_preferredStructure = null;
                 return false;
             }
-            if (!CharacterLivesInADwelling(p_character)) {
+            if (!CharacterLivesInAValidHome(p_character)) {
                 p_preferredStructure = null;
                 return false;
             }
@@ -33,7 +33,7 @@ namespace Characters.Villager_Wants {
         }
         
         public override bool IsWantValid(Character p_character) {
-            if (!CharacterLivesInADwelling(p_character)) return false;
+            if (!CharacterLivesInAValidHome(p_character)) return false;
             return !p_character.homeStructure.HasBuiltTileObjectOfType(TILE_OBJECT_TYPE.TABLE);
         }
     }

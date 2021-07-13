@@ -213,8 +213,8 @@ public class WorldSettingsData {
     #endregion
 
     #region Factions
-    public bool HasReachedMaxFactionCount() {
-        return factionSettings.factionTemplates.Count >= mapSettings.GetMaxFactions();
+    public bool HasReachedMaxStartingFactionCount() {
+        return factionSettings.factionTemplates.Count >= mapSettings.GetMaxStartingFactions();
     }
     #endregion
 

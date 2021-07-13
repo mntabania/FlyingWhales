@@ -16,6 +16,7 @@ public class Ore : TileObject {
         AddAdvertisedAction(INTERACTION_TYPE.ASSAULT);
         AddAdvertisedAction(INTERACTION_TYPE.RESOLVE_COMBAT);
         AddAdvertisedAction(INTERACTION_TYPE.MINE_METAL);
+        AddAdvertisedAction(INTERACTION_TYPE.MINE_ORE);
         count = 120;
         SetYield(50);
     }

@@ -51,6 +51,8 @@ public static class ChanceData {
         {CHANCE_TYPE.Create_Change_Class_Combatant, 35},
         {CHANCE_TYPE.Personal_Combatant_Change_Class, 5},
         {CHANCE_TYPE.Kobold_Place_Freezing_Trap, 10},
+        {CHANCE_TYPE.Base_Create_Faction_Chance, 2},
+        {CHANCE_TYPE.Vagrant_Join_Or_Create_Faction, 15},
     };
     public static bool RollChance(CHANCE_TYPE p_chanceType) {
         if (integerChances.ContainsKey(p_chanceType)) {

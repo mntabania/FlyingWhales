@@ -56,7 +56,7 @@ public class FoundCultData : PlayerAction {
                 return false;
             }
             int villagerFactionCount = FactionManager.Instance.GetActiveVillagerFactionCount();
-            if (villagerFactionCount >= FactionManager.MaxActiveVillagerFactions) {
+            if (villagerFactionCount >= FactionManager.Instance.maxActiveVillagerFactions) {
                 return false;
             }
             return true;
@@ -75,7 +75,7 @@ public class FoundCultData : PlayerAction {
             reasons += "Slaves cannot perform this action,";
         }
         int villagerFactionCount = FactionManager.Instance.GetActiveVillagerFactionCount();
-        if (villagerFactionCount >= FactionManager.MaxActiveVillagerFactions) {
+        if (villagerFactionCount >= FactionManager.Instance.maxActiveVillagerFactions) {
             reasons += "Maximum number of active factions have been reached,";
         }
         return reasons;

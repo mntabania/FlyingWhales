@@ -89,7 +89,7 @@ namespace Inner_Maps.Location_Structures {
                     }
                     for (int i = 0; i < residents.Count; i++) {
                         Character resident = residents[i];
-                        resident.eventDispatcher.ExecuteObjectPlacedInCharactersDwelling(resident, this, tileObject);
+                        resident.eventDispatcher.ExecuteObjectPlacedInCharactersHome(resident, this, tileObject);
                     }
                     if(poi is Torch) {
                         ProcessInnerLight();
@@ -107,7 +107,7 @@ namespace Inner_Maps.Location_Structures {
                     }
                     for (int i = 0; i < residents.Count; i++) {
                         Character resident = residents[i];
-                        resident.eventDispatcher.ExecuteObjectRemovedFromCharactersDwelling(resident, this, tileObject);
+                        resident.eventDispatcher.ExecuteObjectRemovedFromCharactersHome(resident, this, tileObject);
                     }
                     if (poi is Torch) {
                         ProcessInnerLight();
@@ -125,7 +125,7 @@ namespace Inner_Maps.Location_Structures {
                     }
                     for (int i = 0; i < residents.Count; i++) {
                         Character resident = residents[i];
-                        resident.eventDispatcher.ExecuteObjectRemovedFromCharactersDwelling(resident, this, tileObject);
+                        resident.eventDispatcher.ExecuteObjectRemovedFromCharactersHome(resident, this, tileObject);
                     }
                     if (poi is Torch) {
                         ProcessInnerLight();
@@ -143,7 +143,7 @@ namespace Inner_Maps.Location_Structures {
                     }
                     for (int i = 0; i < residents.Count; i++) {
                         Character resident = residents[i];
-                        resident.eventDispatcher.ExecuteObjectRemovedFromCharactersDwelling(resident, this, tileObject);
+                        resident.eventDispatcher.ExecuteObjectRemovedFromCharactersHome(resident, this, tileObject);
                     }
                     if (poi is Torch) {
                         ProcessInnerLight();
@@ -173,13 +173,13 @@ namespace Inner_Maps.Location_Structures {
         public void OnTileObjectInDwellingSetAsUnbuilt(TileObject p_tileObject) {
             for (int i = 0; i < residents.Count; i++) {
                 Character resident = residents[i];
-                resident.eventDispatcher.ExecuteObjectRemovedFromCharactersDwelling(resident, this, p_tileObject);
+                resident.eventDispatcher.ExecuteObjectRemovedFromCharactersHome(resident, this, p_tileObject);
             }
         }
         public void OnTileObjectInDwellingSetAsBuilt(TileObject p_tileObject) {
             for (int i = 0; i < residents.Count; i++) {
                 Character resident = residents[i];
-                resident.eventDispatcher.ExecuteObjectPlacedInCharactersDwelling(resident, this, p_tileObject);
+                resident.eventDispatcher.ExecuteObjectPlacedInCharactersHome(resident, this, p_tileObject);
             }
         }
         #endregion

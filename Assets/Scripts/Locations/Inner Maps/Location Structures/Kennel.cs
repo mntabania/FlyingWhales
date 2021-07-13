@@ -68,6 +68,9 @@ namespace Inner_Maps.Location_Structures {
             for (int i = 0; i < characters.Count; i++) {
                 Character character = characters[i];
                 character.traitContainer.RemoveRestrainAndImprison(character);
+                if (character.isLycanthrope) {
+                    character.lycanData.limboForm.traitContainer.RemoveRestrainAndImprison(character.lycanData.limboForm);
+                }
             }
             base.DestroyStructure(p_responsibleCharacter, isPlayerSource);
             if (_markerDummy != null) {

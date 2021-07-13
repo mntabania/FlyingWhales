@@ -77,7 +77,7 @@ public abstract class FoodPile : ResourcePile {
                     if (!actor.needsComponent.isStarving && !actor.partyComponent.isActiveMember && actor.homeStructure != null && 
                         gridTileLocation != null && gridTileLocation.structure != actor.homeStructure && gridTileLocation.structure.structureType != STRUCTURE_TYPE.DWELLING && 
                         !gridTileLocation.structure.structureType.IsFoodProducingStructure() && !actor.jobQueue.HasJob(JOB_TYPE.STOCKPILE_FOOD) && 
-                        !actor.jobQueue.HasJob(JOB_TYPE.HAUL) && actor.movementComponent.HasPathToEvenIfDiffRegion(actor.homeStructure)) {
+                        !actor.jobQueue.HasJob(JOB_TYPE.HAUL) && actor.movementComponent.HasPathToEvenIfDiffRegion(actor.homeStructure) && !actor.traitContainer.HasTrait("Vampire")) {
                         actor.jobComponent.CreateDropItemJob(JOB_TYPE.STOCKPILE_FOOD, this, actor.homeStructure);
                     }
                 }

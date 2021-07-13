@@ -54,6 +54,10 @@ public class Ghost : Summon {
         }
         base.LoadReferences(data);
     }
+    protected override void OnTickEnded() {
+        base.OnTickEnded();
+        PerTickOutsideCombatHPRecovery();
+    }
     #endregion
 
     public void SetBetrayedBy(Character character) {

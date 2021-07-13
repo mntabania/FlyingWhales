@@ -579,7 +579,9 @@ namespace Generator.Map_Generation.Components {
 					List<LocationGridTile> overlappedTiles = RuinarchListPool<LocationGridTile>.Claim();
 					tile.PopulateTilesInRadius(overlappedTiles, 2, includeCenterTile: true,
 						includeTilesInDifferentStructure: true);
-					if (!overlappedTiles.Any(t => t.structure.structureType != STRUCTURE_TYPE.WILDERNESS || t.IsAtEdgeOfMap() || !t.IsPassable())) {
+					if (!overlappedTiles.Any(t => t.structure.structureType != STRUCTURE_TYPE.WILDERNESS || t.IsAtEdgeOfMap() || !t.IsPassable() || 
+					                              (t.area.GetOccupyingVillageSpot() != null && t.area.GetOccupyingVillageSpot().mainSpot == t.area)
+					                              )) {
 						unoccupiedTiles.Add(tile);
 					}
 
