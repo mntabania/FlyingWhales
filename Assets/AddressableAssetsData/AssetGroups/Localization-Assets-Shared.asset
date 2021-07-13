@@ -29,6 +29,11 @@ MonoBehaviour:
     m_Address: Assets/Localization/AfflictionsNameAndDescription_Table Shared Data.asset
     m_ReadOnly: 1
     m_SerializedLabels: []
+  - m_GUID: 747b9865f1c63f54a948411a23ffbb9c
+    m_Address: Assets/Localization/DemonicStructuresNameAndDescription_Table Shared
+      Data.asset
+    m_ReadOnly: 1
+    m_SerializedLabels: []
   m_ReadOnly: 1
   m_Settings: {fileID: 11400000, guid: 6745de4528465fa4b9f5f205b9ba154b, type: 2}
   m_SchemaSet:

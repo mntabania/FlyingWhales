@@ -1,0 +1,128 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e9620f8c34305754d8cc9a7e49e852d9, type: 3}
+  m_Name: DemonicStructuresNameAndDescription_Table_fil-PH
+  m_EditorClassIdentifier: 
+  m_LocaleId:
+    m_Code: fil-PH
+  m_SharedData: {fileID: 11400000, guid: 747b9865f1c63f54a948411a23ffbb9c, type: 2}
+  m_Metadata:
+    m_Items: []
+  m_TableData:
+  - m_Id: 416401760256
+    m_Localized: Merkyuri drug.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422609330176
+    m_Localized: Dito nagtitimpla ng kung ano anong sakit.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1900359098368
+    m_Localized: Silid sa ilalim ng lupa
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1907132899328
+    m_Localized: Halika mag labas tayo ng mga buto't kalansay.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2117431107584
+    m_Localized: Prisma
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2122694959104
+    m_Localized: Mag labas ng depensang grupo.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2332745703424
+    m_Localized: Nagpapadumi
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2333798473728
+    m_Localized: Imp Hut ng kakayanan ang player na mag access sa mga bampira at
+      tagabuhay ng patay.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2613927649280
+    m_Localized: Bahay Impakto
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2626460229632
+    m_Localized: Halina at maglabas ng mga impakto.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2740796956672
+    m_Localized: Kulungan ng Halimaw
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2745570074624
+    m_Localized: Pang breed at pang kidnap ng mga halimaw.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2874096132096
+    m_Localized: Mana Butas
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2885261369344
+    m_Localized: Mas mabilis mapupuno ang mana ng manlalaro.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3113431506944
+    m_Localized: Bahay Dambong
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3124512858112
+    m_Localized: Mag labas ng grupo ng mga mandarambong at sumugod sa isang nayon.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3438020304896
+    m_Localized: Panlilinlang
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3445922373632
+    m_Localized: Ang istrakturang ito ay tutulungan ang player makagawa ng ibat ibang
+      modus.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3615300952064
+    m_Localized: Echepwera
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3619780468736
+    m_Localized: Taga echepwera sa mahihinang nilalang.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3791935676416
+    m_Localized: Tulis
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3801188311040
+    m_Localized: Ang istraktura na ito ay magpapalakas sa mga kapangyahiran ng manlalaro.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4027861082112
+    m_Localized: Bilangguan
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4037088550912
+    m_Localized: Makakagawa ka ng grupo na pwedeng mang kidnap ng villager.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4174439424000
+    m_Localized: Tagamasid
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4179279650816
+    m_Localized: Masid at tsismis.
+    m_Metadata:
+      m_Items: []
+  references:
+    version: 1

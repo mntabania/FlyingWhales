@@ -1,0 +1,136 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e9620f8c34305754d8cc9a7e49e852d9, type: 3}
+  m_Name: DemonicStructuresNameAndDescription_Table_en
+  m_EditorClassIdentifier: 
+  m_LocaleId:
+    m_Code: en
+  m_SharedData: {fileID: 11400000, guid: 747b9865f1c63f54a948411a23ffbb9c, type: 2}
+  m_Metadata:
+    m_Items: []
+  m_TableData:
+  - m_Id: 416401760256
+    m_Localized: Biolab
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422609330176
+    m_Localized: The Biolab allows the player to afflict Villagers with a customizable
+      Plague.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1907132899328
+    m_Localized: This Structure allows the Player to spawn Skeletons.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1900359098368
+    m_Localized: Crypt
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2117431107584
+    m_Localized: Prism
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2122694959104
+    m_Localized: This Structure allows the Player to summon defense parties.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2332745703424
+    m_Localized: Defiler
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2333798473728
+    m_Localized: Gives the player access to Vampirism Affliction and Spawn Necronomicon
+      Spell. Allows the player to gain Chaos Orbs from Vampire and Necromancer activities.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2613927649280
+    m_Localized: Imp Hut
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2626460229632
+    m_Localized: This Structure allows the Player to spawn Imps.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2740796956672
+    m_Localized: Kennel
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2745570074624
+    m_Localized: This Structure allows the Player to imprison a monster. The Kennel
+      will slowly breed it. The Player can summon these for various monster partie
+      Imprisoned monsters may also be drained to produce Chaos Orbs.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2874096132096
+    m_Localized: Mana Pit
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2885261369344
+    m_Localized: This Structure increases the player's maximum Mana capacity and
+      hourly Mana regen.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3113431506944
+    m_Localized: Maraud
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3124512858112
+    m_Localized: This Structure allows the player to summon Raid Parties. Raid Parties
+      harass Villages and is primarily used to generate some Chaos Orbs.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3438020304896
+    m_Localized: Meddler
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3445922373632
+    m_Localized: This Structure allows the player to start various Schemes.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3615300952064
+    m_Localized: Ostracizer
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3619780468736
+    m_Localized: This Structure allows the player to make most Villagers look down
+      on a smaller and specific subset of people. This is a powerful tool in fracturing
+      a large society.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3791935676416
+    m_Localized: Spire
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3801188311040
+    m_Localized: This Structure allows the Player to upgrade their Powers.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4027861082112
+    m_Localized: Prison
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4037088550912
+    m_Localized: This Structure allows the Player to capture Villagers. Imprisoned
+      Villagers may be tortured, brainwashed or drained to produce Chaos Orbs.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4174439424000
+    m_Localized: Watcher
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4179279650816
+    m_Localized: This Structure produces Eyes. The Player may place Eyes all over
+      the world to obtain information and store them as Intel.
+    m_Metadata:
+      m_Items: []
+  references:
+    version: 1

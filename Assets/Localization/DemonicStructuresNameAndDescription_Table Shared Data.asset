@@ -1,0 +1,132 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5b11a58205ec3474ca216360e9fa74a8, type: 3}
+  m_Name: DemonicStructuresNameAndDescription_Table Shared Data
+  m_EditorClassIdentifier: 
+  m_TableCollectionName: DemonicStructuresNameAndDescription_Table
+  m_TableCollectionNameGuidString: 747b9865f1c63f54a948411a23ffbb9c
+  m_Entries:
+  - m_Id: 416401760256
+    m_Key: Biolab
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422609330176
+    m_Key: Biolab_Description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1900359098368
+    m_Key: Crypt
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1907132899328
+    m_Key: Crypt_Description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2117431107584
+    m_Key: Prism
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2122694959104
+    m_Key: Prism_Description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2332745703424
+    m_Key: Defiler
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2333798473728
+    m_Key: Defiler_Description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2613927649280
+    m_Key: Imp Hut
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2626460229632
+    m_Key: Imp Hut_Description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2740796956672
+    m_Key: Kennel
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2745570074624
+    m_Key: Kennel_Description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2874096132096
+    m_Key: Mana Pit
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2885261369344
+    m_Key: Mana Pit_Description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3113431506944
+    m_Key: Maraud
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3124512858112
+    m_Key: Maraud_Description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3438020304896
+    m_Key: Meddler
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3445922373632
+    m_Key: Meddler_Description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3615300952064
+    m_Key: Ostracizer
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3619780468736
+    m_Key: Ostracizer_Description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3791935676416
+    m_Key: Spire
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3801188311040
+    m_Key: Spire_Description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4027861082112
+    m_Key: Prison
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4037088550912
+    m_Key: Prison_Description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4174439424000
+    m_Key: Watcher
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4179279650816
+    m_Key: Watcher_Description
+    m_Metadata:
+      m_Items: []
+  m_Metadata:
+    m_Items: []
+  m_KeyGenerator:
+    id: 0
+  references:
+    version: 1
+    00000000:
+      type: {class: DistributedUIDGenerator, ns: UnityEngine.Localization.Tables,
+        asm: Unity.Localization}
+      data:
+        m_CustomEpoch: 1626156638398

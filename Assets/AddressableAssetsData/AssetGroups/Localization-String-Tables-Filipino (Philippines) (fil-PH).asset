@@ -32,6 +32,11 @@ MonoBehaviour:
     m_ReadOnly: 1
     m_SerializedLabels:
     - Locale-fil-PH
+  - m_GUID: 52d9e6436cc612043ba297c59e8a0c33
+    m_Address: DemonicStructuresNameAndDescription_Table_fil-PH
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-fil-PH
   m_ReadOnly: 1
   m_Settings: {fileID: 11400000, guid: 6745de4528465fa4b9f5f205b9ba154b, type: 2}
   m_SchemaSet:

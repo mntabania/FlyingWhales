@@ -2,6 +2,7 @@
 using Inner_Maps.Location_Structures;
 using UtilityScripts;
 using UnityEngine;
+using UnityEngine.Localization.Settings;
 
 public class DemonicStructurePlayerSkill : SkillData {
     public override PLAYER_SKILL_CATEGORY category => PLAYER_SKILL_CATEGORY.DEMONIC_STRUCTURE;
@@ -10,6 +11,9 @@ public class DemonicStructurePlayerSkill : SkillData {
     public STRUCTURE_TYPE structureType { get; protected set; }
     private StructureSetting structureSetting => new StructureSetting(structureType, RESOURCE.NONE);
     private LocationStructureObject m_structureTemplate;
+
+    public override string localizedName => LocalizationSettings.StringDatabase.GetLocalizedString("DemonicStructuresNameAndDescription_Table", name);
+    public override string localizedDescription => $"{LocalizationSettings.StringDatabase.GetLocalizedString("DemonicStructuresNameAndDescription_Table", name + "_Description")}";
 
     #region getter
     public LocationStructureObject structureTemplate {
