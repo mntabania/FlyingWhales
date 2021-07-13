@@ -75,6 +75,7 @@ public class EquipmentItem : TileObject {
         AddAdvertisedAction(INTERACTION_TYPE.PICK_UP);
         AddAdvertisedAction(INTERACTION_TYPE.BOOBY_TRAP);
         AddAdvertisedAction(INTERACTION_TYPE.CRAFT_EQUIPMENT);
+        AddAdvertisedAction(INTERACTION_TYPE.BUY_ITEM);
     }
 
 	public override void OnPlacePOI() {
