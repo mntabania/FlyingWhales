@@ -1,11 +1,15 @@
 ﻿using System.Collections.Generic;
 using Object_Pools;
 using UtilityScripts;
+using UnityEngine.Localization.Settings;
 
 public class AfflictData : PlayerAction {
     public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.AFFLICT;
     public override string name => "Afflict";
     public override string description => $"Afflict a Villager with a negative Trait.";
+
+    public override string localizedName => LocalizationSettings.StringDatabase.GetLocalizedString("AfflictionsNameAndDescription_Table", name);
+    public override string localizedDescription => $"{LocalizationSettings.StringDatabase.GetLocalizedString("AfflictionsNameAndDescription_Table", name + "_Description")}";
 
     public AfflictData() : base() {
         targetTypes = new SPELL_TARGET[] { SPELL_TARGET.CHARACTER };

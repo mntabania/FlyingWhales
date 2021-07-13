@@ -1,0 +1,164 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5b11a58205ec3474ca216360e9fa74a8, type: 3}
+  m_Name: AfflictionsNameAndDescription_Table Shared Data
+  m_EditorClassIdentifier: 
+  m_TableCollectionName: AfflictionsNameAndDescription_Table
+  m_TableCollectionNameGuidString: a66c0145640c64142b6f20463a66f9e6
+  m_Entries:
+  - m_Id: 11148107776
+    m_Key: Gluttony
+    m_Metadata:
+      m_Items: []
+  - m_Id: 144191430656
+    m_Key: Gluttony_Description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5842627371008
+    m_Key: Agoraphobia
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5849816408064
+    m_Key: Agoraphobia_Description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6179140575232
+    m_Key: Alcoholic
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6181648769024
+    m_Key: Alcoholic_Description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6423655915520
+    m_Key: Cannibalism
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6425451077632
+    m_Key: Cannibalism_Description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6715000659968
+    m_Key: Cowardice
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6719362736128
+    m_Key: Cowardice_Description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 7453638565888
+    m_Key: Hotheaded
+    m_Metadata:
+      m_Items: []
+  - m_Id: 7459741278208
+    m_Key: Hotheaded_Description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 7731788029952
+    m_Key: Kleptomania
+    m_Metadata:
+      m_Items: []
+  - m_Id: 7752826658816
+    m_Key: Kleptomania_Description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 7886943723520
+    m_Key: Laziness
+    m_Metadata:
+      m_Items: []
+  - m_Id: 7892761223168
+    m_Key: Laziness_Description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8009283182592
+    m_Key: Lycanthropy
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8016795181056
+    m_Key: Lycanthropy_Description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8277110464512
+    m_Key: Music Hater
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8282269458432
+    m_Key: Music Hater_Description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8435168616448
+    m_Key: Narcolepsy
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8440105312256
+    m_Key: Narcolepsy_Description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8590773100544
+    m_Key: Paralysis
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8597479792640
+    m_Key: Paralysis_Description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8709895528448
+    m_Key: Plague
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8715725611008
+    m_Key: Plague_Description1
+    m_Metadata:
+      m_Items: []
+  - m_Id: 15543540817920
+    m_Key: Psychopathy
+    m_Metadata:
+      m_Items: []
+  - m_Id: 15591267803136
+    m_Key: Psychopathy_Description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 16009288916992
+    m_Key: Pyrophobia
+    m_Metadata:
+      m_Items: []
+  - m_Id: 16015198691328
+    m_Key: Pyrophobia_Description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 16148900519936
+    m_Key: Unfaithfulness
+    m_Metadata:
+      m_Items: []
+  - m_Id: 16168257232896
+    m_Key: Unfaithfulness_Description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 16317851279360
+    m_Key: Vampirism
+    m_Metadata:
+      m_Items: []
+  - m_Id: 16327942774784
+    m_Key: Vampirism_Description
+    m_Metadata:
+      m_Items: []
+  m_Metadata:
+    m_Items: []
+  m_KeyGenerator:
+    id: 0
+  references:
+    version: 1
+    00000000:
+      type: {class: DistributedUIDGenerator, ns: UnityEngine.Localization.Tables,
+        asm: Unity.Localization}
+      data:
+        m_CustomEpoch: 1626152378556

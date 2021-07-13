@@ -1,0 +1,182 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e9620f8c34305754d8cc9a7e49e852d9, type: 3}
+  m_Name: AfflictionsNameAndDescription_Table_en
+  m_EditorClassIdentifier: 
+  m_LocaleId:
+    m_Code: en
+  m_SharedData: {fileID: 11400000, guid: a66c0145640c64142b6f20463a66f9e6, type: 2}
+  m_Metadata:
+    m_Items:
+    - id: 0
+  m_TableData:
+  - m_Id: 11148107776
+    m_Localized: Gluttony
+    m_Metadata:
+      m_Items: []
+  - m_Id: 144191430656
+    m_Localized: This Affliction will turn a Villager into a Glutton. Gluttons get
+      hungry faster. A Glutton produces a Chaos Orb each time it eats.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5842627371008
+    m_Localized: Agoraphobia
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5849816408064
+    m_Localized: This Affliction will make a Villager afraid of crowds. An agoraphobic
+      Villager produces a Chaos Orb each time it encounter a crowd.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6181648769024
+    m_Localized: Makes a character often want to drink.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6179140575232
+    m_Localized: Alcoholic
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6423655915520
+    m_Localized: Cannibalism
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6425451077632
+    m_Localized: Makes a character eat other characters with the same race for sustenance.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6715000659968
+    m_Localized: Cowardice
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6719362736128
+    m_Localized: This Affliction will turn a Villager into a Coward. Cowards will
+      often run away from combat and will produce a Chaos Orb whenever they do this.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 7453638565888
+    m_Localized: Hotheaded
+    m_Metadata:
+      m_Items: []
+  - m_Id: 7459741278208
+    m_Localized: This Affliction will make the Villager more prone to angry fits.
+      Often gets triggered when seeing other people. A hothead produces a Chaos Orb
+      each time it gets Angry.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 7731788029952
+    m_Localized: Kleptomania
+    m_Metadata:
+      m_Items: []
+  - m_Id: 7752826658816
+    m_Localized: This Affliction will turn a Villager into a Kleptomaniac. Kleptomaniacs
+      will sometimes steal objects owned by others.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 7886943723520
+    m_Localized: Laziness
+    m_Metadata:
+      m_Items: []
+  - m_Id: 7892761223168
+    m_Localized: This Affliction will make a Villager Lazy. Lazy villagers may sometimes
+      refuse to do work and will produce a Chaos Orb whenever they do this.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8009283182592
+    m_Localized: Lycanthropy
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8016795181056
+    m_Localized: This Affliction will turn a Villager into a Werewolf. A Werewolf
+      sometimes switches from normal form to wolf form and vice-versa whenever it
+      sleeps. A Lycanthrope produces 2 Chaos Orbs whenever it sheds a Wolf Pelt.
+      It also produces 2 Chaos Orbs each time it kills a Villager.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8277110464512
+    m_Localized: Music Hater
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8282269458432
+    m_Localized: This Affliction will make a Villager hate anything related to Music.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8435168616448
+    m_Localized: Narcolepsy
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8440105312256
+    m_Localized: This Affliction will make a Villager Narcoleptic. Narcoleptic villagers
+      may involuntarily fall asleep at any time and will produce a Chaos Orb whenever
+      they do this.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8590773100544
+    m_Localized: Paralysis
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8597479792640
+    m_Localized: This Affliction will prevent a Villager from moving.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8709895528448
+    m_Localized: Plague
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8715725611008
+    m_Localized: This Affliction will afflict a character with a virulent disease.
+      The Plague may start spreading to others before eventually killing the character.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 15543540817920
+    m_Localized: Psychopathy
+    m_Metadata:
+      m_Items: []
+  - m_Id: 15591267803136
+    m_Localized: This Affliction will turn a Villager into a Serial Killer. Serial
+      Killers have a specific type of victim that they would target for abduction
+      and killing. You may set your desired Victim Profile.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 16009288916992
+    m_Localized: Pyrophobia
+    m_Metadata:
+      m_Items: []
+  - m_Id: 16015198691328
+    m_Localized: This Affliction will make a Villager fear fire. Pyrophobic Villagers
+      will always flee or cower whenever it gets close to a fire.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 16148900519936
+    m_Localized: Unfaithfulness
+    m_Metadata:
+      m_Items: []
+  - m_Id: 16168257232896
+    m_Localized: This Affliction will make a Villager Unfaithful. Unfaithful Villagers
+      may flirt and develop Affairs even if they are already in a relationship.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 16317851279360
+    m_Localized: Vampirism
+    m_Metadata:
+      m_Items: []
+  - m_Id: 16327942774784
+    m_Localized: This Affliction will turn a Villager into a Vampire. A Vampire's
+      Energy Meter no longer decreases but they have to drink other Villager's blood
+      to survive.
+    m_Metadata:
+      m_Items: []
+  references:
+    version: 1
+    00000000:
+      type: {class: SmartFormatTag, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_Entries: 00a07aac85090000

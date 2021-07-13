@@ -1,0 +1,163 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e9620f8c34305754d8cc9a7e49e852d9, type: 3}
+  m_Name: AfflictionsNameAndDescription_Table_fil-PH
+  m_EditorClassIdentifier: 
+  m_LocaleId:
+    m_Code: fil-PH
+  m_SharedData: {fileID: 11400000, guid: a66c0145640c64142b6f20463a66f9e6, type: 2}
+  m_Metadata:
+    m_Items:
+    - id: 0
+  m_TableData:
+  - m_Id: 11148107776
+    m_Localized: Katakawan
+    m_Metadata:
+      m_Items: []
+  - m_Id: 144191430656
+    m_Localized: Sakit na katakawan.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5842627371008
+    m_Localized: Takot Sa Matao
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5849816408064
+    m_Localized: Takot sa madaming tao.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6181648769024
+    m_Localized: Tagay pa kahit walang ambag.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6179140575232
+    m_Localized: Lasinggero.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6423655915520
+    m_Localized: Kain Kapwa
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6425451077632
+    m_Localized: SObrang takaw kain kapwa.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6715000659968
+    m_Localized: kaduwagan
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6719362736128
+    m_Localized: Takbo takot.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 7453638565888
+    m_Localized: Mainitin Ulo
+    m_Metadata:
+      m_Items: []
+  - m_Id: 7459741278208
+    m_Localized: Grabe naman sungit.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 7731788029952
+    m_Localized: Kamay ni Hilda
+    m_Metadata:
+      m_Items: []
+  - m_Id: 7752826658816
+    m_Localized: Likot ng kamay ni ate.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 7886943723520
+    m_Localized: Katamaran
+    m_Metadata:
+      m_Items: []
+  - m_Id: 7892761223168
+    m_Localized: Di mautusan ni inay.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8009283182592
+    m_Localized: Anyong Lobo
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8016795181056
+    m_Localized: Woooooo! mag aanyong lobo ako.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8277110464512
+    m_Localized: Sintunado
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8282269458432
+    m_Localized: Galit ako sa musika kasi sintunado ako.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8435168616448
+    m_Localized: Antukin.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8440105312256
+    m_Localized: Kaka puyat mo yan eh.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8590773100544
+    m_Localized: Di Makagalaw
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8597479792640
+    m_Localized: Di ka makakagalaw promise.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8709895528448
+    m_Localized: Nakakahawang Sakit
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8715725611008
+    m_Localized: pinoy Plagued version.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 15543540817920
+    m_Localized: Raulo
+    m_Metadata:
+      m_Items: []
+  - m_Id: 15591267803136
+    m_Localized: Makulet na to dalhin na sa loob.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 16009288916992
+    m_Localized: Takot sa Apoy.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 16015198691328
+    m_Localized: Ah takot sa apoy.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 16148900519936
+    m_Localized: Salawahan
+    m_Metadata:
+      m_Items: []
+  - m_Id: 16168257232896
+    m_Localized: Nasama sa masamang barkada.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 16317851279360
+    m_Localized: Bampira
+    m_Metadata:
+      m_Items: []
+  - m_Id: 16327942774784
+    m_Localized: Gising sa gabi tulog sa umaga.
+    m_Metadata:
+      m_Items: []
+  references:
+    version: 1
+    00000000:
+      type: {class: SmartFormatTag, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_Entries: 00a07aac85090000

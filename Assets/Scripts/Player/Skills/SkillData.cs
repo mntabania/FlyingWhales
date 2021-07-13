@@ -30,8 +30,8 @@ public class SkillData : IPlayerSkill {
     public int currentLevel { get; set; }
     public bool isUnlockedBaseOnRequirements { get; set; }
 
-    public string localizedName => LocalizationSettings.StringDatabase.GetLocalizedString("SkillNameAndDescription_Table", name);
-    public string localizedDescription => $"{LocalizationSettings.StringDatabase.GetLocalizedString("SkillNameAndDescription_Table", name + "_Description")}";
+    public virtual string localizedName => LocalizationSettings.StringDatabase.GetLocalizedString("SkillNameAndDescription_Table", name);
+    public virtual string localizedDescription => $"{LocalizationSettings.StringDatabase.GetLocalizedString("SkillNameAndDescription_Table", name + "_Description")}";
 
     public int unlockCost { get; set; }
     public SkillEventDispatcher skillEventDispatcher { get; }

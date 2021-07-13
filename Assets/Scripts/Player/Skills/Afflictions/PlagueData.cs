@@ -3,11 +3,14 @@ using Logs;
 using Object_Pools;
 using UnityEngine;
 using UtilityScripts;
+using UnityEngine.Localization.Settings;
 
 public class PlagueData : AfflictData {
     public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.PLAGUE;
     public override string name => "Plague";
     public override string description => GetDescription();
+    public override string localizedDescription => GetDescription();
+
     public override PLAYER_SKILL_CATEGORY category => PLAYER_SKILL_CATEGORY.AFFLICTION;
     //public override INTERVENTION_ABILITY_TYPE type => INTERVENTION_ABILITY_TYPE.AFFLICTION;
 
@@ -48,7 +51,8 @@ public class PlagueData : AfflictData {
     #endregion
 
     private string GetDescription() {
-        string modifiedDescription = $"This Affliction will afflict a character with a virulent disease. The Plague may start spreading to others before eventually killing the character.";
+        string modifiedDescription = $"{LocalizationSettings.StringDatabase.GetLocalizedString("AfflictionsNameAndDescription_Table", name + "_Description1")}";
+        //string modifiedDescription = $"This Affliction will afflict a character with a virulent disease. The Plague may start spreading to others before eventually killing the character.";
         if (GameManager.Instance.gameHasStarted) {
             modifiedDescription = $"{modifiedDescription}\n\n{PlagueDisease.Instance.GetPlagueEffectsSummary()}";
         }

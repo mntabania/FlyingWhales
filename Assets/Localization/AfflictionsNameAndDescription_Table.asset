@@ -10,12 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5be51871efa6c3e4eae1703925c8f5ac, type: 3}
-  m_Name: SkillNameAndDescription_Table
+  m_Name: AfflictionsNameAndDescription_Table
   m_EditorClassIdentifier: 
-  m_SharedTableData: {fileID: 11400000, guid: f518eadf0478bad4eb9c2b552b7acb67, type: 2}
+  m_SharedTableData: {fileID: 11400000, guid: a66c0145640c64142b6f20463a66f9e6, type: 2}
   m_Tables:
-  - {fileID: 11400000, guid: 63624b0cb59ca4a43810d738d2cc2b6a, type: 2}
-  - {fileID: 11400000, guid: 854f2c2fd531fef41adde5f197836f16, type: 2}
+  - {fileID: 11400000, guid: f61d7bd38704e1c47b03355ede1c7c65, type: 2}
+  - {fileID: 11400000, guid: f0420684018fc98458440b65fc9ce18b, type: 2}
   m_Extensions:
   - id: 0
   m_Group: String Table
