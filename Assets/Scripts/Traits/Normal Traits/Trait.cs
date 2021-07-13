@@ -7,6 +7,7 @@ using Object_Pools;
 using UnityEngine;
 using UnityEngine.Assertions;
 using Inner_Maps;
+using UnityEngine.Localization.Settings;
 
 namespace Traits {
     [System.Serializable]
@@ -27,6 +28,10 @@ namespace Traits {
         public List<RESISTANCE> resistancesType;
         public List<float> resistancesValue;
         public List<string> traitOverrideFunctionIdentifiers { get; protected set; }
+
+        public virtual string localizedName => LocalizationSettings.StringDatabase.GetLocalizedString("TraitsNameAndDescription_Table", name);
+        public virtual string localizedDescription => $"{LocalizationSettings.StringDatabase.GetLocalizedString("TraitsNameAndDescription_Table", name + "_Description")}";
+
         /// <summary>
         /// Persistent ID of this trait. NOTE: Only instanced traits use this.
         /// </summary>

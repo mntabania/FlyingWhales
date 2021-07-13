@@ -42,6 +42,10 @@ MonoBehaviour:
     m_Address: Assets/Localization/PlayerActionsNameAndDescription_Table Shared Data.asset
     m_ReadOnly: 1
     m_SerializedLabels: []
+  - m_GUID: 93442a147aa37144ba165db45c62806a
+    m_Address: Assets/Localization/TraitsNameAndDescription_Table Shared Data.asset
+    m_ReadOnly: 1
+    m_SerializedLabels: []
   m_ReadOnly: 1
   m_Settings: {fileID: 11400000, guid: 6745de4528465fa4b9f5f205b9ba154b, type: 2}
   m_SchemaSet:
