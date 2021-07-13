@@ -1455,7 +1455,20 @@ public enum CHANCE_TYPE {
     Personal_Combatant_Change_Class,
     Kobold_Place_Freezing_Trap,
     Base_Create_Faction_Chance,
-    Vagrant_Join_Or_Create_Faction
+    Vagrant_Join_Or_Create_Faction,
+    Vampire_Hunt_Drink_Blood_Chance,
+    Werewolf_Hunt_On_See_Werewolf,
+    Werewolf_Hunt_Mangled,
+    Plagued_Event_Lethargic,
+    Plagued_Event_Paralyzed,
+    Plagued_Event_Heart_Attck,
+    Plagued_Event_Pneumonia,
+    Plagued_Event_Puke,
+    Plagued_Event_Seizure,
+    Plagued_Event_Septic_Shock,
+    Plagued_Event_Sneeze,
+    Plagued_Event_Stroke,
+    Plagued_Event_Organ_Failure
 }
 public enum Gradient_Direction {
     Top, Bottom, Left, Right

@@ -117,11 +117,15 @@ namespace UtilityScripts {
             if (settlement != null) {
                 LocationStructure cityCenter = settlement.GetFirstStructureOfType(STRUCTURE_TYPE.CITY_CENTER);
                 LocationStructure lumberyard = settlement.GetFirstStructureOfType(STRUCTURE_TYPE.LUMBERYARD);
+                LocationStructure mine = settlement.GetFirstStructureOfType(STRUCTURE_TYPE.MINE);
                 if (cityCenter != null) {
                     job.AddPriorityLocation(actionType, cityCenter);
                 }
                 if (lumberyard != null) {
                     job.AddPriorityLocation(actionType, lumberyard);
+                }
+                if (mine != null) {
+                    job.AddPriorityLocation(actionType, mine);
                 }
             }
         }

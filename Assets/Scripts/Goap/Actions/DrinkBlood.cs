@@ -439,7 +439,7 @@ public class DrinkBlood : GoapAction {
                 LogPool.Release(log);
             } else {
                 if (actor.currentSettlement is NPCSettlement currentSettlement && currentSettlement.eventManager.CanHaveEvents()) {
-                    if (currentSettlement.owner != null && GameUtilities.RollChance(15)) { //15
+                    if (currentSettlement.owner != null && ChanceData.RollChance(CHANCE_TYPE.Vampire_Hunt_Drink_Blood_Chance)) { //15
                         CRIME_SEVERITY crimeSeverity = currentSettlement.owner.GetCrimeSeverity(actor, goapNode.poiTarget, CRIME_TYPE.Vampire);
                         if (crimeSeverity != CRIME_SEVERITY.None && crimeSeverity != CRIME_SEVERITY.Unapplicable && !currentSettlement.eventManager.HasActiveEvent(SETTLEMENT_EVENT.Vampire_Hunt)) {
                             currentSettlement.eventManager.AddNewActiveEvent(SETTLEMENT_EVENT.Vampire_Hunt);

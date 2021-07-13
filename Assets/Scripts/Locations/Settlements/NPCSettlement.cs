@@ -1826,9 +1826,9 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
                                 break;
                             case TILE_OBJECT_TYPE.PHYLACTERY:
                                 job.SetCanTakeThisJobChecker(JobManager.Can_Craft_Phylactery);
-                                // TileObjectData data = TileObjectDB.GetTileObjectData(TILE_OBJECT_TYPE.PHYLACTERY);
-                                // data.TryGetPossibleRecipe(region, out var recipeToUse); //get possible recipe and assign that to job
-                                // job.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[]{ recipeToUse });
+                                TileObjectData data = TileObjectDB.GetTileObjectData(TILE_OBJECT_TYPE.PHYLACTERY);
+                                data.TryGetPossibleRecipe(this, out var recipeToUse); //get possible recipe and assign that to job
+                                job.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[]{ recipeToUse });
                                 break;
                         }
                         AddToAvailableJobs(job);    

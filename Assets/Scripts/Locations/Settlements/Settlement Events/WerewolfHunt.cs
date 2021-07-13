@@ -1,4 +1,5 @@
-﻿namespace Locations.Settlements.Settlement_Events {
+﻿using UnityEngine;
+namespace Locations.Settlements.Settlement_Events {
     public class WerewolfHunt : SettlementEvent {
         public override SETTLEMENT_EVENT eventType => SETTLEMENT_EVENT.Werewolf_Hunt;
         
@@ -42,6 +43,9 @@
             }
             log.AddLogToDatabase();
             PlayerManager.Instance.player.ShowNotificationFromPlayer(log, true);
+#if DEBUG_LOG
+            Debug.Log($"{GameManager.Instance.TodayLogString()}Started Werewolf Hunt Event at {location.name} initial end date is {_endDate.ToString()}");
+#endif
         }
         public override void DeactivateEvent(NPCSettlement p_settlement) {
             for (int i = 0; i < p_settlement.residents.Count; i++) {
@@ -99,6 +103,9 @@
         private void RescheduleEnd() {
             SchedulingManager.Instance.RemoveSpecificEntry(_currentScheduleKey);
             ScheduleEnd();
+#if DEBUG_LOG
+            Debug.Log($"{GameManager.Instance.TodayLogString()}Rescheduled end of Werewolf Hunt Event at {location.name} to {_endDate.ToString()}");
+#endif
         }
         private void LoadEnd(GameDate date) {
             _endDate = date;
@@ -128,6 +135,14 @@
             SaveDataWerewolfHunt saveData = new SaveDataWerewolfHunt();
             saveData.Save(this);
             return saveData;
+        }
+        #endregion
+        
+        #region For Testing
+        public override string GetTestingInfo() {
+            string info = base.GetTestingInfo();
+            info = $"{info} will end on {_endDate.ToString()}";
+            return info;
         }
         #endregion
     }
