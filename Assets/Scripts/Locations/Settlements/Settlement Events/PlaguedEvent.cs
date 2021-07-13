@@ -33,6 +33,9 @@ namespace Locations.Settlements.Settlement_Events {
             SubscribeListeners(p_settlement);
             ScheduleEnd(p_settlement);
             //p_settlement.settlementClassTracker.AddNeededClass("Druid");
+#if DEBUG_LOG
+            Debug.Log($"{GameManager.Instance.TodayLogString()}Started Plagued Event at {location.name} initial end date is {_endDate.ToString()}");
+#endif
         }
         public override void DeactivateEvent(NPCSettlement p_settlement) {
             if (p_settlement.owner != null) { RevertFactionEffects(p_settlement.owner); }
@@ -82,7 +85,7 @@ namespace Locations.Settlements.Settlement_Events {
             SchedulingManager.Instance.RemoveSpecificEntry(_endScheduleTicket);
             ScheduleEnd(p_settlement);
 #if DEBUG_LOG
-            Debug.Log($"{GameManager.Instance.TodayLogString()}Rescheduled Plagued event end at {p_settlement.name}");
+            Debug.Log($"{GameManager.Instance.TodayLogString()}Rescheduled Plagued event end at {p_settlement.name} to {_endDate.ToString()}");
 #endif
         }
         private void DeactivateEventBySchedule(NPCSettlement p_settlement) {
