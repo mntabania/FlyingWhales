@@ -24,7 +24,7 @@ namespace Traits {
             base.OnAddTrait(sourceCharacter);
             if (sourceCharacter is Character character) {
                 character.movementComponent.AdjustSpeedModifier(-0.5f);
-                if (GameUtilities.RollChance(5) && character.homeSettlement != null && 
+                if (ChanceData.RollChance(CHANCE_TYPE.Plagued_Event_Lethargic) && character.homeSettlement != null && 
                     Locations.Settlements.Settlement_Events.PlaguedEvent.HasMinimumAmountOfPlaguedVillagersForEvent(character.homeSettlement) &&
                     !character.homeSettlement.eventManager.HasActiveEvent(SETTLEMENT_EVENT.Plagued_Event) && character.homeSettlement.eventManager.CanHaveEvents()) {
                     character.homeSettlement.eventManager.AddNewActiveEvent(SETTLEMENT_EVENT.Plagued_Event);

@@ -497,7 +497,7 @@ public class ReactionComponent : CharacterComponent {
 #if DEBUG_LOG
                 debugLog = $"{debugLog}\n-Witness considers werewolf as a crime and there is no active werewolf hunt at active settlement";
 #endif
-                if (GameUtilities.RollChance(25, ref debugLog)) {
+                if (ChanceData.RollChance(CHANCE_TYPE.Werewolf_Hunt_On_See_Werewolf, ref debugLog)) {
 #if DEBUG_LOG
                     debugLog = $"{debugLog}\n-Created new werewolf hunt event at {disguisedActor.homeSettlement.name}";
 #endif
@@ -1761,7 +1761,7 @@ public class ReactionComponent : CharacterComponent {
 #if DEBUG_LOG
                                 debugLog = $"{debugLog}\n-Mangled body is near settlement, will roll for chance to create werewolf hunt event";
 #endif
-                                if (GameUtilities.RollChance(25, ref debugLog)) {
+                                if (ChanceData.RollChance(CHANCE_TYPE.Werewolf_Hunt_Mangled, ref debugLog)) {
 #if DEBUG_LOG
                                     debugLog = $"{debugLog}\n-Created new werewolf hunt event!";
 #endif

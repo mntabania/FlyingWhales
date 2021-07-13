@@ -16,7 +16,7 @@ namespace Interrupts {
 
         #region Overrides
         public override bool ExecuteInterruptStartEffect(InterruptHolder interruptHolder, ref Log overrideEffectLog, ActualGoapNode goapNode = null) {
-            if (GameUtilities.RollChance(5) && interruptHolder.actor.homeSettlement != null && 
+            if (ChanceData.RollChance(CHANCE_TYPE.Plagued_Event_Seizure) && interruptHolder.actor.homeSettlement != null && 
                 Locations.Settlements.Settlement_Events.PlaguedEvent.HasMinimumAmountOfPlaguedVillagersForEvent(interruptHolder.actor.homeSettlement) &&
                 !interruptHolder.actor.homeSettlement.eventManager.HasActiveEvent(SETTLEMENT_EVENT.Plagued_Event) && interruptHolder.actor.homeSettlement.eventManager.CanHaveEvents()) {
                 interruptHolder.actor.homeSettlement.eventManager.AddNewActiveEvent(SETTLEMENT_EVENT.Plagued_Event);
