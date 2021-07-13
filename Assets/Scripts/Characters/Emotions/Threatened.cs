@@ -16,7 +16,11 @@ public class Threatened : Emotion {
             witness.relationshipContainer.AdjustOpinion(witness, targetCharacter, "Threatened", -8, "was threatened");
         }
         if(witness.marker && witness.marker.IsPOIInVision(target)) {
-            witness.combatComponent.FightOrFlight(target, CombatManager.Threatened);
+            bool attackBecauseOfCrime = false;
+            if (goapNode != null && goapNode.crimeType != CRIME_TYPE.None && goapNode.crimeType != CRIME_TYPE.Unset) {
+                attackBecauseOfCrime = true;
+            }
+            witness.combatComponent.FightOrFlight(target, CombatManager.Threatened, willAttackBecauseOfCrime: attackBecauseOfCrime);
                 //if (witness.moodComponent.moodState == MOOD_STATE.Critical) {
                 //    witness.combatComponent.FightOrFlight(target, CombatManager.Threatened);
                 //} else if (witness.moodComponent.moodState == MOOD_STATE.Bad) {

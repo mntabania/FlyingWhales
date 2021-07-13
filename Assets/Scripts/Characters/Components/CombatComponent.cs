@@ -570,27 +570,27 @@ public class CombatComponent : CharacterComponent {
         return new CombatReaction(COMBAT_REACTION.None);
     }
     public void FightOrFlight(IPointOfInterest target, CombatReaction combatReaction, 
-        ActualGoapNode connectedAction = null, bool isLethal = true) {
+        ActualGoapNode connectedAction = null, bool isLethal = true, bool willAttackBecauseOfCrime = false) {
         if (combatReaction.reaction == COMBAT_REACTION.Fight) {
-            Fight(target, combatReaction.reason, connectedAction, isLethal);
+            Fight(target, combatReaction.reason, connectedAction, isLethal, willAttackBecauseOfCrime);
         } else if (combatReaction.reaction == COMBAT_REACTION.Flight) {
             if (owner.movementComponent.isStationary) {
 #if DEBUG_LOG
                 owner.logComponent.PrintLogIfActive($"Supposed to FLIGHT for {owner.name} against {target.nameWithID} but character is STATIONARY, fight insted");
 #endif
-                Fight(target, combatReaction.reason, connectedAction, isLethal);
+                Fight(target, combatReaction.reason, connectedAction, isLethal, willAttackBecauseOfCrime);
             } else {
                 Flight(target, combatReaction.reason);
             }
         }
     }
-    public void FightOrFlight(IPointOfInterest target, string fightReason, ActualGoapNode connectedAction = null, bool isLethal = true) {
+    public void FightOrFlight(IPointOfInterest target, string fightReason, ActualGoapNode connectedAction = null, bool isLethal = true, bool willAttackBecauseOfCrime = false) {
         CombatReaction combatReaction = GetFightOrFlightReaction(target, fightReason);
         if(combatReaction.reaction != COMBAT_REACTION.None) {
-            FightOrFlight(target, combatReaction, connectedAction, isLethal);
+            FightOrFlight(target, combatReaction, connectedAction, isLethal, willAttackBecauseOfCrime);
         }
     }
-    public bool Fight(IPointOfInterest target, string reason, ActualGoapNode connectedAction = null, bool isLethal = true) {
+    public bool Fight(IPointOfInterest target, string reason, ActualGoapNode connectedAction = null, bool isLethal = true, bool willAttackBecauseOfCrime = false) {
 #if DEBUG_LOG
         string debugLog = $"Triggered FIGHT response for {owner.name} against {target.nameWithID}";
 #endif
@@ -608,10 +608,10 @@ public class CombatComponent : CharacterComponent {
                     //CombatData prevCombatData = fightCombatData[target];
                     //ObjectPoolManager.Instance.ReturnCombatDataToPool(prevCombatData);
                     //fightCombatData[target] = newCombatData;
-                    combatDataDictionary[target].SetFightData(reason, connectedAction, isLethal);
+                    combatDataDictionary[target].SetFightData(reason, connectedAction, isLethal, willAttackBecauseOfCrime);
                 } else {
                     CombatData newCombatData = ObjectPoolManager.Instance.CreateNewCombatData();
-                    newCombatData.SetFightData(reason, connectedAction, isLethal);
+                    newCombatData.SetFightData(reason, connectedAction, isLethal, willAttackBecauseOfCrime);
                     combatDataDictionary.Add(target, newCombatData);
                 }
 
@@ -1519,6 +1519,7 @@ public class CombatData {
     public string avoidReason;
     public ActualGoapNode connectedAction;
     public bool isLethal;
+    public bool attackBecauseOfCrime;
 
     public CombatData() {
         Initialize();
@@ -1527,6 +1528,7 @@ public class CombatData {
         reasonForCombat = data.reasonForCombat;
         avoidReason = data.avoidReason;
         isLethal = data.isLethal;
+        attackBecauseOfCrime = data.attackBecauseOfCrime;
         if (!string.IsNullOrEmpty(data.connectedAction)) {
             connectedAction = DatabaseManager.Instance.actionDatabase.GetActionByPersistentID(data.connectedAction);
         }
@@ -1536,14 +1538,27 @@ public class CombatData {
         avoidReason = string.Empty;
         connectedAction = null;
         isLethal = false;
+        attackBecauseOfCrime = false;
     }
     public void Reset() {
+        ActualGoapNode action = connectedAction;
+        bool hasAction = action != null;
+        if (hasAction) {
+            action.SetIsStillProcessing(false);
+        }
         Initialize();
+        if (hasAction && action.isSupposedToBeInPool) {
+            action.ProcessReturnToPool();
+        }
     }
-    public void SetFightData(string reasonForCombat, ActualGoapNode connectedAction, bool isLethal) {
+    public void SetFightData(string reasonForCombat, ActualGoapNode connectedAction, bool isLethal, bool willAttackBecauseOfCrime) {
+        if (connectedAction != null) {
+            connectedAction.SetIsStillProcessing(true);
+        }
         this.reasonForCombat = reasonForCombat;
         this.connectedAction = connectedAction;
         this.isLethal = isLethal;
+        attackBecauseOfCrime = willAttackBecauseOfCrime;
     }
     public void SetFlightData(string avoidReason) {
         this.avoidReason = avoidReason;
@@ -1556,14 +1571,16 @@ public class SaveDataCombatData : SaveData<CombatData> {
     public string avoidReason;
     public string connectedAction;
     public bool isLethal;
+    public bool attackBecauseOfCrime;
 
-#region Overrides
+    #region Overrides
     public override void Save(CombatData data) {
         base.Save(data);
         reasonForCombat = data.reasonForCombat;
         avoidReason = data.avoidReason;
         isLethal = data.isLethal;
-        if(data.connectedAction != null) {
+        attackBecauseOfCrime = data.attackBecauseOfCrime;
+        if (data.connectedAction != null) {
             connectedAction = data.connectedAction.persistentID;
             SaveManager.Instance.saveCurrentProgressManager.AddToSaveHub(data.connectedAction);
         }

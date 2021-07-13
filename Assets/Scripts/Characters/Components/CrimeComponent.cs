@@ -52,6 +52,15 @@ public class CrimeComponent : CharacterComponent {
     public void AddReportedCrime(CrimeData data) {
         reportedCrimes.Add(data);
     }
+    public bool IsAnActiveCrimeWitnessedBy(Character p_witness) {
+        for (int i = 0; i < activeCrimes.Count; i++) {
+            CrimeData data = activeCrimes[i];
+            if (data.IsWitness(p_witness)) {
+                return true;
+            }
+        }
+        return false;
+    }
     public bool IsReported(CrimeData data) {
         if (data.isRemoved) {
             //If crime is already removed meaning it is no longer a crime, it should be tagged as Reported so that removed crimes will no longer be reported
