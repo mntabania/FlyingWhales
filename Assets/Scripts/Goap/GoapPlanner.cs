@@ -172,8 +172,12 @@ public class GoapPlanner {
                     return;
                 }
             }
+            JobQueueItem job = _goapThreadInProcess.job;
+            ObjectPoolManager.Instance.ReturnGoapThreadToPool(_goapThreadInProcess);
+            _goapThreadInProcess = null;
             //Perform job immediately upon receiving plan so that character will not wait for 1 tick anymore
-            owner.PerformJob(_goapThreadInProcess.job);
+            owner.PerformJob(job);
+            return;
         } else {
             JOB_TYPE jobType = _goapThreadInProcess.job.jobType;
             //If unable to do a Need while in a Trapped Structure, remove Trap Structure.
