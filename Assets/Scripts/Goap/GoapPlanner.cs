@@ -172,6 +172,8 @@ public class GoapPlanner {
                     return;
                 }
             }
+            //Perform job immediately upon receiving plan so that character will not wait for 1 tick anymore
+            owner.PerformJob(_goapThreadInProcess.job);
         } else {
             JOB_TYPE jobType = _goapThreadInProcess.job.jobType;
             //If unable to do a Need while in a Trapped Structure, remove Trap Structure.
