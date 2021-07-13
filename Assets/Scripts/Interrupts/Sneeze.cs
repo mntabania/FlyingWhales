@@ -21,7 +21,7 @@ namespace Interrupts {
                 AirborneTransmission.Instance.Transmit(actor, null, PlagueDisease.Instance.GetTransmissionLevel(PLAGUE_TRANSMISSION.Airborne));
                 return true;
             }
-            if (GameUtilities.RollChance(5) && interruptHolder.actor.homeSettlement != null && 
+            if (ChanceData.RollChance(CHANCE_TYPE.Plagued_Event_Sneeze) && interruptHolder.actor.homeSettlement != null && 
                 Locations.Settlements.Settlement_Events.PlaguedEvent.HasMinimumAmountOfPlaguedVillagersForEvent(interruptHolder.actor.homeSettlement) &&
                 !interruptHolder.actor.homeSettlement.eventManager.HasActiveEvent(SETTLEMENT_EVENT.Plagued_Event) && interruptHolder.actor.homeSettlement.eventManager.CanHaveEvents()) {
                 interruptHolder.actor.homeSettlement.eventManager.AddNewActiveEvent(SETTLEMENT_EVENT.Plagued_Event);

@@ -53,6 +53,19 @@ public static class ChanceData {
         {CHANCE_TYPE.Kobold_Place_Freezing_Trap, 10},
         {CHANCE_TYPE.Base_Create_Faction_Chance, 2},
         {CHANCE_TYPE.Vagrant_Join_Or_Create_Faction, 15},
+        {CHANCE_TYPE.Vampire_Hunt_Drink_Blood_Chance, 15},
+        {CHANCE_TYPE.Werewolf_Hunt_On_See_Werewolf, 25},
+        {CHANCE_TYPE.Werewolf_Hunt_Mangled, 25},
+        {CHANCE_TYPE.Plagued_Event_Lethargic, 5},
+        {CHANCE_TYPE.Plagued_Event_Paralyzed, 15},
+        {CHANCE_TYPE.Plagued_Event_Heart_Attck, 15},
+        {CHANCE_TYPE.Plagued_Event_Pneumonia, 15},
+        {CHANCE_TYPE.Plagued_Event_Puke, 5},
+        {CHANCE_TYPE.Plagued_Event_Seizure, 5},
+        {CHANCE_TYPE.Plagued_Event_Septic_Shock, 15},
+        {CHANCE_TYPE.Plagued_Event_Sneeze, 5},
+        {CHANCE_TYPE.Plagued_Event_Stroke, 15},
+        {CHANCE_TYPE.Plagued_Event_Organ_Failure, 15},
     };
     public static bool RollChance(CHANCE_TYPE p_chanceType) {
         if (integerChances.ContainsKey(p_chanceType)) {
