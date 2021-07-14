@@ -33,14 +33,7 @@ public class EquipmentComponent {
         
     }
 
-    public void ApplyOwner(Character p_character) {
-        allEquipments.ForEach((eachEquipment) => {
-            eachEquipment.SetInventoryOwner(p_character);
-            eachEquipment.SetCharacterOwner(p_character);
-        });
-    }
-
-    public void LoadReferences(SaveDataEquipmentComponent p_data, EquipmentComponent p_newEC) {
+    public EquipmentComponent LoadReferences(SaveDataEquipmentComponent p_data) {
 
         EquipmentComponent ec = p_data.Load();
         currentWeapon = ec.currentWeapon;
@@ -51,7 +44,7 @@ public class EquipmentComponent {
         ec.allEquipments.Add(currentArmor);
         ec.allEquipments.Add(currentAccessory);
 
-        p_newEC = ec;
+        return ec;
     }
 
     void Reset() {

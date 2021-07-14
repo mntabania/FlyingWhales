@@ -6457,8 +6457,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         //Load character traits after all references and visuals and objects of character has been placed since
         LoadCharacterTraitsFromSave(data);
         equipmentComponent = new EquipmentComponent();
-        equipmentComponent.LoadReferences(data.equipmentComponent, equipmentComponent);
-        equipmentComponent.ApplyOwner(this);
+        equipmentComponent = equipmentComponent.LoadReferences(data.equipmentComponent);
         //ApplyStackCountForTraits();
         SetRelationshipContainer(data.saveDataBaseRelationshipContainer.Load());
 
