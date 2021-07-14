@@ -51,7 +51,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public CharacterTrait defaultCharacterTrait { get; private set; }
     public List<INTERACTION_TYPE> advertisedActions { get; private set; }
     public List<TileObject> items { get; private set; }
-    public List<TileObject> equipmentInventory { get; private set; }
     public List<TileObject> ownedItems { get; private set; }
     public List<JobQueueItem> allJobsTargetingThis { get; private set; }
     public List<Trait> traitsNeededToBeRemoved { get; private set; }
@@ -308,7 +307,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         skillCauseOfDeath = PLAYER_SKILL_TYPE.NONE;
         advertisedActions = new List<INTERACTION_TYPE>();
         items = new List<TileObject>();
-        equipmentInventory = new List<TileObject>();
         ownedItems = new List<TileObject>();
         allJobsTargetingThis = new List<JobQueueItem>();
         traitsNeededToBeRemoved = new List<Trait>();
@@ -360,7 +358,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         shouldDoActionOnFirstTickUponLoadGame = true;
         advertisedActions = new List<INTERACTION_TYPE>();
         items = new List<TileObject>();
-        equipmentInventory = new List<TileObject>();
         ownedItems = new List<TileObject>();
         allJobsTargetingThis = new List<JobQueueItem>();
         traitsNeededToBeRemoved = new List<Trait>();
@@ -433,6 +430,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         previousCharacterDataComponent = data.previousCharacterDataComponent.Load(); previousCharacterDataComponent.SetOwner(this);
         traitComponent = data.traitComponent.Load(); traitComponent.SetOwner(this);
         moneyComponent = data.moneyComponent.Load(); moneyComponent.SetOwner(this);
+        //equipmentComponent = data.equipmentComponent.Load();
         dailyScheduleComponent = data.dailyScheduleComponent.Load(); dailyScheduleComponent.SetOwner(this);
 
         if (data.talentComponent != null) {
@@ -4020,8 +4018,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     //}
     private bool AddItem(TileObject item) {
         if (item is EquipmentItem) {
-            if (!equipmentInventory.Contains(item)) {
-                equipmentInventory.Add(item);
+            if (!equipmentComponent.allEquipments.Contains(item)) {
+                equipmentComponent.allEquipments.Add(item as EquipmentItem);
                 //item.OnTileObjectAddedToInventoryOf(this);
                 Messenger.Broadcast(CharacterSignals.CHARACTER_OBTAINED_ITEM, item, this);
                 eventDispatcher.ExecuteItemObtained(this, item);
@@ -4041,7 +4039,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     }
     private bool RemoveItem(TileObject item) {
         if (item is EquipmentItem) {
-            if (equipmentInventory.Remove(item)) {
+            if (equipmentComponent.allEquipments.Remove(item as EquipmentItem)) {
                 Messenger.Broadcast(CharacterSignals.CHARACTER_LOST_ITEM, item, this);
                 eventDispatcher.ExecuteItemLost(this, item);
                 return true;
@@ -6458,14 +6456,10 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
 
         //Load character traits after all references and visuals and objects of character has been placed since
         LoadCharacterTraitsFromSave(data);
-        for (int i = 0; i < data.equipmentInventory.Count; i++) {
-            TileObject obj = DatabaseManager.Instance.tileObjectDatabase.GetTileObjectByPersistentID(data.equipmentInventory[i]);
-            if (obj != null) {
-                equipmentInventory.Add(obj);
-            }
-        }
         equipmentComponent = new EquipmentComponent();
-        ApplyStackCountForTraits();
+        equipmentComponent.LoadReferences(data.equipmentComponent, equipmentComponent);
+        equipmentComponent.ApplyOwner(this);
+        //ApplyStackCountForTraits();
         SetRelationshipContainer(data.saveDataBaseRelationshipContainer.Load());
 
         visuals.UpdateAllVisuals(this);
@@ -6551,11 +6545,14 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     }
 #endregion
 
-#region apply equipment effects upon load
+#region apply equipment effects upon load //for remove stacks are already saved
     void ApplyStackCountForTraits() {
-        equipmentInventory.ForEach((eachEquip) => {
-            (eachEquip as EquipmentItem).AssignData();
-            equipmentComponent.SetEquipment(eachEquip as EquipmentItem, this, true);
+        equipmentComponent.allEquipments.ForEach((eachEquip) => {
+            if(eachEquip != null) {
+                (eachEquip).AssignData();
+                equipmentComponent.SetEquipment(eachEquip, this, true);
+            }
+            
         });
     }
 #endregion

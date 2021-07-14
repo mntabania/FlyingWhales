@@ -61,68 +61,38 @@ public static class EquipmentBonusProcessor
     static void ApplyEachBonusToTarget(EquipmentItem p_equipItem, EQUIPMENT_BONUS p_equipBonus, Character p_targetCharacter, bool p_initializedStackCountOnly = false, EQUIPMENT_WARD_BONUS p_wardBonus = EQUIPMENT_WARD_BONUS.None, EQUIPMENT_SLAYER_BONUS p_slayerBonus = EQUIPMENT_SLAYER_BONUS.None) {
         switch (p_equipBonus) {
             case EQUIPMENT_BONUS.Str_Actual:
-            if (p_initializedStackCountOnly) {
-                return;
-            }
             p_targetCharacter.combatComponent.AdjustStrengthModifier(p_equipItem.equipmentData.equipmentUpgradeData.GetProcessedAdditionalAttack(p_equipItem.quality));
             break;
             case EQUIPMENT_BONUS.Str_Percentage:
-            if (p_initializedStackCountOnly) {
-                return;
-            }
             //float computedAttack = p_targetCharacter.combatComponent.unModifiedAttack * (p_equipItem.equipmentData.equipmentUpgradeData.AdditionalAttackPercentage / 100f);
             p_targetCharacter.combatComponent.AdjustStrengthPercentModifier(p_equipItem.equipmentData.equipmentUpgradeData.AdditionalAttackPercentage);
             break;
             case EQUIPMENT_BONUS.Int_Actual:
-            if (p_initializedStackCountOnly) {
-                return;
-            }
             p_targetCharacter.combatComponent.AdjustIntelligenceModifier(p_equipItem.equipmentData.equipmentUpgradeData.GetProcessedAdditionalInt(p_equipItem.quality));
             break;
             case EQUIPMENT_BONUS.Int_Percentage:
-            if (p_initializedStackCountOnly) {
-                return;
-            }
             //float computedAttack = p_targetCharacter.combatComponent.unModifiedAttack * (p_equipItem.equipmentData.equipmentUpgradeData.AdditionalAttackPercentage / 100f);
             p_targetCharacter.combatComponent.AdjustIntelligencePercentModifier(p_equipItem.equipmentData.equipmentUpgradeData.GetProcessedAdditionalIntPercentage(p_equipItem.quality));
             break;
             case EQUIPMENT_BONUS.Crit_Rate_Actual:
-            if (p_initializedStackCountOnly) {
-                return;
-            }
             p_targetCharacter.combatComponent.AdjustCritRate(p_equipItem.equipmentData.equipmentUpgradeData.GetProcessedAdditionalCritRate(p_equipItem.quality));
             break;
             case EQUIPMENT_BONUS.Max_HP_Actual:
-            if (p_initializedStackCountOnly) {
-                return;
-            }
             p_targetCharacter.combatComponent.AdjustMaxHPModifier(p_equipItem.equipmentData.equipmentUpgradeData.GetProcessedAdditionalmaxHP(p_equipItem.quality));
             break;
             case EQUIPMENT_BONUS.Max_HP_Percentage:
-            if (p_initializedStackCountOnly) {
-                return;
-            }
             //float addedHP = p_targetCharacter.combatComponent.unModifiedMaxHP * (p_equipItem.equipmentData.equipmentUpgradeData.AdditionalmaxHPPercentage / 100f);
             p_targetCharacter.combatComponent.AdjustMaxHPPercentModifier(p_equipItem.equipmentData.equipmentUpgradeData.AdditionalMaxHPPercentage);
             break;
             case EQUIPMENT_BONUS.Increased_Piercing:
-            if (p_initializedStackCountOnly) {
-                return;
-            }
             p_targetCharacter.piercingAndResistancesComponent.AdjustBasePiercing(p_equipItem.equipmentData.equipmentUpgradeData.GetProcessedAdditionalPiercing(p_equipItem.quality));
             break;
             case EQUIPMENT_BONUS.Attack_Element:
-            if (p_initializedStackCountOnly) {
-                return;
-            }
             p_targetCharacter.combatComponent.SetElementalType(p_equipItem.equipmentData.equipmentUpgradeData.elementAttackBonus);
             break;
             case EQUIPMENT_BONUS.Increased_3_Random_Resistance:
             case EQUIPMENT_BONUS.Increased_4_Random_Resistance:
             case EQUIPMENT_BONUS.Increased_5_Random_Resistance:
-            if (p_initializedStackCountOnly) {
-                return;
-            }
             ApplyResistanceBonusOnCharacter(p_equipItem, p_targetCharacter);
             break;
             case EQUIPMENT_BONUS.Slayer_Bonus:
@@ -130,6 +100,10 @@ public static class EquipmentBonusProcessor
             if (p_slayerBonus != EQUIPMENT_SLAYER_BONUS.None) {
                 esb = p_slayerBonus;
             }
+            if (esb == EQUIPMENT_SLAYER_BONUS.None) {
+                return;
+            }
+            
             if (p_targetCharacter.traitContainer.HasTrait(traitDictionaryForSlayer[esb])) {
                 Trait trait = p_targetCharacter.traitContainer.GetTraitOrStatus<Trait>(traitDictionaryForSlayer[esb]);
                 Slayer monsterSlayerTrait = trait as Slayer;
@@ -145,6 +119,9 @@ public static class EquipmentBonusProcessor
             EQUIPMENT_WARD_BONUS ewb = p_equipItem.equipmentData.equipmentUpgradeData.wardBonus;
             if (p_wardBonus != EQUIPMENT_WARD_BONUS.None) {
                 ewb = p_wardBonus;
+            }
+            if (ewb == EQUIPMENT_WARD_BONUS.None) {
+                return;
             }
             if (p_targetCharacter.traitContainer.HasTrait(traitDictionaryForWard[ewb])) {
                 Trait trait = p_targetCharacter.traitContainer.GetTraitOrStatus<Trait>(traitDictionaryForWard[ewb]);
@@ -218,6 +195,9 @@ public static class EquipmentBonusProcessor
             if (p_slayerBonus != EQUIPMENT_SLAYER_BONUS.None) {
                 esb = p_slayerBonus;
             }
+            if (esb == EQUIPMENT_SLAYER_BONUS.None) {
+                return;
+            }
             if (p_targetCharacter.traitContainer.HasTrait(traitDictionaryForSlayer[esb])) {
                 Trait trait = p_targetCharacter.traitContainer.GetTraitOrStatus<Trait>(traitDictionaryForSlayer[esb]);
                 Slayer monsterSlayerTrait = trait as Slayer;
@@ -231,6 +211,9 @@ public static class EquipmentBonusProcessor
             EQUIPMENT_WARD_BONUS ewb = p_equipItem.equipmentData.equipmentUpgradeData.wardBonus;
             if (p_wardBonus != EQUIPMENT_WARD_BONUS.None) {
                 ewb = p_wardBonus;
+            }
+            if (ewb == EQUIPMENT_WARD_BONUS.None) {
+                return;
             }
             if (p_targetCharacter.traitContainer.HasTrait(traitDictionaryForWard[ewb])) {
                 Trait trait = p_targetCharacter.traitContainer.GetTraitOrStatus<Trait>(traitDictionaryForWard[ewb]);

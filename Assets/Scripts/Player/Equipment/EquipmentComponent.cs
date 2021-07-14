@@ -6,9 +6,9 @@ using UtilityScripts;
 
 public class EquipmentComponent {
 
-    public EquipmentItem currentWeapon { private set; get; }
-    public EquipmentItem currentArmor { private set; get; }
-    public EquipmentItem currentAccessory { private set; get; }
+    public EquipmentItem currentWeapon { set; get; }
+    public EquipmentItem currentArmor { set; get; }
+    public EquipmentItem currentAccessory { set; get; }
 
     public List<EquipmentItem> allEquipments = new List<EquipmentItem>();
 
@@ -17,9 +17,41 @@ public class EquipmentComponent {
     }
 
     public EquipmentComponent(SaveDataEquipmentComponent p_copy) {
-        currentWeapon = p_copy.currentWeapon;
-        currentArmor = p_copy.currentArmor;
-        currentAccessory = p_copy.currentAccessory;
+        currentWeapon = DatabaseManager.Instance.tileObjectDatabase.GetTileObjectByPersistentID(p_copy.currentWeaponID) as EquipmentItem;
+        currentArmor = DatabaseManager.Instance.tileObjectDatabase.GetTileObjectByPersistentID(p_copy.currentArmorID) as EquipmentItem;
+        currentAccessory = DatabaseManager.Instance.tileObjectDatabase.GetTileObjectByPersistentID(p_copy.currentAccessoryID) as EquipmentItem;
+
+        if (currentWeapon != null) {
+            allEquipments.Add(currentWeapon);
+        }
+        if(currentArmor != null) {
+            allEquipments.Add(currentArmor);
+        }
+        if (currentAccessory != null) {
+            allEquipments.Add(currentAccessory);
+        }
+        
+    }
+
+    public void ApplyOwner(Character p_character) {
+        allEquipments.ForEach((eachEquipment) => {
+            eachEquipment.SetInventoryOwner(p_character);
+            eachEquipment.SetCharacterOwner(p_character);
+        });
+    }
+
+    public void LoadReferences(SaveDataEquipmentComponent p_data, EquipmentComponent p_newEC) {
+
+        EquipmentComponent ec = p_data.Load();
+        currentWeapon = ec.currentWeapon;
+        currentArmor = ec.currentArmor;
+        currentAccessory = ec.currentAccessory;
+
+        ec.allEquipments.Add(currentWeapon);
+        ec.allEquipments.Add(currentArmor);
+        ec.allEquipments.Add(currentAccessory);
+
+        p_newEC = ec;
     }
 
     void Reset() {
@@ -186,19 +218,35 @@ public class EquipmentComponent {
 
 [System.Serializable]
 public class SaveDataEquipmentComponent : SaveData<EquipmentComponent> {
-    public EquipmentItem currentWeapon;
-    public EquipmentItem currentArmor;
-    public EquipmentItem currentAccessory;
+    public string currentWeaponID = string.Empty;
+    public string currentArmorID = string.Empty;
+    public string currentAccessoryID = string.Empty;
 
     #region Overrides
     public override void Save(EquipmentComponent data) {
-        currentWeapon = data.currentWeapon;
-        currentArmor = data.currentArmor;
-        currentAccessory = data.currentAccessory;
+        if(data.currentWeapon != null) {
+            currentWeaponID = data.currentWeapon.persistentID;
+        }
+        if(data.currentArmor != null) {
+            currentArmorID = data.currentArmor.persistentID;
+        }
+        if(data.currentAccessory != null) {
+            currentAccessoryID = data.currentAccessory.persistentID;
+        }
     }
 
     public override EquipmentComponent Load() {
-        EquipmentComponent component = new EquipmentComponent(this);
+        base.Load();
+        EquipmentComponent component = new EquipmentComponent();
+        if (!string.IsNullOrEmpty(currentWeaponID)) {
+            component.currentWeapon = DatabaseManager.Instance.tileObjectDatabase.GetTileObjectByPersistentID(currentWeaponID) as EquipmentItem;
+        }
+        if (!string.IsNullOrEmpty(currentArmorID)) {
+            component.currentArmor = DatabaseManager.Instance.tileObjectDatabase.GetTileObjectByPersistentID(currentArmorID) as EquipmentItem;
+        }
+        if (!string.IsNullOrEmpty(currentAccessoryID)) {
+            component.currentAccessory = DatabaseManager.Instance.tileObjectDatabase.GetTileObjectByPersistentID(currentAccessoryID) as EquipmentItem;
+        }
         return component;
     }
     #endregion

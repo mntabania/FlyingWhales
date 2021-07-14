@@ -71,7 +71,6 @@ public class SaveDataCharacter : SaveData<Character>, ISavableCounterpart {
 
     public string territory;
     public List<string> items;
-    public List<string> equipmentInventory;
     public List<string> ownedItems;
     public List<string> jobs;
     public List<string> forceCancelJobsOnTickEnded;
@@ -110,6 +109,7 @@ public class SaveDataCharacter : SaveData<Character>, ISavableCounterpart {
     public SaveDataPreviousCharacterDataComponent previousCharacterDataComponent;
     public SaveDataCharacterTraitComponent traitComponent;
     public SaveDataCharacterMoneyComponent moneyComponent;
+    public SaveDataEquipmentComponent equipmentComponent;
     //public SaveDataBuffStatsBonus buffStatusBonus;
     public SaveDataCharacterTalentComponent talentComponent;
     public SaveDataResourceStorageComponent resourceStorageComponent;
@@ -194,6 +194,7 @@ public class SaveDataCharacter : SaveData<Character>, ISavableCounterpart {
         traitComponent = new SaveDataCharacterTraitComponent(); traitComponent.Save(data.traitComponent);
         //buffStatusBonus = new SaveDataBuffStatsBonus(); buffStatusBonus.Save(data.buffStatsBonus);
         moneyComponent = new SaveDataCharacterMoneyComponent(); moneyComponent.Save(data.moneyComponent);
+        equipmentComponent = new SaveDataEquipmentComponent(); equipmentComponent.Save(data.equipmentComponent);
         resourceStorageComponent = new SaveDataResourceStorageComponent(); resourceStorageComponent.Save(data.resourceStorageComponent);
         dailyScheduleComponent = new SaveDataDailyScheduleComponent(); dailyScheduleComponent.Save(data.dailyScheduleComponent);
 
@@ -264,10 +265,7 @@ public class SaveDataCharacter : SaveData<Character>, ISavableCounterpart {
         for (int i = 0; i < data.items.Count; i++) {
             items.Add(data.items[i].persistentID);
         }
-        equipmentInventory = new List<string>();
-        for (int i = 0; i < data.equipmentInventory.Count; i++) {
-            equipmentInventory.Add(data.equipmentInventory[i].persistentID);
-        }
+
         ownedItems = new List<string>();
         for (int i = 0; i < data.ownedItems.Count; i++) {
             ownedItems.Add(data.ownedItems[i].persistentID);
