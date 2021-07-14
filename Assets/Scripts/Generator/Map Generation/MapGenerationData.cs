@@ -107,10 +107,12 @@ public class MapGenerationData {
 			oceanBorderTilesCategorizedByArea.Add(p_area, RuinarchListPool<LocationGridTile>.Claim());
 		}
 		oceanBorderTilesCategorizedByArea[p_area].Add(p_tile);
+		// p_tile.parentTileMap.SetColor(p_tile.localPlace, Color.red);
 	}
 	public void RemoveOceanBorderTile(Area p_area, LocationGridTile p_tile) {
 		if (oceanBorderTilesCategorizedByArea.ContainsKey(p_area)) {
 			oceanBorderTilesCategorizedByArea[p_area].Remove(p_tile);
+			// p_tile.parentTileMap.SetColor(p_tile.localPlace, Color.white);
 			if (oceanBorderTilesCategorizedByArea[p_area].Count == 0) {
 				oceanBorderTilesCategorizedByArea.Remove(p_area);
 			}
@@ -121,7 +123,7 @@ public class MapGenerationData {
 			List<LocationGridTile> tiles = oceanBorderTilesCategorizedByArea[p_area];
 			for (int i = 0; i < tiles.Count; i++) {
 				LocationGridTile tile = tiles[i];
-				if (tile.tileObjectComponent.objHere == null && !tile.IsAtEdgeOfMap() && tile.HasDifferentStructureNeighbour(true)) {
+				if (tile.tileObjectComponent.objHere == null && tile.structure is Ocean && !tile.IsAtEdgeOfMap() && tile.HasDifferentStructureNeighbour(true)) {
 					return tile;
 				}
 			}

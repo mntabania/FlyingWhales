@@ -124,8 +124,11 @@ public class WorldSettings : MonoBehaviour {
             WorldPickerItem worldPickerItem = worldPickerItems[i];
             if (SaveManager.Instance.currentSaveDataPlayer.IsWorldUnlocked(worldPickerItem.worldType) ||
                 SaveManager.Instance.unlockAllWorlds) {
+#if DEVELOPMENT_BUILD || UNITY_EDITOR
+                worldPickerItem.Enable(); //Enable for now for testing
+#else
                 worldPickerItem.Disable();
-                // worldPickerItem.Enable(); //Enable for now for testing
+#endif
             } else {
                 worldPickerItem.Disable();
             }
