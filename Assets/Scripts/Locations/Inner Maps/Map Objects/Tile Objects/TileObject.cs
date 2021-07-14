@@ -710,6 +710,11 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
             }
         }
         Messenger.Broadcast(JobSignals.CHECK_APPLICABILITY_OF_ALL_JOBS_TARGETING, this as IPointOfInterest);
+        if (this is EquipmentItem equipment) {
+            //Seized equipments should remove ownership so that if it is dropped, characters should pick it up
+            //https://trello.com/c/NYf9Tkb7/5430-equipment-seized-by-the-player-should-clear-ownership
+            equipment.SetCharacterOwner(null);
+        }
         UnsubscribeListeners();
     }
     public void OnUnseizePOI(LocationGridTile tileLocation) {

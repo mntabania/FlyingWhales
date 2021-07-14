@@ -443,8 +443,17 @@ namespace Inner_Maps {
             } else {
                 summary = $"{summary}None";
             }
-            
-            
+            summary = $"{summary}\nCharacters Here: ";
+            if (tile.charactersHere.Count > 0) {
+                for (int i = 0; i < tile.charactersHere.Count; i++) {
+                    Character c = tile.charactersHere[i];
+                    summary = $"{summary}{c.name},";
+                }
+            } else {
+                summary = $"{summary}None";
+            }
+
+
             IPointOfInterest poi = tile.tileObjectComponent.objHere; //?? tile.tileObjectComponent.genericTileObject
             summary = $"{summary}\nContent: {poi}";
             if (poi != null) {

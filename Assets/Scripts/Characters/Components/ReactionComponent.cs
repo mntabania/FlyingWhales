@@ -1319,7 +1319,7 @@ public class ReactionComponent : CharacterComponent {
         bool shouldSwitchFaction = actor.race == RACE.SKELETON && disguisedTarget.traitContainer.HasTrait("Necromancer") && actor.faction == disguisedTarget.prevFaction && disguisedTarget.prevFaction != null;
         bool isInActiveRaid = actor.partyComponent.hasParty && actor.partyComponent.currentParty.isActive && actor.partyComponent.currentParty.currentQuest is RaidPartyQuest;
         bool isTargetInStructureInNonHostileVillage = targetGridTile != null && targetGridTile.structure.structureType != STRUCTURE_TYPE.WILDERNESS
-            && targetGridTile.IsPartOfSettlement(out BaseSettlement settlement) && settlement.owner != null && disguisedActor.faction != null && !disguisedActor.faction.IsHostileWith(settlement.owner);
+            && targetGridTile.IsPartOfSettlement(out BaseSettlement settlement) && settlement.owner != null && disguisedActor.faction != null && !disguisedActor.faction.IsHostileWith(settlement.owner) && disguisedActor.faction != settlement.owner;
 
 
         if (shouldNotAttackSkeletons) {
