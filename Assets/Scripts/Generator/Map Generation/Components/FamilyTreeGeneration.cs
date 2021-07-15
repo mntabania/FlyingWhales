@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Scenario_Maps;
@@ -76,6 +77,17 @@ public class FamilyTreeGeneration : MapGenerationComponent {
     public override IEnumerator LoadSavedData(MapGenerationData data, SaveDataCurrentProgress saveData) {
         DatabaseManager.Instance.familyTreeDatabase.Load(saveData);
         yield return null;
+    }
+    public override void LoadSavedData(object state) {
+        try {
+            LoadThreadQueueItem threadItem = state as LoadThreadQueueItem;
+            MapGenerationData mapData = threadItem.mapData;
+            SaveDataCurrentProgress saveData = threadItem.saveData;
+            DatabaseManager.Instance.familyTreeDatabase.Load(saveData);
+            threadItem.isDone = true;
+        } catch (Exception e) {
+            Debug.LogError(e.Message + "\n" + e.StackTrace);
+        }
     }
     #endregion
 }

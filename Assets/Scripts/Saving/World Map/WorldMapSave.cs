@@ -11,8 +11,8 @@ using UnityEngine;
 public class WorldMapSave {
     public WorldSettingsData.World_Type worldType;
     public WorldMapTemplate worldMapTemplate;
+    public SaveDataRegion regionSave;
     public List<SaveDataArea> areaSaves;
-    public List<SaveDataRegion> regionSaves;
     public List<SaveDataBaseSettlement> settlementSaves;
     public List<SaveDataLocationStructure> structureSaves;
     public List<SaveDataWorldEvent> worldEventSaves;
@@ -33,7 +33,7 @@ public class WorldMapSave {
         worldType = WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Tutorial ? WorldSettingsData.World_Type.Custom : WorldSettings.Instance.worldSettingsData.worldType;
         worldMapTemplate = _worldMapTemplate;
         yield return SaveManager.Instance.StartCoroutine(SaveHexTilesCoroutine(hexTileDatabase.allAreas));
-        yield return SaveManager.Instance.StartCoroutine(SaveRegionsCoroutine(regionDatabase.allRegions));
+        yield return SaveManager.Instance.StartCoroutine(SaveRegionsCoroutine(regionDatabase.mainRegion));
         yield return SaveManager.Instance.StartCoroutine(SaveSettlementsCoroutine(settlementDatabase.allSettlements));
         yield return SaveManager.Instance.StartCoroutine(SaveStructuresCoroutine(structureDatabase.allStructures));
         yield return SaveManager.Instance.StartCoroutine(SaveWorldEventsCoroutine(activeEvents));
@@ -44,7 +44,7 @@ public class WorldMapSave {
         worldType = WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Tutorial ? WorldSettingsData.World_Type.Custom : WorldSettings.Instance.worldSettingsData.worldType;
         worldMapTemplate = _worldMapTemplate;
         SaveHexTiles(hexTileDatabase.allAreas);
-        SaveRegions(regionDatabase.allRegions);
+        SaveRegions(regionDatabase.mainRegion);
         SaveSettlements(settlementDatabase.allSettlements);
         SaveStructures(structureDatabase.allStructures);
         SaveWorldEvents(activeEvents);
@@ -110,29 +110,36 @@ public class WorldMapSave {
     #endregion
 
     #region Regions
-    private void SaveRegions(Region[] regions) {
-        regionSaves = new List<SaveDataRegion>();
-        for (int i = 0; i < regions.Length; i++) {
-            Region region = regions[i];
-            SaveDataRegion saveDataRegion = new SaveDataRegion();
-            saveDataRegion.Save(region);
-            regionSaves.Add(saveDataRegion);
-        }
+    private void SaveRegions(Region region) {
+        SaveDataRegion saveDataRegion = new SaveDataRegion();
+        saveDataRegion.Save(region);
+        regionSave = saveDataRegion;
+        //regionSaves = new List<SaveDataRegion>();
+        //for (int i = 0; i < regions.Length; i++) {
+        //    Region region = regions[i];
+        //    SaveDataRegion saveDataRegion = new SaveDataRegion();
+        //    saveDataRegion.Save(region);
+        //    regionSaves.Add(saveDataRegion);
+        //}
     }
-    private IEnumerator SaveRegionsCoroutine(Region[] regions) {
-        int batchCount = 0;
-        regionSaves = new List<SaveDataRegion>();
-        for (int i = 0; i < regions.Length; i++) {
-            Region region = regions[i];
-            SaveDataRegion saveDataRegion = new SaveDataRegion();
-            saveDataRegion.Save(region);
-            regionSaves.Add(saveDataRegion);
-            batchCount++;
-            if (batchCount >= SaveManager.Region_Save_Batches) {
-                batchCount = 0;
-                yield return null;    
-            }
-        }
+    private IEnumerator SaveRegionsCoroutine(Region region) {
+        SaveDataRegion saveDataRegion = new SaveDataRegion();
+        saveDataRegion.Save(region);
+        regionSave = saveDataRegion;
+        yield return null;
+        //int batchCount = 0;
+        //regionSaves = new List<SaveDataRegion>();
+        //for (int i = 0; i < regions.Length; i++) {
+        //    Region region = regions[i];
+        //    SaveDataRegion saveDataRegion = new SaveDataRegion();
+        //    saveDataRegion.Save(region);
+        //    regionSaves.Add(saveDataRegion);
+        //    batchCount++;
+        //    if (batchCount >= SaveManager.Region_Save_Batches) {
+        //        batchCount = 0;
+        //        yield return null;    
+        //    }
+        //}
     }
     #endregion
 

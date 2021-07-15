@@ -86,7 +86,7 @@ public class Region : ISavable, ILogFiller {
         persistentID = data.persistentID;
         id = UtilityScripts.Utilities.SetID(this, data.id);
         name = data.name;
-        coreTile = GridMap.Instance.allAreas[data.coreTileID];
+        //coreTile = GridMap.Instance.allAreas[data.coreTileID];
         areas = new List<Area>();
         regionColor = data.regionColor;
         objectsInRegionCount = new Dictionary<TILE_OBJECT_TYPE, int>();
@@ -101,6 +101,7 @@ public class Region : ISavable, ILogFiller {
         wilderness = p_wilderness;
     }
     public void LoadReferences(SaveDataRegion saveDataRegion) {
+
 #if DEBUG_LOG
         string summary = $"Loading {name} references:";
         summary = $"{summary}\nLoading Residents:";
@@ -147,14 +148,17 @@ public class Region : ISavable, ILogFiller {
             VillageSpot villageSpot = saveDataRegion.villageSpots[i].Load();
             villageSpots.Add(villageSpot);
         }
-        gridTileFeatureComponent.LoadReferences(saveDataRegion.gridTileFeatureComponent);
 #if DEBUG_LOG
         Debug.Log(summary);
 #endif
     }
-#endregion
+    public void LoadReferencesMainThread(SaveDataRegion saveDataRegion) {
+        coreTile = GridMap.Instance.allAreas[saveDataRegion.coreTileID];
+        gridTileFeatureComponent.LoadReferences(saveDataRegion.gridTileFeatureComponent);
+    }
+    #endregion
 
-#region Tiles
+    #region Tiles
     public void AddTile(Area tile) {
         if (!areas.Contains(tile)) {
             areas.Add(tile);

@@ -201,17 +201,17 @@ public class VampireBehaviour : CharacterBehaviourComponent {
         }
         return null;
     }
-    private Area GetNoStructurePlainAreaInAllRegions() {
-        Area area = null;
-        for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
-            Region region = GridMap.Instance.allRegions[i];
-            area = GetNoStructurePlainAreaInRegion(region);
-            if (area != null) {
-                return area;
-            }
-        }
-        return area;
-    }
+    //private Area GetNoStructurePlainAreaInAllRegions() {
+    //    Area area = null;
+    //    for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
+    //        Region region = GridMap.Instance.allRegions[i];
+    //        area = GetNoStructurePlainAreaInRegion(region);
+    //        if (area != null) {
+    //            return area;
+    //        }
+    //    }
+    //    return area;
+    //}
     private Area GetNoStructurePlainAreaInRegion(Region region) {
         return region.GetRandomAreaThatIsUncorruptedAndNotMountainWaterAndNoStructureAndNotNextToOrPartOfVillage();
     }

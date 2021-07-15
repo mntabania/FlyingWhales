@@ -20,7 +20,7 @@ public class RegionFeatureGeneration : MapGenerationComponent {
     public override IEnumerator ExecuteRandomGeneration(MapGenerationData data) {
         if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Oona) {
             //add dragon feature to second world
-            Region chosenRegion = GridMap.Instance.allRegions[0];
+            Region chosenRegion = GridMap.Instance.mainRegion;
             chosenRegion.regionFeatureComponent.AddFeature(RegionFeatureDB.Dragon);
             chosenRegion.regionFeatureComponent.AddFeature(RegionFeatureDB.Crystals);
         } else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Custom) {

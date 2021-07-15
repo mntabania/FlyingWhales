@@ -823,20 +823,20 @@ namespace Inner_Maps {
             return localPlace.ToString();
         }
         public float GetDistanceTo(LocationGridTile tile) {
-            if(structure.region != tile.structure.region) {
-                //Computing distance of tiles from different region should be different
-                //It should origin tile distance to origin tile region's edge tile + target tile region's edge tile to target tile
-                Region targetRegion = tile.structure.region;
-                LocationGridTile targetGate = GetTargetTileToGoToRegion(targetRegion);
-                LocationGridTile exitTile = GetExitTileToGoToRegion(targetGate);
+            //if(structure.region != tile.structure.region) {
+            //    //Computing distance of tiles from different region should be different
+            //    //It should origin tile distance to origin tile region's edge tile + target tile region's edge tile to target tile
+            //    Region targetRegion = tile.structure.region;
+            //    LocationGridTile targetGate = GetTargetTileToGoToRegion(targetRegion);
+            //    LocationGridTile exitTile = GetExitTileToGoToRegion(targetGate);
 
-                float originDistanceToExitTile = Vector2.Distance(localLocation, exitTile.localLocation);
-                float targetGateDistanceToTargetTile = Vector2.Distance(targetGate.localLocation, tile.localLocation);
+            //    float originDistanceToExitTile = Vector2.Distance(localLocation, exitTile.localLocation);
+            //    float targetGateDistanceToTargetTile = Vector2.Distance(targetGate.localLocation, tile.localLocation);
 
-                return originDistanceToExitTile + targetGateDistanceToTargetTile;
-            } else {
+            //    return originDistanceToExitTile + targetGateDistanceToTargetTile;
+            //} else {
                 return Vector2.Distance(localLocation, tile.localLocation);
-            }
+            //}
         }
         public void FindNeighbours(LocationGridTile[,] map) {
             int mapUpperBoundX = map.GetUpperBound(0);
@@ -1704,35 +1704,35 @@ namespace Inner_Maps {
             //We only consider it impassable if there is a block wall
             return (tileObjectComponent.objHere == null || !tileObjectComponent.objHere.IsUnpassable()) /*&& !tileObjectComponent.HasWalls()*/ && groundType != Ground_Type.Water;
         }
-        private LocationGridTile GetTargetTileToGoToRegion(Region region) {
-            //if (currentRegion != null) {
-            //    RegionInnerTileMap regionInnerTileMap = currentRegion.innerMap as RegionInnerTileMap;
-            //    if (regionInnerTileMap != null) {
-            //        return regionInnerTileMap.GetTileToGoToRegion(region);
-            //    }
-            //} else if (gridTileLocation != null) {
-            //    RegionInnerTileMap regionInnerTileMap = gridTileLocation.parentMap.region.innerMap as RegionInnerTileMap;
-            //    if (regionInnerTileMap != null) {
-            //        return regionInnerTileMap.GetTileToGoToRegion(region);
-            //    }
-            //}
-            RegionInnerTileMap regionInnerTileMap = structure.region.innerMap as RegionInnerTileMap;
-            if (regionInnerTileMap != null) {
-                return regionInnerTileMap.GetTileToGoToRegion(region);
-            }
-            return null;
-        }
-        public LocationGridTile GetExitTileToGoToRegion(Region region) {
-            //gate -the tile where the character will appear in the target region
-            LocationGridTile gate = GetTargetTileToGoToRegion(region);
-            return GetExitTileToGoToRegion(gate);
-        }
-        public LocationGridTile GetExitTileToGoToRegion(LocationGridTile gateInTargetRegion) {
-            //direction - the direction where the character must go in order to go to the other region, it is also the basis in which we get the tile where the character will exit in this region
-            DIRECTION direction = gateInTargetRegion.GetDirection();
-            LocationGridTile exitTile = GetNearestEdgeTileFromThis(direction);
-            return exitTile;
-        }
+        //private LocationGridTile GetTargetTileToGoToRegion(Region region) {
+        //    //if (currentRegion != null) {
+        //    //    RegionInnerTileMap regionInnerTileMap = currentRegion.innerMap as RegionInnerTileMap;
+        //    //    if (regionInnerTileMap != null) {
+        //    //        return regionInnerTileMap.GetTileToGoToRegion(region);
+        //    //    }
+        //    //} else if (gridTileLocation != null) {
+        //    //    RegionInnerTileMap regionInnerTileMap = gridTileLocation.parentMap.region.innerMap as RegionInnerTileMap;
+        //    //    if (regionInnerTileMap != null) {
+        //    //        return regionInnerTileMap.GetTileToGoToRegion(region);
+        //    //    }
+        //    //}
+        //    RegionInnerTileMap regionInnerTileMap = structure.region.innerMap as RegionInnerTileMap;
+        //    if (regionInnerTileMap != null) {
+        //        return regionInnerTileMap.GetTileToGoToRegion(region);
+        //    }
+        //    return null;
+        //}
+        //public LocationGridTile GetExitTileToGoToRegion(Region region) {
+        //    //gate -the tile where the character will appear in the target region
+        //    LocationGridTile gate = GetTargetTileToGoToRegion(region);
+        //    return GetExitTileToGoToRegion(gate);
+        //}
+        //public LocationGridTile GetExitTileToGoToRegion(LocationGridTile gateInTargetRegion) {
+        //    //direction - the direction where the character must go in order to go to the other region, it is also the basis in which we get the tile where the character will exit in this region
+        //    DIRECTION direction = gateInTargetRegion.GetDirection();
+        //    LocationGridTile exitTile = GetNearestEdgeTileFromThis(direction);
+        //    return exitTile;
+        //}
 #endregion
 
         public void InstantPlaceDemonicStructure(StructureSetting p_structureSetting) {

@@ -76,8 +76,6 @@ namespace Locations.Settlements {
             parties = new List<Party>();
             bookmarkEventDispatcher = new BookmarkableEventDispatcher();
             SetLocationType(data.locationType);
-            StartListeningForFires();
-            ConstructDefaultActions();
         }
 
         #region Settlement Info
@@ -1119,6 +1117,10 @@ namespace Locations.Settlements {
             if (!string.IsNullOrEmpty(data.factionOwnerID)) {
                 owner =  DatabaseManager.Instance.factionDatabase.GetFactionBasedOnPersistentID(data.factionOwnerID);    
             }
+        }
+        public virtual void LoadReferencesMainThread(SaveDataBaseSettlement data) {
+            StartListeningForFires();
+            ConstructDefaultActions();
         }
         #endregion
     }

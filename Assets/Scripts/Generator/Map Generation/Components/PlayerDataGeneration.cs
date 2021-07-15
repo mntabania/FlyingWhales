@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Inner_Maps.Location_Structures;
@@ -28,6 +29,17 @@ public class PlayerDataGeneration : MapGenerationComponent {
         LevelLoaderManager.Instance.UpdateLoadingInfo("Loading Player Data...");
         PlayerManager.Instance.InitializePlayer(saveData);
         yield return null;
+    }
+    public override void LoadSavedData(object state) {
+        try {
+            LoadThreadQueueItem threadItem = state as LoadThreadQueueItem;
+            MapGenerationData mapData = threadItem.mapData;
+            SaveDataCurrentProgress saveData = threadItem.saveData;
+            PlayerManager.Instance.InitializePlayer(saveData);
+            threadItem.isDone = true;
+        } catch (Exception e) {
+            Debug.LogError(e.Message + "\n" + e.StackTrace);
+        }
     }
     #endregion
 }

@@ -164,19 +164,39 @@ public class MapGenerator : BaseMonoBehaviour {
     public IEnumerator InitializeSavedWorld(SaveDataCurrentProgress saveData) {
         //Note: In the Save World, the TileFeatureGeneration is done after the second wave is done loading because there are tile features thats needs the references when it is added
         //Example: The HeatWave feature function PopulateInitialCharactersOutside is called when it is added, inside the GetAllCharactersInsideHexThatMeetCriteria is called, where the innermaphextile is needed, so we must have the references before loading the tile features
-        LevelLoaderManager.Instance.UpdateLoadingInfo("Loading World...");
+        LevelLoaderManager.Instance.UpdateLoadingInfo("Loading Initial Data...");
         SaveManager.Instance.SetUseSaveData(true);
         WorldSettings.Instance.SetWorldSettingsData(saveData.worldSettingsData);
         DatabaseManager.Instance.mainSQLDatabase.InitializeDatabase(); //Initialize main SQL database
 
+        WorldSettings.Instance.worldSettingsData.SetWorldType(saveData.worldMapSave.worldType);
+
         MapGenerationData mapData = new MapGenerationData();
         mapData.chosenWorldMapTemplate = saveData.worldMapSave.worldMapTemplate;
+        GridMap.Instance.SetupInitialData(mapData.width, mapData.height);
         float newX = MapGenerationData.XOffset * (mapData.width / 2f);
         float newY = MapGenerationData.YOffset * (mapData.height / 2f);
         GridMap.Instance.transform.localPosition = new Vector2(-newX, -newY);
         WorldConfigManager.Instance.mapGenerationData = mapData;
+        saveData.LoadDate();
 
-        MapGenerationComponent[] threadedMapGenerationComponents = { new WorldMapRegionGeneration(), new SettlementLoading() };
+        Region region = new Region(saveData.worldMapSave.regionSave);
+        DatabaseManager.Instance.regionDatabase.RegisterRegion(region);
+
+        //AreaGeneration areaGenerationComponent = new AreaGeneration();
+        //LoadThreadQueueItem threadItemAreaGeneration = new LoadThreadQueueItem();
+        //threadItemAreaGeneration.mapData = mapData;
+        //threadItemAreaGeneration.saveData = saveData;
+        //ThreadPool.QueueUserWorkItem(areaGenerationComponent.LoadSavedData, threadItemAreaGeneration);
+
+        //while (!threadItemAreaGeneration.isDone) {
+        //    yield return null;
+        //}
+        //LevelLoaderManager.Instance.UpdateLoadingInfo("Loading Map...");
+
+        MapGenerationComponent[] threadedMapGenerationComponents = { 
+            new LoadInitialAreaData(), new SettlementLoading(), new FamilyTreeGeneration(), new SingletonDataGeneration(), new PlayerDataGeneration() 
+        };
         LoadThreadQueueItem[] threadItems = new LoadThreadQueueItem[threadedMapGenerationComponents.Length];
         for (int i = 0; i < threadedMapGenerationComponents.Length; i++) {
             LoadThreadQueueItem threadItem = new LoadThreadQueueItem();
@@ -189,8 +209,8 @@ public class MapGenerator : BaseMonoBehaviour {
             yield return null;
         }
         MapGenerationComponent[] mapGenerationComponents = {
-            /*new AreaGeneration(), new WorldMapRegionGeneration(), new SettlementLoading(),*/ new FamilyTreeGeneration(),
-            new RegionInnerMapGeneration(), new SingletonDataGeneration(), new PlayerDataGeneration(),
+            /*new AreaGeneration(), new WorldMapRegionGeneration(), new SettlementLoading(), new FamilyTreeGeneration(),*/ 
+            new RegionInnerMapGeneration(), /*new SingletonDataGeneration(), new PlayerDataGeneration(),*/ 
             new LoadFirstWave(), new LoadSecondWave(), new TileFeatureGeneration(), new MapGenerationFinalization(),
             new LoadCharactersCurrentAction(), new LoadPlayerQuests(),
             /*, new LoadAwarenessGeneration()*/

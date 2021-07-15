@@ -107,13 +107,9 @@ public class Player : ILeader, IObjectManipulator {
         summonMeterComponent.Initialize();
 
         // bookmarkComponent.AddBookmark(summonMeterComponent.progress, BOOKMARK_CATEGORY.Portal);
-        if (WorldSettings.Instance.worldSettingsData.IsRetaliationAllowed()) {
-            bookmarkComponent.AddBookmark(retaliationComponent.retaliationProgress, BOOKMARK_CATEGORY.Major_Events);
-        }
         hasAlreadyWon = data.hasAlreadyWon;
         
         charactersThatHaveReportedDemonicStructure = new List<string>(data.charactersThatHaveReportedDemonicStructure);
-        SubscribeListeners();
     }
 
     public void LoadPlayerData(SaveDataPlayer save) {
@@ -831,13 +827,19 @@ public class Player : ILeader, IObjectManipulator {
         summonMeterComponent.LoadReferences(data.summonMeterComponent);
         underlingsComponent.LoadReferences(data.underlingsComponent);
         retaliationComponent.LoadReferences(data.retaliationComponent);
+    }
+    public void LoadReferencesMainThread(SaveDataPlayerGame data) {
+        SubscribeListeners();
+        if (WorldSettings.Instance.worldSettingsData.IsRetaliationAllowed()) {
+            bookmarkComponent.AddBookmark(retaliationComponent.retaliationProgress, BOOKMARK_CATEGORY.Major_Events);
+        }
         PlayerUI.Instance.UpdateUI();
     }
     #endregion
 
     #region Building
     public void SetIsCurrentlyBuildingDemonicStructure(bool state) {
-        isCurrentlyBuildingDemonicStructure = state;
+    isCurrentlyBuildingDemonicStructure = state;
     }
     #endregion
 

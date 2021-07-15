@@ -119,7 +119,7 @@ public class SaveSpiritEnergy {
 	}
 
 	public void Load() {
-		Region region = DatabaseManager.Instance.regionDatabase.GetRegionByPersistentID(regionID);
+		Region region = DatabaseManager.Instance.regionDatabase.mainRegion;
 		PlayerManager.Instance.CreateSpiritEnergyFromSave(pos, region);
 	}
 }

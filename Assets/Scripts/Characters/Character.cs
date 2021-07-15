@@ -4987,7 +4987,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
         currentActionNode = actionNode;
 #if DEBUG_LOG
-        if (currentActionNode != null) {
+        if (actionNode != null) {
             logComponent.PrintLogIfActive($"{name} will do action {actionNode.action.name} to {actionNode.poiTarget}");
             //Current Job must always be the job in the top prio, if there is inconsistency with the currentActionNode, then the problem lies on what you set as the currentActionNode
         }
@@ -6360,18 +6360,20 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             deathLog = data.deathLog;
             // deathLog = DatabaseManager.Instance.logDatabase.GetLogByPersistentID(data.deathLog);
         }
-        if (!string.IsNullOrEmpty(data.homeRegion)) {
-            homeRegion = DatabaseManager.Instance.regionDatabase.GetRegionByPersistentID(data.homeRegion);
-        }
+        homeRegion = DatabaseManager.Instance.regionDatabase.mainRegion;
+        //if (!string.IsNullOrEmpty(data.homeRegion)) {
+        //    homeRegion = DatabaseManager.Instance.regionDatabase.GetRegionByPersistentID(data.homeRegion);
+        //}
         if (!string.IsNullOrEmpty(data.homeSettlement)) {
             homeSettlement = DatabaseManager.Instance.settlementDatabase.GetSettlementByPersistentID(data.homeSettlement) as NPCSettlement;
         }
         if (!string.IsNullOrEmpty(data.homeStructure)) {
             homeStructure = DatabaseManager.Instance.structureDatabase.GetStructureByPersistentID(data.homeStructure);
         }
-        if (!string.IsNullOrEmpty(data.currentRegion)) {
-            _currentRegion = DatabaseManager.Instance.regionDatabase.GetRegionByPersistentID(data.currentRegion);
-        }
+        _currentRegion = DatabaseManager.Instance.regionDatabase.mainRegion;
+        //if (!string.IsNullOrEmpty(data.currentRegion)) {
+        //    _currentRegion = DatabaseManager.Instance.regionDatabase.GetRegionByPersistentID(data.currentRegion);
+        //}
         if (!string.IsNullOrEmpty(data.currentStructure)) {
             _currentStructure = DatabaseManager.Instance.structureDatabase.GetStructureByPersistentID(data.currentStructure);
         }

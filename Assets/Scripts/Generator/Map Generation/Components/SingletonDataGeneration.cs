@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Inner_Maps.Location_Structures;
@@ -23,7 +24,17 @@ public class SingletonDataGeneration : MapGenerationComponent {
 	public override IEnumerator LoadSavedData(MapGenerationData data, SaveDataCurrentProgress saveData) {
 		yield return MapGenerator.Instance.StartCoroutine(LoadSaveDataPlagueDisease(data, saveData));
     }
-
+    public override void LoadSavedData(object state) {
+        try {
+            LoadThreadQueueItem threadItem = state as LoadThreadQueueItem;
+            MapGenerationData mapData = threadItem.mapData;
+            SaveDataCurrentProgress saveData = threadItem.saveData;
+            saveData.LoadPlagueDisease();
+            threadItem.isDone = true;
+        } catch (Exception e) {
+            Debug.LogError(e.Message + "\n" + e.StackTrace);
+        }
+    }
     #endregion
 
     #region Plague Disease

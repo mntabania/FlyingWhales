@@ -363,14 +363,12 @@ namespace UtilityScripts {
 
             return result.ToList<int>();
         }
-        public static List<Area> GetHexTilesGivenCoordinates(List<Point> coordinates, Area[,] map) {
-            List<Area> tiles = new List<Area>();
+        public static void PopulateAreasGivenCoordinates(List<Area> areas, List<Point> coordinates, Area[,] map) {
             for (int i = 0; i < coordinates.Count; i++) {
                 Point point = coordinates[i];
                 Area tile = map[point.X, point.Y];
-                tiles.Add(tile);
+                areas.Add(tile);
             }
-            return tiles;
         }
         public static List<Area> GetHexTilesGivenCoordinates(Point[] coordinates, Area[,] map) {
             List<Area> tiles = new List<Area>();

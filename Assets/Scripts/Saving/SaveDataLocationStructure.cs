@@ -13,7 +13,7 @@ public class SaveDataLocationStructure : SaveData<LocationStructure> {
     public string name;
     public string nameWithoutID;
     public STRUCTURE_TYPE structureType;
-    public string regionLocationID;
+    //public string regionLocationID;
     public STRUCTURE_TAG[] structureTags;
     public Point[] tileCoordinates;
     public int maxHP;
@@ -34,7 +34,7 @@ public class SaveDataLocationStructure : SaveData<LocationStructure> {
         name = structure.name;
         nameWithoutID = structure.nameWithoutID;
         structureType = structure.structureType;
-        regionLocationID = structure.region.persistentID;
+        //regionLocationID = structure.region.persistentID;
         settlementLocationID = structure.settlementLocation?.persistentID ?? string.Empty;
         isStoredAsTarget = structure.isStoredAsTarget;
 

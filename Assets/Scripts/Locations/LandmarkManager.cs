@@ -89,13 +89,13 @@ public partial class LandmarkManager : BaseMonoBehaviour {
         return newNpcSettlement;
     }
     public NPCSettlement LoadNPCSettlement(SaveDataNPCSettlement saveDataNpcSettlement) {
-        List<Area> tiles = GameUtilities.GetHexTilesGivenCoordinates(saveDataNpcSettlement.tileCoordinates, GridMap.Instance.map);
+        //List<Area> tiles = GameUtilities.GetHexTilesGivenCoordinates(saveDataNpcSettlement.tileCoordinates, GridMap.Instance.map);
         NPCSettlement newNpcSettlement = new NPCSettlement(saveDataNpcSettlement);
-        for (int i = 0; i < tiles.Count; i++) {
-            Area tile = tiles[i];
-            newNpcSettlement.AddAreaToSettlement(tile);
-        }
-        Messenger.Broadcast(SettlementSignals.SETTLEMENT_CREATED, newNpcSettlement);
+        //for (int i = 0; i < tiles.Count; i++) {
+        //    Area tile = tiles[i];
+        //    newNpcSettlement.AddAreaToSettlement(tile);
+        //}
+        //Messenger.Broadcast(SettlementSignals.SETTLEMENT_CREATED, newNpcSettlement);
         DatabaseManager.Instance.settlementDatabase.RegisterSettlement(newNpcSettlement);
         return newNpcSettlement;
     }
@@ -109,12 +109,15 @@ public partial class LandmarkManager : BaseMonoBehaviour {
     public PlayerSettlement LoadPlayerSettlement(SaveDataPlayerSettlement saveDataPlayerSettlement) {
         PlayerSettlement newPlayerSettlement = new PlayerSettlement(saveDataPlayerSettlement);
 
-        List<Area> tiles = GameUtilities.GetHexTilesGivenCoordinates(saveDataPlayerSettlement.tileCoordinates, GridMap.Instance.map);
-        for (int i = 0; i < tiles.Count; i++) {
-            Area tile = tiles[i];
-            newPlayerSettlement.AddAreaToSettlement(tile);
-        }
-        Messenger.Broadcast(SettlementSignals.SETTLEMENT_CREATED, newPlayerSettlement);
+        //Moved this to LoadReferences because the first load is for initial data only since we multithread initial data
+        //List<Area> areas = RuinarchListPool<Area>.Claim();
+        //GameUtilities.PopulateAreasGivenCoordinates(areas, saveDataPlayerSettlement.tileCoordinates, GridMap.Instance.map);
+        //for (int i = 0; i < areas.Count; i++) {
+        //    Area a = areas[i];
+        //    newPlayerSettlement.AddAreaToSettlement(a);
+        //}
+        //RuinarchListPool<Area>.Release(areas);
+        //Messenger.Broadcast(SettlementSignals.SETTLEMENT_CREATED, newPlayerSettlement);
         DatabaseManager.Instance.settlementDatabase.RegisterSettlement(newPlayerSettlement);
         return newPlayerSettlement;
     }

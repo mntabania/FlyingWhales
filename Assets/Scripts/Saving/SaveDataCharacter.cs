@@ -59,10 +59,10 @@ public class SaveDataCharacter : SaveData<Character>, ISavableCounterpart {
     //References
     public string grave;
     public Log deathLog;
-    public string homeRegion;
+    //public string homeRegion;
     public string homeSettlement;
     public string homeStructure;
-    public string currentRegion;
+    //public string currentRegion;
     public string currentStructure;
     public string faction;
 
@@ -236,18 +236,18 @@ public class SaveDataCharacter : SaveData<Character>, ISavableCounterpart {
             deathLog = data.deathLog;
             // SaveManager.Instance.saveCurrentProgressManager.AddToSaveHub(data.deathLog);
         }
-        if (data.homeRegion != null) {
-            homeRegion = data.homeRegion.persistentID;
-        }
+        //if (data.homeRegion != null) {
+        //    homeRegion = data.homeRegion.persistentID;
+        //}
         if (data.homeSettlement != null) {
             homeSettlement = data.homeSettlement.persistentID;
         }
         if (data.homeStructure != null) {
             homeStructure = data.homeStructure.persistentID;
         }
-        if (data.currentRegion != null) {
-            currentRegion = data.currentRegion.persistentID;
-        }
+        //if (data.currentRegion != null) {
+        //    currentRegion = data.currentRegion.persistentID;
+        //}
         if (data.currentStructure != null) {
             currentStructure = data.currentStructure.persistentID;
         }

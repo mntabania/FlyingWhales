@@ -8,7 +8,7 @@ public class RegionOtherData : OtherData {
         this.region = region;
     }
     public RegionOtherData(SaveDataRegionOtherData saveData) {
-        this.region = DatabaseManager.Instance.regionDatabase.GetRegionByPersistentID(saveData.regionID);
+        this.region = DatabaseManager.Instance.regionDatabase.mainRegion;
     }
     
     public override SaveDataOtherData Save() {

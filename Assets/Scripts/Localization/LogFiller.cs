@@ -77,7 +77,7 @@ public struct SaveDataLogFiller {
             } else if (objIdentifier == "npcSettlement") {
                 tempFiller.obj = LandmarkManager.Instance.GetSettlementByPersistentID(objID);
             } else if (objIdentifier == "region") {
-                tempFiller.obj = GridMap.Instance.GetRegionByPersistentID(objID);
+                tempFiller.obj = GridMap.Instance.mainRegion;
             } 
             //else if (objIdentifier == "landmark") {
             //    tempFiller.obj = LandmarkManager.Instance.GetLandmarkByID(objID);

@@ -954,20 +954,21 @@ namespace Inner_Maps {
 
         #region Cycle Regions
         private void CycleRegions() {
-            if (currentlyShowingLocation == null) {
-                TryShowLocationMap(GridMap.Instance.allRegions[0]);
-            }
-            else {
-                for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
-                    Region region = GridMap.Instance.allRegions[i];
-                    if (currentlyShowingLocation == region) {
-                        Region nextRegion = CollectionUtilities.GetNextElementCyclic(GridMap.Instance.allRegions, i);
-                        ShowInnerMap(nextRegion, true, true);
-                        break;
-                    }
-                }
+            TryShowLocationMap(GridMap.Instance.mainRegion);
+            //if (currentlyShowingLocation == null) {
+            //    TryShowLocationMap(GridMap.Instance.allRegions[0]);
+            //}
+            //else {
+            //    for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
+            //        Region region = GridMap.Instance.allRegions[i];
+            //        if (currentlyShowingLocation == region) {
+            //            Region nextRegion = CollectionUtilities.GetNextElementCyclic(GridMap.Instance.allRegions, i);
+            //            ShowInnerMap(nextRegion, true, true);
+            //            break;
+            //        }
+            //    }
                
-            }
+            //}
         }
         #endregion
 

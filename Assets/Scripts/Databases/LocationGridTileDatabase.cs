@@ -24,7 +24,7 @@ public class LocationGridTileDatabase {
         throw new Exception($"There is no Location Grid Tile with id {id}");
     }
     public LocationGridTile GetTileBySavedData(TileLocationSave tileLocationSave) {
-        Region region = DatabaseManager.Instance.regionDatabase.GetRegionByPersistentID(tileLocationSave.regionPersistentID);
+        Region region = DatabaseManager.Instance.regionDatabase.mainRegion;
         return region.innerMap.GetTileFromMapCoordinates(tileLocationSave.xPos, tileLocationSave.yPos);
     }
     

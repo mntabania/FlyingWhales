@@ -398,17 +398,17 @@ public class NecromancerBehaviour : CharacterBehaviourComponent {
         }
         return false;
     }
-    private Area GetNoStructurePlainAreaInAllRegions() {
-        Area chosenArea = null;
-        for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
-            Region region = GridMap.Instance.allRegions[i];
-            chosenArea = GetNoStructurePlainAreaInRegion(region);
-            if (chosenArea != null) {
-                return chosenArea;
-            }
-        }
-        return chosenArea;
-    }
+    //private Area GetNoStructurePlainAreaInAllRegions() {
+    //    Area chosenArea = GetNoStructurePlainAreaInRegion(GridMap.Instance.mainRegion);
+    //    //for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
+    //    //    Region region = GridMap.Instance.allRegions[i];
+    //    //    chosenArea = GetNoStructurePlainAreaInRegion(region);
+    //    //    if (chosenArea != null) {
+    //    //        return chosenArea;
+    //    //    }
+    //    //}
+    //    return chosenArea;
+    //}
     private Area GetNoStructurePlainAreaInRegion(Region region) {
         return region.GetRandomAreaThatIsUncorruptedFullyPlainNoStructureAndNotNextToOrPartOfVillage();
     }

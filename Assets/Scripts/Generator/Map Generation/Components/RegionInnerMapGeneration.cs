@@ -12,34 +12,39 @@ using UnityEngine.Tilemaps;
 public class RegionInnerMapGeneration : MapGenerationComponent {
     public override IEnumerator ExecuteRandomGeneration(MapGenerationData data) {
         LevelLoaderManager.Instance.UpdateLoadingInfo("Generating Map...");
-        for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
-            Region region = GridMap.Instance.allRegions[i];
-            yield return MapGenerator.Instance.StartCoroutine(LandmarkManager.Instance.GenerateRegionMap(region, this, data));
-        }
+        Region region = DatabaseManager.Instance.regionDatabase.mainRegion;
+        yield return MapGenerator.Instance.StartCoroutine(LandmarkManager.Instance.GenerateRegionMap(region, this, data));
+        //for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
+        //    Region region = GridMap.Instance.allRegions[i];
+        //    yield return MapGenerator.Instance.StartCoroutine(LandmarkManager.Instance.GenerateRegionMap(region, this, data));
+        //}
     }
 
     #region Scenario Maps
     public override IEnumerator LoadScenarioData(MapGenerationData data, ScenarioMapData scenarioMapData) {
         LevelLoaderManager.Instance.UpdateLoadingInfo("Generating Map...");
-        for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
-            Region region = GridMap.Instance.allRegions[i];
-            yield return MapGenerator.Instance.StartCoroutine(LandmarkManager.Instance.GenerateScenarioMap(region, this, data, scenarioMapData));
-        }
+        Region region = DatabaseManager.Instance.regionDatabase.mainRegion;
+        yield return MapGenerator.Instance.StartCoroutine(LandmarkManager.Instance.GenerateScenarioMap(region, this, data, scenarioMapData));
+        //for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
+        //    Region region = GridMap.Instance.allRegions[i];
+        //    yield return MapGenerator.Instance.StartCoroutine(LandmarkManager.Instance.GenerateScenarioMap(region, this, data, scenarioMapData));
+        //}
     }
     #endregion
 
     #region Saved World
     public override IEnumerator LoadSavedData(MapGenerationData data, SaveDataCurrentProgress saveData) {
         LevelLoaderManager.Instance.UpdateLoadingInfo("Loading Inner Maps...");
-        for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
-            Region region = GridMap.Instance.allRegions[i];
-            region.CreateStructureList();
-        }
-        
+        //for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
+        //    Region region = GridMap.Instance.allRegions[i];
+        //    region.CreateStructureList();
+        //}
+        Region location = DatabaseManager.Instance.regionDatabase.mainRegion;
+        location.CreateStructureList();
+
         //load all structure instances.
         for (int i = 0; i < saveData.worldMapSave.structureSaves.Count; i++) {
             SaveDataLocationStructure saveDataLocationStructure = saveData.worldMapSave.structureSaves[i];
-            Region location = DatabaseManager.Instance.regionDatabase.GetRegionByPersistentID(saveDataLocationStructure.regionLocationID);
             LocationStructure createdStructure = saveDataLocationStructure.InitialLoad(location);
             if (createdStructure != null && !createdStructure.hasBeenDestroyed) {
                 if (createdStructure is Wilderness wilderness) {
@@ -54,15 +59,17 @@ public class RegionInnerMapGeneration : MapGenerationComponent {
             }
             saveDataLocationStructure.Load();
         }
-        
+
         //create inner maps
-        for (int i = 0; i < saveData.worldMapSave.regionSaves.Count; i++) {
-            SaveDataRegion saveDataRegion = saveData.worldMapSave.regionSaves[i];
-            Region location = DatabaseManager.Instance.regionDatabase.GetRegionByPersistentID(saveDataRegion.persistentID);
-            yield return MapGenerator.Instance.StartCoroutine(LandmarkManager.Instance.LoadRegionMap(location, this, saveDataRegion.innerMapSave, saveData));
-            // yield return MapGenerator.Instance.StartCoroutine(LoadTileObjects(saveDataRegion, location));
-        }
-        
+        SaveDataRegion saveDataRegion = saveData.worldMapSave.regionSave;
+        yield return MapGenerator.Instance.StartCoroutine(LandmarkManager.Instance.LoadRegionMap(location, this, saveDataRegion.innerMapSave, saveData));
+        //for (int i = 0; i < saveData.worldMapSave.regionSaves.Count; i++) {
+        //    SaveDataRegion saveDataRegion = saveData.worldMapSave.regionSaves[i];
+        //    Region location = DatabaseManager.Instance.regionDatabase.GetRegionByPersistentID(saveDataRegion.persistentID);
+        //    yield return MapGenerator.Instance.StartCoroutine(LandmarkManager.Instance.LoadRegionMap(location, this, saveDataRegion.innerMapSave, saveData));
+        //    // yield return MapGenerator.Instance.StartCoroutine(LoadTileObjects(saveDataRegion, location));
+        //}
+
         LevelLoaderManager.Instance.UpdateLoadingInfo($"Loading Structures...");
         
         //place structures
@@ -71,17 +78,18 @@ public class RegionInnerMapGeneration : MapGenerationComponent {
             if (saveDataLocationStructure.hasBeenDestroyed) {
                 continue; //do not place already destroyed structures.
             }
-            Region location = DatabaseManager.Instance.regionDatabase.GetRegionByPersistentID(saveDataLocationStructure.regionLocationID);
+            //Region region = DatabaseManager.Instance.regionDatabase.GetRegionByPersistentID(saveDataLocationStructure.regionLocationID);
             yield return MapGenerator.Instance.StartCoroutine(AssignTilesToStructures(saveDataLocationStructure, location));
             yield return MapGenerator.Instance.StartCoroutine(LoadStructureObject(saveDataLocationStructure, location));    
         }
 
         Dictionary<string, TileBase> tileAssetDB = InnerMapManager.Instance.assetManager.GetFloorAndWallTileAssetDB();
-        for (int i = 0; i < saveData.worldMapSave.regionSaves.Count; i++) {
-            SaveDataRegion saveDataRegion = saveData.worldMapSave.regionSaves[i];
-            Region location = DatabaseManager.Instance.regionDatabase.GetRegionByPersistentID(saveDataRegion.persistentID);
-            yield return MapGenerator.Instance.StartCoroutine(location.innerMap.LoadTileVisuals(this, saveDataRegion.innerMapSave, tileAssetDB));
-        }
+        yield return MapGenerator.Instance.StartCoroutine(location.innerMap.LoadTileVisuals(this, saveDataRegion.innerMapSave, tileAssetDB));
+        //for (int i = 0; i < saveData.worldMapSave.regionSaves.Count; i++) {
+        //    SaveDataRegion saveDataRegion = saveData.worldMapSave.regionSaves[i];
+        //    Region region = DatabaseManager.Instance.regionDatabase.GetRegionByPersistentID(saveDataRegion.persistentID);
+        //    yield return MapGenerator.Instance.StartCoroutine(location.innerMap.LoadTileVisuals(this, saveDataRegion.innerMapSave, tileAssetDB));
+        //}
         tileAssetDB.Clear();
         
         // //add wilderness to all village settlements

@@ -3,9 +3,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Inner_Maps.Location_Structures;
+using Locations.Settlements;
+using UtilityScripts;
 
 namespace Locations.Settlements {
-    public class PlayerSettlement : BaseSettlement{
+    public class PlayerSettlement : BaseSettlement {
 
         #region getters
         public override Type serializedData => typeof(SaveDataPlayerSettlement);
@@ -118,6 +120,20 @@ namespace Locations.Settlements {
             }
             return false;
         }
-
+        #region Loading
+        public override void LoadReferences(SaveDataBaseSettlement data) {
+            base.LoadReferences(data);
+            if (data is SaveDataPlayerSettlement dataSettlement) {
+                List<Area> areas = RuinarchListPool<Area>.Claim();
+                GameUtilities.PopulateAreasGivenCoordinates(areas, dataSettlement.tileCoordinates, GridMap.Instance.map);
+                for (int i = 0; i < areas.Count; i++) {
+                    Area a = areas[i];
+                    AddAreaToSettlement(a);
+                }
+                RuinarchListPool<Area>.Release(areas);
+            }
+        }
+        #endregion
     }
+
 }

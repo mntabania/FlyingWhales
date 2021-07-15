@@ -1565,21 +1565,34 @@ public class ConsoleBase : InfoUIBase {
         int id = System.Int32.Parse(idParameterString);
         TILE_OBJECT_TYPE type;
         if (Enum.TryParse(typeParameterString, out type)) {
-            for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
-                Region currRegion = GridMap.Instance.allRegions[i];
-                List<TileObject> objs = RuinarchListPool<TileObject>.Claim();
-                currRegion.PopulateTileObjectsOfType(objs, type);
-                for (int j = 0; j < objs.Count; j++) {
-                    TileObject currObj = objs[j];
-                    if (currObj.id == id) {
-                        AddSuccessMessage(
-                            $"Removed {currObj} from {currObj.gridTileLocation} at {currObj.gridTileLocation.structure}");
-                        currObj.gridTileLocation.structure.RemovePOI(currObj);
-                        break;
-                    }
+            Region currRegion = GridMap.Instance.mainRegion;
+            List<TileObject> objs = RuinarchListPool<TileObject>.Claim();
+            currRegion.PopulateTileObjectsOfType(objs, type);
+            for (int j = 0; j < objs.Count; j++) {
+                TileObject currObj = objs[j];
+                if (currObj.id == id) {
+                    AddSuccessMessage(
+                        $"Removed {currObj} from {currObj.gridTileLocation} at {currObj.gridTileLocation.structure}");
+                    currObj.gridTileLocation.structure.RemovePOI(currObj);
+                    break;
                 }
-                RuinarchListPool<TileObject>.Release(objs);
             }
+            RuinarchListPool<TileObject>.Release(objs);
+            //for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
+            //    Region currRegion = GridMap.Instance.allRegions[i];
+            //    List<TileObject> objs = RuinarchListPool<TileObject>.Claim();
+            //    currRegion.PopulateTileObjectsOfType(objs, type);
+            //    for (int j = 0; j < objs.Count; j++) {
+            //        TileObject currObj = objs[j];
+            //        if (currObj.id == id) {
+            //            AddSuccessMessage(
+            //                $"Removed {currObj} from {currObj.gridTileLocation} at {currObj.gridTileLocation.structure}");
+            //            currObj.gridTileLocation.structure.RemovePOI(currObj);
+            //            break;
+            //        }
+            //    }
+            //    RuinarchListPool<TileObject>.Release(objs);
+            //}
         } else {
             AddErrorMessage($"There is no tile object of type {typeParameterString}");
         }
@@ -1701,12 +1714,12 @@ public class ConsoleBase : InfoUIBase {
             return;
         }
         
-        string regionName = parameters[0];
-        Region region = GridMap.Instance.GetRegionByName(regionName);
-        if (region == null) {
-            AddErrorMessage($"There is no region named {regionName}!");
-            return;
-        }
+        //string regionName = parameters[0];
+        Region region = GridMap.Instance.mainRegion;
+        //if (region == null) {
+        //    AddErrorMessage($"There is no region named {regionName}!");
+        //    return;
+        //}
         string xString = parameters[1];
         int x;
         if (Int32.TryParse(xString, out x) == false) {

@@ -83,12 +83,14 @@ public class LoadSecondWave : MapGenerationComponent {
     #region Region
     private IEnumerator LoadRegionReferences(SaveDataCurrentProgress saveData) {
         LevelLoaderManager.Instance.UpdateLoadingInfo("Loading Region Data...");
-        for (int i = 0; i < saveData.worldMapSave.regionSaves.Count; i++) {
-            SaveDataRegion saveDataRegion = saveData.worldMapSave.regionSaves[i];
-            Region region = DatabaseManager.Instance.regionDatabase.GetRegionByPersistentID(saveDataRegion.persistentID);
-            region.LoadReferences(saveDataRegion);
-            yield return null;
-        }
+        DatabaseManager.Instance.regionDatabase.mainRegion.LoadReferences(saveData.worldMapSave.regionSave);
+        yield return null;
+        //for (int i = 0; i < saveData.worldMapSave.regionSaves.Count; i++) {
+        //    SaveDataRegion saveDataRegion = saveData.worldMapSave.regionSaves[i];
+        //    Region region = DatabaseManager.Instance.regionDatabase.GetRegionByPersistentID(saveDataRegion.persistentID);
+        //    region.LoadReferences(saveDataRegion);
+        //    yield return null;
+        //}
     }
     #endregion
     
@@ -434,21 +436,33 @@ public class LoadSecondWave : MapGenerationComponent {
     #region Location Grid Tile
     private IEnumerator LoadLocationGridTileSecondWave(SaveDataCurrentProgress saveData) {
         LevelLoaderManager.Instance.UpdateLoadingInfo("Loading Additional Map Data...");
+        SaveDataRegion saveDataRegion = saveData.worldMapSave.regionSave;
         int batchCount = 0;
-        for (int i = 0; i < saveData.worldMapSave.regionSaves.Count; i++) {
-            SaveDataRegion saveDataRegion = saveData.worldMapSave.regionSaves[i];
-            for (int j = 0; j < saveDataRegion.innerMapSave.tileSaves.Values.Count; j++) {
-                SaveDataLocationGridTile saveDataLocationGridTile = saveDataRegion.innerMapSave.tileSaves.Values.ElementAt(j);
-                LocationGridTile tile = DatabaseManager.Instance.locationGridTileDatabase.GetTileByPersistentID(saveDataLocationGridTile.persistentID);
-                tile.LoadSecondWave(saveDataLocationGridTile);
-                batchCount++;
-                if (batchCount == MapGenerationData.LocationGridTileSecondaryWaveBatches) {
-                    batchCount = 0;
-                    yield return null;    
-                }
+        for (int j = 0; j < saveDataRegion.innerMapSave.tileSaves.Values.Count; j++) {
+            SaveDataLocationGridTile saveDataLocationGridTile = saveDataRegion.innerMapSave.tileSaves.Values.ElementAt(j);
+            LocationGridTile tile = DatabaseManager.Instance.locationGridTileDatabase.GetTileByPersistentID(saveDataLocationGridTile.persistentID);
+            tile.LoadSecondWave(saveDataLocationGridTile);
+            batchCount++;
+            if (batchCount == MapGenerationData.LocationGridTileSecondaryWaveBatches) {
+                batchCount = 0;
+                yield return null;
             }
         }
-        yield return null;
+        //int batchCount = 0;
+        //for (int i = 0; i < saveData.worldMapSave.regionSaves.Count; i++) {
+        //    SaveDataRegion saveDataRegion = saveData.worldMapSave.regionSaves[i];
+        //    for (int j = 0; j < saveDataRegion.innerMapSave.tileSaves.Values.Count; j++) {
+        //        SaveDataLocationGridTile saveDataLocationGridTile = saveDataRegion.innerMapSave.tileSaves.Values.ElementAt(j);
+        //        LocationGridTile tile = DatabaseManager.Instance.locationGridTileDatabase.GetTileByPersistentID(saveDataLocationGridTile.persistentID);
+        //        tile.LoadSecondWave(saveDataLocationGridTile);
+        //        batchCount++;
+        //        if (batchCount == MapGenerationData.LocationGridTileSecondaryWaveBatches) {
+        //            batchCount = 0;
+        //            yield return null;    
+        //        }
+        //    }
+        //}
+        //yield return null;
     }
     #endregion
 

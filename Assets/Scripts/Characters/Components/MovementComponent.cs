@@ -22,7 +22,7 @@ public class MovementComponent : CharacterComponent {
     public bool cameFromWurmHole { get; private set; }
     public bool isTravellingInWorld { get; private set; }
     public bool isFlying => owner.traitContainer.HasTrait("Flying");
-    public Region targetRegionToTravelInWorld { get; private set; }
+    //public Region targetRegionToTravelInWorld { get; private set; }
     public List<LocationStructure> structuresToAvoid { get; }
     public int enableDiggingCounter { get; private set; }
     public int avoidSettlementsCounter { get; private set; }
@@ -223,102 +223,103 @@ public class MovementComponent : CharacterComponent {
 
     #region Go To
     public bool MoveToAnotherRegion(Region targetRegion, Action doneAction = null) {
-        if (owner.currentRegion == targetRegion) {
+        //if (owner.currentRegion == targetRegion) {
             //action doer is already at the target location
             doneAction?.Invoke();
             return true;
-        } else {
-            LocationGridTile exitTile = owner.gridTileLocation.GetExitTileToGoToRegion(targetRegion);
-            if (exitTile != null && owner.movementComponent.HasPathTo(exitTile)) {
-                //check first if character has path toward the exit tile.
-                owner.marker.GoTo(exitTile, () => TravelToAnotherRegion(targetRegion, doneAction));
-                return true;
-            }
-        }
-        return false;
+        //} 
+        //else {
+        //    LocationGridTile exitTile = owner.gridTileLocation.GetExitTileToGoToRegion(targetRegion);
+        //    if (exitTile != null && owner.movementComponent.HasPathTo(exitTile)) {
+        //        //check first if character has path toward the exit tile.
+        //        owner.marker.GoTo(exitTile, () => TravelToAnotherRegion(targetRegion, doneAction));
+        //        return true;
+        //    }
+        //}
+        //return false;
     }
     private void TravelToAnotherRegion(Region targetRegion, Action doneAction = null) {
-        if(!owner.limiterComponent.canPerform || !owner.limiterComponent.canMove || owner.isDead) {
-            return;
-        }
-        StartTravellingToRegion(targetRegion, doneAction);
+        //if(!owner.limiterComponent.canPerform || !owner.limiterComponent.canMove || owner.isDead) {
+        //    return;
+        //}
+        //StartTravellingToRegion(targetRegion, doneAction);
     }
     private void StartTravellingToRegion(Region targetRegion, Action doneAction = null) {
-        if (isTravellingInWorld) {
-#if DEBUG_LOG
-            owner.logComponent.PrintLogErrorIfActive(owner.name + " cannot travel to " + targetRegion.name + " because it is already travelling in the world");
-#endif
-            return;
-        }
-        isTravellingInWorld = true;
-        SetTargetRegionToTravelInWorld(targetRegion);
-        owner.SetPOIState(POI_STATE.INACTIVE);
-        if (owner.carryComponent.isCarryingAnyPOI) {
-            owner.carryComponent.carriedPOI.SetPOIState(POI_STATE.INACTIVE);
-        }
+//        if (isTravellingInWorld) {
+//#if DEBUG_LOG
+//            owner.logComponent.PrintLogErrorIfActive(owner.name + " cannot travel to " + targetRegion.name + " because it is already travelling in the world");
+//#endif
+//            return;
+//        }
+//        isTravellingInWorld = true;
+//        SetTargetRegionToTravelInWorld(targetRegion);
+//        owner.SetPOIState(POI_STATE.INACTIVE);
+//        if (owner.carryComponent.isCarryingAnyPOI) {
+//            owner.carryComponent.carriedPOI.SetPOIState(POI_STATE.INACTIVE);
+//        }
 
-        Log leftLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "Generic", "left_location", providedTags: LOG_TAG.Life_Changes);
-        leftLog.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER, false);
-        leftLog.AddToFillers(owner.currentRegion, owner.currentRegion.name, LOG_IDENTIFIER.LANDMARK_1);
-        leftLog.AddLogToDatabase(true);
-        owner.DisableMarker();
+//        Log leftLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "Generic", "left_location", providedTags: LOG_TAG.Life_Changes);
+//        leftLog.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER, false);
+//        leftLog.AddToFillers(owner.currentRegion, owner.currentRegion.name, LOG_IDENTIFIER.LANDMARK_1);
+//        leftLog.AddLogToDatabase(true);
+//        owner.DisableMarker();
 
-        owner.combatComponent.ClearHostilesInRange();
-        owner.combatComponent.ClearAvoidInRange();
+//        owner.combatComponent.ClearHostilesInRange();
+//        owner.combatComponent.ClearAvoidInRange();
 
-        if (owner.marker) {
-            owner.marker.ClearPOIsInVisionRange();
-            owner.marker.ClearPOIsInVisionRangeButDiffStructure();
-            owner.marker.pathfindingAI.ClearAllCurrentPathData();
-        }
+//        if (owner.marker) {
+//            owner.marker.ClearPOIsInVisionRange();
+//            owner.marker.ClearPOIsInVisionRangeButDiffStructure();
+//            owner.marker.pathfindingAI.ClearAllCurrentPathData();
+//        }
 
-        Messenger.Broadcast(CharacterSignals.STARTED_TRAVELLING_IN_WORLD, owner);
+//        Messenger.Broadcast(CharacterSignals.STARTED_TRAVELLING_IN_WORLD, owner);
 
-        FinishTravellingToRegion(doneAction);
+//        FinishTravellingToRegion(doneAction);
     }
     private void FinishTravellingToRegion(Action doneAction = null) {
-        if (!isTravellingInWorld) {
-#if DEBUG_LOG
-            owner.logComponent.PrintLogErrorIfActive(owner.name + " cannot finish travel to " + targetRegionToTravelInWorld?.name + " because it is already not travelling in the world");
-#endif
-            return;
-        }
-        isTravellingInWorld = false;
+//        if (!isTravellingInWorld) {
+//#if DEBUG_LOG
+//            owner.logComponent.PrintLogErrorIfActive(owner.name + " cannot finish travel to " + targetRegionToTravelInWorld?.name + " because it is already not travelling in the world");
+//#endif
+//            return;
+//        }
+//        isTravellingInWorld = false;
 
-        if (!owner.marker) {
-            owner.CreateMarker();
-        }
+//        if (!owner.marker) {
+//            owner.CreateMarker();
+//        }
 
-        Region fromRegion = owner.currentRegion;
-        fromRegion.RemoveCharacterFromLocation(owner);
+//        Region fromRegion = owner.currentRegion;
+//        fromRegion.RemoveCharacterFromLocation(owner);
 
-        //character must arrive at the direction that it came from.
-        LocationGridTile entrance = (targetRegionToTravelInWorld.innerMap as RegionInnerTileMap).GetTileToGoToRegion(fromRegion);//targetLocation.innerMap.GetRandomUnoccupiedEdgeTile();
-        owner.marker.PlaceMarkerAt(entrance);
+//        //character must arrive at the direction that it came from.
+//        LocationGridTile entrance = (targetRegionToTravelInWorld.innerMap as RegionInnerTileMap).GetTileToGoToRegion(fromRegion);//targetLocation.innerMap.GetRandomUnoccupiedEdgeTile();
+//        owner.marker.PlaceMarkerAt(entrance);
 
-        owner.SetPOIState(POI_STATE.ACTIVE);
-        if (owner.carryComponent.isCarryingAnyPOI) {
-            owner.carryComponent.carriedPOI.SetPOIState(POI_STATE.ACTIVE);
-        }
-        Log arriveLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "Generic", "arrive_location", providedTags: LOG_TAG.Life_Changes);
-        arriveLog.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER, false);
-        arriveLog.AddToFillers(targetRegionToTravelInWorld, targetRegionToTravelInWorld.name, LOG_IDENTIFIER.LANDMARK_1);
-        arriveLog.AddLogToDatabase(true);
+//        owner.SetPOIState(POI_STATE.ACTIVE);
+//        if (owner.carryComponent.isCarryingAnyPOI) {
+//            owner.carryComponent.carriedPOI.SetPOIState(POI_STATE.ACTIVE);
+//        }
+//        Log arriveLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "Generic", "arrive_location", providedTags: LOG_TAG.Life_Changes);
+//        arriveLog.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER, false);
+//        arriveLog.AddToFillers(targetRegionToTravelInWorld, targetRegionToTravelInWorld.name, LOG_IDENTIFIER.LANDMARK_1);
+//        arriveLog.AddLogToDatabase(true);
 
-        if (owner.isNormalCharacter) {
-            PlayerManager.Instance.player.ShowNotificationFrom(entrance, arriveLog);
-        }
+//        if (owner.isNormalCharacter) {
+//            PlayerManager.Instance.player.ShowNotificationFrom(entrance, arriveLog);
+//        }
 
-        owner.EnableMarker();
-        SetTargetRegionToTravelInWorld(null);
+//        owner.EnableMarker();
+//        SetTargetRegionToTravelInWorld(null);
 
-        Messenger.Broadcast(CharacterSignals.FINISHED_TRAVELLING_IN_WORLD, owner);
+//        Messenger.Broadcast(CharacterSignals.FINISHED_TRAVELLING_IN_WORLD, owner);
 
-        doneAction?.Invoke();
+//        doneAction?.Invoke();
     }
-    public void SetTargetRegionToTravelInWorld(Region region) {
-        targetRegionToTravelInWorld = region;
-    }
+    //public void SetTargetRegionToTravelInWorld(Region region) {
+    //    targetRegionToTravelInWorld = region;
+    //}
 #endregion
 
 #region Pathfinding
@@ -716,9 +717,9 @@ public class MovementComponent : CharacterComponent {
 
 #region Loading
     public void LoadReferences(SaveDataMovementComponent data) {
-        if (!string.IsNullOrEmpty(data.targetRegionToTravelInWorld)) {
-            targetRegionToTravelInWorld = DatabaseManager.Instance.regionDatabase.GetRegionByPersistentID(data.targetRegionToTravelInWorld);
-        }
+        //if (!string.IsNullOrEmpty(data.targetRegionToTravelInWorld)) {
+        //    targetRegionToTravelInWorld = DatabaseManager.Instance.regionDatabase.GetRegionByPersistentID(data.targetRegionToTravelInWorld);
+        //}
 
         for (int i = 0; i < data.structuresToAvoid.Count; i++) {
             LocationStructure structure = DatabaseManager.Instance.structureDatabase.GetStructureByPersistentID(data.structuresToAvoid[i]);
@@ -743,7 +744,7 @@ public class SaveDataMovementComponent : SaveData<MovementComponent> {
     public bool cameFromWurmHole;
     public bool isTravellingInWorld;
     //public bool isFlying;
-    public string targetRegionToTravelInWorld;
+    //public string targetRegionToTravelInWorld;
     public List<string> structuresToAvoid;
 
     public int enableDiggingCounter;
@@ -766,9 +767,9 @@ public class SaveDataMovementComponent : SaveData<MovementComponent> {
         isTravellingInWorld = data.isTravellingInWorld;
         //isFlying = data.isFlying;
 
-        if(data.targetRegionToTravelInWorld != null) {
-            targetRegionToTravelInWorld = data.targetRegionToTravelInWorld.persistentID;
-        }
+        //if(data.targetRegionToTravelInWorld != null) {
+        //    targetRegionToTravelInWorld = data.targetRegionToTravelInWorld.persistentID;
+        //}
 
         structuresToAvoid = new List<string>();
         for (int i = 0; i < data.structuresToAvoid.Count; i++) {

@@ -110,7 +110,7 @@ public class MonsterGeneration : MapGenerationComponent {
 		yield return null;
 	}
 	private IEnumerator CaveMonsterGeneration() {
-		Region region = GridMap.Instance.allRegions.First();
+		Region region = GridMap.Instance.mainRegion;
 		if (region.HasStructure(STRUCTURE_TYPE.CAVE)) {
 			List<LocationStructure> caves = region.GetStructuresAtLocation(STRUCTURE_TYPE.CAVE);
 			List<LocationStructure> orderedStructures = RuinarchListPool<LocationStructure>.Claim();

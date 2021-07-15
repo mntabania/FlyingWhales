@@ -80,7 +80,7 @@ public class DatabaseManager : MonoBehaviour {
         } else if (type == typeof(LocationStructure) || type.IsSubclassOf(typeof(LocationStructure))) {
             return structureDatabase.GetStructureByPersistentID(persistentID);
         } else if (type == typeof(Region)) {
-            return regionDatabase.GetRegionByPersistentID(persistentID);
+            return regionDatabase.mainRegion;
         } else if (type == typeof(BaseSettlement) || type.IsSubclassOf(typeof(BaseSettlement))) {
             return settlementDatabase.GetSettlementByPersistentIDSafe(persistentID);
         } else if (type == typeof(Faction)) {

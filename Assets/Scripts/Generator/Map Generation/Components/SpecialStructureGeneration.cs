@@ -195,12 +195,17 @@ namespace Generator.Map_Generation.Components {
 	        }
         }
         private void SpecialStructureSecondPass() {
-			for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
-				Region region = GridMap.Instance.allRegions[i];
-				for (int j = 0; j < region.regionFeatureComponent.features.Count; j++) {
-					RegionFeature feature = region.regionFeatureComponent.features[j];
-					feature.SpecialStructureGenerationSecondPassActions(region);
-				}
+			//for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
+			//	Region region = GridMap.Instance.allRegions[i];
+			//	for (int j = 0; j < region.regionFeatureComponent.features.Count; j++) {
+			//		RegionFeature feature = region.regionFeatureComponent.features[j];
+			//		feature.SpecialStructureGenerationSecondPassActions(region);
+			//	}
+			//}
+			Region region = GridMap.Instance.mainRegion;
+			for (int j = 0; j < region.regionFeatureComponent.features.Count; j++) {
+				RegionFeature feature = region.regionFeatureComponent.features[j];
+				feature.SpecialStructureGenerationSecondPassActions(region);
 			}
 		}
         

@@ -16,13 +16,16 @@ public class VillageGeneration : MapGenerationComponent {
 	#region Random World
 	public override IEnumerator ExecuteRandomGeneration(MapGenerationData data) {
 		LevelLoaderManager.Instance.UpdateLoadingInfo("Creating Settlements...");
-		for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
-			Region region = GridMap.Instance.allRegions[i];
-			yield return MapGenerator.Instance.StartCoroutine(CreateSettlements(region, data));
-			if (!succeess) {
-				yield break;
-			}
-			
+		//for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
+		//	Region region = GridMap.Instance.allRegions[i];
+		//	yield return MapGenerator.Instance.StartCoroutine(CreateSettlements(region, data));
+		//	if (!succeess) {
+		//		yield break;
+		//	}
+		//}
+		yield return MapGenerator.Instance.StartCoroutine(CreateSettlements(GridMap.Instance.mainRegion, data));
+		if (!succeess) {
+			yield break;
 		}
 		ApplyPreGeneratedCharacterRelationships(data);
 		for (int i = 0; i < DatabaseManager.Instance.settlementDatabase.allNonPlayerSettlements.Count; i++) {

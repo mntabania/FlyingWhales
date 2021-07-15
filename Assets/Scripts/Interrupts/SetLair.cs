@@ -49,14 +49,15 @@ namespace Interrupts {
 #endregion
 
         private LocationStructure GetLairInAllRegions() {
-            LocationStructure chosenLair = null;
-            for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
-                Region region = GridMap.Instance.allRegions[i];
-                chosenLair = GetLairInRegion(region);
-                if(chosenLair != null) {
-                    return chosenLair;
-                }
-            }
+            LocationStructure chosenLair = GetLairInRegion(GridMap.Instance.mainRegion);
+            //LocationStructure chosenLair = null;
+            //for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
+            //    Region region = GridMap.Instance.allRegions[i];
+            //    chosenLair = GetLairInRegion(region);
+            //    if(chosenLair != null) {
+            //        return chosenLair;
+            //    }
+            //}
             return chosenLair;
         }
         private LocationStructure GetLairInRegion(Region region) {

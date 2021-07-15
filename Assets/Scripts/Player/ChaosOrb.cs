@@ -120,7 +120,7 @@ public class SaveDataChaosOrb {
 	}
 
     public void Load() {
-        Region region = DatabaseManager.Instance.regionDatabase.GetRegionByPersistentID(regionID);
+		Region region = DatabaseManager.Instance.regionDatabase.mainRegion;
         PlayerManager.Instance.CreateChaosOrbFromSave(pos, region);
     }
 }

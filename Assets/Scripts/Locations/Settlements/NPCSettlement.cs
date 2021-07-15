@@ -56,7 +56,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
     public SettlementPartyComponent partyComponent { get; private set; }
     public SettlementStructureComponent structureComponent { get; private set; }
 
-    private readonly Region _region;
+    private Region _region;
     private readonly WeightedDictionary<Character> newRulerDesignationWeights;
     private int newRulerDesignationChance;
     private string _plaguedExpiryKey;
@@ -102,7 +102,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         SaveDataNPCSettlement saveData = saveDataBaseSettlement as SaveDataNPCSettlement;
         System.Diagnostics.Debug.Assert(saveData != null, nameof(saveData) + " != null");
         hasTriedToStealCorpse = saveData.hasTriedToStealCorpse;
-        _region = DatabaseManager.Instance.regionDatabase.GetRegionByPersistentID(saveData.regionID);
+        //_region = DatabaseManager.Instance.regionDatabase.GetRegionByPersistentID(saveData.regionID);
         newRulerDesignationWeights = new WeightedDictionary<Character>();
         forcedCancelJobsOnTickEnded = new List<JobQueueItem>();
         ResetNewRulerDesignationChance();
@@ -126,9 +126,17 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
     }
 
     #region Loading
-    public override void LoadReferences(SaveDataBaseSettlement data) {
-        base.LoadReferences(data);
+    public override void LoadReferencesMainThread(SaveDataBaseSettlement data) {
+        base.LoadReferencesMainThread(data);
+        _region = GridMap.Instance.mainRegion;
         if (data is SaveDataNPCSettlement saveDataNpcSettlement) {
+            List<Area> areas = RuinarchListPool<Area>.Claim();
+            GameUtilities.PopulateAreasGivenCoordinates(areas, saveDataNpcSettlement.tileCoordinates, GridMap.Instance.map);
+            for (int i = 0; i < areas.Count; i++) {
+                Area a = areas[i];
+                AddAreaToSettlement(a);
+            }
+            RuinarchListPool<Area>.Release(areas);
             if (!string.IsNullOrEmpty(saveDataNpcSettlement.prisonID)) {
                 LocationStructure p = DatabaseManager.Instance.structureDatabase.GetStructureByPersistentID(saveDataNpcSettlement.prisonID);
                 LoadPrison(p);

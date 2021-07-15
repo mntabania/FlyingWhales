@@ -78,29 +78,29 @@ public class LandmarkCharacterItem : PooledObject {
     public void ShowTravellingTooltip() {
         //UIManager.Instance.ShowSmallInfo("Travelling to " + character.currentParty.icon.targetLocation.tileLocation.settlementOfTile.name);
         //UIManager.Instance.ShowSmallLocationInfo(character.currentParty.icon.targetLocation.tileLocation.settlementOfTile, thisTrans, new Vector3(434f, 0f, 0f), "Travelling to:");
-        if (character.carryComponent.masterCharacter.movementComponent.isTravellingInWorld == false) {
-            return;
-        }
-        Region showingRegion = UIManager.Instance.GetCurrentlyShowingSmallInfoLocation();
-        Region targetRegion = character.carryComponent.masterCharacter.movementComponent.targetRegionToTravelInWorld;
-        if (showingRegion == null || showingRegion != targetRegion) {
+        //if (character.carryComponent.masterCharacter.movementComponent.isTravellingInWorld == false) {
+        //    return;
+        //}
+        //Region showingRegion = UIManager.Instance.GetCurrentlyShowingSmallInfoLocation();
+        //Region targetRegion = character.carryComponent.masterCharacter.movementComponent.targetRegionToTravelInWorld;
+        //if (showingRegion == null || showingRegion != targetRegion) {
             
-            float x = UIManager.Instance.locationSmallInfoRT.position.x;
-            //float x = thisTrans.position.x + thisTrans.sizeDelta.x + 50f;
-            UIManager.Instance.ShowSmallLocationInfo(targetRegion, new Vector3(x, thisTrans.position.y - 15f, 0f), "Travelling to:");
-        }
+        //    float x = UIManager.Instance.locationSmallInfoRT.position.x;
+        //    //float x = thisTrans.position.x + thisTrans.sizeDelta.x + 50f;
+        //    UIManager.Instance.ShowSmallLocationInfo(targetRegion, new Vector3(x, thisTrans.position.y - 15f, 0f), "Travelling to:");
+        //}
     }
     public void ShowArrivedTooltip() {
         //UIManager.Instance.ShowSmallInfo("Arrived at " + character.currentParty.specificLocation.name);
-        if (character.carryComponent.masterCharacter.movementComponent.isTravellingInWorld == false) {
-            return;
-        }
-        Region showingRegion = UIManager.Instance.GetCurrentlyShowingSmallInfoLocation();
-        Region targetRegion = character.carryComponent.masterCharacter.movementComponent.targetRegionToTravelInWorld;
-        if (showingRegion == null || showingRegion != targetRegion) {
-            float x = thisTrans.position.x + thisTrans.sizeDelta.x + 50f;
-            UIManager.Instance.ShowSmallLocationInfo(targetRegion, new Vector3(x, thisTrans.position.y - 15f, 0f), "Arrived at:");
-        }
+        //if (character.carryComponent.masterCharacter.movementComponent.isTravellingInWorld == false) {
+        //    return;
+        //}
+        //Region showingRegion = UIManager.Instance.GetCurrentlyShowingSmallInfoLocation();
+        //Region targetRegion = character.carryComponent.masterCharacter.movementComponent.targetRegionToTravelInWorld;
+        //if (showingRegion == null || showingRegion != targetRegion) {
+        //    float x = thisTrans.position.x + thisTrans.sizeDelta.x + 50f;
+        //    UIManager.Instance.ShowSmallLocationInfo(targetRegion, new Vector3(x, thisTrans.position.y - 15f, 0f), "Arrived at:");
+        //}
     }
     public void ShowRestrainedTooltip() {
         string info = string.Empty;

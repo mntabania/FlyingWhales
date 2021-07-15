@@ -61,7 +61,7 @@ public class SubterraneanBehaviour : CharacterBehaviourComponent {
 
     private void LeaveWurmHoles(LocationGridTile point1) {
         LocationGridTile point2 = null;
-        Region chosenRegion = GridMap.Instance.GetRandomRegion();
+        Region chosenRegion = GridMap.Instance.mainRegion;
         for (int i = 0; i < 3; i++) {
             Area chosenArea = chosenRegion.GetRandomAreaThatIsNotWater();
             LocationGridTile chosenTile = chosenArea.gridTileComponent.GetRandomPassableUnoccupiedNonWaterTile();

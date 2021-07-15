@@ -10,7 +10,7 @@ using UnityEngine.Assertions;
 using Debug = UnityEngine.Debug;
 namespace Inner_Maps {
     public class RegionInnerTileMap : InnerTileMap {
-        private Dictionary<Region, Transform> otherRegionObjects { get; set; } //dictionary of objects to show which direction other regions are from this one.
+        //private Dictionary<Region, Transform> otherRegionObjects { get; set; } //dictionary of objects to show which direction other regions are from this one.
 
         [SerializeField] private GameObject regionDirectionPrefab;
         private Bounds groundMapLocalBounds;
@@ -92,47 +92,47 @@ namespace Inner_Maps {
         }
         #endregion
 
-        #region Overrides
-        public override void OnMapGenerationFinished() {
-            base.OnMapGenerationFinished();
-            GenerateRegionDirectionObjects();
-        }
-        #endregion
+        //#region Overrides
+        //public override void OnMapGenerationFinished() {
+        //    base.OnMapGenerationFinished();
+        //    GenerateRegionDirectionObjects();
+        //}
+        //#endregion
 
         #region Other Regions
-        private void GenerateRegionDirectionObjects() {
-            otherRegionObjects = new Dictionary<Region, Transform>();
-            for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
-                Region otherRegion = GridMap.Instance.allRegions[i];
-                if (otherRegion != region) {
-                    Vector3 directionToRegion = (otherRegion.coreTile.areaData.position - region.coreTile.areaData.position).normalized * (height + width);
-                    GameObject regionDirectionGO = Instantiate(regionDirectionPrefab, centerGo.transform, true);
-                    regionDirectionGO.name = $"{otherRegion.name} direction";
-                    regionDirectionGO.transform.localPosition = directionToRegion;
-                    otherRegionObjects.Add(otherRegion, regionDirectionGO.transform);
-                }
-            }
-        }
-        private Vector3 GetClosestPointToRegion(Region targetRegion) {
-            Bounds bounds = groundMapLocalBounds;
-            bounds.center = bounds.center + groundTilemap.transform.position;
-            Vector3 closestPoint = bounds.ClosestPoint(otherRegionObjects[targetRegion].position);
-            return transform.InverseTransformPoint(closestPoint);
-        }
-        public LocationGridTile GetTileToGoToRegion([NotNull]Region targetRegion) {
-            Assert.IsTrue(targetRegion != region, $"target region passed is same as owning region! {targetRegion.name}");
-            Vector3 coordinates = GetClosestPointToRegion(targetRegion);
-#if DEBUG_LOG
-            Debug.Log($"Getting target tile to go to {targetRegion.name} from {region.name}. Result was {coordinates.ToString()}");
-#endif
-            int xCoordinate = Mathf.Clamp((int)coordinates.x, 0, width - 1);
-            int yCoordinate = Mathf.Clamp((int)coordinates.y, 0, height - 1);
-            LocationGridTile targetTile = map[xCoordinate, yCoordinate];
-            return targetTile;
-        }
-#endregion
+        //private void GenerateRegionDirectionObjects() {
+        //    otherRegionObjects = new Dictionary<Region, Transform>();
+        //    for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
+        //        Region otherRegion = GridMap.Instance.allRegions[i];
+        //        if (otherRegion != region) {
+        //            Vector3 directionToRegion = (otherRegion.coreTile.areaData.position - region.coreTile.areaData.position).normalized * (height + width);
+        //            GameObject regionDirectionGO = Instantiate(regionDirectionPrefab, centerGo.transform, true);
+        //            regionDirectionGO.name = $"{otherRegion.name} direction";
+        //            regionDirectionGO.transform.localPosition = directionToRegion;
+        //            otherRegionObjects.Add(otherRegion, regionDirectionGO.transform);
+        //        }
+        //    }
+        //}
+//        private Vector3 GetClosestPointToRegion(Region targetRegion) {
+//            Bounds bounds = groundMapLocalBounds;
+//            bounds.center = bounds.center + groundTilemap.transform.position;
+//            Vector3 closestPoint = bounds.ClosestPoint(otherRegionObjects[targetRegion].position);
+//            return transform.InverseTransformPoint(closestPoint);
+//        }
+//        public LocationGridTile GetTileToGoToRegion([NotNull] Region targetRegion) {
+//            Assert.IsTrue(targetRegion != region, $"target region passed is same as owning region! {targetRegion.name}");
+//            Vector3 coordinates = GetClosestPointToRegion(targetRegion);
+//#if DEBUG_LOG
+//            Debug.Log($"Getting target tile to go to {targetRegion.name} from {region.name}. Result was {coordinates.ToString()}");
+//#endif
+//            int xCoordinate = Mathf.Clamp((int) coordinates.x, 0, width - 1);
+//            int yCoordinate = Mathf.Clamp((int) coordinates.y, 0, height - 1);
+//            LocationGridTile targetTile = map[xCoordinate, yCoordinate];
+//            return targetTile;
+//        }
+        #endregion
 
-#region Utilities
+        #region Utilities
         private Vector2Int GetRegionDimensions(Region p_region) {
             int maxX = p_region.areas.Max(t => t.areaData.xCoordinate);
             int minX = p_region.areas.Min(t => t.areaData.xCoordinate);

@@ -9,7 +9,7 @@ public class HeirloomHuntPartyQuest : PartyQuest {
     public Heirloom targetHeirloom { get; private set; }
     public Area targetArea { get; private set; }
     public bool foundHeirloom { get; private set; }
-    public Region regionToSearch { get; private set; }
+    //public Region regionToSearch { get; private set; }
 
     private bool isSearching;
     private int currentChance;
@@ -92,9 +92,9 @@ public class HeirloomHuntPartyQuest : PartyQuest {
     public void SetTargetHeirloom(Heirloom heirloom) {
         targetHeirloom = heirloom;
     }
-    public void SetRegionToSearch(Region region) {
-        regionToSearch = region;
-    }
+    //public void SetRegionToSearch(Region region) {
+    //    regionToSearch = region;
+    //}
     public void SetFoundHeirloom(bool state) {
         foundHeirloom = state;
         if (foundHeirloom) {
@@ -158,9 +158,9 @@ public class HeirloomHuntPartyQuest : PartyQuest {
             if (!string.IsNullOrEmpty(subData.targetArea)) {
                 targetArea = DatabaseManager.Instance.areaDatabase.GetAreaByPersistentID(subData.targetArea);
             }
-            if (!string.IsNullOrEmpty(subData.regionToSearch)) {
-                regionToSearch = DatabaseManager.Instance.regionDatabase.GetRegionByPersistentID(subData.regionToSearch);
-            }
+            //if (!string.IsNullOrEmpty(subData.regionToSearch)) {
+            //    regionToSearch = DatabaseManager.Instance.regionDatabase.GetRegionByPersistentID(subData.regionToSearch);
+            //}
             //if (isWaitTimeOver && !isDisbanded) {
             //    Messenger.AddListener<Character, HexTile>(Signals.CHARACTER_ENTERED_HEXTILE, OnCharacterEnteredHex);
             //}
@@ -174,7 +174,7 @@ public class SaveDataHeirloomHuntPartyQuest : SaveDataPartyQuest {
     public string targetHeirloom;
     public string targetArea;
     //public bool foundHeirloom;
-    public string regionToSearch;
+    //public string regionToSearch;
 
     #region Overrides
     public override void Save(PartyQuest data) {
@@ -189,9 +189,9 @@ public class SaveDataHeirloomHuntPartyQuest : SaveDataPartyQuest {
             if (subData.targetArea != null) {
                 targetArea = subData.targetArea.persistentID;
             }
-            if (subData.regionToSearch != null) {
-                regionToSearch = subData.regionToSearch.persistentID;
-            }
+            //if (subData.regionToSearch != null) {
+            //    regionToSearch = subData.regionToSearch.persistentID;
+            //}
         }
     }
     #endregion
