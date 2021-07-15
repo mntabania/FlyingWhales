@@ -13,4 +13,7 @@
     }
     public Phylactery(SaveDataTileObject data) : base(data) { }
     protected override string GenerateName() { return "Phylactery"; }
+    protected override bool IsInterestedInThisTreasure(Character p_character) {
+        return !p_character.traitContainer.HasTrait("Vampire") && !p_character.isLycanthrope;
+    }
 }
