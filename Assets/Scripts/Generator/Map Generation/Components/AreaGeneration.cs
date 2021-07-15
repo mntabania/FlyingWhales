@@ -303,6 +303,53 @@ public class AreaGeneration : MapGenerationComponent {
 #endregion
 	
 #region Saved World
+	public override void LoadSavedData(object state) {
+		LoadThreadQueueItem threadItem = state as LoadThreadQueueItem;
+		MapGenerationData mapData = threadItem.mapData;
+		SaveDataCurrentProgress saveData = threadItem.saveData;
+
+		mapData.chosenWorldMapTemplate = saveData.worldMapSave.worldMapTemplate;
+		WorldSettings.Instance.worldSettingsData.SetWorldType(saveData.worldMapSave.worldType);
+		saveData.LoadDate();
+
+		GridMap.Instance.SetupInitialData(mapData.width, mapData.height);
+		float newX = MapGenerationData.XOffset * (mapData.width / 2f);
+		float newY = MapGenerationData.YOffset * (mapData.height / 2f);
+		GridMap.Instance.transform.localPosition = new Vector2(-newX, -newY);
+		Area[,] map = new Area[mapData.width, mapData.height];
+		List<Area> normalHexTiles = new List<Area>();
+
+		SaveDataArea[,] savedMap = saveData.worldMapSave.GetSaveDataMap();
+
+		//int batchCount = 0;
+		for (int x = 0; x < mapData.width; x++) {
+			for (int y = 0; y < mapData.height; y++) {
+				SaveDataArea savedHexTile = savedMap[x, y];
+
+				Area area = savedHexTile.Load();
+				normalHexTiles.Add(area);
+				map[x, y] = area;
+
+				//batchCount++;
+				//if (batchCount == MapGenerationData.WorldMapTileGenerationBatches) {
+				//	batchCount = 0;
+				//	yield return null;
+				//}
+			}
+		}
+
+		GridMap.Instance.SetMap(map, normalHexTiles);
+        for (int i = 0; i < normalHexTiles.Count; i++) {
+			Area area = normalHexTiles[i];
+			area.neighbourComponent.FindNeighbours(area, map);
+		}
+
+		////Find Neighbours for each hextile
+		//Parallel.ForEach(normalHexTiles, (area) => {
+		//	area.neighbourComponent.FindNeighbours(area, map);
+		//});
+		threadItem.isDone = true;
+	}
 	public override IEnumerator LoadSavedData(MapGenerationData data, SaveDataCurrentProgress saveData) {
 		LevelLoaderManager.Instance.UpdateLoadingInfo("Loading world map...");
 		data.chosenWorldMapTemplate = saveData.worldMapSave.worldMapTemplate;

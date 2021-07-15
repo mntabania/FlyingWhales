@@ -26,12 +26,12 @@ public partial class LandmarkManager : BaseMonoBehaviour {
     [SerializeField] private StructureDataDictionary structureData;
     
     
-    public STRUCTURE_TYPE[] humanSurvivalStructures { get; private set; }
-    public STRUCTURE_TYPE[] humanUtilityStructures { get; private set; }
-    public STRUCTURE_TYPE[] humanCombatStructures { get; private set; }
-    public STRUCTURE_TYPE[] elfSurvivalStructures { get; private set; }
-    public STRUCTURE_TYPE[] elfUtilityStructures { get; private set; }
-    public STRUCTURE_TYPE[] elfCombatStructures { get; private set; }
+    //public STRUCTURE_TYPE[] humanSurvivalStructures { get; private set; }
+    //public STRUCTURE_TYPE[] humanUtilityStructures { get; private set; }
+    //public STRUCTURE_TYPE[] humanCombatStructures { get; private set; }
+    //public STRUCTURE_TYPE[] elfSurvivalStructures { get; private set; }
+    //public STRUCTURE_TYPE[] elfUtilityStructures { get; private set; }
+    //public STRUCTURE_TYPE[] elfCombatStructures { get; private set; }
 
     #region getters
     public List<BaseSettlement> allSettlements => DatabaseManager.Instance.settlementDatabase.allSettlements;
@@ -39,7 +39,7 @@ public partial class LandmarkManager : BaseMonoBehaviour {
     #endregion
     
     public void Initialize() {
-        ConstructRaceStructureRequirements();
+        //ConstructRaceStructureRequirements();
     }
 
     #region Monobehaviours
@@ -234,28 +234,28 @@ public partial class LandmarkManager : BaseMonoBehaviour {
             throw new Exception($"No structure class for type {structureType.ToString()}, {noSpacesTypeName}");
         }
     }
-    private void ConstructRaceStructureRequirements() {
-        humanSurvivalStructures = new STRUCTURE_TYPE[] { STRUCTURE_TYPE.WAREHOUSE, STRUCTURE_TYPE.CEMETERY, STRUCTURE_TYPE.PRISON, STRUCTURE_TYPE.BARRACKS, STRUCTURE_TYPE.HOSPICE };
-        humanUtilityStructures = new STRUCTURE_TYPE[] { STRUCTURE_TYPE.TAVERN };
-        humanCombatStructures = new STRUCTURE_TYPE[] { STRUCTURE_TYPE.HUNTER_LODGE, STRUCTURE_TYPE.MAGE_QUARTERS };
-        elfSurvivalStructures = new STRUCTURE_TYPE[] { STRUCTURE_TYPE.HUNTER_LODGE, STRUCTURE_TYPE.HOSPICE, STRUCTURE_TYPE.MAGE_QUARTERS };
-        elfUtilityStructures = new STRUCTURE_TYPE[] { STRUCTURE_TYPE.TAVERN, STRUCTURE_TYPE.WAREHOUSE, STRUCTURE_TYPE.CEMETERY, STRUCTURE_TYPE.PRISON };
-        elfCombatStructures = new STRUCTURE_TYPE[] { STRUCTURE_TYPE.BARRACKS };
-    }
-    public STRUCTURE_TYPE[] GetRaceStructureRequirements(RACE race, string category) {
-        if (race == RACE.ELVES) {
-            if (category == "Survival") { return elfSurvivalStructures; }
-            else if (category == "Utility") { return elfUtilityStructures; }
-            else if (category == "Combat") { return elfCombatStructures; }
-        }
-        if (category == "Survival") {
-            return humanSurvivalStructures;
-        } else if (category == "Utility") {
-            return humanUtilityStructures;
-        } else {
-            return humanCombatStructures;
-        }
-    }
+    //private void ConstructRaceStructureRequirements() {
+    //    humanSurvivalStructures = new STRUCTURE_TYPE[] { STRUCTURE_TYPE.WAREHOUSE, STRUCTURE_TYPE.CEMETERY, STRUCTURE_TYPE.PRISON, STRUCTURE_TYPE.BARRACKS, STRUCTURE_TYPE.HOSPICE };
+    //    humanUtilityStructures = new STRUCTURE_TYPE[] { STRUCTURE_TYPE.TAVERN };
+    //    humanCombatStructures = new STRUCTURE_TYPE[] { STRUCTURE_TYPE.HUNTER_LODGE, STRUCTURE_TYPE.MAGE_QUARTERS };
+    //    elfSurvivalStructures = new STRUCTURE_TYPE[] { STRUCTURE_TYPE.HUNTER_LODGE, STRUCTURE_TYPE.HOSPICE, STRUCTURE_TYPE.MAGE_QUARTERS };
+    //    elfUtilityStructures = new STRUCTURE_TYPE[] { STRUCTURE_TYPE.TAVERN, STRUCTURE_TYPE.WAREHOUSE, STRUCTURE_TYPE.CEMETERY, STRUCTURE_TYPE.PRISON };
+    //    elfCombatStructures = new STRUCTURE_TYPE[] { STRUCTURE_TYPE.BARRACKS };
+    //}
+    //public STRUCTURE_TYPE[] GetRaceStructureRequirements(RACE race, string category) {
+    //    if (race == RACE.ELVES) {
+    //        if (category == "Survival") { return elfSurvivalStructures; }
+    //        else if (category == "Utility") { return elfUtilityStructures; }
+    //        else if (category == "Combat") { return elfCombatStructures; }
+    //    }
+    //    if (category == "Survival") {
+    //        return humanSurvivalStructures;
+    //    } else if (category == "Utility") {
+    //        return humanUtilityStructures;
+    //    } else {
+    //        return humanCombatStructures;
+    //    }
+    //}
     /// <summary>
     /// Place structures for settlement. This requires that the settlement has enough unoccupied hex tiles.
     /// NOTE: This function also creates the LocationStructure instances.

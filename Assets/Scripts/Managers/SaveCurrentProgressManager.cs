@@ -28,6 +28,7 @@ public class SaveCurrentProgressManager : MonoBehaviour {
     public bool isWritingToDisk { get; private set; }
     public string currentSaveDataPath { get; private set; }
     private string filePath;
+    private string _loadSavePath;
 
     void LateUpdate() {
         if (isWritingToDisk) {
@@ -364,18 +365,28 @@ public class SaveCurrentProgressManager : MonoBehaviour {
     public void SetCurrentSaveDataPath(string path) {
         currentSaveDataPath = path;
     }
-    public IEnumerator LoadSaveDataCurrentProgressBasedOnSetPath() {
-        //extract files from currentSaveDataPath zip to temp folder
+    //public IEnumerator LoadSaveDataCurrentProgressBasedOnSetPath() {
+    //    //extract files from currentSaveDataPath zip to temp folder
+    //    ZipFile.ExtractToDirectory(currentSaveDataPath, UtilityScripts.Utilities.tempPath);
+    //    string savePath = $"{UtilityScripts.Utilities.tempPath}mainSave.sav";
+    //    var thread = new Thread(() => LoadDataFromPath(savePath));
+    //    thread.Start();
+    //    while (thread.IsAlive) {
+    //        yield return null;
+    //    }
+    //}
+    //public void LoadDataFromPath(string path) {
+    //    currentSaveDataProgress = GetSaveFileData(path);
+    //}
+    public void LoadSaveDataCurrentProgress(LoadThreadQueueItem threadItem) {
         ZipFile.ExtractToDirectory(currentSaveDataPath, UtilityScripts.Utilities.tempPath);
-        string savePath = $"{UtilityScripts.Utilities.tempPath}mainSave.sav";
-        var thread = new Thread(() => LoadDataFromPath(savePath));
-        thread.Start();
-        while (thread.IsAlive) {
-            yield return null;
-        }
+        _loadSavePath = $"{UtilityScripts.Utilities.tempPath}mainSave.sav";
+        ThreadPool.QueueUserWorkItem(ReadSaveDataFileInOtherThread, threadItem);
     }
-    private void LoadDataFromPath(string path) {
-        currentSaveDataProgress = GetSaveFileData(path);
+    public void ReadSaveDataFileInOtherThread(object state) {
+        LoadThreadQueueItem threadItem = state as LoadThreadQueueItem;
+        currentSaveDataProgress = GetSaveFileData(_loadSavePath);
+        threadItem.isDone = true;
     }
     private SaveDataCurrentProgress GetSaveFileData(string path) {
         return SaveGame.Load<SaveDataCurrentProgress>(path);

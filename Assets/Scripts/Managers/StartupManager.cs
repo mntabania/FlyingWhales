@@ -1,8 +1,12 @@
 ﻿using System;
 using UnityEngine;
 using System.Collections;
+using System.Collections.Concurrent;
+using System.Threading;
 using Scenario_Maps;
 using UnityEngine.Assertions;
+using Threads;
+using System.IO.Compression;
 
 public class StartupManager : MonoBehaviour {
 	public MapGenerator mapGenerator;
@@ -17,58 +21,79 @@ public class StartupManager : MonoBehaviour {
     private IEnumerator PerformStartup() {
         LevelLoaderManager.Instance.SetLoadingState(true);
         LevelLoaderManager.Instance.UpdateLoadingInfo("Initializing Data...");
-        yield return StartCoroutine(initializer.InitializeDataBeforeWorldCreation());
+        //yield return StartCoroutine(initializer.InitializeDataBeforeWorldCreationEnumerator());
+        initializer.InitializeDataBeforeWorldCreationMainThread();
 
         if (!string.IsNullOrEmpty(SaveManager.Instance.saveCurrentProgressManager.currentSaveDataPath)) {
-            LevelLoaderManager.Instance.UpdateLoadingInfo("Reading Save File...");
-            LevelLoaderManager.Instance.UpdateLoadingBar(0.4f, 8f);
-            yield return StartCoroutine(SaveManager.Instance.saveCurrentProgressManager.LoadSaveDataCurrentProgressBasedOnSetPath());
-            yield return StartCoroutine(mapGenerator.InitializeSavedWorld(SaveManager.Instance.saveCurrentProgressManager.currentSaveDataProgress));
-            //clear out save file in temp folder
-            SaveManager.Instance.DeleteSaveFilesInTempDirectory();
+            yield return StartCoroutine(PerformStartUpLoadGame());
         } else {
-            LevelLoaderManager.Instance.UpdateLoadingInfo("Initializing World...");
-            if (WorldSettings.Instance.worldSettingsData.IsScenarioMap()) {
-                ScenarioData scenarioData = WorldSettings.Instance.GetScenarioDataByWorldType(WorldSettings.Instance.worldSettingsData.worldType);
-                ScenarioMapData scenarioMapData = null;
-                if(scenarioData != null) {
-                    scenarioMapData = UtilityScripts.Utilities.Deserialize<ScenarioMapData>(scenarioData.scenarioSettings.text);
-                } else {
-                    throw new Exception($"There is no scenario map data for {WorldSettings.Instance.worldSettingsData.worldType.ToString()}");
-                }
-                //switch (WorldSettings.Instance.worldSettingsData.worldType) {
-                //    case WorldSettingsData.World_Type.Tutorial:
-                //        scenarioMapData = SaveManager.Instance.GetScenarioMapData($"{Application.streamingAssetsPath}/Scenario Maps/Tutorial.sce");
-                //        break;
-                //    case WorldSettingsData.World_Type.Oona:
-                //        scenarioMapData = SaveManager.Instance.GetScenarioMapData($"{Application.streamingAssetsPath}/Scenario Maps/Oona.sce");
-                //        break;
-                //    case WorldSettingsData.World_Type.Pangat_Loo:
-                //        scenarioMapData = SaveManager.Instance.GetScenarioMapData($"{Application.streamingAssetsPath}/Scenario Maps/Pangat_Loo.sce");
-                //        break;
-                //    case WorldSettingsData.World_Type.Zenko:
-                //        scenarioMapData = SaveManager.Instance.GetScenarioMapData($"{Application.streamingAssetsPath}/Scenario Maps/Zenko.sce");
-                //        break;
-                //    case WorldSettingsData.World_Type.Affatt:
-                //        scenarioMapData = SaveManager.Instance.GetScenarioMapData($"{Application.streamingAssetsPath}/Scenario Maps/Affatt.sce");
-                //        break;
-                //    case WorldSettingsData.World_Type.Icalawa:
-                //        scenarioMapData = SaveManager.Instance.GetScenarioMapData($"{Application.streamingAssetsPath}/Scenario Maps/Icalawa.sce");
-                //        break;
-                //    default:
-                //        throw new Exception($"There is no scenario map data for {WorldSettings.Instance.worldSettingsData.worldType.ToString()}");
-                //}
-                
-                if (scenarioMapData != null && !WorldConfigManager.Instance.useRandomGenerationForScenarioMaps) {
-                    yield return StartCoroutine(mapGenerator.InitializeScenarioWorld(scenarioMapData));    
-                } else {
-                    Debug.Log("Generating random world...");
-                    yield return StartCoroutine(mapGenerator.InitializeWorld());    
-                }
+            yield return StartCoroutine(PerformStartUpNewGame());
+        }
+    }
+    private IEnumerator PerformStartUpLoadGame() {
+        LevelLoaderManager.Instance.UpdateLoadingInfo("Reading Save File...");
+        LevelLoaderManager.Instance.UpdateLoadingBar(0.4f, 8f);
+        LoadThreadQueueItem threadItemReadSaveFile = new LoadThreadQueueItem(); 
+        LoadThreadQueueItem threadItemDataBeforeWorldCreation = new LoadThreadQueueItem();
+        ThreadPool.QueueUserWorkItem(initializer.InitializeDataBeforeWorldCreationOtherThread, threadItemDataBeforeWorldCreation);
+        SaveManager.Instance.saveCurrentProgressManager.LoadSaveDataCurrentProgress(threadItemReadSaveFile);
+
+        while (!threadItemReadSaveFile.isDone || !threadItemDataBeforeWorldCreation.isDone) {
+            yield return null;
+        }
+        yield return StartCoroutine(mapGenerator.InitializeSavedWorld(SaveManager.Instance.saveCurrentProgressManager.currentSaveDataProgress));
+        //clear out save file in temp folder
+        SaveManager.Instance.DeleteSaveFilesInTempDirectory();
+    }
+    private IEnumerator PerformStartUpNewGame() {
+        LoadThreadQueueItem threadItemDataBeforeWorldCreation = new LoadThreadQueueItem();
+        ThreadPool.QueueUserWorkItem(initializer.InitializeDataBeforeWorldCreationOtherThread, threadItemDataBeforeWorldCreation);
+
+        while (!threadItemDataBeforeWorldCreation.isDone) {
+            yield return null;
+        }
+
+        LevelLoaderManager.Instance.UpdateLoadingInfo("Initializing World...");
+        if (WorldSettings.Instance.worldSettingsData.IsScenarioMap()) {
+            ScenarioData scenarioData = WorldSettings.Instance.GetScenarioDataByWorldType(WorldSettings.Instance.worldSettingsData.worldType);
+            ScenarioMapData scenarioMapData = null;
+            if (scenarioData != null) {
+                scenarioMapData = UtilityScripts.Utilities.Deserialize<ScenarioMapData>(scenarioData.scenarioSettings.text);
+            } else {
+                throw new Exception($"There is no scenario map data for {WorldSettings.Instance.worldSettingsData.worldType.ToString()}");
+            }
+            //switch (WorldSettings.Instance.worldSettingsData.worldType) {
+            //    case WorldSettingsData.World_Type.Tutorial:
+            //        scenarioMapData = SaveManager.Instance.GetScenarioMapData($"{Application.streamingAssetsPath}/Scenario Maps/Tutorial.sce");
+            //        break;
+            //    case WorldSettingsData.World_Type.Oona:
+            //        scenarioMapData = SaveManager.Instance.GetScenarioMapData($"{Application.streamingAssetsPath}/Scenario Maps/Oona.sce");
+            //        break;
+            //    case WorldSettingsData.World_Type.Pangat_Loo:
+            //        scenarioMapData = SaveManager.Instance.GetScenarioMapData($"{Application.streamingAssetsPath}/Scenario Maps/Pangat_Loo.sce");
+            //        break;
+            //    case WorldSettingsData.World_Type.Zenko:
+            //        scenarioMapData = SaveManager.Instance.GetScenarioMapData($"{Application.streamingAssetsPath}/Scenario Maps/Zenko.sce");
+            //        break;
+            //    case WorldSettingsData.World_Type.Affatt:
+            //        scenarioMapData = SaveManager.Instance.GetScenarioMapData($"{Application.streamingAssetsPath}/Scenario Maps/Affatt.sce");
+            //        break;
+            //    case WorldSettingsData.World_Type.Icalawa:
+            //        scenarioMapData = SaveManager.Instance.GetScenarioMapData($"{Application.streamingAssetsPath}/Scenario Maps/Icalawa.sce");
+            //        break;
+            //    default:
+            //        throw new Exception($"There is no scenario map data for {WorldSettings.Instance.worldSettingsData.worldType.ToString()}");
+            //}
+
+            if (scenarioMapData != null && !WorldConfigManager.Instance.useRandomGenerationForScenarioMaps) {
+                yield return StartCoroutine(mapGenerator.InitializeScenarioWorld(scenarioMapData));
             } else {
                 Debug.Log("Generating random world...");
                 yield return StartCoroutine(mapGenerator.InitializeWorld());
             }
+        } else {
+            Debug.Log("Generating random world...");
+            yield return StartCoroutine(mapGenerator.InitializeWorld());
         }
     }
 
@@ -80,4 +105,10 @@ public class StartupManager : MonoBehaviour {
         Messenger.RemoveListener(UISignals.START_GAME_AFTER_LOADOUT_SELECT, OnLoadoutSelected);
         initializer.InitializeDataAfterLoadoutSelection();
     }
+}
+
+public class LoadThreadQueueItem {
+    public bool isDone;
+    public MapGenerationData mapData;
+    public SaveDataCurrentProgress saveData;
 }

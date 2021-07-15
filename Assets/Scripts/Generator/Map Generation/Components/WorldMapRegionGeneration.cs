@@ -98,8 +98,55 @@ public class WorldMapRegionGeneration : MapGenerationComponent {
 	// 	}
 	// }
 	#endregion
-	
+
 	#region Saved World
+	public override void LoadSavedData(object state) {
+        try {
+			LoadThreadQueueItem threadItem = state as LoadThreadQueueItem;
+			MapGenerationData mapData = threadItem.mapData;
+			SaveDataCurrentProgress saveData = threadItem.saveData;
+
+			WorldSettings.Instance.worldSettingsData.SetWorldType(saveData.worldMapSave.worldType);
+			saveData.LoadDate();
+
+			GridMap.Instance.SetupInitialData(mapData.width, mapData.height);
+			Area[,] map = new Area[mapData.width, mapData.height];
+			List<Area> normalHexTiles = new List<Area>();
+
+			SaveDataArea[,] savedMap = saveData.worldMapSave.GetSaveDataMap();
+
+			for (int x = 0; x < mapData.width; x++) {
+				for (int y = 0; y < mapData.height; y++) {
+					SaveDataArea savedHexTile = savedMap[x, y];
+
+					Area area = savedHexTile.Load();
+					normalHexTiles.Add(area);
+					map[x, y] = area;
+				}
+			}
+
+			GridMap.Instance.SetMap(map, normalHexTiles);
+			for (int i = 0; i < normalHexTiles.Count; i++) {
+				Area area = normalHexTiles[i];
+				area.neighbourComponent.FindNeighbours(area, map);
+			}
+
+			int lastX = 0;
+			int lastY = 0;
+			Region[] allRegions = new Region[saveData.worldMapSave.regionSaves.Count];
+
+			for (int i = 0; i < saveData.worldMapSave.regionSaves.Count; i++) {
+				SaveDataRegion saveDataRegion = saveData.worldMapSave.regionSaves[i];
+				Region region = CreateNewRegionFromSave(saveDataRegion, lastX, lastY, saveData.worldMapSave.worldMapTemplate.worldMapWidth, saveData.worldMapSave.worldMapTemplate.worldMapHeight);
+				allRegions[i] = region;
+			}
+			GridMap.Instance.SetRegions(allRegions);
+			threadItem.isDone = true;
+		} catch (Exception e) {
+			Debug.LogError(e.Message + "\n" + e.StackTrace);
+        }
+		
+	}
 	public override IEnumerator LoadSavedData(MapGenerationData data, SaveDataCurrentProgress saveData) {
 		LevelLoaderManager.Instance.UpdateLoadingInfo("Loading Regions...");
 		yield return MapGenerator.Instance.StartCoroutine(LoadRegions(saveData));

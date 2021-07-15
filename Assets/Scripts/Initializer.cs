@@ -8,7 +8,7 @@ using Tutorial;
 using UnityEngine;
 
 public class Initializer : MonoBehaviour {
-    public IEnumerator InitializeDataBeforeWorldCreation() {
+    public IEnumerator InitializeDataBeforeWorldCreationEnumerator() {
         //BaseSettlement.onSettlementBuilt = null; //TODO: Make this better
         LocalizationManager.Instance.Initialize();
         GameManager.Instance.Initialize();
@@ -39,6 +39,31 @@ public class Initializer : MonoBehaviour {
         PlayerSkillManager.Instance.ResetSummonPlayerSkills();
         yield return null;
         CombatManager.Instance.Initialize();
+    }
+    public void InitializeDataBeforeWorldCreationMainThread() {
+        LocalizationManager.Instance.Initialize();
+        GameManager.Instance.Initialize();
+        SaveManager.Instance.PrepareTempDirectory();
+        DatabaseManager.Instance.Initialize();
+        CharacterManager.Instance.Initialize();
+        TraitManager.Instance.Initialize();
+        PlayerManager.Instance.Initialize();
+        InnerMapManager.Instance.Initialize();
+        UIManager.Instance.InitializeUI();
+        PlayerUI.Instance.Initialize();
+        WorldEventManager.Instance.Initialize();
+    }
+    public void InitializeDataBeforeWorldCreationOtherThread(object state) {
+        LoadThreadQueueItem threadItem = state as LoadThreadQueueItem;
+        RaceManager.Instance.Initialize();
+        LandmarkManager.Instance.Initialize();
+        CrimeManager.Instance.Initialize();
+        InteractionManager.Instance.Initialize();
+        JobManager.Instance.Initialize();
+        PlayerSkillManager.Instance.ResetSpellsInUse();
+        PlayerSkillManager.Instance.ResetSummonPlayerSkills();
+        CombatManager.Instance.Initialize();
+        threadItem.isDone = true;
     }
 
     public void InitializeDataAfterWorldCreation() {

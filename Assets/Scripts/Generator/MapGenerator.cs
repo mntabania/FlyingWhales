@@ -11,6 +11,7 @@ using Inner_Maps;
 using Scenario_Maps;
 using Debug = UnityEngine.Debug;
 using Random = UnityEngine.Random;
+using System.Threading;
 
 public class MapGenerator : BaseMonoBehaviour {
 
@@ -163,17 +164,47 @@ public class MapGenerator : BaseMonoBehaviour {
     public IEnumerator InitializeSavedWorld(SaveDataCurrentProgress saveData) {
         //Note: In the Save World, the TileFeatureGeneration is done after the second wave is done loading because there are tile features thats needs the references when it is added
         //Example: The HeatWave feature function PopulateInitialCharactersOutside is called when it is added, inside the GetAllCharactersInsideHexThatMeetCriteria is called, where the innermaphextile is needed, so we must have the references before loading the tile features
+        LevelLoaderManager.Instance.UpdateLoadingInfo("Loading World...");
         SaveManager.Instance.SetUseSaveData(true);
         WorldSettings.Instance.SetWorldSettingsData(saveData.worldSettingsData);
         DatabaseManager.Instance.mainSQLDatabase.InitializeDatabase(); //Initialize main SQL database
+
+        MapGenerationData mapData = new MapGenerationData();
+        mapData.chosenWorldMapTemplate = saveData.worldMapSave.worldMapTemplate;
+        float newX = MapGenerationData.XOffset * (mapData.width / 2f);
+        float newY = MapGenerationData.YOffset * (mapData.height / 2f);
+        GridMap.Instance.transform.localPosition = new Vector2(-newX, -newY);
+        WorldConfigManager.Instance.mapGenerationData = mapData;
+
+        MapGenerationComponent[] threadedMapGenerationComponents = { new WorldMapRegionGeneration(), new SettlementLoading() };
+        LoadThreadQueueItem[] threadItems = new LoadThreadQueueItem[threadedMapGenerationComponents.Length];
+        for (int i = 0; i < threadedMapGenerationComponents.Length; i++) {
+            LoadThreadQueueItem threadItem = new LoadThreadQueueItem();
+            threadItem.mapData = mapData;
+            threadItem.saveData = saveData;
+            threadItems[i] = threadItem;
+            ThreadPool.QueueUserWorkItem(threadedMapGenerationComponents[i].LoadSavedData, threadItem);
+        }
+        while (!AreAllThreadItemsDone(threadItems)) {
+            yield return null;
+        }
         MapGenerationComponent[] mapGenerationComponents = {
-            new AreaGeneration(), new WorldMapRegionGeneration(), new SettlementLoading(), new FamilyTreeGeneration(),
+            /*new AreaGeneration(), new WorldMapRegionGeneration(), new SettlementLoading(),*/ new FamilyTreeGeneration(),
             new RegionInnerMapGeneration(), new SingletonDataGeneration(), new PlayerDataGeneration(),
             new LoadFirstWave(), new LoadSecondWave(), new TileFeatureGeneration(), new MapGenerationFinalization(),
             new LoadCharactersCurrentAction(), new LoadPlayerQuests(),
             /*, new LoadAwarenessGeneration()*/
         };
         yield return StartCoroutine(InitializeSavedWorldCoroutine(mapGenerationComponents, saveData));
+    }
+    private bool AreAllThreadItemsDone(LoadThreadQueueItem[] threadItems) {
+        for (int i = 0; i < threadItems.Length; i++) {
+            LoadThreadQueueItem item = threadItems[i];
+            if (!item.isDone) {
+                return false;
+            }
+        }
+        return true;
     }
     private IEnumerator InitializeSavedWorldCoroutine(MapGenerationComponent[] components, SaveDataCurrentProgress saveData) {
         Stopwatch loadingWatch = new Stopwatch();
