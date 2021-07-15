@@ -86,6 +86,7 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable, IObjectPoolTeste
     #endregion
 
     public ActualGoapNode() {
+        persistentID = string.Empty;
         logTags = new List<LOG_TAG>();
         awareCharacters = new List<Character>();
     }

@@ -4996,7 +4996,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         SetCurrentPlan(plan);
 
         if (hasMarker) {
-            marker.UpdateActionIcon();
+            marker?.UpdateActionIcon();
         }
     }
     private void SetCurrentPlan(GoapPlan plan) {

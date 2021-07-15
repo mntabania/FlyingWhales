@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UtilityScripts;
 
 public class CharacterDatabase {
     
@@ -113,13 +114,15 @@ public class CharacterDatabase {
 
     public void OnDestroy() {
         if (allCharactersList != null) {
-            List<Character> allCharacterTemp = new List<Character>(allCharactersList);
+            List<Character> allCharacterTemp = RuinarchListPool<Character>.Claim(); // new List<Character>(allCharactersList);
+            allCharacterTemp.AddRange(allCharactersList);
             for (int i = 0; i < allCharacterTemp.Count; i++) {
                 Character character = allCharacterTemp[i];
                 character?.CleanUp();
             }
             allCharactersList?.Clear();
-            allCharacterTemp?.Clear();
+            //allCharacterTemp?.Clear();
+            RuinarchListPool<Character>.Release(allCharacterTemp);
         }
         limboCharacters?.Clear();
         allCharacters?.Clear();
