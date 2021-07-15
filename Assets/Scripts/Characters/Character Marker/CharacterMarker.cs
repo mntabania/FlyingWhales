@@ -1198,15 +1198,8 @@ public class CharacterMarker : MapObjectVisual<Character> {
 #if DEBUG_PROFILER
         Profiler.EndSample();
 #endif
-
+        LocationGridTile prevTile = previousGridTile;
         if (previousGridTile != character.gridTileLocation && character.gridTileLocation != null) {
-#if DEBUG_PROFILER
-            Profiler.BeginSample($"{character.name} On Character Moved To");
-#endif
-            character.gridTileLocation.parentMap.OnCharacterMovedTo(character, character.gridTileLocation, previousGridTile);
-#if DEBUG_PROFILER
-            Profiler.EndSample();
-#endif
             if(character != null) {
                 previousGridTile = character.gridTileLocation;
                 if (_previousAreaLocation == null || (_previousAreaLocation != character.areaLocation)) {
@@ -1254,6 +1247,13 @@ public class CharacterMarker : MapObjectVisual<Character> {
 #endif
                 }
             }
+#if DEBUG_PROFILER
+            Profiler.BeginSample($"{character.name} On Character Moved To");
+#endif
+            character.gridTileLocation.parentMap.OnCharacterMovedTo(character, character.gridTileLocation, prevTile);
+#if DEBUG_PROFILER
+            Profiler.EndSample();
+#endif
         }
     }
     public void OnDeath(LocationGridTile deathTileLocation) {

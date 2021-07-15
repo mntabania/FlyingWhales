@@ -136,6 +136,13 @@ public class Summon : Character {
             //Remove disguise first before processing death
             reactionComponent.SetDisguisedCharacter(null);
 
+            if (responsibleCharacter != null) {
+                //If a character killed another character, he should automatically be one of the ones who saw the dead body
+                //This is so that the killer will not assume murder anymore because he already knows the dead body
+                //https://trello.com/c/xMuWkixY/4997-killer-assumed-another-villager-killed-his-victim
+                reactionComponent.AddCharacterThatSawThisDead(responsibleCharacter);
+            }
+
             UnsubscribeSignals();
             if (stateComponent.currentState != null) {
                 stateComponent.ExitCurrentState();
