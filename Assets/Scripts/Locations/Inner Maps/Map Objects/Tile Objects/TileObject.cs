@@ -1157,6 +1157,9 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         if (cannotBePickedUp) {
             return false;
         }
+        if (traitContainer.HasTrait("Treasure") && !IsInterestedInThisTreasure(character)) {
+            return false;
+        }
         if (characterOwner == null || IsOwnedBy(character)) {
             //if the item is at a tile that is part of a npcSettlement and that tile is part of that settlements main storage, do not allow pick up
             //Temporarily removed this because when the player unseize a necronomicon in the storage area, it does not get picked up
@@ -1174,6 +1177,9 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
             }
         }
         return false;
+    }
+    protected virtual bool IsInterestedInThisTreasure(Character p_character) {
+        return true;
     }
     protected TileObject GetBase() {
         return this;
