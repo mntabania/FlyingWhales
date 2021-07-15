@@ -1433,7 +1433,7 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable, IObjectPoolTeste
         return false;
     }
     public void Reset() {
-        persistentID = null; //string.Empty //Note: Null this instead of string.Empty so that the == and != operators will be accurate when checking for nulls since we override it to check for persistent id instead of the instance of the class itself
+        persistentID = string.Empty; //string.Empty //Note: Null this instead of string.Empty so that the == and != operators will be accurate when checking for nulls since we override it to check for persistent id instead of the instance of the class itself
         actor = null;
         poiTarget = null;
         disguisedActor = null;
